@@ -11,8 +11,8 @@
     <isReadOnly>false</isReadOnly>
     <name>My Private Sandbox</name>
     <repositoryType>Camelot</repositoryType>
-    <updateUri>http://localhost:54321/SandboxService/update</updateUri>
-    <uri>http://localhost:54321/SandboxService/query</uri>
+    <updateUri>http://localhost/Services/SandboxService/update</updateUri>
+    <uri>http://localhost/Services/SandboxService/query</uri>
   </Repository>
   <Repository>
     <description>RDS/WIP Part 4 Reference Data Library</description>
@@ -28,11 +28,11 @@
     <repositoryType>RDSWIP</repositoryType>
     <uri>http://tpl.rdlfacade.org/data</uri>
   </Repository>
-  <repository>
+  <Repository>
     <description>RDS/Proto and P7 Initial Set Templates</description>
     <isReadOnly>true</isReadOnly>
     <name>Proto and Initial</name>
     <repositoryType>Camelot</repositoryType>
     <uri>http://facade.iringsandbox.org/TemporaryInitialSetTemplates/sparql</uri>
-  </repository>
+  </Repository>
 </ArrayOfRepository>

@@ -44,6 +44,7 @@ namespace ApplicationEditor
     private bool isPosting = false;
     private bool isFetched = false;
     private ApplicationDAL _dal;
+    private bool _getSchemaObjects = false;
 
     //public event System.EventHandler<System.EventArgs> OnDataArrived;
 
@@ -662,10 +663,6 @@ namespace ApplicationEditor
           _dal.GetSchemaObjects(_currentProject.Name, _currentApplication.Name);
           isFetched = true;
         }
-        //Response response = (Response)args.Data;
-        //resultsList.lbResult.ItemsSource = response.StatusList[0].Messages;
-        //resultsList.Show();
-
       }
       catch (Exception ex)
       {
@@ -674,6 +671,14 @@ namespace ApplicationEditor
       finally
       {
         biBusyWindow.IsBusy = false;
+
+        if (_getSchemaObjects)
+        {
+          biBusyWindow.IsBusy = true;
+
+          _getSchemaObjects = false;
+          _dal.GetSchemaObjects(_currentProject.Name, _currentApplication.Name);
+        }
       }
     }
 
@@ -984,7 +989,7 @@ namespace ApplicationEditor
           cmbApp.Items.Clear();
           tvwItemSourceRoot.Items.Clear();
           tvwItemDestinationRoot.Items.Clear();
-          
+
           cbProvider.SelectedIndex = -1;
           tbNewAppName.Text = string.Empty;
           tbNewAppDesc.Text = string.Empty;
@@ -1099,15 +1104,42 @@ namespace ApplicationEditor
       try
       {
         biBusyWindow.IsBusy = true;
-        TreeViewItem dbdictRoot = tvwItemDestinationRoot;
-        DatabaseDictionary dbDict = dbdictRoot.Tag as DatabaseDictionary;
-        if (dbDict != null)
-            dbDict.dataObjects.Clear();
-        foreach (TreeViewItem dataObjectItem in dbdictRoot.Items)
+
+        DatabaseDictionary dict = null;
+        if (dict != null)
+          dict.dataObjects.Clear();
+
+        string connString = BuildConnectionString(cbProvider.SelectedItem.ToString()
+                  , tbNewDataSource.Text
+                  , tbNewDatabase.Text
+                  , tbUserID.Text
+                  , tbPassword.Password.ToString());
+
+        if (tvwItemDestinationRoot.Tag == null)
         {
-          dbDict.dataObjects.Add(dataObjectItem.Tag as org.iringtools.library.DataObject);
+
+          dict = new DatabaseDictionary
+           {
+             connectionString = connString,
+             provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true),
+             schemaName = tbSchemaName.Text,
+           };
+          tvwItemDestinationRoot.Tag = dict;
+
+          foreach (TreeViewItem dataObjectItem in tvwItemDestinationRoot.Items)
+          {
+            dict.dataObjects.Add(dataObjectItem.Tag as org.iringtools.library.DataObject);
+          }
         }
-        _dal.SaveDatabaseDictionary(dbDict, _currentProject.Name, _currentApplication.Name);
+        else
+        {
+          dict = tvwItemDestinationRoot.Tag as DatabaseDictionary;
+          dict.connectionString = connString;
+          dict.provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+          dict.schemaName = tbSchemaName.Text;
+        }
+
+        _dal.SaveDatabaseDictionary(dict, _currentProject.Name, _currentApplication.Name);
       }
       catch (Exception ex)
       {
@@ -1171,7 +1203,7 @@ namespace ApplicationEditor
               parentParent.Items.Add(parent);
             }
             _dal.GetSchemaObjectsSchma(_currentProject.Name, _currentApplication.Name, ((TextBlock)((StackPanel)tableItem.Header).Children[1]).Text);
-             //constructObjectTree(tableItem, destRoot);
+            //constructObjectTree(tableItem, destRoot);
           }
 
         }
@@ -1848,26 +1880,26 @@ namespace ApplicationEditor
       if (tvwItemDestinationRoot.Tag == null)
       {
 
-         dict = new DatabaseDictionary
-          {
-            connectionString = connString,
-            provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true),
-            schemaName = tbSchemaName.Text,
-          };
-         tvwItemDestinationRoot.Tag = dict;
+        dict = new DatabaseDictionary
+         {
+           connectionString = connString,
+           provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true),
+           schemaName = tbSchemaName.Text,
+         };
+        tvwItemDestinationRoot.Tag = dict;
       }
       else
       {
         dict = tvwItemDestinationRoot.Tag as DatabaseDictionary;
-        if (dict.connectionString != connString)
-        {
-          dict.connectionString = connString;
-          
-        }
+        dict.connectionString = connString;
+        dict.provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+        dict.schemaName = tbSchemaName.Text;
       }
+
+      _getSchemaObjects = true;
+
       _dal.SaveDatabaseDictionary(dict, _currentProject.Name, _currentApplication.Name);
-        _dal.GetSchemaObjects(_currentProject.Name, _currentApplication.Name);
-       // isFetched = true;
+
       
     }
   }

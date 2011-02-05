@@ -36,7 +36,7 @@
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\log4net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate">
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\NHibernate.dll</HintPath>
