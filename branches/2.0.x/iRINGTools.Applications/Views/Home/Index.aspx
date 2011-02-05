@@ -4,12 +4,12 @@
 <head>
   <meta http-equiv="cache-control" content="no-cache" />
   <link rel="stylesheet" type="text/css" href="<%=ResolveUrl("~/content/css/iring-tools.css") %>" />
-  <title>iRINGTools Version 2.00.01</title>
+  <title>iRINGTools Version 2.00.02</title>
 </head>
 <body>
   <div class="banner">
     <h1>
-      <img src="<%=ResolveUrl("~/content/img/iring-tools-logo.png") %>" />&nbsp; Version 2.00.01</h1>
+      <img src="<%=ResolveUrl("~/content/img/iring-tools-logo.png") %>" />&nbsp; Version 2.00.02</h1>
   </div>
   <div class="main">
     <p>
@@ -29,9 +29,9 @@
     <h2>
       iRINGTools Applications</h2>
     <ul>
-      <li><a href="RefDataEditor">Reference Data Editor</a></li>
-      <li><a href="AppEditor">Application Editor</a></li>
-      <li><a href="MappingEditor">Mapping Editor</a></li>
+      <li><a href="<%=ResolveUrl("~/RefDataEditor") %>">Reference Data Editor</a></li>
+      <li><a href="<%=ResolveUrl("~/AppEditor") %>">Application Editor</a></li>
+      <li><a href="<%=ResolveUrl("~/MappingEditor") %>MappingEditor">Mapping Editor</a></li>
     </ul>
   </div>
 </body>
