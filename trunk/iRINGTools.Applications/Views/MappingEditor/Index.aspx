@@ -9,7 +9,7 @@
 <head id="Head1" runat="server">
     <meta http-equiv="cache-control" content="no-cache"/>
     <title>MappingEditor</title>
-    <script src="../../Scripts/Silverlight.js" type="text/javascript"></script>
+  <script src="<%=ResolveUrl("~/Scripts/Silverlight.js") %>" type="text/javascript"></script>
         <script type="text/javascript">
           function onSilverlightError(sender, args) {
             var appSource = "";

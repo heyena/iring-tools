@@ -7,7 +7,8 @@
   </head>
   <body>
     <div class="banner">
-      <h1><img src="../../Content/img/iring-tools-logo.png" />&nbsp; Version 2.01.00</h1>
+    <h1>
+      <img src="<%=ResolveUrl("~/content/img/iring-tools-logo.png") %>" />&nbsp; Version 2.01.00</h1>
     </div>      
     <div class="main">
       <p>iRINGTools is a set of free, public domain, open source (BSD 3 license) software applications and utilities that 
@@ -20,10 +21,10 @@
       	 these functions via the following services:</p><br>
       <h2>iRINGTools Applications</h2>
       <ul>
-		    <li><a href="RefDataEditor">Reference Data Editor</a></li>        
-		    <li><a href="AppEditor">Application Editor</a></li>
-        <li><a href="MappingEditor">Mapping Editor</a></li>
-         <li><a href="AdapterManager">Adapter Manager</a></li>
+      <li><a href="<%=ResolveUrl("~/RefDataEditor") %>">Reference Data Editor</a></li>
+      <li><a href="<%=ResolveUrl("~/AppEditor") %>">Application Editor</a></li>
+      <li><a href="<%=ResolveUrl("~/MappingEditor") %>">Mapping Editor</a></li>
+      <li><a href="<%=ResolveUrl("~/AdapterManager") %>">Adapter Manager</a></li>
 	    </ul>
     </div>
   </body>

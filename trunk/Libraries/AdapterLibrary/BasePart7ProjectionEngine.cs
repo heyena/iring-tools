@@ -82,6 +82,7 @@ namespace org.iringtools.adapter.projection
     private RoleType _roleType = RoleType.Property;
     private string _valueListName = null;
 
+    public bool FullIndex { get; set; }
     public long Count { get; set; }
 
     public BasePart7ProjectionEngine()
@@ -414,13 +415,11 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
+        if (filter == null || filter.Expressions == null || filter.OrderExpressions == null)
+          throw new Exception("Invalid DataFilter.");
         _graphMap = _mapping.FindGraphMap(graph);
         DataObject _dataObject = dictionary.DataObjects.Find(o => o.ObjectName == _graphMap.dataObjectName);
 
-        if (filter != null)
-        {
-          if (filter.Expressions != null)
-          {
             foreach (Expression expression in filter.Expressions)
             {
               string[] propertyNameParts = expression.PropertyName.Split('.');
@@ -446,17 +445,12 @@ namespace org.iringtools.adapter.projection
                 }
               }
             }
-          }
 
-          if (filter.OrderExpressions != null)
-          {
             foreach (OrderExpression orderExpression in filter.OrderExpressions)
             {
               string[] propertyNameParts = orderExpression.PropertyName.Split('.');
               string dataPropertyName = ProjectPropertyName(propertyNameParts);
               orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
-            }
-          }
         }
       }
       catch (Exception ex)

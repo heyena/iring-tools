@@ -9,6 +9,7 @@
 <head id="Head1" runat="server">
     <meta http-equiv="cache-control" content="no-cache"/>
     <title>ReferenceDataEditor</title>
+  <script src="<%=ResolveUrl("~/Scripts/Silverlight.js") %>" type="text/javascript"></script>
      <script type="text/javascript">
  function onBeforeUnloadAction(){
    return "Did you save your changes!!!........";

@@ -44,7 +44,7 @@ namespace ApplicationEditor
     private bool isPosting = false;
     private bool isFetched = false;
     private ApplicationDAL _dal;
-
+    private bool _getSchemaObjects = false;
     private List<string> _selectedDatabaseSchema = new List<string>();
 
     //public event System.EventHandler<System.EventArgs> OnDataArrived;
@@ -684,6 +684,12 @@ namespace ApplicationEditor
       finally
       {
         biBusyWindow.IsBusy = false;
+        if (_getSchemaObjects)
+        {
+          biBusyWindow.IsBusy = true;
+          _getSchemaObjects = false;
+          _dal.GetSchemaObjects(_currentProject.Name, _currentApplication.Name);
+        }
       }
     }
 
@@ -1109,15 +1115,41 @@ namespace ApplicationEditor
       try
       {
         biBusyWindow.IsBusy = true;
-        TreeViewItem dbdictRoot = tvwItemDestinationRoot;
-        DatabaseDictionary dbDict = dbdictRoot.Tag as DatabaseDictionary;
-        if (dbDict != null)
-          dbDict.DataObjects.Clear();
-        foreach (TreeViewItem dataObjectItem in dbdictRoot.Items)
+
+        DatabaseDictionary dict = null;
+        if (dict != null)
+          dict.dataObjects.Clear();
+
+        string connString = BuildConnectionString(cbProvider.SelectedItem.ToString()
+                  , tbNewDataSource.Text
+                  , tbNewDatabase.Text
+                  , tbUserID.Text
+                  , tbPassword.Password.ToString());
+
+        if (tvwItemDestinationRoot.Tag == null)
         {
-          dbDict.DataObjects.Add(dataObjectItem.Tag as org.iringtools.library.DataObject);
+
+          dict = new DatabaseDictionary
+           {
+             connectionString = connString,
+             provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true),
+             schemaName = tbSchemaName.Text,
+           };
+          tvwItemDestinationRoot.Tag = dict;
+          foreach (TreeViewItem dataObjectItem in tvwItemDestinationRoot.Items)
+          {
+            dict.dataObjects.Add(dataObjectItem.Tag as org.iringtools.library.DataObject);
+          }
         }
-        _dal.SaveDatabaseDictionary(dbDict, _currentProject.Name, _currentApplication.Name);
+        else
+        {
+          dict = tvwItemDestinationRoot.Tag as DatabaseDictionary;
+          dict.connectionString = connString;
+          dict.provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+          dict.schemaName = tbSchemaName.Text;
+        }
+
+        _dal.SaveDatabaseDictionary(dict, _currentProject.Name, _currentApplication.Name);
       }
       catch (Exception ex)
       {
@@ -1897,16 +1929,16 @@ namespace ApplicationEditor
       else
       {
         dict = tvwItemDestinationRoot.Tag as DatabaseDictionary;
-        if (dict.ConnectionString != connString)
-        {
-          dict.ConnectionString = connString;
-
-        }
+        dict.connectionString = connString;
+        dict.provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+        dict.schemaName = tbSchemaName.Text;
       }
-      _dal.SaveDatabaseDictionary(dict, _currentProject.Name, _currentApplication.Name);
-      _dal.GetSchemaObjects(_currentProject.Name, _currentApplication.Name);
-      // isFetched = true;
 
+      _getSchemaObjects = true;
+
+      _dal.SaveDatabaseDictionary(dict, _currentProject.Name, _currentApplication.Name);
+
+      
     }
   }
 }

@@ -93,7 +93,7 @@ namespace org.iringtools.services
     }
     [Description("Gets data transfer indices according to the posted manifest.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
-    public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, Manifest manifest, string hashAlgorithm)
+    public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";

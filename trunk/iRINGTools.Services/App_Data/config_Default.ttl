@@ -4,7 +4,7 @@
         dnr:queryProcessor _:qProc ;
         dnr:updateProcessor _:uProc ;
         dnr:protocolProcessor _:pProc ;
-		dnr:stylesheet "../css/interface.css" ;		
+	dnr:stylesheet "../css/interface.css" ;		
         dnr:introText "~/App_Data/InterfaceIntro.txt" ;
         dnr:type "VDS.RDF.Web.SparqlServer" ;
         dnr:defaultQueryFile "~/App_Data/default.rq" .						
@@ -31,7 +31,7 @@ _:sqlServer a dnr:SqlIOManager ;
         dnr:queryProcessor _:qProcS ;
         dnr:updateProcessor _:uProcS ;
         dnr:protocolProcessor _:pProcS ;
-		dnr:stylesheet "../css/interface.css" ;		
+	dnr:stylesheet "../css/interface.css" ;		
         dnr:introText "~/App_Data/SandboxIntro.txt" ;
         dnr:type "VDS.RDF.Web.SparqlServer" ;
         dnr:defaultQueryFile "~/App_Data/default.rq" .
