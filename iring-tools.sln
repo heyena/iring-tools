@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrismContrib.Silverlight", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UtilityLibrary.Silverlight", "Libraries\UtilityLibrary\Silverlight\UtilityLibrary.Silverlight.csproj", "{EA853599-4781-4BD2-8EC7-61E893520A23}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MappingEditor.Silverlight", "Modules\Mapping\Silverlight\MappingEditor.Silverlight.csproj", "{ABD639A6-E306-4C15-BB2E-CDA458AA7761}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Spinner.Silverlight", "Modules\Spinner\Silverlight\Spinner.Silverlight.csproj", "{E257A89A-0F74-4DC9-94FB-8AE38D5C46FB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modelling.Silverlight", "Modules\RDSWIPModelling\Modelling.Silverlight.csproj", "{C5891409-8F76-4B5E-8EB9-C35B89796131}"
@@ -102,7 +104,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QMXFGenerator", "Utilities\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProxyConfig", "Utilities\ProxyConfig\ProxyConfig.csproj", "{12822A05-394F-42BE-8D77-BCAE438E808E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mapping.Silverlight", "Modules\Mapping\Silverlight\Mapping.Silverlight.csproj", "{76CA1820-6E1C-4C70-8EDF-0559DA07EE54}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacadeExchange", "Utilities\FacadeExchange\FacadeExchange.csproj", "{66E98657-D742-4775-82A3-9B02BB17B035}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution

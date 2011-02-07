@@ -8,7 +8,7 @@
     <ProjectGuid>{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.adapter.datalayer</RootNamespace>
+    <RootNamespace>iRINGTools.SDK.CSVDataLayer</RootNamespace>
     <AssemblyName>CSVDataLayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -53,24 +53,18 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdapterLibrary">
-      <HintPath>..\lib\AdapterLibrary.dll</HintPath>
+    <Reference Include="Ciloci.Flee">
+      <HintPath>..\lib\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
-    <Reference Include="Ciloci.Flee, Version=0.9.26.0, Culture=neutral, PublicKeyToken=c8526a021ef298ed, processorArchitecture=MSIL">
+    <Reference Include="iRINGLibrary, Version=2.0.1.2544, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Ciloci.Flee.dll</HintPath>
+      <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="iRINGLibrary, Version=2.0.0.1673, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\iRINGLibrary.dll</HintPath>
+    <Reference Include="log4net">
+      <HintPath>..\lib\log4net\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\Ninject.dll</HintPath>
+    <Reference Include="Ninject">
+      <HintPath>..\lib\ninject2\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -84,18 +78,23 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UtilityLibrary, Version=2.0.0.1673, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UtilityLibrary, Version=2.0.1.2544, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\lib\UtilityLibrary.dll</HintPath>
+      <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="CSVDataLayer.cs" />
     <Compile Include="DataObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Equipment.12345_000.API.xml" />
+    <Content Include="BindingConfiguration.12345_000.CSV.xml" />
+    <Content Include="DataDictionary.xml" />
+    <Content Include="Equipment.12345_000.CSV.xml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -113,6 +112,13 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="12345_000.CSV.config" />
+    <None Include="CSVDataLayer.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="12345_000.CSV\Equipment\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

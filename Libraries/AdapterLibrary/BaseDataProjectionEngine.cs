@@ -18,6 +18,7 @@ namespace org.iringtools.adapter.projection
         protected List<string> _relatedObjectPaths = null;
         protected Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
 
+        public bool FullIndex { get; set; }
         public long Count { get; set; }
         public BaseDataProjectionEngine()
         {

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using org.iringtools.library;
-using System.Xml.Serialization;
 
-namespace Bechtel.CSVDataLayer.API
+namespace iRINGTools.SDK.CSVDataLayer
 {
   public class Equipment
   {
@@ -93,11 +90,6 @@ namespace Bechtel.CSVDataLayer.API
         default:
           throw new Exception("Property [" + propertyName + "] does not exist.");
       }
-    }
-
-    public IList<IDataObject> GetRelatedObjects(string relatedObjectType)
-    {
-      throw new NotImplementedException();
     }
   }
 }

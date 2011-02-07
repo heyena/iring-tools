@@ -509,6 +509,7 @@ namespace org.iringtools.adapter
 
         _projectionEngine.Count = _dataLayer.GetCount(graphName, filter);
 
+        _projectionEngine.FullIndex = fullIndex;
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -517,7 +518,9 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
-    public XDocument GetDataProjection(string projectName, string applicationName, string graphName, string identifier, string format)
+    public XDocument GetDataProjection(
+      string projectName, string applicationName, string graphName, 
+      string identifier, string format, bool fullIndex)
     {
       try
       {
@@ -537,6 +540,7 @@ namespace org.iringtools.adapter
 
         _dataObjects = _dataLayer.Get(graphName, identifiers);
 
+        _projectionEngine.FullIndex = fullIndex;
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -548,7 +552,7 @@ namespace org.iringtools.adapter
 
     public XDocument GetDataProjection(
       string projectName, string applicationName, string graphName,
-      string format, int start, int limit, string sortOrder, string sortBy, 
+      string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex, 
       NameValueCollection parameters)
     {
       try
@@ -582,7 +586,8 @@ namespace org.iringtools.adapter
               "start", 
               "limit", 
               "sortBy", 
-              "sortOrder" 
+              "sortOrder",
+              "indexStyle",
             };
 
             if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
@@ -632,6 +637,7 @@ namespace org.iringtools.adapter
           _projectionEngine.Count = _dataLayer.GetCount(graphName, null);
         }
 
+        _projectionEngine.FullIndex = fullIndex; 
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -643,7 +649,7 @@ namespace org.iringtools.adapter
 
     public XDocument GetProjection(
 		string projectName, string applicationName, string graphName, 
-		string identifier, string format)
+    string identifier, string format, bool fullIndex)
     {
       try
       {
@@ -663,6 +669,7 @@ namespace org.iringtools.adapter
 
         LoadDataObjectSet(graphName, identifiers);
 
+        _projectionEngine.FullIndex = fullIndex;
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -675,7 +682,7 @@ namespace org.iringtools.adapter
     public XDocument GetProjection(
 		string projectName, string applicationName, string graphName, 
 		DataFilter filter, 
-		string format, int start, int limit)
+		string format, int start, int limit, bool fullIndex)
     {
       try
       {
@@ -701,6 +708,7 @@ namespace org.iringtools.adapter
 
         _projectionEngine.Count = LoadDataObjectSet(graphName, filter, start, limit);
 
+        _projectionEngine.FullIndex = fullIndex;
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -711,7 +719,7 @@ namespace org.iringtools.adapter
     }
     public XDocument GetProjection(
       string projectName, string applicationName, string graphName, 
-      string format, int start, int limit, string sortOrder, string sortBy,
+      string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
       NameValueCollection parameters)
     {
       try
@@ -743,7 +751,8 @@ namespace org.iringtools.adapter
               "start", 
               "limit", 
               "sortBy", 
-              "sortOrder" 
+              "sortOrder",
+              "indexStyle",
             };
 
             if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
@@ -793,6 +802,7 @@ namespace org.iringtools.adapter
           _projectionEngine.Count = LoadDataObjectSet(graphName, null);
         }
 
+        _projectionEngine.FullIndex = fullIndex;
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -1134,13 +1144,13 @@ namespace org.iringtools.adapter
     {
       _graphMap = _mapping.FindGraphMap(graphName);
 
-      long count = _dataLayer.GetCount(_graphMap.dataObjectName, dataFilter);      
       _dataObjects.Clear();
       if (dataFilter != null)
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, dataFilter, limit, start);
       else
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
       
+      long count = _dataLayer.GetCount(_graphMap.dataObjectMap, dataFilter);
       return count;
     }
 

@@ -324,6 +324,8 @@ namespace org.iringtools.adapter.projection
 
               if (value == null)
                 value = RDF_NIL;
+              else
+                value = value.Replace("rdl:", RDL_NS.NamespaceName);
 
               propertyElement.Add(new XAttribute(RDF_RESOURCE, value));
             }
