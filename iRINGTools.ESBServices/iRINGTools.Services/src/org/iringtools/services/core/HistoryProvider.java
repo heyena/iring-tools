@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
+
 import javax.xml.bind.JAXBException;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
@@ -43,13 +43,10 @@ public class HistoryProvider
     return history;
   }
   
-  public ExchangeResponse getExchangeResponse(String scope, String id, XMLGregorianCalendar timestamp) throws JAXBException, IOException 
+  public ExchangeResponse getExchangeResponse(String scope, String id, String timestamp) throws JAXBException, IOException 
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
-    
-    // timestamp is the start time with ":" being replaced with "." to be able to save the file to windows file system,
-    // thus reverse the process to get the file name
-    String exchangeFile = path + "/" + timestamp.toString().replace(".", ":") + ".xml";
+    String exchangeFile = path + "/" + timestamp.replace(":", ".") + ".xml";
     
     return JaxbUtil.read(ExchangeResponse.class, exchangeFile);
   }

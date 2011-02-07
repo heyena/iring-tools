@@ -4,7 +4,7 @@ public class Field
 {
   protected String name;  // header
   protected String dataIndex;
-  protected String type;
+  protected String type;  // data type
   protected int width;
   protected boolean fixed = false;  // fixed width
   protected boolean filterable = true;
