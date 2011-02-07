@@ -126,12 +126,12 @@ namespace org.iringtools.services
 
     [Description("Gets data transfer objects according to the posted manifest and data transfer indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
-    public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dtoPageRequest)
+    public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _dtoProvider.GetDataTransferObjects(scope, app, graph, dtoPageRequest);
+      return _dtoProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
     }
 
     [Description("Gets single data transfer object by id.")]

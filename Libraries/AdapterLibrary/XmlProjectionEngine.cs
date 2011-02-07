@@ -264,6 +264,7 @@ namespace org.iringtools.adapter.projection
 
                   if (value != null)
                   {
+                    value = value.Replace(RDL_NS.NamespaceName, "rdl:");
                     propertyElement.Add(new XAttribute("reference", value));
                   }
                 }
