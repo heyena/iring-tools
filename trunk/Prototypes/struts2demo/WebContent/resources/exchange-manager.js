@@ -1,13 +1,14 @@
 Ext.ns('iringtools.org.xmgr');
 
 function createGridStore(url){
+
   var store = new Ext.data.Store({
     proxy: new Ext.data.HttpProxy({
       url: url,
       timeout : 120000
     }),
     reader: new Ext.data.DynamicGridReader({}),
-    remoteSort: true,
+    remoteSort: true,    
     listeners: {
       exception: function(ex){
         Ext.getBody().unmask();
@@ -20,6 +21,7 @@ function createGridStore(url){
 }
 
 function createGridPane(store, pageSize){
+
   var filters = new Ext.ux.grid.GridFilters({
     remotesort: true,
     local: false,
@@ -94,9 +96,45 @@ function createXlogsPane(label, context, xlogsContainer){
   xlogsStore.load();
 }
 
-function loadPageDto(type, action, context, label){
-  var tab = Ext.getCmp('content-pane').getItem('tab-' + label);
+function getPageXlogs(scope, xid, timestamp){  
+  Ext.getBody().mask("Loading...", "x-mask-loading");
+  var url = 'pageXlogs' + '?scope=' + scope + '&xid=' + xid + '&xTime=' + timestamp;
+  var store = createGridStore(url);
+  var pageSize = 25;  
+  var pageXlogsGridPane = createGridPane(store, pageSize);
   
+  store.on('load', function(){
+	store.recordType = store.reader.recordType;
+    var hdwin = new Ext.Window({
+	  title : 'History Detail',
+	  closable : true,	  
+	  width : 1000,
+	  height : 500,
+	  layout : 'fit',
+	  listeners : {	 
+	    close : {
+		  fn : function() {
+		    Ext.getBody().unmask();
+		  }
+	    }
+	  },
+	  items : [ pageXlogsGridPane ]
+	});
+    
+    hdwin.show();
+  });
+  
+  store.load({
+      params: {
+        start: 0,          
+        limit: pageSize
+      }
+    });
+  
+}
+
+function loadPageDto(type, action, context, label){	
+  var tab = Ext.getCmp('content-pane').getItem('tab-' + label);  
   if (tab != null){
     tab.show();
   }
@@ -104,6 +142,7 @@ function loadPageDto(type, action, context, label){
     Ext.getBody().mask("Loading...", "x-mask-loading");    
     
     var url = action + context;
+    
     var store = createGridStore(url);
     var pageSize = 25; 
     

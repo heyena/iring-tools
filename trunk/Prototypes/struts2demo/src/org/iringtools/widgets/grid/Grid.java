@@ -4,8 +4,8 @@ import java.util.List;
 
 public class Grid
 {
-  protected String identifier;
-  protected String description;
+  protected String identifier;  // optional
+  protected String description; // optional
   protected int total;
   protected List<Field> fields;
   protected List<List<String>> data;

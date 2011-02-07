@@ -49,7 +49,12 @@
         <param name="root">exchangeResult</param>
       </result>
     </action>
-    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXlogs">
+    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getXlogs">
+      <result type="json">
+        <param name="root">xlogsGrid</param>
+      </result>
+    </action>
+    <action name="pageXlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXlogs">
       <result type="json">
         <param name="root">pageXlogsGrid</param>
       </result>

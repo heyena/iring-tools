@@ -2,6 +2,8 @@ package org.iringtools.controllers;
 
 import java.util.Map;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import org.apache.commons.lang.xwork.StringUtils;
 import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.dxfr.response.ExchangeResponse;
@@ -19,6 +21,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   private String xlogsServiceUri;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
+  private Grid xlogsGrid;
   private Grid pageXlogsGrid;
   
   private String scope;
@@ -33,6 +36,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   private int limit;
   private boolean reviewed;
   private String exchangeResult;
+  private String xTime;
   
   public ExchangeDataController() 
   {    
@@ -94,11 +98,25 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   }
   
   //----------------------------------
+  // get exchange responses 
+  // ---------------------------------
+  public String getXlogs()
+  {
+    xlogsGrid = exchangeDataModel.getXlogsGrid(xlogsServiceUri, scope, xid);    
+    return SUCCESS;
+  }
+  
+  public Grid getXlogsGrid()
+  {
+    return xlogsGrid;
+  }
+  
+  //----------------------------------
   // get a page of exchange responses 
   // ---------------------------------
   public String getPageXlogs()
   {
-    pageXlogsGrid = exchangeDataModel.getXlogsGrid(xlogsServiceUri, scope, xid);    
+	pageXlogsGrid = exchangeDataModel.getPageXlogsGrid(xlogsServiceUri, scope, xid, xTime, start, limit);    
     return SUCCESS;
   }
   
@@ -219,4 +237,15 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   {
     return reviewed;
   }
+  
+  public void setXTime(String xTime)
+  {
+    this.xTime = xTime;
+  }
+
+  public String getXTime()
+  {
+    return xTime;
+  }
+  
 }
