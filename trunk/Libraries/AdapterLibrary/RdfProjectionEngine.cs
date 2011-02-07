@@ -158,6 +158,7 @@ namespace org.iringtools.adapter.projection
     private XElement BuildRdfXml()
     {
       Dictionary<string, List<string>> classInstancesCache = new Dictionary<string, List<string>>();
+      bool rootClass = true;
 
       foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
       {
@@ -166,30 +167,38 @@ namespace org.iringtools.adapter.projection
         for (int i = 0; i < _dataObjects.Count; i++)
         {
           string classId = classMap.id.Substring(classMap.id.IndexOf(":") + 1);
-          string classInstance = _graphBaseUri + _classIdentifiers[classMap.id][i];
-          bool classExists = true;
+          string classIdentifier = _classIdentifiers[classMap.id][i];
 
-          _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
+          if (!String.IsNullOrEmpty(classIdentifier))
+          {
+            string classPrefix = (rootClass) ? _graphBaseUri : _graphBaseUri + Utility.TitleCase(classMap.name) + "/";
+            string classInstance = classPrefix + classIdentifier;
+            bool classExists = true;
 
-          if (!classInstancesCache.ContainsKey(classId))
-          {
-            classInstancesCache[classId] = new List<string> { classInstance };
-            AddRdfClassElement(classId, classInstance);
-            classExists = false;
-          }
-          else if (!classInstancesCache[classId].Contains(classInstance))
-          {
-            classInstancesCache[classId].Add(classInstance);
-            AddRdfClassElement(classId, classInstance);
-            classExists = false;
-          }
+            _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
 
-          if (!classExists)
-          {
-            foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
-              AddRdfTemplateElements(classInstance, templateMap, i);
+            if (!classInstancesCache.ContainsKey(classId))
+            {
+              classInstancesCache[classId] = new List<string> { classInstance };
+              AddRdfClassElement(classId, classInstance);
+              classExists = false;
+            }
+            else if (!classInstancesCache[classId].Contains(classInstance))
+            {
+              classInstancesCache[classId].Add(classInstance);
+              AddRdfClassElement(classId, classInstance);
+              classExists = false;
+            }
+
+            if (!classExists)
+            {
+              foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
+                AddRdfTemplateElements(classInstance, templateMap, i);
+            }
           }
         }
+
+        rootClass = false;
       }
 
       return _rdfXml;
@@ -210,10 +219,12 @@ namespace org.iringtools.adapter.projection
 
       List<RoleMap> propertyRoles = new List<RoleMap>();
       XElement baseTemplateElement = new XElement(OWL_THING);
-      baseTemplateElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
+      bool isBaseTemplateValid = true;
       StringBuilder baseValues = new StringBuilder();
       RoleMap classRole = null;
 
+      baseTemplateElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
+      
       foreach (RoleMap roleMap in templateMap.roleMaps)
       {
         string roleId = roleMap.id.Substring(roleMap.id.IndexOf(":") + 1);
@@ -257,17 +268,25 @@ namespace org.iringtools.adapter.projection
       if (classRole != null)
       {
         string identifier = _classIdentifiers[classRole.classMap.id][dataObjectIndex];
-        baseValues.Append(identifier);
 
-        string hashCode = Utility.MD5Hash(templateId + baseValues.ToString());
-        baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
+        if (!String.IsNullOrEmpty(identifier))
+        {
+          baseValues.Append(identifier);
 
-        string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
-        XElement roleElement = new XElement(TPL_NS + roleId);
-        roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri + identifier));
-        baseTemplateElement.Add(roleElement);
+          string hashCode = Utility.MD5Hash(templateId + baseValues.ToString());
+          baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
 
-        _rdfXml.Add(baseTemplateElement);
+          string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
+          XElement roleElement = new XElement(TPL_NS + roleId);
+          roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri + Utility.TitleCase(classRole.classMap.name) + "/" + identifier));
+          baseTemplateElement.Add(roleElement);
+
+          _rdfXml.Add(baseTemplateElement);
+        }
+        else
+        {
+          isBaseTemplateValid = false;
+        }
       }
       else
       {
@@ -332,7 +351,7 @@ namespace org.iringtools.adapter.projection
           }
         }
 
-        if (valueObjects != null)
+        if (valueObjects != null && isBaseTemplateValid)
         {
           for (int i = 0; i < valueObjects.Count; i++)
           {
