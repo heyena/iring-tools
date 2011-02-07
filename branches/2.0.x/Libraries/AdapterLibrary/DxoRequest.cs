@@ -18,7 +18,5 @@ namespace org.iringtools.adapter
     [DataMember(Name = "dataTransferIndices", Order = 1)]
     public DataTransferIndices DataTransferIndices { get; set; }
 
-    [DataMember(Name = "hashAlgorithm", Order = 2)]
-    public String HashAlgorithm { get; set; }
   }
 }
