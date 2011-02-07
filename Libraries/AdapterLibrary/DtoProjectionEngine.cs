@@ -39,14 +39,12 @@ namespace org.iringtools.adapter.projection
     {
       XDocument xDocument = null;
 
-      //List<DataTransferObject> dataTransferObjectList = _dataTransferObjects.DataTransferObjectList;
-
       try
       {
         GraphMap graphMap = _mapping.FindGraphMap(graphName);
         DataTransferObjects dataTransferObjects = ToDataTransferObjects(graphMap, ref dataObjects);
-        //List<DataTransferObject> dataTransferObjectList = dataTransferObjects.DataTransferObjectList;
-        XElement xElement = SerializationExtensions.ToXml<DataTransferObjects>(dataTransferObjects);
+        string xml = Utility.SerializeDataContract<DataTransferObjects>(dataTransferObjects);
+        XElement xElement = XElement.Parse(xml);
         xDocument = new XDocument(xElement);
       }
       catch (Exception ex)
@@ -88,83 +86,86 @@ namespace org.iringtools.adapter.projection
               List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
               string classIdentifier = _classIdentifiers[classMap.id][i];
 
-              ClassObject classObject = new ClassObject
+              if (!String.IsNullOrEmpty(classIdentifier))
               {
-                classId = classMap.id,
-                name = classMap.name,
-                identifier = classIdentifier,
-              };
-
-              if (dto.classObjects.Count == 0)
-                dto.identifier = classIdentifier;
-
-              dto.classObjects.Add(classObject);
-
-              foreach (TemplateMap templateMap in templateMaps)
-              {
-                bool isTemplateValid = true;
-
-                TemplateObject templateObject = new TemplateObject
+                ClassObject classObject = new ClassObject
                 {
-                  templateId = templateMap.id,
-                  name = templateMap.name,
+                  classId = classMap.id,
+                  name = classMap.name,
+                  identifier = classIdentifier,
                 };
 
-                foreach (RoleMap roleMap in templateMap.roleMaps)
+                if (dto.classObjects.Count == 0)
+                  dto.identifier = classIdentifier;
+
+                dto.classObjects.Add(classObject);
+
+                foreach (TemplateMap templateMap in templateMaps)
                 {
-                  RoleObject roleObject = new RoleObject
+                  bool isTemplateValid = true;
+
+                  TemplateObject templateObject = new TemplateObject
                   {
-                    type = roleMap.type,
-                    roleId = roleMap.id,
-                    name = roleMap.name,
-                    dataType = roleMap.dataType
+                    templateId = templateMap.id,
+                    name = templateMap.name,
                   };
 
-                  templateObject.roleObjects.Add(roleObject);
-                  string value = roleMap.value;
-
-                  if (
-                    roleMap.type == RoleType.Property ||
-                    roleMap.type == RoleType.DataProperty ||
-                    roleMap.type == RoleType.ObjectProperty
-                    )
+                  foreach (RoleMap roleMap in templateMap.roleMaps)
                   {
-                    string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectName.Length + 1);
-                    value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
-
-                    if (!String.IsNullOrEmpty(roleMap.valueListName))
+                    RoleObject roleObject = new RoleObject
                     {
-                      value = _mapping.ResolveValueList(roleMap.valueListName, value);
+                      type = roleMap.type,
+                      roleId = roleMap.id,
+                      name = roleMap.name,
+                      dataType = roleMap.dataType
+                    };
 
-                      if (value != null)
-                        value = value.Replace(RDL_NS.NamespaceName, "rdl:");
-                    }
-                    else if (roleMap.dataType.Contains("dateTime"))
+                    templateObject.roleObjects.Add(roleObject);
+                    string value = roleMap.value;
+
+                    if (
+                      roleMap.type == RoleType.Property ||
+                      roleMap.type == RoleType.DataProperty ||
+                      roleMap.type == RoleType.ObjectProperty
+                      )
                     {
-                      value = Utility.ToXsdDateTime(value);
+                      string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectName.Length + 1);
+                      value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
+
+                      if (!String.IsNullOrEmpty(roleMap.valueListName))
+                      {
+                        value = _mapping.ResolveValueList(roleMap.valueListName, value);
+
+                        if (value != null)
+                          value = value.Replace(RDL_NS.NamespaceName, "rdl:");
+                      }
+                      else if (roleMap.dataType.Contains("dateTime"))
+                      {
+                        value = Utility.ToXsdDateTime(value);
+                      }
                     }
+                    else if (roleMap.classMap != null)
+                    {
+                      roleObject.relatedClassId = roleMap.classMap.id;
+                      roleObject.relatedClassName = roleMap.classMap.name;
+
+                      if (!String.IsNullOrEmpty(_classIdentifiers[roleMap.classMap.id][i]))
+                      {
+                        value = "#" + _classIdentifiers[roleMap.classMap.id][i];
+                      }
+                      else
+                      {
+                        isTemplateValid = false;
+                      }
+                    }
+
+                    roleObject.value = value;
                   }
-                  else if (roleMap.classMap != null)
+
+                  if (isTemplateValid)
                   {
-                    roleObject.relatedClassId = roleMap.classMap.id;
-                    roleObject.relatedClassName = roleMap.classMap.name;
-
-                    if (!String.IsNullOrEmpty(_classIdentifiers[roleMap.classMap.id][i]))
-                    {
-                      value = "#" + _classIdentifiers[roleMap.classMap.id][i];
-                    }
-                    else
-                    {
-                      isTemplateValid = false;
-                    }
+                    classObject.templateObjects.Add(templateObject);
                   }
-
-                  roleObject.value = value;
-                }
-
-                if (isTemplateValid)
-                {
-                  classObject.templateObjects.Add(templateObject);
                 }
               }
             }
