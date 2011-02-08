@@ -27,6 +27,7 @@ using org.iringtools.ontologyservice.presentation.presentationmodels;
 using org.ids_adi.qmxf;
 using System.Collections.Generic;
 using org.iringtools.library;
+using System.Text;
 
 namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 {
@@ -143,6 +144,18 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
       }
     }
 
+        void showResponse(string title, Response response)
+        {
+          StringBuilder message = new StringBuilder();
+          foreach (Status status in response.StatusList)
+          {
+            foreach (string msg in status.Messages)
+            {
+              message.AppendLine(msg);
+            }
+          }
+          MessageBox.Show(message.ToString(), title, MessageBoxButton.OK);
+        }
 
     void OnDataArrivedHandler(object sender, System.EventArgs e)
     {
@@ -196,7 +209,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
             MessageBox.Show(args.FriendlyErrorMessage, "Post Class Error", MessageBoxButton.OK);
             return;
           }
-          MessageBox.Show("Class posted successfully", "Post Class", MessageBoxButton.OK);
+                    showResponse("Post Class Response", (Response)args.Data);
 
           if (_clickedButton == "btnOK1")
           {
@@ -338,6 +351,10 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
         if (_clickedButton == "btnOK1")
         {
           QMXF @qmxf = _classBLL.QMXF;
+                    ComboBox cb = cmbRepositories;
+                    ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
+                    Repository repository = cbi.Tag as Repository;
+                    _classBLL.QMXF.targetRepository = repository.Name;
           referenceDataService.PostClass(@qmxf);
         }
         else if (_clickedButton == "btnCancel1")

@@ -18,6 +18,7 @@ using org.iringtools.adapter;
 using VDS.RDF.Query;
 using System.Net;
 using org.iringtools.adapter.identity;
+using System.Collections;
 
 namespace org.iringtools.exchange
 {
