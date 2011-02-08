@@ -41,6 +41,8 @@ using VDS.RDF.Query;
 using org.iringtools.mapping;
 using System.ServiceModel;
 using System.Security.Principal;
+using org.iringtools.adapter.identity;
+using System.Collections;
 
 
 namespace org.iringtools.facade
@@ -51,6 +53,8 @@ namespace org.iringtools.facade
     private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
+    private IIdentityLayer _identityLayer = null;
+    private IDictionary _keyRing = null;
     private IDataLayer _dataLayer = null;
     private ISemanticLayer _semanticEngine = null;
     private ScopeProjects _scopes = null;
@@ -117,8 +121,40 @@ namespace org.iringtools.facade
       _response = new Response();
       _response.StatusList = new List<Status>();
       _kernel.Bind<Response>().ToConstant(_response);
+      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
+            _settings["XmlPath"]
+          );
+      string bindingConfigurationPath = Path.Combine(
+        _settings["BaseDirectoryPath"],
+        relativePath
+      );
+      _kernel.Load(bindingConfigurationPath);
+      InitializeIdentity();
     }
 
+    private void InitializeIdentity()
+    {
+      try
+      {
+        _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
+        _keyRing = _identityLayer.GetKeyRing();
+        _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
+
+        if (_keyRing.Count > 0)
+        {
+          if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
+          {
+            string userName = _keyRing["Name"].ToString();
+            _settings.Add("UserName", userName);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing identity: {0}", ex));
+        throw new Exception(string.Format("Error initializing identity: {0})", ex));
+      }
+    }
     public Response Delete(string scope, string app, string graph)
     {
       Status status = new Status();
