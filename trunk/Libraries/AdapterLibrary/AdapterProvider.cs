@@ -484,7 +484,7 @@ namespace org.iringtools.adapter
 
     public XDocument GetDataProjection(
 		string projectName, string applicationName, string graphName, 
-		DataFilter filter, string format, int start, int limit)
+		DataFilter filter, string format, int start, int limit, bool fullIndex)
     {
       try
       {
@@ -1150,7 +1150,7 @@ namespace org.iringtools.adapter
       else
         _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
       
-      long count = _dataLayer.GetCount(_graphMap.dataObjectMap, dataFilter);
+      long count = _dataLayer.GetCount(_graphMap.dataObjectName, dataFilter);
       return count;
     }
 

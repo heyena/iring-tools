@@ -341,10 +341,10 @@ namespace ApplicationEditor
           CheckBox _Cbox = new CheckBox();
           for (int i = 0; i < _selectedDatabaseSchema.Count(); i++)
           {
-              if (schemaObject.ToUpper() == _selectedDatabaseSchema[i].ToUpper())
-              {
-                  _Cbox.IsChecked = true;
-              }
+            if (schemaObject.ToUpper() == _selectedDatabaseSchema[i].ToUpper())
+            {
+              _Cbox.IsChecked = true;
+            }
           }
           sp.Children.Add(_Cbox);
           sp.Children.Add(new TextBlock { Text = schemaObject });
@@ -1118,7 +1118,7 @@ namespace ApplicationEditor
 
         DatabaseDictionary dict = null;
         if (dict != null)
-          dict.dataObjects.Clear();
+          dict.DataObjects.Clear();
 
         string connString = BuildConnectionString(cbProvider.SelectedItem.ToString()
                   , tbNewDataSource.Text
@@ -1130,23 +1130,23 @@ namespace ApplicationEditor
         {
 
           dict = new DatabaseDictionary
-           {
-             connectionString = connString,
-             provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true),
-             schemaName = tbSchemaName.Text,
-           };
+          {
+            ConnectionString = connString,
+            Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true),
+            SchemaName = tbSchemaName.Text,
+          };
           tvwItemDestinationRoot.Tag = dict;
           foreach (TreeViewItem dataObjectItem in tvwItemDestinationRoot.Items)
           {
-            dict.dataObjects.Add(dataObjectItem.Tag as org.iringtools.library.DataObject);
+            dict.DataObjects.Add(dataObjectItem.Tag as org.iringtools.library.DataObject);
           }
         }
         else
         {
           dict = tvwItemDestinationRoot.Tag as DatabaseDictionary;
-          dict.connectionString = connString;
-          dict.provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
-          dict.schemaName = tbSchemaName.Text;
+          dict.ConnectionString = connString;
+          dict.Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+          dict.SchemaName = tbSchemaName.Text;
         }
 
         _dal.SaveDatabaseDictionary(dict, _currentProject.Name, _currentApplication.Name);
@@ -1206,22 +1206,22 @@ namespace ApplicationEditor
 
         for (int i = 0; i < sourceRoot.Items.Count; i++)
         {
-            tableItem = (TreeViewItem)sourceRoot.Items[i];
-            TreeViewItem parent = tableItem.Parent as TreeViewItem;
-            if (((CheckBox)((StackPanel)((HeaderedItemsControl)sourceRoot.Items[i]).Header).Children[0]).IsChecked.Value.Equals(true))
+          tableItem = (TreeViewItem)sourceRoot.Items[i];
+          TreeViewItem parent = tableItem.Parent as TreeViewItem;
+          if (((CheckBox)((StackPanel)((HeaderedItemsControl)sourceRoot.Items[i]).Header).Children[0]).IsChecked.Value.Equals(true))
+          {
+            if (!parent.Header.ToString().Equals("Available Database Schema Items"))
             {
-                if (!parent.Header.ToString().Equals("Available Database Schema Items"))
-                {
-                    TreeViewItem parentParent = parent.Parent as TreeViewItem;
-                    parentParent.Items.Add(parent);
-                }
-                _SourceItems.Add(((TextBlock)((StackPanel)((HeaderedItemsControl)(sourceRoot.Items[i])).Header).Children[1]).Text);
+              TreeViewItem parentParent = parent.Parent as TreeViewItem;
+              parentParent.Items.Add(parent);
             }
+            _SourceItems.Add(((TextBlock)((StackPanel)((HeaderedItemsControl)(sourceRoot.Items[i])).Header).Children[1]).Text);
+          }
         }
 
         for (int i = 0; i < tvwItemDestinationRoot.Items.Count; i++)
         {
-            _DestinationItems.Add(((TextBlock)((StackPanel)((HeaderedItemsControl)(tvwItemDestinationRoot.Items[i])).Header).Children[1]).Text);
+          _DestinationItems.Add(((TextBlock)((StackPanel)((HeaderedItemsControl)(tvwItemDestinationRoot.Items[i])).Header).Children[1]).Text);
         }
 
         var commonItemsinDictionary = _SourceItems.Intersect(_DestinationItems);
@@ -1229,20 +1229,20 @@ namespace ApplicationEditor
 
         foreach (var Value in commonItemsinDictionary)
         {
-            MessageBox.Show("Data object: " + Value.ToUpper() + " already in Dictionary", "ADD DATA OBJECT", MessageBoxButton.OK);
+          MessageBox.Show("Data object: " + Value.ToUpper() + " already in Dictionary", "ADD DATA OBJECT", MessageBoxButton.OK);
         }
 
         if (tvwItemDestinationRoot.Items.Count > 0)
         {
-            foreach (var _dicValue in leftItemsinDatabaseSchema)
-            {
-                _dal.GetSchemaObjectsSchma(_currentProject.Name, _currentApplication.Name, _dicValue.ToUpper());
-            }
+          foreach (var _dicValue in leftItemsinDatabaseSchema)
+          {
+            _dal.GetSchemaObjectsSchma(_currentProject.Name, _currentApplication.Name, _dicValue.ToUpper());
+          }
         }
         else
         {
-            for (int i = 0; i < _SourceItems.Count; i++)
-                _dal.GetSchemaObjectsSchma(_currentProject.Name, _currentApplication.Name, _SourceItems[i].ToUpper());
+          for (int i = 0; i < _SourceItems.Count; i++)
+            _dal.GetSchemaObjectsSchma(_currentProject.Name, _currentApplication.Name, _SourceItems[i].ToUpper());
         }
 
       }
@@ -1929,16 +1929,16 @@ namespace ApplicationEditor
       else
       {
         dict = tvwItemDestinationRoot.Tag as DatabaseDictionary;
-        dict.connectionString = connString;
-        dict.provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
-        dict.schemaName = tbSchemaName.Text;
+        dict.ConnectionString = connString;
+        dict.Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+        dict.SchemaName = tbSchemaName.Text;
       }
 
       _getSchemaObjects = true;
 
       _dal.SaveDatabaseDictionary(dict, _currentProject.Name, _currentApplication.Name);
 
-      
+
     }
   }
 }
