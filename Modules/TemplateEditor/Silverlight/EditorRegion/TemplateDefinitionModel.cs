@@ -484,6 +484,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 role.name.Clear();
                 role.name.Add(new QMXFName() { lang = null, value = name });
                 role.description = new Description() { contentType = null, lang = null, parseType = null, value = description };
+                role.range = uri;
         }
 
     }
