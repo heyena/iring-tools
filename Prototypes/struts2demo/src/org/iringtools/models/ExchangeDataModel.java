@@ -103,7 +103,7 @@ public class ExchangeDataModel extends DataModel
     return String.format("%1$tY/%1$tm/%1$td-%1$tH:%1$tM:%1$tS.%1$tL", gcal);
   }  
 
-  public Grid getXlogsGrid(String serviceUri, String scope, String exchangeId)
+  public Grid getXlogsGrid(String serviceUri, String scope, String exchangeId, String label)
   {
     String relativePath = "/" + scope + "/exchanges/" + exchangeId;
     History xlogs = null;
@@ -170,12 +170,12 @@ public class ExchangeDataModel extends DataModel
       { 
         List<String> row = new ArrayList<String>(); 
         String exchangeTime = xr.getEndTimeStamp().toString().replace(":", ".");;
+        String startTime = format(xr.getStartTimeStamp().toGregorianCalendar());
         
         row.add("<input type=\"image\" src=\"resources/images/info-small.png\" "
                 + "onClick='javascript:getPageXlogs(\"" + scope + "\",\"" + exchangeId 
-                + "\",\"" + exchangeTime + "\")'>");
-        
-        String startTime = format(xr.getStartTimeStamp().toGregorianCalendar());
+                + "\",\"" + label + "\",\"" + startTime + "\",\"" + exchangeTime + "\")'>");
+  
         String endTime = format(xr.getEndTimeStamp().toGregorianCalendar());
         
         row.add(startTime);
@@ -196,7 +196,7 @@ public class ExchangeDataModel extends DataModel
   
   
   
-  public Grid getPageXlogsGrid(String xlogsServiceUri, String scope, String xid, String exchangeTime, int start, int limit){
+  public Grid getPageXlogsGrid(String xlogsServiceUri, String scope, String xid, String exchangeTime, int start, int limit, String label){
 
 	  String relativePath = "/" + scope + "/exchanges/" + xid + "/" + exchangeTime;
 	  String xlogsKey = "xlogs" + relativePath;
@@ -212,8 +212,16 @@ public class ExchangeDataModel extends DataModel
 	      
 	      try 
 	      {
-	    	response = httpClient.get(ExchangeResponse.class, relativePath);
-	        session.put(xlogsKey, response);
+	    	  if (session.containsKey(xlogsKey))
+	          {
+	    		  response = (ExchangeResponse) session.get(xlogsKey);
+	          }
+	    	  else 
+	    	  {
+	    		response = httpClient.get(ExchangeResponse.class, relativePath);
+	  	        session.put(xlogsKey, response);
+	    	  }
+	    	
 	      }
 	      catch (HttpClientException ex)
 	      {
@@ -225,8 +233,9 @@ public class ExchangeDataModel extends DataModel
 	    List<Status> statuses = response.getStatusList().getItems();	   
 	    
 	    Grid pageXlogsGrid = new Grid();  
-	    pageXlogsGrid.setTotal(statuses.size());
 	    
+	    pageXlogsGrid.setIdentifier(label);
+	    pageXlogsGrid.setDescription(exchangeTime);
 	    List<Field> fields = new ArrayList<Field>();
 	    pageXlogsGrid.setFields(fields);
 	    
@@ -247,24 +256,43 @@ public class ExchangeDataModel extends DataModel
 	   
 	    int actualLimit = Math.min(statuses.size(), start + limit);    
 
-	    for (int i = start; i < actualLimit; i++)
-	    {      
+	    if (actualLimit > 0) {
+		  for (int i = start; i < actualLimit; i++)
+		  {      
+		    List<String> row = new ArrayList<String>();
+		    StringBuilder messages = new StringBuilder();      
+	
+		    Status status = statuses.get(i);
+		    row.add(status.getIdentifier());
+		      
+		    for (String message : status.getMessages().getItems())
+		    {
+		      if (messages.length() > 0)
+		        messages.append(" ");
+		        
+		        messages.append(message);
+	        }
+		      
+		      row.add(messages.toString());
+		      data.add(row);
+		  }
+		  pageXlogsGrid.setTotal(statuses.size());
+	    }
+	    else{
+	      pageXlogsGrid.setTotal(1);
 	      List<String> row = new ArrayList<String>();
-	      StringBuilder messages = new StringBuilder();      
-
-	      Status status = statuses.get(i);
-	      row.add(status.getIdentifier());
-	      
-	      for (String message : status.getMessages().getItems())
-	      {
-	        if (messages.length() > 0)
-	          messages.append(" ");
-	        
-	        messages.append(message);
-	      }
-	      
-	      row.add(messages.toString());
-	      data.add(row);
+	      row.add("");
+		  StringBuilder messages = new StringBuilder(); 		 
+		  for (String message : response.getMessages().getItems())
+		  {
+			if (messages.length() > 0)
+			  messages.append(" ");
+			        
+			messages.append(message);
+		  }
+			      
+		  row.add(messages.toString());
+		  data.add(row);
 	    }
 	    
 	    return pageXlogsGrid;

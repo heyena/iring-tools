@@ -37,6 +37,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   private boolean reviewed;
   private String exchangeResult;
   private String xTime;
+  private String label;
   
   public ExchangeDataController() 
   {    
@@ -102,7 +103,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ---------------------------------
   public String getXlogs()
   {
-    xlogsGrid = exchangeDataModel.getXlogsGrid(xlogsServiceUri, scope, xid);    
+    xlogsGrid = exchangeDataModel.getXlogsGrid(xlogsServiceUri, scope, xid, label);    
     return SUCCESS;
   }
   
@@ -116,7 +117,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ---------------------------------
   public String getPageXlogs()
   {
-	pageXlogsGrid = exchangeDataModel.getPageXlogsGrid(xlogsServiceUri, scope, xid, xTime, start, limit);    
+	pageXlogsGrid = exchangeDataModel.getPageXlogsGrid(xlogsServiceUri, scope, xid, xTime, start, limit, label);    
     return SUCCESS;
   }
   
@@ -246,6 +247,16 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   public String getXTime()
   {
     return xTime;
+  }
+  
+  public void setLabel(String label)
+  {
+    this.label = label;
+  }
+
+  public String getLabel()
+  {
+    return label;
   }
   
 }
