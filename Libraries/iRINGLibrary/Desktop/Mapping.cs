@@ -422,4 +422,30 @@ namespace org.iringtools.library
     [DataMember(EmitDefaultValue = false, Order = 1)]
     public string uri { get; set; }
   }
+
+  [DataContract]
+  public class ClassificationTemplate
+  {
+    [DataMember(EmitDefaultValue = false, Order = 0)]
+    public TemplateIds TemplateIds { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 1)]
+    public TemplateMap TemplateMap { get; set; }
+  }
+
+  [CollectionDataContract(ItemName = "templateId")]
+  public class TemplateIds : List<string> { }
+
+  [DataContract]
+  public enum ClassificationStyle
+  {
+    [EnumMember]
+    Type,
+
+    [EnumMember]
+    Template,
+
+    [EnumMember]
+    Both
+  }
 }
