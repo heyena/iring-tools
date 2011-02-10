@@ -385,34 +385,42 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    //TODO: Status should be assigned to the appropriate identifier
     public Response Delete(string objectType, IList<string> identifiers)
     {
       Response response = new Response();
-      Status status = new Status();
-
+      
       try
       {
-        status.Identifier = objectType;
         IList<IDataObject> dataObjects = Create(objectType, identifiers);
 
         using (ISession session = OpenSession())
         {
           foreach (IDataObject dataObject in dataObjects)
+          {
+            string identifier = dataObject.GetPropertyValue("Id").ToString();
             session.Delete(dataObject);
+
+            Status status = new Status();
+            status.Messages = new Messages();
+            status.Identifier = identifier;
+            status.Messages.Add(string.Format("Record [{0}] have been deleted successfully.", identifier));
+
+            response.Append(status);
+          }
+
           session.Flush();
-          status.Messages.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
         }
       }
       catch (Exception ex)
       {
         _logger.Error("Error in Delete: " + ex);
 
+        Status status = new Status();
         status.Level = StatusLevel.Error;
         status.Messages.Add(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
+        response.Append(status);
       }
 
-      response.Append(status);
       return response;
     }
 
@@ -475,7 +483,7 @@ namespace org.iringtools.adapter.datalayer
       IList<IDataObject> relatedObjects;
       DataDictionary dictionary = GetDictionary();
       DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);
-      DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relationshipName == relatedObjectType);
+      DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName == relatedObjectType);
 
       StringBuilder sql = new StringBuilder();
       sql.Append("from " + dataRelationship.relatedObjectName + " where ");

@@ -23,13 +23,9 @@ namespace org.iringtools.adapter.projection
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
 
-    private string TYPE_BASED_CLASSIFICATION = "type-based-classification";
-    private string TEMPLATE_BASED_CLASSIFICATION = "template-based-classification";
-
     private ClassificationStyle _primaryClassificationStyle;
     private ClassificationStyle _secondaryClassificationStyle;
     private ClassificationTemplate _classificationConfig = null;
-    private Dictionary<string, List<IDataObject>> _relatedObjectsCache = null;
     private XElement _rdfXml = null;
     
     [Inject]
@@ -187,8 +183,6 @@ namespace org.iringtools.adapter.projection
             string classPrefix = (rootClass) ? _graphBaseUri : _graphBaseUri + Utility.TitleCase(classMap.name) + "/";
             string classInstance = classPrefix + classIdentifier;
             bool classExists = true;
-
-            _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
 
             // _primaryClassificationStyle == ClassificationStyle.Type || _primaryClassificationStyle == ClassificationStyle.Both          
             XElement classElement = new XElement(OWL_THING, new XAttribute(RDF_ABOUT, classInstance));
@@ -383,18 +377,20 @@ namespace org.iringtools.adapter.projection
 
       if (classRole != null)
       {
-        string identifier = _classIdentifiers[classRole.classMap.classId][dataObjectIndex];
+        List<string> identifiers = classRole.classMap.identifiers;
+        string delimiter = classRole.classMap.identifierDelimiter;
+        string refClassIdentifier = GetClassIdentifierValue(identifiers, delimiter, dataObjectIndex);
 
-        if (!String.IsNullOrEmpty(identifier))
+        if (!String.IsNullOrEmpty(refClassIdentifier))
         {
-          baseValues.Append(identifier);
+          baseValues.Append(refClassIdentifier);
 
           string hashCode = Utility.MD5Hash(baseValues.ToString());
           baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
 
           string roleId = classRole.roleId.Substring(classRole.roleId.IndexOf(":") + 1);
           XElement roleElement = new XElement(TPL_NS + roleId);
-          roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri + Utility.TitleCase(classRole.classMap.name) + "/" + identifier));
+          roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri + Utility.TitleCase(classRole.classMap.name) + "/" + refClassIdentifier));
           baseTemplateElement.Add(roleElement);
 
           _rdfXml.Add(baseTemplateElement);
@@ -414,26 +410,12 @@ namespace org.iringtools.adapter.projection
           List<XElement> propertyElements = new List<XElement>();
           multiPropertyElements.Add(propertyElements);
 
-          string propertyMap = propertyRole.propertyName;
-          int lastDotPos = propertyMap.LastIndexOf('.');
-          string propertyName = propertyMap.Substring(lastDotPos + 1);
-          string objectPath = propertyMap.Substring(0, lastDotPos);
-
-          if (propertyMap.Split('.').Length > 2)  // related property
-          {
-            if (!_relatedObjectsCache.TryGetValue(objectPath, out valueObjects))
-            {
-              valueObjects = GetRelatedObjects(propertyRole.propertyName, _dataObjects[dataObjectIndex]);
-              _relatedObjectsCache.Add(objectPath, valueObjects);
-            }
-          }
-          else  // direct property
-          {
-            valueObjects = new List<IDataObject> { _dataObjects[dataObjectIndex] };
-          }
+          valueObjects = getValueObjects(propertyRole.propertyName, dataObjectIndex);
 
           foreach (IDataObject valueObject in valueObjects)
           {
+            int lastDotPos = propertyRole.propertyName.LastIndexOf('.');
+            string propertyName = propertyRole.propertyName.Substring(lastDotPos + 1);
             string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
 
             XElement propertyElement = new XElement(TPL_NS + propertyRole.roleId.Replace(TPL_PREFIX, String.Empty));
