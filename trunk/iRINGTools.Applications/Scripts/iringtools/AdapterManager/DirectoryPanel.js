@@ -1,6 +1,6 @@
 ﻿Ext.ns('AdapterManager');
 /**
-* @class AdapterManager.DirectoryPanel
+* @class AdapterManager.directoryPanel
 * @extends Panel
 * @author by Gert Jansen van Rensburg
 */
@@ -17,7 +17,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     split: true,
 
     navigationUrl: null,
-    DirectoryPanel: null,
+    directoryPanel: null,
+    rootNode: null,
+    treeLoader: null,
 
     /**
     * initComponent
@@ -31,12 +33,30 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
             remove: true,
             refresh: true,
             selectionchange: true
-           
+
         });
 
         this.tbar = this.buildToolbar();
 
-        this.DirectoryPanel = new Ext.tree.TreePanel({
+        this.treeLoader = new Ext.tree.TreeLoader({
+            baseParams: { type: null },
+            url: this.navigationUrl
+        });
+
+        this.treeLoader.on("beforeload", function (treeLoader, node) {
+            treeLoader.baseParams.type = node.attributes.type;
+        }, this);
+
+        this.rootNode = new Ext.tree.AsyncTreeNode({
+            id: 'root',
+            text: 'Scopes',
+            expanded: true,
+            draggable: false,
+            icon: 'Content/img/internet-web-browser.png',
+            type: 'ScopesNode'
+        });
+
+        this.directoryPanel = new Ext.tree.TreePanel({
             region: 'center',
             collapseMode: 'mini',
             height: 300,
@@ -46,36 +66,25 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
             expandAll: true,
             rootVisible: true,
             lines: true,
+            autoScroll: true,
             //singleExpand: true,
             useArrows: true,
-
-            loader: new Ext.tree.TreeLoader({
-                dataUrl: this.navigationUrl
-            }),
-
-            root: {
-                nodeType: 'async',
-                text: 'Scopes',
-                expanded: true,
-                draggable: false,
-                icon: 'Content/img/internet-web-browser.png',
-                id: 'src',
-                type: 'Scope'
-            }
+            loader: this.treeLoader,
+            root: this.rootNode
 
         });
 
         this.items = [
-      this.DirectoryPanel
+      this.directoryPanel
     ];
 
-       
+
         var state = Ext.state.Manager.get("AdapterManager");
 
         if (state) {
-            if (this.DirectoryPanel.expandPath(state) == false) {
+            if (this.directoryPanel.expandPath(state) == false) {
                 Ext.state.Manager.clear("AdapterManager");
-                this.DirectoryPanel.root.reload();
+                this.directoryPanel.root.reload();
             }
         }
 
@@ -107,26 +116,26 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     },
 
     onCreate: function (btn, ev) {
-        var node = this.DirectoryPanel.getSelectionModel().getSelectedNode();
+        var node = this.directoryPanel.getSelectionModel().getSelectedNode();
         var formType = "newForm";
         this.fireEvent('create', this, node, formType);
     },
 
     onOpen: function (btn, ev) {
-        var node = this.DirectoryPanel.getSelectionModel().getSelectedNode();
+        var node = this.directoryPanel.getSelectionModel().getSelectedNode();
         var formType = "editForm";
         this.fireEvent('open', this, node, formType);
     },
 
     onRemove: function (btn, ev) {
-        var node = this.DirectoryPanel.getSelectionModel().getSelectedNode();
+        var node = this.directoryPanel.getSelectionModel().getSelectedNode();
         this.fireEvent('remove', this, node);
 
     },
 
     onRefresh: function (node) {
         //Ext.state.Manager.clear('AdapterManager');
-        this.DirectoryPanel.root.reload();
+        this.directoryPanel.root.reload();
     },
 
     getNodeBySelectedTab: function (tab) {
@@ -138,8 +147,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     getNodeById: function (nodeId) {
         //  alert("2");
-        if (this.DirectoryPanel.getNodeById(nodeId)) { //if nodeID exists it will find out NODE
-            return this.DirectoryPanel.getNodeById(nodeId)
+        if (this.directoryPanel.getNodeById(nodeId)) { //if nodeID exists it will find out NODE
+            return this.directoryPanel.getNodeById(nodeId)
         } else {
             return false;
         }

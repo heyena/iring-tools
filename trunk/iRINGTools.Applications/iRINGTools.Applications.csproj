@@ -80,17 +80,15 @@
     <Compile Include="Controllers\AppEditorController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\MappingController.cs" />
     <Compile Include="Controllers\MappingEditorController.cs" />
     <Compile Include="Controllers\RefDataController.cs" />
     <Compile Include="Controllers\RefDataEditorController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\ApplicationTreeNode.cs" />
-    <Compile Include="Models\GraphTreeNode.cs" />
     <Compile Include="Models\JsonArray.cs" />
     <Compile Include="Models\JsonContainer.cs" />
-    <Compile Include="Models\ScopeTreeNode.cs" />
     <Compile Include="Models\TreeNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\AppEditor\Index.aspx.cs">
@@ -4681,6 +4679,10 @@
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Libraries\ExcelLibrary\ExcelLibrary\ExcelLibrary.csproj">
+      <Project>{4DDB5151-FE9D-4041-BA46-63486D7DA32D}</Project>
+      <Name>ExcelLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>

@@ -7,7 +7,7 @@ var App = new Ext.App({});
 
 Ext.onReady(function () {
     Ext.QuickTips.init();
-
+    
     /*
     var actionPanel = new AdapterManager.ActionPanel({
     id: 'action-panel',
@@ -57,14 +57,14 @@ Ext.onReady(function () {
         collapsible: true,
         collapsed: false,
 
-        navigationUrl: 'directory?format=tree'
+        navigationUrl: 'directory/getnode'
 
     });
 
     directoryPanel.on('create', function (npanel, node, formType) {
 
         if (node != null) {
-            if (node.attributes.type == "Application") {
+            if (node.attributes.type == "ApplicationNode") {
                 Ext.MessageBox.show({
                     title: '<font color=red>Error!</font>',
                     msg: 'Opetation not allowed.',
@@ -85,7 +85,7 @@ Ext.onReady(function () {
             return false;
         }
         if (node.parentNode == null) {
-            if (node.attributes.type == "Scope") {
+            if (node.attributes.type == "ScopeNode") {
 
                 var newTab = new AdapterManager.ScopePanel({
                     id: 'tab-' + node.id,
@@ -98,7 +98,7 @@ Ext.onReady(function () {
                 contentPanel.add(newTab);
                 contentPanel.activate(newTab);
             }
-        } else if (node.attributes.type == "Graph") {
+        } else if (node.attributes.type == "GraphNode") {
 
             var application = node.parentNode;
             var scope = application.parentNode;
@@ -134,7 +134,7 @@ Ext.onReady(function () {
     directoryPanel.on('open', function (npanel, node, formType) {
 
         if (node != null) {
-            var formData = this.buildForm(node, formType);
+            //var formData = this.buildForm(node, formType);
             var obj = node.attributes;
         } else {
             Ext.MessageBox.show({
@@ -146,7 +146,7 @@ Ext.onReady(function () {
             return false;
         }
 
-        if (node.attributes.type == "Scope") {
+        if (obj.type == "ScopeNode") {
 
             var newTab = new AdapterManager.ScopePanel({
                 id: 'tab-' + node.id,
@@ -159,7 +159,7 @@ Ext.onReady(function () {
             contentPanel.add(newTab);
             contentPanel.activate(newTab);
 
-        } else if (node.attributes.type == "Application") {
+        } else if (obj.type == "ApplicationNode") {
 
             var scope = node.parentNode;
             var formData = this.buildForm(node, formType);
@@ -175,13 +175,17 @@ Ext.onReady(function () {
             contentPanel.add(newTab);
             contentPanel.activate(newTab);
 
-        } else if (node.attributes.type == "Graph") {
+        } else if (obj.type == "GraphNode") {
 
             var application = node.parentNode;
             var scope = application.parentNode;
 
             var newTab = new AdapterManager.MappingPanel({
-                title: 'Mapping - ' + scope.text + '.' + application.text + '.' + node.text
+                title: 'Mapping - ' + scope.text + '.' + application.text + '.' + node.text,
+                scope: scope.text,
+                application: scope.text,
+                graph: node.text,
+                navigationUrl: 'mapping/getnode'
             });
 
             contentPanel.add(newTab);
