@@ -31,7 +31,7 @@
     <ul>
       <li><a href="<%=ResolveUrl("~/RefDataEditor") %>">Reference Data Editor</a></li>
       <li><a href="<%=ResolveUrl("~/AppEditor") %>">Application Editor</a></li>
-      <li><a href="<%=ResolveUrl("~/MappingEditor") %>MappingEditor">Mapping Editor</a></li>
+      <li><a href="<%=ResolveUrl("~/MappingEditor") %>">Mapping Editor</a></li>
     </ul>
   </div>
 </body>

@@ -2601,7 +2601,8 @@ namespace org.iringtools.referenceData
       }
       catch (Exception ex)
       {
-        throw ex;
+          _logger.Error(string.Format("Failed to read repository['{0}']", repository.uri), ex);
+          return new SPARQLResults();
       }
     }
 
