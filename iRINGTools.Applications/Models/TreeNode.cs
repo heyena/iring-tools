@@ -22,20 +22,15 @@ namespace iRINGTools.Web.Models
    
   */
 
-  public class TreeNode<T>
+  public class TreeNode
   {
     public virtual string id { get; set; }
     public virtual string text { get; set; }
     public string icon { get; set; }
     public bool leaf { get; set; }
     public bool expanded { get; set; }
-    public List<T> children { get; set; }
-    public virtual string type
-    {
-      get
-      {
-        return "Treenode";
-      }
-    }
+    public List<TreeNode> children { get; set; }
+    public string type { get; set; }
+    public string nodeType { get; set; }
   }
 }
