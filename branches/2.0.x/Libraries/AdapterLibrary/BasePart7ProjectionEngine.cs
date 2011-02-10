@@ -9,11 +9,14 @@ using VDS.RDF.Query;
 using VDS.RDF;
 using System.Text.RegularExpressions;
 using org.iringtools.utility;
+using log4net;
 
 namespace org.iringtools.adapter.projection
 {
   public abstract class BasePart7ProjectionEngine : IProjectionLayer
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(BasePart7ProjectionEngine));
+    
     protected static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     protected static readonly XNamespace OWL_NS = "http://www.w3.org/2002/07/owl#";
     protected static readonly XNamespace XSD_NS = "http://www.w3.org/2001/XMLSchema#";
@@ -77,6 +80,7 @@ namespace org.iringtools.adapter.projection
     protected Dictionary<string, List<string>> _classIdentifiers = null;
     protected List<string> _relatedObjectPaths = null;
     protected Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
+    protected Dictionary<string, List<IDataObject>> _relatedObjectsCache = null;
     protected TripleStore _memoryStore = null;
     private RoleType _roleType = RoleType.Property;
     private string _valueListName = null;
@@ -88,6 +92,7 @@ namespace org.iringtools.adapter.projection
     {
       _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
+      _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
     }
 
     public abstract XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);
@@ -277,26 +282,21 @@ namespace org.iringtools.adapter.projection
               }
             }
           }
-          else  // identifier comes from a property
+          else if (_dataObjects != null)  // identifier comes from a property
           {
-            string[] property = identifier.Split('.');
-            string objectName = property[0].Trim();
-            string propertyName = property[1].Trim();
-
-            if (_dataObjects != null)
+            for (int i = 0; i < _dataObjects.Count; i++)
             {
-              for (int i = 0; i < _dataObjects.Count; i++)
-              {
-                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
+              IDataObject valueObject = getValueObjects(identifier, i).First();
+              string propertyName = identifier.Substring(identifier.LastIndexOf('.') + 1);
+              string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
 
-                if (identifiers.Count == i)
-                {
-                  identifiers.Add(value);
-                }
-                else
-                {
-                  identifiers[i] += classMap.identifierDelimiter + value;
-                }
+              if (identifiers.Count == i)
+              {
+                identifiers.Add(value);
+              }
+              else
+              {
+                identifiers[i] += classMap.identifierDelimiter + value;
               }
             }
           }
@@ -304,6 +304,62 @@ namespace org.iringtools.adapter.projection
 
         _classIdentifiers[classMap.classId] = identifiers;
       }
+    }
+
+    protected List<IDataObject> getValueObjects(string propertyMap, int dataObjectIndex)
+    {
+      List<IDataObject> valueObjects = null;
+
+      int lastDotPos = propertyMap.LastIndexOf('.');
+      string propertyName = propertyMap.Substring(lastDotPos + 1);
+      string objectPath = propertyMap.Substring(0, lastDotPos);
+
+      if (propertyMap.Split('.').Length > 2)  // related property
+      {
+        if (!_relatedObjectsCache.TryGetValue(objectPath, out valueObjects))
+        {
+          valueObjects = GetRelatedObjects(propertyMap, _dataObjects[dataObjectIndex]);
+          _relatedObjectsCache.Add(objectPath, valueObjects);
+        }
+      }
+      else  // direct property
+      {
+        valueObjects = new List<IDataObject> { _dataObjects[dataObjectIndex] };
+      }
+
+      return valueObjects;
+    }
+
+    protected string GetClassIdentifierValue(List<string> identifiers, string delimiter, int dataObjectIndex)
+    {
+      string classIdentifierValue = String.Empty;
+
+      foreach (string identifier in identifiers)
+      {
+        if (classIdentifierValue.Length > 0)
+          classIdentifierValue += delimiter;
+
+        // identifier is a fixed value
+        if (identifier.StartsWith("#") && identifier.EndsWith("#"))
+        {
+          string value = identifier.Substring(1, identifier.Length - 2);
+          classIdentifierValue += value;
+        }
+        else  // identifier is a property map
+        {
+          List<IDataObject> identifierValueObjects = getValueObjects(identifier, dataObjectIndex);
+
+          if (identifierValueObjects != null && identifierValueObjects.Count > 0)
+          {
+            IDataObject identifierValueObject = identifierValueObjects.First();
+            string propertyName = identifier.Substring(identifier.LastIndexOf('.') + 1);
+            string value = Convert.ToString(identifierValueObject.GetPropertyValue(propertyName));
+            classIdentifierValue += value;
+          }
+        }
+      }
+
+      return classIdentifierValue;
     }
 
     private void SetInboundSparqlClassIdentifiers()
@@ -314,11 +370,8 @@ namespace org.iringtools.adapter.projection
       {
         var pair = _graphMap.classTemplateListMaps.First();
         string classId = pair.Key.classId;
-
         string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
-
-        Utility.WriteString(query, "./Logs/Sparql.log", true);
-
+        _logger.Debug(query);
         object results = _memoryStore.ExecuteQuery(query);
 
         if (results != null)
@@ -405,7 +458,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    //resolve the dataFilter into data object terms
+    // resolve the dataFilter into data object terms
     public void ProjectDataFilter(DataDictionary dictionary, ref DataFilter filter, string graph)
     {
       try
