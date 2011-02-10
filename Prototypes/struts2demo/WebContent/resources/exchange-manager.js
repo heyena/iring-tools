@@ -81,8 +81,6 @@ function createXlogsPane(label, context, xlogsContainer){
   var xlogsStore = createHistoryGridStore(xlogsUrl);
   
   xlogsStore.on('load', function(){
-    xlogsStore.recordType = xlogsStore.reader.recordType;      
-  
     var xlogsPane = new Ext.grid.GridPanel({
       id: 'xlogs-' + label,
       title: 'Exchange Logs',
@@ -127,27 +125,26 @@ function getPageXlogs(scope, xid, label, startTime, timestamp){
     var pageSize = 25;    
     var paneTitle = label + ' (' + startTime + ')';  
     store.on('load', function(){
-	  store.recordType = store.reader.recordType;	
-	  xlogsContentPane = new Ext.Panel({  
-		id: paneTitle,
-		layout: 'fit',
-		title: paneTitle,     
-		border: false,
-		AllowScroll : false,
-		items: [createGridPane(store, pageSize)],
-		tools:[{
-		  id:'close',
-		  handler: function(event, toolEl, panel){    
-			Ext.getCmp(paneTitle).destroy();
-			Ext.getCmp('content-pane').getLayout().setActiveItem(0);
-		  }
-		}]
-	  });		
-	  Ext.getBody().unmask();
-	  Ext.getCmp('xlogs-content-pane').add(xlogsContentPane);	  
-	  Ext.getCmp('xlogs-content-pane').getLayout().setActiveItem(0);	  
-	  Ext.getCmp('content-pane').getLayout().setActiveItem(1);
-	  Ext.getCmp('content-pane').doLayout();
+  	  xlogsContentPane = new Ext.Panel({  
+  		id: paneTitle,
+  		layout: 'fit',
+  		title: paneTitle,     
+  		border: false,
+  		AllowScroll : false,
+  		items: [createGridPane(store, pageSize)],
+  		tools:[{
+  		  id:'close',
+  		  handler: function(event, toolEl, panel){    
+  			Ext.getCmp(paneTitle).destroy();
+  			Ext.getCmp('content-pane').getLayout().setActiveItem(0);
+  		  }
+  		}]
+  	  });		
+  	  Ext.getBody().unmask();
+  	  Ext.getCmp('xlogs-content-pane').add(xlogsContentPane);	  
+  	  Ext.getCmp('xlogs-content-pane').getLayout().setActiveItem(0);	  
+  	  Ext.getCmp('content-pane').getLayout().setActiveItem(1);
+  	  Ext.getCmp('content-pane').doLayout();
     });    
     store.load({
       params: {
@@ -174,8 +171,6 @@ function loadPageDto(type, action, context, label){
     
     store.on('load', function(){
       if (Ext.getCmp('dto-content-pane').getItem('tab-' + label) == null) {
-        store.recordType = store.reader.recordType;      
-        
         var dtoBcPane = new Ext.Container({
           id: 'bc-' + label,
           cls: 'bc-container',
@@ -334,7 +329,6 @@ function loadRelatedItem(type, context, individual, classId, className, classIde
     });    
     dtoBcPane.doLayout();
     
-    store.recordType = store.reader.recordType;  
     dtoContentPane.add(createGridPane(store, pageSize));
     dtoContentPane.getLayout().setActiveItem(dtoContentPane.items.length-1);
   });

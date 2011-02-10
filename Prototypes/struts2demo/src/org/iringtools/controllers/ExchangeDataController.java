@@ -2,8 +2,6 @@ package org.iringtools.controllers;
 
 import java.util.Map;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.apache.commons.lang.xwork.StringUtils;
 import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.dxfr.response.ExchangeResponse;
@@ -98,9 +96,9 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
     return exchangeResult;
   }
   
-  //----------------------------------
-  // get exchange responses 
-  // ---------------------------------
+  //----------------------------
+  // get all exchange responses 
+  // ---------------------------
   public String getXlogs()
   {
     xlogsGrid = exchangeDataModel.getXlogsGrid(xlogsServiceUri, scope, xid, label);    
@@ -117,7 +115,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ---------------------------------
   public String getPageXlogs()
   {
-	pageXlogsGrid = exchangeDataModel.getPageXlogsGrid(xlogsServiceUri, scope, xid, xTime, start, limit, label);    
+    pageXlogsGrid = exchangeDataModel.getPageXlogsGrid(xlogsServiceUri, scope, xid, xTime, start, limit, label);    
     return SUCCESS;
   }
   

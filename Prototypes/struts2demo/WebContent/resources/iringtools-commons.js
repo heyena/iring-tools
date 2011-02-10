@@ -44,7 +44,7 @@ Ext.data.DynamicGridReader = Ext.extend(Ext.data.JsonReader, {
 
 Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
   constructor: function(store) {
-    var recordType = store.recordType;
+    var recordType = store.reader.recordType;
     var fields = recordType.prototype.fields;
     var columns = [];
     
