@@ -1651,46 +1651,46 @@ namespace ApplicationEditor
 
     private void btnDelScope_Click(object sender, RoutedEventArgs e)
     {
-      try
-      {
-
-        if (tvwScopes.SelectedItem != null)
+        try
         {
-          TreeViewItem selectedItem = (TreeViewItem)tvwScopes.SelectedItem;
-          object oItem = selectedItem.Tag;
 
-          if (oItem is ScopeProject)
-          {
-            _scopes.Remove((ScopeProject)oItem);
-            tvwScopes.Items.Remove(selectedItem);
+            if (tvwScopes.SelectedItem != null)
+            {
+                TreeViewItem selectedItem = (TreeViewItem)tvwScopes.SelectedItem;
+                object oItem = selectedItem.Tag;
 
-            _editProject = null;
-            tbNewPrjName.Text = String.Empty;
-            tbNewPrjDesc.Text = String.Empty;
+                if (oItem is ScopeProject)
+                {
+                    _scopes.Remove((ScopeProject)oItem);
+                    tvwScopes.Items.Remove(selectedItem);
 
-            _editApplication = null;
-            tbNewAppName.Text = String.Empty;
-            tbNewAppDesc.Text = String.Empty;
-          }
-          else if (oItem is ScopeApplication)
-          {
-            TreeViewItem parentItem = (TreeViewItem)selectedItem.Parent;
-            ScopeProject project = (ScopeProject)parentItem.Tag;
+                    _editProject = null;
+                    tbNewPrjName.Text = String.Empty;
+                    tbNewPrjDesc.Text = String.Empty;
 
-            project.Applications.Remove((ScopeApplication)oItem);
-            parentItem.Items.Remove(selectedItem);
+                    _editApplication = null;
+                    tbNewAppName.Text = String.Empty;
+                    tbNewAppDesc.Text = String.Empty;
+                }
+                else if (oItem is ScopeApplication)
+                {
+                    TreeViewItem parentItem = (TreeViewItem)selectedItem.Parent;
+                    ScopeProject project = (ScopeProject)parentItem.Tag;
 
-            _editApplication = null;
-            tbNewAppName.Text = String.Empty;
-            tbNewAppDesc.Text = String.Empty;
-          }
+                    project.Applications.Remove((ScopeApplication)oItem);
+                    parentItem.Items.Remove(selectedItem);
+
+                    _editApplication = null;
+                    tbNewAppName.Text = String.Empty;
+                    tbNewAppDesc.Text = String.Empty;
+                }
+            }
+
         }
-
-      }
-      catch (Exception ex)
-      {
-        throw ex;
-      }
+        catch (Exception ex)
+        {
+            throw ex;
+        }
     }
 
     private void btnMoveUp_Click(object sender, RoutedEventArgs e)
