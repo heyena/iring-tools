@@ -40,6 +40,9 @@ namespace org.iringtools.library
     [DataMember(Name = "label")]
     public string Label { get; set; }
 
+    [DataMember(Name = "lang")]
+        public string Lang { get; set; }
+
     [DataMember(Name = "repository")]
     public string Repository { get; set; }
 
