@@ -136,21 +136,23 @@ namespace org.iringtools.modules.contextmenu.contextmenuregion
 
         void buttonEditClassHandler(object sender, System.Windows.RoutedEventArgs e)
         {
-            org.ids_adi.qmxf.ClassDefinition classDefinition = null;
+            //org.ids_adi.qmxf.ClassDefinition classDefinition = null;
 
             try
             {
-                classDefinition = model.SelectedQMXF.classDefinitions.FirstOrDefault<org.ids_adi.qmxf.ClassDefinition>();
+              aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
+             // classDefinition = (ClassDefinition)model.SelectedTreeItem.Tag;
+             //   classDefinition = model.SelectedQMXF.classDefinitions.FirstOrDefault<org.ids_adi.qmxf.ClassDefinition>();
             }
             catch(Exception ex)
             {
                 throw ex;
             }
 
-            if (classDefinition != null)
-            {
-                aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
-            }
+            //if (classDefinition != null)
+            //{
+            //    aggregator.GetEvent<ButtonEvent>().Publish(new ButtonEventArgs() { ButtonClicked = (Button)e.OriginalSource, Sender = sender });
+            //}
         }
 
         void buttonAddTemplateHandler(object sender, System.Windows.RoutedEventArgs e)

@@ -169,6 +169,9 @@ namespace org.iringtools.informationmodel.usercontrols
     /// <param name="e">The <see cref="System.Windows.RoutedEventArgs"/> instance containing the event data.</param>
     public void classifications_selected(object sender, System.Windows.RoutedEventArgs e)
     {
+
+      string language = string.Empty;
+      List<string> names = new List<string>();
       try
       {
         if (classifications.isProcessed)
@@ -181,15 +184,20 @@ namespace org.iringtools.informationmodel.usercontrols
 
         foreach (Classification classificationDetails in classification)
         {
-          string label = classificationDetails.label;
+          names = classificationDetails.label.Split('@').ToList();
+          if (names.Count == 1)
+            language = "en";
+          else
+            language = names[names.Count - 1];
 
           Entity entity = new Entity
           {
-            Label = label ?? "[null]",
+            Label = names[0] ?? "[null]",
             Repository = "UnKnown",
+            Lang = language,
             Uri = classificationDetails.reference,
           };
-          classifications.Items.Add(AddTreeItem(label, entity));
+          classifications.Items.Add(AddTreeItem(names[0], entity));
         }
 
         classifications.itemTextBlock.Text = "[Classifications] (" + classification.Count + ")";

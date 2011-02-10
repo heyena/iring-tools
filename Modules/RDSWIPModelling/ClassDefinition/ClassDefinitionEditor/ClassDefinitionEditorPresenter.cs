@@ -284,19 +284,22 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
       try
       {
         _editorMode = editorMode;
-        _classBLL = new ClassDefinitionBLL(qmxf);
+        if (model.SelectedTreeItem.Tag is ClassDefinition)
+        {
+          _classBLL = new ClassDefinitionBLL((ClassDefinition)model.SelectedTreeItem.Tag);
 
-        TextCtrl("className").DataContext = _classBLL;
-        TextCtrl("entityType").DataContext = _classBLL;
-        TextCtrl("description").DataContext = _classBLL;
+          TextCtrl("className").DataContext = _classBLL;
+          TextCtrl("entityType").DataContext = _classBLL;
+          TextCtrl("description").DataContext = _classBLL;
 
-        TextCtrl("authority").DataContext = _classBLL;
-        TextCtrl("recorded").DataContext = _classBLL;
-        TextCtrl("dateFrom").DataContext = _classBLL;
-        TextCtrl("dateTo").DataContext = _classBLL;
+          TextCtrl("authority").DataContext = _classBLL;
+          TextCtrl("recorded").DataContext = _classBLL;
+          TextCtrl("dateFrom").DataContext = _classBLL;
+          TextCtrl("dateTo").DataContext = _classBLL;
 
-        ListBoxCtrl("specialization").DataContext = _classBLL;
-        ListBoxCtrl("classification").DataContext = _classBLL;
+          ListBoxCtrl("specialization").DataContext = _classBLL;
+          ListBoxCtrl("classification").DataContext = _classBLL;
+        }
       }
       catch (Exception ex)
       {
@@ -369,6 +372,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
         }
         else if (_clickedButton == "btnApply1")
         {
+          //ClassDefinition clss = _classBLL.
           QMXF @qmxf = _classBLL.QMXF;
           referenceDataService.PostClass(@qmxf);
         }

@@ -21,21 +21,23 @@ namespace org.iringtools.modulelibrary.layerbll
         private ObservableCollection<ListBoxItem> _classification = new ObservableCollection<ListBoxItem>();
         private ObservableCollection<ListBoxItem> _specialization = new ObservableCollection<ListBoxItem>();
 
-        public ClassDefinitionBLL(QMXF qmxf)
+        public ClassDefinitionBLL(ClassDefinition classDef)
         {
-            if (qmxf != null)
+          if (classDef != null)
             {
-                _qmxf = qmxf;
-                _classDefinition = qmxf.classDefinitions.FirstOrDefault<ClassDefinition>();
+              _classDefinition = classDef;
+
+                //_classDefinition = qmxf.classDefinitions.FirstOrDefault(c => c.identifier == identifier);
                 
                 foreach (Specialization s in _classDefinition.specialization) 
-                {                
-                    _specialization.Add(new ListBoxItem() { Content = s.label, Tag = s });
+                {
+
+                    _specialization.Add(new ListBoxItem() { Content = s.label.Split('@')[0], Tag = s });
                 }
 
                 foreach (Classification s in _classDefinition.classification)
                 {
-                    _classification.Add(new ListBoxItem() { Content = s.label, Tag = s });
+                  _classification.Add(new ListBoxItem() { Content = s.label.Split('@')[0], Tag = s });
                 }
 
             }
@@ -62,7 +64,8 @@ namespace org.iringtools.modulelibrary.layerbll
                 {                    
                     _classDefinition.classification.Add((Classification)lstItm.Tag);
                 }
-
+                if (_qmxf == null)
+                  _qmxf = new ids_adi.qmxf.QMXF();
                 _qmxf.classDefinitions.Clear();
                 _qmxf.classDefinitions.Add(_classDefinition);
 
