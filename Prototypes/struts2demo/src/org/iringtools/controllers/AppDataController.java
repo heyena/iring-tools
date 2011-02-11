@@ -46,7 +46,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = appDataModel.getDtoGrid(dxfrServiceUri, scope, app, graph, filter, dir, sort, start, limit);    
+    pageDtoGrid = appDataModel.getDtoGrid(dxfrServiceUri, scope, app, graph, filter, sort, dir, start, limit);    
     return SUCCESS;
   }
   
@@ -61,7 +61,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   public String getPageRelatedItems() 
   {
     pageRelatedItemGrid = appDataModel.getRelatedItemGrid(dxfrServiceUri, scope, app, graph, 
-        individual, classId, classIdentifier, filter, dir, sort, start, limit);
+        individual, classId, classIdentifier, filter, sort, dir, start, limit);
     return SUCCESS;
   }
 

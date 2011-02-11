@@ -415,16 +415,20 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
-        if (filter == null || filter.Expressions == null || filter.OrderExpressions == null)
-          throw new Exception("Invalid DataFilter.");
-        _graphMap = _mapping.FindGraphMap(graph);
-        DataObject _dataObject = dictionary.DataObjects.Find(o => o.ObjectName == _graphMap.dataObjectName);
+        if (filter != null && (filter.Expressions != null || filter.OrderExpressions != null))
+        {
+          _graphMap = _mapping.FindGraphMap(graph);
+          DataObject _dataObject = dictionary.DataObjects.Find(o => o.ObjectName == _graphMap.dataObjectName);
 
+          if (filter.Expressions != null)
+          {
             foreach (Expression expression in filter.Expressions)
             {
               string[] propertyNameParts = expression.PropertyName.Split('.');
               string dataPropertyName = ProjectPropertyName(propertyNameParts);
+
               expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+
               if (_roleType == RoleType.ObjectProperty)
               {
                 if (expression.RelationalOperator == RelationalOperator.EqualTo)
@@ -445,12 +449,17 @@ namespace org.iringtools.adapter.projection
                 }
               }
             }
+          }
 
+          if (filter.OrderExpressions != null)
+          {
             foreach (OrderExpression orderExpression in filter.OrderExpressions)
             {
               string[] propertyNameParts = orderExpression.PropertyName.Split('.');
               string dataPropertyName = ProjectPropertyName(propertyNameParts);
               orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+            }
+          }
         }
       }
       catch (Exception ex)

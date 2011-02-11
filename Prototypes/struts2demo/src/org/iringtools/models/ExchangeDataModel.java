@@ -30,32 +30,32 @@ public class ExchangeDataModel extends DataModel
     this.session = session;
   }
 
-  public Grid getDtoGrid(String serviceUri, String scope, String exchangeId, String filter, String sortOrder,
-      String sortBy, int start, int limit)
+  public Grid getDtoGrid(String serviceUri, String scope, String xid, String filter, String sortBy,
+      String sortOrder, int start, int limit)
   {
-    String dtiRelativePath = "/" + scope + "/exchanges/" + exchangeId;
+    String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
-    DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, filter, sortOrder, sortBy,
-        start, limit);
+    DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, filter, sortBy, 
+        sortOrder, start, limit);
     Grid pageDtoGrid = getDtoGrid(DataType.EXCHANGE, pageDtos);
     DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());
     return pageDtoGrid;
   }
 
-  public Grid getRelatedItemGrid(String serviceUri, String scope, String exchangeId, String dtoIdentifier,
-      String classId, String classIdentifier, String filter, String sortOrder, String sortBy, int start, int limit)
+  public Grid getRelatedItemGrid(String serviceUri, String scope, String xid, String dtoIdentifier,
+      String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
   {
-    String dtiRelativePath = "/" + scope + "/exchanges/" + exchangeId;
+    String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
-    DataTransferObject dto = getDto(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter, sortOrder,
-        sortBy, start, limit);
+    DataTransferObject dto = getDto(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter, sortBy,
+        sortOrder, start, limit);
     return getRelatedItemGrid(DataType.EXCHANGE, dto, classId, classIdentifier, start, limit);
   }
 
-  public ExchangeResponse submitExchange(String serviceUri, String scope, String exchangeId, boolean reviewed)
+  public ExchangeResponse submitExchange(String serviceUri, String scope, String xid, boolean reviewed)
   {
-    String relativePath = "/" + scope + "/exchanges/" + exchangeId;
+    String relativePath = "/" + scope + "/exchanges/" + xid;
     DataTransferIndices dtis = getDtis(serviceUri, relativePath, null, null, null);
 
     ExchangeResponse response;
@@ -72,7 +72,12 @@ public class ExchangeDataModel extends DataModel
       removeSessionData("dti" + relativePath);
 
       // remove exchange logs cache
-      removeSessionData("xlogs" + relativePath);
+      String xlogsKey = "xlogs" + relativePath;
+      for (String key : session.keySet())
+      {
+        if (key.startsWith(xlogsKey))
+          removeSessionData(key);
+      }
 
       // remove app dti cache
       removeSessionData("dti/" + response.getReceiverScopeName() + "/" + response.getReceiverAppName() + "/"
@@ -100,9 +105,9 @@ public class ExchangeDataModel extends DataModel
     return String.format("%1$tY/%1$tm/%1$td-%1$tH:%1$tM:%1$tS.%1$tL", gcal);
   }
 
-  public Grid getXlogsGrid(String serviceUri, String scope, String exchangeId, String label)
+  public Grid getXlogsGrid(String serviceUri, String scope, String xid, String xlabel)
   {
-    String relativePath = "/" + scope + "/exchanges/" + exchangeId;
+    String relativePath = "/" + scope + "/exchanges/" + xid;
     History xlogs = null;
 
     HttpClient httpClient = new HttpClient(serviceUri);
@@ -168,12 +173,11 @@ public class ExchangeDataModel extends DataModel
         List<String> row = new ArrayList<String>();
         String exchangeTime = xr.getEndTimeStamp().toString().replace(":", ".");
         String startTime = format(xr.getStartTimeStamp().toGregorianCalendar());
-
-        row.add("<input type=\"image\" src=\"resources/images/info-small.png\" "
-            + "onClick='javascript:getPageXlogs(\"" + scope + "\",\"" + exchangeId + "\",\"" + label + "\",\""
-            + startTime + "\",\"" + exchangeTime + "\")'>");
-
         String endTime = format(xr.getEndTimeStamp().toGregorianCalendar());
+        
+        row.add("<input type=\"image\" src=\"resources/images/info-small.png\" "
+            + "onClick='javascript:createPageXlogs(\"" + scope + "\",\"" + xid + "\",\"" + xlabel 
+            + "\",\"" + startTime + "\",\"" + exchangeTime + "\")'>");
 
         row.add(startTime);
         row.add(endTime);
@@ -191,10 +195,10 @@ public class ExchangeDataModel extends DataModel
     return xlogsGrid;
   }
 
-  public Grid getPageXlogsGrid(String xlogsServiceUri, String scope, String xid, String exchangeTime, int start,
-      int limit, String label)
+  public Grid getPageXlogsGrid(String xlogsServiceUri, String scope, String xid, String xlabel, String xtime, 
+      int start, int limit)
   {
-    String relativePath = "/" + scope + "/exchanges/" + xid + "/" + exchangeTime;
+    String relativePath = "/" + scope + "/exchanges/" + xid + "/" + xtime;
     String xlogsKey = "xlogs" + relativePath;
     ExchangeResponse response;
 
@@ -224,11 +228,11 @@ public class ExchangeDataModel extends DataModel
       }
     }
 
-    List<Status> statuses = response.getStatusList().getItems();
     Grid pageXlogsGrid = new Grid();
-
-    pageXlogsGrid.setIdentifier(label);
-    pageXlogsGrid.setDescription(exchangeTime);
+    List<Status> statuses = response.getStatusList().getItems();
+    
+    pageXlogsGrid.setIdentifier(xlabel);
+    pageXlogsGrid.setDescription(xtime);
     List<Field> fields = new ArrayList<Field>();
     pageXlogsGrid.setFields(fields);
 
@@ -249,38 +253,15 @@ public class ExchangeDataModel extends DataModel
 
     int actualLimit = Math.min(statuses.size(), start + limit);
 
-    if (actualLimit > 0)
+    for (int i = start; i < actualLimit; i++)
     {
-      for (int i = start; i < actualLimit; i++)
-      {
-        List<String> row = new ArrayList<String>();
-        StringBuilder messages = new StringBuilder();
-
-        Status status = statuses.get(i);
-        row.add(status.getIdentifier());
-
-        for (String message : status.getMessages().getItems())
-        {
-          if (messages.length() > 0)
-            messages.append(" ");
-
-          messages.append(message);
-        }
-
-        row.add(messages.toString());
-        data.add(row);
-      }
-      
-      pageXlogsGrid.setTotal(statuses.size());
-    }
-    else
-    {
-      pageXlogsGrid.setTotal(1);
       List<String> row = new ArrayList<String>();
-      row.add("");
       StringBuilder messages = new StringBuilder();
-      
-      for (String message : response.getMessages().getItems())
+
+      Status status = statuses.get(i);
+      row.add(status.getIdentifier());
+
+      for (String message : status.getMessages().getItems())
       {
         if (messages.length() > 0)
           messages.append(" ");
@@ -291,6 +272,8 @@ public class ExchangeDataModel extends DataModel
       row.add(messages.toString());
       data.add(row);
     }
+    
+    pageXlogsGrid.setTotal(statuses.size());
 
     return pageXlogsGrid;
   }
