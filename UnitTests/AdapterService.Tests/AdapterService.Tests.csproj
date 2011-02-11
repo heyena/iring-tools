@@ -209,6 +209,7 @@
     </Content>
     <Content Include="XML\BindingConfiguration.12345_000.DEF.Test.xml" />
     <Content Include="XML\BindingConfiguration.12345_000.DEF.xml" />
+    <Content Include="XML\ClassificationTemplate.xml" />
     <Content Include="XML\DatabaseDictionary.12345_000.DEF.xml" />
     <Content Include="XML\DataDictionary.12345_000.DEF.xml" />
     <Content Include="XML\DTO.12345_000.ABC.Lines.xml" />

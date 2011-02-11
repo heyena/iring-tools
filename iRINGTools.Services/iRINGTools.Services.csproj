@@ -81,17 +81,16 @@
     <Content Include="App_Data\InterfaceIntro.txt" />
     <Content Include="App_Data\SandboxIntro.txt" />
     <Content Include="ClientAccessPolicy.xml" />
-    <Content Include="css\interface.css" />
     <Content Include="css\iring-tools.css" />
     <Content Include="css\reset.css" />
-    <Content Include="css\sparql.css" />
+    <Content Include="css\sparql-query.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="img\blue-fade.png" />
     <Content Include="img\fade.png" />
     <Content Include="img\iring-tools-logo.png" />
     <Content Include="img\iRINGTools_logo.png" />
-    <Content Include="index.html" />
+    <Content Include="Index.aspx" />
     <Content Include="SPARQL\ClassRelations.txt" />
     <Content Include="SPARQL\ContainsSearch.txt" />
     <Content Include="SPARQL\ExactSearch.txt" />
@@ -131,9 +130,12 @@
     <Content Include="SPARQL\TemplateExactSearch.txt" />
     <Content Include="SPARQL\TemplateGetProperties.txt" />
     <Content Include="SPARQL\TemplateTypes.txt" />
+    <Content Include="XML\BindingConfiguration.Adapter.xml" />
+    <Content Include="XML\ClassificationTemplate.xml" />
     <Content Include="XML\Queries.xml">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="XML\Repositories.Default.xml" />
     <None Include="App_Data\config.ttl" />
     <None Include="App_Data\default.rq" />
     <None Include="Web.config">

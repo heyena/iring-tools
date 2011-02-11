@@ -53,7 +53,7 @@ namespace org.iringtools.services
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
     private AdapterProvider _adapterProvider = null;
     private ExchangeProvider _exchangeProvider = null;
-
+    
     /// <summary>
     /// Adapter Service Constructor
     /// </summary>
@@ -99,120 +99,120 @@ namespace org.iringtools.services
     }
     #endregion
 
-    #region Get
-    /// <summary>
-    /// Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="identifier">Identifier</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
-    public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
-    {
-      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format, false);
+    //#region Get
+    ///// <summary>
+    ///// Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.
+    ///// </summary>
+    ///// <param name="projectName">Project name</param>
+    ///// <param name="applicationName">Application name</param>
+    ///// <param name="graphName">Graph name</param>
+    ///// <param name="identifier">Identifier</param>
+    ///// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
+    ///// <returns>Returns an arbitrary XML</returns>
+    //[Description("Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.")]
+    //[WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
+    //public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
+    //{
+    //  XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, identifier, format, false);
 
-      return xDocument.Root;
-    }
-    #endregion
+    //  return xDocument.Root;
+    //}
+    //#endregion
 
-    #region GetListWithFilter
-    /// <summary>
-    /// Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
-    public XElement GetListWithFilter(string projectName, string applicationName, string graphName, string format, DataFilter filter, int start, int limit, string indexStyle)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+    //#region GetListWithFilter
+    ///// <summary>
+    ///// Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.
+    ///// </summary>
+    ///// <param name="projectName">Project name</param>
+    ///// <param name="applicationName">Application name</param>
+    ///// <param name="graphName">Graph name</param>
+    ///// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
+    ///// <returns>Returns an arbitrary XML</returns>
+    //[Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
+    //public XElement GetListWithFilter(string projectName, string applicationName, string graphName, string format, DataFilter filter, int start, int limit, string indexStyle)
+    //{
+    //  OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+    //  context.ContentType = "application/xml";
 
-      bool fullIndex = false;
-      if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-        fullIndex = true;
+    //  bool fullIndex = false;
+    //  if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+    //    fullIndex = true;
 
-      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, filter, format, start, limit, fullIndex);
+    //  XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, filter, format, start, limit, fullIndex);
 
-      return xDocument.Root;
-    }
-    #endregion
+    //  return xDocument.Root;
+    //}
+    //#endregion
 
-    #region GetList
-    /// <summary>
-    /// Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-    public XElement GetList(string projectName, string applicationName, string graphName, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-    {
-      NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+    //#region GetList
+    ///// <summary>
+    ///// Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.
+    ///// </summary>
+    ///// <param name="projectName">Project name</param>
+    ///// <param name="applicationName">Application name</param>
+    ///// <param name="graphName">Graph name</param>
+    ///// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
+    ///// <returns>Returns an arbitrary XML</returns>
+    //[Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    //[WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    //public XElement GetList(string projectName, string applicationName, string graphName, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    //{
+    //  NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+    //  OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+    //  context.ContentType = "application/xml";
 
-      bool fullIndex = false;
-      if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-        fullIndex = true;
+    //  bool fullIndex = false;
+    //  if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+    //    fullIndex = true;
 
-      XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+    //  XDocument xDocument = _adapterProvider.GetProjection(projectName, applicationName, graphName, format, start, limit, sortOrder, sortBy, fullIndex, parameters);
 
-      return xDocument.Root;
-    }
-    #endregion
+    //  return xDocument.Root;
+    //}
+    //#endregion
 
-    #region PostList
-    /// <summary>
-    /// Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <param name="xml">Arbitrary XML</param>
-    /// <returns>Returns a Response object</returns>
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
-    public Response PostList(string projectName, string applicationName, string graphName, string format, XElement xElement)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+    //#region PostList
+    ///// <summary>
+    ///// Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified.
+    ///// </summary>
+    ///// <param name="projectName">Project name</param>
+    ///// <param name="applicationName">Application name</param>
+    ///// <param name="graphName">Graph name</param>
+    ///// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
+    ///// <param name="xml">Arbitrary XML</param>
+    ///// <returns>Returns a Response object</returns>
+    //[Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}")]
+    //public Response PostList(string projectName, string applicationName, string graphName, string format, XElement xElement)
+    //{
+    //  OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+    //  context.ContentType = "application/xml";
 
-      return _adapterProvider.Post(projectName, applicationName, graphName, format, new XDocument(xElement));
-    }
-    #endregion
+    //  return _adapterProvider.Post(projectName, applicationName, graphName, format, new XDocument(xElement));
+    //}
+    //#endregion
 
-    #region Delete
-    /// <summary>
-    /// Deletes the specified individual based on scope, graph and identifier.
-    /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
-    /// <param name="graphName">Graph name</param>
-    /// <param name="identifier">Identifier</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Deletes the specified individual based on scope, graph and identifier.")]
-    [WebInvoke(Method="DELETE", UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
-    public Response Delete(string projectName, string applicationName, string graphName, string identifier)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+    //#region Delete
+    ///// <summary>
+    ///// Deletes the specified individual based on scope, graph and identifier.
+    ///// </summary>
+    ///// <param name="projectName">Project name</param>
+    ///// <param name="applicationName">Application name</param>
+    ///// <param name="graphName">Graph name</param>
+    ///// <param name="identifier">Identifier</param>
+    ///// <returns>Returns an arbitrary XML</returns>
+    //[Description("Deletes the specified individual based on scope, graph and identifier.")]
+    //[WebInvoke(Method="DELETE", UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}")]
+    //public Response Delete(string projectName, string applicationName, string graphName, string identifier)
+    //{
+    //  OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+    //  context.ContentType = "application/xml";
 
-      return _adapterProvider.DeleteIndividual(projectName, applicationName, graphName, identifier);
-    }
-    #endregion
+    //  return _adapterProvider.DeleteIndividual(projectName, applicationName, graphName, identifier);
+    //}
+    //#endregion
     #endregion
     #endregion
 

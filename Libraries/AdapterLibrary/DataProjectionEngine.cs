@@ -38,7 +38,7 @@ namespace org.iringtools.adapter.projection
         _dictionary = _dataLayer.GetDictionary();
         _dataObjects = dataObjects;
 
-        if (_dataObjects != null && _dataObjects.Count == 1)
+        if (_dataObjects != null && (_dataObjects.Count == 1 || FullIndex))
         {
           xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
 
@@ -51,7 +51,7 @@ namespace org.iringtools.adapter.projection
             xElement.Add(rowElement);
           }
         }
-        if (_dataObjects != null && (_dataObjects.Count > 1 || _dataObjects.Count == 0))
+        if (_dataObjects != null && (_dataObjects.Count > 1 && !FullIndex))
         {
           xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
 

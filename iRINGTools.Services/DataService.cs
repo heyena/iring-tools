@@ -35,6 +35,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.adapter;
 using System.Collections.Specialized;
+using org.iringtools.library.manifest;
 
 namespace org.iringtools.services
 {
@@ -44,13 +45,15 @@ namespace org.iringtools.services
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
     private AdapterProvider _adapterProvider = null;
-
+    private DtoProvider _dtoProvider = null;
+    
     /// <summary>
     /// Adapter Service Constructor
     /// </summary>
     public DataService()
     {
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
+      _dtoProvider = new DtoProvider(ConfigurationManager.AppSettings);
     }
 
     #region Public Resources
@@ -85,6 +88,24 @@ namespace org.iringtools.services
       context.ContentType = "application/xml";
 
       return _adapterProvider.GetDictionary(projectName, applicationName);
+    }
+    #endregion
+
+    #region GetManifest
+    /// <summary>
+    /// Gets the manifest of graphs for the specified scope.
+    /// </summary>
+    /// <param name="projectName">Project name</param>
+    /// <param name="applicationName">Application name</param>
+    /// <returns>Returns a Manifest object.</returns>
+    [Description("Gets manifest for an application.")]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/manifest")]
+    public Manifest GetManifest(string projectName, string applicationName)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _dtoProvider.GetManifest(projectName, applicationName);
     }
     #endregion
 
