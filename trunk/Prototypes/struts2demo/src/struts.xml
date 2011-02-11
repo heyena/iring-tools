@@ -46,17 +46,17 @@
     </action>
     <action name="xsubmit" class="org.iringtools.controllers.ExchangeDataController" method="submitExchange">
       <result type="json">
-        <param name="root">exchangeResult</param>
+        <param name="root">xResultsGrid</param>
       </result>
     </action>
-    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getXlogs">
+    <action name="xlogs" class="org.iringtools.controllers.ExchangeDataController" method="getXLogs">
       <result type="json">
-        <param name="root">xlogsGrid</param>
+        <param name="root">xLogsGrid</param>
       </result>
     </action>
-    <action name="pageXlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXlogs">
+    <action name="pageXlogs" class="org.iringtools.controllers.ExchangeDataController" method="getPageXLogs">
       <result type="json">
-        <param name="root">pageXlogsGrid</param>
+        <param name="root">pageXLogsGrid</param>
       </result>
     </action>
 	</package>

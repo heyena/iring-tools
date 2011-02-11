@@ -50,6 +50,11 @@ public class DataModel
   }
 
   private static final Logger logger = Logger.getLogger(DataModel.class);
+  
+  protected String FULL_DTI_KEY_PREFIX = "dti-full";
+  protected String PART_DTI_KEY_PREFIX = "dti-part";
+  protected String FILTER_KEY_PREFIX = "filter-key";
+  
   protected Map<String, Object> session;
 
   protected void removeSessionData(String key)
@@ -58,37 +63,59 @@ public class DataModel
       session.remove(key);
   }
 
-  protected DataTransferIndices getDtis(String serviceUri, String relativePath, String filter, String sortOrder,
-      String sortBy)
+  // only cache full dti and one filtered dti
+  protected DataTransferIndices getDtis(String serviceUri, String relativePath, String filter, String sortBy,
+      String sortOrder)
   {
     DataTransferIndices dtis = new DataTransferIndices();
-    String fullDtiKey = "dti-full" + relativePath;
-    String partDtiKey = "dti-part" + relativePath;
-
+    String fullDtiKey = FULL_DTI_KEY_PREFIX + relativePath;
+    String partDtiKey = PART_DTI_KEY_PREFIX + relativePath;
+    String lastFilterKey = FILTER_KEY_PREFIX + relativePath;
+    String currFilter = filter + "/" + sortBy + "/" + sortOrder;
+    
     try
     {
-      DataFilter dataFilter = createDataFilter(filter, sortOrder, sortBy);
+      DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);
 
       if (dataFilter == null)
       {
+        HttpClient httpClient = new HttpClient(serviceUri);
+        dtis = httpClient.post(DataTransferIndices.class, relativePath, new DataFilter());
+        session.put(fullDtiKey, dtis);
+        
         if (session.containsKey(partDtiKey))
         {
           session.remove(partDtiKey);
         }
-
-        HttpClient httpClient = new HttpClient(serviceUri);
-        dtis = httpClient.post(DataTransferIndices.class, relativePath, new DataFilter());
-        session.put(fullDtiKey, dtis);
+        
+        if (session.containsKey(lastFilterKey))
+        {
+          session.remove(lastFilterKey);  
+        }
       }
-      else if (session.containsKey(partDtiKey))
+      else if (session.containsKey(lastFilterKey))
       {
-        dtis = (DataTransferIndices) session.get(partDtiKey);
+        String lastFilter = (String) session.get(lastFilterKey);
+        
+        // filter has not changed
+        if (lastFilter.equals(currFilter))
+        {
+          dtis = (DataTransferIndices) session.get(partDtiKey);
+        }
+        else  // filter does not exist or has changed
+        {
+          HttpClient httpClient = new HttpClient(serviceUri);
+          dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
+          session.put(partDtiKey, dtis);
+          session.put(lastFilterKey, currFilter);
+        }
       }
       else
       {
         HttpClient httpClient = new HttpClient(serviceUri);
         dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
         session.put(partDtiKey, dtis);
+        session.put(lastFilterKey, currFilter);
       }
     }
     catch (Exception ex)
@@ -101,11 +128,11 @@ public class DataModel
 
   protected DataTransferIndices getCachedDtis(String relativePath)
   {
-    String dtiKey = "dti-part" + relativePath;
+    String dtiKey = PART_DTI_KEY_PREFIX + relativePath;
 
     if (!session.containsKey(dtiKey))
     {
-      dtiKey = "dti-full" + relativePath;
+      dtiKey = FULL_DTI_KEY_PREFIX + relativePath;
     }
 
     return (DataTransferIndices) session.get(dtiKey);
@@ -134,9 +161,9 @@ public class DataModel
   }
 
   public DataTransferObjects getPageDtos(String serviceUri, String dtiRelativePath, String dtoRelativePath,
-      String filter, String sortOrder, String sortBy, int start, int limit)
+      String filter, String sortBy, String sortOrder, int start, int limit)
   {
-    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath, filter, sortOrder, sortBy);
+    DataTransferIndices dtis = getDtis(serviceUri, dtiRelativePath, filter, sortBy, sortOrder);
     List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
     int actualLimit = Math.min(start + limit, dtiList.size());
     List<DataTransferIndex> pageDtis = dtiList.subList(start, actualLimit);
@@ -145,7 +172,7 @@ public class DataModel
 
   // TODO: use filter, sort, and start/limit for related individual
   public DataTransferObject getDto(String serviceUri, String dtiRelativePath, String dtoRelativePath,
-      String dtoIdentifier, String filter, String sortOrder, String sortBy, int start, int limit)
+      String dtoIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
   {
     DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
     List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
@@ -206,7 +233,7 @@ public class DataModel
       {
         ClassObject classObject = dto.getClassObjects().getItems().get(0);
         pageDtoGrid.setIdentifier(classObject.getClassId());
-        pageDtoGrid.setDescription(classObject.getName());
+        pageDtoGrid.setDescription(IOUtil.toCamelCase(classObject.getName()));
 
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
         {
@@ -247,7 +274,7 @@ public class DataModel
             {
               RelatedClass relatedClass = new RelatedClass();
               relatedClass.setId(roleObject.getRelatedClassId());
-              relatedClass.setName(roleObject.getRelatedClassName());
+              relatedClass.setName(IOUtil.toCamelCase(roleObject.getRelatedClassName()));
               relatedClass.setIdentifier(roleObject.getValue().substring(1));
               relatedClasses.add(relatedClass);
             }
@@ -369,7 +396,7 @@ public class DataModel
             {
               RelatedClass relatedClass = new RelatedClass();
               relatedClass.setId(roleObject.getRelatedClassId());
-              relatedClass.setName(roleObject.getRelatedClassName());
+              relatedClass.setName(IOUtil.toCamelCase(roleObject.getRelatedClassName()));
               relatedClass.setIdentifier(roleObject.getValue().substring(1));
               relatedClasses.add(relatedClass);
             }
@@ -420,7 +447,7 @@ public class DataModel
         int actualLimit = Math.min(start + limit, total);
 
         relatedItemGrid.setIdentifier(classObject.getClassId());
-        relatedItemGrid.setDescription(classObject.getName());
+        relatedItemGrid.setDescription(IOUtil.toCamelCase(classObject.getName()));
         relatedItemGrid.setTotal(total);
         relatedItemGrid.setFields(fields);
         relatedItemGrid.setData(gridData.subList(start, actualLimit));
@@ -432,7 +459,7 @@ public class DataModel
     return relatedItemGrid;
   }
 
-  private DataFilter createDataFilter(String filter, String sortOrder, String sortBy)
+  private DataFilter createDataFilter(String filter, String sortBy, String sortOrder)
   {
     DataFilter dataFilter = null;
 
@@ -490,7 +517,7 @@ public class DataModel
     }
 
     // process sorting
-    if (sortOrder != null || sortBy != null)
+    if (sortBy != null && sortOrder != null)
     {
       if (dataFilter == null)
         dataFilter = new DataFilter();
@@ -501,11 +528,11 @@ public class DataModel
       OrderExpression orderExpression = new OrderExpression();
       orderExpressions.getItems().add(orderExpression);
 
-      if (sortOrder != null)
-        orderExpression.setSortOrder(SortOrder.valueOf(sortOrder));
-
       if (sortBy != null)
         orderExpression.setPropertyName(sortBy);
+
+      if (sortOrder != null)
+        orderExpression.setSortOrder(SortOrder.valueOf(sortOrder));
     }
 
     return dataFilter;

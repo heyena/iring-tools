@@ -205,7 +205,24 @@ namespace org.iringtools.adapter.datalayer
         using (ISession session = OpenSession())
         {
           IQuery query = session.CreateQuery(queryString.ToString());
-          return query.List<IDataObject>();
+          IList<IDataObject> dataObjects = query.List<IDataObject>();
+
+          // order data objects as list of identifiers
+          IList<IDataObject> orderedDataObjects = new List<IDataObject>();
+          
+          foreach (string identifier in identifiers)
+          {
+            foreach (IDataObject dataObject in dataObjects)
+            {
+              if (dataObject.GetPropertyValue("Id").ToString() == identifier)
+              {
+                orderedDataObjects.Add(dataObject);
+                break;
+              }
+            }
+          }
+
+          return orderedDataObjects;
         }
       }
       catch (Exception ex)
@@ -230,7 +247,8 @@ namespace org.iringtools.adapter.datalayer
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
-        if (filter != null && filter.Expressions != null && (filter.Expressions.Count > 0 || filter.OrderExpressions.Count > 0))
+        //if (filter != null && filter.Expressions != null && (filter.Expressions.Count > 0 || filter.OrderExpressions.Count > 0))
+        if (filter != null)
         {
           string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);

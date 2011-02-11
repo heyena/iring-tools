@@ -7,9 +7,9 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONObject;
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.data.filter.Expression;
-import org.iringtools.data.filter.ExpressionList;
+import org.iringtools.data.filter.Expressions;
 import org.iringtools.data.filter.OrderExpression;
-import org.iringtools.data.filter.OrderExpressionList;
+import org.iringtools.data.filter.OrderExpressions;
 import org.iringtools.data.filter.RelationalOperator;
 import org.iringtools.data.filter.SortOrder;
 import org.iringtools.data.filter.Values;
@@ -85,12 +85,12 @@ public class DataFilterContainer {
 
 			}
 		
-				ExpressionList expressionListObject = new ExpressionList();
+				Expressions expressionListObject = new Expressions();
 				expressionListObject.setItems(expressionList);
 				dataFilter.setExpressions(expressionListObject);
 			
 			
-				OrderExpressionList orderExpressionListObject = new OrderExpressionList();
+				OrderExpressions orderExpressionListObject = new OrderExpressions();
 				orderExpressionListObject.setItems(orderExpressionList);
 				dataFilter.setOrderExpressions(orderExpressionListObject);
 			

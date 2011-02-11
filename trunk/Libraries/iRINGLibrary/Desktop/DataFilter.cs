@@ -88,8 +88,8 @@ namespace org.iringtools.library
 
     public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
     {
-      if (this == null || (this.Expressions.Count == 0 && this.OrderExpressions.Count == 0))
-        return String.Empty;
+      //if (this == null || (this.Expressions.Count == 0 && this.OrderExpressions.Count == 0))
+      //  return String.Empty;
 
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
       else objectAlias = String.Empty;

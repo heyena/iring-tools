@@ -1,5 +1,25 @@
 Ext.ns('iringtools.org.xmgr');
 
+function storeSort(field, dir){
+  var limit = this.lastOptions.params.limit;
+  
+  if (dir == undefined){
+    if (this.lastOptions.params.dir == 'ASC')
+      dir = 'DESC';
+    else  // including undefined
+      dir = 'ASC';
+  }
+  
+  this.lastOptions.params = {
+    sort: field,
+    dir: dir,
+    start: 0,
+    limit: limit
+  };
+  
+  this.reload();
+}
+
 function createGridStore(url){
   var store = new Ext.data.Store({
     proxy: new Ext.data.HttpProxy({
@@ -16,24 +36,8 @@ function createGridStore(url){
     }
   });
   
-  return store;
-}
-
-function createHistoryGridStore(url){
-  var store = new Ext.data.Store({
-	proxy: new Ext.data.HttpProxy({
-	  url: url,
-	  timeout: 120000
-	}),
-	reader: new Ext.data.DynamicGridReader({}),
-	remoteSort: true,    
-	listeners: {
-	  exception: function(ex){
-	    Ext.getBody().unmask();       
-	    showDialog(400, 100, 'Info', 'No history exists!', Ext.Msg.OK, null);
-	  }
-	}
-  });	  
+  store.sort = store.sort.createInterceptor(storeSort);
+  
   return store;
 }
 
@@ -51,6 +55,9 @@ function createGridPane(store, pageSize){
     prependCombo: true
   });  
   
+  var colModel = new Ext.grid.DynamicColumnModel(store);  
+  var selModel = new Ext.grid.RowSelectionModel({ singleSelect: true });
+  
   var gridPane = new Ext.grid.GridPanel({
     identifier: store.reader.identifier,
     description: store.reader.description,
@@ -59,8 +66,8 @@ function createGridPane(store, pageSize){
     loadMask: true,
     store: store,
     stripeRows: true,
-    cm: new Ext.grid.DynamicColumnModel(store),
-    selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
+    cm: colModel,
+    selModel: selModel,
     enableColLock: false,
     viewConfig: { forceFit: true },
     plugins: [filters],
@@ -76,14 +83,13 @@ function createGridPane(store, pageSize){
   return gridPane;
 }
 
-function createXlogsPane(label, context, xlogsContainer){
-  var xlogsUrl = 'xlogs' + context + '&label=' + label;
-  var xlogsStore = createHistoryGridStore(xlogsUrl);
+function createXlogsPane(context, xlogsContainer, xlabel){
+  var xlogsUrl = 'xlogs' + context + '&xlabel=' + xlabel;
+  var xlogsStore = createGridStore(xlogsUrl);
   
   xlogsStore.on('load', function(){
     var xlogsPane = new Ext.grid.GridPanel({
-      id: 'xlogs-' + label,
-      title: 'Exchange Logs',
+      id: 'xlogs-' + xlabel,
       layout: 'fit',
       store: xlogsStore,
       stripeRows: true,
@@ -93,7 +99,25 @@ function createXlogsPane(label, context, xlogsContainer){
       enableColLock: true,
       viewConfig: {
         forceFit: true
-      }
+      },
+      tbar: new Ext.Toolbar({
+        items: [{
+          xtype: 'tbspacer', 
+          width: 4
+        },{
+          xtype: 'label',
+          html: '<span style="font-weight:bold;color:#006">Exchange Results</span>'
+        },{
+          xtype: 'tbspacer', 
+          width: 4
+        },{
+          xtype: 'button',
+          icon: 'resources/images/refresh.png',
+          handler: function(){
+            xlogsStore.load();
+          }
+        }]
+      })
     });
     
     if (xlogsContainer.items.length == 0){
@@ -110,42 +134,34 @@ function createXlogsPane(label, context, xlogsContainer){
   xlogsStore.load();
 }
 
-function getPageXlogs(scope, xid, label, startTime, timestamp){  
-  Ext.getBody().mask("Loading...", "x-mask-loading");
-  var url = 'pageXlogs' + '?scope=' + scope + '&xid=' + xid + '&xTime=' + timestamp + '&label=' + label;
+function createPageXlogs(scope, xid, xlabel, startTime, xtime){ 
+  var paneTitle = xlabel + ' (' + startTime + ')';
+  var tab = Ext.getCmp('content-pane').getItem(paneTitle);  
   
-  var xlogsContentPane = Ext.getCmp(paneTitle);  
-  if(xlogsContentPane != null)
-  {
-    xlogsContentPane.show();
+  if (tab != null){
+    tab.show();
   }
-  else
-  {  
+  else { 
+    Ext.getBody().mask("Loading...", "x-mask-loading");    
+    
+    var url = 'pageXlogs' + '?scope=' + scope + '&xid=' + xid + '&xtime=' + xtime;
     var store = createGridStore(url);
     var pageSize = 25;    
-    var paneTitle = label + ' (' + startTime + ')';  
+    
     store.on('load', function(){
-  	  xlogsContentPane = new Ext.Panel({  
-  		id: paneTitle,
-  		layout: 'fit',
-  		title: paneTitle,     
-  		border: false,
-  		AllowScroll : false,
-  		items: [createGridPane(store, pageSize)],
-  		tools:[{
-  		  id:'close',
-  		  handler: function(event, toolEl, panel){    
-  			Ext.getCmp(paneTitle).destroy();
-  			Ext.getCmp('content-pane').getLayout().setActiveItem(0);
-  		  }
-  		}]
-  	  });		
+  	  var xlogsPagePane = new Ext.Panel({  
+    		id: paneTitle,
+    		layout: 'fit',
+    		title: paneTitle,     
+    		border: false,
+        closable: true,
+    		items: [createGridPane(store, pageSize)]
+  	  });	
+  	  
+  	  Ext.getCmp('content-pane').add(xlogsPagePane).show();
   	  Ext.getBody().unmask();
-  	  Ext.getCmp('xlogs-content-pane').add(xlogsContentPane);	  
-  	  Ext.getCmp('xlogs-content-pane').getLayout().setActiveItem(0);	  
-  	  Ext.getCmp('content-pane').getLayout().setActiveItem(1);
-  	  Ext.getCmp('content-pane').doLayout();
-    });    
+    });   
+      
     store.load({
       params: {
         start: 0,          
@@ -153,24 +169,23 @@ function getPageXlogs(scope, xid, label, startTime, timestamp){
       }
     });
   }
-  
 }
 
 function loadPageDto(type, action, context, label){	
-  var tab = Ext.getCmp('dto-content-pane').getItem('tab-' + label);  
+  var tab = Ext.getCmp('content-pane').getItem('tab-' + label);
+  
   if (tab != null){
     tab.show();
   }
   else { 
     Ext.getBody().mask("Loading...", "x-mask-loading");    
     
-    var url = action + context;
-    
+    var url = action + context;    
     var store = createGridStore(url);
     var pageSize = 25; 
     
     store.on('load', function(){
-      if (Ext.getCmp('dto-content-pane').getItem('tab-' + label) == null) {
+      if (Ext.getCmp('content-pane').getItem('tab-' + label) == null) {
         var dtoBcPane = new Ext.Container({
           id: 'bc-' + label,
           cls: 'bc-container',
@@ -213,14 +228,14 @@ function loadPageDto(type, action, context, label){
             },{
               id: 'tb-xlog',
               xtype: 'button',
-              tooltip: 'Show/hide exchange logs',
+              tooltip: 'Show/hide exchange results',
               icon: 'resources/images/exchange-log.png',
               handler: function(){            
-                var dtoTab = Ext.getCmp('dto-content-pane').getActiveTab();
+                var dtoTab = Ext.getCmp('content-pane').getActiveTab();
                 var xlogsContainer = dtoTab.items.map['xlogs-container-' + label]; 
                 
                 if (xlogsContainer.items.length == 0){
-                  createXlogsPane(label, context, xlogsContainer);                
+                  createXlogsPane(context, xlogsContainer, label);                
                 }
                 else {
                   if (xlogsContainer.collapsed)
@@ -269,7 +284,7 @@ function loadPageDto(type, action, context, label){
             region: 'south',
             layout: 'fit',
             border: false,
-            height: 250,
+            height: 294,
             split: true,
             collapsed: true
           });
@@ -277,7 +292,7 @@ function loadPageDto(type, action, context, label){
           dtoTab.add(xlogsContainer);
         }
         
-        Ext.getCmp('dto-content-pane').add(dtoTab).show();
+        Ext.getCmp('content-pane').add(dtoTab).show();
       }
     });
       
@@ -305,7 +320,7 @@ function loadRelatedItem(type, context, individual, classId, className, classIde
   var pageSize = 25; 
   
   store.on('load', function(){
-    var dtoTab = Ext.getCmp('dto-content-pane').getActiveTab();
+    var dtoTab = Ext.getCmp('content-pane').getActiveTab();
     var label = dtoTab.id.substring(4);
     var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
     
@@ -346,7 +361,7 @@ function removeHTMLTag(htmlText){
 }
 
 function showIndividualInfo(individual, relatedClasses){
-  var dtoTab = Ext.getCmp('dto-content-pane').getActiveTab();
+  var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
   var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
   var dtoContentPane = dtoTab.items.map['dto-' + label];
@@ -434,7 +449,7 @@ function showIndividualInfo(individual, relatedClasses){
 }
 
 function navigate(bcItemIndex){
-  var dtoTab = Ext.getCmp('dto-content-pane').getActiveTab();
+  var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
   var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
   var dtoContentPane = dtoTab.items.map['dto-' + label];  
@@ -547,7 +562,7 @@ Ext.onReady(function(){
         text: 'Refresh',
         handler: function(){
           var directoryTree = Ext.getCmp('directory-tree');
-          var contentPane = Ext.getCmp('dto-content-pane');
+          var contentPane = Ext.getCmp('content-pane');
           
           // clear dto tabs
           while (contentPane.items.length > 0) {
@@ -582,13 +597,13 @@ Ext.onReady(function(){
           showDialog(400, 60, 'Submit Exchange?', msg, Ext.Msg.OKCANCEL, processUserResponse); 
         }
       },{
-        //TODO: still deciding whether to enable it or not
+        //TODO: TBD
         id: 'xlogs-button',
         xtype: 'button',
         icon: 'resources/images/exchange-log.png',
         text: 'History',
         disabled: true,
-        //hidden: true,
+        hidden: true,
         handler: function(){  
           alert('Show exchange log');
         }
@@ -683,25 +698,12 @@ Ext.onReady(function(){
     items: [ directoryTreePane, propertyPane ]
   });
   
-  var dtoContentPane = new Ext.TabPanel({
-    id: 'dto-content-pane',
-    activeTab: 0
-  });
-
-  var xlogsContentPane = new Ext.Panel({
-    id: 'xlogs-content-pane',
-    layout: 'card'
-    //activeTab: 0
-  });
-
-  var contentPane = new Ext.Panel({
+  var contentPane = new Ext.TabPanel({
     id: 'content-pane',
     region: 'center',
-    layout: 'card',
     deferredRender: false,
     enableTabScroll: true,
-    activeItem: 0,
-    items: [dtoContentPane, xlogsContentPane]
+    activeItem: 0
   });
   
   var viewport = new Ext.Viewport({
@@ -711,5 +713,3 @@ Ext.onReady(function(){
   
   directoryTreePane.getRootNode().expand(false);
 });
-
-

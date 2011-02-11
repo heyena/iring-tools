@@ -15,15 +15,16 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
 {
   private static final long serialVersionUID = 1L;
   private ExchangeDataModel exchangeDataModel;
+  
   private String esbServiceUri;
-  private String xlogsServiceUri;
+  private String xLogsServiceUri;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
-  private Grid xlogsGrid;
-  private Grid pageXlogsGrid;
+  private Grid xLogsGrid;
+  private String xResultsGrid;
+  private Grid pageXLogsGrid;
   
   private String scope;
-  private String xid;
   private String individual;
   private String classId;
   private String classIdentifier;
@@ -33,16 +34,16 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   private int start;
   private int limit;
   private boolean reviewed;
-  private String exchangeResult;
-  private String xTime;
-  private String label;
+  private String xid;
+  private String xlabel;
+  private String xtime;
   
   public ExchangeDataController() 
   {    
     Map<String, Object> appContext = ActionContext.getContext().getApplication();
     
     esbServiceUri = appContext.get("ESBServiceUri").toString();
-    xlogsServiceUri = appContext.get("XlogsServiceUri").toString();
+    xLogsServiceUri = appContext.get("HistoryServiceUri").toString();
     exchangeDataModel = new ExchangeDataModel();
   }
   
@@ -57,7 +58,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = exchangeDataModel.getDtoGrid(esbServiceUri, scope, xid, filter, dir, sort, start, limit);    
+    pageDtoGrid = exchangeDataModel.getDtoGrid(esbServiceUri, scope, xid, filter, sort, dir, start, limit);    
     return SUCCESS;
   }
   
@@ -72,7 +73,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   public String getPageRelatedItems() 
   {
     pageRelatedItemGrid = exchangeDataModel.getRelatedItemGrid(esbServiceUri, scope, xid, 
-        individual, classId, classIdentifier, filter, dir, sort, start, limit);
+        individual, classId, classIdentifier, filter, sort, dir, start, limit);
     return SUCCESS;
   }
 
@@ -87,41 +88,41 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   public String submitExchange() 
   {
     ExchangeResponse response = exchangeDataModel.submitExchange(esbServiceUri, scope, xid, reviewed);  
-    exchangeResult = StringUtils.join(response.getMessages().getItems(), "\r");    
+    xResultsGrid = StringUtils.join(response.getMessages().getItems(), "\r");    
     return SUCCESS;
   }
   
-  public String getExchangeResult()
+  public String getXResultsGrid()
   {
-    return exchangeResult;
+    return xResultsGrid;
   }
   
   //----------------------------
   // get all exchange responses 
   // ---------------------------
-  public String getXlogs()
+  public String getXLogs()
   {
-    xlogsGrid = exchangeDataModel.getXlogsGrid(xlogsServiceUri, scope, xid, label);    
+    xLogsGrid = exchangeDataModel.getXlogsGrid(xLogsServiceUri, scope, xid, xlabel);    
     return SUCCESS;
   }
   
-  public Grid getXlogsGrid()
+  public Grid getXLogsGrid()
   {
-    return xlogsGrid;
+    return xLogsGrid;
   }
   
   //----------------------------------
   // get a page of exchange responses 
   // ---------------------------------
-  public String getPageXlogs()
+  public String getPageXLogs()
   {
-    pageXlogsGrid = exchangeDataModel.getPageXlogsGrid(xlogsServiceUri, scope, xid, xTime, start, limit, label);    
+    pageXLogsGrid = exchangeDataModel.getPageXlogsGrid(xLogsServiceUri, scope, xid, xlabel, xtime, start, limit);    
     return SUCCESS;
   }
   
-  public Grid getPageXlogsGrid()
+  public Grid getPageXLogsGrid()
   {
-    return pageXlogsGrid;
+    return pageXLogsGrid;
   }
   
   // --------------------------
@@ -135,16 +136,6 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   public String getScope()
   {
     return scope;
-  }
-
-  public void setXid(String xid)
-  {
-    this.xid = xid;
-  }
-
-  public String getXid()
-  {
-    return xid;
   }
   
   public void setIndividual(String individual)
@@ -236,25 +227,34 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   {
     return reviewed;
   }
-  
-  public void setXTime(String xTime)
+
+  public void setXid(String xid)
   {
-    this.xTime = xTime;
+    this.xid = xid;
   }
 
-  public String getXTime()
+  public String getXid()
   {
-    return xTime;
-  }
-  
-  public void setLabel(String label)
-  {
-    this.label = label;
+    return xid;
   }
 
-  public String getLabel()
+  public void setXlabel(String xlabel)
   {
-    return label;
+    this.xlabel = xlabel;
   }
+
+  public String getXlabel()
+  {
+    return xlabel;
+  } 
   
+  public void setXtime(String xtime)
+  {
+    this.xtime = xtime;
+  }
+
+  public String getXtime()
+  {
+    return xtime;
+  }
 }
