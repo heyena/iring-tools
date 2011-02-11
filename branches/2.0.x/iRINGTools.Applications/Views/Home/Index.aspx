@@ -4,12 +4,12 @@
 <head>
   <meta http-equiv="cache-control" content="no-cache" />
   <link rel="stylesheet" type="text/css" href="<%=ResolveUrl("~/content/css/iring-tools.css") %>" />
-  <title>iRINGTools Version 2.00.02</title>
+  <title>iRINGTools Version 2.0</title>
 </head>
 <body>
   <div class="banner">
     <h1>
-      <img src="<%=ResolveUrl("~/content/img/iring-tools-logo.png") %>" />&nbsp; Version 2.00.02</h1>
+      <img src="<%=ResolveUrl("~/content/img/iring-tools-logo.png") %>" />&nbsp; Version 2.0</h1>
   </div>
   <div class="main">
     <p>

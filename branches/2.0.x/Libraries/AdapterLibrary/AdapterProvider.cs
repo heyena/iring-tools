@@ -487,21 +487,30 @@ namespace org.iringtools.adapter
 
         IList<string> index = new List<string>();
 
+        string dataObjectName = String.Empty;
         if (format != null)
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+
+          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+          graphName = dataObject.objectName;
+          dataObjectName = dataObject.objectName;
         }
         else
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>("data");
+
+          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+          graphName = dataObject.objectName;
+          dataObjectName = dataObject.objectName;
         }
 
         if (limit == 0)
           limit = 100;
 
-        _dataObjects = _dataLayer.Get(graphName, filter, limit, start);
+        _dataObjects = _dataLayer.Get(dataObjectName, filter, limit, start);
 
-        _projectionEngine.Count = _dataLayer.GetCount(graphName, filter);
+        _projectionEngine.Count = _dataLayer.GetCount(dataObjectName, filter);
 
         _projectionEngine.FullIndex = fullIndex;
         
@@ -525,16 +534,25 @@ namespace org.iringtools.adapter
 
         IList<string> identifiers = new List<string>() { identifier };
 
+        string dataObjectName = String.Empty;
         if (format != null)
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+
+          _graphMap = _mapping.FindGraphMap(graphName);
+          graphName = _graphMap.name;
+          dataObjectName = _graphMap.dataObjectMap;
         }
         else
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>("data");
+
+          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+          graphName = dataObject.objectName;
+          dataObjectName = dataObject.objectName;
         }
 
-        _dataObjects = _dataLayer.Get(graphName, identifiers);
+        _dataObjects = _dataLayer.Get(dataObjectName, identifiers);
 
         _projectionEngine.FullIndex = fullIndex;
 
@@ -559,13 +577,22 @@ namespace org.iringtools.adapter
 
         IList<string> index = new List<string>();
 
+        string dataObjectName = String.Empty;
         if (format != null)
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+
+          _graphMap = _mapping.FindGraphMap(graphName);
+          graphName = _graphMap.name;
+          dataObjectName = _graphMap.dataObjectMap;
         }
         else
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>("data");
+
+          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+          graphName = dataObject.objectName;
+          dataObjectName = dataObject.objectName;
         }
 
         if (limit == 0)
@@ -623,15 +650,15 @@ namespace org.iringtools.adapter
             filter.OrderExpressions.Add(orderBy);
           }
 
-          _dataObjects = _dataLayer.Get(graphName, filter, limit, start);
+          _dataObjects = _dataLayer.Get(dataObjectName, filter, limit, start);
 
-          _projectionEngine.Count = _dataLayer.GetCount(graphName, filter);
+          _projectionEngine.Count = _dataLayer.GetCount(dataObjectName, filter);
         }
         else
         {
-          _dataObjects = _dataLayer.Get(graphName, null);
+          _dataObjects = _dataLayer.Get(dataObjectName, null);
 
-          _projectionEngine.Count = _dataLayer.GetCount(graphName, null);
+          _projectionEngine.Count = _dataLayer.GetCount(dataObjectName, null);
         }
 
         _projectionEngine.FullIndex = fullIndex; 
