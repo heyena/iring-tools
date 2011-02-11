@@ -83,14 +83,15 @@ namespace ApplicationEditor
       {
 
         StringBuilder sb = new StringBuilder();
-        //sb.Append(tblPrimaryObject.Text);
-        //sb.Append(".");
+       // sb.Append(tblPrimaryObject.Text);
+       // sb.Append(".");
+        sb.Append(cbRelated.SelectedItem.ToString());
+        sb.Append(".");
         sb.Append(cbSourceProps.SelectedItem.ToString());
         sb.Append(".");
         //sb.Append(cbRelationType.SelectedItem.ToString());
         //sb.Append(".");
-        //sb.Append(cbRelated.SelectedItem.ToString());
-        //sb.Append(".");
+       
         sb.Append(cbRelatedProps.SelectedItem.ToString());
         if (!lbRelatedProps.Items.Contains(sb.ToString()))
         {

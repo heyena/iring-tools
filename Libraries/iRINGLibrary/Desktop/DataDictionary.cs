@@ -170,7 +170,10 @@ namespace org.iringtools.library
 
     [DataContract(Namespace = "http://ns.iringtools.org/library")]
     public class PropertyMap
-    {        
+    {
+        [DataMember(IsRequired = true)]
+        public string basePropertyName { get; set; }
+
         [DataMember(IsRequired = true)]
         public string dataPropertyName { get; set; }
 
