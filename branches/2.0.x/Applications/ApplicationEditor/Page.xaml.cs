@@ -173,6 +173,15 @@ namespace ApplicationEditor
                 dataObject.keyProperties.Add(key);
                 child = new TreeViewItem { Tag = key };
                 AddTreeItem(objectItem, child, lbItem, null, false);
+
+                //Added to remove error while creating and posting user defined Key
+                foreach (DataProperty _dataproperty in dataObject.dataProperties)
+                {
+                    if (_dataproperty.columnName.ToUpper() == lbItem.ToUpper())
+                    {
+                        _dataproperty.keyType = KeyType.assigned;
+                    }
+                }
               }
             }
           }
