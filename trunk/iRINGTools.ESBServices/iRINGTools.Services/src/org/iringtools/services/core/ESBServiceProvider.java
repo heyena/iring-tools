@@ -108,7 +108,7 @@ public class ESBServiceProvider
 
       Manifest crossedManifest = getCrossedManifest();
       DxiRequest dxiRequest = new DxiRequest();
-      
+       
       dxiRequest.setDataFilter(dataFilter);
       dxiRequest.setManifest(crossedManifest);
       
@@ -153,7 +153,7 @@ public class ESBServiceProvider
     return dxiList;
   }
 
-  public DataTransferObjects getDataTransferObjects(String scope, String id, DataTransferIndices dataTransferIndices)
+  public DataTransferObjects getDataTransferObjects(String scope, String id, DataTransferIndices dtis)
   {
     DataTransferObjects resultDtos = new DataTransferObjects();
     DataTransferObjects sourceDtos = null;
@@ -161,7 +161,7 @@ public class ESBServiceProvider
 
     try
     {
-      logger.debug("getDataTransferObjects(" + scope + "," + id + "," + JaxbUtil.toXml(dataTransferIndices, true) + ")");
+      logger.debug("getDataTransferObjects(" + scope + "," + id + "," + JaxbUtil.toXml(dtis, true) + ")");
 
       DataTransferObjectList resultDtoList = new DataTransferObjectList();
       resultDtos.setDataTransferObjectList(resultDtoList);
@@ -175,7 +175,7 @@ public class ESBServiceProvider
       List<DataTransferIndex> sourceDtiListItems = new ArrayList<DataTransferIndex>();
       List<DataTransferIndex> targetDtiListItems = new ArrayList<DataTransferIndex>();
 
-      for (DataTransferIndex dti : dataTransferIndices.getDataTransferIndexList().getItems())
+      for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
       {
         switch (dti.getTransferType())
         {
@@ -200,11 +200,11 @@ public class ESBServiceProvider
       {
         DxoRequest sourceDxoRequest = new DxoRequest();
         sourceDxoRequest.setManifest(crossedManifest);
-        DataTransferIndices sourceDataTransferIndices = new DataTransferIndices();
+        DataTransferIndices sourceDtis = new DataTransferIndices();
         DataTransferIndexList sourceDtiList = new DataTransferIndexList();        
         sourceDtiList.setItems(sourceDtiListItems);
-        sourceDataTransferIndices.setDataTransferIndexList(sourceDtiList);
-        sourceDxoRequest.setDataTransferIndices(sourceDataTransferIndices);
+        sourceDtis.setDataTransferIndexList(sourceDtiList);
+        sourceDxoRequest.setDataTransferIndices(sourceDtis);
 
         String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxo";
         sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDxoRequest);
@@ -255,11 +255,11 @@ public class ESBServiceProvider
       {
         DxoRequest targetDxoRequest = new DxoRequest();
         targetDxoRequest.setManifest(crossedManifest);
-        DataTransferIndices targetDataTransferIndices = new DataTransferIndices();
+        DataTransferIndices targetDtis = new DataTransferIndices();
         DataTransferIndexList targetDtiList = new DataTransferIndexList();
         targetDtiList.setItems(targetDtiListItems);
-        targetDataTransferIndices.setDataTransferIndexList(targetDtiList);
-        targetDxoRequest.setDataTransferIndices(targetDataTransferIndices);
+        targetDtis.setDataTransferIndexList(targetDtiList);
+        targetDxoRequest.setDataTransferIndices(targetDtis);
 
         String targetDtoUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxo";
         targetDtos = httpClient.post(DataTransferObjects.class, targetDtoUrl, targetDxoRequest);
@@ -315,8 +315,22 @@ public class ESBServiceProvider
           resultDtoListItems.addAll(dxoList.getDataTransferObjectList().getItems());
       }
 
-      DataTransferObjectComparator dtoc = new DataTransferObjectComparator();
-      Collections.sort(resultDtoListItems, dtoc);
+      // order result data transfer objects as requested data transfer indices
+      List<DataTransferObject> orderedDtoListItems = new ArrayList<DataTransferObject>();
+      
+      for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
+      {
+        for (DataTransferObject dto : resultDtoListItems)
+        {
+          if (dti.getIdentifier().equals(dto.getIdentifier()))
+          {
+            orderedDtoListItems.add(dto);
+            break;
+          }
+        }
+      }
+      
+      resultDtoList.setItems(orderedDtoListItems);
     }
     catch (Exception ex)
     {

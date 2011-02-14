@@ -348,7 +348,15 @@ namespace org.iringtools.adapter.datalayer
 
               try
               {
-                session.SaveOrUpdate(dataObject);
+                IQuery query = session.CreateQuery("from " + dataObject.GetType() + " where Id = ?");
+                query.SetString(0, identifier);
+                IDataObject dataObj = query.List<IDataObject>().FirstOrDefault<IDataObject>();
+
+                if (dataObj != null)
+                  session.Update(dataObject);
+                else
+                  session.Save(dataObject);
+
                 session.Flush();
                 status.Messages.Add(string.Format("Record [{0}] have been saved successfully.", identifier));
               }
