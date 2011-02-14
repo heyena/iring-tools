@@ -55,8 +55,8 @@ public class ExchangeDataModel extends DataModel
 
   public ExchangeResponse submitExchange(String serviceUri, String scope, String xid, boolean reviewed)
   {
-    String relativePath = "/" + scope + "/exchanges/" + xid;
-    DataTransferIndices dtis = getDtis(serviceUri, relativePath, null, null, null);
+    String exchangeRelativePath = "/" + scope + "/exchanges/" + xid;
+    DataTransferIndices dtis = getDtis(serviceUri, exchangeRelativePath, null, null, null);
 
     ExchangeResponse response;
     ExchangeRequest request = new ExchangeRequest();
@@ -65,23 +65,18 @@ public class ExchangeDataModel extends DataModel
 
     try
     {
-      HttpClient httpClient = new HttpClient(serviceUri + relativePath);
+      HttpClient httpClient = new HttpClient(serviceUri + exchangeRelativePath);
       response = httpClient.post(ExchangeResponse.class, "/submit", request);
 
-      // remove exchange dti cache
-      removeSessionData("dti" + relativePath);
-
-      // remove exchange logs cache
-      String xlogsKey = "xlogs" + relativePath;
+      // remove cache data related to this exchange including the app data
+      String appRelativePath = response.getReceiverScopeName() + "/" + response.getReceiverAppName() + "/"
+        + response.getReceiverGraphName();
+      
       for (String key : session.keySet())
       {
-        if (key.startsWith(xlogsKey))
+        if (key.contains(exchangeRelativePath) || key.contains(appRelativePath))
           removeSessionData(key);
       }
-
-      // remove app dti cache
-      removeSessionData("dti/" + response.getReceiverScopeName() + "/" + response.getReceiverAppName() + "/"
-          + response.getReceiverGraphName());
     }
     catch (HttpClientException ex)
     {
@@ -199,7 +194,7 @@ public class ExchangeDataModel extends DataModel
       int start, int limit)
   {
     String relativePath = "/" + scope + "/exchanges/" + xid + "/" + xtime;
-    String xlogsKey = "xlogs" + relativePath;
+    String xlogsKey = XLOGS_PREFIX + relativePath;
     ExchangeResponse response;
 
     if (session.containsKey(xlogsKey))
