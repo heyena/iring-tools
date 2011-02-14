@@ -15,27 +15,27 @@ namespace iRINGTools.SDK.CSVDataLayer
     [TestFixture]
     public class CSVDataLayerTest
     {
-        private static CustomDataLayer _csvDataLayer;
-        private static AdapterSettings _adapterSettings;
+        private NameValueCollection _settings;
+        private AdapterSettings _adapterSettings;
+        private CustomDataLayer _csvDataLayer;
 
-        [SetUp]
-        public void BeforeTest()
+        public CSVDataLayerTest()
         {
-            NameValueCollection settings = new NameValueCollection();
+            _settings = new NameValueCollection();
 
-            settings["BaseDirectoryPath"] = "C:\\iring-tools-2.0.x\\iRINGTools.SDK\\CSVDataLayer";
-            settings["XmlPath"] = ".\\";
-            settings["ProjectName"] = "12345_000";
-            settings["ApplicationName"] = "CSV";
+            _settings["BaseDirectoryPath"] = "C:\\iring-tools-2.0.x\\iRINGTools.SDK\\CSVDataLayer";
+            _settings["XmlPath"] = ".\\";
+            _settings["ProjectName"] = "12345_000";
+            _settings["ApplicationName"] = "CSV";
+
+            Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
             _adapterSettings = new AdapterSettings();
-            _adapterSettings.AppendSettings(settings);
-
-            Directory.SetCurrentDirectory(_adapterSettings["BaseDirectoryPath"]);
+            _adapterSettings.AppendSettings(_settings);
 
             string appSettingsPath = String.Format("{0}12345_000.CSV.config",
-                  _adapterSettings["XmlPath"]
-                );
+                _adapterSettings["XmlPath"]
+            );
 
             if (File.Exists(appSettingsPath))
             {
