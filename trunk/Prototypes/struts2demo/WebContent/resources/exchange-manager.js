@@ -190,7 +190,6 @@ function loadPageDto(type, action, context, label){
           id: 'bc-' + label,
           cls: 'bc-container',
           padding: '5',
-          bodyStyle: 'background-color:#fcfcfc',
           items: [{
             xtype: 'box',
             autoEl: {tag: 'span', html: '<a class="breadcrumb" href="#" onclick="navigate(0)">' + 
@@ -212,7 +211,7 @@ function loadPageDto(type, action, context, label){
             items: [{
               id: 'tb-exchange',
               xtype: 'button',
-              tooltip: 'Exchange',
+              tooltip: 'Send data to target endpoint',
               icon: 'resources/images/exchange.png',
               handler: function(){
                 var xidIndex = context.indexOf('&xid=');
@@ -367,11 +366,11 @@ function showIndividualInfo(individual, relatedClasses){
   var dtoContentPane = dtoTab.items.map['dto-' + label];
   var dtoGrid = dtoContentPane.getLayout().activeItem;
   
-  var classItemPane = new Ext.Panel({
+  var classItemPane = new Ext.Container({
     region: 'north',
     layout: 'fit',
     height: 46,
-    bodyStyle: 'background-color:#eef',
+    cls: 'class-badge',
     html: '<div style="width:60px;float:left"><img style="margin:2px 15px 2px 5px" src="resources/images/class-badge-large.png"/></div>' +
           '<div style="width:100%;height:100%;padding-top:8px">' + individual + '<br/>' + dtoGrid.description + '</div>'
   });
@@ -492,7 +491,7 @@ function submitExchange(userResponse) {
 }
 
 function showDialog(width, height, title, message, buttons, callback){
-  var style = 'style="width:' + width + 'px;height:' + height + 'px;border:1px solid #8EA4C1;overflow:auto"';
+  var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
   
   Ext.Msg.show({
     title: title,

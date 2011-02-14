@@ -51,9 +51,11 @@ public class DataModel
 
   private static final Logger logger = Logger.getLogger(DataModel.class);
   
-  protected String FULL_DTI_KEY_PREFIX = "dti-full";
-  protected String PART_DTI_KEY_PREFIX = "dti-part";
-  protected String FILTER_KEY_PREFIX = "filter-key";
+  protected String DTI_PREFIX = "dti-";
+  protected String XLOGS_PREFIX = "xlogs-";
+  protected String FULL_DTI_KEY_PREFIX = DTI_PREFIX + "full";
+  protected String PART_DTI_KEY_PREFIX = DTI_PREFIX + "part";
+  protected String FILTER_KEY_PREFIX = DTI_PREFIX + "filter-key";
   
   protected Map<String, Object> session;
 
