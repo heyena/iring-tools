@@ -42,4 +42,10 @@
     </jaxrs:serviceBeans>
   </jaxrs:server>
   
+    <jaxrs:server id="IdGenService" address="/idgen" >
+    <jaxrs:serviceBeans>
+      <bean class="org.iringtools.services.IDGeneratorService" />
+    </jaxrs:serviceBeans>
+  </jaxrs:server>
+  
 </beans>
