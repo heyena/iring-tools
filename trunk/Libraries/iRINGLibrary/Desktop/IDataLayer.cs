@@ -38,8 +38,6 @@ namespace org.iringtools.library
     object GetPropertyValue(string propertyName);
 
     void SetPropertyValue(string propertyName, object value);
-
-    IList<IDataObject> GetRelatedObjects(string relatedObjectType);
   }
 
   public interface IDataLayer
