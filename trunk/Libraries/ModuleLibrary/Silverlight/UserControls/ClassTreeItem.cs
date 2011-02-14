@@ -193,7 +193,7 @@ namespace org.iringtools.informationmodel.usercontrols
           Entity entity = new Entity
           {
             Label = names[0] ?? "[null]",
-            Repository = "UnKnown",
+            Repository = ClassDefinition.repositoryName,
             Lang = language,
             Uri = classificationDetails.reference,
           };
