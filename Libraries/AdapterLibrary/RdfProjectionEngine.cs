@@ -113,9 +113,17 @@ namespace org.iringtools.adapter.projection
             var rootClassTemplatesMap = _classIdentifiers.First();
             string rootClassId = rootClassTemplatesMap.Key;
             List<string> rootClassInstances = rootClassTemplatesMap.Value;
-            int classInstanceCount = rootClassInstances.Count;
-            _dataObjects = _dataLayer.Create(_graphMap.dataObjectName, new string[classInstanceCount]);
-            _relatedObjects = new Dictionary<string, IList<IDataObject>>[classInstanceCount];
+            
+            List<string> classInstances = _classIdentifiers.Values.First();
+            List<string> dataObjectIdentifiers = new List<string>();
+
+            foreach (string classInstance in classInstances)
+            {
+              dataObjectIdentifiers.Add(classInstance.Substring(classInstance.LastIndexOf("/") + 1));
+            }
+
+            _dataObjects = _dataLayer.Create(_graphMap.dataObjectName, dataObjectIdentifiers);
+            _relatedObjects = new Dictionary<string, IList<IDataObject>>[dataObjectIdentifiers.Count];
             _relatedObjectPaths = new List<string>();
 
             if (_memoryStore != null)
