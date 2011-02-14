@@ -329,6 +329,10 @@ namespace org.ids_adi.qmxf
     [XmlAttribute]
     public string label { get; set; }
 
+    [DataMember(EmitDefaultValue = false)]
+    [XmlAttribute]
+    public string lang { get; set; }
+
     public static IComparer<Classification> sortAscending()
     {
       return (IComparer<Classification>)new sortAscendingHelper();

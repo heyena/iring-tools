@@ -88,6 +88,22 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetPart8Classification</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetPart8Classification.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetSpecialization</key>
     <query>
       <bindings>

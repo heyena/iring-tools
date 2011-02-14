@@ -51,22 +51,9 @@ namespace org.iringtools.refdata
     private const string REPOSITORIES_FILE_NAME = "Repositories.xml";
     private const string QUERIES_FILE_NAME = "Queries.xml";
 
-    //private const string rdlUri = "http://rdl.rdlfacade.org/data#";
-    //private const string tplUri = "http://tpl.rdlfacade.org/data#";
-
-    //private const string egPrefix = "PREFIX eg: <http://example.org/data#>";
-    //private const string rdlPrefix = "PREFIX rdl: <http://rdl.rdlfacade.org/data#>";
-    //private const string tplPrefix = "PREFIX tpl: <http://tpl.rdlfacade.org/data#>";
-    //private const string rdfPrefix = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>";
-    //private const string rdfsPrefix = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>";
-    //private const string xsdPrefix = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>";
-    //private const string dmPrefix = "PREFIX dm: <http://dm.rdlfacade.org/data#>";
-    //private const string p8dm = "PREFIX p8dm: <http://standards.tc184-sc4.org/iso/15926/-8/data-model#>";
-    //private const string owlPrefix = "PREFIX owl: <http://www.w3.org/2002/07/owl#>";
-    //private const string owl2xmlPrefix = "PREFIX owl2xml: <http://www.w3.org/2006/12/owl2-xml#>";
-    //private const string p8Prefix = "PREFIX p8: <http://standards.tc184-sc4.org/iso/15926/-8/template-model#>";
-    //private const string templatesPrefix = "PREFIX templates: <http://standards.tc184-sc4.org/iso/15926/-8/templates#>";
     private NamespaceMapper nsMap = new NamespaceMapper();
+    private bool qn = false;
+    private string qName = string.Empty;
     private const string insertData = "INSERT DATA {";
     private const string deleteData = "DELETE DATA {";
     private const string deleteWhere = "DELETE WHERE {";
@@ -368,25 +355,34 @@ namespace org.iringtools.refdata
         string relativeUri = String.Empty;
 
         List<Classification> classifications = new List<Classification>();
+        Query getClassification;
+        QueryBindings queryBindings; 
 
-
-        Query getClassification = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassification").Query;
-        QueryBindings queryBindings = getClassification.Bindings;
-
-        sparql = ReadSPARQL(getClassification.FileName);
-        sparql = sparql.Replace("param1", id);
-
-        if (rep == null)
+        foreach (Repository repository in _repositories)
         {
-          foreach (Repository repository in _repositories)
+          if (rep != null)
+            if (rep.Name != repository.Name) continue;
+
+          switch (rep.RepositoryType)
           {
-            classifications = ProcessClassifications(repository, sparql, queryBindings);
-          }
-        }
-        else
-        {
-          classifications = ProcessClassifications(rep, sparql, queryBindings);
+            case RepositoryType.Camelot:
+            case RepositoryType.RDSWIP:
+              getClassification = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassification").Query;
+              queryBindings = getClassification.Bindings;
 
+              sparql = ReadSPARQL(getClassification.FileName);
+              sparql = sparql.Replace("param1", id);
+              classifications = ProcessClassifications(rep, sparql, queryBindings);
+              break;
+            case RepositoryType.Part8:
+              getClassification = (Query)_queries.FirstOrDefault(c => c.Key == "GetPart8Classification").Query;
+              queryBindings = getClassification.Bindings;
+
+              sparql = ReadSPARQL(getClassification.FileName);
+              sparql = sparql.Replace("param1", id);
+              classifications = ProcessClassifications(rep, sparql, queryBindings);
+              break;
+          }
         }
 
         return classifications;
@@ -403,6 +399,7 @@ namespace org.iringtools.refdata
       SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
       List<Classification> classifications = new List<Classification>();
       List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+      List<string> names = new List<string>();
 
       foreach (Dictionary<string, string> result in results)
       {
@@ -410,9 +407,14 @@ namespace org.iringtools.refdata
         Classification classification = new Classification();
         string uri = String.Empty;
         string label = String.Empty;
+        string lang = string.Empty;
 
         if (result.ContainsKey("uri"))
         {
+          string pref = nsMap
+              .GetPrefix(new Uri(result["uri"]
+              .Substring(0, result["uri"].IndexOf("#") + 1)));
+          if (pref.Equals("owl") || pref.Equals("dm")) continue;
           uri = result["uri"];
           classification.reference = uri;
         }
@@ -420,9 +422,16 @@ namespace org.iringtools.refdata
         if (result.ContainsKey("label"))
           label = result["label"];
         else
-          label = GetLabel(uri).Label;
-
+        {
+          names = GetLabel(uri).Label.Split('@').ToList();
+          label = names[0];
+          if (names.Count == 1)
+            lang = defaultLanguage;
+          else
+            lang = names[names.Count - 1];
+        }
         classification.label = label;
+        classification.lang = lang;
         Utility.SearchAndInsert(classifications, classification, Classification.sortAscending());
       }
 
@@ -515,6 +524,8 @@ namespace org.iringtools.refdata
 
               string uri = String.Empty;
               string label = String.Empty;
+              string lang = string.Empty;
+
               if (result.ContainsKey("uri"))
               {
                 uri = result["uri"];
@@ -522,7 +533,12 @@ namespace org.iringtools.refdata
               }
               if (result.ContainsKey("label"))
               {
-                label = result["label"];
+                names = result["label"].Split('@').ToList();
+                label = names[0];
+                if (names.Count == 1)
+                  lang = defaultLanguage;
+                else
+                  lang = names[names.Count - 1];
               }
               else
               {
@@ -530,6 +546,7 @@ namespace org.iringtools.refdata
               }
 
               specialization.label = label;
+              specialization.lang = lang;
               Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
               //specializations.Add(specialization); 
             }
@@ -597,13 +614,14 @@ namespace org.iringtools.refdata
             if (rep.Name != repository.Name) continue;
 
           SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
-
+          Classification classification = null;
           List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
           classifications = new List<Classification>();
           specializations = new List<Specialization>();
 
           foreach (Dictionary<string, string> result in results)
           {
+
             classDefinition = new ClassDefinition();
 
 
@@ -613,22 +631,24 @@ namespace org.iringtools.refdata
             description = new Description();
             status = new QMXFStatus();
 
+            if (result.ContainsKey("type"))
+            {
+              Uri typeName = new Uri(result["type"].Substring(0, result["type"].IndexOf("#") + 1));
+              string pref = nsMap.GetPrefix(typeName);
+              if (pref == "dm")
+                classDefinition.entityType = new EntityType { reference = result["type"] };
+            //  else if(repository.RepositoryType == RepositoryType.Part8)
+            //    continue;
+            }
+
             if (result.ContainsKey("label"))
             {
               names = result["label"].Split('@').ToList();
               name.value = names[0];
               if (names.Count == 1)
                 name.lang = defaultLanguage;
-              else 
-                name.lang = names[names.Count-1];
-            }
-            if (result.ContainsKey("type"))
-            {
-              Uri typeName = new Uri(result["type"].Substring(0,result["type"].IndexOf("#")+1));
-              if(nsMap.GetPrefix(typeName) == "dm")
-                classDefinition.entityType = new EntityType { reference = result["type"] };
-              
-               
+              else
+                name.lang = names[names.Count - 1];
             }
 
             //legacy properties
@@ -639,7 +659,7 @@ namespace org.iringtools.refdata
               if (names.Count == 1)
                 description.lang = defaultLanguage;
               else
-                description.lang = names[names.Count-1];
+                description.lang = names[names.Count - 1];
             }
             // description.value = result["definition"];
 
@@ -660,7 +680,7 @@ namespace org.iringtools.refdata
               if (names.Count == 1)
                 description.lang = defaultLanguage;
               else
-                description.lang = names[names.Count-1];
+                description.lang = names[names.Count - 1];
             }
             if (result.ContainsKey("authority"))
               status.authority = result["authority"];
@@ -678,12 +698,14 @@ namespace org.iringtools.refdata
 
             classifications = GetClassifications(id, repository);
             specializations = GetSpecializations(id, repository);
-            classDefinition.classification = classifications;
-            classDefinition.specialization = specializations;
-
+            if (classifications.Count > 0)
+              classDefinition.classification = classifications;
+            if (specializations.Count > 0)
+              classDefinition.specialization = specializations;
           }
           if (classDefinition != null)
             qmxf.classDefinitions.Add(classDefinition);
+
 
         }
         return qmxf;
@@ -1156,6 +1178,7 @@ namespace org.iringtools.refdata
     {
       try
       {
+
         string rangeSparql = String.Empty;
         string relativeUri = String.Empty;
 
@@ -1173,124 +1196,155 @@ namespace org.iringtools.refdata
 
         List<RoleQualification> roleQualifications = new List<RoleQualification>();
 
-        RefDataEntities rangeResultEntities = new RefDataEntities();
-        RefDataEntities referenceResultEntities = new RefDataEntities();
-        RefDataEntities valueResultEntities = new RefDataEntities();
 
-        Query getRangeRestriction = (Query)_queries.FirstOrDefault(c => c.Key == "GetRangeRestriction").Query;
-        QueryBindings rangeRestrictionBindings = getRangeRestriction.Bindings;
-
-        Query getReferenceRestriction = (Query)_queries.FirstOrDefault(c => c.Key == "GetReferenceRestriction").Query;
-        QueryBindings referenceRestrictionBindings = getReferenceRestriction.Bindings;
-
-        Query getValueRestriction = (Query)_queries.FirstOrDefault(c => c.Key == "GetValueRestriction").Query;
-        QueryBindings valueRestrictionBindings = getValueRestriction.Bindings;
-
-        rangeSparql = ReadSPARQL(getRangeRestriction.FileName);
-        rangeSparql = rangeSparql.Replace("param1", id);
-
-        referenceSparql = ReadSPARQL(getReferenceRestriction.FileName);
-        referenceSparql = referenceSparql.Replace("param1", id);
-
-        valueSparql = ReadSPARQL(getValueRestriction.FileName);
-        valueSparql = valueSparql.Replace("param1", id);
 
         foreach (Repository repository in _repositories)
         {
           if (rep != null)
             if (rep.Name != repository.Name) continue;
-
-          SPARQLResults rangeSparqlResults = QueryFromRepository(repository, rangeSparql);
-          SPARQLResults referenceSparqlResults = QueryFromRepository(repository, referenceSparql);
-          SPARQLResults valueSparqlResults = QueryFromRepository(repository, valueSparql);
-
-          List<Dictionary<string, string>> rangeBindingResults = BindQueryResults(rangeRestrictionBindings, rangeSparqlResults);
-          List<Dictionary<string, string>> referenceBindingResults = BindQueryResults(referenceRestrictionBindings, referenceSparqlResults);
-          List<Dictionary<string, string>> valueBindingResults = BindQueryResults(valueRestrictionBindings, valueSparqlResults);
-
-          List<Dictionary<string, string>> combinedResults = MergeLists(MergeLists(rangeBindingResults, referenceBindingResults), valueBindingResults);
-
-          foreach (Dictionary<string, string> combinedResult in combinedResults)
+          switch (rep.RepositoryType)
           {
+            case RepositoryType.Camelot:
+            case RepositoryType.RDSWIP:
 
-            RoleQualification roleQualification = new RoleQualification();
+              RefDataEntities rangeResultEntities = new RefDataEntities();
+              RefDataEntities referenceResultEntities = new RefDataEntities();
+              RefDataEntities valueResultEntities = new RefDataEntities();
 
+              Query getRangeRestriction = (Query)_queries.FirstOrDefault(c => c.Key == "GetRangeRestriction").Query;
+              QueryBindings rangeRestrictionBindings = getRangeRestriction.Bindings;
 
+              Query getReferenceRestriction = (Query)_queries.FirstOrDefault(c => c.Key == "GetReferenceRestriction").Query;
+              QueryBindings referenceRestrictionBindings = getReferenceRestriction.Bindings;
 
-            string uri = String.Empty;
-            if (combinedResult.ContainsKey("qualifies"))
-            {
-              uri = combinedResult["qualifies"];
-              roleQualification.qualifies = uri;
-              roleQualification.identifier = Utility.GetIdFromURI(uri);
-            }
-            if (combinedResult.ContainsKey("name"))
-            {
-              string nameValue = combinedResult["name"];
+              Query getValueRestriction = (Query)_queries.FirstOrDefault(c => c.Key == "GetValueRestriction").Query;
+              QueryBindings valueRestrictionBindings = getValueRestriction.Bindings;
 
-              if (nameValue == null)
+              rangeSparql = ReadSPARQL(getRangeRestriction.FileName);
+              rangeSparql = rangeSparql.Replace("param1", id);
+
+              referenceSparql = ReadSPARQL(getReferenceRestriction.FileName);
+              referenceSparql = referenceSparql.Replace("param1", id);
+
+              valueSparql = ReadSPARQL(getValueRestriction.FileName);
+              valueSparql = valueSparql.Replace("param1", id);
+              SPARQLResults rangeSparqlResults = QueryFromRepository(repository, rangeSparql);
+              SPARQLResults referenceSparqlResults = QueryFromRepository(repository, referenceSparql);
+              SPARQLResults valueSparqlResults = QueryFromRepository(repository, valueSparql);
+
+              List<Dictionary<string, string>> rangeBindingResults = BindQueryResults(rangeRestrictionBindings, rangeSparqlResults);
+              List<Dictionary<string, string>> referenceBindingResults = BindQueryResults(referenceRestrictionBindings, referenceSparqlResults);
+              List<Dictionary<string, string>> valueBindingResults = BindQueryResults(valueRestrictionBindings, valueSparqlResults);
+
+              List<Dictionary<string, string>> combinedResults = MergeLists(MergeLists(rangeBindingResults, referenceBindingResults), valueBindingResults);
+
+              foreach (Dictionary<string, string> combinedResult in combinedResults)
               {
-                nameValue = GetLabel(uri).Label;
+
+                RoleQualification roleQualification = new RoleQualification();
+                string uri = String.Empty;
+                if (combinedResult.ContainsKey("qualifies"))
+                {
+                  uri = combinedResult["qualifies"];
+                  roleQualification.qualifies = uri;
+                  roleQualification.identifier = Utility.GetIdFromURI(uri);
+                }
+                if (combinedResult.ContainsKey("name"))
+                {
+                  string nameValue = combinedResult["name"];
+
+                  if (nameValue == null)
+                  {
+                    nameValue = GetLabel(uri).Label;
+                  }
+                  names = nameValue.Split('@').ToList();
+
+                  QMXFName name = new QMXFName();
+                  if (names.Count > 1)
+                    name.lang = names[names.Count - 1];
+                  else
+                    name.lang = defaultLanguage;
+
+                  name.value = names[0];
+
+                  roleQualification.name.Add(name);
+                }
+                else
+                {
+                  string nameValue = GetLabel(uri).Label;
+
+                  if (nameValue == String.Empty)
+                    nameValue = "tpl:" + Utility.GetIdFromURI(uri);
+
+                  QMXFName name = new QMXFName();
+                  names = nameValue.Split('@').ToList();
+
+                  if (names.Count > 1)
+                    name.lang = names[names.Count - 1];
+                  else
+                    name.lang = defaultLanguage;
+
+                  name.value = names[0];
+
+                  roleQualification.name.Add(name);
+                }
+                if (combinedResult.ContainsKey("range"))
+                {
+                  roleQualification.range = combinedResult["range"];
+                }
+                if (combinedResult.ContainsKey("reference"))
+                {
+                  QMXFValue value = new QMXFValue
+                  {
+                    reference = combinedResult["reference"]
+                  };
+
+                  roleQualification.value = value;
+                }
+                if (combinedResult.ContainsKey("value"))
+                {
+                  QMXFValue value = new QMXFValue
+                  {
+                    text = combinedResult["value"],
+                    As = combinedResult["value_dataType"]
+                  };
+
+                  roleQualification.value = value;
+                }
+                Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
               }
-              names = nameValue.Split('@').ToList();
+              break;
+            case RepositoryType.Part8:
+              RefDataEntities part8Entities = new RefDataEntities();
+              Query getPart8Roles = (Query)_queries.FirstOrDefault(c => c.Key == "GetPart8Roles").Query;
+              QueryBindings getPart8RolesBindings = getPart8Roles.Bindings;
 
-              QMXFName name = new QMXFName();
-              if (names.Count > 1)
-                name.lang = names[names.Count - 1];
-              else
-                name.lang = defaultLanguage;
-
-              name.value = names[0];
-
-              roleQualification.name.Add(name);
-            }
-            else
-            {
-              string nameValue = GetLabel(uri).Label;
-
-              if (nameValue == String.Empty)
-                nameValue = "tpl:" + Utility.GetIdFromURI(uri);
-
-              QMXFName name = new QMXFName();
-              names = nameValue.Split('@').ToList();
-
-              if (names.Count > 1)
-                name.lang = names[names.Count - 1];
-              else
-                name.lang = defaultLanguage;
-
-              name.value = names[0];
-
-              roleQualification.name.Add(name);
-            }
-            if (combinedResult.ContainsKey("range"))
-            {
-              roleQualification.range = combinedResult["range"];
-            }
-            if (combinedResult.ContainsKey("reference"))
-            {
-              QMXFValue value = new QMXFValue
+              string part8RolesSparql = ReadSPARQL(getPart8Roles.FileName);
+              part8RolesSparql = part8RolesSparql.Replace("param1", id);
+              SPARQLResults part8RolesResults = QueryFromRepository(repository, part8RolesSparql);
+              List<Dictionary<string, string>> part8RolesBindingResults = BindQueryResults(getPart8RolesBindings, part8RolesResults);
+              foreach (Dictionary<string, string> result in part8RolesBindingResults)
               {
-                reference = combinedResult["reference"]
-              };
+                if (result.ContainsKey("comment"))
+                { }
 
-              roleQualification.value = value;
-            }
-            if (combinedResult.ContainsKey("value"))
-            {
-              QMXFValue value = new QMXFValue
-              {
-                text = combinedResult["value"],
-                As = combinedResult["value_dataType"]
-              };
+                if (result.ContainsKey("type"))
+                { }
 
-              roleQualification.value = value;
-            }
-            Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
+                if (result.ContainsKey("label"))
+                { }
+
+                if (result.ContainsKey("index"))
+                { }
+
+                if (result.ContainsKey("role"))
+                { }
+                RoleQualification roleQualification = new RoleQualification();
+              }
+              break;
           }
 
         }
-
         return roleQualifications;
       }
       catch (Exception e)
@@ -2511,7 +2565,6 @@ namespace org.iringtools.refdata
             string id = string.Empty;
             string label = string.Empty;
             string language = string.Empty;
-            string qName = string.Empty;
             //string description = string.Empty;
             string generatedTempId = string.Empty;
             string templateName = string.Empty;
@@ -2866,6 +2919,7 @@ namespace org.iringtools.refdata
     {
       Response response = new Response();
       response.Level = StatusLevel.Success;
+      bool qn = false;
 
       try
       {
@@ -2968,8 +3022,8 @@ namespace org.iringtools.refdata
                   if (existingTemplate.roleDefinition.Count != template.roleDefinition.Count)
                   {
                     hasDeletes = true;
-                    sparqlStmts.AppendLine(string.Format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, existingTemplate.roleDefinition.Count));
-                    sparqlAdd.AppendLine(string.Format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, template.roleDefinition.Count));
+                    //   sparqlStmts.AppendLine(string.Format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, existingTemplate.roleDefinition.Count));
+                    //    sparqlAdd.AppendLine(string.Format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, template.roleDefinition.Count));
                   }
 
                   index = 1;
@@ -3007,8 +3061,8 @@ namespace org.iringtools.refdata
                           //index
                           if (existingRole.designation.value != index.ToString())
                           {
-                            sparqlStmts.AppendLine(string.Format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .", roleIdentifier, existingRole.designation.value));
-                            sparqlAdd.AppendLine(string.Format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .", roleIdentifier, name.value, index));
+                            //                  sparqlStmts.AppendLine(string.Format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .", roleIdentifier, existingRole.designation.value));
+                            //                 sparqlAdd.AppendLine(string.Format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .", roleIdentifier, name.value, index));
                           }
                         }
                       }
@@ -3045,14 +3099,17 @@ namespace org.iringtools.refdata
                       }
 
                       sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:type p8:TemplateRoleDescription ;", roleID));// could get roleIndex from QMXF?
-                      sparqlAdd.AppendLine(string.Format("rdfs:label \"{0}{1}\"^^xsd:string ;", roleLabel, language));
-                      sparqlAdd.AppendLine(string.Format("p8:valRoleIndex {0} ;", index));
-                      sparqlAdd.AppendLine(string.Format("p8:hasTemplate tpl:{0} ;", identifier));
+                      sparqlAdd.AppendLine(string.Format("  rdfs:label \"{0}{1}\"^^xsd:string ;", roleLabel, language));
+                      sparqlAdd.AppendLine(string.Format("  p8:valRoleIndex {0} ;", index));
+                      sparqlAdd.AppendLine(string.Format("  p8:hasTemplate tpl:{0} ;", identifier));
 
                       if (!string.IsNullOrEmpty(role.range))
-                        sparqlAdd.AppendLine(string.Format("  p8:hasRoleFillerType rdl:{0} ;", role.range));
+                      {
+                        qn = nsMap.ReduceToQName(role.range, out qName);
+                        sparqlAdd.AppendLine(string.Format("  p8:hasRoleFillerType {0} ;", qName));
+                      }
 
-                      sparqlAdd.AppendLine(string.Format("p8:hasRole rdl:{0} .", roleID));
+                      sparqlAdd.AppendLine(string.Format("  p8:hasRole rdl:{0} .", roleID));
 
                       //sparqlStr.AppendLine("  p8:hasRoleFillerType " + range + " ;");
                       #endregion
@@ -3136,10 +3193,10 @@ namespace org.iringtools.refdata
                   }
                 }
 
-                sparqlAdd.AppendLine(string.Format("  tpl:TemplateDescription_of_{0} rdf:type p8:TemplateDescription ;", label));
-                sparqlAdd.AppendLine(string.Format("  rdfs:label \"TemplateDescription_of_{0}{1}\"^^xsd:string ;", label, language));
+                sparqlAdd.AppendLine(string.Format("  tpl:{0} rdf:type p8:TemplateDescription ;", identifier));
+                sparqlAdd.AppendLine(string.Format("  rdfs:label \"{0}{1}\"^^xsd:string ;", label, language));
                 sparqlAdd.AppendLine(string.Format("  p8:valNumberOfRoles {0} ;", template.roleDefinition.Count));
-                sparqlAdd.AppendLine(string.Format("  p8:hasTemplate tpl:{0} .", identifier));
+                // sparqlAdd.AppendLine(string.Format("  p8:hasTemplate tpl:{0} .", identifier));
 
                 foreach (RoleDefinition role in template.roleDefinition)
                 {
@@ -3169,11 +3226,11 @@ namespace org.iringtools.refdata
                     roleID = Utility.GetIdFromURI(role.identifier);
                   }
 
-                  sparqlAdd.AppendLine(string.Format("  tpl:TemplateRoleDescription_of_{0}_{1} rdf:type p8:TemplateRoleDescription ;", label, roleLabel));// could get roleIndex from QMXF?
-                  sparqlAdd.AppendLine(string.Format("  rdfs:label \"TemplateRoleDescription_of_{0}_{1}{2}\"^^xsd:string ;", label, roleLabel, language));
+                  sparqlAdd.AppendLine(string.Format("  tpl:{0} rdf:type p8:TemplateRoleDescription ;", roleID));// could get roleIndex from QMXF?
+                  sparqlAdd.AppendLine(string.Format("  rdfs:label \"{0}{1}\"^^xsd:string ;", roleLabel, language));
                   sparqlAdd.AppendLine(string.Format("  p8:valRoleIndex {0} ;", ++roleCount));
-                  sparqlAdd.AppendLine(string.Format("  p8:hasTemplate tpl:{0} ;", identifier));
-                  sparqlAdd.AppendLine(string.Format("  p8:hasRole tpl:{0} .", roleID));
+                  sparqlAdd.AppendLine(string.Format("  p8:hasTemplate tpl:{0} .", identifier));
+                  sparqlAdd.AppendLine(string.Format("  tpl:{0} p8:hasRole tpl:{1} .", identifier, roleID));
                   ///TODO
                   //need to work out how to get id for this
                   //  sparqlAdd.AppendLine("  p8:hasRoleFillerType " + range + " ;");
@@ -3205,7 +3262,6 @@ namespace org.iringtools.refdata
               string id = string.Empty;
               string label = string.Empty;
               string language = string.Empty;
-              string qName = string.Empty;
               string generatedTempId = string.Empty;
               string templateName = string.Empty;
               string roleDefinition = string.Empty;
@@ -3263,12 +3319,12 @@ namespace org.iringtools.refdata
 
                   sparqlStr.Append(prefix);
                   sparqlStr.AppendLine(insertData);
-                  sparqlStr.AppendLine(string.Format("  tpl:{0} rdf:type owl:class ;", ID));
+                  sparqlStr.AppendLine(string.Format("  tpl:{0} rdf:type owl:class .", ID));
 
                   int descrCount = template.description.Count;
 
-                  sparqlStr.AppendLine(string.Format("  rdfs:label \"{0}{1}\"^^xsd:string ;", label, language));
-                  sparqlStr.AppendLine("  rdf:type p8:Template ;");
+                  sparqlStr.AppendLine(string.Format("  tpl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .", ID, label, language));
+                  sparqlStr.AppendLine(string.Format("  tpl:{0}  rdf:type p8:Template .", ID));
 
                   foreach (Description descr in template.description)
                   {
@@ -3282,18 +3338,15 @@ namespace org.iringtools.refdata
                       else
                         language = "@" + descr.lang;
 
-                      if (--descrCount > 0)
-                        sparqlStr.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string ;", descr.value.Split('@')[0], language));
-                      else
-                        sparqlStr.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string .", descr.value.Split('@')[0], language));
+                      sparqlStr.AppendLine(string.Format("  tpl:{0}  rdfs:comment \"{0}{1}\"^^xsd:string .", ID, descr.value.Split('@')[0], language));
                     }
 
                   }
 
-                  sparqlStr.AppendLine(string.Format("  tpl:TemplateDescription_of_{0} rdf:type p8:TemplateDescription ;", label));
-                  sparqlStr.AppendLine(string.Format("  rdfs:label \"TemplateDescription_of_{0}{1}\"^^xsd:string ;", label, language));
-                  sparqlStr.AppendLine(string.Format("  p8:valNumberOfRoles {0} ;", template.roleQualification.Count));
-                  sparqlStr.AppendLine(string.Format("  p8:hasTemplate tpl:{0} .", ID));
+                  sparqlStr.AppendLine(string.Format("  tpl:{0}  rdf:type p8:TemplateDescription .", ID));
+                  sparqlStr.AppendLine(string.Format("  tpl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .", ID, label, language));
+                  sparqlStr.AppendLine(string.Format("  tpl:{0}  p8:valNumberOfRoles {1} .", ID, template.roleQualification.Count));
+                  // sparqlStr.AppendLine(string.Format("  p8:hasTemplate tpl:{0} .", ID));
 
                   sparqlStr.AppendLine("}");
 
@@ -3306,12 +3359,12 @@ namespace org.iringtools.refdata
                     sparqlStr.Append(prefix);
                     sparqlStr.AppendLine(insertData);
 
-                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdfs:subClassOf {1} ;", ID, specialization));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdfs:subClassOf {1} .", ID, specialization));
 
-                    sparqlStr.AppendLine(string.Format("  tpl:TemplateSpecialization_of_{0}_to_{1} rdf:type p8:TemplateSpecialization ;", spec.label.Split('@')[0], label));
-                    sparqlStr.AppendLine(string.Format("  rdfs:label \"TemplateSpecialization_of_{0}_to_{1}{2}\"^^xds:string ;", spec.label.Split('@')[0], label, language));
-                    sparqlStr.AppendLine(string.Format("  p8:hasSuperTemplate {0} ;", specialization));
-                    sparqlStr.AppendLine(string.Format("  p8:hasSubTemplate tpl:{0} .", ID));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdf:type p8:TemplateSpecialization .", specialization));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", specialization, spec.label.Split('@')[0], language));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasSuperTemplate tpl:{1} .", specialization, ID));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasSubTemplate tpl:{1} .", ID, specialization));
                     sparqlStr.AppendLine("}");
 
                     response = PostToRepository(repository, sparqlStr.ToString());
@@ -3327,7 +3380,7 @@ namespace org.iringtools.refdata
                     if (string.IsNullOrEmpty(role.name.FirstOrDefault().lang))
                       language = "@" + defaultLanguage;
                     else
-                      language = role.name.FirstOrDefault().lang;
+                      language = "@" + role.name.FirstOrDefault().lang;
 
                     genName = "Role qualification " + roleLabel;
                     if (string.IsNullOrEmpty(role.identifier))
@@ -3347,13 +3400,23 @@ namespace org.iringtools.refdata
                     sparqlStr = new StringBuilder();
                     sparqlStr.Append(prefix);
                     sparqlStr.AppendLine(insertData);
-                    sparqlStr.AppendLine(string.Format("  tpl:TemplateRoleDescription_of_{0}_{1} rdf:type p8:TemplateRoleDescription ;", label, roleLabel));// could get roleIndex from QMXF?
-                    sparqlStr.AppendLine(string.Format("  rdfs:label \"TemplateRoleDescription_of_{0}_{1}{2}\"^^xsd:string ;", label, roleLabel, language));
-                    sparqlStr.AppendLine(string.Format("  rdfs:label \"{1}{2}\"^^xsd:string ;", roleLabel, language));
-                    sparqlStr.AppendLine(string.Format("  p8:valRoleIndex {0} ;", ++roleCount));
-                    sparqlStr.AppendLine(string.Format("  p8:hasTemplate tpl:{0} ;", ID));
-                    //sparqlStr.AppendLine("  p8:hasRoleFillerType " + range + " ;");
-                    sparqlStr.AppendLine(string.Format("  p8:hasRole tpl:{0} .", roleID));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdf:type p8:TemplateRoleDescription .", roleID));// could get roleIndex from QMXF?
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", roleID, roleLabel, language));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0}  p8:valRoleIndex {1} .", roleID, ++roleCount));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0}  p8:hasTemplate tpl:{1} .", roleID, ID));
+                    if (!string.IsNullOrEmpty(role.range))
+                    {
+                      qn = nsMap.ReduceToQName(role.range, out qName);
+                      if (qn)
+                        sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
+                    }
+                    if (role.value != null)
+                    {
+                      qn = nsMap.ReduceToQName(role.value.reference, out qName);
+                      if (qn)
+                        sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
+                    }
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasRole tpl:{1} .", ID, roleID));
                     sparqlStr.AppendLine("}");
 
                     response = PostToRepository(repository, sparqlStr.ToString());
@@ -3381,7 +3444,7 @@ namespace org.iringtools.refdata
 
                 label = td.name[0].value.Split('@')[0];
 
-                sparqlStr.AppendLine(string.Format(" tpl:TemplateDescription_of_{0} rdf:type p8:TemplateDescription ;", label));
+                sparqlStr.AppendLine(string.Format(" tpl:{0} rdf:type p8:TemplateDescription ;", identifier));
                 sparqlStr.AppendLine(" ?property ?value . ");
 
                 foreach (RoleDefinition role in td.roleDefinition)
@@ -3398,7 +3461,7 @@ namespace org.iringtools.refdata
                   sparqlStr = new StringBuilder();
                   sparqlStr.Append(prefix);
                   sparqlStr.AppendLine(deleteData);
-                  sparqlStr.AppendLine(string.Format("  tpl:TemplateRoleDescription_of_{0}_{1} p8:hasRole {2} ;", label, roleLabel, roleID));
+                  sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasRole {1} ;", ID, roleID));
                   sparqlStr.AppendLine(" ?property ?value . ");
                 }
 
@@ -3473,11 +3536,11 @@ namespace org.iringtools.refdata
                     }
                   }
 
-                  sparqlStr.AppendLine(string.Format("  tpl:TemplateDescription_of_{0} rdf:type p8:TemplateDescription ;", label));
+                  sparqlStr.AppendLine(string.Format("  tpl:{0} rdf:type p8:TemplateDescription ;", ID));
                   // sparql.AppendLine(" rdf:type owl:thing ;");
-                  sparqlStr.AppendLine(string.Format("  rdfs:label \"TemplateDescription_of_{0}{1}\"^^xsd:string ;", label, language));
+                  sparqlStr.AppendLine(string.Format("  rdfs:label \"{0}{1}\"^^xsd:string ;", label, language));
                   sparqlStr.AppendLine(string.Format("  p8:valNumberOfRoles {0} ;", template.roleQualification.Count));
-                  sparqlStr.AppendLine(string.Format("  p8:hasTemplate tpl:{0} .", ID));
+                  //sparqlStr.AppendLine(string.Format("  p8:hasTemplate tpl:{0} .", ID));
 
                   sparqlStr.AppendLine("}");
                   response = PostToRepository(repository, sparqlStr.ToString());
@@ -3489,12 +3552,12 @@ namespace org.iringtools.refdata
                     sparqlStr.Append(prefix);
                     sparqlStr.AppendLine(insertData);
 
-                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdfs:subClassOf {1} ;", ID, specialization));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdfs:subClassOf {1} .", ID, specialization));
 
-                    sparqlStr.AppendLine(string.Format("  tpl:TemplateSpecialization_of_{0}_to_{1} rdf:type p8:TemplateSpecialization ;", spec.label, label));
-                    sparqlStr.AppendLine(string.Format("  rdfs:label \"TemplateSpecialization_of_{0}_to_{1} \"^^xds:string ;", spec.label.Split('@')[0], label, language));
-                    sparqlStr.AppendLine(string.Format("  p8:hasSuperTemplate {0} ;", specialization));
-                    sparqlStr.AppendLine(string.Format("  p8:hasSubTemplate tpl:{0} .", ID));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdf:type p8:TemplateSpecialization .", specialization));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdfs:label \"{1}{2}\"^^xds:string .", specialization, spec.label.Split('@')[0], language));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasSuperTemplate {1} .", ID, specialization));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasSubTemplate tpl:{1} .", specialization, ID));
                     sparqlStr.AppendLine("}");
 
                     response = PostToRepository(repository, sparqlStr.ToString());
@@ -3531,12 +3594,23 @@ namespace org.iringtools.refdata
                     sparqlStr = new StringBuilder();
                     sparqlStr.Append(prefix);
                     sparqlStr.AppendLine(insertData);
-                    sparqlStr.AppendLine(string.Format("  tpl:TemplateRoleDescription_of_{0}_{1} rdf:type p8:TemplateRoleDescription ;", label, roleLabel));// could get roleIndex from QMXF?
-                    sparqlStr.AppendLine(string.Format("  rdfs:label \"TemplateRoleDescription_of_{0}_{1}{2}\"^^xsd:string ;", label, roleLabel, language));
-                    sparqlStr.AppendLine(string.Format("  p8:valRoleIndex {0} ;", roleCount));
-                    sparqlStr.AppendLine(string.Format("  p8:hasTemplate tpl:{0} ;", ID));
-                    //sparqlStr.AppendLine("  p8:hasRoleFillerType " + range + " ;");
-                    sparqlStr.AppendLine(string.Format("  p8:hasRole rdl:{0}", roleID));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdf:type p8:TemplateRoleDescription .", roleID));// could get roleIndex from QMXF?
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", roleID, roleLabel, language));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} p8:valRoleIndex {1} .", roleID, roleCount));
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasTemplate tpl:{1} .", roleID, ID));
+                    if (!string.IsNullOrEmpty(role.range))
+                    {
+                      qn = nsMap.ReduceToQName(role.range, out qName);
+                      if (qn)
+                        sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
+                    }
+                    if (role.value != null)
+                    {
+                      qn = nsMap.ReduceToQName(role.value.reference, out qName);
+                      if (qn)
+                        sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
+                    }
+                    sparqlStr.AppendLine(string.Format("  tpl:{0} p8:hasRole rdl:{1} .", ID, roleID));
                     sparqlStr.AppendLine("}");
 
                     response = PostToRepository(repository, sparqlStr.ToString());
@@ -3807,8 +3881,6 @@ namespace org.iringtools.refdata
           int classIndex = -1;
 
           string language = string.Empty;
-          bool qn = false;
-          string qName = string.Empty;
 
           if (target.IsReadOnly)
           {
@@ -4117,10 +4189,9 @@ namespace org.iringtools.refdata
 
           foreach (ClassDefinition clsDef in qmxf.classDefinitions)
           {
-           
+
             string language = string.Empty;
-            bool qn = false;
-            string qName = string.Empty;
+            List<string> names = new List<string>();
             StringBuilder sparqlAdd = new StringBuilder();
             sparqlAdd.AppendLine(insertData);
             bool hasDeletes = false;
@@ -4152,8 +4223,8 @@ namespace org.iringtools.refdata
                     if (String.Compare(existingName.value, clsName.value, true) != 0)
                     {
                       hasDeletes = true;
-                      sparqlStmts.AppendLine(string.Format("rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string . ", clsId, existingName.value, clsName.lang));
-                      sparqlAdd.AppendLine(string.Format("rdl:{0}  rdfs:label \"{1}{2}\"^^xsd:string ;", clsId, clsName.value, clsName.lang));
+                      sparqlStmts.AppendLine(string.Format(" rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string . ", clsId, existingName.value, clsName.lang));
+                      sparqlAdd.AppendLine(string.Format(" rdl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .", clsId, clsName.value, clsName.lang));
                     }
                   }
 
@@ -4166,14 +4237,14 @@ namespace org.iringtools.refdata
                       if (String.Compare(existingDescription.value, description.value, true) != 0)
                       {
                         hasDeletes = true;
-                        sparqlStmts.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string . ", existingDescription.value, description.lang));
-                        sparqlAdd.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string ;", description.value, description.lang));
+                        sparqlStmts.AppendLine(string.Format(" rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string . ", clsId, existingDescription.value, description.lang));
+                        sparqlAdd.AppendLine(string.Format(" rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", clsId, description.value, description.lang));
                       }
                     }
                   }
 
                   // delete specialization
-                  specCount = existingClsDef.specialization.Count;
+
                   foreach (Specialization spec in clsDef.specialization)
                   {
 
@@ -4187,16 +4258,13 @@ namespace org.iringtools.refdata
                         qn = nsMap.ReduceToQName(existingSpec.reference, out qName);
                         sparqlStmts.AppendLine(string.Format("  ?a dm:hasSubclass {0} . ", qName));
                         qn = nsMap.ReduceToQName(spec.reference, out qName);
-                        if (--specCount > 0)
-                          sparqlAdd.AppendLine(string.Format("  rdfs:subClassOf {0} ;", qName));
-                        else
-                          sparqlAdd.AppendLine(string.Format("  rdfs:subClassOf {0} .", qName));
+                        if (qn)
+                          sparqlAdd.AppendLine(string.Format(" ?a rdfs:subClassOf {0} .", qName));
                       }
                     }
                   }
 
                   // delete classification
-                  classCount = existingClsDef.classification.Count;
 
                   foreach (Classification clsif in clsDef.classification)
                   {
@@ -4207,18 +4275,16 @@ namespace org.iringtools.refdata
                       {
                         hasDeletes = true;
                         qn = nsMap.ReduceToQName(existingClasif.reference, out qName);
-                        sparqlStmts.AppendLine(string.Format(" ?a dm:hasClassified {0} .", qName));
-                        sparqlStmts.AppendLine(string.Format(" ?a dm:hasClassifier {0} .", qName));
-                        qn = nsMap.ReduceToQName(clsif.reference, out qName);
-                        if (--classCount > 0)
+                        if (qn)
                         {
-                          sparqlAdd.AppendLine(string.Format(" dm:hasClassified {0} ;", qName));
-                          sparqlAdd.AppendLine(string.Format(" dm:hasClassifier {0} ;", qName));
+                          sparqlStmts.AppendLine(string.Format(" ?a dm:hasClassified {0} .", qName));
+                          sparqlStmts.AppendLine(string.Format(" ?a dm:hasClassifier {0} .", qName));
                         }
-                        else
+                        qn = nsMap.ReduceToQName(clsif.reference, out qName);
+                        if (qn)
                         {
-                          sparqlAdd.AppendLine(string.Format(" dm:hasClassified {0} ;", qName));
-                          sparqlAdd.AppendLine(string.Format(" dm:hasClassifier {0} .", qName));
+                          sparqlAdd.AppendLine(string.Format(" ?a dm:hasClassified {0} .", qName));
+                          sparqlAdd.AppendLine(string.Format(" ?a dm:hasClassifier {0} .", qName));
                         }
 
                       }
@@ -4254,7 +4320,6 @@ namespace org.iringtools.refdata
                   language = "@" + clsName.lang;
 
                 if (string.IsNullOrEmpty(clsId))
-
                 {
                   string newClsName = "Class definition " + clsLabel;
 
@@ -4263,7 +4328,8 @@ namespace org.iringtools.refdata
                 }
 
                 // append label
-                sparqlAdd.AppendLine(string.Format("rdl:{0}  rdfs:label \"{1}{2}\"^^xsd:string ;", clsId, clsLabel, language));
+                sparqlAdd.AppendLine(string.Format(" rdl:{0} rdf:type owl:Class .", clsId));
+                sparqlAdd.AppendLine(string.Format(" rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", clsId, clsLabel, language));
 
                 // append entity type
                 if (clsDef.entityType != null && !String.IsNullOrEmpty(clsDef.entityType.reference))
@@ -4271,7 +4337,7 @@ namespace org.iringtools.refdata
                   qn = nsMap.ReduceToQName(clsDef.entityType.reference, out qName);
 
                   if (qn)
-                    sparqlAdd.AppendLine(string.Format("  rdf:type {0} ;", qName));
+                    sparqlAdd.AppendLine(string.Format(" rdl:{0} rdf:type {1} .", clsId, qName));
 
                 }
 
@@ -4284,24 +4350,19 @@ namespace org.iringtools.refdata
                       language = "@" + defaultLanguage;
                     else
                       language = "@" + desc.lang;
-
                     string description = desc.value.Split('@')[0];
-                    sparqlAdd.AppendLine(string.Format("  rdfs:comment \"{0}{1}\"^^xsd:string ; ", description, language));
-
+                    sparqlAdd.AppendLine(string.Format(" rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string . ", clsId, description, language));
                   }
                 }
 
                 // append specialization
-                specCount = clsDef.specialization.Count;
                 foreach (Specialization spec in clsDef.specialization)
                 {
                   if (!String.IsNullOrEmpty(spec.reference))
                   {
                     qn = nsMap.ReduceToQName(spec.reference, out qName);
-                    if (--specCount > 0)
-                      sparqlAdd.AppendLine(string.Format("  rdfs:subClassOf {0} ;", qName));
-                    else
-                      sparqlAdd.AppendLine(string.Format("  rdfs:subClassOf {0} .", qName));
+                    if (qn)
+                      sparqlAdd.AppendLine(string.Format(" rdl:{0} rdfs:subClassOf {1} .", clsId, qName));
                   }
                 }
 
@@ -4313,21 +4374,17 @@ namespace org.iringtools.refdata
                   if (!string.IsNullOrEmpty(clsif.reference))
                   {
                     qn = nsMap.ReduceToQName(clsif.reference, out qName);
-                    //if (--classCount > 0)
-                    //{
-                      
+
+                    if (repository.RepositoryType == RepositoryType.Part8 && qn)
+                    {
+                      sparqlAdd.AppendLine(string.Format("rdl:{0} rdf:type {1} .", clsId, qName));
+
+                    }
+                    else if (repository.RepositoryType != RepositoryType.Part8 && qn)
+                    {
                       sparqlAdd.AppendLine(string.Format("rdl:{0} dm:hasClassifier {1} .", clsId, qName));
-                      sparqlAdd.AppendLine(string.Format("{0} dm:hasClassified rdl:{1} .",qName, clsId));
-
-
-                    //  sparqlAdd.AppendLine(string.Format("  rdfs:subClassOf {0} ;", qName));
-                    // // sparqlAdd.AppendLine(string.Format("  dm:hasClassifier {0} ;", qName));
-                    //}
-                    //else
-                    //{
-                    //  //sparqlAdd.AppendLine(string.Format("  dm:hasClassified {0} ;", qName));
-                    //  sparqlAdd.AppendLine(string.Format("  rdfs:subClassOf {0} .", qName));
-                    //}
+                      sparqlAdd.AppendLine(string.Format("{0} dm:hasClassified rdl:{1} .", qName, clsId));
+                    }
                   }
                 }
 

@@ -50,8 +50,8 @@ namespace org.iringtools.informationmodel.usercontrols
             MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Template Error", MessageBoxButton.OK);
             return;
           }
-
-          QMXF qmxf = (QMXF)CompletedEventArgs.Data;
+          QMXF qmxf = null;
+          qmxf = (QMXF)CompletedEventArgs.Data;
           qmxf.sourceRepository = this.Entity.Repository;
           TemplateDefinition = qmxf.templateDefinitions.Where(c=>c.repositoryName == qmxf.sourceRepository).FirstOrDefault();
           TemplateQualification = qmxf.templateQualifications.Where(c => c.repositoryName == qmxf.sourceRepository).FirstOrDefault();
