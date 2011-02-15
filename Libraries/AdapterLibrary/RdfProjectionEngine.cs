@@ -83,11 +83,11 @@ namespace org.iringtools.adapter.projection
 
       try
       {
+        #region fill data object with properties
         _graphMap = _mapping.FindGraphMap(graphName);
 
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 && xDocument != null)
         {
-
           XmlDocument xmlDocument = new XmlDocument();
           using(XmlReader xmlReader = xDocument.CreateReader())
           {
@@ -112,9 +112,17 @@ namespace org.iringtools.adapter.projection
             var rootClassTemplatesMap = _classIdentifiers.First();
             string rootClassId = rootClassTemplatesMap.Key;
             List<string> rootClassInstances = rootClassTemplatesMap.Value;
-            int classInstanceCount = rootClassInstances.Count;
-            _dataObjects = _dataLayer.Create(_graphMap.dataObjectMap, new string[classInstanceCount]);
-            _relatedObjects = new Dictionary<string, IList<IDataObject>>[classInstanceCount];
+            
+            List<string> classInstances = _classIdentifiers.Values.First();
+            List<string> dataObjectIdentifiers = new List<string>();
+
+            foreach (string classInstance in classInstances)
+            {
+              dataObjectIdentifiers.Add(classInstance.Substring(classInstance.LastIndexOf("/") + 1));
+            }
+
+            _dataObjects = _dataLayer.Create(_graphMap.dataObjectMap, dataObjectIdentifiers);
+            _relatedObjects = new Dictionary<string, IList<IDataObject>>[dataObjectIdentifiers.Count];            
             _relatedObjectPaths = new List<string>();
 
             if (_memoryStore != null)
@@ -122,7 +130,7 @@ namespace org.iringtools.adapter.projection
               for (int i = 0; i < rootClassInstances.Count; i++)
               {
                 _relatedObjects[i] = new Dictionary<string, IList<IDataObject>>();
-                CreateDataObjects(rootClassId, rootClassInstances[i], i);
+                PopulateDataObjects(rootClassId, rootClassInstances[i], i);
               }
 
               // add related data objects
@@ -144,6 +152,10 @@ namespace org.iringtools.adapter.projection
             }
           }
         }
+        #endregion fill data object with properties
+
+        #region 
+        #endregion
       }
       catch (Exception ex)
       {
@@ -475,7 +487,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private void CreateDataObjects(string classId, string classInstance, int dataObjectIndex)
+    private void PopulateDataObjects(string classId, string classInstance, int dataObjectIndex)
     {
       KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMap(classId);
       List<TemplateMap> templateMaps = pair.Value;
@@ -538,7 +550,7 @@ namespace org.iringtools.adapter.projection
             foreach (SparqlResult result in resultSet)
             {
               string subclassInstance = result.ToString().Remove(0, ("?class = ").Length);
-              CreateDataObjects(classRole.classMap.classId, subclassInstance, dataObjectIndex);
+              PopulateDataObjects(classRole.classMap.classId, subclassInstance, dataObjectIndex);
               break;  // should be one result only
             }
           }
