@@ -85,8 +85,8 @@ namespace ApplicationEditor
         StringBuilder sb = new StringBuilder();
        // sb.Append(tblPrimaryObject.Text);
        // sb.Append(".");
-        sb.Append(cbRelated.SelectedItem.ToString());
-        sb.Append(".");
+       // sb.Append(cbRelated.SelectedItem.ToString());
+        //sb.Append(".");
         sb.Append(cbSourceProps.SelectedItem.ToString());
         sb.Append(".");
         //sb.Append(cbRelationType.SelectedItem.ToString());

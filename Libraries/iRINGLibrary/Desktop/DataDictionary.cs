@@ -172,9 +172,6 @@ namespace org.iringtools.library
     public class PropertyMap
     {
         [DataMember(IsRequired = true)]
-        public string basePropertyName { get; set; }
-
-        [DataMember(IsRequired = true)]
         public string dataPropertyName { get; set; }
 
         [DataMember(IsRequired = true)]
