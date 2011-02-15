@@ -519,7 +519,7 @@ public class DataModel
     }
 
     // process sorting
-    if (sortBy != null && sortOrder != null)
+    if (sortBy != null && sortBy.length() > 0 && sortOrder != null && sortOrder.length() > 0)
     {
       if (dataFilter == null)
         dataFilter = new DataFilter();

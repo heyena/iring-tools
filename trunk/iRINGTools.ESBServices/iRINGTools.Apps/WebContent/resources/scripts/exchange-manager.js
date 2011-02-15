@@ -3,18 +3,21 @@ Ext.ns('iringtools.org.xmgr');
 function storeSort(field, dir){
   var limit = this.lastOptions.params.limit;
   
+  this.lastOptions.params = {
+    start: 0,
+    limit: limit
+  };
+  
   if (dir == undefined){
-    if (this.lastOptions.params.dir == 'ASC')
+    if (this.sortInfo && this.sortInfo.direction == 'ASC')
       dir = 'DESC';
-    else  // including undefined
+    else
       dir = 'ASC';
   }
   
-  this.lastOptions.params = {
-    sort: field,
-    dir: dir,
-    start: 0,
-    limit: limit
+  this.sortInfo = {
+    field: field, 
+    direction: dir
   };
   
   this.reload();

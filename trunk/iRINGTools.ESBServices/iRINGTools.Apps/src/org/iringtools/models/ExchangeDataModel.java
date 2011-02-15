@@ -178,7 +178,12 @@ public class ExchangeDataModel extends DataModel
         row.add(endTime);
         row.add(xr.getSenderScopeName() + "." + xr.getSenderAppName() + "." + xr.getSenderGraphName());
         row.add(xr.getReceiverScopeName() + "." + xr.getReceiverAppName() + "." + xr.getReceiverGraphName());
-        row.add(StringUtils.join(xr.getMessages().getItems(), "<br/>"));
+        
+        if (xr.getMessages() != null)
+          row.add(StringUtils.join(xr.getMessages().getItems(), "<br/>"));
+        else
+          row.add("<br/>");
+          
         data.add(row);
       }
 
