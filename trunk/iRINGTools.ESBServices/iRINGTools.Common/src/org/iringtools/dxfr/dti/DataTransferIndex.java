@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="hashValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dti}TransferType"/>
+ *         &lt;element name="sortIndex" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DataTransferIndex", propOrder = {
     "identifier",
     "hashValue",
-    "transferType"
+    "transferType",
+    "sortIndex"
 })
 public class DataTransferIndex {
 
@@ -42,6 +44,8 @@ public class DataTransferIndex {
     protected String hashValue;
     @XmlElement(required = true)
     protected TransferType transferType;
+    @XmlElement(required = true)
+    protected String sortIndex;
 
     /**
      * Gets the value of the identifier property.
@@ -113,6 +117,30 @@ public class DataTransferIndex {
      */
     public void setTransferType(TransferType value) {
         this.transferType = value;
+    }
+
+    /**
+     * Gets the value of the sortIndex property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSortIndex() {
+        return sortIndex;
+    }
+
+    /**
+     * Sets the value of the sortIndex property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSortIndex(String value) {
+        this.sortIndex = value;
     }
 
 }

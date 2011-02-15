@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.List;
@@ -97,7 +98,7 @@ public class ESBServiceProvider
   
   public DataTransferIndices getDataTransferIndices(String scope, String id, DataFilter dataFilter)
   {
-    DataTransferIndices dxiList = null;
+    DataTransferIndices dxis = null;
 
     try
     {
@@ -143,14 +144,57 @@ public class ESBServiceProvider
 
       // request exchange service to diff the dti
       String dxiUrl = settings.get("differencingServiceUri") + "/dxi";
-      dxiList = httpClient.post(DataTransferIndices.class, dxiUrl, dfiRequest);
+      dxis = httpClient.post(DataTransferIndices.class, dxiUrl, dfiRequest);
+      
+      // apply sorting
+      if (dataFilter != null && dataFilter.getOrderExpressions() != null && 
+          dataFilter.getOrderExpressions().getItems().size() > 0)
+      {
+        final String sortType = dxis.getSortType();
+        final String sortOrder = dxis.getSortOrder();
+        
+        Comparator<DataTransferIndex> comparator = new Comparator<DataTransferIndex>()
+        {
+          public int compare(DataTransferIndex dti1, DataTransferIndex dti2) 
+          {
+            int compareValue = 0;
+            
+            if (sortType.equalsIgnoreCase("string"))  // sort type is string
+            {
+              if (sortOrder.equalsIgnoreCase("ASC"))
+              {
+                compareValue = dti1.getSortIndex().compareTo(dti2.getSortIndex());
+              }
+              else
+              {
+                compareValue = dti2.getSortIndex().compareTo(dti1.getSortIndex());
+              }
+            }
+            else if (!sortType.contains("date") || !sortType.contains("time"))  // sort type is numeric
+            {
+              if (sortOrder.equalsIgnoreCase("ASC"))
+              {
+                compareValue = Integer.parseInt(dti1.getSortIndex()) - Integer.parseInt(dti2.getSortIndex());
+              }
+              else
+              {
+                compareValue = Integer.parseInt(dti2.getSortIndex()) - Integer.parseInt(dti1.getSortIndex());
+              }
+            }
+            
+            return compareValue;
+          }
+        };
+        
+        Collections.sort(dxis.getDataTransferIndexList().getItems(), comparator);
+      }
     }
     catch (Exception ex)
     {
       logger.error(ex);
     }
 
-    return dxiList;
+    return dxis;
   }
 
   public DataTransferObjects getDataTransferObjects(String scope, String id, DataTransferIndices dtis)

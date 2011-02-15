@@ -18,6 +18,8 @@
       <xs:element name="scopeName" type="xs:string" />
       <xs:element name="appName" type="xs:string" />
       <xs:element name="dataTransferIndexList" type="DataTransferIndexList" />
+      <xs:element name="sortType" type="xs:string" />
+      <xs:element name="sortOrder" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 
@@ -38,6 +40,7 @@
       <xs:element name="identifier" type="xs:string" />
       <xs:element name="hashValue" type="xs:string" />
       <xs:element name="transferType" type="TransferType" />
+      <xs:element name="sortIndex" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 

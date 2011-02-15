@@ -126,6 +126,9 @@ public class DifferencingProvider
       resultDtiListItems.addAll(sourceDtiList);
       resultDtiListItems.addAll(targetDtiList);
       
+      resultDtis.setSortType(sourceDtis.getSortType());
+      resultDtis.setSortOrder(sourceDtis.getSortOrder());
+      
       return resultDtis;
     }
 
@@ -161,11 +164,14 @@ public class DifferencingProvider
       else if (value == 0)
       {
         if (sourceDti.getHashValue().compareTo(targetDti.getHashValue()) == 0)
+        {
           targetDti.setTransferType(TransferType.SYNC);
+        }
         else
         {
           targetDti.setTransferType(TransferType.CHANGE);
-          targetDti.setHashValue(sourceDti.getHashValue());  // only store source hash value
+          targetDti.setHashValue(sourceDti.getHashValue());  // use source hash value
+          targetDti.setSortIndex(sourceDti.getSortIndex());  // use source sort index 
         }
         
         resultDtiListItems.add(targetDti);
@@ -202,6 +208,9 @@ public class DifferencingProvider
         resultDtiListItems.add(targetDti);
       }
     }
+    
+    resultDtis.setSortType(sourceDtis.getSortType());
+    resultDtis.setSortOrder(sourceDtis.getSortOrder());
     
     return resultDtis;
   }
