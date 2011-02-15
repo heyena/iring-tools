@@ -723,56 +723,60 @@ public class ESBServiceProvider
     
     Graph sourceGraph = sourceManifest.getGraphs().getItems().get(0);
     Graph targetGraph = targetManifest.getGraphs().getItems().get(0);
-    List<ClassTemplates> sourceClassTemplatesList = sourceGraph.getClassTemplatesList().getItems();
-    List<ClassTemplates> targetClassTemplatesList = targetGraph.getClassTemplatesList().getItems();
-            
-    for (int i = 0; i < targetClassTemplatesList.size(); i++)
+    
+    if (sourceGraph.getClassTemplatesList() != null && targetGraph.getClassTemplatesList() != null)
     {
-      org.iringtools.dxfr.manifest.Class targetClass = targetClassTemplatesList.get(i).getClazz();
-      ClassTemplates sourceClassTemplates = getClassTemplates(sourceClassTemplatesList, targetClass.getId());
-      
-      if (sourceClassTemplates != null)
-      {
-        List<Template> targetTemplates = targetClassTemplatesList.get(i).getTemplates().getItems();
-        List<Template> sourceTemplates = sourceClassTemplates.getTemplates().getItems();
-        
-        for (int j = 0; j < targetTemplates.size(); j++)
-        {
-          Template targetTemplate = targetTemplates.get(j);
-          Template sourceTemplate = getTemplate(sourceTemplates, targetTemplate.getId());
-          
-          if (sourceTemplate == null)
-          {
-            if (targetTemplate.getTransferOption() == TransferOption.REQUIRED)
-            {
-              throw new Exception("Required template [" + targetTemplate.getId() + "] not found");
-            }
-            else
-            {
-              targetTemplates.remove(j--);
-            }
-          }
-          else
-          {
-            List<Role> targetRoles = targetTemplate.getRoles().getItems();
-            List<Role> sourceRoles = sourceTemplate.getRoles().getItems();
-            
-            for (int k = 0; k < targetRoles.size(); k++)
-            {
-              Role sourceRole = getRole(sourceRoles, targetRoles.get(k).getId());
+      List<ClassTemplates> sourceClassTemplatesList = sourceGraph.getClassTemplatesList().getItems();
+      List<ClassTemplates> targetClassTemplatesList = targetGraph.getClassTemplatesList().getItems();
               
-              if (sourceRole == null)
+      for (int i = 0; i < targetClassTemplatesList.size(); i++)
+      {
+        org.iringtools.dxfr.manifest.Class targetClass = targetClassTemplatesList.get(i).getClazz();
+        ClassTemplates sourceClassTemplates = getClassTemplates(sourceClassTemplatesList, targetClass.getId());
+        
+        if (sourceClassTemplates != null && sourceClassTemplates.getTemplates() != null)
+        {
+          List<Template> targetTemplates = targetClassTemplatesList.get(i).getTemplates().getItems();
+          List<Template> sourceTemplates = sourceClassTemplates.getTemplates().getItems();
+          
+          for (int j = 0; j < targetTemplates.size(); j++)
+          {
+            Template targetTemplate = targetTemplates.get(j);
+            Template sourceTemplate = getTemplate(sourceTemplates, targetTemplate.getId());
+            
+            if (sourceTemplate == null)
+            {
+              if (targetTemplate.getTransferOption() == TransferOption.REQUIRED)
               {
-                targetRoles.remove(k--);
+                throw new Exception("Required template [" + targetTemplate.getId() + "] not found");
+              }
+              else
+              {
+                targetTemplates.remove(j--);
+              }
+            }
+            else if (targetTemplate.getRoles() != null && sourceTemplate.getRoles() != null)
+            {
+              List<Role> targetRoles = targetTemplate.getRoles().getItems();
+              List<Role> sourceRoles = sourceTemplate.getRoles().getItems();
+              
+              for (int k = 0; k < targetRoles.size(); k++)
+              {
+                Role sourceRole = getRole(sourceRoles, targetRoles.get(k).getId());
+                
+                if (sourceRole == null)
+                {
+                  targetRoles.remove(k--);
+                }
               }
             }
           }
         }
+        else
+        {
+          targetClassTemplatesList.remove(i--);
+        }      
       }
-      else
-      {
-        targetClassTemplatesList.remove(i--);
-      }      
     }
     
     return targetManifest;
