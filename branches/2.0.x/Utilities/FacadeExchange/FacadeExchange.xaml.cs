@@ -22,660 +22,706 @@ using System.Configuration;
 
 namespace org.iringtools.utils.exchange
 {
-  /// <summary>
-  /// Interaction logic for FacadeExchange.xaml
-  /// </summary>
-  public partial class FacadeExchange : Window
-  {
-    #region Member Variables
-      private ObservableCollection<StatusMessage> _messages = new ObservableCollection<StatusMessage>();
-      Application _app = Application.Current;
-      ScopeProject _project = null;
-      ScopeApplication _application = null;
-      GraphMap _graph = null;
-      List<string> _graphUris = null;
-      string _graphUri = String.Empty;
-
-      string _proxyHost = String.Empty;
-      string _proxyPort = String.Empty;
-      string _proxyCredentialToken = String.Empty;
-
-      string _facadeCredentialDomain = String.Empty;
-      string _facadeCredentialUsername = String.Empty;
-      string _facadeCredentialPassword = String.Empty;
-
-      string _adapterCredentialDomain = String.Empty;
-      string _adapterCredentialUsername = String.Empty;
-      string _adapterCredentialPassword = String.Empty; 
-      #endregion
-
-    public FacadeExchange()
+    /// <summary>
+    /// Interaction logic for FacadeExchange.xaml
+    /// </summary>
+    public partial class FacadeExchange : Window
     {
-      InitializeComponent();
+        #region Member Variables
+        private ObservableCollection<StatusMessage> _messages = new ObservableCollection<StatusMessage>();
+        Application _app = Application.Current;
+        ScopeProject _project = null;
+        ScopeApplication _application = null;
+        GraphMap _graph = null;
+        List<string> _graphUris = null;
+        string _graphUri = String.Empty;
 
-      listBoxResults.ItemsSource = _messages;
+        string _proxyHost = String.Empty;
+        string _proxyPort = String.Empty;
+        string _proxyCredentialToken = String.Empty;
 
-      _proxyHost = ConfigurationManager.AppSettings["ProxyHost"];
-      _proxyPort = ConfigurationManager.AppSettings["ProxyPort"];
-      _proxyCredentialToken = ConfigurationManager.AppSettings["ProxyCredentialToken"];
-    }
+        string _facadeCredentialDomain = String.Empty;
+        string _facadeCredentialUsername = String.Empty;
+        string _facadeCredentialPassword = String.Empty;
 
-    #region Controls Events
-    private void buttonPull_Click(object sender, RoutedEventArgs e)
-    {
-        try
+        string _adapterCredentialDomain = String.Empty;
+        string _adapterCredentialUsername = String.Empty;
+        string _adapterCredentialPassword = String.Empty;
+        WebClient adapterClient = new WebClient();
+        bool isadapterDiaglogShown = false;
+        WebClient facedeClient = new WebClient();
+        bool isfacedeDiaglogShown = false;
+        #endregion
+
+        public FacadeExchange()
         {
-            _messages.Clear();
+            InitializeComponent();
 
-            _messages.Add(new StatusMessage { Message = "Pulling Graph from remote Façade...", ImageName = "Resources/info_22.png" });
+            listBoxResults.ItemsSource = _messages;
 
-            WebClient client = new WebClient();
-            bool adapterConnect;
-            bool facadeConnect;
-
-            if (chkboxAdapterCredentials.IsChecked == true)
-                adapterConnect = ShowLoginDialog(CredentialType.Adapter) == true;
-            else
-                adapterConnect = true;
-
-            if (chkboxFacadeCredentials.IsChecked == true)
-                facadeConnect = ShowLoginDialog(CredentialType.Facade) == true;
-            else
-                facadeConnect = true;
-
-            if (adapterConnect && facadeConnect)
-            {
-                #region Prepare proxy and facade credentials if required
-                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
-                {
-                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
-                    proxy.Credentials = CredentialCache.DefaultCredentials;
-                    client.Proxy = proxy;
-                }
-                else
-                {
-                    client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-                }
-                if (chkboxAdapterCredentials.IsChecked == true)
-                {
-                    NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
-                    client.Credentials = credential;
-                }
-                else
-                {
-                    client.Credentials = CredentialCache.DefaultCredentials;
-                }
-                #endregion
-
-                //client.Credentials = CredentialCache.DefaultCredentials;
-
-                //client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-
-                client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
-                client.Headers["Content-type"] = "application/xml";
-                client.Encoding = Encoding.UTF8;
-
-                Uri pullURI = new Uri(
-                    textBoxAdapterURL.Text + "/" +
-                    _project.Name + "/" +
-                    _application.Name + "/" +
-                    _graph.name + "/pull");
-
-                Request request = new Request();
-                WebCredentials targetCredentials = new WebCredentials();
-                if (chkboxFacadeCredentials.IsChecked == true)
-                {
-                    targetCredentials.domain = _facadeCredentialDomain;
-                    targetCredentials.userName = _facadeCredentialUsername;
-                    targetCredentials.password = _facadeCredentialPassword;
-                    targetCredentials.Encrypt();
-                }
-                string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-                request.Add("targetUri", textBoxTargetURL.Text);
-                request.Add("targetCredentials", targetCredentialsXML);
-                request.Add("targetGraphBaseUri", comboBoxGraphUri.Text);
-                request.Add("graphName", comboBoxGraphName.Text);
-                request.Add("filter", "");
-
-                string message = Utility.SerializeDataContract<Request>(request);
-
-                client.UploadStringAsync(pullURI, message);
-            }
-            else
-            {
-                _messages.Add(new StatusMessage { Message = "User cancelled operation.", ImageName = "Resources/info_22.png" });
-            }
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            _proxyHost = ConfigurationManager.AppSettings["ProxyHost"];
+            _proxyPort = ConfigurationManager.AppSettings["ProxyPort"];
+            _proxyCredentialToken = ConfigurationManager.AppSettings["ProxyCredentialToken"];
         }
 
-    }
-
-    private void buttonPublish_Click(object sender, RoutedEventArgs e)
-    {
-        try
+        #region Controls Events
+        private void buttonPull_Click(object sender, RoutedEventArgs e)
         {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = "Publishing Graph to own Façade...", ImageName = "Resources/info_22.png" });
-
-            WebClient client = new WebClient();
-            bool connect;
-
-            if (chkboxAdapterCredentials.IsChecked == true)
-                connect = ShowLoginDialog(CredentialType.Adapter) == true;
-            else
-                connect = true;
-
-            if (connect)
-            {
-                #region Prepare proxy and facade credentials if required
-                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
-                {
-                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
-                    proxy.Credentials = CredentialCache.DefaultCredentials;
-                    client.Proxy = proxy;
-                }
-                else
-                {
-                    client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-                }
-                if (chkboxAdapterCredentials.IsChecked == true)
-                {
-                    NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
-                    client.Credentials = credential;
-                }
-                else
-                {
-                    client.Credentials = CredentialCache.DefaultCredentials;
-                }
-                #endregion
-
-                client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
-
-                Uri refreshURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/" + comboBoxGraphName.Text + "/refresh");
-
-                client.DownloadStringAsync(refreshURI);
-            }
-            else
+            try
             {
                 _messages.Clear();
 
-                _messages.Add(new StatusMessage { Message = "User cancelled operation.", ImageName = "Resources/info_22.png" });
-            }
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
+                _messages.Add(new StatusMessage { Message = "Pulling Graph from remote Façade...", ImageName = "Resources/info_22.png" });
 
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
+                WebClient client = new WebClient();
+                bool adapterConnect;
+                bool facadeConnect;
 
-    private void buttonConnect_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = "Fetching Scopes from Adapter...", ImageName = "Resources/info_22.png" });
-
-            Uri scopesURI = new Uri(textBoxAdapterURL.Text + "/scopes");
-
-            WebClient client = new WebClient();
-            bool connect;
-
-            if (chkboxAdapterCredentials.IsChecked == true)
-                connect = ShowLoginDialog(CredentialType.Adapter) == true;
-            else
-                connect = true;
-
-            if (connect)
-            {
-                #region Prepare proxy and facade credentials if required
-                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
-                {
-                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
-                    proxy.Credentials = CredentialCache.DefaultCredentials;
-                    client.Proxy = proxy;
-                }
+                if (isadapterDiaglogShown == false)
+                    adapterConnect = ShowLoginDialog(CredentialType.Adapter) == true;
                 else
-                {
-                    client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-                }
-                if (chkboxAdapterCredentials.IsChecked == true)
-                {
-                    NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
-                    client.Credentials = credential;
-                }
-                else
-                {
-                    client.Credentials = CredentialCache.DefaultCredentials;
-                }
-                #endregion
-
-                client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetScopesCompleted);
-
-                client.DownloadStringAsync(scopesURI); 
-            }
-            else
-            {
-                _messages.Clear();
-
-                _messages.Add(new StatusMessage { Message = "User cancelled operation.", ImageName = "Resources/info_22.png" });
-            }
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-
-    private void buttonExit_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            _app.Shutdown();
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-
-    private void buttonFacadeConnect_Click(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            _messages.Clear();
-            bool connect;
-
-            if (chkboxFacadeCredentials.IsChecked == true)
-                connect = ShowLoginDialog(CredentialType.Facade) == true;
-            else
-                connect = true;
-
-            if (connect)
-            {
-                _messages.Add(new StatusMessage { Message = "Fetching graphs from Façade...", ImageName = "Resources/info_22.png" });
-
-                string sparql = "SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } }";
-
-                SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(textBoxTargetURL.Text), "");
-
-                #region Prepare proxy and facade credentials if required
-                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
-                {
-                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
-                    proxy.Credentials = CredentialCache.DefaultCredentials;
-                    endpoint.Proxy = proxy;
-                }
+                    adapterConnect = true;
                 if (chkboxFacadeCredentials.IsChecked == true)
                 {
-                    endpoint.Credentials = new NetworkCredential();
-                    endpoint.Credentials.Domain = _facadeCredentialDomain;
-                    endpoint.Credentials.UserName = _facadeCredentialUsername;
-                    endpoint.Credentials.Password = _facadeCredentialPassword;
+                    if (isfacedeDiaglogShown == false)
+                        facadeConnect = ShowLoginDialog(CredentialType.Facade) == true;
+                    else
+                        facadeConnect = true;
                 }
-                #endregion
+                else
+                    facadeConnect = true;
 
-                try
+                if (adapterConnect && facadeConnect)
                 {
-                    SparqlResultSet results = endpoint.QueryWithResultSet(sparql);
-
-                    _graphUris = new List<string>();
-                    _graphUris.Add("[Default Graph]");
-                    foreach (SparqlResult result in results.Results)
+                    #region Prepare proxy and facade credentials if required
+                    if (_proxyHost != String.Empty && _proxyPort != String.Empty)
                     {
-                        string uri = result.Value("g").ToString();
-
-                        if (uri != null)
-                        {
-                            if (!uri.StartsWith("_:"))
-                            {
-                                _graphUris.Add(uri);
-                            }
-                        }
+                        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                        proxy.Credentials = CredentialCache.DefaultCredentials;
+                        client.Proxy = proxy;
                     }
-
-                    comboBoxGraphUri.ItemsSource = _graphUris;
-                    comboBoxGraphUri.SelectionChanged += new SelectionChangedEventHandler(comboBoxGraphUri_SelectionChanged);
-                    comboBoxGraphUri.SelectedIndex = 0;
-                    comboBoxGraphUri.IsEnabled = true;
-
-                    _messages.Add(new StatusMessage
+                    else
                     {
-                        Message = "Successfully fetched " + _graphUris.Count +
-                          " graphs from Façade.",
-                        ImageName = "Resources/success_22.png"
-                    });
+                        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                    }
+                    if (isfacedeDiaglogShown == true)
+                    {
+                        //NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
+                        client.Credentials = facedeClient.Credentials;
+                    }
+                    else
+                    {
+                        client.Credentials = CredentialCache.DefaultCredentials;
+                    }
+                    #endregion
+
+                    //client.Credentials = CredentialCache.DefaultCredentials;
+
+                    //client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+
+                    client.UploadStringCompleted += new UploadStringCompletedEventHandler(client_UploadStringCompleted);
+                    client.Headers["Content-type"] = "application/xml";
+                    client.Encoding = Encoding.UTF8;
+
+                    Uri pullURI = new Uri(
+                        textBoxAdapterURL.Text + "/" +
+                        _project.Name + "/" +
+                        _application.Name + "/" +
+                        _graph.name + "/pull");
+
+                    Request request = new Request();
+                    WebCredentials targetCredentials = new WebCredentials();
+                    if (chkboxFacadeCredentials.IsChecked == true)
+                    {
+                        targetCredentials.domain = _facadeCredentialDomain;
+                        targetCredentials.userName = _facadeCredentialUsername;
+                        targetCredentials.password = _facadeCredentialPassword;
+                        targetCredentials.Encrypt();
+                    }
+                    string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+                    request.Add("targetUri", textBoxTargetURL.Text);
+                    request.Add("targetCredentials", targetCredentialsXML);
+                    request.Add("targetGraphBaseUri", comboBoxGraphUri.Text);
+                    request.Add("graphName", comboBoxGraphName.Text);
+                    request.Add("filter", "");
+
+                    string message = Utility.SerializeDataContract<Request>(request);
+
+                    client.UploadStringAsync(pullURI, message);
                 }
-                catch (Exception ex)
+                else
                 {
-                    comboBoxGraphUri.IsEnabled = true;
-                    buttonPull.IsEnabled = true;
+                    _messages.Add(new StatusMessage { Message = "User cancelled operation.", ImageName = "Resources/info_22.png" });
+                }
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+
+        }
+
+        private void buttonPublish_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = "Publishing Graph to own Façade...", ImageName = "Resources/info_22.png" });
+
+                WebClient client = new WebClient();
+                bool connect;
+
+                if (isadapterDiaglogShown == false)
+                    connect = ShowLoginDialog(CredentialType.Adapter) == true;
+                else
+                    connect = true;
+
+                if (connect)
+                {
+                    #region Prepare proxy and facade credentials if required
+                    if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+                    {
+                        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                        proxy.Credentials = CredentialCache.DefaultCredentials;
+                        client.Proxy = proxy;
+                    }
+                    else
+                    {
+                        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                    }
+                    if (isadapterDiaglogShown == true)
+                    {
+                        // NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
+                        client.Credentials = adapterClient.Credentials;
+                    }
+                    else
+                    {
+                        client.Credentials = CredentialCache.DefaultCredentials;
+                    }
+                    #endregion
+
+                    client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
+
+                    Uri refreshURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/" + comboBoxGraphName.Text + "/refresh");
+
+                    client.DownloadStringAsync(refreshURI);
+                }
+                else
+                {
                     _messages.Clear();
 
-                    _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-                    _messages.Add(new StatusMessage { Message = "Please type in the Graph URI.", ImageName = "Resources/info_22.png" });
+                    _messages.Add(new StatusMessage { Message = "User cancelled operation.", ImageName = "Resources/info_22.png" });
+                }
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+
+        private void buttonConnect_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = "Fetching Scopes from Adapter...", ImageName = "Resources/info_22.png" });
+
+                Uri scopesURI = new Uri(textBoxAdapterURL.Text + "/scopes");
+
+                WebClient client = new WebClient();
+                bool connect;
+                if (chkboxAdapterCredentials.IsChecked == true)
+                {
+                    if (isadapterDiaglogShown == false)
+                        connect = ShowLoginDialog(CredentialType.Adapter) == true;
+                    else
+                        connect = true;
+                }
+                else
+                    connect = true;
+
+                if (connect)
+                {
+                    #region Prepare proxy and facade credentials if required
+                    if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+                    {
+                        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                        proxy.Credentials = CredentialCache.DefaultCredentials;
+                        client.Proxy = proxy;
+
+                    }
+                    else
+                    {
+                        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                    }
+                    if (isadapterDiaglogShown == true)
+                    {
+                        NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
+                        client.Credentials = credential;
+                        adapterClient.Credentials = credential;
+
+                    }
+                    else
+                    {
+                        client.Credentials = CredentialCache.DefaultCredentials;
+                    }
+                    #endregion
+
+                    client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetScopesCompleted);
+
+                    client.DownloadStringAsync(scopesURI);
+                }
+                else
+                {
+                    _messages.Clear();
+
+                    _messages.Add(new StatusMessage { Message = "User cancelled operation.", ImageName = "Resources/info_22.png" });
+                }
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+        private void buttonExit_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _app.Shutdown();
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+        private void buttonFacadeConnect_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _messages.Clear();
+                bool connect;
+
+                if (isfacedeDiaglogShown != true && chkboxFacadeCredentials.IsChecked == true)
+                    connect = ShowLoginDialog(CredentialType.Facade) == true;
+                else
+                    connect = true;
+
+                if (connect)
+                {
+                    _messages.Add(new StatusMessage { Message = "Fetching graphs from Façade...", ImageName = "Resources/info_22.png" });
+
+                    string sparql = "SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } }";
+
+                    SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(textBoxTargetURL.Text), "");
+
+                    #region Prepare proxy and facade credentials if required
+                    if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+                    {
+                        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                        proxy.Credentials = CredentialCache.DefaultCredentials;
+                        endpoint.Proxy = proxy;
+                    }
+                    if (isfacedeDiaglogShown == true && chkboxFacadeCredentials.IsChecked == true)
+                    {
+                        endpoint.Credentials = new NetworkCredential();
+                        endpoint.Credentials.Domain = _facadeCredentialDomain;
+                        endpoint.Credentials.UserName = _facadeCredentialUsername;
+                        endpoint.Credentials.Password = _facadeCredentialPassword;
+                        facedeClient.Credentials = endpoint.Credentials;
+                    }
+                    #endregion
+
+                    try
+                    {
+                        SparqlResultSet results = endpoint.QueryWithResultSet(sparql);
+
+                        _graphUris = new List<string>();
+                        _graphUris.Add("[Default Graph]");
+                        foreach (SparqlResult result in results.Results)
+                        {
+                            string uri = result.Value("g").ToString();
+
+                            if (uri != null)
+                            {
+                                if (!uri.StartsWith("_:"))
+                                {
+                                    _graphUris.Add(uri);
+                                }
+                            }
+                        }
+
+                        comboBoxGraphUri.ItemsSource = _graphUris;
+                        comboBoxGraphUri.SelectionChanged += new SelectionChangedEventHandler(comboBoxGraphUri_SelectionChanged);
+                        comboBoxGraphUri.SelectedIndex = 0;
+                        comboBoxGraphUri.IsEnabled = true;
+
+                        _messages.Add(new StatusMessage
+                        {
+                            Message = "Successfully fetched " + _graphUris.Count +
+                              " graphs from Façade.",
+                            ImageName = "Resources/success_22.png"
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        comboBoxGraphUri.IsEnabled = true;
+                        buttonPull.IsEnabled = true;
+                        _messages.Clear();
+
+                        _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+                        _messages.Add(new StatusMessage { Message = "Please type in the Graph URI.", ImageName = "Resources/info_22.png" });
+                    }
+
+                    listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
+                }
+                else
+                {
+                    _messages.Clear();
+
+                    _messages.Add(new StatusMessage { Message = "User cancelled operation.", ImageName = "Resources/info_22.png" });
+                }
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+        private void comboBoxProjectName_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (comboBoxProjectName.SelectedIndex != -1)
+                {
+                    _project = (ScopeProject)comboBoxProjectName.SelectedItem;
+                    comboBoxAppName.DisplayMemberPath = "Name";
+                    comboBoxAppName.ItemsSource = _project.Applications;
+                    comboBoxAppName.SelectionChanged += new SelectionChangedEventHandler(comboBoxAppName_SelectionChanged);
+                    comboBoxAppName.SelectedIndex = 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+        private void comboBoxAppName_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _application = (ScopeApplication)comboBoxAppName.SelectedItem;
+
+                if (_application != null && _application.Name != null && _application.Name != String.Empty)
+                {
+                    WebClient client = new WebClient();
+                    #region Prepare proxy and facade credentials if required
+                    if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+                    {
+                        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                        proxy.Credentials = CredentialCache.DefaultCredentials;
+                        client.Proxy = proxy;
+                    }
+                    else
+                    {
+                        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                    }
+                    if (chkboxAdapterCredentials.IsChecked == true)
+                    {
+                        NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
+                        client.Credentials = credential;
+                    }
+                    else
+                    {
+                        client.Credentials = CredentialCache.DefaultCredentials;
+                    }
+                    #endregion
+
+                    client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetMappingCompleted);
+
+                    Uri mappingURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/mapping");
+
+                    client.DownloadStringAsync(mappingURI);
+                }
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+        private void comboBoxGraphName_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _graph = (GraphMap)comboBoxGraphName.SelectedItem;
+
+                buttonPublish.IsEnabled = true;
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+        private void comboBoxGraphUri_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                _graphUri = comboBoxGraphUri.SelectedItem.ToString();
+
+                buttonPull.IsEnabled = true;
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+
+        #endregion
+
+        #region Webclient Task Complete handlers
+        void client_UploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
+        {
+            try
+            {
+                DisplayResults(e.Result);
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+        void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            try
+            {
+                DisplayResults(e.Result);
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+        private void client_GetScopesCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            try
+            {
+                ObservableCollection<ScopeProject> scopes = e.Result.DeserializeDataContract<ObservableCollection<ScopeProject>>();
+
+                if (scopes != null && scopes.Count > 0)
+                {
+                    comboBoxProjectName.DisplayMemberPath = "Name";
+                    comboBoxProjectName.ItemsSource = scopes;
+                    comboBoxProjectName.SelectionChanged += new SelectionChangedEventHandler(comboBoxProjectName_SelectionChanged);
+                    comboBoxProjectName.SelectedIndex = 0;
+
+                    comboBoxProjectName.IsEnabled = true;
+                    comboBoxAppName.IsEnabled = true;
+                }
+
+                _messages.Add(new StatusMessage
+                {
+                    Message = "Successfully fetched " + scopes.Count +
+                      " scopes from Adapter.",
+                    ImageName = "Resources/success_22.png"
+                });
+
+                listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+
+        private void client_GetMappingCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            try
+            {
+                Mapping mapping = e.Result.DeserializeDataContract<Mapping>();
+
+                if (mapping != null && mapping.graphMaps.Count > 0)
+                {
+                    comboBoxGraphName.DisplayMemberPath = "name";
+                    comboBoxGraphName.ItemsSource = mapping.graphMaps;
+                    comboBoxGraphName.SelectionChanged += new SelectionChangedEventHandler(comboBoxGraphName_SelectionChanged);
+                    comboBoxGraphName.SelectedIndex = 0;
+                    comboBoxGraphName.IsEnabled = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _messages.Clear();
+
+                _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
+            }
+        }
+        #endregion
+
+        #region Private Methods
+        void DisplayResults(string result)
+        {
+            Response response = result.DeserializeDataContract<Response>();
+
+            if (response != null && response.StatusList != null)
+            {
+                foreach (Status status in response.StatusList)
+                {
+                    string imageName = "Resources/info_22.png";
+                    if (status.Level == StatusLevel.Error) imageName = "Resources/error_22.png";
+                    if (status.Level == StatusLevel.Success) imageName = "Resources/success_22.png";
+
+                    foreach (string message in status.Messages)
+                    {
+                        _messages.Add(new StatusMessage { Message = message, ImageName = imageName });
+                    }
                 }
 
                 listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
             }
-            else
-            {
-                _messages.Clear();
+        }
 
-                _messages.Add(new StatusMessage { Message = "User cancelled operation.", ImageName = "Resources/info_22.png" });
+        private bool ShowLoginDialog(CredentialType credentialType)
+        {
+            Login login = new Login();
+            login.Owner = this;
+            if (credentialType == CredentialType.Adapter)
+            {
+                login.txtBlockTitle.Text = "Adapter Credentials";
+                isadapterDiaglogShown = true;
             }
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-
-    private void comboBoxProjectName_SelectionChanged(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            if (comboBoxProjectName.SelectedIndex != -1)
+            else if (credentialType == CredentialType.Facade)
             {
-                _project = (ScopeProject)comboBoxProjectName.SelectedItem;
-                comboBoxAppName.DisplayMemberPath = "Name";
-                comboBoxAppName.ItemsSource = _project.Applications;
-                comboBoxAppName.SelectionChanged += new SelectionChangedEventHandler(comboBoxAppName_SelectionChanged);
-                comboBoxAppName.SelectedIndex = 0;
-            }
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-
-    private void comboBoxAppName_SelectionChanged(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            _application = (ScopeApplication)comboBoxAppName.SelectedItem;
-
-            if (_application != null && _application.Name != null && _application.Name != String.Empty)
-            {
-                WebClient client = new WebClient();
-                #region Prepare proxy and facade credentials if required
-                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
-                {
-                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
-                    proxy.Credentials = CredentialCache.DefaultCredentials;
-                    client.Proxy = proxy;
-                }
-                else
-                {
-                    client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-                }
-                if (chkboxAdapterCredentials.IsChecked == true)
-                {
-                    NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
-                    client.Credentials = credential;
-                }
-                else
-                {
-                    client.Credentials = CredentialCache.DefaultCredentials;
-                }
-                #endregion
-
-                client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetMappingCompleted);
-
-                Uri mappingURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/mapping");
-
-                client.DownloadStringAsync(mappingURI);
-            }
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-
-    private void comboBoxGraphName_SelectionChanged(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            _graph = (GraphMap)comboBoxGraphName.SelectedItem;
-
-            buttonPublish.IsEnabled = true;
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-
-    private void comboBoxGraphUri_SelectionChanged(object sender, RoutedEventArgs e)
-    {
-        try
-        {
-            _graphUri = comboBoxGraphUri.SelectedItem.ToString();
-
-            buttonPull.IsEnabled = true;
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-
-    
-    #endregion
-
-    #region Webclient Task Complete handlers
-    void client_UploadStringCompleted(object sender, UploadStringCompletedEventArgs e)
-    {
-        try
-        {
-            DisplayResults(e.Result);
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-
-    void client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-    {
-        try
-        {
-            DisplayResults(e.Result);
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-
-    private void client_GetScopesCompleted(object sender, DownloadStringCompletedEventArgs e)
-    {
-        try
-        {
-            ObservableCollection<ScopeProject> scopes = e.Result.DeserializeDataContract<ObservableCollection<ScopeProject>>();
-
-            if (scopes != null && scopes.Count > 0)
-            {
-                comboBoxProjectName.DisplayMemberPath = "Name";
-                comboBoxProjectName.ItemsSource = scopes;
-                comboBoxProjectName.SelectionChanged += new SelectionChangedEventHandler(comboBoxProjectName_SelectionChanged);
-                comboBoxProjectName.SelectedIndex = 0;
-
-                comboBoxProjectName.IsEnabled = true;
-                comboBoxAppName.IsEnabled = true;
+                login.txtBlockTitle.Text = "Façade Credentials";
+                isfacedeDiaglogShown = true;
             }
 
-            _messages.Add(new StatusMessage
+            login.ShowDialog();
+
+            if (login.DialogResult == true && credentialType == CredentialType.Adapter)
             {
-                Message = "Successfully fetched " + scopes.Count +
-                  " scopes from Adapter.",
-                ImageName = "Resources/success_22.png"
-            });
-
-            listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-
-    private void client_GetMappingCompleted(object sender, DownloadStringCompletedEventArgs e)
-    {
-        try
-        {
-            Mapping mapping = e.Result.DeserializeDataContract<Mapping>();
-
-            if (mapping != null && mapping.graphMaps.Count > 0)
-            {
-                comboBoxGraphName.DisplayMemberPath = "name";
-                comboBoxGraphName.ItemsSource = mapping.graphMaps;
-                comboBoxGraphName.SelectionChanged += new SelectionChangedEventHandler(comboBoxGraphName_SelectionChanged);
-                comboBoxGraphName.SelectedIndex = 0;
-                comboBoxGraphName.IsEnabled = true;
+                _adapterCredentialDomain = login.textBoxDomain.Text;
+                _adapterCredentialUsername = login.textBoxUsername.Text;
+                _adapterCredentialPassword = login.textBoxPassword.Password;
             }
-        }
-        catch (Exception ex)
-        {
-            _messages.Clear();
-
-            _messages.Add(new StatusMessage { Message = ex.ToString(), ImageName = "Resources/error_22.png" });
-        }
-    }
-    #endregion
-
-    #region Private Methods
-    void DisplayResults(string result)
-    {
-        Response response = result.DeserializeDataContract<Response>();
-
-        if (response != null && response.StatusList != null)
-        {
-            foreach (Status status in response.StatusList)
+            else if (login.DialogResult == true && credentialType == CredentialType.Facade)
             {
-                string imageName = "Resources/info_22.png";
-                if (status.Level == StatusLevel.Error) imageName = "Resources/error_22.png";
-                if (status.Level == StatusLevel.Success) imageName = "Resources/success_22.png";
-
-                foreach (string message in status.Messages)
-                {
-                    _messages.Add(new StatusMessage { Message = message, ImageName = imageName });
-                }
+                _facadeCredentialDomain = login.textBoxDomain.Text;
+                _facadeCredentialUsername = login.textBoxUsername.Text;
+                _facadeCredentialPassword = login.textBoxPassword.Password;
             }
 
-            listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
+
+
+            return login.DialogResult == true;
         }
+        #endregion
+
+        private enum CredentialType
+        {
+            Adapter,
+            Facade
+        }
+
+        public class StatusMessage
+        {
+            public string ImageName { get; set; }
+            public string Message { get; set; }
+        }
+
+        private void chkboxAdapterCredentials_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckBox _checkbox = sender as CheckBox;
+
+            if (_checkbox.IsChecked == true)
+            {
+                isadapterDiaglogShown = false;
+            }
+        }
+
+        private void chkboxFacadeCredentials_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckBox _checkbox = sender as CheckBox;
+
+            if (_checkbox.IsChecked == true)
+            {
+                isfacedeDiaglogShown = false;
+            }
+        }
+
+        private void chkboxAdapterCredentials_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        //public string AdapterCredentialDomain
+        //{
+        //    get { return _adapterCredentialDomain; }
+        //    set { _adapterCredentialDomain = value; }
+        //}
+
+        //public string AdapterCredentialUsername
+        //{
+        //    get { return _adapterCredentialUsername; }
+        //    set { _adapterCredentialUsername = value; }
+        //}
+
+        //public string AdapterCredentialPassword
+        //{
+        //    get { return _adapterCredentialPassword; }
+        //    set { _adapterCredentialPassword = value; }
+        //}
+
+        //public string FacadeCredentialDomain
+        //{
+        //    get { return _facadeCredentialDomain; }
+        //    set { _facadeCredentialDomain = value; }
+        //}
+
+        //public string FacadeCredentialUsername
+        //{
+        //    get { return _facadeCredentialUsername; }
+        //    set { _facadeCredentialUsername = value; }
+        //}
+
+        //public string FacadeCredentialPassword
+        //{
+        //    get { return _facadeCredentialPassword; }
+        //    set { _facadeCredentialPassword = value; }
+        //}
+
     }
-
-    private bool ShowLoginDialog(CredentialType credentialType)
-    {
-        Login login = new Login();
-        login.Owner = this;
-        if (credentialType == CredentialType.Adapter)
-        {
-            login.txtBlockTitle.Text = "Adapter Credentials";
-        }
-        else if (credentialType == CredentialType.Facade)
-        {
-            login.txtBlockTitle.Text = "Façade Credentials";
-        }
-
-        login.ShowDialog();
-
-        if (login.DialogResult == true && credentialType == CredentialType.Adapter)
-        {
-            _adapterCredentialDomain = login.textBoxDomain.Text;
-            _adapterCredentialUsername = login.textBoxUsername.Text;
-            _adapterCredentialPassword = login.textBoxPassword.Password;
-        }
-        else if (login.DialogResult == true && credentialType == CredentialType.Facade)
-        {
-            _facadeCredentialDomain = login.textBoxDomain.Text;
-            _facadeCredentialUsername = login.textBoxUsername.Text;
-            _facadeCredentialPassword = login.textBoxPassword.Password;
-        }
-
-        return login.DialogResult == true;
-    }
-    #endregion
-    
-    private enum CredentialType
-    {
-        Adapter,
-        Facade
-    }
-
-    public class StatusMessage
-    {
-      public string ImageName { get; set; }
-      public string Message { get; set; }
-    }    
-
-    //public string AdapterCredentialDomain
-    //{
-    //    get { return _adapterCredentialDomain; }
-    //    set { _adapterCredentialDomain = value; }
-    //}
-
-    //public string AdapterCredentialUsername
-    //{
-    //    get { return _adapterCredentialUsername; }
-    //    set { _adapterCredentialUsername = value; }
-    //}
-
-    //public string AdapterCredentialPassword
-    //{
-    //    get { return _adapterCredentialPassword; }
-    //    set { _adapterCredentialPassword = value; }
-    //}
-
-    //public string FacadeCredentialDomain
-    //{
-    //    get { return _facadeCredentialDomain; }
-    //    set { _facadeCredentialDomain = value; }
-    //}
-
-    //public string FacadeCredentialUsername
-    //{
-    //    get { return _facadeCredentialUsername; }
-    //    set { _facadeCredentialUsername = value; }
-    //}
-
-    //public string FacadeCredentialPassword
-    //{
-    //    get { return _facadeCredentialPassword; }
-    //    set { _facadeCredentialPassword = value; }
-    //}
-
-  }
 }
