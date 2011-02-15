@@ -286,40 +286,48 @@ public class DifferencingProvider
     
             for (TemplateObject targetTemplateObject : targetTemplateObjectList)
             {
-              TemplateObject sourceTemplateObject = getTemplateObject(sourceTemplateObjectList, targetTemplateObject.getTemplateId());    
-              sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
-    
-              if (targetTemplateObject.getRoleObjects() != null && sourceTemplateObject.getRoleObjects() != null)
+              TemplateObject sourceTemplateObject = getTemplateObject(sourceTemplateObjectList, 
+                  targetTemplateObject.getTemplateId());
+              
+              if (sourceTemplateObject != null)
               {
-                List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getItems();
-                List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getItems();
+                sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
       
-                // find and set old value for roles that are changed
-                for (RoleObject targetRoleObject : targetRoleObjectList)
+                if (targetTemplateObject.getRoleObjects() != null && sourceTemplateObject.getRoleObjects() != null)
                 {
-                  RoleType targetRoleType = targetRoleObject.getType();
-      
-                  if (targetRoleType == RoleType.PROPERTY ||
-                      targetRoleType == RoleType.DATA_PROPERTY ||
-                      targetRoleType == RoleType.OBJECT_PROPERTY)
+                  List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getItems();
+                  List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getItems();
+        
+                  // find and set old value for roles that are changed
+                  for (RoleObject targetRoleObject : targetRoleObjectList)
                   {
-                    RoleObject sourceRoleObject = getRoleObject(sourceRoleObjectList, targetRoleObject.getRoleId());
-      
-                    String targetRoleValue = targetRoleObject.getValue();
-                    String sourceRoleValue = sourceRoleObject.getValue();
-      
-                    if (targetRoleValue == null)
-                      targetRoleValue = "";
-                    if (sourceRoleValue == null)
-                      sourceRoleValue = "";
-      
-                    sourceRoleObject.setOldValue(targetRoleValue);
-      
-                    if (!targetRoleValue.equals(sourceRoleValue))
+                    RoleType targetRoleType = targetRoleObject.getType();
+        
+                    if (targetRoleType == RoleType.PROPERTY ||
+                        targetRoleType == RoleType.DATA_PROPERTY ||
+                        targetRoleType == RoleType.OBJECT_PROPERTY)
                     {
-                      sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
-                      sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
-                      sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                      RoleObject sourceRoleObject = getRoleObject(sourceRoleObjectList, targetRoleObject.getRoleId());
+        
+                      if (sourceRoleObject != null)
+                      {
+                        String targetRoleValue = targetRoleObject.getValue();
+                        String sourceRoleValue = sourceRoleObject.getValue();
+          
+                        if (targetRoleValue == null)
+                          targetRoleValue = "";
+                        if (sourceRoleValue == null)
+                          sourceRoleValue = "";
+          
+                        sourceRoleObject.setOldValue(targetRoleValue);
+          
+                        if (!targetRoleValue.equals(sourceRoleValue))
+                        {
+                          sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                          sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                          sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                        }
+                      }
                     }
                   }
                 }
