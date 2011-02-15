@@ -133,7 +133,7 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
 			disabled: false,
 			handler: this.onDelete,
 			scope: this
-		}]
+		}];
   },
   
 onDelete:function(){
@@ -147,7 +147,7 @@ onDelete:function(){
                 icon: Ext.MessageBox.INFO
         });
     }else if(node==null){
-        Ext.Msg.alert('Warning', 'Please select a node.')
+        Ext.Msg.alert('Warning', 'Please select a node.');
     }else{
     Ext.Msg.show({
         msg: 'All the tabs will be closed. Do you want to delete this node?',
@@ -159,7 +159,8 @@ onDelete:function(){
                 Ext.Ajax.request({
                             url: 'deleteNode',
                             method: 'GET',
-                            params: {'nodeId' : node.id, 'parentNodeID':node.parentNode.id},
+                            params: {'nodeId' : node.attributes.properties['Id'], 
+                                     'parentNodeID':node.parentNode.attributes.properties['Id']},
                             success: function(o) {
                                 // remove all tabs form tabpanel
                                 Ext.getCmp('contentPanel').removeAll(true); // it will be removed in future
@@ -170,11 +171,11 @@ onDelete:function(){
                                 //Tree Reload
                                 that.onRefresh();
                                 // fire event so that the Details panel will be changed accordingly
-                                that.fireEvent('selectionchange',this)
-                                Ext.Msg.alert('Sucess', 'Node has been deleted')
+                                that.fireEvent('selectionchange',this);
+                                Ext.Msg.alert('Sucess', 'Node has been deleted');
                                 },
                             failure: function(f,a){
-                                Ext.Msg.alert('Warning', 'Error!!!')
+                                Ext.Msg.alert('Warning', 'Error!!!');
                             }
                         });
                 }else if (action == 'no'){
@@ -187,13 +188,13 @@ onDelete:function(){
 
  getNodeBySelectedTab: function(tab) {
         var tabid = tab.id;
-        nodeId = tabid.substr(4,tabid.length)  // tabid is "tab-jf23dfj-sd3fas-df33s-s3df"
-        return this.getNodeById(nodeId)        // get the NODE using nodeid
+        nodeId = tabid.substr(4,tabid.length);  // tabid is "tab-jf23dfj-sd3fas-df33s-s3df"
+        return this.getNodeById(nodeId);        // get the NODE using nodeid
   },
 
   getNodeById: function(nodeId) {
       if(this.federationPanel.getNodeById(nodeId)){ //if nodeID exists it will find out NODE
-          return this.federationPanel.getNodeById(nodeId)
+          return this.federationPanel.getNodeById(nodeId);
       }else{
           return false;
       }
@@ -208,11 +209,11 @@ onDelete:function(){
   },
 
   expandNode:function(node){
-      this.federationPanel.expandPath(node.getPath())
+      this.federationPanel.expandPath(node.getPath());
   },
 
  onSelectionChange:function(sm,node){
-     this.onClick(node)
+     this.onClick(node);
  },
 generateForm:function(formType){
     node = this.getSelectedNode();
@@ -241,19 +242,19 @@ generateForm:function(formType){
 },
 
 getAllChildNodes:function(parentNode,skippedIDs){
-    var mainArr = new Array()
+    var mainArr = new Array();
     var kids = parentNode.childNodes;   // Get the list of children
     var numkids = kids.length; // Figure out how many there are
 
     //find child
     for(var i = 0, len = numkids; i < len; i++) {
-        subArr = new Array()
-        subArr[0] =kids[i].attributes.id
-        subArr[1] =kids[i].attributes.text
-        if((typeof(skippedIDs) != 'undefined') && skippedIDs.indexOf(kids[i].attributes.id)<0){        
-        mainArr.push(subArr)
+        subArr = new Array();
+        subArr[0] = kids[i].attributes.properties['Id']; // kids[i].attributes.id
+        subArr[1] = kids[i].attributes.text;
+        if((typeof(skippedIDs) != 'undefined') && skippedIDs.indexOf(kids[i].attributes.properties['Id'])<0){        
+        mainArr.push(subArr);
         }else if((typeof(skippedIDs) == 'undefined')){
-            mainArr.push(subArr)
+            mainArr.push(subArr);
         }
     } 
     return Ext.util.JSON.encode(mainArr);
@@ -265,9 +266,9 @@ getNodesIDTitleByID:function(){
 
 openTab: function(node,formType) {
  
-     var obj = node.attributes
-        var properties = node.attributes.properties
-        var nId = obj['id']
+     var obj = node.attributes;
+        var properties = node.attributes.properties;
+        var nId = obj['id'];
 
          var list_items = '{'
                      +'xtype : "hidden",'//hidden field
@@ -290,7 +291,7 @@ openTab: function(node,formType) {
                      +'{'
                      +'xtype:"hidden",'//hidden field
                      +'name:"parentNodeID",' //it will contain "ID Generators||Namespaces||Repositories
-                     +'value:"'+node.parentNode.id+'"' //value of the field
+                     +'value:"'+node.attributes.properties['Id']+'"' //value of the field
                      +'}';
         }
         
@@ -302,32 +303,32 @@ openTab: function(node,formType) {
 
         for ( var i = 0; i < properties.length; i++) {
 
-            var fname=properties[i].name
-            var value=''
-            var xtype=''
+            var fname=properties[i].name;
+            var value='';
+            var xtype='';
             switch(fname){
                 case "Description":
-                    xtype= 'xtype : "textarea", width : 230'
+                    xtype= 'xtype : "textarea", width : 230';
                     break;
                  case "URI":
-                     xtype= 'xtype : "textfield", width : 230'
+                     xtype= 'xtype : "textfield", width : 230';
                     break;
                  case "Read Only" :
                  case "Writable":
-                     xtype= 'xtype : "combo", width : 230, triggerAction: "all", editable : false, mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120'
+                     xtype= 'xtype : "combo", width : 230, triggerAction: "all", editable : false, mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120';
                      break;
                  case 'Repository Type':
-                     xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part8"],  displayField:"'+properties[i].value+'", width: 120'
+                     xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part8"],  displayField:"'+properties[i].value+'", width: 120';
                  break;
                  case 'ID Generator':
                      // get all the IDGenerators
-                     var allIDGenerators = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','idGenerator'))
-                     xtype= 'xtype : "combo",hiddenName:"ID Generator", width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i].value+'", width: 120'
+                     var allIDGenerators = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','idGenerator'));
+                     xtype= 'xtype : "combo",hiddenName:"ID Generator", width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i].value+'", width: 120';
                  break;
                  case 'Namespace List':
-                     var imgPath='./resources/js/external/ux/images/'
-                     var selNameSpaceIDsArr = new Array()
-                     var nodeIDTitleArr = new Array()
+                     var imgPath='./resources/js/external/ux/images/';
+                     var selNameSpaceIDsArr = new Array();
+                     var nodeIDTitleArr = new Array();
                      if(properties[i].value !=null && properties[i].value!=''){
                          var selNameSpaces=properties[i].value.items;
                          selNameSpaceIDsArr= (selNameSpaces.toString()).split(',');
@@ -336,18 +337,18 @@ openTab: function(node,formType) {
                          
                          for(var j=0;j < selNameSpaceIDsArr.length; j++ ){
                             
-                            subArr = new Array()
-                            subArr[0] =selNameSpaceIDsArr[j]                // contains nameSpaceID
-                            subArr[1] =this.getNodeById(subArr[0]).text     // contains nameSpaceTitle
+                            subArr = new Array();
+                            subArr[0] =selNameSpaceIDsArr[j];              // contains nameSpaceID
+                            subArr[1] =this.getNodeById(subArr[0]).text;     // contains nameSpaceTitle
                             
                              if(subArr[0]!='' && subArr[1]!=undefined){
-                                  nodeIDTitleArr.push(subArr)
+                                  nodeIDTitleArr.push(subArr);
                              }
                          }    
                      }
                      
                      // get all the namespances
-                     var filteredNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'),selNameSpaceIDsArr)
+                     var filteredNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'),selNameSpaceIDsArr);
 
                      xtype='xtype : "itemselector", fieldLabel: "Namespace List",name: "itemselector",'
                          +'imagePath: "'+imgPath+'", '
@@ -356,7 +357,7 @@ openTab: function(node,formType) {
 
                  break;
                  default:
-                    xtype= 'xtype : "textfield", width : 230'
+                    xtype= 'xtype : "textfield", width : 230';
             }
 
              if(formType=='editForm'){
@@ -369,18 +370,17 @@ openTab: function(node,formType) {
              + '",name:"'
              + properties[i].name
              + '",allowBlank:false, blankText:"This Field is required !"'
-             +value+'}'
+             +value+'}';
 
        }
-        list_tems = eval('[' + list_items + ']')
+        list_tems = eval('[' + list_items + ']');
         //label = node.parentNode.text + ' : ' + obj['text']+'('+formType+')'
-        this.fireEvent('opentab', this, node, label, list_tems)
+        this.fireEvent('opentab', this, node, label, list_tems);
  },
 
 
-  onClick: function(node) {      
-
-        var gridSource = new Array();
+  onClick: function(node) {
+        /*var gridSource = new Array();
         if(node!=undefined && node!=null && !node.hasChildNodes()){
             // get all the attributes of node
             var properties = node.attributes.properties;
@@ -393,13 +393,16 @@ openTab: function(node,formType) {
             }
         }
         // populate the property grid with gridSource
-        this.propertyPanel.setSource(gridSource);
+        this.propertyPanel.setSource(gridSource);*/
+        
+        if(node!=undefined && node!=null && !node.hasChildNodes())
+          this.propertyPanel.setSource(node.attributes.properties);
     
         this.fireEvent('click', this, node);
   },
 
   onDblClick: function(node) {
-      this.generateForm('editForm')
+      this.generateForm('editForm');
   },
 
   onExpand: function(node) {
@@ -413,11 +416,11 @@ openTab: function(node,formType) {
   },
 
   onEdit: function (btn, ev) {
-      this.generateForm('editForm')
+      this.generateForm('editForm');
   },
 
   onAddnew: function (btn, ev) {
-     this.generateForm('newForm')
+     this.generateForm('newForm');
         
   },
   
@@ -427,7 +430,7 @@ openTab: function(node,formType) {
   },
   
   onBeforeLoad: function () {
-      this.federationPanel.body.mask('Loading...', 'x-mask-loading')
+      this.federationPanel.body.mask('Loading...', 'x-mask-loading');
   }
 
 });
