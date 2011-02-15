@@ -174,11 +174,11 @@ public class ESBServiceProvider
             {
               if (sortOrder.equalsIgnoreCase("ASC"))
               {
-                compareValue = Integer.parseInt(dti1.getSortIndex()) - Integer.parseInt(dti2.getSortIndex());
+                compareValue = (int)(Double.parseDouble(dti1.getSortIndex()) - Double.parseDouble(dti2.getSortIndex()));
               }
               else
               {
-                compareValue = Integer.parseInt(dti2.getSortIndex()) - Integer.parseInt(dti1.getSortIndex());
+                compareValue = (int)(Double.parseDouble(dti2.getSortIndex()) - Double.parseDouble(dti1.getSortIndex()));
               }
             }
             

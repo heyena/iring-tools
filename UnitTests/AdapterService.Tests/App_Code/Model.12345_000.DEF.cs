@@ -177,7 +177,7 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.DEF
       public virtual String SPEC { get; set; }
       public virtual String SYSTEM { get; set; }
       public virtual String LINENO { get; set; }
-      public virtual String NOMDIAMETER { get; set; }
+      public virtual Double? NOMDIAMETER { get; set; }
       public virtual String INSULATIONTYPE { get; set; }
       public virtual String HTRACED { get; set; }
       public virtual String CONSTTYPE { get; set; }
@@ -271,7 +271,7 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.DEF
             if (value != null) LINENO = Convert.ToString(value);
             break;
           case "NOMDIAMETER":
-            if (value != null) NOMDIAMETER = Convert.ToString(value);
+            if (value != null) NOMDIAMETER = Convert.ToDouble(value);
             break;
           case "INSULATIONTYPE":
             if (value != null) INSULATIONTYPE = Convert.ToString(value);

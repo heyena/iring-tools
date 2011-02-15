@@ -267,7 +267,7 @@ public class DifferencingProvider
         for (int j = 0; j < targetClassObjectList.size(); j++)
         {
           ClassObject targetClassObject = targetClassObjectList.get(j);
-          ClassObject sourceClassObject = sourceClassObjectList.get(j);
+          ClassObject sourceClassObject = getClassObject(sourceClassObjectList, targetClassObject.getClassId());
   
           // assure target and source identifier are still the same
           if (j == 0 && !targetClassObject.getIdentifier().equalsIgnoreCase(sourceClassObject.getIdentifier()))
@@ -339,6 +339,17 @@ public class DifferencingProvider
     }
     
     return sourceDtos;
+  }
+  
+  private ClassObject getClassObject(List<ClassObject> classObjects, String classId)
+  {
+    for (ClassObject classObject : classObjects)
+    {
+      if (classObject.getClassId().equals(classId))
+        return classObject;
+    }
+    
+    return null;
   }
   
   private TemplateObject getTemplateObject(List<TemplateObject> templateObjects, String templateId)
