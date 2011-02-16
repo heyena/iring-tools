@@ -431,11 +431,11 @@ namespace org.iringtools.library
       DataType propertyType = DataType.String;
       foreach (DataObject dataObject in dataDictionary.dataObjects)
       {
-        if (dataObject.ObjectName.ToUpper() == objectType.ToUpper())
+        if (dataObject.objectName.ToUpper() == objectType.ToUpper())
         {
           foreach (DataProperty dataProperty in dataObject.dataProperties)
           {
-            if (dataProperty.PropertyName.ToUpper() == PropertyName.ToUpper())
+            if (dataProperty.propertyName.ToUpper() == propertyName.ToUpper())
             {
               propertyType = dataProperty.dataType;
               break;
