@@ -1,8 +1,6 @@
 <ClassificationTemplate xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library">
   <TemplateIds>
     <templateId>tpl:R63638239485</templateId>
-    <templateId>tpl:R11111111111</templateId>
-    <templateId>tpl:R22222222222</templateId>
   </TemplateIds>
   <TemplateMap>
     <templateId>tpl:R63638239485</templateId>
