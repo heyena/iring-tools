@@ -77,8 +77,13 @@ namespace org.iringtools.utils.exchange
                 bool adapterConnect;
                 bool facadeConnect;
 
-                if (isadapterDiaglogShown == false)
-                    adapterConnect = ShowLoginDialog(CredentialType.Adapter) == true;
+                if (chkboxAdapterCredentials.IsChecked == true)
+                {
+                    if (isadapterDiaglogShown == false)
+                        adapterConnect = ShowLoginDialog(CredentialType.Adapter) == true;
+                    else
+                        adapterConnect = true;
+                }
                 else
                     adapterConnect = true;
                 if (chkboxFacadeCredentials.IsChecked == true)
