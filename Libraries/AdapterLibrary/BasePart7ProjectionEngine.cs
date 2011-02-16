@@ -9,14 +9,14 @@ using VDS.RDF.Query;
 using VDS.RDF;
 using System.Text.RegularExpressions;
 using org.iringtools.utility;
+
 using log4net;
 
 namespace org.iringtools.adapter.projection
 {
   public abstract class BasePart7ProjectionEngine : IProjectionLayer
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(BasePart7ProjectionEngine));
-    
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(BasePart7ProjectionEngine));    
     protected static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     protected static readonly XNamespace OWL_NS = "http://www.w3.org/2002/07/owl#";
     protected static readonly XNamespace XSD_NS = "http://www.w3.org/2001/XMLSchema#";
@@ -463,19 +463,21 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
-        if (filter == null || filter.Expressions == null || filter.OrderExpressions == null)
-          throw new Exception("Invalid DataFilter.");
-
+        if (filter != null && (filter.Expressions != null || filter.OrderExpressions != null))
+        {
         _graphMap = _mapping.FindGraphMap(graph);
 
         DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectMap);
 
+          if (filter.Expressions != null)
+          {
         foreach (Expression expression in filter.Expressions)
         {
           string[] propertyNameParts = expression.PropertyName.Split('.');
           string dataPropertyName = ProjectPropertyName(propertyNameParts);
           //string dataPropertyName = ProjectPropertyName(propertyNameParts, 0, null);
           expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+
           if (_roleType == RoleType.ObjectProperty)
           {
             if (expression.RelationalOperator == RelationalOperator.EqualTo)
@@ -496,13 +498,17 @@ namespace org.iringtools.adapter.projection
             }
           }
         }
+          }
 
+          if (filter.OrderExpressions != null)
+          {
         foreach (OrderExpression orderExpression in filter.OrderExpressions)
         {
           string[] propertyNameParts = orderExpression.PropertyName.Split('.');
           string dataPropertyName = ProjectPropertyName(propertyNameParts);
-          //string dataPropertyName = ProjectPropertyName(propertyNameParts, 0, null);
           orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+            }
+          }
         }
       }
       catch (Exception ex)
