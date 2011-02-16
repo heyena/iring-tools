@@ -26,107 +26,185 @@ var filters = new Ext.ux.grid.GridFilters({
 });
  * </code></pre>
  */
+
 Ext.ux.grid.filter.StringFilter = Ext.extend(Ext.ux.grid.filter.Filter, {
 
-    /**
-     * @cfg {String} iconCls
-     * The iconCls to be applied to the menu item.
-     * Defaults to <tt>'ux-gridfilter-text-icon'</tt>.
-     */
-    iconCls : 'ux-gridfilter-text-icon',
+	    /**
+	     * @cfg {Object} fieldCls
+	     * The Class to use to construct each field item within this menu
+	     * Defaults to:<pre>
+	     * fieldCls : Ext.form.TextField
+	     * </pre>
+	     */
+	    fieldCls : Ext.form.TextField,
+	    /**
+	     * @cfg {Object} fieldCfg
+	     * The default configuration options for any field item unless superseded
+	     * by the <code>{@link #fields}</code> configuration.
+	     * Defaults to:<pre>
+	     * fieldCfg : {}
+	     * </pre>
+	     * Example usage:
+	     * <pre><code>
+	fieldCfg : {
+	    width: 150,
+	},
+	     * </code></pre>
+	     */
+	    /**
+	     * @cfg {Object} fields
+	     * The field items may be configured individually
+	     * Defaults to <tt>undefined</tt>.
+	     * Example usage:
+	     * <pre><code>
+	fields : {
+	    gt: { // override fieldCfg options
+	        width: 200,
+	        fieldCls: Ext.ux.form.CustomTextField // to override default {@link #fieldCls}
+	    }
+	},
+	     * </code></pre>
+	     */
+	    /**
+	     * @cfg {Object} iconCls
+	     * The iconCls to be applied to each comparator field item.
+	     * Defaults to:<pre>
+	iconCls : {
+	    gt : 'ux-rangemenu-gt',
+	    lt : 'ux-rangemenu-lt',
+	    eq : 'ux-rangemenu-eq'
+	}
+	     * </pre>
+	     */
+	    iconCls : {
+	        gt : 'ux-rangemenu-gt',
+	        lt : 'ux-rangemenu-lt',
+	        eq : 'ux-rangemenu-eq'
+	    },
 
-    emptyText: '',
-    selectOnFocus: true,
-    width: 125,
-    
-    /**  
-     * @private
-     * Template method that is to initialize the filter and install required menu items.
-     */
-    init : function (config) {
-        Ext.applyIf(config, {
-            enableKeyEvents: true,
-            iconCls: this.iconCls,
-            listeners: {
-                scope: this,
-                keyup: this.onInputKeyUp
-            }
-        });
+	    /**
+	     * @cfg {Object} menuItemCfgs
+	     * Default configuration options for each menu item
+	     * Defaults to:<pre>
+	menuItemCfgs : {
+	    emptyText: 'Enter Filter Text...',
+	    selectOnFocus: true,
+	    width: 125
+	}
+	     * </pre>
+	     */
+	    menuItemCfgs : {
+	        emptyText: '',
+	        selectOnFocus: true,
+	        width: 125
+	    },
 
-        this.inputItem = new Ext.form.TextField(config); 
-        this.menu.add(this.inputItem);
-        this.updateTask = new Ext.util.DelayedTask(this.fireUpdate, this);
-    },
-    
-    /**
-     * @private
-     * Template method that is to get and return the value of the filter.
-     * @return {String} The value of this filter
-     */
-    getValue : function () {
-        return this.inputItem.getValue();
-    },
-    
-    /**
-     * @private
-     * Template method that is to set the value of the filter.
-     * @param {Object} value The value to set the filter
-     */	
-    setValue : function (value) {
-        this.inputItem.setValue(value);
-        this.fireEvent('update', this);
-    },
+	    /**
+	     * @cfg {Array} menuItems
+	     * The items to be shown in this menu.  Items are added to the menu
+	     * according to their position within this array. Defaults to:<pre>
+	     * menuItems : ['lt','gt','-','eq']
+	     * </pre>
+	     */
+	    menuItems : ['lt', 'gt', '-', 'eq'],
 
-    /**
-     * @private
-     * Template method that is to return <tt>true</tt> if the filter
-     * has enough configuration information to be activated.
-     * @return {Boolean}
-     */
-    isActivatable : function () {
-        return this.inputItem.getValue().length > 0;
-    },
+	    /**  
+	     * @private
+	     * Template method that is to initialize the filter and install required menu items.
+	     */
+	    init : function (config) {
+	        // if a menu already existed, do clean up first
+	        if (this.menu){
+	            this.menu.destroy();
+	        }        
+	        this.menu = new Ext.ux.menu.RangeMenu(Ext.apply(config, {
+	            // pass along filter configs to the menu
+	            fieldCfg : this.fieldCfg || {},
+	            fieldCls : this.fieldCls,
+	            fields : this.fields || {},
+	            iconCls: this.iconCls,
+	            menuItemCfgs: this.menuItemCfgs,
+	            menuItems: this.menuItems,
+	            updateBuffer: this.updateBuffer
+	        }));
+	        // relay the event fired by the menu
+	        this.menu.on('update', this.fireUpdate, this);
+	    },
+	    
+	    /**
+	     * @private
+	     * Template method that is to get and return the value of the filter.
+	     * @return {String} The value of this filter
+	     */
+	    getValue : function () {
+	        return this.menu.getValue();
+	    },
 
-    /**
-     * @private
-     * Template method that is to get and return serialized filter data for
-     * transmission to the server.
-     * @return {Object/Array} An object or collection of objects containing
-     * key value pairs representing the current configuration of the filter.
-     */
-    getSerialArgs : function () {
-        return {type: 'string', value: this.getValue()};
-    },
+	    /**
+	     * @private
+	     * Template method that is to set the value of the filter.
+	     * @param {Object} value The value to set the filter
+	     */	
+	    setValue : function (value) {
+	        this.menu.setValue(value);
+	    },
 
-    /**
-     * Template method that is to validate the provided Ext.data.Record
-     * against the filters configuration.
-     * @param {Ext.data.Record} record The record to validate
-     * @return {Boolean} true if the record is valid within the bounds
-     * of the filter, false otherwise.
-     */
-    validateRecord : function (record) {
-        var val = record.get(this.dataIndex);
+	    /**
+	     * @private
+	     * Template method that is to return <tt>true</tt> if the filter
+	     * has enough configuration information to be activated.
+	     * @return {Boolean}
+	     */
+	    isActivatable : function () {
+	        var values = this.getValue();
+	        for (key in values) {
+	            if (values[key] !== undefined) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    },
+	    
+	    /**
+	     * @private
+	     * Template method that is to get and return serialized filter data for
+	     * transmission to the server.
+	     * @return {Object/Array} An object or collection of objects containing
+	     * key value pairs representing the current configuration of the filter.
+	     */
+	    getSerialArgs : function () {
+	        var key,
+	            args = [],
+	            values = this.menu.getValue();
+	        for (key in values) {
+	            args.push({
+	                type: 'string',
+	                comparison: key,
+	                value: values[key]
+	            });
+	        }
+	        return args;
+	    },
 
-        if(typeof val != 'string') {
-            return (this.getValue().length === 0);
-        }
-
-        return val.toLowerCase().indexOf(this.getValue().toLowerCase()) > -1;
-    },
-    
-    /**  
-     * @private
-     * Handler method called when there is a keyup event on this.inputItem
-     */
-    onInputKeyUp : function (field, e) {
-        var k = e.getKey();
-        if (k == e.RETURN && field.isValid()) {
-            e.stopEvent();
-            this.menu.hide(true);
-            return;
-        }
-        // restart the timer
-        this.updateTask.delay(this.updateBuffer);
-    }
-});
+	    /**
+	     * Template method that is to validate the provided Ext.data.Record
+	     * against the filters configuration.
+	     * @param {Ext.data.Record} record The record to validate
+	     * @return {Boolean} true if the record is valid within the bounds
+	     * of the filter, false otherwise.
+	     */
+	    validateRecord : function (record) {
+	        var val = record.get(this.dataIndex),
+	            values = this.getValue();
+	        if (values.eq !== undefined && val != values.eq) {
+	            return false;
+	        }
+	        if (values.lt !== undefined && val >= values.lt) {
+	            return false;
+	        }
+	        if (values.gt !== undefined && val <= values.gt) {
+	            return false;
+	        }
+	        return true;
+	    }
+	});

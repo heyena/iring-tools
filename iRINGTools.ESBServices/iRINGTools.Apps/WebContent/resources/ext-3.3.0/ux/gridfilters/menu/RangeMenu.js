@@ -31,7 +31,7 @@ Ext.ux.menu.RangeMenu = Ext.extend(Ext.menu.Menu, {
             'update'
         );
       
-        this.updateTask = new Ext.util.DelayedTask(this.fireUpdate, this);
+        //this.updateTask = new Ext.util.DelayedTask(this.fireUpdate, this);
     
         var i, len, item, cfg, Cls;
 
@@ -104,9 +104,16 @@ Ext.ux.menu.RangeMenu = Ext.extend(Ext.menu.Menu, {
      */
     onInputKeyUp : function (field, e) {
         var k = e.getKey();
-        if (k == e.RETURN && field.isValid()) {
+        /*if (field.isValid()) {
             e.stopEvent();
             this.hide(true);
+            return;
+        }*/
+        
+        if (k == e.RETURN /*&& field.isValid()*/) {
+            //e.stopEvent();
+            this.hide(true);
+            this.fireUpdate();
             return;
         }
         
@@ -123,6 +130,6 @@ Ext.ux.menu.RangeMenu = Ext.extend(Ext.menu.Menu, {
         }
         
         // restart the timer
-        this.updateTask.delay(this.updateBuffer);
+        //this.updateTask.delay(this.updateBuffer);
     }
 });

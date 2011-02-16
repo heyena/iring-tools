@@ -107,7 +107,7 @@ filter : [{"type":"list","value":"small,medium","field":"size"}]
      * @param {Object} config
      */
     init : function (config) {
-        this.dt = new Ext.util.DelayedTask(this.fireUpdate, this);
+        //this.dt = new Ext.util.DelayedTask(this.fireUpdate, this);
 
         // if a menu already existed, do clean up first
         if (this.menu){
@@ -159,7 +159,8 @@ filter : [{"type":"list","value":"small,medium","field":"size"}]
 
     /** @private */
     onCheckChange : function(){
-        this.dt.delay(this.updateBuffer);
+        //this.dt.delay(this.updateBuffer);
+    	this.fireEvent('update', this);
     },
     
     
