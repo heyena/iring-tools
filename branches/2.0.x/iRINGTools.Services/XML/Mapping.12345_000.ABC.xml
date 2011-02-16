@@ -111,7 +111,7 @@
                   <name>hasScale</name>
                   <dataType>xsd:double</dataType>
                   <propertyName>LINES.UOM_NOMDIAMETER</propertyName>
-                  <valueList>Length</valueList>
+                  <valueListName>Length</valueListName>
                 </RoleMap>
                 <RoleMap>
                   <type>Reference</type>
@@ -126,7 +126,6 @@
                   <dataType>xsd:double</dataType>
                   <propertyName>LINES.NOMDIAMETER</propertyName>
                   <value/>
-                  <valueList/>
                 </RoleMap>
               </roleMaps>
             </TemplateMap>
