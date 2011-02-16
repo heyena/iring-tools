@@ -23,6 +23,7 @@ import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
 import org.iringtools.common.response.StatusList;
 import org.iringtools.data.filter.DataFilter;
+import org.iringtools.data.filter.Expression;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
 
@@ -113,6 +114,32 @@ public class ESBServiceProvider
       dxiRequest.setDataFilter(dataFilter);
       dxiRequest.setManifest(crossedManifest);
       
+      // extract transfer type if it's in the filter
+      Expression transferTypeExpression = null;
+      
+      if (dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
+      {
+        List<Expression> expressions = dataFilter.getExpressions().getItems();
+        
+        for (int i = 0; i < expressions.size(); i++)
+        {
+          Expression expression = expressions.get(i);
+          
+          if (expression.getPropertyName().equalsIgnoreCase("transfer type"))
+          {
+            transferTypeExpression = expressions.remove(i);
+            
+            if (expressions.size() > 0)
+            {
+              // remove logical operator of the next expression
+              expressions.get(i).setLogicalOperator(null);
+            }
+            
+            break;
+          }
+        }
+      }
+      
       // get source dti
       String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
       DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, dxiRequest);
@@ -146,12 +173,27 @@ public class ESBServiceProvider
       String dxiUrl = settings.get("differencingServiceUri") + "/dxi";
       dxis = httpClient.post(DataTransferIndices.class, dxiUrl, dfiRequest);
       
+      // apply transfer type expression
+      if (transferTypeExpression != null)
+      {
+        String value = transferTypeExpression.getValues().getValues().get(0);
+        List<DataTransferIndex> dtiList = dxis.getDataTransferIndexList().getItems();
+        
+        for (int i = 0; i < dtiList.size(); i++)
+        {
+          if (!dtiList.get(i).getTransferType().toString().equalsIgnoreCase(value))
+          {
+            dtiList.remove(i--);
+          }
+        }
+      }
+      
       // apply sorting
-      if (dataFilter != null && dataFilter.getOrderExpressions() != null && 
+      if (dataFilter.getOrderExpressions() != null && 
           dataFilter.getOrderExpressions().getItems().size() > 0)
       {
-        final String sortType = dxis.getSortType();
-        final String sortOrder = dxis.getSortOrder();
+        final String sortType = dxis.getSortType().toLowerCase();
+        final String sortOrder = dxis.getSortOrder().toLowerCase();
         
         Comparator<DataTransferIndex> comparator = new Comparator<DataTransferIndex>()
         {
@@ -159,9 +201,9 @@ public class ESBServiceProvider
           {
             int compareValue = 0;
             
-            if (sortType.equalsIgnoreCase("string"))  // sort type is string
+            if (sortType.equals("string") || sortType.contains("date") || sortType.contains("time"))
             {
-              if (sortOrder.equalsIgnoreCase("ASC"))
+              if (sortOrder.equals("asc"))
               {
                 compareValue = dti1.getSortIndex().compareTo(dti2.getSortIndex());
               }
@@ -170,9 +212,9 @@ public class ESBServiceProvider
                 compareValue = dti2.getSortIndex().compareTo(dti1.getSortIndex());
               }
             }
-            else if (!sortType.contains("date") || !sortType.contains("time"))  // sort type is numeric
+            else // sort type is numeric
             {
-              if (sortOrder.equalsIgnoreCase("ASC"))
+              if (sortOrder.equals("asc"))
               {
                 compareValue = (int)(Double.parseDouble(dti1.getSortIndex()) - Double.parseDouble(dti2.getSortIndex()));
               }
