@@ -28,7 +28,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
             {
                 _qmxf = qmxf;
 
-                _templateDefinition = qmxf.templateDefinitions.Where(c=>c.repositoryName == qmxf.sourceRepository).FirstOrDefault<TemplateDefinition>();
+                _templateDefinition = qmxf.templateDefinitions.FirstOrDefault<TemplateDefinition>();
 
                 foreach (RoleDefinition s in _templateDefinition.roleDefinition)
                 {
