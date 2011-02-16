@@ -88,9 +88,6 @@ namespace org.iringtools.library
 
     public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
     {
-      //if (this == null || (this.Expressions.Count == 0 && this.OrderExpressions.Count == 0))
-      //  return String.Empty;
-
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
       else objectAlias = String.Empty;
 
@@ -114,7 +111,7 @@ namespace org.iringtools.library
 
           foreach (OrderExpression orderExpression in this.OrderExpressions)
           {
-            string orderStatement = ResolveOrderExpression(dataDictionary, objectType, orderExpression, objectAlias);
+            string orderStatement = ResolveOrderExpression(orderExpression, objectAlias);
             whereClause.Append(orderStatement);
           }
         }
@@ -633,7 +630,7 @@ namespace org.iringtools.library
       return sqlExpression.ToString();
     }
 
-    private string ResolveOrderExpression(DataDictionary dataDictionary, string objectType, OrderExpression orderExpression, string objectAlias)
+    private string ResolveOrderExpression(OrderExpression orderExpression, string objectAlias)
     {
       string PropertyName = orderExpression.PropertyName;
 
