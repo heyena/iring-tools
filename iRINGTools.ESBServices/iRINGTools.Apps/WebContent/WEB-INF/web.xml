@@ -1,31 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app id="iRINGTools.Apps">
+<web-app id="WebApp_ID" version="2.4"
+  xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+  
+  <display-name>iRINGTools Apps</display-name>
+
   <context-param>
-    <param-name>ExchangeDataServiceUri</param-name>
+    <param-name>ESBServiceUri</param-name>
     <param-value>http://localhost:8080/services/esb</param-value>
   </context-param>
   <context-param>
-    <param-name>RefDataServiceUri</param-name>
-    <param-value>http://localhost:8080/services/refdata</param-value>
+    <param-name>HistoryServiceUri</param-name>
+    <param-value>http://localhost:8080/services/history</param-value>
   </context-param>
   <context-param>
-    <param-name>DirectoryServiceUri</param-name>
-    <param-value>http://localhost:8080/services/dir</param-value>
+    <param-name>DXFRServiceUri</param-name>
+    <param-value>http://localhost:54321/dxfr</param-value>
   </context-param>
-  <context-param>
-    <param-name>AppDataServiceUri</param-name>
-    <param-value>http://localhost:54321/dxfr</param-value><!--
-    http://75.101.140.62/Services/dto
-    http://localhost:54321/dxfr
-  --></context-param>
+  
   <context-param>
     <param-name>RefServiceUri</param-name>
     <param-value>http://localhost:54321/refdata</param-value>
   </context-param>
-  <display-name>iRINGTools Apps</display-name>
+  <context-param>
+    <param-name>IDGenServiceUri</param-name>
+    <param-value>http://localhost:8080/services/idgen</param-value>
+  </context-param>
+  
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
+  
   <filter>
     <filter-name>struts2</filter-name>
     <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
@@ -34,5 +39,4 @@
     <filter-name>struts2</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
-  
 </web-app>

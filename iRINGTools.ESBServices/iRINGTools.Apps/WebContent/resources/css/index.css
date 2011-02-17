@@ -75,14 +75,14 @@ p {
 
 .headerLnk {
 	font-family: Calibri, Arial;
-	font-size: 18;
+	font-size: 18px;
 	text-decoration: underline;
 	color: #4784B6;
 }
 
 .headerLnkBlack {
 	font-family: Calibri, Arial;
-	font-size: 18;
+	font-size: 18px;
 	text-decoration: none;
 	color: #000000;
 }

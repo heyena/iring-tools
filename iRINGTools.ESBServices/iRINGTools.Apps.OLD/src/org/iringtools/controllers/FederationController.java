@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.iringtools.models.FederationModel;
 import org.iringtools.models.Result;
 import org.iringtools.refdata.federation.RepositoryType;
-import org.iringtools.ui.widgets.tree.Tree;
+import org.iringtools.widgets.tree.Tree;
 import com.opensymphony.xwork2.Action;
 import org.apache.struts2.interceptor.ServletRequestAware;
 
