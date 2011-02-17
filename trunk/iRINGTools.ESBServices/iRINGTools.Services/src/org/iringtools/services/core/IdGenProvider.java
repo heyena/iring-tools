@@ -22,7 +22,7 @@ public class IdGenProvider {
 		return conn;
 	}
 	
-	public boolean checkExist(String uri, String randomNumber){
+	public boolean checkExist(String uri, String comment, String randomNumber){
 		Connection con = null;
 		PreparedStatement stmt=null;
 		try{
@@ -37,9 +37,10 @@ public class IdGenProvider {
 				if(rs.getInt("count")!=0){
 					return true;
 				}else{
-					stmt = con.prepareStatement("insert into idGeneratorLog ( srno , url, idnumber)values ((select MAX(srno) from idGeneratorLog)+1, ?, ?)");
+					stmt = con.prepareStatement("insert into idGeneratorLog ( srno , url, idnumber, comment)values ((select MAX(srno) from idGeneratorLog)+1, ?, ?,?)");
 					stmt.setString(1, uri);
 					stmt.setString(2, randomNumber);
+					stmt.setString(3, comment);
 					stmt.executeUpdate();
 					return false;
 				}
@@ -57,15 +58,15 @@ public class IdGenProvider {
 		return false;
 	}
 	
-	public String generateRandomNumber(String uri){
+	public String generateRandomNumber(String uri, String comment){
 		long floor = 0L;
 		long ceiling = 100000000000L;
 	  	final long i = useGetRandom.nextLong();
 	  	long x = floor + ((i & 0x7fffffffffffffffL) % (ceiling + 1 - floor));
 	  	String randomNumber = "R"+x;
 	  	System.out.println("Generated random number :" + randomNumber);
-	  	if(this.checkExist(uri, randomNumber)){
-	  		generateRandomNumber(uri);
+	  	if(this.checkExist(uri, comment, randomNumber)){
+	  		generateRandomNumber(uri, comment);
 	  	}
 	  	return randomNumber;
 	}

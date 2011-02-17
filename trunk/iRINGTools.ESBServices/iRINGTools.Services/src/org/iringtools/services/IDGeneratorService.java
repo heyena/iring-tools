@@ -5,6 +5,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 
 import org.iringtools.services.core.IdGenProvider;
 
@@ -26,7 +27,7 @@ public class IDGeneratorService extends AbstractService{
 	      try
 	      {
 	    	  
-	    	  //IdGenProvider idGenProvider = new IdGenProvider();
+	    	  IdGenProvider idGenProvider = new IdGenProvider();
 	    	  //System.out.println(uri);
 	    	  //generatedId = idGenProvider.generateRandomNumber(uri);
 	      }
@@ -38,16 +39,20 @@ public class IDGeneratorService extends AbstractService{
 	      return "";
 	    }
     @GET
-    @Path("/acquireId/{uri}")
-    public String acquireId(@PathParam("uri") String uri) throws Exception 
+    @Path("/acquireId/{params}")
+    //public String acquireId(@PathParam("uri") String uri) throws Exception 
+    public String acquireId(@PathParam("params") String params, 
+            @QueryParam("uri") String uri, @QueryParam("comment") String comment) throws Exception
     {
       String generatedId = null;
       try
       {
     	  
     	  IdGenProvider idGenProvider = new IdGenProvider();
-    	  System.out.println(uri);
-    	  generatedId = idGenProvider.generateRandomNumber(uri);
+    	  System.out.println("params:"+params);
+    	  System.out.println("uri:"+uri);
+    	  System.out.println("comment:"+comment);
+    	  generatedId = idGenProvider.generateRandomNumber(uri+"#", comment);
       }
       catch (Exception ex)
       {
