@@ -97,11 +97,11 @@ a.breadcrumb {
 	text-decoration: none;
 }
 
-a.breadcrumb:hover {
+/*a.breadcrumb:hover {
 	text-decoration: underline;
 }
 
-.breadcrumb-img {
+*/.breadcrumb-img {
 	vertical-align: middle;
 	padding-bottom: 2px;
 }

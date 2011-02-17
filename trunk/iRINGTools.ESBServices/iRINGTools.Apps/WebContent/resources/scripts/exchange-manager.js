@@ -540,7 +540,7 @@ Ext.onReady(function(){
   
   var headerPane = new Ext.BoxComponent({
     region: 'north',
-    height: 46,
+    height: 55,   
     cls: 'blue-fade',
     contentEl: 'header'
   });
