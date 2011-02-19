@@ -12,7 +12,7 @@
   <PropertyGroup>
     <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
     <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
-
+    <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
     <ServicesDir>$(MSBuildProjectDirectory)\iRINGTools.Services</ServicesDir>
     <ApplicationsDir>$(MSBuildProjectDirectory)\iRINGTools.Applications</ApplicationsDir>
     <LandingPageDir>$(MSBuildProjectDirectory)\iRINGTools.Landing</LandingPageDir>
@@ -272,12 +272,18 @@
     <MSBuild Projects="$(SDKSolutionFile)" Targets="Build"/>
   </Target>
 
-  <Target Name="Test">
+    <Target Name="Test">
+        <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test-results.xml" />
+	</Target>
+
+  
+  
+  <!--<Target Name="Test">
     <Message Text="Cleaning old test results ..." />
     <Exec Command="RmDir /S /Q TestResults" />
     <Message Text="Executing unit tests..." />
     <Exec Command="$(MSTestCmd) %(UnitTest.TestContainer)" />
-  </Target>
+  </Target>-->
 
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
@@ -356,5 +362,5 @@
 
   <Target Name="Rebuild" DependsOnTargets="SvnUpdate; CleanBuild; PrepareBuild; CoreBuild; SDKBuild"/>
 
-  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages"/>
+  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
 </Project>

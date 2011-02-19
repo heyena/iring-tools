@@ -66,6 +66,8 @@ namespace org.iringtools.nhibernate
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
+
+
       _adapterProvider = new AdapterProvider(_settings);
 
       _response = new Response();

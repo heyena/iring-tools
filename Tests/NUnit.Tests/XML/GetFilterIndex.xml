@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinesList total="2" xmlns="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines">
+  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90003-SC">
+    <TAG>90003-SC</TAG>
+  </Lines>
+  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90004-SC">
+    <TAG>90004-SC</TAG>
+  </Lines>
+</LinesList>

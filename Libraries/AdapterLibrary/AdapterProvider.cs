@@ -490,7 +490,7 @@ namespace org.iringtools.adapter
         string dataObjectName = String.Empty;
         if (format != null)
         {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
 
           DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
           graphName = dataObject.objectName;
@@ -537,7 +537,7 @@ namespace org.iringtools.adapter
         string dataObjectName = String.Empty;
         if (format != null)
         {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
 
           _graphMap = _mapping.FindGraphMap(graphName);
           graphName = _graphMap.name;
@@ -580,7 +580,7 @@ namespace org.iringtools.adapter
         string dataObjectName = String.Empty;
         if (format != null)
         {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
 
           _graphMap = _mapping.FindGraphMap(graphName);
           graphName = _graphMap.name;
@@ -656,7 +656,7 @@ namespace org.iringtools.adapter
         }
         else
         {
-          _dataObjects = _dataLayer.Get(dataObjectName, null);
+          _dataObjects = _dataLayer.Get(dataObjectName, null, limit, start);
 
           _projectionEngine.Count = _dataLayer.GetCount(dataObjectName, null);
         }
@@ -841,26 +841,27 @@ namespace org.iringtools.adapter
       }
     }
 
-    public IList<IDataObject> GetDataObjects(
-		string projectName, string applicationName, string graphName, 
-		string format, XDocument xDocument)
-    {
-      InitializeScope(projectName, applicationName);
-      InitializeDataLayer();
+    //public IList<IDataObject> GetDataObjects(
+    //string projectName, string applicationName, string graphName, 
+    //string format, XDocument xDocument)
+    //{
+    //  InitializeScope(projectName, applicationName);
+    //  InitializeDataLayer();
 
-      if (format != null)
-      {
-        _projectionEngine = _kernel.Get<IProjectionLayer>(format);
-      }
-      else
-      {
-        _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
-      }
+    //  if (format != null)
+    //  {
+    //    _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+    //  }
+    //  else
+    //  {
+    //    _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
+    //  }
 
-      IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
+    //  IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
-      return dataObjects;
-    }
+    //  return dataObjects;
+    //}
+
     public Response DeleteAll(string projectName, string applicationName)
     {
       Status status = new Status();

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinesList total="32" xmlns="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines">
+  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90006-SL">
+    <TAG>90006-SL</TAG>
+  </Lines>
+  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90007-SL">
+    <TAG>90007-SL</TAG>
+  </Lines>
+  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90008-RV">
+    <TAG>90008-RV</TAG>
+  </Lines>
+  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90009-O">
+    <TAG>90009-O</TAG>
+  </Lines>
+  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90010-O">
+    <TAG>90010-O</TAG>
+  </Lines>
+</LinesList>
