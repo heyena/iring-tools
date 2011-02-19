@@ -127,7 +127,7 @@ namespace org.iringtools.adapter.projection
               for (int i = 0; i < rootClassInstances.Count; i++)
               {
                 _relatedRecordsMaps[i] = new Dictionary<string, List<Dictionary<string, string>>>();
-                FillDataRecord(rootClassId, rootClassInstances[i], i);
+                ProcessClassInstance(_graphMap.classTemplateListMaps.First().Key, rootClassInstances[i], i);                
                 _dataObjects.Add(CreateDataObject(_graphMap.dataObjectMap, i));
               }
 
@@ -470,11 +470,40 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private void FillDataRecord(string classId, string classInstance, int dataObjectIndex)
+    private void ProcessClassInstance(ClassMap classMap, string classInstance, int dataObjectIndex)
     {
-      KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMap(classId);
+      KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMap(classMap.classId);
       List<TemplateMap> templateMaps = pair.Value;
 
+      if (templateMaps == null || templateMaps.Count == 0)
+      {
+        string identifierValue = classInstance.Substring(classInstance.LastIndexOf("/") + 1);
+
+        if (pair.Key == null || String.IsNullOrEmpty(pair.Key.identifierDelimiter))
+        {
+          string classIdentifier = classMap.identifiers.First();
+          _dataRecords[dataObjectIndex][classIdentifier.Substring(classIdentifier.LastIndexOf('.') + 1)] = identifierValue;
+        }
+        else
+        {
+          string[] identifierValueParts = identifierValue.Split(new string[] { pair.Key.identifierDelimiter }, StringSplitOptions.None);
+          List<string> identifiers = classMap.identifiers;
+
+          for (int i = 0; i < identifiers.Count; i++)
+          {
+            string identifierVal = identifierValueParts[i];
+            _dataRecords[dataObjectIndex][identifiers[i]] = identifierVal;
+          }
+        }
+      }
+      else
+      {
+        FillDataRecord(classInstance, dataObjectIndex, templateMaps);
+      }
+    }
+
+    private void FillDataRecord(string classInstance, int dataObjectIndex, List<TemplateMap> templateMaps)
+    {
       foreach (TemplateMap templateMap in templateMaps)
       {
         string possessorRoleId = String.Empty;
@@ -519,7 +548,6 @@ namespace org.iringtools.adapter.projection
           referenceEndStmt = END_STATEMENT;
         }
 
-        //TODO: fix leaf class to use role value
         if (classRole != null)
         {
           string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId, classInstance,
@@ -534,7 +562,7 @@ namespace org.iringtools.adapter.projection
             foreach (SparqlResult result in resultSet)
             {
               string subclassInstance = result.Value("class").ToString();
-              FillDataRecord(classRole.classMap.classId, subclassInstance, dataObjectIndex);
+              ProcessClassInstance(classRole.classMap, subclassInstance, dataObjectIndex);
               break;  // should be one result only
             }
           }
