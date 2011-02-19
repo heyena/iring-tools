@@ -137,7 +137,7 @@
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\Mapping\Silverlight\MappingModule.Silverlight.csproj">
       <Project>{ABD639A6-E306-4C15-BB2E-CDA458AA7761}</Project>
-      <Name>MappingEditor.Silverlight %28Modules\MappingEditor.Silverlight%29</Name>
+      <Name>MappingModule.Silverlight</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\Menu\Silverlight\Menu.Silverlight.csproj">
       <Project>{021999F9-1E99-401B-9C7C-21C331434F02}</Project>

@@ -140,6 +140,8 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter != null && filter.Expressions.Count > 0)
         {
+          filter.OrderExpressions.Clear();
+
           string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);
         }
