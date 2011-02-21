@@ -37,7 +37,7 @@ namespace org.iringtools.adapter
       }
       else
       {
-        this.Add("GraphBaseUri", @"http://yourcompany.com/");
+        this.Add("GraphBaseUri", @"http://www.example.com/");
       }
     }
 

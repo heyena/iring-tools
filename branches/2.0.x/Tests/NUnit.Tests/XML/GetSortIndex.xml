@@ -1,99 +1,99 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<LinesList total="32" xmlns="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines">
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/66015-O">
-    <TAG>66015-O</TAG>
+<LinesList total="32" xmlns="http://www.example.com/12345_000/ABC/Lines">
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/66015-O">
+    <Tag>66015-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90006-O">
-    <TAG>90006-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90006-O">
+    <Tag>90006-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90009-O">
-    <TAG>90009-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90009-O">
+    <Tag>90009-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90010-O">
-    <TAG>90010-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90010-O">
+    <Tag>90010-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90011-O">
-    <TAG>90011-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90011-O">
+    <Tag>90011-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90012-O">
-    <TAG>90012-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90012-O">
+    <Tag>90012-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90013-O">
-    <TAG>90013-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90013-O">
+    <Tag>90013-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90020-O">
-    <TAG>90020-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90020-O">
+    <Tag>90020-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90030-O">
-    <TAG>90030-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90030-O">
+    <Tag>90030-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90031-O">
-    <TAG>90031-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90031-O">
+    <Tag>90031-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90032-O">
-    <TAG>90032-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90032-O">
+    <Tag>90032-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90033-O">
-    <TAG>90033-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90033-O">
+    <Tag>90033-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90058-O">
-    <TAG>90058-O</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90058-O">
+    <Tag>90058-O</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90026-RV">
-    <TAG>90026-RV</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90026-RV">
+    <Tag>90026-RV</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90028-RV">
-    <TAG>90028-RV</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90028-RV">
+    <Tag>90028-RV</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90041-RV">
-    <TAG>90041-RV</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90041-RV">
+    <Tag>90041-RV</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90042-RV">
-    <TAG>90042-RV</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90042-RV">
+    <Tag>90042-RV</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90043-RV">
-    <TAG>90043-RV</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90043-RV">
+    <Tag>90043-RV</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90024-RV">
-    <TAG>90024-RV</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90024-RV">
+    <Tag>90024-RV</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90005-RV">
-    <TAG>90005-RV</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90005-RV">
+    <Tag>90005-RV</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90008-RV">
-    <TAG>90008-RV</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90008-RV">
+    <Tag>90008-RV</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90014-RV">
-    <TAG>90014-RV</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90014-RV">
+    <Tag>90014-RV</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90002-RV">
-    <TAG>90002-RV</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90002-RV">
+    <Tag>90002-RV</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90003-SC">
-    <TAG>90003-SC</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90003-SC">
+    <Tag>90003-SC</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90004-SC">
-    <TAG>90004-SC</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90004-SC">
+    <Tag>90004-SC</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90004-SL">
-    <TAG>90004-SL</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90004-SL">
+    <Tag>90004-SL</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90006-SL">
-    <TAG>90006-SL</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90006-SL">
+    <Tag>90006-SL</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90007-SL">
-    <TAG>90007-SL</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90007-SL">
+    <Tag>90007-SL</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90003-SL">
-    <TAG>90003-SL</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90003-SL">
+    <Tag>90003-SL</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90002-SW">
-    <TAG>90002-SW</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90002-SW">
+    <Tag>90002-SW</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90025-SW">
-    <TAG>90025-SW</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90025-SW">
+    <Tag>90025-SW</Tag>
   </Lines>
-  <Lines uri="http://yourcompany.com/12345_000%2c12345_000/ABC%2cABC/Lines/90003-V">
-    <TAG>90003-V</TAG>
+  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90003-V">
+    <Tag>90003-V</Tag>
   </Lines>
 </LinesList>

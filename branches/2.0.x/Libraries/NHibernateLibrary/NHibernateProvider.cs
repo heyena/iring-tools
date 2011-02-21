@@ -709,9 +709,9 @@ namespace org.iringtools.nhibernate
         {
           string scope = string.Format("{0}.{1}", projectName, applicationName);
 
-          _settings.Add("ProjectName", projectName);
-          _settings.Add("ApplicationName", applicationName);
-          _settings.Add("Scope", scope);
+          _settings["ProjectName"] = projectName;
+          _settings["ApplicationName"] = applicationName;
+          _settings["Scope"] = scope;
 
           _settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml",
             _settings["XmlPath"],

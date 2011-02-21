@@ -491,18 +491,29 @@ namespace org.iringtools.adapter
         if (format != null)
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+        }
+        else
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>("data");
+        }
 
-          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+        _graphMap = _mapping.FindGraphMap(graphName);
+        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+
+
+        if (_graphMap != null)
+        {
+          graphName = _graphMap.name;
+          dataObjectName = _graphMap.dataObjectMap;
+        }
+        else if (dataObject != null)
+        {
           graphName = dataObject.objectName;
           dataObjectName = dataObject.objectName;
         }
         else
         {
-          _projectionEngine = _kernel.Get<IProjectionLayer>("data");
-
-          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
-          graphName = dataObject.objectName;
-          dataObjectName = dataObject.objectName;
+          throw new FileNotFoundException("Requested graph or dataObject not found.");
         }
 
         if (limit == 0)
@@ -538,18 +549,28 @@ namespace org.iringtools.adapter
         if (format != null)
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-
-          _graphMap = _mapping.FindGraphMap(graphName);
-          graphName = _graphMap.name;
-          dataObjectName = _graphMap.dataObjectMap;
         }
         else
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>("data");
+        }
 
-          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+        _graphMap = _mapping.FindGraphMap(graphName);
+        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+
+        if (_graphMap != null)
+        {
+          graphName = _graphMap.name;
+          dataObjectName = _graphMap.dataObjectMap;
+        }
+        else if (dataObject != null)
+        {
           graphName = dataObject.objectName;
           dataObjectName = dataObject.objectName;
+        }
+        else
+        {
+          throw new FileNotFoundException("Requested graph or dataObject not found.");
         }
 
         _dataObjects = _dataLayer.Get(dataObjectName, identifiers);
@@ -581,18 +602,29 @@ namespace org.iringtools.adapter
         if (format != null)
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-
-          _graphMap = _mapping.FindGraphMap(graphName);
-          graphName = _graphMap.name;
-          dataObjectName = _graphMap.dataObjectMap;
         }
         else
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>("data");
+        }
 
-          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+        _graphMap = _mapping.FindGraphMap(graphName);
+        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+          
+
+        if (_graphMap != null)
+        {
+          graphName = _graphMap.name;
+          dataObjectName = _graphMap.dataObjectMap;
+        }
+        else if (dataObject != null)
+        {
           graphName = dataObject.objectName;
           dataObjectName = dataObject.objectName;
+        }
+        else
+        {
+          throw new FileNotFoundException("Requested graph or dataObject not found.");
         }
 
         if (limit == 0)
@@ -1020,9 +1052,9 @@ namespace org.iringtools.adapter
 
           if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
 
-          _settings.Add("ProjectName",              projectName);
-          _settings.Add("ApplicationName",          applicationName);
-          _settings.Add("Scope", scope);
+          _settings["ProjectName"] = projectName;
+          _settings["ApplicationName"] = applicationName;
+          _settings["Scope"] = scope;
 
           string appSettingsPath = String.Format("{0}{1}.config", 
             _settings["XmlPath"],
@@ -1136,7 +1168,7 @@ namespace org.iringtools.adapter
           if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
           {
             string userName = _keyRing["Name"].ToString();
-            _settings.Add("UserName", userName);
+            _settings["UserName"] = userName;
           }
         }
       }

@@ -16,11 +16,14 @@ namespace org.iringtools.library
       this.Add("ProxyHost", String.Empty);
       this.Add("ProxyPort", String.Empty);
       this.Add("IgnoreSslErrors", "True");
+
       if (OperationContext.Current != null)
       {
         string baseAddress = OperationContext.Current.Host.BaseAddresses[0].ToString();
+        
         if (!baseAddress.EndsWith("/"))
           baseAddress = baseAddress + "/";
+        
         this.Add("BaseAddress", baseAddress);
       }
       else

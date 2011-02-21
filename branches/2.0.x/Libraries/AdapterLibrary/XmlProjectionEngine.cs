@@ -63,6 +63,9 @@ namespace org.iringtools.adapter.projection
           {
             CreateHierarchicalXml(xElement, pair, i);
           }
+
+          XAttribute total = new XAttribute("total", this.Count);
+          xElement.Add(total);
         }
         if (_dataObjects != null && _dataObjects.Count > 1 && !FullIndex)
         {
