@@ -376,7 +376,6 @@ namespace org.iringtools.dxfr.manifest
 namespace org.iringtools.mapping
 {
   using System.Runtime.Serialization;
-  using System.Collections.Generic;
 
   [System.Runtime.Serialization.DataContractAttribute(Name = "roleType", Namespace = "http://www.iringtools.org/mapping")]
   public enum RoleType
@@ -460,7 +459,7 @@ namespace org.iringtools.mapping
   {
   }
 
-  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "valueListMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "valueListMaps")]
+  [System.Runtime.Serialization.CollectionDataContractAttribute(Name = "valueListMaps", Namespace = "http://www.iringtools.org/mapping", ItemName = "valueListMap")]
   public class ValueListMaps : System.Collections.Generic.List<org.iringtools.mapping.ValueListMap>
   {
   }
@@ -942,31 +941,5 @@ namespace org.iringtools.mapping
         this.uriField = value;
       }
     }
-  }
-
-  [CollectionDataContract(ItemName = "templateId")]
-  public class TemplateIds : List<string> { }
-
-  [DataContract(Name = "classificationTemplate", Namespace = "http://www.iringtools.org/mapping")]
-  public class ClassificationTemplate
-  {
-    [DataMember(Name = "templateIds", EmitDefaultValue = false, Order = 0)]
-    public TemplateIds TemplateIds { get; set; }
-
-    [DataMember(Name = "templateMap", EmitDefaultValue = false, Order = 1)]
-    public TemplateMap TemplateMap { get; set; }
-  }
-
-  [DataContract(Name = "classificationStyle", Namespace = "http://www.iringtools.org/mapping")]
-  public enum ClassificationStyle
-  {
-    [EnumMember]
-    Type,
-
-    [EnumMember]
-    Template,
-
-    [EnumMember]
-    Both
   }
 }
