@@ -11,6 +11,7 @@ using org.iringtools.excel;
 using org.iringtools.library;
 using org.iringtools.utility;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -504,6 +505,11 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error in GetIdentifiers: " + ex);
         throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
       }
+    }
+
+    public Response Configure(XElement configuration)
+    {
+      throw new NotImplementedException();
     }
 
     private Excel.Worksheet GetWorkSheet(string objectType, Excel.Workbook xlWorkBook, ExcelWorksheet cfWorksheet)

@@ -379,34 +379,42 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    //TODO: Status should be assigned to the appropriate identifier
     public Response Delete(string objectType, IList<string> identifiers)
     {
       Response response = new Response();
-      Status status = new Status();
 
       try
       {
-        status.Identifier = objectType;
         IList<IDataObject> dataObjects = Create(objectType, identifiers);
 
         using (ISession session = OpenSession())
         {
           foreach (IDataObject dataObject in dataObjects)
+          {
+            string identifier = dataObject.GetPropertyValue("Id").ToString();
             session.Delete(dataObject);
+
+            Status status = new Status();
+            status.Messages = new Messages();
+            status.Identifier = identifier;
+            status.Messages.Add(string.Format("Record [{0}] have been deleted successfully.", identifier));
+
+            response.Append(status);
+          }
+
           session.Flush();
-          status.Messages.Add(string.Format("Records of type [{0}] has been deleted succesfully.", objectType));
         }
       }
       catch (Exception ex)
       {
         _logger.Error("Error in Delete: " + ex);
 
+        Status status = new Status();
         status.Level = StatusLevel.Error;
         status.Messages.Add(string.Format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
+        response.Append(status);
       }
 
-      response.Append(status);
       return response;
     }
 
@@ -467,15 +475,26 @@ namespace org.iringtools.adapter.datalayer
       IList<IDataObject> relatedObjects;
       DataDictionary dictionary = GetDictionary();
       DataObject dataObject = dictionary.DataObjects.First(c => c.ObjectName == sourceDataObject.GetType().Name);
-      DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelationshipName == relatedObjectType);
+      DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelatedObjectName == relatedObjectType);
 
       StringBuilder sql = new StringBuilder();
       sql.Append("from " + dataRelationship.RelatedObjectName + " where ");
+      
       foreach (PropertyMap map in dataRelationship.PropertyMaps)
       {
-        sql.Append(map.RelatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.DataPropertyName) + "' and ");
+        DataProperty propertyMap = dataObject.DataProperties.First(c => c.PropertyName == map.DataPropertyName);
+
+        if (propertyMap.DataType == DataType.String)
+        {
+          sql.Append(map.RelatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.DataPropertyName) + "' and ");
+        }
+        else
+        {
+          sql.Append(map.RelatedPropertyName + " = " + sourceDataObject.GetPropertyValue(map.DataPropertyName) + " and ");
+        }
       }
-      sql.Remove(sql.Length - 4, 4);
+
+      sql.Remove(sql.Length - 4, 4);  // remove the tail "and "
 
       using (ISession session = OpenSession())
       {

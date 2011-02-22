@@ -34,9 +34,6 @@
     <Reference Include="Ciloci.Flee">
       <HintPath>..\..\..\ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
-    <Reference Include="iRINGLibrary">
-      <HintPath>..\..\..\Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\..\ExternalBinaries\log4net\log4net.dll</HintPath>
     </Reference>
@@ -68,6 +65,12 @@
     <Compile Include="ExcelDataLayer.cs" />
     <Compile Include="ExcelSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
