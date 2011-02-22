@@ -1,4 +1,4 @@
-<mapping xmlns="http://www.iringtools.org/mapping">
+<mapping xmlns="http://www.iringtools.org/mapping" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <graphMaps>
     <graphMap>
       <name>Lines</name>
@@ -28,7 +28,6 @@
                   <value>rdl:R40471041754</value>
                 </roleMap>
                 <roleMap>
-                  <type>Property</type>
                   <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
@@ -106,12 +105,11 @@
                   <name>hasPossessor</name>
                 </roleMap>
                 <roleMap>
-                  <type>Property</type>
                   <id>tpl:R93884193692</id>
                   <name>hasScale</name>
                   <dataType>xsd:string</dataType>
                   <propertyName>LINES.UOM_NOMDIAMETER</propertyName>
-                  <valueList>Length</valueList>
+                  <valueListName>Length</valueListName>
                 </roleMap>
                 <roleMap>
                   <type>Reference</type>
@@ -120,7 +118,6 @@
                   <value>rdl:R17622148043</value>
                 </roleMap>
                 <roleMap>
-                  <type>Property</type>
                   <id>tpl:R90688063648</id>
                   <name>valValue</name>
                   <dataType>xsd:double</dataType>
@@ -155,7 +152,6 @@
                   <value>rdl:R40471041754</value>
                 </roleMap>
                 <roleMap>
-                  <type>Property</type>
                   <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
@@ -190,7 +186,6 @@
                   <value>rdl:R16893283050</value>
                 </roleMap>
                 <roleMap>
-                  <type>Property</type>
                   <id>tpl:R22674749688</id>
                   <name>valIdentifier</name>
                   <dataType>xsd:string</dataType>
@@ -204,8 +199,8 @@
       <dataObjectName>LINES</dataObjectName>
     </graphMap>
   </graphMaps>
-  <valueLists>
-    <valueList>
+  <valueListMaps>
+    <valueListMap>
       <name>Length</name>
       <valueMaps>
         <valueMap>
@@ -213,12 +208,16 @@
           <uri>rdl:R52054275374</uri>
         </valueMap>
         <valueMap>
+          <internalValue>mm</internalValue>
+          <uri>rdl:R52054275374</uri>
+        </valueMap>
+        <valueMap>
           <internalValue>INCH</internalValue>
           <uri>rdl:R34755432270</uri>
         </valueMap>
       </valueMaps>
-    </valueList>
-    <valueList>
+    </valueListMap>
+    <valueListMap>
       <name>Temperature</name>
       <valueMaps>
         <valueMap>
@@ -230,8 +229,8 @@
           <uri>rdl:R53109662405</uri>
         </valueMap>
       </valueMaps>
-    </valueList>
-    <valueList>
+    </valueListMap>
+    <valueListMap>
       <name>Pressure</name>
       <valueMaps>
         <valueMap>
@@ -243,6 +242,6 @@
           <uri>rdl:R83490506551</uri>
         </valueMap>
       </valueMaps>
-    </valueList>
-  </valueLists>
+    </valueListMap>
+  </valueListMaps>
 </mapping>
