@@ -46,7 +46,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
     
     esbServiceUri = appContext.get("ESBServiceUri").toString();
     xLogsServiceUri = appContext.get("HistoryServiceUri").toString();
-    refServiceUri = appContext.get("RefServiceUri").toString();
+    refServiceUri = appContext.get("RefDataServiceUri").toString();
     exchangeDataModel = new ExchangeDataModel();
   }
   
