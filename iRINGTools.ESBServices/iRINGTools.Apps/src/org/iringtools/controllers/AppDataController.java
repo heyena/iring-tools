@@ -14,6 +14,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   private static final long serialVersionUID = 1L;
   private AppDataModel appDataModel;
   private String dxfrServiceUri;
+  private String refServiceUri;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
   
@@ -31,7 +32,9 @@ public class AppDataController extends ActionSupport implements SessionAware
   
   public AppDataController() 
   {
-    dxfrServiceUri = ActionContext.getContext().getApplication().get("DXFRServiceUri").toString();    
+	Map<String, Object> appContext = ActionContext.getContext().getApplication();
+    dxfrServiceUri = appContext.get("DXFRServiceUri").toString();
+    refServiceUri = appContext.get("RefDataServiceUri").toString();
     appDataModel = new AppDataModel();
   }
   
@@ -46,7 +49,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = appDataModel.getDtoGrid(dxfrServiceUri, scope, app, graph, filter, sort, dir, start, limit);    
+    pageDtoGrid = appDataModel.getDtoGrid(dxfrServiceUri, refServiceUri, scope, app, graph, filter, sort, dir, start, limit);    
     return SUCCESS;
   }
   
