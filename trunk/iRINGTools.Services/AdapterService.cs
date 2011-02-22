@@ -196,7 +196,16 @@ namespace org.iringtools.services
     {
       return _adapterProvider.GetDataLayers();
     }
+
     #endregion
+
+    [Description("Configure the selected data layer in the service.")]
+    [WebInvoke(Method = "POST",UriTemplate = "/{projectname}/{applicationName}/config")]
+    public Response ConfigureDataLayer(String projectName, String applicationName, XElement configuration)
+    {
+      return _adapterProvider.SaveDataLayerConfig(projectName, applicationName, configuration);
+    }
+
     #endregion
   }
 }

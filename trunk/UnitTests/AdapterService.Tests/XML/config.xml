@@ -1,0 +1,8 @@
+﻿<config>
+<datalayerName>org.iringtools.adapter.datalayer.ExcelDataLayer, ExcelLibrary</datalayerName>
+<datalayerConfiguration>
+<workbook xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.excel" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <location>D:\iRINGTools\Services\App_Data\excel-source.12345_000.EXCEL.xlsx</location>  
+</workbook>
+</datalayerConfiguration>
+</config>

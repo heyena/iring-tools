@@ -98,20 +98,20 @@ namespace AdapterService.Tests
       return response;
     }
 
-    //public Response DeleteAll(string projectName, string applicationName)
-    //{
-    //  Response response = null;
-    //  try
-    //  {
-    //    response = _adapterProvider.DeleteAll(projectName, applicationName);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    Error.SetError(ex);
-    //  }
+    public Response SaveDatalayerConfig(string projectName, string applicationName, XElement configuration)
+    {
+      Response response = null;
+      try
+      {
+        response = _adapterProvider.SaveDataLayerConfig(projectName, applicationName, configuration);
+     }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
 
-    //  return response;
-    //}
+      return response;
+    }
 
     //public Response RefreshAll(string projectName, string applicationName)
     //{

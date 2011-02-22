@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using System.Reflection;
 using System.Text;
 using System.Web;
@@ -27,6 +28,8 @@ namespace org.iringtools.adapter.datalayer
     private AdapterSettings _settings = null;
     private IDictionary _keyRing = null;
     private ISessionFactory _sessionFactory;
+    private string _hibernateConfigPath = string.Empty;
+    NHibernate.Cfg.Configuration _configuration = null;
 
     [Inject]
     public NHibernateDataLayer(AdapterSettings settings, IDictionary keyRing)
@@ -34,7 +37,7 @@ namespace org.iringtools.adapter.datalayer
       _settings = settings;
       _keyRing = keyRing;
 
-      string hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml",
+      _hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml",
         _settings["XmlPath"],
         _settings["Scope"]
       );
@@ -55,7 +58,7 @@ namespace org.iringtools.adapter.datalayer
       _databaseDictionary = Utility.Read<DatabaseDictionary>(databaseDictionaryPath);
 
       _sessionFactory = new Configuration()
-        .Configure(hibernateConfigPath)
+        .Configure(_hibernateConfigPath)
         .AddFile(hibernateMappingPath)
         .BuildSessionFactory();
     }
@@ -481,6 +484,28 @@ namespace org.iringtools.adapter.datalayer
       }
 
       return relatedObjects;
+    }
+
+
+
+    public Response Configure(XElement configuration)
+    {
+      Response _response = new Response();
+      _response.Messages = new Messages();
+      try
+      {
+        _configuration = Utility.DeserializeDataContract<NHibernate.Cfg.Configuration>(configuration.ToString());
+        Utility.Write<NHibernate.Cfg.Configuration>(_configuration, _hibernateConfigPath, true);
+        _response.Messages.Add("DataLayer configuration Saved successfully");
+        _response.Level = StatusLevel.Success;
+      }
+      catch (Exception ex)
+      {
+        _response.Messages.Add("Failed to Save datalayer Configuration");
+        _response.Messages.Add(ex.Message);
+        _response.Level = StatusLevel.Error;
+      }
+      return _response;
     }
   }
 }

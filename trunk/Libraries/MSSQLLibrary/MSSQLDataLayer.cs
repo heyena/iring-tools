@@ -13,7 +13,7 @@ using org.iringtools.utility;
 using log4net;
 using Ninject;
 
-namespace org.iringtools.library.mssql
+namespace org.iringtools.adapter.datalayer 
 {
   public class MSSQLDataLayer : IDataLayer
   {
@@ -25,7 +25,8 @@ namespace org.iringtools.library.mssql
     private DataDictionary _dataDictionary = null;
     private string applicationName = string.Empty;
     private string projectName = string.Empty;
-    private MSSQLConfiguration _configration = null;
+    private string _xmlPath = string.Empty;
+    private MSSQLConfiguration _configuration = null;
 
     [Inject]
     public MSSQLDataLayer(AdapterSettings settings)
@@ -34,7 +35,7 @@ namespace org.iringtools.library.mssql
       _settings = settings;
       projectName = _settings["Scope"].Split('.')[0];
       applicationName = _settings["Scope"].Split('.')[1];
-      _configration = GetConfiguration(projectName, applicationName);
+      _configuration = GetConfiguration(projectName, applicationName);
     }
 
     public DataDictionary GetDictionary()
@@ -138,7 +139,7 @@ namespace org.iringtools.library.mssql
         List<string> propertyMap = new List<string>();
         List<string> identifierMap = new List<string>();
         List<SecondaryObject> secondaryObjects = new List<SecondaryObject>();
-        SqlObject objectSql = _configration.FirstOrDefault(c => c.ObjectTypeName == objectType);
+        SqlObject objectSql = _configuration.FirstOrDefault(c => c.ObjectTypeName == objectType);
         secondaryObjects.AddRange(objectSql.SecondaryObjects);
 
         DataCRUD getData = new DataCRUD(objectSql.ConnectionString);
@@ -277,7 +278,7 @@ namespace org.iringtools.library.mssql
         Status status = new Status();
         StringBuilder sql = new StringBuilder();
         IList<string> identifiers = new List<string>();
-        SqlObject objectSql = _configration.FirstOrDefault(c => c.ObjectTypeName == objectType);
+        SqlObject objectSql = _configuration.FirstOrDefault(c => c.ObjectTypeName == objectType);
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
 
         foreach (IDataObject dataObject in dataObjects)
@@ -309,7 +310,7 @@ namespace org.iringtools.library.mssql
       try
       {
         StringBuilder sql; ;
-        SqlObject objectSql = _configration.FirstOrDefault(c => c.ObjectTypeName == objectType);
+        SqlObject objectSql = _configuration.FirstOrDefault(c => c.ObjectTypeName == objectType);
         DataCRUD deleteData = new DataCRUD(objectSql.ConnectionString);
 
         foreach (string identifier in identifiers)
@@ -363,7 +364,7 @@ namespace org.iringtools.library.mssql
     {
       StringBuilder sql = new StringBuilder();
 
-      SqlObject objectSql = _configration.FirstOrDefault(c => c.ObjectTypeName == objectType);
+      SqlObject objectSql = _configuration.FirstOrDefault(c => c.ObjectTypeName == objectType);
       IList<string> identifiers = GetIdentifiers(objectType, null);
 
       List<IDataObject> dataObjects = Get(objectType, identifiers).ToList();
@@ -401,7 +402,7 @@ namespace org.iringtools.library.mssql
       try
       {
         List<IDataObject> dataObjects = new List<IDataObject>();
-        SqlObject objectSql = _configration.FirstOrDefault(c => c.ObjectTypeName == objectType);
+        SqlObject objectSql = _configuration.FirstOrDefault(c => c.ObjectTypeName == objectType);
         if (identifiers == null)
         {
           identifiers = new List<string>();
@@ -428,7 +429,7 @@ namespace org.iringtools.library.mssql
       {
 
         List<String> identifiers = new List<String>();
-        SqlObject objectSql = _configration.FirstOrDefault(c => c.ObjectTypeName == objectType);
+        SqlObject objectSql = _configuration.FirstOrDefault(c => c.ObjectTypeName == objectType);
 
         StringBuilder sql = new StringBuilder();
         if (!string.IsNullOrEmpty(objectSql.SelectSqlJoin))
@@ -482,7 +483,7 @@ namespace org.iringtools.library.mssql
       try
       {
         List<String> identifiers = new List<String>();
-        SqlObject objectSql = _configration.FirstOrDefault(c => c.ObjectTypeName == objectType);
+        SqlObject objectSql = _configuration.FirstOrDefault(c => c.ObjectTypeName == objectType);
 
         StringBuilder sql = new StringBuilder();
         if (!string.IsNullOrEmpty(objectSql.SelectSqlJoin))
@@ -556,7 +557,7 @@ namespace org.iringtools.library.mssql
           primaryTable = ((MSSQLObject)dataObject).GetPrimaryTableName();
           if (objectSql == null)
           {
-            objectSql = _configration.FirstOrDefault(c => c.ObjectTypeName == primaryObject);
+            objectSql = _configuration.FirstOrDefault(c => c.ObjectTypeName == primaryObject);
             saveData = new DataCRUD(objectSql.ConnectionString);
             foreach (SecondaryObject so in objectSql.SecondaryObjects)
             {
@@ -604,22 +605,43 @@ namespace org.iringtools.library.mssql
       MSSQLConfiguration msSQLCofiguration = new MSSQLConfiguration();
 
       string scope = string.Format("mssql-configuration.{0}.{1}.xml", projectName, applicationName);
-      string path = Path.Combine(_settings["XmlPath"], scope);
-      if (File.Exists(path))
+      _xmlPath = Path.Combine(_settings["XmlPath"], scope);
+      if (File.Exists(_xmlPath))
       {
-        msSQLCofiguration = Utility.Read<MSSQLConfiguration>(path, true);
+        msSQLCofiguration = Utility.Read<MSSQLConfiguration>(_xmlPath, true);
       }
       else
       {
-        throw new Exception("File " + scope + " not found at " + path);
+        throw new Exception("File " + scope + " not found at " + _xmlPath);
       }
       return msSQLCofiguration;
     }
 
     public SqlObject GetObjectSql(string objectTypeName)
     {
-      return _configration.FirstOrDefault(c => c.ObjectTypeName == objectTypeName);
+      return _configuration.FirstOrDefault(c => c.ObjectTypeName == objectTypeName);
     }
 
+
+
+    public Response Configure(XElement configuration)
+    {
+      Response _response = new Response();
+      _response.Messages = new Messages();
+      try
+      {
+        _configuration = Utility.DeserializeDataContract<MSSQLConfiguration>(configuration.ToString());
+        Utility.Write<MSSQLConfiguration>(_configuration, _xmlPath, true);
+        _response.Messages.Add("DataLayer configuration Saved successfully");
+        _response.Level = StatusLevel.Success;
+      }
+      catch (Exception ex)
+      {
+        _response.Messages.Add("Failed to Save datalayer Configuration");
+        _response.Messages.Add(ex.Message);
+        _response.Level = StatusLevel.Error;
+      }
+      return _response;
+    }
   }
 }

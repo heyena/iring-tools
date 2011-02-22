@@ -181,13 +181,14 @@ namespace AdapterService.Tests
       Assert.AreNotEqual(0, scopes.Count);
     }
 
-    //[TestMethod()]
-    //public void GetManifest()
-    //{
-    //  AdapterProxy target = new AdapterProxy();
-    //  org.iringtools.dxfr.manifest.Manifest manifest = target.GetManifest("12345_000", "ABC");
+    [TestMethod()]
+    public void SaveDataLayerConfig()
+    {
+      AdapterProxy target = new AdapterProxy();
+     XElement xml = Utility.ReadXml(@"E:\iring-tools\trunk\UnitTests\AdapterService.Tests\XML\config.xml");
+     Response resp = target.SaveDatalayerConfig("12345_000", "EXCEL", xml);
     //  Assert.AreNotEqual(0, manifest.Graphs.Count);
-    //}
+    }
 
 
 

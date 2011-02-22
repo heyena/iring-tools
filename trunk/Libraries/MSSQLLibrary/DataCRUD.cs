@@ -7,7 +7,7 @@ using System.Data;
 using System.Data.SqlClient;
 using org.iringtools.library;
 
-namespace org.iringtools.library.mssql
+namespace org.iringtools.adapter.datalayer 
 {
   public class DataCRUD
   {

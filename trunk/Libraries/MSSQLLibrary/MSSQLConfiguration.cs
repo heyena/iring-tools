@@ -2,7 +2,7 @@
 using System.Xml.Serialization;
 
 
-namespace org.iringtools.library.mssql
+namespace org.iringtools.adapter.datalayer 
 {
   [XmlTypeAttribute()]
   [XmlRootAttribute(IsNullable = false)]
