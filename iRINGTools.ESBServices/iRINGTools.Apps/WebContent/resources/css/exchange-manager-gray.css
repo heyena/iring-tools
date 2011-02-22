@@ -117,8 +117,9 @@ a.breadcrumb {
   color: #000000;
 }
 
-.exchange_banner{
-  background-image:url('../../../images/blue-fade-small.png');
+.exchangeBanner{
+  background-image:url('../images/blue-fade.png');
   background-repeat:repeat-x;
+  background-position:left bottom;
   height: 65px;
 }

@@ -215,7 +215,7 @@ public class DataModel
 	
 	try {
 		HttpClient httpClient = new HttpClient(refServiceUri);
-		value = httpClient.get(Entity.class, "/classes/" + id + "/label");		
+		value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");		
 	} 
 	catch (Exception e) {
 		System.out.println("Exception :" + e);
