@@ -5,7 +5,7 @@ using System.Text;
 using org.iringtools.library;
 using System.Data;
 
-namespace org.iringtools.library.mssql
+namespace org.iringtools.adapter.datalayer 
 {
   public class MSSQLObject : IDataObject
   {

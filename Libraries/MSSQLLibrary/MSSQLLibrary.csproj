@@ -47,11 +47,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="DataCRUD.cs" />
     <Compile Include="MSSQLConfiguration.cs" />
     <Compile Include="MSSQLDataLayer.cs" />
     <Compile Include="MSSQLObject.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
@@ -62,6 +64,9 @@
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

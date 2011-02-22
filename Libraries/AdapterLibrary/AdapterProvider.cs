@@ -61,7 +61,7 @@ namespace org.iringtools.adapter
     private ScopeProjects _scopes = null;
     private IDataLayer _dataLayer = null;
     private IIdentityLayer _identityLayer = null;
-	private IDictionary _keyRing = null;
+	  private IDictionary _keyRing = null;
     private ISemanticLayer _semanticEngine = null;
     private IProjectionLayer _projectionEngine = null;
     private DataDictionary _dataDictionary = null;
@@ -509,7 +509,7 @@ namespace org.iringtools.adapter
 
         _projectionEngine.Count = _dataLayer.GetCount(graphName, filter);
 
-        _projectionEngine.FullIndex = fullIndex;
+       // _projectionEngine.FullIndex = fullIndex;
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -1478,6 +1478,39 @@ namespace org.iringtools.adapter
       }
 
       return dataLayerAssemblies;
+    }
+
+    public Response SaveDataLayerConfig(string projectName, string applicationName, XElement configuration)
+    {
+      string dlXml = configuration.Element("datalayerName").Value;
+      XElement dlcXml = configuration.Element("datalayerConfiguration");
+
+      string bindConf = string.Empty;
+      
+      string scope = String.Format("{0}.{1}", projectName, applicationName);
+      string appSettingsPath = String.Format("{0}{1}.config",  _settings["XmlPath"],  scope);
+      string relativePath = String.Format("{0}BindingConfiguration.{1}.xml",  _settings["XmlPath"],  scope);
+      string bindingConfigurationPath = Path.Combine(_settings["BaseDirectoryPath"], relativePath);
+      _settings["Scope"] = scope;
+      _settings["BindingConfigurationPath"] = bindingConfigurationPath;
+
+
+      bindingConfigurationPath = _settings["BindingConfigurationPath"];
+
+        XElement binding = new XElement("module",
+          new XAttribute("name", _settings["Scope"]),
+          new XElement("bind",
+            new XAttribute("name", "DataLayer"),
+            new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+            new XAttribute("to", dlXml)
+          )
+        );
+
+        binding.Save(bindingConfigurationPath);
+        _kernel.Load(bindingConfigurationPath);
+      
+      _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
+      return _dataLayer.Configure(dlcXml);
     }
   }
 }

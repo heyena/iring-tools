@@ -27,6 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using System.Text;
 using org.ids_adi.qxf;
 using org.w3.sparql_results;
@@ -61,5 +62,8 @@ namespace org.iringtools.library
     DataDictionary GetDictionary();
 
     IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
+
+
+    Response Configure(XElement configuration);
   }
 }
