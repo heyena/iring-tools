@@ -45,7 +45,7 @@
 			<classpath refid="jaxb-ri-20100511.userclasspath" />
 		</taskdef>
 		<xjc destdir="src" extension="true">
-			<schema dir="schemas" includes="**/*.xsd" />
+			<schema dir="schemas" includes="**/dto.xsd" />
 			<arg value="-no-header" />
 			<arg value="-Xcollection-setter-injector" />
 		</xjc>

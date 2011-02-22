@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="relatedClassId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="relatedClassName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="hasValueMap" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -42,7 +43,8 @@ import javax.xml.bind.annotation.XmlType;
     "oldValue",
     "value",
     "relatedClassId",
-    "relatedClassName"
+    "relatedClassName",
+    "hasValueMap"
 })
 public class RoleObject {
 
@@ -62,6 +64,7 @@ public class RoleObject {
     protected String relatedClassId;
     @XmlElement(required = true)
     protected String relatedClassName;
+    protected boolean hasValueMap;
 
     /**
      * Gets the value of the type property.
@@ -253,6 +256,22 @@ public class RoleObject {
      */
     public void setRelatedClassName(String value) {
         this.relatedClassName = value;
+    }
+
+    /**
+     * Gets the value of the hasValueMap property.
+     * 
+     */
+    public boolean isHasValueMap() {
+        return hasValueMap;
+    }
+
+    /**
+     * Sets the value of the hasValueMap property.
+     * 
+     */
+    public void setHasValueMap(boolean value) {
+        this.hasValueMap = value;
     }
 
 }

@@ -27,6 +27,7 @@ import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
 import org.iringtools.dxfr.dto.TransferType;
+import org.iringtools.refdata.response.Entity;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.IOUtil;
@@ -208,8 +209,24 @@ public class DataModel
     return null;
   }
 
+  public String resolveValueMap(String refServiceUri, String id) 
+  {	
+	Entity value = null;
+	
+	try {
+		HttpClient httpClient = new HttpClient(refServiceUri);
+		value = httpClient.get(Entity.class, "/classes/" + id + "/label");		
+	} 
+	catch (Exception e) {
+		System.out.println("Exception :" + e);
+	}	
+	
+	return value.getLabel();
+  }
+  
   // paging is based on number of data transfer objects
-  public Grid getDtoGrid(DataType dataType, DataTransferObjects dtos)
+  @SuppressWarnings("unchecked")
+  public Grid getDtoGrid(DataType dataType, DataTransferObjects dtos, String refServiceUri)
   {
     Grid pageDtoGrid = new Grid();
     List<DataTransferObject> dtoList = dtos.getDataTransferObjectList().getItems();
@@ -260,6 +277,44 @@ public class DataModel
                 fields.add(field);
               }
 
+              if (roleObject.isHasValueMap())
+              {
+            	Map<String,String> valueMaps;
+            	String roleObjectValue = roleObject.getValue();
+            	String roleObjectOldValue = "";
+            	
+            	if (dataType == DataType.EXCHANGE)
+            	  roleObjectOldValue = roleObject.getOldValue();
+            	
+            	if (session.containsKey("valueMaps"))
+            	{        	      
+            	  valueMaps = (Map<String,String>) session.get("valueMaps");
+            	}
+            	else
+            	{
+            	  valueMaps = new HashMap<String,String>();
+            	  session.put("valueMaps", valueMaps);
+            	}
+            	
+            	if (roleObjectValue != null)
+            	{
+            	  if (!roleObjectValue.isEmpty() && !valueMaps.containsKey(roleObjectValue))
+            	    valueMaps.put(roleObjectValue, resolveValueMap(refServiceUri, roleObjectValue));
+            	
+            	  if (!roleObjectValue.isEmpty())
+            	    roleObject.setValue(valueMaps.get(roleObjectValue));
+            	}
+    	      
+            	if (roleObjectOldValue != null)
+            	{
+            	  if (dataType == DataType.EXCHANGE && !valueMaps.containsKey(roleObjectOldValue) && !roleObjectOldValue.isEmpty())
+            	    valueMaps.put(roleObjectOldValue, resolveValueMap(refServiceUri, roleObjectOldValue));
+            	
+            	  if (!roleObjectOldValue.isEmpty())
+            	    roleObject.setOldValue(valueMaps.get(roleObjectOldValue));
+            	}
+              }
+              
               if (dataType == DataType.APP || roleObject.getOldValue() == null
                   || roleObject.getOldValue().equals(roleObject.getValue()))
               {
@@ -271,9 +326,10 @@ public class DataModel
                     + "</span>");
               }
             }
+            
             else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0
                 && roleObject.getValue() != null && roleObject.getValue().length() > 0)
-            {
+            {              
               RelatedClass relatedClass = new RelatedClass();
               relatedClass.setId(roleObject.getRelatedClassId());
               relatedClass.setName(IOUtil.toCamelCase(roleObject.getRelatedClassName()));

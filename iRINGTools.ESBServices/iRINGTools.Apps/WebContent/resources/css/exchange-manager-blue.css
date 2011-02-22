@@ -45,11 +45,11 @@ a:active {color: black}
 }
 
 .blue-fade {
-  background-image: url(../images/blue-fade.png);
-  background-repeat: repeat-x;
-  -webkit-user-select: none;
-	-moz-user-select: none;
-	cursor: default;
+  margin-left: 10px;
+  background: #f0f0f0 url(../images/blue-fade.png) repeat-x;
+  font-family: Arial, Helvetica, Sans-Serif;
+  font-size: 12;
+  color: #30332D;
 }
 
 /* change default property grid */
@@ -108,4 +108,17 @@ a.breadcrumb:hover {
 
 .class-badge {
   background-color: #dde;
+}
+
+.headerLnkBlack {
+  font-family: Calibri, Arial;
+  font-size: 18px;
+  text-decoration: none;
+  color: #000000;
+}
+
+.exchange_banner{
+  background-image:url('../../../images/blue-fade-small.png');
+  background-repeat:repeat-x;
+  height: 65px;
 }

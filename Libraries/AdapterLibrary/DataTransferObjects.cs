@@ -194,6 +194,9 @@ namespace org.iringtools.adapter
 
     [DataMember(Order = 7, EmitDefaultValue = false)]
     public string relatedClassName { get; set; }
+
+    [DataMember(Order = 8, EmitDefaultValue = false)]
+    public bool hasValueMap { get; set; }
   }
 
   [DataContract]
