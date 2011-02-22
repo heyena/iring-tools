@@ -109,3 +109,16 @@ a.breadcrumb {
 .class-badge {
 	background-color: #ededed;
 }
+
+.headerLnkBlack {
+  font-family: Calibri, Arial;
+  font-size: 18px;
+  text-decoration: none;
+  color: #000000;
+}
+
+.exchange_banner{
+  background-image:url('../../../images/blue-fade-small.png');
+  background-repeat:repeat-x;
+  height: 65px;
+}

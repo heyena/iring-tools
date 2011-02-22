@@ -30,14 +30,14 @@ public class ExchangeDataModel extends DataModel
     this.session = session;
   }
 
-  public Grid getDtoGrid(String serviceUri, String scope, String xid, String filter, String sortBy,
+  public Grid getDtoGrid(String serviceUri, String refServiceUri, String scope, String xid, String filter, String sortBy,
       String sortOrder, int start, int limit)
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
     DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, filter, sortBy, 
         sortOrder, start, limit);
-    Grid pageDtoGrid = getDtoGrid(DataType.EXCHANGE, pageDtos);
+    Grid pageDtoGrid = getDtoGrid(DataType.EXCHANGE, pageDtos, refServiceUri);
     DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());
     return pageDtoGrid;

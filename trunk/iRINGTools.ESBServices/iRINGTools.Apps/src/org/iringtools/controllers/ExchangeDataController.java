@@ -18,8 +18,10 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   
   private String esbServiceUri;
   private String xLogsServiceUri;
+  private String refServiceUri;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
+  
   private Grid xLogsGrid;
   private String xResultsGrid;
   private Grid pageXLogsGrid;
@@ -44,6 +46,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
     
     esbServiceUri = appContext.get("ESBServiceUri").toString();
     xLogsServiceUri = appContext.get("HistoryServiceUri").toString();
+    refServiceUri = appContext.get("RefServiceUri").toString();
     exchangeDataModel = new ExchangeDataModel();
   }
   
@@ -58,7 +61,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = exchangeDataModel.getDtoGrid(esbServiceUri, scope, xid, filter, sort, dir, start, limit);    
+    pageDtoGrid = exchangeDataModel.getDtoGrid(esbServiceUri, refServiceUri, scope, xid, filter, sort, dir, start, limit);    
     return SUCCESS;
   }
   

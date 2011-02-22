@@ -189,19 +189,22 @@ namespace org.iringtools.mapping
 
       public static string ResolveValueList(this Mapping mapping, string valueListName, string value)
       {
-        foreach (ValueListMap valueListMap in mapping.valueListMaps)
-        {
-          if (valueListMap.name == valueListName)
+          if (mapping.valueListMaps != null)
           {
-            foreach (ValueMap valueMap in valueListMap.valueMaps)
-            {
-              if (valueMap.internalValue == value)
+              foreach (ValueListMap valueListMap in mapping.valueListMaps)
               {
-                return valueMap.uri.Replace("rdl:", RDL_NS);
+                  if (valueListMap.name == valueListName)
+                  {
+                      foreach (ValueMap valueMap in valueListMap.valueMaps)
+                      {
+                          if (valueMap.internalValue == value)
+                          {
+                              return valueMap.uri.Replace("rdl:", RDL_NS);
+                          }
+                      }
+                  }
               }
-            }
           }
-        }
 
         return RDF_NIL;
       }

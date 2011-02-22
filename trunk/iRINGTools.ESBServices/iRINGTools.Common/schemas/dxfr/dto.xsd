@@ -107,6 +107,13 @@
       <xs:element name="value" type="xs:string" />
       <xs:element name="relatedClassId" type="xs:string" />
       <xs:element name="relatedClassName" type="xs:string" />
+      <xs:element name="hasValueMap" type="xs:boolean">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="hasValueMap" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
