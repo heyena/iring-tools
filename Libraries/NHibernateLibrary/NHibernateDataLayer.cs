@@ -489,11 +489,22 @@ namespace org.iringtools.adapter.datalayer
 
       StringBuilder sql = new StringBuilder();
       sql.Append("from " + dataRelationship.relatedObjectName + " where ");
+
       foreach (PropertyMap map in dataRelationship.propertyMaps)
       {
-        sql.Append(map.relatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.dataPropertyName) + "' and ");
+        DataProperty propertyMap = dataObject.dataProperties.First(c => c.propertyName == map.dataPropertyName);
+
+        if (propertyMap.dataType == DataType.String)
+        {
+          sql.Append(map.relatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.dataPropertyName) + "' and ");
+        }
+        else
+        {
+          sql.Append(map.relatedPropertyName + " = " + sourceDataObject.GetPropertyValue(map.dataPropertyName) + " and ");
+        }
       }
-      sql.Remove(sql.Length - 4, 4);
+
+      sql.Remove(sql.Length - 4, 4);  // remove the tail "and "
 
       using (ISession session = OpenSession())
       {
