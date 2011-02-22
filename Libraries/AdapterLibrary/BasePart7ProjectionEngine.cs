@@ -73,14 +73,24 @@ namespace org.iringtools.adapter.projection
 
     protected AdapterSettings _settings = null;
     protected Mapping _mapping = null;
+    protected DataDictionary _dictionary = null;
     protected GraphMap _graphMap = null;
     protected string _graphBaseUri = null;
     protected IDataLayer _dataLayer = null;
     protected IList<IDataObject> _dataObjects = null;
+    protected Dictionary<string, string>[] _dataRecords = null;
     protected Dictionary<string, List<string>> _classIdentifiers = null;
     protected List<string> _relatedObjectPaths = null;
+
+    // key is related object type at a data object index and value is list of related objects 
     protected Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
+
+    // key is related object type and value is a list of related data records
+    protected Dictionary<string, List<Dictionary<string, string>>>[] _relatedRecordsMaps = null;
+
+    // key is related object path and value is list of related objects
     protected Dictionary<string, List<IDataObject>> _relatedObjectsCache = null;
+
     protected TripleStore _memoryStore = null;
     private RoleType _roleType = RoleType.Property;
     private string _valueListName = null;
@@ -133,47 +143,52 @@ namespace org.iringtools.adapter.projection
     // senario (assume no circular relationships - should be handled by AppEditor): 
     //  dataObject1.L1RelatedDataObjects.L2RelatedDataObjects.LnRelatedDataObjects.property1
     //  dataObject1.L1RelatedDataObjects.L2RelatedDataObjects.LnRelatedDataObjects.property2
-    protected void SetObjects(int dataObjectIndex, string propertyPath, List<string> relatedValues)
+    protected void SetRelatedRecords(int dataObjectIndex, string relatedPropertyPath, List<string> relatedValues)
     {
-      Dictionary<string, IList<IDataObject>> relatedObjectDictionary = _relatedObjects[dataObjectIndex];
-      int lastDotPosition = propertyPath.LastIndexOf('.');
-      string property = propertyPath.Substring(lastDotPosition + 1);
-      string objectPathString = propertyPath.Substring(0, lastDotPosition);  // exclude property
-      string[] objectPath = objectPathString.Split('.');
+      Dictionary<string, List<Dictionary<string, string>>> relatedRecordsMap = _relatedRecordsMaps[dataObjectIndex];
+      int lastDotPosition = relatedPropertyPath.LastIndexOf('.');
+      string property = relatedPropertyPath.Substring(lastDotPosition + 1);
+      string objectPath = relatedPropertyPath.Substring(0, lastDotPosition);  // exclude property
+      string[] objectNames = objectPath.Split('.');
 
-      if (!_relatedObjectPaths.Contains(objectPathString))
-        _relatedObjectPaths.Add(objectPathString);
+      if (!_relatedObjectPaths.Contains(objectPath))
+        _relatedObjectPaths.Add(objectPath);
 
       // top level data objects are processed separately, so start with 1
-      for (int i = 1; i < objectPath.Length; i++)
+      for (int i = 1; i < objectNames.Length; i++)
       {
-        string relatedObjectType = objectPath[i];
-        IList<IDataObject> relatedObjects = null;
+        string relatedObjectType = objectNames[i];
+        List<Dictionary<string, string>> relatedRecords = null;
 
-        if (relatedObjectDictionary.ContainsKey(relatedObjectType))
+        if (relatedRecordsMap.ContainsKey(relatedObjectType))
         {
-          relatedObjects = relatedObjectDictionary[relatedObjectType];
+          relatedRecords = relatedRecordsMap[relatedObjectType];
         }
         else
         {
-          if (i == objectPath.Length - 1)  // last related object in the chain
+          if (i == objectNames.Length - 1)  // last related object in the chain
           {
-            relatedObjects = _dataLayer.Create(relatedObjectType, new string[relatedValues.Count]);
+            relatedRecords = new List<Dictionary<string, string>>();
+
+            for (int j = 0; j < relatedValues.Count; j++)
+            {
+              relatedRecords.Add(new Dictionary<string, string>());
+            }
           }
-          else // intermediate related object
+          else
           {
-            relatedObjects = _dataLayer.Create(relatedObjectType, null);
+            relatedRecords = new List<Dictionary<string, string>>();
           }
 
-          relatedObjectDictionary.Add(relatedObjectType, relatedObjects);
+          relatedRecordsMap[relatedObjectType] = relatedRecords;
         }
 
         // only fill last related object values now; values of intermediate related objects' parent might not be available yet.
-        if (i == objectPath.Length - 1)
+        if (i == objectNames.Length - 1)
         {
           for (int j = 0; j < relatedValues.Count; j++)
           {
-            relatedObjects[j].SetPropertyValue(property, relatedValues[j]);
+            relatedRecords[j][property] = relatedValues[j];
           }
         }
       }
@@ -190,13 +205,11 @@ namespace org.iringtools.adapter.projection
     //  dataObject1.L1RelatedDataObjects[1].L2RelatedDataObjects[2].property4.value2
     //  dataObject1.L1RelatedDataObjects[2].L2RelatedDataObjects[1].property3.value1
     //  dataObject1.L1RelatedDataObjects[2].L2RelatedDataObjects[2].property4.value2
-    protected void SetRelatedObjects()
+    protected void FillRelatedRecords()
     {
-      DataDictionary dictionary = _dataLayer.GetDictionary();
-
       for (int i = 0; i < _dataObjects.Count; i++)
       {
-        Dictionary<string, IList<IDataObject>> relatedObjectDictionary = _relatedObjects[i];
+        Dictionary<string, List<Dictionary<string, string>>> relatedObjectsMap = _relatedRecordsMaps[i];
 
         foreach (string relatedObjectPath in _relatedObjectPaths)
         {
@@ -207,27 +220,43 @@ namespace org.iringtools.adapter.projection
             string parentObjectType = relatedObjectPathElements[j];
             string relatedObjectType = relatedObjectPathElements[j + 1];
 
-            if (relatedObjectDictionary.ContainsKey(relatedObjectType))
+            if (relatedObjectsMap.ContainsKey(relatedObjectType))
             {
-              IList<IDataObject> parentObjects = null;
+              List<Dictionary<string, string>> relatedRecords = relatedObjectsMap[relatedObjectType];
 
               if (j == 0)
-                parentObjects = new List<IDataObject> { _dataObjects[i] };
-              else
-                parentObjects = relatedObjectDictionary[parentObjectType];
-
-              IList<IDataObject> relatedObjects = relatedObjectDictionary[relatedObjectType];
-
-              foreach (IDataObject parentObject in parentObjects)
               {
-                DataObject dataObject = dictionary.DataObjects.First(c => c.ObjectName == parentObjectType);
-                DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelationshipName == relatedObjectType);
+                List<IDataObject> parentObjects = new List<IDataObject> { _dataObjects[i] };
 
-                foreach (IDataObject relatedObject in relatedObjects)
+                foreach (IDataObject parentObject in parentObjects)
                 {
-                  foreach (PropertyMap map in dataRelationship.PropertyMaps)
+                  DataObject dataObject = _dictionary.DataObjects.First(c => c.ObjectName == parentObjectType);
+                  DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelatedObjectName == relatedObjectType);
+
+                  foreach (Dictionary<string, string> relatedRecord in relatedRecords)
                   {
-                    relatedObject.SetPropertyValue(map.RelatedPropertyName, parentObject.GetPropertyValue(map.DataPropertyName));
+                    foreach (PropertyMap map in dataRelationship.PropertyMaps)
+                    {
+                      relatedRecord[map.RelatedPropertyName] = parentObject.GetPropertyValue(map.DataPropertyName).ToString();
+                    }
+                  }
+                }
+              }
+              else
+              {
+                List<Dictionary<string, string>> parentObjects = relatedObjectsMap[parentObjectType];
+
+                foreach (Dictionary<string, string> parentObject in parentObjects)
+                {
+                  DataObject dataObject = _dictionary.DataObjects.First(c => c.ObjectName == parentObjectType);
+                  DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelatedObjectName == relatedObjectType);
+
+                  foreach (Dictionary<string, string> relatedRecord in relatedRecords)
+                  {
+                    foreach (PropertyMap map in dataRelationship.PropertyMaps)
+                    {
+                      relatedRecord[map.RelatedPropertyName] = parentObject[map.DataPropertyName];
+                    }
                   }
                 }
               }
@@ -235,6 +264,85 @@ namespace org.iringtools.adapter.projection
           }
         }
       }
+    }
+
+    // turn related records into data objects, remove duplicates, and append them to top level data objects
+    protected void AppendRelatedObjects()
+    {
+      // dictonary cache of related object types and list of identifiers
+      Dictionary<string, List<string>> relatedObjectTypeIdentifiers = new Dictionary<string, List<string>>();
+
+      foreach (Dictionary<string, List<Dictionary<string, string>>> relatedRecordsMap in _relatedRecordsMaps)
+      {
+        foreach (var relatedRecordsMapPair in relatedRecordsMap)
+        {
+          string relatedObjectType = relatedRecordsMapPair.Key;
+          List<KeyProperty> keyProperties = GetKeyProperties(relatedObjectType);
+
+          foreach (Dictionary<string, string> relatedRecord in relatedRecordsMapPair.Value)
+          {
+            string relatedObjectIdentifier = String.Empty;
+            foreach (KeyProperty keyProperty in keyProperties)
+            {
+              relatedObjectIdentifier += relatedRecord[keyProperty.KeyPropertyName];
+            }
+
+            if (!relatedObjectTypeIdentifiers.ContainsKey(relatedObjectType))
+            {
+              List<string> relatedObjectIdentifiers = new List<string> { relatedObjectIdentifier };
+              relatedObjectTypeIdentifiers.Add(relatedObjectType, relatedObjectIdentifiers);
+
+              IDataObject relatedObject = _dataLayer.Create(relatedObjectType, new List<string> { relatedObjectIdentifier }).First();
+              foreach (var relatedRecordPair in relatedRecord)
+              {
+                relatedObject.SetPropertyValue(relatedRecordPair.Key, relatedRecordPair.Value);
+              }
+
+              _dataObjects.Add(relatedObject);
+            }
+            else if (!relatedObjectTypeIdentifiers[relatedObjectType].Contains(relatedObjectIdentifier))
+            {
+              relatedObjectTypeIdentifiers[relatedObjectType].Add(relatedObjectIdentifier);
+
+              IDataObject relatedObject = _dataLayer.Create(relatedObjectType, new List<string> { relatedObjectIdentifier }).First();
+              foreach (var relatedRecordPair in relatedRecord)
+              {
+                relatedObject.SetPropertyValue(relatedRecordPair.Key, relatedRecordPair.Value);
+              }
+
+              _dataObjects.Add(relatedObject);
+            }
+          }
+        }
+      }
+    }
+
+    protected List<KeyProperty> GetKeyProperties(string objectType)
+    {
+      DataObject dataObject = _dictionary.DataObjects.First(c => c.ObjectName.ToUpper() == objectType.ToUpper());
+      return dataObject.KeyProperties;
+    }
+
+    // turn data record into data object
+    protected IDataObject CreateDataObject(string objectType, int objectIndex)
+    {
+      Dictionary<string, string> dataRecord = _dataRecords[objectIndex];
+      List<KeyProperty> keyProperties = GetKeyProperties(objectType);
+      string identifier = String.Empty;
+
+      foreach (KeyProperty keyProperty in keyProperties)
+      {
+        identifier += dataRecord[keyProperty.KeyPropertyName];
+      }
+
+      IDataObject dataObject = _dataLayer.Create(objectType, new List<string>{identifier}).First<IDataObject>();
+
+      foreach (var pair in dataRecord)
+      {
+        dataObject.SetPropertyValue(pair.Key, pair.Value);
+      }
+
+      return dataObject;
     }
 
     protected void SetClassIdentifiers(DataDirection direction)
@@ -261,9 +369,8 @@ namespace org.iringtools.adapter.projection
 
       foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
       {
-        List<string> identifiers = new List<string>();
-
         ClassMap classMap = classTemplateMap.classMap;
+        List<string> identifiers = new List<string>();
 
         foreach (string identifier in classMap.identifiers)
         {
@@ -284,26 +391,21 @@ namespace org.iringtools.adapter.projection
               }
             }
           }
-          else  // identifier comes from a property
+          else if (_dataObjects != null)  // identifier comes from a property
           {
-            string[] property = identifier.Split('.');
-            string ObjectName = property[0].Trim();
-            string propertyName = property[1].Trim();
-
-            if (_dataObjects != null)
+            for (int i = 0; i < _dataObjects.Count; i++)
             {
-              for (int i = 0; i < _dataObjects.Count; i++)
-              {
-                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
+              IDataObject valueObject = GetValueObjects(identifier, i).First();
+              string propertyName = identifier.Substring(identifier.LastIndexOf('.') + 1);
+              string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
 
-                if (identifiers.Count == i)
-                {
-                  identifiers.Add(value);
-                }
-                else
-                {
-                  identifiers[i] += classMap.identifierDelimiter + value;
-                }
+              if (identifiers.Count == i)
+              {
+                identifiers.Add(value);
+              }
+              else
+              {
+                identifiers[i] += classMap.identifierDelimiter + value;
               }
             }
           }
@@ -313,7 +415,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    protected List<IDataObject> getValueObjects(string propertyMap, int dataObjectIndex)
+    protected List<IDataObject> GetValueObjects(string propertyMap, int dataObjectIndex)
     {
       List<IDataObject> valueObjects = null;
 
@@ -323,10 +425,12 @@ namespace org.iringtools.adapter.projection
 
       if (propertyMap.Split('.').Length > 2)  // related property
       {
-        if (!_relatedObjectsCache.TryGetValue(objectPath, out valueObjects))
+        string key = objectPath + "." + dataObjectIndex;
+
+        if (!_relatedObjectsCache.TryGetValue(key, out valueObjects))
         {
           valueObjects = GetRelatedObjects(propertyMap, _dataObjects[dataObjectIndex]);
-          _relatedObjectsCache.Add(objectPath, valueObjects);
+          _relatedObjectsCache.Add(key, valueObjects);
         }
       }
       else  // direct property
@@ -354,7 +458,7 @@ namespace org.iringtools.adapter.projection
         }
         else  // identifier is a property map
         {
-          List<IDataObject> identifierValueObjects = getValueObjects(identifier, dataObjectIndex);
+          List<IDataObject> identifierValueObjects = GetValueObjects(identifier, dataObjectIndex);
 
           if (identifierValueObjects != null && identifierValueObjects.Count > 0)
           {
@@ -368,6 +472,7 @@ namespace org.iringtools.adapter.projection
 
       return classIdentifierValue;
     }
+
     private void SetInboundSparqlClassIdentifiers()
     {
       _classIdentifiers.Clear();
@@ -376,10 +481,8 @@ namespace org.iringtools.adapter.projection
       {
         ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
         string classId = classTemplateMap.classMap.id;
-
         string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
         _logger.Debug(query);
-
         object results = _memoryStore.ExecuteQuery(query);
 
         if (results != null)
@@ -388,7 +491,7 @@ namespace org.iringtools.adapter.projection
 
           foreach (SparqlResult result in resultSet)
           {
-            string classInstance = result.ToString().Remove(0, ("?class = " + _graphBaseUri).Length);
+            string classInstance = result.Value("class").ToString();
 
             if (!String.IsNullOrEmpty(classInstance))
             {
@@ -417,7 +520,6 @@ namespace org.iringtools.adapter.projection
       foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
       {
         ClassMap classMap = classTemplateMap.classMap;
-
         List<string> classIdentifiers = new List<string>();
 
         foreach (string identifier in classMap.identifiers)
@@ -442,7 +544,7 @@ namespace org.iringtools.adapter.projection
           else  // identifier comes from a property
           {
             string[] property = identifier.Split('.');
-            string ObjectName = property[0].Trim();
+            string objectName = property[0].Trim();
             string propertyName = property[1].Trim();
 
             if (_dataObjects != null)
@@ -468,7 +570,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    //resolve the dataFilter into data object terms
+    // resolve the dataFilter into data object terms
     public void ProjectDataFilter(DataDictionary dictionary, ref DataFilter filter, string graph)
     {
       try
@@ -476,6 +578,7 @@ namespace org.iringtools.adapter.projection
         if (filter != null && (filter.Expressions != null || filter.OrderExpressions != null))
         {
           _graphMap = _mapping.FindGraphMap(graph);
+
           DataObject _dataObject = dictionary.DataObjects.Find(o => o.ObjectName == _graphMap.dataObjectName);
 
           if (filter.Expressions != null)
@@ -484,7 +587,6 @@ namespace org.iringtools.adapter.projection
             {
               string[] propertyNameParts = expression.PropertyName.Split('.');
               string dataPropertyName = ProjectPropertyName(propertyNameParts);
-
               expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
 
               if (_roleType == RoleType.ObjectProperty)
@@ -569,7 +671,6 @@ namespace org.iringtools.adapter.projection
       ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.Find(
         cm => Utility.TitleCase(cm.classMap.name).ToUpper() == className.ToUpper());
 
-      ClassMap classMap = classTemplateMap.classMap;
       List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
       TemplateMap templateMap = templateMaps.Find(tm => tm.name == templateName);
 
