@@ -14,14 +14,14 @@ public class AppDataModel extends DataModel
     this.session = session;
   }
   
-  public Grid getDtoGrid(String serviceUri, String scope, String app, String graph, String filter, 
+  public Grid getDtoGrid(String serviceUri, String refServiceUri, String scope, String app, String graph, String filter, 
       String sortBy, String sortOrder, int start, int limit)
   {
     String dtiRelativePath = "/" + scope + "/" + app + "/" + graph + "/filter";
     String dtoRelativePath = "/" + scope + "/" + app + "/" + graph + "/page";    
     DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, 
         filter, sortBy, sortOrder, start, limit);
-    Grid pageDtoGrid = getDtoGrid(DataType.APP, pageDtos);
+    Grid pageDtoGrid = getDtoGrid(DataType.APP, pageDtos, refServiceUri);
     DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
     pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());      
     return pageDtoGrid;
