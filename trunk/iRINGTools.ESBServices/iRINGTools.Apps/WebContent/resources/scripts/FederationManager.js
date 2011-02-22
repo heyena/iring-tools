@@ -23,7 +23,7 @@ Ext.onReady(function () {
 	  collapsible: false,
 	  collapsed: false,
 
-	  border: true,
+	  border: false,
 	  split: true,
 
 	  width: 260,
@@ -94,8 +94,8 @@ Ext.onReady(function () {
 		items: [{
 			region: 'north',
 			//baseCls : 'x-plain',
-			height: 65, // give north and south regions a height
-			margins: '-10 5 0 0',
+			height: 55, // give north and south regions a height
+			//margins: '-10 5 0 0',
 			contentEl:'header'
 		  },
 			federationPanel,

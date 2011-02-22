@@ -118,7 +118,7 @@ a.breadcrumb:hover {
 }
 
 .exchange_banner{
-  background-image:url('../../../images/blue-fade-small.png');
+  background-image:url('../images/blue-fade.png');
   background-repeat:repeat-x;
-  height: 65px;
+  background-position:left bottom;
 }

@@ -115,7 +115,8 @@ function createXlogsPane(context, xlogsContainer, xlabel){
           width: 4
         },{
           xtype: 'button',
-          icon: 'resources/images/refresh.png',
+          icon: 'resources/images/16x16/view-refresh.png',
+          tooltip: 'Refresh',
           handler: function(){
             xlogsStore.load();
           }
@@ -540,9 +541,7 @@ Ext.onReady(function(){
   
   var headerPane = new Ext.BoxComponent({
     region: 'north',
-    height: 105,   
-    margins: '-50 5 0 0',
-    cls: 'blue-fade',
+    height: 55,
     contentEl: 'header'
   });
   
@@ -561,8 +560,8 @@ Ext.onReady(function(){
       items: [{
         id: 'refresh-button',
         xtype: 'button',
-        icon: 'resources/images/refresh.png',
-        text: 'Refresh',
+        icon: 'resources/images/16x16/view-refresh.png',
+        text: 'Refresh',        
         handler: function(){
           var directoryTree = Ext.getCmp('directory-tree');
           var contentPane = Ext.getCmp('content-pane');
@@ -587,7 +586,7 @@ Ext.onReady(function(){
         id: 'exchange-button',
         xtype: 'button',
         icon: 'resources/images/exchange.png',
-        text: 'Exchange',
+        text: 'Exchange',        
         disabled: true,
         handler: function(){
           var node = Ext.getCmp('directory-tree').getSelectionModel().getSelectedNode(); 
@@ -604,7 +603,7 @@ Ext.onReady(function(){
         id: 'xlogs-button',
         xtype: 'button',
         icon: 'resources/images/exchange-log.png',
-        text: 'History',
+        text: 'History',        
         disabled: true,
         hidden: true,
         handler: function(){  
