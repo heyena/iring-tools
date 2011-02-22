@@ -10,7 +10,7 @@
  */
  
 .exchange_banner{
-	background-image:url('../../../../images/blue-fade-small.png');
+	background-image:url('../../../images/blue-fade-small.png');
 	background-repeat:repeat-x;
 	height: 65px;
 }
