@@ -138,10 +138,8 @@ namespace org.iringtools.adapter.projection
                         roleObject.hasValueMap = true;
                         value = _mapping.ResolveValueList(roleMap.valueListName, value);
 
-                        if (value != RDF_NIL)
-                            value = value.Replace(RDL_NS.NamespaceName, "rdl:");
-                        else if (value == RDF_NIL)
-                            value = String.Empty;
+                        if (value == RDF_NIL)
+                          value = String.Empty;
                       }
                       else if (roleMap.dataType.Contains("dateTime"))
                       {

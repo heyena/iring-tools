@@ -30,19 +30,43 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graph }
+     * Create an instance of {@link DataExchanges }
      * 
      */
-    public Graph createGraph() {
-        return new Graph();
+    public DataExchanges createDataExchanges() {
+        return new DataExchanges();
     }
 
     /**
-     * Create an instance of {@link Application }
+     * Create an instance of {@link Commodity }
      * 
      */
-    public Application createApplication() {
-        return new Application();
+    public Commodity createCommodity() {
+        return new Commodity();
+    }
+
+    /**
+     * Create an instance of {@link Directory }
+     * 
+     */
+    public Directory createDirectory() {
+        return new Directory();
+    }
+
+    /**
+     * Create an instance of {@link Graphs }
+     * 
+     */
+    public Graphs createGraphs() {
+        return new Graphs();
+    }
+
+    /**
+     * Create an instance of {@link Exchange }
+     * 
+     */
+    public Exchange createExchange() {
+        return new Exchange();
     }
 
     /**
@@ -62,27 +86,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Exchange }
-     * 
-     */
-    public Exchange createExchange() {
-        return new Exchange();
-    }
-
-    /**
-     * Create an instance of {@link Commodity }
-     * 
-     */
-    public Commodity createCommodity() {
-        return new Commodity();
-    }
-
-    /**
      * Create an instance of {@link ExchangeDefinition }
      * 
      */
     public ExchangeDefinition createExchangeDefinition() {
         return new ExchangeDefinition();
+    }
+
+    /**
+     * Create an instance of {@link Application }
+     * 
+     */
+    public Application createApplication() {
+        return new Application();
     }
 
     /**
@@ -94,27 +110,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graphs }
+     * Create an instance of {@link Graph }
      * 
      */
-    public Graphs createGraphs() {
-        return new Graphs();
-    }
-
-    /**
-     * Create an instance of {@link DataExchanges }
-     * 
-     */
-    public DataExchanges createDataExchanges() {
-        return new DataExchanges();
-    }
-
-    /**
-     * Create an instance of {@link Directory }
-     * 
-     */
-    public Directory createDirectory() {
-        return new Directory();
+    public Graph createGraph() {
+        return new Graph();
     }
 
 }

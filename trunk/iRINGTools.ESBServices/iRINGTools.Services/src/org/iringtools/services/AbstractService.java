@@ -22,12 +22,12 @@ public abstract class AbstractService
 
     String directoryServiceUri = servletContext.getInitParameter("directoryServiceUri");
     if (directoryServiceUri == null || directoryServiceUri.equals(""))
-      directoryServiceUri = "http://localhost:8080/iringtools/services/dirsvc";
+      directoryServiceUri = "http://localhost:8080/services/dir";
     settings.put("directoryServiceUri", directoryServiceUri);
 
     String differencingServiceUri = servletContext.getInitParameter("differencingServiceUri");
     if (differencingServiceUri == null || differencingServiceUri.equals(""))
-      differencingServiceUri = "http://localhost:8080/iringtools/services/diffsvc";
+      differencingServiceUri = "http://localhost:8080/services/diff";
     settings.put("differencingServiceUri", differencingServiceUri);
 
     String poolSize = servletContext.getInitParameter("poolSize");

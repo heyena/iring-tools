@@ -903,6 +903,9 @@ namespace org.iringtools.adapter
                 if (!String.IsNullOrEmpty(roleMap.valueListName))
                 {
                   value = _mapping.ResolveValueList(roleMap.valueListName, value);
+
+                  if (value == "rdf:nil")
+                    value = String.Empty;
                 }
 
                 if (propertyName == sortIndex)

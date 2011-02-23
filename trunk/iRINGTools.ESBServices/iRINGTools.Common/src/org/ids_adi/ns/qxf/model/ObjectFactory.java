@@ -30,99 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link TemplateQualification }
+     * Create an instance of {@link Value }
      * 
      */
-    public TemplateQualification createTemplateQualification() {
-        return new TemplateQualification();
-    }
-
-    /**
-     * Create an instance of {@link Specialization }
-     * 
-     */
-    public Specialization createSpecialization() {
-        return new Specialization();
-    }
-
-    /**
-     * Create an instance of {@link RoleQualification }
-     * 
-     */
-    public RoleQualification createRoleQualification() {
-        return new RoleQualification();
-    }
-
-    /**
-     * Create an instance of {@link EntityType }
-     * 
-     */
-    public EntityType createEntityType() {
-        return new EntityType();
-    }
-
-    /**
-     * Create an instance of {@link Status }
-     * 
-     */
-    public Status createStatus() {
-        return new Status();
-    }
-
-    /**
-     * Create an instance of {@link LicenseText }
-     * 
-     */
-    public LicenseText createLicenseText() {
-        return new LicenseText();
-    }
-
-    /**
-     * Create an instance of {@link RoleDefinition }
-     * 
-     */
-    public RoleDefinition createRoleDefinition() {
-        return new RoleDefinition();
-    }
-
-    /**
-     * Create an instance of {@link License }
-     * 
-     */
-    public License createLicense() {
-        return new License();
-    }
-
-    /**
-     * Create an instance of {@link Qmxf }
-     * 
-     */
-    public Qmxf createQmxf() {
-        return new Qmxf();
-    }
-
-    /**
-     * Create an instance of {@link LicenseTerm }
-     * 
-     */
-    public LicenseTerm createLicenseTerm() {
-        return new LicenseTerm();
-    }
-
-    /**
-     * Create an instance of {@link TextualDefinition }
-     * 
-     */
-    public TextualDefinition createTextualDefinition() {
-        return new TextualDefinition();
-    }
-
-    /**
-     * Create an instance of {@link TemplateDefinition }
-     * 
-     */
-    public TemplateDefinition createTemplateDefinition() {
-        return new TemplateDefinition();
+    public Value createValue() {
+        return new Value();
     }
 
     /**
@@ -134,6 +46,78 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link LicenseTerm }
+     * 
+     */
+    public LicenseTerm createLicenseTerm() {
+        return new LicenseTerm();
+    }
+
+    /**
+     * Create an instance of {@link License }
+     * 
+     */
+    public License createLicense() {
+        return new License();
+    }
+
+    /**
+     * Create an instance of {@link EntityType }
+     * 
+     */
+    public EntityType createEntityType() {
+        return new EntityType();
+    }
+
+    /**
+     * Create an instance of {@link Specialization }
+     * 
+     */
+    public Specialization createSpecialization() {
+        return new Specialization();
+    }
+
+    /**
+     * Create an instance of {@link Qmxf }
+     * 
+     */
+    public Qmxf createQmxf() {
+        return new Qmxf();
+    }
+
+    /**
+     * Create an instance of {@link Status }
+     * 
+     */
+    public Status createStatus() {
+        return new Status();
+    }
+
+    /**
+     * Create an instance of {@link TemplateQualification }
+     * 
+     */
+    public TemplateQualification createTemplateQualification() {
+        return new TemplateQualification();
+    }
+
+    /**
+     * Create an instance of {@link RoleDefinition }
+     * 
+     */
+    public RoleDefinition createRoleDefinition() {
+        return new RoleDefinition();
+    }
+
+    /**
+     * Create an instance of {@link RoleQualification }
+     * 
+     */
+    public RoleQualification createRoleQualification() {
+        return new RoleQualification();
+    }
+
+    /**
      * Create an instance of {@link Name }
      * 
      */
@@ -142,11 +126,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Value }
+     * Create an instance of {@link TextualDefinition }
      * 
      */
-    public Value createValue() {
-        return new Value();
+    public TextualDefinition createTextualDefinition() {
+        return new TextualDefinition();
+    }
+
+    /**
+     * Create an instance of {@link Restriction }
+     * 
+     */
+    public Restriction createRestriction() {
+        return new Restriction();
+    }
+
+    /**
+     * Create an instance of {@link LicenseText }
+     * 
+     */
+    public LicenseText createLicenseText() {
+        return new LicenseText();
     }
 
     /**
@@ -166,11 +166,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Restriction }
+     * Create an instance of {@link TemplateDefinition }
      * 
      */
-    public Restriction createRestriction() {
-        return new Restriction();
+    public TemplateDefinition createTemplateDefinition() {
+        return new TemplateDefinition();
     }
 
 }

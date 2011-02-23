@@ -107,10 +107,10 @@ public class ESBServiceProvider
 
       // init exchange definition
       initExchangeDefinition(scope, id);
-
+      
       Manifest crossedManifest = getCrossedManifest();
-      DxiRequest dxiRequest = new DxiRequest();
-       
+      
+      DxiRequest dxiRequest = new DxiRequest();       
       dxiRequest.setDataFilter(dataFilter);
       dxiRequest.setManifest(crossedManifest);
       
@@ -256,8 +256,7 @@ public class ESBServiceProvider
       // init exchange definition
       initExchangeDefinition(scope, id);
       
-      Manifest crossedManifest = getCrossedManifest();
-      
+      Manifest crossedManifest = getCrossedManifest();      
       List<DataTransferIndex> sourceDtiListItems = new ArrayList<DataTransferIndex>();
       List<DataTransferIndex> targetDtiListItems = new ArrayList<DataTransferIndex>();
 

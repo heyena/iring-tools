@@ -14,17 +14,20 @@
     <param-value>http://localhost:8080/services/history</param-value>
   </context-param>
   <context-param>
-    <param-name>DXFRServiceUri</param-name>
-    <param-value>http://localhost:54321/dxfr</param-value>
+    <param-name>IDGenServiceUri</param-name>
+    <param-value>http://localhost:8080/services/idgen</param-value>
   </context-param>
-  
+  <context-param>
+    <param-name>RefDataServiceUri</param-name>
+    <param-value>http://localhost:8080/services/refdata</param-value>
+  </context-param>
   <context-param>
     <param-name>RefServiceUri</param-name>
     <param-value>http://localhost:54321/refdata</param-value>
   </context-param>
   <context-param>
-    <param-name>IDGenServiceUri</param-name>
-    <param-value>http://localhost:8080/services/idgen</param-value>
+    <param-name>DXFRServiceUri</param-name>
+    <param-value>http://localhost:54321/dxfr</param-value>
   </context-param>
   
   <welcome-file-list>

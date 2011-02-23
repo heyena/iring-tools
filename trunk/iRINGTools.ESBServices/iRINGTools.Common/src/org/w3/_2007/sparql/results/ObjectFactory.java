@@ -36,30 +36,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Result }
-     * 
-     */
-    public Result createResult() {
-        return new Result();
-    }
-
-    /**
-     * Create an instance of {@link Head }
-     * 
-     */
-    public Head createHead() {
-        return new Head();
-    }
-
-    /**
-     * Create an instance of {@link Results }
-     * 
-     */
-    public Results createResults() {
-        return new Results();
-    }
-
-    /**
      * Create an instance of {@link Link }
      * 
      */
@@ -76,11 +52,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Binding }
+     * Create an instance of {@link Results }
      * 
      */
-    public Binding createBinding() {
-        return new Binding();
+    public Results createResults() {
+        return new Results();
+    }
+
+    /**
+     * Create an instance of {@link Head }
+     * 
+     */
+    public Head createHead() {
+        return new Head();
     }
 
     /**
@@ -89,6 +73,22 @@ public class ObjectFactory {
      */
     public Literal createLiteral() {
         return new Literal();
+    }
+
+    /**
+     * Create an instance of {@link Result }
+     * 
+     */
+    public Result createResult() {
+        return new Result();
+    }
+
+    /**
+     * Create an instance of {@link Binding }
+     * 
+     */
+    public Binding createBinding() {
+        return new Binding();
     }
 
     /**
