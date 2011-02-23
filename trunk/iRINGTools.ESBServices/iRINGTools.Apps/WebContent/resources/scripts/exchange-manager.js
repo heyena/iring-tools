@@ -552,6 +552,7 @@ Ext.onReady(function(){
     width: 800,
     lines: true,
     autoScroll: true,
+    border: false,
     animate: true,
     enableDD: false,
     containerScroll: true,
@@ -672,6 +673,7 @@ Ext.onReady(function(){
     title: 'Details',
     region: 'south',
     height: 250,
+    layout: 'fit',
     collapsible: true,
     stripeRows: true,
     autoScroll: true,
@@ -689,13 +691,14 @@ Ext.onReady(function(){
     region: 'west',
     id: 'west-panel',
     title: 'Directory',
-    frame: true,
+    frame: false,
+    border: false,
     split: true,
     width: 260,
     minSize: 175,
     maxSize: 400,
     collapsible: true,
-    margins: '0 0 0 4',
+    //margins: '0 0 0 4',
     layout: 'border',
     items: [ directoryTreePane, propertyPane ]
   });
@@ -705,6 +708,7 @@ Ext.onReady(function(){
     region: 'center',
     deferredRender: false,
     enableTabScroll: true,
+    border: true,
     activeItem: 0
   });
   
