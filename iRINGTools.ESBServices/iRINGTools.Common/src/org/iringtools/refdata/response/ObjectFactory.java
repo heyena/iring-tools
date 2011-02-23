@@ -30,6 +30,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Entities }
+     * 
+     */
+    public Entities createEntities() {
+        return new Entities();
+    }
+
+    /**
      * Create an instance of {@link Response }
      * 
      */
@@ -43,14 +51,6 @@ public class ObjectFactory {
      */
     public Entity createEntity() {
         return new Entity();
-    }
-
-    /**
-     * Create an instance of {@link Entities }
-     * 
-     */
-    public Entities createEntities() {
-        return new Entities();
     }
 
 }

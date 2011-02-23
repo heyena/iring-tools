@@ -30,14 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link OrderExpressions }
-     * 
-     */
-    public OrderExpressions createOrderExpressions() {
-        return new OrderExpressions();
-    }
-
-    /**
      * Create an instance of {@link Expressions }
      * 
      */
@@ -46,11 +38,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataFilter }
+     * Create an instance of {@link OrderExpressions }
      * 
      */
-    public DataFilter createDataFilter() {
-        return new DataFilter();
+    public OrderExpressions createOrderExpressions() {
+        return new OrderExpressions();
+    }
+
+    /**
+     * Create an instance of {@link Values }
+     * 
+     */
+    public Values createValues() {
+        return new Values();
     }
 
     /**
@@ -62,11 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Values }
+     * Create an instance of {@link DataFilter }
      * 
      */
-    public Values createValues() {
-        return new Values();
+    public DataFilter createDataFilter() {
+        return new DataFilter();
     }
 
     /**

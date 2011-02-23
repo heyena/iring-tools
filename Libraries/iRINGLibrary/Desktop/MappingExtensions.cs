@@ -199,7 +199,7 @@ namespace org.iringtools.mapping
                       {
                           if (valueMap.internalValue == value)
                           {
-                              return valueMap.uri.Replace("rdl:", RDL_NS);
+                              return valueMap.uri;  // uri with prefix
                           }
                       }
                   }
