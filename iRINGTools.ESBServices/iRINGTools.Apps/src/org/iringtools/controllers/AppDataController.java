@@ -34,7 +34,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   {
 	Map<String, Object> appContext = ActionContext.getContext().getApplication();
     dxfrServiceUri = appContext.get("DXFRServiceUri").toString();
-    refServiceUri = appContext.get("RefDataServiceUri").toString();
+    refServiceUri = appContext.get("RefServiceUri").toString();
     appDataModel = new AppDataModel();
   }
   
