@@ -24,8 +24,8 @@ Ext.onReady(function () {
 	  collapsed: false,
 
 	  border: false,
+	  frame: false,
 	  split: true,
-
 	  width: 260,
   	  minSize: 175,
   	  maxSize: 500,
@@ -35,8 +35,9 @@ Ext.onReady(function () {
 	var tabPanel = new Ext.TabPanel({
 		region: 'center',
 		id: 'contentPanel',     // used in FederationManager.js
-		margins: '0 5 0 0',
-                disabled:true,
+		//margins: '0 5 0 0',
+                //disabled:true,
+		border: true,
 		enableTabScroll: true                
 	});
 
@@ -82,7 +83,7 @@ Ext.onReady(function () {
                         }                        
                 });
 
-                Ext.getCmp('contentPanel').enable()
+                //Ext.getCmp('contentPanel').enable();
                 tabPanel.add(newTab);
                 tabPanel.activate(newTab); 
 
@@ -96,6 +97,7 @@ Ext.onReady(function () {
 			//baseCls : 'x-plain',
 			height: 55, // give north and south regions a height
 			//margins: '-10 5 0 0',
+			border: false,
 			contentEl:'header'
 		  },
 			federationPanel,

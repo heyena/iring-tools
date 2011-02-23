@@ -32,19 +32,15 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     this.tbar = this.buildToolbar();
 
     this.federationPanel = new Ext.tree.TreePanel({
-      region: 'north',
-      collapseMode: 'mini',
-      height: 300,
-      layout: 'fit',
+      region: 'center',     
       border: false,
       split: true,
-      expandAll:true,
-      
+      expandAll:true,      
       rootVisible: false,
       lines: true,
-      //singleExpand: true,
       useArrows: false,
-      autoScroll:true,
+      autoScroll:true, 
+      style: 'padding-bottom:5px;background:#eee;',
       loader: new Ext.tree.TreeLoader({
         dataUrl: this.url
       }),
@@ -62,11 +58,15 @@ FederationManager.FederationPanel = Ext.extend(Ext.Panel, {
     this.propertyPanel = new Ext.grid.PropertyGrid({
             id:'property-panel',
             title: 'Details',
-            region:'center',
-            layout: 'fit',
+            region:'south',
+            //layout: 'fit',
+            stripeRows: true,
+            collapsible: true,
             autoScroll:true,
-            margin:'10 0 0 0',
-            bodyStyle: 'padding-bottom:15px;background:#eee;',
+            border: false,
+            frame: false,
+            height: 250,           
+            //bodyStyle: 'padding-bottom:15px;background:#eee;',
             source:{},
             listeners: {
                     // to disable editable option of the property grid
