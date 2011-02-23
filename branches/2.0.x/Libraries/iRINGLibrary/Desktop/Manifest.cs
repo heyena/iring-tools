@@ -114,7 +114,7 @@ namespace org.iringtools.library.manifest
   [DataContract(Namespace = "http://www.iringtools.org/dxfr/manifest", Name = "class")]
   public class Class
   {
-    [DataMember(Name = "classId", Order = 0, EmitDefaultValue = false)]
+    [DataMember(Name = "id", Order = 0, EmitDefaultValue = false)]
     public string ClassId { get; set; }
 
     [DataMember(Name = "name", Order = 1, EmitDefaultValue = false)]
@@ -129,7 +129,7 @@ namespace org.iringtools.library.manifest
       Roles = new List<Role>();
     }
 
-    [DataMember(Name = "templateId", Order = 0, EmitDefaultValue = false)]
+    [DataMember(Name = "id", Order = 0, EmitDefaultValue = false)]
     public string TemplateId { get; set; }
 
     [DataMember(Name = "name", Order = 1, EmitDefaultValue = false)]
@@ -148,7 +148,7 @@ namespace org.iringtools.library.manifest
     [DataMember(Name = "type", Order = 0, EmitDefaultValue = false)]
     public RoleType Type { get; set; }
 
-    [DataMember(Name = "roleId", Order = 1, EmitDefaultValue = false)]
+    [DataMember(Name = "id", Order = 1, EmitDefaultValue = false)]
     public string RoleId { get; set; }
 
     [DataMember(Name = "name", Order = 2, EmitDefaultValue = false)]
