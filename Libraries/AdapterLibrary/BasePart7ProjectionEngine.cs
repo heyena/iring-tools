@@ -586,28 +586,31 @@ namespace org.iringtools.adapter.projection
             foreach (Expression expression in filter.Expressions)
             {
               string[] propertyNameParts = expression.PropertyName.Split('.');
-              string dataPropertyName = ProjectPropertyName(propertyNameParts);
+              Values values = expression.Values;
+              string dataPropertyName = ProjectProperty(propertyNameParts, ref values);
               expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
 
-              if (_roleType == RoleType.ObjectProperty)
-              {
-                if (expression.RelationalOperator == RelationalOperator.EqualTo)
-                {
-                  expression.Values = ProjectPropertValues(expression.Values);
-                  expression.RelationalOperator = RelationalOperator.In;
-                }
-                else if (expression.RelationalOperator == RelationalOperator.In)
-                {
-                  expression.Values = ProjectPropertValues(expression.Values);
-                }
-                else
-                {
-                  throw new Exception(
-                    "Invalid Expression in DataFilter. " +
-                    "Object Property Roles can only use EqualTo and In in the expression."
-                  );
-                }
-              }
+              #region already done in Project Property
+              //if (_roleType == RoleType.ObjectProperty)
+              //{
+              //  if (expression.RelationalOperator == RelationalOperator.EqualTo)
+              //  {
+              //    expression.Values = ProjectPropertValues(expression.Values);
+              //    expression.RelationalOperator = RelationalOperator.In;
+              //  }
+              //  else if (expression.RelationalOperator == RelationalOperator.In)
+              //  {
+              //    expression.Values = ProjectPropertValues(expression.Values);
+              //  }
+              //  else
+              //  {
+              //    throw new Exception(
+              //      "Invalid Expression in DataFilter. " +
+              //      "Object Property Roles can only use EqualTo and In in the expression."
+              //    );
+              //  }
+              //}
+              #endregion 
             }
           }
 
@@ -615,7 +618,7 @@ namespace org.iringtools.adapter.projection
           {
             foreach (OrderExpression orderExpression in filter.OrderExpressions)
             {
-              string[] propertyNameParts = orderExpression.PropertyName.Split('.');
+              string[] propertyNameParts = orderExpression.PropertyName.Split('.');   
               string dataPropertyName = ProjectPropertyName(propertyNameParts);
               orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
             }
@@ -639,28 +642,28 @@ namespace org.iringtools.adapter.projection
         return dataPropertyNameParts[0];
     }
 
-    public Values ProjectPropertValues(Values values)
-    {
-      Values dataValues = new Values();
+    //public Values ProjectPropertValues(Values values)
+    //{
+    //  Values dataValues = new Values();
 
-      ValueListMap valueList = _mapping.valueListMaps.Find(vl => vl.name == _valueListName);
+    //  ValueListMap valueList = _mapping.valueListMaps.Find(vl => vl.name == _valueListName);
 
-      foreach (string value in values)
-      {
-        List<ValueMap> valueMaps = valueList.valueMaps.FindAll(vm => vm.uri == value);
-        foreach (ValueMap valueMap in valueMaps)
-        {
-          string dataValue = valueMap.internalValue;
-          dataValues.Add(dataValue);
-        }
-      }
+    //  foreach (string value in values)
+    //  {
+    //    List<ValueMap> valueMaps = valueList.valueMaps.FindAll(vm => vm.uri == value);
+    //    foreach (ValueMap valueMap in valueMaps)
+    //    {
+    //      string dataValue = valueMap.internalValue;
+    //      dataValues.Add(dataValue);
+    //    }
+    //  }
 
-      return dataValues;
-    }
+    //  return dataValues;
+    //}
 
     //THIS ASSUMES CLASS IS ONLY USED ONCE
     //resolve the propertyName expression into data object propertyName
-    public string ProjectPropertyName(string[] propertyNameParts)
+    public string ProjectProperty(string[] propertyNameParts, ref Values values)
     {
       string dataPropertyName = String.Empty;
 
@@ -717,6 +720,13 @@ namespace org.iringtools.adapter.projection
             dataPropertyName = roleMap.propertyName;
             _roleType = RoleType.ObjectProperty;
             _valueListName = roleMap.valueListName;
+
+            for (int i = 0; i < values.Count; i++)
+            {
+              string value = values[i];
+              value = _mapping.ResolveValueMap(_valueListName, value);
+              values[i] = value;
+            }
           }
           break;
 
@@ -728,6 +738,12 @@ namespace org.iringtools.adapter.projection
       }
 
       return dataPropertyName;
+    }
+
+    public string ProjectPropertyName(string[] propertyNameParts)
+    {
+      Values values = new Values();
+      return ProjectProperty(propertyNameParts, ref values);
     }
   }
 
