@@ -5,7 +5,7 @@
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs; $(MSBuildProjectDirectory)\iRINGTools.SDK\AssemblyInfo.cs</AssemblyInfoFile>
     <Major>2</Major>
     <Minor>0</Minor>
-    <Build>2</Build>
+    <Build>3</Build>
     <Revision>0</Revision>
   </PropertyGroup>
 
@@ -111,7 +111,8 @@
       Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
                Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
-               Utilities\ProxyConfig\bin\Debug\ProxyConfig.exe;               
+               Utilities\ProxyConfig\bin\Debug\ProxyConfig.exe;
+               Utilities\ConfigurationTool\bin\Debug\ConfigurationTool.exe;               
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.dll;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.xml;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\HtmlAgilityPack.dll;
