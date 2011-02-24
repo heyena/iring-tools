@@ -1,11 +1,11 @@
 ﻿Ext.ns('AdapterManager');
 /**
-* @class AdapterManager.ScopePanel
+* @class AdapterManager.ExcelLibraryPanel
 * @extends Panel
 * @author by Gert Jansen van Rensburg
 */
-AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
-    title: 'Scope',
+AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
+    title: 'ExcelLibrary',
     width: 120,
 
     collapseMode: 'mini',
@@ -17,6 +17,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
     border: true,
     split: true,
 
+    scope: null,
     record: null,
     form: null,
     url: null,
@@ -39,37 +40,34 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
 
         this.tbar = this.buildToolbar();
 
-        var name = ""
-        var description = ""
-
-        if (this.record != null) {
-            name = this.record.Name;
-            description = this.Description
-        }
-
-        this.form = new Ext.FormPanel({
-            labelWidth: 150, // label settings here cascade unless
-            url: this.url,
-            method: 'POST',
-            bodyStyle: 'padding:10px 5px 0',
-
-            border: false, // removing the border of the form
-
+        var form = new Ext.FormPanel({
+            renderTo: 'fi-form',
+            fileUpload: true,
+            width: 500,
             frame: true,
-            closable: true,
+            title: 'File Upload Form',
+            autoHeight: true,
+            bodyStyle: 'padding: 10px 10px 0 10px;',
+            labelWidth: 50,
             defaults: {
-                width: 330,
+                anchor: '95%',
+                allowBlank: false,
                 msgTarget: 'side'
             },
-            defaultType: 'textfield',
-
-            items: [
-                { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 250, value: name, allowBlank: false },
-                { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 250, value: description }
-            ],
-            buttonAlign: 'left', // buttons aligned to the left            
-            autoDestroy: false
-
+            items: [{
+                xtype: 'textfield',
+                fieldLabel: 'Name'
+            }, {
+                xtype: 'fileuploadfield',
+                id: 'form-file',
+                emptyText: 'Select an image',
+                fieldLabel: 'Photo',
+                name: 'photo-path',
+                buttonText: '',
+                buttonCfg: {
+                    iconCls: 'upload-icon'
+                }
+            }]            
         });
 
         this.items = [
@@ -79,7 +77,11 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
         this.on('close', this.onCloseTab, this)
 
         // super
-        AdapterManager.ScopePanel.superclass.initComponent.call(this);
+        AdapterManager.ExcelLibraryPanel.superclass.initComponent.call(this);
+
+        var data = dataLayersStore.getById(this.record.DataLayerName);
+        cmbDataLayers.Value = data;
+
     },
 
     buildToolbar: function () {
@@ -90,7 +92,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
             tooltip: 'Save',
             disabled: false,
             handler: this.onSave,
-            scope: this
+            ExcelLibrary: this
         }, {
             xtype: "tbbutton",
             text: 'Clear',
@@ -98,7 +100,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
             tooltip: 'Clear',
             disabled: false,
             handler: this.onReset,
-            scope: this
+            ExcelLibrary: this
         }]
     },
     getActiveTab: function () {
@@ -125,26 +127,18 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
 
     onSave: function () {
         var that = this;    // consists the main/previous class object
-
+                
         this.form.getForm().submit({
             waitMsg: 'Saving Data...',
+            url: this.url,
             success: function (f, a) {
                 if (that.getActiveTab()) {
-                    Ext.Msg.alert('Success', 'Changes saved successfully!')
-
-                    var formType = that.data_form.getForm().findField('formType').getValue();
-                    if (formType == 'newForm') { // in case of newForm close the newTab
-                        Ext.getCmp('content-panel').remove(that.getActiveTab(), true);
-                    }
-
-                    var tempPanel = Ext.getCmp('nav-panel'); // Get Directory Panel
-                    // Ext.state.Manager.clear('AdapterManager'); 
-                    tempPanel.DirectoryPanel.root.reload();
+                    Ext.Msg.alert('Success', 'Processed file "' + o.result.file + '" on the server');
                 }
 
             },
             failure: function (f, a) {
-                Ext.Msg.alert('Warning', 'Error saving changes!')
+                Ext.Msg.alert('Warning', 'Error processing file!')
             }
         });
 
