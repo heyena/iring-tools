@@ -1466,7 +1466,8 @@ namespace org.iringtools.adapter
             {
               if (!t.IsInterface && ti.IsAssignableFrom(t))
               {
-                dataLayerAssemblies.Add(t.FullName + ", " + asm.FullName.Split(',')[0]);
+                DataLayer dataLayer = new DataLayer { Assembly = t.FullName, Name = asm.FullName.Split(',')[0] };
+                dataLayerAssemblies.Add(dataLayer);
               }
             }
           }

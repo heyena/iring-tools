@@ -42,7 +42,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
         this.searchStore = new Ext.data.JsonStore({
             root: 'items',
             totalProperty: 'total',
-            idProperty: 'label',
+            idProperty: 'Label',
             fields: [
               { name: 'Uri', allowBlank: false },
               { name: 'Label', allowBlank: false },

@@ -200,7 +200,7 @@ namespace org.iringtools.services
     #endregion
 
     [Description("Configure the selected data layer in the service.")]
-    [WebInvoke(Method = "POST",UriTemplate = "/{projectname}/{applicationName}/config")]
+    [WebInvoke(Method = "POST",UriTemplate = "/{projectname}/{applicationName}/configure")]
     public Response ConfigureDataLayer(String projectName, String applicationName, XElement configuration)
     {
       return _adapterProvider.SaveDataLayerConfig(projectName, applicationName, configuration);

@@ -20,6 +20,8 @@
     <script src="../../Scripts/iringtools/adaptermanager/MappingPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/adaptermanager/SearchPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/adaptermanager/ScopePanel.js" type="text/javascript"></script>        
+    <script src="../../Scripts/iringtools/adaptermanager/ApplicationPanel.js" type="text/javascript"></script>
+    <script src="../../Scripts/iringtools/adaptermanager/ExcelLibraryPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/adaptermanager/AjaxRowExpander.js" type="text/javascript"></script>    
 
     <!-- page specific -->    

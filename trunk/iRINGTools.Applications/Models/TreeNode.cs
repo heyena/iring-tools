@@ -32,5 +32,6 @@ namespace iRINGTools.Web.Models
     public List<TreeNode> children { get; set; }
     public string type { get; set; }
     public string nodeType { get; set; }
+    public object record { get; set; }
   }
 }
