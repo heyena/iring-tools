@@ -2503,9 +2503,7 @@ namespace org.iringtools.refdata
                                         language = "@" + name.lang;
                                 }
 
-                                //sparqlAdd.AppendLine(string.Format("  tpl:{0} rdf:type owl:Class .", identifier));
                                 sparqlAdd.AppendLine(string.Format("  tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, label, language));
-                                sparqlAdd.AppendLine(string.Format("  tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
                                 sparqlAdd.AppendLine(string.Format("  tpl:{0} rdf:type p8:Template .", identifier));
 
                                 //add descriptions to sparql
@@ -2524,6 +2522,22 @@ namespace org.iringtools.refdata
                                     }
                                 }
                                 sparqlAdd.AppendLine(string.Format(" tpl:{0} p8:valNumberOfRoles {1} .", identifier, newTemplateQualification.roleQualification.Count));
+
+                                foreach (Specialization spec in newTemplateQualification.specialization)
+                                {
+                                    //sparqlStr = new StringBuilder();
+                                    string specialization = spec.reference;
+                                    sparqlAdd.Append(prefix);
+                                    sparqlAdd.AppendLine(insertData);
+
+                                    sparqlAdd.AppendLine(string.Format("  tpl:{0} rdfs:subClassOf {1} .", identifier, specialization));
+
+                                    sparqlStr.AppendLine(string.Format("  tpl:{0} rdf:type p8:TemplateSpecialization .", specialization));
+                                    sparqlAdd.AppendLine(string.Format("  tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", specialization, spec.label.Split('@')[0], language));
+                                    sparqlAdd.AppendLine(string.Format("  tpl:{0} p8:hasSuperTemplate tpl:{1} .", specialization, identifier));
+                                    sparqlAdd.AppendLine(string.Format("  tpl:{0} p8:hasSubTemplate tpl:{1} .", identifier, specialization));
+                                }
+                                
                                 foreach (RoleQualification role in newTemplateQualification.roleQualification)
                                 {
                                     string roleLabel = role.name.FirstOrDefault().value.Split('@')[0];
