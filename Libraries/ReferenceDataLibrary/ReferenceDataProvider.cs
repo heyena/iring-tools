@@ -2311,7 +2311,7 @@ namespace org.iringtools.refdata
                             QMXF existingQmxf = new QMXF();
                             if (!String.IsNullOrEmpty(identifier))
                             {
-                                existingQmxf = GetTemplate(identifier, QMXFType.Definition, repository);
+                                existingQmxf = GetTemplate(identifier, QMXFType.Qualification, repository);
                             }
                             else
                             {
@@ -2439,7 +2439,7 @@ namespace org.iringtools.refdata
                                             else
                                                 language = "@" + role.name.FirstOrDefault().lang;
 
-                                            genName = "Role definition " + roleLabel;
+                                            genName = "Role Qualification " + roleLabel;
                                             if (string.IsNullOrEmpty(role.identifier))
                                             {
                                                 if (_useExampleRegistryBase)
@@ -2537,7 +2537,7 @@ namespace org.iringtools.refdata
                                     else
                                         language = role.name.FirstOrDefault().lang;
 
-                                    genName = "Role definition " + roleLabel;
+                                    genName = "Role Qualification " + roleLabel;
                                     if (string.IsNullOrEmpty(role.identifier))
                                     {
                                         if (_useExampleRegistryBase)
