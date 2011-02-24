@@ -109,16 +109,26 @@ public class DataModel
         {
           HttpClient httpClient = new HttpClient(serviceUri);
           dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
-          session.put(partDtiKey, dtis);
-          session.put(lastFilterKey, currFilter);
+          
+          if (dtis != null && dtis.getDataTransferIndexList() != null && 
+        		  dtis.getDataTransferIndexList().getItems().size() > 0)
+          {
+  	        session.put(partDtiKey, dtis);
+  	        session.put(lastFilterKey, currFilter);
+          }
         }
       }
       else
       {
         HttpClient httpClient = new HttpClient(serviceUri);
         dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
-        session.put(partDtiKey, dtis);
-        session.put(lastFilterKey, currFilter);
+        
+        if (dtis != null && dtis.getDataTransferIndexList() != null && 
+            dtis.getDataTransferIndexList().getItems().size() > 0)
+        {
+          session.put(partDtiKey, dtis);
+          session.put(lastFilterKey, currFilter);
+        }
       }
     }
     catch (Exception ex)
@@ -517,10 +527,19 @@ public class DataModel
     return relatedItemGrid;
   }
 
+  private String getValueMapKey(String value, HashMap<String,String> valueMaps) {
+	  for (String key : valueMaps.keySet())
+	      if (valueMaps.get(key).equalsIgnoreCase(value))
+	    	  return key;
+	  return null;	 
+  }
+  
   private DataFilter createDataFilter(String filter, String sortBy, String sortOrder)
   {
     DataFilter dataFilter = null;
-
+    
+    @SuppressWarnings("unchecked")
+	HashMap<String,String> valueMaps = (HashMap<String,String>)session.get("valueMaps");
     // process filtering
     if (filter != null && filter.length() > 0)
     {
@@ -563,8 +582,12 @@ public class DataModel
 
             List<String> valueList = new ArrayList<String>();
             values.setValues(valueList);
-
-            valueList.add(String.valueOf(filterExpression.get("value")));
+            
+            String unitValue = getValueMapKey(String.valueOf(filterExpression.get("value")), valueMaps);
+            if (unitValue != null && !unitValue.isEmpty())
+            	valueList.add(unitValue);
+            else
+            	valueList.add(String.valueOf(filterExpression.get("value")));
           }
         }
       }
