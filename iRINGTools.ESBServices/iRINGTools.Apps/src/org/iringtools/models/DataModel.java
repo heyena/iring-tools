@@ -53,13 +53,13 @@ public class DataModel
   }
 
   private static final Logger logger = Logger.getLogger(DataModel.class);
-  
+
   protected String DTI_PREFIX = "dti-";
   protected String XLOGS_PREFIX = "xlogs-";
   protected String FULL_DTI_KEY_PREFIX = DTI_PREFIX + "full";
   protected String PART_DTI_KEY_PREFIX = DTI_PREFIX + "part";
   protected String FILTER_KEY_PREFIX = DTI_PREFIX + "filter-key";
-  
+
   protected Map<String, Object> session;
 
   protected void removeSessionData(String key)
@@ -68,26 +68,27 @@ public class DataModel
       session.remove(key);
   }
 
-  private DataTransferIndices getFilteredDtis(DataFilter dataFilter, String relativePath, String serviceUri, String fullDtiKey)
+  private DataTransferIndices getFilteredDtis(DataFilter dataFilter, String relativePath, String serviceUri,
+      String fullDtiKey)
   {
-    DataTransferIndices dtis = null;
-    // extract transfer type if it's in the filter
-    Expression transferTypeExpression = null;   
+    DataTransferIndices resultDtis = new DataTransferIndices();
+    Expression transferTypeExpression = null;
     OrderExpression transferTypeOrderExpression = null;
 
-    if (dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0) 
+    // extract transfer type from expressions
+    if (dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
     {
       List<Expression> expressions = dataFilter.getExpressions().getItems();
 
-      for (int i = 0; i < expressions.size(); i++) 
+      for (int i = 0; i < expressions.size(); i++)
       {
         Expression expression = expressions.get(i);
 
-        if (expression.getPropertyName().equalsIgnoreCase("transfer type")) 
+        if (expression.getPropertyName().equalsIgnoreCase("transfer type"))
         {
           transferTypeExpression = expressions.remove(i);
 
-          if (expressions.size() > 0) 
+          if (expressions.size() > 0)
           {
             // remove logical operator of the next expression
             expressions.get(i).setLogicalOperator(null);
@@ -97,20 +98,21 @@ public class DataModel
         }
       }
     }
-    
-    if(dataFilter.getOrderExpressions() != null && dataFilter.getOrderExpressions().getItems().size() > 0)
+
+    // extract transfer type from order expressions
+    if (dataFilter.getOrderExpressions() != null && dataFilter.getOrderExpressions().getItems().size() > 0)
     {
       List<OrderExpression> orderExpressions = dataFilter.getOrderExpressions().getItems();
 
-      for (int i = 0; i < orderExpressions.size(); i++) 
+      for (int i = 0; i < orderExpressions.size(); i++)
       {
         OrderExpression orderExpression = orderExpressions.get(i);
 
-        if (orderExpression.getPropertyName().equalsIgnoreCase("transfer type")) 
+        if (orderExpression.getPropertyName().equalsIgnoreCase("transfer type"))
         {
           transferTypeOrderExpression = orderExpressions.remove(i);
 
-          if (orderExpressions.size() > 0) 
+          if (orderExpressions.size() > 0)
           {
             // remove logical operator of the next expression
             orderExpressions.get(i).setPropertyName(null);
@@ -120,133 +122,185 @@ public class DataModel
           break;
         }
       }
-      
     }
-    
+
     try
     {
-      List<DataTransferIndex> partialDtiList = null;
-      boolean found = false;
-      HttpClient httpClient = new HttpClient(serviceUri);   
-      String destinationUri = relativePath + "?destination=source";
-      dtis = httpClient.post(DataTransferIndices.class, destinationUri, dataFilter);
-      
-      DataTransferIndices fullDtis = (DataTransferIndices)session.get(fullDtiKey);
+      DataTransferIndices fullDtis = (DataTransferIndices) session.get(fullDtiKey);
       List<DataTransferIndex> fullDtiList = fullDtis.getDataTransferIndexList().getItems();
-      
-      if (dtis != null && dtis.getDataTransferIndexList() != null) 
-      {
-        partialDtiList = dtis.getDataTransferIndexList().getItems();
-        found = parsePartialDtis(partialDtiList, fullDtiList);
-      }      
-     
-      if (!found)
-      {
-        destinationUri = relativePath + "?destination=target";
-        dtis = httpClient.post(DataTransferIndices.class, destinationUri, dataFilter);
-        if (dtis != null && dtis.getDataTransferIndexList() != null) 
-        {
-          partialDtiList = dtis.getDataTransferIndexList().getItems();
-          parsePartialDtis(partialDtiList, fullDtiList);
-        }
-      }   
-                
-      // apply transfer type expression
-      if (transferTypeExpression != null && partialDtiList != null)
+
+      List<DataTransferIndex> cloneFullDtiList = new ArrayList<DataTransferIndex>();
+      cloneFullDtiList.addAll(fullDtiList);
+
+      // apply transfer type filtering
+      if (transferTypeExpression != null && cloneFullDtiList != null)
       {
         String value = transferTypeExpression.getValues().getValues().get(0);
-       
-        for (int i = 0; i < partialDtiList.size(); i++)
+
+        for (int i = 0; i < cloneFullDtiList.size(); i++)
         {
-          if (!partialDtiList.get(i).getTransferType().toString().equalsIgnoreCase(value))
+          if (!cloneFullDtiList.get(i).getTransferType().toString().equalsIgnoreCase(value))
           {
-            partialDtiList.remove(i--);
+            cloneFullDtiList.remove(i--);
           }
         }
       }
-      
-      // apply sorting
-      if (dtis != null && dtis.getDataTransferIndexList() != null && dataFilter.getOrderExpressions() != null && dataFilter.getOrderExpressions().getItems().size() > 0)
+
+      if ((dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
+          || dataFilter.getOrderExpressions() != null && dataFilter.getOrderExpressions().getItems().size() > 0)
       {
-        final String sortType = dtis.getSortType().toLowerCase();
-        final String sortDir = dtis.getSortOrder().toLowerCase();
+        boolean found = false;
+        List<DataTransferIndex> partialDtiList = null;
         
-        Comparator<DataTransferIndex> comparator = new Comparator<DataTransferIndex>()
+        HttpClient httpClient = new HttpClient(serviceUri);
+        String destinationUri = relativePath + "?destination=source";
+        resultDtis = httpClient.post(DataTransferIndices.class, destinationUri, dataFilter);
+
+        if (resultDtis != null && resultDtis.getDataTransferIndexList() != null)
         {
-          public int compare(DataTransferIndex dti1, DataTransferIndex dti2) 
+          partialDtiList = resultDtis.getDataTransferIndexList().getItems();
+          found = parsePartialDtis(partialDtiList, cloneFullDtiList);
+        }
+
+        if (!found)
+        {
+          destinationUri = relativePath + "?destination=target";
+          resultDtis = httpClient.post(DataTransferIndices.class, destinationUri, dataFilter);
+
+          if (resultDtis != null && resultDtis.getDataTransferIndexList() != null)
           {
-            int compareValue = 0;
-            
-            if (sortType.equals("string") || sortType.contains("date") || sortType.contains("time"))
-            {
-              if (sortDir.equals("asc"))
-              {
-                compareValue = dti1.getSortIndex().compareTo(dti2.getSortIndex());
-              }
-              else
-              {
-                compareValue = dti2.getSortIndex().compareTo(dti1.getSortIndex());
-              }
-            }
-            else // sort type is numeric
-            {
-              if (sortDir.equals("asc"))
-              {
-                compareValue = (int)(Double.parseDouble(dti1.getSortIndex()) - Double.parseDouble(dti2.getSortIndex()));
-              }
-              else
-              {
-                compareValue = (int)(Double.parseDouble(dti2.getSortIndex()) - Double.parseDouble(dti1.getSortIndex()));
-              }
-            }
-            
-            return compareValue;
+            partialDtiList = resultDtis.getDataTransferIndexList().getItems();
+            parsePartialDtis(partialDtiList, cloneFullDtiList);
           }
-        };
-        
-        Collections.sort(dtis.getDataTransferIndexList().getItems(), comparator);
+        }
+      }
+      else
+      {        
+        DataTransferIndexList resultDtiList = new DataTransferIndexList();
+        resultDtis.setDataTransferIndexList(resultDtiList);
+        resultDtiList.setItems(cloneFullDtiList);        
+      }
+
+      // apply sorting
+      if (resultDtis.getDataTransferIndexList() != null && resultDtis.getDataTransferIndexList().getItems().size() > 0)
+      {
+        if (transferTypeOrderExpression != null)
+        {
+          final String sortDir = transferTypeOrderExpression.getSortOrder().toString().toLowerCase();
+          
+          Comparator<DataTransferIndex> comparator = new Comparator<DataTransferIndex>()
+          {
+            public int compare(DataTransferIndex dti1, DataTransferIndex dti2)
+            {
+              int compareValue = 0;
+         
+              if (sortDir.equals("asc"))
+              {
+                compareValue = dti1.getTransferType().toString().compareTo(dti2.getTransferType().toString());
+              }
+              else
+              {
+                compareValue = dti2.getTransferType().toString().compareTo(dti1.getTransferType().toString());
+              }            
+  
+              return compareValue;
+            }
+          };
+  
+          Collections.sort(resultDtis.getDataTransferIndexList().getItems(), comparator);
+        }
+        else if (dataFilter.getOrderExpressions() != null && dataFilter.getOrderExpressions().getItems().size() > 0)
+        {
+          final String sortType = resultDtis.getSortType().toLowerCase();
+          final String sortDir = resultDtis.getSortOrder().toLowerCase();
+  
+          Comparator<DataTransferIndex> comparator = new Comparator<DataTransferIndex>()
+          {
+            public int compare(DataTransferIndex dti1, DataTransferIndex dti2)
+            {
+              int compareValue = 0;
+  
+              if (sortType.equals("string") || sortType.contains("date") || sortType.contains("time"))
+              {
+                if (sortDir.equals("asc"))
+                {
+                  compareValue = dti1.getSortIndex().compareTo(dti2.getSortIndex());
+                }
+                else
+                {
+                  compareValue = dti2.getSortIndex().compareTo(dti1.getSortIndex());
+                }
+              }
+              else // sort type is numeric
+              {
+                if (sortDir.equals("asc"))
+                {
+                  compareValue = (int) (Double.parseDouble(dti1.getSortIndex()) - Double.parseDouble(dti2.getSortIndex()));
+                }
+                else
+                {
+                  compareValue = (int) (Double.parseDouble(dti2.getSortIndex()) - Double.parseDouble(dti1.getSortIndex()));
+                }
+              }
+  
+              return compareValue;
+            }
+          };
+  
+          Collections.sort(resultDtis.getDataTransferIndexList().getItems(), comparator);
+        }
       }
     }
     catch (Exception ex)
     {
       logger.error(ex);
     }
-    return dtis;
-  }
-  
-  private boolean parsePartialDtis(List<DataTransferIndex> partialDtiList, List<DataTransferIndex> fullDtiList)
-  {    
-    boolean found = false;
     
+    return resultDtis;
+  }
+
+  private boolean parsePartialDtis(List<DataTransferIndex> partialDtiList, List<DataTransferIndex> fullDtiList)
+  {
+    boolean found = false;
+
     for (int i = 0; i < partialDtiList.size(); i++)
     {
+      boolean exists = false;
+      
       for (int j = 0; j < fullDtiList.size(); j++)
       {
         if (partialDtiList.get(i).getIdentifier().equalsIgnoreCase(fullDtiList.get(j).getIdentifier()))
         {
           partialDtiList.get(i).setTransferType(fullDtiList.get(j).getTransferType());
-          
+
           if (!partialDtiList.get(i).getHashValue().equalsIgnoreCase(fullDtiList.get(j).getHashValue()))
             fullDtiList.get(j).setHashValue(partialDtiList.get(i).getHashValue());
-            
+
+          exists = true;
           found = true;
-          break;          
-        }                  
-       }
-    }    
+          break;
+        }
+      }
+      
+      if (!exists)
+      {
+        partialDtiList.remove(i--);
+      }
+    }
+    
     return found;
   }
-  
+
   // only cache full dti and one filtered dti
-  protected DataTransferIndices getDtis(DataType dataType, String serviceUri, String relativePath, String filter, String sortBy,
-      String sortOrder)
+  protected DataTransferIndices getDtis(DataType dataType, String serviceUri, String relativePath, String filter,
+      String sortBy, String sortOrder)
   {
     DataTransferIndices dtis = new DataTransferIndices();
     String fullDtiKey = FULL_DTI_KEY_PREFIX + relativePath;
     String partDtiKey = PART_DTI_KEY_PREFIX + relativePath;
     String lastFilterKey = FILTER_KEY_PREFIX + relativePath;
     String currFilter = filter + "/" + sortBy + "/" + sortOrder;
-    
+
     try
     {
       DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);
@@ -259,35 +313,36 @@ public class DataModel
           dtis = httpClient.get(DataTransferIndices.class, relativePath);
           session.put(fullDtiKey, dtis);
         }
-        else 
+        else
         {
           HttpClient httpClient = new HttpClient(serviceUri);
           dtis = httpClient.post(DataTransferIndices.class, relativePath, new DataFilter());
           session.put(fullDtiKey, dtis);
         }
-        
+
         if (session.containsKey(partDtiKey))
         {
           session.remove(partDtiKey);
         }
-        
+
         if (session.containsKey(lastFilterKey))
         {
-          session.remove(lastFilterKey);  
+          session.remove(lastFilterKey);
         }
       }
       else if (session.containsKey(lastFilterKey))
       {
         String lastFilter = (String) session.get(lastFilterKey);
-        
+
         // filter has not changed
         if (lastFilter.equals(currFilter))
         {
           dtis = (DataTransferIndices) session.get(partDtiKey);
-        }       
-        else  // filter does not exist or has changed
+        }
+        else
+        // filter does not exist or has changed
         {
-          if (dataType == DataType.EXCHANGE)  // exchange data
+          if (dataType == DataType.EXCHANGE) // exchange data
           {
             dtis = getFilteredDtis(dataFilter, relativePath, serviceUri, fullDtiKey);
           }
@@ -296,28 +351,28 @@ public class DataModel
             HttpClient httpClient = new HttpClient(serviceUri);
             dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
           }
-          if (dtis != null && dtis.getDataTransferIndexList() != null && dtis.getDataTransferIndexList().getItems().size() > 0)
+          if (dtis != null && dtis.getDataTransferIndexList() != null
+              && dtis.getDataTransferIndexList().getItems().size() > 0)
           {
-  	        session.put(partDtiKey, dtis);
-  	        session.put(lastFilterKey, currFilter);
+            session.put(partDtiKey, dtis);
+            session.put(lastFilterKey, currFilter);
           }
         }
       }
       else
       {
-        //TODO: check null and empty dti list before parse
-        if (dataType == DataType.EXCHANGE)  // exchange data
+        if (dataType == DataType.EXCHANGE) // exchange data
         {
           dtis = getFilteredDtis(dataFilter, relativePath, serviceUri, fullDtiKey);
         }
-        else  // app data
+        else // app data
         {
           HttpClient httpClient = new HttpClient(serviceUri);
           dtis = httpClient.post(DataTransferIndices.class, relativePath, dataFilter);
         }
-        
-        if (dtis != null && dtis.getDataTransferIndexList() != null && 
-            dtis.getDataTransferIndexList().getItems().size() > 0)
+
+        if (dtis != null && dtis.getDataTransferIndexList() != null
+            && dtis.getDataTransferIndexList().getItems().size() > 0)
         {
           session.put(partDtiKey, dtis);
           session.put(lastFilterKey, currFilter);
@@ -366,8 +421,8 @@ public class DataModel
     return dtos;
   }
 
-  public DataTransferObjects getPageDtos(DataType dataType, String serviceUri, String dtiRelativePath, String dtoRelativePath,
-      String filter, String sortBy, String sortOrder, int start, int limit)
+  public DataTransferObjects getPageDtos(DataType dataType, String serviceUri, String dtiRelativePath,
+      String dtoRelativePath, String filter, String sortBy, String sortOrder, int start, int limit)
   {
     DataTransferIndices dtis = getDtis(dataType, serviceUri, dtiRelativePath, filter, sortBy, sortOrder);
     List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
@@ -412,21 +467,23 @@ public class DataModel
     return null;
   }
 
-  public String resolveValueMap(String refServiceUri, String id) 
-  {	
-	Entity value = null;
-	
-	try {
-		HttpClient httpClient = new HttpClient(refServiceUri);
-		value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");		
-	} 
-	catch (Exception e) {
-		System.out.println("Exception :" + e);
-	}	
-	
-	return value.getLabel();
+  public String resolveValueMap(String refServiceUri, String id)
+  {
+    Entity value = null;
+
+    try
+    {
+      HttpClient httpClient = new HttpClient(refServiceUri);
+      value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");
+    }
+    catch (Exception e)
+    {
+      System.out.println("Exception :" + e);
+    }
+
+    return value.getLabel();
   }
-  
+
   // paging is based on number of data transfer objects
   @SuppressWarnings("unchecked")
   public Grid getDtoGrid(DataType dataType, DataTransferObjects dtos, String refServiceUri)
@@ -482,42 +539,43 @@ public class DataModel
 
               if (roleObject.isHasValueMap())
               {
-            	Map<String,String> valueMaps;
-            	String roleObjectValue = roleObject.getValue();
-            	String roleObjectOldValue = "";
-            	
-            	if (dataType == DataType.EXCHANGE)
-            	  roleObjectOldValue = roleObject.getOldValue();
-            	
-            	if (session.containsKey("valueMaps"))
-            	{        	      
-            	  valueMaps = (Map<String,String>) session.get("valueMaps");
-            	}
-            	else
-            	{
-            	  valueMaps = new HashMap<String,String>();
-            	  session.put("valueMaps", valueMaps);
-            	}
-            	
-            	if (roleObjectValue != null)
-            	{
-            	  if (!roleObjectValue.isEmpty() && !valueMaps.containsKey(roleObjectValue))
-            	    valueMaps.put(roleObjectValue, resolveValueMap(refServiceUri, roleObjectValue));
-            	
-            	  if (!roleObjectValue.isEmpty())
-            	    roleObject.setValue(valueMaps.get(roleObjectValue));
-            	}
-    	      
-            	if (roleObjectOldValue != null)
-            	{
-            	  if (dataType == DataType.EXCHANGE && !valueMaps.containsKey(roleObjectOldValue) && !roleObjectOldValue.isEmpty())
-            	    valueMaps.put(roleObjectOldValue, resolveValueMap(refServiceUri, roleObjectOldValue));
-            	
-            	  if (!roleObjectOldValue.isEmpty())
-            	    roleObject.setOldValue(valueMaps.get(roleObjectOldValue));
-            	}
+                Map<String, String> valueMaps;
+                String roleObjectValue = roleObject.getValue();
+                String roleObjectOldValue = "";
+
+                if (dataType == DataType.EXCHANGE)
+                  roleObjectOldValue = roleObject.getOldValue();
+
+                if (session.containsKey("valueMaps"))
+                {
+                  valueMaps = (Map<String, String>) session.get("valueMaps");
+                }
+                else
+                {
+                  valueMaps = new HashMap<String, String>();
+                  session.put("valueMaps", valueMaps);
+                }
+
+                if (roleObjectValue != null)
+                {
+                  if (!roleObjectValue.isEmpty() && !valueMaps.containsKey(roleObjectValue))
+                    valueMaps.put(roleObjectValue, resolveValueMap(refServiceUri, roleObjectValue));
+
+                  if (!roleObjectValue.isEmpty())
+                    roleObject.setValue(valueMaps.get(roleObjectValue));
+                }
+
+                if (roleObjectOldValue != null)
+                {
+                  if (dataType == DataType.EXCHANGE && !valueMaps.containsKey(roleObjectOldValue)
+                      && !roleObjectOldValue.isEmpty())
+                    valueMaps.put(roleObjectOldValue, resolveValueMap(refServiceUri, roleObjectOldValue));
+
+                  if (!roleObjectOldValue.isEmpty())
+                    roleObject.setOldValue(valueMaps.get(roleObjectOldValue));
+                }
               }
-              
+
               if (dataType == DataType.APP || roleObject.getOldValue() == null
                   || roleObject.getOldValue().equals(roleObject.getValue()))
               {
@@ -529,10 +587,10 @@ public class DataModel
                     + "</span>");
               }
             }
-            
+
             else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0
                 && roleObject.getValue() != null && roleObject.getValue().length() > 0)
-            {              
+            {
               RelatedClass relatedClass = new RelatedClass();
               relatedClass.setId(roleObject.getRelatedClassId());
               relatedClass.setName(IOUtil.toCamelCase(roleObject.getRelatedClassName()));
@@ -720,19 +778,20 @@ public class DataModel
     return relatedItemGrid;
   }
 
-  private String getValueMapKey(String value, HashMap<String,String> valueMaps) {
-	  for (String key : valueMaps.keySet())
-	      if (valueMaps.get(key).equalsIgnoreCase(value))
-	    	  return key;
-	  return null;	 
+  private String getValueMapKey(String value, HashMap<String, String> valueMaps)
+  {
+    for (String key : valueMaps.keySet())
+      if (valueMaps.get(key).equalsIgnoreCase(value))
+        return key;
+    return null;
   }
-  
+
   private DataFilter createDataFilter(String filter, String sortBy, String sortOrder)
   {
     DataFilter dataFilter = null;
-    
+
     @SuppressWarnings("unchecked")
-	  HashMap<String,String> valueMaps = (HashMap<String,String>)session.get("valueMaps");
+    HashMap<String, String> valueMaps = (HashMap<String, String>) session.get("valueMaps");
     // process filtering
     if (filter != null && filter.length() > 0)
     {
@@ -757,7 +816,7 @@ public class DataModel
             {
               expression.setLogicalOperator(LogicalOperator.AND);
             }
-            
+
             if (filterExpression.containsKey("comparison"))
             {
               String operator = filterExpression.get("comparison");
@@ -775,12 +834,12 @@ public class DataModel
 
             List<String> valueList = new ArrayList<String>();
             values.setValues(valueList);
-            
+
             String unitValue = getValueMapKey(String.valueOf(filterExpression.get("value")), valueMaps);
             if (unitValue != null && !unitValue.isEmpty())
-            	valueList.add(unitValue);
+              valueList.add(unitValue);
             else
-            	valueList.add(String.valueOf(filterExpression.get("value")));
+              valueList.add(String.valueOf(filterExpression.get("value")));
           }
         }
       }
