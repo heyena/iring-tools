@@ -328,7 +328,10 @@ public class ESBServiceProvider
         }
       }
 
-      if (sourceDtos != null && targetDtos != null)
+      if (sourceDtos != null && sourceDtos.getDataTransferObjectList() != null &&
+          sourceDtos.getDataTransferObjectList().getItems().size() > 0 && 
+          targetDtos != null && targetDtos.getDataTransferObjectList() != null &&
+          targetDtos.getDataTransferObjectList().getItems().size() > 0)
       {
         // request exchange service to compare changed DTOs
         DfoRequest dfoRequest = new DfoRequest();
