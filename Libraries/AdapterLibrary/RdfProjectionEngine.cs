@@ -306,8 +306,8 @@ namespace org.iringtools.adapter.projection
 
       if (!String.IsNullOrEmpty(referenceRole.valueList))
         value = _mapping.ResolveValueList(referenceRole.valueList, value);
-      else
-        value = value.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
+      
+      value = value.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
 
       return value;
     }

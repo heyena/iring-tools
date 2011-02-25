@@ -239,7 +239,7 @@ namespace org.iringtools.adapter
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null, 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
-        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm);
+        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm, String.Empty);
       }
       catch (Exception ex)
       {
@@ -267,7 +267,7 @@ namespace org.iringtools.adapter
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, filter, 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
-        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm);
+        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm, String.Empty);
       }
       catch (Exception ex)
       {
@@ -291,7 +291,7 @@ namespace org.iringtools.adapter
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null, 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
-        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm);
+        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm, String.Empty);
       }
       catch (Exception ex)
       {
@@ -320,7 +320,33 @@ namespace org.iringtools.adapter
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, filter, 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
-        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm);
+        // get sort index
+        string sortIndex = String.Empty;
+
+        if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
+        {
+          sortIndex = filter.OrderExpressions.First().PropertyName;
+        }
+
+        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm, sortIndex);
+
+        // set sort order and type 
+        if (dataTransferIndices != null && filter != null && filter.OrderExpressions != null &&
+          filter.OrderExpressions.Count > 0)
+        {
+          dataTransferIndices.SortOrder = filter.OrderExpressions.First().SortOrder.ToString();
+
+          // find data type of the sort index
+          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectMap);
+          foreach (DataProperty dataProperty in dataObject.dataProperties)
+          {
+            if (dataProperty.propertyName.ToUpper() == sortIndex.ToUpper())
+            {
+              dataTransferIndices.SortType = dataProperty.dataType.ToString();
+              break;
+            }
+          }
+        }
       }
       catch (Exception ex)
       {
@@ -832,7 +858,8 @@ namespace org.iringtools.adapter
     }
 
     //NOTE: only MD5 hash algorithm is supported at current
-    private DataTransferIndices BuildDataTransferIndices(ref IList<IDataObject> dataObjects, ref Dictionary<string, List<string>> classIdentifiers, string hashAlgorithm)
+    private DataTransferIndices BuildDataTransferIndices(ref IList<IDataObject> dataObjects, ref Dictionary<string, List<string>> classIdentifiers, 
+      string hashAlgorithm, string sortIndex)
     {
       DataTransferIndices dataTransferIndices = new DataTransferIndices()
       {
@@ -873,6 +900,14 @@ namespace org.iringtools.adapter
                 if (!String.IsNullOrEmpty(roleMap.valueList))
                 {
                   value = _mapping.ResolveValueList(roleMap.valueList, value);
+
+                  if (value == "rdf:nil")
+                    value = String.Empty;
+                }
+
+                if (propertyName == sortIndex)
+                {
+                  dti.SortIndex = value;
                 }
 
                 propertyValues.Append(value);
