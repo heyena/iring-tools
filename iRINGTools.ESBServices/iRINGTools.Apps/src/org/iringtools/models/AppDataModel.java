@@ -19,7 +19,7 @@ public class AppDataModel extends DataModel
   {
     String dtiRelativePath = "/" + scope + "/" + app + "/" + graph + "/filter";
     String dtoRelativePath = "/" + scope + "/" + app + "/" + graph + "/page";    
-    DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, 
+    DataTransferObjects pageDtos = getPageDtos(DataType.APP, serviceUri, dtiRelativePath, dtoRelativePath, 
         filter, sortBy, sortOrder, start, limit);
     Grid pageDtoGrid = getDtoGrid(DataType.APP, pageDtos, refServiceUri);
     DataTransferIndices dtis = getCachedDtis(dtiRelativePath);

@@ -96,13 +96,16 @@ namespace org.iringtools.adapter
         _scopes = new ScopeProjects();
         Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
+
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
             _settings["XmlPath"]
           );
+
       string bindingConfigurationPath = Path.Combine(
         _settings["BaseDirectoryPath"],
         relativePath
       );
+
       _kernel.Load(bindingConfigurationPath);
       InitializeIdentity();
     }
@@ -121,7 +124,7 @@ namespace org.iringtools.adapter
       };
     }
 
-	public Manifest GetManifest(string scope, string app)
+	  public Manifest GetManifest(string scope, string app)
     {
       Manifest manifest = new Manifest()
       {
@@ -233,7 +236,6 @@ namespace org.iringtools.adapter
       }
 
       return manifest;
-
     }
 
     public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlogrithm)
@@ -287,6 +289,7 @@ namespace org.iringtools.adapter
 
       return dataTransferIndices;
     }
+
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
       DataTransferIndices dataTransferIndices = null;
@@ -298,7 +301,7 @@ namespace org.iringtools.adapter
 
         BuildCrossGraphMap(manifest, graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null, 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm, String.Empty);
@@ -310,6 +313,7 @@ namespace org.iringtools.adapter
 
       return dataTransferIndices;
     }
+
     public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
       DataTransferIndices dataTransferIndices = null;
@@ -364,6 +368,7 @@ namespace org.iringtools.adapter
 
       return dataTransferIndices;
     }
+
     // get list (page) of data transfer objects per data transfer indicies
     public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
     {

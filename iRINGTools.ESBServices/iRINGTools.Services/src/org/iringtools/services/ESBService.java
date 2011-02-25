@@ -8,6 +8,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
@@ -45,13 +46,12 @@ public class ESBService extends AbstractService
     return directory;
   }
 
-  @POST
+  @GET
   @Path("/{scope}/exchanges/{id}")
   @Consumes("application/xml")
   public DataTransferIndices getDataTransferIndices(
 		  @PathParam("scope") String scope, 
-		  @PathParam("id") String id, 
-		  DataFilter dataFilter) 
+		  @PathParam("id") String id)
   {
     DataTransferIndices dataTransferIndices = null;
     
@@ -59,7 +59,7 @@ public class ESBService extends AbstractService
     {
       initService();
       ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
-      dataTransferIndices = serviceProvider.getDataTransferIndices(scope, id, dataFilter);
+      dataTransferIndices = serviceProvider.getDataTransferIndices(scope, id);
     }
     catch (Exception ex)
     {
@@ -68,7 +68,32 @@ public class ESBService extends AbstractService
     
     return dataTransferIndices;
   }
-
+  
+  @POST
+  @Path("/{scope}/exchanges/{id}")
+  @Consumes("application/xml")
+  public DataTransferIndices getDataTransferIndices(
+      @PathParam("scope") String scope, 
+      @PathParam("id") String id,
+      @QueryParam("destination") String destination,
+      DataFilter dataFilter) 
+  {
+    DataTransferIndices dataTransferIndices = null;
+    
+    try
+    {
+      initService();
+      ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
+      dataTransferIndices = serviceProvider.getDataTransferIndices(scope, id, destination, dataFilter);
+    }
+    catch (Exception ex)
+    {
+      logger.error("Error in getDataTransferIndices(): " + ex);
+    }
+    
+    return dataTransferIndices;
+  }
+  
   @POST
   @Path("/{scope}/exchanges/{id}/page")
   @Consumes("application/xml")
