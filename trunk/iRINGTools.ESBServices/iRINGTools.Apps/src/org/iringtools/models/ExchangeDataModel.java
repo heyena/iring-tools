@@ -24,7 +24,7 @@ import org.iringtools.widgets.grid.Grid;
 public class ExchangeDataModel extends DataModel
 {
   private static final Logger logger = Logger.getLogger(ExchangeDataModel.class);
-
+ 
   public void setSession(Map<String, Object> session)
   {
     this.session = session;
@@ -35,7 +35,7 @@ public class ExchangeDataModel extends DataModel
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
-    DataTransferObjects pageDtos = getPageDtos(serviceUri, dtiRelativePath, dtoRelativePath, filter, sortBy, 
+    DataTransferObjects pageDtos = getPageDtos(DataType.EXCHANGE, serviceUri, dtiRelativePath, dtoRelativePath, filter, sortBy, 
         sortOrder, start, limit);
     Grid pageDtoGrid = getDtoGrid(DataType.EXCHANGE, pageDtos, refServiceUri);
     DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
@@ -56,7 +56,7 @@ public class ExchangeDataModel extends DataModel
   public ExchangeResponse submitExchange(String serviceUri, String scope, String xid, boolean reviewed)
   {
     String exchangeRelativePath = "/" + scope + "/exchanges/" + xid;
-    DataTransferIndices dtis = getDtis(serviceUri, exchangeRelativePath, null, null, null);
+    DataTransferIndices dtis = getDtis(DataType.EXCHANGE, serviceUri, exchangeRelativePath, null, null, null);
 
     ExchangeResponse response;
     ExchangeRequest request = new ExchangeRequest();

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.List;
@@ -23,10 +22,8 @@ import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
 import org.iringtools.common.response.StatusList;
 import org.iringtools.data.filter.DataFilter;
-import org.iringtools.data.filter.Expression;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
-
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -38,7 +35,6 @@ import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
-
 import org.iringtools.dxfr.manifest.ClassTemplates;
 import org.iringtools.dxfr.manifest.Graph;
 import org.iringtools.dxfr.manifest.Manifest;
@@ -47,8 +43,8 @@ import org.iringtools.dxfr.manifest.Template;
 import org.iringtools.dxfr.manifest.TransferOption;
 import org.iringtools.dxfr.request.DfiRequest;
 import org.iringtools.dxfr.request.DfoRequest;
-import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.DxiRequest;
+import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.utility.HttpClient;
@@ -96,8 +92,9 @@ public class ESBServiceProvider
 
     return directory;
   }
-  
-  public DataTransferIndices getDataTransferIndices(String scope, String id, DataFilter dataFilter)
+
+  // get dxi without filter
+  public DataTransferIndices getDataTransferIndices(String scope, String id)
   {
     DataTransferIndices dxis = null;
 
@@ -110,39 +107,9 @@ public class ESBServiceProvider
       
       Manifest crossedManifest = getCrossedManifest();
       
-      DxiRequest dxiRequest = new DxiRequest();       
-      dxiRequest.setDataFilter(dataFilter);
-      dxiRequest.setManifest(crossedManifest);
-      
-      // extract transfer type if it's in the filter
-      Expression transferTypeExpression = null;
-      
-      if (dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
-      {
-        List<Expression> expressions = dataFilter.getExpressions().getItems();
-        
-        for (int i = 0; i < expressions.size(); i++)
-        {
-          Expression expression = expressions.get(i);
-          
-          if (expression.getPropertyName().equalsIgnoreCase("transfer type"))
-          {
-            transferTypeExpression = expressions.remove(i);
-            
-            if (expressions.size() > 0)
-            {
-              // remove logical operator of the next expression
-              expressions.get(i).setLogicalOperator(null);
-            }
-            
-            break;
-          }
-        }
-      }
-      
       // get source dti
-      String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
-      DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, dxiRequest);
+      String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
+      DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, crossedManifest);
       
       if (sourceDtis != null)
       {
@@ -151,8 +118,8 @@ public class ESBServiceProvider
       }      
 
       // get target dti
-      String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
-      DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, dxiRequest);
+      String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
+      DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, crossedManifest);
       
       if (targetDtis != null)
       {
@@ -172,64 +139,6 @@ public class ESBServiceProvider
       // request exchange service to diff the dti
       String dxiUrl = settings.get("differencingServiceUri") + "/dxi";
       dxis = httpClient.post(DataTransferIndices.class, dxiUrl, dfiRequest);
-      
-      // apply transfer type expression
-      if (transferTypeExpression != null)
-      {
-        String value = transferTypeExpression.getValues().getValues().get(0);
-        List<DataTransferIndex> dtiList = dxis.getDataTransferIndexList().getItems();
-        
-        for (int i = 0; i < dtiList.size(); i++)
-        {
-          if (!dtiList.get(i).getTransferType().toString().equalsIgnoreCase(value))
-          {
-            dtiList.remove(i--);
-          }
-        }
-      }
-      
-      // apply sorting
-      if (dataFilter.getOrderExpressions() != null && 
-          dataFilter.getOrderExpressions().getItems().size() > 0)
-      {
-        final String sortType = dxis.getSortType().toLowerCase();
-        final String sortOrder = dxis.getSortOrder().toLowerCase();
-        
-        Comparator<DataTransferIndex> comparator = new Comparator<DataTransferIndex>()
-        {
-          public int compare(DataTransferIndex dti1, DataTransferIndex dti2) 
-          {
-            int compareValue = 0;
-            
-            if (sortType.equals("string") || sortType.contains("date") || sortType.contains("time"))
-            {
-              if (sortOrder.equals("asc"))
-              {
-                compareValue = dti1.getSortIndex().compareTo(dti2.getSortIndex());
-              }
-              else
-              {
-                compareValue = dti2.getSortIndex().compareTo(dti1.getSortIndex());
-              }
-            }
-            else // sort type is numeric
-            {
-              if (sortOrder.equals("asc"))
-              {
-                compareValue = (int)(Double.parseDouble(dti1.getSortIndex()) - Double.parseDouble(dti2.getSortIndex()));
-              }
-              else
-              {
-                compareValue = (int)(Double.parseDouble(dti2.getSortIndex()) - Double.parseDouble(dti1.getSortIndex()));
-              }
-            }
-            
-            return compareValue;
-          }
-        };
-        
-        Collections.sort(dxis.getDataTransferIndexList().getItems(), comparator);
-      }
     }
     catch (Exception ex)
     {
@@ -239,6 +148,44 @@ public class ESBServiceProvider
     return dxis;
   }
 
+  // get dxi with filter
+  public DataTransferIndices getDataTransferIndices(String scope, String id, String destination, DataFilter dataFilter)
+  {
+    DataTransferIndices dxis = null;
+
+    try 
+    {
+      logger.debug("getDataTransferIndices(" + scope + "," + id + ")");
+
+      // init exchange definition
+      initExchangeDefinition(scope, id);
+
+      Manifest crossedManifest = getCrossedManifest();
+
+      DxiRequest dxiRequest = new DxiRequest();
+      dxiRequest.setDataFilter(dataFilter);
+      dxiRequest.setManifest(crossedManifest);
+      
+      if (destination.equalsIgnoreCase("source"))
+      {
+        // get source dti
+        String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
+        dxis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, dxiRequest);        
+      }
+      else 
+      {
+        String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
+        dxis = httpClient.post(DataTransferIndices.class, targetDtiUrl, dxiRequest);
+      }
+    }
+    catch (Exception ex)
+    {
+      logger.error(ex);
+    }
+
+    return dxis;
+  }
+  
   public DataTransferObjects getDataTransferObjects(String scope, String id, DataTransferIndices dtis)
   {
     DataTransferObjects resultDtos = new DataTransferObjects();
