@@ -118,7 +118,8 @@ namespace org.iringtools.adapter.projection
                       type = roleMap.type,
                       roleId = roleMap.roleId,
                       name = roleMap.name,
-                      dataType = roleMap.dataType
+                      dataType = roleMap.dataType,
+                      hasValueMap = false
                     };
 
                     templateObject.roleObjects.Add(roleObject);
@@ -135,9 +136,11 @@ namespace org.iringtools.adapter.projection
 
                       if (!String.IsNullOrEmpty(roleMap.valueList))
                       {
+                        roleObject.hasValueMap = true;
                         value = _mapping.ResolveValueList(roleMap.valueList, value);
-                        if (value != null)
-                          value = value.Replace(RDL_NS.NamespaceName, "rdl:");
+
+                        if (value == RDF_NIL)
+                          value = String.Empty;
                       }
                       else if (roleMap.dataType.Contains("dateTime"))
                       {
