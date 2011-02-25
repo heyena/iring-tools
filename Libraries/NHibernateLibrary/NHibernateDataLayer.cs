@@ -502,10 +502,13 @@ namespace org.iringtools.adapter.datalayer
         relatedObjects = query.List<IDataObject>();
       }
 
+      if (relatedObjects != null && relatedObjects.Count > 0 && dataRelationship.RelationshipType == RelationshipType.OneToOne)
+      {
+        return new List<IDataObject> { relatedObjects.First() };
+      }
+
       return relatedObjects;
     }
-
-
 
     public Response Configure(XElement configuration)
     {
