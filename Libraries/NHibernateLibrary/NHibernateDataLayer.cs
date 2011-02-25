@@ -482,7 +482,7 @@ namespace org.iringtools.adapter.datalayer
 
     public IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
     {
-      IList<IDataObject> relatedObjects;
+      IList<IDataObject> relatedObjects = null;
       DataDictionary dictionary = GetDictionary();
       DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);
       DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName == relatedObjectType);
@@ -510,6 +510,11 @@ namespace org.iringtools.adapter.datalayer
       {
         IQuery query = session.CreateQuery(sql.ToString());
         relatedObjects = query.List<IDataObject>();
+      }
+
+      if (relatedObjects != null && relatedObjects.Count > 0 && dataRelationship.relationshipType == RelationshipType.OneToOne)
+      {
+        return new List<IDataObject>{ relatedObjects.First()};
       }
 
       return relatedObjects;

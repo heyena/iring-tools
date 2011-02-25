@@ -16,14 +16,15 @@ namespace org.iringtools.library
       this.Add("ProxyHost", String.Empty);
       this.Add("ProxyPort", String.Empty);
       this.Add("IgnoreSslErrors", "True");
+      this.Add("PrimaryClassificationStyle", "Type");
+      this.Add("SecondaryClassificationStyle", "Template");
+      this.Add("ClassificationTemplateFile", @".\XML\ClassificationTemplate.xml");
 
       if (OperationContext.Current != null)
       {
         string baseAddress = OperationContext.Current.Host.BaseAddresses[0].ToString();
-        
         if (!baseAddress.EndsWith("/"))
           baseAddress = baseAddress + "/";
-        
         this.Add("BaseAddress", baseAddress);
       }
       else
@@ -35,10 +36,25 @@ namespace org.iringtools.library
     //Append Web.config settings
     public void AppendSettings(NameValueCollection settings)
     {
-      foreach (string s in settings.AllKeys)
+      foreach (string key in settings.AllKeys)
       {
-        //Override existing settings, and create new ones
-        this.Set(s, settings[s]);
+        if (key.Equals("PrimaryClassificationStyle") || key.Equals("SecondaryClassificationStyle"))
+        {
+          if (key.Equals("PrimaryClassificationStyle") && settings[key].ToString() == ClassificationStyle.Template.ToString())
+            throw new Exception("Primary Classification Style value can only be 'Type' or 'Both'!");
+
+          if (settings[key].ToString().ToUpper() == ClassificationStyle.Type.ToString().ToUpper() ||
+              settings[key].ToString().ToUpper() == ClassificationStyle.Template.ToString().ToUpper() ||
+              settings[key].ToString().ToUpper() == ClassificationStyle.Both.ToString().ToUpper())
+          {
+            this[key] = Utility.TitleCase(settings[key].ToString());  // override the default
+          }
+        }
+        else
+        {
+          //Override existing settings, and create new ones
+          this.Set(key, settings[key]);
+        }
       }
     }
 
@@ -62,7 +78,7 @@ namespace org.iringtools.library
 
         proxyCredentials = new WebProxyCredentials(
           this["ProxyCredentialToken"],
-          this["ProxyHost"], 
+          this["ProxyHost"],
           portNumber);
 
         proxyCredentials.Decrypt();
@@ -71,5 +87,5 @@ namespace org.iringtools.library
       return proxyCredentials;
     }
   }
-  
+
 }

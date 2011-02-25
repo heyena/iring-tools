@@ -21,9 +21,6 @@ namespace org.iringtools.adapter
       this.Add("dotNetRDFPassword", "dotNetRDF");
       this.Add("TrimData", "False");
       this.Add("DumpSettings", "False");
-      this.Add("PrimaryClassificationStyle", "Type");
-      this.Add("SecondaryClassificationStyle", "Template");
-      this.Add("ClassificationTemplateFile", ".\\XML\\ClassificationTemplate.xml");
       this.Add("ExecutingAssemblyName", "App_Code");
 
       if (OperationContext.Current != null)
@@ -54,19 +51,6 @@ namespace org.iringtools.adapter
             baseAddress = baseAddress + "/";
           
           settings[key] = baseAddress;
-        }
-
-        if (key.Equals("PrimaryClassificationStyle") || key.Equals("SecondaryClassificationStyle"))
-        {
-          if (key.Equals("PrimaryClassificationStyle") && settings[key].ToString() == ClassificationStyle.Template.ToString())
-            throw new Exception("Primary Classification Style value can only be 'Type' or 'Both'!");
-
-          if (settings[key].ToString().ToUpper() == ClassificationStyle.Type.ToString().ToUpper() ||
-              settings[key].ToString().ToUpper() == ClassificationStyle.Template.ToString().ToUpper() ||
-              settings[key].ToString().ToUpper() == ClassificationStyle.Both.ToString().ToUpper())
-          {
-            this[key] = Utility.TitleCase(settings[key].ToString());  // override the default
-          }
         }
 
         //Protect existing settings, but add new ones.
