@@ -253,11 +253,7 @@ public class DataModel
 
       if (dataFilter == null)
       {
-        if (session.containsKey(fullDtiKey))
-        {
-          dtis = (DataTransferIndices)session.get(fullDtiKey);
-        }
-        else if (dataType == DataType.EXCHANGE)
+        if (dataType == DataType.EXCHANGE)
         {
           HttpClient httpClient = new HttpClient(serviceUri);
           dtis = httpClient.get(DataTransferIndices.class, relativePath);
