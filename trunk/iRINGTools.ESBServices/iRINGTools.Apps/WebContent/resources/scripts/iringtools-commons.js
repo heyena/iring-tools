@@ -1,5 +1,31 @@
 Ext.ns('iringtools.org.commons');
 
+Ext.MyPagingToolbar = Ext.extend(Ext.PagingToolbar, {
+  constructor: function(config) {
+    Ext.MyPagingToolbar.superclass.constructor.call(this, config, []);
+  },
+  
+  doRefresh : function(){
+    var filters = this.ownerCt.filters;
+    var hasActiveFilter = false;
+    
+    for (var i = 0; i < filters.filters.length; i++) {
+      if (filters.filters.items[i].active) {
+        hasActiveFilter = true;
+        break;
+      }
+    }
+    
+    // clear sort info
+    this.ownerCt.store.sortInfo = null;
+    
+    if (hasActiveFilter)      
+      filters.clearFilters();  // will trigger store to reload
+    else
+      this.doLoad(0);
+  }
+});
+
 Ext.data.DynamicGridReader = Ext.extend(Ext.data.JsonReader, {
   constructor: function(config) {
     Ext.data.DynamicGridReader.superclass.constructor.call(this, config, []);

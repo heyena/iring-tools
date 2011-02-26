@@ -27,7 +27,7 @@ public class IDGeneratorService extends AbstractService{
 	      try
 	      {
 	    	  
-	    	  IdGenProvider idGenProvider = new IdGenProvider();
+	    	  //IdGenProvider idGenProvider = new IdGenProvider();
 	    	  //System.out.println(uri);
 	    	  //generatedId = idGenProvider.generateRandomNumber(uri);
 	      }

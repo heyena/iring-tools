@@ -60,7 +60,7 @@ function createGridPane(store, pageSize){
   
   var colModel = new Ext.grid.DynamicColumnModel(store);  
   var selModel = new Ext.grid.RowSelectionModel({ singleSelect: true });
-  var pagingControl = new Ext.PagingToolbar({
+  var pagingToolbar = new Ext.MyPagingToolbar({
 	  store: store,
 	  pageSize: pageSize,
 	  displayInfo: true,
@@ -81,7 +81,7 @@ function createGridPane(store, pageSize){
     enableColLock: false,
     viewConfig: { forceFit: true },
     plugins: [filters],
-    bbar: pagingControl
+    bbar: pagingToolbar
   });
   
   return gridPane;
