@@ -302,7 +302,7 @@ public class DataModel
     String currFilter = filter + "/" + sortBy + "/" + sortOrder;
 
     try
-    {
+    {      
       DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);
 
       if (dataFilter == null)
@@ -339,8 +339,7 @@ public class DataModel
         {
           dtis = (DataTransferIndices) session.get(partDtiKey);
         }
-        else
-        // filter does not exist or has changed
+        else  // filter does not exist or has changed
         {
           if (dataType == DataType.EXCHANGE) // exchange data
           {
@@ -469,23 +468,27 @@ public class DataModel
 
   public String resolveValueMap(String refServiceUri, String id)
   {
-    Entity value = null;
+    String label = id;
 
     try
     {
       HttpClient httpClient = new HttpClient(refServiceUri);
-      value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");
+      Entity value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");
+      
+      if (value != null)
+      {
+        label = value.getLabel();
+      }
     }
     catch (Exception e)
     {
-      System.out.println("Exception :" + e);
+      logger.error("Error in resolveValueMap:" + e);
     }
 
-    return value.getLabel();
+    return label;
   }
 
   // paging is based on number of data transfer objects
-  @SuppressWarnings("unchecked")
   public Grid getDtoGrid(DataType dataType, DataTransferObjects dtos, String refServiceUri)
   {
     Grid pageDtoGrid = new Grid();
@@ -539,40 +542,13 @@ public class DataModel
 
               if (roleObject.isHasValueMap())
               {
-                Map<String, String> valueMaps;
                 String roleObjectValue = roleObject.getValue();
-                String roleObjectOldValue = "";
-
-                if (dataType == DataType.EXCHANGE)
-                  roleObjectOldValue = roleObject.getOldValue();
-
-                if (session.containsKey("valueMaps"))
+                roleObject.setValue(getValueMap(refServiceUri, roleObjectValue));
+                
+                if (dataType == DataType.EXCHANGE) 
                 {
-                  valueMaps = (Map<String, String>) session.get("valueMaps");
-                }
-                else
-                {
-                  valueMaps = new HashMap<String, String>();
-                  session.put("valueMaps", valueMaps);
-                }
-
-                if (roleObjectValue != null)
-                {
-                  if (!roleObjectValue.isEmpty() && !valueMaps.containsKey(roleObjectValue))
-                    valueMaps.put(roleObjectValue, resolveValueMap(refServiceUri, roleObjectValue));
-
-                  if (!roleObjectValue.isEmpty())
-                    roleObject.setValue(valueMaps.get(roleObjectValue));
-                }
-
-                if (roleObjectOldValue != null)
-                {
-                  if (dataType == DataType.EXCHANGE && !valueMaps.containsKey(roleObjectOldValue)
-                      && !roleObjectOldValue.isEmpty())
-                    valueMaps.put(roleObjectOldValue, resolveValueMap(refServiceUri, roleObjectOldValue));
-
-                  if (!roleObjectOldValue.isEmpty())
-                    roleObject.setOldValue(valueMaps.get(roleObjectOldValue));
+                  String roleObjectOldValue = roleObject.getOldValue();
+                  roleObject.setOldValue(getValueMap(refServiceUri, roleObjectOldValue));
                 }
               }
 
@@ -783,15 +759,49 @@ public class DataModel
     for (String key : valueMaps.keySet())
       if (valueMaps.get(key).equalsIgnoreCase(value))
         return key;
+    
     return null;
   }
 
+  @SuppressWarnings("unchecked")
+  private String getValueMap(String refServiceUri, String value)
+  {
+    Map<String, String> valueMaps;
+    String valueMap = value;
+    
+    if (session.containsKey("valueMaps"))
+    {
+      valueMaps = (Map<String, String>)session.get("valueMaps");
+    }
+    else
+    {
+      valueMaps = new HashMap<String, String>();
+      session.put("valueMaps", valueMaps);
+    }
+
+    if (value != null && !value.isEmpty())
+    {
+      if (!valueMaps.containsKey(value))
+      {
+        valueMap = resolveValueMap(refServiceUri, value);
+        valueMaps.put(value, valueMap);
+      }
+      else
+      {
+        valueMap = valueMaps.get(value);
+      }
+    }
+    
+    return valueMap;
+  }
+  
   private DataFilter createDataFilter(String filter, String sortBy, String sortOrder)
   {
     DataFilter dataFilter = null;
 
     @SuppressWarnings("unchecked")
     HashMap<String, String> valueMaps = (HashMap<String, String>) session.get("valueMaps");
+    
     // process filtering
     if (filter != null && filter.length() > 0)
     {
@@ -832,14 +842,14 @@ public class DataModel
             Values values = new Values();
             expression.setValues(values);
 
-            List<String> valueList = new ArrayList<String>();
-            values.setValues(valueList);
+            List<String> valMaps = new ArrayList<String>();
+            values.setValues(valMaps);
 
-            String unitValue = getValueMapKey(String.valueOf(filterExpression.get("value")), valueMaps);
-            if (unitValue != null && !unitValue.isEmpty())
-              valueList.add(unitValue);
+            String valueMap = getValueMapKey(String.valueOf(filterExpression.get("value")), valueMaps);
+            if (valueMap != null && !valueMap.isEmpty())
+              valMaps.add(valueMap);
             else
-              valueList.add(String.valueOf(filterExpression.get("value")));
+              valMaps.add(String.valueOf(filterExpression.get("value")));
           }
         }
       }
