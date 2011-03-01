@@ -149,7 +149,7 @@ public class DataModel
       if ((dataFilter.getExpressions() != null && dataFilter.getExpressions().getItems().size() > 0)
           || dataFilter.getOrderExpressions() != null && dataFilter.getOrderExpressions().getItems().size() > 0)
       {
-        boolean found = false;
+        boolean matched = false;
         List<DataTransferIndex> partialDtiList = null;
         
         HttpClient httpClient = new HttpClient(serviceUri);
@@ -159,17 +159,31 @@ public class DataModel
         if (resultDtis != null && resultDtis.getDataTransferIndexList() != null)
         {
           partialDtiList = resultDtis.getDataTransferIndexList().getItems();
-          found = parsePartialDtis(partialDtiList, cloneFullDtiList);
+          matched = parsePartialDtis(partialDtiList, cloneFullDtiList);
         }
 
-        if (!found)
+        if (!matched)
         {
           destinationUri = relativePath + "?destination=target";
-          resultDtis = httpClient.post(DataTransferIndices.class, destinationUri, dataFilter);
+          DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, destinationUri, dataFilter);
 
-          if (resultDtis != null && resultDtis.getDataTransferIndexList() != null)
+          if (targetDtis != null && targetDtis.getDataTransferIndexList() != null)
           {
-            partialDtiList = resultDtis.getDataTransferIndexList().getItems();
+            List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getItems();
+
+            for (DataTransferIndex targetDti : targetDtiList)
+            {
+              for (DataTransferIndex fullDti : cloneFullDtiList)
+              {
+                if (fullDti.getTransferType() == org.iringtools.dxfr.dti.TransferType.DELETE &&
+                    fullDti.getIdentifier().equalsIgnoreCase(targetDti.getIdentifier()))
+                {
+                  partialDtiList.add(targetDti);
+                  break;
+                }                
+              }
+            }
+            
             parsePartialDtis(partialDtiList, cloneFullDtiList);
           }
         }
@@ -261,7 +275,7 @@ public class DataModel
 
   private boolean parsePartialDtis(List<DataTransferIndex> partialDtiList, List<DataTransferIndex> fullDtiList)
   {
-    boolean found = false;
+    int count = 0;
 
     for (int i = 0; i < partialDtiList.size(); i++)
     {
@@ -277,7 +291,7 @@ public class DataModel
             fullDtiList.get(j).setHashValue(partialDtiList.get(i).getHashValue());
 
           exists = true;
-          found = true;
+          count++;
           break;
         }
       }
@@ -288,7 +302,7 @@ public class DataModel
       }
     }
     
-    return found;
+    return count == fullDtiList.size();
   }
 
   // only cache full dti and one filtered dti
