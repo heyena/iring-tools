@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 import javax.xml.bind.JAXBException;
 
 import org.ids_adi.ns.qxf.model.Qmxf;
@@ -22,6 +24,8 @@ import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.refdata.response.Entity;
+import org.iringtools.services.OutgoingWebResponseContext;
+import org.iringtools.services.RefDataEntities;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
 
@@ -274,6 +278,19 @@ public class RefDataProvider
           throw ex;
       }
   }
+
+  private String getLabel(String uri)
+  {
+      return new String();
+  }
+
+  /*public Version getVersion(){
+	  return new Version();
+  }
+  
+  public String getClassLabel(String id){
+	  return getLabel("http://rdl.rdlfacade.org/data#" + id);  
+	  }
   
   public Qmxf GetClass(String id, String namespaceUrl)
   {
@@ -281,36 +298,11 @@ public class RefDataProvider
           return qmxf;
   }
   
-  private Qmxf GetTemplate(String id, Repository repository)
-  {
-    Qmxf qmxf = new Qmxf();
-
-   /* try
-    {
-      TemplateQualification templateQualification = qmxf.getTemplateQualifications();
-
-      if (templateQualification != null)
-      {
-        qmxf.getTemplateQualifications().add(templateQualification);
-      }
-      else
-      {
-        TemplateDefinition templateDefinition = GetTemplateDefinition(id, repository);
-        qmxf.templateDefinitions.Add(templateDefinition);
-      }
-    }
-    catch (Exception ex)
-    {
-      //_logger.Error("Error in GetTemplate: " + ex);
-    }*/
-    return qmxf;
-  }
-  
-  public Qmxf GetTemplate(String id){
+  public Qmxf GetTemplate(String id, Repository repository){
 	  Qmxf federatedQmxf = new Qmxf();
       try
       {
-        for (Repository repository: _repositories)
+        for (Repository repository1: _repositories)
         {
           Qmxf qmxf = GetTemplate(id, repository);
                     
@@ -361,18 +353,43 @@ public class RefDataProvider
 	  return repository;
 
   }
+ 
+  public RefDataEntities searchPageReset(String query, int startIdx,int pageLimit){
+	  
+	  return new RefDataEntities();
+  }
   
-  public String getClassLabel(String id){
-	  return getLabel("http://rdl.rdlfacade.org/data#" + id);  
-	  }
-  
-  private String getLabel(String uri)
-  {
-      return new String();
-
+  public List<Entity> find(String query){
+	  List<Entity> listEntities;
   }
 
-/*  public List<Entity> find(String query){
-	  List<Entity> listEntities;
-  }*/
-}
+  public RefDataEntities search(String query)
+  {
+  }
+
+  public RefDataEntities searchPage(String query, String start, String limit)
+  {
+  }
+
+  public RefDataEntities searchReset(String query)
+   {
+   }
+
+  public List<Entity> getSuperClasses(String id)
+  {
+  }
+
+  public List<Entity> getAllSuperClasses(String id)
+  {
+  }
+
+  public List<Entity> getSubClasses(String id)
+  {
+  }
+
+  public List<Entity> getClassTemplates(String id)
+  {
+	  	  
+  }
+*/
+  }
