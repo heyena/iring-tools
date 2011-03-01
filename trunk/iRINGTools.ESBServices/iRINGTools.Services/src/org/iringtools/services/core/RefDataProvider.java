@@ -8,24 +8,27 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.ids_adi.ns.qxf.model.Qmxf;
+import org.ids_adi.ns.qxf.model.TemplateDefinition;
+import org.ids_adi.ns.qxf.model.TemplateQualification;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
 import org.iringtools.common.response.StatusList;
-
 import org.iringtools.refdata.federation.Federation;
 import org.iringtools.refdata.federation.IDGenerator;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.refdata.queries.Queries;
-
+import org.iringtools.refdata.response.Entity;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
 
 public class RefDataProvider
 {
   private Hashtable<String, String> settings;
+  private List<Repository> _repositories = null;
 
   public RefDataProvider(Hashtable<String, String> settings)
   {
@@ -271,4 +274,105 @@ public class RefDataProvider
           throw ex;
       }
   }
+  
+  public Qmxf GetClass(String id, String namespaceUrl)
+  {
+	  Qmxf qmxf = new Qmxf();
+          return qmxf;
+  }
+  
+  private Qmxf GetTemplate(String id, Repository repository)
+  {
+    Qmxf qmxf = new Qmxf();
+
+   /* try
+    {
+      TemplateQualification templateQualification = qmxf.getTemplateQualifications();
+
+      if (templateQualification != null)
+      {
+        qmxf.getTemplateQualifications().add(templateQualification);
+      }
+      else
+      {
+        TemplateDefinition templateDefinition = GetTemplateDefinition(id, repository);
+        qmxf.templateDefinitions.Add(templateDefinition);
+      }
+    }
+    catch (Exception ex)
+    {
+      //_logger.Error("Error in GetTemplate: " + ex);
+    }*/
+    return qmxf;
+  }
+  
+  public Qmxf GetTemplate(String id){
+	  Qmxf federatedQmxf = new Qmxf();
+      try
+      {
+        for (Repository repository: _repositories)
+        {
+          Qmxf qmxf = GetTemplate(id, repository);
+                    
+          for (TemplateDefinition templateDefinition:qmxf.getTemplateDefinitions())
+          {
+            if (templateDefinition != null)
+            	federatedQmxf.getTemplateDefinitions().add(templateDefinition);
+          }
+          for (TemplateQualification templateQualification: qmxf.getTemplateQualifications())
+          {
+            if (templateQualification != null)
+            	federatedQmxf.getTemplateQualifications().add(templateQualification);
+          }   
+        }
+      }
+      catch (Exception ex)
+      {
+        //_logger.Error("Error in GetTemplate: " + ex);
+      }
+
+      return federatedQmxf;
+  }
+  
+  public Response PostTemplate(Qmxf qmxf)
+  {
+	  return new Response(); 
+  }
+  
+  public Response PostClass(Qmxf qmxf)
+  {
+	  return new Response(); 
+  }
+
+  @SuppressWarnings("unchecked")
+  public List<Repository> getRepositories() throws Exception{
+	  List<Repository> repository;
+	  try
+	  {
+	  Federation federation = getFederation();
+	  repository = (List<Repository>) new Repository();
+	  for(Repository repo : federation.getRepositories().getItems())
+	  {
+		  repository.add(repo);
+	  }
+	  }catch(Exception ex){
+			throw ex;
+	  }
+	  return repository;
+
+  }
+  
+  public String getClassLabel(String id){
+	  return getLabel("http://rdl.rdlfacade.org/data#" + id);  
+	  }
+  
+  private String getLabel(String uri)
+  {
+      return new String();
+
+  }
+
+/*  public List<Entity> find(String query){
+	  List<Entity> listEntities;
+  }*/
 }
