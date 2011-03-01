@@ -188,6 +188,17 @@ public class RefDataService extends AbstractService
     return response;
   }
   
+  
+/*  @GET
+  @Path("/version")
+  public Version GetVersion()
+   {
+     OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+     context.ContentType = "application/xml";
+     return _referenceDataProvider.getVersion();
+   }
+ 
+  
   @GET
   @Path("/classes/{id}/label")
   public String getClassLabel(@PathParam("id") String id)
@@ -280,39 +291,6 @@ public class RefDataService extends AbstractService
 	  return response;
   }
 
-  /*public List<Entity> getSuperClasses(String id)
-  {
-  }
-
-  public List<Entity> getAllSuperClasses(String id)
-  {
-  }
-
-  public List<Entity> getSubClasses(String id)
-  {
-  }
-
-  public List<Entity> getClassTemplates(String id)
-  {
-	  	  
-  }  
-
-  @GET
-  @Path("/search/{query}/{start}/{limit}/reset")
-
-  public RefDataEntities SearchPageReset(String query, String start, String limit)
-   {
-     OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-     context.ContentType = "application/xml";
-
-     int startIdx = 0;
-     int pageLimit = 0;
-     int.TryParse(start, out startIdx);
-     int.TryParse(limit, out pageLimit);
-
-     return _referenceDataProvider.SearchPageReset(query, startIdx, pageLimit);
-   }
-
   @GET
   @Path("/repositories")
   public List<Repository> getRepositories()
@@ -328,7 +306,39 @@ public class RefDataService extends AbstractService
 	      logger.error("Error getting federation information: " + ex);
 	    }
    }
-  
+
+  public List<Entity> getSuperClasses(String id)
+  {
+  }
+
+  public List<Entity> getAllSuperClasses(String id)
+  {
+  }
+
+  public List<Entity> getSubClasses(String id)
+  {
+  }
+
+  public List<Entity> getClassTemplates(String id)
+  {
+	  	  
+  } 
+
+  @GET
+  @Path("/search/{query}/{start}/{limit}/reset")
+  public RefDataEntities searchPageReset(String query, String start, String limit)
+   {
+     OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+     context.ContentType = "application/xml";
+
+     int startIdx = 0;
+     int pageLimit = 0;
+     int.TryParse(start, out startIdx);
+     int.TryParse(limit, out pageLimit);
+
+     return _referenceDataProvider.searchPageReset(query, startIdx, pageLimit);
+   }
+
   @GET
   @Path("/repositories/{query}")
   public List<Entity> find(@PathParam("query") String query)
@@ -354,34 +364,31 @@ public class RefDataService extends AbstractService
   {
      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
      context.ContentType = "application/xml";
-     return _referenceDataProvider.Search(query);
+     return _referenceDataProvider.search(query);
    }
 
   @GET
   @Path("/search/{query}/{start}/{limit}")
-  public RefDataEntities SearchPage(String query, String start, String limit)
+  public RefDataEntities searchPage(String query, String start, String limit)
    {
      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
      context.ContentType = "application/xml";
-
-
      int startIdx = 0;
      int pageLimit = 0;
      int.TryParse(start, out startIdx);
      int.TryParse(limit, out pageLimit);
 
-     return _referenceDataProvider.SearchPage(query, startIdx, pageLimit);
+     return _referenceDataProvider.searchPage(query, startIdx, pageLimit);
    }
 
   @GET
   @Path("/search/{query}/reset")
-  public RefDataEntities SearchReset(String query)
+  public RefDataEntities searchReset(String query)
    {
      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
      context.ContentType = "application/xml";
 
-     return _referenceDataProvider.SearchReset(query);
+     return _referenceDataProvider.searchReset(query);
    }*/
-  
 }
 
