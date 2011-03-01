@@ -454,6 +454,8 @@ public class ESBServiceProvider
         if (exchangeRequest.isReviewed())
           sourcePoolDtiList.addAll(syncDtiList);
 
+        DataTransferObjects sourceDtos = null;
+        
         if (sourcePoolDtiList.size() > 0)
         {
           // request source DTOs
@@ -466,14 +468,14 @@ public class ESBServiceProvider
           poolDtiList.setItems(sourcePoolDtiList);
           
           String sourceDtoUrl = sourceGraphUrl + "/dxo";
-          DataTransferObjects poolDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDxoRequest);
-          List<DataTransferObject> poolDtoListItems = poolDtos.getDataTransferObjectList().getItems();
+          sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDxoRequest);
+          List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
   
           // set transfer type for each DTO : poolDtoList and remove/report ones that have changed
           // and deleted during review and acceptance period
-          for (int j = 0; j < poolDtoListItems.size(); j++)
+          for (int j = 0; j < sourceDtoListItems.size(); j++)
           {
-            DataTransferObject sourceDto = poolDtoListItems.get(j);
+            DataTransferObject sourceDto = sourceDtoListItems.get(j);
             String identifier = sourceDto.getIdentifier();          
             
             if (sourceDto.getClassObjects() != null)
@@ -497,11 +499,11 @@ public class ESBServiceProvider
                         exchangeResponse.setLevel(Level.WARNING);
                       }
                       
-                      poolDtoListItems.remove(j--); 
+                      sourceDtoListItems.remove(j--); 
                     }
                     else if (dti.getTransferType() == TransferType.SYNC)
                     {
-                      poolDtoListItems.remove(j--);  // exclude SYNC DTOs
+                      sourceDtoListItems.remove(j--);  // exclude SYNC DTOs
                     }
                     else
                     {
@@ -518,48 +520,60 @@ public class ESBServiceProvider
               }
             }
           }
-
-          // report DTOs that were deleted during review and acceptance
-          if (exchangeRequest.isReviewed() && sourcePoolDtiList.size() > 0)
+        }
+        
+        // report DTOs that were deleted during review and acceptance
+        if (exchangeRequest.isReviewed() && sourcePoolDtiList.size() > 0)
+        {
+          for (DataTransferIndex sourceDti : sourcePoolDtiList)
           {
-            for (DataTransferIndex sourceDti : sourcePoolDtiList)
-            {
-              Status status = createStatus(sourceDti.getIdentifier(), "DTO no longer exists.");
-              exchangeResponse.getStatusList().getItems().add(status);
-              
-              if (exchangeResponse.getLevel() != Level.ERROR)
-                exchangeResponse.setLevel(Level.WARNING);
-            }
-          }
-  
-          // create identifiers for deleted DTOs
-          for (DataTransferIndex deleteDti : deleteDtiList)
-          {
-            DataTransferObject deleteDto = new DataTransferObject();
-            deleteDto.setIdentifier(deleteDti.getIdentifier());
-            deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
-            poolDtoListItems.add(deleteDto);
-          }
-  
-          // post add/change/delete DTOs to target endpoint
-          if (poolDtoListItems.size() > 0)
-          {
-            Response poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
-            exchangeResponse.getStatusList().getItems().addAll(poolResponse.getStatusList().getItems());
+            Status status = createStatus(sourceDti.getIdentifier(), "DTO no longer exists.");
+            exchangeResponse.getStatusList().getItems().add(status);
             
-            if (exchangeResponse.getLevel() != Level.ERROR || 
-               (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
+            if (exchangeResponse.getLevel() != Level.ERROR)
+              exchangeResponse.setLevel(Level.WARNING);
+          }
+        }
+        
+        DataTransferObjects poolDtos = new DataTransferObjects();
+        DataTransferObjectList poolDtosList = new DataTransferObjectList();
+        poolDtos.setDataTransferObjectList(poolDtosList);
+        
+        List<DataTransferObject> poolDtoListItems = new ArrayList<DataTransferObject>();
+        poolDtosList.setItems(poolDtoListItems);
+        
+        if (sourceDtos != null && sourceDtos.getDataTransferObjectList() != null)
+        {
+          poolDtoListItems.addAll(sourceDtos.getDataTransferObjectList().getItems());
+        }
+
+        // create identifiers for deleted DTOs
+        for (DataTransferIndex deleteDti : deleteDtiList)
+        {
+          DataTransferObject deleteDto = new DataTransferObject();
+          deleteDto.setIdentifier(deleteDti.getIdentifier());
+          deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
+          poolDtoListItems.add(deleteDto);
+        }
+
+        // post add/change/delete DTOs to target endpoint
+        if (poolDtoListItems.size() > 0)
+        {
+          Response poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
+          exchangeResponse.getStatusList().getItems().addAll(poolResponse.getStatusList().getItems());
+          
+          if (exchangeResponse.getLevel() != Level.ERROR || 
+             (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
+          {
+            exchangeResponse.setLevel(poolResponse.getLevel());
+            
+            // find the errors and warnings to put in the summary
+            for (Status status : poolResponse.getStatusList().getItems())
             {
-              exchangeResponse.setLevel(poolResponse.getLevel());
-              
-              // find the errors and warnings to put in the summary
-              for (Status status : poolResponse.getStatusList().getItems())
+              String messages = StringUtils.join(status.getMessages().getItems(), " ");                
+              if (!messages.contains("successful"))
               {
-                String messages = StringUtils.join(status.getMessages().getItems(), " ");                
-                if (!messages.contains("successful"))
-                {
-                  exchangeResponse.getMessages().getItems().addAll(status.getMessages().getItems());
-                }
+                exchangeResponse.getMessages().getItems().addAll(status.getMessages().getItems());
               }
             }
           }
