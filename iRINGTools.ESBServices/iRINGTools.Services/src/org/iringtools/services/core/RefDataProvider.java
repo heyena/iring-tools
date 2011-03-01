@@ -24,8 +24,8 @@ import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.refdata.response.Entity;
-import org.iringtools.services.OutgoingWebResponseContext;
-import org.iringtools.services.RefDataEntities;
+//import org.iringtools.services.OutgoingWebResponseContext;
+//import org.iringtools.services.RefDataEntities;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
 
