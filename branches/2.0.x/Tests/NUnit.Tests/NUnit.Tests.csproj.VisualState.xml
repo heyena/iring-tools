@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="true">
-  <TopNode>[0-1000]E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests\NUnit.Tests.csproj</TopNode>
-  <SelectedNode>[0-1004]NUnit.Tests.XmlTest.GetFull</SelectedNode>
+  <TopNode>[0-1000]C:\Users\rpdecarl\iring-tools-2.0.x\Tests\NUnit.Tests\NUnit.Tests.csproj</TopNode>
+  <SelectedNode>[0-1000]C:\Users\rpdecarl\iring-tools-2.0.x\Tests\NUnit.Tests\NUnit.Tests.csproj</SelectedNode>
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
-    <Node UniqueName="[0-1000]E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests\NUnit.Tests.csproj" Expanded="true" />
-    <Node UniqueName="[0-1057]E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests\Bin\NUnit.Tests.dll" Expanded="true" />
-    <Node UniqueName="[0-1058]NUnit" Expanded="true" />
-    <Node UniqueName="[0-1059]NUnit.Tests" Expanded="true" />
-    <Node UniqueName="[0-1033]NUnit.Tests.AdapterTest" Expanded="true" />
-    <Node UniqueName="[0-1042]NUnit.Tests.NHibernateTest" Expanded="true" />
-    <Node UniqueName="[0-1050]NUnit.Tests.ReferenceDataTests" Expanded="true" />
-    <Node UniqueName="[0-1056]NUnit.Tests.ReferenceDataTests.GetTemplate" Checked="true" />
-    <Node UniqueName="[0-1001]NUnit.Tests.XmlTest" Expanded="true" />
+    <Node UniqueName="[0-1000]C:\Users\rpdecarl\iring-tools-2.0.x\Tests\NUnit.Tests\NUnit.Tests.csproj" Expanded="true" />
+    <Node UniqueName="[0-1056]C:\Users\rpdecarl\iring-tools-2.0.x\Tests\NUnit.Tests\Bin\NUnit.Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1057]NUnit" Expanded="true" />
+    <Node UniqueName="[0-1058]NUnit.Tests" Expanded="true" />
+    <Node UniqueName="[0-1041]NUnit.Tests.ReferenceDataTests" Expanded="true" />
   </Nodes>
 </VisualState>
