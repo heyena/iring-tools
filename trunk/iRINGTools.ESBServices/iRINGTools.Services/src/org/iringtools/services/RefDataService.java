@@ -87,7 +87,7 @@ public class RefDataService extends AbstractService
 
     return response;
   }
-
+  
   @POST
   @Path("/idgenerator")
   public Response saveIDGenerator(IDGenerator idgenerator)
@@ -189,7 +189,7 @@ public class RefDataService extends AbstractService
   }
   
   
-/*  @GET
+  /*@GET
   @Path("/version")
   public Version GetVersion()
    {
@@ -197,7 +197,6 @@ public class RefDataService extends AbstractService
      context.ContentType = "application/xml";
      return _referenceDataProvider.getVersion();
    }
- 
   
   @GET
   @Path("/classes/{id}/label")
@@ -290,41 +289,47 @@ public class RefDataService extends AbstractService
 	    }
 	  return response;
   }
-
+*/
   @GET
   @Path("/repositories")
   public List<Repository> getRepositories()
   {
+	  List<Repository> repositoryList=null;
 	  try
 	    {
 	      initService();
 		  RefDataProvider refDataProvider = new RefDataProvider(settings);
-		  return refDataProvider.getRepositories();	      
+		  repositoryList = refDataProvider.getRepositories();	      
 	    }
 	    catch (Exception ex)
 	    {
-	      logger.error("Error getting federation information: " + ex);
+	      logger.error("Error getting getRepositories information: " + ex);
 	    }
+	    return repositoryList;
    }
 
   public List<Entity> getSuperClasses(String id)
   {
+	  return null;
   }
 
   public List<Entity> getAllSuperClasses(String id)
   {
-  }
+	  return null;
+	  }
 
   public List<Entity> getSubClasses(String id)
-  {
+  {  return null;
+  
   }
 
   public List<Entity> getClassTemplates(String id)
   {
-	  	  
+	  return null;
+	    	  
   } 
 
-  @GET
+  /*@GET
   @Path("/search/{query}/{start}/{limit}/reset")
   public RefDataEntities searchPageReset(String query, String start, String limit)
    {
