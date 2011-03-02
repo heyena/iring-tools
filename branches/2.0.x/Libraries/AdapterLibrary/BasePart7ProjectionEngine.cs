@@ -36,6 +36,7 @@ namespace org.iringtools.adapter.projection
     protected static readonly string RDL_PREFIX = "rdl:";
     protected static readonly string TPL_PREFIX = "tpl:";
     protected static readonly string RDF_NIL = RDF_PREFIX + "nil";
+    protected static readonly string QUALIFIED_RDF_NIL = RDF_NS.NamespaceName + "nil";
     protected static readonly string BLANK_NODE = "?bnode";
     protected static readonly string END_STATEMENT = ".";
 
@@ -92,7 +93,6 @@ namespace org.iringtools.adapter.projection
     protected Dictionary<string, List<IDataObject>> _relatedObjectsCache = null;
 
     protected TripleStore _memoryStore = null;
-    private RoleType _roleType = RoleType.Property;
     private string _valueListName = null;
 
     public bool FullIndex { get; set; }
@@ -440,36 +440,47 @@ namespace org.iringtools.adapter.projection
       return valueObjects;
     }
 
-    protected string GetClassIdentifierValue(List<string> identifiers, string delimiter, int dataObjectIndex)
+    protected List<string> GetClassIdentifiers(ClassMap classMap, int dataObjectIndex, out bool hasRelatedProperty)
     {
-      string classIdentifierValue = String.Empty;
+      List<string> classIdentifiers = new List<string>();
+      hasRelatedProperty = false;
 
-      foreach (string identifier in identifiers)
+      foreach (string identifier in classMap.identifiers)
       {
-        if (classIdentifierValue.Length > 0)
-          classIdentifierValue += delimiter;
+        if (classIdentifiers.Count > 0)
+        {
+          classIdentifiers.Add(classMap.identifierDelimiter);
+        }
 
         // identifier is a fixed value
         if (identifier.StartsWith("#") && identifier.EndsWith("#"))
         {
-          string value = identifier.Substring(1, identifier.Length - 2);
-          classIdentifierValue += value;
+          classIdentifiers.Add(identifier.Substring(1, identifier.Length - 2));
         }
-        else  // identifier is a property map
+        else 
         {
-          List<IDataObject> identifierValueObjects = GetValueObjects(identifier, dataObjectIndex);
-
-          if (identifierValueObjects != null && identifierValueObjects.Count > 0)
+          string[] identifierParts = identifier.Split('.');
+          string propertyName = identifierParts[identifierParts.Length - 1];
+                
+          if (identifierParts.Length > 2)  // related property
           {
-            IDataObject identifierValueObject = identifierValueObjects.First();
-            string propertyName = identifier.Substring(identifier.LastIndexOf('.') + 1);
-            string value = Convert.ToString(identifierValueObject.GetPropertyValue(propertyName));
-            classIdentifierValue += value;
+            List<IDataObject> valueObjects = GetValueObjects(identifier, dataObjectIndex);
+
+            foreach (IDataObject valueObject in valueObjects)
+            {
+              classIdentifiers.Add(Convert.ToString(valueObject.GetPropertyValue(propertyName)));
+            }
+
+            hasRelatedProperty = true;
+          }
+          else  // direct property
+          {
+            classIdentifiers.Add(Convert.ToString(_dataObjects[dataObjectIndex].GetPropertyValue(propertyName)));
           }
         }
       }
 
-      return classIdentifierValue;
+      return classIdentifiers;
     }
 
     private void SetInboundSparqlClassIdentifiers()
@@ -587,26 +598,6 @@ namespace org.iringtools.adapter.projection
               Values values = expression.Values;
               string dataPropertyName = ProjectProperty(propertyNameParts, ref values);
               expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
-
-              //if (_roleType == RoleType.ObjectProperty)
-              //{
-              //  if (expression.RelationalOperator == RelationalOperator.EqualTo)
-              //  {
-              //    expression.Values = ProjectPropertValues(expression.Values);
-              //    expression.RelationalOperator = RelationalOperator.In;
-              //  }
-              //  else if (expression.RelationalOperator == RelationalOperator.In)
-              //  {
-              //    expression.Values = ProjectPropertValues(expression.Values);
-              //  }
-              //  else
-              //  {
-              //    throw new Exception(
-              //      "Invalid Expression in DataFilter. " +
-              //      "Object Property Roles can only use EqualTo and In in the expression."
-              //    );
-              //  }
-              //}
             }
           }
 
@@ -732,7 +723,6 @@ namespace org.iringtools.adapter.projection
     public string ProjectProperty(string[] propertyNameParts, ref Values values)
     {
       string dataPropertyName = String.Empty;
-
       string className = propertyNameParts[0];
       string templateName = propertyNameParts[1];
       string roleName = propertyNameParts[2];
@@ -749,7 +739,6 @@ namespace org.iringtools.adapter.projection
       {
         case RoleType.DataProperty:
           dataPropertyName = roleMap.propertyName;
-          _roleType = RoleType.DataProperty;
           _valueListName = null;
           break;
 
@@ -761,7 +750,6 @@ namespace org.iringtools.adapter.projection
 
         case RoleType.ObjectProperty:
           dataPropertyName = roleMap.propertyName;
-          _roleType = RoleType.ObjectProperty;
           _valueListName = roleMap.valueList;
           break;
 
@@ -778,13 +766,11 @@ namespace org.iringtools.adapter.projection
           if (String.IsNullOrEmpty(roleMap.valueList))
           {
             dataPropertyName = roleMap.propertyName;
-            _roleType = RoleType.DataProperty;
             _valueListName = null;
           }
           else
           {
             dataPropertyName = roleMap.propertyName;
-            _roleType = RoleType.ObjectProperty;
             _valueListName = roleMap.valueList;
 
             for (int i = 0; i < values.Count; i++)
