@@ -2,19 +2,21 @@ DevelopmentEnvironment
 
 if 64-bit use 64-bit verison whenever possible
 
-SlikSVN
-TortoiseSVN
-Java (latest)
-Eclipse (Helios)
-.NET Framework 4
-Microsoft WebPlatform
+SlikSVN (http://www.sliksvn.com/en/download) - Install into C:\Program Files\Subversion for msbuild Task
+TortoiseSVN (http://tortoisesvn.net/downloads.html)
+Java (http://www.java.com/en/download/manual.jsp)
+Eclipse IDE for Java EE Developers (http://eclipse.org/downloads/)
+.NET Framework 4 (http://www.microsoft.com/downloads/en/details.aspx?FamilyID=9cfb2d51-5ff4-4491-b0e5-b386f32c0992&displaylang=en)
+Microsoft WebPlatform (http://www.microsoft.com/web/downloads/platform.aspx)
 	WebMatrix
 	ASP.NET 4
-Express Tools
-	SQLServer 2008 R2 Express (Database with Management Tools)
+Express Tools (http://www.microsoft.com/web/downloads/platform.aspx)
+	SQLServer 2008 R2 Express
+		SQL Server Express Installation Options
+			Database with Management Tools
 	Visual Studio 2010 Express
 		Visual Web Developer 2010 Express
 		Visual C# 2010 Express
-MSBuild ComminityTasks
-Silverlight Tools for Visual Studio
-Silverlight Toolkit
+MSBuild ComminityTasks (http://msbuildtasks.tigris.org/)
+Silverlight 4 Tools for Visual Studio 2010 (http://www.microsoft.com/downloads/en/details.aspx?FamilyID=b3deb194-ca86-4fb6-a716-b67c2604a139&displayLang=en)
+Silverlight 4 Toolkit (http://silverlight.codeplex.com/releases/view/43528)
