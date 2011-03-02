@@ -21,13 +21,17 @@ namespace NUnit.Tests
     {
         private ReferenceDataProvider _refdataProvider = null;
         private ReferenceDataSettings _settings = null;
+        private string _baseDirectory = string.Empty;
 
         public ReferenceDataTests()
         {
             _settings = new ReferenceDataSettings();
             _settings.AppendSettings(ConfigurationManager.AppSettings);
-            _settings["BaseDirectoryPath"] = @"C:\Users\rpdecarl\iring-tools-2.0.x\Tests\NUnit.Tests";
-            Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+          //  _settings["BaseDirectoryPath"] = @"E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests";
+            _baseDirectory = Directory.GetCurrentDirectory();
+            _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
+            _settings["BaseDirectoryPath"] = _baseDirectory;
+            Directory.SetCurrentDirectory(_baseDirectory);
             _refdataProvider = new ReferenceDataProvider(_settings);
         }
 
@@ -43,7 +47,6 @@ namespace NUnit.Tests
         public void GetClassLabel()
         {
             string label = _refdataProvider.GetClassLabel("R99781532089");
-
             StringAssert.IsMatch("ISO 15926-4 INDIVIDUAL", label);
         }
 
@@ -51,7 +54,7 @@ namespace NUnit.Tests
         public void GetRepositories()
         {
             List<Repository> repositories = _refdataProvider.GetRepositories();
-            Assert.AreEqual(4, repositories.Count);
+            Assert.AreEqual(5, repositories.Count);
         }
 
         [Test]
@@ -108,7 +111,6 @@ namespace NUnit.Tests
         [Test]
         public void GetTemplate()
         {
-
             QMXF qmxf = _refdataProvider.GetTemplate("R89987134385");
             Assert.IsNotNull(qmxf);
         }
