@@ -111,8 +111,7 @@
       Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
                Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
-               Utilities\ProxyConfig\bin\Debug\ProxyConfig.exe;
-               Utilities\ConfigurationTool\bin\Debug\ConfigurationTool.exe;               
+               Utilities\ConfigurationTool\bin\Debug\ConfigurationTool.exe;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.dll;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.xml;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\HtmlAgilityPack.dll;

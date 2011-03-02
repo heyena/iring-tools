@@ -38,7 +38,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit-gui-runner">
-      <HintPath>..\..\ExternalBinaries\Nunit\nunit-gui-runner.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\Nunit\lib\nunit-gui-runner.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
