@@ -403,15 +403,15 @@ namespace org.iringtools.library
 
       //TODO: Is it better to default to string or non-string?
       DataType propertyType = DataType.String;
-      foreach (DataObject dataObject in dataDictionary.DataObjects)
+      foreach (DataObject dataObject in dataDictionary.dataObjects)
       {
-        if (dataObject.ObjectName.ToUpper() == objectType.ToUpper())
+        if (dataObject.objectName.ToUpper() == objectType.ToUpper())
         {
-          foreach (DataProperty dataProperty in dataObject.DataProperties)
+          foreach (DataProperty dataProperty in dataObject.dataProperties)
           {
-            if (dataProperty.PropertyName.ToUpper() == PropertyName.ToUpper())
+            if (dataProperty.propertyName.ToUpper() == PropertyName.ToUpper())
             {
-              propertyType = dataProperty.DataType;
+              propertyType = dataProperty.dataType;
               break;
             }
           }

@@ -570,7 +570,6 @@ namespace org.iringtools.refdata
 
             try
             {
-                ClassDefinition classDefinition = null;
                 QMXFName name;
                 Description description;
                 QMXFStatus status;
@@ -597,6 +596,8 @@ namespace org.iringtools.refdata
                 sparql = sparql.Replace("param1", uri);
                 foreach (Repository repository in _repositories)
                 {
+                    ClassDefinition classDefinition = null;
+
                     if (rep != null)
                         if (rep.Name != repository.Name) continue;
 

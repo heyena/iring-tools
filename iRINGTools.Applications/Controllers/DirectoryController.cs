@@ -359,15 +359,15 @@ namespace iRINGTools.Web.Controllers
 
             List<TreeNode> nodes = new List<TreeNode>();
 
-            foreach (DataObject dataObject in dictionary.DataObjects)
+            foreach (DataObject dataObject in dictionary.dataObjects)
             {
               TreeNode node = new TreeNode
               {
                 nodeType = "async",
                 type = "DataObjectNode",
                 icon = "Content/img/object.png",
-                id = context + "/DataObject/" + dataObject.ObjectName,
-                text = dataObject.ObjectName,
+                id = context + "/DataObject/" + dataObject.objectName,
+                text = dataObject.objectName,
                 expanded = false,
                 leaf = false,
                 children = null,
@@ -386,19 +386,19 @@ namespace iRINGTools.Web.Controllers
 
             DataDictionary dictionary = GetDictionary(adapterServiceURI, false, context.Split('/')[0], context.Split('/')[1]);
 
-            DataObject dataObject = dictionary.DataObjects.FirstOrDefault(o => o.ObjectName == context.Split('/')[4]);
+            DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName == context.Split('/')[4]);
 
             List<TreeNode> nodes = new List<TreeNode>();
 
-            foreach (DataProperty property in dataObject.DataProperties)
+            foreach (DataProperty property in dataObject.dataProperties)
             {
               TreeNode node = new TreeNode
               { 
                 nodeType = "async",
                 type = "DataPropertyNode",
-                icon = (dataObject.IsKeyProperty(property.PropertyName)) ? "Content/img/key.png" : "Content/img/property.png",
-                id = context + "/" + property.PropertyName,
-                text = property.PropertyName,
+                icon = (dataObject.isKeyProperty(property.propertyName)) ? "Content/img/key.png" : "Content/img/property.png",
+                id = context + "/" + property.propertyName,
+                text = property.propertyName,
                 expanded = true,
                 leaf = true,
                 children = new List<TreeNode>(),

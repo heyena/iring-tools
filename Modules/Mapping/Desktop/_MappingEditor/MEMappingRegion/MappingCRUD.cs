@@ -355,14 +355,14 @@ namespace org.iringtools.modules.memappingregion
           GraphMap graphMap = new GraphMap();
           graphMap.name = graphName;
 
-          string dataObjectName = model.SelectedDataObject.DataObject.ObjectName;
+          string dataObjectName = model.SelectedDataObject.DataObject.objectName;
           ClassMap classMap = new ClassMap
           {
             name = model.SelectedIMLabel,
             id = SPARQLExtensions.GetIdWithAliasFromUri(model.SelectedIMUri)
           };
 
-          classMap.identifiers.Add(string.Format("{0}.{1}", dataObjectName, model.SelectedDataObject.DataProperty.PropertyName));
+          classMap.identifiers.Add(string.Format("{0}.{1}", dataObjectName, model.SelectedDataObject.DataProperty.propertyName));
 
           graphMap.AddClassMap(null, classMap);
 
@@ -677,7 +677,7 @@ namespace org.iringtools.modules.memappingregion
           if (roleMap.dataType == null && !roleMap.dataType.StartsWith("xsd:"))
           {
             roleMap.propertyName =
-                string.Format("{0}.{1}", model.SelectedDataObject.DataObject.ObjectName, model.SelectedDataObject.DataProperty.PropertyName);
+                string.Format("{0}.{1}", model.SelectedDataObject.DataObject.objectName, model.SelectedDataObject.DataProperty.propertyName);
             roleMap.valueListName = String.Empty;
           }
           else if (roleMap.dataType != null || roleMap.dataType.StartsWith("xsd:"))
@@ -689,13 +689,13 @@ namespace org.iringtools.modules.memappingregion
               roleMap.propertyName = string.Format("{0}.{1}.{2}",
                 parentObject.ParentObjectName,
                 parentObject.RelationshipName,
-                //              model.SelectedDataObject.DataObject.ObjectName,
-                model.SelectedDataObject.DataProperty.PropertyName);
+                //              model.SelectedDataObject.DataObject.objectName,
+                model.SelectedDataObject.DataProperty.propertyName);
             }
             else
             {
               roleMap.propertyName =
-                  string.Format("{0}.{1}", model.SelectedDataObject.DataObject.ObjectName, model.SelectedDataObject.DataProperty.PropertyName);
+                  string.Format("{0}.{1}", model.SelectedDataObject.DataObject.objectName, model.SelectedDataObject.DataProperty.propertyName);
             }
           }
           else
@@ -797,7 +797,7 @@ namespace org.iringtools.modules.memappingregion
           };
           classMap.identifiers = new Identifiers();
           classMap.identifiers
-              .Add(string.Format("{0}.{1}", model.SelectedDataObject.DataObject.ObjectName, model.SelectedDataObject.DataProperty.PropertyName));
+              .Add(string.Format("{0}.{1}", model.SelectedDataObject.DataObject.objectName, model.SelectedDataObject.DataProperty.propertyName));
 
           model.SelectedGraphMap.AddClassMap(roleMap, classMap);
 
@@ -867,8 +867,8 @@ namespace org.iringtools.modules.memappingregion
                 //roleMap.type = RoleType.ObjectProperty;
                 roleMap.propertyName =
                 string.Format("{0}.{1}",
-                    model.SelectedDataObject.DataObject.ObjectName,
-                    model.SelectedDataObject.DataProperty.PropertyName);
+                    model.SelectedDataObject.DataObject.objectName,
+                    model.SelectedDataObject.DataProperty.propertyName);
 
                 model.SelectedMappingItem.itemTextBlock.Text =
                     model.SelectedMappingItem.itemTextBlock.Text.Replace(Presenter.unmappedToken, "");

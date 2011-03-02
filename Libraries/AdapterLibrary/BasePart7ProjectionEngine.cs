@@ -92,7 +92,6 @@ namespace org.iringtools.adapter.projection
     protected Dictionary<string, List<IDataObject>> _relatedObjectsCache = null;
 
     protected TripleStore _memoryStore = null;
-    private RoleType _roleType = RoleType.Property;
     private string _valueListName = null;
 
     public bool FullIndex { get; set; }
@@ -230,14 +229,14 @@ namespace org.iringtools.adapter.projection
 
                 foreach (IDataObject parentObject in parentObjects)
                 {
-                  DataObject dataObject = _dictionary.DataObjects.First(c => c.ObjectName == parentObjectType);
-                  DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelatedObjectName == relatedObjectType);
+                  DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName == parentObjectType);
+                  DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName == relatedObjectType);
 
                   foreach (Dictionary<string, string> relatedRecord in relatedRecords)
                   {
-                    foreach (PropertyMap map in dataRelationship.PropertyMaps)
+                    foreach (PropertyMap map in dataRelationship.propertyMaps)
                     {
-                      relatedRecord[map.RelatedPropertyName] = parentObject.GetPropertyValue(map.DataPropertyName).ToString();
+                      relatedRecord[map.relatedPropertyName] = parentObject.GetPropertyValue(map.dataPropertyName).ToString();
                     }
                   }
                 }
@@ -248,14 +247,14 @@ namespace org.iringtools.adapter.projection
 
                 foreach (Dictionary<string, string> parentObject in parentObjects)
                 {
-                  DataObject dataObject = _dictionary.DataObjects.First(c => c.ObjectName == parentObjectType);
-                  DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelatedObjectName == relatedObjectType);
+                  DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName == parentObjectType);
+                  DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName == relatedObjectType);
 
                   foreach (Dictionary<string, string> relatedRecord in relatedRecords)
                   {
-                    foreach (PropertyMap map in dataRelationship.PropertyMaps)
+                    foreach (PropertyMap map in dataRelationship.propertyMaps)
                     {
-                      relatedRecord[map.RelatedPropertyName] = parentObject[map.DataPropertyName];
+                      relatedRecord[map.relatedPropertyName] = parentObject[map.dataPropertyName];
                     }
                   }
                 }
@@ -284,7 +283,7 @@ namespace org.iringtools.adapter.projection
             string relatedObjectIdentifier = String.Empty;
             foreach (KeyProperty keyProperty in keyProperties)
             {
-              relatedObjectIdentifier += relatedRecord[keyProperty.KeyPropertyName];
+              relatedObjectIdentifier += relatedRecord[keyProperty.keyPropertyName];
             }
 
             if (!relatedObjectTypeIdentifiers.ContainsKey(relatedObjectType))
@@ -319,8 +318,8 @@ namespace org.iringtools.adapter.projection
 
     protected List<KeyProperty> GetKeyProperties(string objectType)
     {
-      DataObject dataObject = _dictionary.DataObjects.First(c => c.ObjectName.ToUpper() == objectType.ToUpper());
-      return dataObject.KeyProperties;
+      DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
+      return dataObject.keyProperties;
     }
 
     // turn data record into data object
@@ -332,7 +331,7 @@ namespace org.iringtools.adapter.projection
 
       foreach (KeyProperty keyProperty in keyProperties)
       {
-        identifier += dataRecord[keyProperty.KeyPropertyName];
+        identifier += dataRecord[keyProperty.keyPropertyName];
       }
 
       IDataObject dataObject = _dataLayer.Create(objectType, new List<string>{identifier}).First<IDataObject>();
@@ -579,7 +578,7 @@ namespace org.iringtools.adapter.projection
         {
           _graphMap = _mapping.FindGraphMap(graph);
 
-          DataObject _dataObject = dictionary.DataObjects.Find(o => o.ObjectName == _graphMap.dataObjectName);
+          DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
 
           if (filter.Expressions != null)
           {
@@ -683,7 +682,6 @@ namespace org.iringtools.adapter.projection
       {
         case RoleType.DataProperty:
           dataPropertyName = roleMap.propertyName;
-          _roleType = RoleType.DataProperty;
           _valueListName = null;
           break;
 
@@ -695,7 +693,6 @@ namespace org.iringtools.adapter.projection
 
         case RoleType.ObjectProperty:
           dataPropertyName = roleMap.propertyName;
-          _roleType = RoleType.ObjectProperty;
           _valueListName = roleMap.valueListName;
           break;
 
@@ -712,13 +709,11 @@ namespace org.iringtools.adapter.projection
           if (String.IsNullOrEmpty(roleMap.valueListName))
           {
             dataPropertyName = roleMap.propertyName;
-            _roleType = RoleType.DataProperty;
             _valueListName = null;
           }
           else
           {
             dataPropertyName = roleMap.propertyName;
-            _roleType = RoleType.ObjectProperty;
             _valueListName = roleMap.valueListName;
 
             for (int i = 0; i < values.Count; i++)

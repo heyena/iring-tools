@@ -115,10 +115,10 @@ namespace ApplicationEditor
       org.iringtools.library.DataObject dataObject;
 
       string selectedObject = e.AddedItems[0].ToString();
-      dataObject = dbdict.DataObjects.First(c => c.ObjectName == selectedObject);
-      foreach (DataProperty prop in dataObject.DataProperties)
+      dataObject = dbdict.dataObjects.First(c => c.objectName == selectedObject);
+      foreach (DataProperty prop in dataObject.dataProperties)
       {
-        _relatedObjectProperties.Add(prop.PropertyName);
+        _relatedObjectProperties.Add(prop.propertyName);
       }
       cbRelatedProps.ItemsSource = _relatedObjectProperties;
     }
@@ -129,13 +129,13 @@ namespace ApplicationEditor
       DatabaseDictionary dbdict = (DatabaseDictionary)cbRelated.Tag;
       string selectedrelationship = e.AddedItems[0].ToString();
       org.iringtools.library.DataObject selectedDataObject = tblPrimaryObject.Tag as org.iringtools.library.DataObject;
-      DataRelationship dataRelationship = selectedDataObject.DataRelationships.First(c => c.RelationshipName == e.AddedItems[0].ToString());
-      tblRelationshipName.Text = dataRelationship.RelationshipName;
-      cbRelated.SelectedValue = dataRelationship.RelatedObjectName;
-      cbRelationType.SelectedValue = dataRelationship.RelationshipType.ToString();
-      foreach (PropertyMap map in dataRelationship.PropertyMaps)
+      DataRelationship dataRelationship = selectedDataObject.dataRelationships.First(c => c.relationshipName == e.AddedItems[0].ToString());
+      tblRelationshipName.Text = dataRelationship.relationshipName;
+      cbRelated.SelectedValue = dataRelationship.relatedObjectName;
+      cbRelationType.SelectedValue = dataRelationship.relationshipType.ToString();
+      foreach (PropertyMap map in dataRelationship.propertyMaps)
       {
-        lbRelatedProps.Items.Add(map.DataPropertyName + "." + map.RelatedPropertyName);
+        lbRelatedProps.Items.Add(map.dataPropertyName + "." + map.relatedPropertyName);
       }
     }
 

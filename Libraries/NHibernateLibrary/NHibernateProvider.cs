@@ -195,7 +195,7 @@ namespace org.iringtools.nhibernate
         Dictionary<string, string> properties = new Dictionary<string, string>();
         string metadataQuery = string.Empty;
         dbDictionary.ConnectionString = parsedConnStr;
-        dbDictionary.DataObjects = new System.Collections.Generic.List<DataObject>();
+        dbDictionary.dataObjects = new System.Collections.Generic.List<DataObject>();
 
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
@@ -323,14 +323,14 @@ namespace org.iringtools.nhibernate
           {
             table = new DataObject()
             {
-              TableName = tableName,
-              DataProperties = new List<DataProperty>(),
-              KeyProperties = new List<KeyProperty>(),
-              DataRelationships = new List<DataRelationship>(), // to be supported in the future
-              ObjectName = Utility.NameSafe(tableName)
+              tableName = tableName,
+              dataProperties = new List<DataProperty>(),
+              keyProperties = new List<KeyProperty>(),
+              dataRelationships = new List<DataRelationship>(), // to be supported in the future
+              objectName = Utility.NameSafe(tableName)
             };
 
-            dbDictionary.DataObjects.Add(table);
+            dbDictionary.dataObjects.Add(table);
             prevTableName = tableName;
           }
 
@@ -338,15 +338,15 @@ namespace org.iringtools.nhibernate
           {
             DataProperty column = new DataProperty()
             {
-              ColumnName = columnName,
-              DataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              columnName = columnName,
+              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
               // dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-              DataLength = dataLength,
-              IsNullable = isNullable,
-              PropertyName = Utility.NameSafe(columnName)
+              dataLength = dataLength,
+              isNullable = isNullable,
+              propertyName = Utility.NameSafe(columnName)
             };
 
-            table.DataProperties.Add(column);
+            table.dataProperties.Add(column);
           }
           else // process keys
           {
@@ -363,15 +363,15 @@ namespace org.iringtools.nhibernate
 
             DataProperty key = new DataProperty()
             {
-              ColumnName = columnName,
-              DataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-              DataLength = dataLength,
-              IsNullable = isNullable,
-              KeyType = keyType,
-              PropertyName = Utility.NameSafe(columnName),
+              columnName = columnName,
+              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              dataLength = dataLength,
+              isNullable = isNullable,
+              keyType = keyType,
+              propertyName = Utility.NameSafe(columnName),
             };
 
-            table.AddKeyProperty(key);
+            table.addKeyProperty(key);
           }
         }
         return dbDictionary;
@@ -429,7 +429,7 @@ namespace org.iringtools.nhibernate
         Dictionary<string, string> properties = new Dictionary<string, string>();
 
         dbDictionary.ConnectionString = parsedConnStr;
-        dbDictionary.DataObjects = new System.Collections.Generic.List<DataObject>();
+        dbDictionary.dataObjects = new System.Collections.Generic.List<DataObject>();
 
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
@@ -467,11 +467,11 @@ namespace org.iringtools.nhibernate
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
       DataObject dataObject = new DataObject
       {
-        TableName = schemaObjectName,
-        DataProperties = new List<DataProperty>(),
-        KeyProperties = new List<KeyProperty>(),
-        DataRelationships = new List<DataRelationship>(),
-        ObjectName = Utility.NameSafe(schemaObjectName)
+        tableName = schemaObjectName,
+        dataProperties = new List<DataProperty>(),
+        keyProperties = new List<KeyProperty>(),
+        dataRelationships = new List<DataRelationship>(),
+        objectName = Utility.NameSafe(schemaObjectName)
       };
       try
       {
@@ -488,7 +488,7 @@ namespace org.iringtools.nhibernate
         Dictionary<string, string> properties = new Dictionary<string, string>();
 
         dbDictionary.ConnectionString = parsedConnStr;
-        dbDictionary.DataObjects = new System.Collections.Generic.List<DataObject>();
+        dbDictionary.dataObjects = new System.Collections.Generic.List<DataObject>();
 
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
@@ -519,14 +519,14 @@ namespace org.iringtools.nhibernate
           {
             DataProperty column = new DataProperty()
             {
-              ColumnName = columnName,
-              DataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-              DataLength = dataLength,
-              IsNullable = isNullable,
-              PropertyName = Utility.NameSafe(columnName)
+              columnName = columnName,
+              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              dataLength = dataLength,
+              isNullable = isNullable,
+              propertyName = Utility.NameSafe(columnName)
             };
 
-            dataObject.DataProperties.Add(column);
+            dataObject.dataProperties.Add(column);
           }
           else
           {
@@ -543,14 +543,14 @@ namespace org.iringtools.nhibernate
 
             DataProperty key = new DataProperty()
             {
-              ColumnName = columnName,
-              DataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-              DataLength = dataLength,
-              IsNullable = isNullable,
-              KeyType = keyType,
-              PropertyName = Utility.NameSafe(columnName),
+              columnName = columnName,
+              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              dataLength = dataLength,
+              isNullable = isNullable,
+              keyType = keyType,
+              propertyName = Utility.NameSafe(columnName),
             };
-            dataObject.AddKeyProperty(key);
+            dataObject.addKeyProperty(key);
           }
         }
         return dataObject;
@@ -823,11 +823,11 @@ namespace org.iringtools.nhibernate
       }
 
       // Validate table key
-      foreach (DataObject dataObject in dbDictionary.DataObjects)
+      foreach (DataObject dataObject in dbDictionary.dataObjects)
       {
-        if (dataObject.KeyProperties == null || dataObject.KeyProperties.Count == 0)
+        if (dataObject.keyProperties == null || dataObject.keyProperties.Count == 0)
         {
-          throw new Exception(string.Format("Table \"{0}\" has no key.", dataObject.TableName));
+          throw new Exception(string.Format("Table \"{0}\" has no key.", dataObject.tableName));
         }
       }
 

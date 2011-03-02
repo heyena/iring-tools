@@ -150,9 +150,9 @@ namespace org.iringtools.adapter
           string dataObjectName = graphMap.dataObjectName;
           DataObject dataObject = null;
 
-          foreach (DataObject dataObj in dataDictionary.DataObjects)
+          foreach (DataObject dataObj in dataDictionary.dataObjects)
           {
-            if (dataObj.ObjectName == dataObjectName)
+            if (dataObj.objectName == dataObjectName)
             {
               dataObject = dataObj;
               break;
@@ -210,7 +210,7 @@ namespace org.iringtools.adapter
                     string objectName = property[0].Trim();
                     string propertyName = property[1].Trim();
 
-                    if (dataObject.IsKeyProperty(propertyName))
+                    if (dataObject.isKeyProperty(propertyName))
                     {
                       manifestTemplate.transferOption = TransferOption.Required;
                     }
@@ -350,12 +350,12 @@ namespace org.iringtools.adapter
           dataTransferIndices.SortOrder = filter.OrderExpressions.First().SortOrder.ToString();
           
           // find data type of the sort index
-          DataObject dataObject = _dataDictionary.DataObjects.Find(o => o.ObjectName == _graphMap.dataObjectName);
-          foreach (DataProperty dataProperty in dataObject.DataProperties)
+          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
+          foreach (DataProperty dataProperty in dataObject.dataProperties)
           {
-            if (dataProperty.PropertyName.ToUpper() == sortIndex.ToUpper())
+            if (dataProperty.propertyName.ToUpper() == sortIndex.ToUpper())
             {
-              dataTransferIndices.SortType = dataProperty.DataType.ToString();
+              dataTransferIndices.SortType = dataProperty.dataType.ToString();
               break;
             }
           }
