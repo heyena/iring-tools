@@ -3,11 +3,10 @@ package org.iringtools.services.core;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.xml.bind.JAXBException;
 
 import org.ids_adi.ns.qxf.model.Qmxf;
@@ -23,16 +22,20 @@ import org.iringtools.refdata.federation.IDGenerator;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.refdata.queries.Queries;
+import org.iringtools.refdata.queries.Query;
+import org.iringtools.refdata.queries.QueryBindings;
+import org.iringtools.refdata.queries.QueryItem;
 import org.iringtools.refdata.response.Entity;
-//import org.iringtools.services.OutgoingWebResponseContext;
-//import org.iringtools.services.RefDataEntities;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
+
+import sun.misc.Version;
 
 public class RefDataProvider
 {
   private Hashtable<String, String> settings;
   private List<Repository> _repositories = null;
+  private Query _queries = null;
 
   public RefDataProvider(Hashtable<String, String> settings)
   {
@@ -279,19 +282,73 @@ public class RefDataProvider
       }
   }
 
+  /*private SPARQLResults QueryFromRepository(Repository repository, String sparql)
+  {
+    try
+    {
+      SPARQLResults sparqlResults;
+      String encryptedCredentials = repository.encryptedCredentials;
+
+      WebCredentials credentials = new WebCredentials(encryptedCredentials);
+      if (credentials.isEncrypted) credentials.Decrypt();
+      sparqlResults = SPARQLClient.Query(repository.uri, sparql, credentials, _proxyCredentials);
+      return sparqlResults;
+    }
+    catch (Exception ex)
+    {
+        //_logger.Error(string.Format("Failed to read repository['{0}']", repository.uri), ex);
+        return new SPARQLResults();
+    }
+  }
+  
   private String getLabel(String uri)
   {
-      return new String();
-  }
+	  try
+      {
+        String label = null;
+        String sparql = null;
+        String relativeUri = null;
 
-  /*public Version getVersion(){
+        Query query =_queries["GetLabel"].getFileName();
+       
+        //List<QueryItem> query = _queries.getItems();
+        QueryBindings queryBindings = query.getBindings();
+        sparql = ReadSPARQL(_queries.getFileName());
+        sparql = sparql.replace("param1", uri);
+
+        for (Repository repository:_repositories)
+        {
+          SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+          List<Dictionary<String, String>> results = BindQueryResults(queryBindings, sparqlResults);
+
+          for (Dictionary<String, String> result : results)
+          {
+            if (result.get("label"))
+            {
+              label = result["label"];
+            }
+          }
+        }
+
+        return label;
+      }
+      catch (Exception e)
+      {
+        //logger.Error("Error in GetLabel: " + e);
+        throw new Exception("Error while Getting Label for " + uri + ".\n" + e.toString(), e);
+      }
+      
+  }
+*/
+  public Version getVersion(){
 	  return new Version();
   }
   
-  public String getClassLabel(String id){
+/*  public String getClassLabel(String id){
 	  return getLabel("http://rdl.rdlfacade.org/data#" + id);  
 	  }
-  
+  */
   public Qmxf GetClass(String id, String namespaceUrl)
   {
 	  Qmxf qmxf = new Qmxf();
@@ -354,7 +411,7 @@ public class RefDataProvider
 
   }
  
-  public RefDataEntities searchPageReset(String query, int startIdx,int pageLimit){
+ /* public RefDataEntities searchPageReset(String query, int startIdx,int pageLimit){
 	  
 	  return new RefDataEntities();
   }
@@ -390,6 +447,5 @@ public class RefDataProvider
   public List<Entity> getClassTemplates(String id)
   {
 	  	  
-  }
-*/
+  }*/
   }
