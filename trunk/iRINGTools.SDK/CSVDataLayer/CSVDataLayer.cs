@@ -626,5 +626,10 @@ namespace iRINGTools.SDK.CSVDataLayer
       string dataLayerNamespace = "org.iringtools.adapter.datalayer";
       return dataLayerNamespace + ".proj_" + _settings["ProjectName"] + "." + _settings["ApplicationName"] + "." + objectType;
     }
+
+    public Response Configure(XElement configuration)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

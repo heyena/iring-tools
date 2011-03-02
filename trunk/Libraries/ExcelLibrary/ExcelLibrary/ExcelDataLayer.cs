@@ -426,34 +426,34 @@ namespace org.iringtools.adapter.datalayer
       {
         DataDictionary dataDictionary = new DataDictionary()
         {
-          DataObjects = new List<DataObject>()
+          dataObjects = new List<DataObject>()
         };
 
         foreach (ExcelWorksheet worksheet in _configuration.Worksheets)
         {
           DataObject dataObject = new DataObject()
           {
-            ObjectName = worksheet.Name,
-            DataProperties = new List<DataProperty>()
+            objectName = worksheet.Name,
+            dataProperties = new List<DataProperty>()
           };
 
-          dataDictionary.DataObjects.Add(dataObject);
+          dataDictionary.dataObjects.Add(dataObject);
 
           foreach (ExcelColumn column in worksheet.Columns)
           {
             DataProperty dataProperty = new DataProperty()
             {
-              PropertyName = column.Name,
-              DataType = column.DataType
+              propertyName = column.Name,
+              dataType = column.DataType
             };
 
             if (worksheet.Identifier == column.Name)
             {
-              dataObject.AddKeyProperty(dataProperty);
+              dataObject.addKeyProperty(dataProperty);
             }
             else
             {
-              dataObject.DataProperties.Add(dataProperty);
+              dataObject.dataProperties.Add(dataProperty);
             }
           }
         }

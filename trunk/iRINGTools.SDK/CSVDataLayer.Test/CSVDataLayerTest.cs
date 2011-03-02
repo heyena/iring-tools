@@ -7,6 +7,7 @@ using System.Collections.Specialized;
 using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
+using iRINGTools.SDK.CSVDataLayer;
 
 namespace Bechtel.CSVDataLayer.API
 {
@@ -16,7 +17,7 @@ namespace Bechtel.CSVDataLayer.API
   [TestClass]
   public class CSVDataLayerTest
   {
-    private CSVDataLayer _csvDataLayer;
+    private CustomDataLayer _csvDataLayer;
 
     public CSVDataLayerTest()
     {
@@ -38,7 +39,7 @@ namespace Bechtel.CSVDataLayer.API
       AdapterSettings adapterSettings = new AdapterSettings();
       adapterSettings.AppendSettings(settings);
 
-      _csvDataLayer = new CSVDataLayer(adapterSettings);
+      _csvDataLayer = new CustomDataLayer(adapterSettings);
     }
 
     private TestContext testContextInstance;

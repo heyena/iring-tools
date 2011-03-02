@@ -46,7 +46,7 @@ namespace org.iringtools.adapter.projection
 
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(dataObject.ObjectName));
+            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(dataObject.objectName));
             CreateHierarchicalXml(rowElement, dataObject, i);
             xElement.Add(rowElement);
           }
@@ -62,7 +62,7 @@ namespace org.iringtools.adapter.projection
 
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(dataObject.ObjectName));
+            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(dataObject.objectName));
             CreateIndexXml(rowElement, dataObject, i);
             xElement.Add(rowElement);
           }
@@ -84,15 +84,15 @@ namespace org.iringtools.adapter.projection
     #region helper methods
     private void CreateHierarchicalXml(XElement parentElement, DataObject dataObject, int dataObjectIndex)
     {
-      foreach(DataProperty dataProperty in dataObject.DataProperties)
+      foreach(DataProperty dataProperty in dataObject.dataProperties)
       {
-        XElement propertyElement = new XElement(_appNamespace + Utility.TitleCase(dataProperty.PropertyName));
-        propertyElement.Add(new XAttribute("dataType", dataProperty.DataType));
-        var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.PropertyName);
+        XElement propertyElement = new XElement(_appNamespace + Utility.TitleCase(dataProperty.propertyName));
+        propertyElement.Add(new XAttribute("dataType", dataProperty.dataType));
+        var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         
         if (value != null)
         {
-          if (dataProperty.DataType.ToString().ToLower().Contains("date"))
+          if (dataProperty.dataType.ToString().ToLower().Contains("date"))
             value = Utility.ToXsdDateTime(value.ToString());
 
           propertyElement.Value = value.ToString();
@@ -106,25 +106,25 @@ namespace org.iringtools.adapter.projection
     private void CreateIndexXml(XElement parentElement, DataObject dataObject, int dataObjectIndex)
     {
       string uri = _appNamespace.ToString() + "/";
-      foreach (KeyProperty keyProperty in dataObject.KeyProperties)
+      foreach (KeyProperty keyProperty in dataObject.keyProperties)
       {
-        DataProperty dataProperty = dataObject.DataProperties.Find(dp => dp.PropertyName == keyProperty.KeyPropertyName);
+        DataProperty dataProperty = dataObject.dataProperties.Find(dp => dp.propertyName == keyProperty.keyPropertyName);
 
-        var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.PropertyName);
+        var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(_appNamespace + dataProperty.PropertyName, value);
+          XElement propertyElement = new XElement(_appNamespace + dataProperty.propertyName, value);
           parentElement.Add(propertyElement);
           uri += value;
         }
       }
-      List<DataProperty> indexProperties = dataObject.DataProperties.FindAll(dp => dp.ShowOnIndex == true);
+      List<DataProperty> indexProperties = dataObject.dataProperties.FindAll(dp => dp.showOnIndex == true);
       foreach (DataProperty indexProperty in indexProperties)
       {
-        var value = _dataObjects[dataObjectIndex].GetPropertyValue(indexProperty.PropertyName);
+        var value = _dataObjects[dataObjectIndex].GetPropertyValue(indexProperty.propertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(_appNamespace + indexProperty.PropertyName, value);
+          XElement propertyElement = new XElement(_appNamespace + indexProperty.propertyName, value);
         parentElement.Add(propertyElement);
         }
       }
@@ -134,9 +134,9 @@ namespace org.iringtools.adapter.projection
 
     public DataObject FindGraphDataObject(string dataObjectName)
     {
-      foreach (DataObject dataObject in _dictionary.DataObjects)
+      foreach (DataObject dataObject in _dictionary.dataObjects)
       {
-        if (dataObject.ObjectName.ToLower() == dataObjectName.ToLower())
+        if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
         {
           return dataObject;
         }

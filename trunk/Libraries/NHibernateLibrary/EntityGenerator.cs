@@ -70,10 +70,10 @@ namespace org.iringtools.nhibernate
       Response response = new Response();
       Status status = new Status();
 
-      if (dbSchema.DataObjects != null)
+      if (dbSchema.dataObjects != null)
       {
         _namespace = NAMESPACE_PREFIX + projectName + "." + applicationName;
-        _dataObjects = dbSchema.DataObjects;
+        _dataObjects = dbSchema.dataObjects;
 
         try
         {
@@ -101,10 +101,10 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.Write("{"); // begin namespace block
           _dataObjectWriter.Indent++;
 
-          foreach (DataObject dataObject in dbSchema.DataObjects)
+          foreach (DataObject dataObject in dbSchema.dataObjects)
           {
             // create namespace for dataObject
-            dataObject.ObjectNamespace = _namespace;
+            dataObject.objectNamespace = _namespace;
 
             CreateNHibernateDataObjectMap(dataObject);
           }
@@ -138,7 +138,7 @@ namespace org.iringtools.nhibernate
           Utility.WriteString(hibernateConfig, _settings["XmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(mappingXml, _settings["XmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
-          DataDictionary dataDictionary = CreateDataDictionary(dbSchema.DataObjects);
+          DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
           Utility.Write<DataDictionary>(dataDictionary, _settings["XmlPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
@@ -169,19 +169,19 @@ namespace org.iringtools.nhibernate
       }
       */
 
-      return new DataDictionary { DataObjects = dataObjects };
+      return new DataDictionary { dataObjects = dataObjects };
     }
 
     private void CreateNHibernateDataObjectMap(DataObject dataObject)
     {
-      string keyClassName = dataObject.ObjectName + "Id";
+      string keyClassName = dataObject.objectName + "Id";
 
       _mappingWriter.WriteStartElement("class");
-      _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.ObjectName + ", " + _settings["ExecutingAssemblyName"]);
-      _mappingWriter.WriteAttributeString("table", "\"" + dataObject.TableName + "\"");
+      _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.objectName + ", " + _settings["ExecutingAssemblyName"]);
+      _mappingWriter.WriteAttributeString("table", "\"" + dataObject.tableName + "\"");
 
       #region Create composite key
-      if (dataObject.KeyProperties.Count > 1)
+      if (dataObject.keyProperties.Count > 1)
       {
         _dataObjectWriter.WriteLine();
         _dataObjectWriter.WriteLine("[Serializable]");
@@ -193,17 +193,17 @@ namespace org.iringtools.nhibernate
         _mappingWriter.WriteAttributeString("name", "Id");
         _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + _settings["ExecutingAssemblyName"]);
 
-        foreach (KeyProperty keyName in dataObject.KeyProperties)
+        foreach (KeyProperty keyName in dataObject.keyProperties)
         {
-          DataProperty keyProperty = dataObject.GetKeyProperty(keyName.KeyPropertyName);
+          DataProperty keyProperty = dataObject.getKeyProperty(keyName.keyPropertyName);
 
           if (keyProperty != null)
           {
-            _dataObjectWriter.WriteLine("public {0} {1} {{ get; set; }}", keyProperty.DataType, keyProperty.PropertyName);
+            _dataObjectWriter.WriteLine("public {0} {1} {{ get; set; }}", keyProperty.dataType, keyProperty.propertyName);
 
             _mappingWriter.WriteStartElement("key-property");
-            _mappingWriter.WriteAttributeString("name", keyProperty.PropertyName);
-            _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.ColumnName + "\"");
+            _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
+            _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.columnName + "\"");
             _mappingWriter.WriteEndElement(); // end key-property
           }
         }
@@ -216,11 +216,11 @@ namespace org.iringtools.nhibernate
         _dataObjectWriter.WriteLine("if (obj != null)");
         _dataObjectWriter.WriteLine("{");
 
-        for (int i = 0; i < dataObject.KeyProperties.Count; i++)
+        for (int i = 0; i < dataObject.keyProperties.Count; i++)
         {
-          DataProperty keyProperty = dataObject.GetKeyProperty(dataObject.KeyProperties[i].KeyPropertyName);
+          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
 
-          string keyName = String.IsNullOrEmpty(keyProperty.PropertyName) ? keyProperty.ColumnName : keyProperty.PropertyName;
+          string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
 
           if (i == 0)
           {
@@ -247,11 +247,11 @@ namespace org.iringtools.nhibernate
         _dataObjectWriter.Indent++;
         _dataObjectWriter.WriteLine("int _hashCode = 0;");
 
-        for (int i = 0; i < dataObject.KeyProperties.Count; i++)
+        for (int i = 0; i < dataObject.keyProperties.Count; i++)
         {
-          DataProperty keyProperty = dataObject.GetKeyProperty(dataObject.KeyProperties[i].KeyPropertyName);
+          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
 
-          string keyName = String.IsNullOrEmpty(keyProperty.PropertyName) ? keyProperty.ColumnName : keyProperty.PropertyName;
+          string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
 
           _dataObjectWriter.WriteLine("_hashCode += {0}.GetHashCode();", keyName);
         }
@@ -265,10 +265,10 @@ namespace org.iringtools.nhibernate
         _dataObjectWriter.Indent++;
         _dataObjectWriter.WriteLine("string _idString = String.Empty;");
 
-        for (int i = 0; i < dataObject.KeyProperties.Count; i++)
+        for (int i = 0; i < dataObject.keyProperties.Count; i++)
         {
-          DataProperty keyProperty = dataObject.GetKeyProperty(dataObject.KeyProperties[i].KeyPropertyName);
-          string keyName = String.IsNullOrEmpty(keyProperty.PropertyName) ? keyProperty.ColumnName : keyProperty.PropertyName;
+          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties[i].keyPropertyName);
+          string keyName = String.IsNullOrEmpty(keyProperty.propertyName) ? keyProperty.columnName : keyProperty.propertyName;
 
           if (i == 0)
           {
@@ -292,57 +292,57 @@ namespace org.iringtools.nhibernate
       #endregion Create composite key
 
       _dataObjectWriter.WriteLine();
-      _dataObjectWriter.WriteLine("public class {0} : IDataObject", dataObject.ObjectName);
+      _dataObjectWriter.WriteLine("public class {0} : IDataObject", dataObject.objectName);
       _dataObjectWriter.WriteLine("{"); // begin class block
       _dataObjectWriter.Indent++;
 
-      if (dataObject.KeyProperties.Count > 1)
+      if (dataObject.keyProperties.Count > 1)
       {
-        _dataObjectWriter.WriteLine("public {0}()", dataObject.ObjectName);
+        _dataObjectWriter.WriteLine("public {0}()", dataObject.objectName);
         _dataObjectWriter.WriteLine("{");
         _dataObjectWriter.Indent++;
-        _dataObjectWriter.WriteLine("Id = new {0}Id();", dataObject.ObjectName);
+        _dataObjectWriter.WriteLine("Id = new {0}Id();", dataObject.objectName);
         _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}");
         _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyClassName);
 
-        foreach (KeyProperty keyName in dataObject.KeyProperties)
+        foreach (KeyProperty keyName in dataObject.keyProperties)
         {
-          DataProperty keyProperty = dataObject.GetKeyProperty(keyName.KeyPropertyName);
+          DataProperty keyProperty = dataObject.getKeyProperty(keyName.keyPropertyName);
 
-          _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.DataType, keyProperty.PropertyName);
+          _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.dataType, keyProperty.propertyName);
           _dataObjectWriter.WriteLine("{");
           _dataObjectWriter.Indent++;
-          _dataObjectWriter.WriteLine("get {{ return Id.{0}; }}", keyProperty.PropertyName);
-          _dataObjectWriter.WriteLine("set {{ Id.{0} = value; }}", keyProperty.PropertyName);
+          _dataObjectWriter.WriteLine("get {{ return Id.{0}; }}", keyProperty.propertyName);
+          _dataObjectWriter.WriteLine("set {{ Id.{0} = value; }}", keyProperty.propertyName);
           _dataObjectWriter.Indent--;
           _dataObjectWriter.WriteLine("}");
 
           _mappingWriter.WriteStartElement("property");
-          _mappingWriter.WriteAttributeString("name", keyProperty.PropertyName);
-          _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.ColumnName + "\"");
+          _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
+          _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.columnName + "\"");
           _mappingWriter.WriteAttributeString("update", "false");
           _mappingWriter.WriteAttributeString("insert", "false");
           _mappingWriter.WriteEndElement();
         }
       }
-      else if (dataObject.KeyProperties.Count == 1)
+      else if (dataObject.keyProperties.Count == 1)
       {
-        DataProperty keyProperty = dataObject.GetKeyProperty(dataObject.KeyProperties.First().KeyPropertyName);
+        DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
 
-        _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.DataType);
+        _dataObjectWriter.WriteLine("public virtual {0} Id {{ get; set; }}", keyProperty.dataType);
 
         _mappingWriter.WriteStartElement("id");
         _mappingWriter.WriteAttributeString("name", "Id");
-        _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.ColumnName + "\"");
+        _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.columnName + "\"");
         _mappingWriter.WriteStartElement("generator");
-        _mappingWriter.WriteAttributeString("class", keyProperty.KeyType.ToString());
+        _mappingWriter.WriteAttributeString("class", keyProperty.keyType.ToString());
         _mappingWriter.WriteEndElement(); // end generator element
         _mappingWriter.WriteEndElement(); // end id element
 
-        if (keyProperty.KeyType == KeyType.assigned)
+        if (keyProperty.keyType == KeyType.assigned)
         {
-          _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.DataType, keyProperty.PropertyName);
+          _dataObjectWriter.WriteLine("public virtual {0} {1}", keyProperty.dataType, keyProperty.propertyName);
           _dataObjectWriter.WriteLine("{");
           _dataObjectWriter.Indent++;
           _dataObjectWriter.WriteLine("get { return Id; }");
@@ -351,8 +351,8 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.WriteLine("}");
 
           _mappingWriter.WriteStartElement("property");
-          _mappingWriter.WriteAttributeString("name", keyProperty.PropertyName);
-          _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.ColumnName + "\"");
+          _mappingWriter.WriteAttributeString("name", keyProperty.propertyName);
+          _mappingWriter.WriteAttributeString("column", "\"" + keyProperty.columnName + "\"");
           _mappingWriter.WriteAttributeString("update", "false");
           _mappingWriter.WriteAttributeString("insert", "false");
           _mappingWriter.WriteEndElement(); // end property element          
@@ -360,15 +360,15 @@ namespace org.iringtools.nhibernate
       }
 
       #region Process relationships
-      if (dataObject.DataRelationships != null)
-      {
-        foreach (DataRelationship dataRelationship in dataObject.DataRelationships)
-        {
-          DataObject relatedDataObject = GetDataObject(dataRelationship.RelatedObjectName);
+      //if (dataObject.dataRelationships != null)
+      //{
+      //  foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+      //  {
+      //    DataObject relatedDataObject = GetDataObject(dataRelationship.relatedObjectName);
 
-          switch (dataRelationship.RelationshipType)
-          {
-            case RelationshipType.OneToOne:
+      //    switch (dataRelationship.relationshipType)
+      //    {
+      //      case RelationshipType.OneToOne:
 
               //DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
 
@@ -407,9 +407,9 @@ namespace org.iringtools.nhibernate
               //_dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataRelationship.relatedObjectName, dataRelationship.relationshipName);
               //_mappingWriter.WriteEndElement(); // end one-to-one element
 
-              break;
+            //  break;
 
-            case RelationshipType.OneToMany:
+            //case RelationshipType.OneToMany:
 
               //if (dataRelationship.propertyMaps.Count > 0)
               //{
@@ -443,32 +443,32 @@ namespace org.iringtools.nhibernate
               //  _mappingWriter.WriteEndElement(); // one-to-many
               //  _mappingWriter.WriteEndElement(); // end set element
               //}
-              break;
-          }
-        }
-      }
+      //        break;
+      //    }
+      //  }
+      //}
       #endregion Process relationships
 
       #region Process columns
-      if (dataObject.DataProperties != null)
+      if (dataObject.dataProperties != null)
       {
-        foreach (DataProperty dataProperty in dataObject.DataProperties)
+        foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
-          if (!dataObject.IsKeyProperty(dataProperty.PropertyName))
+          if (!dataObject.isKeyProperty(dataProperty.propertyName))
           {
-            bool isNullableType = (dataProperty.DataType != DataType.String && dataProperty.IsNullable == true);
+            bool isNullableType = (dataProperty.dataType != DataType.String && dataProperty.isNullable == true);
             if (isNullableType)
             {
-              _dataObjectWriter.WriteLine("public virtual {0}? {1} {{ get; set; }}", dataProperty.DataType, dataProperty.PropertyName);
+              _dataObjectWriter.WriteLine("public virtual {0}? {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
             }
             else
             {
-              _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.DataType, dataProperty.PropertyName);
+              _dataObjectWriter.WriteLine("public virtual {0} {1} {{ get; set; }}", dataProperty.dataType, dataProperty.propertyName);
             }  
 
             _mappingWriter.WriteStartElement("property");
-            _mappingWriter.WriteAttributeString("name", dataProperty.PropertyName);
-            _mappingWriter.WriteAttributeString("column", "\"" + dataProperty.ColumnName + "\"");
+            _mappingWriter.WriteAttributeString("name", dataProperty.propertyName);
+            _mappingWriter.WriteAttributeString("column", "\"" + dataProperty.columnName + "\"");
             _mappingWriter.WriteEndElement(); // end property element
           }
         }
@@ -482,9 +482,9 @@ namespace org.iringtools.nhibernate
         _dataObjectWriter.Indent++;
         _dataObjectWriter.WriteLine("case \"Id\": return Id;");
 
-        foreach (DataProperty dataProperty in dataObject.DataProperties)
+        foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
-          _dataObjectWriter.WriteLine("case \"{0}\": return {0};", dataProperty.PropertyName);
+          _dataObjectWriter.WriteLine("case \"{0}\": return {0};", dataProperty.propertyName);
         }
 
         _dataObjectWriter.WriteLine("default: throw new Exception(\"Property [\" + propertyName + \"] does not exist.\");");
@@ -502,22 +502,22 @@ namespace org.iringtools.nhibernate
         _dataObjectWriter.Write("{");
         _dataObjectWriter.Indent++;
 
-        if (dataObject.KeyProperties.Count == 1)
+        if (dataObject.keyProperties.Count == 1)
         {
-          DataProperty keyProperty = dataObject.GetKeyProperty(dataObject.KeyProperties.First().KeyPropertyName);
+          DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
 
-          DataType keyDataType = keyProperty.DataType;
+          DataType keyDataType = keyProperty.dataType;
           _dataObjectWriter.WriteLine(@"
         case ""Id"":
           Id = Convert.To{0}(value);
           break;", keyDataType);
         }
-        else if (dataObject.KeyProperties.Count > 1)
+        else if (dataObject.keyProperties.Count > 1)
         {
           _dataObjectWriter.WriteLine(@"
         case ""Id"":
           Id = ({0}Id)value;
-          break;", dataObject.ObjectName);
+          break;", dataObject.objectName);
         }
 
         /*
@@ -542,19 +542,19 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.Indent--;
         }*/
 
-        foreach (DataProperty dataProperty in dataObject.DataProperties)
+        foreach (DataProperty dataProperty in dataObject.dataProperties)
         {
-          _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.PropertyName);
+          _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.propertyName);
           _dataObjectWriter.Indent++;
 
-          bool isDataPropertyNullable = (dataProperty.DataType == DataType.String || dataProperty.IsNullable == true);
+          bool isDataPropertyNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
           if (isDataPropertyNullable)
           {
-            _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", dataProperty.PropertyName, dataProperty.DataType);
+            _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
           }
           else
           {
-            _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", dataProperty.PropertyName, dataProperty.DataType);
+            _dataObjectWriter.WriteLine("{0} = (value != null) ? Convert.To{1}(value) : default({1});", dataProperty.propertyName, dataProperty.dataType);
           }
 
           _dataObjectWriter.WriteLine("break;");
@@ -741,7 +741,7 @@ namespace org.iringtools.nhibernate
     {
       foreach (DataObject dataObject in _dataObjects)
       {
-        if (dataObject.ObjectName.ToLower() == dataObjectName.ToLower())
+        if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
           return dataObject;
       }
 
@@ -750,10 +750,10 @@ namespace org.iringtools.nhibernate
 
     private string GetColumnName(DataObject dataObject, string propertyName)
     {
-      foreach (DataProperty property in dataObject.DataProperties)
+      foreach (DataProperty property in dataObject.dataProperties)
       {
-        if (property.PropertyName.ToLower() == propertyName.ToLower())
-          return property.ColumnName;
+        if (property.propertyName.ToLower() == propertyName.ToLower())
+          return property.columnName;
       }
 
       return String.Empty;

@@ -292,8 +292,8 @@ namespace org.iringtools.adapter.datalayer
     }
     private DataFilter FilterByIdentity(string objectType, DataFilter filter, IdentityProperties identityProperties)
     {
-      DataObject dataObject = _databaseDictionary.DataObjects.Find(d => d.ObjectName == objectType);
-      DataProperty dataProperty = dataObject.DataProperties.Find(p => p.ColumnName == identityProperties.IdentityProperty);
+      DataObject dataObject = _databaseDictionary.dataObjects.Find(d => d.objectName == objectType);
+      DataProperty dataProperty = dataObject.dataProperties.Find(p => p.columnName == identityProperties.IdentityProperty);
       if (dataProperty != null)
       {
         if (filter == null)
@@ -316,7 +316,7 @@ namespace org.iringtools.adapter.datalayer
         string identityValue = _keyRing[identityProperties.KeyRingProperty].ToString();
         Expression expression = new Expression
         {
-          PropertyName = dataProperty.PropertyName,
+          PropertyName = dataProperty.propertyName,
           RelationalOperator = RelationalOperator.EqualTo,
           Values = new Values
           {
@@ -474,23 +474,23 @@ namespace org.iringtools.adapter.datalayer
     {
       IList<IDataObject> relatedObjects;
       DataDictionary dictionary = GetDictionary();
-      DataObject dataObject = dictionary.DataObjects.First(c => c.ObjectName == sourceDataObject.GetType().Name);
-      DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelatedObjectName == relatedObjectType);
+      DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);
+      DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName == relatedObjectType);
 
       StringBuilder sql = new StringBuilder();
-      sql.Append("from " + dataRelationship.RelatedObjectName + " where ");
+      sql.Append("from " + dataRelationship.relatedObjectName + " where ");
       
-      foreach (PropertyMap map in dataRelationship.PropertyMaps)
+      foreach (PropertyMap map in dataRelationship.propertyMaps)
       {
-        DataProperty propertyMap = dataObject.DataProperties.First(c => c.PropertyName == map.DataPropertyName);
+        DataProperty propertyMap = dataObject.dataProperties.First(c => c.propertyName == map.dataPropertyName);
 
-        if (propertyMap.DataType == DataType.String)
+        if (propertyMap.dataType == DataType.String)
         {
-          sql.Append(map.RelatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.DataPropertyName) + "' and ");
+          sql.Append(map.relatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.dataPropertyName) + "' and ");
         }
         else
         {
-          sql.Append(map.RelatedPropertyName + " = " + sourceDataObject.GetPropertyValue(map.DataPropertyName) + " and ");
+          sql.Append(map.relatedPropertyName + " = " + sourceDataObject.GetPropertyValue(map.dataPropertyName) + " and ");
         }
       }
 
@@ -502,7 +502,7 @@ namespace org.iringtools.adapter.datalayer
         relatedObjects = query.List<IDataObject>();
       }
 
-      if (relatedObjects != null && relatedObjects.Count > 0 && dataRelationship.RelationshipType == RelationshipType.OneToOne)
+      if (relatedObjects != null && relatedObjects.Count > 0 && dataRelationship.relationshipType == RelationshipType.OneToOne)
       {
         return new List<IDataObject> { relatedObjects.First() };
       }

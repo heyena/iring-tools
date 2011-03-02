@@ -150,14 +150,14 @@ namespace org.iringtools.adapter.projection
 
                             foreach (IDataObject parentObject in parentObjects)
                             {
-                                DataObject dataObject = dictionary.DataObjects.First(c => c.ObjectName == parentObjectType);
-                                DataRelationship dataRelationship = dataObject.DataRelationships.First(c => c.RelationshipName == relatedObjectType);
+                                DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == parentObjectType);
+                                DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relationshipName == relatedObjectType);
 
                                 foreach (IDataObject relatedObject in relatedObjects)
                                 {
-                                    foreach (PropertyMap map in dataRelationship.PropertyMaps)
+                                    foreach (PropertyMap map in dataRelationship.propertyMaps)
                                     {
-                                        relatedObject.SetPropertyValue(map.RelatedPropertyName, parentObject.GetPropertyValue(map.DataPropertyName));
+                                        relatedObject.SetPropertyValue(map.relatedPropertyName, parentObject.GetPropertyValue(map.dataPropertyName));
                                     }
                                 }
                             }
