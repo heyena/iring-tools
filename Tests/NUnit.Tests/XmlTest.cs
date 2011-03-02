@@ -20,7 +20,7 @@ namespace NUnit.Tests
       _settings = new AdapterSettings();
       _settings.AppendSettings(ConfigurationManager.AppSettings);
 
-      _settings["BaseDirectoryPath"] = @"C:\iring-tools-2.0.x\Tests\NUnit.Tests";
+      _settings["BaseDirectoryPath"] = @"E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests";
       _settings["ProjectName"] = "12345_000";
       _settings["ApplicationName"] = "ABC";
       _settings["GraphName"] = "Lines";

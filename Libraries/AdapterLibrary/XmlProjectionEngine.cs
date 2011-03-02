@@ -19,7 +19,7 @@ namespace org.iringtools.adapter.projection
   {    
     private static readonly ILog _logger = LogManager.GetLogger(typeof(XmlProjectionEngine));
     private Dictionary<string, List<string>> _classIdentifiersCache = null;
-    private DataDictionary _dictionary = null;
+    //private DataDictionary _dictionary = null;
     private XNamespace _appNamespace = null;
     
     [Inject]
