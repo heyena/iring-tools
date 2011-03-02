@@ -1,0 +1,12 @@
+Release Punchlist
+
+Verify Verison Number in the Build.xml
+Run Build
+Resolve any build errors including test failures
+Update Documentation Versions
+Generate PDFs
+Upload ZIPs
+Upload PDFs
+Create Release Note in Wiki
+Update links in iRINGUG Wiki
+
