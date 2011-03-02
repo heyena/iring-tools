@@ -1,0 +1,20 @@
+DevelopmentEnvironment
+
+if 64-bit use 64-bit verison whenever possible
+
+SlikSVN
+TortoiseSVN
+Java (latest)
+Eclipse (Helios)
+.NET Framework 4
+Microsoft WebPlatform
+	WebMatrix
+	ASP.NET 4
+Express Tools
+	SQLServer 2008 R2 Express (Database with Management Tools)
+	Visual Studio 2010 Express
+		Visual Web Developer 2010 Express
+		Visual C# 2010 Express
+MSBuild ComminityTasks
+Silverlight Tools for Visual Studio
+Silverlight Toolkit
