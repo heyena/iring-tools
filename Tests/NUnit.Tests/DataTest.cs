@@ -14,20 +14,24 @@ namespace NUnit.Tests
   {
     private AdapterProvider _adapterProvider = null;
     private AdapterSettings _settings = null;
+    private string _baseDirectory = string.Empty;
 
     public DataTest()
     {
       _settings = new AdapterSettings();
       _settings.AppendSettings(ConfigurationManager.AppSettings);
 
-      _settings["BaseDirectoryPath"] = @"C:\Users\rpdecarl\iring-tools-2.0.x\Tests\NUnit.Tests";
+      //_settings["BaseDirectoryPath"] = @"E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests";
       _settings["ProjectName"] = "12345_000";
       _settings["ApplicationName"] = "ABC";
       _settings["GraphName"] = "Lines";
       _settings["Identifier"] = "66015-O";
       _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
 
-      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+      _baseDirectory = Directory.GetCurrentDirectory();
+      _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
+      _settings["BaseDirectoryPath"] = _baseDirectory;
+      Directory.SetCurrentDirectory(_baseDirectory);
 
       _adapterProvider = new AdapterProvider(_settings);
     }

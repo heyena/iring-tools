@@ -15,19 +15,23 @@ namespace NUnit.Tests
   {
     private NHibernateProvider _hibernateProvider = null;
     private AdapterSettings _settings = null;
+    private string _baseDirectory = string.Empty;
 
     public NHibernateTest()
     {
       _settings = new AdapterSettings();
       _settings.AppendSettings(ConfigurationManager.AppSettings);
 
-      _settings["BaseDirectoryPath"] = @"C:\Users\rpdecarl\iring-tools-2.0.x\Tests\NUnit.Tests";
+      //_settings["BaseDirectoryPath"] = @"E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests";
       _settings["ProjectName"] = "12345_000";
       _settings["ApplicationName"] = "ABC";
       _settings["SchemaObjectName"] = "LINES";
       _settings["ExecutingAssemblyName"] = "NUnit.Tests";
 
-      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+      _baseDirectory = Directory.GetCurrentDirectory();
+      _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
+      _settings["BaseDirectoryPath"] = _baseDirectory;
+      Directory.SetCurrentDirectory(_baseDirectory);
 
       _hibernateProvider = new NHibernateProvider(_settings);
     }
