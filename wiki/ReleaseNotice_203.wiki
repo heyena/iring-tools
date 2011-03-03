@@ -2,7 +2,7 @@
 #labels Featured
 = *iRINGTools* 2.00.03.2742 =
 
-A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_203 iRINGTools 2.0.3] that includes bug fixes.  
+A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_203 iRINGTools 2.0] that includes bug fixes.  
 
 The download is available [http://iring-tools.googlecode.com/files/iRINGTools-2.0.3.zip here].  
 The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGTools-SDK-2.0.3.zip here]
@@ -14,7 +14,7 @@ The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGToo
 [http://iring-tools.googlecode.com/files/iRINGTools_SDK_Guide_v2.0.2.pdf SDK Guide]
 
 == New Features ==
- * ConfigurationTool
+ * Added ConfigurationTool
  
 == Bugs Fixed ==
  * URI of Related Individual is not unique 
