@@ -36,7 +36,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             tabChange: true,
             refresh: true,
             selectionchange: true,
-            ConfigureApplication: true
+            configure: true
         });
 
         this.tbar = this.buildToolbar();
@@ -49,10 +49,12 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
         var name = ""
         var description = ""
+        var dataLayer = ""
 
         if (this.record != null) {
             name = this.record.Name;
-            description = this.Description
+            description = this.record.Description;
+            dataLayer = this.record.DataLayer;
         }
 
         var dataLayersStore = new Ext.data.JsonStore({
@@ -82,7 +84,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             store: dataLayersStore,
             valueField: 'name',
             displayField: 'name',
-            value: this.record.DataLayerName
+            value: dataLayer
         });
 
         that = this;
@@ -98,12 +100,14 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             frame: true,
             closable: true,
             defaults: {
-                width: 330,
+                width: 250,
                 msgTarget: 'side'
             },
             defaultType: 'textfield',
 
             items: [
+                { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 250, value: scope, allowBlank: false },
+                { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 250, value: name, allowBlank: false },
                 { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 250, value: name, allowBlank: false },
                 { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 250, value: description },
                 cmbDataLayers
@@ -135,7 +139,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             tooltip: 'Configure',
             disabled: false,
             handler: this.onConfigure,
-            Application: this
+            scope: this
         }, {
             xtype: "tbbutton",
             text: 'Save',
@@ -143,7 +147,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             tooltip: 'Save',
             disabled: false,
             handler: this.onSave,
-            Application: this
+            scope: this
         }, {
             xtype: "tbbutton",
             text: 'Clear',
@@ -151,7 +155,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             tooltip: 'Clear',
             disabled: false,
             handler: this.onReset,
-            Application: this
+            scope: this
         }]
     },
     getActiveTab: function () {
@@ -172,25 +176,11 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     },
 
     onReset: function () {
-        this.form.getForm().reset()
+        this.form.getForm().reset();
     },
 
     onConfigure: function () {
-        //this.fireEvent('ConfigureApplication', this, this.scope, this.record);
-
-        var newTab = new AdapterManager.ExcelLibraryPanel({
-            id: 'tab-c.',// + this.scope.Name + '.' + this.record.Name,
-            title: 'Configure - ',// + this.scope.Name + '.' + this.record.Name,
-            scope: this.scope,
-            record: this.record,
-            url: 'directory/excellibrary',
-            closable: true
-        });
-
-        var contentPanel = Ext.getCmp('content-panel');
-        contentPanel.add(newTab);
-        contentPanel.activate(newTab);
-
+        this.fireEvent('configure', this, this.scope, this.record);
     },
 
     onSave: function () {
@@ -199,19 +189,15 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         this.form.getForm().submit({
             waitMsg: 'Saving Data...',
             success: function (f, a) {
+                var record = f.getFieldValues();
+
+                that.record.Name = record.Name;
+                that.record.Description = record.Description;
+
                 if (that.getActiveTab()) {
-                    Ext.Msg.alert('Success', 'Changes saved successfully!')
-
-                    var formType = that.data_form.getForm().findField('formType').getValue();
-                    if (formType == 'newForm') { // in case of newForm close the newTab
-                        Ext.getCmp('content-panel').remove(that.getActiveTab(), true);
-                    }
-
-                    var tempPanel = Ext.getCmp('nav-panel'); // Get Directory Panel
-                    // Ext.state.Manager.clear('AdapterManager'); 
-                    tempPanel.DirectoryPanel.root.reload();
+                    Ext.Msg.alert('Success', 'Changes saved successfully!');
+                    that.fireEvent('Save', that);
                 }
-
             },
             failure: function (f, a) {
                 Ext.Msg.alert('Warning', 'Error saving changes!')

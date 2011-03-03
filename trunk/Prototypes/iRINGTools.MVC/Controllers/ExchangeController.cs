@@ -48,6 +48,7 @@ namespace org.iringtools.client.Controllers
       JsonArrayItem item1 = new JsonArrayItem();
       item1.Add("Name", "Data Tranfer Object");
       item1.Add("Uri", "AdapterService");
+      item1.Add("IdentificationByTag", "900001-000");
       container.Items.Add(item1);
 
       JsonArrayItem item2 = new JsonArrayItem();

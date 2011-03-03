@@ -13,14 +13,18 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
     //collapsed: false,
     closable: true,
 
-    layout: 'fit',
+    layout: 'card',
+    activeItem: 0,
     border: true,
     split: true,
 
     scope: null,
-    record: null,
+    application: null,
     form: null,
     url: null,
+
+    btnNext: null,
+    btnPrev: null,
 
     /**
     * initComponent
@@ -29,59 +33,105 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
     initComponent: function () {
 
         this.addEvents({
-            close: true,
             save: true,
             reset: true,
             validate: true,
-            tabChange: true,
             refresh: true,
             selectionchange: true
         });
 
+        var scope = "";
+
+        if (this.scope != null) {
+            scope = this.scope.Name;
+        }
+
+        var application = "";
+
+        if (this.application != null) {
+            application = this.application.Name;
+        }
+
         this.tbar = this.buildToolbar();
 
-        var form = new Ext.FormPanel({
-            renderTo: 'fi-form',
+        this.btnNext = new Ext.Button({
+            text: 'Next',
+            //icon: 'resources/images/16x16/document-save.png',
+            //tooltip: 'Save',
+            disabled: false,
+            handler: this.onNavigation.createDelegate(this, [1]),
+            scope: this
+        });
+
+        this.btnPrev = new Ext.Button({
+            text: 'Prev',
+            //icon: 'resources/images/16x16/document-save.png',
+            //tooltip: 'Save',
+            disabled: false,
+            handler: this.onNavigation.createDelegate(this, [-1]),
+            scope: this
+        });
+
+        this.bbar = new Ext.Toolbar();
+        this.bbar.addButton(new Ext.Toolbar.Fill());
+        this.bbar.addButton(this.btnPrev);
+        this.bbar.addButton(this.btnNext);
+
+        this.form = new Ext.FormPanel({
             fileUpload: true,
-            width: 500,
+            labelWidth: 150, // label settings here cascade unless
+            url: this.url,
+            method: 'POST',
+            bodyStyle: 'padding:10px 5px 0',
+
+            border: false, // removing the border of the form
+
             frame: true,
-            title: 'File Upload Form',
-            autoHeight: true,
-            bodyStyle: 'padding: 10px 10px 0 10px;',
-            labelWidth: 50,
+            closable: true,
             defaults: {
-                anchor: '95%',
-                allowBlank: false,
+                width: 330,
                 msgTarget: 'side'
             },
-            items: [{
-                xtype: 'textfield',
-                fieldLabel: 'Name'
-            }, {
-                xtype: 'fileuploadfield',
-                id: 'form-file',
-                emptyText: 'Select an image',
-                fieldLabel: 'Photo',
-                name: 'photo-path',
-                buttonText: '',
-                buttonCfg: {
-                    iconCls: 'upload-icon'
+            defaultType: 'textfield',
+
+            items: [
+                { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 250, value: scope, allowBlank: false },
+                { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 250, value: application, allowBlank: false },
+                {
+                    xtype: 'fileuploadfield',
+                    emptyText: 'Select an Excel Source File',
+                    fieldLabel: 'Excel Source File',
+                    name: 'source-path',
+                    buttonText: '',
+                    buttonCfg: {
+                        iconCls: 'upload-icon'
+                    }
+                },
+                { 
+                    xtype: 'button',
+                    text: 'Upload',
+                    handler: this.onUpload,
+                    scope: this
                 }
-            }]            
+            ],
+            buttonAlign: 'left', // buttons aligned to the left            
+            autoDestroy: false
+
         });
 
         this.items = [
-  		    this.form
-  	    ];
-
-        this.on('close', this.onCloseTab, this)
+            this.form,
+            {
+                id: 'card-1',
+                html: 'Step 2'
+            }, {
+                id: 'card-2',
+                html: 'Step 3'
+            }
+        ];
 
         // super
         AdapterManager.ExcelLibraryPanel.superclass.initComponent.call(this);
-
-        var data = dataLayersStore.getById(this.record.DataLayerName);
-        cmbDataLayers.Value = data;
-
     },
 
     buildToolbar: function () {
@@ -103,6 +153,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             ExcelLibrary: this
         }]
     },
+
     getActiveTab: function () {
         if (Ext.getCmp('content-panel').items.length != 0) { // check is there any tab in contentPanel
             return Ext.getCmp('content-panel').getActiveTab();
@@ -112,22 +163,13 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
         }
     },
 
-    onCloseTab: function (node) {
-        // check number of tabs in panel to make disabled the centerPanel if its the last tab has been closed.
-        if ((Ext.getCmp('content-panel').items.length) == 1) {
-            Ext.getCmp('content-panel').enable()
-        }
-
-    },
-
     onReset: function () {
         this.form.getForm().reset()
     },
 
-
     onSave: function () {
         var that = this;    // consists the main/previous class object
-                
+
         this.form.getForm().submit({
             waitMsg: 'Saving Data...',
             url: this.url,
@@ -141,7 +183,40 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
                 Ext.Msg.alert('Warning', 'Error processing file!')
             }
         });
+    },
 
+    onUpload: function () {
+        var that = this;    // consists the main/previous class object
+
+        this.form.getForm().submit({
+            waitMsg: 'Saving Data...',
+            url: this.url,
+            success: function (f, a) {
+                if (that.getActiveTab()) {
+                    Ext.Msg.alert('Success', 'Processed file "' + o.result.file + '" on the server');
+                }
+
+            },
+            failure: function (f, a) {
+                Ext.Msg.alert('Warning', 'Error processing file!')
+            }
+        });
+    },
+
+    onNavigation: function (direction) {
+        var idx = this.activeItem + direction;
+
+        if (idx == 0) {
+            this.btnPrev.disable();
+        } else if (idx == this.items.getCount() - 1) {
+            this.btnNext.disable();
+        } else {
+            this.btnNext.enable();
+            this.btnPrev.enable();
+        }
+
+        this.layout.setActiveItem(idx);
+        this.activeItem = idx;
     }
 
 });

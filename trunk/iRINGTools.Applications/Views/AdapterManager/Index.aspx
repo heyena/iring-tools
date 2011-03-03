@@ -4,6 +4,7 @@
 <head id="Head1" runat="server">
     <title>Adapter Manager</title>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/resources/css/ext-all.css"/>
+    <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/examples/ux/css/ux-all.css"/>    
     <link rel="stylesheet" type="text/css" href="../../Content/css/AdapterManager.css"/>    
 
     <!-- ExtJS library: base/adapter -->
@@ -12,8 +13,8 @@
     <!-- ExtJS library: all widgets -->
     <script src="../../Scripts/ext-3.3.1/ext-all.js" type="text/javascript"></script>
     <script src="../../Scripts/ext-3.3.1/examples/ux/ux-all.js" type="text/javascript"></script>
-    
-    <!-- extensions -->
+            
+    <!-- extensions -->    
     <script src="../../Scripts/iringtools/adaptermanager/App.js" type="text/javascript"></script>    
     <script src="../../Scripts/iringtools/adaptermanager/ActionPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/adaptermanager/DirectoryPanel.js" type="text/javascript"></script>
