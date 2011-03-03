@@ -610,10 +610,10 @@ namespace org.iringtools.adapter.datalayer
       {
         msSQLCofiguration = Utility.Read<MSSQLConfiguration>(_xmlPath, true);
       }
-      else
-      {
-        throw new Exception("File " + scope + " not found at " + _xmlPath);
-      }
+    //  else
+   //   {
+   //     throw new Exception("File " + scope + " not found at " + _xmlPath);
+   //   }
       return msSQLCofiguration;
     }
 
