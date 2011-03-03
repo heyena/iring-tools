@@ -8,6 +8,8 @@ using VDS.RDF.Query;
 using VDS.RDF.Parsing;
 using VDS.RDF.Storage;
 using VDS.RDF.Writing;
+//using org.iringtools.library;
+//using org.iringtools.utility;
 
 namespace RdfImportExport
 {
@@ -25,7 +27,7 @@ namespace RdfImportExport
     {
       try
       {
-
+                    
         if (args.Length >= 1)
         {
           method = args[0];
@@ -114,7 +116,7 @@ namespace RdfImportExport
       else
       {
           bool exist = msStore.Exists(new Uri(graphUri));
-          if (exist)
+          if (exist) 
               sqlGraph = new SqlGraph(new Uri(graphUri), msStore);
           else
               throw new Exception(graphUri + " does not exist in Sql store ...");

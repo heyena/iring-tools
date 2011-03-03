@@ -186,7 +186,7 @@ namespace AdapterService.Tests
     {
       AdapterProxy target = new AdapterProxy();
      XElement xml = Utility.ReadXml(@"E:\iring-tools\trunk\UnitTests\AdapterService.Tests\XML\config.xml");
-     Response resp = target.SaveDatalayerConfig("12345_000", "EXCEL", xml);
+     Response resp = target.SaveDatalayerConfig("12345_000", "ABC", xml);
     //  Assert.AreNotEqual(0, manifest.Graphs.Count);
     }
 
