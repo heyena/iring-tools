@@ -1,84 +1,84 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!--This file represents the results of running a test suite-->
-<test-results name="E:\iring-tools\trunk\Tests\NUnit.Tests\NUnit.Tests.csproj" total="50" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2011-03-03" time="19:53:45">
-  <environment nunit-version="2.5.9.10348" clr-version="4.0.30319.1" os-version="Microsoft Windows NT 6.1.7600.0" platform="Win32NT" cwd="E:\iring-tools\trunk\Tests\NUnit.Runner\bin\Debug" machine-name="AUS10468" user="stry41802" user-domain="HATCHGLOBAL" />
-  <culture-info current-culture="en-AU" current-uiculture="en-US" />
-  <test-suite type="Project" name="E:\iring-tools\trunk\Tests\NUnit.Tests\NUnit.Tests.csproj" executed="True" result="Success" success="True" time="21.387" asserts="0">
+<test-results name="C:\Users\rpdecarl\iring-tools\Tests\NUnit.Tests\NUnit.Tests.csproj" total="50" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2011-03-03" time="11:17:37">
+  <environment nunit-version="2.5.9.10348" clr-version="4.0.30319.1" os-version="Microsoft Windows NT 6.1.7600.0" platform="Win32NT" cwd="C:\Users\rpdecarl\iring-tools\Tests\NUnit.Runner\bin\Debug" machine-name="FREL19610" user="rpdecarl" user-domain="IAMERS" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="Project" name="C:\Users\rpdecarl\iring-tools\Tests\NUnit.Tests\NUnit.Tests.csproj" executed="True" result="Success" success="True" time="76.816" asserts="0">
     <results>
-      <test-suite type="Assembly" name="E:\iring-tools\trunk\Tests\NUnit.Tests\Bin\NUnit.Tests.dll" executed="True" result="Success" success="True" time="21.363" asserts="0">
+      <test-suite type="Assembly" name="C:\Users\rpdecarl\iring-tools\Tests\NUnit.Tests\Bin\NUnit.Tests.dll" executed="True" result="Success" success="True" time="76.810" asserts="0">
         <results>
-          <test-suite type="Namespace" name="NUnit" executed="True" result="Success" success="True" time="21.358" asserts="0">
+          <test-suite type="Namespace" name="NUnit" executed="True" result="Success" success="True" time="76.803" asserts="0">
             <results>
-              <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="21.357" asserts="0">
+              <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="76.800" asserts="0">
                 <results>
-                  <test-suite type="TestFixture" name="AdapterTest" executed="True" result="Success" success="True" time="0.086" asserts="0">
+                  <test-suite type="TestFixture" name="AdapterTest" executed="True" result="Success" success="True" time="2.387" asserts="0">
                     <results>
                       <test-case name="NUnit.Tests.AdapterTest.GetBinding" executed="True" result="Success" success="True" time="0.003" asserts="1" />
-                      <test-case name="NUnit.Tests.AdapterTest.GetDataLayers" executed="True" result="Success" success="True" time="0.007" asserts="1" />
-                      <test-case name="NUnit.Tests.AdapterTest.GetDictionary" executed="True" result="Success" success="True" time="0.053" asserts="1" />
+                      <test-case name="NUnit.Tests.AdapterTest.GetDataLayers" executed="True" result="Success" success="True" time="2.242" asserts="1" />
+                      <test-case name="NUnit.Tests.AdapterTest.GetDictionary" executed="True" result="Success" success="True" time="0.063" asserts="1" />
                       <test-case name="NUnit.Tests.AdapterTest.GetMapping" executed="True" result="Success" success="True" time="0.000" asserts="1" />
                       <test-case name="NUnit.Tests.AdapterTest.GetScopes" executed="True" result="Success" success="True" time="0.000" asserts="1" />
-                      <test-case name="NUnit.Tests.AdapterTest.UpdateBinding" executed="True" result="Success" success="True" time="0.003" asserts="2" />
-                      <test-case name="NUnit.Tests.AdapterTest.UpdateMapping" executed="True" result="Success" success="True" time="0.004" asserts="2" />
-                      <test-case name="NUnit.Tests.AdapterTest.UpdateScopes" executed="True" result="Success" success="True" time="0.003" asserts="2" />
+                      <test-case name="NUnit.Tests.AdapterTest.UpdateBinding" executed="True" result="Success" success="True" time="0.004" asserts="2" />
+                      <test-case name="NUnit.Tests.AdapterTest.UpdateMapping" executed="True" result="Success" success="True" time="0.042" asserts="2" />
+                      <test-case name="NUnit.Tests.AdapterTest.UpdateScopes" executed="True" result="Success" success="True" time="0.009" asserts="2" />
                     </results>
                   </test-suite>
-                  <test-suite type="TestFixture" name="DataTest" executed="True" result="Success" success="True" time="3.718" asserts="0">
+                  <test-suite type="TestFixture" name="DataTest" executed="True" result="Success" success="True" time="6.129" asserts="0">
                     <results>
-                      <test-case name="NUnit.Tests.DataTest.GetDataFilterFull" executed="True" result="Success" success="True" time="0.248" asserts="1" />
-                      <test-case name="NUnit.Tests.DataTest.GetDataFilterIndex" executed="True" result="Success" success="True" time="0.056" asserts="1" />
-                      <test-case name="NUnit.Tests.DataTest.GetDataFilterPageSortFull" executed="True" result="Success" success="True" time="0.607" asserts="7" />
-                      <test-case name="NUnit.Tests.DataTest.GetDataFilterPageSortIndex" executed="True" result="Success" success="True" time="0.415" asserts="7" />
-                      <test-case name="NUnit.Tests.DataTest.GetFilterFull" executed="True" result="Success" success="True" time="0.063" asserts="1" />
-                      <test-case name="NUnit.Tests.DataTest.GetFilterIndex" executed="True" result="Success" success="True" time="0.056" asserts="1" />
-                      <test-case name="NUnit.Tests.DataTest.GetFilterPageSortFull" executed="True" result="Success" success="True" time="0.426" asserts="7" />
-                      <test-case name="NUnit.Tests.DataTest.GetFilterPageSortIndex" executed="True" result="Success" success="True" time="0.424" asserts="7" />
-                      <test-case name="NUnit.Tests.DataTest.GetFull" executed="True" result="Success" success="True" time="0.076" asserts="1" />
-                      <test-case name="NUnit.Tests.DataTest.GetIndex" executed="True" result="Success" success="True" time="0.060" asserts="1" />
-                      <test-case name="NUnit.Tests.DataTest.GetIndividual" executed="True" result="Success" success="True" time="0.048" asserts="1" />
-                      <test-case name="NUnit.Tests.DataTest.GetPageFull" executed="True" result="Success" success="True" time="0.544" asserts="7" />
-                      <test-case name="NUnit.Tests.DataTest.GetPageIndex" executed="True" result="Success" success="True" time="0.452" asserts="7" />
-                      <test-case name="NUnit.Tests.DataTest.GetSortFull" executed="True" result="Success" success="True" time="0.164" asserts="1" />
-                      <test-case name="NUnit.Tests.DataTest.GetSortIndex" executed="True" result="Success" success="True" time="0.061" asserts="1" />
+                      <test-case name="NUnit.Tests.DataTest.GetDataFilterFull" executed="True" result="Success" success="True" time="1.004" asserts="1" />
+                      <test-case name="NUnit.Tests.DataTest.GetDataFilterIndex" executed="True" result="Success" success="True" time="0.063" asserts="1" />
+                      <test-case name="NUnit.Tests.DataTest.GetDataFilterPageSortFull" executed="True" result="Success" success="True" time="0.878" asserts="7" />
+                      <test-case name="NUnit.Tests.DataTest.GetDataFilterPageSortIndex" executed="True" result="Success" success="True" time="0.534" asserts="7" />
+                      <test-case name="NUnit.Tests.DataTest.GetFilterFull" executed="True" result="Success" success="True" time="0.072" asserts="1" />
+                      <test-case name="NUnit.Tests.DataTest.GetFilterIndex" executed="True" result="Success" success="True" time="0.061" asserts="1" />
+                      <test-case name="NUnit.Tests.DataTest.GetFilterPageSortFull" executed="True" result="Success" success="True" time="0.763" asserts="7" />
+                      <test-case name="NUnit.Tests.DataTest.GetFilterPageSortIndex" executed="True" result="Success" success="True" time="0.798" asserts="7" />
+                      <test-case name="NUnit.Tests.DataTest.GetFull" executed="True" result="Success" success="True" time="0.146" asserts="1" />
+                      <test-case name="NUnit.Tests.DataTest.GetIndex" executed="True" result="Success" success="True" time="0.076" asserts="1" />
+                      <test-case name="NUnit.Tests.DataTest.GetIndividual" executed="True" result="Success" success="True" time="0.120" asserts="1" />
+                      <test-case name="NUnit.Tests.DataTest.GetPageFull" executed="True" result="Success" success="True" time="0.703" asserts="7" />
+                      <test-case name="NUnit.Tests.DataTest.GetPageIndex" executed="True" result="Success" success="True" time="0.636" asserts="7" />
+                      <test-case name="NUnit.Tests.DataTest.GetSortFull" executed="True" result="Success" success="True" time="0.189" asserts="1" />
+                      <test-case name="NUnit.Tests.DataTest.GetSortIndex" executed="True" result="Success" success="True" time="0.074" asserts="1" />
                     </results>
                   </test-suite>
-                  <test-suite type="TestFixture" name="NHibernateTest" executed="True" result="Success" success="True" time="0.614" asserts="0">
+                  <test-suite type="TestFixture" name="NHibernateTest" executed="True" result="Success" success="True" time="1.062" asserts="0">
                     <results>
-                      <test-case name="NUnit.Tests.NHibernateTest.Generate" executed="True" result="Success" success="True" time="0.470" asserts="2" />
-                      <test-case name="NUnit.Tests.NHibernateTest.GetDictionary" executed="True" result="Success" success="True" time="0.003" asserts="1" />
-                      <test-case name="NUnit.Tests.NHibernateTest.GetProviders" executed="True" result="Success" success="True" time="0.001" asserts="1" />
-                      <test-case name="NUnit.Tests.NHibernateTest.GetRelationships" executed="True" result="Success" success="True" time="0.000" asserts="1" />
-                      <test-case name="NUnit.Tests.NHibernateTest.GetSchemaObjects" executed="True" result="Success" success="True" time="0.006" asserts="1" />
-                      <test-case name="NUnit.Tests.NHibernateTest.GetSchemaObjectSchema" executed="True" result="Success" success="True" time="0.012" asserts="1" />
-                      <test-case name="NUnit.Tests.NHibernateTest.PostDictionary" executed="True" result="Success" success="True" time="0.057" asserts="2" />
+                      <test-case name="NUnit.Tests.NHibernateTest.Generate" executed="True" result="Success" success="True" time="0.361" asserts="2" />
+                      <test-case name="NUnit.Tests.NHibernateTest.GetDictionary" executed="True" result="Success" success="True" time="0.006" asserts="1" />
+                      <test-case name="NUnit.Tests.NHibernateTest.GetProviders" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                      <test-case name="NUnit.Tests.NHibernateTest.GetRelationships" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                      <test-case name="NUnit.Tests.NHibernateTest.GetSchemaObjects" executed="True" result="Success" success="True" time="0.009" asserts="1" />
+                      <test-case name="NUnit.Tests.NHibernateTest.GetSchemaObjectSchema" executed="True" result="Success" success="True" time="0.021" asserts="1" />
+                      <test-case name="NUnit.Tests.NHibernateTest.PostDictionary" executed="True" result="Success" success="True" time="0.592" asserts="2" />
                     </results>
                   </test-suite>
-                  <test-suite type="TestFixture" name="ReferenceDataTests" executed="True" result="Success" success="True" time="7.348" asserts="0">
+                  <test-suite type="TestFixture" name="ReferenceDataTests" executed="True" result="Success" success="True" time="62.347" asserts="0">
                     <results>
-                      <test-case name="NUnit.Tests.ReferenceDataTests.GetClass" executed="True" result="Success" success="True" time="4.028" asserts="1" />
-                      <test-case name="NUnit.Tests.ReferenceDataTests.GetClassLabel" executed="True" result="Success" success="True" time="1.201" asserts="1" />
-                      <test-case name="NUnit.Tests.ReferenceDataTests.GetRepositories" executed="True" result="Success" success="True" time="0.000" asserts="1" />
-                      <test-case name="NUnit.Tests.ReferenceDataTests.GetTemplate" executed="True" result="Success" success="True" time="2.048" asserts="1" />
-                      <test-case name="NUnit.Tests.ReferenceDataTests.Search" executed="True" result="Success" success="True" time="0.000" asserts="1" />
+                      <test-case name="NUnit.Tests.ReferenceDataTests.GetClass" executed="True" result="Success" success="True" time="23.688" asserts="1" />
+                      <test-case name="NUnit.Tests.ReferenceDataTests.GetClassLabel" executed="True" result="Success" success="True" time="9.808" asserts="1" />
+                      <test-case name="NUnit.Tests.ReferenceDataTests.GetRepositories" executed="True" result="Success" success="True" time="0.002" asserts="1" />
+                      <test-case name="NUnit.Tests.ReferenceDataTests.GetTemplate" executed="True" result="Success" success="True" time="17.639" asserts="1" />
+                      <test-case name="NUnit.Tests.ReferenceDataTests.Search" executed="True" result="Success" success="True" time="11.060" asserts="1" />
                     </results>
                   </test-suite>
-                  <test-suite type="TestFixture" name="XmlTest" executed="True" result="Success" success="True" time="9.576" asserts="0">
+                  <test-suite type="TestFixture" name="XmlTest" executed="True" result="Success" success="True" time="4.845" asserts="0">
                     <results>
-                      <test-case name="NUnit.Tests.XmlTest.GetDataFilterFull" executed="True" result="Success" success="True" time="6.140" asserts="1" />
+                      <test-case name="NUnit.Tests.XmlTest.GetDataFilterFull" executed="True" result="Success" success="True" time="0.486" asserts="1" />
                       <test-case name="NUnit.Tests.XmlTest.GetDataFilterIndex" executed="True" result="Success" success="True" time="0.055" asserts="1" />
-                      <test-case name="NUnit.Tests.XmlTest.GetDataFilterPageSortFull" executed="True" result="Success" success="True" time="0.583" asserts="7" />
-                      <test-case name="NUnit.Tests.XmlTest.GetDataFilterPageSortIndex" executed="True" result="Success" success="True" time="0.427" asserts="7" />
-                      <test-case name="NUnit.Tests.XmlTest.GetFilterFull" executed="True" result="Success" success="True" time="0.062" asserts="1" />
-                      <test-case name="NUnit.Tests.XmlTest.GetFilterIndex" executed="True" result="Success" success="True" time="0.050" asserts="1" />
-                      <test-case name="NUnit.Tests.XmlTest.GetFilterPageSortFull" executed="True" result="Success" success="True" time="0.403" asserts="7" />
-                      <test-case name="NUnit.Tests.XmlTest.GetFilterPageSortIndex" executed="True" result="Success" success="True" time="0.395" asserts="7" />
-                      <test-case name="NUnit.Tests.XmlTest.GetFull" executed="True" result="Success" success="True" time="0.065" asserts="1" />
-                      <test-case name="NUnit.Tests.XmlTest.GetIndex" executed="True" result="Success" success="True" time="0.063" asserts="1" />
-                      <test-case name="NUnit.Tests.XmlTest.GetIndividual" executed="True" result="Success" success="True" time="0.070" asserts="1" />
-                      <test-case name="NUnit.Tests.XmlTest.GetPageFull" executed="True" result="Success" success="True" time="0.558" asserts="7" />
-                      <test-case name="NUnit.Tests.XmlTest.GetPageIndex" executed="True" result="Success" success="True" time="0.481" asserts="7" />
-                      <test-case name="NUnit.Tests.XmlTest.GetSortFull" executed="True" result="Success" success="True" time="0.137" asserts="1" />
-                      <test-case name="NUnit.Tests.XmlTest.GetSortIndex" executed="True" result="Success" success="True" time="0.056" asserts="1" />
+                      <test-case name="NUnit.Tests.XmlTest.GetDataFilterPageSortFull" executed="True" result="Success" success="True" time="0.807" asserts="7" />
+                      <test-case name="NUnit.Tests.XmlTest.GetDataFilterPageSortIndex" executed="True" result="Success" success="True" time="0.581" asserts="7" />
+                      <test-case name="NUnit.Tests.XmlTest.GetFilterFull" executed="True" result="Success" success="True" time="0.059" asserts="1" />
+                      <test-case name="NUnit.Tests.XmlTest.GetFilterIndex" executed="True" result="Success" success="True" time="0.060" asserts="1" />
+                      <test-case name="NUnit.Tests.XmlTest.GetFilterPageSortFull" executed="True" result="Success" success="True" time="0.504" asserts="7" />
+                      <test-case name="NUnit.Tests.XmlTest.GetFilterPageSortIndex" executed="True" result="Success" success="True" time="0.473" asserts="7" />
+                      <test-case name="NUnit.Tests.XmlTest.GetFull" executed="True" result="Success" success="True" time="0.117" asserts="1" />
+                      <test-case name="NUnit.Tests.XmlTest.GetIndex" executed="True" result="Success" success="True" time="0.075" asserts="1" />
+                      <test-case name="NUnit.Tests.XmlTest.GetIndividual" executed="True" result="Success" success="True" time="0.103" asserts="1" />
+                      <test-case name="NUnit.Tests.XmlTest.GetPageFull" executed="True" result="Success" success="True" time="0.568" asserts="7" />
+                      <test-case name="NUnit.Tests.XmlTest.GetPageIndex" executed="True" result="Success" success="True" time="0.656" asserts="7" />
+                      <test-case name="NUnit.Tests.XmlTest.GetSortFull" executed="True" result="Success" success="True" time="0.205" asserts="1" />
+                      <test-case name="NUnit.Tests.XmlTest.GetSortIndex" executed="True" result="Success" success="True" time="0.075" asserts="1" />
                     </results>
                   </test-suite>
                 </results>
