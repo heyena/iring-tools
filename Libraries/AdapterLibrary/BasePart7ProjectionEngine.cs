@@ -36,7 +36,6 @@ namespace org.iringtools.adapter.projection
     protected static readonly string RDL_PREFIX = "rdl:";
     protected static readonly string TPL_PREFIX = "tpl:";
     protected static readonly string RDF_NIL = RDF_PREFIX + "nil";
-    protected static readonly string QUALIFIED_RDF_NIL = RDF_NS.NamespaceName + "nil";
     protected static readonly string BLANK_NODE = "?bnode";
     protected static readonly string END_STATEMENT = ".";
 
@@ -143,7 +142,7 @@ namespace org.iringtools.adapter.projection
     // senario (assume no circular relationships - should be handled by AppEditor): 
     //  dataObject1.L1RelatedDataObjects.L2RelatedDataObjects.LnRelatedDataObjects.property1
     //  dataObject1.L1RelatedDataObjects.L2RelatedDataObjects.LnRelatedDataObjects.property2
-    protected void SetRelatedRecords(int dataObjectIndex, string relatedPropertyPath, List<string> relatedValues)
+    protected void SetRelatedRecords(int dataObjectIndex, int classInstanceIndex, string relatedPropertyPath, List<string> relatedValues)
     {
       Dictionary<string, List<Dictionary<string, string>>> relatedRecordsMap = _relatedRecordsMaps[dataObjectIndex];
       int lastDotPosition = relatedPropertyPath.LastIndexOf('.');
@@ -175,7 +174,7 @@ namespace org.iringtools.adapter.projection
               relatedRecords.Add(new Dictionary<string, string>());
             }
           }
-          else
+          else  // intermediate related object
           {
             relatedRecords = new List<Dictionary<string, string>>();
           }
@@ -183,12 +182,19 @@ namespace org.iringtools.adapter.projection
           relatedRecordsMap[relatedObjectType] = relatedRecords;
         }
 
-        // only fill last related object values now; values of intermediate related objects' parent might not be available yet.
+        // fill last related object values
         if (i == objectNames.Length - 1)
         {
-          for (int j = 0; j < relatedValues.Count; j++)
+          if (relatedValues.Count > 1)
           {
-            relatedRecords[j][property] = relatedValues[j];
+            for (int j = 0; j < relatedValues.Count; j++)
+            {
+              relatedRecords[j][property] = relatedValues[j];
+            }
+          }
+          else
+          {
+            relatedRecords[classInstanceIndex][property] = relatedValues.First();
           }
         }
       }
@@ -205,7 +211,7 @@ namespace org.iringtools.adapter.projection
     //  dataObject1.L1RelatedDataObjects[1].L2RelatedDataObjects[2].property4.value2
     //  dataObject1.L1RelatedDataObjects[2].L2RelatedDataObjects[1].property3.value1
     //  dataObject1.L1RelatedDataObjects[2].L2RelatedDataObjects[2].property4.value2
-    protected void FillRelatedRecords()
+    protected void ProcessRelatedItems()
     {
       for (int i = 0; i < _dataObjects.Count; i++)
       {
@@ -267,7 +273,7 @@ namespace org.iringtools.adapter.projection
     }
 
     // turn related records into data objects, remove duplicates, and append them to top level data objects
-    protected void AppendRelatedObjects()
+    protected void CreateRelatedObjects()
     {
       // dictonary cache of related object types and list of identifiers
       Dictionary<string, List<string>> relatedObjectTypeIdentifiers = new Dictionary<string, List<string>>();
@@ -457,7 +463,7 @@ namespace org.iringtools.adapter.projection
         {
           classIdentifiers.Add(identifier.Substring(1, identifier.Length - 2));
         }
-        else 
+        else  // identifier is a property map
         {
           string[] identifierParts = identifier.Split('.');
           string propertyName = identifierParts[identifierParts.Length - 1];
