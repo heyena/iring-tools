@@ -5,11 +5,28 @@
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
     <Node UniqueName="[0-1000]E:\iring-tools\trunk\Tests\NUnit.Tests\NUnit.Tests.csproj" Expanded="true" />
-    <Node UniqueName="[0-1053]E:\iring-tools\trunk\Tests\NUnit.Tests\Bin\NUnit.Tests.dll" Expanded="true" />
-    <Node UniqueName="[0-1054]NUnit" Expanded="true" />
-    <Node UniqueName="[0-1055]NUnit.Tests" Expanded="true" />
+    <Node UniqueName="[0-1056]E:\iring-tools\trunk\Tests\NUnit.Tests\Bin\NUnit.Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1057]NUnit" Expanded="true" />
+    <Node UniqueName="[0-1058]NUnit.Tests" Expanded="true" />
     <Node UniqueName="[0-1031]NUnit.Tests.AdapterTest" Expanded="true" />
+    <Node UniqueName="[0-1040]NUnit.Tests.DataTest" Expanded="true" />
+    <Node UniqueName="[0-1053]NUnit.Tests.DataTest.GetDataFilterFull" Checked="true" />
+    <Node UniqueName="[0-1052]NUnit.Tests.DataTest.GetDataFilterIndex" Checked="true" />
+    <Node UniqueName="[0-1055]NUnit.Tests.DataTest.GetDataFilterPageSortFull" Checked="true" />
+    <Node UniqueName="[0-1054]NUnit.Tests.DataTest.GetDataFilterPageSortIndex" Checked="true" />
+    <Node UniqueName="[0-1047]NUnit.Tests.DataTest.GetFilterFull" Checked="true" />
+    <Node UniqueName="[0-1046]NUnit.Tests.DataTest.GetFilterIndex" Checked="true" />
+    <Node UniqueName="[0-1051]NUnit.Tests.DataTest.GetFilterPageSortFull" Checked="true" />
+    <Node UniqueName="[0-1050]NUnit.Tests.DataTest.GetFilterPageSortIndex" Checked="true" />
+    <Node UniqueName="[0-1043]NUnit.Tests.DataTest.GetFull" Checked="true" />
+    <Node UniqueName="[0-1042]NUnit.Tests.DataTest.GetIndex" Checked="true" />
+    <Node UniqueName="[0-1041]NUnit.Tests.DataTest.GetIndividual" Checked="true" />
+    <Node UniqueName="[0-1045]NUnit.Tests.DataTest.GetPageFull" Checked="true" />
+    <Node UniqueName="[0-1044]NUnit.Tests.DataTest.GetPageIndex" Checked="true" />
+    <Node UniqueName="[0-1049]NUnit.Tests.DataTest.GetSortFull" Checked="true" />
+    <Node UniqueName="[0-1048]NUnit.Tests.DataTest.GetSortIndex" Checked="true" />
     <Node UniqueName="[0-1001]NUnit.Tests.NHibernateTest" Expanded="true" />
-    <Node UniqueName="[0-1004]NUnit.Tests.NHibernateTest.GetDictionary" Checked="true" />
+    <Node UniqueName="[0-1009]NUnit.Tests.ReferenceDataTests" Expanded="true" />
+    <Node UniqueName="[0-1015]NUnit.Tests.XmlTest" Expanded="true" />
   </Nodes>
 </VisualState>

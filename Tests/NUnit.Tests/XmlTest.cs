@@ -27,7 +27,7 @@ namespace NUnit.Tests
       _settings["GraphName"] = "Lines";
       _settings["Identifier"] = "66015-O";
       _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
-
+      _settings["GraphBaseUri"] = "http://www.example.com/"; 
       _baseDirectory = Directory.GetCurrentDirectory();
       _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
       _settings["BaseDirectoryPath"] = _baseDirectory;

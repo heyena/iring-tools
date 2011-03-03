@@ -29,7 +29,7 @@
     </PAndIDRepresentation>
     <NominalDiameter rdlUri="tpl:R77443358818" possessorRole="tpl:R16314127825">
       <hasType rdlUri="tpl:R59896853239" reference="rdl:R17622148043" />
-      <hasScale rdlUri="tpl:R93884193692" />
+      <hasScale rdlUri="tpl:R93884193692" reference="rdl:R52054275374" />
       <valValue rdlUri="tpl:R90688063648" reference="rdf:nil" />
     </NominalDiameter>
   </PipingNetworkSystem>
