@@ -393,21 +393,20 @@ public class RefDataProvider
 	  return new Response(); 
   }
 
-  @SuppressWarnings("unchecked")
   public List<Repository> getRepositories() throws Exception{
-	  List<Repository> repository;
+	  List<Repository> repositoryList;
 	  try
 	  {
 	  Federation federation = getFederation();
-	  repository = (List<Repository>) new Repository();
+	  repositoryList = new ArrayList<Repository>();
 	  for(Repository repo : federation.getRepositories().getItems())
 	  {
-		  repository.add(repo);
+		  repositoryList.add(repo);
 	  }
 	  }catch(Exception ex){
 			throw ex;
 	  }
-	  return repository;
+	  return repositoryList;
 
   }
  
