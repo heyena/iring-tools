@@ -7,6 +7,11 @@ Update Documentation Versions
 Generate PDFs
 Upload ZIPs
 Upload PDFs
+Deploy onto test server
+Verify no missing or extra files
+Also quickly test 12345_000 ABC Lines
 Create Release Note in Wiki
+Mark Files as Featured
+Remove Featured Label from old files.
 Update links in iRINGUG Wiki
 
