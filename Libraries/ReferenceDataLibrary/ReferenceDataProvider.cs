@@ -407,15 +407,22 @@ namespace org.iringtools.refdata
                 }
 
                 if (result.ContainsKey("label"))
-                    label = result["label"];
+                {
+                  names = result["label"].Split('@').ToList();
+                  label = names[0];
+                  if (names.Count == 1)
+                    lang = defaultLanguage;
+                  else
+                    lang = names[names.Count - 1];
+                }
                 else
                 {
-                    names = GetLabel(uri).Label.Split('@').ToList();
-                    label = names[0];
-                    if (names.Count == 1)
-                        lang = defaultLanguage;
-                    else
-                        lang = names[names.Count - 1];
+                  names = GetLabel(uri).Label.Split('@').ToList();
+                  label = names[0];
+                  if (names.Count == 1)
+                    lang = defaultLanguage;
+                  else
+                    lang = names[names.Count - 1];
                 }
                 classification.label = label;
                 classification.lang = lang;
@@ -2539,7 +2546,7 @@ namespace org.iringtools.refdata
                                     if (string.IsNullOrEmpty(role.name.FirstOrDefault().lang))
                                         language = "@" + defaultLanguage;
                                     else
-                                        language = role.name.FirstOrDefault().lang;
+                                      language = "@" + role.name.FirstOrDefault().lang;
 
                                     genName = "Role Qualification " + roleLabel;
                                     if (string.IsNullOrEmpty(role.identifier))

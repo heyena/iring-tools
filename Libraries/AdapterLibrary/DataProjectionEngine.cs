@@ -38,9 +38,12 @@ namespace org.iringtools.adapter.projection
         _dictionary = _dataLayer.GetDictionary();
         _dataObjects = dataObjects;
 
-        if (_dataObjects != null && _dataObjects.Count == 1)
+        if (_dataObjects != null && (_dataObjects.Count == 1 || FullIndex))
         {
           xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
+
+          XAttribute total = new XAttribute("total", this.Count);
+          xElement.Add(total);
 
           DataObject dataObject = FindGraphDataObject(graphName);
 
@@ -51,7 +54,7 @@ namespace org.iringtools.adapter.projection
             xElement.Add(rowElement);
           }
         }
-        if (_dataObjects != null && (_dataObjects.Count > 1 || _dataObjects.Count == 0))
+        if (_dataObjects != null && (_dataObjects.Count > 1 && !FullIndex))
         {
           xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
 
@@ -106,6 +109,7 @@ namespace org.iringtools.adapter.projection
     private void CreateIndexXml(XElement parentElement, DataObject dataObject, int dataObjectIndex)
     {
       string uri = _appNamespace.ToString() + "/";
+
       foreach (KeyProperty keyProperty in dataObject.keyProperties)
       {
         DataProperty dataProperty = dataObject.dataProperties.Find(dp => dp.propertyName == keyProperty.keyPropertyName);
@@ -113,21 +117,25 @@ namespace org.iringtools.adapter.projection
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(_appNamespace + dataProperty.propertyName, value);
+          XElement propertyElement = new XElement(_appNamespace + Utility.TitleCase(dataProperty.propertyName), value);
           parentElement.Add(propertyElement);
+
           uri += value;
         }
       }
+
       List<DataProperty> indexProperties = dataObject.dataProperties.FindAll(dp => dp.showOnIndex == true);
+
       foreach (DataProperty indexProperty in indexProperties)
       {
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(indexProperty.propertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(_appNamespace + indexProperty.propertyName, value);
-        parentElement.Add(propertyElement);
+          XElement propertyElement = new XElement(_appNamespace + Utility.TitleCase(indexProperty.propertyName), value);
+          parentElement.Add(propertyElement);
         }
       }
+
       XAttribute uriAttribute = new XAttribute("uri", uri);
       parentElement.Add(uriAttribute);
     }

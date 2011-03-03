@@ -145,7 +145,7 @@ namespace org.iringtools.facade
           if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
           {
             string userName = _keyRing["Name"].ToString();
-            _settings.Add("UserName", userName);
+            _settings["UserName"] = userName;
           }
         }
       }
@@ -204,9 +204,9 @@ namespace org.iringtools.facade
 
           if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
 
-          _settings.Add("ProjectName", projectName);
-          _settings.Add("ApplicationName", applicationName);
-          _settings.Add("Scope", scope);
+          _settings["ProjectName"] = projectName;
+          _settings["ApplicationName"] = applicationName;
+          _settings["Scope"] =  scope;
 
           string appSettingsPath = String.Format("{0}{1}.config",
             _settings["XmlPath"],
@@ -297,7 +297,7 @@ namespace org.iringtools.facade
           throw new Exception("Target graph uri is required");
 
         string targetGraphBaseUri = request["targetGraphBaseUri"];
-        _settings.Add("TargetGraphBaseUri", targetGraphBaseUri);
+        _settings["TargetGraphBaseUri"] =  targetGraphBaseUri;
 
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetEndpointUri), targetGraphBaseUri);
 

@@ -574,9 +574,9 @@ namespace org.iringtools.adapter
 
           if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
 
-          _settings.Add("ProjectName", projectName);
-          _settings.Add("ApplicationName", applicationName);
-          _settings.Add("Scope", scope);
+          _settings["ProjectName"] =  projectName;
+          _settings["ApplicationName"] = applicationName;
+          _settings["Scope"] =  scope;
 
           string appSettingsPath = String.Format("{0}{1}.config",
             _settings["XmlPath"],
@@ -679,7 +679,7 @@ namespace org.iringtools.adapter
           if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
           {
             string userName = _keyRing["Name"].ToString();
-            _settings.Add("UserName", userName);
+            _settings["UserName"] = userName;
           }
         }
       }

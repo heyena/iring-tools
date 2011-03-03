@@ -140,6 +140,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter != null && filter.Expressions.Count > 0)
         {
+          filter.OrderExpressions.Clear();
           string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);
         }
@@ -212,17 +213,23 @@ namespace org.iringtools.adapter.datalayer
 
           // order data objects as list of identifiers
           IList<IDataObject> orderedDataObjects = new List<IDataObject>();
-          
-          foreach (string identifier in identifiers)
+          if (identifiers != null)
           {
-            foreach (IDataObject dataObject in dataObjects)
-            {
-              if (dataObject.GetPropertyValue("Id").ToString() == identifier)
+              foreach (string identifier in identifiers)
               {
-                orderedDataObjects.Add(dataObject);
-                break;
+                  foreach (IDataObject dataObject in dataObjects)
+                  {
+                      if (dataObject.GetPropertyValue("Id").ToString() == identifier)
+                      {
+                          orderedDataObjects.Add(dataObject);
+                          break;
+                      }
+                  }
               }
-            }
+          }
+          else
+          {
+              orderedDataObjects = dataObjects;
           }
 
           return orderedDataObjects;
@@ -250,8 +257,8 @@ namespace org.iringtools.adapter.datalayer
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
-        //if (filter != null && filter.Expressions != null && (filter.Expressions.Count > 0 || filter.OrderExpressions.Count > 0))
-        if (filter != null)
+        if (filter != null && filter.Expressions != null && (filter.Expressions.Count > 0 || filter.OrderExpressions.Count > 0))
+//        if (filter != null)
         {
           string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);
@@ -472,7 +479,7 @@ namespace org.iringtools.adapter.datalayer
 
     public IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
     {
-      IList<IDataObject> relatedObjects;
+      IList<IDataObject> relatedObjects = null;
       DataDictionary dictionary = GetDictionary();
       DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);
       DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName == relatedObjectType);

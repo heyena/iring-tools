@@ -39,7 +39,7 @@ namespace org.iringtools.adapter.projection
       try
       {
         _appNamespace = String.Format("{0}{1}/{2}",
-           _settings["BaseAddress"],
+           _settings["GraphBaseUri"],
            HttpUtility.UrlEncode(_settings["ProjectName"]),
            HttpUtility.UrlEncode(_settings["ApplicationName"])
          );
@@ -54,25 +54,29 @@ namespace org.iringtools.adapter.projection
           new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
         if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 &&
-          _dataObjects != null && _dataObjects.Count == 1)
+          _dataObjects != null && (_dataObjects.Count == 1 ||
+          FullIndex))
         {
           _classIdentifiersCache = new Dictionary<string, List<string>>();
           SetClassIdentifiers(DataDirection.Outbound);
 
-          ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
+          var pair = _graphMap.classTemplateMaps.First();          
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            CreateHierarchicalXml(xElement, classTemplateMap, i);
+            CreateHierarchicalXml(xElement, pair, i);
           }
+          XAttribute total = new XAttribute("total", this.Count);
+          xElement.Add(total);
         }
-        if (_dataObjects != null && _dataObjects.Count > 1)
+        if (_dataObjects != null && _dataObjects.Count > 1 && !FullIndex)
         {
           xElement = new XElement(_appNamespace + Utility.TitleCase(graphName));
-          ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First(); 
+
+          var pair = _graphMap.classTemplateMaps.First(); 
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(classTemplateMap.classMap.name));
-            CreateIndexXml(rowElement, classTemplateMap, i);
+            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(pair.classMap.name));
+            CreateIndexXml(rowElement, pair, i);
             xElement.Add(rowElement);
           }
           XAttribute total = new XAttribute("total", this.Count);
@@ -93,13 +97,13 @@ namespace org.iringtools.adapter.projection
     }
 
     #region helper methods
-    private void CreateIndexXml(XElement parentElement, ClassTemplateMap classTemplateMap, int dataObjectIndex)
+    private void CreateIndexXml(XElement parentElement, ClassTemplateMap classTemplateListMap, int dataObjectIndex)
     {
       string uri = _appNamespace.ToString() + "/" + _graphMap.name + "/";
-      foreach (string keyPropertyName in classTemplateMap.classMap.identifiers)
+      foreach (string keyPropertyName in classTemplateListMap.classMap.identifiers)
       {
         RoleMap roleMap = null;
-        foreach(TemplateMap templateMap in classTemplateMap.templateMaps)
+        foreach(TemplateMap templateMap in classTemplateListMap.templateMaps)
         {
           roleMap = templateMap.roleMaps.Find(rm => rm.propertyName == keyPropertyName);
           if (roleMap != null) break;
@@ -109,15 +113,16 @@ namespace org.iringtools.adapter.projection
           string propertyName = RemoveDataPropertyAlias(roleMap.propertyName);
           var value = _dataObjects[dataObjectIndex].GetPropertyValue(propertyName);
           if (value != null)
-            uri += classTemplateMap.classMap.identifierDelimiter + value;
+            uri += classTemplateListMap.classMap.identifierDelimiter + value;
         }        
       }
       parentElement.Value = uri;
     }
-    private void CreateHierarchicalXml(XElement parentElement, ClassTemplateMap classTemplateMap, int dataObjectIndex)
+
+    private void CreateHierarchicalXml(XElement parentElement, ClassTemplateMap classTemplateListMap, int dataObjectIndex)
     {
-      ClassMap classMap = classTemplateMap.classMap;
-      List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+      ClassMap classMap = classTemplateListMap.classMap;
+      List<TemplateMap> templateMaps = classTemplateListMap.templateMaps;
       string classIdentifier = _classIdentifiers[classMap.id][dataObjectIndex];
 
       XElement classElement = new XElement(_appNamespace + Utility.TitleCase(classMap.name));
@@ -200,8 +205,8 @@ namespace org.iringtools.adapter.projection
             classElement.Add(baseTemplateElement);
 
             string classId = classRole.classMap.id;
-            ClassTemplateMap subClassTemplateMap = _graphMap.GetClassTemplateMap(classId);
-            CreateHierarchicalXml(roleElement, subClassTemplateMap, dataObjectIndex);
+            ClassTemplateMap subClassTemplateListMap = _graphMap.GetClassTemplateMap(classId);
+            CreateHierarchicalXml(roleElement, subClassTemplateListMap, dataObjectIndex);
           }
           else
           {

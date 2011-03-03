@@ -121,7 +121,6 @@ namespace org.iringtools.nhibernate
       _response.Append(status);
       return _response;
     }
-
     public DatabaseDictionary GetDictionary(string projectName, string applicationName)
     {
       DatabaseDictionary databaseDictionary = new DatabaseDictionary();
@@ -147,7 +146,6 @@ namespace org.iringtools.nhibernate
       }
       return databaseDictionary;
     }
-
     public Response PostDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
     {
       Status status = new Status();
@@ -170,7 +168,6 @@ namespace org.iringtools.nhibernate
       _response.Append(status);
       return _response;
     }
-
     public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName)
     {
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
@@ -340,7 +337,6 @@ namespace org.iringtools.nhibernate
             {
               columnName = columnName,
               dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
-              // dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
               dataLength = dataLength,
               isNullable = isNullable,
               propertyName = Utility.NameSafe(columnName)
@@ -382,7 +378,6 @@ namespace org.iringtools.nhibernate
         return dbDictionary;
       }
     }
-
     public DataRelationships GetRelationships()
     {
       try
@@ -395,7 +390,6 @@ namespace org.iringtools.nhibernate
         return null;
       }
     }
-
     public DataProviders GetProviders()
     {
       try
@@ -408,7 +402,6 @@ namespace org.iringtools.nhibernate
         return null;
       }
     }
-
     public DataObjects GetSchemaObjects(string projectName, string applicationName)
     {
       DataObjects tableNames = new DataObjects();
@@ -460,7 +453,6 @@ namespace org.iringtools.nhibernate
         return tableNames;
       }
     }
-
     public DataObject GetSchemaObjectSchema(string projectName, string applicationName, string schemaObjectName)
     {
       List<string> tableNames = new List<string>();
@@ -708,9 +700,9 @@ namespace org.iringtools.nhibernate
         {
           string scope = string.Format("{0}.{1}", projectName, applicationName);
 
-          _settings.Add("ProjectName", projectName);
-          _settings.Add("ApplicationName", applicationName);
-          _settings.Add("Scope", scope);
+          _settings["ProjectName"] = projectName;
+          _settings["ApplicationName"] = applicationName;
+          _settings["Scope"] = scope;
 
           _settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml",
             _settings["XmlPath"],
