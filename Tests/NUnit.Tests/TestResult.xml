@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="E:\iring-tools\trunk\Tests\NUnit.Tests\NUnit.Tests.csproj" total="1" errors="1" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2011-03-03" time="14:47:51">
+  <environment nunit-version="2.5.9.10348" clr-version="4.0.30319.1" os-version="Microsoft Windows NT 6.1.7600.0" platform="Win32NT" cwd="E:\iring-tools\trunk\Tests\NUnit.Runner\bin\Debug" machine-name="AUS10468" user="stry41802" user-domain="HATCHGLOBAL" />
+  <culture-info current-culture="en-AU" current-uiculture="en-US" />
+  <test-suite type="Project" name="E:\iring-tools\trunk\Tests\NUnit.Tests\NUnit.Tests.csproj" executed="True" result="Failure" success="False" time="326.270" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="E:\iring-tools\trunk\Tests\NUnit.Tests\Bin\NUnit.Tests.dll" executed="True" result="Failure" success="False" time="326.269" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="NUnit" executed="True" result="Failure" success="False" time="326.266" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="Tests" executed="True" result="Failure" success="False" time="326.265" asserts="0">
+                <results>
+                  <test-suite type="TestFixture" name="DataTest" executed="True" result="Failure" success="False" time="326.120" asserts="0">
+                    <results>
+                      <test-case name="NUnit.Tests.DataTest.GetFilterPageSortFull" executed="True" result="Error" success="False" time="326.116" asserts="0">
+                        <failure>
+                          <message><![CDATA[System.Exception : Error while getting a list of identifiers of type [LINES]. NHibernate.ADOException: could not execute query
+[ select count(*) as col_0_0_ from dbo."LINES" lines0_ where upper(Area)='90' order by System DESC ]
+[SQL: select count(*) as col_0_0_ from dbo."LINES" lines0_ where upper(Area)='90' order by System DESC] ---> System.Data.SqlClient.SqlException: Column "dbo.LINES.SYSTEM" is invalid in the ORDER BY clause because it is not contained in either an aggregate function or the GROUP BY clause.
+   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection)
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection)
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning()
+   at System.Data.SqlClient.TdsParser.Run(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj)
+   at System.Data.SqlClient.SqlDataReader.ConsumeMetaData()
+   at System.Data.SqlClient.SqlDataReader.get_MetaData()
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, DbAsyncResult result)
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior, String method)
+   at System.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbCommand.System.Data.IDbCommand.ExecuteReader()
+   at NHibernate.AdoNet.AbstractBatcher.ExecuteReader(IDbCommand cmd)
+   at NHibernate.Loader.Loader.GetResultSet(IDbCommand st, Boolean autoDiscoverTypes, Boolean callable, RowSelection selection, ISessionImplementor session)
+   at NHibernate.Loader.Loader.DoQuery(ISessionImplementor session, QueryParameters queryParameters, Boolean returnProxies)
+   at NHibernate.Loader.Loader.DoQueryAndInitializeNonLazyCollections(ISessionImplementor session, QueryParameters queryParameters, Boolean returnProxies)
+   at NHibernate.Loader.Loader.DoList(ISessionImplementor session, QueryParameters queryParameters)
+   --- End of inner exception stack trace ---
+   at NHibernate.Loader.Loader.DoList(ISessionImplementor session, QueryParameters queryParameters)
+   at NHibernate.Loader.Loader.ListIgnoreQueryCache(ISessionImplementor session, QueryParameters queryParameters)
+   at NHibernate.Loader.Loader.List(ISessionImplementor session, QueryParameters queryParameters, ISet`1 querySpaces, IType[] resultTypes)
+   at NHibernate.Hql.Ast.ANTLR.Loader.QueryLoader.List(ISessionImplementor session, QueryParameters queryParameters)
+   at NHibernate.Hql.Ast.ANTLR.QueryTranslatorImpl.List(ISessionImplementor session, QueryParameters queryParameters)
+   at NHibernate.Engine.Query.HQLQueryPlan.PerformList(QueryParameters queryParameters, ISessionImplementor session, IList results)
+   at NHibernate.Impl.SessionImpl.List(String query, QueryParameters queryParameters, IList results)
+   at NHibernate.Impl.SessionImpl.List[T](String query, QueryParameters parameters)
+   at NHibernate.Impl.QueryImpl.List[T]()
+   at org.iringtools.adapter.datalayer.NHibernateDataLayer.GetCount(String objectType, DataFilter filter) in E:\iring-tools\trunk\Libraries\NHibernateLibrary\NHibernateDataLayer.cs:line 151]]></message>
+                          <stack-trace><![CDATA[at org.iringtools.adapter.AdapterProvider.GetDataProjection(String projectName, String applicationName, String graphName, String format, Int32 start, Int32 limit, String sortOrder, String sortBy, Boolean fullIndex, NameValueCollection parameters)
+at NUnit.Tests.DataTest.GetFilterPageSortFull() in E:\iring-tools\trunk\Tests\NUnit.Tests\DataTest.cs:line 481
+]]></stack-trace>
+                        </failure>
+                      </test-case>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

@@ -15,6 +15,7 @@ using org.iringtools.utility;
 using System.Net;
 using System.Collections.ObjectModel;
 using org.iringtools.library;
+using org.iringtools.mapping;
 using org.w3.sparql_results;
 using System.Threading;
 using VDS.RDF.Query;
