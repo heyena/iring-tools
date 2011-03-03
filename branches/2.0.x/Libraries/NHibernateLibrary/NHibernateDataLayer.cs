@@ -360,11 +360,12 @@ namespace org.iringtools.adapter.datalayer
               try
               {
                 session.SaveOrUpdate(dataObject);
-                session.Flush();
                 status.Messages.Add(string.Format("Record [{0}] have been saved successfully.", identifier));
               }
               catch (Exception ex)
               {
+                _logger.Error("Error posting data object [" + identifier + "]");
+
                 status.Level = StatusLevel.Error;
                 status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
                 status.Results.Add("ResultTag", identifier);
@@ -372,6 +373,8 @@ namespace org.iringtools.adapter.datalayer
 
               response.Append(status);
             }
+
+            session.Flush();
           }
         }
 

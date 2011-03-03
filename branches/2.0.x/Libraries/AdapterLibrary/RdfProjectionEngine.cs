@@ -22,6 +22,7 @@ namespace org.iringtools.adapter.projection
   public class RdfProjectionEngine : BasePart7ProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
+    protected static readonly string QUALIFIED_RDF_NIL = RDF_NS.NamespaceName + "nil";
 
     private ClassificationStyle _primaryClassificationStyle;
     private ClassificationStyle _secondaryClassificationStyle;
@@ -69,6 +70,7 @@ namespace org.iringtools.adapter.projection
       }
       catch (Exception ex)
       {
+        _logger.Error("Error in ToXml: " + ex);
         throw ex;
       }
 
@@ -81,60 +83,59 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _graphMap = _mapping.FindGraphMap(graphName);
-
-        if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 && xDocument != null)
+        if (xDocument != null)
         {
-          XmlDocument xmlDocument = new XmlDocument();
-          using (XmlReader xmlReader = xDocument.CreateReader())
+          _graphMap = _mapping.FindGraphMap(graphName);
+
+          if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0)
           {
-            xmlDocument.Load(xmlReader);
-          }
-          xDocument.Root.RemoveAll();
-
-          RdfXmlParser parser = new RdfXmlParser();
-          Graph graph = new Graph();
-          parser.Load(graph, xmlDocument);
-          xmlDocument.RemoveAll();
-
-          // load graph to memory store to allow querying locally
-          _memoryStore = new TripleStore();
-          _memoryStore.Add(graph);
-          graph.Dispose();
-
-          SetClassIdentifiers(DataDirection.InboundSparql);
-
-          if (_classIdentifiers.Count > 0)
-          {
-            var rootClassTemplatesMap = _classIdentifiers.First();
-            string rootClassId = rootClassTemplatesMap.Key;
-            List<string> rootClassInstances = rootClassTemplatesMap.Value;
-
-            _dataObjects = new List<IDataObject>();
-            _dataRecords = new Dictionary<string, string>[rootClassInstances.Count];
-
-            for (int i = 0; i < _dataRecords.Length; i++)
+            XmlDocument xmlDocument = new XmlDocument();
+            using (XmlReader xmlReader = xDocument.CreateReader())
             {
-              _dataRecords[i] = new Dictionary<string, string>();
+              xmlDocument.Load(xmlReader);
             }
+            xDocument.Root.RemoveAll();
 
-            _relatedRecordsMaps = new Dictionary<string, List<Dictionary<string, string>>>[rootClassInstances.Count];
-            _relatedObjectPaths = new List<string>();
+            RdfXmlParser parser = new RdfXmlParser();
+            Graph graph = new Graph();
+            parser.Load(graph, xmlDocument);
+            xmlDocument.RemoveAll();
+
+            // load graph to memory store to allow querying locally
+            _memoryStore = new TripleStore();
+            _memoryStore.Add(graph);
+            graph.Dispose();
 
             if (_memoryStore != null)
             {
-              for (int i = 0; i < rootClassInstances.Count; i++)
-              {
-                _relatedRecordsMaps[i] = new Dictionary<string, List<Dictionary<string, string>>>();
-                ProcessClassInstance(_graphMap.classTemplateListMaps.First().Key, rootClassInstances[i], i);                
-                _dataObjects.Add(CreateDataObject(_graphMap.dataObjectMap, i));
-              }
+              ClassMap rootClassMap = _graphMap.classTemplateListMaps.First().Key;
+              string rootClassId = rootClassMap.classId;
+              List<string> rootClassInstances = GetClassInstances(rootClassId);
 
-              // add related data objects to the top level data objects
-              if (_relatedObjectPaths != null && _relatedObjectPaths.Count > 0)
+              if (rootClassInstances.Count > 0)
               {
-                FillRelatedRecords();
-                AppendRelatedObjects();
+                _dataObjects = new List<IDataObject>();
+                _dataRecords = new Dictionary<string, string>[rootClassInstances.Count];
+                _relatedRecordsMaps = new Dictionary<string, List<Dictionary<string, string>>>[rootClassInstances.Count];
+                _relatedObjectPaths = new List<string>();
+
+                for (int i = 0; i < rootClassInstances.Count; i++)
+                {
+                  _dataRecords[i] = new Dictionary<string, string>();
+                  _relatedRecordsMaps[i] = new Dictionary<string, List<Dictionary<string, string>>>();
+
+                  ProcessClass(i, rootClassMap, new List<string> {rootClassInstances[i]});
+
+                  IDataObject dataObject = CreateDataObject(_graphMap.dataObjectMap, i);
+                  _dataObjects.Add(dataObject);
+                }
+
+                // fill related data objects and append them to top level data objects
+                if (_relatedObjectPaths != null && _relatedObjectPaths.Count > 0)
+                {
+                  ProcessRelatedItems();
+                  CreateRelatedObjects();
+                }
               }
             }
           }
@@ -142,21 +143,23 @@ namespace org.iringtools.adapter.projection
       }
       catch (Exception ex)
       {
+        _logger.Error("Error in ToDataObjects: " + ex);
         throw ex;
       }
 
       return _dataObjects;
     }
 
-    #region helper methods
+    #region outbound helper methods
     private XElement BuildRdfXml()
     {
       Dictionary<string, List<string>> classInstancesCache = new Dictionary<string, List<string>>();
 
       // get classification settings
-      _primaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle), 
+      _primaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
         _settings["PrimaryClassificationStyle"].ToString());
-      _secondaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle), 
+
+      _secondaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
         _settings["SecondaryClassificationStyle"].ToString());
 
       if (File.Exists(_settings["ClassificationTemplateFile"]))
@@ -209,7 +212,7 @@ namespace org.iringtools.adapter.projection
                 {
                   if (_classificationConfig.TemplateIds.Contains(templateMap.templateId))
                   {
-                    if (_secondaryClassificationStyle == ClassificationStyle.Type || 
+                    if (_secondaryClassificationStyle == ClassificationStyle.Type ||
                         _secondaryClassificationStyle == ClassificationStyle.Both)
                     {
                       foreach (RoleMap roleMap in templateMap.roleMaps)
@@ -223,7 +226,7 @@ namespace org.iringtools.adapter.projection
                       }
                     }
 
-                    if (_secondaryClassificationStyle == ClassificationStyle.Template || 
+                    if (_secondaryClassificationStyle == ClassificationStyle.Template ||
                         _secondaryClassificationStyle == ClassificationStyle.Both)
                     {
                       string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
@@ -261,7 +264,7 @@ namespace org.iringtools.adapter.projection
                   }
                   else
                   {
-                    AddRdfTemplateElements(classPrefix, classIdentifier, classIdentifierIndex, templateMap, 
+                    AddRdfTemplateElements(classPrefix, classIdentifier, classIdentifierIndex, templateMap,
                       dataObjectIndex, hasRelatedProperty);
                   }
                 }
@@ -284,7 +287,7 @@ namespace org.iringtools.adapter.projection
         XElement templateElement = new XElement(OWL_THING);
         _rdfXml.Add(templateElement);
 
-        templateElement.Add(new XElement(RDF_TYPE, 
+        templateElement.Add(new XElement(RDF_TYPE,
           new XAttribute(RDF_RESOURCE, TPL_NS.NamespaceName + classificationTemplate.templateId)));
 
         StringBuilder values = new StringBuilder(classificationTemplate.templateId);
@@ -311,7 +314,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private void AddRdfTemplateElements(string classPrefix, string classIdentifier, int classIdentifierIndex, 
+    private void AddRdfTemplateElements(string classPrefix, string classIdentifier, int classIdentifierIndex,
       TemplateMap templateMap, int dataObjectIndex, bool classIdentifierHasRelatedProperty)
     {
       string classInstance = classPrefix + classIdentifier;
@@ -408,7 +411,7 @@ namespace org.iringtools.adapter.projection
 
             string roleId = classRole.roleId.Substring(classRole.roleId.IndexOf(":") + 1);
             XElement roleElement = new XElement(TPL_NS + roleId);
-            roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri + 
+            roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri +
               Utility.TitleCase(classRole.classMap.name) + "/" + refClassIdentifier));
             baseTemplateElement.Add(roleElement);
 
@@ -435,7 +438,7 @@ namespace org.iringtools.adapter.projection
           if (propertyParts.Length == 2)  // direct property
           {
             string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-            propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue)); 
+            propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
           }
           else  // related property
           {
@@ -452,7 +455,7 @@ namespace org.iringtools.adapter.projection
             {
               IDataObject relatedObject = relatedObjects[classIdentifierIndex];
               string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
-              propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue)); 
+              propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
             }
             else  // related property is property map
             {
@@ -468,6 +471,9 @@ namespace org.iringtools.adapter.projection
         // add property elements to template element(s)
         if (matrixPropertyElements.Count > 0 && matrixPropertyElements[0].Count > 0)
         {
+          // used to enforce dotNetRDF to store/retrieve template triples in order as the RDF
+          string hashPrefixFormat = Regex.Replace(matrixPropertyElements[0].Count.ToString(), "\\d", "0") + "0";
+
           for (int i = 0; i < matrixPropertyElements[0].Count; i++)
           {
             XElement templateElement = new XElement(baseTemplateElement);
@@ -486,6 +492,7 @@ namespace org.iringtools.adapter.projection
             }
 
             string hashCode = Utility.MD5Hash(templateValue.ToString());
+            hashCode = i.ToString(hashPrefixFormat) + hashCode.Substring(hashPrefixFormat.Length);
             templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
           }
         }
@@ -495,7 +502,7 @@ namespace org.iringtools.adapter.projection
     private XElement CreatePropertyElement(RoleMap propertyRole, string propertyValue)
     {
       XElement propertyElement = new XElement(TPL_NS + propertyRole.roleId.Replace(TPL_PREFIX, String.Empty));
-      
+
       if (String.IsNullOrEmpty(propertyRole.valueList))
       {
         if (String.IsNullOrEmpty(propertyValue))
@@ -512,7 +519,7 @@ namespace org.iringtools.adapter.projection
           propertyElement.Add(new XText(propertyValue));
         }
       }
-      else // resolve value list to uri
+      else  // resolve value list to uri
       {
         propertyValue = _mapping.ResolveValueList(propertyRole.valueList, propertyValue);
 
@@ -536,47 +543,94 @@ namespace org.iringtools.adapter.projection
 
       return value.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
     }
+    #endregion
 
-    private void ProcessClassInstance(ClassMap classMap, string classInstance, int dataObjectIndex)
+    #region inbound helper methods
+    private List<string> GetClassInstances(string classId)
+    {
+      List<string> classInstances = new List<string>();
+      string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
+      object results = _memoryStore.ExecuteQuery(query);
+
+      if (results != null)
+      {
+        SparqlResultSet resultSet = (SparqlResultSet)results;
+
+        foreach (SparqlResult result in resultSet)
+        {
+          string classInstance = result.Value("class").ToString();
+
+          if (!String.IsNullOrEmpty(classInstance))
+          {
+            classInstances.Add(classInstance);
+          }
+          else
+          {
+            _logger.Debug(query);
+            throw new Exception("Individual of class [" + classId + "] not found!");
+          }
+        }
+      }
+
+      return classInstances;
+    }
+
+    private void ProcessClass(int dataObjectIndex, ClassMap classMap, List<string> classInstances)
     {
       KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMap(classMap.classId);
       List<TemplateMap> templateMaps = pair.Value;
 
-      if (templateMaps == null || templateMaps.Count == 0)
+      for (int classInstanceIndex = 0; classInstanceIndex < classInstances.Count; classInstanceIndex++)
       {
-        string identifierValue = classInstance.Substring(classInstance.LastIndexOf("/") + 1);
+        string classInstance = classInstances[classInstanceIndex];
+        string identifier = classInstance.Substring(classInstance.LastIndexOf("/") + 1);
 
-        if (pair.Key == null || String.IsNullOrEmpty(pair.Key.identifierDelimiter))
-        {
-          string classIdentifier = classMap.identifiers.First();
-          _dataRecords[dataObjectIndex][classIdentifier.Substring(classIdentifier.LastIndexOf('.') + 1)] = identifierValue;
-        }
-        else
-        {
-          string[] identifierValueParts = identifierValue.Split(new string[] { pair.Key.identifierDelimiter }, StringSplitOptions.None);
-          List<string> identifiers = classMap.identifiers;
+        string[] identifierParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
+          ? identifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
+          : new string[] { identifier };
 
-          for (int i = 0; i < identifiers.Count; i++)
+        for (int i = 0; i < identifierParts.Length; i++)
+        {
+          string identifierPart = identifierParts[i];
+
+          // remove fixed values from identifier
+          foreach (string clsIdentifier in classMap.identifiers)
           {
-            string identifierVal = identifierValueParts[i];
-            _dataRecords[dataObjectIndex][identifiers[i]] = identifierVal;
+            if (clsIdentifier.StartsWith("#") && clsIdentifier.EndsWith("#"))
+            {
+              identifierPart = identifierPart.Replace(clsIdentifier.Substring(1, clsIdentifier.Length - 2), "");
+            }
           }
+
+          // set identifier value to mapped property
+          foreach (string clsIdentifier in classMap.identifiers)
+          {
+            if (clsIdentifier.Split('.').Length > 2)  // related property
+            {
+              SetRelatedRecords(dataObjectIndex, classInstanceIndex, clsIdentifier, new List<string> { identifierPart });
+            }
+            else  // direct property
+            {
+              _dataRecords[dataObjectIndex][clsIdentifier.Substring(clsIdentifier.LastIndexOf('.') + 1)] = identifierPart;
+            }
+          }          
         }
       }
-      else
+
+      if (templateMaps != null && templateMaps.Count > 0)
       {
-        FillDataRecord(classInstance, dataObjectIndex, templateMaps);
+        ProcessTemplates(dataObjectIndex, classInstances, templateMaps);
       }
     }
 
-    private void FillDataRecord(string classInstance, int dataObjectIndex, List<TemplateMap> templateMaps)
+    private void ProcessTemplates(int dataObjectIndex, List<string> classInstances, List<TemplateMap> templateMaps)
     {
       foreach (TemplateMap templateMap in templateMaps)
       {
         string possessorRoleId = String.Empty;
         RoleMap referenceRole = null;
         RoleMap classRole = null;
-        List<RoleMap> propertyRoleMaps = new List<RoleMap>();
+        List<RoleMap> propertyRoles = new List<RoleMap>();
 
         // find property roles
         foreach (RoleMap roleMap in templateMap.roleMaps)
@@ -597,7 +651,7 @@ namespace org.iringtools.adapter.projection
             case RoleType.Property:
             case RoleType.DataProperty:
             case RoleType.ObjectProperty:
-              propertyRoleMaps.Add(roleMap);
+              propertyRoles.Add(roleMap);
               break;
           }
         }
@@ -615,66 +669,71 @@ namespace org.iringtools.adapter.projection
           referenceEndStmt = END_STATEMENT;
         }
 
-        if (classRole != null)
+        for (int classInstanceIndex = 0; classInstanceIndex < classInstances.Count; classInstanceIndex++)
         {
-          string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId, classInstance,
-              templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, classRole.roleId);
-
-          object results = _memoryStore.ExecuteQuery(query);
-
-          if (results is SparqlResultSet)
+          if (classRole != null)
           {
-            SparqlResultSet resultSet = (SparqlResultSet)results;
-
-            foreach (SparqlResult result in resultSet)
-            {
-              string subclassInstance = result.Value("class").ToString();
-              ProcessClassInstance(classRole.classMap, subclassInstance, dataObjectIndex);
-              break;  // should be one result only
-            }
-          }
-        }
-        else // query for property values
-        {
-          foreach (RoleMap roleMap in propertyRoleMaps)
-          {
-            List<string> values = new List<string>();
-            string[] propertyPath = roleMap.propertyName.Split('.');
-            string property = propertyPath[propertyPath.Length - 1].Trim();
-
-            string query = String.Format(LITERAL_QUERY_TEMPLATE, possessorRoleId, classInstance, templateMap.templateId, 
-              referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, roleMap.roleId);
+            string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId, classInstances[classInstanceIndex],
+                templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, classRole.roleId);
 
             object results = _memoryStore.ExecuteQuery(query);
 
             if (results is SparqlResultSet)
             {
               SparqlResultSet resultSet = (SparqlResultSet)results;
+              List<string> subclassInstances = new List<string>();
 
               foreach (SparqlResult result in resultSet)
               {
-                string value = Regex.Replace(result.ToString(), @".*= ", String.Empty);
-
-                if (value == RDF_NIL)
-                  value = String.Empty;
-                else if (value.Contains("^^"))
-                  value = value.Substring(0, value.IndexOf("^^"));
-                else if (!String.IsNullOrEmpty(roleMap.valueList))
-                  value = _mapping.ResolveValueMap(roleMap.valueList, value);
-
-                if (propertyPath.Length > 2)  // related property
-                {
-                  values.Add(value);
-                }
-                else  // direct property
-                {
-                  _dataRecords[dataObjectIndex][property] = value;
-                }
+                string subclassInstance = result.Value("class").ToString();
+                subclassInstances.Add(subclassInstance);
               }
 
-              if (propertyPath.Length > 2)
+              ProcessClass(dataObjectIndex, classRole.classMap, subclassInstances);
+            }
+          }
+          else // query for property values
+          {
+            foreach (RoleMap propertyRole in propertyRoles)
+            {
+              List<string> values = new List<string>();
+              string[] propertyPath = propertyRole.propertyName.Split('.');
+              string property = propertyPath[propertyPath.Length - 1].Trim();
+
+              string query = String.Format(LITERAL_QUERY_TEMPLATE, possessorRoleId, classInstances[classInstanceIndex], 
+                templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, propertyRole.roleId);
+
+              object results = _memoryStore.ExecuteQuery(query);
+
+              if (results is SparqlResultSet)
               {
-                SetRelatedRecords(dataObjectIndex, roleMap.propertyName, values);
+                SparqlResultSet resultSet = (SparqlResultSet)results;
+
+                foreach (SparqlResult result in resultSet)
+                {
+                  string value = Regex.Replace(result.ToString(), @".*= ", String.Empty);
+
+                  if (value == QUALIFIED_RDF_NIL)
+                    value = String.Empty;
+                  else if (value.Contains("^^"))
+                    value = value.Substring(0, value.IndexOf("^^"));
+                  else if (!String.IsNullOrEmpty(propertyRole.valueList))
+                    value = _mapping.ResolveValueMap(propertyRole.valueList, value);
+
+                  if (propertyPath.Length > 2)  // related property
+                  {
+                    values.Add(value);
+                  }
+                  else  // direct property
+                  {
+                    _dataRecords[dataObjectIndex][property] = value;
+                  }
+                }
+
+                if (propertyPath.Length > 2)
+                {
+                  SetRelatedRecords(dataObjectIndex, classInstanceIndex, propertyRole.propertyName, values);
+                }
               }
             }
           }

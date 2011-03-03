@@ -74,13 +74,8 @@ namespace org.iringtools.exchange
       _response.StatusList = new List<Status>();
       _kernel.Bind<Response>().ToConstant(_response);
 
-      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
-            _settings["XmlPath"]
-          );
-      string bindingConfigurationPath = Path.Combine(
-        _settings["BaseDirectoryPath"],
-        relativePath
-      );
+      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["XmlPath"]);
+      string bindingConfigurationPath = Path.Combine(_settings["BaseDirectoryPath"], relativePath);
       _kernel.Load(bindingConfigurationPath);
       InitializeIdentity();
     }
@@ -116,8 +111,6 @@ namespace org.iringtools.exchange
 
       try
       {
-        Utility.WriteString("SPARQLs will go here:", "./Logs/Sparql.log", true);
-
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
         InitializeScope(projectName, applicationName);
@@ -177,7 +170,7 @@ namespace org.iringtools.exchange
         rdfWriter.Save(graph, textWriter);
         XDocument xDocument = XDocument.Parse(sb.ToString());
 
-        // call RdfProjectionEngine to fill data objects from a given graph
+        // create data objects for a given graph
         _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
         _dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
