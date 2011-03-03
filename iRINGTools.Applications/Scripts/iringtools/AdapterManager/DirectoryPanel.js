@@ -286,6 +286,10 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         } else {
             return false;
         }
+    },
+
+    reload: function() {
+        this.diretoryPanel.root.reload();
     }
 
 });

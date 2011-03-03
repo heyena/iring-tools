@@ -57,13 +57,6 @@ namespace org.iringtools.library
     /// </summary>
     /// <returns>A string of the Description of the application</returns>
     [DataMember(Name = "description", Order = 1, EmitDefaultValue = false)]
-    public string Description { get; set; }
-
-    /// <summary>
-    /// The description of the application represented by this instance
-    /// </summary>
-    /// <returns>A string of the Configured DataLayer of the application</returns>
-    [DataMember(Name = "dataLayerName", Order = 2)]
-    public string DataLayerName { get; set; }
+    public string Description { get; set; }    
   }
 }

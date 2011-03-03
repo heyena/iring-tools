@@ -73,6 +73,11 @@ Ext.onReady(function () {
             url: 'directory/scope'
         });
 
+        newTab.on('save', function (panel) {
+            contentPanel.remove(panel);
+            directoryPanel.reload();
+        }, this);
+
         contentPanel.add(newTab);
         contentPanel.activate(newTab);
 
@@ -85,7 +90,7 @@ Ext.onReady(function () {
             title: 'Scope - ' + node.text,
             record: node.attributes.record,
             url: 'directory/scope'
-        });
+        });        
 
         contentPanel.add(newTab);
         contentPanel.activate(newTab);
@@ -107,9 +112,14 @@ Ext.onReady(function () {
             title: 'Application - ' + node.parentNode.text + '.(new)',
             scope: node.parentNode.attributes.record,
             record: null,
-            url: 'directory/scope',
+            url: 'directory/application',
             closable: true
         });
+
+        newTab.on('save', function (panel) {
+            contentPanel.remove(panel);
+            directoryPanel.reload();
+        }, this);
 
         contentPanel.add(newTab);
         contentPanel.activate(newTab);
@@ -123,10 +133,34 @@ Ext.onReady(function () {
             title: 'Application - ' + node.parentNode.text + '.' + node.text,
             scope: node.parentNode.attributes.record,
             record: node.attributes.record,
-            url: 'directory/scope',
+            url: 'directory/application',
             closable: true
-        });    
-        
+        });
+                
+        newTab.on('configure', function (panel, scope, application) {
+
+            if (application.DataLayer = 'ExcelLibrary') {
+
+                var newConfig = new AdapterManager.ExcelLibraryPanel({
+                    id: 'tab-c.' + scope.Name + '.' + application.Name,
+                    title: 'Configure - ' + scope.Name + '.' + application.Name,
+                    scope: scope,
+                    application: application,
+                    url: 'excellibrary/configure',
+                    closable: true
+                });
+
+                contentPanel.add(newConfig);
+                contentPanel.activate(newConfig);
+
+            } else if (application.DataLayer = 'NHibernateLibrary') {
+
+            } else {
+
+            }
+
+        }, this);
+
         contentPanel.add(newTab);
         contentPanel.activate(newTab);
 
@@ -150,7 +184,7 @@ Ext.onReady(function () {
         contentPanel.add(newTab);
         contentPanel.activate(newTab);
 
-    }, this);   
+    }, this);
 
     directoryPanel.on('remove', function (npanel, node) {
         that = this;

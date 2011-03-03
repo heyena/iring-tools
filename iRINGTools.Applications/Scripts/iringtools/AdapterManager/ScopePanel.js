@@ -44,7 +44,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
 
         if (this.record != null) {
             name = this.record.Name;
-            description = this.Description
+            description = this.record.Description
         }
 
         this.form = new Ext.FormPanel({
@@ -64,6 +64,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
             defaultType: 'textfield',
 
             items: [
+                { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 250, value: name, allowBlank: false },
                 { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 250, value: name, allowBlank: false },
                 { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 250, value: description }
             ],
@@ -101,9 +102,12 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
             scope: this
         }]
     },
+
     getActiveTab: function () {
-        if (Ext.getCmp('content-panel').items.length != 0) { // check is there any tab in contentPanel
-            return Ext.getCmp('content-panel').getActiveTab();
+        contentPanel = Ext.getCmp('content-panel');
+
+        if (contentPanel.items.length != 0) { // check is there any tab in contentPanel
+            return contentPanel.getActiveTab();
         }
         else {
             return false;
@@ -111,11 +115,11 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
     },
 
     onCloseTab: function (node) {
+        contentPanel = Ext.getCmp('content-panel');
         // check number of tabs in panel to make disabled the centerPanel if its the last tab has been closed.
-        if ((Ext.getCmp('content-panel').items.length) == 1) {
-            Ext.getCmp('content-panel').enable()
+        if ((contentPanel.items.length) == 1) {
+            contentPanel.enable()
         }
-
     },
 
     onReset: function () {
@@ -130,24 +134,14 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
             waitMsg: 'Saving Data...',
             success: function (f, a) {
                 if (that.getActiveTab()) {
-                    Ext.Msg.alert('Success', 'Changes saved successfully!')
-
-                    var formType = that.data_form.getForm().findField('formType').getValue();
-                    if (formType == 'newForm') { // in case of newForm close the newTab
-                        Ext.getCmp('content-panel').remove(that.getActiveTab(), true);
-                    }
-
-                    var tempPanel = Ext.getCmp('nav-panel'); // Get Directory Panel
-                    // Ext.state.Manager.clear('AdapterManager'); 
-                    tempPanel.DirectoryPanel.root.reload();
+                    Ext.Msg.alert('Success', 'Changes saved successfully!');
+                    that.fireEvent('Save', that);
                 }
-
             },
             failure: function (f, a) {
                 Ext.Msg.alert('Warning', 'Error saving changes!')
             }
         });
-
     }
 
 });

@@ -79,6 +79,7 @@
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\AppEditorController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
+    <Compile Include="Controllers\ExcelLibraryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
     <Compile Include="Controllers\MappingEditorController.cs" />
@@ -4664,6 +4665,7 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\" />
     <Folder Include="Scripts\ext-3.3.1\examples\spinner\images\" />
     <Folder Include="Scripts\ext-3.3.1\resources\images\vista\dd\" />
     <Folder Include="Scripts\ext-3.3.1\resources\images\vista\tree\" />

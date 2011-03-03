@@ -52,6 +52,20 @@ namespace iRINGTools.Web.Controllers
       return (ScopeProjects)Session[key];
     }
 
+    private string GetDataLayer(string adapterServiceURI, bool fetch, string scope, string application) 
+    {
+      XElement binding = GetBinding(adapterServiceURI, false, scope, application);
+
+      if (binding != null)
+      {
+        return binding.Element("bind").Attribute("to").Value.Split(',')[1].Trim();
+      }
+      else
+      {
+        return "";
+      }
+    }    
+
     private DataLayers GetDataLayers(string adapterServiceURI, bool fetch)
     {
       string key = "DataLayers";
@@ -81,6 +95,22 @@ namespace iRINGTools.Web.Controllers
       }
 
       return (Mapping)Session[key];      
+    }
+
+    private XElement GetBinding(string adapterServiceURI, bool fetch, string scope, string application)
+    {
+      string key = String.Format("{0}.{1}.binding", scope, application);
+
+      if (Session[key] == null || fetch)
+      {
+
+        WebHttpClient client = new WebHttpClient(adapterServiceURI);
+        XElement element = client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
+
+        Session[key] = element;
+      }
+
+      return (XElement)Session[key];
     }
 
     private DataDictionary GetDictionary(string adapterServiceURI, bool fetch, string scope, string application)
@@ -217,7 +247,7 @@ namespace iRINGTools.Web.Controllers
           {
 
             List<TreeNode> nodes = new List<TreeNode>();
-            ScopeProjects scopes = GetScopes(adapterServiceURI, false);
+            ScopeProjects scopes = GetScopes(adapterServiceURI, true);
 
             foreach (ScopeProject scope in scopes)
             {
@@ -251,7 +281,6 @@ namespace iRINGTools.Web.Controllers
 
             foreach (ScopeApplication app in scope.Applications)
             {
-
               TreeNode node = new TreeNode
               {
                 nodeType = "async",
@@ -262,7 +291,7 @@ namespace iRINGTools.Web.Controllers
                 expanded = false,
                 leaf = false,
                 children = null,
-                record = app
+                record = new { Name = app.Name, Description = app.Description, DataLayer = GetDataLayer(adapterServiceURI, false, scope.Name, app.Name) }
               };
 
               nodes.Add(node);
@@ -473,21 +502,25 @@ namespace iRINGTools.Web.Controllers
             
       ScopeProjects scopes = GetScopes(adapterServiceURI, false);
 
-      ScopeProject project = scopes.FirstOrDefault(o => o.Name == form["Name"]);
+      ScopeProject project = scopes.FirstOrDefault(o => o.Name == form["Scope"]);
 
-      if (project == null) 
+      if (project == null)
       {
-        project = new ScopeProject();        
-        project.Applications = new ScopeApplications();
+        project = new ScopeProject
+        {
+          Name = form["Name"],
+          Description = form["Description"],
+          Applications = new ScopeApplications()
+        };
+        scopes.Add(project);
       }
+      else
+      {
+        project.Name = form["Name"];
+        project.Description = form["Description"];
+      }      
 
-      project.Name = form["Name"];
-      project.Description = form["Description"];
-
-      ScopeProjects projects = new ScopeProjects();
-      scopes.Add(project);
-
-      return PostScopes(adapterServiceURI, projects);
+      return PostScopes(adapterServiceURI, scopes);
     }
 
     public JsonResult Application(FormCollection form)
@@ -497,13 +530,29 @@ namespace iRINGTools.Web.Controllers
       if (Request.QueryString["remote"] != null)
         adapterServiceURI = Request.QueryString["remote"] + "/adapter";
 
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
-            
-      ScopeApplication application = new ScopeApplication();
+      ScopeProjects scopes = GetScopes(adapterServiceURI, false);
+      ScopeProject project = scopes.FirstOrDefault(o => o.Name == form["Scope"]);
 
-      application.Name = form["Name"];
-      application.Description = form["Description"];
+      if (project != null)
+      {
+        ScopeApplication application = project.Applications.FirstOrDefault(o => o.Name == form["Application"]);
+
+        if (application == null)
+        {
+          application = new ScopeApplication
+          {
+            Name = form["Name"],
+            Description = form["Description"]
+          };
+
+          project.Applications.Add(application);
+        }
+        else
+        {
+          application.Name = form["Name"];
+          application.Description = form["Description"];
+        }
+      }
 
       return PostScopes(adapterServiceURI, scopes);
     }
