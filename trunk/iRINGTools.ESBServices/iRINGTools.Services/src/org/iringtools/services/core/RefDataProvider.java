@@ -3,7 +3,6 @@ package org.iringtools.services.core;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -23,13 +22,14 @@ import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.refdata.queries.Query;
-import org.iringtools.refdata.queries.QueryBindings;
-import org.iringtools.refdata.queries.QueryItem;
-import org.iringtools.refdata.response.Entity;
+import org.iringtools.utility.HttpClient;
+import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
 
 import sun.misc.Version;
+
+import com.opensymphony.xwork2.ActionContext;
 
 public class RefDataProvider
 {
@@ -447,4 +447,36 @@ public class RefDataProvider
   {
 	  	  
   }*/
+  
+  private Response queryIdGenerator(String serviceUrl) throws HttpClientException
+  {
+	  	  Response result=null;
+    	  String uri = ActionContext.getContext().getApplication().get("IDGenServiceUri").toString();
+    	  HttpClient httpClient = new HttpClient(uri);
+    	  result = httpClient.get(Response.class, serviceUrl);
+    	  return result;
+  }
+
+  private String createIdsAdiId(String uri, String comment)
+  {
+    String idsAdiId = "";
+    Response responseText=null;
+    try
+    {
+      String serviceUrl = "/acquireId/param?uri="+uri+"&comment=" +comment;
+      responseText = queryIdGenerator(serviceUrl);
+      Messages messages = responseText.getMessages();
+      List<String> messageList = messages.getItems();
+      if (messageList != null)
+      {
+        idsAdiId = messageList.get(0);
+      }
+    }
+    catch (Exception e)
+    {
+        //logger.Error("Error in createIdsAdiId: " + e);
+    	
+    }
+    return idsAdiId;
+  }
   }
