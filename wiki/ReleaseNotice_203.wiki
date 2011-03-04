@@ -24,7 +24,7 @@ The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGToo
  * data service allows other formats, but defaults to raw XML
  * rdf:type vs ClassificationTemplate/ClassificationOfIndividual
  * Move configuration of above to global scope.
- * Nulls in DataLayer should not create “Empty” Individual or relating Template
+ * Nulls in DataLayer should not create empty Individual or relating Template
  * MappingEditor is not producing the properly qualified propertyName for related objects
 
 Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
