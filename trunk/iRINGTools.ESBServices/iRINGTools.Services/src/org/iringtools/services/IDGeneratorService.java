@@ -1,5 +1,7 @@
 package org.iringtools.services;
 
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -7,6 +9,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.iringtools.common.response.Level;
+import org.iringtools.common.response.Messages;
+import org.iringtools.common.response.Response;
 import org.iringtools.services.core.IdGenProvider;
 
 
@@ -41,9 +46,10 @@ public class IDGeneratorService extends AbstractService{
     @GET
     @Path("/acquireId/{params}")
     //public String acquireId(@PathParam("uri") String uri) throws Exception 
-    public String acquireId(@PathParam("params") String params, 
+    public Response acquireId(@PathParam("params") String params, 
             @QueryParam("uri") String uri, @QueryParam("comment") String comment) throws Exception
     {
+      Response response = new Response();
       String generatedId = null;
       try
       {
@@ -53,12 +59,26 @@ public class IDGeneratorService extends AbstractService{
     	  System.out.println("uri:"+uri);
     	  System.out.println("comment:"+comment);
     	  generatedId = idGenProvider.generateRandomNumber(uri+"#", comment);
+    	  if(generatedId!=null){
+	    	  response.setLevel(Level.SUCCESS);
+	    	  //String responseMsg = "Generated Id : "+generatedId;
+	    	  Messages messages = new Messages();
+	          response.setMessages(messages);
+	          List<String> messageList = messages.getItems();
+	          messageList.add(generatedId);
+    	  }else{
+    		  response.setLevel(Level.ERROR);
+	    	  Messages messages = new Messages();
+	          response.setMessages(messages);
+	          List<String> messageList = messages.getItems();
+	          messageList.add("Error Generating ID");
+    	  }
       }
       catch (Exception ex)
       {
       }
 
-      return generatedId;
+      return response;
     }
 	  
 	  
