@@ -1,4 +1,3 @@
-#labels Featured
 #summary Date: 2010/11/11
 = *iRINGTools* 2.00.00.1960 =
 
