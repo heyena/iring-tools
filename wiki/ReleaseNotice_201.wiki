@@ -1,5 +1,4 @@
 #summary Date: 2011/1/26
-#labels Featured
 = *iRINGTools* 2.00.01.2552 =
 
 A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_200 iRINGTools 2.0] that includes final adjustments to the SDK and fixes many bugs.  
