@@ -2,6 +2,7 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Ciloci.Flee;
@@ -11,7 +12,6 @@ using org.iringtools.excel;
 using org.iringtools.library;
 using org.iringtools.utility;
 using Excel = Microsoft.Office.Interop.Excel;
-using System.Xml.Linq;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -62,7 +62,7 @@ namespace org.iringtools.adapter.datalayer
     private string _configurationPath = String.Empty;
     private ExcelConfiguration _configuration = null;
     private Dictionary<string, Type> _dynamicTypes = new Dictionary<string, Type>();
-
+   
     [Inject]
     public ExcelDataLayer(AdapterSettings settings)
     {
@@ -70,7 +70,7 @@ namespace org.iringtools.adapter.datalayer
       {
         _settings = settings;
 
-        _configurationPath = _settings["XmlPath"] + "excel-configuration." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml";
+        _configurationPath = _settings["XmlPath"] + "excel-configuration." + _settings["Scope"] + ".xml";
         _configuration = ProcessExcelConfig(_configurationPath);
 
       }
@@ -507,11 +507,6 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public Response Configure(XElement configuration)
-    {
-      throw new NotImplementedException();
-    }
-
     private Excel.Worksheet GetWorkSheet(string objectType, Excel.Workbook xlWorkBook, ExcelWorksheet cfWorksheet)
     {
       try
@@ -803,6 +798,27 @@ namespace org.iringtools.adapter.datalayer
 
     #endregion
 
+
+    public Response Configure(XElement configuration)
+    {
+      Response _response = new Response();
+      _response.Messages = new Messages();
+      try
+      {
+
+        _configuration = Utility.DeserializeDataContract<ExcelConfiguration>(configuration.Nodes().First().ToString());
+        Utility.Write<ExcelConfiguration>(_configuration, _configurationPath, true);
+        _response.Messages.Add("DataLayer configuration Saved successfully");
+        _response.Level = StatusLevel.Success;
+      }
+      catch (Exception ex)
+      {
+        _response.Messages.Add("Failed to Save datalayer Configuration");
+        _response.Messages.Add(ex.Message);
+        _response.Level = StatusLevel.Error;
+      }
+      return _response;
+    }
   }
 
 }
