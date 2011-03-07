@@ -39,7 +39,7 @@ namespace ConfigurationTool.ViewModel
             _proxyRepository = proxyRepository;
             _proxyParams = new ProxyParams();
             _proxyParams.AppName = "Proxy Configuration Tool";
-            _proxyParams.RegAppName = "Registry Configuration Tool";
+            _proxyParams.RegAppName = "Registry Configuration Tool";            
             Reset();
         }
 
@@ -96,7 +96,7 @@ namespace ConfigurationTool.ViewModel
         {
             get
             {
-                return _proxyParams.IsEnable;
+              return true;//_proxyParams.IsEnable;
             }
             set
             {
@@ -578,7 +578,7 @@ namespace ConfigurationTool.ViewModel
                     }
                     else
                     {
-                        this.IsEnable = false;
+                        this.IsEnable = false;                        
                         OnPropertyChanged("IsEnable");
 
                         this.RegUsername = "";
