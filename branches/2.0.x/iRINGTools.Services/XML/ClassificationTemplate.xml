@@ -8,15 +8,15 @@
     <roleMaps>
       <RoleMap>
         <type>Reference</type>
-        <roleId>tpl:R55055340393</roleId>
+        <roleId>tpl:R55055340390</roleId>
         <name>hasClass</name>
         <dataType>dm:ClassOfIndividual</dataType>
         <propertyName/>
-        <value>rdl:R99781532089</value>
+        <value>rdl:R99781532080</value>
       </RoleMap>
       <RoleMap>
         <type>Possessor</type>
-        <roleId>tpl:R99011248051</roleId>
+        <roleId>tpl:R99011248050</roleId>
         <name>hasIndividual</name>
         <dataType/>
         <propertyName/>
