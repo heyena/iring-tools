@@ -27,6 +27,7 @@ namespace iRINGTools.Web.Controllers
   {
 
     NameValueCollection _settings = null;
+
     string _adapterServiceURI = String.Empty;
     string _refDataServiceURI = String.Empty;
 
@@ -35,9 +36,8 @@ namespace iRINGTools.Web.Controllers
       _settings = ConfigurationManager.AppSettings;
       _adapterServiceURI = _settings["AdapterServiceUri"];
       _refDataServiceURI = _settings["ReferenceDataServiceUri"];
-
-      _settings["App_Data"] = "./App_Data/";
-
+      
+      _settings["App_Data"] = ".\\App_Data\\";
     } 
 
     //
@@ -54,6 +54,9 @@ namespace iRINGTools.Web.Controllers
     public JsonResult Configure(FormCollection form)
     {
       string adapterServiceURI = _adapterServiceURI;
+      string savedFileName = string.Empty;
+
+      string configurationUri = string.Format("/{0}/{1}/configure", form["Scope"], form["Application"] );
 
       if (Request.QueryString["remote"] != null)
         adapterServiceURI = Request.QueryString["remote"] + "/adapter";
@@ -63,30 +66,29 @@ namespace iRINGTools.Web.Controllers
         HttpPostedFileBase hpf = Request.Files[file] as HttpPostedFileBase;
         if (hpf.ContentLength == 0)
           continue;
-        string savedFileName = Path.Combine(
+           savedFileName = Path.Combine(
            AppDomain.CurrentDomain.BaseDirectory, 
            _settings["App_Data"],
            Path.GetFileName(hpf.FileName));
         hpf.SaveAs(savedFileName);
       }
-
-      ExcelConfiguration excel = new ExcelConfiguration();
-      excel.Location = form[""];
-
-      XElement dataLayerAssem = new XElement("dataLayerName");
-      dataLayerAssem.Value = form["dataLayer"];
-
-      XElement dataLayerConfig = new XElement("dataLayerConfiguration");
-      dataLayerConfig.Value = Utility.Serialize<ExcelConfiguration>(excel, true);
-
-      XElement configuration = new XElement("root");
-      configuration.Add(dataLayerAssem);
-      configuration.Add(dataLayerConfig);
-
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      client.Post<XElement>("/configure", configuration, true);
-
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      if (!string.IsNullOrEmpty(savedFileName))
+      {
+        ExcelConfiguration excel = new ExcelConfiguration();
+        excel.Location = savedFileName;
+        DataLayerConfig configuration = new DataLayerConfig();
+        configuration.DataLayerName = "org.iringtools.adapter.datalayer.ExcelDataLayer, ExcelLibrary";
+        configuration.DataLayerConfiguration = XElement.Parse(Utility.Serialize<ExcelConfiguration>(excel, System.Text.Encoding.UTF8, true));
+        
+        WebHttpClient client = new WebHttpClient(adapterServiceURI);
+        client.Post<DataLayerConfig>(configurationUri, configuration, true);
+        
+        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      }
+      else
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
     }
 
   }

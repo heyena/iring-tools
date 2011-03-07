@@ -806,7 +806,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
 
-        _configuration = Utility.DeserializeDataContract<ExcelConfiguration>(configuration.Nodes().First().ToString());
+        _configuration = Utility.DeserializeDataContract<ExcelConfiguration>(configuration.ToString());
         Utility.Write<ExcelConfiguration>(_configuration, _configurationPath, true);
         _response.Messages.Add("DataLayer configuration Saved successfully");
         _response.Level = StatusLevel.Success;
