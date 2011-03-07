@@ -201,72 +201,39 @@ namespace org.iringtools.adapter.projection
 
               if (!classInstanceExists)
               {
-                // _primaryClassificationStyle == ClassificationStyle.Type || _primaryClassificationStyle == ClassificationStyle.Both          
+                // add individual          
                 XElement classElement = new XElement(OWL_THING, new XAttribute(RDF_ABOUT, classInstance));
                 classElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId)));
                 _rdfXml.Add(classElement);
 
-                AddRdfClassificationElement(classId, classPrefix, classIdentifier);
+                // add primary classification template
+                if (_primaryClassificationStyle == ClassificationStyle.Both)
+                {
+                  TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
+                  AddTemplateElements(classPrefix, classIdentifier, classIdentifierIndex, classificationTemplate,
+                        dataObjectIndex, hasRelatedProperty);
+                }
 
                 foreach (TemplateMap templateMap in templateMaps)
                 {
-                  if (_classificationConfig.TemplateIds.Contains(templateMap.templateId))
-                  {
-                    if (_secondaryClassificationStyle == ClassificationStyle.Type ||
-                        _secondaryClassificationStyle == ClassificationStyle.Both)
+                  if ((_secondaryClassificationStyle == ClassificationStyle.Type ||
+                       _secondaryClassificationStyle == ClassificationStyle.Both) && 
+                      _classificationConfig.TemplateIds.Contains(templateMap.templateId))
+                  {                   
+                    foreach (RoleMap roleMap in templateMap.roleMaps)
                     {
-                      foreach (RoleMap roleMap in templateMap.roleMaps)
+                      if (roleMap.type == RoleType.Reference)
                       {
-                        if (roleMap.type == RoleType.Reference)
-                        {
-                          string value = GetReferenceRoleValue(roleMap);
-                          classElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, value)));
-                          break;
-                        }
+                        string value = GetReferenceRoleValue(roleMap);
+                        classElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, value)));
                       }
                     }
 
-                    if (_secondaryClassificationStyle == ClassificationStyle.Template ||
-                        _secondaryClassificationStyle == ClassificationStyle.Both)
-                    {
-                      string templateId = templateMap.templateId.Replace(TPL_PREFIX, TPL_NS.NamespaceName);
-
-                      XElement templateElement = new XElement(OWL_THING);
-                      templateElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
-
-                      StringBuilder values = new StringBuilder(templateMap.templateId);
-
-                      foreach (RoleMap roleMap in templateMap.roleMaps)
-                      {
-                        string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
-                        XElement roleElement = new XElement(TPL_NS + roleId);
-
-                        values.Append(roleMap.value);
-
-                        if (roleMap.type == RoleType.Possessor)
-                        {
-                          roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
-                        }
-                        else if (roleMap.type == RoleType.Reference)
-                        {
-                          string value = GetReferenceRoleValue(roleMap);
-                          roleElement.Add(new XAttribute(RDF_RESOURCE, value));
-                        }
-
-                        templateElement.Add(roleElement);
-                      }
-
-                      string hashCode = Utility.MD5Hash(values.ToString());
-                      templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
-
-                      _rdfXml.Add(templateElement);
-                    }
+                    continue;
                   }
-                  else
-                  {
-                    AddRdfTemplateElements(classPrefix, classIdentifier, classIdentifierIndex, templateMap,
+
+                  AddTemplateElements(classPrefix, classIdentifier, classIdentifierIndex, templateMap,
                       dataObjectIndex, hasRelatedProperty);
-                  }
                 }
               }
             }
@@ -277,44 +244,7 @@ namespace org.iringtools.adapter.projection
       return _rdfXml;
     }
 
-    private void AddRdfClassificationElement(string classId, string classPrefix, string classIdentifier)
-    {
-      string classInstance = classPrefix + classIdentifier;
-
-      if (_primaryClassificationStyle == ClassificationStyle.Both)
-      {
-        TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
-        XElement templateElement = new XElement(OWL_THING);
-        _rdfXml.Add(templateElement);
-
-        templateElement.Add(new XElement(RDF_TYPE,
-          new XAttribute(RDF_RESOURCE, TPL_NS.NamespaceName + classificationTemplate.templateId)));
-
-        StringBuilder values = new StringBuilder(classificationTemplate.templateId);
-        foreach (RoleMap roleMap in classificationTemplate.roleMaps)
-        {
-          string roleId = roleMap.roleId.Substring(roleMap.roleId.IndexOf(":") + 1);
-          XElement roleElement = new XElement(TPL_NS + roleId);
-          templateElement.Add(roleElement);
-
-          if (roleMap.type == RoleType.Possessor)
-          {
-            roleElement.Add(new XAttribute(RDF_RESOURCE, classInstance));
-            values.Append(classIdentifier);
-          }
-          else if (roleMap.type == RoleType.Reference)
-          {
-            roleElement.Add(new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId));
-            values.Append(classId);
-          }
-        }
-
-        string hashCode = Utility.MD5Hash(values.ToString());
-        templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
-      }
-    }
-
-    private void AddRdfTemplateElements(string classPrefix, string classIdentifier, int classIdentifierIndex,
+    private void AddTemplateElements(string classPrefix, string classIdentifier, int classIdentifierIndex,
       TemplateMap templateMap, int dataObjectIndex, bool classIdentifierHasRelatedProperty)
     {
       string classInstance = classPrefix + classIdentifier;
@@ -370,56 +300,7 @@ namespace org.iringtools.adapter.projection
         }
       }
 
-      if (classRole != null)  // reference template
-      {
-        bool refClassHasRelatedProperty;
-        List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, out refClassHasRelatedProperty);
-
-        if (refClassHasRelatedProperty)
-        {
-          string refClassBaseValues = baseValues.ToString();
-          string roleId = classRole.roleId.Substring(classRole.roleId.IndexOf(":") + 1);
-          string baseRelatedClassUri = _graphBaseUri + Utility.TitleCase(classRole.classMap.name) + "/";
-
-          foreach (string refClassIdentifier in refClassIdentifiers)
-          {
-            if (!String.IsNullOrEmpty(refClassIdentifier))
-            {
-              XElement refBaseTemplateElement = new XElement(baseTemplateElement);
-
-              string hashCode = Utility.MD5Hash(refClassBaseValues + refClassIdentifier);
-              refBaseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
-
-              XElement roleElement = new XElement(TPL_NS + roleId);
-              roleElement.Add(new XAttribute(RDF_RESOURCE, baseRelatedClassUri + refClassIdentifier));
-              refBaseTemplateElement.Add(roleElement);
-
-              _rdfXml.Add(refBaseTemplateElement);
-            }
-          }
-        }
-        else
-        {
-          string refClassIdentifier = refClassIdentifiers.First();
-
-          if (!String.IsNullOrEmpty(refClassIdentifier))
-          {
-            baseValues.Append(refClassIdentifier);
-
-            string hashCode = Utility.MD5Hash(baseValues.ToString());
-            baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
-
-            string roleId = classRole.roleId.Substring(classRole.roleId.IndexOf(":") + 1);
-            XElement roleElement = new XElement(TPL_NS + roleId);
-            roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri +
-              Utility.TitleCase(classRole.classMap.name) + "/" + refClassIdentifier));
-            baseTemplateElement.Add(roleElement);
-
-            _rdfXml.Add(baseTemplateElement);
-          }
-        }
-      }
-      else  // property template
+      if (propertyRoles.Count > 0)  // property template
       {
         List<List<XElement>> matrixPropertyElements = new List<List<XElement>>();
 
@@ -497,6 +378,62 @@ namespace org.iringtools.adapter.projection
           }
         }
       }
+      else if (classRole != null)  // reference template with known class role
+      {
+        bool refClassHasRelatedProperty;
+        List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, 
+          out refClassHasRelatedProperty);
+
+        if (refClassHasRelatedProperty)
+        {
+          string refClassBaseValues = baseValues.ToString();
+          string roleId = classRole.roleId.Substring(classRole.roleId.IndexOf(":") + 1);
+          string baseRelatedClassUri = _graphBaseUri + Utility.TitleCase(classRole.classMap.name) + "/";
+
+          foreach (string refClassIdentifier in refClassIdentifiers)
+          {
+            if (!String.IsNullOrEmpty(refClassIdentifier))
+            {
+              XElement refBaseTemplateElement = new XElement(baseTemplateElement);
+
+              string hashCode = Utility.MD5Hash(refClassBaseValues + refClassIdentifier);
+              refBaseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
+
+              XElement roleElement = new XElement(TPL_NS + roleId);
+              roleElement.Add(new XAttribute(RDF_RESOURCE, baseRelatedClassUri + refClassIdentifier));
+              refBaseTemplateElement.Add(roleElement);
+
+              _rdfXml.Add(refBaseTemplateElement);
+            }
+          }
+        }
+        else
+        {
+          string refClassIdentifier = refClassIdentifiers.First();
+
+          if (!String.IsNullOrEmpty(refClassIdentifier))
+          {
+            baseValues.Append(refClassIdentifier);
+
+            string hashCode = Utility.MD5Hash(baseValues.ToString());
+            baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
+
+            string roleId = classRole.roleId.Substring(classRole.roleId.IndexOf(":") + 1);
+            XElement roleElement = new XElement(TPL_NS + roleId);
+            roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri +
+              Utility.TitleCase(classRole.classMap.name) + "/" + refClassIdentifier));
+            baseTemplateElement.Add(roleElement);
+
+            _rdfXml.Add(baseTemplateElement);
+          }
+        }
+      }
+      else  // reference template with no class role (primary classification template)
+      {
+        string hashCode = Utility.MD5Hash(baseValues.ToString());
+        baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
+        _rdfXml.Add(baseTemplateElement);
+      }
     }
 
     private XElement CreatePropertyElement(RoleMap propertyRole, string propertyValue)
@@ -511,7 +448,8 @@ namespace org.iringtools.adapter.projection
         }
         else
         {
-          propertyElement.Add(new XAttribute(RDF_DATATYPE, propertyRole.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName)));
+          propertyElement.Add(new XAttribute(RDF_DATATYPE, 
+            propertyRole.dataType.Replace(XSD_PREFIX, XSD_NS.NamespaceName)));
 
           if (propertyRole.dataType.Contains("dateTime"))
             propertyValue = Utility.ToXsdDateTime(propertyValue);
@@ -673,8 +611,9 @@ namespace org.iringtools.adapter.projection
         {
           if (classRole != null)
           {
-            string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId, classInstances[classInstanceIndex],
-                templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, classRole.roleId);
+            string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId, 
+              classInstances[classInstanceIndex], templateMap.templateId, referenceVariable, referenceRoleId, 
+              referenceRoleValue, referenceEndStmt, classRole.roleId);
 
             object results = _memoryStore.ExecuteQuery(query);
 
@@ -701,7 +640,8 @@ namespace org.iringtools.adapter.projection
               string property = propertyPath[propertyPath.Length - 1].Trim();
 
               string query = String.Format(LITERAL_QUERY_TEMPLATE, possessorRoleId, classInstances[classInstanceIndex], 
-                templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, propertyRole.roleId);
+                templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, 
+                propertyRole.roleId);
 
               object results = _memoryStore.ExecuteQuery(query);
 
