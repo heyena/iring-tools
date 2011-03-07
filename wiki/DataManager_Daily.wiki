@@ -21,7 +21,7 @@ Mohamed
   * finally looked at idgenerator code
   * prerequisites to port the reference data service
     * utility classes e.g. QMXF (should be implemented)
-    * Ninject equivalant
+    * Ninject equivalent
     * use federation manager to access other services  
      
 *Discussion*
