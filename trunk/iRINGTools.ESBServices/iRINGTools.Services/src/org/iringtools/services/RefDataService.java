@@ -308,6 +308,27 @@ public class RefDataService extends AbstractService
 	    return repositoryList;
    }
 
+  
+  /*@GET
+  @Path("/createid/{uri}/{comment}")
+  public void createid(@PathParam("uri") String uri,@PathParam("comment") String comment)
+  {
+	  String repositoryList=null;
+
+	  try
+	    {
+	      initService();
+		  RefDataProvider refDataProvider = new RefDataProvider(settings);
+		  repositoryList = refDataProvider.createid(uri, comment);	      
+	    }
+	    catch (Exception ex)
+	    {
+	      logger.error("Error getting getRepositories information: " + ex);
+	    }
+	    System.out.println(repositoryList);
+   }*/
+  
+  
   public List<Entity> getSuperClasses(String id)
   {
 	  return null;

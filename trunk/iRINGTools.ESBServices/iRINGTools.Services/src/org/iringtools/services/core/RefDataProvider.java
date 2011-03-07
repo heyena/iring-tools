@@ -451,9 +451,19 @@ public class RefDataProvider
   private Response queryIdGenerator(String serviceUrl) throws HttpClientException
   {
 	  	  Response result=null;
-    	  String uri = ActionContext.getContext().getApplication().get("IDGenServiceUri").toString();
-    	  HttpClient httpClient = new HttpClient(uri);
-    	  result = httpClient.get(Response.class, serviceUrl);
+	  	  HttpClient httpClient = null;
+	  	 try
+	     {
+	       //String uri = ActionContext.getContext().getApplication().get("IDGenServiceUri").toString();
+	  		String uri = "http://localhost:8080/services/idgen";
+	       httpClient = new HttpClient(uri);
+	     }
+	     catch (Exception e)
+	     {
+	       System.out.println("Exception in IDGenServiceUri :" + e);
+	     }
+	     
+	      result = httpClient.get(Response.class, serviceUrl);
     	  return result;
   }
 
@@ -474,9 +484,14 @@ public class RefDataProvider
     }
     catch (Exception e)
     {
-        //logger.Error("Error in createIdsAdiId: " + e);
+       //logger.Error("Error in createIdsAdiId: " + e);
+    	System.out.println("Error in createIdsAdiId: "+e);
     	
     }
     return idsAdiId;
   }
+  
+/*  public String createid(String uri, String comment){
+	  return createIdsAdiId(uri, comment);
+  }*/
   }
