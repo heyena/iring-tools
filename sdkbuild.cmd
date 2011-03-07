@@ -1,6 +1,6 @@
 @echo off
-call "%VS100COMNTOOLS%\vsvars32.bat"
 cd %~dp0%
-svn update
-msbuild build.xml /t:SDKBuild /fileLogger /flp:errorsonly;logfile=msbuild.error.log /fileLogger /flp1:warningsonly;logfile=msbuild.warning.log
+@set "PATH=%SYSTEMROOT%\Microsoft.NET\Framework\v4.0.30319;%PATH%"
+svn update build-express.xml
+msbuild build-express.xml /t:SDKBuild /fileLogger /flp:errorsonly;logfile=msbuild.error.log /fileLogger /flp1:warningsonly;logfile=msbuild.warning.log
 pause
