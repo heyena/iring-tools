@@ -120,10 +120,10 @@ namespace org.iringtools.services
     /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
     /// <returns>Returns an arbitrary XML</returns>
     [Description("Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
-    public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{className}/{identifier}?format={format}")]
+    public XElement Get(string projectName, string applicationName, string graphName, string className, string identifier, string format)
     {
-      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, identifier, format, false);
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, className, identifier, format, false);
 
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";

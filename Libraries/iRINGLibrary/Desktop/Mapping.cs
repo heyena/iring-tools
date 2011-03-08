@@ -32,6 +32,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Runtime.Serialization;
 using org.iringtools.library.manifest;
+using org.iringtools.utility;
 
 namespace org.iringtools.library
 {
@@ -136,6 +137,17 @@ namespace org.iringtools.library
       foreach (var pair in classTemplateListMaps)
       {
         if (pair.Key.classId == classId)
+          return pair;
+      }
+
+      return default(KeyValuePair<ClassMap, List<TemplateMap>>);
+    }
+
+    public KeyValuePair<ClassMap, List<TemplateMap>> GetClassTemplateListMapByName(string className)
+    {
+      foreach (var pair in classTemplateListMaps)
+      {
+        if (Utility.TitleCase(pair.Key.name) == className)
           return pair;
       }
 
