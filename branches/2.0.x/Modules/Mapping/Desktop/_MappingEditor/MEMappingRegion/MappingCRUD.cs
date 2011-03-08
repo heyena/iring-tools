@@ -683,8 +683,7 @@ namespace org.iringtools.modules.memappingregion
                         {
                             roleMap.propertyName = string.Format("{0}.{1}.{2}",
                               parentObject.ParentObjectName,
-                             // parentObject.RelationshipName,
-                                            model.SelectedDataObject.DataObject.objectName,
+                              model.SelectedDataObject.DataObject.objectName,
                               model.SelectedDataObject.DataProperty.propertyName);
                         }
                         else

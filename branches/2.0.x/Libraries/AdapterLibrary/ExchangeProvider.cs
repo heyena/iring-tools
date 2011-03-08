@@ -37,7 +37,6 @@ namespace org.iringtools.exchange
         private IDataLayer _dataLayer = null;
         private IProjectionLayer _projectionEngine = null;
         private Mapping _mapping = null;
-        private GraphMap _graphMap = null;
 
         private IList<IDataObject> _dataObjects = new List<IDataObject>();
         private Dictionary<string, List<string>> _classIdentifiers = new Dictionary<string, List<string>>();
@@ -480,63 +479,6 @@ namespace org.iringtools.exchange
                 throw new Exception(string.Format("Error initializing application: {0})", ex));
             }
         }
-
-        private void PopulateClassIdentifiers(List<string> identifiers)
-        {
-            _classIdentifiers.Clear();
-
-            foreach (ClassMap classMap in _graphMap.classTemplateListMaps.Keys)
-            {
-                List<string> classIdentifiers = new List<string>();
-
-                foreach (string identifier in classMap.identifiers)
-                {
-                    // identifier is a fixed value
-                    if (identifier.StartsWith("#") && identifier.EndsWith("#"))
-                    {
-                        string value = identifier.Substring(1, identifier.Length - 2);
-
-                        for (int i = 0; i < _dataObjects.Count; i++)
-                        {
-                            if (classIdentifiers.Count == i)
-                            {
-                                classIdentifiers.Add(value);
-                            }
-                            else
-                            {
-                                classIdentifiers[i] += classMap.identifierDelimiter + value;
-                            }
-                        }
-                    }
-                    else  // identifier comes from a property
-                    {
-                        string[] property = identifier.Split('.');
-                        string objectName = property[0].Trim();
-                        string propertyName = property[1].Trim();
-
-                        if (_dataObjects != null)
-                        {
-                            for (int i = 0; i < _dataObjects.Count; i++)
-                            {
-                                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
-
-                                if (classIdentifiers.Count == i)
-                                {
-                                    classIdentifiers.Add(value);
-                                }
-                                else
-                                {
-                                    classIdentifiers[i] += classMap.identifierDelimiter + value;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                _classIdentifiers[classMap.classId] = classIdentifiers;
-            }
-        }
-
         #endregion
     }
 }
