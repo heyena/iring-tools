@@ -26,8 +26,10 @@ namespace org.iringtools.adapter.projection
 
     private ClassificationStyle _primaryClassificationStyle;
     private ClassificationStyle _secondaryClassificationStyle;
-    private ClassificationTemplate _classificationConfig = null;
-    private XElement _rdfXml = null;
+    private ClassificationTemplate _classificationConfig;
+
+    private Dictionary<string, List<string>> _classInstancesCache;
+    private XElement _rdfXml;
 
     [Inject]
     public RdfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
@@ -48,11 +50,13 @@ namespace org.iringtools.adapter.projection
       {
         _classificationConfig = Utility.Read<ClassificationTemplate>(_settings["ClassificationTemplateFile"]);
       }
+
+      _classInstancesCache = new Dictionary<string, List<string>>();
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
-      XDocument rdfXml = null;
+      XDocument rdfDoc = null;
 
       _rdfXml = new XElement(RDF_NS + "RDF",
         new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS),
@@ -62,22 +66,23 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _graphBaseUri = String.Format("{0}{1}/{2}/",
-        _settings["GraphBaseUri"],
-        HttpUtility.UrlEncode(_settings["ProjectName"]),
-        HttpUtility.UrlEncode(_settings["ApplicationName"]));
-
         _graphMap = _mapping.FindGraphMap(graphName);
-        _dataObjects = dataObjects;
 
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 &&
-          _dataObjects != null && _dataObjects.Count > 0)
+          dataObjects != null && dataObjects.Count > 0)
         {
-          rdfXml = new XDocument(BuildRdfXml());
+          _graphBaseUri = String.Format("{0}{1}/{2}/{3}/",
+            _settings["GraphBaseUri"],
+            HttpUtility.UrlEncode(_settings["ProjectName"]),
+            HttpUtility.UrlEncode(_settings["ApplicationName"]),
+            HttpUtility.UrlEncode(_graphMap.name));
+
+          _dataObjects = dataObjects;
+          rdfDoc = new XDocument(BuildRdfXml());
         }
         else
         {
-          rdfXml = new XDocument(_rdfXml);
+          rdfDoc = new XDocument(_rdfXml);
         }
       }
       catch (Exception ex)
@@ -86,7 +91,47 @@ namespace org.iringtools.adapter.projection
         throw ex;
       }
 
-      return rdfXml;
+      return rdfDoc;
+    }
+
+    public override XDocument ToXml(string graphName, string className, ref IDataObject dataObject)
+    {
+      XDocument rdfDoc = null;
+
+      _rdfXml = new XElement(RDF_NS + "RDF",
+        new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS),
+        new XAttribute(XNamespace.Xmlns + "owl", OWL_NS),
+        new XAttribute(XNamespace.Xmlns + "xsd", XSD_NS),
+        new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
+
+      try
+      {
+        _graphMap = _mapping.FindGraphMap(graphName);
+
+       if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 && dataObject != null)
+        {
+          _dataObjects = new List<IDataObject> {dataObject};
+
+          _graphBaseUri = String.Format("{0}{1}/{2}/{3}/",
+            _settings["GraphBaseUri"],
+            HttpUtility.UrlEncode(_settings["ProjectName"]),
+            HttpUtility.UrlEncode(_settings["ApplicationName"]),
+            HttpUtility.UrlEncode(_graphMap.name));
+
+          rdfDoc = new XDocument(BuildRdfXml(className));
+        }
+        else
+        {
+          rdfDoc = new XDocument(_rdfXml);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in ToXml: " + ex);
+        throw ex;
+      }
+
+      return rdfDoc;
     }
 
     public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument)
@@ -173,8 +218,7 @@ namespace org.iringtools.adapter.projection
     #region outbound helper methods
     private XElement BuildRdfXml()
     {
-      Dictionary<string, List<string>> classInstancesCache = new Dictionary<string, List<string>>();
-      bool rootClass = true;
+      bool isRootClass = true;
 
       foreach (var pair in _graphMap.classTemplateListMaps)
       {
@@ -183,76 +227,91 @@ namespace org.iringtools.adapter.projection
 
         for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
         {
-          string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
-          bool hasRelatedProperty;
-          List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
-
-          for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
-          {
-            string classIdentifier = classIdentifiers[classIdentifierIndex];
-
-            if (!String.IsNullOrEmpty(classIdentifier))
-            {
-              string classPrefix = _graphBaseUri + Utility.TitleCase(classMap.name) + "/";
-              string classInstance = classPrefix + classIdentifier;
-              bool classInstanceCreated = true;
-
-              if (!classInstancesCache.ContainsKey(classId))
-              {
-                classInstancesCache[classId] = new List<string> { classInstance };
-                classInstanceCreated = false;
-              }
-              else if (!classInstancesCache[classId].Contains(classInstance))
-              {
-                classInstancesCache[classId].Add(classInstance);
-                classInstanceCreated = false;
-              }
-
-              if (rootClass && !classInstanceCreated)
-              {
-                // add individual          
-                XElement classElement = new XElement(OWL_THING, new XAttribute(RDF_ABOUT, classInstance));
-                classElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId)));
-                _rdfXml.Add(classElement);
-
-                // add primary classification template
-                if (_primaryClassificationStyle == ClassificationStyle.Both)
-                {
-                  TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
-                  AddTemplateElements(classPrefix, classIdentifier, classIdentifierIndex, classificationTemplate,
-                        dataObjectIndex, hasRelatedProperty);
-                }
-
-                foreach (TemplateMap templateMap in templateMaps)
-                {
-                  if ((_secondaryClassificationStyle == ClassificationStyle.Type ||
-                       _secondaryClassificationStyle == ClassificationStyle.Both) && 
-                      _classificationConfig.TemplateIds.Contains(templateMap.templateId))
-                  {                   
-                    foreach (RoleMap roleMap in templateMap.roleMaps)
-                    {
-                      if (roleMap.type == RoleType.Reference)
-                      {
-                        string value = GetReferenceRoleValue(roleMap);
-                        classElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, value)));
-                      }
-                    }
-
-                    continue;
-                  }
-
-                  AddTemplateElements(classPrefix, classIdentifier, classIdentifierIndex, templateMap,
-                      dataObjectIndex, hasRelatedProperty);
-                }
-              }
-            }
-          }
+          CreateClassInstance(dataObjectIndex, isRootClass, classMap, templateMaps);
         }
 
-        rootClass = false;
+        isRootClass = false;
       }
 
       return _rdfXml;
+    }
+
+    private XElement BuildRdfXml(string className)
+    {
+      KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMapByName(className);
+      ClassMap classMap = pair.Key;
+      List<TemplateMap> templateMaps = pair.Value;
+
+      bool isRootClass = (_graphMap.classTemplateListMaps.First().Key.classId == classMap.classId);
+      CreateClassInstance(0, isRootClass, classMap, templateMaps);
+
+      return _rdfXml;
+    }
+
+    private void CreateClassInstance(int dataObjectIndex, bool isRootClass, ClassMap classMap, List<TemplateMap> templateMaps)
+    {
+      string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
+      bool hasRelatedProperty;
+      List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
+
+      for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
+      {
+        string classIdentifier = classIdentifiers[classIdentifierIndex];
+
+        if (!String.IsNullOrEmpty(classIdentifier))
+        {
+          string classPrefix = _graphBaseUri + Utility.TitleCase(classMap.name) + "/";
+          string classInstance = classPrefix + classIdentifier;
+          bool classInstanceCreated = true;
+
+          if (!_classInstancesCache.ContainsKey(classId))
+          {
+            _classInstancesCache[classId] = new List<string> { classInstance };
+            classInstanceCreated = false;
+          }
+          else if (!_classInstancesCache[classId].Contains(classInstance))
+          {
+            _classInstancesCache[classId].Add(classInstance);
+            classInstanceCreated = false;
+          }
+
+          if (!classInstanceCreated)
+          {
+            // add individual          
+            XElement classElement = new XElement(OWL_THING, new XAttribute(RDF_ABOUT, classInstance));
+            classElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId)));
+            _rdfXml.Add(classElement);
+
+            // add primary classification template
+            if (isRootClass && _primaryClassificationStyle == ClassificationStyle.Both)
+            {
+              TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
+              AddTemplateElements(classPrefix, classIdentifier, classIdentifierIndex, classificationTemplate, dataObjectIndex, hasRelatedProperty);
+            }
+
+            foreach (TemplateMap templateMap in templateMaps)
+            {
+              if ((_secondaryClassificationStyle == ClassificationStyle.Type ||
+                   _secondaryClassificationStyle == ClassificationStyle.Both) &&
+                  _classificationConfig.TemplateIds.Contains(templateMap.templateId))
+              {
+                foreach (RoleMap roleMap in templateMap.roleMaps)
+                {
+                  if (roleMap.type == RoleType.Reference)
+                  {
+                    string value = GetReferenceRoleValue(roleMap);
+                    classElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, value)));
+                  }
+                }
+
+                continue;
+              }
+
+              AddTemplateElements(classPrefix, classIdentifier, classIdentifierIndex, templateMap, dataObjectIndex, hasRelatedProperty);
+            }
+          }
+        }
+      }
     }
 
     private void AddTemplateElements(string classPrefix, string classIdentifier, int classIdentifierIndex,

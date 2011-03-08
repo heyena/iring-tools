@@ -79,6 +79,11 @@ namespace org.iringtools.adapter.projection
       return new XDocument(xElement);
     }
 
+    public override XDocument ToXml(string graphName, string className, ref IDataObject dataObject)
+    {
+      throw new NotImplementedException();
+    }
+
     public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
     {
       throw new NotImplementedException();

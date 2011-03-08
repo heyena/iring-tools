@@ -477,8 +477,8 @@ namespace org.iringtools.adapter
     }
 
     public XDocument GetDataProjection(
-		string projectName, string applicationName, string graphName, 
-		DataFilter filter, string format, int start, int limit, bool fullIndex)
+		  string projectName, string applicationName, string graphName, 
+		  DataFilter filter, string format, int start, int limit, bool fullIndex)
     {
       try
       {
@@ -499,8 +499,7 @@ namespace org.iringtools.adapter
 
         _graphMap = _mapping.FindGraphMap(graphName);
         DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
-
-
+        
         if (_graphMap != null)
         {
           graphName = _graphMap.name;
@@ -520,9 +519,7 @@ namespace org.iringtools.adapter
           limit = 100;
 
         _dataObjects = _dataLayer.Get(dataObjectName, filter, limit, start);
-
         _projectionEngine.Count = _dataLayer.GetCount(dataObjectName, filter);
-
         _projectionEngine.FullIndex = fullIndex;
         
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
@@ -535,7 +532,7 @@ namespace org.iringtools.adapter
     }
 
     public XDocument GetDataProjection(
-      string projectName, string applicationName, string graphName, 
+      string projectName, string applicationName, string graphName, string className,
       string identifier, string format, bool fullIndex)
     {
       try
@@ -574,10 +571,17 @@ namespace org.iringtools.adapter
         }
 
         _dataObjects = _dataLayer.Get(dataObjectName, identifiers);
-
         _projectionEngine.FullIndex = fullIndex;
 
-        return _projectionEngine.ToXml(graphName, ref _dataObjects);
+        if (_dataObjects != null && _dataObjects.Count > 0)
+        {
+          IDataObject dataObj = _dataObjects.First<IDataObject>();
+          return _projectionEngine.ToXml(graphName, className, ref dataObj);
+        }
+        else
+        {
+          throw new Exception("Data object with identifier [" + identifier + "] not found.");
+        }
       }
       catch (Exception ex)
       {
@@ -611,7 +615,6 @@ namespace org.iringtools.adapter
         _graphMap = _mapping.FindGraphMap(graphName);
         DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
           
-
         if (_graphMap != null)
         {
           graphName = _graphMap.name;
@@ -689,7 +692,6 @@ namespace org.iringtools.adapter
         else
         {
           _dataObjects = _dataLayer.Get(dataObjectName, null, limit, start);
-
           _projectionEngine.Count = _dataLayer.GetCount(dataObjectName, null);
         }
 
