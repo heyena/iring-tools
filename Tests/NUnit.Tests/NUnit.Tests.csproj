@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="AdapterTest.cs" />
     <Compile Include="App_Code\Model.12345_000.ABC.cs" />
+    <Compile Include="App_Code\Model.12345_000.DEF.cs" />
     <Compile Include="FacadeTest.cs" />
     <Compile Include="ReferenceDataTests.cs" />
     <Compile Include="XmlTest.cs" />
@@ -111,13 +112,19 @@
     <Content Include="SPARQL\TemplateGetProperties.txt" />
     <Content Include="SPARQL\TemplateTypes.txt" />
     <Content Include="XML\BindingConfiguration.12345_000.ABC.xml" />
+    <Content Include="XML\BindingConfiguration.12345_000.DEF.xml" />
     <Content Include="XML\BindingConfiguration.Adapter.xml" />
     <Content Include="XML\ClassificationTemplate.xml" />
     <Content Include="XML\DatabaseDictionary.12345_000.ABC.xml" />
+    <Content Include="XML\DatabaseDictionary.12345_000.DEF.xml" />
     <Content Include="XML\DataDictionary.12345_000.ABC.xml" />
+    <Content Include="XML\DataDictionary.12345_000.DEF.xml" />
     <Content Include="XML\Mapping.12345_000.ABC.xml" />
+    <Content Include="XML\Mapping.12345_000.DEF.xml" />
     <Content Include="XML\nh-configuration.12345_000.ABC.xml" />
+    <Content Include="XML\nh-configuration.12345_000.DEF.xml" />
     <Content Include="XML\nh-mapping.12345_000.ABC.xml" />
+    <Content Include="XML\nh-mapping.12345_000.DEF.xml" />
     <Content Include="XML\Queries.xml" />
     <Content Include="XML\Repositories.xml" />
     <Content Include="XML\Scopes.xml" />
