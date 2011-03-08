@@ -36,6 +36,18 @@ namespace org.iringtools.adapter.projection
       _dataLayer = dataLayer;
       _mapping = mapping;
       _dictionary = _dataLayer.GetDictionary();
+
+      // get classification settings
+      _primaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
+        _settings["PrimaryClassificationStyle"].ToString());
+
+      _secondaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
+        _settings["SecondaryClassificationStyle"].ToString());
+
+      if (File.Exists(_settings["ClassificationTemplateFile"]))
+      {
+        _classificationConfig = Utility.Read<ClassificationTemplate>(_settings["ClassificationTemplateFile"]);
+      }
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
@@ -121,10 +133,18 @@ namespace org.iringtools.adapter.projection
 
                 for (int i = 0; i < rootClassInstances.Count; i++)
                 {
+                  List<string> rootClassInstance = new List<string> {rootClassInstances[i]};
+
                   _dataRecords[i] = new Dictionary<string, string>();
                   _relatedRecordsMaps[i] = new Dictionary<string, List<Dictionary<string, string>>>();
 
-                  ProcessClass(i, rootClassMap, new List<string> {rootClassInstances[i]});
+                  ProcessClass(i, rootClassMap, rootClassInstance);
+
+                  if (_primaryClassificationStyle == ClassificationStyle.Both)
+                  {
+                    TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
+                    ProcessTemplates(i, rootClassInstance, new List<TemplateMap> { classificationTemplate });
+                  }
 
                   IDataObject dataObject = CreateDataObject(_graphMap.dataObjectMap, i);
                   _dataObjects.Add(dataObject);
@@ -154,18 +174,6 @@ namespace org.iringtools.adapter.projection
     private XElement BuildRdfXml()
     {
       Dictionary<string, List<string>> classInstancesCache = new Dictionary<string, List<string>>();
-
-      // get classification settings
-      _primaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
-        _settings["PrimaryClassificationStyle"].ToString());
-
-      _secondaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
-        _settings["SecondaryClassificationStyle"].ToString());
-
-      if (File.Exists(_settings["ClassificationTemplateFile"]))
-      {
-        _classificationConfig = Utility.Read<ClassificationTemplate>(_settings["ClassificationTemplateFile"]);
-      }
 
       foreach (var pair in _graphMap.classTemplateListMaps)
       {
@@ -637,7 +645,7 @@ namespace org.iringtools.adapter.projection
             {
               List<string> values = new List<string>();
               string[] propertyPath = propertyRole.propertyName.Split('.');
-              string property = propertyPath[propertyPath.Length - 1].Trim();
+              string property = propertyPath[propertyPath.Length - 1];
 
               string query = String.Format(LITERAL_QUERY_TEMPLATE, possessorRoleId, classInstances[classInstanceIndex], 
                 templateMap.templateId, referenceVariable, referenceRoleId, referenceRoleValue, referenceEndStmt, 
