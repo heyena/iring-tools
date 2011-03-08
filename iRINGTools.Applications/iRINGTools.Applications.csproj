@@ -169,7 +169,7 @@
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>23456</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <!--<IISUrl>http://localhost:23456/</IISUrl>-->
+          <IISUrl>http://localhost:23456/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
