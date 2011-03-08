@@ -34,7 +34,8 @@ namespace org.iringtools.adapter
       }
       else
       {
-        this.Add("GraphBaseUri", @"http://www.example.com/");
+          this.Add("GraphBaseUri", @"http://localhost:65432/AdapterService");
+        //this.Add("GraphBaseUri", @"http://www.example.com/");
       }
     }
 
