@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="dist" name="iringtools">
-  <property name="ExchangeManager.location" value="./ExchangeManager" />
   <property name="iRINGTools.Apps.location" value="./iRINGTools.Apps" />
   <property name="iRINGTools.Mediators.location" value="./iRINGTools.Mediators" />
   <property name="iRINGTools.Services.location" value="./iRINGTools.Services" />
@@ -27,19 +26,16 @@
   </target>
   
   <target name="build" depends="init">
-    <!--<ant antfile="build.xml" dir="${ExchangeManager.location}" target="build" />-->
     <ant antfile="build.xml" dir="${iRINGTools.Apps.location}" target="build" />
     <ant antfile="build.xml" dir="${iRINGTools.Mediators.location}" target="build" />
     <ant antfile="build.xml" dir="${iRINGTools.Services.location}" target="build" />
   </target>
   
   <target name="dist" depends="clean">
-    <ant antfile="build.xml" dir="${ExchangeManager.location}" target="dist" />
     <ant antfile="build.xml" dir="${iRINGTools.Apps.location}" target="dist" />
     <ant antfile="build.xml" dir="${iRINGTools.Mediators.location}" target="dist" />
     <ant antfile="build.xml" dir="${iRINGTools.Services.location}" target="dist" />
     <copy todir="dist">
-      <fileset dir="${ExchangeManager.location}/dist" />
       <fileset dir="${iRINGTools.Apps.location}/dist" />
       <fileset dir="${iRINGTools.Mediators.location}/dist" />
       <fileset dir="${iRINGTools.Services.location}/dist" />

@@ -95,7 +95,9 @@
                $(ApplicationsDir)\web.config;
                $(ApplicationsDir)\.svn\**;
                $(ApplicationsDir)\*\.svn\**;
-               $(ApplicationsDir)\*\*\.svn\**;">
+               $(ApplicationsDir)\*\*\.svn\**;
+							 $(ApplicationsDir)\*\*\*\.svn\**;
+							 $(ApplicationsDir)\*\*\*\*\.svn\**;">
     </AppsDeployment>
 
     <UtilitiesDeployment
