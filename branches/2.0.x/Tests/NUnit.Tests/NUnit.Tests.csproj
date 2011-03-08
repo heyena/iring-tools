@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="AdapterTest.cs" />
     <Compile Include="App_Code\Model.12345_000.ABC.cs" />
+    <Compile Include="FacadeTest.cs" />
     <Compile Include="ReferenceDataTests.cs" />
     <Compile Include="XmlTest.cs" />
     <Compile Include="DataTest.cs" />
