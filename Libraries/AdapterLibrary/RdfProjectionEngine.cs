@@ -174,6 +174,7 @@ namespace org.iringtools.adapter.projection
     private XElement BuildRdfXml()
     {
       Dictionary<string, List<string>> classInstancesCache = new Dictionary<string, List<string>>();
+      bool rootClass = true;
 
       foreach (var pair in _graphMap.classTemplateListMaps)
       {
@@ -194,20 +195,20 @@ namespace org.iringtools.adapter.projection
             {
               string classPrefix = _graphBaseUri + Utility.TitleCase(classMap.name) + "/";
               string classInstance = classPrefix + classIdentifier;
-              bool classInstanceExists = true;
+              bool classInstanceCreated = true;
 
               if (!classInstancesCache.ContainsKey(classId))
               {
                 classInstancesCache[classId] = new List<string> { classInstance };
-                classInstanceExists = false;
+                classInstanceCreated = false;
               }
               else if (!classInstancesCache[classId].Contains(classInstance))
               {
                 classInstancesCache[classId].Add(classInstance);
-                classInstanceExists = false;
+                classInstanceCreated = false;
               }
 
-              if (!classInstanceExists)
+              if (rootClass && !classInstanceCreated)
               {
                 // add individual          
                 XElement classElement = new XElement(OWL_THING, new XAttribute(RDF_ABOUT, classInstance));
@@ -247,6 +248,8 @@ namespace org.iringtools.adapter.projection
             }
           }
         }
+
+        rootClass = false;
       }
 
       return _rdfXml;
