@@ -629,7 +629,7 @@ namespace iRINGTools.SDK.CSVDataLayer
 
     public Response Configure(XElement configuration)
     {
-      throw new NotImplementedException();
+        throw new NotImplementedException();
     }
   }
 }
