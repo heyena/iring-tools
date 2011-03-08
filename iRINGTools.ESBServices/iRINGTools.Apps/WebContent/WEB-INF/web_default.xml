@@ -2,9 +2,7 @@
 <web-app id="WebApp_ID" version="2.4"
   xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-  
   <display-name>iRINGTools Apps</display-name>
-
   <context-param>
     <param-name>ESBServiceUri</param-name>
     <param-value>http://localhost:8080/services/esb</param-value>
@@ -14,27 +12,24 @@
     <param-value>http://localhost:8080/services/history</param-value>
   </context-param>   
   <context-param>
-    <param-name>RefDataServiceUri</param-name>
+    <param-name>FederationServiceUri</param-name>
     <param-value>http://localhost:8080/services/refdata</param-value>
   </context-param>
   <context-param>
-    <param-name>RefServiceUri</param-name>
-    <param-value>http://localhost:54321/refdata</param-value>
+    <param-name>RefDataServiceUri</param-name>
+    <param-value>http://localhost/services/refdata</param-value>
   </context-param>
   <context-param>
     <param-name>IDGenServiceUri</param-name>
     <param-value>http://localhost:8080/services/idgen</param-value>
   </context-param>
-  
   <context-param>
     <param-name>DXFRServiceUri</param-name>
-    <param-value>http://localhost:54321/dxfr</param-value>
+    <param-value>http://localhost/services/dxfr</param-value>
   </context-param>
-  
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
-  
   <filter>
     <filter-name>struts2</filter-name>
     <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
