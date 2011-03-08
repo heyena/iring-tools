@@ -1,4 +1,4 @@
-#labels Meeting
+#labels DATE7March2011,Meeting
 *Attendance*
   * Aswini
   * Mohamed
