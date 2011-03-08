@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-
 import javax.xml.bind.JAXBException;
-
 import org.ids_adi.ns.qxf.model.Qmxf;
 import org.ids_adi.ns.qxf.model.TemplateDefinition;
 import org.ids_adi.ns.qxf.model.TemplateQualification;
@@ -26,10 +24,8 @@ import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
-
 import sun.misc.Version;
 
-import com.opensymphony.xwork2.ActionContext;
 
 public class RefDataProvider
 {
@@ -340,6 +336,8 @@ public class RefDataProvider
       }
       
   }
+  
+  
 */
   public Version getVersion(){
 	  return new Version();
@@ -454,9 +452,8 @@ public class RefDataProvider
 	  	  HttpClient httpClient = null;
 	  	 try
 	     {
-	       //String uri = ActionContext.getContext().getApplication().get("IDGenServiceUri").toString();
-	  		String uri = "http://localhost:8080/services/idgen";
-	       httpClient = new HttpClient(uri);
+	  	    String uri = settings.get("idGenServiceUri");
+	  		httpClient = new HttpClient(uri);
 	     }
 	     catch (Exception e)
 	     {
