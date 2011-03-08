@@ -30,6 +30,17 @@ public abstract class AbstractService
       differencingServiceUri = "http://localhost:8080/services/diff";
     settings.put("differencingServiceUri", differencingServiceUri);
 
+    String idGenServiceUri = servletContext.getInitParameter("IDGenServiceUri");
+    if (idGenServiceUri == null || idGenServiceUri.equals(""))
+    	idGenServiceUri = "http://localhost:8080/services/idgen";
+    settings.put("idGenServiceUri", idGenServiceUri);
+
+    String dbConnectionString = servletContext.getInitParameter("dbConnectionString");
+    if (dbConnectionString == null || dbConnectionString.equals(""))
+    	dbConnectionString = "jdbc:sqlserver://127.0.0.1:1046;Database=ABC;User=abc; Password=abc";
+    settings.put("dbConnectionString", dbConnectionString);
+    	
+    
     String poolSize = servletContext.getInitParameter("poolSize");
     if (poolSize == null || poolSize.equals(""))
       poolSize = "50";

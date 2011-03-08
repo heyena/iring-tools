@@ -53,8 +53,8 @@ public class IDGeneratorService extends AbstractService{
       String generatedId = null;
       try
       {
-    	  
-    	  IdGenProvider idGenProvider = new IdGenProvider();
+    	  initService();
+    	  IdGenProvider idGenProvider = new IdGenProvider(settings);
     	  System.out.println("params:"+params);
     	  System.out.println("uri:"+uri);
     	  System.out.println("comment:"+comment);

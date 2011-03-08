@@ -4,18 +4,24 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Hashtable;
 import java.util.Random;
 
 public class IdGenProvider {
 	
 
     private Random useGetRandom = new Random();
+    private Hashtable<String, String> settings;
 
+    public IdGenProvider(Hashtable<String, String> settings){
+    	this.settings = settings;
+    }
 	public Connection getConnection(){
 		Connection conn = null;
 		try{
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
-			conn = java.sql.DriverManager.getConnection("jdbc:sqlserver://127.0.0.1:1046;Database=ABC;User=abc; Password=abc");
+			String dbConnectionString = settings.get("dbConnectionString");
+			conn = java.sql.DriverManager.getConnection(dbConnectionString);
 		}catch (Exception e){
             e.printStackTrace();
         }
