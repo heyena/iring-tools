@@ -164,15 +164,15 @@ namespace org.iringtools.exchange
                 {
                     WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
 
-                    if (request.ContainsKey("networkCredential"))
-                    {
-                        NetworkCredential networkCredential = new NetworkCredential("374020", "March@2011", "INDIA");
-                        webProxy.Credentials = networkCredential;
-                        endpoint.SetProxy(webProxy.Address);
-                        endpoint.SetProxyCredentials("374020", "March@2011");
-                    }
-                    else
-                    {
+                    //if (request.ContainsKey("networkCredential"))
+                    //{
+                    //    NetworkCredential networkCredential = new NetworkCredential("374020", "March@2011", "INDIA");
+                    //    webProxy.Credentials = networkCredential;
+                    //    endpoint.SetProxy(webProxy.Address);
+                    //    endpoint.SetProxyCredentials("374020", "March@2011");
+                    //}
+                    //else
+                    //{
                         WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
                         if (proxyCrendentials != null)
                         {
@@ -180,7 +180,7 @@ namespace org.iringtools.exchange
                             endpoint.SetProxy(webProxy.Address);
                             endpoint.SetProxyCredentials(proxyCrendentials.userName, proxyCrendentials.password);
                         }
-                    }
+                    //}
 
 
                 }
