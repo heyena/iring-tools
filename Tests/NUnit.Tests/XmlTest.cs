@@ -25,7 +25,7 @@ namespace NUnit.Tests
       _settings["ProjectName"] = "12345_000";
       _settings["ApplicationName"] = "ABC";
       _settings["GraphName"] = "Lines";
-      _settings["Identifier"] = "66015-O";
+      _settings["Identifier"] = "90002-RV";
       _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
       _settings["GraphBaseUri"] = "http://www.example.com/"; 
       _baseDirectory = Directory.GetCurrentDirectory();
