@@ -1,28 +1,30 @@
 <ClassificationTemplate xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library">
   <TemplateIds>
     <templateId>tpl:R63638239485</templateId>
+    <templateId>tpl:R66921101784</templateId>
   </TemplateIds>
   <TemplateMap>
-    <templateId>tpl:R63638239485</templateId>
-    <name>ClassificationOfIndividual</name>
+    <templateId>tpl:R66921101784</templateId>
+    <name>IdentificationByTag</name>
     <roleMaps>
       <RoleMap>
-        <type>Reference</type>
-        <roleId>tpl:R55055340390</roleId>
-        <name>hasClass</name>
-        <dataType>dm:ClassOfIndividual</dataType>
-        <propertyName/>
-        <value>rdl:R99781532080</value>
+        <type>Possessor</type>
+        <roleId>tpl:R44537504070</roleId>
+        <name>hasObject</name>
       </RoleMap>
       <RoleMap>
-        <type>Possessor</type>
-        <roleId>tpl:R99011248050</roleId>
-        <name>hasIndividual</name>
-        <dataType/>
-        <propertyName/>
-        <value/>
+        <type>Reference</type>
+        <roleId>tpl:R30790108016</roleId>
+        <name>hasIdentificationType</name>
+        <value>rdl:R40471041754</value>
+      </RoleMap>
+      <RoleMap>
+        <type>Property</type>
+        <roleId>tpl:R22674749688</roleId>
+        <name>valIdentifier</name>
+        <dataType>xsd:string</dataType>
+        <propertyName>LINES.SYSTEM</propertyName>
       </RoleMap>
     </roleMaps>
-    <templateType>Definition</templateType>
   </TemplateMap>
 </ClassificationTemplate>

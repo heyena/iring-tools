@@ -109,7 +109,7 @@
                   <type>Property</type>
                   <roleId>tpl:R93884193692</roleId>
                   <name>hasScale</name>
-                  <dataType>xsd:string</dataType>
+                  <dataType>xsd:double</dataType>
                   <propertyName>LINES.UOM_NOMDIAMETER</propertyName>
                   <valueList>Length</valueList>
                 </RoleMap>
@@ -125,8 +125,32 @@
                   <name>valValue</name>
                   <dataType>xsd:double</dataType>
                   <propertyName>LINES.NOMDIAMETER</propertyName>
+                  <value/>
                 </RoleMap>
               </roleMaps>
+            </TemplateMap>
+            <TemplateMap>
+              <templateId>tpl:R63638239485</templateId>
+              <name>ClassificationOfIndividual</name>
+              <roleMaps>
+                <RoleMap>
+                  <type>Reference</type>
+                  <roleId>tpl:R55055340393</roleId>
+                  <name>hasClass</name>
+                  <dataType>dm:ClassOfIndividual</dataType>
+                  <propertyName/>
+                  <value>rdl:R99781532089</value>
+                </RoleMap>
+                <RoleMap>
+                  <type>Possessor</type>
+                  <roleId>tpl:R99011248051</roleId>
+                  <name>hasIndividual</name>
+                  <dataType/>
+                  <propertyName/>
+                  <value/>
+                </RoleMap>
+              </roleMaps>
+              <templateType>Definition</templateType>
             </TemplateMap>
           </a:Value>
         </a:KeyValueOfClassMapArrayOfTemplateMap5KeNI5sr>
@@ -176,7 +200,7 @@
           <a:Value>
             <TemplateMap>
               <templateId>tpl:R30193386273</templateId>
-              <name>ClassifiedIdentification1</name>
+              <name>ClassifiedIdentification</name>
               <roleMaps>
                 <RoleMap>
                   <type>Possessor</type>
@@ -209,7 +233,7 @@
       <name>Length</name>
       <valueMaps>
         <ValueMap>
-          <internalValue>METER</internalValue>
+          <internalValue>mm</internalValue>
           <uri>rdl:R52054275374</uri>
         </ValueMap>
         <ValueMap>
