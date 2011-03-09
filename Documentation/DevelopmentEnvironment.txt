@@ -10,7 +10,7 @@ Eclipse IDE for Java EE Developers (http://eclipse.org/downloads/)
 Microsoft WebPlatform (http://www.microsoft.com/web/downloads/platform.aspx)
 	WebMatrix
 	ASP.NET 4
-Express Tools (http://www.microsoft.com/web/downloads/platform.aspx)
+Express Tools (http://www.microsoft.com/express/Downloads/)
 	SQLServer 2008 R2 Express
 		SQL Server Express Installation Options
 			Database with Management Tools
