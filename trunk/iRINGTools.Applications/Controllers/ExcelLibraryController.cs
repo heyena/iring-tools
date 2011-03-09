@@ -60,35 +60,29 @@ namespace iRINGTools.Web.Controllers
 
       if (Request.QueryString["remote"] != null)
         adapterServiceURI = Request.QueryString["remote"] + "/adapter";
-      
-      foreach (string file in Request.Files)
-      {
-        HttpPostedFileBase hpf = Request.Files[file] as HttpPostedFileBase;
-        if (hpf.ContentLength == 0)
-          continue;
-           savedFileName = Path.Combine(
-           AppDomain.CurrentDomain.BaseDirectory, 
-           _settings["App_Data"],
-           Path.GetFileName(hpf.FileName));
-        hpf.SaveAs(savedFileName);
-      }
-      if (!string.IsNullOrEmpty(savedFileName))
-      {
-        ExcelConfiguration excel = new ExcelConfiguration();
-        excel.Location = savedFileName;
-        DataLayerConfig configuration = new DataLayerConfig();
-        configuration.DataLayerName = "org.iringtools.adapter.datalayer.ExcelDataLayer, ExcelLibrary";
-        configuration.DataLayerConfiguration = XElement.Parse(Utility.Serialize<ExcelConfiguration>(excel, System.Text.Encoding.UTF8, true));
+            
+      WebHttpClient client = new WebHttpClient(_adapterServiceURI);
+      client.ForwardPost(configurationUri, Request);
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+
+      //if (!string.IsNullOrEmpty(savedFileName))
+      //{
+      //  ExcelConfiguration excel = new ExcelConfiguration();
+      //  excel.Location = savedFileName;
+      //  DataLayerConfig configuration = new DataLayerConfig();
+      //  configuration.DataLayerName = "org.iringtools.adapter.datalayer.ExcelDataLayer, ExcelLibrary";
+      //  configuration.DataLayerConfiguration = XElement.Parse(Utility.Serialize<ExcelConfiguration>(excel, System.Text.Encoding.UTF8, true));
         
-        WebHttpClient client = new WebHttpClient(adapterServiceURI);
-        client.Post<DataLayerConfig>(configurationUri, configuration, true);
+      //  WebHttpClient client = new WebHttpClient(adapterServiceURI);
+      //  client.Post<DataLayerConfig>(configurationUri, configuration, true);        
         
-        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-      }
-      else
-      {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-      }
+      //  return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      //}
+      //else
+      //{
+      //  return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      //}
     }
 
   }

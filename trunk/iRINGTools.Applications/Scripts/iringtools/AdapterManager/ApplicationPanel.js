@@ -126,7 +126,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         // super
         AdapterManager.ApplicationPanel.superclass.initComponent.call(this);
 
-        var data = dataLayersStore.getById(this.record.DataLayerName);
+        var data = dataLayersStore.getById(dataLayer);
         cmbDataLayers.Value = data;
 
     },
@@ -191,8 +191,10 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             success: function (f, a) {
                 var record = f.getFieldValues();
 
-                that.record.Name = record.Name;
-                that.record.Description = record.Description;
+                that.record = record;
+
+                //that.record.Name = record.Name;
+                //that.record.Description = record.Description;
 
                 if (that.getActiveTab()) {
                     Ext.Msg.alert('Success', 'Changes saved successfully!');
