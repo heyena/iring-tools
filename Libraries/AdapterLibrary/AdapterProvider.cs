@@ -48,6 +48,7 @@ using System.ServiceModel;
 using System.Security.Principal;
 using org.iringtools.dxfr.manifest;
 using org.iringtools.adapter.identity;
+using System.Web;
 
 namespace org.iringtools.adapter
 {
@@ -1515,10 +1516,27 @@ namespace org.iringtools.adapter
       return dataLayerAssemblies;
     }
 
-    public Response SaveDataLayerConfig(string projectName, string applicationName, DataLayerConfig configuration)
+    public Response SaveDataLayerConfig(string projectName, string applicationName, HttpRequest request)
     {
-      string datalayerName = configuration.DataLayerName;
-      XElement dataLayerConfiguration = configuration.DataLayerConfiguration;
+      
+      string savedFileName = string.Empty;
+      string appdata = _settings["XmlPath"];
+
+      foreach (string file in request.Files)
+      {
+        HttpPostedFile hpf = request.Files[file] as HttpPostedFile;
+        if (hpf.ContentLength == 0)
+          continue;
+
+        savedFileName = Path.Combine(
+        AppDomain.CurrentDomain.BaseDirectory,
+        appdata,
+        Path.GetFileName(hpf.FileName));
+        hpf.SaveAs(savedFileName);
+      }
+
+      string datalayerName = request.Form["DataLayer"];
+      XElement dataLayerConfiguration = XElement.Parse(request.Form["Configuration"]);
 
       string bindConf = string.Empty;
 

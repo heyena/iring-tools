@@ -43,6 +43,7 @@ using System.Text;
 using System;
 using org.iringtools.utility;
 using org.iringtools.mapping;
+using System.Web;
 
 namespace org.iringtools.services
 {
@@ -201,9 +202,9 @@ namespace org.iringtools.services
 
     [Description("Configure the selected data layer in the service.")]
     [WebInvoke(Method = "POST",UriTemplate = "/{projectname}/{applicationName}/configure")]
-    public Response ConfigureDataLayer(String projectName, String applicationName, DataLayerConfig configuration)
+    public Response ConfigureDataLayer(String projectName, String applicationName)
     {
-      return _adapterProvider.SaveDataLayerConfig(projectName, applicationName, configuration);
+      return _adapterProvider.SaveDataLayerConfig(projectName, applicationName, HttpContext.Current.Request);
     }
 
     #endregion

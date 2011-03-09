@@ -41,7 +41,7 @@ namespace org.iringtools.utility
       public string name { get; set; }
       public string message { get; set; }
       public string fileName { get; set; }
-      public string mimeType { get; set; }
+      public string mimeType { get; set; }      
     }
 
     public enum MultipartMessageType
@@ -445,9 +445,9 @@ namespace org.iringtools.utility
                   writer.Write("--" + _boundary + NEW_LINE);
 
                   if (requestMessage.type == MultipartMessageType.File)
-                  {
-                    writer.Write("Content-Disposition: file; name=\"{1}\"; filename=\"{2}\"{3}", requestMessage.mimeType, requestMessage.name, requestMessage.fileName, NEW_LINE);
-                    writer.Write("Content-Type: {0}; {1}", requestMessage.mimeType, NEW_LINE);
+                  {                    
+                    writer.Write("Content-Disposition: file; name=\"{1}\"; filename=\"{2}\"{3}", requestMessage.mimeType, requestMessage.name, requestMessage.fileName, NEW_LINE);                    
+                    writer.Write("Content-Type: {0}; {1}", requestMessage.mimeType, NEW_LINE);                                      
                   }
                   else
                   {
@@ -481,6 +481,50 @@ namespace org.iringtools.utility
 
                 throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
             }
+        }
+
+        public void ForwardPost(string relativeUri, HttpRequestBase requestBase)
+        {
+          
+          string uri = _baseUri + relativeUri;
+          HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+          Stream webStream = null;
+
+          try
+          {
+            request.ContentType = requestBase.ContentType;
+            request.ContentLength = requestBase.ContentLength;
+            request.Method = "POST";
+            request.Timeout = TIMEOUT;
+            
+            PrepareCredentials(request);
+            
+            webStream = request.GetRequestStream();
+            requestBase.InputStream.CopyTo(webStream);            
+
+          }
+          catch (Exception exception)
+          {
+            throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+          }
+          finally
+          {            
+            if (null != webStream)    {
+              webStream.Flush();
+              webStream.Close();    // might need additional exception handling here
+            }
+          }
+
+          try
+          {
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+          }
+          catch (Exception exception)
+          {            
+            throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+          }
+          
         }
 
         public string Post<T>(string relativeUri, T requestEntity, bool useDataContractSerializer)

@@ -289,7 +289,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     },
 
     reload: function() {
-        this.diretoryPanel.root.reload();
+        this.directoryPanel.root.reload();
     }
 
 });

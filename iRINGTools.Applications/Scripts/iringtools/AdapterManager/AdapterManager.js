@@ -110,7 +110,7 @@ Ext.onReady(function () {
         var newTab = new AdapterManager.ApplicationPanel({
             id: 'tab-' + node.id,
             title: 'Application - ' + node.parentNode.text + '.(new)',
-            scope: node.parentNode.attributes.record,
+            scope: node.attributes.record,
             record: null,
             url: 'directory/application',
             closable: true
