@@ -103,7 +103,7 @@ namespace AdapterService.Tests
       Response response = null;
       try
       {
-        response = _adapterProvider.SaveDataLayerConfig(projectName, applicationName, configuration);
+        //response = _adapterProvider.SaveDataLayerConfig(projectName, applicationName, configuration);
      }
       catch (Exception ex)
       {

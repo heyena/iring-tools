@@ -944,7 +944,7 @@ namespace org.iringtools.mapping
     }
   }
 
-  [CollectionDataContract(ItemName = "templateId")]
+  [CollectionDataContract(ItemName = "id")]
   public class TemplateIds : List<string> { }
 
   [DataContract(Name = "classificationTemplate", Namespace = "http://www.iringtools.org/mapping")]

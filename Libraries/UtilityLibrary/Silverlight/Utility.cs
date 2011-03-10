@@ -300,6 +300,22 @@ namespace org.iringtools.utility
         from field in type.GetFields(BindingFlags.Public | BindingFlags.Static)
         where field.IsLiteral
         select field.Name).ToList();
-    } 
+    }
+
+    public static string TitleCase(string value)
+    {
+      string returnValue = String.Empty;
+      string[] words = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+      foreach (string word in words)
+      {
+        returnValue += word.Substring(0, 1).ToUpper();
+
+        if (word.Length > 1)
+          returnValue += word.Substring(1).ToLower();
+      }
+
+      return returnValue;
+    }
   }
 }
