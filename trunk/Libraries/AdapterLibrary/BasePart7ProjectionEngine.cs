@@ -105,6 +105,7 @@ namespace org.iringtools.adapter.projection
     }
 
     public abstract XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);
+    public abstract XDocument ToXml(string graphName, string className, string classIdentifier, ref IDataObject dataObject);
     public abstract IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument);
 
     //propertyPath = "Instrument.LineItems.Tag";
@@ -142,7 +143,7 @@ namespace org.iringtools.adapter.projection
     // senario (assume no circular relationships - should be handled by AppEditor): 
     //  dataObject1.L1RelatedDataObjects.L2RelatedDataObjects.LnRelatedDataObjects.property1
     //  dataObject1.L1RelatedDataObjects.L2RelatedDataObjects.LnRelatedDataObjects.property2
-    protected void SetRelatedRecords(int dataObjectIndex, string relatedPropertyPath, List<string> relatedValues)
+    protected void SetRelatedRecords(int dataObjectIndex, int classInstanceIndex, string relatedPropertyPath, List<string> relatedValues)
     {
       Dictionary<string, List<Dictionary<string, string>>> relatedRecordsMap = _relatedRecordsMaps[dataObjectIndex];
       int lastDotPosition = relatedPropertyPath.LastIndexOf('.');
@@ -174,7 +175,7 @@ namespace org.iringtools.adapter.projection
               relatedRecords.Add(new Dictionary<string, string>());
             }
           }
-          else
+          else  // intermediate related object
           {
             relatedRecords = new List<Dictionary<string, string>>();
           }
@@ -182,12 +183,19 @@ namespace org.iringtools.adapter.projection
           relatedRecordsMap[relatedObjectType] = relatedRecords;
         }
 
-        // only fill last related object values now; values of intermediate related objects' parent might not be available yet.
+        // fill last related object values
         if (i == objectNames.Length - 1)
         {
-          for (int j = 0; j < relatedValues.Count; j++)
+          if (relatedValues.Count > 1)
           {
-            relatedRecords[j][property] = relatedValues[j];
+            for (int j = 0; j < relatedValues.Count; j++)
+            {
+              relatedRecords[j][property] = relatedValues[j];
+            }
+          }
+          else
+          {
+            relatedRecords[classInstanceIndex][property] = relatedValues.First();
           }
         }
       }
@@ -204,7 +212,7 @@ namespace org.iringtools.adapter.projection
     //  dataObject1.L1RelatedDataObjects[1].L2RelatedDataObjects[2].property4.value2
     //  dataObject1.L1RelatedDataObjects[2].L2RelatedDataObjects[1].property3.value1
     //  dataObject1.L1RelatedDataObjects[2].L2RelatedDataObjects[2].property4.value2
-    protected void FillRelatedRecords()
+    protected void ProcessRelatedItems()
     {
       for (int i = 0; i < _dataObjects.Count; i++)
       {
@@ -266,7 +274,7 @@ namespace org.iringtools.adapter.projection
     }
 
     // turn related records into data objects, remove duplicates, and append them to top level data objects
-    protected void AppendRelatedObjects()
+    protected void CreateRelatedObjects()
     {
       // dictonary cache of related object types and list of identifiers
       Dictionary<string, List<string>> relatedObjectTypeIdentifiers = new Dictionary<string, List<string>>();
@@ -440,36 +448,47 @@ namespace org.iringtools.adapter.projection
       return valueObjects;
     }
 
-    protected string GetClassIdentifierValue(List<string> identifiers, string delimiter, int dataObjectIndex)
+    protected List<string> GetClassIdentifiers(ClassMap classMap, int dataObjectIndex, out bool hasRelatedProperty)
     {
-      string classIdentifierValue = String.Empty;
+      List<string> classIdentifiers = new List<string>();
+      hasRelatedProperty = false;
 
-      foreach (string identifier in identifiers)
+      foreach (string identifier in classMap.identifiers)
       {
-        if (classIdentifierValue.Length > 0)
-          classIdentifierValue += delimiter;
+        if (classIdentifiers.Count > 0)
+        {
+          classIdentifiers.Add(classMap.identifierDelimiter);
+        }
 
         // identifier is a fixed value
         if (identifier.StartsWith("#") && identifier.EndsWith("#"))
         {
-          string value = identifier.Substring(1, identifier.Length - 2);
-          classIdentifierValue += value;
+          classIdentifiers.Add(identifier.Substring(1, identifier.Length - 2));
         }
         else  // identifier is a property map
         {
-          List<IDataObject> identifierValueObjects = GetValueObjects(identifier, dataObjectIndex);
+          string[] identifierParts = identifier.Split('.');
+          string propertyName = identifierParts[identifierParts.Length - 1];
 
-          if (identifierValueObjects != null && identifierValueObjects.Count > 0)
+          if (identifierParts.Length > 2)  // related property
           {
-            IDataObject identifierValueObject = identifierValueObjects.First();
-            string propertyName = identifier.Substring(identifier.LastIndexOf('.') + 1);
-            string value = Convert.ToString(identifierValueObject.GetPropertyValue(propertyName));
-            classIdentifierValue += value;
+            List<IDataObject> valueObjects = GetValueObjects(identifier, dataObjectIndex);
+
+            foreach (IDataObject valueObject in valueObjects)
+            {
+              classIdentifiers.Add(Convert.ToString(valueObject.GetPropertyValue(propertyName)));
+            }
+
+            hasRelatedProperty = true;
+          }
+          else  // direct property
+          {
+            classIdentifiers.Add(Convert.ToString(_dataObjects[dataObjectIndex].GetPropertyValue(propertyName)));
           }
         }
       }
 
-      return classIdentifierValue;
+      return classIdentifiers;
     }
 
     private void SetInboundSparqlClassIdentifiers()
@@ -588,28 +607,6 @@ namespace org.iringtools.adapter.projection
               Values values = expression.Values;
               string dataPropertyName = ProjectProperty(propertyNameParts, ref values);
               expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
-
-              #region already done in Project Property
-              //if (_roleType == RoleType.ObjectProperty)
-              //{
-              //  if (expression.RelationalOperator == RelationalOperator.EqualTo)
-              //  {
-              //    expression.Values = ProjectPropertValues(expression.Values);
-              //    expression.RelationalOperator = RelationalOperator.In;
-              //  }
-              //  else if (expression.RelationalOperator == RelationalOperator.In)
-              //  {
-              //    expression.Values = ProjectPropertValues(expression.Values);
-              //  }
-              //  else
-              //  {
-              //    throw new Exception(
-              //      "Invalid Expression in DataFilter. " +
-              //      "Object Property Roles can only use EqualTo and In in the expression."
-              //    );
-              //  }
-              //}
-              #endregion 
             }
           }
 
@@ -617,8 +614,8 @@ namespace org.iringtools.adapter.projection
           {
             foreach (OrderExpression orderExpression in filter.OrderExpressions)
             {
-              string[] propertyNameParts = orderExpression.PropertyName.Split('.');   
-              string dataPropertyName = ProjectPropertyName(propertyNameParts);
+              string[] propertyNameParts = orderExpression.PropertyName.Split('.');
+              string dataPropertyName = ProjectProperty(propertyNameParts);
               orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
             }
           }
@@ -640,25 +637,6 @@ namespace org.iringtools.adapter.projection
       else
         return dataPropertyNameParts[0];
     }
-
-    //public Values ProjectPropertValues(Values values)
-    //{
-    //  Values dataValues = new Values();
-
-    //  ValueListMap valueList = _mapping.valueListMaps.Find(vl => vl.name == _valueListName);
-
-    //  foreach (string value in values)
-    //  {
-    //    List<ValueMap> valueMaps = valueList.valueMaps.FindAll(vm => vm.uri == value);
-    //    foreach (ValueMap valueMap in valueMaps)
-    //    {
-    //      string dataValue = valueMap.internalValue;
-    //      dataValues.Add(dataValue);
-    //    }
-    //  }
-
-    //  return dataValues;
-    //}
 
     //THIS ASSUMES CLASS IS ONLY USED ONCE
     //resolve the propertyName expression into data object propertyName
@@ -735,7 +713,7 @@ namespace org.iringtools.adapter.projection
       return dataPropertyName;
     }
 
-    public string ProjectPropertyName(string[] propertyNameParts)
+    public string ProjectProperty(string[] propertyNameParts)
     {
       Values values = new Values();
       return ProjectProperty(propertyNameParts, ref values);

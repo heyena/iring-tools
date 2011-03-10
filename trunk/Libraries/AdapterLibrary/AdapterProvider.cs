@@ -524,10 +524,9 @@ namespace org.iringtools.adapter
           limit = 100;
 
         _dataObjects = _dataLayer.Get(dataObjectName, filter, limit, start);
-
         _projectionEngine.Count = _dataLayer.GetCount(dataObjectName, filter);
-
         _projectionEngine.FullIndex = fullIndex;
+
         return _projectionEngine.ToXml(graphName, ref _dataObjects);
       }
       catch (Exception ex)
@@ -640,8 +639,6 @@ namespace org.iringtools.adapter
           }
           filter.Expressions = expressions;
 
-
-
           if (!String.IsNullOrEmpty(sortBy))
           {
             OrderExpression orderBy = new OrderExpression
@@ -662,13 +659,11 @@ namespace org.iringtools.adapter
           }
 
           _dataObjects = _dataLayer.Get(dataObjectName, filter, limit, start);
-
           _projectionEngine.Count = _dataLayer.GetCount(dataObjectName, filter);
         }
         else
         {
           _dataObjects = _dataLayer.Get(dataObjectName, null);
-
           _projectionEngine.Count = _dataLayer.GetCount(dataObjectName, null);
         }
 
@@ -684,7 +679,7 @@ namespace org.iringtools.adapter
 
     public XDocument GetProjection(
         string projectName, string applicationName, string graphName,
-    string identifier, string format, bool fullIndex)
+        string identifier, string format, bool fullIndex)
     {
       try
       {
@@ -753,9 +748,9 @@ namespace org.iringtools.adapter
       }
     }
     public XDocument GetProjection(
-      string projectName, string applicationName, string graphName,
-      string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
-      NameValueCollection parameters)
+        string projectName, string applicationName, string graphName,
+        string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
+        NameValueCollection parameters)
     {
       try
       {
@@ -846,6 +841,61 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
+    public XDocument GetDataProjection(
+       string projectName, string applicationName, string graphName, string className,
+       string classIdentifier, string format, bool fullIndex)
+    {
+      string dataObjectName = String.Empty;
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        if (format != null)
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+        }
+        else
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>("data");
+        }
+
+        _graphMap = _mapping.FindGraphMap(graphName);
+        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+
+        if (_graphMap != null)
+        {
+          graphName = _graphMap.name;
+          dataObjectName = _graphMap.dataObjectName;
+        }
+        else if (dataObject != null)
+        {
+          graphName = dataObject.objectName;
+          dataObjectName = dataObject.objectName;
+        }
+        else
+        {
+          throw new FileNotFoundException("Requested graph or dataObject not found.");
+        }
+
+        IDataObject dataObj = GetDataObject(dataObject, className, classIdentifier);
+
+        if (dataObj != null)
+        {
+          return _projectionEngine.ToXml(graphName, className, classIdentifier, ref dataObj);
+        }
+        else
+        {
+          throw new Exception("Data object with identifier [" + classIdentifier + "] not found.");
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
 
     public IList<IDataObject> GetDataObjects(
         string projectName, string applicationName, string graphName,
@@ -866,6 +916,98 @@ namespace org.iringtools.adapter
       IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
 
       return dataObjects;
+    }
+
+    private IDataObject GetDataObject(DataObject dataObject, string className, string classIdentifier)
+    {
+      DataFilter filter = new DataFilter();
+
+      #region parse identifier to build data filter
+      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMapByName(className);
+      ClassMap classMap = classTemplateMap.classMap;
+
+      if (classMap != null)
+      {
+        string[] identifierParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
+          ? classIdentifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
+          : new string[] { classIdentifier };
+
+        for (int i = 0; i < identifierParts.Length; i++)
+        {
+          string identifierPart = identifierParts[i];
+
+          // remove fixed values from identifier
+          foreach (string clsIdentifier in classMap.identifiers)
+          {
+            if (clsIdentifier.StartsWith("#") && clsIdentifier.EndsWith("#"))
+            {
+              identifierPart = identifierPart.Replace(clsIdentifier.Substring(1, clsIdentifier.Length - 2), "");
+            }
+          }
+
+          // set identifier value to mapped property
+          foreach (string clsIdentifier in classMap.identifiers)
+          {
+            if (clsIdentifier.Split('.').Length > 2)  // related property
+            {
+              string[] clsIdentifierParts = clsIdentifier.Split('.');
+              string relatedObjectType = clsIdentifierParts[clsIdentifierParts.Length - 2];
+
+              // get related object then assign its related properties to top level data object properties
+              DataFilter relatedObjectFilter = new DataFilter();
+
+              Expression relatedExpression = new Expression
+              {
+                PropertyName = clsIdentifierParts.Last(),
+                Values = new Values { identifierPart }
+              };
+
+              relatedObjectFilter.Expressions.Add(relatedExpression);
+              IList<IDataObject> relatedObjects = _dataLayer.Get(relatedObjectType, relatedObjectFilter, 0, 0);
+
+              if (relatedObjects != null && relatedObjects.Count > 0)
+              {
+                IDataObject relatedObject = relatedObjects.First();
+                DataRelationship dataRelationship = dataObject.dataRelationships.Find(c => c.relatedObjectName == relatedObjectType);
+
+                foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+                {
+                  Expression expression = new Expression();
+
+                  if (filter.Expressions.Count > 0)
+                    expression.LogicalOperator = LogicalOperator.And;
+
+                  expression.PropertyName = propertyMap.dataPropertyName;
+                  expression.Values = new Values { relatedObject.GetPropertyValue(propertyMap.relatedPropertyName).ToString() };
+                  filter.Expressions.Add(expression);
+                }
+              }
+            }
+            else  // direct property
+            {
+              Expression expression = new Expression();
+
+              if (filter.Expressions.Count > 0)
+                expression.LogicalOperator = LogicalOperator.And;
+
+              expression.PropertyName = clsIdentifier.Substring(clsIdentifier.LastIndexOf('.') + 1);
+              expression.Values = new Values { identifierPart };
+              filter.Expressions.Add(expression);
+            }
+          }
+        }
+      }
+      #endregion
+
+      IList<string> identifiers = _dataLayer.GetIdentifiers(dataObject.objectName, filter);
+      IList<IDataObject> dataObjects = _dataLayer.Get(dataObject.objectName, identifiers);
+
+      if (dataObjects != null && dataObjects.Count > 0)
+      {
+        return dataObjects.First<IDataObject>();
+      }
+
+      return null;
     }
 
     //public Response DeleteAll(string projectName, string applicationName)
@@ -959,7 +1101,6 @@ namespace org.iringtools.adapter
 
       return response;
     }
-
 
     public Response DeleteIndividual(string projectName, string applicationName, string graphName, string identifier)
     {
@@ -1517,8 +1658,7 @@ namespace org.iringtools.adapter
     }
 
     public Response SaveDataLayerConfig(string projectName, string applicationName, HttpRequest request)
-    {
-      
+    {      
       string savedFileName = string.Empty;
       string appdata = _settings["XmlPath"];
 

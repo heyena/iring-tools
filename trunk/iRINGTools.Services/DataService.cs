@@ -35,6 +35,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.adapter;
 using System.Collections.Specialized;
+using System;
 
 namespace org.iringtools.services
 {
@@ -101,7 +102,29 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
     public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, identifier, format, false);
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, String.Empty, identifier, format, false);
+
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return xDocument.Root;
+    }
+
+    /// <summary>
+    /// Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.
+    /// </summary>
+    /// <param name="projectName">Project name</param>
+    /// <param name="applicationName">Application name</param>
+    /// <param name="graphName">Graph name</param>
+    /// <param name="graphName">Class name</param>
+    /// <param name="identifier">Identifier</param>
+    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
+    /// <returns>Returns an arbitrary XML</returns>
+    [Description("Gets an XML projection of the specified scope, graph and identifier in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{className}/{identifier}?format={format}")]
+    public XElement GetIndividual(string projectName, string applicationName, string graphName, string className, string identifier, string format)
+    {
+      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, className, identifier, format, false);
 
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";

@@ -118,7 +118,7 @@ namespace org.iringtools.mapping
       return default(ClassTemplateMap);
     }
 
-    public ClassTemplateMap GetClassTemplateMapByName(this GraphMap graphMap, string className)
+    public static ClassTemplateMap GetClassTemplateMapByName(this GraphMap graphMap, string className)
     {
       foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
       {
