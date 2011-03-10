@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using org.iringtools.dxfr.manifest;
+using org.iringtools.utility;
 
 namespace org.iringtools.mapping
 {
@@ -111,6 +112,17 @@ namespace org.iringtools.mapping
       foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
       {
         if (classTemplateMap.classMap.id == classId)
+          return classTemplateMap;
+      }
+
+      return default(ClassTemplateMap);
+    }
+
+    public ClassTemplateMap GetClassTemplateMapByName(this GraphMap graphMap, string className)
+    {
+      foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
+      {
+        if (Utility.TitleCase(classTemplateMap.classMap.name) == className)
           return classTemplateMap;
       }
 
