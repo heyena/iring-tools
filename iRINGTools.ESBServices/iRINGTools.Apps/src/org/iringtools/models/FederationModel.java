@@ -33,12 +33,12 @@ public class FederationModel
   {
     try
     {
-      String uri = ActionContext.getContext().getApplication().get("RefDataServiceUri").toString();
+      String uri = ActionContext.getContext().getApplication().get("FederationServiceUri").toString();
       httpClient = new HttpClient(uri);
     }
     catch (Exception e)
     {
-      System.out.println("Exception in RefDataServiceUri :" + e);
+      System.out.println("Exception in FederationServiceUri :" + e);
     }
     federation = null;
   }

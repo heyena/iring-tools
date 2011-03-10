@@ -17,7 +17,15 @@ public class JaxbUtil
 	public static <T> void write(T object, String path, boolean indent) throws JAXBException, IOException
   {		
 	  OutputStream stream = new FileOutputStream(path);
-		toXml(object, stream, indent);
+	  
+	  try
+	  {
+	  	toXml(object, stream, indent);
+	  }
+	  catch(Exception ex)
+	  {
+	  	stream.close();
+	  }
   }
 	
 	public static <T> String toXml(T object, boolean indent) throws JAXBException, IOException 

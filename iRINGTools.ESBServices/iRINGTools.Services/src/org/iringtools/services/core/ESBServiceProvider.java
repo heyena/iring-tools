@@ -423,7 +423,9 @@ public class ESBServiceProvider
       
       // create a pool (page) DTOs to send to target endpoint
       int dtiSize = dtiList.size();
-      int poolSize = Integer.parseInt(settings.get("poolSize"));
+      int webXmlPoolSize = Integer.parseInt(settings.get("poolSize"));
+      
+      int poolSize = Math.min(webXmlPoolSize, dtiSize-1);
 
       for (int i = 0; i < dtiSize; i += poolSize)
       {
@@ -559,8 +561,9 @@ public class ESBServiceProvider
         // post add/change/delete DTOs to target endpoint
         if (poolDtoListItems.size() > 0)
         {
-          Response poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
-          exchangeResponse.getStatusList().getItems().addAll(poolResponse.getStatusList().getItems());
+        	Response poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
+           	
+        	exchangeResponse.getStatusList().getItems().addAll(poolResponse.getStatusList().getItems());
           
           if (exchangeResponse.getLevel() != Level.ERROR || 
              (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
@@ -609,12 +612,14 @@ public class ESBServiceProvider
     catch (Exception ex)
     {
       String error = "Error while posting DTOs: " + ex;      
-      logger.error(error);
-      
+      logger.error(error);      
+      Messages messages = new Messages();
+      exchangeResponse.setMessages(messages);
+      List<String> messageList = messages.getItems();
+      messageList.add(error);      
       exchangeResponse.setLevel(Level.ERROR);      
-      Status status = new Status();      
-      List<String> messages = new ArrayList<String>();
-      messages.add(error);
+      Status status = new Status();    
+      
       StatusList statuses = new StatusList();
       List<Status> statusItems = statusList.getItems();
       statusItems.add(status);

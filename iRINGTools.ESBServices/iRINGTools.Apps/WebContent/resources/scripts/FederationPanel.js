@@ -266,8 +266,9 @@ getNodesIDTitleByID:function(){
 
 openTab: function(node,formType) {
  
-     var obj = node.attributes;
+        var obj = node.attributes;
         var properties = node.attributes.properties;
+        var parentNode = node.parentNode;
         var nId = obj['id'];
 
          var list_items = '{'
@@ -301,9 +302,9 @@ openTab: function(node,formType) {
          * Generate the fields items dynamically
          */
 
-        for ( var i = 0; i < properties.length; i++) {
+        for ( var i in properties) {
 
-            var fname=properties[i].name;
+            var fname=i;
             var value='';
             var xtype='';
             switch(fname){
@@ -315,22 +316,22 @@ openTab: function(node,formType) {
                     break;
                  case "Read Only" :
                  case "Writable":
-                     xtype= 'xtype : "combo", width : 230, triggerAction: "all", editable : false, mode: "local", store: ["true","false"],  displayField:"'+properties[i].value+'", width: 120';
+                     xtype= 'xtype : "combo", width : 230, triggerAction: "all", editable : false, mode: "local", store: ["true","false"],  displayField:"'+properties[i]+'", width: 120';
                      break;
                  case 'Repository Type':
-                     xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part8"],  displayField:"'+properties[i].value+'", width: 120';
+                     xtype= 'xtype : "combo",width : 230, triggerAction: "all", editable : false, mode: "local", store: ["RDS/WIP", "Camelot", "Part8"],  displayField:"'+properties[i]+'", width: 120';
                  break;
                  case 'ID Generator':
                      // get all the IDGenerators
-                     var allIDGenerators = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','idGenerator'));
-                     xtype= 'xtype : "combo",hiddenName:"ID Generator", width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i].value+'", width: 120';
+                     var allIDGenerators = this.getAllChildNodes(parentNode);
+                     xtype= 'xtype : "combo",hiddenName:"ID Generator", width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i]+'", width: 120';
                  break;
                  case 'Namespace List':
                      var imgPath='./resources/js/external/ux/images/';
                      var selNameSpaceIDsArr = new Array();
                      var nodeIDTitleArr = new Array();
-                     if(properties[i].value !=null && properties[i].value!=''){
-                         var selNameSpaces=properties[i].value.items;
+                     if(properties[i] !=null && properties[i]!=''){
+                         var selNameSpaces=properties[i].items;
                          selNameSpaceIDsArr= (selNameSpaces.toString()).split(',');
 
                         // nodeIDTitleArr = this.getNodesIDTitleByID(selNameSpaceIDsArr)                        
@@ -361,14 +362,14 @@ openTab: function(node,formType) {
             }
 
              if(formType=='editForm'){
-                 value = ', value:"'+ properties[i].value+'"';
+                 value = ', value:"'+ properties[i]+'"';
             	 label = node.parentNode.text + ' : ' + obj['text'];
              }else{
             	 label = obj['text']+':(New)';
              }
-             list_items = list_items+',{'+xtype+', fieldLabel:"' + properties[i].name
+             list_items = list_items+',{'+xtype+', fieldLabel:"' + i
              + '",name:"'
-             + properties[i].name
+             + i
              + '",allowBlank:false, blankText:"This Field is required !"'
              +value+'}';
 
@@ -385,10 +386,10 @@ openTab: function(node,formType) {
             // get all the attributes of node
             var properties = node.attributes.properties;
             for ( var i = 0; i < properties.length; i++) {
-            	 if(properties[i].name == 'ID Generator'){
-                     gridSource[properties[i].name] = this.getNodeById(properties[i].value).text;     // contains IDGenerator Title
+            	 if(i == 'ID Generator'){
+                     gridSource[i] = this.getNodeById(properties[i]).text;     // contains IDGenerator Title
                  }else{
-                      gridSource[properties[i].name] = properties[i].value;
+                      gridSource[i] = properties[i];
                  }
             }
         }
@@ -426,11 +427,11 @@ openTab: function(node,formType) {
   
   onLoad: function () {
       this.federationPanel.getRootNode().expand(true);
-      this.federationPanel.body.unmask();
+      Ext.getBody().unmask();
   },
   
   onBeforeLoad: function () {
-      this.federationPanel.body.mask('Loading...', 'x-mask-loading');
+      Ext.getBody().mask('Loading...', 'x-mask-loading');
   }
 
 });

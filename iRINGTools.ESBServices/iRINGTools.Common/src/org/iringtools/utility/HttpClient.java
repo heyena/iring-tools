@@ -10,12 +10,15 @@ import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Map.Entry;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
+
 
 public class HttpClient
 {
   private String baseUri;
   private HttpProxy httpProxy = null;
   private NetworkCredentials networkCredentials = null;
+  private static final Logger logger = Logger.getLogger(HttpClient.class);
   
   public final static String GET = "GET";
   public final static String POST = "POST";
@@ -65,9 +68,13 @@ public class HttpClient
   
   public <T,R> R post(Class<R> responseClass, String relativeUri, T requestEntity) throws HttpClientException 
   {    
+  	
+  	
     try 
     {
       String content = "";
+      
+      logger.debug("post(" + relativeUri + "," + JaxbUtil.toXml(requestEntity, true) + ")");
       
       if (requestEntity != null)
         content = JaxbUtil.toXml(requestEntity, false);
@@ -81,8 +88,12 @@ public class HttpClient
       requestStream.flush();
       requestStream.close();
       
-      InputStream responseStream = conn.getInputStream();   
-      return JaxbUtil.toObject(responseClass, responseStream);
+      InputStream responseStream = conn.getInputStream();  
+      R response = JaxbUtil.toObject(responseClass, responseStream);
+      
+      logger.debug("post (" + JaxbUtil.toXml(response, true) + ")");
+          
+      return response;
     }
     catch (Exception ex)
     {
@@ -99,6 +110,7 @@ public class HttpClient
   {
     try
     {
+    	logger.debug("post(" + relativeUri + "," + JaxbUtil.toXml(formData, true) + ")");
       URLConnection conn = getConnection(POST, relativeUri);
       conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
     
@@ -122,7 +134,11 @@ public class HttpClient
       requestStream.close();
       
       InputStream responseStream = conn.getInputStream();   
-      return JaxbUtil.toObject(responseClass, responseStream);
+      
+      T response = JaxbUtil.toObject(responseClass, responseStream);
+      logger.debug("post (" + JaxbUtil.toXml(response, true) + ")");
+      
+      return response;
     }
     catch (Exception ex)
     {

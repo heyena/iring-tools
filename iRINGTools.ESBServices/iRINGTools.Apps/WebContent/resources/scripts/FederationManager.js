@@ -83,7 +83,7 @@ Ext.onReady(function () {
                         }                        
                 });
 
-                //Ext.getCmp('contentPanel').enable();
+                Ext.getCmp('contentPanel').enable();
                 tabPanel.add(newTab);
                 tabPanel.activate(newTab); 
 
