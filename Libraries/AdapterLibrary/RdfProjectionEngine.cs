@@ -239,24 +239,28 @@ namespace org.iringtools.adapter.projection
     private XElement CreateIndividual(string baseUri, string classId, string classIdentifier)
     {
       XElement individualElement = null;
-      string individual = baseUri + classIdentifier;
-      bool individualCreated = true;
 
-      if (!_classInstancesCache.ContainsKey(classId))
+      if (!String.IsNullOrEmpty(classIdentifier))
       {
-        _classInstancesCache[classId] = new List<string> { individual };
-        individualCreated = false;
-      }
-      else if (!_classInstancesCache[classId].Contains(individual))
-      {
-        _classInstancesCache[classId].Add(individual);
-        individualCreated = false;
-      }
+        string individual = baseUri + classIdentifier;
+        bool individualCreated = true;
 
-      if (!individualCreated)
-      {
-        individualElement = new XElement(OWL_THING, new XAttribute(RDF_ABOUT, individual));
-        individualElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId)));
+        if (!_classInstancesCache.ContainsKey(classId))
+        {
+          _classInstancesCache[classId] = new List<string> { individual };
+          individualCreated = false;
+        }
+        else if (!_classInstancesCache[classId].Contains(individual))
+        {
+          _classInstancesCache[classId].Add(individual);
+          individualCreated = false;
+        }
+
+        if (!individualCreated)
+        {
+          individualElement = new XElement(OWL_THING, new XAttribute(RDF_ABOUT, individual));
+          individualElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, RDL_NS.NamespaceName + classId)));
+        }
       }
 
       return individualElement;
