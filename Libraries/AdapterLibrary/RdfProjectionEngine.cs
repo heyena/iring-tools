@@ -94,7 +94,7 @@ namespace org.iringtools.adapter.projection
       return rdfDoc;
     }
 
-    public override XDocument ToXml(string graphName, string className, ref IDataObject dataObject)
+    public override XDocument ToXml(string graphName, string className, string classIdentifier, ref IDataObject dataObject)
     {
       XDocument rdfDoc = null;
 
@@ -118,7 +118,7 @@ namespace org.iringtools.adapter.projection
             HttpUtility.UrlEncode(_settings["ApplicationName"]),
             HttpUtility.UrlEncode(_graphMap.name));
 
-          rdfDoc = new XDocument(BuildRdfXml(className));
+          rdfDoc = new XDocument(BuildRdfXml(className, classIdentifier));
         }
         else
         {
@@ -222,17 +222,17 @@ namespace org.iringtools.adapter.projection
      
       for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
       {
-        ProcessOutboundClass(dataObjectIndex, true, pair);
+        ProcessOutboundClass(String.Empty, String.Empty, dataObjectIndex, true, pair);
       }
 
       return _rdfXml;
     }
 
     // build RDF that's rooted at className with classIdentifier
-    private XElement BuildRdfXml(string className)
+    private XElement BuildRdfXml(string startClassName, string startClassIdentifier)
     {
-      KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMapByName(className);
-      ProcessOutboundClass(0, true, pair);
+      KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMapByName(startClassName);
+      ProcessOutboundClass(startClassName, startClassIdentifier, 0, true, pair);
       return _rdfXml;
     }
 
@@ -266,45 +266,50 @@ namespace org.iringtools.adapter.projection
       return individualElement;
     }
 
-    private void ProcessOutboundClass(int dataObjectIndex, bool isRootClass, KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap)
+    private void ProcessOutboundClass(string startClassName, string startClassIdentifier, int dataObjectIndex, bool isRootClass, 
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap)
     {
       ClassMap classMap = classTemplateListMap.Key;
       List<TemplateMap> templateMaps = classTemplateListMap.Value;
 
       if (classMap != null)
       {
-        string baseUri = _graphBaseUri + Utility.TitleCase(classMap.name) + "/";
+        string className = Utility.TitleCase(classMap.name);
+        string baseUri = _graphBaseUri + className + "/";
         string classId = classMap.classId.Substring(classMap.classId.IndexOf(":") + 1);
         bool hasRelatedProperty;
         List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
 
         for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
         {
-          string currClassIdentifier = classIdentifiers[classIdentifierIndex];
+          string classIdentifier = classIdentifiers[classIdentifierIndex];
 
-          XElement individualElement = CreateIndividual(baseUri, classId, currClassIdentifier);
-
-          if (individualElement != null)
+          if (String.IsNullOrEmpty(startClassIdentifier) || className != startClassName || classIdentifier == startClassIdentifier)
           {
-            _rdfXml.Add(individualElement);
+            XElement individualElement = CreateIndividual(baseUri, classId, classIdentifier);
 
-            // add primary classification template
-            if (isRootClass && _primaryClassificationStyle == ClassificationStyle.Both)
+            if (individualElement != null)
             {
-              TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
-              AddTemplateElements(dataObjectIndex, baseUri, currClassIdentifier, classIdentifierIndex,
-                classificationTemplate, hasRelatedProperty);
-            }
+              _rdfXml.Add(individualElement);
 
-            ProcessOutboundTemplates(dataObjectIndex, individualElement, templateMaps, baseUri,
-              currClassIdentifier, classIdentifierIndex, hasRelatedProperty);
+              // add primary classification template
+              if (isRootClass && _primaryClassificationStyle == ClassificationStyle.Both)
+              {
+                TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
+                AddTemplateElements(startClassName, startClassIdentifier, dataObjectIndex, baseUri, classIdentifier, 
+                  classIdentifierIndex, classificationTemplate, hasRelatedProperty);
+              }
+
+              ProcessOutboundTemplates(startClassName, startClassIdentifier, dataObjectIndex, individualElement, templateMaps, 
+                baseUri, classIdentifier, classIdentifierIndex, hasRelatedProperty);
+            }
           }
         }
       }
     }
 
-    private void ProcessOutboundTemplates(int dataObjectIndex, XElement individualElement, List<TemplateMap> templateMaps, 
-      string baseUri, string classIdentifier, int classIdentifierIndex, bool hasRelatedProperty)
+    private void ProcessOutboundTemplates(string startClassName, string startClassIdentifier, int dataObjectIndex, XElement individualElement, 
+      List<TemplateMap> templateMaps, string baseUri, string classIdentifier, int classIdentifierIndex, bool hasRelatedProperty)
     {
       if (templateMaps != null && templateMaps.Count > 0)
       {
@@ -326,13 +331,14 @@ namespace org.iringtools.adapter.projection
             continue;
           }
 
-          AddTemplateElements(dataObjectIndex, baseUri, classIdentifier, classIdentifierIndex, templateMap, hasRelatedProperty);
+          AddTemplateElements(startClassName, startClassIdentifier, dataObjectIndex, baseUri, classIdentifier, 
+            classIdentifierIndex, templateMap, hasRelatedProperty);
         }
       }
     }
 
-    private void AddTemplateElements(int dataObjectIndex, string baseUri, string classIdentifier, int classIdentifierIndex,
-      TemplateMap templateMap, bool classIdentifierHasRelatedProperty)
+    private void AddTemplateElements(string startClassName, string startClassIdentifier, int dataObjectIndex, string baseUri, 
+      string classIdentifier, int classIdentifierIndex, TemplateMap templateMap, bool classIdentifierHasRelatedProperty)
     {
       string classInstance = baseUri + classIdentifier;
       IDataObject dataObject = _dataObjects[dataObjectIndex];
@@ -515,7 +521,7 @@ namespace org.iringtools.adapter.projection
         }
 
         KeyValuePair<ClassMap, List<TemplateMap>> relatedPair = _graphMap.GetClassTemplateListMap(classRole.classMap.classId);
-        ProcessOutboundClass(dataObjectIndex, false, relatedPair);
+        ProcessOutboundClass(startClassName, startClassIdentifier, dataObjectIndex, false, relatedPair);
       }
       else  // reference template with no class role (primary classification template)
       {
@@ -621,24 +627,24 @@ namespace org.iringtools.adapter.projection
           string identifierPart = identifierParts[i];
 
           // remove fixed values from identifier
-          foreach (string clsIdentifier in classMap.identifiers)
+          foreach (string classIdentifier in classMap.identifiers)
           {
-            if (clsIdentifier.StartsWith("#") && clsIdentifier.EndsWith("#"))
+            if (classIdentifier.StartsWith("#") && classIdentifier.EndsWith("#"))
             {
-              identifierPart = identifierPart.Replace(clsIdentifier.Substring(1, clsIdentifier.Length - 2), "");
+              identifierPart = identifierPart.Replace(classIdentifier.Substring(1, classIdentifier.Length - 2), "");
             }
           }
 
           // set identifier value to mapped property
-          foreach (string clsIdentifier in classMap.identifiers)
+          foreach (string classIdentifier in classMap.identifiers)
           {
-            if (clsIdentifier.Split('.').Length > 2)  // related property
+            if (classIdentifier.Split('.').Length > 2)  // related property
             {
-              SetRelatedRecords(dataObjectIndex, classInstanceIndex, clsIdentifier, new List<string> { identifierPart });
+              SetRelatedRecords(dataObjectIndex, classInstanceIndex, classIdentifier, new List<string> { identifierPart });
             }
             else  // direct property
             {
-              _dataRecords[dataObjectIndex][clsIdentifier.Substring(clsIdentifier.LastIndexOf('.') + 1)] = identifierPart;
+              _dataRecords[dataObjectIndex][classIdentifier.Substring(classIdentifier.LastIndexOf('.') + 1)] = identifierPart;
             }
           }
         }
