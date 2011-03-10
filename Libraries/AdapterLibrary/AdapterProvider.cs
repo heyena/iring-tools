@@ -535,14 +535,13 @@ namespace org.iringtools.adapter
       string projectName, string applicationName, string graphName, string className,
       string identifier, string format, bool fullIndex)
     {
+      string dataObjectName = String.Empty;
+      
       try
       {
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
-        IList<string> identifiers = new List<string>() { identifier };
-
-        string dataObjectName = String.Empty;
         if (format != null)
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
@@ -570,12 +569,10 @@ namespace org.iringtools.adapter
           throw new FileNotFoundException("Requested graph or dataObject not found.");
         }
 
-        _dataObjects = _dataLayer.Get(dataObjectName, identifiers);
-        _projectionEngine.FullIndex = fullIndex;
+        IDataObject dataObj = GetDataObject(className, dataObject, identifier);
 
-        if (_dataObjects != null && _dataObjects.Count > 0)
+        if (dataObj != null)
         {
-          IDataObject dataObj = _dataObjects.First<IDataObject>();
           return _projectionEngine.ToXml(graphName, className, ref dataObj);
         }
         else
@@ -588,6 +585,98 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error in GetProjection: {0}", ex));
         throw ex;
       }
+    }
+    
+    private IDataObject GetDataObject(string className, DataObject dataObject, string identifier)
+    {
+      DataFilter filter = new DataFilter();
+        
+      #region parse identifier to build data filter
+      KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMapByName(className);
+      ClassMap classMap = pair.Key;
+      
+      if (classMap != null)
+      {
+        string[] identifierParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
+          ? identifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
+          : new string[] { identifier };
+
+        for (int i = 0; i < identifierParts.Length; i++)
+        {
+          string identifierPart = identifierParts[i];
+
+          // remove fixed values from identifier
+          foreach (string clsIdentifier in classMap.identifiers)
+          {
+            if (clsIdentifier.StartsWith("#") && clsIdentifier.EndsWith("#"))
+            {
+              identifierPart = identifierPart.Replace(clsIdentifier.Substring(1, clsIdentifier.Length - 2), "");
+            }
+          }
+
+          // set identifier value to mapped property
+          foreach (string clsIdentifier in classMap.identifiers)
+          {
+            if (clsIdentifier.Split('.').Length > 2)  // related property
+            {
+              string[] clsIdentifierParts = clsIdentifier.Split('.');
+              string relatedObjectType = clsIdentifierParts[clsIdentifierParts.Length - 2];
+
+              // get related object then assign its related properties to top level data object properties
+              DataFilter relatedObjectFilter = new DataFilter();
+
+              Expression relatedExpression = new Expression
+              {
+                PropertyName = clsIdentifierParts.Last(),
+                Values = new Values { identifierPart }
+              };
+
+              relatedObjectFilter.Expressions.Add(relatedExpression);
+              IList<IDataObject> relatedObjects = _dataLayer.Get(relatedObjectType, relatedObjectFilter, 0, 0);
+
+              if (relatedObjects != null && relatedObjects.Count > 0)
+              {
+                IDataObject relatedObject = relatedObjects.First();
+                DataRelationship dataRelationship = dataObject.dataRelationships.Find(c => c.relatedObjectName == relatedObjectType);
+
+                foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+                {
+                  Expression expression = new Expression();
+
+                  if (filter.Expressions.Count > 0)
+                    expression.LogicalOperator = LogicalOperator.And;
+
+                  expression.PropertyName = propertyMap.dataPropertyName;
+                  expression.Values = new Values { relatedObject.GetPropertyValue(propertyMap.relatedPropertyName).ToString() };
+                  filter.Expressions.Add(expression);
+                }
+              }
+            }
+            else  // direct property
+            {
+              Expression expression = new Expression();
+
+              if (filter.Expressions.Count > 0)
+                expression.LogicalOperator = LogicalOperator.And;
+
+              expression.PropertyName = clsIdentifier.Substring(clsIdentifier.LastIndexOf('.') + 1);
+              expression.Values = new Values { identifierPart };
+              filter.Expressions.Add(expression);
+            }
+          }
+        }
+      }
+      #endregion
+
+      IList<string> identifiers = _dataLayer.GetIdentifiers(dataObject.objectName, filter);
+      IList<IDataObject> dataObjects = _dataLayer.Get(dataObject.objectName, identifiers);
+
+      if (dataObjects != null && dataObjects.Count > 0)
+      {
+        return dataObjects.First<IDataObject>();
+      }
+
+      return null;
     }
 
     public XDocument GetDataProjection(
