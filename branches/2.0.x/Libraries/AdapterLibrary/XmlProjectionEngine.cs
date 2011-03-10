@@ -91,7 +91,7 @@ namespace org.iringtools.adapter.projection
       return new XDocument(xElement);
     }
 
-    public override XDocument ToXml(string graphName, string className, ref IDataObject dataObject)
+    public override XDocument ToXml(string graphName, string className, string classIdentifier, ref IDataObject dataObject)
     {
       //TODO: need to update to use className
       IList<IDataObject> dataObjects = new List<IDataObject> { dataObject };

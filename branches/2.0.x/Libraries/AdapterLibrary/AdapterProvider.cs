@@ -533,7 +533,7 @@ namespace org.iringtools.adapter
 
     public XDocument GetDataProjection(
       string projectName, string applicationName, string graphName, string className,
-      string identifier, string format, bool fullIndex)
+      string classIdentifier, string format, bool fullIndex)
     {
       string dataObjectName = String.Empty;
       
@@ -569,15 +569,15 @@ namespace org.iringtools.adapter
           throw new FileNotFoundException("Requested graph or dataObject not found.");
         }
 
-        IDataObject dataObj = GetDataObject(className, dataObject, identifier);
+        IDataObject dataObj = GetDataObject(dataObject, className, classIdentifier);
 
         if (dataObj != null)
         {
-          return _projectionEngine.ToXml(graphName, className, ref dataObj);
+          return _projectionEngine.ToXml(graphName, className, classIdentifier, ref dataObj);
         }
         else
         {
-          throw new Exception("Data object with identifier [" + identifier + "] not found.");
+          throw new Exception("Data object with identifier [" + classIdentifier + "] not found.");
         }
       }
       catch (Exception ex)
@@ -586,8 +586,8 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
-    
-    private IDataObject GetDataObject(string className, DataObject dataObject, string identifier)
+
+    private IDataObject GetDataObject(DataObject dataObject, string className, string classIdentifier)
     {
       DataFilter filter = new DataFilter();
         
@@ -598,8 +598,8 @@ namespace org.iringtools.adapter
       if (classMap != null)
       {
         string[] identifierParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
-          ? identifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
-          : new string[] { identifier };
+          ? classIdentifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
+          : new string[] { classIdentifier };
 
         for (int i = 0; i < identifierParts.Length; i++)
         {
