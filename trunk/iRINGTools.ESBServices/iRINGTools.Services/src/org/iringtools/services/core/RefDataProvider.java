@@ -271,52 +271,14 @@ public class RefDataProvider {
 		}
 	}
 
-	/*
-	 * private SPARQLResults QueryFromRepository(Repository repository, String
-	 * sparql) { try { SPARQLResults sparqlResults; String encryptedCredentials
-	 * = repository.encryptedCredentials;
-	 * 
-	 * WebCredentials credentials = new WebCredentials(encryptedCredentials); if
-	 * (credentials.isEncrypted) credentials.Decrypt(); sparqlResults =
-	 * SPARQLClient.Query(repository.uri, sparql, credentials,
-	 * _proxyCredentials); return sparqlResults; } catch (Exception ex) {
-	 * //_logger.Error(string.Format("Failed to read repository['{0}']",
-	 * repository.uri), ex); return new SPARQLResults(); } }
-	 * 
-	 * private String getLabel(String uri) { try { String label = null; String
-	 * sparql = null; String relativeUri = null;
-	 * 
-	 * Query query =_queries["GetLabel"].getFileName();
-	 * 
-	 * //List<QueryItem> query = _queries.getItems(); QueryBindings
-	 * queryBindings = query.getBindings(); sparql =
-	 * ReadSPARQL(_queries.getFileName()); sparql = sparql.replace("param1",
-	 * uri);
-	 * 
-	 * for (Repository repository:_repositories) { SPARQLResults sparqlResults =
-	 * QueryFromRepository(repository, sparql);
-	 * 
-	 * List<Dictionary<String, String>> results =
-	 * BindQueryResults(queryBindings, sparqlResults);
-	 * 
-	 * for (Dictionary<String, String> result : results) { if
-	 * (result.get("label")) { label = result["label"]; } } }
-	 * 
-	 * return label; } catch (Exception e) {
-	 * //logger.Error("Error in GetLabel: " + e); throw new
-	 * Exception("Error while Getting Label for " + uri + ".\n" + e.toString(),
-	 * e); }
-	 * 
-	 * }
-	 */
 	public Version getVersion() {
 		return new Version();
 	}
 
-	/*
-	 * public String getClassLabel(String id){ return
-	 * getLabel("http://rdl.rdlfacade.org/data#" + id); }
-	 */
+	public String getClassLabel(String id) throws Exception {
+		return getLabel("http://rdl.rdlfacade.org/data#" + id);
+	}
+
 	public Qmxf GetClass(String id, String namespaceUrl) {
 		Qmxf qmxf = new Qmxf();
 		return qmxf;
@@ -437,7 +399,7 @@ public class RefDataProvider {
 
 		Query query = new Query();
 		String sparql = "";
-		// String relativeUri = "";
+
 		List<QueryItem> items = _queries.getItems();
 		for (QueryItem qry : items) {
 			if (qry.getKey().contains("GetLabel")) {
@@ -448,7 +410,7 @@ public class RefDataProvider {
 		QueryBindings queryBindings = query.getBindings();
 		sparql = ReadSPARQL(query.getFileName());
 		sparql = sparql.replace("param1", uri);
-		// _repositories = getRepositories();
+
 		for (Repository repository : _repositories) {
 			Sparql sparqlResult = queryFromRepository(repository, sparql);
 			if (sparqlResult != null) {
@@ -539,11 +501,8 @@ public class RefDataProvider {
 		String results = null;// new Results();
 		try {
 			String baseUri = repository.getUri();
-			// String encryptedCredentials = repository.
+			// TODO need to look at credentials
 			NetworkCredentials credentials = new NetworkCredentials();
-			// String domain = "localhost";
-			// credentials.setDomain(domain);
-		
 			HttpClient sparqlClient = new HttpClient(baseUri);
 			sparqlClient.setNetworkCredentials(credentials);
 			sparqlResults = sparqlClient.PostMessage(Sparql.class, "", message);
