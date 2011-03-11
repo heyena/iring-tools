@@ -99,6 +99,11 @@ public class FederationModel
     generatorsNode.setText("ID Generators");
     generatorsNode.setIconCls("folder");
     generatorsNode.getProperties().put("Id", "idGenerator");
+    // For New Form
+    generatorsNode.getProperties().put("Name", "");
+    generatorsNode.getProperties().put("URI", "");
+    generatorsNode.getProperties().put("Description", "");
+
     treeNodes.add(generatorsNode);
 
     List<Node> generatorNodes = generatorsNode.getChildren();
@@ -132,6 +137,15 @@ public class FederationModel
     namespacesNode.setText("Namespaces");
     namespacesNode.setIconCls("folder");
     namespacesNode.getProperties().put("Id", "namespace");
+    
+    // For New Form
+    namespacesNode.getProperties().put("Alias","");
+    namespacesNode.getProperties().put("URI","");
+    namespacesNode.getProperties().put("Description","");
+    namespacesNode.getProperties().put("Writable","");
+    namespacesNode.getProperties().put("ID Generator","");
+
+    
     treeNodes.add(namespacesNode);
 
     List<Node> namespaceNodes = namespacesNode.getChildren();
@@ -162,6 +176,17 @@ public class FederationModel
     repositoriesNode.setText("Repositories");
     repositoriesNode.setIconCls("folder");
     repositoriesNode.getProperties().put("Id", "repository");
+    
+    // For New Form
+    repositoriesNode.getProperties().put("Name", "");
+    repositoriesNode.getProperties().put("Description", "");
+    repositoriesNode.getProperties().put("Read Only", "");
+    repositoriesNode.getProperties().put("Repository Type", "");
+    repositoriesNode.getProperties().put("Update URI", "");
+    repositoriesNode.getProperties().put("URI", "");
+    repositoriesNode.getProperties().put("Namespace List", "");
+
+    
     treeNodes.add(repositoriesNode);
 
     List<Node> repositoryNodes = repositoriesNode.getChildren();
