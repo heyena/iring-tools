@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="textual-definition" type="{http://ns.ids-adi.org/qxf/model#}TextualDefinition" maxOccurs="unbounded"/>
  *         &lt;element name="status" type="{http://ns.ids-adi.org/qxf/model#}Status" maxOccurs="unbounded"/>
  *         &lt;element name="role-definition" type="{http://ns.ids-adi.org/qxf/model#}RoleDefinition" maxOccurs="unbounded"/>
+ *         &lt;element name="specialization" type="{http://ns.ids-adi.org/qxf/model#}Specialization" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
@@ -46,7 +47,8 @@ import javax.xml.bind.annotation.XmlType;
     "descriptions",
     "textualDefinitions",
     "statuses",
-    "roleDefinitions"
+    "roleDefinitions",
+    "specializations"
 })
 public class TemplateDefinition {
 
@@ -66,6 +68,8 @@ public class TemplateDefinition {
     protected List<Status> statuses;
     @XmlElement(name = "role-definition", required = true)
     protected List<RoleDefinition> roleDefinitions;
+    @XmlElement(name = "specialization", required = true)
+    protected List<Specialization> specializations;
     @XmlAttribute(name = "id")
     protected String id;
 
@@ -292,6 +296,35 @@ public class TemplateDefinition {
     }
 
     /**
+     * Gets the value of the specializations property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the specializations property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getSpecializations().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Specialization }
+     * 
+     * 
+     */
+    public List<Specialization> getSpecializations() {
+        if (specializations == null) {
+            specializations = new ArrayList<Specialization>();
+        }
+        return this.specializations;
+    }
+
+    /**
      * Gets the value of the id property.
      * 
      * @return
@@ -385,6 +418,18 @@ public class TemplateDefinition {
      */
     public void setRoleDefinitions(List<RoleDefinition> roleDefinitions) {
         this.roleDefinitions = roleDefinitions;
+    }
+
+    /**
+     * Sets the value of the specializations property.
+     * 
+     * @param specializations
+     *     allowed object is
+     *     {@link Specialization }
+     *     
+     */
+    public void setSpecializations(List<Specialization> specializations) {
+        this.specializations = specializations;
     }
 
 }
