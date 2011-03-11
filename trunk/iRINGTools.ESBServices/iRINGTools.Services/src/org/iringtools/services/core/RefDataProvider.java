@@ -8,12 +8,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import javax.xml.bind.JAXBException;
-
-import org.ids_adi.ns.qxf.model.ClassDefinition;
-import org.ids_adi.ns.qxf.model.Description;
-import org.ids_adi.ns.qxf.model.Name;
 import org.ids_adi.ns.qxf.model.Qmxf;
-import org.ids_adi.ns.qxf.model.Specialization;
 import org.ids_adi.ns.qxf.model.TemplateDefinition;
 import org.ids_adi.ns.qxf.model.TemplateQualification;
 import org.iringtools.common.response.Level;
@@ -318,145 +313,14 @@ public class RefDataProvider {
 		return new Version();
 	}
 
-	
-	public Qmxf GetClass(String id)
-    {
+	/*
+	 * public String getClassLabel(String id){ return
+	 * getLabel("http://rdl.rdlfacade.org/data#" + id); }
+	 */
+	public Qmxf GetClass(String id, String namespaceUrl) {
 		Qmxf qmxf = new Qmxf();
-		String label = null;
-		String comment = null;
-
-      try
-      {
-        String sparql = null;
-
-        ClassDefinition classDefinition;
-        Name name;
-        Description description;
-        List<Specialization> specializations = new ArrayList<Specialization>();
-
-        Query query = new Query();
-        
-        List<QueryItem> items = _queries.getItems();
-		for (QueryItem qry : items) {
-			if (qry.getKey().contains("GetPart8Class")) {
-				query = qry.getQuery();
-				break;
-			}
-		}
-
-		
-		QueryBindings queryBindings = query.getBindings();
-		sparql = ReadSPARQL(query.getFileName());
-		sparql = sparql.replace("param1", id);
-		_repositories = getRepositories();
-
-		for (Repository repository : _repositories) {
-			Results sparqlResult = queryFromRepository(repository, sparql);
-			
-			List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResult);
-			classDefinition = new ClassDefinition();
-			specializations = new ArrayList<Specialization>();
-			
-	        classDefinition.setId("http://rdl.rdlfacade.org/data#" + id);
-	        classDefinition.setRepository(repository.getName());
-	        name = new Name();
-	          
-			for (Hashtable<String, String> result : results) {
-				description = new Description();
-				if (result.containsKey("label")) {
-					label = result.get("label");
-					name.setLang(label);
-				
-				}
-				if (result.containsKey("comment")) {
-					comment = result.get("comment");
-					description.setLang(comment);
-				}
-				
-				classDefinition.getNames().add(name);
-	            classDefinition.getDescriptions().add(description);
-			}
-			
-			specializations = GetPart8Specializations(id);
-	        classDefinition.setSpecializations(specializations);
-	        
-	        qmxf.getClassDefinitions().add(classDefinition);
-		}
-
-     }
-      catch (Exception e)
-      {
-        //_logger.Error("Error in GetClass: " + e);
-      }
-      return qmxf;
-    }
-	
-	private List<Specialization> GetPart8Specializations(String id)
-    {
-
-      String sparql = null;
-
-      List<Specialization> specializations = new ArrayList<Specialization>();
-      try
-      {
-
-        Query queryContainsSearch = new Query();
-        
-        List<QueryItem> items = _queries.getItems();
-		for (QueryItem qry : items) {
-			if (qry.getKey().contains("GetPart8Specialization")) {
-				queryContainsSearch = qry.getQuery();
-				break;
-			}
-		}
-
-		
-		QueryBindings queryBindings = queryContainsSearch.getBindings();
-		sparql = ReadSPARQL(queryContainsSearch.getFileName());
-		sparql = sparql.replace("param1", id);
-		_repositories = getRepositories();
-        
-        
-		for (Repository repository : _repositories) {
-          Results sparqlResult = queryFromRepository(repository, sparql);
-
-          List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResult);
-
-          for (Hashtable<String, String> result : results) 
-          {
-            Specialization specialization = new Specialization();
-
-            String uri = null;
-            String label = null;
-            if (result.containsKey("uri"))
-            {
-              uri = result.get("uri");
-              specialization.setReference(uri);
-            }
-            if (result.containsKey("label"))
-            {
-              label = result.get("label");
-            }
-            else
-            {
-              label = getLabel(uri);
-            }
-
-            specialization.setLabel(label);
-            //Method to be implemented
-            //Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
-          }
-        }
-
-      }
-      catch (Exception e)
-      {
-        //_logger.Error("Error in GetSpecializations: " + e);
-      }
-      return specializations;
-
-    }
-
+		return qmxf;
+	}
 
 	public Qmxf GetTemplate(String id, Repository repository) {
 		Qmxf federatedQmxf = new Qmxf();
