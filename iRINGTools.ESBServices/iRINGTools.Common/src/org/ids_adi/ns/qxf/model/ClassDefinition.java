@@ -30,7 +30,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="description" type="{http://ns.ids-adi.org/qxf/model#}Description" maxOccurs="unbounded"/>
  *         &lt;element name="textual-definition" type="{http://ns.ids-adi.org/qxf/model#}TextualDefinition" maxOccurs="unbounded"/>
  *         &lt;element name="status" type="{http://ns.ids-adi.org/qxf/model#}Status" maxOccurs="unbounded"/>
- *         &lt;element name="role-definition" type="{http://ns.ids-adi.org/qxf/model#}RoleDefinition" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
@@ -51,8 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "names",
     "descriptions",
     "textualDefinitions",
-    "statuses",
-    "roleDefinitions"
+    "statuses"
 })
 public class ClassDefinition {
 
@@ -76,8 +74,6 @@ public class ClassDefinition {
     protected List<TextualDefinition> textualDefinitions;
     @XmlElement(name = "status", required = true)
     protected List<Status> statuses;
-    @XmlElement(name = "role-definition", required = true)
-    protected List<RoleDefinition> roleDefinitions;
     @XmlAttribute(name = "id")
     protected String id;
 
@@ -357,35 +353,6 @@ public class ClassDefinition {
     }
 
     /**
-     * Gets the value of the roleDefinitions property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the roleDefinitions property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getRoleDefinitions().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link RoleDefinition }
-     * 
-     * 
-     */
-    public List<RoleDefinition> getRoleDefinitions() {
-        if (roleDefinitions == null) {
-            roleDefinitions = new ArrayList<RoleDefinition>();
-        }
-        return this.roleDefinitions;
-    }
-
-    /**
      * Gets the value of the id property.
      * 
      * @return
@@ -491,18 +458,6 @@ public class ClassDefinition {
      */
     public void setStatuses(List<Status> statuses) {
         this.statuses = statuses;
-    }
-
-    /**
-     * Sets the value of the roleDefinitions property.
-     * 
-     * @param roleDefinitions
-     *     allowed object is
-     *     {@link RoleDefinition }
-     *     
-     */
-    public void setRoleDefinitions(List<RoleDefinition> roleDefinitions) {
-        this.roleDefinitions = roleDefinitions;
     }
 
 }

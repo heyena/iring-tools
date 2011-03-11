@@ -20,8 +20,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="repository" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="suggested-designation" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
- *         &lt;element name="designation" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="specialization" type="{http://ns.ids-adi.org/qxf/model#}Specialization" maxOccurs="unbounded"/>
+ *         &lt;element name="designation" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
  *         &lt;element name="name" type="{http://ns.ids-adi.org/qxf/model#}Name" maxOccurs="unbounded"/>
  *         &lt;element name="description" type="{http://ns.ids-adi.org/qxf/model#}Description" maxOccurs="unbounded"/>
  *         &lt;element name="textual-definition" type="{http://ns.ids-adi.org/qxf/model#}TextualDefinition" maxOccurs="unbounded"/>
@@ -39,8 +41,10 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "TemplateQualification", propOrder = {
+    "repository",
     "suggestedDesignations",
-    "designation",
+    "specializations",
+    "designations",
     "names",
     "descriptions",
     "textualDefinitions",
@@ -49,10 +53,14 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class TemplateQualification {
 
+    @XmlElement(required = true)
+    protected String repository;
     @XmlElement(name = "suggested-designation", required = true)
     protected List<String> suggestedDesignations;
-    @XmlElement(required = true)
-    protected String designation;
+    @XmlElement(name = "specialization", required = true)
+    protected List<Specialization> specializations;
+    @XmlElement(name = "designation", required = true)
+    protected List<String> designations;
     @XmlElement(name = "name", required = true)
     protected List<Name> names;
     @XmlElement(name = "description", required = true)
@@ -67,6 +75,30 @@ public class TemplateQualification {
     protected String id;
     @XmlAttribute(name = "qualifies")
     protected String qualifies;
+
+    /**
+     * Gets the value of the repository property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getRepository() {
+        return repository;
+    }
+
+    /**
+     * Sets the value of the repository property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setRepository(String value) {
+        this.repository = value;
+    }
 
     /**
      * Gets the value of the suggestedDesignations property.
@@ -98,27 +130,61 @@ public class TemplateQualification {
     }
 
     /**
-     * Gets the value of the designation property.
+     * Gets the value of the specializations property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the specializations property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getSpecializations().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Specialization }
+     * 
+     * 
      */
-    public String getDesignation() {
-        return designation;
+    public List<Specialization> getSpecializations() {
+        if (specializations == null) {
+            specializations = new ArrayList<Specialization>();
+        }
+        return this.specializations;
     }
 
     /**
-     * Sets the value of the designation property.
+     * Gets the value of the designations property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the designations property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getDesignations().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
      */
-    public void setDesignation(String value) {
-        this.designation = value;
+    public List<String> getDesignations() {
+        if (designations == null) {
+            designations = new ArrayList<String>();
+        }
+        return this.designations;
     }
 
     /**
@@ -324,6 +390,30 @@ public class TemplateQualification {
      */
     public void setSuggestedDesignations(List<String> suggestedDesignations) {
         this.suggestedDesignations = suggestedDesignations;
+    }
+
+    /**
+     * Sets the value of the specializations property.
+     * 
+     * @param specializations
+     *     allowed object is
+     *     {@link Specialization }
+     *     
+     */
+    public void setSpecializations(List<Specialization> specializations) {
+        this.specializations = specializations;
+    }
+
+    /**
+     * Sets the value of the designations property.
+     * 
+     * @param designations
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDesignations(List<String> designations) {
+        this.designations = designations;
     }
 
     /**

@@ -23,6 +23,22 @@
     <xs:attribute name="timestamp" type="xs:string" />
     <xs:attribute name="license-ref" type="xs:string" />
     <xs:attribute name="targetRepository" type="xs:string" />
+	<xs:attribute name="sourceRepository" type="xs:string" />
+  </xs:complexType>
+
+  <xs:complexType name="TemplateDefinition">
+    <xs:sequence>
+      <xs:element name="repository" type="xs:string"/>
+      <xs:element name="suggested-designation" type="xs:string" maxOccurs="unbounded"/>
+      <xs:element name="designation" type="xs:string"/>
+      <xs:element name="name" type="Name" maxOccurs="unbounded"/>
+      <xs:element name="description" type="Description" maxOccurs="unbounded"/>
+      <xs:element name="textual-definition" type="TextualDefinition" maxOccurs="unbounded"/>
+      <xs:element name="status" type="Status" maxOccurs="unbounded"/>
+      <xs:element name="role-definition" type="RoleDefinition" maxOccurs="unbounded"/>
+	  <xs:element name="specialization" type="Specialization" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="ClassDefinition">
@@ -37,34 +53,16 @@
       <xs:element name="description" type="Description" maxOccurs="unbounded"/>
       <xs:element name="textual-definition" type="TextualDefinition" maxOccurs="unbounded"/>
       <xs:element name="status" type="Status" maxOccurs="unbounded"/>
-      <xs:element name="role-definition" type="RoleDefinition" maxOccurs="unbounded"/>
-    </xs:sequence>
-    <xs:attribute name="id" type="xs:string"/>
-  </xs:complexType>
-
-  <xs:complexType name="Classification">
-    <xs:attribute name="reference" type="xs:string"/>
-    <xs:attribute name="label" type="xs:string"/>
-  </xs:complexType>
-
-  <xs:complexType name="TemplateDefinition">
-    <xs:sequence>
-      <xs:element name="repository" type="xs:string"/>
-      <xs:element name="suggested-designation" type="xs:string" maxOccurs="unbounded"/>
-      <xs:element name="designation" type="xs:string"/>
-      <xs:element name="name" type="Name" maxOccurs="unbounded"/>
-      <xs:element name="description" type="Description" maxOccurs="unbounded"/>
-      <xs:element name="textual-definition" type="TextualDefinition" maxOccurs="unbounded"/>
-      <xs:element name="status" type="Status" maxOccurs="unbounded"/>
-      <xs:element name="role-definition" type="RoleDefinition" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="id" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="TemplateQualification">
     <xs:sequence>
+	  <xs:element name="repository" type="xs:string"/>
       <xs:element name="suggested-designation" type="xs:string" maxOccurs="unbounded"/>
-      <xs:element name="designation" type="xs:string"/>
+      <xs:element name="specialization" type="Specialization" maxOccurs="unbounded"/>
+      <xs:element name="designation" type="xs:string"  maxOccurs="unbounded"/>
       <xs:element name="name" type="Name" maxOccurs="unbounded"/>
       <xs:element name="description" type="Description" maxOccurs="unbounded"/>
       <xs:element name="textual-definition" type="TextualDefinition" maxOccurs="unbounded"/>
@@ -73,6 +71,52 @@
     </xs:sequence>
     <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="qualifies" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="License">
+    <xs:sequence>
+      <xs:element name="license-terms" type="LicenseTerm" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="LicenseTerm">
+    <xs:sequence>
+      <xs:element name="license-text" type="LicenseText" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="LicenseText">
+    <xs:attribute name="lang" type="xs:string"/>
+    <xs:attribute name="formal" type="xs:string" default="true"/>
+  </xs:complexType>
+
+  <xs:complexType name="EntityType">
+    <xs:attribute name="reference" type="xs:string"/>
+  </xs:complexType>
+  
+  <xs:complexType name="Classification">
+    <xs:attribute name="reference" type="xs:string"/>
+    <xs:attribute name="label" type="xs:string"/>
+    <xs:attribute name="lang" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="Specialization">
+    <xs:attribute name="reference" type="xs:string"/>
+    <xs:attribute name="label" type="xs:string"/>
+    <xs:attribute name="lang" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="Name">
+    <xs:attribute name="lang" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="Description">
+    <xs:attribute name="lang" type="xs:string"/>
+    <xs:attribute name="contentType" type="xs:string"/>
+    <xs:attribute name="parseType" type="xs:string"/>
+  </xs:complexType>
+  
+  <xs:complexType name="TextualDefinition">
+    <xs:attribute name="lang" type="xs:string" default="en-GB"/>
   </xs:complexType>
 
   <xs:complexType name="RoleDefinition">
@@ -97,20 +141,13 @@
       <xs:element name="value" type="Value"/>
       <xs:element name="description" type="Description" maxOccurs="unbounded"/>
     </xs:sequence>
+    <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="qualifies" type="xs:string"/>
     <xs:attribute name="range" type="xs:string"/>
     <xs:attribute name="minimum" type="xs:string"/>
     <xs:attribute name="maximum" type="xs:string"/>
     <xs:attribute name="inverse-minimum" type="xs:string"/>
     <xs:attribute name="inverse-maximum" type="xs:string"/>
-  </xs:complexType>
-
-  <xs:complexType name="EntityType">
-    <xs:attribute name="reference" type="xs:string"/>
-  </xs:complexType>
-
-  <xs:complexType name="Name">
-    <xs:attribute name="lang" type="xs:string"/>
   </xs:complexType>
 
   <xs:complexType name="Value">
@@ -126,45 +163,14 @@
     <xs:attribute name="to" type="xs:string"/>
   </xs:complexType>
 
-  <xs:complexType name="License">
-    <xs:sequence>
-      <xs:element name="license-terms" type="LicenseTerm" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="LicenseTerm">
-    <xs:sequence>
-      <xs:element name="license-text" type="LicenseText" maxOccurs="unbounded"/>
-    </xs:sequence>
-    <xs:attribute name="id" type="xs:string"/>
-  </xs:complexType>
-
-  <xs:complexType name="LicenseText">
-    <xs:attribute name="lang" type="xs:string"/>
-    <xs:attribute name="formal" type="xs:string" default="true"/>
-  </xs:complexType>
 
   <xs:complexType name="Restriction">
     <xs:sequence>
       <xs:element name="type" type="xs:string"/>
       <xs:element name="value" type="xs:string"/>
-      <xs:element name="valueFrom" type="xs:string"/>
+      <xs:element name="valuesFrom" type="xs:string"/>
       <xs:element name="cardinality" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="Description">
-    <xs:attribute name="lang" type="xs:string"/>
-    <xs:attribute name="contentType" type="xs:string"/>
-    <xs:attribute name="parseType" type="xs:string"/>
-  </xs:complexType>
-
-  <xs:complexType name="Specialization">
-    <xs:attribute name="reference" type="xs:string"/>
-    <xs:attribute name="label" type="xs:string"/>
-  </xs:complexType>
-
-  <xs:complexType name="TextualDefinition">
-    <xs:attribute name="lang" type="xs:string" default="en-GB"/>
-  </xs:complexType>
 </xs:schema>

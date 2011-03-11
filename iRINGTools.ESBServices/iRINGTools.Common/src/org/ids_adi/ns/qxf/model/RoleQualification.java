@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="value" type="{http://ns.ids-adi.org/qxf/model#}Value"/>
  *         &lt;element name="description" type="{http://ns.ids-adi.org/qxf/model#}Description" maxOccurs="unbounded"/>
  *       &lt;/sequence>
+ *       &lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="qualifies" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="range" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="minimum" type="{http://www.w3.org/2001/XMLSchema}string" />
@@ -51,6 +52,8 @@ public class RoleQualification {
     protected Value value;
     @XmlElement(name = "description", required = true)
     protected List<Description> descriptions;
+    @XmlAttribute(name = "id")
+    protected String id;
     @XmlAttribute(name = "qualifies")
     protected String qualifies;
     @XmlAttribute(name = "range")
@@ -144,6 +147,30 @@ public class RoleQualification {
             descriptions = new ArrayList<Description>();
         }
         return this.descriptions;
+    }
+
+    /**
+     * Gets the value of the id property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Sets the value of the id property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setId(String value) {
+        this.id = value;
     }
 
     /**

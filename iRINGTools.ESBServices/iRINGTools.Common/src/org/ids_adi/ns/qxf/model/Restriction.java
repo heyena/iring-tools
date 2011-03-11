@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="valueFrom" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="valuesFrom" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="cardinality" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Restriction", propOrder = {
     "type",
     "value",
-    "valueFrom",
+    "valuesFrom",
     "cardinality"
 })
 public class Restriction {
@@ -43,7 +43,7 @@ public class Restriction {
     @XmlElement(required = true)
     protected String value;
     @XmlElement(required = true)
-    protected String valueFrom;
+    protected String valuesFrom;
     @XmlElement(required = true)
     protected String cardinality;
 
@@ -96,27 +96,27 @@ public class Restriction {
     }
 
     /**
-     * Gets the value of the valueFrom property.
+     * Gets the value of the valuesFrom property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getValueFrom() {
-        return valueFrom;
+    public String getValuesFrom() {
+        return valuesFrom;
     }
 
     /**
-     * Sets the value of the valueFrom property.
+     * Sets the value of the valuesFrom property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setValueFrom(String value) {
-        this.valueFrom = value;
+    public void setValuesFrom(String value) {
+        this.valuesFrom = value;
     }
 
     /**

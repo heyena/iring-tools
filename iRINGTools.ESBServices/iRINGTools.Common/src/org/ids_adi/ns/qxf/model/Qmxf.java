@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="timestamp" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="license-ref" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="targetRepository" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="sourceRepository" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -60,6 +61,8 @@ public class Qmxf {
     protected String licenseRef;
     @XmlAttribute(name = "targetRepository")
     protected String targetRepository;
+    @XmlAttribute(name = "sourceRepository")
+    protected String sourceRepository;
 
     /**
      * Gets the value of the classDefinitions property.
@@ -247,6 +250,30 @@ public class Qmxf {
      */
     public void setTargetRepository(String value) {
         this.targetRepository = value;
+    }
+
+    /**
+     * Gets the value of the sourceRepository property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getSourceRepository() {
+        return sourceRepository;
+    }
+
+    /**
+     * Sets the value of the sourceRepository property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setSourceRepository(String value) {
+        this.sourceRepository = value;
     }
 
     /**
