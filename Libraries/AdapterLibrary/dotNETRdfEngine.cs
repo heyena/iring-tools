@@ -73,7 +73,7 @@ namespace org.iringtools.adapter.semantic
 
       _graph = new Graph();
       _graphNs = String.Format("{0}{1}/{2}/",
-        _settings["BaseAddress"],
+        _settings["GraphBaseUri"],
         _settings["ProjectName"],
         _settings["ApplicationName"]
         );

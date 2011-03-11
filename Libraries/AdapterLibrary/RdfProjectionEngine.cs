@@ -221,9 +221,12 @@ namespace org.iringtools.adapter.projection
     {
       ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
 
-      for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
+      if (classTemplateMap != null)
       {
-        ProcessOutboundClass(String.Empty, String.Empty, dataObjectIndex, true, classTemplateMap);
+        for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
+        {
+          ProcessOutboundClass(String.Empty, String.Empty, dataObjectIndex, true, classTemplateMap);
+        }
       }
 
       return _rdfXml;
@@ -233,7 +236,12 @@ namespace org.iringtools.adapter.projection
     private XElement BuildRdfXml(string startClassName, string startClassIdentifier)
     {
       ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMapByName(startClassName);
-      ProcessOutboundClass(startClassName, startClassIdentifier, 0, true, classTemplateMap);
+
+      if (classTemplateMap != null)
+      {
+        ProcessOutboundClass(startClassName, startClassIdentifier, 0, true, classTemplateMap);
+      }
+
       return _rdfXml;
     }
 
@@ -268,41 +276,44 @@ namespace org.iringtools.adapter.projection
     }
 
     private void ProcessOutboundClass(string startClassName, string startClassIdentifier, int dataObjectIndex, bool isRootClass,
-      ClassTemplateMap classTemplateListMap)
+      ClassTemplateMap classTemplateMap)
     {
-      ClassMap classMap = classTemplateListMap.classMap;
-      List<TemplateMap> templateMaps = classTemplateListMap.templateMaps;
-
-      if (classMap != null)
+      if (classTemplateMap != null)
       {
-        string className = Utility.TitleCase(classMap.name);
-        string baseUri = _graphBaseUri + className + "/";
-        string classId = classMap.id.Substring(classMap.id.IndexOf(":") + 1);
-        bool hasRelatedProperty;
-        List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
+        ClassMap classMap = classTemplateMap.classMap;
+        List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
 
-        for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
+        if (classMap != null)
         {
-          string classIdentifier = classIdentifiers[classIdentifierIndex];
+          string className = Utility.TitleCase(classMap.name);
+          string baseUri = _graphBaseUri + className + "/";
+          string classId = classMap.id.Substring(classMap.id.IndexOf(":") + 1);
+          bool hasRelatedProperty;
+          List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
 
-          if (String.IsNullOrEmpty(startClassIdentifier) || className != startClassName || classIdentifier == startClassIdentifier)
+          for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
           {
-            XElement individualElement = CreateIndividual(baseUri, classId, classIdentifier);
+            string classIdentifier = classIdentifiers[classIdentifierIndex];
 
-            if (individualElement != null)
+            if (String.IsNullOrEmpty(startClassIdentifier) || className != startClassName || classIdentifier == startClassIdentifier)
             {
-              _rdfXml.Add(individualElement);
+              XElement individualElement = CreateIndividual(baseUri, classId, classIdentifier);
 
-              // add primary classification template
-              if (isRootClass && _primaryClassificationStyle == ClassificationStyle.Both)
+              if (individualElement != null)
               {
-                TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
-                AddTemplateElements(startClassName, startClassIdentifier, dataObjectIndex, baseUri, classIdentifier,
-                  classIdentifierIndex, classificationTemplate, hasRelatedProperty);
-              }
+                _rdfXml.Add(individualElement);
 
-              ProcessOutboundTemplates(startClassName, startClassIdentifier, dataObjectIndex, individualElement, templateMaps,
-                baseUri, classIdentifier, classIdentifierIndex, hasRelatedProperty);
+                // add primary classification template
+                if (isRootClass && _primaryClassificationStyle == ClassificationStyle.Both)
+                {
+                  TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
+                  AddTemplateElements(startClassName, startClassIdentifier, dataObjectIndex, baseUri, classIdentifier,
+                    classIdentifierIndex, classificationTemplate, hasRelatedProperty);
+                }
+
+                ProcessOutboundTemplates(startClassName, startClassIdentifier, dataObjectIndex, individualElement, templateMaps,
+                  baseUri, classIdentifier, classIdentifierIndex, hasRelatedProperty);
+              }
             }
           }
         }
@@ -611,9 +622,6 @@ namespace org.iringtools.adapter.projection
 
     private void ProcessInboundClass(int dataObjectIndex, ClassMap classMap, List<string> classInstances)
     {
-      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(classMap.id);
-      List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-
       for (int classInstanceIndex = 0; classInstanceIndex < classInstances.Count; classInstanceIndex++)
       {
         string classInstance = classInstances[classInstanceIndex];
@@ -651,9 +659,16 @@ namespace org.iringtools.adapter.projection
         }
       }
 
-      if (templateMaps != null && templateMaps.Count > 0)
+      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(classMap.id);
+
+      if (classTemplateMap != null)
       {
-        ProcessInboundTemplates(dataObjectIndex, classInstances, templateMaps);
+        List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+
+        if (templateMaps != null && templateMaps.Count > 0)
+        {
+          ProcessInboundTemplates(dataObjectIndex, classInstances, templateMaps);
+        }
       }
     }
 
@@ -766,7 +781,7 @@ namespace org.iringtools.adapter.projection
                   }
                 }
 
-                if (propertyPath.Length > 2)
+                if (propertyPath.Length > 2 && values.Count > 0)
                 {
                   SetRelatedRecords(dataObjectIndex, classInstanceIndex, propertyRole.propertyName, values);
                 }
