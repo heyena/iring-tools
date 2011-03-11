@@ -164,16 +164,22 @@ public class RefDataService extends AbstractService {
 	 * OutgoingWebResponseContext context =
 	 * WebOperationContext.Current.OutgoingResponse; context.ContentType =
 	 * "application/xml"; return _referenceDataProvider.getVersion(); }
-	 * 
-	 * @GET
-	 * 
-	 * @Path("/classes/{id}/label") public String getClassLabel(@PathParam("id")
-	 * String id) { String classLabel = ""; try { initService(); RefDataProvider
-	 * refDataProvider = new RefDataProvider(settings); classLabel =
-	 * refDataProvider.getClassLabel(id); } catch (Exception ex) {
-	 * logger.error("Error getting federation information: " + ex); } return
-	 * classLabel; }
-	 * 
+	 */
+	@GET
+	@Path("/classes/{id}/label")
+	public String getClassLabel(@PathParam("id") String id) {
+		String classLabel = "";
+		try {
+			initService();
+			RefDataProvider refDataProvider = new RefDataProvider(settings);
+			classLabel = refDataProvider.getClassLabel(id);
+		} catch (Exception ex) {
+			logger.error("Error getting class label information: " + ex);
+		}
+		return classLabel;
+	}
+
+	/*
 	 * @GET
 	 * 
 	 * @Path("/classes/{id}/{namespace}")
@@ -315,18 +321,19 @@ public class RefDataService extends AbstractService {
 		return queries;
 	}
 
-//	@GET
-//	@Path("/label/{query}")
-//	public String getLabel(@PathParam("query") String query) throws Exception {
-//		String label = "";
-//		try {
-//			initService();
-//			RefDataProvider refDataProvider = new RefDataProvider(settings);
-//			label = refDataProvider.getLabel(query);
-//		} catch (RuntimeException ex) {
-//			logger.error("Error getting getLabel information: " + ex);
-//
-//		}
-//		return label;
-//	}
+	// @GET
+	// @Path("/label/{query}")
+	// public String getLabel(@PathParam("query") String query) throws Exception
+	// {
+	// String label = "";
+	// try {
+	// initService();
+	// RefDataProvider refDataProvider = new RefDataProvider(settings);
+	// label = refDataProvider.getLabel(query);
+	// } catch (RuntimeException ex) {
+	// logger.error("Error getting getLabel information: " + ex);
+	//
+	// }
+	// return label;
+	// }
 }
