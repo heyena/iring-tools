@@ -2,6 +2,8 @@ package org.iringtools.services.core;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -34,9 +36,10 @@ import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
 import org.iringtools.utility.NetworkCredentials;
-import org.w3._2007.sparql.results.Binding;
-import org.w3._2007.sparql.results.Result;
-import org.w3._2007.sparql.results.Results;
+import org.w3._2005.sparql.results.Binding;
+import org.w3._2005.sparql.results.Result;
+import org.w3._2005.sparql.results.Results;
+import org.w3._2005.sparql.results.Sparql;
 
 import sun.misc.Version;
 
@@ -48,8 +51,8 @@ public class RefDataProvider {
 	public RefDataProvider(Hashtable<String, String> settings) {
 		try {
 			this.settings = settings;
-			this._repositories = this.getRepositories();
-			this._queries = this.getQueries();
+			_repositories = getRepositories();
+			_queries = getQueries();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -565,76 +568,82 @@ public class RefDataProvider {
 		return idsAdiId;
 	}
 
-	public String getLabel(String uri) {
-		try {
-			Query query = new Query();
-			String label = "";
-			String sparql = "";
-			String relativeUri = "";
-			List<QueryItem> items = _queries.getItems();
-			for (QueryItem qry : items) {
-				if (qry.getKey().contains("GetLabel")) {
-					query = qry.getQuery();
-					break;
-				}
+	public String getLabel(String uri) throws Exception {
+		String label = "";
+
+		Query query = new Query();
+		String sparql = "";
+		// String relativeUri = "";
+		List<QueryItem> items = _queries.getItems();
+		for (QueryItem qry : items) {
+			if (qry.getKey().contains("GetLabel")) {
+				query = qry.getQuery();
+				break;
 			}
-			QueryBindings queryBindings = query.getBindings();
-			sparql = ReadSPARQL(query.getFileName());
-			sparql = sparql.replace("param1", uri);
-			_repositories = getRepositories();
-			for (Repository repository : _repositories) {
-				Results sparqlResult = queryFromRepository(repository, sparql);
+		}
+		QueryBindings queryBindings = query.getBindings();
+		sparql = ReadSPARQL(query.getFileName());
+		sparql = sparql.replace("param1", uri);
+		// _repositories = getRepositories();
+		for (Repository repository : _repositories) {
+			Sparql sparqlResult = queryFromRepository(repository, sparql);
+			if (sparqlResult != null) {
+				Results res = sparqlResult.getResults();
 				List<Hashtable<String, String>> results = bindQueryResults(
-						queryBindings, sparqlResult);
+						queryBindings, res);
 				for (Hashtable<String, String> result : results) {
 					if (result.containsKey("label")) {
 						label = result.get("label");
 					}
 				}
 			}
-
-			return label;
-		} catch (Exception ex) {
-			return ex.toString();
 		}
 
+		return label;
 	}
+
 	private List<Hashtable<String, String>> bindQueryResults(
 			QueryBindings queryBindings, Results sparqlResults) {
+		String sBinding = "";
+		String qBinding = "";
 		try {
 			List<Hashtable<String, String>> results = new ArrayList<Hashtable<String, String>>();
-			for(Result sparqlResult : sparqlResults.getResults()){
+			for (Result sparqlResult : sparqlResults.getResults()) {
 				Hashtable<String, String> result = new Hashtable<String, String>();
 				String sortKey = "";
-				for(Binding sparqlBinding : sparqlResult.getBindings()){
-					for(QueryBinding queryBinding : queryBindings.getItems()){
-						if(queryBinding.getName() == sparqlBinding.getName()){
-							String bindingKey = queryBinding.getName();
+				for (Binding sparqlBinding : sparqlResult.getBindings()) {
+					sBinding = sparqlBinding.getName();
+					for (QueryBinding queryBinding : queryBindings.getItems()) {
+						qBinding = queryBinding.getName();
+						if (sBinding.equals(qBinding)) {
+							String bindingKey = qBinding;
 							String bindingValue = "";
 							String dataType = "";
-							
-							if(queryBinding.getType() == SPARQLBindingType.URI){
+
+							if (queryBinding.getType() == SPARQLBindingType.URI) {
 								bindingValue = sparqlBinding.getUri();
-							}
-							else if (queryBinding.getType() == SPARQLBindingType.LITERAL){
-								bindingValue = sparqlBinding.getLiteral().getContent();
-								dataType = sparqlBinding.getLiteral().getDatatype();
+							} else if (queryBinding.getType() == SPARQLBindingType.LITERAL) {
+								bindingValue = sparqlBinding.getLiteral()
+										.getContent();
+								dataType = sparqlBinding.getLiteral()
+										.getDatatype();
 								sortKey = bindingValue;
 							}
-							
-							if(result.containsKey(bindingKey)){
+
+							if (result.containsKey(bindingKey)) {
 								bindingKey = makeUniqueKey(result, bindingKey);
 							}
-							
+
 							result.put(bindingKey, bindingValue);
-							
-							if(!dataType.equals("") && dataType != null){
-								result.put(bindingKey + "_dataType", bindingValue);
+
+							if (dataType != null && !dataType.isEmpty()) {
+								result.put(bindingKey + "_dataType",
+										bindingValue);
 							}
 						}
 					}
 				}
-				results.add(result)	;
+				results.add(result);
 			}
 			return results;
 		} catch (RuntimeException ex) {
@@ -646,9 +655,9 @@ public class RefDataProvider {
 			String duplicateKey) {
 		try {
 			String newKey = "";
-			for(int i = 2; i < Integer.MAX_VALUE; i++){
+			for (int i = 2; i < Integer.MAX_VALUE; i++) {
 				String postFix = " (" + (new Integer(i)).toString() + ")";
-				if(!hashtable.containsKey(duplicateKey + postFix)){
+				if (!hashtable.containsKey(duplicateKey + postFix)) {
 					newKey += postFix;
 					break;
 				}
@@ -659,16 +668,24 @@ public class RefDataProvider {
 		}
 	}
 
-	private Results queryFromRepository(Repository repository, String sparql) throws HttpClientException {
-		Results sparqlResults = null;
-		try {		
-			//String encryptedCredentials = repository.
+	private Sparql queryFromRepository(Repository repository, String sparql)
+			throws HttpClientException, UnsupportedEncodingException {
+		Sparql sparqlResults = null;
+		String message = "query=" + URLEncoder.encode(sparql, "UTF-8");
+		String results = null;// new Results();
+		try {
+			String baseUri = repository.getUri();
+			// String encryptedCredentials = repository.
 			NetworkCredentials credentials = new NetworkCredentials();
-			HttpClient sparqlClient = new HttpClient(repository.getUri(),credentials);
-			sparqlResults = sparqlClient.post(Results.class, sparql);
-			
+			// String domain = "localhost";
+			// credentials.setDomain(domain);
+		
+			HttpClient sparqlClient = new HttpClient(baseUri);
+			sparqlClient.setNetworkCredentials(credentials);
+			sparqlResults = sparqlClient.PostMessage(Sparql.class, "", message);
+
 		} catch (RuntimeException ex) {
-			return sparqlResults;
+			return sparqlResults = null;
 		}
 		return sparqlResults;
 	}
