@@ -117,12 +117,32 @@ namespace AdapterService.Tests
     //  Assert.IsFalse(actual.Level == StatusLevel.Error);
     //}
 
+    [TestMethod()]
+    public void PullTest_ABC()
+    {
+      AdapterProxy target = new AdapterProxy();
+      Response prepare = target.RefreshGraph("12345_000", "ABC", "LINES");
+
+      if (prepare.Level == StatusLevel.Error)
+      {
+        throw new AssertFailedException(Utility.SerializeDataContract<Response>(prepare));
+      }
+
+      Request request = new Request
+      {
+        {"targetUri", "http://localhost:54321/facade/query"},
+        {"targetGraphBaseUri", "http://localhost:54321/data/12345_000/ABC/LINES"},
+      };
+
+      Response actual = target.Pull("12345_000", "ABC", "LINES", request);
+      Assert.IsFalse(actual.Level == StatusLevel.Error);
+    }
+    
     //[TestMethod()]
-    //public void PullTest_ABC()
+    //public void PullTest()
     //{
     //  AdapterProxy target = new AdapterProxy();
-
-    //  Response prepare = target.RefreshAll("12345_000", "ABC");
+    //  Response prepare = target.RefreshGraph("Rosatom", "Excel", "Person");
 
     //  if (prepare.Level == StatusLevel.Error)
     //  {
@@ -130,18 +150,15 @@ namespace AdapterService.Tests
     //  }
 
     //  Request request = new Request
-    //  {
-
-    //    {"targetUri", "http://localhost/InterfaceService/sparql/"},
-    //    {"graphName", "Lines"},
+    //  {        
+    //    {"targetEndpointUri", "http://localhost:54321/facade/query"},
+    //    {"targetGraphBaseUri", "http://localhost:54321/data/Rosatom/Excel/Person"},
     //  };
 
-    //  Response actual = target.Pull("12345_000", "ABC", request);
-
+    //  Response actual = target.Pull("Rosatom", "Excel", "Person", request);
     //  Assert.IsFalse(actual.Level == StatusLevel.Error);
     //}
 
-    [TestMethod()]
     public void SparqlPull()
     {
       AdapterProxy target = new AdapterProxy();
@@ -149,7 +166,7 @@ namespace AdapterService.Tests
       Request request = new Request
       {
         {"targetEndpointUri", "http://localhost:54321/facade/query"},
-        {"targetGraphBaseUri", "http://www.example.com/12345_000/XYZ/LINES"},
+        {"targetGraphBaseUri", "http://localhost:54321/data/12345_000/XYZ/LINES"},
       };
 
       Response setup = target.RefreshGraph("12345_000", "XYZ", "LINES");
