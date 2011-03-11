@@ -315,18 +315,18 @@ public class RefDataService extends AbstractService {
 		return queries;
 	}
 
-	@GET
-	@Path("/label/{query}")
-	public String getLabel(String query) {
-		String label = "";
-		try {
-			initService();
-			RefDataProvider refDataProvider = new RefDataProvider(settings);
-			label = refDataProvider.getLabel(query);
-		} catch (RuntimeException ex) {
-			logger.error("Error getting getRepositories information: " + ex);
-
-		}
-		return label;
-	}
+//	@GET
+//	@Path("/label/{query}")
+//	public String getLabel(@PathParam("query") String query) throws Exception {
+//		String label = "";
+//		try {
+//			initService();
+//			RefDataProvider refDataProvider = new RefDataProvider(settings);
+//			label = refDataProvider.getLabel(query);
+//		} catch (RuntimeException ex) {
+//			logger.error("Error getting getLabel information: " + ex);
+//
+//		}
+//		return label;
+//	}
 }

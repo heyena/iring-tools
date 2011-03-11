@@ -176,6 +176,34 @@ public class HttpClient
     return networkCredentials;
   }
   
+  public <T> T PostMessage(Class<T> responseClass, String relativeUri, String requestMessage) throws HttpClientException
+  {
+      try
+      {
+          URLConnection conn = getConnection(POST, relativeUri);
+          conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        
+          StringBuilder requestEntity = new StringBuilder();
+          requestEntity.append(requestMessage);
+          
+          DataOutputStream requestStream = new DataOutputStream(conn.getOutputStream());    
+          requestStream.writeBytes(requestEntity.toString());        
+          requestStream.flush();
+          requestStream.close();
+          
+          InputStream responseStream = conn.getInputStream();   
+          
+          T response = JaxbUtil.toObject(responseClass, responseStream);
+          logger.debug("post (" + JaxbUtil.toXml(response, true) + ")");
+          
+          return response;
+        }
+      catch (Exception ex)
+      {
+    	  throw new HttpClientException(ex.toString());
+      }
+  }
+  
   private URLConnection getConnection(String method, String relativeUri) throws IOException
   {
     if (baseUri == null) baseUri = "";
