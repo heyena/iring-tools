@@ -14,6 +14,19 @@ div.banner {
   width: 700px;
 }
 
+div.note {
+  background: #FFB27F;
+  border-radius: 15px 15px 15px 15px;
+  margin-right: 20px;
+  margin-top: 10px;
+  padding: 20px;
+  text-align: left;
+}
+
+p.title {
+  font-weight: bold;
+}
+
 table {
 	width:700px;	
 }
