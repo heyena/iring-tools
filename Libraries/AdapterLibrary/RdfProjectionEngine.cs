@@ -610,9 +610,6 @@ namespace org.iringtools.adapter.projection
 
     private void ProcessInboundClass(int dataObjectIndex, ClassMap classMap, List<string> classInstances)
     {
-      KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMap(classMap.classId);
-      List<TemplateMap> templateMaps = pair.Value;
-
       for (int classInstanceIndex = 0; classInstanceIndex < classInstances.Count; classInstanceIndex++)
       {
         string classInstance = classInstances[classInstanceIndex];
@@ -649,6 +646,9 @@ namespace org.iringtools.adapter.projection
           }
         }
       }
+
+      KeyValuePair<ClassMap, List<TemplateMap>> pair = _graphMap.GetClassTemplateListMap(classMap.classId);
+      List<TemplateMap> templateMaps = pair.Value;
 
       if (templateMaps != null && templateMaps.Count > 0)
       {
@@ -765,7 +765,7 @@ namespace org.iringtools.adapter.projection
                   }
                 }
 
-                if (propertyPath.Length > 2)
+                if (propertyPath.Length > 2 && values.Count > 0)
                 {
                   SetRelatedRecords(dataObjectIndex, classInstanceIndex, propertyRole.propertyName, values);
                 }

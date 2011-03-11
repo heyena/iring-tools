@@ -297,31 +297,30 @@ namespace org.iringtools.adapter.projection
             if (!relatedObjectTypeIdentifiers.ContainsKey(relatedObjectType))
             {
               List<string> relatedObjectIdentifiers = new List<string> { relatedObjectIdentifier };
+
               relatedObjectTypeIdentifiers.Add(relatedObjectType, relatedObjectIdentifiers);
-
-              IDataObject relatedObject = _dataLayer.Create(relatedObjectType, new List<string> { relatedObjectIdentifier }).First();
-              foreach (var relatedRecordPair in relatedRecord)
-              {
-                relatedObject.SetPropertyValue(relatedRecordPair.Key, relatedRecordPair.Value);
-              }
-
-              _dataObjects.Add(relatedObject);
+              AddRelatedObject(relatedObjectType, relatedObjectIdentifier, relatedRecord);
             }
             else if (!relatedObjectTypeIdentifiers[relatedObjectType].Contains(relatedObjectIdentifier))
             {
               relatedObjectTypeIdentifiers[relatedObjectType].Add(relatedObjectIdentifier);
-
-              IDataObject relatedObject = _dataLayer.Create(relatedObjectType, new List<string> { relatedObjectIdentifier }).First();
-              foreach (var relatedRecordPair in relatedRecord)
-              {
-                relatedObject.SetPropertyValue(relatedRecordPair.Key, relatedRecordPair.Value);
-              }
-
-              _dataObjects.Add(relatedObject);
+              AddRelatedObject(relatedObjectType, relatedObjectIdentifier, relatedRecord);
             }
           }
         }
       }
+    }
+
+    protected void AddRelatedObject(string relatedObjectType, string relatedObjectIdentifier, Dictionary<string, string> relatedRecord)
+    {
+      IDataObject relatedObject = _dataLayer.Create(relatedObjectType, new List<string> { relatedObjectIdentifier }).First();
+
+      foreach (var relatedRecordPair in relatedRecord)
+      {
+        relatedObject.SetPropertyValue(relatedRecordPair.Key, relatedRecordPair.Value);
+      }
+
+      _dataObjects.Add(relatedObject);
     }
 
     protected List<KeyProperty> GetKeyProperties(string objectType)
