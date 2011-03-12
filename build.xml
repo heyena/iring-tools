@@ -235,24 +235,14 @@
           Command="Copy $(ServicesDir)\\XML\Repositories_Default.xml $(ServicesDir)\XML\Repositories.xml" />
     <Exec Condition="!Exists('$(ServicesDir)\App_Data\config.ttl')" 
           Command="Copy $(ServicesDir)\App_Data\config_Default.ttl $(ServicesDir)\App_Data\config.ttl" />
-    
     <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
           Command="Copy $(ApplicationsDir)\Web_Default.config $(ApplicationsDir)\Web.config" />
-
     <Exec Condition="!Exists('$(FacadeExchangeDir)\App.config')"
       Command="Copy $(FacadeExchangeDir)\App_Default.config $(FacadeExchangeDir)\App.config" />
-
     <Exec Condition="!Exists('$(QMXFGeneratorDir)\App.config')"
           Command="Copy $(QMXFGeneratorDir)\QMXFGenerator_Default.config $(QMXFGeneratorDir)\App.config" />
-    
     <Exec Condition="!Exists('$(RDFImportExportDir)\App.config')"
           Command="Copy $(RDFImportExportDir)\RDFImportExport_Default.config $(RDFImportExportDir)\App.config" />
-
-    <Exec Condition="!Exists('$(AdapterServiceTestsDir)\App.config')"
-          Command="Copy $(AdapterServiceTestsDir)\App_Default.config $(AdapterServiceTestsDir)\App.config" />
-
-    <Exec Condition="!Exists('$(RefDataServiceTestsDir)\App.config')"
-          Command="Copy $(RefDataServiceTestsDir)\App_Default.config $(RefDataServiceTestsDir)\App.config" />
   </Target>
 
   <Target Name="CoreBuild" DependsOnTargets="Version">
