@@ -10,8 +10,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.PathSegment;
 import javax.xml.bind.JAXBException;
 
+import org.apache.cxf.jaxrs.model.Parameter;
 import org.apache.log4j.Logger;
 import org.ids_adi.ns.qxf.model.Qmxf;
 import org.iringtools.common.response.Response;
@@ -167,6 +170,7 @@ public class RefDataService extends AbstractService {
 	 */
 	@GET
 	@Path("/classes/{id}/label")
+	@Produces("text/html") 
 	public String getClassLabel(@PathParam("id") String id) {
 		String classLabel = "";
 		try {
@@ -179,29 +183,35 @@ public class RefDataService extends AbstractService {
 		return classLabel;
 	}
 
+	@GET
+	@Path("/classes/{id}")  //TODO need to add namespace parameter
+	public Qmxf getClass(@PathParam("id") String id) {
+		Qmxf qmxf = null;
+		try {
+			initService();
+			RefDataProvider refDataProvider = new RefDataProvider(settings);
+			qmxf = refDataProvider.getClass(id, null, null);
+		} catch (Exception ex) {
+			logger.error("Error getting class information: " + ex);
+		}
+		return qmxf;
+	}
+
+	@GET
+	@Path("/templates/{id}")
+	public Qmxf getTemplate(@PathParam("id") String id) {
+		Qmxf qmxf = null;
+		try {
+			initService();
+			RefDataProvider refDataProvider = new RefDataProvider(settings);
+			qmxf = refDataProvider.getTemplate(id);
+		} catch (Exception ex) {
+			logger.error("Error getting federation information: " + ex);
+		}
+		return qmxf;
+	}
+
 	/*
-	 * @GET
-	 * 
-	 * @Path("/classes/{id}/{namespace}")
-	 * 
-	 * public Qmxf getClass(@PathParam("id") String id,@PathParam("namespace")
-	 * String namespace) {
-	 * 
-	 * Qmxf qmxf= null; try { initService(); RefDataProvider refDataProvider =
-	 * new RefDataProvider(settings); qmxf =
-	 * refDataProvider.GetClass(id,namespace); } catch (Exception ex) {
-	 * logger.error("Error getting federation information: " + ex); } return
-	 * qmxf; }
-	 * 
-	 * @GET
-	 * 
-	 * @Path("/templates/{id}") public Qmxf getTemplate(@PathParam("id") String
-	 * id) { Qmxf qmxf= null; try { initService(); RefDataProvider
-	 * refDataProvider = new RefDataProvider(settings); qmxf =
-	 * refDataProvider.GetTemplate(id); } catch (Exception ex) {
-	 * logger.error("Error getting federation information: " + ex); } return
-	 * qmxf; }
-	 * 
 	 * @POST
 	 * 
 	 * @Path("/templates") public Response PostTemplate(Qmxf qmxf) { Response
