@@ -3,12 +3,22 @@ package org.iringtools.services.core;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import javax.xml.bind.JAXBException;
+
+import org.ids_adi.ns.qxf.model.ClassDefinition;
+import org.ids_adi.ns.qxf.model.Classification;
+import org.ids_adi.ns.qxf.model.Description;
+import org.ids_adi.ns.qxf.model.EntityType;
+import org.ids_adi.ns.qxf.model.Name;
 import org.ids_adi.ns.qxf.model.Qmxf;
+import org.ids_adi.ns.qxf.model.Specialization;
 import org.ids_adi.ns.qxf.model.TemplateDefinition;
 import org.ids_adi.ns.qxf.model.TemplateQualification;
 import org.iringtools.common.response.Level;
@@ -20,6 +30,7 @@ import org.iringtools.refdata.federation.Federation;
 import org.iringtools.refdata.federation.IDGenerator;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
+import org.iringtools.refdata.federation.RepositoryType;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.refdata.queries.Query;
 import org.iringtools.refdata.queries.QueryBinding;
@@ -30,24 +41,29 @@ import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.IOUtil;
 import org.iringtools.utility.JaxbUtil;
+import org.iringtools.utility.NamespaceMapper;
 import org.iringtools.utility.NetworkCredentials;
 import org.w3._2005.sparql.results.Binding;
 import org.w3._2005.sparql.results.Result;
 import org.w3._2005.sparql.results.Results;
 import org.w3._2005.sparql.results.Sparql;
+import org.iringtools.refdata.response.*;
 
 import sun.misc.Version;
 
 public class RefDataProvider {
-	private Hashtable<String, String> settings;
+	private Hashtable<String, String> _settings;
 	private List<Repository> _repositories = null;
 	private Queries _queries = null;
+	private String defaultLanguage = "en";
+	private NamespaceMapper _nsmap = null;;
 
 	public RefDataProvider(Hashtable<String, String> settings) {
 		try {
-			this.settings = settings;
+			_settings = settings;
 			_repositories = getRepositories();
 			_queries = getQueries();
+			_nsmap = new NamespaceMapper();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -56,13 +72,13 @@ public class RefDataProvider {
 
 	public Queries getQueries() throws JAXBException, IOException,
 			FileNotFoundException {
-		String path = settings.get("baseDirectory")
+		String path = _settings.get("baseDirectory")
 				+ "/WEB-INF/data/Queries.xml";
 		return JaxbUtil.read(Queries.class, path);
 	}
 
 	public Federation getFederation() throws JAXBException, IOException {
-		String path = settings.get("baseDirectory")
+		String path = _settings.get("baseDirectory")
 				+ "/WEB-INF/data/federation.xml";
 		return JaxbUtil.read(Federation.class, path);
 	}
@@ -70,7 +86,7 @@ public class RefDataProvider {
 	public Response saveFederation(Federation federation) throws Exception {
 		Response response = new Response();
 		try {
-			String path = settings.get("baseDirectory")
+			String path = _settings.get("baseDirectory")
 					+ "/WEB-INF/data/federation.xml";
 			JaxbUtil.write(federation, path, true);
 			response.setLevel(Level.SUCCESS);
@@ -125,7 +141,7 @@ public class RefDataProvider {
 				federation.getNamespaces().getItems().add(namespace);
 			}
 
-			String path = settings.get("baseDirectory")
+			String path = _settings.get("baseDirectory")
 					+ "/WEB-INF/data/federation.xml";
 			JaxbUtil.write(federation, path, true);
 
@@ -188,7 +204,7 @@ public class RefDataProvider {
 				federation.getIdGenerators().getItems().add(idgenerator);
 			}
 
-			String path = settings.get("baseDirectory")
+			String path = _settings.get("baseDirectory")
 					+ "/WEB-INF/data/federation.xml";
 			JaxbUtil.write(federation, path, true);
 
@@ -238,7 +254,7 @@ public class RefDataProvider {
 			if (!deleteFlag) {
 				federation.getRepositories().getItems().add(repository);
 			}
-			String path = settings.get("baseDirectory")
+			String path = _settings.get("baseDirectory")
 					+ "/WEB-INF/data/federation.xml";
 			JaxbUtil.write(federation, path, true);
 
@@ -260,7 +276,7 @@ public class RefDataProvider {
 
 	public String ReadSPARQL(String queryName) throws Exception {
 		try {
-			String path = settings.get("baseDirectory")
+			String path = _settings.get("baseDirectory")
 					+ "/WEB-INF/data/Sparqls/";
 
 			String query = IOUtil.readString(path + queryName);
@@ -276,45 +292,419 @@ public class RefDataProvider {
 	}
 
 	public String getClassLabel(String id) throws Exception {
-		return getLabel("http://rdl.rdlfacade.org/data#" + id);
+		return getLabel(_nsmap.GetNamespaceUri("rdl").toString() + id);
 	}
 
-	public Qmxf GetClass(String id, String namespaceUrl) {
+	public Qmxf getClass(String id, Repository repository) throws Exception {
+		return getClass(id, "", repository);
+	}
+
+	public Qmxf getClass(String id) throws Exception {
+		return getClass(id, "", null);
+	}
+
+	public Qmxf getClass(String id, String namespaceUrl, Repository rep)
+			throws Exception {
 		Qmxf qmxf = new Qmxf();
-		return qmxf;
-	}
 
-	public Qmxf GetTemplate(String id, Repository repository) {
-		Qmxf federatedQmxf = new Qmxf();
 		try {
-			for (Repository repository1 : _repositories) {
-				Qmxf qmxf = GetTemplate(id, repository);
+			Name name;
+			Description description;
+			org.ids_adi.ns.qxf.model.Status status;
+			String[] names = null;
 
-				for (TemplateDefinition templateDefinition : qmxf
-						.getTemplateDefinitions()) {
-					if (templateDefinition != null)
-						federatedQmxf.getTemplateDefinitions().add(
-								templateDefinition);
-				}
-				for (TemplateQualification templateQualification : qmxf
-						.getTemplateQualifications()) {
-					if (templateQualification != null)
-						federatedQmxf.getTemplateQualifications().add(
-								templateQualification);
+			List<Classification> classifications = new ArrayList<Classification>();
+			List<Specialization> specializations = new ArrayList<Specialization>();
+
+			// Entities resultEntities = new Entities();
+			// List<Entity> resultEnt = new ArrayList<Entity>();
+			String sparql = "";
+			// String relativeUri = "";
+
+			Query queryContainsSearch = getQuery("GetClass");
+//			List<QueryItem> items = _queries.getItems();
+//			for (QueryItem qry : items) {
+//				if (qry.getKey().equals("GetClass")) {
+//					queryContainsSearch = qry.getQuery();
+//					break;
+//				}
+//			}
+			QueryBindings queryBindings = queryContainsSearch.getBindings();
+
+			sparql = ReadSPARQL(queryContainsSearch.getFileName());
+
+			if ( namespaceUrl == null || namespaceUrl.isEmpty())
+				namespaceUrl = _nsmap.GetNamespaceUri("rdl").toString();
+
+			String uri = namespaceUrl + id;
+
+			sparql = sparql.replace("param1", uri);
+			for (Repository repository : _repositories) {
+				ClassDefinition classDefinition = null;
+
+				if (rep != null)
+					if (rep.getName().equals(repository.getName())) {
+						continue;
+					}
+				Sparql sparqlResult = queryFromRepository(repository, sparql);
+				if (sparqlResult != null) {
+					Results res = sparqlResult.getResults();
+
+					List<Hashtable<String, String>> results = bindQueryResults(
+							queryBindings, res);
+
+					classifications = new ArrayList<Classification>();
+					specializations = new ArrayList<Specialization>();
+
+					for (Hashtable<String, String> result : results) {
+						classDefinition = new ClassDefinition();
+						classDefinition.setId(uri);
+						classDefinition.setRepository(repository.getName());
+						name = new Name();
+						description = new Description();
+						status = new org.ids_adi.ns.qxf.model.Status();
+
+						if (result.containsKey("type")) {
+							URI typeName = new URI(
+									result.get("type")
+											.substring(
+													0,
+													result.get("type").indexOf(
+															"#") + 1));
+							if (typeName.toString().contains("dm")) {
+								EntityType et = new EntityType();
+								et.setReference(result.get("type"));
+								classDefinition.setEntityType(et);
+							} else if (repository.getRepositoryType().equals(
+									RepositoryType.PART_8)) {
+								continue;
+							}
+						}
+
+						if (result.containsKey("label")) {
+							names = result.get("label").split("@");
+							name.setValue(names[0]);
+							if (names.length == 1) {
+								name.setLang(defaultLanguage);
+							} else {
+								name.setLang(names[names.length - 1]);
+							}
+						}
+
+						// legacy properties
+						if (result.containsKey("definition")) {
+							names = result.get("definition").split("@");
+							description.setValue(names[0]);
+							if (names.length == 1) {
+								description.setLang(defaultLanguage);
+							} else {
+								description.setLang(names[names.length - 1]);
+							}
+						}
+						// description.value = result["definition"];
+
+						if (result.containsKey("creator")) {
+							status.setAuthority(result.get("creator"));
+						}
+						if (result.containsKey("creationDate")) {
+							status.setFrom(result.get("creationDate"));
+						}
+						if (result.containsKey("class")) {
+							status.setClazz(result.get("class"));
+						}
+						// camelot properties
+						if (result.containsKey("comment")) {
+							names = result.get("comment").split("@");
+							description.setValue(names[0]);
+							if (names.length == 1) {
+								description.setLang(defaultLanguage);
+							} else {
+								description.setLang(names[names.length - 1]);
+							}
+						}
+						if (result.containsKey("authority")) {
+							status.setAuthority(result.get("authority"));
+						}
+						if (result.containsKey("recorded")) {
+							status.setClazz(result.get("recorded"));
+						}
+						if (result.containsKey("from")) {
+							status.setFrom(result.get("from"));
+						}
+
+						classDefinition.getNames().add(name);
+
+						classDefinition.getDescriptions().add(description);
+						classDefinition.getStatuses().add(status);
+
+						classifications = getClassifications(id, repository);
+						specializations = getSpecializations(id, repository);
+
+						if (classifications.size() > 0) {
+							classDefinition.setClassifications(classifications);
+						}
+						if (specializations.size() > 0) {
+							classDefinition.setSpecializations(specializations);
+						}
+					}
+					if (classDefinition != null) {
+						qmxf.getClassDefinitions().add(classDefinition);
+
+					}
 				}
 			}
-		} catch (Exception ex) {
+			return qmxf;
+		} catch (RuntimeException e) {
+			// _logger.Error("Error in GetClass: " + e);
+			throw e;
+		}
+	}
+
+	private List<Specialization> getSpecializations(String id, Repository rep)
+			throws Exception {
+		try {
+			String sparql = "";
+			String sparqlPart8 = "";
+			String relativeUri = "";
+			String[] names = null;
+			Results res = null;
+			List<Specialization> specializations = new ArrayList<Specialization>();
+			Query queryGetSpecialization = getQuery("GetSpecialization");
+			QueryBindings queryBindings = queryGetSpecialization.getBindings();
+			sparql = ReadSPARQL(queryGetSpecialization.getFileName());
+			sparql = sparql.replace("param1", id);
+			Query queryGetSubClassOf = getQuery("GetSubClassOf");
+			QueryBindings queryBindingsPart8 = queryGetSubClassOf.getBindings();
+			sparqlPart8 = ReadSPARQL(queryGetSubClassOf.getFileName());
+			sparqlPart8 = sparqlPart8.replace("param1", id);
+			for (Repository repository : _repositories) {
+				if (rep != null) {
+					if (!rep.getName().equals(repository.getName())) {
+						continue;
+					}
+				}
+				if (repository.getRepositoryType() == RepositoryType.PART_8) {
+					Sparql sparqlResults = queryFromRepository(repository,
+							sparqlPart8);
+					if (sparqlResults != null) {
+						res = sparqlResults.getResults();
+						List<Hashtable<String, String>> results = bindQueryResults(
+								queryBindingsPart8, res);
+
+						for (Hashtable<String, String> result : results) {
+							Specialization specialization = new Specialization();
+							String uri = "";
+							String label = "";
+							String lang = "";
+							if (result.containsKey("uri")) {
+								uri = result.get("uri");
+								specialization.setReference(uri);
+							}
+							if (result.containsKey("label")) {
+								names = result.get("label").split("@", -1);
+								label = names[0];
+								if (names.length == 1) {
+									lang = defaultLanguage;
+								} else {
+									lang = names[names.length - 1];
+								}
+							} else {
+								names = getLabel(uri).split("@", -1);
+								label = names[0];
+								if (names.length == 1) {
+									lang = defaultLanguage;
+								} else {
+									lang = names[names.length - 1];
+								}
+							}
+							specialization.setLabel(label);
+							specialization.setLang(lang);
+							specializations.add(specialization);
+						}
+					}
+				} else {
+					Sparql sparqlResults = queryFromRepository(repository,
+							sparql);
+					if (sparqlResults != null) {
+						res = sparqlResults.getResults();
+						List<Hashtable<String, String>> results = bindQueryResults(
+								queryBindings, res);
+
+						for (Hashtable<String, String> result : results) {
+							Specialization specialization = new Specialization();
+							String uri = "";
+							String label = "";
+							String lang = "";
+
+							if (result.containsKey("uri")) {
+								uri = result.get("uri");
+								specialization.setReference(uri);
+							}
+							if (result.containsKey("label")) {
+								names = result.get("label").split("@", -1);
+								label = names[0];
+								if (names.length == 1) {
+									lang = defaultLanguage;
+								} else {
+									lang = names[names.length - 1];
+								}
+							} else {
+								label = getLabel(uri);
+							}
+
+							specialization.setLabel(label);
+							specialization.setLang(lang);
+							specializations.add(specialization);
+						}
+					}
+				}
+			}
+			return specializations;
+		} catch (RuntimeException e) {
+			// _logger.Error("Error in GetSpecializations: " + e);
+			throw new RuntimeException("Error while Getting Class: " + id
+					+ ".\n" + e.toString(), e);
+		}
+	}
+
+	private List<Classification> getClassifications(String id, Repository rep)
+			throws Exception {
+		try {
+			String sparql = "";
+			String relativeUri = "";
+
+			List<Classification> classifications = new ArrayList<Classification>();
+			Query getClassification;
+			QueryBindings queryBindings;
+
+			for (Repository repository : _repositories) {
+				if (rep != null) {
+					if (rep.getName().equals(repository.getName())) {
+						continue;
+					}
+				}
+				switch (rep.getRepositoryType()) {
+				case CAMELOT:
+				case RDS_WIP:
+
+					getClassification = getQuery("GetClassification");
+					queryBindings = getClassification.getBindings();
+
+					sparql = ReadSPARQL(getClassification.getFileName());
+					sparql = sparql.replace("param1", id);
+					classifications = processClassifications(rep, sparql,
+							queryBindings);
+					break;
+				case PART_8:
+					getClassification = getQuery("GetPart8Classification");
+					queryBindings = getClassification.getBindings();
+
+					sparql = ReadSPARQL(getClassification.getFileName());
+					sparql = sparql.replace("param1", id);
+					classifications = processClassifications(rep, sparql,
+							queryBindings);
+					break;
+				}
+			}
+
+			return classifications;
+		} catch (Exception e) {
+			// _logger.Error("Error in GetClassifications: " + e);
+			throw e;// new Exception("Error while Getting Class: " + id + ".\n"
+					// + e.ToString(), e);
+		}
+	}
+
+	private List<Classification> processClassifications(Repository repository,
+			String sparql, QueryBindings queryBindings) throws Exception {
+		Results res = null;
+		Sparql sparqlResults = queryFromRepository(repository, sparql);
+		if (sparqlResults != null) {
+			res = sparqlResults.getResults();
+		}
+		List<Hashtable<String, String>> results = bindQueryResults(
+				queryBindings, res);
+		List<Classification> classifications = new ArrayList<Classification>();
+
+		String[] names = null;
+
+		for (Hashtable<String, String> result : results) {
+
+			Classification classification = new Classification();
+			String uri = "";
+			String label = "";
+			String lang = "";
+
+			if (result.containsKey("uri")) {
+				String pref = _nsmap.GetPrefix(new URI(result.get("uri")
+						.substring(0, result.get("uri").indexOf("#") + 1)));
+				String uriString = result.get("uri");
+				if (pref.equals("owl") || pref.equals("dm")) {
+					continue;
+				}
+				uri = uriString;
+				classification.setReference(uri);
+			}
+
+			if (result.containsKey("label")) {
+				names = result.get("label").split("@");
+				label = names[0];
+				if (names.length == 1)
+					lang = defaultLanguage;
+				else
+					lang = names[names.length - 1];
+			} else {
+				names = getLabel(uri).split("@");
+				label = names[0];
+				if (names.length == 1)
+					lang = defaultLanguage;
+				else
+					lang = names[names.length - 1];
+			}
+			classification.setLabel(label);
+			classification.setLang(lang);
+			classifications.add(classification);
+		}
+
+		return classifications;
+	}
+
+	public final Qmxf getTemplate(String id) {
+		Qmxf qmxf = new Qmxf();
+
+		try {
+			List<TemplateQualification> templateQualifications = getTemplateQualification(id, null);
+
+			if (templateQualifications.size() > 0) {
+				qmxf.setTemplateQualifications(templateQualifications);
+			} else {
+				List<TemplateDefinition> templateDefinitions = getTemplateDefinition(id, null);
+				qmxf.setTemplateDefinitions(templateDefinitions);
+			}
+		} catch (RuntimeException ex) {
 			// _logger.Error("Error in GetTemplate: " + ex);
 		}
 
-		return federatedQmxf;
+		return qmxf;
 	}
 
-	public Response PostTemplate(Qmxf qmxf) {
+	private List<TemplateDefinition> getTemplateDefinition(String id,
+			Repository repository) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private List<TemplateQualification> getTemplateQualification(String id,
+			Repository repository) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Response postTemplate(Qmxf qmxf) {
 		return new Response();
 	}
 
-	public Response PostClass(Qmxf qmxf) {
+	public Response postClass(Qmxf qmxf) {
 		return new Response();
 	}
 
@@ -340,18 +730,29 @@ public class RefDataProvider {
 	 * return new RefDataEntities(); }
 	 * 
 	 * public List<Entity> find(String query){ List<Entity> listEntities; }
-	 * 
-	 * public RefDataEntities search(String query) { }
-	 * 
-	 * public RefDataEntities searchPage(String query, String start, String
-	 * limit) { }
-	 * 
-	 * public RefDataEntities searchReset(String query) { }
-	 * 
-	 * public List<Entity> getSuperClasses(String id) { }
-	 * 
-	 * public List<Entity> getAllSuperClasses(String id) { }
-	 * 
+	 */
+
+	public Entities search(String query) {
+		return null;
+	}
+
+	public Entities searchPage(String query, String start, String limit) {
+		return null;
+	}
+
+	public Entities searchReset(String query) {
+		return null;
+	}
+
+	public Entities getSuperClasses(String id) {
+		return null;
+	}
+
+	public Entities getAllSuperClasses(String id) {
+		return null;
+	}
+
+	/*
 	 * public List<Entity> getSubClasses(String id) { }
 	 * 
 	 * public List<Entity> getClassTemplates(String id) {
@@ -364,12 +765,11 @@ public class RefDataProvider {
 		Response result = null;
 		HttpClient httpClient = null;
 		try {
-			String uri = settings.get("idGenServiceUri");
+			String uri = _settings.get("idGenServiceUri");
 			httpClient = new HttpClient(uri);
 		} catch (Exception e) {
 			System.out.println("Exception in IDGenServiceUri :" + e);
 		}
-
 		result = httpClient.get(Response.class, serviceUrl);
 		return result;
 	}
@@ -389,17 +789,14 @@ public class RefDataProvider {
 		} catch (Exception e) {
 			// logger.Error("Error in createIdsAdiId: " + e);
 			System.out.println("Error in createIdsAdiId: " + e);
-
 		}
 		return idsAdiId;
 	}
 
 	public String getLabel(String uri) throws Exception {
 		String label = "";
-
 		Query query = new Query();
 		String sparql = "";
-
 		List<QueryItem> items = _queries.getItems();
 		for (QueryItem qry : items) {
 			if (qry.getKey().contains("GetLabel")) {
@@ -410,7 +807,6 @@ public class RefDataProvider {
 		QueryBindings queryBindings = query.getBindings();
 		sparql = ReadSPARQL(query.getFileName());
 		sparql = sparql.replace("param1", uri);
-
 		for (Repository repository : _repositories) {
 			Sparql sparqlResult = queryFromRepository(repository, sparql);
 			if (sparqlResult != null) {
@@ -424,7 +820,6 @@ public class RefDataProvider {
 				}
 			}
 		}
-
 		return label;
 	}
 
@@ -445,7 +840,6 @@ public class RefDataProvider {
 							String bindingKey = qBinding;
 							String bindingValue = "";
 							String dataType = "";
-
 							if (queryBinding.getType() == SPARQLBindingType.URI) {
 								bindingValue = sparqlBinding.getUri();
 							} else if (queryBinding.getType() == SPARQLBindingType.LITERAL) {
@@ -455,11 +849,9 @@ public class RefDataProvider {
 										.getDatatype();
 								sortKey = bindingValue;
 							}
-
 							if (result.containsKey(bindingKey)) {
 								bindingKey = makeUniqueKey(result, bindingKey);
 							}
-
 							result.put(bindingKey, bindingValue);
 
 							if (dataType != null && !dataType.isEmpty()) {
@@ -498,7 +890,6 @@ public class RefDataProvider {
 			throws HttpClientException, UnsupportedEncodingException {
 		Sparql sparqlResults = null;
 		String message = "query=" + URLEncoder.encode(sparql, "UTF-8");
-		String results = null;// new Results();
 		try {
 			String baseUri = repository.getUri();
 			// TODO need to look at credentials
@@ -512,4 +903,17 @@ public class RefDataProvider {
 		}
 		return sparqlResults;
 	}
+
+	private Query getQuery(String queryName) {
+		Query query = null;
+		List<QueryItem> items = _queries.getItems();
+		for (QueryItem qry : items) {
+			if (qry.getKey().equals(queryName)) {
+				query =  qry.getQuery();
+				break;
+			}
+		}
+		return query;
+	}
+
 }
