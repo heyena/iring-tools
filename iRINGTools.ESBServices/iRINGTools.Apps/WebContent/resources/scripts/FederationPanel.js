@@ -327,20 +327,22 @@ openTab: function(node,formType) {
                      xtype= 'xtype : "combo",hiddenName:"ID Generator", width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i]+'", width: 120';
                  break;
                  case 'Namespace List':
-                     var imgPath='./resources/js/external/ux/images/';
-                     var selNameSpaceIDsArr = new Array();
+                     //var imgPath='./resources/js/external/ux/images/';
+                	 var imgPath='./resources/ext-3.3.0/ux/images/';
+                     
                      var nodeIDTitleArr = new Array();
                      if(properties[i] !=null && properties[i]!=''){
-                         var selNameSpaces=properties[i].items;
-                         selNameSpaceIDsArr= (selNameSpaces.toString()).split(',');
+                    	 var selNameSpaceIDs = Ext.util.JSON.decode(properties[i]);
+                    	
+                         var selNameSpaceIDsArr = selNameSpaceIDs.items;
 
                         // nodeIDTitleArr = this.getNodesIDTitleByID(selNameSpaceIDsArr)                        
                          
-                         for(var j=0;j < selNameSpaceIDsArr.length; j++ ){
+                         for(var j = 0; j < selNameSpaceIDsArr.length; j++){
                             
                             subArr = new Array();
                             subArr[0] =selNameSpaceIDsArr[j];              // contains nameSpaceID
-                            subArr[1] =this.getNodeById(subArr[0]).text;     // contains nameSpaceTitle
+                            subArr[1] =subArr[0];     // contains nameSpaceTitle
                             
                              if(subArr[0]!='' && subArr[1]!=undefined){
                                   nodeIDTitleArr.push(subArr);
@@ -349,7 +351,9 @@ openTab: function(node,formType) {
                      }
                      
                      // get all the namespances
-                     var filteredNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'),selNameSpaceIDsArr);
+                     var rootNode = this.federationPanel.getRootNode();
+                     var nameSpaceParentNode = rootNode.findChild('identifier','namespace');
+                     var filteredNameSpaces = this.getAllChildNodes(nameSpaceParentNode, selNameSpaceIDsArr);
 
                      xtype='xtype : "itemselector", fieldLabel: "Namespace List",name: "itemselector",'
                          +'imagePath: "'+imgPath+'", '
@@ -375,6 +379,7 @@ openTab: function(node,formType) {
 
        }
         list_tems = eval('[' + list_items + ']');
+        
         //label = node.parentNode.text + ' : ' + obj['text']+'('+formType+')'
         this.fireEvent('opentab', this, node, label, list_tems);
  },
