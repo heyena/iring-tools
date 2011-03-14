@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;attribute name="lang" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="reference" type="{http://www.w3.org/2001/XMLSchema}string" />
  *       &lt;attribute name="as" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="text" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -36,7 +37,8 @@ public class Value {
     protected String reference;
     @XmlAttribute(name = "as")
     protected String as;
-
+    @XmlAttribute(name = "text")
+    protected String text;
     /**
      * Gets the value of the lang property.
      * 
@@ -107,6 +109,29 @@ public class Value {
      */
     public void setAs(String value) {
         this.as = value;
+    }
+    /**
+     * Gets the value of the text property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getText() {
+        return text;
+    }
+
+    /**
+     * Sets the value of the text property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setText(String value) {
+        this.text = value;
     }
 
 }
