@@ -683,7 +683,7 @@ public class RefDataProvider {
 		return qmxf;
 	}
 
-	public final Qmxf GetTemplate(String id, String templateType, Repository rep) throws HttpClientException, Exception
+	public final Qmxf getTemplate(String id, String templateType, Repository rep) throws HttpClientException, Exception
 	{
 		Qmxf qmxf = new Qmxf();
 		List<TemplateQualification> templateQualification = null;
@@ -1237,14 +1237,98 @@ public class RefDataProvider {
 
 	}
 
-	/*
-	 * public RefDataEntities searchPageReset(String query, int startIdx,int
-	 * pageLimit){
-	 * 
-	 * return new RefDataEntities(); }
-	 * 
-	 * public List<Entity> find(String query){ List<Entity> listEntities; }
-	 */
+	public Entities GetClassTemplates(String id) throws Exception
+	{
+		Entities queryResult = new Entities();
+		String[] names = null;
+		String language = "";
+		try
+		{
+			String sparqlGetClassTemplates = "";
+			String sparqlGetRelatedTemplates = "";
+			String relativeUri = "";
+			Query queryGetClassTemplates = getQuery("GetClassTemplates");
+			QueryBindings queryBindingsGetClassTemplates = queryGetClassTemplates.getBindings();
+
+			sparqlGetClassTemplates = ReadSPARQL(queryGetClassTemplates.getFileName());
+			sparqlGetClassTemplates = sparqlGetClassTemplates.replace("param1", id);
+
+			Query queryGetRelatedTemplates = getQuery("GetRelatedTemplates");
+			QueryBindings queryBindingsGetRelatedTemplates = queryGetRelatedTemplates.getBindings();
+
+			sparqlGetRelatedTemplates = ReadSPARQL(queryGetRelatedTemplates.getFileName());
+			sparqlGetRelatedTemplates = sparqlGetRelatedTemplates.replace("param1", id);
+
+			for (Repository repository : _repositories)
+			{
+				if (repository.getRepositoryType().equals(RepositoryType.PART_8))
+				{
+					Results sparqlResults = queryFromRepository(repository, sparqlGetRelatedTemplates);
+
+					List<Hashtable<String, String>> results = bindQueryResults(queryBindingsGetRelatedTemplates, sparqlResults);
+
+					for (Hashtable<String, String> result : results)
+					{
+
+						names = result.get("label").split("@", -1);
+						if (names.length == 1)
+						{
+							language = defaultLanguage;
+						}
+						else
+						{
+							language = names[names.length - 1];
+						}
+
+						Entity tempVar = new Entity();
+						tempVar.setUri(result.get("uri"));
+						tempVar.setLabel(names[0]);
+						tempVar.setLang(language);
+						tempVar.setRepository(repository.getName());
+						Entity resultEntity = tempVar;
+
+						//Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+						queryResult.getItems().add(resultEntity);                        
+					}
+				}
+				else
+				{
+					Results sparqlResults = queryFromRepository(repository, sparqlGetClassTemplates);
+
+					List<Hashtable<String, String>> results = bindQueryResults(queryBindingsGetClassTemplates, sparqlResults);
+
+					for (Hashtable<String, String> result : results)
+					{
+						names = result.get("label").split("@", -1);
+						if (names.length == 1)
+						{
+							language = defaultLanguage;
+						}
+						else
+						{
+							language = names[names.length - 1];
+						}
+
+						Entity tempVar2 = new Entity();
+						tempVar2.setUri(result.get("uri"));
+						tempVar2.setLabel(names[0]);
+						tempVar2.setLang(language);
+						tempVar2.setRepository(repository.getName());
+						Entity resultEntity = tempVar2;
+
+						//Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+						queryResult.getItems().add(resultEntity);
+					}
+				}
+			}
+		}
+		catch (RuntimeException e)
+		{
+			//_logger.Error("Error in GetClassTemplates: " + e);
+			throw new RuntimeException("Error while Finding " + id + ".\n" + e.toString(), e);
+		}
+		return queryResult;
+	}
 
 	public Entities search(String query) {
 		return null;

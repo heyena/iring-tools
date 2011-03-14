@@ -290,11 +290,22 @@ public class RefDataService extends AbstractService {
 		}		
 		return entityList;
 	}
-
-	public Entities getClassTemplates(String id) {
-		return null;
-
-	}
+    
+    @GET
+    @Path("/classes/{id}/templates")
+	public Entities getClassTemplates(@PathParam("id") String id) {
+    	Entities entityList = null;
+    	try {
+			initService();
+			RefDataProvider refdataProvider = new RefDataProvider(settings);
+			entityList = refdataProvider.GetClassTemplates(id);
+    	}
+    	catch (Exception ex)
+    	{
+    		logger.error("Error getting class templates information: " + ex);
+    	}
+    	return entityList;
+    }
 
 	/*
 	 * @GET
