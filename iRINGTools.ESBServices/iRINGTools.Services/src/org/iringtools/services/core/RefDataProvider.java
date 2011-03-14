@@ -1299,7 +1299,7 @@ public class RefDataProvider {
 		return queryResult;
 	}
 
-	public final Entities getSubClasses(String id) throws Exception
+	public Entities getSubClasses(String id) throws Exception
 	{
 		Entities queryResult = new Entities();
 
@@ -1386,18 +1386,88 @@ public class RefDataProvider {
 		return queryResult;
 	}
 	
-	public Entities getAllSuperClasses(String id) {
-		return null;
+	public Entities getAllSuperClasses(String id) throws Exception
+	{
+		Entities list = new Entities();
+		return getAllSuperClasses(id, list);
 	}
 
-	/*
-	 * public List<Entity> getSubClasses(String id) { }
-	 * 
-	 * public List<Entity> getClassTemplates(String id) {
-	 * 
-	 * }
-	 */
+	public Entities getAllSuperClasses(String id, Entities list) throws Exception
+	{
+		String[] names = null;
+		try
+		{
+			List<Specialization> specializations = getSpecializations(id, null);
+			//base case
+			if (specializations.isEmpty())
+			{
+				return list;
+			}
 
+			for (Specialization specialization : specializations)
+			{
+				String uri = specialization.getReference();
+				String label = specialization.getLabel();
+				String language = "";
+
+				if (label == null)
+				{
+					names = getLabel(uri).split("[@]", -1);
+					label = names[0];
+					if (names.length == 1)
+					{
+						language = defaultLanguage;
+					}
+					else
+					{
+						language = names[names.length - 1];
+					}
+				} else {
+					names = label.split("@");
+					if (names.length == 1)
+					{
+						language = defaultLanguage;
+					}
+					else
+					{
+						language = names[names.length - 1];
+					}
+					label = names[0];
+				}
+				Entity tempVar = new Entity();
+				tempVar.setUri(uri);
+				tempVar.setLabel(label);
+				tempVar.setLang(language);
+				Entity resultEntity = tempVar;
+
+				String trimmedUri = "";
+				boolean found = false;
+				for (Entity entt : list.getItems())
+				{
+					if (resultEntity.getUri().equals(entt.getUri()))
+					{
+						found = true;
+					}
+				}
+
+				if (!found)
+				{
+					trimmedUri = uri.substring(0, 0) + uri.substring(0 + uri.lastIndexOf('#') + 1);
+					list.getItems().add(resultEntity);
+					//Utility.SearchAndInsert(list, resultEntity, Entity.sortAscending());
+					getAllSuperClasses(trimmedUri, list);
+				}
+			}
+		}
+		catch (RuntimeException e)
+		{
+			//_logger.Error("Error in GetAllSuperClasses: " + e);
+			throw new RuntimeException("Error while Finding " + id + ".\n" + e.toString(), e);
+		}
+
+		return list;
+	}
+	
 	private Response queryIdGenerator(String serviceUrl)
 			throws HttpClientException {
 		Response result = null;
@@ -1626,10 +1696,9 @@ public class RefDataProvider {
 		Results results = new Results();
 		String message = "query=" + URLEncoder.encode(sparql, "UTF-8");
 		try {
-			String baseUri = repository.getUri();
 			// TODO need to look at credentials
 			NetworkCredentials credentials = new NetworkCredentials();
-			HttpClient sparqlClient = new HttpClient(baseUri);
+			HttpClient sparqlClient = new HttpClient(repository.getUri());
 			sparqlClient.setNetworkCredentials(credentials);
 			sparqlResults = sparqlClient.PostMessage(Sparql.class, "", message);
 		
