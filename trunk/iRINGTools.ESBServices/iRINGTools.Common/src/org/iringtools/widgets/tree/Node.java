@@ -6,6 +6,7 @@ public abstract class Node
 {
   protected String text;
   protected String iconCls;
+  protected String identifier;
   protected HashMap<String, String> properties;
 
   public String getText()
@@ -26,6 +27,16 @@ public abstract class Node
   public void setIconCls(String value)
   {
     this.iconCls = value;
+  }
+  
+  public String getIdentifier()
+  {
+    return identifier;
+  }
+
+  public void setIdentifier(String value)
+  {
+    this.identifier = value;
   }
 
   public HashMap<String, String> getProperties()
