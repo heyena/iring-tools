@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="repository" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="lang" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,7 +34,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Entity", propOrder = {
     "label",
     "repository",
-    "uri"
+    "uri",
+    "lang"
 })
 @XmlRootElement(name = "entity")
 public class Entity {
@@ -44,6 +46,8 @@ public class Entity {
     protected String repository;
     @XmlElement(required = true)
     protected String uri;
+    @XmlElement(required = true)
+    protected String lang;
 
     /**
      * Gets the value of the label property.
@@ -116,5 +120,30 @@ public class Entity {
     public void setUri(String value) {
         this.uri = value;
     }
+    
+    /**
+     * Gets the value of the lang property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getLang() {
+        return lang;
+    }
+
+    /**
+     * Sets the value of the lang property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setLang(String value) {
+        this.lang = value;
+    }
+
 
 }

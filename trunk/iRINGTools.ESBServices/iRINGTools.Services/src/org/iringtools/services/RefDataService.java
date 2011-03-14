@@ -255,7 +255,7 @@ public class RefDataService extends AbstractService {
     	}
     	catch (Exception ex)
     	{
-    		logger.error("Error getting getRepositories information: " + ex);
+    		logger.error("Error getting super classes information: " + ex);
     	}	
 		return entityList;
 	}
@@ -275,10 +275,20 @@ public class RefDataService extends AbstractService {
 		}
 		return entityList;
 	}
-
-	public Entities getAllSuperClasses(String id) {
-		return null;
-
+    
+    @GET
+    @Path("/classes/{id}/allsuperclasses")
+	public Entities getAllSuperClasses(@PathParam("id") String id) {
+		Entities entityList = null;
+		try {
+			initService();
+			RefDataProvider refdataProvider = new RefDataProvider(settings);
+			entityList = refdataProvider.getAllSuperClasses(id);
+		}
+		catch (Exception ex){
+			logger.error("Error getting all superclasses information: " + ex);
+		}		
+		return entityList;
 	}
 
 	public Entities getClassTemplates(String id) {
