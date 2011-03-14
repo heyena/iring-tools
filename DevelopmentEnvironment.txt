@@ -1,0 +1,11 @@
+DevelopmentEnvironment
+
+if 64-bit use 64-bit verison whenever possible
+
+SlikSVN (http://www.sliksvn.com/en/download) - Install into C:\Program Files\Subversion for msbuild Task
+TortoiseSVN (http://tortoisesvn.net/downloads.html)
+.NET Framework 4 (http://www.microsoft.com/downloads/en/details.aspx?FamilyID=9cfb2d51-5ff4-4491-b0e5-b386f32c0992&displaylang=en)
+Express Tools (http://www.microsoft.com/express/Downloads/)
+	Visual Studio 2010 Express
+		Visual C# 2010 Express
+Nunit
