@@ -21,6 +21,8 @@ import org.iringtools.widgets.tree.Node;
 import org.iringtools.widgets.tree.Tree;
 import org.iringtools.widgets.tree.TreeNode;
 import org.iringtools.utility.HttpClient;
+import org.apache.struts2.json.JSONException;
+import org.apache.struts2.json.JSONUtil;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -99,6 +101,7 @@ public class FederationModel
     generatorsNode.setText("ID Generators");
     generatorsNode.setIconCls("folder");
     generatorsNode.getProperties().put("Id", "idGenerator");
+    generatorsNode.setIdentifier("idGenerator");
     // For New Form
     generatorsNode.getProperties().put("Name", "");
     generatorsNode.getProperties().put("URI", "");
@@ -112,7 +115,7 @@ public class FederationModel
     LeafNode generatorNodeDef = new LeafNode();
     generatorNodeDef.setText("None");
     generatorNodeDef.setIconCls("generator");
-    generatorNodeDef.getProperties().put("Id", "idGenerator0");
+    generatorNodeDef.getProperties().put("Id", "idGenerator0");    
     generatorNodeDef.setLeaf(true);
     generatorNodes.add(generatorNodeDef);
 
@@ -137,6 +140,7 @@ public class FederationModel
     namespacesNode.setText("Namespaces");
     namespacesNode.setIconCls("folder");
     namespacesNode.getProperties().put("Id", "namespace");
+    namespacesNode.setIdentifier("namespace");
     
     // For New Form
     namespacesNode.getProperties().put("Alias","");
@@ -176,7 +180,8 @@ public class FederationModel
     repositoriesNode.setText("Repositories");
     repositoriesNode.setIconCls("folder");
     repositoriesNode.getProperties().put("Id", "repository");
-    
+    repositoriesNode.setIdentifier("repository");
+
     // For New Form
     repositoriesNode.getProperties().put("Name", "");
     repositoriesNode.getProperties().put("Description", "");
@@ -215,8 +220,17 @@ public class FederationModel
         for (String namespaceItem : repository.getNamespaces().getItems())
         {
           namespaceList.add("namespace" + namespaceItem);
+        }       
+        
+        try
+        {
+        	String nameList = JSONUtil.serialize(namespaces);
+        	properties.put("Namespace List", nameList);
         }
-        // properties.put("Namespace List", namespaces);
+        catch (JSONException ex)
+        {
+        	properties.put ("Namespace List", "");
+        }
       }
       else
       {
