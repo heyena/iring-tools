@@ -2350,30 +2350,13 @@ namespace org.iringtools.refdata
                                             if (String.Compare(existingName.value, name.value, true) != 0)
                                             {
                                                 hasDeletes = true;
-                                                sparqlStmts.AppendLine(string.Format("tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
                                                 sparqlStmts.AppendLine(string.Format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, existingName.value, language));
-                                                sparqlAdd.AppendLine(string.Format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
+                                                sparqlStmts.AppendLine(string.Format("tpl:{0} rdf:type p8:TemplateDescription .", identifier));
+                                                sparqlStmts.AppendLine(string.Format("tpl:{0} rdf:hasTemplate p8:{1} .", identifier, existingName.value.Remove(0, existingName.value.LastIndexOf("_") + 1)));
+
                                                 sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, name.value, language));
-                                            }
-                                        }
-                                    }
-                                    //append changing descriptions to each block
-                                    foreach (Description description in newTemplateQualification.description)
-                                    {
-                                        Description existingDescription = existingTemplate.description.Find(d => d.lang == description.lang);
-
-                                        if (string.IsNullOrEmpty(existingDescription.lang))
-                                            language = "@" + defaultLanguage;
-                                        else
-                                            language = "@" + existingDescription.lang;
-
-                                        if (existingDescription != null)
-                                        {
-                                            if (String.Compare(existingDescription.value, description.value, true) != 0)
-                                            {
-                                                hasDeletes = true;
-                                                sparqlStmts.AppendLine(string.Format("rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", identifier, existingDescription.value, language));
-                                                sparqlAdd.AppendLine(string.Format("rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", identifier, description.value, language));
+                                                sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:type p8:TemplateDescription .", identifier));
+                                                sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:hasTemplate p8:{1} .", identifier, name.value.Remove(0, name.value.LastIndexOf("_") + 1)));
                                             }
                                         }
                                     }
@@ -2384,6 +2367,28 @@ namespace org.iringtools.refdata
                                         hasDeletes = true;
                                         sparqlStmts.AppendLine(string.Format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, existingTemplate.roleQualification.Count));
                                         sparqlAdd.AppendLine(string.Format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, newTemplateQualification.roleQualification.Count));
+                                    }
+
+                                    foreach (Specialization spec in newTemplateQualification.specialization)
+                                    {
+                                        Specialization existingSpecialization = existingTemplate.specialization.Find(n => n.reference == spec.reference);
+
+                                        if (existingSpecialization != null)
+                                        {
+                                            string specialization = spec.reference;
+                                            string existingSpec = existingSpecialization.reference;
+
+                                            hasDeletes = true;
+                                            sparqlStmts.AppendLine(string.Format("tpl:{0} rdf:type p8:TemplateSpecialization .", existingSpec));
+                                            sparqlStmts.AppendLine(string.Format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", existingSpec, existingSpecialization.label.Split('@')[0], language));
+                                            sparqlStmts.AppendLine(string.Format("tpl:{0} p8:hasSuperTemplate tpl:{1} .", existingSpec, identifier));
+                                            sparqlStmts.AppendLine(string.Format("tpl:{0} p8:hasSubTemplate tpl:{1} .", identifier, existingSpec));
+
+                                            sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:type p8:TemplateSpecialization .", specialization));
+                                            sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", specialization, spec.label.Split('@')[0], language));
+                                            sparqlAdd.AppendLine(string.Format("tpl:{0} p8:hasSuperTemplate tpl:{1} .", specialization, identifier));
+                                            sparqlAdd.AppendLine(string.Format("tpl:{0} p8:hasSubTemplate tpl:{1} .", identifier, specialization));
+                                        }
                                     }
 
                                     index = 1;
@@ -2411,6 +2416,7 @@ namespace org.iringtools.refdata
                                                 {
                                                     if (String.Compare(existingName.value, name.value, true) != 0)
                                                     {
+                                                        ///TODO: Why are we removing this? We should remove the role from the template only and not from the repository
                                                         hasDeletes = true;
                                                         sparqlStmts.AppendLine(string.Format("tpl:{0} rdf:type owl:Class .", existingRole.identifier));
                                                         sparqlStmts.AppendLine(string.Format("tpl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .", existingRole.identifier, existingName.value, name.lang));
@@ -2529,7 +2535,7 @@ namespace org.iringtools.refdata
                                     ///TODO: Generate an id for template specialization??
 
                                     //sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:subClassOf {1} .", identifier, specialization));
-                                    sparqlStr.AppendLine(string.Format("tpl:{0} rdf:type p8:TemplateSpecialization .", specialization));
+                                    sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:type p8:TemplateSpecialization .", specialization));
                                     sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", specialization, spec.label.Split('@')[0], language));
                                     sparqlAdd.AppendLine(string.Format("tpl:{0} p8:hasSuperTemplate tpl:{1} .", specialization, identifier));
                                     sparqlAdd.AppendLine(string.Format("tpl:{0} p8:hasSubTemplate tpl:{1} .", identifier, specialization));
