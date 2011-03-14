@@ -80,3 +80,30 @@ _:sqlServerT a dnr:SqlIOManager ;
         dnr:database "TempInitSetDb" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
+<dotnetrdf:/repositories/noumenon/*> a dnr:HttpHandler ;
+        dnr:cacheDuration "0";
+        dnr:queryProcessor _:qProcN ;
+        dnr:updateProcessor _:uProcN ;
+        dnr:protocolProcessor _:pProcN ;
+		dnr:stylesheet "../css/interface.css" ;		
+        dnr:introText "~/config/NoumenonIntro.txt" ;
+        dnr:type "VDS.RDF.Web.SparqlServer" ;
+        dnr:defaultQueryFile "~/config/query.txt" .
+_:qProcN a dnr:SparqlQueryProcessor ;
+        dnr:type "VDS.RDF.Query.LeviathanQueryProcessor" ;
+        dnr:usingStore _:sqlStoreN .
+_:uProcN a dnr:SparqlUpdateProcessor ;
+        dnr:type "VDS.RDF.Update.LeviathanUpdateProcessor" ;
+        dnr:usingStore _:sqlStoreN .
+_:pProcN a dnr:SparqlHttpProtocolProcessor ;
+        dnr:type "VDS.RDF.Update.Protocol.LeviathanProtocolProcessor" ;
+        dnr:usingStore _:sqlStoreN .
+_:sqlStoreN a dnr:TripleStore ;
+        dnr:type "VDS.RDF.SqlTripleStore" ;
+        dnr:sqlManager _:sqlServerN .		
+_:sqlServerN a dnr:SqlIOManager ;
+        dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
+        dnr:server ".\SQLEXPRESS" ;
+        dnr:database "NoumenonDb" ;
+        dnr:user "dotNetRDF" ;
+        dnr:password "dotNetRDF" .
