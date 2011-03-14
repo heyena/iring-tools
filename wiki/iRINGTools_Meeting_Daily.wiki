@@ -2,31 +2,42 @@
 *Attendance*
   * Aswini
   * Mohamed
+  * Koos
   * Rashmi
 
 *Status*
 
+Koos
+  * GetClass - Done
+  * GetClassTemplates - Done
+  * GetLabel - Done
+  * GetSuperClass - Done
+  * GetSubclasses - Done
+  * GetAllSuperClasses - Done
+  * And associated functions
+  * Will work on Search
+     * insertion and sorting into List
+
 Aswini
-  * created method in reference data service to call the id generator
-    * reference data provider throwing an exception
-    * Trying to access a setting in web.xml that throws an error
-    * Rashmi is helping out with that exception
-    * used static uri to call the IdGen for now
+  * Met with Fang
+     * pointed out some issues.
+     * Still facing some issues.
+     * Edit is not working for repositories (conflicts in JSON)
+     * Save is not working
 
 Rashmi
-  * Rashmi helping Aswini fix reference data calls
-  * Rashmi introduced struts
-  * id generator database is temporary (design for that table is needed)
+  * GetClass
+  * GetSpecializations
+  * RefDataEntities
+     * designing the xsd
+  * Save functionality still working on that
+  * worked Aswini on federation issues
 
 Mohamed
-  * finally looked at idgenerator code
-  * prerequisites to port the reference data service
-    * utility classes e.g. QMXF (should be implemented)
-    * Ninject equivalant
-    * use federation manager to access other services 
-    
-*Discussion*
-  * Mohamed to ask Robertson how to get Rashmi to use Goto Meeting.
-  * Rashmi to complete QMXF class implementation
-  * Aswini to bring up the federation manger ui forms (fix errors that are currently breaking it)
-  * Mohamed to create initial ui design
+  * Trying to finish some C# code
+  * PostClass
+
+*ToDO*
+  * Koos and Mohamed to discuss with Darius ID generator  Design issues
+       * ID field should bot be either editable or viewable. Not both
+  * Where will the ref data editor sit in java
