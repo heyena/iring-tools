@@ -15,6 +15,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <SilverlightApplicationList>{2AD28296-22DA-465F-90AA-6538661B3F86}|..\Applications\ApplicationEditor\ApplicationEditor.Silverlight.csproj|ClientBin|False,{965B155F-23B5-4650-8CEF-2B36A1B6F843}|..\Applications\ReferenceDataEditor\ReferenceDataEditor.Silverlight.csproj|ClientBin|False,{4549FEAF-A62B-4126-9D6D-10D1DB543466}|..\Applications\MappingEditor\MappingEditor.Silverlight.csproj|ClientBin|False</SilverlightApplicationList>
+    <UseIISExpress>true</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -4835,12 +4836,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>12345</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl>http://localhost:12345/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
