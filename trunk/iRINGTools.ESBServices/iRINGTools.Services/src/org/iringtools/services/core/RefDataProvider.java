@@ -1258,10 +1258,134 @@ public class RefDataProvider {
 		return null;
 	}
 
-	public Entities getSuperClasses(String id) {
-		return null;
+	public Entities getSuperClasses(String id) throws Exception
+	{
+		Entities queryResult = new Entities();
+		String[] names = null;
+		try
+		{
+			List<Specialization> specializations = getSpecializations(id, null);
+
+			for (Specialization specialization : specializations)
+			{
+				Entity tempVar = new Entity();
+				String uri = specialization.getReference();
+				names = specialization.getLabel().split("@");
+				String label = names[0];
+
+				if (label == null)
+				{
+					names = getLabel(uri).split("@");
+					label = names[0];
+				}
+				if(names.length == 1){
+					tempVar.setLang(defaultLanguage);
+					
+				} else if(names.length == 2) {
+					tempVar.setLang(names[names.length-1]);
+				}					
+				tempVar.setUri(uri);
+				tempVar.setLabel(label);
+				Entity resultEntity = tempVar;
+				queryResult.getItems().add(resultEntity);
+//				Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+			}
+		}
+		catch (RuntimeException e)
+		{
+			//_logger.Error("Error in GetSuperClasses: " + e);
+			throw new RuntimeException("Error while Finding " + id + ".\n" + e.toString(), e);
+		}
+		return queryResult;
 	}
 
+	public final Entities getSubClasses(String id) throws Exception
+	{
+		Entities queryResult = new Entities();
+
+		try
+		{
+			String sparql = "";
+			String sparqlPart8 = "";
+			String relativeUri = "";
+			String language = "";
+			String[] names = null;
+
+			Query queryGetSubClasses = getQuery("GetSubClasses");
+			QueryBindings queryBindings = queryGetSubClasses.getBindings();
+
+			sparql = ReadSPARQL(queryGetSubClasses.getFileName());
+			sparql = sparql.replace("param1", id);
+
+			Query queryGetSubClassOfInverse = getQuery("GetSubClassOfInverse");
+			QueryBindings queryBindingsPart8 = queryGetSubClassOfInverse.getBindings();
+
+			sparqlPart8 = ReadSPARQL(queryGetSubClassOfInverse.getFileName());
+			sparqlPart8 = sparqlPart8.replace("param1", id);
+
+			for (Repository repository : _repositories)
+			{
+				if (repository.getRepositoryType().equals(RepositoryType.PART_8))
+				{
+					Results sparqlResults = queryFromRepository(repository, sparqlPart8);
+
+					List<Hashtable<String, String>> results = bindQueryResults(queryBindingsPart8, sparqlResults);
+
+					for (Hashtable<String, String> result : results)
+					{
+						names = result.get("label").split("@", -1);
+
+						if (names.length == 1)
+						{
+							language = defaultLanguage;
+						}
+						else
+						{
+							language = names[names.length - 1];
+						}
+						Entity tempVar = new Entity();
+						tempVar.setUri(result.get("uri"));
+						tempVar.setLabel(names[0]);
+						tempVar.setLang(language);
+						Entity resultEntity = tempVar;
+						queryResult.getItems().add(tempVar);
+						//Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+					}
+				}
+				else
+				{
+					Results sparqlResults = queryFromRepository(repository, sparql);
+					List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
+					for (Hashtable<String, String> result : results)
+					{
+						names = result.get("label").split("@", -1);
+						if (names.length == 1)
+						{
+							language = defaultLanguage;
+						}
+						else
+						{
+							language = names[names.length - 1];
+						}
+						Entity tempVar2 = new Entity();
+						tempVar2.setUri(result.get("uri"));
+						tempVar2.setLabel(names[0]);
+						tempVar2.setLang(language);
+						Entity resultEntity = tempVar2;
+						queryResult.getItems().add(resultEntity);
+//						Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+					}
+				}
+			}
+		}
+		catch (RuntimeException e)
+		{
+//			_logger.Error("Error in GetSubClasses: " + e);
+			throw new RuntimeException("Error while Finding " + id + ".\n" + e.toString(), e);
+		}
+		return queryResult;
+	}
+	
 	public Entities getAllSuperClasses(String id) {
 		return null;
 	}
@@ -1498,8 +1622,8 @@ public class RefDataProvider {
 
 	private Results queryFromRepository(Repository repository, String sparql)
 			throws HttpClientException, UnsupportedEncodingException {
-		Sparql sparqlResults = null;
-		Results results = null;
+		Sparql sparqlResults = new Sparql();
+		Results results = new Results();
 		String message = "query=" + URLEncoder.encode(sparql, "UTF-8");
 		try {
 			String baseUri = repository.getUri();
@@ -1508,6 +1632,7 @@ public class RefDataProvider {
 			HttpClient sparqlClient = new HttpClient(baseUri);
 			sparqlClient.setNetworkCredentials(credentials);
 			sparqlResults = sparqlClient.PostMessage(Sparql.class, "", message);
+		
 			results = sparqlResults.getResults();
 		} catch (RuntimeException ex) {
 			return results = null;

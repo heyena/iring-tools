@@ -23,6 +23,7 @@ import org.iringtools.refdata.federation.IDGenerator;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.refdata.queries.Queries;
+import org.iringtools.refdata.response.Entities;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.services.core.RefDataProvider;
 
@@ -243,21 +244,44 @@ public class RefDataService extends AbstractService {
 		}
 		return repositoryList;
 	}
-
-	public List<Entity> getSuperClasses(String id) {
-		return null;
+    @GET
+    @Path("/classes/{id}/superclasses")
+	public Entities getSuperClasses(@PathParam("id") String id) {
+    	Entities entityList = null;
+    	try{
+    		initService();
+    		RefDataProvider refdataProvider = new RefDataProvider(settings);
+    		entityList = refdataProvider.getSuperClasses(id);
+    	}
+    	catch (Exception ex)
+    	{
+    		logger.error("Error getting getRepositories information: " + ex);
+    	}	
+		return entityList;
 	}
 
-	public List<Entity> getAllSuperClasses(String id) {
-		return null;
+    @GET
+    @Path("/classes/{id}/subclasses")
+	public Entities getSubClasses(@PathParam("id") String id) {
+		Entities entityList = null;
+		try{
+			initService();
+			RefDataProvider refdataProvider = new RefDataProvider(settings);
+			entityList = refdataProvider.getSubClasses(id);
+		}
+		catch (Exception ex)
+		{
+			logger.error("Error getting getRepositories information: " + ex);
+		}
+		return entityList;
 	}
 
-	public List<Entity> getSubClasses(String id) {
+	public Entities getAllSuperClasses(String id) {
 		return null;
 
 	}
 
-	public List<Entity> getClassTemplates(String id) {
+	public Entities getClassTemplates(String id) {
 		return null;
 
 	}
