@@ -269,9 +269,9 @@ openTab: function(node,formType) {
         var obj = node.attributes;
         var properties = node.attributes.properties;
         var parentNode = node.parentNode;
-        var nId = obj['id'];
-
-         var list_items = '{'
+        //var nId = obj['id'];
+		var nodeID=properties['Id'];
+		var list_items = '{'
                      +'xtype : "hidden",'//hidden field
                      +'name:"formType",' // it will contain 'editForm/newForm'
                      +'value:"'+formType+'"' //value of the field
@@ -280,19 +280,19 @@ openTab: function(node,formType) {
                 list_items = list_items+'{'
                      +'xtype:"hidden",'//hidden field
                      +'name:"parentNodeID",' //it will contain "ID Generators||Namespaces||Repositories
-                     +'value:"'+obj['id']+'"' //value of the field
+                     +'value:"'+obj['identifier']+'"' //value of the field
                      +'}';
          }
          if(formType=='editForm'){
                 list_items = list_items+'{'
                      +'xtype:"hidden",'//hidden field
                      +'name:"nodeID",' //name of the field sent to the server
-                     +'value:"'+obj['id']+'"' //value of the field
+                     +'value:"'+nodeID+'"' //value of the field
                      +'},'
                      +'{'
                      +'xtype:"hidden",'//hidden field
                      +'name:"parentNodeID",' //it will contain "ID Generators||Namespaces||Repositories
-                     +'value:"'+node.attributes.properties['Id']+'"' //value of the field
+                     +'value:"'+parentNode.attributes.identifier+'"' //value of the field
                      +'}';
         }
         
@@ -327,9 +327,8 @@ openTab: function(node,formType) {
                      xtype= 'xtype : "combo",hiddenName:"ID Generator", width : 230, triggerAction: "all", editable : false, mode: "local", store: '+allIDGenerators+',  displayField:"'+properties[i]+'", width: 120';
                  break;
                  case 'Namespace List':
-                     //var imgPath='./resources/js/external/ux/images/';
-                	 var imgPath='./resources/ext-3.3.0/ux/images/';
-                     
+                     var imgPath='./resources/js/external/ux/images/';
+					 var selNameSpaceIDsArr = new Array()
                      var nodeIDTitleArr = new Array();
                      if(properties[i] !=null && properties[i]!=''){
                     	 var selNameSpaceIDs = Ext.util.JSON.decode(properties[i]);
@@ -351,9 +350,12 @@ openTab: function(node,formType) {
                      }
                      
                      // get all the namespances
-                     var rootNode = this.federationPanel.getRootNode();
+					 //var filteredNameSpaces = this.getAllChildNodes(this.federationPanel.getRootNode().findChild('id','namespace'),selNameSpaceIDsArr)
+					 var rootNode = this.federationPanel.getRootNode();
                      var nameSpaceParentNode = rootNode.findChild('identifier','namespace');
-                     var filteredNameSpaces = this.getAllChildNodes(nameSpaceParentNode, selNameSpaceIDsArr);
+					 var filteredNameSpaces = this.getAllChildNodes(nameSpaceParentNode, selNameSpaceIDsArr);
+
+
 
                      xtype='xtype : "itemselector", fieldLabel: "Namespace List",name: "itemselector",'
                          +'imagePath: "'+imgPath+'", '
@@ -362,11 +364,11 @@ openTab: function(node,formType) {
 
                  break;
                  default:
-                    xtype= 'xtype : "textfield", width : 230';
+                    xtype= 'xtype : "textfield", width : 230'
             }
 
              if(formType=='editForm'){
-                 value = ', value:"'+ properties[i]+'"';
+                 value = ', value:"'+properties[i]+'"';
             	 label = node.parentNode.text + ' : ' + obj['text'];
              }else{
             	 label = obj['text']+':(New)';
@@ -376,6 +378,7 @@ openTab: function(node,formType) {
              + i
              + '",allowBlank:false, blankText:"This Field is required !"'
              +value+'}';
+
 
        }
         list_tems = eval('[' + list_items + ']');
