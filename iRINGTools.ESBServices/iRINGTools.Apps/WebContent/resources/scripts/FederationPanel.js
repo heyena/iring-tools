@@ -254,20 +254,20 @@ FederationManager.FederationPanel = Ext
             }
           },
 
-          getAllChildNodes : function(parentNode, skippedIDs) {
-            var filteredNodes = new Array();
+          getNamespaces : function(parentNode, ignoreIds) {
+            var namespaces = new Array();
             var childNodes = parentNode.childNodes; // get the list of children
 
             for ( var i = 0; i < childNodes.length; i++) {
               var nodeId = childNodes[i].attributes.properties['Id'];
               
-              if (typeof(skippedIDs) == 'undefined' || skippedIDs.indexOf(nodeId) == -1) {
-                var node = [nodeId, childNodes[i].attributes.text];
-                filteredNodes.push(node);              
+              if (ignoreIds.indexOf(nodeId) == -1) {
+                var namespace = [nodeId, childNodes[i].attributes.text];
+                namespaces.push(namespace);              
               }
             }
             
-            return filteredNodes;
+            return namespaces;
           },
 
           getNodesIDTitleByID : function() {},
@@ -358,27 +358,22 @@ FederationManager.FederationPanel = Ext
                 break;
                 
               case 'Namespace List':
-//                var selNameSpaceIDsArr = new Array();
-//                var nodeIDTitleArr = new Array();
-//                
-//                if (properties[i] != null && properties[i] != '') {
-//                  var selNameSpaceIDs = properties[i];
-//                  var selNameSpaceIDsArr = selNameSpaceIDs.items;
-//
-//                  for ( var j = 0; j < selNameSpaceIDsArr.length; j++) {
-//                    subArr = new Array();
-//                    subArr[0] = selNameSpaceIDsArr[j]; // contains nameSpaceID
-//                    subArr[1] = subArr[0]; // contains nameSpaceTitle
-//
-//                    if (subArr[0] != '' && subArr[1] != undefined) {
-//                      nodeIDTitleArr.push(subArr);
-//                    }
-//                  }
-//                }
+                var selNamespaces = new Array();
+                var selNamespaceIds = new Array();
+                
+                if (properties[i] != null && properties[i] != '') {
+                  var selNamespaceList = Ext.util.JSON.decode(properties[i]);
+                  
+                  for (var namespaceId in selNamespaceList) {
+                    var selNameSpaceItem = [namespaceId, selNamespaceList[namespaceId]];
+                    selNamespaces.push(selNameSpaceItem);
+                    selNamespaceIds.push(namespaceId);
+                  }
+                }
 
                 var rootNode = this.federationPanel.getRootNode();
-                var nameSpaceParentNode = rootNode.findChild('identifier', 'namespace');
-                var availNamespaces = this.getAllChildNodes(nameSpaceParentNode);
+                var namespaceParentNode = rootNode.findChild('identifier', 'namespace');
+                var availNamespaces = this.getNamespaces(namespaceParentNode, selNamespaceIds);
 
                 listItem.xtype = 'itemselector';
                 listItem.fieldLabel = 'Namespace List';
@@ -391,7 +386,7 @@ FederationManager.FederationPanel = Ext
                   displayField: 'text', 
                   valueField: 'value'
                 },{ 
-                  store: [],
+                  store: selNamespaces,
                   width: 200,
                   height: 150
                 }]; 
