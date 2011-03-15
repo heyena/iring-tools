@@ -98,6 +98,7 @@ public class FederationModel
     List<Node> treeNodes = tree.getNodes();
 
     TreeNode generatorsNode = new TreeNode();
+    generatorsNode.setIdentifier("idGenerator");
     generatorsNode.setText("ID Generators");
     generatorsNode.setIconCls("folder");
     generatorsNode.getProperties().put("Id", "idGenerator");
@@ -112,6 +113,7 @@ public class FederationModel
 
     // Default Node
     LeafNode generatorNodeDef = new LeafNode();
+    generatorsNode.setIdentifier("idGenerator0");
     generatorNodeDef.setText("None");
     generatorNodeDef.setIconCls("generator");
     generatorNodeDef.getProperties().put("Id", "idGenerator0");    
@@ -121,6 +123,7 @@ public class FederationModel
     for (IDGenerator idgenerator : federation.getIdGenerators().getItems())
     {
       LeafNode generatorNode = new LeafNode();
+      generatorsNode.setIdentifier(idgenerator.getId());
       generatorNode.setText(idgenerator.getName());
       generatorNode.setIconCls("generator");
       generatorNode.setLeaf(true);
@@ -136,6 +139,7 @@ public class FederationModel
 
     // Namespaces
     TreeNode namespacesNode = new TreeNode();
+    namespacesNode.setIdentifier("namespace");
     namespacesNode.setText("Namespaces");
     namespacesNode.setIconCls("folder");
     namespacesNode.getProperties().put("Id", "namespace");
@@ -154,6 +158,7 @@ public class FederationModel
     for (Namespace namespace : federation.getNamespaces().getItems())
     {
       LeafNode namespaceNode = new LeafNode();
+      namespaceNode.setIdentifier(namespace.getId());
       namespaceNode.setText(namespace.getAlias());
       namespaceNode.setIconCls("namespace");
       namespaceNode.setLeaf(true);
@@ -175,6 +180,7 @@ public class FederationModel
 
     // Repositories
     TreeNode repositoriesNode = new TreeNode();
+    repositoriesNode.setIdentifier("repository");
     repositoriesNode.setText("Repositories");
     repositoriesNode.setIconCls("folder");
     repositoriesNode.getProperties().put("Id", "repository");
@@ -195,6 +201,7 @@ public class FederationModel
     for (Repository repository : federation.getRepositories().getItems())
     {
       LeafNode repositoryNode = new LeafNode();
+      repositoryNode.setIdentifier(repository.getId());
       repositoryNode.setText(repository.getName());
       repositoryNode.setIconCls("repository");
       repositoryNode.setLeaf(true);
