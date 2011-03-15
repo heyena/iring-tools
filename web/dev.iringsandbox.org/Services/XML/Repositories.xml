@@ -4,15 +4,15 @@
     <isReadOnly>true</isReadOnly>
     <name>iRING Sandbox</name>
     <repositoryType>Camelot</repositoryType>
-    <uri>http://www.iringsandbox.org/SandboxService/sparql</uri>
+    <uri>http://www.iringsandbox.org/repositories/sandbox/query</uri>
   </Repository>
   <Repository>
     <description>Development Sandbox</description>
     <isReadOnly>false</isReadOnly>
     <name>My Private Sandbox</name>
     <repositoryType>Camelot</repositoryType>
-    <updateUri>http://localhost/Services/SandboxService/update</updateUri>
-    <uri>http://localhost/Services/SandboxService/query</uri>
+    <updateUri>http://dev.iringsandbox.org/Services/SandboxService/update</updateUri>
+    <uri>http://dev.iringsandbox.org/Services/SandboxService/query</uri>
   </Repository>
   <Repository>
     <description>RDS/WIP Part 4 Reference Data Library</description>
@@ -22,17 +22,10 @@
     <uri>http://rdl.rdlfacade.org/data</uri>
   </Repository>
   <Repository>
-    <description>RDS/WIP Part 7 Template Library</description>
-    <isReadOnly>true</isReadOnly>
-    <name>Templates</name>
-    <repositoryType>RDSWIP</repositoryType>
-    <uri>http://tpl.rdlfacade.org/data</uri>
-  </Repository>
-  <Repository>
     <description>RDS/Proto and P7 Initial Set Templates</description>
     <isReadOnly>true</isReadOnly>
     <name>Proto and Initial</name>
     <repositoryType>Camelot</repositoryType>
-    <uri>http://facade.iringsandbox.org/TemporaryInitialSetTemplates/sparql</uri>
+    <uri>http://www.iringsandbox.org/repositories/tempInitSet/query</uri>
   </Repository>
 </ArrayOfRepository>
