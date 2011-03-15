@@ -102,8 +102,7 @@ FederationManager.FederationPanel = Ext
             }
 
             // super
-            FederationManager.FederationPanel.superclass.initComponent
-                .call(this);
+            FederationManager.FederationPanel.superclass.initComponent.call(this);
           },
 
           buildToolbar : function() {
@@ -172,17 +171,9 @@ FederationManager.FederationPanel = Ext
                               },
                               success : function(o) {
                                 // remove all tabs form tabpanel
-                                Ext.getCmp('contentPanel').removeAll(true); // it
-                                                                            // will
-                                                                            // be
-                                                                            // removed
-                                                                            // in
-                                                                            // future
-                                Ext.getCmp('contentPanel').disable(); // it will
-                                                                      // be
-                                                                      // removed
-                                                                      // in
-                                                                      // future
+                                // to be removed in future
+                                Ext.getCmp('contentPanel').removeAll(true);
+                                Ext.getCmp('contentPanel').disable();
 
                                 // remove the node form tree
                                 // that.federationPanel.selModel.selNode.parentNode.removeChild(node);
@@ -208,15 +199,14 @@ FederationManager.FederationPanel = Ext
 
           getNodeBySelectedTab : function(tab) {
             var tabid = tab.id;
-            nodeId = tabid.substr(4, tabid.length); // tabid is
-                                                    // "tab-jf23dfj-sd3fas-df33s-s3df"
+            // tabid is "tab-jf23dfj-sd3fas-df33s-s3df"
+            nodeId = tabid.substr(4, tabid.length); 
             return this.getNodeById(nodeId); // get the NODE using nodeid
           },
 
           getNodeById : function(nodeId) {
-            if (this.federationPanel.getNodeById(nodeId)) { // if nodeID exists
-                                                            // it will find out
-                                                            // NODE
+            // if nodeID exists it will find out NODE
+            if (this.federationPanel.getNodeById(nodeId)) { 
               return this.federationPanel.getNodeById(nodeId);
             } else {
               return false;
@@ -265,23 +255,19 @@ FederationManager.FederationPanel = Ext
           },
 
           getAllChildNodes : function(parentNode, skippedIDs) {
-            var mainArr = new Array();
-            var kids = parentNode.childNodes; // Get the list of children
-            var numkids = kids.length; // Figure out how many there are
+            var filteredNodes = new Array();
+            var childNodes = parentNode.childNodes; // get the list of children
 
-            // find child
-            for ( var i = 0, len = numkids; i < len; i++) {
-              subArr = new Array();
-              subArr[0] = kids[i].attributes.properties['Id']; // kids[i].attributes.id
-              subArr[1] = kids[i].attributes.text;
-              if ((typeof (skippedIDs) != 'undefined')
-                  && skippedIDs.indexOf(kids[i].attributes.properties['Id']) < 0) {
-                mainArr.push(subArr);
-              } else if ((typeof (skippedIDs) == 'undefined')) {
-                mainArr.push(subArr);
+            for ( var i = 0; i < childNodes.length; i++) {
+              var nodeId = childNodes[i].attributes.properties['Id'];
+              
+              if (typeof(skippedIDs) == 'undefined' || skippedIDs.indexOf(nodeId) == -1) {
+                var node = [nodeId, childNodes[i].attributes.text];
+                filteredNodes.push(node);              
               }
             }
-            return Ext.util.JSON.encode(mainArr);
+            
+            return filteredNodes;
           },
 
           getNodesIDTitleByID : function() {},
@@ -292,6 +278,7 @@ FederationManager.FederationPanel = Ext
             var parentNode = node.parentNode;
             var nodeID = properties['Id'];
             var listItems = new Array();
+            var label = '';
             
             listItems.push({
               xtype: 'hidden',  // hidden field
@@ -303,7 +290,7 @@ FederationManager.FederationPanel = Ext
               listItems.push({
                 xtype: 'hidden',      // hidden field
                 name: 'parentNodeID', // it will contain contain "ID // Generators||Namespaces||Repositories
-                value: formType       // value of the field
+                value: obj['identifier']  // value of the field
               });
             }
             else if (formType == 'editForm') {
@@ -324,7 +311,6 @@ FederationManager.FederationPanel = Ext
               var listItem = {};
               var fname = i;
               var value = '';
-              var label = '';
               
               switch (fname) {
               case "Description":
@@ -345,7 +331,7 @@ FederationManager.FederationPanel = Ext
                 listItem.editable = false;
                 listItem.mode = 'local';
                 listItem.store = ["true", "false"];
-                listItem.displayField = 'properties[i]';                
+                listItem.displayField = properties[i];                
                 break;
                 
               case 'Repository Type':
@@ -354,8 +340,8 @@ FederationManager.FederationPanel = Ext
                 listItem.triggerAction = 'all';
                 listItem.editable = false;
                 listItem.mode = 'local';
-                listItem.store = ["RDS/WIP", "Camelot", "Part8"];
-                listItem.displayField = 'properties[i]';
+                listItem.store = ['RDS/WIP', 'Camelot', 'Part8'];
+                listItem.displayField = properties[i];
                 break;
                 
               case 'ID Generator':
@@ -368,49 +354,47 @@ FederationManager.FederationPanel = Ext
                 listItem.editable = false;
                 listItem.mode = 'local';
                 listItem.store = allIDGenerators;
-                listItem.displayField = 'properties[i]';
+                listItem.displayField = properties[i];
                 break;
                 
               case 'Namespace List':
-                var imgPath = './resources/js/external/ux/images/';
-                var selNameSpaceIDsArr = new Array()
-                var nodeIDTitleArr = new Array();
-                
-                if (properties[i] != null && properties[i] != '') {
-                  var selNameSpaceIDs = Ext.util.JSON.decode(properties[i]);
-                  var selNameSpaceIDsArr = selNameSpaceIDs.items;
-
-                  for ( var j = 0; j < selNameSpaceIDsArr.length; j++) {
-
-                    subArr = new Array();
-                    subArr[0] = selNameSpaceIDsArr[j]; // contains nameSpaceID
-                    subArr[1] = subArr[0]; // contains nameSpaceTitle
-
-                    if (subArr[0] != '' && subArr[1] != undefined) {
-                      nodeIDTitleArr.push(subArr);
-                    }
-                  }
-                }
+//                var selNameSpaceIDsArr = new Array();
+//                var nodeIDTitleArr = new Array();
+//                
+//                if (properties[i] != null && properties[i] != '') {
+//                  var selNameSpaceIDs = properties[i];
+//                  var selNameSpaceIDsArr = selNameSpaceIDs.items;
+//
+//                  for ( var j = 0; j < selNameSpaceIDsArr.length; j++) {
+//                    subArr = new Array();
+//                    subArr[0] = selNameSpaceIDsArr[j]; // contains nameSpaceID
+//                    subArr[1] = subArr[0]; // contains nameSpaceTitle
+//
+//                    if (subArr[0] != '' && subArr[1] != undefined) {
+//                      nodeIDTitleArr.push(subArr);
+//                    }
+//                  }
+//                }
 
                 var rootNode = this.federationPanel.getRootNode();
                 var nameSpaceParentNode = rootNode.findChild('identifier', 'namespace');
-                var filteredNameSpaces = this.getAllChildNodes(nameSpaceParentNode, selNameSpaceIDsArr);
+                var availNamespaces = this.getAllChildNodes(nameSpaceParentNode);
 
                 listItem.xtype = 'itemselector';
                 listItem.fieldLabel = 'Namespace List';
                 listItem.name = 'itemselector';
-                listItem.imagePath = imgPath;
-                listItem.multiselects = [{ 
+                listItem.imagePath = './resources/ext-3.3.0/ux/images/';
+                listItem.multiselects = [{
+                  store: availNamespaces,
                   width: 200,
                   height: 150,
-                  displayField: "text", 
-                  valueField: "value",
-                  store: filteredNameSpaces
+                  displayField: 'text', 
+                  valueField: 'value'
                 },{ 
+                  store: [],
                   width: 200,
-                  height: 150, 
-                  store: Ext.util.JSON.encode(nodeIDTitleArr)
-                }];
+                  height: 150
+                }]; 
                 break;
                 
               default:
@@ -427,10 +411,10 @@ FederationManager.FederationPanel = Ext
                 label = obj['text'] + ':(New)';
               }
               
-              listItem.fieldLable = i;
+              listItem.fieldLabel = i;
               listItem.name = i;
               listItem.allowBlank = false;
-              listItem.blankText = "This Field is required";
+              listItem.blankText = 'This Field is required';
               listItem.value = value;
               
               listItems.push(listItem);
@@ -488,5 +472,4 @@ FederationManager.FederationPanel = Ext
           onBeforeLoad : function() {
             Ext.getBody().mask('Loading...', 'x-mask-loading');
           }
-
         });

@@ -55,10 +55,10 @@ FederationManager.ContentPanel = Ext.extend(Ext.Panel, {
   		this.data_form
   	];
 
-      this.on('close', this.onCloseTab, this)
+      this.on('close', this.onCloseTab, this);
 
     // super
-    FederationManager.ContentPanel.superclass.initComponent.call(this)
+    FederationManager.ContentPanel.superclass.initComponent.call(this);
   },
 
 buildToolbar: function () {
@@ -78,7 +78,7 @@ buildToolbar: function () {
 			disabled: false,
 			handler: this.onReset,
 			scope: this
-		}]
+		}];
   },
   getActiveTab: function() {
       if(Ext.getCmp('contentPanel').items.length !=0){ // check is there any tab in contentPanel
@@ -92,13 +92,13 @@ buildToolbar: function () {
   onCloseTab: function(node) {
       // check number of tabs in panel to make disabled the centerPanel if its the last tab has been closed.
         if((Ext.getCmp('contentPanel').items.length) ==1){
-              Ext.getCmp('contentPanel').disable()
+              Ext.getCmp('contentPanel').disable();
          }
   
   },
 
   onReset: function(){
-        this.data_form.getForm().reset()
+        this.data_form.getForm().reset();
   },
 
   onSave:function(){
@@ -107,8 +107,8 @@ buildToolbar: function () {
             waitMsg: 'Saving Data...',
             success: function(f,a){
                 if(that.getActiveTab()){
-                    var node = federationPanel.getNodeBySelectedTab(that.getActiveTab())
-                    Ext.Msg.alert('Success', 'Changes saved successfully!')
+                    var node = federationPanel.getNodeBySelectedTab(that.getActiveTab());
+                    Ext.Msg.alert('Success', 'Changes saved successfully!');
                     var formType = that.data_form.getForm().findField('formType').getValue();
                     if(formType=='newForm'){ // in case of newForm close the newTab
                         Ext.getCmp('contentPanel').remove(that.getActiveTab(), true);
@@ -121,7 +121,7 @@ buildToolbar: function () {
                 
             },
             failure: function(f,a){
-                Ext.Msg.alert('Warning', 'Error saving changes!')
+                Ext.Msg.alert('Warning', 'Error saving changes!');
             }
         });
 

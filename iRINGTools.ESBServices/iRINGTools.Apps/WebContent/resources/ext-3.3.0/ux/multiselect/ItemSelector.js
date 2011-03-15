@@ -93,7 +93,6 @@ Ext.ux.form.ItemSelector = Ext.extend(Ext.form.Field,  {
         p.render(this.el);
         icons.el.down('.'+icons.bwrapCls).remove();
 
-        // ICON HELL!!!
         if (this.imagePath!="" && this.imagePath.charAt(this.imagePath.length-1)!="/")
             this.imagePath+="/";
         this.iconUp = this.imagePath + (this.iconUp || 'up2.gif');
