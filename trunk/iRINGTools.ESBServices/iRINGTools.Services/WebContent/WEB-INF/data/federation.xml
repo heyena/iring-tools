@@ -1,74 +1,74 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <federation xmlns="http://www.iringtools.org/refdata/federation">
-    <idGenerators>
-    	<sequenceId>2</sequenceId>
-        <idGenerator>
-            <id>1</id>
-            <uri>http://org.iringtools.com/idgen1</uri>
-            <name>IdGenerator1</name>
-            <description>Sample ID Generator 1</description>
-        </idGenerator>
-        <idGenerator>
-            <id>2</id>
-            <uri>http://org.iringtools.com/idgen2</uri>
-            <name>IdGenerator2</name>
-            <description>Sample ID Generator 2</description>
-        </idGenerator>
-    </idGenerators>
-    <namespaces>
-    	<sequenceId>2</sequenceId>
-        <namespace>
-            <id>1</id>
-            <uri>http://org.iringtool.com/namespace1</uri>
-            <alias>namespace1</alias>
-            <isWritable>true</isWritable>
-            <description>Sample namespace 1</description>
-            <idGenerator>1</idGenerator>
-        </namespace>
-        <namespace>
-            <id>2</id>
-            <uri>http://org.iringtool.com/namespace2</uri>
-            <alias>namespace2</alias>
-            <isWritable>true</isWritable>
-            <description>Sample namespace 2</description>
-            <idGenerator>2</idGenerator>
-        </namespace>
-    </namespaces>
-    <repositories>
-    	<sequenceId>4</sequenceId>
-        <repository>
-            <id>1</id>
-            <description>RDS/WIP Part 4 Reference Data Library</description>
-            <isReadOnly>true</isReadOnly>
-            <name>ReferenceData</name>
-            <repositoryType>Camelot</repositoryType>
-            <uri>http://rdl.rdlfacade.org/data</uri>
-            <updateUri>updateUri</updateUri>
+	<idGenerators>
+		<sequenceId>2</sequenceId>
+		<idGenerator>
+			<id>1</id>
+			<uri>http://org.iringtools.com/idgen1</uri>
+			<name>IdGenerator1</name>
+			<description>Sample ID Generator 1</description>
+		</idGenerator>
+		<idGenerator>
+			<id>2</id>
+			<uri>http://org.iringtools.com/idgen2</uri>
+			<name>IdGenerator2</name>
+			<description>Sample ID Generator 2</description>
+		</idGenerator>
+	</idGenerators>
+	<namespaces>
+		<sequenceId>2</sequenceId>
+		<namespace>
+			<id>1</id>
+			<uri>http://org.iringtool.com/namespace1</uri>
+			<alias>namespace1</alias>
+			<isWritable>true</isWritable>
+			<description>Sample namespace 1</description>
+			<idGenerator>1</idGenerator>
+		</namespace>
+		<namespace>
+			<id>2</id>
+			<uri>http://org.iringtool.com/namespace2</uri>
+			<alias>namespace2</alias>
+			<isWritable>true</isWritable>
+			<description>Sample namespace 2</description>
+			<idGenerator>2</idGenerator>
+		</namespace>
+	</namespaces>
+	<repositories>
+		<sequenceId>4</sequenceId>
+		<repository>
+			<id>1</id>
+			<description>RDS/WIP Part 4 Reference Data Library</description>
+			<isReadOnly>true</isReadOnly>
+			<name>ReferenceData</name>
+			<repositoryType>Camelot</repositoryType>
+			<uri>http://rdl.rdlfacade.org/data</uri>
+			<updateUri>updateUri</updateUri>
 			<namespaces>
-                <namespaceId>1</namespaceId>                
-            </namespaces>
-        </repository>
-        <repository>
-            <id>2</id>
-            <description>RDS/WIP Part 7 Template Library</description>
-            <isReadOnly>true</isReadOnly>
-            <name>Templates</name>
-            <repositoryType>Camelot</repositoryType>
-            <uri>http://tpl.rdlfacade.org/data</uri>
-            <updateUri>updateUri</updateUri>
+				<namespaceId>1</namespaceId>
+			</namespaces>
+		</repository>
+		<repository>
+			<id>2</id>
+			<description>RDS/WIP Part 7 Template Library</description>
+			<isReadOnly>true</isReadOnly>
+			<name>Templates</name>
+			<repositoryType>Camelot</repositoryType>
+			<uri>http://tpl.rdlfacade.org/data</uri>
+			<updateUri>updateUri</updateUri>
 			<namespaces>
-                <namespaceId>2</namespaceId>                
-            </namespaces>
-        </repository>
-        <repository>
-            <id>3</id>
-            <description>iRING Sandbox</description>
-            <isReadOnly>true</isReadOnly>
-            <name>iRING Sandbox</name>
-            <repositoryType>Camelot</repositoryType>
-            <uri>http://www.iringsandbox.org/SandboxService/sparql</uri>
-            <updateUri>updateUri</updateUri>
-			<namespaces/>
-        </repository>
-    </repositories>
+				<namespaceId>2</namespaceId>
+			</namespaces>
+		</repository>
+		<repository>
+			<id>3</id>
+			<description>iRING Sandbox</description>
+			<isReadOnly>true</isReadOnly>
+			<name>iRING Sandbox</name>
+			<repositoryType>Camelot</repositoryType>
+			<uri>http://www.iringsandbox.org/SandboxService/sparql</uri>
+			<updateUri>updateUri</updateUri>
+			<namespaces />
+		</repository>
+	</repositories>
 </federation>

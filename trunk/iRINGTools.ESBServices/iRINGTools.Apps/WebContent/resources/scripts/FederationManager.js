@@ -8,7 +8,7 @@
  * by using different Extjs custom classes
  *
  */
-var federationPanel
+var federationPanel;
 Ext.onReady(function () {
 
 	Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
@@ -43,9 +43,9 @@ Ext.onReady(function () {
 
          tabPanel.on('tabChange', function(tabContainer){
             if(tabContainer.items.length !=0){ // check is there any tab
-            var nodeObj = federationPanel.getNodeBySelectedTab(tabContainer.getActiveTab())
+            var nodeObj = federationPanel.getNodeBySelectedTab(tabContainer.getActiveTab());
             if(nodeObj){
-                federationPanel.selectNode(nodeObj)
+                federationPanel.selectNode(nodeObj);
             }
            }else{
               // code for unselect
@@ -84,8 +84,7 @@ Ext.onReady(function () {
                 });
 
                 Ext.getCmp('contentPanel').enable();
-                tabPanel.add(newTab);
-                tabPanel.activate(newTab); 
+                tabPanel.add(newTab).show();
 
 	});
       

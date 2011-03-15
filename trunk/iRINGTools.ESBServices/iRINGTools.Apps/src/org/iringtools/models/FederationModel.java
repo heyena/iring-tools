@@ -1,5 +1,6 @@
 package org.iringtools.models;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -93,7 +94,6 @@ public class FederationModel
 
   public Tree toTree()
   {
-
     Tree tree = new Tree();
     List<Node> treeNodes = tree.getNodes();
 
@@ -108,7 +108,6 @@ public class FederationModel
     generatorsNode.getProperties().put("Description", "");
 
     treeNodes.add(generatorsNode);
-
     List<Node> generatorNodes = generatorsNode.getChildren();
 
     // Default Node
@@ -148,10 +147,8 @@ public class FederationModel
     namespacesNode.getProperties().put("Description","");
     namespacesNode.getProperties().put("Writable","");
     namespacesNode.getProperties().put("ID Generator","");
-
     
     treeNodes.add(namespacesNode);
-
     List<Node> namespaceNodes = namespacesNode.getChildren();
 
     for (Namespace namespace : federation.getNamespaces().getItems())
@@ -167,6 +164,7 @@ public class FederationModel
       properties.put("URI", namespace.getUri());
       properties.put("Description", namespace.getDescription());
       properties.put("Writable", String.valueOf(namespace.isIsWritable()));
+      
       if (namespace.getIdGenerator() != null)
       {
         properties.put("ID Generator", "idgenerator" + namespace.getIdGenerator());
@@ -190,10 +188,8 @@ public class FederationModel
     repositoriesNode.getProperties().put("Update URI", "");
     repositoriesNode.getProperties().put("URI", "");
     repositoriesNode.getProperties().put("Namespace List", "");
-
     
     treeNodes.add(repositoriesNode);
-
     List<Node> repositoryNodes = repositoriesNode.getChildren();
 
     for (Repository repository : federation.getRepositories().getItems())
@@ -215,21 +211,22 @@ public class FederationModel
       
       if (repository.getNamespaces() != null)
       {
-        NamespaceList namespaces = new NamespaceList();
-        List<String> namespaceList = namespaces.getItems();
-        for (String namespaceItem : repository.getNamespaces().getItems())
+        Map<String, String> namespaces = new HashMap<String, String>();
+        
+        for (String namespaceId : repository.getNamespaces().getItems())
         {
-          namespaceList.add("namespace" + namespaceItem);
+          Namespace namespace = getNamespace(namespaceId);
+          namespaces.put(namespaceId, namespace.getAlias());
         }       
         
         try
         {
-        	String nameList = JSONUtil.serialize(namespaces);
-        	properties.put("Namespace List", nameList);
+          String nameList = JSONUtil.serialize(namespaces);
+          properties.put("Namespace List", nameList);
         }
         catch (JSONException ex)
         {
-        	properties.put ("Namespace List", "");
+          properties.put ("Namespace List", null);
         }
       }
       else
@@ -241,6 +238,19 @@ public class FederationModel
     }
 
     return tree;
+  }
+  
+  private Namespace getNamespace(String namespaceId)
+  {
+    for (Namespace namespace : federation.getNamespaces().getItems())
+    {
+      if (namespace.getId().equalsIgnoreCase(namespaceId))
+      {
+        return namespace;
+      }
+    }
+    
+    return null;
   }
 
   public boolean readTree(HttpServletRequest httpRequest)
