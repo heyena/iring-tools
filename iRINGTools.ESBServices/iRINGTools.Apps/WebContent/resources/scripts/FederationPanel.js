@@ -261,7 +261,7 @@ FederationManager.FederationPanel = Ext
             for ( var i = 0; i < childNodes.length; i++) {
               var nodeId = childNodes[i].attributes.properties['Id'];
               
-              if (ignoreIds.indexOf(nodeId) == -1) {
+              if (ignoreIds == undefined || ignoreIds.indexOf(nodeId) == -1) {
                 var namespace = [nodeId, childNodes[i].attributes.text];
                 namespaces.push(namespace);              
               }
@@ -346,7 +346,7 @@ FederationManager.FederationPanel = Ext
                 
               case 'ID Generator':
                 // get all the IDGenerators
-                var allIDGenerators = this.getAllChildNodes(parentNode);
+                var allIDGenerators = this.getNamespaces(parentNode);
                 listItem.xtype = 'combo';
                 listItem.hiddenName = 'ID Generator';
                 listItem.width = 230;
