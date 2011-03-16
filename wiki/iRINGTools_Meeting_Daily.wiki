@@ -1,4 +1,6 @@
+#summary Date: 2011/3/16
 #labels Meeting
+
 *Attendance*
   * Aswini
   * Mohamed
