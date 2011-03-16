@@ -269,7 +269,6 @@ FederationManager.FederationPanel = Ext
             
             return namespaces;
           },
-
           getNodesIDTitleByID : function() {},
 
           openTab : function(node, formType) {
@@ -285,7 +284,7 @@ FederationManager.FederationPanel = Ext
               name: 'formType', // it will contain 'editForm/newForm'
               value: formType   // value of the field
             });
-            
+
             if (formType == 'newForm') {
               listItems.push({
                 xtype: 'hidden',      // hidden field
@@ -346,7 +345,10 @@ FederationManager.FederationPanel = Ext
                 
               case 'ID Generator':
                 // get all the IDGenerators
-                var allIDGenerators = this.getNamespaces(parentNode);
+            	 var rootNode = this.federationPanel.getRootNode();
+                 var namespaceParentNode = rootNode.findChild('identifier', 'idGenerator');
+                 var allIDGenerators = this.getNamespaces(namespaceParentNode);
+
                 listItem.xtype = 'combo';
                 listItem.hiddenName = 'ID Generator';
                 listItem.width = 230;
