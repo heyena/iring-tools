@@ -326,6 +326,10 @@ namespace org.ids_adi.qmxf
     [DataContract]
     public class Specialization
     {
+        [DataMember(Name = "id", EmitDefaultValue = false)]
+        [XmlAttribute(AttributeName = "id")]
+        public string identifier { get; set; }
+
         [DataMember(EmitDefaultValue = false)]
         [XmlAttribute]
         public string reference { get; set; }
@@ -569,6 +573,10 @@ namespace org.ids_adi.qmxf
           //this.inverseMinimum = "0";
           //this.inverseMaximum = "unbounded";
         }
+
+        [DataMember(Name = "id", EmitDefaultValue = false)]
+        [XmlAttribute(AttributeName = "id")]
+        public string identifier { get; set; }
 
         [DataMember(Name = "name", EmitDefaultValue = false)]
         [XmlElement(ElementName = "name")]

@@ -44,7 +44,8 @@ namespace NUnit.Tests
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
-          _settings["GraphName"], _settings["Identifier"],
+          _settings["GraphName"], _settings["ClassName"],
+          _settings["Identifier"],
           "Xml", false
         );
 

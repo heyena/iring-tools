@@ -49,30 +49,30 @@ namespace NUnit.Tests
             Assert.AreNotEqual(0, updatedFacade.StatusList.Count);
         }
 
-        [Test]
-        public void Pull()
-        {
+        //[Test]
+        //public void Pull()
+        //{
        
-            Request _newRequest = new Request();
+        //    Request _newRequest = new Request();
 
-            WebCredentials targetCredentials = new WebCredentials();
-            string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+        //    WebCredentials targetCredentials = new WebCredentials();
+        //    string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
 
-            _newRequest.Add("targetUri", @"http://localhost:65432/InterfaceService/query");
-            _newRequest.Add("targetCredentials", targetCredentialsXML);
-            _newRequest.Add("targetGraphBaseUri", @"http://localhost:65432/AdapterService/12345_000/ABC/Lines");
-            _newRequest.Add("graphName", "Lines");
-            _newRequest.Add("filter", "");
-            _newRequest.Add("ProxyHost", "172.21.161.170");
-            _newRequest.Add("ProxyPort", "8080");
-            _newRequest.Add("networkCredential", "");
+        //    _newRequest.Add("targetUri", @"http://localhost:65432/InterfaceService/query");
+        //    _newRequest.Add("targetCredentials", targetCredentialsXML);
+        //    _newRequest.Add("targetGraphBaseUri", @"http://localhost:65432/AdapterService/12345_000/ABC/Lines");
+        //    _newRequest.Add("graphName", "Lines");
+        //    _newRequest.Add("filter", "");
+        //    _newRequest.Add("ProxyHost", "172.21.161.170");
+        //    _newRequest.Add("ProxyPort", "8080");
+        //    _newRequest.Add("networkCredential", "");
 
 
 
-            Response getData = _exchangeProvider.Pull("12345_000", "DEF", "Lines", _newRequest);
-            Assert.AreNotEqual(0, getData.StatusList.Count);
+        //    Response getData = _exchangeProvider.Pull("12345_000", "DEF", "Lines", _newRequest);
+        //    Assert.AreNotEqual(0, getData.StatusList.Count);
 
-        }
+        //}
     }
 }
 

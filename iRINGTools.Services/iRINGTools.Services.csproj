@@ -13,6 +13,7 @@
     <RootNamespace>org.iringtools.services</RootNamespace>
     <AssemblyName>iRINGTools.Services</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -148,7 +149,6 @@
     </Compile>
     <Compile Include="DataService.cs" />
     <Compile Include="DtoService.cs" />
-    <Compile Include="ExchangeService.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

@@ -205,6 +205,8 @@ namespace QMXFGenerator
               classRange.set_Item(rowIndex + 1, (int)ClassColumns.ID + 1, identifier);
             }
 
+            string classId = Utility.GetIdFromURI(identifier.ToString());
+
             classDefinition.identifier = identifier.ToString().Trim();
 
             if (description != null && description.ToString() != String.Empty)
@@ -229,7 +231,7 @@ namespace QMXFGenerator
               };
             }
 
-            List<Specialization> classSpecialization = ProcessClassSpecialization(name);
+            List<Specialization> classSpecialization = ProcessClassSpecialization(classId, name);
 
             if (classSpecialization.Count > 0)
                 classDefinition.specialization = classSpecialization;
@@ -299,7 +301,7 @@ namespace QMXFGenerator
       }
     }
 
-    private static List<Specialization> ProcessClassSpecialization(string className)
+    private static List<Specialization> ProcessClassSpecialization(string classId, string className)
     {
       try
       {
@@ -345,6 +347,14 @@ namespace QMXFGenerator
               label = superclassName.ToString(),
               reference = superclassIdentifier.ToString().Trim(),
             };
+
+            string superClassId = Utility.GetIdFromURI(specialization.reference);
+
+            specialization.identifier = String.Format(
+              "{0}-{1}",
+              superClassId,
+              classId
+            );
 
             classSpecializations.Add(specialization);
           }
@@ -599,6 +609,7 @@ namespace QMXFGenerator
             }
 
             templateQualification.identifier = templateIdentifier.ToString().Trim();
+            string templateId = Utility.GetIdFromURI(templateQualification.identifier);
 
             if (description != null && description.ToString() != String.Empty)
             {
@@ -632,7 +643,7 @@ namespace QMXFGenerator
                 }
 
                 templateQualification.qualifies = (templateQualifiesId ?? "").ToString().Trim();
-                templateQualification.roleQualification = ProcessRoleQualification(templateQualification.name.FirstOrDefault().value, row, parentRow);
+                templateQualification.roleQualification = ProcessRoleQualification(templateId, templateQualification.name.FirstOrDefault().value, row, parentRow);
               }
               else
               {
@@ -658,7 +669,7 @@ namespace QMXFGenerator
       }
     }
 
-    private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow)
+    private static List<RoleQualification> ProcessRoleQualification(string templateId, string templateName, ArrayList row, ArrayList parentRow)
     {
       int roleIndex = 0;
 
@@ -715,6 +726,10 @@ namespace QMXFGenerator
             }
 
             roleQualification.qualifies = (parentRole ?? "").ToString().Trim();
+
+            string qualifiesId = Utility.GetIdFromURI(roleQualification.qualifies);
+
+            roleQualification.identifier = templateId + "-" + qualifiesId;
 
             if (type != null && type.ToString() != String.Empty)
             {
