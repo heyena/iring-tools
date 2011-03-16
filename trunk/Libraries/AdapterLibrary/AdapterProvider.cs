@@ -924,10 +924,11 @@ namespace org.iringtools.adapter
 
       #region parse identifier to build data filter
       ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMapByName(className);
-      ClassMap classMap = classTemplateMap.classMap;
-
-      if (classMap != null)
+      
+      if (classTemplateMap != null && classTemplateMap.classMap != null)
       {
+        ClassMap classMap = classTemplateMap.classMap;
+        
         string[] identifierParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
           ? classIdentifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
           : new string[] { classIdentifier };
