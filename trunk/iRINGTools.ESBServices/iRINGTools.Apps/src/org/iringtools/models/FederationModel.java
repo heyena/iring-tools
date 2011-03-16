@@ -102,7 +102,7 @@ public class FederationModel
     generatorsNode.setText("ID Generators");
     generatorsNode.setIconCls("folder");
     generatorsNode.getProperties().put("Id", "idGenerator");
-    generatorsNode.setIdentifier("idGenerator");
+    
     // For New Form
     generatorsNode.getProperties().put("Name", "");
     generatorsNode.getProperties().put("URI", "");
@@ -113,7 +113,7 @@ public class FederationModel
 
     // Default Node
     LeafNode generatorNodeDef = new LeafNode();
-    generatorsNode.setIdentifier("idGenerator0");
+    generatorNodeDef.setIdentifier("idGenerator0");
     generatorNodeDef.setText("None");
     generatorNodeDef.setIconCls("generator");
     generatorNodeDef.getProperties().put("Id", "idGenerator0");    
@@ -123,7 +123,7 @@ public class FederationModel
     for (IDGenerator idgenerator : federation.getIdGenerators().getItems())
     {
       LeafNode generatorNode = new LeafNode();
-      generatorsNode.setIdentifier(idgenerator.getId());
+      generatorNode.setIdentifier(idgenerator.getId());
       generatorNode.setText(idgenerator.getName());
       generatorNode.setIconCls("generator");
       generatorNode.setLeaf(true);
