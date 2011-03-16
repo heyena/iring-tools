@@ -1,0 +1,97 @@
+﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="org.iringtools.adapter.datalayer.proj_Showroom.EM.LINE, App_Code" table="&quot;LINE&quot;">
+    <id name="Id" column="&quot;TAG&quot;">
+      <generator class="assigned" />
+    </id>
+    <property name="TAG" column="&quot;TAG&quot;" update="false" insert="false" />
+    <property name="DWG_NO" column="&quot;DWG_NO&quot;" />
+    <property name="ERROR_STATUS" column="&quot;ERROR_STATUS&quot;" />
+    <property name="SENDER_LOCK_FLAG" column="&quot;SENDER_LOCK_FLAG&quot;" />
+    <property name="SENDER_LOCK_REASON" column="&quot;SENDER_LOCK_REASON&quot;" />
+    <property name="DESIGN" column="&quot;DESIGN&quot;" />
+    <property name="CLIENT_SYSTEM" column="&quot;CLIENT_SYSTEM&quot;" />
+    <property name="RATING" column="&quot;RATING&quot;" />
+    <property name="REV" column="&quot;REV&quot;" />
+    <property name="PID" column="&quot;PID&quot;" />
+    <property name="LOCATOR" column="&quot;LOCATOR&quot;" />
+    <property name="HOLD" column="&quot;HOLD&quot;" />
+    <property name="HEAT_TRACE" column="&quot;HEAT_TRACE&quot;" />
+    <property name="PROJ_NO" column="&quot;PROJ_NO&quot;" />
+    <property name="DWG_TAG" column="&quot;DWG_TAG&quot;" />
+    <property name="LINE_NUMBER" column="&quot;LINE_NUMBER&quot;" />
+    <property name="SPEC" column="&quot;SPEC&quot;" />
+    <property name="DIAMETER" column="&quot;DIAMETER&quot;" />
+    <property name="DIAMETER_UOM" column="&quot;DIAMETER_UOM&quot;" />
+    <property name="REV_STATUS" column="&quot;REV_STATUS&quot;" />
+    <property name="SEQ_NO" column="&quot;SEQ_NO&quot;" />
+    <property name="WERE_CLONED_FROM" column="&quot;WERE_CLONED_FROM&quot;" />
+    <property name="WERE_CLONED_TO" column="&quot;WERE_CLONED_TO&quot;" />
+    <property name="COM_GRP" column="&quot;COM_GRP&quot;" />
+    <property name="CIN" column="&quot;CIN&quot;" />
+    <property name="SYSTEM" column="&quot;SYSTEM&quot;" />
+    <property name="IS_CLONE" column="&quot;IS_CLONE&quot;" />
+    <property name="SEQUENCE_CODE" column="&quot;SEQUENCE_CODE&quot;" />
+    <property name="UNIT" column="&quot;UNIT&quot;" />
+    <property name="WAS_CLONED" column="&quot;WAS_CLONED&quot;" />
+    <property name="CLIENT_UNIT" column="&quot;CLIENT_UNIT&quot;" />
+    <property name="INS_THK" column="&quot;INS_THK&quot;" />
+    <property name="PUB_FLAG" column="&quot;PUB_FLAG&quot;" />
+    <property name="BSAP" column="&quot;BSAP&quot;" />
+    <property name="ATTACHMENT_OBJECT_TYPE" column="&quot;ATTACHMENT_OBJECT_TYPE&quot;" />
+    <property name="ATTACHMENT_CHILD_ID" column="&quot;ATTACHMENT_CHILD_ID&quot;" />
+    <property name="ATTACHMENT_ORDER" column="&quot;ATTACHMENT_ORDER&quot;" />
+    <property name="ATTACHMENT_RELATION_TYPE" column="&quot;ATTACHMENT_RELATION_TYPE&quot;" />
+    <property name="ATTACHMENT_SIZE" column="&quot;ATTACHMENT_SIZE&quot;" />
+    <property name="ATTACHMENT_FILE_EXTENSION" column="&quot;ATTACHMENT_FILE_EXTENSION&quot;" />
+    <property name="ATTACHMENT_MIME_TYPE" column="&quot;ATTACHMENT_MIME_TYPE&quot;" />
+    <property name="ATTACHMENT_FILE_NAME" column="&quot;ATTACHMENT_FILE_NAME&quot;" />
+    <property name="ATTACHMENT_REVISION_TYPE" column="&quot;ATTACHMENT_REVISION_TYPE&quot;" />
+    <property name="ATTACHMENT_ROLE_FLAG" column="&quot;ATTACHMENT_ROLE_FLAG&quot;" />
+    <property name="ATTACHMENT_CHECK_SUM" column="&quot;ATTACHMENT_CHECK_SUM&quot;" />
+    <property name="ATTACHMENT_DIFFERENCING_TOKEN" column="&quot;ATTACHMENT_DIFFERENCING_TOKEN&quot;" />
+    <property name="ATTACHMENT_LAST_UPDATED" column="&quot;ATTACHMENT_LAST_UPDATED&quot;" />
+    <property name="ATTACHMENT_COMPRESSION_FLAG" column="&quot;ATTACHMENT_COMPRESSION_FLAG&quot;" />
+    <property name="ATTACHMENT_COMPRESSION_TYPE" column="&quot;ATTACHMENT_COMPRESSION_TYPE&quot;" />
+  </class>
+  <class name="org.iringtools.adapter.datalayer.proj_Showroom.EM.VALVE, App_Code" table="&quot;VALVE&quot;">
+    <id name="Id" column="&quot;TAG&quot;">
+      <generator class="assigned" />
+    </id>
+    <property name="TAG" column="&quot;TAG&quot;" update="false" insert="false" />
+    <property name="DWG_NO" column="&quot;DWG_NO&quot;" />
+    <property name="ERROR_STATUS" column="&quot;ERROR_STATUS&quot;" />
+    <property name="SENDER_LOCK" column="&quot;SENDER_LOCK&quot;" />
+    <property name="SENDER_LOCK_REASON" column="&quot;SENDER_LOCK_REASON&quot;" />
+    <property name="STARTUP" column="&quot;STARTUP&quot;" />
+    <property name="RATING" column="&quot;RATING&quot;" />
+    <property name="PID_REV" column="&quot;PID_REV&quot;" />
+    <property name="DES_RESP" column="&quot;DES_RESP&quot;" />
+    <property name="PID" column="&quot;PID&quot;" />
+    <property name="HOLD" column="&quot;HOLD&quot;" />
+    <property name="HEAT_TRACE" column="&quot;HEAT_TRACE&quot;" />
+    <property name="PROJ_NO" column="&quot;PROJ_NO&quot;" />
+    <property name="LINE_NUMBER" column="&quot;LINE_NUMBER&quot;" />
+    <property name="MATERIAL_SPEC_LINE" column="&quot;MATERIAL_SPEC_LINE&quot;" />
+    <property name="LINE_TAG" column="&quot;LINE_TAG&quot;" />
+    <property name="QUANTITY" column="&quot;QUANTITY&quot;" />
+    <property name="DIAMETER" column="&quot;DIAMETER&quot;" />
+    <property name="DIAMETER_UOM" column="&quot;DIAMETER_UOM&quot;" />
+    <property name="VALVE_LOCK_DEVICE" column="&quot;VALVE_LOCK_DEVICE&quot;" />
+    <property name="VALVE_NUMBER" column="&quot;VALVE_NUMBER&quot;" />
+    <property name="SEQ_NO" column="&quot;SEQ_NO&quot;" />
+    <property name="CLIENT_SYSTEM" column="&quot;CLIENT_SYSTEM&quot;" />
+    <property name="WERE_CLONED_FROM" column="&quot;WERE_CLONED_FROM&quot;" />
+    <property name="WERE_CLONED_TO" column="&quot;WERE_CLONED_TO&quot;" />
+    <property name="COM_GRP" column="&quot;COM_GRP&quot;" />
+    <property name="CIN" column="&quot;CIN&quot;" />
+    <property name="SYSTEM" column="&quot;SYSTEM&quot;" />
+    <property name="IS_CLONED" column="&quot;IS_CLONED&quot;" />
+    <property name="PID_LOCATION" column="&quot;PID_LOCATION&quot;" />
+    <property name="VALVE_TYPE" column="&quot;VALVE_TYPE&quot;" />
+    <property name="SEQUENCE" column="&quot;SEQUENCE&quot;" />
+    <property name="SUFFIX" column="&quot;SUFFIX&quot;" />
+    <property name="UNIT" column="&quot;UNIT&quot;" />
+    <property name="WAS_CLONED" column="&quot;WAS_CLONED&quot;" />
+    <property name="CLIENT_UNIT" column="&quot;CLIENT_UNIT&quot;" />
+  </class>
+</hibernate-mapping>
