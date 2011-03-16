@@ -483,6 +483,7 @@ namespace org.iringtools.adapter
       return _response;
     }
 
+    //DataFilter List
     public XDocument GetDataProjection(
         string projectName, string applicationName, string graphName,
         DataFilter filter, string format, int start, int limit, bool fullIndex)
@@ -535,44 +536,8 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
-    public XDocument GetDataProjection(
-      string projectName, string applicationName, string graphName,
-      string identifier, string format, bool fullIndex)
-    {
-      try
-      {
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
-        string dataObjectName = String.Empty;
-        _graphMap = _mapping.FindGraphMap(graphName);
 
-        if (_graphMap != null)
-        {
-          dataObjectName = _graphMap.dataObjectName;
-        }
-        IList<string> identifiers = new List<string>() { identifier };
-
-        if (format != null)
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-        }
-        else
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>("data");
-        }
-
-        _dataObjects = _dataLayer.Get(dataObjectName, identifiers);
-
-        _projectionEngine.FullIndex = fullIndex;
-        return _projectionEngine.ToXml(graphName, ref _dataObjects);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-        throw ex;
-      }
-    }
-
+    //List
     public XDocument GetDataProjection(
       string projectName, string applicationName, string graphName,
       string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
@@ -677,170 +642,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XDocument GetProjection(
-        string projectName, string applicationName, string graphName,
-        string identifier, string format, bool fullIndex)
-    {
-      try
-      {
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
-
-        IList<string> identifiers = new List<string>() { identifier };
-
-        if (format != null)
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-        }
-        else
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
-        }
-
-        LoadDataObjectSet(graphName, identifiers);
-
-        _projectionEngine.FullIndex = fullIndex;
-        return _projectionEngine.ToXml(graphName, ref _dataObjects);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-        throw ex;
-      }
-    }
-
-    public XDocument GetProjection(
-        string projectName, string applicationName, string graphName,
-        DataFilter filter,
-        string format, int start, int limit, bool fullIndex)
-    {
-      try
-      {
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
-
-        if (format != null)
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-        }
-        else
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
-        }
-
-        if (limit == 0)
-          limit = 100;
-
-        if (_projectionEngine.GetType().BaseType == typeof(BasePart7ProjectionEngine))
-        {
-          ((BasePart7ProjectionEngine)_projectionEngine).ProjectDataFilter(_dataDictionary, ref filter, graphName);
-        }
-
-        _projectionEngine.Count = LoadDataObjectSet(graphName, filter, start, limit);
-
-        _projectionEngine.FullIndex = fullIndex;
-        return _projectionEngine.ToXml(graphName, ref _dataObjects);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-        throw ex;
-      }
-    }
-    public XDocument GetProjection(
-        string projectName, string applicationName, string graphName,
-        string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
-        NameValueCollection parameters)
-    {
-      try
-      {
-        InitializeScope(projectName, applicationName);
-        InitializeDataLayer();
-
-        if (format != null)
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-        }
-        else
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
-        }
-
-        if (limit == 0)
-          limit = 100;
-
-        DataFilter filter = new DataFilter();
-
-        if (parameters != null)
-        {
-          List<Expression> expressions = new List<Expression>();
-          foreach (string key in parameters.AllKeys)
-          {
-            string[] expectedParameters = { 
-              "format", 
-              "start", 
-              "limit", 
-              "sortBy", 
-              "sortOrder",
-              "indexStyle",
-            };
-
-            if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
-            {
-              string value = parameters[key];
-
-              Expression expression = new Expression
-              {
-                PropertyName = key,
-                RelationalOperator = library.RelationalOperator.EqualTo,
-                Values = new Values { value },
-              };
-
-              expressions.Add(expression);
-            }
-          }
-          filter.Expressions = expressions;
-
-          if (!String.IsNullOrEmpty(sortBy))
-          {
-            OrderExpression orderBy = new OrderExpression
-            {
-              PropertyName = sortBy,
-            };
-
-            if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
-            {
-              orderBy.SortOrder = SortOrder.Desc;
-            }
-            else
-            {
-              orderBy.SortOrder = SortOrder.Asc;
-            }
-
-            filter.OrderExpressions.Add(orderBy);
-          }
-
-          if (_projectionEngine.GetType().BaseType == typeof(BasePart7ProjectionEngine))
-          {
-            ((BasePart7ProjectionEngine)_projectionEngine).ProjectDataFilter(_dataDictionary, ref filter, graphName);
-          }
-
-          _projectionEngine.Count = LoadDataObjectSet(graphName, filter, start, limit);
-        }
-        else
-        {
-          _projectionEngine.Count = LoadDataObjectSet(graphName, null);
-        }
-
-        _projectionEngine.FullIndex = fullIndex;
-        return _projectionEngine.ToXml(graphName, ref _dataObjects);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-        throw ex;
-      }
-    }
+    //Individual
     public XDocument GetDataProjection(
        string projectName, string applicationName, string graphName, string className,
        string classIdentifier, string format, bool fullIndex)

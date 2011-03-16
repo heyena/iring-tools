@@ -230,7 +230,7 @@ namespace org.iringtools.exchange
 
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         TextWriter textWriter = new StringWriter(sb);
-        VDS.RDF.Writing.FastRdfXmlWriter rdfWriter = new VDS.RDF.Writing.FastRdfXmlWriter();
+        VDS.RDF.Writing.RdfXmlWriter rdfWriter = new VDS.RDF.Writing.RdfXmlWriter();
         rdfWriter.Save(graph, textWriter);
         XDocument xDocument = XDocument.Parse(sb.ToString());
 
