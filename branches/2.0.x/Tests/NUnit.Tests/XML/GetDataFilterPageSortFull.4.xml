@@ -8,7 +8,7 @@
     <Spec dataType="String">BFU3</Spec>
     <System dataType="String">RV</System>
     <Lineno dataType="String">042</Lineno>
-    <Nomdiameter dataType="String">40</Nomdiameter>
+    <Nomdiameter dataType="Single">40</Nomdiameter>
     <Insulationtype dataType="String">N</Insulationtype>
     <Htraced dataType="String"></Htraced>
     <Consttype dataType="String">NEW</Consttype>
@@ -41,7 +41,7 @@
     <Spec dataType="String">BFU3</Spec>
     <System dataType="String">RV</System>
     <Lineno dataType="String">043</Lineno>
-    <Nomdiameter dataType="String">40</Nomdiameter>
+    <Nomdiameter dataType="Single">40</Nomdiameter>
     <Insulationtype dataType="String">PP</Insulationtype>
     <Htraced dataType="String"></Htraced>
     <Consttype dataType="String">NEW</Consttype>
@@ -74,7 +74,7 @@
     <Spec dataType="String">AAA3</Spec>
     <System dataType="String">RV</System>
     <Lineno dataType="String">014</Lineno>
-    <Nomdiameter dataType="String">80</Nomdiameter>
+    <Nomdiameter dataType="Single">80</Nomdiameter>
     <Insulationtype dataType="String">N</Insulationtype>
     <Htraced dataType="String"></Htraced>
     <Consttype dataType="String">NEW</Consttype>
@@ -107,7 +107,7 @@
     <Spec dataType="String">BFU3</Spec>
     <System dataType="String">RV</System>
     <Lineno dataType="String">024</Lineno>
-    <Nomdiameter dataType="String">25</Nomdiameter>
+    <Nomdiameter dataType="Single">25</Nomdiameter>
     <Insulationtype dataType="String">N</Insulationtype>
     <Htraced dataType="String"></Htraced>
     <Consttype dataType="String">NEW</Consttype>
@@ -140,7 +140,7 @@
     <Spec dataType="String">BBA3</Spec>
     <System dataType="String">O</System>
     <Lineno dataType="String">020</Lineno>
-    <Nomdiameter dataType="String">50</Nomdiameter>
+    <Nomdiameter dataType="Single">50</Nomdiameter>
     <Insulationtype dataType="String">IH</Insulationtype>
     <Htraced dataType="String"></Htraced>
     <Consttype dataType="String">NEW</Consttype>

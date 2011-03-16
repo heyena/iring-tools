@@ -4,7 +4,7 @@ if 64-bit use 64-bit verison whenever possible
 
 SlikSVN (http://www.sliksvn.com/en/download) - Install into C:\Program Files\Subversion for msbuild Task
 TortoiseSVN (http://tortoisesvn.net/downloads.html)
-Java (http://www.java.com/en/download/manual.jsp)
+Java JDK (http://www.oracle.com/technetwork/java/javase/downloads/index.html) (if 64-bit install both)
 Eclipse IDE for Java EE Developers (http://eclipse.org/downloads/)
 .NET Framework 4 (http://www.microsoft.com/downloads/en/details.aspx?FamilyID=9cfb2d51-5ff4-4491-b0e5-b386f32c0992&displaylang=en)
 Microsoft WebPlatform (http://www.microsoft.com/web/downloads/platform.aspx)
@@ -20,3 +20,12 @@ Express Tools (http://www.microsoft.com/express/Downloads/)
 MSBuild ComminityTasks (http://msbuildtasks.tigris.org/)
 Silverlight 4 Tools for Visual Studio 2010 (http://www.microsoft.com/downloads/en/details.aspx?FamilyID=b3deb194-ca86-4fb6-a716-b67c2604a139&displayLang=en)
 Silverlight 4 Toolkit (http://silverlight.codeplex.com/releases/view/43528)
+
+JAVA_HOME <- 32-bit JDK
+
+
+Silverlight Developer Runtime
+Nunit
+Ant
+PATH <- Ant
+Nant
