@@ -318,7 +318,7 @@ namespace QMXFGenerator
           object superclass = specialization[(int)ClassSpecializationColumns.Superclass];
 
           var query = from @class in _classes
-                      where Convert.ToString(@class[(int)ClassColumns.Label]) == superclass.ToString()
+                      where Convert.ToString(@class[(int)ClassColumns.Label]).Trim() == superclass.ToString().Trim()
                       select @class;
 
           if (query.FirstOrDefault().Count > 0)
