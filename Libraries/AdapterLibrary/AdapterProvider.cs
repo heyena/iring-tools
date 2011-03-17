@@ -510,6 +510,7 @@ namespace org.iringtools.adapter
 
         if (_graphMap != null)
         {
+          graphName = _graphMap.name;
           dataObjectName = _graphMap.dataObjectName;
         }
         else if (dataObject != null)
@@ -521,6 +522,7 @@ namespace org.iringtools.adapter
         {
           throw new FileNotFoundException("Requested graph or dataObject not found.");
         }
+
         if (limit == 0)
           limit = 100;
 
@@ -567,10 +569,21 @@ namespace org.iringtools.adapter
         DataFilter filter = new DataFilter();
 
         _graphMap = _mapping.FindGraphMap(graphName);
+        DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
 
         if (_graphMap != null)
         {
+          graphName = _graphMap.name;
           dataObjectName = _graphMap.dataObjectName;
+        }
+        else if (dataObject != null)
+        {
+          graphName = dataObject.objectName;
+          dataObjectName = dataObject.objectName;
+        }
+        else
+        {
+          throw new FileNotFoundException("Requested graph or dataObject not found.");
         }
 
         if (parameters != null)
@@ -657,6 +670,10 @@ namespace org.iringtools.adapter
         if (format != null)
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+        }
+        else if (!String.IsNullOrEmpty(className))
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
         }
         else
         {
