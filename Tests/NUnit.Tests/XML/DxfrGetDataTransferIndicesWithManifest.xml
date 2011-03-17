@@ -1,0 +1,188 @@
+﻿<ArrayOfdataTransferIndex xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/dxfr/dti">
+  <dataTransferIndex>
+    <identifier>90002-RV</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90002-SW</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90003-SC</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90003-SL</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90003-V</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90004-SC</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90004-SL</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90005-RV</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90006-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90006-SL</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90007-SL</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90008-RV</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90009-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90010-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90011-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90012-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90013-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90014-RV</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90020-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90024-RV</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90025-SW</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90026-RV</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90028-RV</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90030-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90031-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90032-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90033-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90041-RV</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90042-RV</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90043-RV</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
+    <identifier>90058-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+</ArrayOfdataTransferIndex>
