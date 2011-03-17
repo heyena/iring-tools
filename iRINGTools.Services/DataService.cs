@@ -36,6 +36,8 @@ using org.iringtools.utility;
 using org.iringtools.adapter;
 using System.Collections.Specialized;
 using org.iringtools.library.manifest;
+using System.IO;
+using System.Net;
 
 namespace org.iringtools.services
 {
@@ -123,12 +125,31 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{identifier}?format={format}")]
     public XElement Get(string projectName, string applicationName, string graphName, string identifier, string format)
     {
-      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, "", identifier, format, false);
-
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
 
-      return xDocument.Root;
+      try
+      {
+        XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, String.Empty, identifier, format, false);
+
+        context.ContentType = "application/xml";
+
+        return xDocument.Root;
+      }
+      catch (Exception ex)
+      {
+        if (ex is FileNotFoundException)
+        {
+          context.ContentType = "text/xml";
+          context.StatusCode = HttpStatusCode.NotFound;
+          return null;
+        }
+        else
+        {
+          context.ContentType = "text/xml";
+          context.StatusCode = HttpStatusCode.InternalServerError;
+          throw ex;
+        }
+      }
     }
 
     /// <summary>
@@ -145,12 +166,31 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}/{className}/{identifier}?format={format}")]
     public XElement GetIndividual(string projectName, string applicationName, string graphName, string className, string identifier, string format)
     {
-      XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, className, identifier, format, false);
-
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
 
-      return xDocument.Root;
+      try
+      {
+        XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, className, identifier, format, false);
+
+        context.ContentType = "application/xml";
+
+        return xDocument.Root;
+      }
+      catch (Exception ex)
+      {
+        if (ex is FileNotFoundException)
+        {
+          context.ContentType = "text/xml";
+          context.StatusCode = HttpStatusCode.NotFound;
+          return null;
+        }
+        else
+        {
+          context.ContentType = "text/xml";
+          context.StatusCode = HttpStatusCode.InternalServerError;
+          throw ex;
+        }
+      }
     }
     #endregion
 
@@ -167,16 +207,35 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/{graphName}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
     public XElement GetListWithFilter(string projectName, string applicationName, string graphName, DataFilter filter, string format, int start, int limit, string indexStyle)
     {
-      bool fullIndex = false;
-      if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-        fullIndex = true;
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+
+      try
+      {
+        bool fullIndex = false;
+        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+          fullIndex = true;
 
       XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, filter, format, start, limit, fullIndex);
 
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+        context.ContentType = "application/xml";
 
-      return xDocument.Root;
+        return xDocument.Root;
+      }
+      catch (Exception ex)
+      {
+        if (ex is FileNotFoundException)
+        {
+          context.ContentType = "text/xml";
+          context.StatusCode = HttpStatusCode.NotFound;
+          return null;
+        }
+        else
+        {
+          context.ContentType = "text/xml";
+          context.StatusCode = HttpStatusCode.InternalServerError;
+          throw ex;
+        }
+      }
     }
     #endregion
 
@@ -193,7 +252,11 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/{graphName}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
     public XElement GetList(string projectName, string applicationName, string graphName, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
-      NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+
+      try
+      {
+        NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
 
       bool fullIndex = false;
       if (indexStyle != null && indexStyle.ToUpper() == "FULL")
@@ -201,10 +264,25 @@ namespace org.iringtools.services
 
       XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, format, start, limit, sortOrder, sortBy, fullIndex, parameters);
 
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+        context.ContentType = "application/xml";
 
-      return xDocument.Root;
+        return xDocument.Root;
+      }
+      catch (Exception ex)
+      {
+        if (ex is FileNotFoundException)
+        {
+          context.ContentType = "text/xml";
+          context.StatusCode = HttpStatusCode.NotFound;
+          return null;
+        }
+        else
+        {
+          context.ContentType = "text/xml";
+          context.StatusCode = HttpStatusCode.InternalServerError;
+          throw ex;
+        }
+      }
     }
     #endregion
 

@@ -665,6 +665,10 @@ namespace org.iringtools.adapter
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
         }
+        else if (!String.IsNullOrEmpty(className))
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+        }
         else
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>("data");
