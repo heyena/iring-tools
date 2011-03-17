@@ -30,6 +30,12 @@ namespace org.iringtools.adapter.projection
       _dataLayer = dataLayer;
       _dictionary = dictionary;
       _mapping = mapping;
+
+      _appNamespace = String.Format("{0}{1}/{2}",
+         _settings["GraphBaseUri"],
+         HttpUtility.UrlEncode(_settings["ProjectName"]),
+         HttpUtility.UrlEncode(_settings["ApplicationName"])
+       );
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
@@ -38,53 +44,51 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _appNamespace = String.Format("{0}{1}/{2}",
-           _settings["GraphBaseUri"],
-           HttpUtility.UrlEncode(_settings["ProjectName"]),
-           HttpUtility.UrlEncode(_settings["ApplicationName"])
-         );
-
         _graphMap = _mapping.FindGraphMap(graphName);
         _dataObjects = dataObjects;
 
-        //TODO: use entities for rdl & tpl instead of namespaces
-        xElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
-          new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
-          new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
-          new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
-
         if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 &&
-          _dataObjects != null && (_dataObjects.Count == 1 ||
-          FullIndex))
+            _dataObjects != null && _dataObjects.Count > 0)
         {
-          _classIdentifiersCache = new Dictionary<string, List<string>>();
-          SetClassIdentifiers(DataDirection.Outbound);
-
-          var pair = _graphMap.classTemplateMaps.First();          
-          for (int i = 0; i < _dataObjects.Count; i++)
+          if (_dataObjects.Count == 1 || FullIndex)
           {
-            CreateHierarchicalXml(xElement, pair, i);
-          }
-          XAttribute total = new XAttribute("total", this.Count);
-          xElement.Add(total);
-        }
-        if (_dataObjects != null && _dataObjects.Count > 1 && !FullIndex)
-        {
-          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName));
+            xElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
+             new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
+             new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
+             new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
 
-          var pair = _graphMap.classTemplateMaps.First(); 
-          for (int i = 0; i < _dataObjects.Count; i++)
-          {
-            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(pair.classMap.name));
-            CreateIndexXml(rowElement, pair, i);
-            xElement.Add(rowElement);
+            _classIdentifiersCache = new Dictionary<string, List<string>>();
+            SetClassIdentifiers(DataDirection.Outbound);
+
+            var pair = _graphMap.classTemplateMaps.First();
+            for (int i = 0; i < _dataObjects.Count; i++)
+            {
+              CreateHierarchicalXml(xElement, pair, i);
+            }
+
+            XAttribute total = new XAttribute("total", this.Count);
+            xElement.Add(total);
           }
-          XAttribute total = new XAttribute("total", this.Count);
-          xElement.Add(total);
+          else
+          {
+            xElement = new XElement(_appNamespace + Utility.TitleCase(graphName));
+
+            var pair = _graphMap.classTemplateMaps.First();
+            for (int i = 0; i < _dataObjects.Count; i++)
+            {
+              XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(pair.classMap.name));
+              CreateIndexXml(rowElement, pair, i);
+              xElement.Add(rowElement);
+            }
+
+            XAttribute total = new XAttribute("total", this.Count);
+            xElement.Add(total);
+          }
         }
       }
       catch (Exception ex)
       {
+        _logger.Error("Error in ToXml: " + ex);
         throw ex;
       }
 
@@ -93,9 +97,40 @@ namespace org.iringtools.adapter.projection
 
     public override XDocument ToXml(string graphName, string className, string classIdentifier, ref IDataObject dataObject)
     {
-      //TODO: need to update to use className
-      IList<IDataObject> dataObjects = new List<IDataObject> { dataObject };
-      return ToXml(graphName, ref dataObjects);
+      XElement xElement = null;
+
+      try
+      {
+        _graphMap = _mapping.FindGraphMap(graphName);
+
+        if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 && dataObject != null)
+        {
+          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
+            new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
+            new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
+            new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
+         
+          _dataObjects = new List<IDataObject>{ dataObject };
+
+          _classIdentifiersCache = new Dictionary<string, List<string>>();
+          SetClassIdentifiers(DataDirection.Outbound);
+
+          ClassTemplateMap classTemplateMap = 
+            _graphMap.GetClassTemplateMapByName(className) ?? _graphMap.classTemplateMaps.First();
+
+          for (int i = 0; i < _dataObjects.Count; i++)
+          {
+            CreateHierarchicalXml(xElement, classTemplateMap, i);
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in ToXml: " + ex);
+        throw ex;
+      }
+
+      return new XDocument(xElement);
     }
 
     public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
@@ -292,6 +327,7 @@ namespace org.iringtools.adapter.projection
         }
       }
     }
+
     public DataObject FindGraphDataObject(string dataObjectName)
     {
       foreach (DataObject dataObject in _dictionary.dataObjects)
