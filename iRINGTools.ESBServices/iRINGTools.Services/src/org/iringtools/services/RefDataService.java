@@ -171,7 +171,7 @@ public class RefDataService extends AbstractService {
 	 */
 	@GET
 	@Path("/classes/{id}/label")
-	@Produces("text/html") 
+	@Produces("text/html")
 	public String getClassLabel(@PathParam("id") String id) {
 		String classLabel = "";
 		try {
@@ -185,7 +185,8 @@ public class RefDataService extends AbstractService {
 	}
 
 	@GET
-	@Path("/classes/{id}")  //TODO need to add namespace parameter
+	@Path("/classes/{id}")
+	// TODO need to add namespace parameter
 	public Qmxf getClass(@PathParam("id") String id) {
 		Qmxf qmxf = null;
 		try {
@@ -212,25 +213,6 @@ public class RefDataService extends AbstractService {
 		return qmxf;
 	}
 
-	/*
-	 * @POST
-	 * 
-	 * @Path("/templates") public Response PostTemplate(Qmxf qmxf) { Response
-	 * response=null; try { initService(); RefDataProvider refDataProvider = new
-	 * RefDataProvider(settings); response= refDataProvider.PostTemplate(qmxf);
-	 * } catch (Exception ex) {
-	 * logger.error("Error getting federation information: " + ex); } return
-	 * response; }
-	 * 
-	 * @POST
-	 * 
-	 * @Path("/classes") public Response PostClass(Qmxf qmxf) { Response
-	 * response=null; try { initService(); RefDataProvider refDataProvider = new
-	 * RefDataProvider(settings); response= refDataProvider.PostClass(qmxf); }
-	 * catch (Exception ex) {
-	 * logger.error("Error getting federation information: " + ex); } return
-	 * response; }
-	 */
 	@GET
 	@Path("/repositories")
 	public List<Repository> getRepositories() {
@@ -244,84 +226,83 @@ public class RefDataService extends AbstractService {
 		}
 		return repositoryList;
 	}
-    @GET
-    @Path("/classes/{id}/superclasses")
-	public Entities getSuperClasses(@PathParam("id") String id) {
-    	Entities entityList = null;
-    	try{
-    		initService();
-    		RefDataProvider refdataProvider = new RefDataProvider(settings);
-    		entityList = refdataProvider.getSuperClasses(id);
-    	}
-    	catch (Exception ex)
-    	{
-    		logger.error("Error getting super classes information: " + ex);
-    	}	
+
+	@GET
+	@Path("/classes/{id}/superclasses")
+	public org.iringtools.refdata.response.Response getSuperClasses(@PathParam("id") String id) {
+		org.iringtools.refdata.response.Response entityList = null;
+		try {
+			initService();
+			RefDataProvider refdataProvider = new RefDataProvider(settings);
+			entityList = refdataProvider.getSuperClasses(id);
+		} catch (Exception ex) {
+			logger.error("Error getting super classes information: " + ex);
+		}
 		return entityList;
 	}
 
-    @GET
-    @Path("/classes/{id}/subclasses")
-	public Entities getSubClasses(@PathParam("id") String id) {
-		Entities entityList = null;
-		try{
+	@GET
+	@Path("/classes/{id}/subclasses")
+	public org.iringtools.refdata.response.Response getSubClasses(@PathParam("id") String id) {
+		org.iringtools.refdata.response.Response entityList = null;
+		try {
 			initService();
 			RefDataProvider refdataProvider = new RefDataProvider(settings);
 			entityList = refdataProvider.getSubClasses(id);
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			logger.error("Error getting getRepositories information: " + ex);
 		}
 		return entityList;
 	}
-    
-    @GET
-    @Path("/classes/{id}/allsuperclasses")
-	public Entities getAllSuperClasses(@PathParam("id") String id) {
-		Entities entityList = null;
+
+	@GET
+	@Path("/classes/{id}/allsuperclasses")
+	public org.iringtools.refdata.response.Response getAllSuperClasses(@PathParam("id") String id) {
+		org.iringtools.refdata.response.Response entityList = null;
 		try {
 			initService();
 			RefDataProvider refdataProvider = new RefDataProvider(settings);
 			entityList = refdataProvider.getAllSuperClasses(id);
-		}
-		catch (Exception ex){
+		} catch (Exception ex) {
 			logger.error("Error getting all superclasses information: " + ex);
-		}		
+		}
 		return entityList;
 	}
-    
-    @GET
-    @Path("/classes/{id}/templates")
-	public Entities getClassTemplates(@PathParam("id") String id) {
-    	Entities entityList = null;
-    	try {
+
+	@GET
+	@Path("/classes/{id}/templates")
+	public org.iringtools.refdata.response.Response getClassTemplates(@PathParam("id") String id) {
+		org.iringtools.refdata.response.Response entityList = null;
+		try {
 			initService();
 			RefDataProvider refdataProvider = new RefDataProvider(settings);
-			entityList = refdataProvider.GetClassTemplates(id);
-    	}
-    	catch (Exception ex)
-    	{
-    		logger.error("Error getting class templates information: " + ex);
-    	}
-    	return entityList;
-    }
+			entityList = refdataProvider.getClassTemplates(id);
+		} catch (Exception ex) {
+			logger.error("Error getting class templates information: " + ex);
+		}
+		return entityList;
+	}
+
+	@GET
+	@Path("/search/{query}/{start}/{limit}")
+	public org.iringtools.refdata.response.Response searchPage(@PathParam("query") String query,
+			@PathParam("start") String start, @PathParam("limit") String limit) throws Exception {
+		org.iringtools.refdata.response.Response  response = null;
+		try {
+			
+		int startIdx = Integer.parseInt(start);
+		int pageLimit = Integer.parseInt(limit);
+		initService();
+		RefDataProvider refdataProvider = new RefDataProvider(settings);
+		response = refdataProvider.searchPage(query, startIdx, pageLimit);
+		}
+		catch (RuntimeException ex){
+		  logger.error("Error getting Search result: " + ex);
+		}
+		return response;
+	}
 
 	/*
-	 * @GET
-	 * 
-	 * @Path("/search/{query}/{start}/{limit}/reset") public RefDataEntities
-	 * searchPageReset(String query, String start, String limit) {
-	 * OutgoingWebResponseContext context =
-	 * WebOperationContext.Current.OutgoingResponse; context.ContentType =
-	 * "application/xml";
-	 * 
-	 * int startIdx = 0; int pageLimit = 0; int.TryParse(start, out startIdx);
-	 * int.TryParse(limit, out pageLimit);
-	 * 
-	 * return _referenceDataProvider.searchPageReset(query, startIdx,
-	 * pageLimit); }
-	 * 
 	 * @GET
 	 * 
 	 * @Path("/repositories/{query}") public List<Entity>
@@ -333,14 +314,23 @@ public class RefDataService extends AbstractService {
 	 * classLabel;
 	 * 
 	 * }
-	 * 
-	 * @GET
-	 * 
-	 * @Path("/search/{query}") public RefDataEntities search(String query) {
-	 * OutgoingWebResponseContext context =
-	 * WebOperationContext.Current.OutgoingResponse; context.ContentType =
-	 * "application/xml"; return _referenceDataProvider.search(query); }
-	 * 
+	 */ 
+	  @GET
+	  
+	  @Path("/search/{query}") 
+	  public org.iringtools.refdata.response.Response search(@PathParam("query") String query) throws Exception {
+		  org.iringtools.refdata.response.Response response = null;
+		  try {
+			  initService();
+			  RefDataProvider refdataProvider = new RefDataProvider(settings);
+				response = refdataProvider.searchPage(query, 0, 0);
+		  }
+		  catch (RuntimeException ex){
+			  logger.error("Error getting Search results: " + ex);
+		  }
+		  return response; 
+         }
+	 /* 
 	 * @GET
 	 * 
 	 * @Path("/search/{query}/{start}/{limit}") public RefDataEntities

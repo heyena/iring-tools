@@ -8,9 +8,14 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import javax.xml.bind.JAXBException;
 
 import org.ids_adi.ns.qxf.model.ClassDefinition;
@@ -40,6 +45,7 @@ import org.iringtools.refdata.queries.QueryBinding;
 import org.iringtools.refdata.queries.QueryBindings;
 import org.iringtools.refdata.queries.QueryItem;
 import org.iringtools.refdata.queries.SPARQLBindingType;
+import org.iringtools.utility.EntityComparator;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.IOUtil;
@@ -54,7 +60,7 @@ import org.w3._2005.sparql.results.Sparql;
 import org.iringtools.refdata.response.*;
 import org.ids_adi.ns.qxf.model.Restriction;
 
-import sun.misc.Version;
+import org.iringtools.common.Version;
 
 public class RefDataProvider {
 	private Hashtable<String, String> _settings;
@@ -62,12 +68,13 @@ public class RefDataProvider {
 	private Queries _queries = null;
 	private String defaultLanguage = "en";
 	private NamespaceMapper _nsmap = null;
-	 private boolean _useExampleRegistryBase = false;
-     private final String insertData = "INSERT DATA {";
-     private final String deleteData = "DELETE DATA {";
-     private final String deleteWhere = "DELETE WHERE {";
-     private StringBuilder prefix = new StringBuilder();
-     private StringBuilder sparqlBuilder = new StringBuilder();
+	private Map<String, Entity> _searchHistory = new TreeMap<String, Entity>();
+	private boolean _useExampleRegistryBase = false;
+	private final String insertData = "INSERT DATA {";
+	private final String deleteData = "DELETE DATA {";
+	private final String deleteWhere = "DELETE WHERE {";
+	private StringBuilder prefix = new StringBuilder();
+	private StringBuilder sparqlBuilder = new StringBuilder();
 
 	public RefDataProvider(Hashtable<String, String> settings) {
 		try {
@@ -285,7 +292,7 @@ public class RefDataProvider {
 		return response;
 	}
 
-	public String ReadSPARQL(String queryName) throws Exception {
+	public String readSparql(String queryName) throws Exception {
 		try {
 			String path = _settings.get("baseDirectory")
 					+ "/WEB-INF/data/Sparqls/";
@@ -326,23 +333,14 @@ public class RefDataProvider {
 
 			List<Classification> classifications = new ArrayList<Classification>();
 			List<Specialization> specializations = new ArrayList<Specialization>();
-
-			// Entities resultEntities = new Entities();
-			// List<Entity> resultEnt = new ArrayList<Entity>();
 			String sparql = "";
 			// String relativeUri = "";
 
 			Query queryContainsSearch = getQuery("GetClass");
-			// List<QueryItem> items = _queries.getItems();
-			// for (QueryItem qry : items) {
-			// if (qry.getKey().equals("GetClass")) {
-			// queryContainsSearch = qry.getQuery();
-			// break;
-			// }
-			// }
+
 			QueryBindings queryBindings = queryContainsSearch.getBindings();
 
-			sparql = ReadSPARQL(queryContainsSearch.getFileName());
+			sparql = readSparql(queryContainsSearch.getFileName());
 
 			if (namespaceUrl == null || namespaceUrl.isEmpty())
 				namespaceUrl = _nsmap.GetNamespaceUri("rdl").toString();
@@ -376,7 +374,7 @@ public class RefDataProvider {
 					if (result.containsKey("type")) {
 						URI typeName = new URI(result.get("type").substring(0,
 								result.get("type").indexOf("#") + 1));
-						if (typeName.toString().contains("dm")) {
+						if (_nsmap.GetPrefix(typeName).equals("dm")) {
 							EntityType et = new EntityType();
 							et.setReference(result.get("type"));
 							classDefinition.setEntityType(et);
@@ -476,11 +474,11 @@ public class RefDataProvider {
 			List<Specialization> specializations = new ArrayList<Specialization>();
 			Query queryGetSpecialization = getQuery("GetSpecialization");
 			QueryBindings queryBindings = queryGetSpecialization.getBindings();
-			sparql = ReadSPARQL(queryGetSpecialization.getFileName());
+			sparql = readSparql(queryGetSpecialization.getFileName());
 			sparql = sparql.replace("param1", id);
 			Query queryGetSubClassOf = getQuery("GetSubClassOf");
 			QueryBindings queryBindingsPart8 = queryGetSubClassOf.getBindings();
-			sparqlPart8 = ReadSPARQL(queryGetSubClassOf.getFileName());
+			sparqlPart8 = readSparql(queryGetSubClassOf.getFileName());
 			sparqlPart8 = sparqlPart8.replace("param1", id);
 			for (Repository repository : _repositories) {
 				if (rep != null) {
@@ -593,7 +591,7 @@ public class RefDataProvider {
 					getClassification = getQuery("GetClassification");
 					queryBindings = getClassification.getBindings();
 
-					sparql = ReadSPARQL(getClassification.getFileName());
+					sparql = readSparql(getClassification.getFileName());
 					sparql = sparql.replace("param1", id);
 					classifications = processClassifications(rep, sparql,
 							queryBindings);
@@ -602,7 +600,7 @@ public class RefDataProvider {
 					getClassification = getQuery("GetPart8Classification");
 					queryBindings = getClassification.getBindings();
 
-					sparql = ReadSPARQL(getClassification.getFileName());
+					sparql = readSparql(getClassification.getFileName());
 					sparql = sparql.replace("param1", id);
 					classifications = processClassifications(rep, sparql,
 							queryBindings);
@@ -691,45 +689,36 @@ public class RefDataProvider {
 		return qmxf;
 	}
 
-	public final Qmxf getTemplate(String id, String templateType, Repository rep) throws HttpClientException, Exception
-	{
+	public final Qmxf getTemplate(String id, String templateType, Repository rep)
+			throws HttpClientException, Exception {
 		Qmxf qmxf = new Qmxf();
 		List<TemplateQualification> templateQualification = null;
 		List<TemplateDefinition> templateDefinition = null;
-		try
-		{
-			if (templateType.equals("Qualification"))
-			{
+		try {
+			if (templateType.equals("Qualification")) {
 				templateQualification = getTemplateQualification(id, rep);
-			}
-			else
-			{
+			} else {
 				templateDefinition = getTemplateDefinition(id, rep);
 			}
 
-			if (templateQualification != null)
-			{
+			if (templateQualification != null) {
 				qmxf.getTemplateQualifications().addAll(templateQualification);
-			}
-			else
-			{
+			} else {
 				qmxf.getTemplateDefinitions().addAll(templateDefinition);
 			}
-		}
-		catch (RuntimeException ex)
-		{
-			//_logger.Error("Error in GetTemplate: " + ex);
+		} catch (RuntimeException ex) {
+			// _logger.Error("Error in GetTemplate: " + ex);
 		}
 
 		return qmxf;
 	}
-	
-	private List<TemplateDefinition> getTemplateDefinition(String id, Repository rep) throws Exception {
+
+	private List<TemplateDefinition> getTemplateDefinition(String id,
+			Repository rep) throws Exception {
 		List<TemplateDefinition> templateDefinitionList = new ArrayList<TemplateDefinition>();
 		TemplateDefinition templateDefinition = null;
 
-		try
-		{
+		try {
 			String sparql = "";
 			String relativeUri = "";
 			String[] names = null;
@@ -742,59 +731,47 @@ public class RefDataProvider {
 			Query queryContainsSearch = getQuery("GetTemplate");
 			QueryBindings queryBindings = queryContainsSearch.getBindings();
 
-			sparql = ReadSPARQL(queryContainsSearch.getFileName());
+			sparql = readSparql(queryContainsSearch.getFileName());
 			sparql = sparql.replace("param1", id);
-			for (Repository repository : _repositories)
-			{
-				if (rep != null)
-				{
-					if (!rep.getName().equals(repository.getName()))
-					{
+			for (Repository repository : _repositories) {
+				if (rep != null) {
+					if (!rep.getName().equals(repository.getName())) {
 						continue;
 					}
 				}
 
 				Results sparqlResults = queryFromRepository(repository, sparql);
 
-				List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
+				List<Hashtable<String, String>> results = bindQueryResults(
+						queryBindings, sparqlResults);
 
-				for (Hashtable<String, String> result : results)
-				{
+				for (Hashtable<String, String> result : results) {
 					templateDefinition = new TemplateDefinition();
 					Name name = new Name();
 
 					templateDefinition.setRepository(repository.getName());
 
-					if (result.containsKey("label"))
-					{
+					if (result.containsKey("label")) {
 						names = result.get("label").split("@", -1);
 						name.setValue(names[0]);
-						if (names.length == 1)
-						{
+						if (names.length == 1) {
 							name.setLang(defaultLanguage);
-						}
-						else
-						{
+						} else {
 							name.setLang(names[names.length - 1]);
 						}
 					}
 
-					if (result.containsKey("definition"))
-					{
+					if (result.containsKey("definition")) {
 						names = result.get("definition").split("@", -1);
 						description.setValue(names[0]);
-						if (names.length == 1)
-						{
+						if (names.length == 1) {
 							description.setLang(defaultLanguage);
-						}
-						else
-						{
+						} else {
 							description.setLang(names[names.length - 1]);
 						}
 					}
 
-					if (result.containsKey("creationDate"))
-					{
+					if (result.containsKey("creationDate")) {
 						status.setFrom(result.get("creationDate"));
 					}
 					templateDefinition.setId("tpl:" + id);
@@ -802,111 +779,99 @@ public class RefDataProvider {
 					templateDefinition.getDescriptions().add(description);
 					templateDefinition.getStatuses().add(status);
 
-					templateDefinition.getRoleDefinitions().addAll(getRoleDefinition(id, repository));
+					templateDefinition.getRoleDefinitions().addAll(
+							getRoleDefinition(id, repository));
 					templateDefinitionList.add(templateDefinition);
 				}
 			}
 
 			return templateDefinitionList;
-		}
-		catch (RuntimeException e)
-		{
-			//_logger.Error("Error in GetTemplateDefinition: " + e);
-			throw new RuntimeException("Error while Getting Class: " + id + ".\n" + e.toString(), e);
+		} catch (RuntimeException e) {
+			// _logger.Error("Error in GetTemplateDefinition: " + e);
+			throw new RuntimeException("Error while Getting Class: " + id
+					+ ".\n" + e.toString(), e);
 		}
 	}
 
-	private List<RoleDefinition> getRoleDefinition(String id, Repository repository) throws Exception {
-		   try
-			{
-				String sparql = "";
-				String relativeUri = "";
-				String sparqlQuery = "";
-				String[] names = null;
+	private List<RoleDefinition> getRoleDefinition(String id,
+			Repository repository) throws Exception {
+		try {
+			String sparql = "";
+			String relativeUri = "";
+			String sparqlQuery = "";
+			String[] names = null;
 
-				Description description = new Description();
-				org.ids_adi.ns.qxf.model.Status status = new org.ids_adi.ns.qxf.model.Status();
+			Description description = new Description();
+			org.ids_adi.ns.qxf.model.Status status = new org.ids_adi.ns.qxf.model.Status();
 
-				List<RoleDefinition> roleDefinitions = new ArrayList<RoleDefinition>();
-				List<Entity> resultEntities = new ArrayList<Entity>();
+			List<RoleDefinition> roleDefinitions = new ArrayList<RoleDefinition>();
+			List<Entity> resultEntities = new ArrayList<Entity>();
 
-				switch (repository.getRepositoryType())
-				{
-					case PART_8:
-						sparqlQuery = "GetPart8Roles";
-						break;
-					case CAMELOT:
-					case RDS_WIP:
-						sparqlQuery = "GetRoles";
-						break;
-				}
-				Query queryContainsSearch = getQuery(sparqlQuery);
-				QueryBindings queryBindings = queryContainsSearch.getBindings();
-
-				sparql = ReadSPARQL(queryContainsSearch.getFileName());
-				sparql = sparql.replace("param1", id);
-
-				Results sparqlResults = queryFromRepository(repository, sparql);
-				List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
-
-				for (Hashtable<String, String> result : results)
-				{
-					RoleDefinition roleDefinition = new RoleDefinition();
-					Name name = new Name();
-
-					if (result.containsKey("label"))
-					{
-						names = result.get("label").split("@", -1);
-						name.setValue(names[0]);
-						if (names.length == 1)
-						{
-							name.setLang(defaultLanguage);
-						}
-						else
-						{
-							name.setLang(names[names.length - 1]);
-						}
-					}
-					if (result.containsKey("role"))
-					{
-						roleDefinition.setId(result.get("role"));
-					}
-					if (result.containsKey("comment"))
-					{
-						names = result.get("comment").split("@", -1);
-						description.setValue(names[0]);
-						
-						if (names.length == 1)
-						{
-							description.setLang(defaultLanguage);
-						}
-						else
-						{
-							description.setLang(names[names.length - 1]);
-						}
-					}
-					if (result.containsKey("index"))
-					{
-						description.setValue(result.get("index").toString());
-					}
-					if (result.containsKey("type"))
-					{
-						roleDefinition.setRange(result.get("type"));
-					}
-					roleDefinition.getNames().add(name);
-					roleDefinition.getDescriptions().add(description);
-					roleDefinitions.add(roleDefinition);
-//					Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
-				}
-
-				return roleDefinitions;
+			switch (repository.getRepositoryType()) {
+			case PART_8:
+				sparqlQuery = "GetPart8Roles";
+				break;
+			case CAMELOT:
+			case RDS_WIP:
+				sparqlQuery = "GetRoles";
+				break;
 			}
-			catch (RuntimeException e)
-			{
-				//_logger.Error("Error in GetRoleDefinition: " + e);
-				throw new RuntimeException("Error while Getting Class: " + id + ".\n" + e.toString(), e);
+			Query queryContainsSearch = getQuery(sparqlQuery);
+			QueryBindings queryBindings = queryContainsSearch.getBindings();
+
+			sparql = readSparql(queryContainsSearch.getFileName());
+			sparql = sparql.replace("param1", id);
+
+			Results sparqlResults = queryFromRepository(repository, sparql);
+			List<Hashtable<String, String>> results = bindQueryResults(
+					queryBindings, sparqlResults);
+
+			for (Hashtable<String, String> result : results) {
+				RoleDefinition roleDefinition = new RoleDefinition();
+				Name name = new Name();
+
+				if (result.containsKey("label")) {
+					names = result.get("label").split("@", -1);
+					name.setValue(names[0]);
+					if (names.length == 1) {
+						name.setLang(defaultLanguage);
+					} else {
+						name.setLang(names[names.length - 1]);
+					}
+				}
+				if (result.containsKey("role")) {
+					roleDefinition.setId(result.get("role"));
+				}
+				if (result.containsKey("comment")) {
+					names = result.get("comment").split("@", -1);
+					description.setValue(names[0]);
+
+					if (names.length == 1) {
+						description.setLang(defaultLanguage);
+					} else {
+						description.setLang(names[names.length - 1]);
+					}
+				}
+				if (result.containsKey("index")) {
+					description.setValue(result.get("index").toString());
+				}
+				if (result.containsKey("type")) {
+					roleDefinition.setRange(result.get("type"));
+				}
+				roleDefinition.getNames().add(name);
+				roleDefinition.getDescriptions().add(description);
+				roleDefinitions.add(roleDefinition);
+				// Utility.SearchAndInsert(roleDefinitions, roleDefinition,
+				// RoleDefinition.sortAscending());
 			}
+
+			return roleDefinitions;
+		} catch (RuntimeException e) {
+			// _logger.Error("Error in GetRoleDefinition: " + e);
+			throw new RuntimeException("Error while Getting Class: " + id
+					+ ".\n" + e.toString(), e);
 		}
+	}
 
 	private List<TemplateQualification> getTemplateQualification(String id,
 			Repository rep) throws Exception, HttpClientException {
@@ -944,7 +909,7 @@ public class RefDataProvider {
 					getTemplateQualification = getQuery(sparqlQuery);
 					queryBindings = getTemplateQualification.getBindings();
 
-					sparql = ReadSPARQL(getTemplateQualification.getFileName());
+					sparql = readSparql(getTemplateQualification.getFileName());
 					sparql = sparql.replace("param1", id);
 
 					Results sparqlResults = queryFromRepository(repository,
@@ -1015,15 +980,12 @@ public class RefDataProvider {
 			Repository rep) throws Exception {
 		try {
 			String rangeSparql = "";
-			String relativeUri = "";
 
 			String[] names = null;
 
 			String referenceSparql = "";
-			String relativeUri1 = "";
 
 			String valueSparql = "";
-			String relativeUri2 = "";
 
 			Description description = new Description();
 			org.ids_adi.ns.qxf.model.Status status = new org.ids_adi.ns.qxf.model.Status();
@@ -1056,14 +1018,14 @@ public class RefDataProvider {
 					QueryBindings valueRestrictionBindings = getValueRestriction
 							.getBindings();
 
-					rangeSparql = ReadSPARQL(getRangeRestriction.getFileName());
+					rangeSparql = readSparql(getRangeRestriction.getFileName());
 					rangeSparql = rangeSparql.replace("param1", id);
 
-					referenceSparql = ReadSPARQL(getReferenceRestriction
+					referenceSparql = readSparql(getReferenceRestriction
 							.getFileName());
 					referenceSparql = referenceSparql.replace("param1", id);
 
-					valueSparql = ReadSPARQL(getValueRestriction.getFileName());
+					valueSparql = readSparql(getValueRestriction.getFileName());
 					valueSparql = valueSparql.replace("param1", id);
 					Results rangeSparqlResults = queryFromRepository(
 							repository, rangeSparql);
@@ -1160,7 +1122,7 @@ public class RefDataProvider {
 					QueryBindings getPart8RolesBindings = getPart8Roles
 							.getBindings();
 
-					String part8RolesSparql = ReadSPARQL(getPart8Roles
+					String part8RolesSparql = readSparql(getPart8Roles
 							.getFileName());
 					part8RolesSparql = part8RolesSparql.replace("param1", id);
 					Results part8RolesResults = queryFromRepository(repository,
@@ -1224,754 +1186,1106 @@ public class RefDataProvider {
 
 	public Response postTemplate(Qmxf qmxf) {
 
-        Response response = new Response();
-        response.setLevel(Level.SUCCESS);
-        boolean qn = false;
-        ReferenceObject qName = null;
-        try
-        {
-            Repository repository = getRepository(qmxf.getTargetRepository());
-
-            if (repository == null || repository.isIsReadOnly())
-            {
-                Status status = new Status();
-                //status.Level = StatusLevel.Error;
-
-                if (repository == null)
-                    status.getMessages().getItems().add("Repository not found!");
-                else
-                	status.getMessages().getItems().add("Repository [" + qmxf.getTargetRepository() + "] is read-only!");
-
-                //_response.Append(status);
-            }
-            else
-            {
-                String registry = (_useExampleRegistryBase)? _settings.get("ExampleRegistryBase") : _settings.get("ClassRegistryBase");
-                StringBuilder sparqlDelete = new StringBuilder();
-
-                //region Template Definitions
-                if (qmxf.getTemplateDefinitions().size() > 0)
-                {
-                    for (TemplateDefinition newTemplateDefinition : qmxf.getTemplateDefinitions())
-                    {
-                        String language = null;
-                        int roleCount = 0;
-                        StringBuilder sparqlAdd = new StringBuilder();
-
-                        sparqlAdd.append(insertData);
-                        boolean hasDeletes = false;
-                        String templateName = null;
-                        String identifier = null;
-                        String generatedId = null;
-                        String roleDefinition = null;
-                        int index = 1;
-                        if (newTemplateDefinition.getId()!=null){
-                        	identifier = getIdFromURI(newTemplateDefinition.getId());
-                        }
-
-                        templateName = newTemplateDefinition.getNames().get(0).getValue();
-                        //check for exisitng template
-                        Qmxf existingQmxf = new Qmxf();
-                        if (identifier!=null)
-                        {
-                            //TODO
-                        	//existingQmxf = getTemplate(identifier, QMXFType.Definition, repository);
-                        	existingQmxf = getTemplate(identifier, "", repository);
-                        }
-                        else
-                        {
-                            if (_useExampleRegistryBase)
-                                generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), templateName);
-                            else
-                                generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), templateName);
-                            identifier = getIdFromURI(generatedId);
-                        }
-                        //region Form Delete/Insert SPARQL
-                        if (existingQmxf.getTemplateDefinitions().size() > 0)
-                        {
-                            StringBuilder sparqlStmts = new StringBuilder();
-
-                            for (TemplateDefinition existingTemplate : existingQmxf.getTemplateDefinitions())
-                            {
-                                for (Name name : newTemplateDefinition.getNames())
-                                {
-                                    templateName = name.getValue();
-                                    //Name existingName = existingTemplate.name.Find(n => n.lang == name.lang);
-                                    Name existingName=new Name();
-            		                for(Name tempName : existingTemplate.getNames()){
-            		                	if(name.getLang().equalsIgnoreCase(tempName.getLang())){
-            		                		existingName = tempName;
-            		                	}
-            		                }
-                                    if (existingName.getLang()==null)
-                                        language = "@" + defaultLanguage;
-                                    else
-                                        language = "@" + existingName.getLang();
-
-                                    if (existingName != null)
-                                    {
-                                        if (!existingName.getValue().equalsIgnoreCase(name.getValue()))
-                                        {
-                                            hasDeletes = true;
-                                            sparqlStmts.append(String.format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
-                                            sparqlStmts.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, existingName.getValue(), language));
-                                            sparqlAdd.append(String.format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
-                                            sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, name.getValue(), language));
-                                        }
-                                    }
-                                }
-                                //append changing descriptions to each block
-                                for (Description description : newTemplateDefinition.getDescriptions())
-                                {
-                                    //Description existingDescription = existingTemplate.description.Find(d => d.lang == description.lang);
-                                	Description existingDescription = new Description();
-            		                for(Description tempName : existingTemplate.getDescriptions()){
-            		                	if(description.getLang().equalsIgnoreCase(tempName.getLang())){
-            		                		existingDescription = tempName;
-            		                	}
-            		                }
-                                    if (existingDescription.getLang()==null)
-                                        language = "@" + defaultLanguage;
-                                    else
-                                        language = "@" + existingDescription.getLang();
-
-                                    if (existingDescription != null)
-                                    {
-                                        if (!existingDescription.getValue().equalsIgnoreCase(description.getValue()))
-                                        {
-                                            hasDeletes = true;
-                                            sparqlStmts.append(String.format("rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", identifier, existingDescription.getValue(), language));
-                                            sparqlAdd.append(String.format("rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", identifier, description.getValue(), language));
-                                        }
-                                    }
-                                }
-
-                                //role count
-                                if (existingTemplate.getRoleDefinitions().size() != newTemplateDefinition.getRoleDefinitions().size())
-                                {
-                                    hasDeletes = true;
-                                    sparqlStmts.append(String.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, existingTemplate.getRoleDefinitions().size()));
-                                    sparqlAdd.append(String.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, newTemplateDefinition.getRoleDefinitions().size()));
-                                }
-
-                                index = 1;
-                                for (RoleDefinition role : newTemplateDefinition.getRoleDefinitions())
-                                {
-                                    String roleIdentifier = role.getId();
-                                    hasDeletes = false;
-
-                                    //get existing role if it exists
-                                    //RoleDefinition existingRole = existingTemplate.roleDefinition.Find(r => r.identifier == role.identifier);
-                                    RoleDefinition existingRole = new RoleDefinition();
-            		                for(RoleDefinition tempRoleDef : existingTemplate.getRoleDefinitions()){
-            		                	if(role.getId().equalsIgnoreCase(tempRoleDef.getId())){
-            		                		existingRole = tempRoleDef;
-            		                	}
-            		                }
-                                    //remove existing role from existing template, leftovers will be deleted later
-                                    existingTemplate.getRoleDefinitions().remove(existingRole);
-
-                                    if (existingRole != null)
-                                    {
-                                       //region Process Changing Role
-                                        String label = null;
-
-                                        for (Name name : role.getNames())
-                                        {
-                                            //QMXFName existingName = existingRole.name.Find(n => n.lang == name.lang);
-                                        	Name existingName = new Name();
-                    		                for(Name tempName : existingRole.getNames()){
-                    		                	if(name.getLang().equalsIgnoreCase(tempName.getLang())){
-                    		                		existingName = tempName;
-                    		                	}
-                    		                }
-                                            if (existingName != null)
-                                            {
-                                                if (!existingName.getValue().equalsIgnoreCase(name.getValue()))
-                                                {
-                                                    hasDeletes = true;
-                                                    sparqlStmts.append(String.format("tpl:{0} rdf:type owl:Class .", existingRole.getId()));
-                                                    sparqlStmts.append(String.format("tpl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .", existingRole.getId(), existingName.getValue(), name.getLang()));
-                                                }
-                                                //index
-                                                if (existingRole.getDesignation() != String.valueOf(index))
-                                                {
-                                                    sparqlStmts.append(String.format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .", existingRole.getId(), existingRole.getDesignation()));
-                                                }
-                                            }
-                                        }
-                                        if (existingRole.getRange() != null)
-                                        {
-                                            if (!existingRole.getRange().equalsIgnoreCase(role.getRange()))
-                                            {
-                                                hasDeletes = true;
-                                                sparqlStmts.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", existingRole.getId(), existingRole.getRange()));
-                                            }
-                                        }
-                                        //endregion
-                                    }
-                                    else
-                                    {
-                                        //region Insert New Role
-
-                                    	String roleLabel = role.getNames().get(0).getValue().split("@")[0];
-                                        String roleID = null;
-                                        generatedId = null;
-                                        String genName = null;
-
-                                        if (role.getNames().get(0).getLang()==null)
-                                            language = "@" + defaultLanguage;
-                                        else
-                                            language = "@" + role.getNames().get(0).getLang();
-
-                                        genName = "Role definition " + roleLabel;
-                                        if (role.getId()==null)
-                                        {
-                                            if (_useExampleRegistryBase)
-                                                generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), genName);
-                                            else
-                                                generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), genName);
-                                            roleID = getIdFromURI(generatedId);
-                                        }
-                                        else
-                                        {	
-                                        	roleID = getIdFromURI(role.getId());
-                                        }
-                                        // sparqlAdd.append(String.format("tpl:{0} rdf:type owl:Class .", roleID));
-                                        sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", roleID, roleLabel, language));
-                                        sparqlAdd.append(String.format("tpl:{0} p8:valRoleIndex {1} .", roleID, index));
-                                        sparqlAdd.append(String.format("tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
-
-                                        if (role.getRange()!=null)
-                                        {
-                                            qn = _nsmap.ReduceToQName(role.getRange(), qName);
-                                            sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
-                                        }
-
-                                        /*for (Restriction restriction : role.getRestrictions())
-                                        {
-
-                                        }*/
-                                        sparqlAdd.append(String.format("tpl:{0} p8:hasRole rdl:{1} .", identifier, roleID));
-                                        //endregion
-                                    }
-
-                                    index++;
-                                }
-                            }
-
-                            sparqlDelete.append(prefix);
-                            sparqlDelete.append(deleteWhere);
-                            sparqlDelete.append(sparqlStmts);
-                            sparqlDelete.append(" }; ");
-                        }
-                        //endregion
-
-                        //region Form Insert SPARQL
-                        if (hasDeletes)
-                        {
-                            sparqlAdd.append("}");
-                        }
-                        else
-                        {
-                            String label = null;
-                            String labelSparql = null;
-                            //form labels
-                            for (Name name : newTemplateDefinition.getNames())
-                            {
-                            	label = name.getValue().split("@")[0];
- 
-                                if (name.getLang()==null)
-                                    language = "@" + defaultLanguage;
-                                else
-                                    language = "@" + name.getLang();
-                            }
-
-                            //sparqlAdd.append(String.format("  tpl:{0} rdf:type owl:Class .", identifier));
-                            sparqlAdd.append(String.format("  tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, label, language));
-                            sparqlAdd.append(String.format("  tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
-                            sparqlAdd.append(String.format("  tpl:{0} rdf:type p8:Template .", identifier));
-
-                            //add descriptions to sparql
-                            for (Description descr : newTemplateDefinition.getDescriptions())
-                            {
-                                if (descr.getValue()==null)
-                                    continue;
-                                else
-                                {
-                                    if (descr.getLang()==null)
-                                        language = "@" + defaultLanguage;
-                                    else
-                                        language = "@" + descr.getLang();
-
-                                    sparqlAdd.append(String.format("tpl:{0} rdfs:comment \"{0}{1}\"^^xsd:string .", identifier, descr.getValue().split("@")[0], language));
-                                }
-                            }
-                            sparqlAdd.append(String.format(" tpl:{0} p8:valNumberOfRoles {1} .", identifier, newTemplateDefinition.getRoleDefinitions().size()));
-                            for (RoleDefinition role : newTemplateDefinition.getRoleDefinitions())
-                            {
-                            	String roleLabel = role.getNames().get(0).getValue().split("@")[0];
-                               	String roleID = null;
-                                generatedId = null;
-                                String genName = null;
-                                String range = role.getRange();
-
-                                if (role.getNames().get(0).getLang()==null)
-                                    language = "@" + defaultLanguage;
-                                else
-                                    language = role.getNames().get(0).getLang();
-
-                                genName = "Role definition " + roleLabel;
-                                if (role.getId()==null)
-                                {
-                                    if (_useExampleRegistryBase)
-                                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), genName);
-                                    else
-                                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), genName);
-                                    roleID = getIdFromURI(generatedId);
-                                }
-                                else
-                                {	
-                                	roleID = getIdFromURI(role.getId());
-                                }
-                                //sparqlAdd.append(String.format("  tpl:{0} rdf:type owl:Class .", roleID));
-                                sparqlAdd.append(String.format("  tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", roleID, roleLabel, language));
-                                sparqlAdd.append(String.format("  tpl:{0} p8:valRoleIndex {1} .", roleID, ++roleCount));
-                                sparqlAdd.append(String.format("  tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
-                                sparqlAdd.append(String.format("  tpl:{0} p8:hasRole tpl:{1} .", identifier, roleID));
-
-                                if (role.getRange()!=null)
-                                {
-                                    qn = _nsmap.ReduceToQName(role.getRange(), qName);
-                                    sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
-                                }
-                            }
-                            sparqlAdd.append("}");
-                        }
-                        //endregion
-
-                        // add prefix first
-                        sparqlBuilder.append(prefix);
-                        sparqlBuilder.append(sparqlDelete);
-                        sparqlBuilder.append(sparqlAdd);
-
-                        String sparql = sparqlBuilder.toString();
-                        Response postResponse = postToRepository(repository, sparql);
-                        //response.append(postResponse);
-                    }
-                }
-                
-                //endregion Template Definitions
-
-                //region Template Qualification
-
-                if (qmxf.getTemplateQualifications().size() > 0)
-                {
-                    for (TemplateQualification newTemplateQualification : qmxf.getTemplateQualifications())
-                    {
-                        String language = null;
-                        int roleCount = 0;
-                        StringBuilder sparqlAdd = new StringBuilder();
-
-                        sparqlAdd.append(insertData);
-                        boolean hasDeletes = false;
-                        String templateName = null;
-                        String identifier = null;
-                        String generatedId = null;
-                        String roleQualification = null;
-                        int index = 1;
-                        if (newTemplateQualification.getId()!=null){
-                            identifier = getIdFromURI(newTemplateQualification.getId());
-                        }
-
-                        templateName = newTemplateQualification.getNames().get(0).getValue();
-                        //check for exisitng template
-                        Qmxf existingQmxf = new Qmxf();
-                        if (identifier!=null)
-                        {
-                        	//TODO
-                            //existingQmxf = GetTemplate(identifier, QMXFType.Qualification, repository);
-                            existingQmxf = getTemplate(identifier, "", repository);
-                        }
-                        else
-                        {
-                            if (_useExampleRegistryBase)
-                                generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), templateName);
-                            else
-                                generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), templateName);
-
-                            identifier = getIdFromURI(generatedId);
-                        }
-                        //region Form Delete/Insert SPARQL
-                        if (existingQmxf.getTemplateQualifications().size() > 0)
-                        {
-                            StringBuilder sparqlStmts = new StringBuilder();
-
-                            for (TemplateQualification existingTemplate : existingQmxf.getTemplateQualifications())
-                            {
-                                for (Name name : newTemplateQualification.getNames())
-                                {
-                                    templateName = name.getValue();
-                                    //Name existingName = existingTemplate.name.Find(n => n.lang == name.lang);
-                                    Name existingName = new Name();
-            		                for(Name tempName : existingTemplate.getNames()){
-            		                	if(name.getLang().equalsIgnoreCase(tempName.getLang())){
-            		                		existingName = tempName;
-            		                	}
-            		                }
-                                    if (existingName.getLang()==null)
-                                        language = "@" + defaultLanguage;
-                                    else
-                                        language = "@" + existingName.getLang();
-
-                                    if (existingName != null)
-                                    {
-                                        if (!existingName.getValue().equalsIgnoreCase(name.getValue()))
-                                        {
-                                            hasDeletes = true;
-                                            sparqlStmts.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, existingName.getValue(), language));
-                                            sparqlStmts.append(String.format("tpl:{0} rdf:type p8:TemplateDescription .", identifier));
-                                            sparqlStmts.append(String.format("tpl:{0} rdf:hasTemplate p8:{1} .", identifier, existingName.getValue().replaceFirst(existingName.getValue().substring(0, existingName.getValue().lastIndexOf("_") + 1),"")));
-
-                                            sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, name.getValue(), language));
-                                            sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateDescription .", identifier));
-                                            sparqlAdd.append(String.format("tpl:{0} rdf:hasTemplate p8:{1} .", identifier, name.getValue().replaceFirst(name.getValue().substring(0, name.getValue().lastIndexOf("_") + 1),"")));
-                                        }
-                                    }
-                                }
-
-                                //role count
-                                if (existingTemplate.getRoleQualifications().size() != newTemplateQualification.getRoleQualifications().size())
-                                {
-                                    hasDeletes = true;
-                                    sparqlStmts.append(String.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, existingTemplate.getRoleQualifications().size()));
-                                    sparqlAdd.append(String.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, newTemplateQualification.getRoleQualifications().size()));
-                                }
-
-                                for (Specialization spec : newTemplateQualification.getSpecializations())
-                                {
-                                    //Specialization existingSpecialization = existingTemplate.specialization.Find(n => n.reference == spec.reference);
-                                    Specialization existingSpecialization = new Specialization();
-            		                for(Specialization tempSpecialisation : existingTemplate.getSpecializations()){
-            		                	if(spec.getReference().equalsIgnoreCase(tempSpecialisation.getReference())){
-            		                		existingSpecialization = tempSpecialisation;
-            		                	}
-            		                }
-                                    if (existingSpecialization != null)
-                                    {
-                                        String specialization = spec.getReference();
-                                        String existingSpec = existingSpecialization.getReference();
-
-                                        hasDeletes = true;
-                                        sparqlStmts.append(String.format("tpl:{0} rdf:type p8:TemplateSpecialization .", existingSpec));
-                                        sparqlStmts.append(String.format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", existingSpec, existingSpecialization.getLabel().split("@")[0], language));
-                                        sparqlStmts.append(String.format("tpl:{0} p8:hasSuperTemplate tpl:{1} .", existingSpec, identifier));
-                                        sparqlStmts.append(String.format("tpl:{0} p8:hasSubTemplate tpl:{1} .", identifier, existingSpec));
-
-                                        sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateSpecialization .", specialization));
-                                        sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", specialization, spec.getLabel().split("@")[0], language));
-                                        sparqlAdd.append(String.format("tpl:{0} p8:hasSuperTemplate tpl:{1} .", specialization, identifier));
-                                        sparqlAdd.append(String.format("tpl:{0} p8:hasSubTemplate tpl:{1} .", identifier, specialization));
-                                    }
-                                }
-
-                                index = 1;
-                                for (RoleQualification role : newTemplateQualification.getRoleQualifications())
-                                {
-                                    String roleIdentifier = role.getId();
-                                    hasDeletes = false;
-
-                                    //get existing role if it exists
-                                    //RoleQualification existingRole = existingTemplate.roleQualification.Find(r => r.identifier == role.identifier);
-                                    RoleQualification existingRole = new RoleQualification();
-            		                for(RoleQualification tempExistingRole : existingTemplate.getRoleQualifications()){
-            		                	if(role.getId().equalsIgnoreCase(tempExistingRole.getId())){
-            		                		existingRole = tempExistingRole;
-            		                	}
-            		                }
-                                    //remove existing role from existing template, leftovers will be deleted later
-                                    existingTemplate.getRoleQualifications().remove(existingRole);
-
-                                    if (existingRole != null)
-                                    {
-                                        //region Process Changing Role
-                                        String label = null;
-
-                                        for (Name name : role.getNames())
-                                        {
-                                            //QMXFName existingName = existingRole.name.Find(n => n.lang == name.lang);
-                                        	Name existingName = new Name();
-                    		                for(Name tempExistingName : existingRole.getNames()){
-                    		                	if(name.getLang().equalsIgnoreCase(tempExistingName.getLang())){
-                    		                		existingName = tempExistingName;
-                    		                	}
-                    		                }
-                                            if (existingName != null)
-                                            {
-                                                if (!existingName.getValue().equalsIgnoreCase(name.getValue()))
-                                                {
-                                                    ///TODO: Why are we removing this? We should remove the role from the template only and not from the repository
-                                                    hasDeletes = true;
-                                                    sparqlStmts.append(String.format("tpl:{0} rdf:type owl:Class .", existingRole.getId()));
-                                                    sparqlStmts.append(String.format("tpl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .", existingRole.getId(), existingName.getValue(), name.getLang()));
-                                                }
-                                                //index
-                                                //if (existingRole.designation.value != index.ToString())
-                                                //{
-                                                //    sparqlStmts.append(String.format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .", existingRole.identifier, existingRole.designation.value));
-                                                //}
-                                            }
-                                        }
-                                        if (existingRole.getRange() != null)
-                                        {
-                                            if (!existingRole.getRange().equalsIgnoreCase(role.getRange()))
-                                            {
-                                                hasDeletes = true;
-                                                sparqlStmts.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", existingRole.getId(), existingRole.getRange()));
-                                            }
-                                        }
-                                        //endregion
-                                    }
-                                    else
-                                    {
-                                        //region Insert New Role
-
-                                        String roleLabel = role.getNames().get(0).getValue().split("@")[0];
-                                        String roleID = null;
-                                        generatedId = null;
-                                        String genName = null;
-
-                                        if (role.getNames().get(0).getLang()==null)
-                                            language = "@" + defaultLanguage;
-                                        else
-                                            language = "@" + role.getNames().get(0).getLang();
-
-                                        genName = "Role Qualification " + roleLabel;
-                                        if (role.getId() == null)
-                                        {
-                                            if (_useExampleRegistryBase)
-                                                generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), genName);
-                                            else
-                                                generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), genName);
-
-                                            roleID = getIdFromURI(generatedId);
-                                        }
-                                        else
-                                        {
-                                        	roleID = getIdFromURI(role.getId());
-                                        }
-                                        // sparqlAdd.append(String.format("tpl:{0} rdf:type owl:Class .", roleID));
-                                        sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", roleID, roleLabel, language));
-                                        sparqlAdd.append(String.format("tpl:{0} p8:valRoleIndex {1} .", roleID, index));
-                                        sparqlAdd.append(String.format("tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
-
-                                        if (role.getRange()!=null)
-                                        {
-                                            qn = _nsmap.ReduceToQName(role.getRange(), qName);
-                                            sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
-                                        }
-
-                                        //foreach (PropertyRestriction restriction in role.restrictions)
-                                        //{
-                                        //
-                                        //}
-                                        sparqlAdd.append(String.format("tpl:{0} p8:hasRole rdl:{1} .", identifier, roleID));
-                                        //endregion
-                                    }
-
-                                    index++;
-                                }
-                            }
-
-                            sparqlDelete.append(prefix);
-                            sparqlDelete.append(deleteWhere);
-                            sparqlDelete.append(sparqlStmts);
-                            sparqlDelete.append(" }; ");
-                        }
-                        //endregion
-
-                        //region Form Insert SPARQL
-                        if (hasDeletes)
-                        {
-                            sparqlAdd.append("}");
-                        }
-                        else
-                        {
-                            String label = null;
-                            String labelSparql = null;
-                            //form labels
-                            for (Name name : newTemplateQualification.getNames())
-                            {
-                                label = name.getValue().split("@")[0];
-
-                                if (name.getLang()==null)
-                                    language = "@" + defaultLanguage;
-                                else
-                                    language = "@" + name.getLang();
-                            }
-
-                            sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, label, language));                                
-                            sparqlAdd.append(String.format("tpl:{0} p8:valNumberOfRoles {1} .", identifier, newTemplateQualification.getRoleQualifications().size()));
-
-                            ///TODO: Template Description R# should go here instead
-                            sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateDescription .", identifier));
-
-                            ///TODO: BIG QUESTION AROUND THIS
-                            sparqlAdd.append(String.format("tpl:{0} rdf:hasTemplate p8:{1} .", identifier, label.replaceFirst(label.substring(0,label.lastIndexOf("_") + 1),"")));
-              
-                            for (Specialization spec : newTemplateQualification.getSpecializations())
-                            {
-                                //sparqlStr = new StringBuilder();
-                                String specialization = spec.getReference();
-                                sparqlAdd.append(prefix);
-                                sparqlAdd.append(insertData);
-
-                                ///TODO: Generate an id for template specialization??
-
-                                //sparqlAdd.append(String.format("tpl:{0} rdfs:subClassOf {1} .", identifier, specialization));
-                                sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateSpecialization .", specialization));
-                                sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", specialization, spec.getLabel().split("@")[0], language));
-                                sparqlAdd.append(String.format("tpl:{0} p8:hasSuperTemplate tpl:{1} .", specialization, identifier));
-                                sparqlAdd.append(String.format("tpl:{0} p8:hasSubTemplate tpl:{1} .", identifier, specialization));
-                            }
-                            
-                            for (RoleQualification role : newTemplateQualification.getRoleQualifications())
-                            {
-                                String roleLabel = role.getNames().get(0).getValue().split("@")[0];
-                                String roleID = null;
-                                generatedId = null;
-                                String genName = null;
-                                String range = role.getRange();
-
-                                if (role.getNames().get(0).getLang()==null)
-                                    language = "@" + defaultLanguage;
-                                else
-                                  language = "@" + role.getNames().get(0).getLang();
-
-                                genName = "Role Qualification " + roleLabel;
-                                if (role.getId()==null)
-                                {
-                                    if (_useExampleRegistryBase)
-                                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), genName);
-                                    else
-                                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), genName);
-
-                                    roleID = getIdFromURI(generatedId);
-                                }
-                                else
-                                {
-                                    roleID = getIdFromURI(role.getId());
-                                }
-
-                                ///TODO: p8:TemplateRoleDecription has to be replaced with R#
-                                sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateRoleDescription .", roleID));
-                                sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", roleID, roleLabel, language));
-                                sparqlAdd.append(String.format("tpl:{0} p8:valRoleIndex {1} .", roleID, ++roleCount));
-                                sparqlAdd.append(String.format("tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
-                                sparqlAdd.append(String.format("tpl:{0} p8:hasRole tpl:{1} .", identifier, roleID));
-
-                                if (role.getRange()!=null)
-                                {
-                                    qn = _nsmap.ReduceToQName(role.getRange(), qName);
-                                    sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
-                                }
-                            }
-                            sparqlAdd.append("}");
-                        }
-                        //endregion
-
-                        // add prefix first
-                        sparqlBuilder.append(prefix);
-                        sparqlBuilder.append(sparqlDelete);
-                        sparqlBuilder.append(sparqlAdd);
-
-                        String sparql = sparqlBuilder.toString();
-                        Response postResponse = postToRepository(repository, sparql);
-                        //TODO
-                        //response.append(postResponse);
-                    }
-                }
-                //endregion
-            }
-        }
-        catch (Exception ex)
-        {
-            String errMsg = "Error in PostTemplate: " + ex;
-            Status status = new Status();
-
-            response.setLevel(Level.ERROR);
-            status.getMessages().getItems().add(errMsg);
-        }
-        return response;
-    
-}
-
-	private int getIndexFromName(String name)
-    {
-      int index = 0;
-      try
-      {
-        for (Repository repository : _repositories)
-        {
-          if (repository.getName().equalsIgnoreCase(name))
-          {
-            return index;
-          }
-          index++;
-        }
-        index = 0;
-        for (Repository repository : _repositories)
-        {
-          if (!repository.isIsReadOnly())
-          {
-        	  return index;
-          }
-          index++;
-        }
-      }
-      catch (Exception ex)
-      {
-        //throw ex;
-    	  
-      }
-      return index;
-    }
-	private Response postToRepository(Repository repository, String sparql)
-    {
-      Response response = new Response();
-      Status status = null;
-
-      /*try
-      {
-        String encryptedCredentials = repository.encryptedCredentials;
-        string uri = string.IsNullOrEmpty(repository.updateUri) ? repository.uri : repository.updateUri;
-
-        WebCredentials credentials = new WebCredentials(encryptedCredentials);
-        if (credentials.isEncrypted) credentials.Decrypt();
-
-        SPARQLClient.PostQueryAsMultipartMessage(uri, sparql, credentials, _proxyCredentials);
-
-        status = new Status
-        {
-          Level = StatusLevel.Success,
-          Messages = { "Successfully updated Repository" },
-        };
-      }
-      catch (Exception ex)
-      {
-        status = new Status
-        {
-          Level = StatusLevel.Error,
-          Messages = { ex.ToString() },
-        };
-      }
-
-      response.DateTimeStamp = DateTime.Now;
-      response.Append(status);
-       */
-      return response;
-    }
-	
+		Response response = new Response();
+		response.setLevel(Level.SUCCESS);
+		boolean qn = false;
+		ReferenceObject qName = null;
+		try {
+			Repository repository = getRepository(qmxf.getTargetRepository());
+
+			if (repository == null || repository.isIsReadOnly()) {
+				Status status = new Status();
+				// status.Level = StatusLevel.Error;
+
+				if (repository == null)
+					status.getMessages().getItems()
+							.add("Repository not found!");
+				else
+					status.getMessages()
+							.getItems()
+							.add("Repository [" + qmxf.getTargetRepository()
+									+ "] is read-only!");
+
+				// _response.Append(status);
+			} else {
+				String registry = (_useExampleRegistryBase) ? _settings
+						.get("ExampleRegistryBase") : _settings
+						.get("ClassRegistryBase");
+				StringBuilder sparqlDelete = new StringBuilder();
+
+				// region Template Definitions
+				if (qmxf.getTemplateDefinitions().size() > 0) {
+					for (TemplateDefinition newTemplateDefinition : qmxf
+							.getTemplateDefinitions()) {
+						String language = null;
+						int roleCount = 0;
+						StringBuilder sparqlAdd = new StringBuilder();
+
+						sparqlAdd.append(insertData);
+						boolean hasDeletes = false;
+						String templateName = null;
+						String identifier = null;
+						String generatedId = null;
+						String roleDefinition = null;
+						int index = 1;
+						if (newTemplateDefinition.getId() != null) {
+							identifier = getIdFromURI(newTemplateDefinition
+									.getId());
+						}
+
+						templateName = newTemplateDefinition.getNames().get(0)
+								.getValue();
+						// check for exisitng template
+						Qmxf existingQmxf = new Qmxf();
+						if (identifier != null) {
+							// TODO
+							// existingQmxf = getTemplate(identifier,
+							// QMXFType.Definition, repository);
+							existingQmxf = getTemplate(identifier, "",
+									repository);
+						} else {
+							if (_useExampleRegistryBase)
+								generatedId = createIdsAdiId(
+										_settings.get("ExampleRegistryBase"),
+										templateName);
+							else
+								generatedId = createIdsAdiId(
+										_settings.get("TemplateRegistryBase"),
+										templateName);
+							identifier = getIdFromURI(generatedId);
+						}
+						// region Form Delete/Insert SPARQL
+						if (existingQmxf.getTemplateDefinitions().size() > 0) {
+							StringBuilder sparqlStmts = new StringBuilder();
+
+							for (TemplateDefinition existingTemplate : existingQmxf
+									.getTemplateDefinitions()) {
+								for (Name name : newTemplateDefinition
+										.getNames()) {
+									templateName = name.getValue();
+									// Name existingName =
+									// existingTemplate.name.Find(n => n.lang ==
+									// name.lang);
+									Name existingName = new Name();
+									for (Name tempName : existingTemplate
+											.getNames()) {
+										if (name.getLang().equalsIgnoreCase(
+												tempName.getLang())) {
+											existingName = tempName;
+										}
+									}
+									if (existingName.getLang() == null)
+										language = "@" + defaultLanguage;
+									else
+										language = "@" + existingName.getLang();
+
+									if (existingName != null) {
+										if (!existingName.getValue()
+												.equalsIgnoreCase(
+														name.getValue())) {
+											hasDeletes = true;
+											sparqlStmts
+													.append(String
+															.format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .",
+																	identifier));
+											sparqlStmts
+													.append(String
+															.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+																	identifier,
+																	existingName
+																			.getValue(),
+																	language));
+											sparqlAdd
+													.append(String
+															.format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .",
+																	identifier));
+											sparqlAdd
+													.append(String
+															.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+																	identifier,
+																	name.getValue(),
+																	language));
+										}
+									}
+								}
+								// append changing descriptions to each block
+								for (Description description : newTemplateDefinition
+										.getDescriptions()) {
+									// Description existingDescription =
+									// existingTemplate.description.Find(d =>
+									// d.lang == description.lang);
+									Description existingDescription = new Description();
+									for (Description tempName : existingTemplate
+											.getDescriptions()) {
+										if (description.getLang()
+												.equalsIgnoreCase(
+														tempName.getLang())) {
+											existingDescription = tempName;
+										}
+									}
+									if (existingDescription.getLang() == null)
+										language = "@" + defaultLanguage;
+									else
+										language = "@"
+												+ existingDescription.getLang();
+
+									if (existingDescription != null) {
+										if (!existingDescription.getValue()
+												.equalsIgnoreCase(
+														description.getValue())) {
+											hasDeletes = true;
+											sparqlStmts
+													.append(String
+															.format("rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .",
+																	identifier,
+																	existingDescription
+																			.getValue(),
+																	language));
+											sparqlAdd
+													.append(String
+															.format("rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .",
+																	identifier,
+																	description
+																			.getValue(),
+																	language));
+										}
+									}
+								}
+
+								// role count
+								if (existingTemplate.getRoleDefinitions()
+										.size() != newTemplateDefinition
+										.getRoleDefinitions().size()) {
+									hasDeletes = true;
+									sparqlStmts
+											.append(String
+													.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .",
+															identifier,
+															existingTemplate
+																	.getRoleDefinitions()
+																	.size()));
+									sparqlAdd
+											.append(String
+													.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .",
+															identifier,
+															newTemplateDefinition
+																	.getRoleDefinitions()
+																	.size()));
+								}
+
+								index = 1;
+								for (RoleDefinition role : newTemplateDefinition
+										.getRoleDefinitions()) {
+									String roleIdentifier = role.getId();
+									hasDeletes = false;
+
+									// get existing role if it exists
+									// RoleDefinition existingRole =
+									// existingTemplate.roleDefinition.Find(r =>
+									// r.identifier == role.identifier);
+									RoleDefinition existingRole = new RoleDefinition();
+									for (RoleDefinition tempRoleDef : existingTemplate
+											.getRoleDefinitions()) {
+										if (role.getId().equalsIgnoreCase(
+												tempRoleDef.getId())) {
+											existingRole = tempRoleDef;
+										}
+									}
+									// remove existing role from existing
+									// template, leftovers will be deleted later
+									existingTemplate.getRoleDefinitions()
+											.remove(existingRole);
+
+									if (existingRole != null) {
+										// region Process Changing Role
+										String label = null;
+
+										for (Name name : role.getNames()) {
+											// QMXFName existingName =
+											// existingRole.name.Find(n =>
+											// n.lang == name.lang);
+											Name existingName = new Name();
+											for (Name tempName : existingRole
+													.getNames()) {
+												if (name.getLang()
+														.equalsIgnoreCase(
+																tempName.getLang())) {
+													existingName = tempName;
+												}
+											}
+											if (existingName != null) {
+												if (!existingName
+														.getValue()
+														.equalsIgnoreCase(
+																name.getValue())) {
+													hasDeletes = true;
+													sparqlStmts
+															.append(String
+																	.format("tpl:{0} rdf:type owl:Class .",
+																			existingRole
+																					.getId()));
+													sparqlStmts
+															.append(String
+																	.format("tpl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .",
+																			existingRole
+																					.getId(),
+																			existingName
+																					.getValue(),
+																			name.getLang()));
+												}
+												// index
+												if (existingRole
+														.getDesignation() != String
+														.valueOf(index)) {
+													sparqlStmts
+															.append(String
+																	.format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .",
+																			existingRole
+																					.getId(),
+																			existingRole
+																					.getDesignation()));
+												}
+											}
+										}
+										if (existingRole.getRange() != null) {
+											if (!existingRole.getRange()
+													.equalsIgnoreCase(
+															role.getRange())) {
+												hasDeletes = true;
+												sparqlStmts
+														.append(String
+																.format("tpl:{0} p8:hasRoleFillerType {1} .",
+																		existingRole
+																				.getId(),
+																		existingRole
+																				.getRange()));
+											}
+										}
+										// endregion
+									} else {
+										// region Insert New Role
+
+										String roleLabel = role.getNames()
+												.get(0).getValue().split("@")[0];
+										String roleID = null;
+										generatedId = null;
+										String genName = null;
+
+										if (role.getNames().get(0).getLang() == null)
+											language = "@" + defaultLanguage;
+										else
+											language = "@"
+													+ role.getNames().get(0)
+															.getLang();
+
+										genName = "Role definition "
+												+ roleLabel;
+										if (role.getId() == null) {
+											if (_useExampleRegistryBase)
+												generatedId = createIdsAdiId(
+														_settings
+																.get("ExampleRegistryBase"),
+														genName);
+											else
+												generatedId = createIdsAdiId(
+														_settings
+																.get("TemplateRegistryBase"),
+														genName);
+											roleID = getIdFromURI(generatedId);
+										} else {
+											roleID = getIdFromURI(role.getId());
+										}
+										// sparqlAdd.append(String.format("tpl:{0} rdf:type owl:Class .",
+										// roleID));
+										sparqlAdd
+												.append(String
+														.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+																roleID,
+																roleLabel,
+																language));
+										sparqlAdd
+												.append(String
+														.format("tpl:{0} p8:valRoleIndex {1} .",
+																roleID, index));
+										sparqlAdd
+												.append(String
+														.format("tpl:{0} p8:hasTemplate tpl:{1} .",
+																roleID,
+																identifier));
+
+										if (role.getRange() != null) {
+											qn = _nsmap.ReduceToQName(
+													role.getRange(), qName);
+											sparqlAdd
+													.append(String
+															.format("tpl:{0} p8:hasRoleFillerType {1} .",
+																	roleID,
+																	qName));
+										}
+
+										/*
+										 * for (Restriction restriction :
+										 * role.getRestrictions()) {
+										 * 
+										 * }
+										 */
+										sparqlAdd.append(String.format(
+												"tpl:{0} p8:hasRole rdl:{1} .",
+												identifier, roleID));
+										// endregion
+									}
+
+									index++;
+								}
+							}
+
+							sparqlDelete.append(prefix);
+							sparqlDelete.append(deleteWhere);
+							sparqlDelete.append(sparqlStmts);
+							sparqlDelete.append(" }; ");
+						}
+						// endregion
+
+						// region Form Insert SPARQL
+						if (hasDeletes) {
+							sparqlAdd.append("}");
+						} else {
+							String label = null;
+							String labelSparql = null;
+							// form labels
+							for (Name name : newTemplateDefinition.getNames()) {
+								label = name.getValue().split("@")[0];
+
+								if (name.getLang() == null)
+									language = "@" + defaultLanguage;
+								else
+									language = "@" + name.getLang();
+							}
+
+							// sparqlAdd.append(String.format("  tpl:{0} rdf:type owl:Class .",
+							// identifier));
+							sparqlAdd
+									.append(String
+											.format("  tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+													identifier, label, language));
+							sparqlAdd
+									.append(String
+											.format("  tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .",
+													identifier));
+							sparqlAdd.append(String.format(
+									"  tpl:{0} rdf:type p8:Template .",
+									identifier));
+
+							// add descriptions to sparql
+							for (Description descr : newTemplateDefinition
+									.getDescriptions()) {
+								if (descr.getValue() == null)
+									continue;
+								else {
+									if (descr.getLang() == null)
+										language = "@" + defaultLanguage;
+									else
+										language = "@" + descr.getLang();
+
+									sparqlAdd
+											.append(String
+													.format("tpl:{0} rdfs:comment \"{0}{1}\"^^xsd:string .",
+															identifier,
+															descr.getValue()
+																	.split("@")[0],
+															language));
+								}
+							}
+							sparqlAdd.append(String.format(
+									" tpl:{0} p8:valNumberOfRoles {1} .",
+									identifier, newTemplateDefinition
+											.getRoleDefinitions().size()));
+							for (RoleDefinition role : newTemplateDefinition
+									.getRoleDefinitions()) {
+								String roleLabel = role.getNames().get(0)
+										.getValue().split("@")[0];
+								String roleID = null;
+								generatedId = null;
+								String genName = null;
+								String range = role.getRange();
+
+								if (role.getNames().get(0).getLang() == null)
+									language = "@" + defaultLanguage;
+								else
+									language = role.getNames().get(0).getLang();
+
+								genName = "Role definition " + roleLabel;
+								if (role.getId() == null) {
+									if (_useExampleRegistryBase)
+										generatedId = createIdsAdiId(
+												_settings
+														.get("ExampleRegistryBase"),
+												genName);
+									else
+										generatedId = createIdsAdiId(
+												_settings
+														.get("TemplateRegistryBase"),
+												genName);
+									roleID = getIdFromURI(generatedId);
+								} else {
+									roleID = getIdFromURI(role.getId());
+								}
+								// sparqlAdd.append(String.format("  tpl:{0} rdf:type owl:Class .",
+								// roleID));
+								sparqlAdd
+										.append(String
+												.format("  tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+														roleID, roleLabel,
+														language));
+								sparqlAdd.append(String.format(
+										"  tpl:{0} p8:valRoleIndex {1} .",
+										roleID, ++roleCount));
+								sparqlAdd.append(String.format(
+										"  tpl:{0} p8:hasTemplate tpl:{1} .",
+										roleID, identifier));
+								sparqlAdd.append(String.format(
+										"  tpl:{0} p8:hasRole tpl:{1} .",
+										identifier, roleID));
+
+								if (role.getRange() != null) {
+									qn = _nsmap.ReduceToQName(role.getRange(),
+											qName);
+									sparqlAdd
+											.append(String
+													.format("tpl:{0} p8:hasRoleFillerType {1} .",
+															roleID, qName));
+								}
+							}
+							sparqlAdd.append("}");
+						}
+						// endregion
+
+						// add prefix first
+						sparqlBuilder.append(prefix);
+						sparqlBuilder.append(sparqlDelete);
+						sparqlBuilder.append(sparqlAdd);
+
+						String sparql = sparqlBuilder.toString();
+						Response postResponse = postToRepository(repository,
+								sparql);
+						// response.append(postResponse);
+					}
+				}
+
+				// endregion Template Definitions
+
+				// region Template Qualification
+
+				if (qmxf.getTemplateQualifications().size() > 0) {
+					for (TemplateQualification newTemplateQualification : qmxf
+							.getTemplateQualifications()) {
+						String language = null;
+						int roleCount = 0;
+						StringBuilder sparqlAdd = new StringBuilder();
+
+						sparqlAdd.append(insertData);
+						boolean hasDeletes = false;
+						String templateName = null;
+						String identifier = null;
+						String generatedId = null;
+						String roleQualification = null;
+						int index = 1;
+						if (newTemplateQualification.getId() != null) {
+							identifier = getIdFromURI(newTemplateQualification
+									.getId());
+						}
+
+						templateName = newTemplateQualification.getNames()
+								.get(0).getValue();
+						// check for exisitng template
+						Qmxf existingQmxf = new Qmxf();
+						if (identifier != null) {
+							// TODO
+							// existingQmxf = GetTemplate(identifier,
+							// QMXFType.Qualification, repository);
+							existingQmxf = getTemplate(identifier, "",
+									repository);
+						} else {
+							if (_useExampleRegistryBase)
+								generatedId = createIdsAdiId(
+										_settings.get("ExampleRegistryBase"),
+										templateName);
+							else
+								generatedId = createIdsAdiId(
+										_settings.get("TemplateRegistryBase"),
+										templateName);
+
+							identifier = getIdFromURI(generatedId);
+						}
+						// region Form Delete/Insert SPARQL
+						if (existingQmxf.getTemplateQualifications().size() > 0) {
+							StringBuilder sparqlStmts = new StringBuilder();
+
+							for (TemplateQualification existingTemplate : existingQmxf
+									.getTemplateQualifications()) {
+								for (Name name : newTemplateQualification
+										.getNames()) {
+									templateName = name.getValue();
+									// Name existingName =
+									// existingTemplate.name.Find(n => n.lang ==
+									// name.lang);
+									Name existingName = new Name();
+									for (Name tempName : existingTemplate
+											.getNames()) {
+										if (name.getLang().equalsIgnoreCase(
+												tempName.getLang())) {
+											existingName = tempName;
+										}
+									}
+									if (existingName.getLang() == null)
+										language = "@" + defaultLanguage;
+									else
+										language = "@" + existingName.getLang();
+
+									if (existingName != null) {
+										if (!existingName.getValue()
+												.equalsIgnoreCase(
+														name.getValue())) {
+											hasDeletes = true;
+											sparqlStmts
+													.append(String
+															.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+																	identifier,
+																	existingName
+																			.getValue(),
+																	language));
+											sparqlStmts
+													.append(String
+															.format("tpl:{0} rdf:type p8:TemplateDescription .",
+																	identifier));
+											sparqlStmts
+													.append(String
+															.format("tpl:{0} rdf:hasTemplate p8:{1} .",
+																	identifier,
+																	existingName
+																			.getValue()
+																			.replaceFirst(
+																					existingName
+																							.getValue()
+																							.substring(
+																									0,
+																									existingName
+																											.getValue()
+																											.lastIndexOf(
+																													"_") + 1),
+																					"")));
+
+											sparqlAdd
+													.append(String
+															.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+																	identifier,
+																	name.getValue(),
+																	language));
+											sparqlAdd
+													.append(String
+															.format("tpl:{0} rdf:type p8:TemplateDescription .",
+																	identifier));
+											sparqlAdd
+													.append(String
+															.format("tpl:{0} rdf:hasTemplate p8:{1} .",
+																	identifier,
+																	name.getValue()
+																			.replaceFirst(
+																					name.getValue()
+																							.substring(
+																									0,
+																									name.getValue()
+																											.lastIndexOf(
+																													"_") + 1),
+																					"")));
+										}
+									}
+								}
+
+								// role count
+								if (existingTemplate.getRoleQualifications()
+										.size() != newTemplateQualification
+										.getRoleQualifications().size()) {
+									hasDeletes = true;
+									sparqlStmts
+											.append(String
+													.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .",
+															identifier,
+															existingTemplate
+																	.getRoleQualifications()
+																	.size()));
+									sparqlAdd
+											.append(String
+													.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .",
+															identifier,
+															newTemplateQualification
+																	.getRoleQualifications()
+																	.size()));
+								}
+
+								for (Specialization spec : newTemplateQualification
+										.getSpecializations()) {
+									// Specialization existingSpecialization =
+									// existingTemplate.specialization.Find(n =>
+									// n.reference == spec.reference);
+									Specialization existingSpecialization = new Specialization();
+									for (Specialization tempSpecialisation : existingTemplate
+											.getSpecializations()) {
+										if (spec.getReference()
+												.equalsIgnoreCase(
+														tempSpecialisation
+																.getReference())) {
+											existingSpecialization = tempSpecialisation;
+										}
+									}
+									if (existingSpecialization != null) {
+										String specialization = spec
+												.getReference();
+										String existingSpec = existingSpecialization
+												.getReference();
+
+										hasDeletes = true;
+										sparqlStmts
+												.append(String
+														.format("tpl:{0} rdf:type p8:TemplateSpecialization .",
+																existingSpec));
+										sparqlStmts
+												.append(String
+														.format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .",
+																existingSpec,
+																existingSpecialization
+																		.getLabel()
+																		.split("@")[0],
+																language));
+										sparqlStmts
+												.append(String
+														.format("tpl:{0} p8:hasSuperTemplate tpl:{1} .",
+																existingSpec,
+																identifier));
+										sparqlStmts
+												.append(String
+														.format("tpl:{0} p8:hasSubTemplate tpl:{1} .",
+																identifier,
+																existingSpec));
+
+										sparqlAdd
+												.append(String
+														.format("tpl:{0} rdf:type p8:TemplateSpecialization .",
+																specialization));
+										sparqlAdd
+												.append(String
+														.format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .",
+																specialization,
+																spec.getLabel()
+																		.split("@")[0],
+																language));
+										sparqlAdd
+												.append(String
+														.format("tpl:{0} p8:hasSuperTemplate tpl:{1} .",
+																specialization,
+																identifier));
+										sparqlAdd
+												.append(String
+														.format("tpl:{0} p8:hasSubTemplate tpl:{1} .",
+																identifier,
+																specialization));
+									}
+								}
+
+								index = 1;
+								for (RoleQualification role : newTemplateQualification
+										.getRoleQualifications()) {
+									String roleIdentifier = role.getId();
+									hasDeletes = false;
+
+									// get existing role if it exists
+									// RoleQualification existingRole =
+									// existingTemplate.roleQualification.Find(r
+									// => r.identifier == role.identifier);
+									RoleQualification existingRole = new RoleQualification();
+									for (RoleQualification tempExistingRole : existingTemplate
+											.getRoleQualifications()) {
+										if (role.getId().equalsIgnoreCase(
+												tempExistingRole.getId())) {
+											existingRole = tempExistingRole;
+										}
+									}
+									// remove existing role from existing
+									// template, leftovers will be deleted later
+									existingTemplate.getRoleQualifications()
+											.remove(existingRole);
+
+									if (existingRole != null) {
+										// region Process Changing Role
+										String label = null;
+
+										for (Name name : role.getNames()) {
+											// QMXFName existingName =
+											// existingRole.name.Find(n =>
+											// n.lang == name.lang);
+											Name existingName = new Name();
+											for (Name tempExistingName : existingRole
+													.getNames()) {
+												if (name.getLang()
+														.equalsIgnoreCase(
+																tempExistingName
+																		.getLang())) {
+													existingName = tempExistingName;
+												}
+											}
+											if (existingName != null) {
+												if (!existingName
+														.getValue()
+														.equalsIgnoreCase(
+																name.getValue())) {
+													// /TODO: Why are we
+													// removing this? We should
+													// remove the role from the
+													// template only and not
+													// from the repository
+													hasDeletes = true;
+													sparqlStmts
+															.append(String
+																	.format("tpl:{0} rdf:type owl:Class .",
+																			existingRole
+																					.getId()));
+													sparqlStmts
+															.append(String
+																	.format("tpl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .",
+																			existingRole
+																					.getId(),
+																			existingName
+																					.getValue(),
+																			name.getLang()));
+												}
+												// index
+												// if
+												// (existingRole.designation.value
+												// != index.ToString())
+												// {
+												// sparqlStmts.append(String.format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .",
+												// existingRole.identifier,
+												// existingRole.designation.value));
+												// }
+											}
+										}
+										if (existingRole.getRange() != null) {
+											if (!existingRole.getRange()
+													.equalsIgnoreCase(
+															role.getRange())) {
+												hasDeletes = true;
+												sparqlStmts
+														.append(String
+																.format("tpl:{0} p8:hasRoleFillerType {1} .",
+																		existingRole
+																				.getId(),
+																		existingRole
+																				.getRange()));
+											}
+										}
+										// endregion
+									} else {
+										// region Insert New Role
+
+										String roleLabel = role.getNames()
+												.get(0).getValue().split("@")[0];
+										String roleID = null;
+										generatedId = null;
+										String genName = null;
+
+										if (role.getNames().get(0).getLang() == null)
+											language = "@" + defaultLanguage;
+										else
+											language = "@"
+													+ role.getNames().get(0)
+															.getLang();
+
+										genName = "Role Qualification "
+												+ roleLabel;
+										if (role.getId() == null) {
+											if (_useExampleRegistryBase)
+												generatedId = createIdsAdiId(
+														_settings
+																.get("ExampleRegistryBase"),
+														genName);
+											else
+												generatedId = createIdsAdiId(
+														_settings
+																.get("TemplateRegistryBase"),
+														genName);
+
+											roleID = getIdFromURI(generatedId);
+										} else {
+											roleID = getIdFromURI(role.getId());
+										}
+										// sparqlAdd.append(String.format("tpl:{0} rdf:type owl:Class .",
+										// roleID));
+										sparqlAdd
+												.append(String
+														.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+																roleID,
+																roleLabel,
+																language));
+										sparqlAdd
+												.append(String
+														.format("tpl:{0} p8:valRoleIndex {1} .",
+																roleID, index));
+										sparqlAdd
+												.append(String
+														.format("tpl:{0} p8:hasTemplate tpl:{1} .",
+																roleID,
+																identifier));
+
+										if (role.getRange() != null) {
+											qn = _nsmap.ReduceToQName(
+													role.getRange(), qName);
+											sparqlAdd
+													.append(String
+															.format("tpl:{0} p8:hasRoleFillerType {1} .",
+																	roleID,
+																	qName));
+										}
+
+										// foreach (PropertyRestriction
+										// restriction in role.restrictions)
+										// {
+										//
+										// }
+										sparqlAdd.append(String.format(
+												"tpl:{0} p8:hasRole rdl:{1} .",
+												identifier, roleID));
+										// endregion
+									}
+
+									index++;
+								}
+							}
+
+							sparqlDelete.append(prefix);
+							sparqlDelete.append(deleteWhere);
+							sparqlDelete.append(sparqlStmts);
+							sparqlDelete.append(" }; ");
+						}
+						// endregion
+
+						// region Form Insert SPARQL
+						if (hasDeletes) {
+							sparqlAdd.append("}");
+						} else {
+							String label = null;
+							String labelSparql = null;
+							// form labels
+							for (Name name : newTemplateQualification
+									.getNames()) {
+								label = name.getValue().split("@")[0];
+
+								if (name.getLang() == null)
+									language = "@" + defaultLanguage;
+								else
+									language = "@" + name.getLang();
+							}
+
+							sparqlAdd
+									.append(String
+											.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+													identifier, label, language));
+							sparqlAdd.append(String.format(
+									"tpl:{0} p8:valNumberOfRoles {1} .",
+									identifier, newTemplateQualification
+											.getRoleQualifications().size()));
+
+							// /TODO: Template Description R# should go here
+							// instead
+							sparqlAdd
+									.append(String
+											.format("tpl:{0} rdf:type p8:TemplateDescription .",
+													identifier));
+
+							// /TODO: BIG QUESTION AROUND THIS
+							sparqlAdd
+									.append(String.format(
+											"tpl:{0} rdf:hasTemplate p8:{1} .",
+											identifier,
+											label.replaceFirst(
+													label.substring(
+															0,
+															label.lastIndexOf("_") + 1),
+													"")));
+
+							for (Specialization spec : newTemplateQualification
+									.getSpecializations()) {
+								// sparqlStr = new StringBuilder();
+								String specialization = spec.getReference();
+								sparqlAdd.append(prefix);
+								sparqlAdd.append(insertData);
+
+								// /TODO: Generate an id for template
+								// specialization??
+
+								// sparqlAdd.append(String.format("tpl:{0} rdfs:subClassOf {1} .",
+								// identifier, specialization));
+								sparqlAdd
+										.append(String
+												.format("tpl:{0} rdf:type p8:TemplateSpecialization .",
+														specialization));
+								sparqlAdd
+										.append(String
+												.format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .",
+														specialization, spec
+																.getLabel()
+																.split("@")[0],
+														language));
+								sparqlAdd
+										.append(String
+												.format("tpl:{0} p8:hasSuperTemplate tpl:{1} .",
+														specialization,
+														identifier));
+								sparqlAdd.append(String.format(
+										"tpl:{0} p8:hasSubTemplate tpl:{1} .",
+										identifier, specialization));
+							}
+
+							for (RoleQualification role : newTemplateQualification
+									.getRoleQualifications()) {
+								String roleLabel = role.getNames().get(0)
+										.getValue().split("@")[0];
+								String roleID = null;
+								generatedId = null;
+								String genName = null;
+								String range = role.getRange();
+
+								if (role.getNames().get(0).getLang() == null)
+									language = "@" + defaultLanguage;
+								else
+									language = "@"
+											+ role.getNames().get(0).getLang();
+
+								genName = "Role Qualification " + roleLabel;
+								if (role.getId() == null) {
+									if (_useExampleRegistryBase)
+										generatedId = createIdsAdiId(
+												_settings
+														.get("ExampleRegistryBase"),
+												genName);
+									else
+										generatedId = createIdsAdiId(
+												_settings
+														.get("TemplateRegistryBase"),
+												genName);
+
+									roleID = getIdFromURI(generatedId);
+								} else {
+									roleID = getIdFromURI(role.getId());
+								}
+
+								// /TODO: p8:TemplateRoleDecription has to be
+								// replaced with R#
+								sparqlAdd
+										.append(String
+												.format("tpl:{0} rdf:type p8:TemplateRoleDescription .",
+														roleID));
+								sparqlAdd
+										.append(String
+												.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+														roleID, roleLabel,
+														language));
+								sparqlAdd.append(String.format(
+										"tpl:{0} p8:valRoleIndex {1} .",
+										roleID, ++roleCount));
+								sparqlAdd.append(String.format(
+										"tpl:{0} p8:hasTemplate tpl:{1} .",
+										roleID, identifier));
+								sparqlAdd.append(String.format(
+										"tpl:{0} p8:hasRole tpl:{1} .",
+										identifier, roleID));
+
+								if (role.getRange() != null) {
+									qn = _nsmap.ReduceToQName(role.getRange(),
+											qName);
+									sparqlAdd
+											.append(String
+													.format("tpl:{0} p8:hasRoleFillerType {1} .",
+															roleID, qName));
+								}
+							}
+							sparqlAdd.append("}");
+						}
+						// endregion
+
+						// add prefix first
+						sparqlBuilder.append(prefix);
+						sparqlBuilder.append(sparqlDelete);
+						sparqlBuilder.append(sparqlAdd);
+
+						String sparql = sparqlBuilder.toString();
+						Response postResponse = postToRepository(repository,
+								sparql);
+						// TODO
+						// response.append(postResponse);
+					}
+				}
+				// endregion
+			}
+		} catch (Exception ex) {
+			String errMsg = "Error in PostTemplate: " + ex;
+			Status status = new Status();
+
+			response.setLevel(Level.ERROR);
+			status.getMessages().getItems().add(errMsg);
+		}
+		return response;
+
+	}
+
+	private int getIndexFromName(String name) {
+		int index = 0;
+		try {
+			for (Repository repository : _repositories) {
+				if (repository.getName().equalsIgnoreCase(name)) {
+					return index;
+				}
+				index++;
+			}
+			index = 0;
+			for (Repository repository : _repositories) {
+				if (!repository.isIsReadOnly()) {
+					return index;
+				}
+				index++;
+			}
+		} catch (Exception ex) {
+			// throw ex;
+
+		}
+		return index;
+	}
+
+	private Response postToRepository(Repository repository, String sparql) {
+		Response response = new Response();
+		Status status = null;
+
+		/*
+		 * try { String encryptedCredentials = repository.encryptedCredentials;
+		 * string uri = string.IsNullOrEmpty(repository.updateUri) ?
+		 * repository.uri : repository.updateUri;
+		 * 
+		 * WebCredentials credentials = new
+		 * WebCredentials(encryptedCredentials); if (credentials.isEncrypted)
+		 * credentials.Decrypt();
+		 * 
+		 * SPARQLClient.PostQueryAsMultipartMessage(uri, sparql, credentials,
+		 * _proxyCredentials);
+		 * 
+		 * status = new Status { Level = StatusLevel.Success, Messages = {
+		 * "Successfully updated Repository" }, }; } catch (Exception ex) {
+		 * status = new Status { Level = StatusLevel.Error, Messages = {
+		 * ex.ToString() }, }; }
+		 * 
+		 * response.DateTimeStamp = DateTime.Now; response.Append(status);
+		 */
+		return response;
+	}
+
 	public Response postClass(Qmxf qmxf) {
 		return new Response();
 	}
@@ -1990,57 +2304,64 @@ public class RefDataProvider {
 		return repositoryList;
 
 	}
-	private Repository getRepository(String name)
-    {
-		Repository repository=null;
-        for(Repository tempRepo : _repositories){
-        	if(tempRepo.getName().equalsIgnoreCase(name)){
-        		return repository;
-        	}
-        }
-        return repository;
-      }
 
-	public Entities GetClassTemplates(String id) throws Exception
-	{
-		Entities queryResult = new Entities();
+	private Repository getRepository(String name) {
+		Repository repository = null;
+		for (Repository tempRepo : _repositories) {
+			if (tempRepo.getName().equalsIgnoreCase(name)) {
+				return repository;
+			}
+		}
+		return repository;
+	}
+
+	public org.iringtools.refdata.response.Response getClassTemplates(String id)
+			throws Exception {
+		org.iringtools.refdata.response.Response response = new org.iringtools.refdata.response.Response();
+		Entities entities = new Entities();
+		response.setEntities(entities);
+		List<Entity> entityList = new ArrayList<Entity>();
+		entities.setItems(entityList);
+
 		String[] names = null;
 		String language = "";
-		try
-		{
+		try {
 			String sparqlGetClassTemplates = "";
 			String sparqlGetRelatedTemplates = "";
 			String relativeUri = "";
 			Query queryGetClassTemplates = getQuery("GetClassTemplates");
-			QueryBindings queryBindingsGetClassTemplates = queryGetClassTemplates.getBindings();
+			QueryBindings queryBindingsGetClassTemplates = queryGetClassTemplates
+					.getBindings();
 
-			sparqlGetClassTemplates = ReadSPARQL(queryGetClassTemplates.getFileName());
-			sparqlGetClassTemplates = sparqlGetClassTemplates.replace("param1", id);
+			sparqlGetClassTemplates = readSparql(queryGetClassTemplates
+					.getFileName());
+			sparqlGetClassTemplates = sparqlGetClassTemplates.replace("param1",
+					id);
 
 			Query queryGetRelatedTemplates = getQuery("GetRelatedTemplates");
-			QueryBindings queryBindingsGetRelatedTemplates = queryGetRelatedTemplates.getBindings();
+			QueryBindings queryBindingsGetRelatedTemplates = queryGetRelatedTemplates
+					.getBindings();
 
-			sparqlGetRelatedTemplates = ReadSPARQL(queryGetRelatedTemplates.getFileName());
-			sparqlGetRelatedTemplates = sparqlGetRelatedTemplates.replace("param1", id);
+			sparqlGetRelatedTemplates = readSparql(queryGetRelatedTemplates
+					.getFileName());
+			sparqlGetRelatedTemplates = sparqlGetRelatedTemplates.replace(
+					"param1", id);
 
-			for (Repository repository : _repositories)
-			{
-				if (repository.getRepositoryType().equals(RepositoryType.PART_8))
-				{
-					Results sparqlResults = queryFromRepository(repository, sparqlGetRelatedTemplates);
+			for (Repository repository : _repositories) {
+				if (repository.getRepositoryType()
+						.equals(RepositoryType.PART_8)) {
+					Results sparqlResults = queryFromRepository(repository,
+							sparqlGetRelatedTemplates);
 
-					List<Hashtable<String, String>> results = bindQueryResults(queryBindingsGetRelatedTemplates, sparqlResults);
+					List<Hashtable<String, String>> results = bindQueryResults(
+							queryBindingsGetRelatedTemplates, sparqlResults);
 
-					for (Hashtable<String, String> result : results)
-					{
+					for (Hashtable<String, String> result : results) {
 
 						names = result.get("label").split("@", -1);
-						if (names.length == 1)
-						{
+						if (names.length == 1) {
 							language = defaultLanguage;
-						}
-						else
-						{
+						} else {
 							language = names[names.length - 1];
 						}
 
@@ -2051,25 +2372,22 @@ public class RefDataProvider {
 						tempVar.setRepository(repository.getName());
 						Entity resultEntity = tempVar;
 
-						//Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
-						queryResult.getItems().add(resultEntity);                        
+						// Utility.SearchAndInsert(queryResult, resultEntity,
+						// Entity.sortAscending());
+						entityList.add(resultEntity);
 					}
-				}
-				else
-				{
-					Results sparqlResults = queryFromRepository(repository, sparqlGetClassTemplates);
+				} else {
+					Results sparqlResults = queryFromRepository(repository,
+							sparqlGetClassTemplates);
 
-					List<Hashtable<String, String>> results = bindQueryResults(queryBindingsGetClassTemplates, sparqlResults);
+					List<Hashtable<String, String>> results = bindQueryResults(
+							queryBindingsGetClassTemplates, sparqlResults);
 
-					for (Hashtable<String, String> result : results)
-					{
+					for (Hashtable<String, String> result : results) {
 						names = result.get("label").split("@", -1);
-						if (names.length == 1)
-						{
+						if (names.length == 1) {
 							language = defaultLanguage;
-						}
-						else
-						{
+						} else {
 							language = names[names.length - 1];
 						}
 
@@ -2080,79 +2398,185 @@ public class RefDataProvider {
 						tempVar2.setRepository(repository.getName());
 						Entity resultEntity = tempVar2;
 
-						//Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
-						queryResult.getItems().add(resultEntity);
+						// Utility.SearchAndInsert(queryResult, resultEntity,
+						// Entity.sortAscending());
+						entityList.add(resultEntity);
 					}
 				}
 			}
+			Collections.sort(entityList, new EntityComparator());
+		} catch (RuntimeException e) {
+			// _logger.Error("Error in GetClassTemplates: " + e);
+			throw new RuntimeException("Error while Finding " + id + ".\n"
+					+ e.toString(), e);
 		}
-		catch (RuntimeException e)
-		{
-			//_logger.Error("Error in GetClassTemplates: " + e);
-			throw new RuntimeException("Error while Finding " + id + ".\n" + e.toString(), e);
+		return response;
+	}
+
+	public org.iringtools.refdata.response.Response search(String query)
+			throws Exception {
+		try {
+			return searchPage(query, 0, 0);
+		} catch (RuntimeException ex) {
+			// _logger.Error("Error in Search: " + ex);
+			throw new RuntimeException("Error while Searching " + query + ".\n"
+					+ ex.toString(), ex);
 		}
-		return queryResult;
 	}
 
-	public Entities search(String query) {
+	public org.iringtools.refdata.response.Response searchPage(String query,
+			int i, int j) throws Exception {
+		org.iringtools.refdata.response.Response response = new org.iringtools.refdata.response.Response();
+		Entities entities = new Entities();
+		response.setEntities(entities);
+		List<Entity> entityList = new ArrayList<Entity>();
+		entities.setItems(entityList);
+		int counter = 0;
+
+		try {
+			String sparql = "";
+			String[] names = null;
+			String language = "";
+			Entity resultEntity = null;
+			String key = null;
+
+			// TODO Check the search History for Optimization
+			// if (_searchHistory.containsKey(query)) {
+			// entityList.addAll(_searchHistory.keySet().ceilingEntry(query).getValue());
+			// } else {
+			Map<String, Entity> resultEntities = new TreeMap<String, Entity>();
+
+			Query queryContainsSearch = getQuery("ContainsSearch");
+			QueryBindings queryBindings = queryContainsSearch.getBindings();
+
+			sparql = readSparql(queryContainsSearch.getFileName());
+			sparql = sparql.replace("param1", query);
+
+			for (Repository repository : _repositories) {
+				Results sparqlResults = queryFromRepository(repository, sparql);
+
+				List<Hashtable<String, String>> results = bindQueryResults(
+						queryBindings, sparqlResults);
+				for (Hashtable<String, String> result : results) {
+					names = result.get("label").split("@", -1);
+					if (names.length == 1) {
+						language = defaultLanguage;
+					} else {
+						language = names[names.length - 1];
+					}
+
+					Entity tempVar = new Entity();
+					tempVar.setUri(result.get("uri"));
+					tempVar.setLabel(names[0]);
+					tempVar.setLang(language);
+					tempVar.setRepository(repository.getName());
+					resultEntity = tempVar;
+
+					key = resultEntity.getLabel();
+
+					if (resultEntities.containsKey(key)) {
+						key += ++counter;
+					}
+
+					resultEntities.put(key, resultEntity);
+				}
+				results.clear();
+			}
+
+			_searchHistory.put(key, resultEntity);
+			entityList.addAll(resultEntities.values());
+			Collections.sort(entityList, new EntityComparator());
+			response.setTotal(entityList.size());
+			// }
+
+			if (j > 0) {
+				response = getRequestedPage(response, i, j);
+			}
+			return response;
+		} catch (RuntimeException e) {
+			// _logger.Error("Error in SearchPage: " + e);
+			throw new RuntimeException("Error while Finding " + query + ".\n"
+					+ e.toString(), e);
+		}
+	}
+
+	private org.iringtools.refdata.response.Response getRequestedPage(
+			org.iringtools.refdata.response.Response entities, int startIdx,
+			int pageSize) {
+		try {
+			org.iringtools.refdata.response.Response page = new org.iringtools.refdata.response.Response();
+			page.setTotal(entities.getEntities().getItems().size());
+
+			for (int i = startIdx; i < startIdx + pageSize; i++) {
+				if (entities.getEntities().getItems().size() == i) {
+					break;
+				}
+				Entity entity = entities.getEntities().getItems().get(i);
+				page.getEntities().getItems().add(i, entity);
+			}
+
+			return page;
+		} catch (RuntimeException ex) {
+			throw ex;
+		}
+	}
+
+	public Map<String, Entity> searchReset(String query) {
 		return null;
 	}
 
-	public Entities searchPage(String query, String start, String limit) {
-		return null;
-	}
+	public org.iringtools.refdata.response.Response getSuperClasses(String id)
+			throws Exception {
+		org.iringtools.refdata.response.Response response = new org.iringtools.refdata.response.Response();
+		Entities entities = new Entities();
+		response.setEntities(entities);
+		List<Entity> entityList = new ArrayList<Entity>();
+		entities.setItems(entityList);
 
-	public Entities searchReset(String query) {
-		return null;
-	}
-
-	public Entities getSuperClasses(String id) throws Exception
-	{
-		Entities queryResult = new Entities();
 		String[] names = null;
-		try
-		{
+		try {
 			List<Specialization> specializations = getSpecializations(id, null);
 
-			for (Specialization specialization : specializations)
-			{
+			for (Specialization specialization : specializations) {
 				Entity tempVar = new Entity();
 				String uri = specialization.getReference();
 				names = specialization.getLabel().split("@");
 				String label = names[0];
 
-				if (label == null)
-				{
+				if (label == null) {
 					names = getLabel(uri).split("@");
 					label = names[0];
 				}
-				if(names.length == 1){
+				if (names.length == 1) {
 					tempVar.setLang(defaultLanguage);
-					
-				} else if(names.length == 2) {
-					tempVar.setLang(names[names.length-1]);
-				}					
+
+				} else if (names.length == 2) {
+					tempVar.setLang(names[names.length - 1]);
+				}
 				tempVar.setUri(uri);
 				tempVar.setLabel(label);
 				Entity resultEntity = tempVar;
-				queryResult.getItems().add(resultEntity);
-//				Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+				entityList.add(resultEntity);
 			}
+			response.setTotal(entityList.size());
+			Collections.sort(entityList, new EntityComparator());
+		} catch (RuntimeException e) {
+			// _logger.Error("Error in GetSuperClasses: " + e);
+			throw new RuntimeException("Error while Finding " + id + ".\n"
+					+ e.toString(), e);
 		}
-		catch (RuntimeException e)
-		{
-			//_logger.Error("Error in GetSuperClasses: " + e);
-			throw new RuntimeException("Error while Finding " + id + ".\n" + e.toString(), e);
-		}
-		return queryResult;
+		return response;
 	}
 
-	public Entities getSubClasses(String id) throws Exception
-	{
-		Entities queryResult = new Entities();
+	public org.iringtools.refdata.response.Response getSubClasses(String id)
+			throws Exception {
+		org.iringtools.refdata.response.Response response = new org.iringtools.refdata.response.Response();
+		Entities entities = new Entities();
+		response.setEntities(entities);
+		List<Entity> entityList = new ArrayList<Entity>();
+		entities.setItems(entityList);
 
-		try
-		{
+		try {
 			String sparql = "";
 			String sparqlPart8 = "";
 			String relativeUri = "";
@@ -2162,33 +2586,31 @@ public class RefDataProvider {
 			Query queryGetSubClasses = getQuery("GetSubClasses");
 			QueryBindings queryBindings = queryGetSubClasses.getBindings();
 
-			sparql = ReadSPARQL(queryGetSubClasses.getFileName());
+			sparql = readSparql(queryGetSubClasses.getFileName());
 			sparql = sparql.replace("param1", id);
 
 			Query queryGetSubClassOfInverse = getQuery("GetSubClassOfInverse");
-			QueryBindings queryBindingsPart8 = queryGetSubClassOfInverse.getBindings();
+			QueryBindings queryBindingsPart8 = queryGetSubClassOfInverse
+					.getBindings();
 
-			sparqlPart8 = ReadSPARQL(queryGetSubClassOfInverse.getFileName());
+			sparqlPart8 = readSparql(queryGetSubClassOfInverse.getFileName());
 			sparqlPart8 = sparqlPart8.replace("param1", id);
 
-			for (Repository repository : _repositories)
-			{
-				if (repository.getRepositoryType().equals(RepositoryType.PART_8))
-				{
-					Results sparqlResults = queryFromRepository(repository, sparqlPart8);
+			for (Repository repository : _repositories) {
+				if (repository.getRepositoryType()
+						.equals(RepositoryType.PART_8)) {
+					Results sparqlResults = queryFromRepository(repository,
+							sparqlPart8);
 
-					List<Hashtable<String, String>> results = bindQueryResults(queryBindingsPart8, sparqlResults);
+					List<Hashtable<String, String>> results = bindQueryResults(
+							queryBindingsPart8, sparqlResults);
 
-					for (Hashtable<String, String> result : results)
-					{
+					for (Hashtable<String, String> result : results) {
 						names = result.get("label").split("@", -1);
 
-						if (names.length == 1)
-						{
+						if (names.length == 1) {
 							language = defaultLanguage;
-						}
-						else
-						{
+						} else {
 							language = names[names.length - 1];
 						}
 						Entity tempVar = new Entity();
@@ -2196,23 +2618,18 @@ public class RefDataProvider {
 						tempVar.setLabel(names[0]);
 						tempVar.setLang(language);
 						Entity resultEntity = tempVar;
-						queryResult.getItems().add(tempVar);
-						//Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+						entityList.add(tempVar);
 					}
-				}
-				else
-				{
-					Results sparqlResults = queryFromRepository(repository, sparql);
-					List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
-					for (Hashtable<String, String> result : results)
-					{
+				} else {
+					Results sparqlResults = queryFromRepository(repository,
+							sparql);
+					List<Hashtable<String, String>> results = bindQueryResults(
+							queryBindings, sparqlResults);
+					for (Hashtable<String, String> result : results) {
 						names = result.get("label").split("@", -1);
-						if (names.length == 1)
-						{
+						if (names.length == 1) {
 							language = defaultLanguage;
-						}
-						else
-						{
+						} else {
 							language = names[names.length - 1];
 						}
 						Entity tempVar2 = new Entity();
@@ -2220,64 +2637,63 @@ public class RefDataProvider {
 						tempVar2.setLabel(names[0]);
 						tempVar2.setLang(language);
 						Entity resultEntity = tempVar2;
-						queryResult.getItems().add(resultEntity);
-//						Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+						entityList.add(resultEntity);
 					}
 				}
 			}
+			response.setTotal(entityList.size());
+			Collections.sort(entityList, new EntityComparator());
+		} catch (RuntimeException e) {
+			// _logger.Error("Error in GetSubClasses: " + e);
+			throw new RuntimeException("Error while Finding " + id + ".\n"
+					+ e.toString(), e);
 		}
-		catch (RuntimeException e)
-		{
-//			_logger.Error("Error in GetSubClasses: " + e);
-			throw new RuntimeException("Error while Finding " + id + ".\n" + e.toString(), e);
-		}
-		return queryResult;
-	}
-	
-	public Entities getAllSuperClasses(String id) throws Exception
-	{
-		Entities list = new Entities();
-		return getAllSuperClasses(id, list);
+		return response;
 	}
 
-	public Entities getAllSuperClasses(String id, Entities list) throws Exception
-	{
+	public org.iringtools.refdata.response.Response getAllSuperClasses(String id)
+			throws Exception {
+		org.iringtools.refdata.response.Response response = new org.iringtools.refdata.response.Response();
+		Entities entities = new Entities();
+		response.setEntities(entities);
+		List<Entity> entityList = new ArrayList<Entity>();
+		entities.setItems(entityList);
+		response = getAllSuperClasses(id, response);
+		response.setTotal(response.getEntities().getItems().size());
+		return response;
+	}
+
+	public org.iringtools.refdata.response.Response getAllSuperClasses(
+			String id, org.iringtools.refdata.response.Response response)
+			throws Exception {
+		Entities entities = response.getEntities();
+		List<Entity> entityList = entities.getItems();
 		String[] names = null;
-		try
-		{
+		try {
 			List<Specialization> specializations = getSpecializations(id, null);
-			//base case
-			if (specializations.isEmpty())
-			{
-				return list;
+			// base case
+			if (specializations.isEmpty()) {
+				return response;
 			}
 
-			for (Specialization specialization : specializations)
-			{
+			for (Specialization specialization : specializations) {
 				String uri = specialization.getReference();
 				String label = specialization.getLabel();
 				String language = "";
 
-				if (label == null)
-				{
+				if (label == null) {
 					names = getLabel(uri).split("[@]", -1);
 					label = names[0];
-					if (names.length == 1)
-					{
+					if (names.length == 1) {
 						language = defaultLanguage;
-					}
-					else
-					{
+					} else {
 						language = names[names.length - 1];
 					}
 				} else {
 					names = label.split("@");
-					if (names.length == 1)
-					{
+					if (names.length == 1) {
 						language = defaultLanguage;
-					}
-					else
-					{
+					} else {
 						language = names[names.length - 1];
 					}
 					label = names[0];
@@ -2290,32 +2706,30 @@ public class RefDataProvider {
 
 				String trimmedUri = "";
 				boolean found = false;
-				for (Entity entt : list.getItems())
-				{
-					if (resultEntity.getUri().equals(entt.getUri()))
-					{
+				for (Entity entt : entities.getItems()) {
+					if (resultEntity.getUri().equals(entt.getUri())) {
 						found = true;
+						break;
 					}
 				}
 
-				if (!found)
-				{
-					trimmedUri = uri.substring(0, 0) + uri.substring(0 + uri.lastIndexOf('#') + 1);
-					list.getItems().add(resultEntity);
-					//Utility.SearchAndInsert(list, resultEntity, Entity.sortAscending());
-					getAllSuperClasses(trimmedUri, list);
+				if (!found) {
+					trimmedUri = uri.substring(0, 0)
+							+ uri.substring(0 + uri.lastIndexOf('#') + 1);
+					entities.getItems().add(resultEntity);
+					getAllSuperClasses(trimmedUri, response);
 				}
 			}
-		}
-		catch (RuntimeException e)
-		{
-			//_logger.Error("Error in GetAllSuperClasses: " + e);
-			throw new RuntimeException("Error while Finding " + id + ".\n" + e.toString(), e);
+			Collections.sort(entityList, new EntityComparator());
+		} catch (RuntimeException e) {
+			// _logger.Error("Error in GetAllSuperClasses: " + e);
+			throw new RuntimeException("Error while Finding " + id + ".\n"
+					+ e.toString(), e);
 		}
 
-		return list;
+		return response;
 	}
-	
+
 	private Response queryIdGenerator(String serviceUrl)
 			throws HttpClientException {
 		Response result = null;
@@ -2361,7 +2775,7 @@ public class RefDataProvider {
 			}
 		}
 		QueryBindings queryBindings = query.getBindings();
-		sparql = ReadSPARQL(query.getFileName());
+		sparql = readSparql(query.getFileName());
 		sparql = sparql.replace("param1", uri);
 		for (Repository repository : _repositories) {
 			Results sparqlResults = queryFromRepository(repository, sparql);
@@ -2376,11 +2790,10 @@ public class RefDataProvider {
 		}
 		return label;
 	}
-	
-	private List<RoleDefinition> getRoleDefinition(String id) throws Exception, HttpClientException
-	{
-		try
-		{
+
+	private List<RoleDefinition> getRoleDefinition(String id) throws Exception,
+			HttpClientException {
+		try {
 			String sparql = "";
 			String relativeUri = "";
 			String sparqlQuery = "";
@@ -2393,87 +2806,70 @@ public class RefDataProvider {
 
 			List<Entity> resultEntities = new ArrayList<Entity>();
 
-			for (Repository repository : _repositories)
-			{
-				switch (repository.getRepositoryType())
-				{
-					case CAMELOT:
-					case RDS_WIP:
-						sparqlQuery = "GetRoles";
-						break;
-					case PART_8:
-						sparqlQuery = "GetPart8Roles";
-						break;
+			for (Repository repository : _repositories) {
+				switch (repository.getRepositoryType()) {
+				case CAMELOT:
+				case RDS_WIP:
+					sparqlQuery = "GetRoles";
+					break;
+				case PART_8:
+					sparqlQuery = "GetPart8Roles";
+					break;
 				}
 				Query queryContainsSearch = getQuery(sparqlQuery);
 				QueryBindings queryBindings = queryContainsSearch.getBindings();
 
-				sparql = ReadSPARQL(queryContainsSearch.getFileName());
+				sparql = readSparql(queryContainsSearch.getFileName());
 				sparql = sparql.replace("param1", id);
 				Results sparqlResults = queryFromRepository(repository, sparql);
 
-				List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
+				List<Hashtable<String, String>> results = bindQueryResults(
+						queryBindings, sparqlResults);
 
-				for (Hashtable<String, String> result : results)
-				{
+				for (Hashtable<String, String> result : results) {
 					RoleDefinition roleDefinition = new RoleDefinition();
 					Name name = new Name();
 
-					if (result.containsKey("label"))
-					{
+					if (result.containsKey("label")) {
 						names = result.get("label").split("@", -1);
 						name.setValue(names[0]);
-						if (names.length == 1)
-						{
+						if (names.length == 1) {
 							name.setLang(defaultLanguage);
-						}
-						else
-						{
+						} else {
 							name.setLang(names[names.length - 1]);
 						}
 					}
-					if (result.containsKey("role"))
-					{
+					if (result.containsKey("role")) {
 						roleDefinition.setId(result.get("role"));
 					}
-					if (result.containsKey("comment"))
-					{
+					if (result.containsKey("comment")) {
 						names = result.get("comment").split("@", -1);
 						description.setValue(names[0]);
-						if (names.length == 1)
-						{
+						if (names.length == 1) {
 							description.setLang(defaultLanguage);
-						}
-						else
-						{
+						} else {
 							description.setLang(names[names.length - 1]);
 						}
 					}
-					if (result.containsKey("index"))
-					{
+					if (result.containsKey("index")) {
 						description.setValue(result.get("index").toString());
 					}
-					if (result.containsKey("type"))
-					{
+					if (result.containsKey("type")) {
 						roleDefinition.setRange(result.get("type"));
 					}
 					roleDefinition.getNames().add(name);
 					roleDefinition.getDescriptions().add(description);
 					roleDefinitions.add(roleDefinition);
-//					Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
-					//roleDefinitions.Add(roleDefinition);
 				}
 			}
 
 			return roleDefinitions;
-		}
-		catch (RuntimeException e)
-		{
-	//		_logger.Error("Error in GetRoleDefinition: " + e);
-			throw new RuntimeException("Error while Getting Class: " + id + ".\n" + e.toString(), e);
+		} catch (RuntimeException e) {
+			// _logger.Error("Error in GetRoleDefinition: " + e);
+			throw new RuntimeException("Error while Getting Class: " + id
+					+ ".\n" + e.toString(), e);
 		}
 	}
-	
 
 	private List<Hashtable<String, String>> bindQueryResults(
 			QueryBindings queryBindings, Results sparqlResults) {
@@ -2549,7 +2945,7 @@ public class RefDataProvider {
 			HttpClient sparqlClient = new HttpClient(repository.getUri());
 			sparqlClient.setNetworkCredentials(credentials);
 			sparqlResults = sparqlClient.PostMessage(Sparql.class, "", message);
-		
+
 			results = sparqlResults.getResults();
 		} catch (RuntimeException ex) {
 			return results = null;
