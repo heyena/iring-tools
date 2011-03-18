@@ -1671,7 +1671,8 @@ namespace ApplicationEditor
           if (oItem is ScopeProject)
           {
             _scopes.Remove((ScopeProject)oItem);
-            tvwScopes.Items.Remove(selectedItem);
+          //tvwScopes.Items.Remove(selectedItem);
+          tvwScopesItemRoot.Items.Remove(selectedItem);
 
             _editProject = null;
             tbNewPrjName.Text = String.Empty;

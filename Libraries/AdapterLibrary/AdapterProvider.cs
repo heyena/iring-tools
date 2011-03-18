@@ -171,7 +171,7 @@ namespace org.iringtools.adapter
                 
         foreach (ScopeProject project in scopes)
         {
-          ScopeProject findProject = _scopes.FirstOrDefault<ScopeProject>(o => o.Name == project.Name);
+          ScopeProject findProject = scopes.FirstOrDefault<ScopeProject>(o => o.Name == project.Name);
 
           if (findProject != null)
           {
@@ -199,12 +199,13 @@ namespace org.iringtools.adapter
           }
           else
           {
-            _scopes.Add(project);
+           scopes.Add(project);
           }
 
         }
 
-        Utility.Write<List<ScopeProject>>(_scopes, _settings["ScopesPath"], true);
+        Utility.Write<List<ScopeProject>>(scopes, _settings["ScopesPath"], true);
+        _scopes = scopes; //Update global variable
 
         status.Messages.Add("Scopes have been updated successfully.");
       }
