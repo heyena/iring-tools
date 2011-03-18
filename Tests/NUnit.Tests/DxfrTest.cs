@@ -15,15 +15,15 @@ using log4net;
 namespace NUnit.Tests
 {
     [TestFixture]
-    public class DxfrTest
+    public class ZDxfrTest
     {
-			private static readonly ILog _logger = LogManager.GetLogger(typeof(DxfrTest));
+			private static readonly ILog _logger = LogManager.GetLogger(typeof(ZDxfrTest));
       private AdapterProvider _adapterProvider = null;
       private AdapterSettings _settings = null;
       private string _baseDirectory = string.Empty;
       private DataTranferProvider _dxfrProvider = null;
 
-      public DxfrTest()
+      public ZDxfrTest()
       {
         _settings = new AdapterSettings();
         _settings.AppendSettings(ConfigurationManager.AppSettings);
@@ -43,113 +43,7 @@ namespace NUnit.Tests
 
         _adapterProvider = new AdapterProvider(_settings);
         _dxfrProvider = new DataTranferProvider(ConfigurationManager.AppSettings);
-      }
-
-			private ClassTemplates getClassTemplates(List<ClassTemplates> classTemplatesList, String classId)
-			{
-				foreach (ClassTemplates classTemplates in classTemplatesList)
-				{
-					org.iringtools.dxfr.manifest.Class clazz = classTemplates.@class;
-
-					if (clazz.id == classId)
-					{
-						return classTemplates;
-					}
-				}
-    
-				return null;
-			}
-
-			private Template getTemplate(List<Template> templates, String templateId)
-			{
-				foreach (Template template in templates)
-				{
-					if (template.id == templateId)
-						return template;
-				}
-    
-				return null;
-			}
-
-			private Role getRole(List<Role> roles, String roleId)
-			{
-				foreach (Role role in roles)
-				{
-					if (role.id == roleId)
-						return role;
-				}
-    
-				return null;
-			}
-
-      private Manifest getCrossedManifest() 
-      {
-        Manifest sourceManifest = null, targetManifest = null;       
-
-        sourceManifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
-
-        targetManifest = _dxfrProvider.GetManifest(_settings["ProjectName"], "DEF");
-  
-        Graph sourceGraph = sourceManifest.graphs[0];
-        Graph targetGraph = targetManifest.graphs[0];
-
-        if (sourceGraph.classTemplatesList != null && targetGraph.classTemplatesList != null)
-        {
-          ClassTemplatesList sourceClassTemplatesList = sourceGraph.classTemplatesList;
-          ClassTemplatesList targetClassTemplatesList = targetGraph.classTemplatesList;
-              
-          for (int i = 0; i < targetClassTemplatesList.Count; i++)
-          {
-            org.iringtools.dxfr.manifest.Class targetClass = targetClassTemplatesList[i].@class;            
-						ClassTemplates sourceClassTemplates = getClassTemplates(sourceClassTemplatesList, targetClass.id);
-        
-            if (sourceClassTemplates != null && sourceClassTemplates.templates != null)
-            {
-              Templates targetTemplates = targetClassTemplatesList[i].templates;
-              Templates sourceTemplates = sourceClassTemplatesList[i].templates;
-          
-              for (int j = 0; j < targetTemplates.Count; j++)
-              {
-                Template targetTemplate = targetTemplates[j];
-								Template sourceTemplate = getTemplate(sourceTemplates, targetTemplate.id);
-            
-                if (sourceTemplate == null)
-                {
-                  if (targetTemplate.transferOption == TransferOption.Required)
-                  {
-                    throw new Exception("Required template [" + targetTemplate.id + "] not found");
-                  }
-                  else
-                  {
-                    targetTemplates.RemoveAt(j--);
-                  }
-                }
-                else if (targetTemplate.roles != null && sourceTemplate.roles != null)
-                {
-                  Roles targetRoles = targetTemplate.roles;
-                  Roles sourceRoles = sourceTemplate.roles;
-              
-                  for (int k = 0; k < targetRoles.Count; k++)
-                  {                    
-                    Role sourceRole = getRole(sourceRoles, targetRoles[k].id);
-                
-                    if (sourceRole == null)
-                    {
-                      targetRoles.RemoveAt(k--);
-                    }
-                  }
-                }
-              }
-            }
-            else 
-            {
-              targetClassTemplatesList.RemoveAt(i--);
-            }      
-          }
-        }
-    
-        return targetManifest;
-      }
+      }			
 
 			private XDocument ToXml<T>(T dataList)
 			{
@@ -175,169 +69,8 @@ namespace NUnit.Tests
 				{
 					dti.HashValue = null;
 				}
-			}
+			}			
 
-			/*
-			public DataTransferIndices diff(String SourceScopeName, String SourceAppName, List<DataTransferIndex> sourceDtiList)
-			{
-				DataTransferIndices resultDtis = new DataTransferIndices();
-				List<DataTransferIndex> resultDtiListItems = new List<DataTransferIndex>();
-				resultDtis.DataTransferIndexList = resultDtiListItems;
-    
-				DataTransferIndices sourceDtis = null;
-				DataTransferIndices targetDtis = null;
-    
-				
-				List<DataTransferIndices> dtisList = null;
-				dtisList = sourceDtiList;
-    
-				if (sourceDtiList == null || sourceDtiList.size() < 2) 
-					return null;
-    
-				if (dtisList.get(0).getScopeName().equalsIgnoreCase(SourceScopeName) &&
-					dtisList.get(0).getAppName().equalsIgnoreCase(SourceAppName))
-				{
-					sourceDtis = dtisList.get(0);
-					targetDtis = dtisList.get(1);
-				}
-				else
-				{
-					sourceDtis = dtisList.get(1);
-					targetDtis = dtisList.get(0);
-				}    
-
-				
-				if (sourceDtis == null || sourceDtis.getDataTransferIndexList().getItems().size() == 0)
-				{
-					if (targetDtis != null)
-					{
-						for (DataTransferIndex dti : targetDtis.getDataTransferIndexList().getItems())
-						{
-							dti.setTransferType(TransferType.DELETE);
-							dti.setHashValue(null);
-						}
-					}
-      
-					return targetDtis;
-				}
-
-				
-				if (targetDtis == null || targetDtis.getDataTransferIndexList().getItems().size() == 0)
-				{
-					if (sourceDtis != null)
-					{
-						for (DataTransferIndex dti : sourceDtis.getDataTransferIndexList().getItems())
-						{
-							dti.setTransferType(TransferType.ADD);
-						}
-					}
-
-					return sourceDtis;
-				}
-
-				List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndexList().getItems();
-				List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getItems();      
-				IdentifierComparator identifierComparator = new IdentifierComparator();
-    
-				Collections.sort(sourceDtiList, identifierComparator);
-				Collections.sort(targetDtiList, identifierComparator);
-
-				
-				if (sourceDtiList.get(0).getIdentifier().compareTo(targetDtiList.get(targetDtiList.size() - 1).getIdentifier()) > 0 ||
-						targetDtiList.get(0).getIdentifier().compareTo(sourceDtiList.get(sourceDtiList.size() - 1).getIdentifier()) > 0)
-				{
-					for (DataTransferIndex dti : sourceDtiList)
-					{
-						dti.setTransferType(TransferType.ADD);
-					}
-      
-					for (DataTransferIndex dti : targetDtiList)
-					{
-						dti.setTransferType(TransferType.DELETE);
-						dti.setHashValue(null);
-					}
-
-					resultDtiListItems.addAll(sourceDtiList);
-					resultDtiListItems.addAll(targetDtiList);
-      
-					resultDtis.setSortType(sourceDtis.getSortType());
-					resultDtis.setSortOrder(sourceDtis.getSortOrder());
-      
-					return resultDtis;
-				}
-
-				
-				int sourceIndex = 0;
-				int targetIndex = 0;
-    
-				while (sourceIndex < sourceDtiList.size() && targetIndex < targetDtiList.size())
-				{
-					DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getItems().get(sourceIndex);
-					DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(targetIndex);
-      
-					int value = sourceDti.getIdentifier().compareTo(targetDti.getIdentifier());
-      
-					if (value < 0)
-					{
-						sourceDti.setTransferType(TransferType.ADD);
-						resultDtiListItems.add(sourceDti);
-        
-						if (sourceIndex < sourceDtiList.size()) sourceIndex++;
-					}
-					else if (value == 0)
-					{
-						if (sourceDti.getHashValue().compareTo(targetDti.getHashValue()) == 0)
-						{
-							targetDti.setTransferType(TransferType.SYNC);
-						}
-						else
-						{
-							targetDti.setTransferType(TransferType.CHANGE);
-							targetDti.setHashValue(sourceDti.getHashValue());  // use source hash value
-							targetDti.setSortIndex(sourceDti.getSortIndex());  // use source sort index 
-						}
-        
-						resultDtiListItems.add(targetDti);
-        
-						if (sourceIndex < sourceDtiList.size()) sourceIndex++;          
-						if (targetIndex < targetDtiList.size()) targetIndex++;
-					}
-					else
-					{
-						targetDti.setTransferType(TransferType.DELETE);
-						targetDti.setHashValue(null);
-						resultDtiListItems.add(targetDti);   
-        
-						if (targetIndex < targetDtiList.size()) targetIndex++;
-					}
-				}
-    
-				if (sourceIndex < sourceDtiList.size())
-				{
-					for (int i = sourceIndex; i < sourceDtiList.size(); i++)
-					{
-						DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getItems().get(i);
-						sourceDti.setTransferType(TransferType.ADD);
-						resultDtiListItems.add(sourceDti);
-					}
-				}
-				else if (targetIndex < targetDtiList.size())
-				{
-					for (int i = targetIndex; i < targetDtiList.size(); i++)
-					{
-						DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(i);
-						targetDti.setTransferType(TransferType.DELETE);
-						targetDti.setHashValue(null);
-						resultDtiListItems.add(targetDti);
-					}
-				}
-    
-				resultDtis.setSortType(sourceDtis.getSortType());
-				resultDtis.setSortOrder(sourceDtis.getSortOrder());
-    
-				return resultDtis;
-			}
-*/
       [Test]
       public void GetDataTransferIndices()
       {
@@ -417,7 +150,7 @@ namespace NUnit.Tests
         XDocument benchmark = null;           
         Manifest manifest = null;
 
-        manifest = getCrossedManifest();
+				manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
             
         string path = String.Format(
           "{0}DxfrGetManifest.xml",
@@ -441,7 +174,7 @@ namespace NUnit.Tests
         DataTransferIndices dtiList = null;
         Manifest manifest = null;
 
-        manifest = getCrossedManifest();
+				manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
         dtiList =
           _dxfrProvider.GetDataTransferIndicesWithManifest(
@@ -490,7 +223,7 @@ namespace NUnit.Tests
           }
         );
 
-        dxiRequest.Manifest = getCrossedManifest();
+				dxiRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
         dtiList =
           _dxfrProvider.GetDataTransferIndicesByRequest(
@@ -519,7 +252,7 @@ namespace NUnit.Tests
         Manifest manifest = null;          
         int page = 25;
 
-        manifest = getCrossedManifest();
+				manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
         dtiList =
           _dxfrProvider.GetDataTransferIndicesWithManifest(
@@ -554,7 +287,7 @@ namespace NUnit.Tests
 				dxoRequest.DataTransferIndices = new DataTransferIndices();
         int page = 25;
 
-        dxoRequest.Manifest = getCrossedManifest();
+				dxoRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
         dtiList =
           _dxfrProvider.GetDataTransferIndicesWithManifest(
@@ -575,119 +308,93 @@ namespace NUnit.Tests
 				String dtosString = ToXml(dtos.DataTransferObjectList).ToString();
 				String benchmarkString = benchmark.ToString();
 				Assert.AreEqual(dtosString, benchmarkString);
-      }
+      }			
 
-
+			
 			[Test]
 			public void PostDataTransferObjects()
 			{
 				XDocument benchmark = null;
-				Response response = null;
-				DataTransferIndices dtiList = null;
-				DxoRequest poolDxoRequest = new DxoRequest();
-				List<DataTransferIndex> sourcePoolDtiList = new List<DataTransferIndex>();
-				List<DataTransferIndex> deleteDtiList = new List<DataTransferIndex>();
-				DataTransferObjects sourceDtos = null;
+				Response response = null;				
+				DxoRequest dxoRequest = new DxoRequest();
+				DataTransferObjects poolDtos = null;
+				List<DataTransferObject> dtoList = null;
 
-				poolDxoRequest.Manifest = getCrossedManifest();
+				dxoRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
-				dtiList =
+				dxoRequest.DataTransferIndices = new DataTransferIndices();
+
+				dxoRequest.DataTransferIndices =
 					_dxfrProvider.GetDataTransferIndicesWithManifest(
 						_settings["ProjectName"], _settings["ApplicationName"],
-						_settings["GraphName"], "MD5", poolDxoRequest.Manifest);
+						_settings["GraphName"], "MD5", dxoRequest.Manifest);
 
-				foreach (DataTransferIndex poolDti in dtiList.DataTransferIndexList)
-				{
-					switch (poolDti.TransferType)
+				poolDtos = _dxfrProvider.GetDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
+						_settings["GraphName"], dxoRequest);
+
+				String dtosString = ToXml(poolDtos).ToString();
+
+				dtoList = poolDtos.DataTransferObjectList;
+
+				dtoList[0].transferType = TransferType.Delete;
+				dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].oldValue = dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].value; 
+				dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].value = "200";
+				
+				string path = String.Format(
+						"{0}DxfrNewDto.xml",
+						_settings["XmlPath"]
+					);
+				benchmark = XDocument.Load(path);
+
+				DataTransferObject newDto = Utility.DeserializeDataContract<DataTransferObject>(benchmark.ToString());
+
+				dtoList.Add(newDto);
+				dtoList[31].transferType = TransferType.Add;
+
+				response = _dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
+						_settings["GraphName"], poolDtos);
+
+				path = String.Format(
+						"{0}DxfrRespones.xml",
+						_settings["XmlPath"]
+					);
+
+				benchmark = XDocument.Load(path);
+
+				String res = ToXml(response).ToString();
+				Response xmlResponse = Utility.DeserializeDataContract<Response>(benchmark.ToString());
+				
+				Assert.AreEqual(response.Level.ToString(), xmlResponse.Level.ToString());
+				foreach (Status status in response.StatusList)
+					foreach (Status xmlStatus in xmlResponse.StatusList)
 					{
-						case TransferType.Delete:
-							deleteDtiList.Add(poolDti);
-							break;
-						case TransferType.Change:
-						case TransferType.Add:
-							sourcePoolDtiList.Add(poolDti);
-							break;
+						Assert.AreEqual(status.Messages.ToString(), xmlStatus.Messages.ToString());
+						Assert.AreEqual(status.Identifier, xmlStatus.Identifier);
+						xmlResponse.StatusList.Remove(xmlStatus);
+						break;
 					}
-				}
 
-				if (sourcePoolDtiList.Count > 0)
-				{
-					// request source DTOs
+				/* Tried to recover the table for XmlTest
+				foreach (DataTransferObject dto in dtoList)
+					dto.transferType = TransferType.Delete;
 
-					DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
-					poolDxoRequest.DataTransferIndices = poolDataTransferIndices;
-					List<DataTransferIndex> poolDtiList = new List<DataTransferIndex>();
-					poolDataTransferIndices.DataTransferIndexList = sourcePoolDtiList;
-					poolDtiList = sourcePoolDtiList;
+				_dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
+						_settings["GraphName"], poolDtos);
 
-					sourceDtos = _dxfrProvider.GetDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-						_settings["GraphName"], poolDxoRequest);
+				path = String.Format(
+						"{0}DxfrOrgDtos.xml",
+						_settings["XmlPath"]
+					);
 
-					List<DataTransferObject> sourceDtoListItems = sourceDtos.DataTransferObjectList;
+				benchmark = XDocument.Load(path);
+				DataTransferObjects orgDtos = Utility.DeserializeDataContract<DataTransferObjects>(benchmark.ToString());
 
-					// set transfer type for each DTO : poolDtoList and remove/report ones that have changed
-					// and deleted during review and acceptance period
-					for (int j = 0; j < sourceDtoListItems.Count; j++)
-					{
-						DataTransferObject sourceDto = sourceDtoListItems[j];
-						String identifier = sourceDto.identifier;
-
-						if (sourceDto.GetClassObject(identifier) != null)
-						{
-							foreach (DataTransferIndex dti in poolDtiList)
-							{
-								if (dti.Identifier == identifier)
-								{
-									sourcePoolDtiList.Remove(dti);
-									if (dti.TransferType == TransferType.Sync)
-									{
-										sourceDtoListItems.RemoveAt(j--);  // exclude SYNC DTOs
-									}
-									else
-									{
-										sourceDto.transferType = dti.TransferType;
-									}
-									break;
-								}
-							}
-						}
-					}
-				}
-				DataTransferObjects poolDtos = new DataTransferObjects();
-				List<DataTransferObject> poolDtoListItems = new List<DataTransferObject>();
-				poolDtos.DataTransferObjectList = poolDtoListItems;
-
-				if (sourceDtos != null && sourceDtos.DataTransferObjectList != null)
-				{
-					poolDtoListItems = sourceDtos.DataTransferObjectList;
-				}
-
-				// create identifiers for deleted DTOs
-				foreach (DataTransferIndex deleteDti in deleteDtiList)
-				{
-					DataTransferObject deleteDto = new DataTransferObject();
-					deleteDto.identifier = deleteDti.Identifier;
-					deleteDto.transferType = TransferType.Delete;
-					poolDtoListItems.Add(deleteDto);
-				}
-
-				// post add/change/delete DTOs to target endpoint
-				if (poolDtoListItems.Count > 0)
-				{
-					response = _dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-							_settings["GraphName"], poolDtos);
-
-					string path = String.Format(
-							"{0}DxfrResponesABC10.xml",
-							_settings["XmlPath"]
-						);
-
-					String responseString = ToXml(response).ToString();
-					benchmark = XDocument.Load(path);
-					String benchmarkString = benchmark.ToString();
-					Assert.AreEqual(responseString, benchmarkString);
-				}
+				_dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
+						_settings["GraphName"], orgDtos);
+				*/
 			}
+			 
+			 
 
     }
 }
