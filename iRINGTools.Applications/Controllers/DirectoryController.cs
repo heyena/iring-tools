@@ -581,7 +581,7 @@ namespace iRINGTools.Web.Controllers
         {
           for (int j = 0; j < scopes[i].Applications.Count(); j++)
           {
-            if (scopes[i].Applications[j].Name == Request.QueryString["nodeID"])
+            if (Request.QueryString["nodeID"].Contains(scopes[i].Applications[j].Name) )
             {
               //scopes[i].Applications[j].Name = _editApplication.Name;
               //scopes[i].Applications[j].Description = _editApplication.Description;
