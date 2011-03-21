@@ -1,49 +1,55 @@
 ﻿using System;
-using System.Collections.Specialized;
+using System.Collections;
+using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Xml.Linq;
+using log4net;
 using NUnit.Framework;
 using org.iringtools.adapter;
-using org.iringtools.library;
 using org.iringtools.dxfr.manifest;
-using System.Collections.Generic;
-using org.iringtools.mapping;
+using org.iringtools.library;
 using org.iringtools.utility;
-using log4net;
+using Ninject;
+using Ninject.Extensions.Xml;
+using org.iringtools.adapter.identity;
+using org.iringtools.nhibernate;
 
 namespace NUnit.Tests
 {
     [TestFixture]
-    public class ZDxfrTest
+    public class DxfrTest
     {
-			private static readonly ILog _logger = LogManager.GetLogger(typeof(ZDxfrTest));
-      private AdapterProvider _adapterProvider = null;
+	    private static readonly ILog _logger = LogManager.GetLogger(typeof(DxfrTest));      
       private AdapterSettings _settings = null;
       private string _baseDirectory = string.Empty;
       private DataTranferProvider _dxfrProvider = null;
+			private IDataLayer _dataLayer = null;
+			private IList<IDataObject> dataObjects = null;			
 
-      public ZDxfrTest()
+      public DxfrTest()
       {
-        _settings = new AdapterSettings();
-        _settings.AppendSettings(ConfigurationManager.AppSettings);
-
-        //_settings["BaseDirectoryPath"] = @"E:\iring-tools\branches\2.0.x\Tests\NUnit.Tests";
-        _settings["ProjectName"] = "12345_000";
-        _settings["ApplicationName"] = "ABC";
-        _settings["GraphName"] = "Lines";
-        _settings["Identifier"] = "90002-RV";
-        _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
-
-        _baseDirectory = Directory.GetCurrentDirectory();
-        _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
-        _settings["BaseDirectoryPath"] = _baseDirectory;
-        Directory.SetCurrentDirectory(_baseDirectory);
-        _settings["GraphBaseUri"] = "http://www.example.com/";
-
-        _adapterProvider = new AdapterProvider(_settings);
+				setSettings();
+				_baseDirectory = Directory.GetCurrentDirectory();
+				_baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
+				_settings["BaseDirectoryPath"] = _baseDirectory;
+				Directory.SetCurrentDirectory(_baseDirectory);
         _dxfrProvider = new DataTranferProvider(ConfigurationManager.AppSettings);
-      }			
+      }
+
+			private void setSettings()
+			{
+				_settings = new AdapterSettings();
+				_settings.AppendSettings(ConfigurationManager.AppSettings);
+
+				_settings["ProjectName"] = "12345_000";
+				_settings["ApplicationName"] = "ABC";
+				_settings["GraphName"] = "Lines";
+				_settings["Identifier"] = "90002-RV";
+				_settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
+				_settings["ExecutingAssemblyName"] = "NUnit.Tests";
+				_settings["GraphBaseUri"] = "http://www.example.com/";
+			}
 
 			private XDocument ToXml<T>(T dataList)
 			{
@@ -278,7 +284,7 @@ namespace NUnit.Tests
 
       [Test]
       public void GetDataTransferObjectsWithDxoRequest()
-      {
+      {				
         XDocument benchmark = null;
         DataTransferIndices dtiList = null;
         DataTransferObjects dtos = null;
@@ -308,8 +314,73 @@ namespace NUnit.Tests
 				String dtosString = ToXml(dtos.DataTransferObjectList).ToString();
 				String benchmarkString = benchmark.ToString();
 				Assert.AreEqual(dtosString, benchmarkString);
-      }			
+      }
 
+			private IKernel prepareKernel()
+			{
+				IKernel _kernel = null;
+				Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+				string relativePath = String.Format(
+					"{0}BindingConfiguration.12345_000.ABC.xml",
+					_settings["XmlPath"]
+					);
+
+				string bindingConfigurationPath = Path.Combine(
+					_settings["BaseDirectoryPath"],
+					relativePath
+					 );
+
+				var ninjectSettings = new NinjectSettings { LoadExtensions = false };
+				_kernel = new StandardKernel(ninjectSettings, new AdapterModule());
+				_kernel.Load(new XmlExtensionModule());
+				_settings = _kernel.Get<AdapterSettings>();
+				_kernel.Load(bindingConfigurationPath);
+
+				relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
+						_settings["XmlPath"]
+					);
+
+				bindingConfigurationPath = Path.Combine(
+					_settings["BaseDirectoryPath"],
+					relativePath
+				);
+
+				_kernel.Load(bindingConfigurationPath);
+				IIdentityLayer _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
+				IDictionary _keyRing = _identityLayer.GetKeyRing();
+				_kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
+
+				if (_keyRing.Count > 0)
+				{
+					if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
+					{
+						string userName = _keyRing["Name"].ToString();
+						_settings["UserName"] = userName;
+					}
+				}				
+				return _kernel;
+			}
+
+			/* Copy initial state of the table for ABC */
+			private void Initialize()
+			{
+				IKernel _kernel = prepareKernel();
+				_settings["Scope"] = "12345_000.ABC";
+
+				try
+				{					
+					_dataLayer = _kernel.Get<IDataLayer>("DataLayer");
+				}
+				catch (Exception ex)
+				{
+					string message = "Error initializing datalayer: " + ex;
+					_logger.Error(message);
+					throw new Exception(message);
+				}
+
+				dataObjects = _dataLayer.Get("LINES", null);
+			}
 			
 			[Test]
 			public void PostDataTransferObjects()
@@ -317,9 +388,13 @@ namespace NUnit.Tests
 				XDocument benchmark = null;
 				Response response = null;				
 				DxoRequest dxoRequest = new DxoRequest();
-				DataTransferObjects poolDtos = null;
+				DataTransferObjects postDtos = null;
 				List<DataTransferObject> dtoList = null;
 
+				/* Copy initial state of the table for ABC */
+			  Initialize();
+
+				setSettings();   
 				dxoRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
 				dxoRequest.DataTransferIndices = new DataTransferIndices();
@@ -329,12 +404,10 @@ namespace NUnit.Tests
 						_settings["ProjectName"], _settings["ApplicationName"],
 						_settings["GraphName"], "MD5", dxoRequest.Manifest);
 
-				poolDtos = _dxfrProvider.GetDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-						_settings["GraphName"], dxoRequest);
+				postDtos = _dxfrProvider.GetDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
+						_settings["GraphName"], dxoRequest);				
 
-				String dtosString = ToXml(poolDtos).ToString();
-
-				dtoList = poolDtos.DataTransferObjectList;
+				dtoList = postDtos.DataTransferObjectList;
 
 				dtoList[0].transferType = TransferType.Delete;
 				dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].oldValue = dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].value; 
@@ -348,11 +421,10 @@ namespace NUnit.Tests
 
 				DataTransferObject newDto = Utility.DeserializeDataContract<DataTransferObject>(benchmark.ToString());
 
-				dtoList.Add(newDto);
-				dtoList[31].transferType = TransferType.Add;
+				dtoList.Add(newDto);				
 
 				response = _dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-						_settings["GraphName"], poolDtos);
+						_settings["GraphName"], postDtos);
 
 				path = String.Format(
 						"{0}DxfrRespones.xml",
@@ -374,28 +446,9 @@ namespace NUnit.Tests
 						break;
 					}
 
-				/* Tried to recover the table for XmlTest
-				foreach (DataTransferObject dto in dtoList)
-					dto.transferType = TransferType.Delete;
-
-				_dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-						_settings["GraphName"], poolDtos);
-
-				path = String.Format(
-						"{0}DxfrOrgDtos.xml",
-						_settings["XmlPath"]
-					);
-
-				benchmark = XDocument.Load(path);
-				DataTransferObjects orgDtos = Utility.DeserializeDataContract<DataTransferObjects>(benchmark.ToString());
-
-				_dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-						_settings["GraphName"], orgDtos);
-				*/
+				//restore the table
+				_dataLayer.Post(dataObjects);				
 			}
-			 
-			 
-
     }
 }
 
