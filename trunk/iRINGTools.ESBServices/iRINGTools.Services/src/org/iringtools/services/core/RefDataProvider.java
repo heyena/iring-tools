@@ -34,6 +34,7 @@ import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
 import org.iringtools.common.response.StatusList;
+import org.iringtools.mapping.TemplateType;
 import org.iringtools.refdata.federation.Federation;
 import org.iringtools.refdata.federation.IDGenerator;
 import org.iringtools.refdata.federation.Namespace;
@@ -695,7 +696,7 @@ public class RefDataProvider {
 		List<TemplateQualification> templateQualification = null;
 		List<TemplateDefinition> templateDefinition = null;
 		try {
-			if (templateType.equals("Qualification")) {
+			if (templateType.equalsIgnoreCase("Qualification")) {
 				templateQualification = getTemplateQualification(id, rep);
 			} else {
 				templateDefinition = getTemplateDefinition(id, rep);
@@ -1238,10 +1239,9 @@ public class RefDataProvider {
 						// check for exisitng template
 						Qmxf existingQmxf = new Qmxf();
 						if (identifier != null) {
-							// TODO
 							// existingQmxf = getTemplate(identifier,
 							// QMXFType.Definition, repository);
-							existingQmxf = getTemplate(identifier, "",
+							existingQmxf = getTemplate(identifier, TemplateType.DEFINITION.toString(),
 									repository);
 						} else {
 							if (_useExampleRegistryBase)
@@ -1700,10 +1700,9 @@ public class RefDataProvider {
 						// check for exisitng template
 						Qmxf existingQmxf = new Qmxf();
 						if (identifier != null) {
-							// TODO
 							// existingQmxf = GetTemplate(identifier,
 							// QMXFType.Qualification, repository);
-							existingQmxf = getTemplate(identifier, "",
+							existingQmxf = getTemplate(identifier, TemplateType.QUALIFICATION.toString(),
 									repository);
 						} else {
 							if (_useExampleRegistryBase)
