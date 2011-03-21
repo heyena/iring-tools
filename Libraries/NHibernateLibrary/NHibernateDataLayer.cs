@@ -481,8 +481,15 @@ namespace org.iringtools.adapter.datalayer
 
     public DataDictionary GetDictionary()
     {
-      _dataDictionary = Utility.Read<DataDictionary>(_dataDictionaryPath);
-      return _dataDictionary;
+        if (File.Exists(_dataDictionaryPath))
+        {
+            _dataDictionary = Utility.Read<DataDictionary>(_dataDictionaryPath);
+            return _dataDictionary;
+        }
+        else
+        {
+            return new DataDictionary();
+        }
     }
 
     public IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
