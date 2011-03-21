@@ -8,7 +8,7 @@ using System.Collections.Specialized;
 
 namespace org.iringtools.nhibernate
 {
-  class NHibernateModule : NinjectModule
+  public class NHibernateModule : NinjectModule
   {
     public override void Load()
     {
