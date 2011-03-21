@@ -128,6 +128,7 @@
     <Content Include="XML\Queries.xml" />
     <Content Include="XML\Repositories.xml" />
     <Content Include="XML\Scopes.xml" />
+    <None Include="XML\TestRDF_ABC.rdf" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\AdapterLibrary\AdapterLibrary.csproj">
