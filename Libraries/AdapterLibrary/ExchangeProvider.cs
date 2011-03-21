@@ -109,69 +109,54 @@ namespace org.iringtools.exchange
             status.Messages = new Messages();
             string proxyHost = string.Empty;
             string proxyPort = string.Empty;
+            XDocument xDocument = new XDocument();
+            DateTime startTime = DateTime.Now;
             try
             {
+
                 status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
                 InitializeScope(projectName, applicationName);
                 InitializeDataLayer();
 
-                DateTime startTime = DateTime.Now;
-
-                if (!request.ContainsKey("targetUri"))
-                    throw new Exception("Target Uri is required");
-
-                string targetEndpointUri = request["targetUri"];
-
-                string targetGraphBaseUri = String.Empty;
-                if (request.ContainsKey("targetGraphBaseUri"))
+                if (!request.ContainsKey("RDFfile")) // Check whether call from NUnit Test or not
                 {
-                    targetGraphBaseUri = request["targetGraphBaseUri"];
-                }
-                _settings["TargetGraphBaseUri"] = targetGraphBaseUri;
+                    if (!request.ContainsKey("targetUri"))
+                        throw new Exception("Target Uri is required");
 
-                SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetEndpointUri), targetGraphBaseUri);
+                    string targetEndpointUri = request["targetUri"];
 
-                if (request.ContainsKey("targetCredentials"))
-                {
-                    string targetCredentialsXML = request["targetCredentials"];
-                    WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+                    string targetGraphBaseUri = String.Empty;
+                    if (request.ContainsKey("targetGraphBaseUri"))
+                    {
+                        targetGraphBaseUri = request["targetGraphBaseUri"];
+                    }
+                    _settings["TargetGraphBaseUri"] = targetGraphBaseUri;
 
-                    if (targetCredentials.isEncrypted)
-                        targetCredentials.Decrypt();
+                    SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetEndpointUri), targetGraphBaseUri);
 
-                    endpoint.SetCredentials(
-                      targetCredentials.GetNetworkCredential().UserName,
-                      targetCredentials.GetNetworkCredential().Password,
-                      targetCredentials.GetNetworkCredential().Domain);
-                }
-                //Changes done to add proxy details from NUnit Test
-                if (request.ContainsKey("ProxyHost"))
-                {
-                    proxyHost = request["ProxyHost"];
-                    proxyPort = request["ProxyPort"];
+                    if (request.ContainsKey("targetCredentials"))
+                    {
+                        string targetCredentialsXML = request["targetCredentials"];
+                        WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
 
-                }
-                else
-                {
+                        if (targetCredentials.isEncrypted)
+                            targetCredentials.Decrypt();
+
+                        endpoint.SetCredentials(
+                          targetCredentials.GetNetworkCredential().UserName,
+                          targetCredentials.GetNetworkCredential().Password,
+                          targetCredentials.GetNetworkCredential().Domain);
+                    }
+
                     proxyHost = _settings["ProxyHost"];
                     proxyPort = _settings["ProxyPort"];
-                }
+
+                    if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+                    {
+                        WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
 
 
-                if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
-                {
-                    WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
-
-                    //if (request.ContainsKey("networkCredential"))
-                    //{
-                    //    NetworkCredential networkCredential = new NetworkCredential("374020", "March@2011", "INDIA");
-                    //    webProxy.Credentials = networkCredential;
-                    //    endpoint.SetProxy(webProxy.Address);
-                    //    endpoint.SetProxyCredentials("374020", "March@2011");
-                    //}
-                    //else
-                    //{
                         WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
                         if (proxyCrendentials != null)
                         {
@@ -179,19 +164,23 @@ namespace org.iringtools.exchange
                             endpoint.SetProxy(webProxy.Address);
                             endpoint.SetProxyCredentials(proxyCrendentials.userName, proxyCrendentials.password);
                         }
-                    //}
 
+                    }
 
+                    String query = "CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}";
+                    VDS.RDF.Graph graph = endpoint.QueryWithResultGraph(query);
+
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    TextWriter textWriter = new StringWriter(sb);
+                    VDS.RDF.Writing.FastRdfXmlWriter rdfWriter = new VDS.RDF.Writing.FastRdfXmlWriter();
+                    rdfWriter.Save(graph, textWriter);
+                    xDocument = XDocument.Parse(sb.ToString());
                 }
-
-                String query = "CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}";
-                VDS.RDF.Graph graph = endpoint.QueryWithResultGraph(query);
-
-                System.Text.StringBuilder sb = new System.Text.StringBuilder();
-                TextWriter textWriter = new StringWriter(sb);
-                VDS.RDF.Writing.FastRdfXmlWriter rdfWriter = new VDS.RDF.Writing.FastRdfXmlWriter();
-                rdfWriter.Save(graph, textWriter);
-                XDocument xDocument = XDocument.Parse(sb.ToString());
+                else
+                {
+                    //Check RDF content sent from NUnit Test
+                    xDocument = XDocument.Parse(request["RDFfile"]);
+                }
 
                 // create data objects for a given graph
                 _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");

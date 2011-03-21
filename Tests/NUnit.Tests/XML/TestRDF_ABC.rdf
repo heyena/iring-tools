@@ -1,0 +1,1403 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE rdf:RDF[
+	<!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+	<!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
+	<!ENTITY xsd 'http://www.w3.org/2001/XMLSchema#'>
+	<!ENTITY ns0 'http://www.w3.org/2002/07/owl#'>
+	<!ENTITY ns1 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns2 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns3 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns4 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns5 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns6 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns7 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns8 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns9 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns10 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns11 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns12 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns13 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns14 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns15 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns16 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns17 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns18 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns19 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns20 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns21 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns22 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns23 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns24 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns25 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns26 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns27 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns28 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns29 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns30 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns31 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns32 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns33 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns34 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns35 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns36 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns37 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns38 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns39 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns40 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns41 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns42 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns43 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns44 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns45 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns46 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns47 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns48 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns49 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns50 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns51 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns52 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns53 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns54 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns55 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns56 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns57 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns58 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns59 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns60 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns61 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns62 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns63 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns64 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns65 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns66 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns67 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns68 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns69 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns70 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns71 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns72 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns73 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns74 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns75 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns76 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns77 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns78 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns79 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns80 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns81 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns82 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns83 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns84 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns85 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns86 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns87 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns88 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns89 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns90 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns91 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns92 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns93 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns94 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns95 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns96 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns97 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns98 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns99 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns100 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns101 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns102 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns103 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns104 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns105 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns106 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns107 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns108 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns109 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns110 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns111 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns112 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns113 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns114 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns115 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns116 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns117 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns118 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns119 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns120 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns121 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns122 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns123 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns124 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns125 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns126 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns127 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns128 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns129 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns130 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns131 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns132 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns133 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns134 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns135 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns136 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns137 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns138 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns139 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns140 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns141 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns142 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns143 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns144 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns145 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns146 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns147 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns148 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns149 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns150 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns151 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns152 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns153 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns154 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns155 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns156 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns157 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns158 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns159 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns160 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns161 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns162 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns163 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns164 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns165 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns166 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns167 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns168 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns169 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns170 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns171 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns172 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns173 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns174 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns175 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns176 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns177 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns178 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns179 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns180 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns181 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns182 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns183 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns184 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns185 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns186 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns187 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns188 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns189 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns190 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns191 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns192 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns193 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns194 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns195 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns196 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns197 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns198 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns199 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns200 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns201 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns202 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns203 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns204 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns205 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns206 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns207 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns208 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns209 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns210 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns211 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns212 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns213 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns214 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns215 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns216 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns217 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns218 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns219 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns220 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns221 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns222 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns223 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns224 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns225 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns226 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns227 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns228 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns229 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns230 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns231 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns232 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns233 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns234 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns235 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns236 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns237 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns238 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns239 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns240 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns241 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns242 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns243 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns244 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns245 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns246 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns247 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns248 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns249 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns250 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns251 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns252 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns253 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns254 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns255 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns256 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns257 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns258 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns259 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns260 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns261 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns262 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns263 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns264 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns265 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns266 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns267 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns268 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns269 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns270 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns271 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns272 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns273 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns274 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns275 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns276 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns277 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns278 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns279 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns280 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns281 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns282 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns283 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns284 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns285 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns286 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns287 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns288 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns289 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns290 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns291 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns292 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns293 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns294 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns295 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns296 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns297 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns298 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns299 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns300 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns301 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns302 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns303 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns304 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns305 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns306 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns307 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns308 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns309 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns310 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns311 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns312 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns313 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns314 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns315 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns316 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns317 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns318 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns319 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns320 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns321 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns322 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns323 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns324 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns325 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns326 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns327 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns328 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns329 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns330 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns331 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns332 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns333 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns334 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns335 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns336 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns337 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns338 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns339 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns340 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns341 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns342 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns343 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns344 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns345 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns346 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns347 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns348 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns349 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns350 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns351 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns352 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns353 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns354 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns355 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns356 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns357 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns358 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns359 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns360 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns361 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns362 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns363 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns364 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns365 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns366 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns367 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns368 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns369 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns370 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns371 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns372 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns373 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns374 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns375 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns376 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns377 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns378 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns379 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns380 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns381 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns382 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns383 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns384 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns385 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns386 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns387 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns388 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns389 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns390 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns391 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns392 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns393 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns394 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns395 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns396 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns397 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns398 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns399 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns400 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns401 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns402 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns403 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns404 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns405 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns406 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns407 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns408 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns409 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns410 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns411 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns412 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns413 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns414 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns415 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns416 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns417 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns418 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns419 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns420 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns421 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns422 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns423 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns424 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns425 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns426 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns427 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns428 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns429 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns430 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns431 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns432 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns433 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns434 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns435 'http://tpl.rdlfacade.org/data#'>
+	<!ENTITY ns436 'http://tpl.rdlfacade.org/data#'>
+]>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:ns0="http://www.w3.org/2002/07/owl#" xmlns:ns1="http://tpl.rdlfacade.org/data#" xmlns:ns2="http://tpl.rdlfacade.org/data#" xmlns:ns3="http://tpl.rdlfacade.org/data#" xmlns:ns4="http://tpl.rdlfacade.org/data#" xmlns:ns5="http://tpl.rdlfacade.org/data#" xmlns:ns6="http://tpl.rdlfacade.org/data#" xmlns:ns7="http://tpl.rdlfacade.org/data#" xmlns:ns8="http://tpl.rdlfacade.org/data#" xmlns:ns9="http://tpl.rdlfacade.org/data#" xmlns:ns10="http://tpl.rdlfacade.org/data#" xmlns:ns11="http://tpl.rdlfacade.org/data#" xmlns:ns12="http://tpl.rdlfacade.org/data#" xmlns:ns13="http://tpl.rdlfacade.org/data#" xmlns:ns14="http://tpl.rdlfacade.org/data#" xmlns:ns15="http://tpl.rdlfacade.org/data#" xmlns:ns16="http://tpl.rdlfacade.org/data#" xmlns:ns17="http://tpl.rdlfacade.org/data#" xmlns:ns18="http://tpl.rdlfacade.org/data#" xmlns:ns19="http://tpl.rdlfacade.org/data#" xmlns:ns20="http://tpl.rdlfacade.org/data#" xmlns:ns21="http://tpl.rdlfacade.org/data#" xmlns:ns22="http://tpl.rdlfacade.org/data#" xmlns:ns23="http://tpl.rdlfacade.org/data#" xmlns:ns24="http://tpl.rdlfacade.org/data#" xmlns:ns25="http://tpl.rdlfacade.org/data#" xmlns:ns26="http://tpl.rdlfacade.org/data#" xmlns:ns27="http://tpl.rdlfacade.org/data#" xmlns:ns28="http://tpl.rdlfacade.org/data#" xmlns:ns29="http://tpl.rdlfacade.org/data#" xmlns:ns30="http://tpl.rdlfacade.org/data#" xmlns:ns31="http://tpl.rdlfacade.org/data#" xmlns:ns32="http://tpl.rdlfacade.org/data#" xmlns:ns33="http://tpl.rdlfacade.org/data#" xmlns:ns34="http://tpl.rdlfacade.org/data#" xmlns:ns35="http://tpl.rdlfacade.org/data#" xmlns:ns36="http://tpl.rdlfacade.org/data#" xmlns:ns37="http://tpl.rdlfacade.org/data#" xmlns:ns38="http://tpl.rdlfacade.org/data#" xmlns:ns39="http://tpl.rdlfacade.org/data#" xmlns:ns40="http://tpl.rdlfacade.org/data#" xmlns:ns41="http://tpl.rdlfacade.org/data#" xmlns:ns42="http://tpl.rdlfacade.org/data#" xmlns:ns43="http://tpl.rdlfacade.org/data#" xmlns:ns44="http://tpl.rdlfacade.org/data#" xmlns:ns45="http://tpl.rdlfacade.org/data#" xmlns:ns46="http://tpl.rdlfacade.org/data#" xmlns:ns47="http://tpl.rdlfacade.org/data#" xmlns:ns48="http://tpl.rdlfacade.org/data#" xmlns:ns49="http://tpl.rdlfacade.org/data#" xmlns:ns50="http://tpl.rdlfacade.org/data#" xmlns:ns51="http://tpl.rdlfacade.org/data#" xmlns:ns52="http://tpl.rdlfacade.org/data#" xmlns:ns53="http://tpl.rdlfacade.org/data#" xmlns:ns54="http://tpl.rdlfacade.org/data#" xmlns:ns55="http://tpl.rdlfacade.org/data#" xmlns:ns56="http://tpl.rdlfacade.org/data#" xmlns:ns57="http://tpl.rdlfacade.org/data#" xmlns:ns58="http://tpl.rdlfacade.org/data#" xmlns:ns59="http://tpl.rdlfacade.org/data#" xmlns:ns60="http://tpl.rdlfacade.org/data#" xmlns:ns61="http://tpl.rdlfacade.org/data#" xmlns:ns62="http://tpl.rdlfacade.org/data#" xmlns:ns63="http://tpl.rdlfacade.org/data#" xmlns:ns64="http://tpl.rdlfacade.org/data#" xmlns:ns65="http://tpl.rdlfacade.org/data#" xmlns:ns66="http://tpl.rdlfacade.org/data#" xmlns:ns67="http://tpl.rdlfacade.org/data#" xmlns:ns68="http://tpl.rdlfacade.org/data#" xmlns:ns69="http://tpl.rdlfacade.org/data#" xmlns:ns70="http://tpl.rdlfacade.org/data#" xmlns:ns71="http://tpl.rdlfacade.org/data#" xmlns:ns72="http://tpl.rdlfacade.org/data#" xmlns:ns73="http://tpl.rdlfacade.org/data#" xmlns:ns74="http://tpl.rdlfacade.org/data#" xmlns:ns75="http://tpl.rdlfacade.org/data#" xmlns:ns76="http://tpl.rdlfacade.org/data#" xmlns:ns77="http://tpl.rdlfacade.org/data#" xmlns:ns78="http://tpl.rdlfacade.org/data#" xmlns:ns79="http://tpl.rdlfacade.org/data#" xmlns:ns80="http://tpl.rdlfacade.org/data#" xmlns:ns81="http://tpl.rdlfacade.org/data#" xmlns:ns82="http://tpl.rdlfacade.org/data#" xmlns:ns83="http://tpl.rdlfacade.org/data#" xmlns:ns84="http://tpl.rdlfacade.org/data#" xmlns:ns85="http://tpl.rdlfacade.org/data#" xmlns:ns86="http://tpl.rdlfacade.org/data#" xmlns:ns87="http://tpl.rdlfacade.org/data#" xmlns:ns88="http://tpl.rdlfacade.org/data#" xmlns:ns89="http://tpl.rdlfacade.org/data#" xmlns:ns90="http://tpl.rdlfacade.org/data#" xmlns:ns91="http://tpl.rdlfacade.org/data#" xmlns:ns92="http://tpl.rdlfacade.org/data#" xmlns:ns93="http://tpl.rdlfacade.org/data#" xmlns:ns94="http://tpl.rdlfacade.org/data#" xmlns:ns95="http://tpl.rdlfacade.org/data#" xmlns:ns96="http://tpl.rdlfacade.org/data#" xmlns:ns97="http://tpl.rdlfacade.org/data#" xmlns:ns98="http://tpl.rdlfacade.org/data#" xmlns:ns99="http://tpl.rdlfacade.org/data#" xmlns:ns100="http://tpl.rdlfacade.org/data#" xmlns:ns101="http://tpl.rdlfacade.org/data#" xmlns:ns102="http://tpl.rdlfacade.org/data#" xmlns:ns103="http://tpl.rdlfacade.org/data#" xmlns:ns104="http://tpl.rdlfacade.org/data#" xmlns:ns105="http://tpl.rdlfacade.org/data#" xmlns:ns106="http://tpl.rdlfacade.org/data#" xmlns:ns107="http://tpl.rdlfacade.org/data#" xmlns:ns108="http://tpl.rdlfacade.org/data#" xmlns:ns109="http://tpl.rdlfacade.org/data#" xmlns:ns110="http://tpl.rdlfacade.org/data#" xmlns:ns111="http://tpl.rdlfacade.org/data#" xmlns:ns112="http://tpl.rdlfacade.org/data#" xmlns:ns113="http://tpl.rdlfacade.org/data#" xmlns:ns114="http://tpl.rdlfacade.org/data#" xmlns:ns115="http://tpl.rdlfacade.org/data#" xmlns:ns116="http://tpl.rdlfacade.org/data#" xmlns:ns117="http://tpl.rdlfacade.org/data#" xmlns:ns118="http://tpl.rdlfacade.org/data#" xmlns:ns119="http://tpl.rdlfacade.org/data#" xmlns:ns120="http://tpl.rdlfacade.org/data#" xmlns:ns121="http://tpl.rdlfacade.org/data#" xmlns:ns122="http://tpl.rdlfacade.org/data#" xmlns:ns123="http://tpl.rdlfacade.org/data#" xmlns:ns124="http://tpl.rdlfacade.org/data#" xmlns:ns125="http://tpl.rdlfacade.org/data#" xmlns:ns126="http://tpl.rdlfacade.org/data#" xmlns:ns127="http://tpl.rdlfacade.org/data#" xmlns:ns128="http://tpl.rdlfacade.org/data#" xmlns:ns129="http://tpl.rdlfacade.org/data#" xmlns:ns130="http://tpl.rdlfacade.org/data#" xmlns:ns131="http://tpl.rdlfacade.org/data#" xmlns:ns132="http://tpl.rdlfacade.org/data#" xmlns:ns133="http://tpl.rdlfacade.org/data#" xmlns:ns134="http://tpl.rdlfacade.org/data#" xmlns:ns135="http://tpl.rdlfacade.org/data#" xmlns:ns136="http://tpl.rdlfacade.org/data#" xmlns:ns137="http://tpl.rdlfacade.org/data#" xmlns:ns138="http://tpl.rdlfacade.org/data#" xmlns:ns139="http://tpl.rdlfacade.org/data#" xmlns:ns140="http://tpl.rdlfacade.org/data#" xmlns:ns141="http://tpl.rdlfacade.org/data#" xmlns:ns142="http://tpl.rdlfacade.org/data#" xmlns:ns143="http://tpl.rdlfacade.org/data#" xmlns:ns144="http://tpl.rdlfacade.org/data#" xmlns:ns145="http://tpl.rdlfacade.org/data#" xmlns:ns146="http://tpl.rdlfacade.org/data#" xmlns:ns147="http://tpl.rdlfacade.org/data#" xmlns:ns148="http://tpl.rdlfacade.org/data#" xmlns:ns149="http://tpl.rdlfacade.org/data#" xmlns:ns150="http://tpl.rdlfacade.org/data#" xmlns:ns151="http://tpl.rdlfacade.org/data#" xmlns:ns152="http://tpl.rdlfacade.org/data#" xmlns:ns153="http://tpl.rdlfacade.org/data#" xmlns:ns154="http://tpl.rdlfacade.org/data#" xmlns:ns155="http://tpl.rdlfacade.org/data#" xmlns:ns156="http://tpl.rdlfacade.org/data#" xmlns:ns157="http://tpl.rdlfacade.org/data#" xmlns:ns158="http://tpl.rdlfacade.org/data#" xmlns:ns159="http://tpl.rdlfacade.org/data#" xmlns:ns160="http://tpl.rdlfacade.org/data#" xmlns:ns161="http://tpl.rdlfacade.org/data#" xmlns:ns162="http://tpl.rdlfacade.org/data#" xmlns:ns163="http://tpl.rdlfacade.org/data#" xmlns:ns164="http://tpl.rdlfacade.org/data#" xmlns:ns165="http://tpl.rdlfacade.org/data#" xmlns:ns166="http://tpl.rdlfacade.org/data#" xmlns:ns167="http://tpl.rdlfacade.org/data#" xmlns:ns168="http://tpl.rdlfacade.org/data#" xmlns:ns169="http://tpl.rdlfacade.org/data#" xmlns:ns170="http://tpl.rdlfacade.org/data#" xmlns:ns171="http://tpl.rdlfacade.org/data#" xmlns:ns172="http://tpl.rdlfacade.org/data#" xmlns:ns173="http://tpl.rdlfacade.org/data#" xmlns:ns174="http://tpl.rdlfacade.org/data#" xmlns:ns175="http://tpl.rdlfacade.org/data#" xmlns:ns176="http://tpl.rdlfacade.org/data#" xmlns:ns177="http://tpl.rdlfacade.org/data#" xmlns:ns178="http://tpl.rdlfacade.org/data#" xmlns:ns179="http://tpl.rdlfacade.org/data#" xmlns:ns180="http://tpl.rdlfacade.org/data#" xmlns:ns181="http://tpl.rdlfacade.org/data#" xmlns:ns182="http://tpl.rdlfacade.org/data#" xmlns:ns183="http://tpl.rdlfacade.org/data#" xmlns:ns184="http://tpl.rdlfacade.org/data#" xmlns:ns185="http://tpl.rdlfacade.org/data#" xmlns:ns186="http://tpl.rdlfacade.org/data#" xmlns:ns187="http://tpl.rdlfacade.org/data#" xmlns:ns188="http://tpl.rdlfacade.org/data#" xmlns:ns189="http://tpl.rdlfacade.org/data#" xmlns:ns190="http://tpl.rdlfacade.org/data#" xmlns:ns191="http://tpl.rdlfacade.org/data#" xmlns:ns192="http://tpl.rdlfacade.org/data#" xmlns:ns193="http://tpl.rdlfacade.org/data#" xmlns:ns194="http://tpl.rdlfacade.org/data#" xmlns:ns195="http://tpl.rdlfacade.org/data#" xmlns:ns196="http://tpl.rdlfacade.org/data#" xmlns:ns197="http://tpl.rdlfacade.org/data#" xmlns:ns198="http://tpl.rdlfacade.org/data#" xmlns:ns199="http://tpl.rdlfacade.org/data#" xmlns:ns200="http://tpl.rdlfacade.org/data#" xmlns:ns201="http://tpl.rdlfacade.org/data#" xmlns:ns202="http://tpl.rdlfacade.org/data#" xmlns:ns203="http://tpl.rdlfacade.org/data#" xmlns:ns204="http://tpl.rdlfacade.org/data#" xmlns:ns205="http://tpl.rdlfacade.org/data#" xmlns:ns206="http://tpl.rdlfacade.org/data#" xmlns:ns207="http://tpl.rdlfacade.org/data#" xmlns:ns208="http://tpl.rdlfacade.org/data#" xmlns:ns209="http://tpl.rdlfacade.org/data#" xmlns:ns210="http://tpl.rdlfacade.org/data#" xmlns:ns211="http://tpl.rdlfacade.org/data#" xmlns:ns212="http://tpl.rdlfacade.org/data#" xmlns:ns213="http://tpl.rdlfacade.org/data#" xmlns:ns214="http://tpl.rdlfacade.org/data#" xmlns:ns215="http://tpl.rdlfacade.org/data#" xmlns:ns216="http://tpl.rdlfacade.org/data#" xmlns:ns217="http://tpl.rdlfacade.org/data#" xmlns:ns218="http://tpl.rdlfacade.org/data#" xmlns:ns219="http://tpl.rdlfacade.org/data#" xmlns:ns220="http://tpl.rdlfacade.org/data#" xmlns:ns221="http://tpl.rdlfacade.org/data#" xmlns:ns222="http://tpl.rdlfacade.org/data#" xmlns:ns223="http://tpl.rdlfacade.org/data#" xmlns:ns224="http://tpl.rdlfacade.org/data#" xmlns:ns225="http://tpl.rdlfacade.org/data#" xmlns:ns226="http://tpl.rdlfacade.org/data#" xmlns:ns227="http://tpl.rdlfacade.org/data#" xmlns:ns228="http://tpl.rdlfacade.org/data#" xmlns:ns229="http://tpl.rdlfacade.org/data#" xmlns:ns230="http://tpl.rdlfacade.org/data#" xmlns:ns231="http://tpl.rdlfacade.org/data#" xmlns:ns232="http://tpl.rdlfacade.org/data#" xmlns:ns233="http://tpl.rdlfacade.org/data#" xmlns:ns234="http://tpl.rdlfacade.org/data#" xmlns:ns235="http://tpl.rdlfacade.org/data#" xmlns:ns236="http://tpl.rdlfacade.org/data#" xmlns:ns237="http://tpl.rdlfacade.org/data#" xmlns:ns238="http://tpl.rdlfacade.org/data#" xmlns:ns239="http://tpl.rdlfacade.org/data#" xmlns:ns240="http://tpl.rdlfacade.org/data#" xmlns:ns241="http://tpl.rdlfacade.org/data#" xmlns:ns242="http://tpl.rdlfacade.org/data#" xmlns:ns243="http://tpl.rdlfacade.org/data#" xmlns:ns244="http://tpl.rdlfacade.org/data#" xmlns:ns245="http://tpl.rdlfacade.org/data#" xmlns:ns246="http://tpl.rdlfacade.org/data#" xmlns:ns247="http://tpl.rdlfacade.org/data#" xmlns:ns248="http://tpl.rdlfacade.org/data#" xmlns:ns249="http://tpl.rdlfacade.org/data#" xmlns:ns250="http://tpl.rdlfacade.org/data#" xmlns:ns251="http://tpl.rdlfacade.org/data#" xmlns:ns252="http://tpl.rdlfacade.org/data#" xmlns:ns253="http://tpl.rdlfacade.org/data#" xmlns:ns254="http://tpl.rdlfacade.org/data#" xmlns:ns255="http://tpl.rdlfacade.org/data#" xmlns:ns256="http://tpl.rdlfacade.org/data#" xmlns:ns257="http://tpl.rdlfacade.org/data#" xmlns:ns258="http://tpl.rdlfacade.org/data#" xmlns:ns259="http://tpl.rdlfacade.org/data#" xmlns:ns260="http://tpl.rdlfacade.org/data#" xmlns:ns261="http://tpl.rdlfacade.org/data#" xmlns:ns262="http://tpl.rdlfacade.org/data#" xmlns:ns263="http://tpl.rdlfacade.org/data#" xmlns:ns264="http://tpl.rdlfacade.org/data#" xmlns:ns265="http://tpl.rdlfacade.org/data#" xmlns:ns266="http://tpl.rdlfacade.org/data#" xmlns:ns267="http://tpl.rdlfacade.org/data#" xmlns:ns268="http://tpl.rdlfacade.org/data#" xmlns:ns269="http://tpl.rdlfacade.org/data#" xmlns:ns270="http://tpl.rdlfacade.org/data#" xmlns:ns271="http://tpl.rdlfacade.org/data#" xmlns:ns272="http://tpl.rdlfacade.org/data#" xmlns:ns273="http://tpl.rdlfacade.org/data#" xmlns:ns274="http://tpl.rdlfacade.org/data#" xmlns:ns275="http://tpl.rdlfacade.org/data#" xmlns:ns276="http://tpl.rdlfacade.org/data#" xmlns:ns277="http://tpl.rdlfacade.org/data#" xmlns:ns278="http://tpl.rdlfacade.org/data#" xmlns:ns279="http://tpl.rdlfacade.org/data#" xmlns:ns280="http://tpl.rdlfacade.org/data#" xmlns:ns281="http://tpl.rdlfacade.org/data#" xmlns:ns282="http://tpl.rdlfacade.org/data#" xmlns:ns283="http://tpl.rdlfacade.org/data#" xmlns:ns284="http://tpl.rdlfacade.org/data#" xmlns:ns285="http://tpl.rdlfacade.org/data#" xmlns:ns286="http://tpl.rdlfacade.org/data#" xmlns:ns287="http://tpl.rdlfacade.org/data#" xmlns:ns288="http://tpl.rdlfacade.org/data#" xmlns:ns289="http://tpl.rdlfacade.org/data#" xmlns:ns290="http://tpl.rdlfacade.org/data#" xmlns:ns291="http://tpl.rdlfacade.org/data#" xmlns:ns292="http://tpl.rdlfacade.org/data#" xmlns:ns293="http://tpl.rdlfacade.org/data#" xmlns:ns294="http://tpl.rdlfacade.org/data#" xmlns:ns295="http://tpl.rdlfacade.org/data#" xmlns:ns296="http://tpl.rdlfacade.org/data#" xmlns:ns297="http://tpl.rdlfacade.org/data#" xmlns:ns298="http://tpl.rdlfacade.org/data#" xmlns:ns299="http://tpl.rdlfacade.org/data#" xmlns:ns300="http://tpl.rdlfacade.org/data#" xmlns:ns301="http://tpl.rdlfacade.org/data#" xmlns:ns302="http://tpl.rdlfacade.org/data#" xmlns:ns303="http://tpl.rdlfacade.org/data#" xmlns:ns304="http://tpl.rdlfacade.org/data#" xmlns:ns305="http://tpl.rdlfacade.org/data#" xmlns:ns306="http://tpl.rdlfacade.org/data#" xmlns:ns307="http://tpl.rdlfacade.org/data#" xmlns:ns308="http://tpl.rdlfacade.org/data#" xmlns:ns309="http://tpl.rdlfacade.org/data#" xmlns:ns310="http://tpl.rdlfacade.org/data#" xmlns:ns311="http://tpl.rdlfacade.org/data#" xmlns:ns312="http://tpl.rdlfacade.org/data#" xmlns:ns313="http://tpl.rdlfacade.org/data#" xmlns:ns314="http://tpl.rdlfacade.org/data#" xmlns:ns315="http://tpl.rdlfacade.org/data#" xmlns:ns316="http://tpl.rdlfacade.org/data#" xmlns:ns317="http://tpl.rdlfacade.org/data#" xmlns:ns318="http://tpl.rdlfacade.org/data#" xmlns:ns319="http://tpl.rdlfacade.org/data#" xmlns:ns320="http://tpl.rdlfacade.org/data#" xmlns:ns321="http://tpl.rdlfacade.org/data#" xmlns:ns322="http://tpl.rdlfacade.org/data#" xmlns:ns323="http://tpl.rdlfacade.org/data#" xmlns:ns324="http://tpl.rdlfacade.org/data#" xmlns:ns325="http://tpl.rdlfacade.org/data#" xmlns:ns326="http://tpl.rdlfacade.org/data#" xmlns:ns327="http://tpl.rdlfacade.org/data#" xmlns:ns328="http://tpl.rdlfacade.org/data#" xmlns:ns329="http://tpl.rdlfacade.org/data#" xmlns:ns330="http://tpl.rdlfacade.org/data#" xmlns:ns331="http://tpl.rdlfacade.org/data#" xmlns:ns332="http://tpl.rdlfacade.org/data#" xmlns:ns333="http://tpl.rdlfacade.org/data#" xmlns:ns334="http://tpl.rdlfacade.org/data#" xmlns:ns335="http://tpl.rdlfacade.org/data#" xmlns:ns336="http://tpl.rdlfacade.org/data#" xmlns:ns337="http://tpl.rdlfacade.org/data#" xmlns:ns338="http://tpl.rdlfacade.org/data#" xmlns:ns339="http://tpl.rdlfacade.org/data#" xmlns:ns340="http://tpl.rdlfacade.org/data#" xmlns:ns341="http://tpl.rdlfacade.org/data#" xmlns:ns342="http://tpl.rdlfacade.org/data#" xmlns:ns343="http://tpl.rdlfacade.org/data#" xmlns:ns344="http://tpl.rdlfacade.org/data#" xmlns:ns345="http://tpl.rdlfacade.org/data#" xmlns:ns346="http://tpl.rdlfacade.org/data#" xmlns:ns347="http://tpl.rdlfacade.org/data#" xmlns:ns348="http://tpl.rdlfacade.org/data#" xmlns:ns349="http://tpl.rdlfacade.org/data#" xmlns:ns350="http://tpl.rdlfacade.org/data#" xmlns:ns351="http://tpl.rdlfacade.org/data#" xmlns:ns352="http://tpl.rdlfacade.org/data#" xmlns:ns353="http://tpl.rdlfacade.org/data#" xmlns:ns354="http://tpl.rdlfacade.org/data#" xmlns:ns355="http://tpl.rdlfacade.org/data#" xmlns:ns356="http://tpl.rdlfacade.org/data#" xmlns:ns357="http://tpl.rdlfacade.org/data#" xmlns:ns358="http://tpl.rdlfacade.org/data#" xmlns:ns359="http://tpl.rdlfacade.org/data#" xmlns:ns360="http://tpl.rdlfacade.org/data#" xmlns:ns361="http://tpl.rdlfacade.org/data#" xmlns:ns362="http://tpl.rdlfacade.org/data#" xmlns:ns363="http://tpl.rdlfacade.org/data#" xmlns:ns364="http://tpl.rdlfacade.org/data#" xmlns:ns365="http://tpl.rdlfacade.org/data#" xmlns:ns366="http://tpl.rdlfacade.org/data#" xmlns:ns367="http://tpl.rdlfacade.org/data#" xmlns:ns368="http://tpl.rdlfacade.org/data#" xmlns:ns369="http://tpl.rdlfacade.org/data#" xmlns:ns370="http://tpl.rdlfacade.org/data#" xmlns:ns371="http://tpl.rdlfacade.org/data#" xmlns:ns372="http://tpl.rdlfacade.org/data#" xmlns:ns373="http://tpl.rdlfacade.org/data#" xmlns:ns374="http://tpl.rdlfacade.org/data#" xmlns:ns375="http://tpl.rdlfacade.org/data#" xmlns:ns376="http://tpl.rdlfacade.org/data#" xmlns:ns377="http://tpl.rdlfacade.org/data#" xmlns:ns378="http://tpl.rdlfacade.org/data#" xmlns:ns379="http://tpl.rdlfacade.org/data#" xmlns:ns380="http://tpl.rdlfacade.org/data#" xmlns:ns381="http://tpl.rdlfacade.org/data#" xmlns:ns382="http://tpl.rdlfacade.org/data#" xmlns:ns383="http://tpl.rdlfacade.org/data#" xmlns:ns384="http://tpl.rdlfacade.org/data#" xmlns:ns385="http://tpl.rdlfacade.org/data#" xmlns:ns386="http://tpl.rdlfacade.org/data#" xmlns:ns387="http://tpl.rdlfacade.org/data#" xmlns:ns388="http://tpl.rdlfacade.org/data#" xmlns:ns389="http://tpl.rdlfacade.org/data#" xmlns:ns390="http://tpl.rdlfacade.org/data#" xmlns:ns391="http://tpl.rdlfacade.org/data#" xmlns:ns392="http://tpl.rdlfacade.org/data#" xmlns:ns393="http://tpl.rdlfacade.org/data#" xmlns:ns394="http://tpl.rdlfacade.org/data#" xmlns:ns395="http://tpl.rdlfacade.org/data#" xmlns:ns396="http://tpl.rdlfacade.org/data#" xmlns:ns397="http://tpl.rdlfacade.org/data#" xmlns:ns398="http://tpl.rdlfacade.org/data#" xmlns:ns399="http://tpl.rdlfacade.org/data#" xmlns:ns400="http://tpl.rdlfacade.org/data#" xmlns:ns401="http://tpl.rdlfacade.org/data#" xmlns:ns402="http://tpl.rdlfacade.org/data#" xmlns:ns403="http://tpl.rdlfacade.org/data#" xmlns:ns404="http://tpl.rdlfacade.org/data#" xmlns:ns405="http://tpl.rdlfacade.org/data#" xmlns:ns406="http://tpl.rdlfacade.org/data#" xmlns:ns407="http://tpl.rdlfacade.org/data#" xmlns:ns408="http://tpl.rdlfacade.org/data#" xmlns:ns409="http://tpl.rdlfacade.org/data#" xmlns:ns410="http://tpl.rdlfacade.org/data#" xmlns:ns411="http://tpl.rdlfacade.org/data#" xmlns:ns412="http://tpl.rdlfacade.org/data#" xmlns:ns413="http://tpl.rdlfacade.org/data#" xmlns:ns414="http://tpl.rdlfacade.org/data#" xmlns:ns415="http://tpl.rdlfacade.org/data#" xmlns:ns416="http://tpl.rdlfacade.org/data#" xmlns:ns417="http://tpl.rdlfacade.org/data#" xmlns:ns418="http://tpl.rdlfacade.org/data#" xmlns:ns419="http://tpl.rdlfacade.org/data#" xmlns:ns420="http://tpl.rdlfacade.org/data#" xmlns:ns421="http://tpl.rdlfacade.org/data#" xmlns:ns422="http://tpl.rdlfacade.org/data#" xmlns:ns423="http://tpl.rdlfacade.org/data#" xmlns:ns424="http://tpl.rdlfacade.org/data#" xmlns:ns425="http://tpl.rdlfacade.org/data#" xmlns:ns426="http://tpl.rdlfacade.org/data#" xmlns:ns427="http://tpl.rdlfacade.org/data#" xmlns:ns428="http://tpl.rdlfacade.org/data#" xmlns:ns429="http://tpl.rdlfacade.org/data#" xmlns:ns430="http://tpl.rdlfacade.org/data#" xmlns:ns431="http://tpl.rdlfacade.org/data#" xmlns:ns432="http://tpl.rdlfacade.org/data#" xmlns:ns433="http://tpl.rdlfacade.org/data#" xmlns:ns434="http://tpl.rdlfacade.org/data#" xmlns:ns435="http://tpl.rdlfacade.org/data#" xmlns:ns436="http://tpl.rdlfacade.org/data#">
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00025c244993a23bb525e3f4c38d6f03">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90058-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">80</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0007b0180e14221b5bedb64325199a8b">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90002-RV</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90002-RV" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/000e87f6dcb224ba25cf62657d9acd71">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11FT   -7283</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -7283" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0010dcc2c5740c23f52e1af5845aa267">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90007-SL" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">40</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0018b228ba52920b22d73ad24f5b440b">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">66</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/66" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00200d36aacefa0170ed9a5ed7d35548">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90009-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90009-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00256e1ae4ccc2ffff8429e1e32b56a1">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90020-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">50</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00257542f94fa954abc62b34f36d08ac">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90008-RV</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90008-RV" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/002b733dfd24895c3c37507226ab4c2c">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90030-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90030-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/002b8185ce4f98b2d14e6f3c4f39f87a">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90032-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">350</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/002d6cc4d374aa05a704fa702072a7d9">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90026-RV" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">40</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/002e1ab13584988a82ff79690fd01ea6">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90043-RV</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90043-RV" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/003185c6c81ca9393b9f395b154ec192">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90032-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90032-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0032b7208378812f95cccb9a3e9f08cf">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90033-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90033-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0034ecc98a09e0bf70c80b5837e37c3c">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90013-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">100</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/003530ec57716cd1c5038b553b76fcf3">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90004-SC" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">40</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/003610b190dc67b0c14f63724d60f987">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90006-SL</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90006-SL" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0039dcbb1387f3e86bde45561952db47">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90004-SL" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">100</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/003cde59bf25f19562fcf7d09a997c4f">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-V" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">40</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/003d21f8f4cb20c1cc40ade0edf39232">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -7283" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:resource="&rdf;nil" />
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/003d9c8313a3d6cf2dccbee4f45b9b33">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90004-SC</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90004-SC" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/003ecf761f017a25c5c9cc8e1040108c">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90009-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">150</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/004037895d6e96fb00c1b1cb278fca1c">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90006-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">250</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00415baf8d1945b55127d4f28ca99a72">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90003-V</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-V" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0043554d72a664cb84855ee3074ba74f">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90006-SL" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">50</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/004697cf7e3a9982568d864f2ac04e75">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -1111" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:resource="&rdf;nil" />
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0050b571960b5a73260ac173b7ee86de">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90002-RV" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">40</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0052135d3b796e8d27f17ff4f4c47a76">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90002-SW" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">40</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0055610fa04b61bb62656dd73589b2ba">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90-AO5676</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R16893283050" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R30193386273" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00584c955dc7607ddb44896db4a6274e">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90011-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90011-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/005908c6393fcedc4ab61103d89ca7c2">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90011-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">80</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/005a4fbf0afda83bd1d1b5652fbe75ef">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90025-SW" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">50</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/005ef49d7ae9957306e7a0403bbe546f">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-SC" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">80</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00612876c435645b320fb99db7b74a9a">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90033-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">150</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0063bf0d68edbd236fe6340ed258c552">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90003-SC</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-SC" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0069a27ac4b2c8331d3f7b72b39ceee0">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90002-SW</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90002-SW" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/006ade9372d07b5a8cc9e56440eef8c8">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11FT   -1111</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -1111" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/006b444a84d6ff54013f85dae32b2c5e">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90031-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">100</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/006bc07f34bedae92dbe37378447d20c">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11FT   -7282</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -7282" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00702a25ce135eb71660db59cf2aac18">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90024-RV" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">25</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0072834fbf3131fa1a1d67def7557420">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90028-RV" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">25</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0074c6f2ee1acbc1ed164ea5e9aa13f4">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90013-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90013-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0075b1e08015d6496604ef0fbb61a069">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90-AO5678</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R16893283050" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R30193386273" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0075db38fa907572157f764d53d9f04c">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -7281" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:resource="&rdf;nil" />
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/007732361c7a48642dd0a7781e3f97b7">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/66015-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:resource="&rdf;nil" />
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00791eed1807ec54749bd57d4707a9de">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90008-RV" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">150</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/007e3c4fc61c12f41325d1c9d77236db">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90014-RV" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">80</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0085cd39306885234bbd3c2a56efdc6f">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90005-RV</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90005-RV" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00880040100331b497c1da6ee74532db">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90026-RV</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90026-RV" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00891e0782008e6a0082af5cc89eeff9">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -7282" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:resource="&rdf;nil" />
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/008f04e212bb10eec35ec8dfde207242">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90058-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90058-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/008f53793bd0b3068e7bcd5f32f52be1">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90028-RV</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90028-RV" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0093c9ce07aa45708aa18d350098bab9">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90003-SL</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-SL" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00995040823255e4b3dd1aa490e8e8eb">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-SL" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">150</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/009ac3a42befae878b631e5f4c55727f">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90024-RV</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90024-RV" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00a3a523d4cdb579afac7005b2a4ae28">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90043-RV" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">40</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00a7fec73c192777e971472247e871d4">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90005-RV" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">80</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00ada2c29979ec8ccc2d6f74d1ce1826">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90010-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90010-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00bc256a416091c6eb318d62c04036aa">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90012-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">100</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00bd3569c4bc1cfb4217cb0337a7ea65">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00bfe37c028d9611ef5edb9ec5d17181">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90042-RV" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">40</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00c378189ebcbb56e1bf8b02be39ad5a">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90012-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90012-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00c870d8459ab8b0ec279f3cdcce5c76">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90041-RV</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90041-RV" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00cebada05b03d402a689d4c14d834bd">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90004-SL</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90004-SL" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00d0d630a223bfa9eaa6a86e4f41733e">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90031-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90031-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00dbf9d5ed3f560eb2442582a7b963a3">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90030-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">300</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00de46dd0450ea0f2e53cad4dc8c84f4">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90020-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90020-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00de9c573d798d99a67e416c3e12bbf3">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11FT   -1112</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -1112" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00dee6d2b23368c1edb7fb2fec655435">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90014-RV</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90014-RV" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00e798229b21c47146d42f8fb9d05067">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90042-RV</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90042-RV" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00e83523972178459b8ae690ce7715cf">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90041-RV" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">25</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00f0b70a87c4f76c3c9ee68597cee312">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90006-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90006-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00f0ec86d8406a43dea24f9828df1f13">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90007-SL</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90007-SL" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00f1c074a5cf7c46c57896d87ab7c8bd">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">11FT   -7281</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -7281" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00f3ca72f92cfbd7c68f60115ca7955f">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">90025-SW</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90025-SW" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00f48aa9f911bf3f3fe9a6d6e3ef709e">
+		<ns436:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">66015-O</ns436:R22674749688>
+		<ns436:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R40471041754" />
+		<ns436:R44537504070 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/66015-O" />
+		<rdf:type rdf:resource="&ns436;R66921101783" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00f8b97ba95ddb46eb29ac5bfe723e39">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90010-O" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:datatype="http://www.w3.org/2001/XMLSchema#double">80</ns436:R90688063648>
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/00ffcc36b29b191e8f98e2cf4a29aca2">
+		<ns436:R16314127825 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -1112" />
+		<ns436:R59896853239 rdf:resource="http://rdl.rdlfacade.org/data#R17622148043" />
+		<ns436:R90688063648 rdf:resource="&rdf;nil" />
+		<ns436:R93884193692 rdf:resource="&rdf;nil" />
+		<rdf:type rdf:resource="&ns436;R77443358818" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0b5616f5675c63d95ce22be985687762">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90058-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/0f5cb157615b4ebb75730d19c22f5c40">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90014-RV" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/135d25b8e4d0e304fd37a83c200c44ff">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90010-O" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/20635f37bf817116632b5f9102613154">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90032-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/275f66dacfcf0e6a808608be8b3e8ebb">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90004-SL" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/27d4badf1798b29452126091bcae62e4">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90009-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/281ed14ac468dc9f5d4d4b637cc3f258">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90041-RV" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/2823769c379b6a915c6ad24ca7940940">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90030-O" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/2a522fac1f07a51f29c44a136fb0a60c">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90013-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/2b5ac404e8add3ca5d189f54966a71fe">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-V" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/2bfb1efdfcd3b20eb8f160458a365492">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-V" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/300edd63d706cd707c7a5c966ec7e91b">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90011-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/322fcdad2638c0cff670726d964ae755">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90012-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/427e0851cda32eee8f27825e773072ca">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/66" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/66015-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/470642691ce6289a26caca38098b1d82">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90012-O" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/508730baec49adc76376adb84e0f8afe">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90011-O" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/5a57da15c9466d24131ef3e13f33f5ca">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90058-O" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/5fac1d01618893c1197ab459f13f9b2f">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90028-RV" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/6022a8952ffa76ed3e26d6b95b8ebaff">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90041-RV" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/6dbd9ee4d16e3c01c7d162cb522687c2">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90030-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/7066330badf76bb242f3ede89784256c">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90005-RV" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/70bf29938a857cffe05132fe077db9c3">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90024-RV" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/7119ad986a2084ab2367824f661aacae">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90002-RV" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/730a6301f7d3d5cdace44509524465e8">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90002-SW" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/749b4dc6d82e2e529208b5c0f9088d19">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90042-RV" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/774174c2d681c0d207f6a08c46cf5b10">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90007-SL" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/79a6a95ddc2c9882533180765b2e3ecf">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90006-SL" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/7f170cde06177efeb3b5385f868045bf">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90025-SW" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/80e8bfa47f5bd1671925c69d5617b155">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90008-RV" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/881e9d4a88243cdedf5af0fee09dc11f">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90004-SC" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/8bfcef929cf7ba2002186d8f872dd631">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90014-RV" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/8f14161d82aa797fb2a4adb73f675052">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90042-RV" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/9245137a376e6b90b8f9c33a920bdf95">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90031-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/9a2bb9e8b86cbe1bd7b87e5d7511fdbc">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-SC" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/a3e1ffd4e628623ba321c55242936048">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90004-SL" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/a52af55eeb9543f25b142c7ca7e20a81">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90043-RV" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/a8023932752f577379fbe3bf4dfdd162">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90002-RV" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/ab31e534c1d1a52cd21fd2bd82a4d724">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90026-RV" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/b0a83d09b3635402935e8723b378ad74">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90024-RV" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/b589ff1f63174f9e9b09820e6436ff8f">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90020-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/bcf77f500e008618b8a7eb72bdbf71f1">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90006-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/bf452c9b48ffeea25589405fc39a98df">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90013-O" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/c7691dab93a836ba2648aa56bf1c088d">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90033-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/ca678f8f424e7df07e5bf732ad836f65">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90010-O" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/cb228c50d5b0a7ab004eaf9caae63e87">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-SC" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/ce8d0c682c077d3b53a5d8aef9710492">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90033-O" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/cf5e4c2e8e2a93ec6fcdd8fc9f03d3bc">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90008-RV" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/d613d39186bc406d14dff7b638c7d323">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90028-RV" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/daa24b3b6592f7da780721de2e1c576b">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90031-O" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/e4ad85b62d3bae08dd350d20a95cb596">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90005-RV" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/efe7ea353ff1a8b789f74cf373bdfa2f">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90004-SC" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/f2a76eb8d23d4ee4dabe3b72974962b2">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90025-SW" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/fba39b7eff132a071b3f8125493e55a0">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90006-O" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/fc381141b3b69d905ec36835b6b7dfbc">
+		<ns436:R62157498012 rdf:resource="http://rdl.rdlfacade.org/data#R30942378492" />
+		<ns436:R62348020201 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90" />
+		<ns436:R77585325576 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-SL" />
+		<rdf:type rdf:resource="&ns436;R41248767846" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/fee981b1306908ce80edf7749aff8e98">
+		<ns436:R22715013877 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90032-O" />
+		<ns436:R35290929175 rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+		<ns436:R74328815710 rdf:resource="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676" />
+		<rdf:type rdf:resource="&ns436;R11327281485" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5676">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PAndIDiagram/90-AO5678">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R99486931975" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -1111">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -1112">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -7281">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -7282">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/11FT   -7283">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/66015-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90002-RV">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90002-SW">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-SC">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-SL">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90003-V">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90004-SC">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90004-SL">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90005-RV">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90006-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90006-SL">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90007-SL">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90008-RV">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90009-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90010-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90011-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90012-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90013-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90014-RV">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90020-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90024-RV">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90025-SW">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90026-RV">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90028-RV">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90030-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90031-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90032-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90033-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90041-RV">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90042-RV">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90043-RV">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PipingNetworkSystem/90058-O">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R19192462550" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/66">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R49658319833" />
+	</ns0:Thing>
+	<ns0:Thing rdf:about="http://localhost:65432/AdapterService/12345_000/ABC/Lines/PlantArea/90">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R49658319833" />
+	</ns0:Thing>
+</rdf:RDF>
