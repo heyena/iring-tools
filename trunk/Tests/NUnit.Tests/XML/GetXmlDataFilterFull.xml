@@ -39,7 +39,7 @@
     </IdentificationByTag>
     <PlantAreaHasPlantObject rdlUri="tpl:R41248767846" possessorRole="tpl:R77585325576">
       <assemblyType rdlUri="tpl:R62157498012" reference="rdl:R30942378492" />
-      <whole rdlUri="tpl:R62348020201" />
+      <whole rdlUri="tpl:R62348020201" reference="#90" />
     </PlantAreaHasPlantObject>
     <PAndIDRepresentation rdlUri="tpl:R11327281485" possessorRole="tpl:R22715013877">
       <representationType rdlUri="tpl:R35290929175" reference="rdl:R99486931975" />
