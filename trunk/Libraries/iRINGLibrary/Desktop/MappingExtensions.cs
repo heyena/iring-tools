@@ -122,7 +122,7 @@ namespace org.iringtools.mapping
     {
       foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
       {
-        if (Utility.TitleCase(classTemplateMap.classMap.name) == className)
+        if (classTemplateMap.classMap != null && classTemplateMap.classMap.name.ToLower() == className.ToLower())
           return classTemplateMap;
       }
 
