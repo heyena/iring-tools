@@ -172,7 +172,7 @@ namespace org.iringtools.adapter.projection
 
         if (String.IsNullOrEmpty(startClassIdentifier) || className != startClassName || classIdentifier == startClassIdentifier)
         {
-          XElement individualElement = CreateIndividualElement(classMap.id, Utility.TitleCase(classMap.name), classIdentifier);
+          XElement individualElement = CreateIndividualElement(parentElement, classMap.id, Utility.TitleCase(classMap.name), classIdentifier);
 
           if (individualElement != null)
           {
@@ -207,7 +207,7 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private XElement CreateIndividualElement(string classId, string className, string classIdentifier)
+    private XElement CreateIndividualElement(XElement parentElement, string classId, string className, string classIdentifier)
     {
       XElement individualElement = null;
 
@@ -232,6 +232,10 @@ namespace org.iringtools.adapter.projection
           individualElement = new XElement(_appNamespace + className);
           individualElement.Add(new XAttribute(RDL_URI_ATTR, classId));
           individualElement.Add(new XAttribute(ID_ATTR, classIdentifier));
+        }
+        else
+        {
+          parentElement.Add(new XAttribute(REF_ATTR, "#" + classIdentifier));
         }
       }
 
