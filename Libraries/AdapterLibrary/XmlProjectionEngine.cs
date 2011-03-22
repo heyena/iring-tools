@@ -22,9 +22,9 @@ namespace org.iringtools.adapter.projection
     private static readonly ILog _logger = LogManager.GetLogger(typeof(XmlProjectionEngine));
     private static readonly string ID_ATTR = "id";
     private static readonly string RDL_URI_ATTR = "rdlUri";
-    private static readonly string REFERENCE_ATTR = "reference";
+    private static readonly string REF_ATTR = "reference";
 
-    private Dictionary<string, List<string>> _classInstancesCache = null;
+    private Dictionary<string, List<string>> _individualsCache = null;
     private XNamespace _appNamespace = null;
 
     [Inject]
@@ -66,14 +66,24 @@ namespace org.iringtools.adapter.projection
           }
           else
           {
+            ClassMap classMap = _graphMap.classTemplateMaps.First().classMap;
             rootElement = new XElement(_appNamespace + Utility.TitleCase(graphName));
-
-            var pair = _graphMap.classTemplateMaps.First();
-            for (int i = 0; i < _dataObjects.Count; i++)
+            
+            for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
             {
-              XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(pair.classMap.name));
-              CreateIndexXml(rowElement, pair, i);
-              rootElement.Add(rowElement);
+              bool hasRelatedProperty;
+              List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
+
+              if (classIdentifiers.Count > 0)
+              {
+                XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(classMap.name));
+                rowElement.Value = _appNamespace.ToString() + "/" + _graphMap.name + "/" + classIdentifiers.First();
+                rootElement.Add(rowElement);
+              }
+              else
+              {
+                _logger.Warn("Class identifier of [" + classMap.name + "] not found.");
+              }
             }
           }
 
@@ -125,33 +135,6 @@ namespace org.iringtools.adapter.projection
     }
 
     #region helper methods
-    private void CreateIndexXml(XElement parentElement, ClassTemplateMap classTemplateMap, int dataObjectIndex)
-    {
-      string uri = _appNamespace.ToString() + "/" + _graphMap.name + "/";
-
-      foreach (string keyPropertyName in classTemplateMap.classMap.identifiers)
-      {
-        RoleMap roleMap = null;
-
-        foreach(TemplateMap templateMap in classTemplateMap.templateMaps)
-        {
-          roleMap = templateMap.roleMaps.Find(rm => rm.propertyName == keyPropertyName);
-          if (roleMap != null) break;
-        }
-
-        if (roleMap != null)
-        {
-          string propertyName = RemoveDataPropertyAlias(roleMap.propertyName);
-          var value = _dataObjects[dataObjectIndex].GetPropertyValue(propertyName);
-
-          if (value != null)
-            uri += classTemplateMap.classMap.identifierDelimiter + value;
-        }        
-      }
-
-      parentElement.Value = uri;
-    }
-
     private void BuildXml(XElement rootElement, string startClassName, string startClassIdentifier)
     {
       ClassTemplateMap classTemplateMap = String.IsNullOrEmpty(startClassName) ?
@@ -159,11 +142,21 @@ namespace org.iringtools.adapter.projection
 
       if (classTemplateMap != null)
       {
-        _classInstancesCache = new Dictionary<string, List<string>>();
+        ClassMap classMap = classTemplateMap.classMap;
+        List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
 
-        for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
+        if (classMap != null)
         {
-          ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, rootElement, classTemplateMap);
+          _individualsCache = new Dictionary<string, List<string>>();
+
+          for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
+          {
+            bool hasRelatedProperty;
+            List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
+
+            ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, classIdentifiers, hasRelatedProperty,
+              rootElement, classTemplateMap.classMap, classTemplateMap.templateMaps);
+          }
         }
       }
       else
@@ -172,73 +165,31 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private XElement CreateIndividual(string classId, string className, string classIdentifier)
-    {
-      XElement individualElement = null;
-
-      if (!String.IsNullOrEmpty(classIdentifier))
-      {
-        string individual = _appNamespace.NamespaceName + classIdentifier;
-        bool individualCreated = true;
-
-        if (!_classInstancesCache.ContainsKey(classId))
-        {
-          _classInstancesCache[classId] = new List<string> { individual };
-          individualCreated = false;
-        }
-        else if (!_classInstancesCache[classId].Contains(individual))
-        {
-          _classInstancesCache[classId].Add(individual);
-          individualCreated = false;
-        }
-
-        if (!individualCreated)
-        {
-          individualElement = new XElement(_appNamespace + className);
-          individualElement.Add(new XAttribute(RDL_URI_ATTR, classId));
-          individualElement.Add(new XAttribute(ID_ATTR, classIdentifier));
-        }
-      }
-
-      return individualElement;
-    }
-
     private void ProcessOutboundClass(int dataObjectIndex, string startClassName, string startClassIdentifier, 
-      XElement parentElement, ClassTemplateMap classTemplateMap)
+      List<string> classIdentifiers, bool hasRelatedProperty, XElement parentElement, ClassMap classMap, List<TemplateMap> templateMaps)
     {
-      if (classTemplateMap != null)
+      string className = Utility.TitleCase(classMap.name);
+
+      for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
       {
-        ClassMap classMap = classTemplateMap.classMap;
-        List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
+        string classIdentifier = classIdentifiers[classIdentifierIndex];
 
-        if (classMap != null)
+        if (String.IsNullOrEmpty(startClassIdentifier) || className != startClassName || classIdentifier == startClassIdentifier)
         {
-          string className = Utility.TitleCase(classMap.name);
-          bool hasRelatedProperty;
-          List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
+          XElement individualElement = CreateIndividual(classMap.id, Utility.TitleCase(classMap.name), classIdentifier);
 
-          for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
+          if (individualElement != null)
           {
-            string classIdentifier = classIdentifiers[classIdentifierIndex];
-
-            if (String.IsNullOrEmpty(startClassIdentifier) || className != startClassName || classIdentifier == startClassIdentifier)
-            {
-              XElement individualElement = CreateIndividual(classMap.id, Utility.TitleCase(classMap.name), classIdentifier);
-
-              if (individualElement != null)
-              {
-                parentElement.Add(individualElement);
-                ProcessOutboundTemplates(dataObjectIndex, startClassName, startClassIdentifier, classIdentifierIndex,
-                  individualElement, templateMaps, hasRelatedProperty);
-              }
-            }
+            parentElement.Add(individualElement);
+            ProcessOutboundTemplates(dataObjectIndex, startClassName, startClassIdentifier, classIdentifierIndex,
+              individualElement, templateMaps, hasRelatedProperty);
           }
         }
       }
     }
 
-    private void ProcessOutboundTemplates(int dataObjectIndex, string startClassName, string startClassIdentifier, int classIdentifierIndex,
-      XElement individualElement, List<TemplateMap> templateMaps, bool classIdentifierHasRelatedProperty)
+    private void ProcessOutboundTemplates(int dataObjectIndex, string startClassName, string startClassIdentifier, 
+      int classIdentifierIndex, XElement individualElement, List<TemplateMap> templateMaps, bool classIdentifierHasRelatedProperty)
     {
       if (templateMaps != null && templateMaps.Count > 0)
       {
@@ -268,7 +219,7 @@ namespace org.iringtools.adapter.projection
                 else
                 {
                   roleElement.Add(new XAttribute(RDL_URI_ATTR, roleMap.id));
-                  roleElement.Add(new XAttribute(REFERENCE_ATTR, roleMap.value));
+                  roleElement.Add(new XAttribute(REF_ATTR, roleMap.value));
                   baseTemplateElement.Add(roleElement);
                 }
                 break;
@@ -355,25 +306,25 @@ namespace org.iringtools.adapter.projection
           else if (classRole != null)  // reference template with known class role
           {
             XElement roleElement = new XElement(_appNamespace + classRole.name);
-            roleElement.Add(new XAttribute(RDL_URI_ATTR, classRole.id));
-            baseTemplateElement.Add(roleElement);
-            individualElement.Add(baseTemplateElement);
 
             ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+            bool refClassHasRelatedProperty;
+            List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, out refClassHasRelatedProperty);
 
-            if (relatedClassTemplateMap != null)
+            if (refClassIdentifiers.Count > 0 && !String.IsNullOrEmpty(refClassIdentifiers.First()))
             {
-              ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, roleElement, relatedClassTemplateMap);
-            }
-            else
-            {
-              bool refClassHasRelatedProperty;
-              List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex,
-                out refClassHasRelatedProperty);
+              roleElement.Add(new XAttribute(RDL_URI_ATTR, classRole.id));
+              baseTemplateElement.Add(roleElement);
+              individualElement.Add(baseTemplateElement);
 
-              if (refClassIdentifiers.Count > 0)
+              if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
               {
-                roleElement.Add(new XAttribute(REFERENCE_ATTR, refClassIdentifiers.First()));
+                ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, refClassIdentifiers, 
+                  refClassHasRelatedProperty, roleElement, relatedClassTemplateMap.classMap, relatedClassTemplateMap.templateMaps);
+              }
+              else
+              {              
+                roleElement.Add(new XAttribute(REF_ATTR, refClassIdentifiers.First()));
               }
             }
           }
@@ -385,6 +336,37 @@ namespace org.iringtools.adapter.projection
       }
     }
 
+    private XElement CreateIndividual(string classId, string className, string classIdentifier)
+    {
+      XElement individualElement = null;
+
+      if (!String.IsNullOrEmpty(classIdentifier))
+      {
+        string individual = _appNamespace.NamespaceName + classIdentifier;
+        bool individualCreated = true;
+
+        if (!_individualsCache.ContainsKey(classId))
+        {
+          _individualsCache[classId] = new List<string> { individual };
+          individualCreated = false;
+        }
+        else if (!_individualsCache[classId].Contains(individual))
+        {
+          _individualsCache[classId].Add(individual);
+          individualCreated = false;
+        }
+
+        if (!individualCreated)
+        {
+          individualElement = new XElement(_appNamespace + className);
+          individualElement.Add(new XAttribute(RDL_URI_ATTR, classId));
+          individualElement.Add(new XAttribute(ID_ATTR, classIdentifier));
+        }
+      }
+
+      return individualElement;
+    }
+
     private XElement CreatePropertyElement(RoleMap propertyRole, string propertyValue)
     {
       XElement propertyElement = new XElement(_appNamespace + propertyRole.name);
@@ -394,7 +376,7 @@ namespace org.iringtools.adapter.projection
       {
         if (String.IsNullOrEmpty(propertyValue))
         {
-          propertyElement.Add(new XAttribute(REFERENCE_ATTR, RDF_NIL));
+          propertyElement.Add(new XAttribute(REF_ATTR, RDF_NIL));
         }
         else
         {
@@ -413,7 +395,7 @@ namespace org.iringtools.adapter.projection
         else
           propertyValue = propertyValue.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
 
-        propertyElement.Add(new XAttribute(REFERENCE_ATTR, propertyValue));
+        propertyElement.Add(new XAttribute(REF_ATTR, propertyValue));
       }
 
       return propertyElement;
