@@ -225,7 +225,7 @@ namespace org.iringtools.adapter.projection
       {
         for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
         {
-          ProcessOutboundClass(String.Empty, String.Empty, dataObjectIndex, true, classTemplateMap);
+          ProcessOutboundClass(dataObjectIndex, String.Empty, String.Empty, true, classTemplateMap);
         }
       }
 
@@ -239,7 +239,7 @@ namespace org.iringtools.adapter.projection
 
       if (classTemplateMap != null)
       {
-        ProcessOutboundClass(startClassName, startClassIdentifier, 0, true, classTemplateMap);
+        ProcessOutboundClass(0, startClassName, startClassIdentifier, true, classTemplateMap);
       }
 
       return _rdfXml;
@@ -275,7 +275,7 @@ namespace org.iringtools.adapter.projection
       return individualElement;
     }
 
-    private void ProcessOutboundClass(string startClassName, string startClassIdentifier, int dataObjectIndex, bool isRootClass,
+    private void ProcessOutboundClass(int dataObjectIndex, string startClassName, string startClassIdentifier, bool isRootClass,
       ClassTemplateMap classTemplateMap)
     {
       if (classTemplateMap != null)
@@ -307,7 +307,7 @@ namespace org.iringtools.adapter.projection
                 if (isRootClass && _primaryClassificationStyle == ClassificationStyle.Both)
                 {
                   TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
-                  AddTemplateElements(startClassName, startClassIdentifier, dataObjectIndex, baseUri, classIdentifier,
+                  AddTemplateElements(dataObjectIndex, startClassName, startClassIdentifier, baseUri, classIdentifier,
                     classIdentifierIndex, classificationTemplate, hasRelatedProperty);
                 }
 
@@ -343,13 +343,13 @@ namespace org.iringtools.adapter.projection
             continue;
           }
 
-          AddTemplateElements(startClassName, startClassIdentifier, dataObjectIndex, baseUri, classIdentifier,
+          AddTemplateElements(dataObjectIndex, startClassName, startClassIdentifier, baseUri, classIdentifier,
             classIdentifierIndex, templateMap, hasRelatedProperty);
         }
       }
     }
 
-    private void AddTemplateElements(string startClassName, string startClassIdentifier, int dataObjectIndex, string baseUri,
+    private void AddTemplateElements(int dataObjectIndex, string startClassName, string startClassIdentifier, string baseUri,
       string classIdentifier, int classIdentifierIndex, TemplateMap templateMap, bool classIdentifierHasRelatedProperty)
     {
       string classInstance = baseUri + classIdentifier;
@@ -407,13 +407,13 @@ namespace org.iringtools.adapter.projection
 
       if (propertyRoles.Count > 0)  // property template
       {
-        List<List<XElement>> matrixPropertyElements = new List<List<XElement>>();
+        List<List<XElement>> multiPropertyElements = new List<List<XElement>>();
 
         // create property elements
         foreach (RoleMap propertyRole in propertyRoles)
         {
           List<XElement> propertyElements = new List<XElement>();
-          matrixPropertyElements.Add(propertyElements);
+          multiPropertyElements.Add(propertyElements);
 
           string[] propertyParts = propertyRole.propertyName.Split('.');
           string propertyName = propertyParts[propertyParts.Length - 1];
@@ -433,7 +433,7 @@ namespace org.iringtools.adapter.projection
 
             if (!_relatedObjectsCache.TryGetValue(key, out relatedObjects))
             {
-              relatedObjects = GetRelatedObjects(propertyRole.propertyName, _dataObjects[dataObjectIndex]);
+              relatedObjects = GetRelatedObjects(propertyRole.propertyName, dataObject);
               _relatedObjectsCache.Add(key, relatedObjects);
             }
 
@@ -455,20 +455,20 @@ namespace org.iringtools.adapter.projection
         }
 
         // add property elements to template element(s)
-        if (matrixPropertyElements.Count > 0 && matrixPropertyElements[0].Count > 0)
+        if (multiPropertyElements.Count > 0 && multiPropertyElements[0].Count > 0)
         {
           // used to enforce dotNetRDF to store/retrieve template triples in order as the RDF
-          string hashPrefixFormat = Regex.Replace(matrixPropertyElements[0].Count.ToString(), "\\d", "0") + "0";
+          string hashPrefixFormat = Regex.Replace(multiPropertyElements[0].Count.ToString(), "\\d", "0") + "0";
 
-          for (int i = 0; i < matrixPropertyElements[0].Count; i++)
+          for (int i = 0; i < multiPropertyElements[0].Count; i++)
           {
             XElement templateElement = new XElement(baseTemplateElement);
             _rdfXml.Add(templateElement);
 
             StringBuilder templateValue = new StringBuilder(baseValues.ToString());
-            for (int j = 0; j < matrixPropertyElements.Count; j++)
+            for (int j = 0; j < multiPropertyElements.Count; j++)
             {
-              XElement propertyElement = matrixPropertyElements[j][i];
+              XElement propertyElement = multiPropertyElements[j][i];
               templateElement.Add(propertyElement);
 
               if (!String.IsNullOrEmpty(propertyElement.Value))
@@ -533,7 +533,7 @@ namespace org.iringtools.adapter.projection
         }
 
         ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
-        ProcessOutboundClass(startClassName, startClassIdentifier, dataObjectIndex, false, relatedClassTemplateMap);
+        ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, false, relatedClassTemplateMap);
       }
       else  // reference template with no class role (primary classification template)
       {
