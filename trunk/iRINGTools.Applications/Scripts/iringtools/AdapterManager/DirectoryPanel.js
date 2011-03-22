@@ -71,7 +71,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       icon: 'Content/img/internet-web-browser.png',
       type: 'ScopesNode'
     });
-
     this.directoryPanel = new Ext.tree.TreePanel({
       region: 'center',
       collapseMode: 'mini',

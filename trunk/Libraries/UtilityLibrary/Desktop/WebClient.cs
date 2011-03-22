@@ -483,7 +483,7 @@ namespace org.iringtools.utility
             }
         }
 
-        public void ForwardPost(string relativeUri, HttpRequestBase requestBase)
+        public string ForwardPost(string relativeUri, HttpRequestBase requestBase)
         {
           
           string uri = _baseUri + relativeUri;
@@ -519,6 +519,7 @@ namespace org.iringtools.utility
           try
           {
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            return Utility.SerializeFromStream(response.GetResponseStream());
           }
           catch (Exception exception)
           {            
