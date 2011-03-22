@@ -25,34 +25,15 @@ namespace org.iringtools.adapter.projection
     private static readonly ILog _logger = LogManager.GetLogger(typeof(RdfProjectionEngine));
     protected static readonly string QUALIFIED_RDF_NIL = RDF_NS.NamespaceName + "nil";
 
-    private ClassificationStyle _primaryClassificationStyle;
-    private ClassificationStyle _secondaryClassificationStyle;
-    private ClassificationTemplate _classificationConfig;
-
-    private Dictionary<string, List<string>> _classInstancesCache;
+    private Dictionary<string, List<string>> _individualsCache;
+    private string _graphBaseUri;
     private XElement _rdfXml;
 
     [Inject]
-    public RdfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
+    public RdfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping) 
+      : base(settings, dataLayer, mapping)
     {
-      _settings = settings;
-      _dataLayer = dataLayer;
-      _mapping = mapping;
-      _dictionary = _dataLayer.GetDictionary();
-
-      // get classification settings
-      _primaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
-        _settings["PrimaryClassificationStyle"].ToString());
-
-      _secondaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
-        _settings["SecondaryClassificationStyle"].ToString());
-
-      if (File.Exists(_settings["ClassificationTemplateFile"]))
-      {
-        _classificationConfig = Utility.Read<ClassificationTemplate>(_settings["ClassificationTemplateFile"]);
-      }
-
-      _classInstancesCache = new Dictionary<string, List<string>>();
+      _individualsCache = new Dictionary<string, List<string>>();
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
@@ -278,7 +259,7 @@ namespace org.iringtools.adapter.projection
 
         if (String.IsNullOrEmpty(startClassIdentifier) || className != startClassName || classIdentifier == startClassIdentifier)
         {
-          XElement individualElement = CreateIndividual(baseUri, classId, classIdentifier);
+          XElement individualElement = CreateIndividualElement(baseUri, classId, classIdentifier);
 
           if (individualElement != null)
           {
@@ -288,7 +269,7 @@ namespace org.iringtools.adapter.projection
             if (isRootClass && _primaryClassificationStyle == ClassificationStyle.Both)
             {
               TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
-              AddTemplateElements(dataObjectIndex, startClassName, startClassIdentifier, baseUri, classIdentifier,
+              CreateTemplateElement(dataObjectIndex, startClassName, startClassIdentifier, baseUri, classIdentifier,
                 classIdentifierIndex, classificationTemplate, hasRelatedProperty);
             }
 
@@ -322,13 +303,13 @@ namespace org.iringtools.adapter.projection
             continue;
           }
 
-          AddTemplateElements(dataObjectIndex, startClassName, startClassIdentifier, baseUri, classIdentifier,
+          CreateTemplateElement(dataObjectIndex, startClassName, startClassIdentifier, baseUri, classIdentifier,
             classIdentifierIndex, templateMap, hasRelatedProperty);
         }
       }
     }
 
-    private XElement CreateIndividual(string baseUri, string classId, string classIdentifier)
+    private XElement CreateIndividualElement(string baseUri, string classId, string classIdentifier)
     {
       XElement individualElement = null;
 
@@ -337,14 +318,14 @@ namespace org.iringtools.adapter.projection
         string individual = baseUri + classIdentifier;
         bool individualCreated = true;
 
-        if (!_classInstancesCache.ContainsKey(classId))
+        if (!_individualsCache.ContainsKey(classId))
         {
-          _classInstancesCache[classId] = new List<string> { individual };
+          _individualsCache[classId] = new List<string> { individual };
           individualCreated = false;
         }
-        else if (!_classInstancesCache[classId].Contains(individual))
+        else if (!_individualsCache[classId].Contains(individual))
         {
-          _classInstancesCache[classId].Add(individual);
+          _individualsCache[classId].Add(individual);
           individualCreated = false;
         }
 
@@ -358,7 +339,7 @@ namespace org.iringtools.adapter.projection
       return individualElement;
     }
 
-    private void AddTemplateElements(int dataObjectIndex, string startClassName, string startClassIdentifier, string baseUri,
+    private void CreateTemplateElement(int dataObjectIndex, string startClassName, string startClassIdentifier, string baseUri,
       string classIdentifier, int classIdentifierIndex, TemplateMap templateMap, bool classIdentifierHasRelatedProperty)
     {
       string classInstance = baseUri + classIdentifier;
