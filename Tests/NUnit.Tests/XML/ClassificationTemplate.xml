@@ -1,28 +1,30 @@
-<ClassificationTemplate xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.library">
-  <TemplateIds>
-    <templateId>tpl:R63638239485</templateId>
-  </TemplateIds>
-  <TemplateMap>
-    <templateId>tpl:R63638239485</templateId>
-    <name>ClassificationOfIndividual</name>
+<classificationTemplate xmlns="http://www.iringtools.org/mapping">
+  <templateIds>
+    <id>tpl:R63638239485</id>
+    <id>tpl:R66921101784</id>
+  </templateIds>
+  <templateMap>
+    <id>tpl:R66921101784</id>
+    <name>IdentificationByTag</name>
     <roleMaps>
-      <RoleMap>
-        <type>Reference</type>
-        <roleId>tpl:R55055340393</roleId>
-        <name>hasClass</name>
-        <dataType>dm:ClassOfIndividual</dataType>
-        <propertyName/>
-        <value>rdl:R99781532089</value>
-      </RoleMap>
-      <RoleMap>
+      <roleMap>
         <type>Possessor</type>
-        <roleId>tpl:R99011248051</roleId>
-        <name>hasIndividual</name>
-        <dataType/>
-        <propertyName/>
-        <value/>
-      </RoleMap>
+        <id>tpl:R44537504070</id>
+        <name>hasObject</name>
+      </roleMap>
+      <roleMap>
+        <type>Reference</type>
+        <id>tpl:R30790108016</id>
+        <name>hasIdentificationType</name>
+        <value>rdl:R40471041754</value>
+      </roleMap>
+      <!--<roleMap>
+        <type>Property</type>
+        <id>tpl:R22674749688</id>
+        <name>valIdentifier</name>
+        <dataType>xsd:string</dataType>
+        <propertyName>LINES.SYSTEM</propertyName>
+      </roleMap>-->
     </roleMaps>
-    <templateType>Definition</templateType>
-  </TemplateMap>
-</ClassificationTemplate>
+  </templateMap>
+</classificationTemplate>
