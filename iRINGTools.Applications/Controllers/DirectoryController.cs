@@ -1,258 +1,50 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using System.Net;
-using System.Configuration;
-using System.Collections.Specialized;
-using System.Runtime.Serialization;
-using System.Xml.Serialization;
-using System.Xml;
+
+using iRINGTools.Web.Helpers;
+using iRINGTools.Web.Models;
 
 using org.iringtools.library;
-using org.iringtools.utility;
 using org.iringtools.mapping;
-
-using iRINGTools.Web.Models;
-using System.Xml.Linq;
 
 namespace iRINGTools.Web.Controllers
 {
   public class DirectoryController : Controller
   {
 
-    NameValueCollection _settings = null;
-    string _adapterServiceURI = String.Empty;
-    string _refDataServiceURI = String.Empty;
+    IDictionaryRepository _dictionaryRepository;
 
     public DirectoryController()
+      : this(new DictionaryRepository())
     {
-      _settings = ConfigurationManager.AppSettings;
-      _adapterServiceURI = _settings["AdapterServiceUri"];
-      _refDataServiceURI = _settings["ReferenceDataServiceUri"];
-    }   
-
-    //
-    // GET: /Directory/
-
-    private ScopeProjects GetScopes(string adapterServiceURI, bool fetch)
-    {
-      string key = "Scopes";
-
-      if (Session[key] == null || fetch) {
-                
-        WebHttpClient client = new WebHttpClient(adapterServiceURI);
-        ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
-
-        Session[key] = scopes;        
-      }
-
-      return (ScopeProjects)Session[key];
     }
 
-    private string GetDataLayer(string adapterServiceURI, bool fetch, string scope, string application) 
+    public DirectoryController(IDictionaryRepository dictionary)
     {
-      XElement binding = GetBinding(adapterServiceURI, false, scope, application);
-
-      if (binding != null)
-      {
-        return binding.Element("bind").Attribute("to").Value.Split(',')[1].Trim();
-      }
-      else
-      {
-        return "";
-      }
-    }    
-
-    private DataLayers GetDataLayers(string adapterServiceURI, bool fetch)
-    {
-      string key = "DataLayers";
-
-      if (Session[key] == null || fetch)
-      {
-
-        WebHttpClient client = new WebHttpClient(adapterServiceURI);
-        DataLayers datalayers = client.Get<DataLayers>("/datalayers");
-
-        Session[key] = datalayers;
-      }
-
-      return (DataLayers)Session[key];
+      _dictionaryRepository = dictionary;
     }
 
-    private Mapping GetMapping(string adapterServiceURI, bool fetch, string scope, string application)
+    public ActionResult Index()
     {
-      string key = String.Format("{0}.{1}.mapping", scope, application);
-
-      if (Session[key] == null || fetch) {
-                
-        WebHttpClient client = new WebHttpClient(adapterServiceURI);
-        Mapping mapping = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scope, application), true);
-
-        Session[key] = mapping;        
-      }
-
-      return (Mapping)Session[key];      
+      return View(_dictionaryRepository.GetScopes());
     }
 
-    private XElement GetBinding(string adapterServiceURI, bool fetch, string scope, string application)
+    public ActionResult GetNode(FormCollection form)
     {
-      string key = String.Format("{0}.{1}.binding", scope, application);
-
-      if (Session[key] == null || fetch)
-      {
-
-        WebHttpClient client = new WebHttpClient(adapterServiceURI);
-        XElement element = client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
-
-        Session[key] = element;
-      }
-
-      return (XElement)Session[key];
-    }
-
-    private DataDictionary GetDictionary(string adapterServiceURI, bool fetch, string scope, string application)
-    {
-      string key = String.Format("{0}.{1}.dictionary", scope, application);
-
-      if (Session[key] == null || fetch)
-      {
-
-        WebHttpClient client = new WebHttpClient(adapterServiceURI);
-        DataDictionary dictionary = client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", scope, application), true);
-
-        Session[key] = dictionary;
-      }
-
-      return (DataDictionary)Session[key];
-    }
-
-    private JsonResult PostScopes(string adapterServiceURI, ScopeProjects scopes) 
-    {
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-            
-      string responseMessage = client.Post<ScopeProjects>("/scopes", scopes, true);
-            
-      if (responseMessage.Contains("success"))
-      {
-        GetScopes(adapterServiceURI, true);
-
-        return Json(new
-        {
-          success = true
-        }, JsonRequestBehavior.AllowGet);
-      }
-      else
-      {
-        return Json(new
-        {
-          success = false
-        }, JsonRequestBehavior.AllowGet);
-      }      
-
-    }
-
-    public JsonResult Index()
-    {
-      string format = String.Empty;
-      string adapterServiceURI = _adapterServiceURI;
-
-      if (Request.QueryString["format"] != null)
-        format = Request.QueryString["format"].ToUpper();
-
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
-
-      ScopeProjects scopes = GetScopes(adapterServiceURI, false);
-
-      switch (format)
-      {
-        case "TREE":
-          {
-            List<TreeNode> nodes = new List<TreeNode>();
-
-            foreach (ScopeProject scope in scopes)
-            {
-
-              TreeNode nodeScope = new TreeNode
-              {
-                type = "ScopeNode",
-                icon = "Content/img/system-file-manager.png",
-                id = scope.Name,
-                text = scope.Name,
-                expanded = true,
-                leaf = false,
-                children = new List<TreeNode>(),
-                record = scope
-              };
-
-              nodes.Add(nodeScope);
-
-              foreach (ScopeApplication app in scope.Applications)
-              {
-                if (app.Name != string.Empty)
-                {
-                  TreeNode nodeApp = new TreeNode
-                  {
-                    type = "ApplicaionNode",
-                    icon = "Content/img/applications-internet.png",
-                    id = app.Name,
-                    text = app.Name,
-                    expanded = true,
-                    leaf = false,
-                    record = app
-                  };
-                  nodeScope.children.Add(nodeApp);
-
-                  //List<string> graphs = GetGraphs(scope.Name, app.Name);
-
-                  //foreach (string graph in graphs)
-                  //{
-                  //  GraphTreeNode nodeGraph = new GraphTreeNode(graph);
-                  //  nodeApp.children.Add(nodeGraph);
-                  //}
-                }
-              }
-            }
-
-            return Json(nodes, JsonRequestBehavior.AllowGet);
-          }
-        default:
-          {
-            JsonContainer<List<ScopeProject>> container = new JsonContainer<List<ScopeProject>>();
-            container.items = scopes;
-            container.total = scopes.Count;
-            container.success = true;
-            return Json(container, JsonRequestBehavior.AllowGet);
-          }
-      }
-    }
-
-    public JsonResult GetNode(FormCollection form)
-    {
-      string format = String.Empty;
-      string adapterServiceURI = _adapterServiceURI;
-
-      if (Request.QueryString["format"] != null)
-        format = Request.QueryString["format"].ToUpper();
-
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
 
       switch (form["type"])
       {
         case "ScopesNode":
           {
 
-            List<TreeNode> nodes = new List<TreeNode>();
-            ScopeProjects scopes = GetScopes(adapterServiceURI, true);
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-            foreach (ScopeProject scope in scopes)
+            foreach (ScopeProject scope in _dictionaryRepository.GetScopes())
             {
 
-              TreeNode node = new TreeNode
+              JsonTreeNode node = new JsonTreeNode
               {
                 nodeType = "async",
                 type = "ScopeNode",
@@ -274,24 +66,31 @@ namespace iRINGTools.Web.Controllers
         case "ScopeNode":
           {
 
-            List<TreeNode> nodes = new List<TreeNode>();
-            ScopeProjects scopes = GetScopes(adapterServiceURI, false);
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-            ScopeProject scope = scopes.FirstOrDefault(o => o.Name == form["node"]);
+            ScopeProject scope = _dictionaryRepository.GetScope(form["node"]);
 
-            foreach (ScopeApplication app in scope.Applications)
+            foreach (ScopeApplication application in scope.Applications)
             {
-              TreeNode node = new TreeNode
+              DataLayer dataLayer = _dictionaryRepository.GetDataLayer(scope.Name, application.Name);
+
+              JsonTreeNode node = new JsonTreeNode
               {
                 nodeType = "async",
                 type = "ApplicationNode",
                 icon = "Content/img/applications-internet.png",
-                id = scope.Name + "/" + app.Name,
-                text = app.Name,
+                id = scope.Name + "/" + application.Name,
+                text = application.Name,
                 expanded = false,
                 leaf = false,
                 children = null,
-                record = new { Name = app.Name, Description = app.Description, DataLayer = GetDataLayer(adapterServiceURI, false, scope.Name, app.Name) }
+                record = new
+                {
+                  Name = application.Name,
+                  Description = application.Description,
+                  DataLayer = dataLayer.Name,
+                  Assembly = dataLayer.Assembly
+                }
               };
 
               nodes.Add(node);
@@ -303,10 +102,10 @@ namespace iRINGTools.Web.Controllers
         case "ApplicationNode":
           {
             string context = form["node"];
-            
-            List<TreeNode> nodes = new List<TreeNode>();
 
-            TreeNode dataObjectsNode = new TreeNode
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+            JsonTreeNode dataObjectsNode = new JsonTreeNode
             {
               nodeType = "async",
               type = "DataObjectsNode",
@@ -316,9 +115,9 @@ namespace iRINGTools.Web.Controllers
               expanded = false,
               leaf = false,
               children = null
-            }; 
+            };
 
-            TreeNode graphsNode = new TreeNode
+            JsonTreeNode graphsNode = new JsonTreeNode
             {
               nodeType = "async",
               type = "GraphsNode",
@@ -330,7 +129,7 @@ namespace iRINGTools.Web.Controllers
               children = null
             };
 
-            TreeNode ValueListsNode = new TreeNode
+            JsonTreeNode ValueListsNode = new JsonTreeNode
             {
               nodeType = "async",
               type = "ValueListsNode",
@@ -351,46 +150,45 @@ namespace iRINGTools.Web.Controllers
         case "ValueListsNode":
           {
             string context = form["node"];
+            string scopeName = context.Split('/')[0];
+            string applicationName = context.Split('/')[1];
 
-            Mapping mapping = GetMapping(adapterServiceURI, false, context.Split('/')[0], context.Split('/')[1]);
+            Mapping mapping = _dictionaryRepository.GetMapping(scopeName, applicationName);
 
-            List<TreeNode> nodes = new List<TreeNode>();
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-            if (mapping.valueListMaps != null)
+            foreach (ValueListMap valueList in mapping.valueListMaps)
             {
-              foreach (ValueListMap valueList in mapping.valueListMaps)
+              JsonTreeNode node = new JsonTreeNode
               {
-                TreeNode node = new TreeNode
-                {
-                  nodeType = "async",
-                  type = "ValueListNode",
-                  icon = "Content/img/valuelist.png",
-                  id = context + "/ValueList/" + valueList.name,
-                  text = valueList.name,
-                  expanded = true,
-                  leaf = true,
-                  children = new List<TreeNode>(),
-                  record = valueList
-                };
+                nodeType = "async",
+                type = "ValueListNode",
+                icon = "Content/img/valuelist.png",
+                id = context + "/ValueList/" + valueList.name,
+                text = valueList.name,
+                expanded = true,
+                leaf = true,
+                children = new List<JsonTreeNode>()
+              };
 
-                nodes.Add(node);
-              }
+              nodes.Add(node);
             }
 
             return Json(nodes, JsonRequestBehavior.AllowGet);
           }
         case "DataObjectsNode":
           {
-
             string context = form["node"];
+            string scopeName = context.Split('/')[0];
+            string applicationName = context.Split('/')[1];
 
-            DataDictionary dictionary = GetDictionary(adapterServiceURI, false, context.Split('/')[0], context.Split('/')[1]);
+            DataDictionary dictionary = _dictionaryRepository.GetDictionary(scopeName, applicationName);
 
-            List<TreeNode> nodes = new List<TreeNode>();
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
             foreach (DataObject dataObject in dictionary.dataObjects)
             {
-              TreeNode node = new TreeNode
+              JsonTreeNode node = new JsonTreeNode
               {
                 nodeType = "async",
                 type = "DataObjectNode",
@@ -399,8 +197,7 @@ namespace iRINGTools.Web.Controllers
                 text = dataObject.objectName,
                 expanded = false,
                 leaf = false,
-                children = null,
-                record = dataObject
+                children = null
               };
 
               nodes.Add(node);
@@ -412,17 +209,19 @@ namespace iRINGTools.Web.Controllers
         case "DataObjectNode":
           {
             string context = form["node"];
+            string scopeName = context.Split('/')[0];
+            string applicationName = context.Split('/')[1];
+            string dataObjectName = context.Split('/')[4];
 
-            DataDictionary dictionary = GetDictionary(adapterServiceURI, false, context.Split('/')[0], context.Split('/')[1]);
+            DataDictionary dictionary = _dictionaryRepository.GetDictionary(scopeName, applicationName);
+            DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName == dataObjectName);
 
-            DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName == context.Split('/')[4]);
-
-            List<TreeNode> nodes = new List<TreeNode>();
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
             foreach (DataProperty property in dataObject.dataProperties)
             {
-              TreeNode node = new TreeNode
-              { 
+              JsonTreeNode node = new JsonTreeNode
+              {
                 nodeType = "async",
                 type = "DataPropertyNode",
                 icon = (dataObject.isKeyProperty(property.propertyName)) ? "Content/img/key.png" : "Content/img/property.png",
@@ -430,8 +229,7 @@ namespace iRINGTools.Web.Controllers
                 text = property.propertyName,
                 expanded = true,
                 leaf = true,
-                children = new List<TreeNode>(),
-                record = property
+                children = new List<JsonTreeNode>()
               };
 
               nodes.Add(node);
@@ -440,34 +238,37 @@ namespace iRINGTools.Web.Controllers
             return Json(nodes, JsonRequestBehavior.AllowGet);
 
           }
-        case "GraphsNode": {
-
-          string context = form["node"];
-          Mapping mapping = GetMapping(adapterServiceURI, false, context.Split('/')[0], context.Split('/')[1]);
-
-          List<TreeNode> nodes = new List<TreeNode>();
-
-          foreach (GraphMap graph in mapping.graphMaps)
+        case "GraphsNode":
           {
-            TreeNode node = new TreeNode
+
+            string context = form["node"];
+            string scopeName = context.Split('/')[0];
+            string applicationName = context.Split('/')[1];            
+
+            Mapping mapping = _dictionaryRepository.GetMapping(scopeName, applicationName);
+
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+            foreach (GraphMap graph in mapping.graphMaps)
             {
-              nodeType = "async",
-              type = "GraphNode",
-              icon = "Content/img/graph-map.png",
-              id = context + "/Graph/" + graph.name,
-              text = graph.name,
-              expanded = true,
-              leaf = true,
-              children = new List<TreeNode>(),
-              record = graph
-            };
+              JsonTreeNode node = new JsonTreeNode
+              {
+                nodeType = "async",
+                type = "GraphNode",
+                icon = "Content/img/graph-map.png",
+                id = context + "/Graph/" + graph.name,
+                text = graph.name,
+                expanded = true,
+                leaf = true,
+                children = new List<JsonTreeNode>()
+              };
 
-            nodes.Add(node);
+              nodes.Add(node);
+            }
+
+            return Json(nodes, JsonRequestBehavior.AllowGet);
+
           }
-
-          return Json(nodes, JsonRequestBehavior.AllowGet);
-
-        }
         default:
           {
             return Json(new { success = false }, JsonRequestBehavior.AllowGet);
@@ -476,14 +277,9 @@ namespace iRINGTools.Web.Controllers
 
     }
 
-    public JsonResult DataLayers()
+    public ActionResult DataLayers()
     {
-      string adapterServiceURI = _adapterServiceURI;
-            
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
-      
-      DataLayers dataLayers = GetDataLayers(adapterServiceURI, false);
+      DataLayers dataLayers = _dictionaryRepository.GetDataLayers();
 
       JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
       container.items = dataLayers;
@@ -491,132 +287,6 @@ namespace iRINGTools.Web.Controllers
       container.total = dataLayers.Count;
 
       return Json(container, JsonRequestBehavior.AllowGet);
-    }
-
-    public JsonResult Scope(FormCollection form)
-    {
-      string adapterServiceURI = _adapterServiceURI;
-            
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";      
-            
-      ScopeProjects scopes = GetScopes(adapterServiceURI, false);
-
-      ScopeProject project = scopes.FirstOrDefault(o => o.Name == form["Scope"]);
-
-      if (project == null)
-      {
-        project = new ScopeProject
-        {
-          Name = form["Name"],
-          Description = form["Description"],
-          Applications = new ScopeApplications()
-        };
-        scopes.Add(project);
-      }
-      else
-      {
-        project.Name = form["Name"];
-        project.Description = form["Description"];
-      }      
-
-      return PostScopes(adapterServiceURI, scopes);
-    }
-
-    public JsonResult Application(FormCollection form)
-    {
-      string adapterServiceURI = _adapterServiceURI;
-
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
-
-      ScopeProjects scopes = GetScopes(adapterServiceURI, false);
-      ScopeProject project = scopes.FirstOrDefault(o => o.Name == form["Scope"]);
-
-      if (project != null)
-      {
-        ScopeApplication application = project.Applications.FirstOrDefault(o => o.Name == form["Application"]);
-
-        if (application == null)
-        {
-          application = new ScopeApplication
-          {
-            Name = form["Name"],
-            Description = form["Description"]
-          };
-
-          project.Applications.Add(application);
-        }
-        else
-        {
-          application.Name = form["Name"];
-          application.Description = form["Description"];
-        }
-      }
-
-      return PostScopes(adapterServiceURI, scopes);
-    }
-
-    public JsonResult DeleteNode()
-    {
-      string format = String.Empty;
-      string adapterServiceURI = _adapterServiceURI;
-      bool isDelete = false;
-
-      if (Request.QueryString["format"] != null)
-        format = Request.QueryString["format"].ToUpper();
-
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
-
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-      ScopeProjects scopes = client.Get<ScopeProjects>("/scopes");
-
-      string relativeUri = String.Format("/scopes");
-      Uri address = new Uri(adapterServiceURI + relativeUri);
-
-      for (int i = 0; i < scopes.Count(); i++)
-      {
-        if (scopes[i].Name == Request.QueryString["parentNodeID"])
-        {
-          for (int j = 0; j < scopes[i].Applications.Count(); j++)
-          {
-            if (Request.QueryString["nodeID"].Contains(scopes[i].Applications[j].Name) )
-            {
-              //scopes[i].Applications[j].Name = _editApplication.Name;
-              //scopes[i].Applications[j].Description = _editApplication.Description;
-              scopes[i].Applications.Remove(scopes[i].Applications[j]);
-              isDelete = true;
-            }
-          }
-        }
-      }
-      if (!isDelete)
-      {
-        for (int i = 0; i < scopes.Count(); i++)
-        {
-          if (scopes[i].Name == Request.QueryString["nodeID"])
-          {
-            scopes.Remove(scopes[i]);
-          }
-        }
-      }
-
-      string responseMessage = client.Post<ScopeProjects>(relativeUri, scopes, true);
-      if (responseMessage.Contains("success"))
-      {
-        return Json(new
-        {
-          success = true
-        }, JsonRequestBehavior.AllowGet);
-      }
-      else
-      {
-        return Json(new
-        {
-          success = false
-        }, JsonRequestBehavior.AllowGet);
-      }
     }
 
   }

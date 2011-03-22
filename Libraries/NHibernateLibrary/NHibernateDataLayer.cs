@@ -20,7 +20,7 @@ using org.iringtools.nhibernate;
 
 namespace org.iringtools.adapter.datalayer
 {
-  public class NHibernateDataLayer : IDataLayer
+  public class NHibernateDataLayer : BaseDataLayer, IDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
     private string _dataDictionaryPath = String.Empty;
@@ -532,7 +532,26 @@ namespace org.iringtools.adapter.datalayer
       return relatedObjects;
     }
 
-    public Response Configure(XElement configuration)
+    public XElement GetConfiguration(string connectionInfo)
+    {
+      DatabaseDictionary databaseDictionary = null;
+
+      try
+      {
+        databaseDictionary = new DatabaseDictionary
+        {
+          ConnectionString = connectionInfo          
+        };
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetConfiguration: " + ex);
+      }
+
+      return Utility.SerializeToXElement<DatabaseDictionary>(databaseDictionary);
+    }
+
+    public Response SaveConfiguration(XElement configuration)
     {
       Response _response = new Response();
       _response.Messages = new Messages();
@@ -540,7 +559,8 @@ namespace org.iringtools.adapter.datalayer
       string _applicationName = _settings["Scope"].Split('.')[1];
       try
       {
-        _databaseDictionary = Utility.DeserializeDataContract<DatabaseDictionary>(configuration.Nodes().First().ToString());
+        //_databaseDictionary = Utility.DeserializeDataContract<DatabaseDictionary>(configuration.Nodes().First().ToString());
+        _databaseDictionary = Utility.DeserializeFromXElement<DatabaseDictionary>(configuration);        
         Utility.Write<DatabaseDictionary>(_databaseDictionary, _hibernateConfigPath, true);
         _response = Generate(_projectName, _applicationName);
         _response.Level = StatusLevel.Success;

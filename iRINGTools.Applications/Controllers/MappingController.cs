@@ -15,6 +15,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 
+using iRINGTools.Web.Helpers;
 using iRINGTools.Web.Models;
 
 namespace iRINGTools.Web.Controllers
@@ -64,11 +65,11 @@ namespace iRINGTools.Web.Controllers
 
             GraphMap graph = mapping.graphMaps.FirstOrDefault(o => o.name == context.Split('/')[2]);
 
-            List<TreeNode> nodes = new List<TreeNode>();
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
             foreach (ClassTemplateMap template in graph.classTemplateMaps)
             {
-              TreeNode node = new TreeNode
+              JsonTreeNode node = new JsonTreeNode
               {
                 nodeType = "async",
                 type = "ClassTemplateNode",
@@ -94,11 +95,11 @@ namespace iRINGTools.Web.Controllers
             GraphMap graph = mapping.graphMaps.FirstOrDefault(o => o.name == context.Split('/')[2]);
             ClassTemplateMap classTemplate = graph.classTemplateMaps.FirstOrDefault(o => o.classMap.name == context.Split('/')[3]);
 
-            List<TreeNode> nodes = new List<TreeNode>();
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
                         
             foreach (TemplateMap template in classTemplate.templateMaps)
             {
-              TreeNode node = new TreeNode
+              JsonTreeNode node = new JsonTreeNode
               {
                 nodeType = "async",
                 type = "TemplateNode",
@@ -125,11 +126,11 @@ namespace iRINGTools.Web.Controllers
             ClassTemplateMap classTemplate = graph.classTemplateMaps.FirstOrDefault(o => o.classMap.name == context.Split('/')[3]);
             TemplateMap template = classTemplate.templateMaps.FirstOrDefault(o => o.name == context.Split('/')[4]);
 
-            List<TreeNode> nodes = new List<TreeNode>();
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
             foreach (RoleMap role in template.roleMaps)
             {
-              TreeNode node = new TreeNode
+              JsonTreeNode node = new JsonTreeNode
               {
                 nodeType = "async",
                 type = "TemplateNode",

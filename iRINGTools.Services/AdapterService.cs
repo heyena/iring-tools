@@ -199,13 +199,20 @@ namespace org.iringtools.services
     }
 
     #endregion
-
+       
     [Description("Configure the selected data layer in the service.")]
-    [WebInvoke(Method = "POST",UriTemplate = "/{projectname}/{applicationName}/configure")]
-    public Response ConfigureDataLayer(String projectName, String applicationName)
-    {
-      return _adapterProvider.SaveDataLayerConfig(projectName, applicationName, HttpContext.Current.Request);
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectname}/{applicationName}/configure")]
+    public Response Configure(String projectName, String applicationName, XElement configuration)
+    { 
+      return _adapterProvider.Configure(projectName, applicationName, configuration);
     }
+
+    [Description("Upload files for data layer in the service.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{projectname}/{applicationName}/upload")]
+    public Response Upload(String projectName, String applicationName)
+    { 
+      return _adapterProvider.Upload(projectName, applicationName, HttpContext.Current.Request.Files);
+    }    
 
     #endregion
   }

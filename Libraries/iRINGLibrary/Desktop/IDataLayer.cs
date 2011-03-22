@@ -63,7 +63,7 @@ namespace org.iringtools.library
 
     IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
 
-
     Response Configure(XElement configuration);
+
   }
 }

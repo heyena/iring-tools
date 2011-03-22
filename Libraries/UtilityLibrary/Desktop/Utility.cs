@@ -598,6 +598,27 @@ namespace org.iringtools.utility
       }
     }
 
+    public static XElement SerializeToXElement<T>(T graph)
+    {
+      try
+      {
+        XmlSerializer ser = new XmlSerializer(typeof(T));
+        XDocument doc = new XDocument();
+        
+        using (XmlWriter xw = doc.CreateWriter())
+        {
+          ser.Serialize(xw, graph);
+          xw.Close();
+        }
+
+        return doc.Root;
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error while serializing " + typeof(T).Name + ".", exception);
+      }
+    }
+
     public static string SerializeFromStream(Stream graph)
     {
       try
@@ -663,6 +684,20 @@ namespace org.iringtools.utility
           graph = (T)serializer.Deserialize(reader);
         }
         return graph;
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error while deserializing " + typeof(T).Name + ".", exception);
+      }
+    }
+
+    public static T DeserializeFromXElement<T>(XElement element)
+    {      
+      try
+      {
+        XmlReader reader = element.CreateReader();
+        XmlSerializer serializer = new XmlSerializer(typeof(T));
+        return (T)serializer.Deserialize(reader);        
       }
       catch (Exception exception)
       {

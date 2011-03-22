@@ -962,7 +962,7 @@ namespace org.iringtools.adapter
     #endregion
 
     #region private methods
-    private void InitializeScope(string projectName, string applicationName)
+    private void InitializeScope(string projectName, string applicationName, bool loadDataLayer)
     {
       try
       {
@@ -1014,21 +1014,30 @@ namespace org.iringtools.adapter
 
           _settings["BindingConfigurationPath"] = bindingConfigurationPath;
 
-          if (!File.Exists(bindingConfigurationPath))
+          if (loadDataLayer)
           {
-            XElement binding = new XElement("module",
-              new XAttribute("name", _settings["Scope"]),
-              new XElement("bind",
-                new XAttribute("name", "DataLayer"),
-                new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-                new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
-              )
-            );
 
-            binding.Save(bindingConfigurationPath);
+            if (!File.Exists(bindingConfigurationPath))
+            {
+              XElement binding = new XElement("module",
+                new XAttribute("name", _settings["Scope"]),
+                new XElement("bind",
+                  new XAttribute("name", "DataLayer"),
+                  new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+                  new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
+                )
+              );
+
+              binding.Save(bindingConfigurationPath);
+            }
+
+            _kernel.Load(bindingConfigurationPath);
           }
 
-          _kernel.Load(bindingConfigurationPath);
+          _settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml",
+            _settings["XmlPath"],
+            scope
+          );
 
           string mappingPath = String.Format("{0}Mapping.{1}.xml",
             _settings["XmlPath"],
@@ -1054,6 +1063,11 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error initializing application: {0}", ex));
         throw new Exception(string.Format("Error initializing application: {0})", ex));
       }
+    }
+
+    private void InitializeScope(string projectName, string applicationName)
+    {
+      InitializeScope(projectName, applicationName, true);
     }
 
     private void InitializeDataLayer()
@@ -1477,53 +1491,76 @@ namespace org.iringtools.adapter
       return dataLayerAssemblies;
     }
 
-    public Response SaveDataLayerConfig(string projectName, string applicationName, HttpRequest request)
-    {      
-      string savedFileName = string.Empty;
-      string appdata = _settings["XmlPath"];
+    public Response Configure(string projectName, string applicationName, XElement config)
+    {
+      Response response = new Response();
+      response.Messages = new Messages();
 
-      foreach (string file in request.Files)
+      try
       {
-        HttpPostedFile hpf = request.Files[file] as HttpPostedFile;
-        if (hpf.ContentLength == 0)
-          continue;
+        InitializeScope(projectName, applicationName, false);
 
-        savedFileName = Path.Combine(
-        AppDomain.CurrentDomain.BaseDirectory,
-        appdata,
-        Path.GetFileName(hpf.FileName));
-        hpf.SaveAs(savedFileName);
-      }
+        string dataLayer = config.Elements("DataLayer").First().Value;
+        XElement configuration = config.Elements("Configuration").First();
 
-      string datalayerName = request.Form["DataLayer"];
-      XElement dataLayerConfiguration = XElement.Parse(request.Form["Configuration"]);
-
-      string bindConf = string.Empty;
-
-      string scope = String.Format("{0}.{1}", projectName, applicationName);
-      string appSettingsPath = String.Format("{0}{1}.config", _settings["XmlPath"], scope);
-      string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["XmlPath"], scope);
-      string bindingConfigurationPath = Path.Combine(_settings["BaseDirectoryPath"], relativePath);
-      _settings["Scope"] = scope;
-      _settings["BindingConfigurationPath"] = bindingConfigurationPath;
-
-
-      bindingConfigurationPath = _settings["BindingConfigurationPath"];
-
-      XElement binding = new XElement("module",
+        XElement binding = new XElement("module",
         new XAttribute("name", _settings["Scope"]),
-        new XElement("bind",
-          new XAttribute("name", "DataLayer"),
-          new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-          new XAttribute("to", datalayerName)
-        )
-      );
+          new XElement("bind",
+            new XAttribute("name", "DataLayer"),
+            new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+            new XAttribute("to", dataLayer)
+          )
+        );
 
-      binding.Save(bindingConfigurationPath);
-      _kernel.Load(bindingConfigurationPath);
+        binding.Save(_settings["BindingConfigurationPath"]);
+        _kernel.Load(_settings["BindingConfigurationPath"]);
 
-      _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
-      return _dataLayer.Configure(dataLayerConfiguration);
+        _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
+
+        _dataLayer.Configure(configuration);
+
+      }
+      catch (Exception ex)
+      {
+        response.Messages.Add(String.Format("Failed to Save Configuration[{0}]", _settings["Scope"]));
+        response.Messages.Add(ex.Message);
+        response.Level = StatusLevel.Error;
+      }
+      return response;
+    }
+
+    public Response Upload(string projectName, string applicationName, HttpFileCollection files)
+    {
+      Response response = new Response();
+      response.Messages = new Messages();
+
+      try
+      {
+        string savedFileName = string.Empty;
+
+        foreach (string file in files)
+        {
+          HttpPostedFile hpf = files[file] as HttpPostedFile;
+          if (hpf.ContentLength == 0)
+            continue;
+
+          savedFileName = Path.Combine(
+          AppDomain.CurrentDomain.BaseDirectory,
+          _settings["XmlPath"],
+          Path.GetFileName(hpf.FileName));
+          hpf.SaveAs(savedFileName);
+        }
+
+      }
+      catch (Exception ex)
+      {
+        response.Messages.Add(String.Format("Failed to Upload Files[{0}]", _settings["Scope"]));
+        response.Messages.Add(ex.Message);
+        response.Level = StatusLevel.Error;
+      }
+      return response;
+
     }
   }
+
 }

@@ -175,7 +175,7 @@ Ext.onReady(function () {
           scope: scope,
           application: application,
 
-          url: 'excellibrary/configure',
+          url: 'excel/configure',
           closable: true
         });
 

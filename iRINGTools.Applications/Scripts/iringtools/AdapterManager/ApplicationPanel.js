@@ -41,20 +41,22 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
         this.tbar = this.buildToolbar();
 
-        var scope = ""
+        var scope = "";
 
         if (this.scope != null) {
             scope = this.scope.Name;
         }
 
-        var name = ""
-        var description = ""
-        var dataLayer = ""
+        var name = "";
+        var description = "";
+        var dataLayer = "";
+        var assembly = "";
 
         if (this.record != null) {
             name = this.record.Name;
             description = this.record.Description;
             dataLayer = this.record.DataLayer;
+            assembly = this.record.Assembly;
         }
 
         var dataLayersStore = new Ext.data.JsonStore({
@@ -64,7 +66,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             url: 'directory/dataLayers',
             // reader configs
             root: 'items',
-            idProperty: 'name',
+            idProperty: 'assembly',
             fields: [
                 { name: 'assembly', mapping: 'Assembly', allowBlank: false },
                 { name: 'name', mapping: 'Name', allowBlank: false }
@@ -84,9 +86,11 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             store: dataLayersStore,
             valueField: 'name',
             displayField: 'name',
-            value: dataLayer
+            hiddenName: 'assembly',
+            value: dataLayer,           
+            hiddenValue: assembly
         });
-
+                
         that = this;
 
         this.form = new Ext.FormPanel({
@@ -126,8 +130,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         // super
         AdapterManager.ApplicationPanel.superclass.initComponent.call(this);
 
-        var data = dataLayersStore.getById(dataLayer);
-        cmbDataLayers.Value = data;
+        //var data = dataLayersStore.getById(dataLayer);
+        //cmbDataLayers.Value = data;
 
     },
 

@@ -15,7 +15,7 @@ using Ninject;
 
 namespace org.iringtools.adapter.datalayer 
 {
-  public class MSSQLDataLayer : IDataLayer
+  public class MSSQLDataLayer : BaseDataLayer, IDataLayer
   {
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(MSSQLDataLayer));
@@ -35,14 +35,14 @@ namespace org.iringtools.adapter.datalayer
       _settings = settings;
       projectName = _settings["Scope"].Split('.')[0];
       applicationName = _settings["Scope"].Split('.')[1];
-      _configuration = GetConfiguration(projectName, applicationName);
+      _configuration = GetConfig(projectName, applicationName);
     }
 
     public DataDictionary GetDictionary()
     {
       DataTable dataTable;
       _dataDictionary = new DataDictionary();
-      MSSQLConfiguration sqlObjects = GetConfiguration(projectName, applicationName);
+      MSSQLConfiguration sqlObjects = GetConfig(projectName, applicationName);
       foreach (SqlObject sqlObject in sqlObjects)
       {
         dataTable = new DataTable();
@@ -600,7 +600,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public MSSQLConfiguration GetConfiguration(string projectName, string applicationName)
+    public MSSQLConfiguration GetConfig(string projectName, string applicationName)
     {
       MSSQLConfiguration msSQLCofiguration = new MSSQLConfiguration();
 
@@ -610,10 +610,10 @@ namespace org.iringtools.adapter.datalayer
       {
         msSQLCofiguration = Utility.Read<MSSQLConfiguration>(_xmlPath, true);
       }
-    //  else
-   //   {
-   //     throw new Exception("File " + scope + " not found at " + _xmlPath);
-   //   }
+      //  else
+      //   {
+      //     throw new Exception("File " + scope + " not found at " + _xmlPath);
+      //   }
       return msSQLCofiguration;
     }
 
@@ -622,15 +622,33 @@ namespace org.iringtools.adapter.datalayer
       return _configuration.FirstOrDefault(c => c.ObjectTypeName == objectTypeName);
     }
 
+    public XElement GetConfiguration(string connectionInfo)
+    {
+      MSSQLConfiguration config = null;
 
+      string projectName = _settings["Scope"].Split('.')[0];
+      string applicationName = _settings["Scope"].Split('.')[1];
 
-    public Response Configure(XElement configuration)
+      try
+      { 
+        config = GetConfig(projectName, applicationName);        
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetConfiguration: " + ex);        
+      }
+
+      return Utility.SerializeToXElement<MSSQLConfiguration>(config);
+    }
+
+    public Response SaveConfiguration(XElement configuration)
     {
       Response _response = new Response();
       _response.Messages = new Messages();
       try
       {
-        _configuration = Utility.DeserializeDataContract<MSSQLConfiguration>(configuration.ToString());
+        //_configuration = Utility.DeserializeDataContract<MSSQLConfiguration>(connectionInfo);
+        _configuration = Utility.DeserializeFromXElement<MSSQLConfiguration>(configuration);
         Utility.Write<MSSQLConfiguration>(_configuration, _xmlPath, true);
         _response.Messages.Add("DataLayer configuration Saved successfully");
         _response.Level = StatusLevel.Success;
@@ -642,6 +660,7 @@ namespace org.iringtools.adapter.datalayer
         _response.Level = StatusLevel.Error;
       }
       return _response;
-    }
+    }    
+
   }
 }
