@@ -381,7 +381,7 @@ namespace NUnit.Tests
 
 				dataObjects = _dataLayer.Get("LINES", null);
 			}
-			
+			/*
 			[Test]
 			public void PostDataTransferObjects()
 			{
@@ -391,7 +391,7 @@ namespace NUnit.Tests
 				DataTransferObjects postDtos = null;
 				List<DataTransferObject> dtoList = null;
 
-				/* Copy initial state of the table for ABC */
+				// Copy initial state of the table for ABC 
 			  Initialize();
 
 				setSettings();   
@@ -449,6 +449,7 @@ namespace NUnit.Tests
 				//restore the table
 				_dataLayer.Post(dataObjects);				
 			}
+*/
     }
 }
 
