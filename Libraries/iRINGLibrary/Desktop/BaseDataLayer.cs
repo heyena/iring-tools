@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace org.iringtools.library
 {
-  public class BaseDataLayer : IDataLayer
+  public abstract class BaseDataLayer : IDataLayer
   {
     public virtual IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
