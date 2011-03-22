@@ -67,8 +67,6 @@
   <ItemGroup>
     <Compile Include="ExcelConfiguration.cs" />
     <Compile Include="ExcelDataLayer.cs" />
-    <Compile Include="ExcelController.cs" />
-    <Compile Include="ExcelProvider.cs" />
     <Compile Include="ExcelSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
