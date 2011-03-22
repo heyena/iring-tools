@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="true">
-  <TopNode>[0-1000]C:\iRing\iring-tools-FMG\Tests\NUnit.Tests\NUnit.Tests.csproj</TopNode>
-  <SelectedNode>[0-1000]C:\iRing\iring-tools-FMG\Tests\NUnit.Tests\NUnit.Tests.csproj</SelectedNode>
+  <TopNode>[0-1000]E:\iring-tools\Tests\NUnit.Tests\NUnit.Tests.csproj</TopNode>
+  <SelectedNode>[0-1000]E:\iring-tools\Tests\NUnit.Tests\NUnit.Tests.csproj</SelectedNode>
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
-    <Node UniqueName="[0-1000]C:\iRing\iring-tools-FMG\Tests\NUnit.Tests\NUnit.Tests.csproj" Expanded="true" />
-    <Node UniqueName="[0-1065]C:\iRing\iring-tools-FMG\Tests\NUnit.Tests\Bin\NUnit.Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1000]E:\iring-tools\Tests\NUnit.Tests\NUnit.Tests.csproj" Expanded="true" />
+    <Node UniqueName="[0-1065]E:\iring-tools\Tests\NUnit.Tests\Bin\NUnit.Tests.dll" Expanded="true" />
     <Node UniqueName="[0-1066]NUnit" Expanded="true" />
     <Node UniqueName="[0-1067]NUnit.Tests" Expanded="true" />
   </Nodes>
