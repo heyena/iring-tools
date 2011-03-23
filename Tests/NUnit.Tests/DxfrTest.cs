@@ -24,9 +24,7 @@ namespace NUnit.Tests
 	    private static readonly ILog _logger = LogManager.GetLogger(typeof(DxfrTest));      
       private AdapterSettings _settings = null;
       private string _baseDirectory = string.Empty;
-      private DataTranferProvider _dxfrProvider = null;
-			private IDataLayer _dataLayer = null;
-			private IList<IDataObject> dataObjects = null;			
+      private DataTranferProvider _dxfrProvider = null;			
 
       public DxfrTest()
       {
@@ -37,30 +35,15 @@ namespace NUnit.Tests
         _settings["ApplicationName"] = "ABC";
         _settings["GraphName"] = "Lines";
         _settings["Identifier"] = "90002-RV";
-        _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
+				_settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
         _settings["ExecutingAssemblyName"] = "NUnit.Tests";
         _settings["GraphBaseUri"] = "http://www.example.com/";
 				_baseDirectory = Directory.GetCurrentDirectory();
 				_baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
-				_settings["BaseDirectoryPath"] = _baseDirectory;
-        //setSettings();
+				_settings["BaseDirectoryPath"] = _baseDirectory;       
 				Directory.SetCurrentDirectory(_baseDirectory);
         _dxfrProvider = new DataTranferProvider(_settings);
-      }
-
-			private void setSettings()
-			{
-				_settings = new AdapterSettings();
-				_settings.AppendSettings(ConfigurationManager.AppSettings);
-
-				_settings["ProjectName"] = "12345_000";
-				_settings["ApplicationName"] = "ABC";
-				_settings["GraphName"] = "Lines";
-				_settings["Identifier"] = "90002-RV";
-				_settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
-				_settings["ExecutingAssemblyName"] = "NUnit.Tests";
-				_settings["GraphBaseUri"] = "http://www.example.com/";
-			}
+      }			
 
 			private XDocument ToXml<T>(T dataList)
 			{
@@ -109,11 +92,20 @@ namespace NUnit.Tests
             _settings["XmlPath"]
             );
 
-        benchmark = XDocument.Load(path);
-				String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
-				String benchmarkString = benchmark.ToString();
-
-				Assert.AreEqual(dtiListString, benchmarkString);
+				if (_settings["TestMode"].ToLower() != "usefiles")
+				{
+					XDocument xDocument = ToXml(dtiList.DataTransferIndexList);
+					xDocument.Save(path);
+					Assert.AreNotEqual(null, xDocument);
+				}
+				else
+				{
+					benchmark = XDocument.Load(path);
+					String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
+					String benchmarkString = benchmark.ToString();
+					Assert.AreEqual(dtiListString, benchmarkString);
+				}
+        
       }
 
       [Test]
@@ -155,10 +147,19 @@ namespace NUnit.Tests
             _settings["XmlPath"]
             );
 
-        benchmark = XDocument.Load(path);
-				String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
-				String benchmarkString = benchmark.ToString();
-				Assert.AreEqual(dtiListString, benchmarkString);
+				if (_settings["TestMode"].ToLower() != "usefiles")
+				{
+					XDocument xDocument = ToXml(dtiList.DataTransferIndexList);
+					xDocument.Save(path);
+					Assert.AreNotEqual(null, xDocument);
+				}
+				else
+				{
+					benchmark = XDocument.Load(path);
+					String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
+					String benchmarkString = benchmark.ToString();
+					Assert.AreEqual(dtiListString, benchmarkString);
+				}
       }
 
       [Test]
@@ -174,10 +175,19 @@ namespace NUnit.Tests
             _settings["XmlPath"]
             );
 
-				String manifestString = ToXml(manifest).ToString();
-        benchmark = XDocument.Load(path);				
-				String benchmarkString = benchmark.ToString();
-				Assert.AreEqual(manifestString, benchmarkString);
+				if (_settings["TestMode"].ToLower() != "usefiles")
+				{
+					XDocument xDocument = ToXml(manifest);
+					xDocument.Save(path);
+					Assert.AreNotEqual(null, xDocument);
+				}
+				else
+				{
+					String manifestString = ToXml(manifest).ToString();
+					benchmark = XDocument.Load(path);
+					String benchmarkString = benchmark.ToString();
+					Assert.AreEqual(manifestString, benchmarkString);
+				}
       }
 
 
@@ -205,11 +215,19 @@ namespace NUnit.Tests
             _settings["XmlPath"]
             );
 
-        benchmark = XDocument.Load(path);
-
-				String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
-				String benchmarkString = benchmark.ToString();
-				Assert.AreEqual(dtiListString, benchmarkString);
+				if (_settings["TestMode"].ToLower() != "usefiles")
+				{
+					XDocument xDocument = ToXml(dtiList.DataTransferIndexList);
+					xDocument.Save(path);
+					Assert.AreNotEqual(null, xDocument);
+				}
+				else
+				{
+					benchmark = XDocument.Load(path);
+					String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
+					String benchmarkString = benchmark.ToString();
+					Assert.AreEqual(dtiListString, benchmarkString);
+				}
       }
 
       [Test]
@@ -254,10 +272,19 @@ namespace NUnit.Tests
             _settings["XmlPath"]
           );
 
-        benchmark = XDocument.Load(path);
-				String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
-				String benchmarkString = benchmark.ToString();
-				Assert.AreEqual(dtiListString, benchmarkString);
+				if (_settings["TestMode"].ToLower() != "usefiles")
+				{
+					XDocument xDocument = ToXml(dtiList.DataTransferIndexList);
+					xDocument.Save(path);
+					Assert.AreNotEqual(null, xDocument);
+				}
+				else
+				{
+					benchmark = XDocument.Load(path);
+					String dtiListString = ToXml(dtiList.DataTransferIndexList).ToString();
+					String benchmarkString = benchmark.ToString();
+					Assert.AreEqual(dtiListString, benchmarkString);
+				}
       }
 
       [Test]
@@ -287,10 +314,19 @@ namespace NUnit.Tests
             _settings["XmlPath"]
           );
 
-        benchmark = XDocument.Load(path);
-				String dtosString = ToXml(dtos.DataTransferObjectList).ToString();
-				String benchmarkString = benchmark.ToString();
-				Assert.AreEqual(dtosString, benchmarkString);
+				if (_settings["TestMode"].ToLower() != "usefiles")
+				{
+					XDocument xDocument = ToXml(dtos.DataTransferObjectList);
+					xDocument.Save(path);
+					Assert.AreNotEqual(null, xDocument);
+				}
+				else
+				{
+					benchmark = XDocument.Load(path);
+					String dtosString = ToXml(dtos.DataTransferObjectList).ToString();
+					String benchmarkString = benchmark.ToString();
+					Assert.AreEqual(dtosString, benchmarkString);
+				}
       }
 
       [Test]
@@ -321,79 +357,22 @@ namespace NUnit.Tests
             _settings["XmlPath"]
           );
 
-        benchmark = XDocument.Load(path);
-				String dtosString = ToXml(dtos.DataTransferObjectList).ToString();
-				String benchmarkString = benchmark.ToString();
-				Assert.AreEqual(dtosString, benchmarkString);
+				if (_settings["TestMode"].ToLower() != "usefiles")
+				{
+					XDocument xDocument = ToXml(dtos.DataTransferObjectList);
+					xDocument.Save(path);
+					Assert.AreNotEqual(null, xDocument);
+				}
+				else
+				{
+					benchmark = XDocument.Load(path);
+					String dtosString = ToXml(dtos.DataTransferObjectList).ToString();
+					String benchmarkString = benchmark.ToString();
+					Assert.AreEqual(dtosString, benchmarkString);
+				}
       }
-
-			private IKernel prepareKernel()
-			{
-				IKernel _kernel = null;
-				Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-
-				string relativePath = String.Format(
-					"{0}BindingConfiguration.12345_000.ABC.xml",
-					_settings["XmlPath"]
-					);
-
-				string bindingConfigurationPath = Path.Combine(
-					_settings["BaseDirectoryPath"],
-					relativePath
-					 );
-
-				var ninjectSettings = new NinjectSettings { LoadExtensions = false };
-				_kernel = new StandardKernel(ninjectSettings, new AdapterModule());
-				_kernel.Load(new XmlExtensionModule());
-				_settings = _kernel.Get<AdapterSettings>();
-				_kernel.Load(bindingConfigurationPath);
-
-				relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
-						_settings["XmlPath"]
-					);
-
-				bindingConfigurationPath = Path.Combine(
-					_settings["BaseDirectoryPath"],
-					relativePath
-				);
-
-				_kernel.Load(bindingConfigurationPath);
-				IIdentityLayer _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
-				IDictionary _keyRing = _identityLayer.GetKeyRing();
-				_kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
-
-				if (_keyRing.Count > 0)
-				{
-					if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
-					{
-						string userName = _keyRing["Name"].ToString();
-						_settings["UserName"] = userName;
-					}
-				}				
-				return _kernel;
-			}
-
-			// Copy initial state of the table for ABC
-			private void Initialize()
-			{
-				IKernel _kernel = prepareKernel();
-				_settings["Scope"] = "12345_000.ABC";
-
-				try
-				{					
-					_dataLayer = _kernel.Get<IDataLayer>("DataLayer");
-				}
-				catch (Exception ex)
-				{
-					string message = "Error initializing datalayer: " + ex;
-					_logger.Error(message);
-					throw new Exception(message);
-				}
-
-				dataObjects = _dataLayer.Get("LINES", null);
-			}
-
-      // Copy initial state of the table for ABC
+			
+      // Restore the database ABC to initial state
       private void CleanUpDatabase()
       {
         try
@@ -427,18 +406,12 @@ namespace NUnit.Tests
 			[Test]
 			public void PostDataTransferObjects()
 			{
-        CleanUpDatabase();
-
-				XDocument benchmark = null;
+        XDocument benchmark = null;
 				Response response = null;				
 				DxoRequest dxoRequest = new DxoRequest();
 				DataTransferObjects postDtos = null;
 				List<DataTransferObject> dtoList = null;
-
-				// Copy initial state of the table for ABC 
-			  Initialize();
-
-				setSettings();   
+				
 				dxoRequest.Manifest = _dxfrProvider.GetManifest(_settings["ProjectName"], _settings["ApplicationName"]);
 
 				dxoRequest.DataTransferIndices = new DataTransferIndices();
@@ -475,28 +448,32 @@ namespace NUnit.Tests
 						_settings["XmlPath"]
 					);
 
-				benchmark = XDocument.Load(path);
+				if (_settings["TestMode"].ToLower() != "usefiles")
+				{
+					XDocument xDocument = ToXml(response);
+					xDocument.Save(path);
+					Assert.AreNotEqual(null, xDocument);
+				}
+				else
+				{
+					benchmark = XDocument.Load(path);
 
-				String res = ToXml(response).ToString();
-				Response xmlResponse = Utility.DeserializeDataContract<Response>(benchmark.ToString());
-				
-				Assert.AreEqual(response.Level.ToString(), xmlResponse.Level.ToString());
-				foreach (Status status in response.StatusList)
-					foreach (Status xmlStatus in xmlResponse.StatusList)
-					{
-						Assert.AreEqual(status.Messages.ToString(), xmlStatus.Messages.ToString());
-						Assert.AreEqual(status.Identifier, xmlStatus.Identifier);
-						xmlResponse.StatusList.Remove(xmlStatus);
-						break;
-					}
+					String res = ToXml(response).ToString();
+					Response xmlResponse = Utility.DeserializeDataContract<Response>(benchmark.ToString());
+
+					Assert.AreEqual(response.Level.ToString(), xmlResponse.Level.ToString());
+					foreach (Status status in response.StatusList)
+						foreach (Status xmlStatus in xmlResponse.StatusList)
+						{
+							Assert.AreEqual(status.Messages.ToString(), xmlStatus.Messages.ToString());
+							Assert.AreEqual(status.Identifier, xmlStatus.Identifier);
+							xmlResponse.StatusList.Remove(xmlStatus);
+							break;
+						}
+				}
 
 				//restore the table
-				foreach (DataTransferObject dto in dtoList)
-					dto.transferType = TransferType.Delete;
-
-				_dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
-						_settings["GraphName"], postDtos);
-				_dataLayer.Post(dataObjects);				
+				CleanUpDatabase();
 			}
 
     }
