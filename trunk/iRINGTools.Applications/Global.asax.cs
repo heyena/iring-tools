@@ -23,14 +23,6 @@ namespace iRINGTools.Web
       routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
       routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
 
-      /*
-      routes.MapRoute(
-          "ScopeApplication", // Route name
-          "{controller}/{action}/{scope}/{application}", // URL with parameters
-          new { controller = "Home", action = "Index", scope = UrlParameter.Optional, application = UrlParameter.Optional } // Parameter defaults
-      );
-      */
-
       routes.MapRoute(
           "Default", // Route name
           "{controller}/{action}/{id}", // URL with parameters
@@ -63,8 +55,8 @@ namespace iRINGTools.Web
       //Bind<IFormsAuthentication>().To<FormsAuthenticationService>();
       //Bind<IMembershipService>().To<AccountMembershipService>();
       //Bind<MembershipProvider>().ToConstant(Membership.Provider);
-      Bind<IDictionaryRepository>().To<DictionaryRepository>().InSingletonScope();
-      Bind<org.iringtools.datalayer.excel.IExcelRepository>().To<org.iringtools.datalayer.excel.IExcelRepository>();
+      Bind<IDictionaryRepository>().To<DictionaryRepository>();
+      Bind<org.iringtools.datalayer.excel.IExcelRepository>().To<org.iringtools.datalayer.excel.ExcelRepository>();
     }
   }
 }
