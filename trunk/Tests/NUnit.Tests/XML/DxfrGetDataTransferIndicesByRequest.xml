@@ -1,4 +1,5 @@
-﻿<ArrayOfdataTransferIndex xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/dxfr/dti">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfdataTransferIndex xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/dxfr/dti">
   <dataTransferIndex>
     <identifier>90003-SC</identifier>
     <hashValue i:nil="true" />

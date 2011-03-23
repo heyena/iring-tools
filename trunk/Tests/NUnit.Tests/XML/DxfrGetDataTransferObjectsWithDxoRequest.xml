@@ -1,4 +1,5 @@
-﻿<ArrayOfdataTransferObject xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/dxfr/dto">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArrayOfdataTransferObject xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/dxfr/dto">
   <dataTransferObject>
     <identifier>90002-RV</identifier>
     <classObjects>
