@@ -117,9 +117,10 @@ Ext.onReady(function () {
             'nodeId': node.attributes.id,
             'parentNodeID': node.parentNode.attributes.id
          },
-         success: function (o) {
+          success: function (o) {
+            contentPanel.removeAll(true);
             directoryPanel.reload();
-            Ext.Msg.alert('Sucess', 'Node has been deleted');
+            Ext.Msg.alert('Sucess', 'Node [' + node.attributes.id.split('/')[1] + '] has been deleted');
          },
          failure: function (f, a) {
            Ext.Msg.alert('Warning', 'Error!!!');
