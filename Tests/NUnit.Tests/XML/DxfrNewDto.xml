@@ -1,8 +1,8 @@
 ﻿<dataTransferObject xmlns="http://www.iringtools.org/dxfr/dto" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-  <identifier>99999-O</identifier>
+  <identifier>99999-O</identifier>  
   <classObjects>
     <classObject>
-      <classId>rdl:R99992462550</classId>
+      <classId>rdl:R19192462550</classId>
       <name>PIPING NETWORK SYSTEM</name>
       <identifier>99999-O</identifier>
       <templateObjects>
@@ -26,7 +26,7 @@
               <roleId>tpl:R22674749688</roleId>
               <name>valIdentifier</name>
               <dataType>xsd:string</dataType>
-              <value>66015-O</value>
+              <value>99999-O</value>
             </roleObject>
           </roleObjects>
         </templateObject>
@@ -49,7 +49,7 @@
               <type>Reference</type>
               <roleId>tpl:R62348020201</roleId>
               <name>whole</name>
-              <value>#66</value>
+              <value>#190</value>
               <relatedClassName>PLANT AREA</relatedClassName>
             </roleObject>
           </roleObjects>
@@ -73,7 +73,7 @@
               <type>Reference</type>
               <roleId>tpl:R74328815710</roleId>
               <name>representation</name>
-              <value>rdl:R99486931975</value>
+              <value>#90-AO5676</value>
               <relatedClassName>P AND I DIAGRAM</relatedClassName>
             </roleObject>
           </roleObjects>
@@ -107,7 +107,7 @@
               <roleId>tpl:R90688063648</roleId>
               <name>valValue</name>
               <dataType>xsd:double</dataType>
-              <value></value>
+              <value>40</value>
             </roleObject>
           </roleObjects>
         </templateObject>
@@ -116,7 +116,7 @@
     <classObject>
       <classId>rdl:R49658319833</classId>
       <name>PLANT AREA</name>
-      <identifier>66</identifier>
+      <identifier>90</identifier>
       <templateObjects>
         <templateObject>
           <templateId>tpl:R66921101783</templateId>
@@ -138,7 +138,7 @@
               <roleId>tpl:R22674749688</roleId>
               <name>valIdentifier</name>
               <dataType>xsd:string</dataType>
-              <value>66</value>
+              <value>190</value>
             </roleObject>
           </roleObjects>
         </templateObject>
@@ -147,7 +147,7 @@
     <classObject>
       <classId>rdl:R35385587762</classId>
       <name>FLUID STREAM</name>
-      <identifier>015</identifier>
+      <identifier>002</identifier>
       <templateObjects>
         <templateObject>
           <templateId>tpl:R74424074375</templateId>
@@ -175,7 +175,7 @@
               <roleId>tpl:R65789235245</roleId>
               <name>valValue</name>
               <dataType>xsd:double</dataType>
-              <value>999</value>
+              <value>163</value>
             </roleObject>
           </roleObjects>
         </templateObject>
@@ -184,7 +184,7 @@
     <classObject>
       <classId>rdl:R99486931975</classId>
       <name>P AND I DIAGRAM</name>
-      <identifier></identifier>
+      <identifier>90-AO5676</identifier>
       <templateObjects>
         <templateObject>
           <templateId>tpl:R30193386273</templateId>
@@ -206,7 +206,7 @@
               <roleId>tpl:R22674749688</roleId>
               <name>valIdentifier</name>
               <dataType>xsd:string</dataType>
-              <value></value>
+              <value>90-AO5676</value>
             </roleObject>
           </roleObjects>
         </templateObject>
