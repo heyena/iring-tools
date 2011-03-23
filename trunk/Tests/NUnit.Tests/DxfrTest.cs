@@ -49,7 +49,16 @@ namespace NUnit.Tests
 
 			private void setSettings()
 			{
+				_settings = new AdapterSettings();
+				_settings.AppendSettings(ConfigurationManager.AppSettings);
 
+				_settings["ProjectName"] = "12345_000";
+				_settings["ApplicationName"] = "ABC";
+				_settings["GraphName"] = "Lines";
+				_settings["Identifier"] = "90002-RV";
+				_settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
+				_settings["ExecutingAssemblyName"] = "NUnit.Tests";
+				_settings["GraphBaseUri"] = "http://www.example.com/";
 			}
 
 			private XDocument ToXml<T>(T dataList)
@@ -382,7 +391,7 @@ namespace NUnit.Tests
 
 				dataObjects = _dataLayer.Get("LINES", null);
 			}
-			/*
+			
 			[Test]
 			public void PostDataTransferObjects()
 			{
@@ -448,9 +457,14 @@ namespace NUnit.Tests
 					}
 
 				//restore the table
+				foreach (DataTransferObject dto in dtoList)
+					dto.transferType = TransferType.Delete;
+
+				_dxfrProvider.PostDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
+						_settings["GraphName"], postDtos);
 				_dataLayer.Post(dataObjects);				
 			}
-*/
+
     }
 }
 
