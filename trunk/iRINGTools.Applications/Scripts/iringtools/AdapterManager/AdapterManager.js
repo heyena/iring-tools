@@ -119,7 +119,7 @@ Ext.onReady(function () {
          },
           success: function (o) {
             contentPanel.removeAll(true);
-            directoryPanel.reload();
+            directoryPanel.reload();                                                                                  
             Ext.Msg.alert('Sucess', 'Node [' + node.attributes.id.split('/')[1] + '] has been deleted');
          },
          failure: function (f, a) {

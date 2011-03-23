@@ -314,8 +314,15 @@ namespace iRINGTools.Web.Controllers
 
     public JsonResult DeleteNode()
     {
-      string scopeName = Request.QueryString["parentNodeID"];
-      string appName = Request.QueryString["nodeID"].Split('/')[1];
+      string scopeName = string.Empty;
+      string appName = string.Empty;
+      string[] nodes = Request.QueryString["nodeID"].Split('/');
+      if (nodes.Length == 2)
+      {
+        appName = nodes[1];
+      }
+      scopeName = nodes[0];
+
       ScopeProjects scopes = _dictionaryRepository.GetScopes();
       ScopeProject scope = scopes.FirstOrDefault(c => c.Name == scopeName);
       ScopeApplication app = scope.Applications.FirstOrDefault(c => c.Name == appName);
