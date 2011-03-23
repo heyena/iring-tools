@@ -37,24 +37,21 @@ namespace org.iringtools.datalayer.excel
   public class ExcelController : Controller
   {
 
-    IExcelProvider _excelProvider { get; set; }
+    IExcelRepository _excelRepository { get; set; }
 
     NameValueCollection _settings = null;
     
     public ExcelController()
-      : this(new ExcelProvider())
+      : this(new ExcelRepository())
     {
     }
 
-    public ExcelController(IExcelProvider provider)            
+    public ExcelController(IExcelRepository repository)            
     {
-      _settings = ConfigurationManager.AppSettings;
-      //_adapterServiceURI = _settings["AdapterServiceUri"];
-      //_refDataServiceURI = _settings["ReferenceDataServiceUri"];
-
+      _settings = ConfigurationManager.AppSettings;      
       _settings["App_Data"] = ".\\App_Data\\";
 
-      _excelProvider = provider;
+      _excelRepository = repository;
     }    
 
     //
@@ -85,9 +82,7 @@ namespace org.iringtools.datalayer.excel
         Directory.CreateDirectory(location);
         hpf.SaveAs(savedFileName);
       }
-
-      _excelProvider.Source = savedFileName;
-            
+                  
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);      
     }
 
@@ -95,22 +90,41 @@ namespace org.iringtools.datalayer.excel
     {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-      if (_excelProvider != null)
+      if (_excelRepository != null)
       {
-        _excelProvider.Source = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["App_Data"], form["Scope"], form["Application"], form["path"]);
+        string sourcePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["App_Data"], form["scope"], form["application"], form["filename"]);
 
         switch (form["type"])
         {
           case "ExcelWorkbookNode":
             {
-              List<ExcelWorksheet> worksheets = _excelProvider.GetWorksheets();
+              List<ExcelWorksheet> worksheets = _excelRepository.GetWorksheets(sourcePath);
 
               if (worksheets != null)
               {
                 foreach (ExcelWorksheet worksheet in worksheets)
                 {
-                  //worksheet.Columns = _excelProvider.GetColumns(worksheet.Name);
+                  List<JsonTreeNode> columnNodes = new List<JsonTreeNode>();                
 
+                  foreach (ExcelColumn column in worksheet.Columns)
+                  {
+                    JsonTreeNode columnNode = new JsonTreeNode
+                    {
+                      nodeType = "async",
+                      type = "ExcelColumnNode",
+                      //icon = "Content/img/system-file-manager.png",
+                      id = column.Name,
+                      text = column.Name,
+                      @checked = false,
+                      expanded = false,
+                      leaf = true,
+                      children = null,
+                      record = column
+                    };
+
+                    columnNodes.Add(columnNode);
+                  }
+                  
                   JsonTreeNode node = new JsonTreeNode
                   {
                     nodeType = "async",
@@ -120,8 +134,8 @@ namespace org.iringtools.datalayer.excel
                     text = worksheet.Name,
                     @checked = false,
                     expanded = false,
-                    leaf = true,
-                    children = null,
+                    leaf = false,
+                    children = columnNodes,
                     record = worksheet
                   };
 
@@ -131,23 +145,6 @@ namespace org.iringtools.datalayer.excel
 
               break;
             }
-          /*
-          case "ExcelWorksheetNode":
-            {
-
-              List<ExcelColumn> columns = _excelProvider.GetColumns(form["node"]);
-
-              if (columns != null)
-              {
-                
-
-                  nodes.Add(node);
-                }
-              }
-
-              break;
-            }
-          */
         }
       }
 

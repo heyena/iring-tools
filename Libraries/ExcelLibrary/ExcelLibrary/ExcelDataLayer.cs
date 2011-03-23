@@ -15,23 +15,16 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace org.iringtools.adapter.datalayer
 {
-  public class ExcelDataObject : IDataObject
+  public class ExcelDataObject : Dictionary<string, object>, IDataObject
   {
-
-    private Dictionary<string, object> Row { get; set; }
-
-    public ExcelDataObject()
-    {
-      Row = new Dictionary<string, object>();
-    }
 
     public string SheetName { get; set; }
 
     public object GetPropertyValue(string propertyName)
     {
-      if (Row.ContainsKey(propertyName))
+      if (this.ContainsKey(propertyName))
       {
-        return Row[propertyName];
+        return this[propertyName];
       }
       else
       {
@@ -51,46 +44,40 @@ namespace org.iringtools.adapter.datalayer
 
     public void SetPropertyValue(string propertyName, object value)
     {
-      Row[propertyName] = value;
+      this[propertyName] = value;
     }
   }
 
-  public class ExcelDataLayer : IDataLayer
+  public class ExcelDataLayer : BaseDataLayer, IDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ExcelDataLayer));
     private AdapterSettings _settings = null;
-    private string _configurationPath = String.Empty;
-    private ExcelConfiguration _configuration = null;
-    private Dictionary<string, Type> _dynamicTypes = new Dictionary<string, Type>();
-   
+    private ExcelProvider _provider = null;
+
     [Inject]
     public ExcelDataLayer(AdapterSettings settings)
     {
       try
       {
-        _settings = settings;
-
-        _configurationPath = _settings["XmlPath"] + "excel-configuration." + _settings["Scope"] + ".xml";
-        _configuration = ProcessExcelConfig(_configurationPath);
-
+        _settings = settings;        
+        _provider = new ExcelProvider(settings);
       }
       catch (Exception e)
       {
-        _logger.Error("Error in processing the Configuration File [" + _configurationPath + "].", e);
+        _logger.Error("Error in ExcelDataLayer contructor.", e);
       }
     }
 
-    public IList<IDataObject> Create(string objectType, IList<string> identifiers)
+    public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
       try
       {
-        ExcelWorksheet cfWorksheet = _configuration.Worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == objectType);
+        ExcelWorksheet cfWorksheet = _provider.GetWorksheet(objectType);
 
         IList<IDataObject> dataObjects = new List<IDataObject>();
 
         objectType = objectType.Substring(objectType.LastIndexOf('.') + 1);
-        //Type type = this.GetType(_settings["projectName"], _settings["applicationName"], objectType);
-
+        
         if (identifiers != null && identifiers.Count > 0)
         {
           foreach (string identifier in identifiers)
@@ -122,12 +109,14 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
+        string identifier = _provider.GetIdentifier(objectType);
+
         IList<string> identifiers = new List<string>();
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
 
         foreach (IDataObject dataObject in dataObjects)
         {
-          identifiers.Add((string)dataObject.GetPropertyValue("Tag"));
+          identifiers.Add((string)dataObject.GetPropertyValue(identifier));
         }
 
         return Delete(objectType, identifiers);
@@ -150,20 +139,10 @@ namespace org.iringtools.adapter.datalayer
         status.Messages.Add("Nothing to delete.");
         response.Append(status);
         return response;
-      }
-
-      Excel.Application xlApplication = null;
-      Excel.Workbook xlWorkBook = null;
+      }      
 
       try
-      {
-
-        xlApplication = new Excel.Application();
-        xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-
-        ExcelWorksheet cfWorksheet = GetConfigWorkSheet(objectType);
-        Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
-
+      {        
         IList<IDataObject> dataObjects = new List<IDataObject>();
 
         if (identifiers != null && identifiers.Count > 0)
@@ -172,12 +151,11 @@ namespace org.iringtools.adapter.datalayer
           {
             Status status = new Status();
             status.Identifier = identifier;
-
-            int row = GetRowIndex(xlWorksheet, cfWorksheet, identifier);
-
+                        
             try
             {
-              xlWorksheet.Rows[row].Delete(Excel.XlDeleteShiftDirection.xlShiftUp);
+              _provider.Delete(objectType, identifier);
+                            
               status.Messages.Add("Data object [" + identifier + "] deleted successfully.");
             }
             catch (Exception ex)
@@ -191,9 +169,6 @@ namespace org.iringtools.adapter.datalayer
           }
         }
 
-        System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorksheet);
-        xlWorksheet = null;
-
         return response;
       }
       catch (Exception ex)
@@ -201,63 +176,14 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error in DeletList: " + ex);
         throw new Exception("Error while delete a list of data objects of type [" + objectType + "].", ex);
       }
-      finally
-      {
-        if (xlWorkBook != null)
-        {
-          xlWorkBook.Close(true, Type.Missing, Type.Missing);
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
-          xlWorkBook = null;
-        }
-
-        if (xlApplication != null)
-        {
-          xlApplication.Quit();
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApplication);
-          xlApplication = null;
-        }
-
-        GC.Collect();
-      }
     }
 
     public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
-    {
-      Excel.Application xlApplication = null;
-      Excel.Workbook xlWorkBook = null;
-
+    {      
       try
       {
-        xlApplication = new Excel.Application();
-        xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-
-        ExcelWorksheet cfWorksheet = GetConfigWorkSheet(objectType);
-        Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
-
-        List<IDataObject> dataObjects = new List<IDataObject>();
-        //Type type = this.GetType(_settings["projectName"], _settings["applicationName"], objectType);
-
-        Excel.Range usedRange = xlWorksheet.UsedRange;
-
-        for (int row = 2; row <= usedRange.Rows.Count; row++)
-        {
-          //IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
-          ExcelDataObject dataObject = new ExcelDataObject()
-          {
-            SheetName = objectType
-          };
-
-          foreach (ExcelColumn column in cfWorksheet.Columns)
-          {
-            dataObject.SetPropertyValue(column.Name, xlWorksheet.Cells[row, column.Index].Value2);
-          }
-
-          dataObjects.Add(dataObject);
-        }
-
-        System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorksheet);
-        xlWorksheet = null;
-
+        List<IDataObject> dataObjects = _provider.GetDataObjects(objectType);
+        
         // Apply filter
         if (filter != null && filter.Expressions.Count > 0)
         {
@@ -311,112 +237,20 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error in GetList: " + ex);
         throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
       }
-      finally
-      {
-        if (xlWorkBook != null)
-        {
-          xlWorkBook.Close(true, Type.Missing, Type.Missing);
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
-          xlWorkBook = null;
-        }
-
-        if (xlApplication != null)
-        {
-          xlApplication.Quit();
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApplication);
-          xlApplication = null;
-        }
-
-        GC.Collect();
-      }
     }
 
     public IList<IDataObject> Get(string objectType, IList<string> identifiers)
-    {
-      Excel.Application xlApplication = null;
-      Excel.Workbook xlWorkBook = null;
-
+    {      
       try
       {
-        xlApplication = new Excel.Application();
-        xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
 
-        ExcelWorksheet cfWorksheet = GetConfigWorkSheet(objectType);
-        Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
-
-        IList<IDataObject> dataObjects = new List<IDataObject>();
-        //Type type = this.GetType(_settings["projectName"], _settings["applicationName"], objectType);
-
-        if (identifiers != null && identifiers.Count > 0)
-        {
-          foreach (string identifier in identifiers)
-          {
-            //IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
-            ExcelDataObject dataObject = new ExcelDataObject()
-            {
-              SheetName = objectType
-            };
-
-            dataObject.SetPropertyValue(cfWorksheet.Identifier, identifier);
-
-            int row = GetRowIndex(xlWorksheet, cfWorksheet, identifier);
-
-            foreach (ExcelColumn column in cfWorksheet.Columns)
-            {
-              dataObject.SetPropertyValue(column.Name, xlWorksheet.Cells[row, column.Index].Value2);
-            }
-
-            dataObjects.Add(dataObject);
-          }
-        }
-        else
-        {
-          Excel.Range usedRange = xlWorksheet.UsedRange;
-
-          for (int row = cfWorksheet.DataIdx; row <= usedRange.Rows.Count; row++)
-          {
-            //IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
-            ExcelDataObject dataObject = new ExcelDataObject()
-            {
-              SheetName = objectType
-            };
-
-            foreach (ExcelColumn column in cfWorksheet.Columns)
-            {
-              dataObject.SetPropertyValue(column.Name, xlWorksheet.Cells[row, column.Index].Value2);
-            }
-
-            dataObjects.Add(dataObject);
-          }
-        }
-
-        System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorksheet);
-        xlWorksheet = null;
-
-        return dataObjects;
+        return _provider.GetDataObjects(objectType, identifiers);                
+        
       }
       catch (Exception ex)
       {
         _logger.Error("Error in GetList: " + ex);
         throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
-      }
-      finally
-      {
-        if (xlWorkBook != null)
-        {
-          xlWorkBook.Close(true, Type.Missing, Type.Missing);
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
-          xlWorkBook = null;
-        }
-
-        if (xlApplication != null)
-        {
-          xlApplication.Quit();
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApplication);
-          xlApplication = null;
-        }
-
-        GC.Collect();
       }
     }
 
@@ -429,11 +263,12 @@ namespace org.iringtools.adapter.datalayer
           dataObjects = new List<DataObject>()
         };
 
-        foreach (ExcelWorksheet worksheet in _configuration.Worksheets)
+        foreach (ExcelWorksheet worksheet in _provider.GetWorksheets())
         {
           DataObject dataObject = new DataObject()
           {
-            objectName = worksheet.Name,
+            objectName = worksheet.Label,
+            tableName = worksheet.Name,
             dataProperties = new List<DataProperty>()
           };
 
@@ -443,11 +278,12 @@ namespace org.iringtools.adapter.datalayer
           {
             DataProperty dataProperty = new DataProperty()
             {
-              propertyName = column.Name,
+              propertyName = column.Label,
+              columnName = column.Name,
               dataType = column.DataType
             };
 
-            if (worksheet.Identifier == column.Name)
+            if (worksheet.Identifier == column.Label)
             {
               dataObject.addKeyProperty(dataProperty);
             }
@@ -470,14 +306,14 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        ExcelWorksheet cfWorkSheet = GetConfigWorkSheet(objectType);
+        string identifier = _provider.GetIdentifier(objectType);
 
         List<string> identifiers = new List<string>();
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
 
         foreach (IDataObject dataObject in dataObjects)
         {
-          identifiers.Add((string)dataObject.GetPropertyValue(cfWorkSheet.Identifier));
+          identifiers.Add((string)dataObject.GetPropertyValue(identifier));
         }
 
         return identifiers;
@@ -493,7 +329,6 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        ExcelWorksheet cfWorkSheet = GetConfigWorkSheet(objectType);
 
         List<string> identifiers = new List<string>();
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
@@ -505,71 +340,12 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error in GetIdentifiers: " + ex);
         throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
       }
-    }
-
-    private Excel.Worksheet GetWorkSheet(string objectType, Excel.Workbook xlWorkBook, ExcelWorksheet cfWorksheet)
-    {
-      try
-      {
-        dynamic worksheet = xlWorkBook.Worksheets.get_Item(objectType);
-
-        if (worksheet == null)
-        {
-          Excel.Worksheet nwWorksheet = xlWorkBook.Worksheets.Add(Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-          nwWorksheet.Name = objectType;
-
-          foreach (ExcelColumn column in cfWorksheet.Columns)
-          {
-            nwWorksheet.Cells[1, column.Index] = column.Name;
-          }
-
-          worksheet = nwWorksheet;
-        }
-
-        return (Excel.Worksheet)worksheet;
-      }
-      catch (Exception e)
-      {
-        throw new Exception("Error getting excel worksheet for object of type [" + objectType + "].", e);
-      }
-    }
-
-    private int GetRowIndex(Excel.Worksheet xlWorksheet, ExcelWorksheet cfWorksheet, string identifier)
-    {
-      try
-      {
-        Excel.Range usedRange = xlWorksheet.UsedRange;
-        Excel.Range findRange = usedRange.Find(identifier, Type.Missing, Type.Missing, Type.Missing, Excel.XlSearchOrder.xlByRows, Excel.XlSearchDirection.xlNext, true, Type.Missing, Type.Missing);
-
-        int row = 0;
-        if (findRange != null)
-        {
-          row = findRange.Cells[1, 1].Row;
-        }
-        else
-        {
-          row = usedRange.Rows.Count + 1;
-        }
-
-        return row;
-      }
-      catch (Exception e)
-      {
-        throw new Exception("Error getting excel row index for object [" + cfWorksheet.Name + "].", e);
-      }
-    }
-
-    private ExcelWorksheet GetConfigWorkSheet(string objectType)
-    {
-      return _configuration.Worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == objectType);
-    }
+    }     
 
     public Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
-      Excel.Application xlApplication = null;
-      Excel.Workbook xlWorkBook = null;
-
+      
       if (dataObjects == null || dataObjects.Count == 0)
       {
         Status status = new Status();
@@ -581,27 +357,10 @@ namespace org.iringtools.adapter.datalayer
 
       try
       {
-        xlApplication = new Excel.Application();
-        xlWorkBook = xlApplication.Workbooks.Open(_configuration.Location, 0, false, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-
+        
         foreach (IDataObject dataObject in dataObjects)
         {
-          string objectType = ((ExcelDataObject)dataObject).SheetName;
-          ExcelWorksheet cfWorksheet = GetConfigWorkSheet(objectType);
-
-          Excel.Worksheet xlWorksheet = GetWorkSheet(objectType, xlWorkBook, cfWorksheet);
-
-          string identifier = dataObject.GetPropertyValue(cfWorksheet.Identifier).ToString();
-
-          int row = GetRowIndex(xlWorksheet, cfWorksheet, identifier);
-
-          foreach (ExcelColumn column in cfWorksheet.Columns)
-          {
-            xlWorksheet.Cells[row, column.Index] = dataObject.GetPropertyValue(column.Name);
-          }
-
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorksheet);
-          xlWorksheet = null;
+          _provider.Update((ExcelDataObject)dataObject);          
         }
 
         return response;
@@ -614,200 +373,16 @@ namespace org.iringtools.adapter.datalayer
         string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
         throw new Exception("Error while posting data objects of type [" + objectType + "].", ex);
       }
-      finally
-      {
-        if (xlWorkBook != null)
-        {
-          xlWorkBook.Close(true, Type.Missing, Type.Missing);
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
-          xlWorkBook = null;
-        }
-
-        if (xlApplication != null)
-        {
-          xlApplication.Quit();
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApplication);
-          xlApplication = null;
-        }
-
-        GC.Collect();
-      }
-    }
-
-    private List<ExcelColumn> CreateConfigColumns(Excel.Worksheet xlWorkSheet, ExcelWorksheet cfWorkSheet)
-    {
-      List<ExcelColumn> columns = new List<ExcelColumn>();
-
-      Excel.Range usedRange = xlWorkSheet.UsedRange;
-
-      for (int i = 1; i <= usedRange.Columns.Count; i++)
-      {
-        string header = usedRange.Cells[cfWorkSheet.HeaderIdx, i].Value2;
-
-        if (header != null)
-        {
-          header = header.Trim().Replace(" ", String.Empty);
-
-          if (header != null && !header.Equals(String.Empty))
-          {
-            ExcelColumn cfColumn = new ExcelColumn()
-            {
-              Index = i,
-              Name = header,
-              DataType = DataType.String
-            };
-
-            columns.Add(cfColumn);
-          }
-        }
-      }
-
-      if (columns.Count > 0)
-      {
-        return columns;
-      }
-      else
-      {
-        return null;
-      }
-    }
-
-    private ExcelConfiguration ProcessExcelConfig(string filePath)
-    {
-      Excel.Application xlApplication = null;
-      Excel.Workbook xlWorkBook = null;
-      ExcelConfiguration config = null;
-
-      try
-      {
-        config = Utility.Read<ExcelConfiguration>(_configurationPath, true);
-
-        xlApplication = new Excel.Application();
-        xlWorkBook = xlApplication.Workbooks.Open(config.Location, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-
-        if (config.Worksheets == null)
-        {
-          config.Worksheets = new List<ExcelWorksheet>();
-
-          foreach (Excel.Worksheet xlWorkSheet in xlWorkBook.Worksheets)
-          {
-            ExcelWorksheet cfWorkSheet = new ExcelWorksheet()
-            {
-              Name = xlWorkSheet.Name,
-              HeaderIdx = 1,
-              DataIdx = 2
-            };
-
-            cfWorkSheet.Columns = CreateConfigColumns(xlWorkSheet, cfWorkSheet);
-
-            if (cfWorkSheet.Columns != null && cfWorkSheet.Columns.Count > 0)
-            {
-              cfWorkSheet.Identifier = cfWorkSheet.Columns[0].Name;
-              config.Worksheets.Add(cfWorkSheet);
-            }
-          }
-        }
-        else
-        {
-
-          foreach (ExcelWorksheet cfWorkSheet in config.Worksheets)
-          {
-            if (cfWorkSheet.Columns == null)
-            {
-              Excel.Worksheet xlWorkSheet = xlWorkBook.Worksheets[cfWorkSheet.Name];
-              if (xlWorkSheet != null)
-              {
-                cfWorkSheet.Columns = CreateConfigColumns(xlWorkSheet, cfWorkSheet);
-
-                if (cfWorkSheet.HeaderIdx <= 0)
-                  cfWorkSheet.HeaderIdx = 1;
-
-                if (cfWorkSheet.DataIdx <= 0)
-                  cfWorkSheet.DataIdx = 2;
-
-                if (cfWorkSheet.Identifier.Equals(String.Empty) && cfWorkSheet.Columns.Count > 0)
-                  cfWorkSheet.Identifier = cfWorkSheet.Columns[0].Name;
-              }
-              else
-              {
-                _logger.Error("Excel Workbook [" + filePath + "] doesn't have a Worksheet named " + cfWorkSheet.Name + ".");
-              }
-            }
-          }
-        }
-        return config;
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error Processing Excel Configuration File [" + filePath + "]: " + ex);
-        return config;
-      }
-      finally
-      {
-        if (xlWorkBook != null)
-        {
-          xlWorkBook.Close(true, Type.Missing, Type.Missing);
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlWorkBook);
-          xlWorkBook = null;
-        }
-
-        if (xlApplication != null)
-        {
-          xlApplication.Quit();
-          System.Runtime.InteropServices.Marshal.ReleaseComObject(xlApplication);
-          xlApplication = null;
-        }
-
-        GC.Collect();
-      }
-
-    }
-
-    //private Type GetType(string projectName, string applicationName, string className)
-    //{
-    //  string keyType = String.Format("Model_{0}_{1}.{2}", projectName, applicationName, className);
-
-    //  if (_dynamicTypes.ContainsKey(keyType))
-    //  {
-    //    return _dynamicTypes[keyType];
-    //  }
-    //  else
-    //  {         
-    //    // Create a new Assembly for Methods
-    //    AssemblyName assemName = new AssemblyName();
-    //    assemName.Name = "ExcelLibrary";
-    //    AssemblyBuilder assemBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemName, AssemblyBuilderAccess.RunAndCollect);
-
-    //    // Create a new module within this assembly
-    //    ModuleBuilder moduleBuilder = assemBuilder.DefineDynamicModule("Model_" + projectName + "_" + applicationName);
-
-    //    // Create a new type within the module
-    //    TypeBuilder typeBuilder = moduleBuilder.DefineType(className, TypeAttributes.Public, typeof(ExcelDataObject));
-
-    //    // Create a type.
-    //    return typeBuilder.CreateType();
-    //  }
-    //}  
-
-    #region IDataLayer Members
-
-    public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
-    {
-      return new List<IDataObject>();
-    }
-
-    #endregion
-
-
+    }    
+   
     public Response Configure(XElement configuration)
     {
       Response _response = new Response();
       _response.Messages = new Messages();
       try
       {
-
-        _configuration = Utility.DeserializeDataContract<ExcelConfiguration>(configuration.ToString());
-        Utility.Write<ExcelConfiguration>(_configuration, _configurationPath, true);
+        _provider.Configure(Utility.DeserializeDataContract<ExcelConfiguration>(configuration.ToString()));
+                
         _response.Messages.Add("DataLayer configuration Saved successfully");
         _response.Level = StatusLevel.Success;
       }

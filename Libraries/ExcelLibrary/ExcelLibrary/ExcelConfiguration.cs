@@ -11,10 +11,13 @@ namespace org.iringtools.datalayer.excel
   [DataContract(Name = "workbook")]
   public class ExcelConfiguration
   {
-    [DataMember(Name = "location", Order = 0)]
+    [DataMember(Name = "location", Order = 0, IsRequired = true)]
     public string Location { get; set; }
 
-    [DataMember(Name = "worksheets", Order = 1)]
+    [DataMember(Name = "generate", Order = 1)]
+    public bool Generate { get; set; }
+            
+    [DataMember(Name = "worksheets", Order = 2)]
     public List<ExcelWorksheet> Worksheets { get; set; }  
   }
 
@@ -29,6 +32,9 @@ namespace org.iringtools.datalayer.excel
 
     [DataMember(Name = "identifier", Order = 2)]
     public string Identifier { get; set; }
+
+    [DataMember(Name = "range", Order = 1)]
+    public string Range { get; set; }
 
     [DataMember(Name = "header", Order = 3)]
     public int HeaderIdx { get; set; }
