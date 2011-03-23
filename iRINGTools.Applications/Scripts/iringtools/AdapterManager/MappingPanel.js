@@ -36,7 +36,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         this.treeLoader = new Ext.tree.TreeLoader({
             baseParams: {
                 type: null,
-                graphMap: this.node.text
+                graphMap: null
             },
             url: this.navigationUrl
         });

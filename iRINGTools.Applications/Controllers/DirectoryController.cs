@@ -243,7 +243,7 @@ namespace iRINGTools.Web.Controllers
 
             string context = form["node"];
             string scopeName = context.Split('/')[0];
-            string applicationName = context.Split('/')[1];            
+            string applicationName = context.Split('/')[1];
 
             Mapping mapping = _dictionaryRepository.GetMapping(scopeName, applicationName);
 
@@ -289,5 +289,51 @@ namespace iRINGTools.Web.Controllers
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult Scope(FormCollection form)
+    {
+      ScopeProject scope = new ScopeProject();
+      scope.Applications = new ScopeApplications();
+      scope.Name = form["name"];
+      scope.Description = form["description"];
+      string success = _dictionaryRepository.AddScope(scope);
+      return Json(new
+      {
+        success = true
+      }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult Application(FormCollection form)
+    {
+      ScopeApplication app = new ScopeApplication { Name = form["name"], Description = form["description"] };
+      string succes = _dictionaryRepository.AddApplication(form["scope"], app); 
+      return Json(new
+      {
+        success = true
+      }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult DeleteNode()
+    {
+      string scopeName = Request.QueryString["parentNodeID"];
+      string appName = Request.QueryString["nodeID"].Split('/')[1];
+      ScopeProjects scopes = _dictionaryRepository.GetScopes();
+      ScopeProject scope = scopes.FirstOrDefault(c => c.Name == scopeName);
+      ScopeApplication app = scope.Applications.FirstOrDefault(c => c.Name == appName);
+      if (app != null)
+      {
+        string success = this._dictionaryRepository.DeleteApplication(scope.Name, app.Name);
+
+      } else if (scope != null)
+      {
+        string success = _dictionaryRepository.DeleteScope(scope.Name);
+      }
+
+      return Json(new
+      {
+        success = true
+      }, JsonRequestBehavior.AllowGet);
+    }
   }
+
 }
+
