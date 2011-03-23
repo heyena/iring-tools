@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RDF xmlns:compnayPayLoad="http://rdl.rdswip.org/sampleReferenceData#" xmlns:part4="http://rdl.rdlfacade.org/data#" xmlns:part7="http://tpl.rdlfacade.org/data#" xmlns:part2="http://dm.rdlfacade.org/data#" xmlns:tpl="http://tpl.rdlfacade.org/data#" xmlns:templates="http://rdl.rdswip.org/sampleTemplates#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#" xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+	<!---->
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER">
+		<rdf:type rdf:resource="http://rdl.rdlfacade.org/data#R69283144996" />
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.DESCRIPTION">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R31727644307" />
+		<tpl:R32187253595 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R23617130273 rdf:resource="http://rdl.rdlfacade.org/data#R56508447506" />
+		<tpl:R99694822937 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DEREK'S DESCRIPTION</tpl:R99694822937>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.MANUFACTURER">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R31727644307" />
+		<tpl:R32187253595 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R23617130273 rdf:resource="http://rdl.rdlfacade.org/data#R13646688670" />
+		<tpl:R99694822937 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">ROSEMOUNT</tpl:R99694822937>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.NAME">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R30193386273" />
+		<tpl:R44537504070 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R30790108016 rdf:resource="http://rdl.rdlfacade.org/data#R39627084634" />
+		<tpl:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">112-PT-01</tpl:R22674749688>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.MODEL">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R31727644307" />
+		<tpl:R32187253595 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R23617130273 rdf:resource="http://rdl.rdlfacade.org/data#R31164033994" />
+		<tpl:R99694822937 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">????</tpl:R99694822937>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.SERVICE">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R31727644307" />
+		<tpl:R32187253595 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R23617130273 rdf:resource="http://rdl.rdlfacade.org/data#R58778212706" />
+		<tpl:R99694822937 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">FIRE WATER RING MAIN PRESSURE AREA 112</tpl:R99694822937>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.GUID">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R30193386273" />
+		<tpl:R44537504070 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R30790108016 rdf:resource="http://rdl.bentley.com/data#GUID" />
+		<tpl:R22674749688 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5603c114-a04d-4762-bc88-e782c049739b</tpl:R22674749688>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.CALIBRATED_RANGE_LOWER_LIMIT">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R33612674560" />
+		<tpl:R56806886394 rdf:resource="http://rdl.rdlfacade.org/data#R48471167011" />
+		<tpl:R11450580697 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R10528152386 rdf:resource="http://rdl.rdlfacade.org/data#R83490506551" />
+		<tpl:R65789235245 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0</tpl:R65789235245>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.CALIBRATED_RANGE_UPPER_LIMIT">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R33612674560" />
+		<tpl:R56806886394 rdf:resource="http://rdl.rdlfacade.org/data#R13365634157" />
+		<tpl:R11450580697 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R10528152386 rdf:resource="http://rdl.rdlfacade.org/data#R83490506551" />
+		<tpl:R65789235245 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">16</tpl:R65789235245>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.UPPER_LIMIT_OPERATING_TEMPERATURE">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R33612674560" />
+		<tpl:R56806886394 rdf:resource="http://rdl.rdlfacade.org/data#R98275537749" />
+		<tpl:R11450580697 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R10528152386 rdf:resource="http://rdl.rdlfacade.org/data#R74877992703" />
+		<tpl:R65789235245 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">35</tpl:R65789235245>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.UPPER_LIMIT_DESIGN_PRESSURE">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R33612674560" />
+		<tpl:R56806886394 rdf:resource="http://rdl.rdlfacade.org/data#R39184488200" />
+		<tpl:R11450580697 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R10528152386 rdf:resource="http://rdl.rdlfacade.org/data#R83490506551" />
+		<tpl:R65789235245 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">16</tpl:R65789235245>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.LOWER_LIMIT_OPERATING_PRESSURE">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R33612674560" />
+		<tpl:R56806886394 rdf:resource="http://rdl.rdlfacade.org/data#R67799695397" />
+		<tpl:R11450580697 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R10528152386 rdf:resource="http://rdl.rdlfacade.org/data#R83490506551" />
+		<tpl:R65789235245 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">12</tpl:R65789235245>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.LOWER_LIMIT_OPERATING_TEMPERATURE">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R33612674560" />
+		<tpl:R56806886394 rdf:resource="http://rdl.rdlfacade.org/data#R29465166907" />
+		<tpl:R11450580697 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R10528152386 rdf:resource="http://rdl.rdlfacade.org/data#R74877992703" />
+		<tpl:R65789235245 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">35</tpl:R65789235245>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.OPERATING_TEMPERATURE">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R33612674560" />
+		<tpl:R56806886394 rdf:resource="http://rdl.rdlfacade.org/data#R98733065502" />
+		<tpl:R11450580697 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R10528152386 rdf:resource="http://rdl.rdlfacade.org/data#R74877992703" />
+		<tpl:R65789235245 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">35</tpl:R65789235245>
+	</owl:Thing>
+	<owl:Thing rdf:about="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER.UPPER_LIMIT_OPERATING_PRESSURE">
+		<rdf:type rdf:resource="http://tpl.rdlfacade.org/data#R33612674560" />
+		<tpl:R56806886394 rdf:resource="http://rdl.rdlfacade.org/data#R74857571784" />
+		<tpl:R11450580697 rdf:resource="http://example.org#PRESSURE_TRANSMITTER.0000000601-PRESSURE_TRANSMITTER" />
+		<tpl:R10528152386 rdf:resource="http://rdl.rdlfacade.org/data#R83490506551" />
+		<tpl:R65789235245 rdf:datatype="http://www.w3.org/2001/XMLSchema#float">16</tpl:R65789235245>
+	</owl:Thing>
+</RDF>

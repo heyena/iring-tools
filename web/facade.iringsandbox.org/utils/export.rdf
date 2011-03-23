@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE rdf:RDF[
+	<!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+	<!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
+	<!ENTITY xsd 'http://www.w3.org/2001/XMLSchema#'>
+]>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+	<rdf:Description rdf:about="http://rdl.rdlfacade.org/data#R42927130334">
+		<rdf:type>ClassOfClassOfInformationRepresentation</rdf:type>
+		<rdfs:comment>Association</rdfs:comment>
+		<rdfs:label>ASSOCIATION</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://rdl.rdlfacade.org/data#R48898017434">
+		<rdf:type>ClassOfClassOfInformationRepresentation</rdf:type>
+		<rdfs:comment>Annotation Item</rdfs:comment>
+		<rdfs:label>ANNOTATION ITEM</rdfs:label>
+	</rdf:Description>
+	<rdf:Description rdf:about="http://rdl.rdlfacade.org/data#R82970363214">
+		<rdf:type>ClassOfClassOfInformationRepresentation</rdf:type>
+		<rdfs:comment>This is the Bolting Aseembley</rdfs:comment>
+		<rdfs:comment>This is the Bolting Assembly</rdfs:comment>
+		<rdfs:label>BOLTING ASSEMBLY</rdfs:label>
+	</rdf:Description>
+</rdf:RDF>
