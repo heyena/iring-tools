@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
+using System.Linq;
 using System.Xml.Linq;
 using log4net;
 using NUnit.Framework;
@@ -42,7 +43,7 @@ namespace NUnit.Tests
 				_baseDirectory = Directory.GetCurrentDirectory();
 				_baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
 				_settings["BaseDirectoryPath"] = _baseDirectory;
-        setSettings();
+        //setSettings();
 				Directory.SetCurrentDirectory(_baseDirectory);
         _dxfrProvider = new DataTranferProvider(_settings);
       }
@@ -372,7 +373,7 @@ namespace NUnit.Tests
 				return _kernel;
 			}
 
-			/* Copy initial state of the table for ABC */
+			// Copy initial state of the table for ABC
 			private void Initialize()
 			{
 				IKernel _kernel = prepareKernel();
@@ -391,10 +392,43 @@ namespace NUnit.Tests
 
 				dataObjects = _dataLayer.Get("LINES", null);
 			}
+
+      // Copy initial state of the table for ABC
+      private void CleanUpDatabase()
+      {
+        try
+        {
+          string sql = Utility.ReadString(@"..\..\iRINGTools.Services\App_Data\ABC.Data.Complete.sql");
+
+          XDocument nhConfig = XDocument.Load(@".\XML\nh-configuration.12345_000.ABC.xml");
+          
+          var properties = nhConfig
+            .Element("configuration")
+            .Element("{urn:nhibernate-configuration-2.2}hibernate-configuration")
+            .Element("{urn:nhibernate-configuration-2.2}session-factory")
+            .Descendants("{urn:nhibernate-configuration-2.2}property");
+
+          var property = from p in properties
+                         where p.Attribute("name").Value == "connection.connection_string"
+                         select p;
+
+          string connectionString = property.FirstOrDefault().Value;
+
+          Utility.ExecuteSQL(sql, connectionString);
+        }
+        catch (Exception ex)
+        {
+          string message = "Error cleaning up Database: " + ex;
+          _logger.Error(message);
+          throw new Exception(message);
+        }
+      }
 			
 			[Test]
 			public void PostDataTransferObjects()
 			{
+        CleanUpDatabase();
+
 				XDocument benchmark = null;
 				Response response = null;				
 				DxoRequest dxoRequest = new DxoRequest();

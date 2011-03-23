@@ -78,6 +78,12 @@
     <Compile Include="XmlTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="..\..\iRINGTools.Services\App_Data\ABC.Data.Complete.sql">
+      <Link>SQL\ABC.Data.Complete.sql</Link>
+    </Content>
+    <Content Include="..\..\iRINGTools.Services\App_Data\ABC.Tables.sql">
+      <Link>SQL\ABC.Tables.sql</Link>
+    </Content>
     <Content Include="SPARQL\ClassRelations.txt" />
     <Content Include="SPARQL\ContainsSearch.txt" />
     <Content Include="SPARQL\ExactSearch.txt" />
