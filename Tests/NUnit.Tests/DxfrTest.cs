@@ -29,26 +29,27 @@ namespace NUnit.Tests
 
       public DxfrTest()
       {
-				setSettings();
+        _settings = new AdapterSettings();
+        _settings.AppendSettings(ConfigurationManager.AppSettings);
+
+        _settings["ProjectName"] = "12345_000";
+        _settings["ApplicationName"] = "ABC";
+        _settings["GraphName"] = "Lines";
+        _settings["Identifier"] = "90002-RV";
+        _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
+        _settings["ExecutingAssemblyName"] = "NUnit.Tests";
+        _settings["GraphBaseUri"] = "http://www.example.com/";
 				_baseDirectory = Directory.GetCurrentDirectory();
 				_baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
 				_settings["BaseDirectoryPath"] = _baseDirectory;
+        setSettings();
 				Directory.SetCurrentDirectory(_baseDirectory);
-        _dxfrProvider = new DataTranferProvider(ConfigurationManager.AppSettings);
+        _dxfrProvider = new DataTranferProvider(_settings);
       }
 
 			private void setSettings()
 			{
-				_settings = new AdapterSettings();
-				_settings.AppendSettings(ConfigurationManager.AppSettings);
 
-				_settings["ProjectName"] = "12345_000";
-				_settings["ApplicationName"] = "ABC";
-				_settings["GraphName"] = "Lines";
-				_settings["Identifier"] = "90002-RV";
-				_settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
-				_settings["ExecutingAssemblyName"] = "NUnit.Tests";
-				_settings["GraphBaseUri"] = "http://www.example.com/";
 			}
 
 			private XDocument ToXml<T>(T dataList)
