@@ -40,6 +40,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
+using System.Data.SqlClient;
 
 namespace org.iringtools.utility
 {
@@ -844,6 +845,17 @@ namespace org.iringtools.utility
       }
 
       return output;
+    }
+
+    public static void ExecuteSQL(string sql, string connectionString)
+    {
+      using (SqlConnection connection = new SqlConnection(
+                 connectionString))
+      {
+        SqlCommand command = new SqlCommand(sql, connection);
+        command.Connection.Open();
+        command.ExecuteNonQuery();
+      }
     }
 
     public static XDocument RemoveNamespace(XDocument xdoc)
