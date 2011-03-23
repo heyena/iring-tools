@@ -22,6 +22,15 @@ namespace iRINGTools.Web.Models
 
     Mapping GetMapping(string scope, string application);
 
-    DataDictionary GetDictionary(string scope, string application);    
+    DataDictionary GetDictionary(string scope, string application);
+
+    string AddScope(ScopeProject scope);
+
+    string DeleteScope(string p);
+
+    string DeleteApplication(string scope, string app);
+
+
+    string AddApplication(string scope , ScopeApplication app);
   }
 }

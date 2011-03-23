@@ -64,7 +64,7 @@ namespace iRINGTools.Web
       //Bind<IMembershipService>().To<AccountMembershipService>();
       //Bind<MembershipProvider>().ToConstant(Membership.Provider);
       Bind<IDictionaryRepository>().To<DictionaryRepository>().InSingletonScope();
-      Bind<org.iringtools.datalayer.excel.IExcelProvider>().To<org.iringtools.datalayer.excel.ExcelProvider>();
+      Bind<org.iringtools.datalayer.excel.IExcelRepository>().To<org.iringtools.datalayer.excel.IExcelRepository>();
     }
   }
 }
