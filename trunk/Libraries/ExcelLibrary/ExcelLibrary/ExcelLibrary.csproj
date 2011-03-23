@@ -65,8 +65,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExcelRepository.cs" />
     <Compile Include="ExcelConfiguration.cs" />
+    <Compile Include="ExcelController.cs" />
     <Compile Include="ExcelDataLayer.cs" />
+    <Compile Include="ExcelProvider.cs" />
     <Compile Include="ExcelSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
