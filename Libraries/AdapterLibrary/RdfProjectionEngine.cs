@@ -238,8 +238,8 @@ namespace org.iringtools.adapter.projection
           bool hasRelatedProperty;
           List<string> classIdentifiers = GetClassIdentifiers(classMap, 0, out hasRelatedProperty);
 
-          ProcessOutboundClass(0, String.Empty, String.Empty, true, classIdentifiers, hasRelatedProperty,
-            classTemplateMap.classMap, classTemplateMap.templateMaps);
+          ProcessOutboundClass(0, startClassName, startClassIdentifier, true, classIdentifiers, 
+            hasRelatedProperty, classTemplateMap.classMap, classTemplateMap.templateMaps);
         }
       }
 
@@ -348,7 +348,7 @@ namespace org.iringtools.adapter.projection
       List<RoleMap> propertyRoles = new List<RoleMap>();
       XElement baseTemplateElement = new XElement(OWL_THING);
       StringBuilder baseValues = new StringBuilder(templateMap.id);
-      RoleMap classRole = null;
+      List<RoleMap> classRoles = new List<RoleMap>();
 
       baseTemplateElement.Add(new XElement(RDF_TYPE, new XAttribute(RDF_RESOURCE, templateId)));
 
@@ -376,7 +376,7 @@ namespace org.iringtools.adapter.projection
           case RoleType.Reference:
             if (roleMap.classMap != null)
             {
-              classRole = roleMap;
+              classRoles.Add(roleMap);
             }
             else
             {
@@ -473,64 +473,92 @@ namespace org.iringtools.adapter.projection
           }
         }
       }
-      else if (classRole != null)  // reference template with known class role
+      else if (classRoles.Count > 0)  // reference template with known class role
       {
-        bool refClassHasRelatedProperty;
-        List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex,
-          out refClassHasRelatedProperty);
+        bool isTemplateValid = false;  // at least one class role identifier is not null or empty
+        Dictionary<RoleMap, List<string>> relatedClassRoles = new Dictionary<RoleMap, List<string>>();
 
-        if (refClassHasRelatedProperty)
+        foreach (RoleMap classRole in classRoles)
         {
-          string refClassBaseValues = baseValues.ToString();
-          string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
-          string baseRelatedClassUri = _graphBaseUri + Utility.TitleCase(classRole.classMap.name) + "/";
+          bool refClassHasRelatedProperty;
+          List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex,
+            out refClassHasRelatedProperty);
 
-          foreach (string refClassIdentifier in refClassIdentifiers)
+          if (refClassHasRelatedProperty)
           {
+            relatedClassRoles[classRole] = refClassIdentifiers;
+          }
+          else
+          {
+            string refClassIdentifier = refClassIdentifiers.First();
+
             if (!String.IsNullOrEmpty(refClassIdentifier))
             {
-              XElement refBaseTemplateElement = new XElement(baseTemplateElement);
+              isTemplateValid = true;
+              baseValues.Append(refClassIdentifier);
 
-              string hashCode = Utility.MD5Hash(refClassBaseValues + refClassIdentifier);
-              refBaseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
-
+              string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
               XElement roleElement = new XElement(TPL_NS + roleId);
-              roleElement.Add(new XAttribute(RDF_RESOURCE, baseRelatedClassUri + refClassIdentifier));
-              refBaseTemplateElement.Add(roleElement);
-              _rdfXml.Add(refBaseTemplateElement);
+              roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri +
+                Utility.TitleCase(classRole.classMap.name) + "/" + refClassIdentifier));
+              baseTemplateElement.Add(roleElement);              
+            }
+
+            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+
+            if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
+            {
+              ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, false, refClassIdentifiers, 
+                refClassHasRelatedProperty, relatedClassTemplateMap.classMap, relatedClassTemplateMap.templateMaps);
             }
           }
         }
-        else
+
+        if (relatedClassRoles.Count > 0)
         {
-          string refClassIdentifier = refClassIdentifiers.First();
-
-          if (!String.IsNullOrEmpty(refClassIdentifier))
+          string refClassBaseValues = baseValues.ToString();
+          
+          foreach (var pair in relatedClassRoles)
           {
-            baseValues.Append(refClassIdentifier);
-
-            string hashCode = Utility.MD5Hash(baseValues.ToString());
-            baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
+            RoleMap classRole = pair.Key;
+            List<string> refClassIdentifiers = pair.Value;
 
             string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
-            XElement roleElement = new XElement(TPL_NS + roleId);
-            roleElement.Add(new XAttribute(RDF_RESOURCE, _graphBaseUri +
-              Utility.TitleCase(classRole.classMap.name) + "/" + refClassIdentifier));
-            baseTemplateElement.Add(roleElement);
+            string baseRelatedClassUri = _graphBaseUri + Utility.TitleCase(classRole.classMap.name) + "/";
 
-            _rdfXml.Add(baseTemplateElement);
+            foreach (string refClassIdentifier in refClassIdentifiers)
+            {
+              if (!String.IsNullOrEmpty(refClassIdentifier))
+              {
+                XElement refBaseTemplateElement = new XElement(baseTemplateElement);
+
+                string hashCode = Utility.MD5Hash(refClassBaseValues + refClassIdentifier);
+                refBaseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
+
+                XElement roleElement = new XElement(TPL_NS + roleId);
+                roleElement.Add(new XAttribute(RDF_RESOURCE, baseRelatedClassUri + refClassIdentifier));
+                refBaseTemplateElement.Add(roleElement);
+                _rdfXml.Add(refBaseTemplateElement);
+              }
+            }
+
+            ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+
+            if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
+            {
+              ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, false, refClassIdentifiers,
+                true, relatedClassTemplateMap.classMap, relatedClassTemplateMap.templateMaps);
+            }
           }
         }
-
-        ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
-
-        if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
+        else if (isTemplateValid)
         {
-          ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, false, refClassIdentifiers, refClassHasRelatedProperty,
-              relatedClassTemplateMap.classMap, relatedClassTemplateMap.templateMaps);
+          string hashCode = Utility.MD5Hash(baseValues.ToString());
+          baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
+          _rdfXml.Add(baseTemplateElement);
         }
       }
-      else  // reference template with no class role (primary classification template)
+      else  // reference template with no class role (e.g. primary classification template)
       {
         string hashCode = Utility.MD5Hash(baseValues.ToString());
         baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));

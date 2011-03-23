@@ -22,6 +22,7 @@ namespace org.iringtools.adapter.projection
     private static readonly ILog _logger = LogManager.GetLogger(typeof(XmlProjectionEngine));
     private static readonly string ID_ATTR = "id";
     private static readonly string RDL_URI_ATTR = "rdlUri";
+    private static readonly string POSSESSOR_ATTR = "possessorRole";
     private static readonly string REF_ATTR = "reference";
 
     private Dictionary<string, List<string>> _individualsCache = null;
@@ -249,8 +250,8 @@ namespace org.iringtools.adapter.projection
     {
       IDataObject dataObject = _dataObjects[dataObjectIndex];
 
+      List<RoleMap> classRoles = new List<RoleMap>();
       List<RoleMap> propertyRoles = new List<RoleMap>();
-      RoleMap classRole = null;
 
       XElement baseTemplateElement = new XElement(_appNamespace + templateMap.name);
       baseTemplateElement.Add(new XAttribute(RDL_URI_ATTR, templateMap.id));
@@ -262,12 +263,14 @@ namespace org.iringtools.adapter.projection
         switch (roleMap.type)
         {
           case RoleType.Possessor:
-            baseTemplateElement.Add(new XAttribute("possessorRole", roleMap.id));
+            baseTemplateElement.Add(new XAttribute(POSSESSOR_ATTR, roleMap.id));
             break;
 
           case RoleType.Reference:
             if (roleMap.classMap != null)
-              classRole = roleMap;
+            {
+              classRoles.Add(roleMap);
+            }
             else
             {
               roleElement.Add(new XAttribute(RDL_URI_ATTR, roleMap.id));
@@ -355,32 +358,40 @@ namespace org.iringtools.adapter.projection
           }
         }
       }
-      else if (classRole != null)  // reference template with known class role
+      else if (classRoles.Count > 0)  // reference template with known class role
       {
-        XElement roleElement = new XElement(_appNamespace + classRole.name);
+        bool isTemplateValid = false;  // at least one class role identifier is not null or empty
 
-        ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
-        bool refClassHasRelatedProperty;
-        List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, out refClassHasRelatedProperty);
-
-        if (refClassIdentifiers.Count > 0 && !String.IsNullOrEmpty(refClassIdentifiers.First()))
+        foreach (RoleMap classRole in classRoles)
         {
-          roleElement.Add(new XAttribute(RDL_URI_ATTR, classRole.id));
-          baseTemplateElement.Add(roleElement);
-          individualElement.Add(baseTemplateElement);
+          XElement roleElement = new XElement(_appNamespace + classRole.name);
 
-          if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
+          ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+          bool refClassHasRelatedProperty;
+          List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, out refClassHasRelatedProperty);
+
+          if (refClassIdentifiers.Count > 0 && !String.IsNullOrEmpty(refClassIdentifiers.First()))
           {
-            ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, false, refClassIdentifiers,
-              refClassHasRelatedProperty, roleElement, relatedClassTemplateMap.classMap, relatedClassTemplateMap.templateMaps);
-          }
-          else
-          {
-            roleElement.Add(new XAttribute(REF_ATTR, refClassIdentifiers.First()));
+            isTemplateValid = true;
+            roleElement.Add(new XAttribute(RDL_URI_ATTR, classRole.id));
+            baseTemplateElement.Add(roleElement);
+
+            if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
+            {
+              ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, false, refClassIdentifiers,
+                refClassHasRelatedProperty, roleElement, relatedClassTemplateMap.classMap, relatedClassTemplateMap.templateMaps);
+            }
+            else
+            {
+              roleElement.Add(new XAttribute(REF_ATTR, "#" + refClassIdentifiers.First()));
+            }
           }
         }
+
+        if (isTemplateValid)
+          individualElement.Add(baseTemplateElement);
       }
-      else  // reference template with no class role (primary classification template)
+      else  // reference template with no class role (e.g. primary classification template)
       {
         individualElement.Add(baseTemplateElement);
       }
