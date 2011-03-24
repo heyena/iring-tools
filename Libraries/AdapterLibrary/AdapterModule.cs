@@ -10,7 +10,7 @@ using System.Collections.Specialized;
 
 namespace org.iringtools.adapter
 {
-  class AdapterModule : NinjectModule
+  public class AdapterModule : NinjectModule
   {
     public override void Load()
     {

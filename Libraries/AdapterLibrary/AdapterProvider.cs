@@ -677,6 +677,7 @@ namespace org.iringtools.adapter
 
         _graphMap = _mapping.FindGraphMap(graphName);
         DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
+        _projectionEngine.Count = 1;
 
         if (_graphMap != null)
         {
@@ -709,6 +710,27 @@ namespace org.iringtools.adapter
         _logger.Error(string.Format("Error in GetProjection: {0}", ex));
         throw ex;
       }
+    }
+
+    public IList<IDataObject> GetDataObjects(
+        string projectName, string applicationName, string graphName,
+        string format, XDocument xDocument)
+    {
+      InitializeScope(projectName, applicationName);
+      InitializeDataLayer();
+
+      if (format != null)
+      {
+        _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+      }
+      else
+      {
+        _projectionEngine = _kernel.Get<IProjectionLayer>(_settings["DefaultProjectionFormat"]);
+      }
+
+      IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xDocument);
+
+      return dataObjects;
     }
 
     private IDataObject GetDataObject(DataObject dataObject, string className, string classIdentifier)
@@ -1057,7 +1079,7 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
-        _projectionEngine = _kernel.Get<IProjectionLayer>(format);
+        _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
         IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
         response = _dataLayer.Post(dataObjects);
 
@@ -1126,7 +1148,7 @@ namespace org.iringtools.adapter
     #endregion
 
     #region private methods
-    private void InitializeScope(string projectName, string applicationName)
+    private void InitializeScope(string projectName, string applicationName, bool loadDataLayer)
     {
       try
       {
@@ -1179,6 +1201,9 @@ namespace org.iringtools.adapter
 
           _settings["BindingConfigurationPath"] = bindingConfigurationPath;
 
+          if (loadDataLayer)
+          {
+
           if (!File.Exists(bindingConfigurationPath))
           {
             XElement binding = new XElement("module",
@@ -1193,7 +1218,13 @@ namespace org.iringtools.adapter
             binding.Save(bindingConfigurationPath);
           }
 
-          _kernel.Load(bindingConfigurationPath);
+            _kernel.Load(bindingConfigurationPath);
+          }
+
+          _settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml",
+            _settings["XmlPath"],
+            scope
+          );
 
           string mappingPath = String.Format("{0}Mapping.{1}.xml",
             _settings["XmlPath"],
@@ -1220,7 +1251,12 @@ namespace org.iringtools.adapter
         throw new Exception(string.Format("Error initializing application: {0})", ex));
       }
     }
-    
+
+    private void InitializeScope(string projectName, string applicationName)
+    {
+      InitializeScope(projectName, applicationName, true);
+    }
+
     private void InitializeDataLayer()
     {
       try
