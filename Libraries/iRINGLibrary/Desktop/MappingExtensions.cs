@@ -120,12 +120,15 @@ namespace org.iringtools.mapping
 
     public static ClassTemplateMap GetClassTemplateMapByName(this GraphMap graphMap, string className)
     {
-      foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
+      if (!String.IsNullOrEmpty(className))
       {
-        if (classTemplateMap.classMap != null && 
-					Utility.TitleCase(classTemplateMap.classMap.name).ToLower() == 
-						Utility.TitleCase(className).ToLower())
-          return classTemplateMap;
+        foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
+        {
+          if (classTemplateMap.classMap != null && 
+					  Utility.TitleCase(classTemplateMap.classMap.name).ToLower() == 
+						  Utility.TitleCase(className).ToLower())
+            return classTemplateMap;
+        }
       }
 
       return default(ClassTemplateMap);

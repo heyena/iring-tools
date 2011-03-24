@@ -42,9 +42,6 @@ namespace org.iringtools.adapter.projection
         {
           xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
 
-          XAttribute total = new XAttribute("total", this.Count);
-          xElement.Add(total);
-
           DataObject dataObject = FindGraphDataObject(graphName);
 
           for (int i = 0; i < _dataObjects.Count; i++)
