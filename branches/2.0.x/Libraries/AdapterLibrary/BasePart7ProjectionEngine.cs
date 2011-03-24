@@ -10,6 +10,7 @@ using VDS.RDF;
 using System.Text.RegularExpressions;
 using org.iringtools.utility;
 using log4net;
+using System.IO;
 
 namespace org.iringtools.adapter.projection
 {
@@ -71,12 +72,15 @@ namespace org.iringtools.adapter.projection
 	      {3} {{7}} ?literals 
       }}}}", RDF_NS.NamespaceName, RDL_NS.NamespaceName, TPL_NS.NamespaceName, BLANK_NODE);
 
+    protected ClassificationStyle _primaryClassificationStyle;
+    protected ClassificationStyle _secondaryClassificationStyle;
+    protected ClassificationTemplate _classificationConfig;
+
     protected AdapterSettings _settings = null;
+    protected IDataLayer _dataLayer = null;
     protected Mapping _mapping = null;
     protected DataDictionary _dictionary = null;
     protected GraphMap _graphMap = null;
-    protected string _graphBaseUri = null;
-    protected IDataLayer _dataLayer = null;
     protected IList<IDataObject> _dataObjects = null;
     protected Dictionary<string, string>[] _dataRecords = null;
     protected Dictionary<string, List<string>> _classIdentifiers = null;
@@ -97,11 +101,28 @@ namespace org.iringtools.adapter.projection
     public bool FullIndex { get; set; }
     public long Count { get; set; }
 
-    public BasePart7ProjectionEngine()
+    public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
     {
       _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
       _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
+
+      _settings = settings;
+      _dataLayer = dataLayer;
+      _mapping = mapping;
+      _dictionary = _dataLayer.GetDictionary();
+
+      // get classification settings
+      _primaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
+        _settings["PrimaryClassificationStyle"].ToString());
+
+      _secondaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
+        _settings["SecondaryClassificationStyle"].ToString());
+
+      if (File.Exists(_settings["ClassificationTemplateFile"]))
+      {
+        _classificationConfig = Utility.Read<ClassificationTemplate>(_settings["ClassificationTemplateFile"]);
+      }
     }
 
     public abstract XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);

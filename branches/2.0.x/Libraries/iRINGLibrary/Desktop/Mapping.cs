@@ -145,10 +145,14 @@ namespace org.iringtools.library
 
     public KeyValuePair<ClassMap, List<TemplateMap>> GetClassTemplateListMapByName(string className)
     {
-      foreach (var pair in classTemplateListMaps)
+      if (!String.IsNullOrEmpty(className))
       {
-        if (Utility.TitleCase(pair.Key.name) == className)
-          return pair;
+        foreach (var pair in classTemplateListMaps)
+        {
+          if (pair.Key != null && Utility.TitleCase(pair.Key.name).ToLower() ==
+            Utility.TitleCase(className).ToLower())
+            return pair;
+        }
       }
 
       return default(KeyValuePair<ClassMap, List<TemplateMap>>);

@@ -40,6 +40,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
+using System.Data.SqlClient;
 
 namespace org.iringtools.utility
 {
@@ -598,6 +599,27 @@ namespace org.iringtools.utility
       }
     }
 
+    public static XElement SerializeToXElement<T>(T graph)
+    {
+      try
+      {
+        XmlSerializer ser = new XmlSerializer(typeof(T));
+        XDocument doc = new XDocument();
+        
+        using (XmlWriter xw = doc.CreateWriter())
+        {
+          ser.Serialize(xw, graph);
+          xw.Close();
+        }
+
+        return doc.Root;
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error while serializing " + typeof(T).Name + ".", exception);
+      }
+    }
+
     public static string SerializeFromStream(Stream graph)
     {
       try
@@ -663,6 +685,20 @@ namespace org.iringtools.utility
           graph = (T)serializer.Deserialize(reader);
         }
         return graph;
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error while deserializing " + typeof(T).Name + ".", exception);
+      }
+    }
+
+    public static T DeserializeFromXElement<T>(XElement element)
+    {      
+      try
+      {
+        XmlReader reader = element.CreateReader();
+        XmlSerializer serializer = new XmlSerializer(typeof(T));
+        return (T)serializer.Deserialize(reader);        
       }
       catch (Exception exception)
       {
@@ -809,6 +845,17 @@ namespace org.iringtools.utility
       }
 
       return output;
+    }
+
+    public static void ExecuteSQL(string sql, string connectionString)
+    {
+      using (SqlConnection connection = new SqlConnection(
+                 connectionString))
+      {
+        SqlCommand command = new SqlCommand(sql, connection);
+        command.Connection.Open();
+        command.ExecuteNonQuery();
+      }
     }
 
     public static XDocument RemoveNamespace(XDocument xdoc)
@@ -1037,14 +1084,18 @@ namespace org.iringtools.utility
     public static string TitleCase(string value)
     {
       string returnValue = String.Empty;
-      string[] words = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-      foreach (string word in words)
+      if (!String.IsNullOrEmpty(value))
       {
-        returnValue += word.Substring(0, 1).ToUpper();
+        string[] words = value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-        if (word.Length > 1)
-          returnValue += word.Substring(1).ToLower();
+        foreach (string word in words)
+        {
+          returnValue += word.Substring(0, 1).ToUpper();
+
+          if (word.Length > 1)
+            returnValue += word.Substring(1).ToLower();
+        }
       }
 
       return returnValue;

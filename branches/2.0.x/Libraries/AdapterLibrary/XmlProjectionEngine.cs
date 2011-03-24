@@ -16,86 +16,114 @@ using System.Web;
 namespace org.iringtools.adapter.projection
 {
   public class XmlProjectionEngine : BasePart7ProjectionEngine
-  {    
+  {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(XmlProjectionEngine));
-    private Dictionary<string, List<string>> _classIdentifiersCache = null;
+    private static readonly string ID_ATTR = "id";
+    private static readonly string RDL_URI_ATTR = "rdlUri";
+    private static readonly string POSSESSOR_ATTR = "possessorRole";
+    private static readonly string REF_ATTR = "reference";
+
+    private Dictionary<string, List<string>> _individualsCache = null;
     private XNamespace _appNamespace = null;
-    
+
     [Inject]
-    public XmlProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping, DataDictionary dictionary)
+    public XmlProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
+      : base(settings, dataLayer, mapping)
     {
-      _settings = settings;
-      _dataLayer = dataLayer;
-      _dictionary = dictionary;
-      _mapping = mapping;
+      _individualsCache = new Dictionary<string, List<string>>();
+
+      _appNamespace = String.Format("{0}{1}/{2}",
+         settings["GraphBaseUri"],
+         HttpUtility.UrlEncode(_settings["ProjectName"]),
+         HttpUtility.UrlEncode(_settings["ApplicationName"])
+       );
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
     {
-      XElement xElement = null;
+      XElement rootElement = null;
 
       try
       {
-        _appNamespace = String.Format("{0}{1}/{2}",
-           _settings["GraphBaseUri"],
-           HttpUtility.UrlEncode(_settings["ProjectName"]),
-           HttpUtility.UrlEncode(_settings["ApplicationName"])
-         );
-
         _graphMap = _mapping.FindGraphMap(graphName);
         _dataObjects = dataObjects;
 
-        xElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
-                   new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
-                   new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
-                   new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS));
-
-        if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 &&
-          _dataObjects != null && (_dataObjects.Count == 1 ||
-          FullIndex))
+        if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 && 
+            _dataObjects != null && _dataObjects.Count > 0)
         {
-          _classIdentifiersCache = new Dictionary<string, List<string>>();
-          SetClassIdentifiers(DataDirection.Outbound);
-
-          var pair = _graphMap.classTemplateListMaps.First();          
-          for (int i = 0; i < _dataObjects.Count; i++)
+          if (_dataObjects.Count == 1 || FullIndex)
           {
-            CreateHierarchicalXml(xElement, pair, i);
+            rootElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
+             new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
+             new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
+             new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS),
+             new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS));
+
+            BuildXml(rootElement, String.Empty, String.Empty);
+          }
+          else
+          {
+            ClassMap classMap = _graphMap.classTemplateListMaps.First().Key;
+            rootElement = new XElement(_appNamespace + Utility.TitleCase(graphName));
+            
+            for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
+            {
+              bool hasRelatedProperty;
+              List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
+
+              if (classIdentifiers.Count > 0)
+              {
+                XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(classMap.name));
+                rowElement.Value = _appNamespace.ToString() + "/" + _graphMap.name + "/" + classIdentifiers.First();
+                rootElement.Add(rowElement);
+              }
+              else
+              {
+                _logger.Warn("Class identifier of [" + classMap.name + "] not found.");
+              }
+            }
           }
 
           XAttribute total = new XAttribute("total", this.Count);
-          xElement.Add(total);
-        }
-        if (_dataObjects != null && _dataObjects.Count > 1 && !FullIndex)
-        {
-          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName));
-
-          var pair = _graphMap.classTemplateListMaps.First(); 
-
-          for (int i = 0; i < _dataObjects.Count; i++)
-          {
-            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(pair.Key.name));
-            CreateIndexXml(rowElement, pair, i);
-            xElement.Add(rowElement);
-          }
-
-          XAttribute total = new XAttribute("total", this.Count);
-          xElement.Add(total);
+          rootElement.Add(total);
         }
       }
       catch (Exception ex)
       {
+        _logger.Error("Error in ToXml: " + ex);
         throw ex;
       }
 
-      return new XDocument(xElement);
+      return new XDocument(rootElement);
     }
 
     public override XDocument ToXml(string graphName, string className, string classIdentifier, ref IDataObject dataObject)
     {
-      //TODO: need to update to use className
-      IList<IDataObject> dataObjects = new List<IDataObject> { dataObject };
-      return ToXml(graphName, ref dataObjects);
+      XElement rootElement = null;
+
+      try
+      {
+        _graphMap = _mapping.FindGraphMap(graphName);
+
+        if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 && dataObject != null)
+        {
+          rootElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
+            new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
+            new XAttribute(XNamespace.Xmlns + "rdl", RDL_NS),
+            new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS),
+            new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS));
+         
+          _dataObjects = new List<IDataObject>{ dataObject };
+          BuildXml(rootElement, className, classIdentifier);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in ToXml: " + ex);
+        throw ex;
+      }
+
+      return new XDocument(rootElement);
     }
 
     public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
@@ -104,210 +132,298 @@ namespace org.iringtools.adapter.projection
     }
 
     #region helper methods
-    private void CreateIndexXml(XElement parentElement, KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap, int dataObjectIndex)
+    private void BuildXml(XElement rootElement, string startClassName, string startClassIdentifier)
     {
-      string uri = _appNamespace.ToString() + "/" + _graphMap.name + "/";
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateMap = String.IsNullOrEmpty(startClassName) ?
+        _graphMap.classTemplateListMaps.First() : _graphMap.GetClassTemplateListMapByName(startClassName);
 
-      foreach (string keyPropertyName in classTemplateListMap.Key.identifiers)
+      if (classTemplateMap.Key != null)
       {
-        RoleMap roleMap = null;
-        foreach(TemplateMap templateMap in classTemplateListMap.Value)
+        ClassMap classMap = classTemplateMap.Key;
+        List<TemplateMap> templateMaps = classTemplateMap.Value;
+                
+        for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
         {
-          roleMap = templateMap.roleMaps.Find(rm => rm.propertyName == keyPropertyName);
-          if (roleMap != null) break;
-        }
+          bool hasRelatedProperty;
+          List<string> classIdentifiers = GetClassIdentifiers(classMap, dataObjectIndex, out hasRelatedProperty);
 
-        if (roleMap != null)
-        {
-          string propertyName = RemoveDataPropertyAlias(roleMap.propertyName);
-
-          var value = _dataObjects[dataObjectIndex].GetPropertyValue(propertyName);
-          if (value != null)
-            uri += classTemplateListMap.Key.identifierDelimiter + value;
-        }        
-      }
-
-      parentElement.Value = uri;
-    }
-
-    private void CreateHierarchicalXml(XElement parentElement, KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap, int dataObjectIndex)
-    {
-      ClassMap classMap = classTemplateListMap.Key;
-      List<TemplateMap> templateMaps = classTemplateListMap.Value;
-      string classIdentifier = _classIdentifiers[classMap.classId][dataObjectIndex];
-
-      XElement classElement = new XElement(_appNamespace + Utility.TitleCase(classMap.name));
-      classElement.Add(new XAttribute("rdlUri", classMap.classId));
-      parentElement.Add(classElement);
-      bool classExists = false;
-
-      if (_classIdentifiersCache.ContainsKey(classMap.classId))
-      {
-        List<string> classIdentifiers = _classIdentifiersCache[classMap.classId];
-
-        if (!classIdentifiers.Contains(classIdentifier))
-        {
-          classIdentifiers.Add(classIdentifier);
-          classElement.Add(new XAttribute("id", classIdentifier));
-        }
-        else
-        {
-          classElement.Add(new XAttribute("reference", "#" + classIdentifier));
-          classExists = true;
+          ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, true, classIdentifiers, 
+            hasRelatedProperty, rootElement, classMap, templateMaps);
         }
       }
       else
       {
-        _classIdentifiersCache[classMap.classId] = new List<string> { classIdentifier };
-        classElement.Add(new XAttribute("id", classIdentifier));
+        throw new Exception("Class [" + startClassName + "] not found.");
       }
+    }
 
-      if (!classExists)
+    private void ProcessOutboundClass(int dataObjectIndex, string startClassName, string startClassIdentifier, bool isRootClass,
+      List<string> classIdentifiers, bool hasRelatedProperty, XElement parentElement, ClassMap classMap, List<TemplateMap> templateMaps)
+    {
+      string className = Utility.TitleCase(classMap.name);
+
+      for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
       {
-        foreach (TemplateMap templateMap in templateMaps)
+        string classIdentifier = classIdentifiers[classIdentifierIndex];
+
+        if (String.IsNullOrEmpty(startClassIdentifier) || className != startClassName || classIdentifier == startClassIdentifier)
         {
-          Dictionary<string, List<IDataObject>> relatedObjects = new Dictionary<string, List<IDataObject>>();
-          List<RoleMap> propertyRoles = new List<RoleMap>();
-          RoleMap classRole = null;
+          XElement individualElement = CreateIndividualElement(isRootClass, parentElement, classMap.classId, 
+            Utility.TitleCase(classMap.name), classIdentifier);
 
-          XElement baseTemplateElement = new XElement(_appNamespace + templateMap.name);
-          baseTemplateElement.Add(new XAttribute("rdlUri", templateMap.templateId));
-
-          foreach (RoleMap roleMap in templateMap.roleMaps)
+          if (individualElement != null)
           {
-            XElement roleElement = new XElement(_appNamespace + roleMap.name);
+            parentElement.Add(individualElement);
 
-            switch (roleMap.type)
+            // add primary classification template
+            if (isRootClass && _primaryClassificationStyle == ClassificationStyle.Both)
             {
-              case RoleType.Possessor:
-                baseTemplateElement.Add(new XAttribute("possessorRole", roleMap.roleId));
-                break;
+              TemplateMap classificationTemplate = _classificationConfig.TemplateMap;
 
-              case RoleType.Reference:
-                if (roleMap.classMap != null)
-                  classRole = roleMap;
-                else
-                {
-                  roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
-                  roleElement.Add(new XAttribute("reference", roleMap.value));
-                  baseTemplateElement.Add(roleElement);
-                }
-                break;
-
-              case RoleType.FixedValue:
-                roleElement.Add(new XAttribute("rdlUri", roleMap.roleId));
-                roleElement.Add(new XText(roleMap.value));
-                baseTemplateElement.Add(roleElement);
-                break;
-
-              case RoleType.Property:
-              case RoleType.DataProperty:
-              case RoleType.ObjectProperty:
-                propertyRoles.Add(roleMap);
-                break;
-            }
-          }
-
-          if (classRole != null)
-          {
-            XElement roleElement = new XElement(_appNamespace + classRole.name);
-            roleElement.Add(new XAttribute("rdlUri", classRole.roleId));
-            baseTemplateElement.Add(roleElement);
-            classElement.Add(baseTemplateElement);
-
-            string classId = classRole.classMap.classId;
-            KeyValuePair<ClassMap, List<TemplateMap>> subClassTemplateListMap = _graphMap.GetClassTemplateListMap(classId);
-            CreateHierarchicalXml(roleElement, subClassTemplateListMap, dataObjectIndex);
-          }
-          else
-          {
-            List<List<XElement>> multiPropertyElements = new List<List<XElement>>();
-            List<IDataObject> valueObjects = null;
-
-            foreach (RoleMap propertyRole in propertyRoles)
-            {
-              List<XElement> propertyElements = new List<XElement>();
-              multiPropertyElements.Add(propertyElements);
-
-              string propertyMap = propertyRole.propertyName;
-              int lastDotPos = propertyMap.LastIndexOf('.');
-              string propertyName = propertyMap.Substring(lastDotPos + 1);
-              string objectPath = propertyMap.Substring(0, lastDotPos);
-
-              if (propertyMap.Split('.').Length > 2)  // related property
-              {
-                if (!relatedObjects.TryGetValue(objectPath, out valueObjects))
-                {
-                  valueObjects = GetRelatedObjects(propertyRole.propertyName, _dataObjects[dataObjectIndex]);
-                  relatedObjects.Add(objectPath, valueObjects);
-                }
-              }
-              else  // direct property
-              {
-                valueObjects = new List<IDataObject> { _dataObjects[dataObjectIndex] };
-              }
-
-              foreach (IDataObject valueObject in valueObjects)
-              {
-                string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
-
-                XElement propertyElement = new XElement(_appNamespace + propertyRole.name);
-                propertyElement.Add(new XAttribute("rdlUri", propertyRole.roleId));
-                propertyElements.Add(propertyElement);
-
-                if (String.IsNullOrEmpty(propertyRole.valueList))
-                {
-                  if (String.IsNullOrEmpty(value))
-                    propertyElement.Add(new XAttribute("reference", RDF_NIL));
-                  else
-                  {
-                    if (propertyRole.dataType.Contains("dateTime"))
-                      value = Utility.ToXsdDateTime(value);
-
-                    propertyElement.Add(new XText(value));
-                  }
-                }
-                else // resolve value list to uri
-                {
-                  value = _mapping.ResolveValueList(propertyRole.valueList, value);
-
-                  if (value != null)
-                  {
-                    propertyElement.Add(new XAttribute("reference", value));
-                  }
-                }
-              }
+              CreateTemplateElement(dataObjectIndex, startClassName, startClassIdentifier, classIdentifierIndex, 
+                individualElement, classificationTemplate, hasRelatedProperty);
             }
 
-            if (valueObjects != null)
-            {
-              for (int i = 0; i < valueObjects.Count; i++)
-              {
-                XElement templateElement = new XElement(baseTemplateElement);
-                classElement.Add(templateElement);
-
-                for (int j = 0; j < propertyRoles.Count; j++)
-                {
-                  templateElement.Add(multiPropertyElements[j][i]);
-                }
-              }
-            }
+            ProcessOutboundTemplates(dataObjectIndex, startClassName, startClassIdentifier, classIdentifierIndex,
+              individualElement, templateMaps, hasRelatedProperty);
           }
         }
       }
     }
 
-    public DataObject FindGraphDataObject(string dataObjectName)
+    private void ProcessOutboundTemplates(int dataObjectIndex, string startClassName, string startClassIdentifier, 
+      int classIdentifierIndex, XElement individualElement, List<TemplateMap> templateMaps, bool hasRelatedProperty)
     {
-      foreach (DataObject dataObject in _dictionary.dataObjects)
+      if (templateMaps != null && templateMaps.Count > 0)
       {
-        if (dataObject.objectName.ToLower() == dataObjectName.ToLower())
+        foreach (TemplateMap templateMap in templateMaps)
         {
-          return dataObject;
+          CreateTemplateElement(dataObjectIndex, startClassName, startClassIdentifier, classIdentifierIndex,
+            individualElement, templateMap, hasRelatedProperty);
+        }
+      }
+    }
+
+    private XElement CreateIndividualElement(bool isRootClass, XElement parentElement, string classId, 
+      string className, string classIdentifier)
+    {
+      XElement individualElement = null;
+
+      if (!String.IsNullOrEmpty(classIdentifier))
+      {
+        string individual = _appNamespace.NamespaceName + classIdentifier;
+        bool individualCreated = true;
+
+        if (!_individualsCache.ContainsKey(classId))
+        {
+          _individualsCache[classId] = new List<string> { individual };
+          individualCreated = false;
+        }
+        else if (!_individualsCache[classId].Contains(individual))
+        {
+          _individualsCache[classId].Add(individual);
+          individualCreated = false;
+        }
+
+        if (!individualCreated)
+        {
+          individualElement = new XElement(_appNamespace + className);
+          individualElement.Add(new XAttribute(RDL_URI_ATTR, classId));
+          individualElement.Add(new XAttribute(ID_ATTR, classIdentifier));
+        }
+        else if (!isRootClass)
+        {
+          parentElement.Add(new XAttribute(REF_ATTR, "#" + classIdentifier));
         }
       }
 
-      throw new Exception("DataObject [" + dataObjectName + "] does not exist.");
+      return individualElement;
+    }
+
+    private void CreateTemplateElement(int dataObjectIndex, string startClassName, string startClassIdentifier,
+      int classIdentifierIndex, XElement individualElement, TemplateMap templateMap, bool classIdentifierHasRelatedProperty)
+    {
+      IDataObject dataObject = _dataObjects[dataObjectIndex];
+
+      List<RoleMap> classRoles = new List<RoleMap>();
+      List<RoleMap> propertyRoles = new List<RoleMap>();
+
+      XElement baseTemplateElement = new XElement(_appNamespace + templateMap.name);
+      baseTemplateElement.Add(new XAttribute(RDL_URI_ATTR, templateMap.templateId));
+
+      foreach (RoleMap roleMap in templateMap.roleMaps)
+      {
+        XElement roleElement = new XElement(_appNamespace + roleMap.name);
+
+        switch (roleMap.type)
+        {
+          case RoleType.Possessor:
+            baseTemplateElement.Add(new XAttribute(POSSESSOR_ATTR, roleMap.roleId));
+            break;
+
+          case RoleType.Reference:
+            if (roleMap.classMap != null)
+            {
+              classRoles.Add(roleMap);
+            }
+            else
+            {
+              roleElement.Add(new XAttribute(RDL_URI_ATTR, roleMap.roleId));
+              roleElement.Add(new XAttribute(REF_ATTR, roleMap.value));
+              baseTemplateElement.Add(roleElement);
+            }
+            break;
+
+          case RoleType.FixedValue:
+            roleElement.Add(new XAttribute(RDL_URI_ATTR, roleMap.roleId));
+            roleElement.Add(new XText(roleMap.value));
+            baseTemplateElement.Add(roleElement);
+            break;
+
+          case RoleType.Property:
+          case RoleType.DataProperty:
+          case RoleType.ObjectProperty:
+            propertyRoles.Add(roleMap);
+            break;
+        }
+      }
+
+      if (propertyRoles.Count > 0)  // property template
+      {
+        List<List<XElement>> multiPropertyElements = new List<List<XElement>>();
+
+        // create property elements
+        foreach (RoleMap propertyRole in propertyRoles)
+        {
+          List<XElement> propertyElements = new List<XElement>();
+          multiPropertyElements.Add(propertyElements);
+
+          string[] propertyParts = propertyRole.propertyName.Split('.');
+          string propertyName = propertyParts[propertyParts.Length - 1];
+
+          int lastDotPos = propertyRole.propertyName.LastIndexOf('.');
+          string objectPath = propertyRole.propertyName.Substring(0, lastDotPos);
+
+          if (propertyParts.Length == 2)  // direct property
+          {
+            string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+            propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
+          }
+          else  // related property
+          {
+            string key = objectPath + "." + dataObjectIndex;
+            List<IDataObject> relatedObjects = null;
+
+            if (!_relatedObjectsCache.TryGetValue(key, out relatedObjects))
+            {
+              relatedObjects = GetRelatedObjects(propertyRole.propertyName, dataObject);
+              _relatedObjectsCache.Add(key, relatedObjects);
+            }
+
+            if (classIdentifierHasRelatedProperty)  // reference class identifier has related property
+            {
+              IDataObject relatedObject = relatedObjects[classIdentifierIndex];
+              string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
+              propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
+            }
+            else  // related property is property map
+            {
+              foreach (IDataObject relatedObject in relatedObjects)
+              {
+                string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
+                propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
+              }
+            }
+          }
+        }
+
+        // add property elements to template element(s)
+        if (multiPropertyElements.Count > 0 && multiPropertyElements[0].Count > 0)
+        {
+          for (int i = 0; i < multiPropertyElements[0].Count; i++)
+          {
+            XElement templateElement = new XElement(baseTemplateElement);
+            individualElement.Add(templateElement);
+
+            for (int j = 0; j < multiPropertyElements.Count; j++)
+            {
+              XElement propertyElement = multiPropertyElements[j][i];
+              templateElement.Add(propertyElement);
+            }
+          }
+        }
+      }
+      else if (classRoles.Count > 0)  // reference template with known class role
+      {
+        bool isTemplateValid = false;  // at least one class role identifier is not null or empty
+
+        foreach (RoleMap classRole in classRoles)
+        {
+          XElement roleElement = new XElement(_appNamespace + classRole.name);
+
+          KeyValuePair<ClassMap, List<TemplateMap>> relatedClassTemplateMap = _graphMap.GetClassTemplateListMap(classRole.classMap.classId);
+          bool refClassHasRelatedProperty;
+          List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, out refClassHasRelatedProperty);
+
+          if (refClassIdentifiers.Count > 0 && !String.IsNullOrEmpty(refClassIdentifiers.First()))
+          {
+            isTemplateValid = true;
+            roleElement.Add(new XAttribute(RDL_URI_ATTR, classRole.roleId));
+            baseTemplateElement.Add(roleElement);
+
+            if (relatedClassTemplateMap.Key != null)
+            {
+              ProcessOutboundClass(dataObjectIndex, startClassName, startClassIdentifier, false, refClassIdentifiers,
+                refClassHasRelatedProperty, roleElement, relatedClassTemplateMap.Key, relatedClassTemplateMap.Value);
+            }
+            else
+            {
+              roleElement.Add(new XAttribute(REF_ATTR, "#" + refClassIdentifiers.First()));
+            }
+          }
+        }
+
+        if (isTemplateValid)
+          individualElement.Add(baseTemplateElement);
+      }
+      else  // reference template with no class role (e.g. primary classification template)
+      {
+        individualElement.Add(baseTemplateElement);
+      }
+    }
+
+    private XElement CreatePropertyElement(RoleMap propertyRole, string propertyValue)
+    {
+      XElement propertyElement = new XElement(_appNamespace + propertyRole.name);
+      propertyElement.Add(new XAttribute(RDL_URI_ATTR, propertyRole.roleId));
+
+      if (String.IsNullOrEmpty(propertyRole.valueList))
+      {
+        if (String.IsNullOrEmpty(propertyValue))
+        {
+          propertyElement.Add(new XAttribute(REF_ATTR, RDF_NIL));
+        }
+        else
+        {
+          if (propertyRole.dataType.Contains("dateTime"))
+            propertyValue = Utility.ToXsdDateTime(propertyValue);
+
+          propertyElement.Add(new XText(propertyValue));
+        }
+      }
+      else  // resolve value list to uri
+      {
+        propertyValue = _mapping.ResolveValueList(propertyRole.valueList, propertyValue);
+
+        if (String.IsNullOrEmpty(propertyValue))
+          propertyValue = RDF_NIL;
+        else
+          propertyValue = propertyValue.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
+
+        propertyElement.Add(new XAttribute(REF_ATTR, propertyValue));
+      }
+
+      return propertyElement;
     }
     #endregion
   }

@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using org.iringtools.library;
 using System.Xml.Linq;
-using Ninject;
 using log4net;
+using Microsoft.ServiceModel.Web;
+using Ninject;
 using System.Text.RegularExpressions;
 using VDS.RDF;
 using VDS.RDF.Storage;
 using org.iringtools.utility;
-using Microsoft.ServiceModel.Web;
-using System.Xml.Serialization;
 
 namespace org.iringtools.adapter.projection
 {
@@ -20,20 +19,12 @@ namespace org.iringtools.adapter.projection
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DtoProjectionEngine));
 
     private DataTransferObjects _dataTransferObjects;
-    private string _scopeName;
-    private string _appName;
 
     [Inject]
     public DtoProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
+      : base(settings, dataLayer, mapping)
     {
-      _dataObjects = new List<IDataObject>();
       _classIdentifiers = new Dictionary<string, List<string>>();
-
-      _scopeName = settings["ProjectName"];
-      _appName = settings["ApplicationName"];
-
-      _dataLayer = dataLayer;
-      _mapping = mapping;
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
@@ -66,10 +57,12 @@ namespace org.iringtools.adapter.projection
     public DataTransferObjects ToDataTransferObjects(GraphMap graphMap, ref IList<IDataObject> dataObjects)
     {
       _dataTransferObjects = new DataTransferObjects()
-      {
-        ScopeName = _scopeName,
-        AppName = _appName,
+	    {
+        ScopeName = _settings["ProjectName"],
+        AppName = _settings["ApplicationName"],
       };
+
+      List<DataTransferObject> dataTransferObjectList = _dataTransferObjects.DataTransferObjectList;
 
       try
       {
@@ -115,8 +108,6 @@ namespace org.iringtools.adapter.projection
                     templateId = templateMap.templateId,
                     name = templateMap.name,
                   };
-
-                  classObject.templateObjects.Add(templateObject);
 
                   foreach (RoleMap roleMap in templateMap.roleMaps)
                   {
