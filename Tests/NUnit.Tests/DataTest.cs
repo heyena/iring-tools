@@ -26,7 +26,7 @@ namespace NUnit.Tests
       _settings["ApplicationName"] = "ABC";
       _settings["GraphName"] = "Lines";
       _settings["Identifier"] = "66015-O";
-      _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
+      _settings["TestMode"] = "WriteFiles"; //UseFiles/WriteFiles
 
       _baseDirectory = Directory.GetCurrentDirectory();
       _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
@@ -162,7 +162,9 @@ namespace NUnit.Tests
       }
 
       int total = 0;
-      int.TryParse(xDocument.Root.Attribute("total").Value, out total);
+      
+      if (xDocument.Root.Attribute("total") != null)
+        int.TryParse(xDocument.Root.Attribute("total").Value, out total);
 
       for (int i = 5; i < total; i+=5)
       {
@@ -227,7 +229,9 @@ namespace NUnit.Tests
       }
 
       int total = 0;
-      int.TryParse(xDocument.Root.Attribute("total").Value, out total);
+
+      if (xDocument.Root.Attribute("total") != null)
+        int.TryParse(xDocument.Root.Attribute("total").Value, out total);
 
       for (int i = 5; i < total; i += 5)
       {
@@ -436,7 +440,9 @@ namespace NUnit.Tests
       }
 
       int total = 0;
-      int.TryParse(xDocument.Root.Attribute("total").Value, out total);
+
+      if (xDocument.Root.Attribute("total") != null)
+        int.TryParse(xDocument.Root.Attribute("total").Value, out total);
 
       for (int i = 5; i < total; i += 5)
       {
@@ -505,7 +511,9 @@ namespace NUnit.Tests
       }
 
       int total = 0;
-      int.TryParse(xDocument.Root.Attribute("total").Value, out total);
+
+      if (xDocument.Root.Attribute("total") != null)
+        int.TryParse(xDocument.Root.Attribute("total").Value, out total);
 
       for (int i = 5; i < total; i += 5)
       {
@@ -681,7 +689,9 @@ namespace NUnit.Tests
       }
 
       int total = 0;
-      int.TryParse(xDocument.Root.Attribute("total").Value, out total);
+
+      if (xDocument.Root.Attribute("total") != null)
+        int.TryParse(xDocument.Root.Attribute("total").Value, out total);
 
       for (int i = 5; i < total; i += 5)
       {
@@ -770,7 +780,9 @@ namespace NUnit.Tests
       }
 
       int total = 0;
-      int.TryParse(xDocument.Root.Attribute("total").Value, out total);
+
+      if (xDocument.Root.Attribute("total") != null)
+        int.TryParse(xDocument.Root.Attribute("total").Value, out total);
 
       for (int i = 5; i < total; i += 5)
       {
