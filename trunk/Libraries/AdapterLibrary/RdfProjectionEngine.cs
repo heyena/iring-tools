@@ -447,7 +447,7 @@ namespace org.iringtools.adapter.projection
         // add property elements to template element(s)
         if (multiPropertyElements.Count > 0 && multiPropertyElements[0].Count > 0)
         {
-          // used to enforce dotNetRDF to store/retrieve template triples in order as the RDF
+          // enforce dotNetRDF to store/retrieve templates in order as expressed in RDF
           string hashPrefixFormat = Regex.Replace(multiPropertyElements[0].Count.ToString(), "\\d", "0") + "0";
 
           for (int i = 0; i < multiPropertyElements[0].Count; i++)
@@ -517,7 +517,9 @@ namespace org.iringtools.adapter.projection
         if (relatedClassRoles.Count > 0)
         {
           string refClassBaseValues = baseValues.ToString();
-          
+          // enforce dotNetRDF to store/retrieve templates in order as expressed in RDF
+          string hashPrefixFormat = Regex.Replace(relatedClassRoles.Count.ToString(), "\\d", "0") + "0";
+
           foreach (var pair in relatedClassRoles)
           {
             RoleMap classRole = pair.Key;
@@ -526,13 +528,16 @@ namespace org.iringtools.adapter.projection
             string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
             string baseRelatedClassUri = _graphBaseUri + Utility.TitleCase(classRole.classMap.name) + "/";
 
-            foreach (string refClassIdentifier in refClassIdentifiers)
+            for (int i = 0; i < refClassIdentifiers.Count; i++)
             {
+              string refClassIdentifier = refClassIdentifiers[i];
+
               if (!String.IsNullOrEmpty(refClassIdentifier))
               {
                 XElement refBaseTemplateElement = new XElement(baseTemplateElement);
 
                 string hashCode = Utility.MD5Hash(refClassBaseValues + refClassIdentifier);
+                hashCode = i.ToString(hashPrefixFormat) + hashCode.Substring(hashPrefixFormat.Length);
                 refBaseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
 
                 XElement roleElement = new XElement(TPL_NS + roleId);
@@ -701,8 +706,8 @@ namespace org.iringtools.adapter.projection
       {
         string possessorRoleId = String.Empty;
         RoleMap referenceRole = null;
-        RoleMap classRole = null;
         List<RoleMap> propertyRoles = new List<RoleMap>();
+        List<RoleMap> classRoles = new List<RoleMap>();
 
         // find property roles
         foreach (RoleMap roleMap in templateMap.roleMaps)
@@ -715,7 +720,7 @@ namespace org.iringtools.adapter.projection
 
             case RoleType.Reference:
               if (roleMap.classMap != null)
-                classRole = roleMap;
+                classRoles.Add(roleMap);
               else
                 referenceRole = roleMap;
               break;
@@ -743,29 +748,32 @@ namespace org.iringtools.adapter.projection
 
         for (int classInstanceIndex = 0; classInstanceIndex < classInstances.Count; classInstanceIndex++)
         {
-          if (classRole != null)
+          if (classRoles.Count > 0)
           {
-            string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId,
-              classInstances[classInstanceIndex], templateMap.id, referenceVariable, referenceRoleId,
-              referenceRoleValue, referenceEndStmt, classRole.id);
-
-            object results = _memoryStore.ExecuteQuery(query);
-
-            if (results is SparqlResultSet)
+            foreach (RoleMap classRole in classRoles)
             {
-              SparqlResultSet resultSet = (SparqlResultSet)results;
-              List<string> subclassInstances = new List<string>();
+              string query = String.Format(SUBCLASS_INSTANCE_QUERY_TEMPLATE, possessorRoleId,
+                classInstances[classInstanceIndex], templateMap.id, referenceVariable, referenceRoleId,
+                referenceRoleValue, referenceEndStmt, classRole.id);
 
-              foreach (SparqlResult result in resultSet)
+              object results = _memoryStore.ExecuteQuery(query);
+
+              if (results is SparqlResultSet)
               {
-                string subclassInstance = result.Value("class").ToString();
-                subclassInstances.Add(subclassInstance);
-              }
+                SparqlResultSet resultSet = (SparqlResultSet)results;
+                List<string> subclassInstances = new List<string>();
 
-              ProcessInboundClass(dataObjectIndex, classRole.classMap, subclassInstances);
+                foreach (SparqlResult result in resultSet)
+                {
+                  string subclassInstance = result.Value("class").ToString();
+                  subclassInstances.Add(subclassInstance);
+                }
+
+                ProcessInboundClass(dataObjectIndex, classRole.classMap, subclassInstances);
+              }
             }
           }
-          else // query for property values
+          else if (propertyRoles.Count > 0)  // query for property values
           {
             foreach (RoleMap propertyRole in propertyRoles)
             {
