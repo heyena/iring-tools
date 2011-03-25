@@ -5,7 +5,7 @@
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs; $(MSBuildProjectDirectory)\iRINGTools.SDK\AssemblyInfo.cs</AssemblyInfoFile>
     <Major>2</Major>
     <Minor>0</Minor>
-    <Build>3</Build>
+    <Build>4</Build>
     <Revision>0</Revision>
   </PropertyGroup>
 
