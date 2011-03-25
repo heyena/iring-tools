@@ -154,7 +154,7 @@
           <templates>
             <template>
               <id>tpl:R30193386273</id>
-              <name>ClassifiedIdentification1</name>
+              <name>ClassifiedIdentification</name>
               <roles>
                 <role>
                   <type>Possessor</type>
