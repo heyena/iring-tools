@@ -176,7 +176,7 @@
           <a:Value>
             <TemplateMap>
               <templateId>tpl:R30193386273</templateId>
-              <name>ClassifiedIdentification1</name>
+              <name>ClassifiedIdentification</name>
               <roleMaps>
                 <RoleMap>
                   <type>Possessor</type>
