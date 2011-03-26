@@ -176,13 +176,15 @@ public class HttpClient
     return networkCredentials;
   }
   
-  public <T> T PostMessage(Class<T> responseClass, String relativeUri, String requestMessage) throws HttpClientException
+  public <T> T postMessage(Class<T> responseClass, String relativeUri, String requestMessage) throws HttpClientException
   {
+	  T response = null;
       try
       {
           URLConnection conn = getConnection(POST, relativeUri);
+          conn.setRequestProperty("Accept", "application/xml, application/rdf+xml");        
           conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-        
+         
           StringBuilder requestEntity = new StringBuilder();
           requestEntity.append(requestMessage);
           
@@ -193,14 +195,16 @@ public class HttpClient
           
           InputStream responseStream = conn.getInputStream();   
           
-          T response = JaxbUtil.toObject(responseClass, responseStream);
+          response = JaxbUtil.toObject(responseClass, responseStream);
           logger.debug("post (" + JaxbUtil.toXml(response, true) + ")");
           
           return response;
         }
       catch (Exception ex)
       {
-    	  throw new HttpClientException(ex.toString());
+    	  logger.error(ex);
+    	 return response;
+    	  //throw new HttpClientException(ex.toString());
       }
   }
   
