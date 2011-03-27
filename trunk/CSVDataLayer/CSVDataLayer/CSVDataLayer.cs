@@ -141,26 +141,11 @@ namespace iRINGTools.SDK.CSVDataLayer
         // Apply filter
         if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
         {
-          string variable = "dataObject";
+          var predicate = filter.ToPredicate(_dataObjectDefinition);
 
-          string linqExpression = filter.ToLinqExpression<GenericDataObject>(variable);
-
-          if (linqExpression != String.Empty)
+          if (predicate != null)
           {
-            
-
-            ExpressionContext context = new ExpressionContext();
-            context.Variables.DefineVariable(variable, typeof(GenericDataObject));
-
-            for (int i = 0; i < _dataObjects.Count; i++)
-            {
-              context.Variables[variable] = _dataObjects[i];
-              var expression = context.CompileGeneric<bool>(linqExpression);
-              if (!expression.Evaluate())
-              {
-                _dataObjects.RemoveAt(i--);
-              }
-            }
+            _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList();
           }
         }
 
@@ -170,6 +155,8 @@ namespace iRINGTools.SDK.CSVDataLayer
         }
 
         //Page and Sort The Data
+        if (pageSize > _dataObjects.Count())
+          pageSize = _dataObjects.Count();
         _dataObjects = _dataObjects.GetRange(startIndex, pageSize);
 
         return _dataObjects;
