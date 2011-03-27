@@ -179,7 +179,7 @@ namespace iRINGTools.SDK.CSVDataLayer
         {
           string variable = "dataObject";
           
-          string linqExpression = filter.ToLinqExpression(type, variable);
+          string linqExpression = filter.ToLinqExpression<EquipmentDataObject>(variable);
           
           if (linqExpression != String.Empty)
           {

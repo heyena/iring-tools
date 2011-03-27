@@ -19,15 +19,15 @@
    enable-background="new 0 0 229.083 83.08"
    xml:space="preserve"
    sodipodi:version="0.32"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.1 "
    sodipodi:docname="iRING User Group logo.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="C:\iring-tools\Images\svg\iRING User Group logo.png"
-   inkscape:export-xdpi="286.01001"
-   inkscape:export-ydpi="286.01001"><metadata
+   inkscape:export-filename="C:\Users\rpdecarl\Desktop\iRING User Group logo.png"
+   inkscape:export-xdpi="58.970036"
+   inkscape:export-ydpi="58.970036"><metadata
    id="metadata110"><rdf:RDF><cc:Work
        rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
-         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
    id="defs108"><inkscape:perspective
      sodipodi:type="inkscape:persp3d"
      inkscape:vp_x="0 : 41.540001 : 1"
@@ -187,8 +187,8 @@
        inkscape:collect="always"
        stdDeviation="1.56082"
        id="feGaussianBlur4187" /></filter></defs><sodipodi:namedview
-   inkscape:window-height="996"
-   inkscape:window-width="1920"
+   inkscape:window-height="1028"
+   inkscape:window-width="1618"
    inkscape:pageshadow="2"
    inkscape:pageopacity="0.0"
    guidetolerance="10.0"
@@ -200,9 +200,9 @@
    id="base"
    showgrid="false"
    inkscape:zoom="2.3746852"
-   inkscape:cx="186.8175"
+   inkscape:cx="121.12458"
    inkscape:cy="-29.137498"
-   inkscape:window-x="1358"
+   inkscape:window-x="54"
    inkscape:window-y="-8"
    inkscape:current-layer="Layer_1"
    fit-margin-top="0"
@@ -257,7 +257,7 @@
      style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1"
      inkscape:connector-curvature="0" /></g><g
    id="g23-1"
-   style="opacity:0.75;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;filter:url(#filter4185)"
+   style="opacity:0.75000000000000000;fill:#000000;fill-opacity:1;stroke:#000000;stroke-opacity:1;filter:url(#filter4185)"
    transform="translate(4.245968,4.2459663)"><linearGradient
      id="linearGradient3863"
      gradientUnits="userSpaceOnUse"
@@ -418,11 +418,11 @@
    id="rect3805"
    width="49.796074"
    height="5.2638555"
-   x="7.2731214"
-   y="72.763298" /><g
+   x="5.2731214"
+   y="70.763298" /><g
    id="g3"
    style="stroke:none"
-   transform="translate(4.3253623,4.3168167)">
+   transform="translate(2.3253623,2.3168167)">
 	<path
    d="m 57.656,58.053 h 5.256 V 73.15 c 0,1.404 0.389,2.533 1.168,3.385 0.778,0.854 1.802,1.279 3.07,1.279 1.457,0 2.587,-0.43 3.392,-1.289 0.804,-0.857 1.205,-2.07 1.205,-3.637 V 58.053 h 5.237 v 15.982 c 0,1.404 -0.364,2.861 -1.093,4.371 -0.729,1.512 -1.85,2.668 -3.362,3.469 -1.514,0.803 -3.206,1.205 -5.077,1.205 -3.391,0 -5.871,-0.943 -7.441,-2.83 -1.57,-1.887 -2.354,-3.871 -2.354,-5.951 V 58.053 z"
    id="path5"
@@ -472,7 +472,7 @@
 <g
    id="g23"
    style="stroke:none"
-   transform="translate(4.3253623,4.3168167)">
+   transform="translate(2.3253623,2.3168167)">
 	<linearGradient
    id="SVGID_1_"
    gradientUnits="userSpaceOnUse"
@@ -502,7 +502,7 @@
    id="stop34" />
 	</linearGradient>
 	<polygon
-   points="110.194,58.248 110.655,2.305 126.025,2.305 148.001,33.965 148.001,2.307 164.447,2.307 164.447,58.248 147.541,58.248 126.332,27.357 126.332,58.248 "
+   points="126.025,2.305 148.001,33.965 148.001,2.307 164.447,2.307 164.447,58.248 147.541,58.248 126.332,27.357 126.332,58.248 110.194,58.248 110.655,2.305 "
    id="polygon36"
    style="fill:url(#SVGID_1_);stroke:none" />
 	<linearGradient

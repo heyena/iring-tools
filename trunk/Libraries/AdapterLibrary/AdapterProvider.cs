@@ -1086,7 +1086,17 @@ namespace org.iringtools.adapter
             Utility.Write<Dictionary<string, string>>(settingsDictionary, @"AdapterSettings.xml");
             Utility.Write<IDictionary>(_keyRing, @"KeyRing.xml");
           }
-          _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
+
+          try
+          {
+            _dataLayer = (IDataLayer)_kernel.Get<IDataLayer2>("DataLayer");
+          }
+          catch (Exception ex)
+          {
+            _logger.Debug(ex.ToString());
+            _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
+          }
+          
           _dataDictionary = _dataLayer.GetDictionary();
           _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
           _isDataLayerInitialized = true;
@@ -1507,7 +1517,7 @@ namespace org.iringtools.adapter
         new XAttribute("name", _settings["Scope"]),
           new XElement("bind",
             new XAttribute("name", "DataLayer"),
-            new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+            new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
             new XAttribute("to", dataLayer)
           )
         );
@@ -1515,9 +1525,9 @@ namespace org.iringtools.adapter
         binding.Save(_settings["BindingConfigurationPath"]);
         _kernel.Load(_settings["BindingConfigurationPath"]);
 
-        _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
+        InitializeDataLayer();
 
-        _dataLayer.Configure(configuration);
+        ((IDataLayer2)_dataLayer).Configure(configuration);
 
       }
       catch (Exception ex)

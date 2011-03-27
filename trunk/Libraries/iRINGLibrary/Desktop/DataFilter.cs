@@ -30,12 +30,18 @@ using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Text;
+using LINQ = System.Linq.Expressions;
+using System.Collections;
+using org.iringtools.utility;
 
 namespace org.iringtools.library
 {
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "dataFilter")]
   public class DataFilter
   {
+    private List<Expression> _filterBuffer = null;
+    private DataObject _dataObjectDefinition = null;
+
     public DataFilter()
     {
       Expressions = new List<Expression>();
@@ -124,7 +130,81 @@ namespace org.iringtools.library
       }
     }
 
-    public string ToLinqExpression(Type type, string objectVariable)
+    public LINQ.Expression<Func<IDataObject, bool>> ToPredicate(DataObject dataObjectDefinition)
+    {
+      _dataObjectDefinition = dataObjectDefinition;
+
+      return ToPredicate(0);
+    }
+
+    public LINQ.Expression<Func<IDataObject, bool>> ToPredicate(int groupLevel)
+    {
+      LINQ.Expression<Func<IDataObject, bool>> predicate = null;
+
+      try
+      {
+        if (Expressions != null && Expressions.Count > 0)
+        {
+          if (_filterBuffer == null)
+            _filterBuffer = Expressions.ToList();
+
+          List<Expression> localBuffer = _filterBuffer.ToList();
+          foreach (Expression expression in localBuffer)
+          {
+            _filterBuffer.Remove(expression);
+
+            groupLevel += (expression.OpenGroupCount - expression.CloseGroupCount);
+
+            switch (expression.LogicalOperator)
+            {
+              case LogicalOperator.And: 
+              case LogicalOperator.None:
+                if (predicate == null)
+                  predicate = PredicateBuilder.True<IDataObject>();
+                predicate = predicate.And(ResolvePredicate(expression));
+                break;
+
+              case LogicalOperator.AndNot:
+              case LogicalOperator.Not:
+                if (predicate == null)
+                  predicate = PredicateBuilder.True<IDataObject>();
+                predicate = predicate.And(ResolvePredicate(expression));
+                predicate = LINQ.Expression.Lambda<Func<IDataObject, bool>>(LINQ.Expression.Not(predicate.Body), predicate.Parameters[0]);
+                break;
+
+              case LogicalOperator.Or:
+                if (predicate == null)
+                  predicate = PredicateBuilder.False<IDataObject>();
+                predicate = predicate.Or(ResolvePredicate(expression));
+                break;
+
+              case LogicalOperator.OrNot:
+                if (predicate == null)
+                  predicate = PredicateBuilder.False<IDataObject>();
+                predicate = predicate.Or(ResolvePredicate(expression));
+                predicate = LINQ.Expression.Lambda<Func<IDataObject, bool>>(LINQ.Expression.Not(predicate.Body), predicate.Parameters[0]);
+                break;
+            }
+
+            if (groupLevel > 0)
+            {
+              predicate = predicate.And(ToPredicate(groupLevel));
+            }
+          }
+        }
+
+        if (predicate == null)
+          predicate = PredicateBuilder.True<IDataObject>();
+
+        return predicate;
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Error while generating Predicate.", ex);
+      }
+    }
+
+    public string ToLinqExpression<T>(string objectVariable)
     {
       if (this == null || this.Expressions.Count == 0)
         return String.Empty;
@@ -138,7 +218,7 @@ namespace org.iringtools.library
 
         foreach (Expression expression in this.Expressions)
         {
-          string exp = ResolveLinqExpression(type, expression, objectVariable);
+          string exp = ResolveLinqExpression<T>(expression, objectVariable);
           linqExpression.Append(exp);
         }
 
@@ -150,242 +230,237 @@ namespace org.iringtools.library
       }
     }
 
-    public string ToLinqExpression<T>(string objectVariable)
-    {
-      return ToLinqExpression(typeof(T), objectVariable);
-    }
+    //public string ToLinqExpression(string objectType, string objectVariable)
+    //{
+    //  return ToLinqExpression(Type.GetType(objectType), objectVariable);
+    //}
 
-    public string ToLinqExpression(string objectType, string objectVariable)
-    {
-      return ToLinqExpression(Type.GetType(objectType), objectVariable);
-    }
+    //private string ResolveSqlExpression(Type type, Expression expression, string objectAlias)
+    //{
+    //  string PropertyName = expression.PropertyName;
 
-    private string ResolveSqlExpression(Type type, Expression expression, string objectAlias)
-    {
-      string PropertyName = expression.PropertyName;
+    //  string qualifiedPropertyName = String.Empty;
+    //  if (expression.IsCaseSensitive)
+    //  {
+    //    qualifiedPropertyName = objectAlias + PropertyName;
+    //  }
+    //  else
+    //  {
+    //    qualifiedPropertyName = "UPPER(" + objectAlias + PropertyName + ")";
+    //  }
 
-      string qualifiedPropertyName = String.Empty;
-      if (expression.IsCaseSensitive)
-      {
-        qualifiedPropertyName = objectAlias + PropertyName;
-      }
-      else
-      {
-        qualifiedPropertyName = "UPPER(" + objectAlias + PropertyName + ")";
-      }
+    //  Type propertyType = type.GetProperty(PropertyName).PropertyType;
+    //  bool isString = propertyType == typeof(string);
+    //  StringBuilder sqlExpression = new StringBuilder();
 
-      Type propertyType = type.GetProperty(PropertyName).PropertyType;
-      bool isString = propertyType == typeof(string);
-      StringBuilder sqlExpression = new StringBuilder();
+    //  if (expression.LogicalOperator != LogicalOperator.None)
+    //  {
+    //    string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
+    //    sqlExpression.Append(" " + logicalOperator + " ");
+    //  }
 
-      if (expression.LogicalOperator != LogicalOperator.None)
-      {
-        string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
-        sqlExpression.Append(" " + logicalOperator + " ");
-      }
+    //  for (int i = 0; i < expression.OpenGroupCount; i++)
+    //    sqlExpression.Append("(");
 
-      for (int i = 0; i < expression.OpenGroupCount; i++)
-        sqlExpression.Append("(");
+    //  string value = String.Empty;
+    //  switch (expression.RelationalOperator)
+    //  {
+    //    case RelationalOperator.StartsWith:
+    //      if (!isString) throw new Exception("StartsWith operator used with non-string property");
 
-      string value = String.Empty;
-      switch (expression.RelationalOperator)
-      {
-        case RelationalOperator.StartsWith:
-          if (!isString) throw new Exception("StartsWith operator used with non-string property");
+    //      if (expression.IsCaseSensitive)
+    //      {
+    //        value = expression.Values.FirstOrDefault();
+    //      }
+    //      else
+    //      {
+    //        value = expression.Values.FirstOrDefault().ToUpper();
+    //      }
 
-          if (expression.IsCaseSensitive)
-          {
-            value = expression.Values.FirstOrDefault();
-          }
-          else
-          {
-            value = expression.Values.FirstOrDefault().ToUpper();
-          }
+    //      sqlExpression.Append(qualifiedPropertyName + " LIKE '" + value + "%'");
 
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '" + value + "%'");
+    //      break;
 
-          break;
+    //    case RelationalOperator.Contains:
+    //      if (!isString) throw new Exception("Contains operator used with non-string property");
 
-        case RelationalOperator.Contains:
-          if (!isString) throw new Exception("Contains operator used with non-string property");
+    //      if (expression.IsCaseSensitive)
+    //      {
+    //        value = expression.Values.FirstOrDefault();
+    //      }
+    //      else
+    //      {
+    //        value = expression.Values.FirstOrDefault().ToUpper();
+    //      }
 
-          if (expression.IsCaseSensitive)
-          {
-            value = expression.Values.FirstOrDefault();
-          }
-          else
-          {
-            value = expression.Values.FirstOrDefault().ToUpper();
-          }
+    //      sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + value + "%'");
 
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + value + "%'");
+    //      break;
 
-          break;
+    //    case RelationalOperator.EndsWith:
+    //      if (!isString) throw new Exception("EndsWith operator used with non-string property");
 
-        case RelationalOperator.EndsWith:
-          if (!isString) throw new Exception("EndsWith operator used with non-string property");
+    //      if (expression.IsCaseSensitive)
+    //      {
+    //        value = expression.Values.FirstOrDefault();
+    //      }
+    //      else
+    //      {
+    //        value = expression.Values.FirstOrDefault().ToUpper();
+    //      }
 
-          if (expression.IsCaseSensitive)
-          {
-            value = expression.Values.FirstOrDefault();
-          }
-          else
-          {
-            value = expression.Values.FirstOrDefault().ToUpper();
-          }
+    //      sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + value + "'");
+    //      break;
 
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + value + "'");
-          break;
+    //    case RelationalOperator.In:
+    //      if (isString)
+    //      {
+    //        if (expression.IsCaseSensitive)
+    //        {
+    //          value = String.Join("','", expression.Values.ToArray());
+    //        }
+    //        else
+    //        {
+    //          value = String.Join("','", expression.Values.ToArray()).ToUpper();
+    //        }
 
-        case RelationalOperator.In:
-          if (isString)
-          {
-            if (expression.IsCaseSensitive)
-            {
-              value = String.Join("','", expression.Values.ToArray());
-            }
-            else
-            {
-              value = String.Join("','", expression.Values.ToArray()).ToUpper();
-            }
+    //        sqlExpression.Append(qualifiedPropertyName + " IN ('" + value + "')");
+    //      }
+    //      else
+    //      {
+    //        sqlExpression.Append(qualifiedPropertyName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
+    //      }
+    //      break;
 
-            sqlExpression.Append(qualifiedPropertyName + " IN ('" + value + "')");
-          }
-          else
-          {
-            sqlExpression.Append(qualifiedPropertyName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
-          }
-          break;
+    //    case RelationalOperator.EqualTo:
+    //      if (isString)
+    //      {
+    //        if (expression.IsCaseSensitive)
+    //        {
+    //          value = expression.Values.FirstOrDefault();
+    //        }
+    //        else
+    //        {
+    //          value = expression.Values.FirstOrDefault().ToUpper();
+    //        }
 
-        case RelationalOperator.EqualTo:
-          if (isString)
-          {
-            if (expression.IsCaseSensitive)
-            {
-              value = expression.Values.FirstOrDefault();
-            }
-            else
-            {
-              value = expression.Values.FirstOrDefault().ToUpper();
-            }
+    //        sqlExpression.Append(qualifiedPropertyName + "='" + value + "'");
+    //      }
+    //      else
+    //      {
+    //        sqlExpression.Append(qualifiedPropertyName + "=" + expression.Values.FirstOrDefault() + "");
+    //      }
+    //      break;
 
-            sqlExpression.Append(qualifiedPropertyName + "='" + value + "'");
-          }
-          else
-          {
-            sqlExpression.Append(qualifiedPropertyName + "=" + expression.Values.FirstOrDefault() + "");
-          }
-          break;
+    //    case RelationalOperator.NotEqualTo:
+    //      if (isString)
+    //      {
+    //        if (expression.IsCaseSensitive)
+    //        {
+    //          value = expression.Values.FirstOrDefault();
+    //        }
+    //        else
+    //        {
+    //          value = expression.Values.FirstOrDefault().ToUpper();
+    //        }
 
-        case RelationalOperator.NotEqualTo:
-          if (isString)
-          {
-            if (expression.IsCaseSensitive)
-            {
-              value = expression.Values.FirstOrDefault();
-            }
-            else
-            {
-              value = expression.Values.FirstOrDefault().ToUpper();
-            }
+    //        sqlExpression.Append(qualifiedPropertyName + "<>'" + value + "'");
+    //      }
+    //      else
+    //      {
+    //        sqlExpression.Append(qualifiedPropertyName + "<>" + expression.Values.FirstOrDefault() + "");
+    //      }
+    //      break;
 
-            sqlExpression.Append(qualifiedPropertyName + "<>'" + value + "'");
-          }
-          else
-          {
-            sqlExpression.Append(qualifiedPropertyName + "<>" + expression.Values.FirstOrDefault() + "");
-          }
-          break;
+    //    case RelationalOperator.GreaterThan:
+    //      if (isString)
+    //      {
+    //        if (expression.IsCaseSensitive)
+    //        {
+    //          value = expression.Values.FirstOrDefault();
+    //        }
+    //        else
+    //        {
+    //          value = expression.Values.FirstOrDefault().ToUpper();
+    //        }
 
-        case RelationalOperator.GreaterThan:
-          if (isString)
-          {
-            if (expression.IsCaseSensitive)
-            {
-              value = expression.Values.FirstOrDefault();
-            }
-            else
-            {
-              value = expression.Values.FirstOrDefault().ToUpper();
-            }
+    //        sqlExpression.Append(qualifiedPropertyName + ">'" + value + "'");
+    //      }
+    //      else
+    //      {
+    //        sqlExpression.Append(qualifiedPropertyName + ">" + expression.Values.FirstOrDefault());
+    //      }
+    //      break;
 
-            sqlExpression.Append(qualifiedPropertyName + ">'" + value + "'");
-          }
-          else
-          {
-            sqlExpression.Append(qualifiedPropertyName + ">" + expression.Values.FirstOrDefault());
-          }
-          break;
+    //    case RelationalOperator.GreaterThanOrEqual:
+    //      if (isString)
+    //      {
+    //        if (expression.IsCaseSensitive)
+    //        {
+    //          value = expression.Values.FirstOrDefault();
+    //        }
+    //        else
+    //        {
+    //          value = expression.Values.FirstOrDefault().ToUpper();
+    //        }
 
-        case RelationalOperator.GreaterThanOrEqual:
-          if (isString)
-          {
-            if (expression.IsCaseSensitive)
-            {
-              value = expression.Values.FirstOrDefault();
-            }
-            else
-            {
-              value = expression.Values.FirstOrDefault().ToUpper();
-            }
+    //        sqlExpression.Append(qualifiedPropertyName + ">='" + value + "'");
+    //      }
+    //      else
+    //      {
+    //        sqlExpression.Append(qualifiedPropertyName + ">=" + expression.Values.FirstOrDefault());
+    //      }
+    //      break;
 
-            sqlExpression.Append(qualifiedPropertyName + ">='" + value + "'");
-          }
-          else
-          {
-            sqlExpression.Append(qualifiedPropertyName + ">=" + expression.Values.FirstOrDefault());
-          }
-          break;
+    //    case RelationalOperator.LesserThan:
+    //      if (isString)
+    //      {
+    //        if (expression.IsCaseSensitive)
+    //        {
+    //          value = expression.Values.FirstOrDefault();
+    //        }
+    //        else
+    //        {
+    //          value = expression.Values.FirstOrDefault().ToUpper();
+    //        }
 
-        case RelationalOperator.LesserThan:
-          if (isString)
-          {
-            if (expression.IsCaseSensitive)
-            {
-              value = expression.Values.FirstOrDefault();
-            }
-            else
-            {
-              value = expression.Values.FirstOrDefault().ToUpper();
-            }
+    //        sqlExpression.Append(qualifiedPropertyName + "<'" + value + "'");
+    //      }
+    //      else
+    //      {
+    //        sqlExpression.Append(qualifiedPropertyName + "<" + expression.Values.FirstOrDefault());
+    //      }
+    //      break;
 
-            sqlExpression.Append(qualifiedPropertyName + "<'" + value + "'");
-          }
-          else
-          {
-            sqlExpression.Append(qualifiedPropertyName + "<" + expression.Values.FirstOrDefault());
-          }
-          break;
+    //    case RelationalOperator.LesserThanOrEqual:
+    //      if (isString)
+    //      {
+    //        if (expression.IsCaseSensitive)
+    //        {
+    //          value = expression.Values.FirstOrDefault();
+    //        }
+    //        else
+    //        {
+    //          value = expression.Values.FirstOrDefault().ToUpper();
+    //        }
 
-        case RelationalOperator.LesserThanOrEqual:
-          if (isString)
-          {
-            if (expression.IsCaseSensitive)
-            {
-              value = expression.Values.FirstOrDefault();
-            }
-            else
-            {
-              value = expression.Values.FirstOrDefault().ToUpper();
-            }
+    //        sqlExpression.Append(qualifiedPropertyName + "<='" + value + "'");
+    //      }
+    //      else
+    //      {
+    //        sqlExpression.Append(qualifiedPropertyName + "<=" + expression.Values.FirstOrDefault());
+    //      }
+    //      break;
 
-            sqlExpression.Append(qualifiedPropertyName + "<='" + value + "'");
-          }
-          else
-          {
-            sqlExpression.Append(qualifiedPropertyName + "<=" + expression.Values.FirstOrDefault());
-          }
-          break;
+    //    default:
+    //      throw new Exception("Relational operator does not exist.");
+    //  }
 
-        default:
-          throw new Exception("Relational operator does not exist.");
-      }
+    //  for (int i = 0; i < expression.CloseGroupCount; i++)
+    //    sqlExpression.Append(")");
 
-      for (int i = 0; i < expression.CloseGroupCount; i++)
-        sqlExpression.Append(")");
-
-      return sqlExpression.ToString();
-    }
+    //  return sqlExpression.ToString();
+    //}
 
     private string ResolveSqlExpression(DataDictionary dataDictionary, string objectType, Expression expression, string objectAlias)
     {
@@ -655,11 +730,11 @@ namespace org.iringtools.library
       return sqlExpression.ToString();
     }
 
-    private string ResolveLinqExpression(Type type, Expression expression, string objectVariable)
+    private string ResolveLinqExpression<T>(Expression expression, string objectVariable)
     {
       string PropertyName = expression.PropertyName;
       string qualifiedPropertyName = objectVariable + PropertyName;
-      Type propertyType = type.GetProperty(PropertyName).PropertyType;
+      Type propertyType = typeof(T).GetProperty(PropertyName).PropertyType;
       bool isString = (propertyType == typeof(string));
       StringBuilder linqExpression = new StringBuilder();
 
@@ -770,6 +845,409 @@ namespace org.iringtools.library
         default:
           throw new Exception("Logical operator [" + logicalOperator + "] not supported.");
       }
+    }
+
+    private LINQ.Expression<Func<IDataObject, bool>> ResolvePredicate(Expression expression)
+    {
+      string propertyName = expression.PropertyName;
+
+      if (_dataObjectDefinition == null)
+        throw new Exception("");
+
+#if !SILVERLIGHT
+      DataProperty dataProperty =
+        _dataObjectDefinition.dataProperties.Find(
+          o => o.propertyName.ToUpper() == propertyName.ToUpper()
+        );
+#else
+      DataProperty dataProperty = null;
+      foreach (DataProperty o in _dataObjectDefinition.dataProperties)
+      {
+        if (o.propertyName.ToUpper() == propertyName.ToUpper())
+        {
+          dataProperty = o;
+          break;
+        }
+      }
+#endif
+      
+
+      if (dataProperty == null)
+        throw new Exception("");
+
+      DataType propertyType = dataProperty.dataType;
+
+      bool isString = propertyType == DataType.String;
+      bool isBoolean = propertyType == DataType.Boolean;
+
+      switch (expression.RelationalOperator)
+      {
+        case RelationalOperator.StartsWith:
+          if (!isString) throw new Exception("StartsWith operator used with non-string property");
+
+          if (expression.IsCaseSensitive)
+          {
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().StartsWith(expression.Values.FirstOrDefault());
+          }
+          else
+          {
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().ToUpper().StartsWith(expression.Values.FirstOrDefault().ToUpper());
+          }
+
+        case RelationalOperator.Contains:
+          if (!isString) throw new Exception("Contains operator used with non-string property");
+
+          if (expression.IsCaseSensitive)
+          {
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().Contains(expression.Values.FirstOrDefault());
+          }
+          else
+          {
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().ToUpper().Contains(expression.Values.FirstOrDefault().ToUpper());
+          }
+
+        case RelationalOperator.EndsWith:
+          if (!isString) throw new Exception("EndsWith operator used with non-string property");
+
+          if (expression.IsCaseSensitive)
+          {
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().EndsWith(expression.Values.FirstOrDefault());
+          }
+          else
+          {
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().ToUpper().EndsWith(expression.Values.FirstOrDefault().ToUpper());
+          }
+
+        case RelationalOperator.In:
+          if (expression.IsCaseSensitive)
+          {
+            if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
+
+            return o => expression.Values.Contains(o.GetPropertyValue(dataProperty.propertyName).ToString());
+          }
+          else
+          {
+            return o => expression.Values.Contains(o.GetPropertyValue(dataProperty.propertyName).ToString(), new GenericDataComparer(propertyType));
+          }
+
+        case RelationalOperator.EqualTo:
+          if (expression.IsCaseSensitive)
+          {
+            if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
+
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().Equals(expression.Values.FirstOrDefault());
+          }
+          else
+          {
+            GenericDataComparer comparer = new GenericDataComparer(propertyType);
+            return o => comparer.Equals(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault());
+          }
+
+        case RelationalOperator.NotEqualTo:
+          if (expression.IsCaseSensitive)
+          {
+            if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
+
+            return o => !o.GetPropertyValue(dataProperty.propertyName).ToString().Equals(expression.Values.FirstOrDefault());
+          }
+          else
+          {
+            GenericDataComparer comparer = new GenericDataComparer(propertyType);
+            return o => !comparer.Equals(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault());
+          }
+
+        case RelationalOperator.GreaterThan:
+          if (expression.IsCaseSensitive)
+          {
+            if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
+
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().CompareTo(expression.Values.FirstOrDefault()) == 1;
+          }
+          else
+          {
+            if (!isBoolean) throw new Exception("GreaterThan operator cannot be used with Boolean property");
+
+            GenericDataComparer comparer = new GenericDataComparer(propertyType);
+            return o => comparer.Compare(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault()) == 1;
+          }
+
+        case RelationalOperator.GreaterThanOrEqual:
+          if (expression.IsCaseSensitive)
+          {
+            if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
+
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().CompareTo(expression.Values.FirstOrDefault()) == 1 ||
+                        o.GetPropertyValue(dataProperty.propertyName).ToString().CompareTo(expression.Values.FirstOrDefault()) == 0;
+          }
+          else
+          {
+            if (!isBoolean) throw new Exception("GreaterThan operator cannot be used with Boolean property");
+
+            GenericDataComparer comparer = new GenericDataComparer(propertyType);
+            return o => comparer.Compare(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault()) == 1 ||
+                        comparer.Compare(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault()) == 0;
+          }
+
+        case RelationalOperator.LesserThan:
+          if (expression.IsCaseSensitive)
+          {
+            if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
+
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().CompareTo(expression.Values.FirstOrDefault()) == -1;
+          }
+          else
+          {
+            if (!isBoolean) throw new Exception("LesserThan operator cannot be used with Boolean property");
+
+            GenericDataComparer comparer = new GenericDataComparer(propertyType);
+            return o => comparer.Compare(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault()) == -1;
+          }
+
+        case RelationalOperator.LesserThanOrEqual:
+          if (expression.IsCaseSensitive)
+          {
+            if (!isString) throw new Exception("Case Sensitivity is not available with this operator and propertyType.");
+
+            return o => o.GetPropertyValue(dataProperty.propertyName).ToString().CompareTo(expression.Values.FirstOrDefault()) == -1 ||
+                        o.GetPropertyValue(dataProperty.propertyName).ToString().CompareTo(expression.Values.FirstOrDefault()) == 0;
+          }
+          else
+          {
+            if (!isBoolean) throw new Exception("GreaterThan operator cannot be used with Boolean property");
+
+            GenericDataComparer comparer = new GenericDataComparer(propertyType);
+            return o => comparer.Compare(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault()) == -1 ||
+                        comparer.Compare(o.GetPropertyValue(dataProperty.propertyName).ToString(), expression.Values.FirstOrDefault()) == 0;
+          }
+
+        default:
+          throw new Exception("Relational operator does not exist.");
+      }
+    }
+  }
+
+  public class GenericDataComparer : IEqualityComparer<string>, IComparer<string>
+  {
+    private DataType _dataType { get; set; }
+
+    public GenericDataComparer(DataType dataType)
+    {
+      _dataType = dataType;
+    }
+
+    // Implement the IComparable interface. 
+    public bool Equals(string str1, string str2)
+    {
+      return Compare(str1, str2) == 0;
+    }
+
+    public int Compare(string str1, string str2)
+    {
+      switch (_dataType)
+      {
+        case DataType.Boolean:
+          bool bool1 = false;
+          Boolean.TryParse(str1, out bool1);
+
+          bool bool2 = false;
+          Boolean.TryParse(str2, out bool1);
+
+          if (Boolean.Equals(bool1, bool2))
+          {
+            return 0;
+          }
+          else if (bool1)
+          {
+            return 1;
+          }
+          else
+          {
+            return -1;
+          }
+
+        case DataType.Byte:
+          byte byte1 = 0;
+          Byte.TryParse(str1, out byte1);
+
+          byte byte2 = 0;
+          Byte.TryParse(str2, out byte2);
+
+          if (byte1 == byte2)
+          {
+            return 0;
+          }
+          else if (byte1 > byte2)
+          {
+            return 1;
+          }
+          else
+          {
+            return -1;
+          }
+
+        case DataType.Char:
+          char char1 = Char.MinValue;
+          Char.TryParse(str1, out char1);
+
+          char char2 = Char.MinValue;
+          Char.TryParse(str2, out char2);
+
+          if (char1 == char2)
+          {
+            return 0;
+          }
+          else if (char1 > char2)
+          {
+            return 1;
+          }
+          else
+          {
+            return -1;
+          }
+
+        case DataType.DateTime:
+          DateTime dateTime1 = DateTime.MinValue;
+          DateTime.TryParse(str1, out dateTime1);
+
+          DateTime dateTime2 = DateTime.MinValue;
+          DateTime.TryParse(str2, out dateTime2);
+
+          return DateTime.Compare(dateTime1, dateTime2);
+
+        case DataType.Decimal:
+          decimal decimal1 = 0;
+          Decimal.TryParse(str1, out decimal1);
+
+          decimal decimal2 = 0;
+          Decimal.TryParse(str2, out decimal2);
+
+          return Decimal.Compare(decimal1, decimal2);
+
+        case DataType.Double:
+          double double1 = 0;
+          Double.TryParse(str1, out double1);
+
+          double double2 = 0;
+          Double.TryParse(str2, out double2);
+
+          if (Double.Equals(double1, double2))
+          {
+            return 0;
+          }
+          else if (double1 > double2)
+          {
+            return 1;
+          }
+          else
+          {
+            return -1;
+          }
+
+        case DataType.Int16:
+          Int16 int161 = 0;
+          Int16.TryParse(str1, out int161);
+
+          Int16 int162 = 0;
+          Int16.TryParse(str2, out int162);
+
+          if (Int16.Equals(int161, int162))
+          {
+            return 0;
+          }
+          else if (int161 > int162)
+          {
+            return 1;
+          }
+          else
+          {
+            return -1;
+          }
+
+        case DataType.Int32:
+          int int1 = 0;
+          Int32.TryParse(str1, out int1);
+
+          int int2 = 0;
+          Int32.TryParse(str2, out int2);
+
+          if (Int32.Equals(int1, int2))
+          {
+            return 0;
+          }
+          else if (int1 > int2)
+          {
+            return 1;
+          }
+          else
+          {
+            return -1;
+          }
+
+        case DataType.Int64:
+          Int64 int641 = 0;
+          Int64.TryParse(str1, out int641);
+
+          Int64 int642 = 0;
+          Int64.TryParse(str2, out int642);
+
+          if (Int16.Equals(int641, int642))
+          {
+            return 0;
+          }
+          else if (int641 > int642)
+          {
+            return 1;
+          }
+          else
+          {
+            return -1;
+          }
+
+        case DataType.Single:
+          Single single1 = 0;
+          Single.TryParse(str1, out single1);
+
+          Single single2 = 0;
+          Single.TryParse(str2, out single2);
+
+          if (Single.Equals(single1, single2))
+          {
+            return 0;
+          }
+          else if (single1 > single2)
+          {
+            return 1;
+          }
+          else
+          {
+            return -1;
+          }
+
+        //Case Insensitive!
+        case DataType.String:
+#if !SILVERLIGHT
+          return String.Compare(str1, str2, true);
+#else
+          return String.Compare(str1, str2, StringComparison.InvariantCultureIgnoreCase);
+#endif
+
+        case DataType.TimeSpan:
+          TimeSpan span1 = TimeSpan.MinValue;
+          TimeSpan.TryParse(str1, out span1);
+
+          TimeSpan span2 = TimeSpan.MinValue;
+          TimeSpan.TryParse(str2, out span2);
+
+          return TimeSpan.Compare(span1, span2);
+
+        default:
+          throw new Exception("Invalid property datatype.");
+      }
+    }
+
+    public int GetHashCode(string obj)
+    {
+      throw new NotImplementedException();
     }
   }
 
