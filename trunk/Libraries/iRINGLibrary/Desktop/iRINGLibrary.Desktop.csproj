@@ -123,6 +123,7 @@
     <Compile Include="DataObjects.cs" />
     <Compile Include="DataProviders.cs" />
     <Compile Include="DataRelationships.cs" />
+    <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Repositories.cs" />
     <Compile Include="DatabaseDictionary.cs" />
     <Compile Include="DataDictionary.cs" />
