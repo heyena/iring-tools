@@ -79,6 +79,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
     </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
@@ -115,6 +118,7 @@
     <Compile Include="BaseDataLayer.cs" />
     <Compile Include="DataLayerConfig.cs" />
     <Compile Include="DataLayers.cs" />
+    <Compile Include="GenericDataObject.cs" />
     <Compile Include="MappingExtensions.cs" />
     <Compile Include="DataObjects.cs" />
     <Compile Include="DataProviders.cs" />

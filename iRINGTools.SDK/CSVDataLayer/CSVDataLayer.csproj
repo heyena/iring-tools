@@ -92,11 +92,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BindingConfiguration.12345_000.CSV.xml" />
-    <Content Include="DataDictionary.xml" />
-    <Content Include="Equipment.12345_000.CSV.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -112,10 +107,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="12345_000.CSV.config" />
-    <None Include="CSVDataLayer.cd" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="12345_000.CSV\Equipment\" />

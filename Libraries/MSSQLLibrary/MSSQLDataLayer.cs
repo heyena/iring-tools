@@ -15,7 +15,7 @@ using Ninject;
 
 namespace org.iringtools.adapter.datalayer 
 {
-  public class MSSQLDataLayer : BaseDataLayer, IDataLayer
+  public class MSSQLDataLayer : BaseDataLayer, IDataLayer2
   {
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(MSSQLDataLayer));
@@ -38,7 +38,7 @@ namespace org.iringtools.adapter.datalayer
       _configuration = GetConfig(projectName, applicationName);
     }
 
-    public DataDictionary GetDictionary()
+    public override DataDictionary GetDictionary()
     {
       DataTable dataTable;
       _dataDictionary = new DataDictionary();
@@ -131,7 +131,7 @@ namespace org.iringtools.adapter.datalayer
       return dataObject;
     }
 
-    public IList<IDataObject> Create(string objectType, IList<string> identifiers)
+    public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
       try
       {
@@ -270,7 +270,7 @@ namespace org.iringtools.adapter.datalayer
 
 
 
-    public Response Delete(string objectType, DataFilter filter)
+    public override Response Delete(string objectType, DataFilter filter)
     {
       try
       {
@@ -296,7 +296,7 @@ namespace org.iringtools.adapter.datalayer
     }
 
 
-    public Response Delete(string objectType, IList<string> identifiers)
+    public override Response Delete(string objectType, IList<string> identifiers)
     {
       Response response = new Response();
       Status status = new Status();
@@ -360,7 +360,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
+    public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
     {
       StringBuilder sql = new StringBuilder();
 
@@ -397,7 +397,7 @@ namespace org.iringtools.adapter.datalayer
       return dataObjects;
     }
 
-    public IList<IDataObject> Get(string objectType, IList<string> identifiers)
+    public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
       try
       {
@@ -423,7 +423,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<String> GetIdentifiers(string objectType, DataFilter filter)
+    public override IList<String> GetIdentifiers(string objectType, DataFilter filter)
     {
       try
       {
@@ -478,7 +478,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public long GetCount(string objectType, DataFilter filter)
+    public override long GetCount(string objectType, DataFilter filter)
     {
       try
       {
@@ -526,12 +526,12 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
+    public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
     {
       return new List<IDataObject>();//no related objects expected
     }
 
-    public Response Post(IList<IDataObject> dataObjects)
+    public override Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
       Status status = new Status();

@@ -41,6 +41,28 @@ namespace org.iringtools.library
 
     [DataMember]
     public List<DataObject> dataObjects { get; set; }
+
+    public static bool IsNumeric(DataType dataType)
+    {
+      bool isNumeric = false;
+
+      var numericTypes = new DataType[] {
+          DataType.Byte,
+          DataType.Decimal,
+          DataType.Double,
+          DataType.Int16,
+          DataType.Int32,
+          DataType.Int64,
+          DataType.Single,
+      };
+
+      if (numericTypes.Contains(dataType))
+      {
+          isNumeric = true;
+      }
+
+      return isNumeric;
+    }
   }
 
   [DataContract(Name = "dataObject", Namespace = "http://www.iringtools.org/library")]

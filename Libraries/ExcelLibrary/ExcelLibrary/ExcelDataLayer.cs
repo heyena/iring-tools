@@ -48,7 +48,7 @@ namespace org.iringtools.adapter.datalayer
     }
   }
 
-  public class ExcelDataLayer : BaseDataLayer, IDataLayer
+  public class ExcelDataLayer : BaseDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ExcelDataLayer));
     private AdapterSettings _settings = null;
@@ -105,7 +105,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public Response Delete(string objectType, DataFilter filter)
+    public override Response Delete(string objectType, DataFilter filter)
     {
       try
       {
@@ -128,7 +128,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public Response Delete(string objectType, IList<string> identifiers)
+    public override Response Delete(string objectType, IList<string> identifiers)
     {
       Response response = new Response();
 
@@ -178,7 +178,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
+    public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int pageNumber)
     {      
       try
       {
@@ -239,7 +239,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<IDataObject> Get(string objectType, IList<string> identifiers)
+    public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {      
       try
       {
@@ -254,7 +254,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public DataDictionary GetDictionary()
+    public override DataDictionary GetDictionary()
     {
       try
       {
@@ -302,7 +302,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<string> GetIdentifiers(string objectType, DataFilter filter)
+    public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
       try
       {
@@ -325,7 +325,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public long GetCount(string objectType, DataFilter filter)
+    public override long GetCount(string objectType, DataFilter filter)
     {
       try
       {
@@ -340,9 +340,9 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error in GetIdentifiers: " + ex);
         throw new Exception("Error while getting a list of identifiers of type [" + objectType + "].", ex);
       }
-    }     
+    }
 
-    public Response Post(IList<IDataObject> dataObjects)
+    public override Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
       
@@ -373,9 +373,9 @@ namespace org.iringtools.adapter.datalayer
         string objectType = (sample != null) ? sample.GetType().Name : String.Empty;
         throw new Exception("Error while posting data objects of type [" + objectType + "].", ex);
       }
-    }    
-   
-    public Response Configure(XElement configuration)
+    }
+
+    public override Response Configure(XElement configuration)
     {
       Response _response = new Response();
       _response.Messages = new Messages();
@@ -393,6 +393,11 @@ namespace org.iringtools.adapter.datalayer
         _response.Level = StatusLevel.Error;
       }
       return _response;
+    }
+
+    public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
+    {
+      throw new NotImplementedException();
     }
   }
 

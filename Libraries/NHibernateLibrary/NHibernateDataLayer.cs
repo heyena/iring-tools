@@ -20,7 +20,7 @@ using org.iringtools.nhibernate;
 
 namespace org.iringtools.adapter.datalayer
 {
-  public class NHibernateDataLayer : BaseDataLayer, IDataLayer
+  public class NHibernateDataLayer : BaseDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
     private string _dataDictionaryPath = String.Empty;
@@ -83,7 +83,7 @@ namespace org.iringtools.adapter.datalayer
     }
 
     #region public methods
-    public IList<IDataObject> Create(string objectType, IList<string> identifiers)
+    public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
       try
       {
@@ -128,7 +128,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public long GetCount(string objectType, DataFilter filter)
+    public override long GetCount(string objectType, DataFilter filter)
     {
       try
       {
@@ -168,7 +168,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<string> GetIdentifiers(string objectType, DataFilter filter)
+    public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
       try
       {
@@ -202,7 +202,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<IDataObject> Get(string objectType, IList<string> identifiers)
+    public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
       try
       {
@@ -250,7 +250,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
+    public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       try
       {
@@ -346,7 +346,7 @@ namespace org.iringtools.adapter.datalayer
       return filter;
     }
 
-    public Response Post(IList<IDataObject> dataObjects)
+    public override Response Post(IList<IDataObject> dataObjects)
     {
       Response response = new Response();
 
@@ -394,7 +394,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public Response Delete(string objectType, IList<string> identifiers)
+    public override Response Delete(string objectType, IList<string> identifiers)
     {
       Response response = new Response();
 
@@ -433,7 +433,7 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
 
-    public Response Delete(string objectType, DataFilter filter)
+    public override Response Delete(string objectType, DataFilter filter)
     {
       Response response = new Response();
       response.StatusList = new List<Status>();
@@ -479,7 +479,7 @@ namespace org.iringtools.adapter.datalayer
       return response;
     }
 
-    public DataDictionary GetDictionary()
+    public override DataDictionary GetDictionary()
     {
         if (File.Exists(_dataDictionaryPath))
         {
@@ -492,7 +492,7 @@ namespace org.iringtools.adapter.datalayer
         }
     }
 
-    public IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
+    public override IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
     {
       IList<IDataObject> relatedObjects = null;
       DataDictionary dictionary = GetDictionary();
