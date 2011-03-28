@@ -112,11 +112,16 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="12345_000.SPPID.config">
+    <None Include="12345_000.SPPID.config" />
+    <None Include="12345_000.SPPID.Default.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="BindingConfiguration.12345_000.SPPID.xml" />
+    <Content Include="Configuration.SPPID.xml" />
+    <Content Include="DataDictionary.SPPID.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
