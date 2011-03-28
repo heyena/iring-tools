@@ -20,7 +20,7 @@ namespace org.iringtools.adapter.datalayer.csv.test
     {
       NameValueCollection settings = new NameValueCollection();
       settings["BaseDirectoryPath"] = AppDomain.CurrentDomain.BaseDirectory;
-      settings["XmlPath"] = @"C:\Users\rpdecarl\iring-tools-2.0.x\iRINGTools.SDK\CSVDataLayer\";
+      settings["XmlPath"] = @".\";
       settings["ProjectName"] = "12345_000";
       settings["ApplicationName"] = "CSV";
 
