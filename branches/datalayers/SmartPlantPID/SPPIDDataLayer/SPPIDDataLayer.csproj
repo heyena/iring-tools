@@ -92,7 +92,6 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="SPPIDDataLayer.cs" />
-    <Compile Include="DataObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
