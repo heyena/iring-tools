@@ -15,6 +15,7 @@ namespace iRINGTools.SDK.CSVDataLayer
     [TestFixture]
     public class CSVDataLayerTest
     {
+        private string _baseDirectory = string.Empty;
         private NameValueCollection _settings;
         private AdapterSettings _adapterSettings;
         private CSVDataLayer _dataLayer;
@@ -23,13 +24,15 @@ namespace iRINGTools.SDK.CSVDataLayer
         {
             _settings = new NameValueCollection();
 
-            _settings["BaseDirectoryPath"] = @"C:\iring-tools\trunk\CSVDataLayer\CSVDataLayer";
             _settings["ProjectName"] = "12345_000";
-            _settings["XmlPath"] = @".\12345_000\";
+            _settings["XmlPath"] = @"..\CSVDataLayer\12345_000\";
             _settings["ApplicationName"] = "CSV";
             _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
 
-            Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+            _baseDirectory = Directory.GetCurrentDirectory();
+            _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\bin"));
+            _settings["BaseDirectoryPath"] = _baseDirectory;
+            Directory.SetCurrentDirectory(_baseDirectory);
 
             _adapterSettings = new AdapterSettings();
             _adapterSettings.AppendSettings(_settings);
