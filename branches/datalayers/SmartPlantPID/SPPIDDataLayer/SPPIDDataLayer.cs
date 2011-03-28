@@ -38,7 +38,6 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
         public override DataDictionary GetDictionary()
         {
-
             DataDictionary dataDictionary = new DataDictionary();
 
             LoadConfiguration();
@@ -294,92 +293,24 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
         public override Response Delete(string objectType, IList<string> identifiers)
         {
+            // Not gonna do it. Wouldn't be prudent.
             Response response = new Response();
-
-            if (identifiers == null || identifiers.Count == 0)
-            {
-                Status status = new Status();
-                status.Level = StatusLevel.Warning;
-                status.Messages.Add("Nothing to delete.");
-                response.Append(status);
-                return response;
-            }
-
-            //Get Path from Scope.config ({project}.{app}.config)
-            string dataObjectPath = String.Format(
-              "{0}\\{1}",
-              _settings["SPPIDFolderPath"],
-              objectType
-            );
-
-            foreach (string identifier in identifiers)
-            {
-                Status status = new Status();
-                status.Identifier = identifier;
-
-                try
-                {
-                    string path = String.Format(
-                      "{0}\\{1}.csv",
-                      dataObjectPath,
-                      identifier
-                    );
-
-                    File.Delete(path);
-
-                    string message = String.Format(
-                      "DataObject [{0}] deleted successfully.",
-                      identifier
-                    );
-
-                    status.Messages.Add(message);
-                }
-                catch (Exception ex)
-                {
-                    _logger.Error("Error in Delete: " + ex);
-
-                    status.Level = StatusLevel.Error;
-
-                    string message = String.Format(
-                      "Error while deleting dataObject [{0}]. {1}",
-                      identifier,
-                      ex
-                    );
-
-                    status.Messages.Add(message);
-                }
-
-                response.Append(status);
-            }
-
+            Status status = new Status();
+            status.Level = StatusLevel.Error;
+            status.Messages.Add("Delete not supported by the SPPID DataLayer.");
+            response.Append(status);
             return response;
         }
 
         public override Response Delete(string objectType, DataFilter filter)
         {
-            try
-            {
-                IList<string> identifiers = new List<string>();
-
-                //NOTE: pageSize of 0 indicates that all rows should be returned.
-                IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
-
-                foreach (IDataObject dataObject in dataObjects)
-                {
-                    identifiers.Add((string)dataObject.GetPropertyValue("Tag"));
-                }
-
-                return Delete(objectType, identifiers);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error in Delete: " + ex);
-
-                throw new Exception(
-                  "Error while deleting data objects of type [" + objectType + "].",
-                  ex
-                );
-            }
+            // Not gonna do it. Wouldn't be prudent with a filter either.
+            Response response = new Response();
+            Status status = new Status();
+            status.Level = StatusLevel.Error;
+            status.Messages.Add("Delete not supported by the SPPID DataLayer.");
+            response.Append(status);
+            return response;
         }
 
         private void LoadConfiguration()
