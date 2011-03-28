@@ -52,7 +52,8 @@
 		<xs:sequence>
 			<xs:element name="id" type="xs:string" />
 			<xs:element name="name" type="xs:string" />
-			<xs:element name="description" type="xs:string" />
+      <xs:element name="description" type="xs:string" />
+      <xs:element name="baseUri" type="xs:string" />
 			<xs:element name="graphs" type="Graphs" />
 		</xs:sequence>
 	</xs:complexType>

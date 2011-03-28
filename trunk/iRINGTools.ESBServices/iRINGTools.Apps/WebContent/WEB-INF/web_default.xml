@@ -23,10 +23,6 @@
     <param-name>IDGenServiceUri</param-name>
     <param-value>http://localhost:8080/services/idgen</param-value>
   </context-param>
-  <context-param>
-    <param-name>DXFRServiceUri</param-name>
-    <param-value>http://localhost/services/dxfr</param-value>
-  </context-param>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>

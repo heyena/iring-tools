@@ -13,11 +13,11 @@ public class AppDataController extends ActionSupport implements SessionAware
 {
   private static final long serialVersionUID = 1L;
   private AppDataModel appDataModel;
-  private String dxfrServiceUri;
   private String refServiceUri;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
-  
+
+  private String baseUri;
   private String scope;
   private String app;
   private String graph;
@@ -33,7 +33,6 @@ public class AppDataController extends ActionSupport implements SessionAware
   public AppDataController() 
   {
 	  Map<String, Object> appContext = ActionContext.getContext().getApplication();
-    dxfrServiceUri = appContext.get("DXFRServiceUri").toString();
     refServiceUri = appContext.get("RefDataServiceUri").toString();
     appDataModel = new AppDataModel();
   }
@@ -49,7 +48,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = appDataModel.getDtoGrid(dxfrServiceUri, refServiceUri, scope, app, graph, filter, sort, dir, start, limit);    
+    pageDtoGrid = appDataModel.getDtoGrid(baseUri, refServiceUri, scope, app, graph, filter, sort, dir, start, limit);    
     return SUCCESS;
   }
   
@@ -63,7 +62,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ----------------------------
   public String getPageRelatedItems() 
   {
-    pageRelatedItemGrid = appDataModel.getRelatedItemGrid(dxfrServiceUri, scope, app, graph, 
+    pageRelatedItemGrid = appDataModel.getRelatedItemGrid(baseUri, scope, app, graph, 
         individual, classId, classIdentifier, filter, sort, dir, start, limit);
     return SUCCESS;
   }
@@ -76,6 +75,16 @@ public class AppDataController extends ActionSupport implements SessionAware
   // --------------------------
   // getter and setter methods
   // --------------------------
+  public void setBaseUri(String baseUri)
+  {
+    this.baseUri = baseUri;
+  }
+
+  public String getBaseUri()
+  {
+    return baseUri;
+  }
+  
   public void setScope(String scope)
   {
     this.scope = scope;

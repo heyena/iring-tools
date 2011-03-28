@@ -614,7 +614,7 @@ Ext.onReady(function(){
       }]
     }),
     root: {
-      nodeType: 'async',  // only load child nodes needed
+      nodeType: 'async',  // only load child nodes as needed
       text: 'Directory',
       icon: 'resources/images/directory.png'
     },
@@ -649,8 +649,9 @@ Ext.onReady(function(){
               var scope = dataTypeNode.parentNode.attributes['text'];
               var app = graphNode.attributes['text'];
               var graph = node.attributes['text'];
+              var baseUri = properties['Base URI'];
               var label = scope + '.' + app + '.' + graph;
-              var context = '?scope=' + scope + '&app=' + app + '&graph=' + graph;
+              var context = '?baseUri=' + baseUri + '&scope=' + scope + '&app=' + app + '&graph=' + graph;
               
               loadPageDto('app', 'adata', context, label);
             }
