@@ -71,6 +71,7 @@ public class DirectoryModel
             HashMap<String, String> properties = graphNode.getProperties();
             properties.put("Name", graph.getName());
             properties.put("Description", graph.getDescription());
+            properties.put("Base URI", app.getBaseUri());
             properties.put("Commodity", graph.getCommodity());
           }
         }

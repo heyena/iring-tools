@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="baseUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="graphs" type="{http://www.iringtools.org/directory}Graphs"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -34,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
     "id",
     "name",
     "description",
+    "baseUri",
     "graphs"
 })
 public class Application {
@@ -44,6 +46,8 @@ public class Application {
     protected String name;
     @XmlElement(required = true)
     protected String description;
+    @XmlElement(required = true)
+    protected String baseUri;
     @XmlElement(required = true)
     protected Graphs graphs;
 
@@ -117,6 +121,30 @@ public class Application {
      */
     public void setDescription(String value) {
         this.description = value;
+    }
+
+    /**
+     * Gets the value of the baseUri property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getBaseUri() {
+        return baseUri;
+    }
+
+    /**
+     * Sets the value of the baseUri property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setBaseUri(String value) {
+        this.baseUri = value;
     }
 
     /**

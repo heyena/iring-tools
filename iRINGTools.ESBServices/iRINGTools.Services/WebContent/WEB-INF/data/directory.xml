@@ -7,6 +7,7 @@
         <id>1</id>
         <name>ABC</name>
         <description>Test Application</description>
+        <baseUri>http://localhost:54321/dxfr</baseUri>
         <graphs>
           <graph>
             <id>1</id>
@@ -20,6 +21,7 @@
         <id>3</id>
         <name>DEF</name>
         <description>Test Application</description>
+        <baseUri>http://localhost:54321/dxfr</baseUri>
         <graphs>
           <graph>
             <id>2</id>
@@ -55,6 +57,7 @@
 				<id>3</id>
 				<name>CM</name>
 				<description>ORACLE Completions Module</description>
+        <baseUri>http://labst9413/services/dxfr</baseUri>
 				<graphs>
 					<graph>
 						<id>3</id>
@@ -73,6 +76,7 @@
 				<id>5</id>
 				<name>CM</name>
 				<description>SQLServer Completions Module</description>
+        <baseUri>http://labst9413/services/dxfr</baseUri>
 				<graphs>
 					<graph>
 						<id>6</id>
@@ -91,6 +95,7 @@
 				<id>6</id>
 				<name>eForms</name>
 				<description>eForms</description>
+        <baseUri>http://labst9413/services/dxfr</baseUri>
 				<graphs>
 					<graph>
 						<id>7</id>
@@ -115,6 +120,7 @@
 				<id>7</id>
 				<name>eForms</name>
 				<description>eForms</description>
+        <baseUri>http://labst9413/services/dxfr</baseUri>
 				<graphs>
 					<graph>
 						<id>9</id>
@@ -139,6 +145,7 @@
 				<id>4</id>
 				<name>eForms</name>
 				<description>eForms</description>
+        <baseUri>http://labst9413/services/dxfr</baseUri>
 				<graphs>
 					<graph>
 						<id>4</id>
