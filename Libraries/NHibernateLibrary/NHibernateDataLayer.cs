@@ -220,27 +220,26 @@ namespace org.iringtools.adapter.datalayer
           IList<IDataObject> dataObjects = query.List<IDataObject>();
 
           // order data objects as list of identifiers
-          IList<IDataObject> orderedDataObjects = new List<IDataObject>();
           if (identifiers != null)
           {
+            IList<IDataObject> orderedDataObjects = new List<IDataObject>();
+
             foreach (string identifier in identifiers)
             {
               foreach (IDataObject dataObject in dataObjects)
               {
-                if (dataObject.GetPropertyValue("Id").ToString() == identifier)
+                if (dataObject.GetPropertyValue("Id").ToString().ToLower() == identifier.ToLower())
                 {
                   orderedDataObjects.Add(dataObject);
                   break;
                 }
               }
             }
-          }
-          else
-          {
-            orderedDataObjects = dataObjects;
+
+            return orderedDataObjects;
           }
 
-          return orderedDataObjects;
+          return dataObjects;
         }
       }
       catch (Exception ex)
