@@ -265,8 +265,8 @@ namespace org.iringtools.adapter.datalayer
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
-        if (filter != null && filter.Expressions != null && (filter.Expressions.Count > 0 || filter.OrderExpressions.Count > 0))
-        //        if (filter != null)
+        if (filter != null && ((filter.Expressions != null && filter.Expressions.Count > 0) || 
+          (filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)))
         {
           string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
           queryString.Append(whereClause);
