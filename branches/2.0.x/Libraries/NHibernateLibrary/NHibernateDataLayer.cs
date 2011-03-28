@@ -234,7 +234,29 @@ namespace org.iringtools.adapter.datalayer
                 using (ISession session = OpenSession())
                 {
                     IQuery query = session.CreateQuery(queryString.ToString());
-                    return query.List<IDataObject>();
+                    IList<IDataObject> dataObjects = query.List<IDataObject>();
+
+                    // order data objects as list of identifiers
+                    if (identifiers != null)
+                    {
+                      IList<IDataObject> orderedDataObjects = new List<IDataObject>();
+
+                      foreach (string identifier in identifiers)
+                      {
+                        foreach (IDataObject dataObject in dataObjects)
+                        {
+                          if (dataObject.GetPropertyValue("Id").ToString().ToLower() == identifier.ToLower())
+                          {
+                            orderedDataObjects.Add(dataObject);
+                            break;
+                          }
+                        }
+                      }
+
+                      return orderedDataObjects;
+                    }
+                   
+                    return dataObjects;
                 }
             }
             catch (Exception ex)
