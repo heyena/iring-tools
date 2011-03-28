@@ -1,0 +1,58 @@
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+  <PropertyGroup>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs; $(MSBuildProjectDirectory)\iRINGTools.SDK\AssemblyInfo.cs</AssemblyInfoFile>
+    <Major>2</Major>
+    <Minor>1</Minor>
+    <Build>0</Build>
+    <Revision>0</Revision>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
+    <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
+    <SolutionFile>bamboo.sln</SolutionFile>
+  </PropertyGroup>
+
+  <Target Name="Version">
+    <Message Text="Updating assembly info ..." />
+
+    <SvnVersion LocalPath="$(MSBuildProjectDirectory)">
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </SvnVersion>
+
+    <FileUpdate
+      Files="$(AssemblyInfoFile)"
+      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*"
+      ReplacementText="$(Major).$(Minor).$(Build).$(Revision)"/>
+  </Target>
+
+  <Target Name="SvnCleanUp">
+    <Message Text="Performing SVN clean-up ..." />
+    <Exec Command="svn cleanup"/>
+  </Target>
+
+  <Target Name="SvnUpdate">
+    <Message Text="Performing SVN update ..." />
+    <Exec Command="svn update"/>
+  </Target>
+
+  <Target Name="CleanBuild">
+    <Message Text="Performing MSBuild clean-up ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
+  </Target>
+
+  <Target Name="Build"> <!--DependsOnTargets="Version"-->
+    <Message Text="Performing MSBuild ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
+  </Target>
+
+    <Target Name="Test">
+        <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="CSVDataLayer\CSVDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />
+	</Target>
+
+  <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
+
+  <Target Name="All" DependsOnTargets="Rebuild; Test"/>
+</Project>
