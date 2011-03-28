@@ -56,7 +56,7 @@
     <Reference Include="Ciloci.Flee">
       <HintPath>..\lib\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
-    <Reference Include="iRINGLibrary, Version=2.0.1.2544, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="iRINGLibrary, Version=2.1.0.2980, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
@@ -78,7 +78,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UtilityLibrary, Version=2.0.1.2544, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UtilityLibrary, Version=2.1.0.2980, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
@@ -88,13 +88,12 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CSVDataLayer.cs" />
-    <Compile Include="DataObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="BindingConfiguration.12345_000.CSV.xml" />
-    <Content Include="DataDictionary.xml" />
-    <Content Include="Equipment.12345_000.CSV.xml" />
+    <Content Include="12345_000\BindingConfiguration.12345_000.CSV.xml" />
+    <Content Include="12345_000\Configuration.CSV.xml" />
+    <Content Include="12345_000\DataDictionary.CSV.xml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
@@ -114,11 +113,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="12345_000.CSV.config" />
-    <None Include="CSVDataLayer.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="12345_000.CSV\Equipment\" />
+    <None Include="12345_000\12345_000.CSV.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="12345_000\12345_000.CSV.Default.config" />
+    <None Include="12345_000\CSV\Equipment.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
