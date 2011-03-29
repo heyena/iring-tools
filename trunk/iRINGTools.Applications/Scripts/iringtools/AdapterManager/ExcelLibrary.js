@@ -28,6 +28,7 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
 
     scope: null,
     application: null,
+    dataLayer: null,
 
     btnNext: null,
     btnPrev: null,
@@ -91,7 +92,8 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
                 buttonCfg: {
                     iconCls: 'upload-icon'
                 }
-            }
+            },
+            { xtype: 'checkbox', name: 'Generate', boxLabel: 'Generate Configuration' },
         ];
 
         // super
@@ -136,7 +138,7 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
 
     scope: null,
     application: null,
-    path: null,
+    filename: null,
     url: null,
 
     configurationPanel: null,
@@ -202,8 +204,8 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
             baseParams: { 
                 scope: scope, 
                 application: application,
-                path: path,
-                type: null 
+                filename: this.filename,
+                type: null
             },
             url: this.url
         });
@@ -217,7 +219,7 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
             text: 'Workbook',
             expanded: true,
             draggable: false,
-            icon: 'Content/img/internet-web-browser.png',
+            icon: 'Content/img/excel.png',
             type: 'ExcelWorkbookNode'
         });
 
@@ -276,17 +278,21 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
     }, 
 
     onNext: function (panel) {        
-        var nodes = this.configurationPanel.getChecked("record");
-
-        Ext.Ajax.request({
+        
+        Ext.Ajax.request({            
             url: 'excel/configure',    // where you wanna post
+            method: 'POST',
             success: function(f, a) {
                 
             },   // function called on success
             failure: function(f, a) {
                 
             },
-            params: { jsonData: Ext.encode(nodes) }  // your json data
+            params: { 
+                Scope: this.scope.Name, 
+                Application: this.application.Name, 
+                DataLayer: this.application.Assembly
+            }
         });
 
     }    
@@ -350,9 +356,10 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
         }
 
         this.form = new AdapterManager.ExcelSourcePanel({
-            scope: this.scope,
-            application: this.application,            
-            url: 'excel/source',
+            scope: scope,
+            application: application,
+            dataLayer: dataLayer,         
+            url: 'excel/upload',
         });
 
         this.form.on('Next', this.onNext, this);
@@ -365,11 +372,12 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
         AdapterManager.ExcelLibraryPanel.superclass.initComponent.call(this);
     },
 
-    onNext: function(panel, path) {
+    onNext: function(panel, filename) {
+        
         var configPanel = new  AdapterManager.ConfigurationPanel({
             scope: this.scope,
             application: this.application,
-            path: path,
+            filename: filename,
             url: 'excel/getnode'
         });
 
@@ -377,7 +385,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
 
         var idx = this.items.getCount() - 1;
         this.layout.setActiveItem(idx);
-        this.activeItem = idx;        
+        this.activeItem = idx;
     }
 
 });

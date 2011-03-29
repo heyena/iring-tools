@@ -37,28 +37,18 @@ namespace org.iringtools.datalayer.excel
     {
       _settings = settings;
       _configurationPath = _settings["XmlPath"] + "excel-configuration." + _settings["Scope"] + ".xml";      
-      Configuration = ProcessConfiguration(Utility.Read<ExcelConfiguration>(_configurationPath));
+      Configuration = Utility.Read<ExcelConfiguration>(_configurationPath);
+
+      _xlApplication = new Excel.Application();
+      _xlWorkBook = _xlApplication.Workbooks.Open(Configuration.Location, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
+            
       if (Configuration.Generate)
       {
+        Configuration = ProcessConfiguration(Configuration);
         Configuration.Generate = false;
-        Utility.Write<ExcelConfiguration>(Configuration, true);
+        Utility.Write<ExcelConfiguration>(Configuration, _configurationPath, true);
       }
-
-      _xlApplication = new Excel.Application();
-      _xlWorkBook = _xlApplication.Workbooks.Open(Configuration.Location, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-    }
-
-    public ExcelProvider(string sourcePath)
-    {
-      Configuration = new ExcelConfiguration()
-      {
-        Location = sourcePath
-      };
-      Configuration = ProcessConfiguration(Configuration);
-
-      _xlApplication = new Excel.Application();
-      _xlWorkBook = _xlApplication.Workbooks.Open(Configuration.Location, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-    }
+    }    
 
     ~ExcelProvider()
     {
@@ -83,13 +73,16 @@ namespace org.iringtools.datalayer.excel
 
       GC.Collect();
     }
-        
+
     private List<ExcelColumn> GetColumns(Excel.Worksheet xlWorksheet, ExcelWorksheet cfWorksheet)
     {
+      return GetColumns(GetRange(xlWorksheet, cfWorksheet.Range), cfWorksheet);
+    }
+        
+    private List<ExcelColumn> GetColumns(Excel.Range xlRange, ExcelWorksheet cfWorksheet)
+    {
       List<ExcelColumn> columns = new List<ExcelColumn>();
-
-      Excel.Range xlRange = GetRange(xlWorksheet, cfWorksheet.Range);
-
+      
       for (int i = 1; i <= xlRange.Columns.Count; i++)
       {
         string header = xlRange.Cells[cfWorksheet.HeaderIdx, i].Value2;
@@ -147,6 +140,7 @@ namespace org.iringtools.datalayer.excel
             ExcelWorksheet cfWorksheet = new ExcelWorksheet()
             {
               Name = xlWorksheet.Name,
+              Label = xlWorksheet.Name,
               HeaderIdx = 1,
               DataIdx = 2
             };
@@ -201,7 +195,7 @@ namespace org.iringtools.datalayer.excel
     public List<ExcelWorksheet> GetWorksheets()
     {
       return GetWorksheets(false);
-    }
+    }    
 
     public List<ExcelWorksheet> GetWorksheets(bool withColumns)
     {      
@@ -223,7 +217,7 @@ namespace org.iringtools.datalayer.excel
 
           if (withColumns)
           {
-            cfWorksheet.Columns = GetColumns(xlWorksheet, cfWorksheet.HeaderIdx);
+            cfWorksheet.Columns = GetColumns(GetRange(xlWorksheet, cfWorksheet.Range), cfWorksheet.HeaderIdx);
 
             if (cfWorksheet.Columns != null && cfWorksheet.Columns.Count > 0)
             {
@@ -237,6 +231,7 @@ namespace org.iringtools.datalayer.excel
           }
             
         }
+
       }
       catch (Exception ex)
       {
@@ -264,13 +259,16 @@ namespace org.iringtools.datalayer.excel
 
     private List<ExcelColumn> GetColumns(Excel.Worksheet xlWorksheet, int headerIdx)
     {
+      return GetColumns(GetRange(xlWorksheet, null), headerIdx); 
+    }
+
+    private List<ExcelColumn> GetColumns(Excel.Range xlRange, int headerIdx)
+    {
       List<ExcelColumn> columns = new List<ExcelColumn>();
 
-      Excel.Range usedRange = xlWorksheet.UsedRange;
-
-      for (int i = 1; i <= usedRange.Columns.Count; i++)
+      for (int i = 1; i <= xlRange.Columns.Count; i++)
       {
-        string header = usedRange.Cells[headerIdx, i].Value2;
+        string header = xlRange.Cells[headerIdx, i].Value2;
 
         if (header != null)
         {

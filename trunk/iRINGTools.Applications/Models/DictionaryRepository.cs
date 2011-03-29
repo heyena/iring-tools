@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Linq;
 using System.Xml.Linq;
 using System.Web;
+using Ninject;
 
 using org.iringtools.library;
 using org.iringtools.utility;
@@ -19,6 +20,7 @@ namespace iRINGTools.Web.Models
     private WebHttpClient _client = null;
     private string _refDataServiceURI = string.Empty;
     
+    [Inject]
     public DictionaryRepository()
     {
       _settings = ConfigurationManager.AppSettings;
@@ -164,13 +166,25 @@ namespace iRINGTools.Web.Models
       return PostScopes(scopes);
     }
 
-    public string AddApplication(string scopeName, ScopeApplication application)
+    public string UpdateScope(string scopeName, string name, string description) 
     {
       ScopeProjects scopes = GetScopes();
       ScopeProject scope = scopes.FirstOrDefault<ScopeProject>(o => o.Name == scopeName);
 
-      if (scope != null)
-        scope.Applications.Add(application);
+      if (scope == null)
+      {
+        scope = new ScopeProject()
+        {
+          Name = name,
+          Description = description,
+          Applications = new ScopeApplications()
+        };
+      }
+      else
+      {
+        scope.Name = name;
+        scope.Description = description;
+      }
 
       return PostScopes(scopes);
     }
@@ -182,6 +196,34 @@ namespace iRINGTools.Web.Models
 
       scopes.Remove(scope);
 
+      return PostScopes(scopes);
+    }
+    
+    public string UpdateApplication(string scopeName, string applicationName, string name, string description)
+    {
+      ScopeProjects scopes = GetScopes();
+      ScopeProject scope = scopes.FirstOrDefault<ScopeProject>(o => o.Name == scopeName);
+      ScopeApplication application = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name == applicationName);
+
+      if (scope != null)
+      {
+        if (application == null)
+        {
+          application = new ScopeApplication()
+          {
+            Name = name,
+            Description = description
+          };
+
+          scope.Applications.Add(application);
+        }
+        else
+        {
+          application.Name = name;
+          application.Description = description;
+        }
+      }     
+      
       return PostScopes(scopes);
     }
 

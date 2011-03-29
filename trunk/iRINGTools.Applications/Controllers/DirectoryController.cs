@@ -168,7 +168,7 @@ namespace iRINGTools.Web.Controllers
                 text = valueList.name,
                 expanded = true,
                 leaf = true,
-                children = new List<JsonTreeNode>()
+                children = new List<JsonTreeNode>()                
               };
 
               nodes.Add(node);
@@ -290,55 +290,35 @@ namespace iRINGTools.Web.Controllers
     }
 
     public JsonResult Scope(FormCollection form)
-    {
-      ScopeProject scope = new ScopeProject();
-      scope.Applications = new ScopeApplications();
-      scope.Name = form["name"];
-      scope.Description = form["description"];
-      string success = _dictionaryRepository.AddScope(scope);
-      return Json(new
-      {
-        success = true
-      }, JsonRequestBehavior.AllowGet);
+    {      
+      string success = _dictionaryRepository.UpdateScope(form["scope"], form["name"], form["description"]);
+            
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult Application(FormCollection form)
     {
-      ScopeApplication app = new ScopeApplication { Name = form["name"], Description = form["description"] };
-      string succes = _dictionaryRepository.AddApplication(form["scope"], app); 
-      return Json(new
-      {
-        success = true
-      }, JsonRequestBehavior.AllowGet);
+      string success = _dictionaryRepository.UpdateApplication(form["scope"], form["application"], form["Name"], form["Description"]);
+            
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
-    public JsonResult DeleteNode()
+    public JsonResult DeleteScope(FormCollection form)
+    { 
+      _dictionaryRepository.DeleteScope(form["nodeid"]);
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult DeleteApplication(FormCollection form)
     {
-      string scopeName = string.Empty;
-      string appName = string.Empty;
-      string[] nodes = Request.QueryString["nodeID"].Split('/');
-      if (nodes.Length == 2)
-      {
-        appName = nodes[1];
-      }
-      scopeName = nodes[0];
+      string context = form["nodeid"];
+      string scope = context.Split('/')[0];
+      string application = context.Split('/')[1];
 
-      ScopeProjects scopes = _dictionaryRepository.GetScopes();
-      ScopeProject scope = scopes.FirstOrDefault(c => c.Name == scopeName);
-      ScopeApplication app = scope.Applications.FirstOrDefault(c => c.Name == appName);
-      if (app != null)
-      {
-        string success = this._dictionaryRepository.DeleteApplication(scope.Name, app.Name);
+      _dictionaryRepository.DeleteApplication(scope, application);
 
-      } else if (scope != null)
-      {
-        string success = _dictionaryRepository.DeleteScope(scope.Name);
-      }
-
-      return Json(new
-      {
-        success = true
-      }, JsonRequestBehavior.AllowGet);
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
   }
 

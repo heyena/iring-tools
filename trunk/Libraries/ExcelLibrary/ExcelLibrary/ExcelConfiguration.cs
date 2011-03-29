@@ -33,16 +33,16 @@ namespace org.iringtools.datalayer.excel
     [DataMember(Name = "identifier", Order = 2)]
     public string Identifier { get; set; }
 
-    [DataMember(Name = "range", Order = 1)]
+    [DataMember(Name = "range", Order = 3)]
     public string Range { get; set; }
-
-    [DataMember(Name = "header", Order = 3)]
+        
+    [DataMember(Name = "header", Order = 4)]
     public int HeaderIdx { get; set; }
 
-    [DataMember(Name = "start", Order = 4)]
+    [DataMember(Name = "start", Order = 5)]
     public int DataIdx { get; set; }
 
-    [DataMember(Name = "columns", Order = 5)]
+    [DataMember(Name = "columns", Order = 6)]
     public List<ExcelColumn> Columns { get; set; }
   }
 
@@ -61,5 +61,4 @@ namespace org.iringtools.datalayer.excel
     [DataMember(Name = "index", Order = 3)]
     public int Index { get; set; }
   }
-
 }

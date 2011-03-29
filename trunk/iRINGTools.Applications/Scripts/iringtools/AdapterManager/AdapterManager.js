@@ -98,35 +98,23 @@ Ext.onReady(function () {
   }, this);
   
   directoryPanel.on('deletescope', function (npanel, node) {
-   
-    if (node.attributes.type != "ApplicationNode" && node.attributes.type != "ScopeNode") {
-      Ext.MessageBox.show({
-        title: '<font color=red></font>',
-        msg: 'Please select a child node to delete.',
-        buttons: Ext.MessageBox.OK,
-        icon: Ext.MessageBox.INFO
-      });
-    } else if (node == null) {
-      Ext.Msg.alert('Warning', 'Please select a node.');
-    } 
-    {
-       Ext.Ajax.request({
-          url: 'directory/deleteNode',
-          method: 'GET',
-          params: {
-            'nodeId': node.attributes.id,
-            'parentNodeID': node.parentNode.attributes.id
-         },
-          success: function (o) {
+    
+    Ext.Ajax.request({
+        url: 'directory/deletescope',
+        method: 'POST',
+        params: {
+            'nodeid': node.attributes.id
+        },
+        success: function (o) {
             contentPanel.removeAll(true);
-            directoryPanel.reload();                                                                                  
-            Ext.Msg.alert('Sucess', 'Node [' + node.attributes.id.split('/')[1] + '] has been deleted');
-         },
-         failure: function (f, a) {
-           Ext.Msg.alert('Warning', 'Error!!!');
+            directoryPanel.reload();
+            Ext.Msg.alert('Sucess', 'Scope [' + node.attributes.id + '] has been deleted');
+        },
+        failure: function (f, a) {
+            Ext.Msg.alert('Warning', 'Error!!!');
         }
-      });
-    } 
+    });
+     
   }, this);
 
 
@@ -197,6 +185,21 @@ Ext.onReady(function () {
   }, this);
 
   directoryPanel.on('deleteapplication', function (npanel, node) {
+      Ext.Ajax.request({
+          url: 'directory/deleteapplication',
+          method: 'POST',
+          params: {              
+              'nodeid': node.attributes.id
+          },
+          success: function (o) {
+              contentPanel.removeAll(true);
+              directoryPanel.reload();
+              Ext.Msg.alert('Sucess', 'Application [' + node.attributes.id + '] has been deleted');
+          },
+          failure: function (f, a) {
+              Ext.Msg.alert('Warning', 'Error!!!');
+          }
+      });
   }, this);
 
 
@@ -215,53 +218,7 @@ Ext.onReady(function () {
     contentPanel.activate(newTab);
 
   }, this);
-
-  directoryPanel.on('remove', function (npanel, node) {
-    that = this;
-    if (node.hasChildNodes()) {
-      Ext.MessageBox.show({
-        title: '<font color=red></font>',
-        msg: 'Please select a child node to delete.',
-        buttons: Ext.MessageBox.OK,
-        icon: Ext.MessageBox.INFO
-      });
-    } else if (node == null) {
-      Ext.Msg.alert('Warning', 'Please select a node.')
-    } else {
-      Ext.Msg.show({
-        msg: 'All the tabs will be closed. Do you want to delete this node?',
-        buttons: Ext.Msg.YESNO,
-        icon: Ext.Msg.QUESTION,
-        fn: function (action) {
-          if (action == 'yes') {
-            //send ajax request
-            Ext.Ajax.request({
-              url: 'directory/deletenode',
-              method: 'GET',
-              params: { 'nodeId': node.id, 'parentNodeID': node.parentNode.id },
-              success: function (o) {
-                // remove all tabs form tabpanel
-                Ext.getCmp('contentpanel').removeAll(true); // it will be removed in future
-                // remove the node form tree
-                //that.federationPanel.selModel.selNode.parentNode.removeChild(node);
-                //Tree Reload
-                that.onRefresh();
-                // fire event so that the Details panel will be changed accordingly
-                that.fireEvent('selectionchange', this)
-                Ext.Msg.alert('Sucess', 'Node has been deleted')
-              },
-              failure: function (f, a) {
-                Ext.Msg.alert('Warning', 'Error!!!')
-              }
-            });
-          } else if (action == 'no') {
-            Ext.Msg.alert('Info', 'Not now');
-          }
-        }
-      });
-    }
-  });
-
+  
   // Load Stores
   searchPanel.load();
 
