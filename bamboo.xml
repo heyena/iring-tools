@@ -12,7 +12,7 @@
   <PropertyGroup>
     <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
     <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
-    <SolutionFile>bamboo.sln</SolutionFile>
+    <SolutionFile>datalayers.sln</SolutionFile>
   </PropertyGroup>
 
   <Target Name="Version">
@@ -49,7 +49,9 @@
   </Target>
 
     <Target Name="Test">
-        <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="CSVDataLayer\CSVDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />
+    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="CSVDataLayer\CSVDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />
+		<NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="SmartPlantPID\SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />
+		<!--<NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="MSSQLLibrary\MSSQLLibrary.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />-->
 	</Target>
 
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
