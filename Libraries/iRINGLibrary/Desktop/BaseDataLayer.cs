@@ -93,6 +93,11 @@ namespace org.iringtools.library
       throw new NotImplementedException();
     }
 
+    public virtual XElement GetConfiguration()
+    {
+      throw new NotImplementedException();
+    }
+
     protected void LoadDataDictionary(string objectType)
     {
       if (_dataObjectDefinition == null)

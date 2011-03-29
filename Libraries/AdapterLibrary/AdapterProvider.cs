@@ -1538,7 +1538,8 @@ namespace org.iringtools.adapter
       }
       return response;
     }
-
+    
+    /*
     public Response Upload(string projectName, string applicationName, HttpFileCollection files)
     {
       Response response = new Response();
@@ -1570,6 +1571,59 @@ namespace org.iringtools.adapter
       }
       return response;
 
+    }*/
+
+    public Response Configure(string projectName, string applicationName, HttpRequest httpRequest)
+    {
+      Response response = new Response();
+      response.Messages = new Messages();
+
+      try
+      {
+        string savedFileName = string.Empty;
+
+        foreach (string file in httpRequest.Files)
+        {
+          HttpPostedFile hpf = httpRequest.Files[file] as HttpPostedFile;
+          if (hpf.ContentLength == 0)
+            continue;
+
+          savedFileName = Path.Combine(
+          AppDomain.CurrentDomain.BaseDirectory,
+          _settings["XmlPath"],
+          Path.GetFileName(hpf.FileName));
+          hpf.SaveAs(savedFileName);
+        }
+
+        InitializeScope(projectName, applicationName, false);
+
+        string dataLayer = httpRequest.Form["DataLayer"];
+        XElement configuration = Utility.DeserializeXml<XElement>(httpRequest.Form["Configuration"]);
+
+        XElement binding = new XElement("module",
+        new XAttribute("name", _settings["Scope"]),
+          new XElement("bind",
+            new XAttribute("name", "DataLayer"),
+            new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
+            new XAttribute("to", dataLayer)
+          )
+        );
+
+        binding.Save(_settings["BindingConfigurationPath"]);
+        _kernel.Load(_settings["BindingConfigurationPath"]);
+
+        InitializeDataLayer();
+
+        ((IDataLayer2)_dataLayer).Configure(configuration);
+
+      }
+      catch (Exception ex)
+      {
+        response.Messages.Add(String.Format("Failed to Upload Files[{0}]", _settings["Scope"]));
+        response.Messages.Add(ex.Message);
+        response.Level = StatusLevel.Error;
+      }
+      return response;
     }
   }
 

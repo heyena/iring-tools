@@ -261,7 +261,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
   onDeleteApplication: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    this.fireEvent('DeleteScope', this, node);
+    this.fireEvent('DeleteApplication', this, node);
   },
 
   onReload: function (node) {

@@ -65,8 +65,7 @@ AdapterManager.DictionaryPanel = Ext.extend(Ext.Panel, {
         });
 
         this.treeLoader.on("beforeload", function (treeLoader, node) {
-            treeLoader.baseParams.type = node.attributes.type;
-            treeLoader.baseParams.type = node.attributes.scope;
+            treeLoader.baseParams.type = node.attributes.type;            
         }, this);
 
         this.rootNode = new Ext.tree.AsyncTreeNode({
