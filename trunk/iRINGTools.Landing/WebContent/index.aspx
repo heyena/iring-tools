@@ -1,3 +1,4 @@
+<%@ Page Language="C#" %>
 <html>
   <head>
     <meta http-equiv="cache-control" content="no-cache">
@@ -35,11 +36,11 @@
             <h2>iRINGTools Applications</h2>
             <ul>
               <li>
-                <a href="http://localhost:8888/ExchangeManager">
+                <a href="<%=Request.Url.Scheme + "://" + Request.Url.Host%>:8080/apps/xchmgr">
                 Exchange Manager</a>
               </li>
               <li>
-                <a href="http://localhost:8080/apps/federationManager">
+                <a href="<%=Request.Url.Scheme + "://" + Request.Url.Host%>:8080/apps/fedmgr">
                 Federation Manager</a>
               </li>
               <li>
@@ -60,28 +61,32 @@
             <h2>iRINGTools Services</h2>
             <ul>
               <li>
-                <a href="Services/InterfaceService/query">
+                <a href="services/facade/query">
                 Interface Service</a>
               </li>
               <li>
-                <a href="Services/SandboxService/query">
+                <a href="services/sandbox/query">
                 Sandbox Service</a>
               </li>
               <li>
-                <a href="Services/RefDataService/help">
+                <a href="services/refdata/help">
                 Reference Data Service</a>
               </li>
               <li>
-                <a href="Services/NHibernateService/help">
+                <a href="services/hibernate/help">
                 NHibernate Service</a>
               </li>
               <li>
-                <a href="Services/AdapterService/help">
+                <a href="services/adapter/help">
                 Adapter Service</a>
               </li>
               <li>
-                <a href="Services/ExchangeService/help">
-                Exchange Service</a>
+                <a href="services/data/help">
+                Data Service</a>
+              </li>
+              <li>
+                <a href="services/dxfr/help">
+                Data Transfer Service</a>
               </li>
             </ul>
           </td>
