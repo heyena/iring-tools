@@ -20,21 +20,21 @@ namespace iRINGTools.Web.Controllers
 {
   public class RefDataController : Controller
   {
+
+    IRefDataRepository _refdataRepository = null;
     NameValueCollection _settings = null;
     string _adapterServiceURI = String.Empty;
     string _refDataServiceURI = String.Empty;
 
     public RefDataController()
+      : this(new RefDataRepository())
+    { }
+
+    public RefDataController(IRefDataRepository repository)
     {
-      _settings = ConfigurationManager.AppSettings;
-      _adapterServiceURI = _settings["AdapterServiceUri"];
-      _refDataServiceURI = _settings["ReferenceDataServiceUri"];
+      _refdataRepository = repository;
     }
 
-    //
-    // POST: /RefData/
-
-    [HttpPost]
     public JsonResult Index(FormCollection collection)
     {
       string query = collection["query"];
@@ -42,14 +42,9 @@ namespace iRINGTools.Web.Controllers
       string limit = collection["limit"];
       JsonContainer<List<Entity>> container = new JsonContainer<List<Entity>>();
 
-      if (query != null && !query.Equals(String.Empty))
+      if (!string.IsNullOrEmpty(query))
       {
-        Uri address = new Uri(String.Format(_refDataServiceURI + "/search/{0}/{1}/{2}", query, start, limit));
-
-        WebClient webClient = new WebClient();
-        string result = webClient.DownloadString(address);
-
-        RefDataEntities dataEntities = result.DeserializeDataContract<RefDataEntities>();
+        RefDataEntities dataEntities = _refdataRepository.Search(query,start,limit);
         
         container.items = dataEntities.Entities.Values.ToList<Entity>();
         container.total = dataEntities.Total;
@@ -59,28 +54,88 @@ namespace iRINGTools.Web.Controllers
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
-    [HttpPost]
-    public ActionResult Classes(FormCollection collection)
+    public JsonResult GetNode(FormCollection form)
     {
-      string id = collection["id"];
+      string start = Request.QueryString["start"];
+      string limit = Request.QueryString["limit"];
+      string query = Request.QueryString["query"];
+      string searchtype = Request.QueryString["type"];
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+      if (!string.IsNullOrEmpty(query))
+      {
+        RefDataEntities dataEntities = _refdataRepository.Search(query, start, limit);
+        foreach (Entity entity in dataEntities.Entities.Values.ToList<Entity>())
+        {
+          JsonTreeNode node = new JsonTreeNode
+          {
+            nodeType = "async",
+            type = searchtype,
+            icon = "Content/img/class.png",
+            id = (entity.Label+entity.Repository).GetHashCode().ToString(),
+            text = entity.Label + '[' + entity.Repository + ']',
+            expanded = false,
+            leaf = false,
+            children = null,
+            record = entity
+          };
+
+          nodes.Add(node);
+        }
+      }
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    public ActionResult SubClasses(FormCollection collection)
+    {
+      string classId = collection["id"];
       JsonContainer<List<Entity>> container = new JsonContainer<List<Entity>>();
 
-      if (id != null && !id.Equals(String.Empty))
+      if (!string.IsNullOrEmpty(classId))
       {
-        Uri address = new Uri(String.Format(_refDataServiceURI + "/classes/{0}", id));
+        Entities dataEntities = _refdataRepository.GetSubClasses(classId);
 
-        WebClient webClient = new WebClient();
-        string result = webClient.DownloadString(address);
+        container.items = dataEntities.ToList<Entity>();
+        container.total = dataEntities.Count;
+        container.success = true;
+      }
+      
+      return Json(container, JsonRequestBehavior.AllowGet);      
+    }
 
-        RefDataEntities dataEntities = result.DeserializeDataContract<RefDataEntities>();
+    public ActionResult SuperClasses(FormCollection collection)
+    {
+      string classId = collection["id"];
+      JsonContainer<List<Entity>> container = new JsonContainer<List<Entity>>();
 
-        container.items = dataEntities.Entities.Values.ToList<Entity>();
-        container.total = dataEntities.Total;
+      if (!string.IsNullOrEmpty(classId))
+      {
+        Entities dataEntities = _refdataRepository.GetSuperClasses(classId);
+
+        container.items = dataEntities.ToList<Entity>();
+        container.total = dataEntities.Count;
         container.success = true;
       }
 
-      return Json(container, JsonRequestBehavior.AllowGet);      
+      return Json(container, JsonRequestBehavior.AllowGet);
     }
+
+    public ActionResult ClassesTemplates(FormCollection collection)
+    {
+      string classId = collection["id"];
+      JsonContainer<List<Entity>> container = new JsonContainer<List<Entity>>();
+
+      if (!string.IsNullOrEmpty(classId))
+      {
+        Entities dataEntities = _refdataRepository.GetClassTemplates(classId);
+
+        container.items = dataEntities.ToList<Entity>();
+        container.total = dataEntities.Count;
+        container.success = true;
+      }
+
+      return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
   }
 }
 
