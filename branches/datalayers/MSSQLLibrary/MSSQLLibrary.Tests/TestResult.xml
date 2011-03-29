@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="E:\iring-tools\branches\datalayers\MSSQLLibrary\MSSQLLibrary.Tests\MSSQLLibrary.Tests.csproj" total="1" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2011-03-29" time="11:15:27">
+  <environment nunit-version="2.5.9.10348" clr-version="4.0.30319.208" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="E:\iring-tools\branches\datalayers\MSSQLLibrary\NUnit.Runner\bin\Debug" machine-name="AUS10468" user="stry41802" user-domain="HATCHGLOBAL" />
+  <culture-info current-culture="en-AU" current-uiculture="en-US" />
+  <test-suite type="Project" name="E:\iring-tools\branches\datalayers\MSSQLLibrary\MSSQLLibrary.Tests\MSSQLLibrary.Tests.csproj" executed="True" result="Success" success="True" time="462.923" asserts="0">
+    <results>
+      <test-suite type="Namespace" name="iRINGTools" executed="True" result="Success" success="True" time="462.916" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="MSSQLLibrary" executed="True" result="Success" success="True" time="462.912" asserts="0">
+            <results>
+              <test-suite type="TestFixture" name="MSSQLLibraryTest" executed="True" result="Success" success="True" time="462.907" asserts="0">
+                <results>
+                  <test-case name="iRINGTools.MSSQLLibrary.MSSQLLibraryTest.Create" executed="True" result="Success" success="True" time="453.183" asserts="1" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
