@@ -17,12 +17,12 @@ namespace iRINGTools.SDK.SPPIDDataLayer
     public class SPPIDDataLayer : BaseDataLayer, IDataLayer2
     {
         private List<IDataObject> _dataObjects = null;
-        private Llama.LMADataSource _projDatasource = null;        // SPPID DataSource
+        private ILMADataSource _projDatasource = null;        // SPPID DataSource
 
         //NOTE: This is required to deliver settings to constructor.
         //NOTE: Other objects could be requested on an as needed basis.
         [Inject]
-        public SPPIDDataLayer(AdapterSettings settings)
+        public SPPIDDataLayer(AdapterSettings settings, IKernel kernel)
         {
             _settings = settings;
 
@@ -31,7 +31,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
             string projectStr = _settings["SPPIDProjectNumber"];
             projectStr += "!" + projectStr;     // per TR-88021 in SPPID 2007 SP4
 
-            _projDatasource = new Llama.LMADataSource();
+            _projDatasource = kernel.Get<ILMADataSource>();
             _projDatasource.ProjectNumber = projectStr;
             _projDatasource.set_SiteNode(siteNode);
         }
