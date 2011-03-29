@@ -87,7 +87,22 @@ Ext.onReady(function () {
                 tabPanel.add(newTab).show();
 
 	});
-      
+
+	 var searchPanel = new FederationManager.SearchPanel({
+		    id: 'search-panel',
+		    title: 'Reference Data Search',
+		    region: 'south',
+		    height: 300,
+		    collapseMode: 'mini',
+		    collapsible: true,
+		    collapsed: false,
+		    searchUrl: '../services/refdata',
+		    limit: 100
+		  });
+	  // Load Stores
+	  searchPanel.load();
+	  
+	  
 	var viewport = new Ext.Viewport({
 		layout: 'border',
 		renderTo: Ext.getBody(),
@@ -100,7 +115,8 @@ Ext.onReady(function () {
 			contentEl:'header'
 		  },
 			federationPanel,
-			tabPanel
+			tabPanel,
+			searchPanel
 		]
 	});
 
