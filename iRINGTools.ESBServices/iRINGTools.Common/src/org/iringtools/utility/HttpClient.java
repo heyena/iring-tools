@@ -71,9 +71,7 @@ public class HttpClient
   }
   
   public <T,R> R post(Class<R> responseClass, String relativeUri, T requestEntity) throws HttpClientException 
-  {    
-  	
-  	
+  {
     try 
     {
       String content = "";
