@@ -63,6 +63,17 @@
       <Name>SPPIDDataLayer</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="12345_000\12345_000.SPPID.config" />
+    <None Include="12345_000\12345_000.SPPID.Default.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="12345_000\BindingConfiguration.12345_000.SPPID.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="12345_000\Configuration.SPPID.xml" />
+    <Content Include="12345_000\DataDictionary.SPPID.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
