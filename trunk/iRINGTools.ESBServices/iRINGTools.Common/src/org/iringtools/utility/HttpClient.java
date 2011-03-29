@@ -9,6 +9,10 @@ import java.net.URLEncoder;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Map.Entry;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
@@ -176,14 +180,14 @@ public class HttpClient
     return networkCredentials;
   }
   
-  public <T> T postMessage(Class<T> responseClass, String relativeUri, String requestMessage) throws HttpClientException
+  public <T> T postMessage(Class<T> responseClass, String relativeUri, String requestMessage) throws HttpClientException, JAXBException, UnmarshalException
   {
 	  T response = null;
       try
       {
           URLConnection conn = getConnection(POST, relativeUri);
-          conn.setRequestProperty("Accept", "application/xml, application/rdf+xml");        
-          conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+          conn.setRequestProperty("Accept", "application/rdf+xml, application/xml");        
+          //conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
          
           StringBuilder requestEntity = new StringBuilder();
           requestEntity.append(requestMessage);

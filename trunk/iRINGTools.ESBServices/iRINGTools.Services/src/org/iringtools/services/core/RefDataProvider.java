@@ -18,6 +18,7 @@ import java.util.TreeMap;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.log4j.Logger;
 import org.ids_adi.ns.qxf.model.ClassDefinition;
 import org.ids_adi.ns.qxf.model.Classification;
 import org.ids_adi.ns.qxf.model.Description;
@@ -76,7 +77,8 @@ public class RefDataProvider {
 	private final String deleteWhere = "DELETE WHERE {";
 	private StringBuilder prefix = new StringBuilder();
 	private StringBuilder sparqlBuilder = new StringBuilder();
-
+	private static final Logger logger = Logger.getLogger(RefDataProvider.class);
+	
 	public RefDataProvider(Hashtable<String, String> settings) {
 		try {
 			_settings = settings;
@@ -169,7 +171,7 @@ public class RefDataProvider {
 		} catch (Exception ex) {
 			msgs.add("Error while saving namespace.");
 			response.setLevel(Level.ERROR);
-			throw ex;
+			logger.error(ex);
 		}
 
 		messages.setItems(msgs);
@@ -232,7 +234,7 @@ public class RefDataProvider {
 		} catch (Exception ex) {
 			msgs.add("Error while saving ID Generator.");
 			response.setLevel(Level.ERROR);
-			throw ex;
+			logger.error(ex);
 		}
 
 		messages.setItems(msgs);
@@ -282,7 +284,7 @@ public class RefDataProvider {
 		} catch (Exception ex) {
 			msgs.add("Error while saving Repository.");
 			response.setLevel(Level.ERROR);
-			throw ex;
+			logger.error(ex);
 		}
 
 		messages.setItems(msgs);
@@ -302,7 +304,8 @@ public class RefDataProvider {
 
 			return query;
 		} catch (Exception ex) {
-			throw ex;
+			logger.error(ex);
+			return "";
 		}
 	}
 
@@ -459,20 +462,21 @@ public class RefDataProvider {
 
 			return qmxf;
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetClass: " + e);
-			throw e;
+			logger.error("Error in GetClass: " + e);
+			return qmxf;
 		}
 	}
 
 	private List<Specialization> getSpecializations(String id, Repository rep)
 			throws Exception {
+		List<Specialization> specializations = new ArrayList<Specialization>();
 		try {
 			String sparql = "";
 			String sparqlPart8 = "";
 			String relativeUri = "";
 			String[] names = null;
 			Results res = null;
-			List<Specialization> specializations = new ArrayList<Specialization>();
+			
 			Query queryGetSpecialization = getQuery("GetSpecialization");
 			QueryBindings queryBindings = queryGetSpecialization.getBindings();
 			sparql = readSparql(queryGetSpecialization.getFileName());
@@ -563,19 +567,17 @@ public class RefDataProvider {
 			}
 			return specializations;
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetSpecializations: " + e);
-			throw new RuntimeException("Error while Getting Class: " + id
-					+ ".\n" + e.toString(), e);
+			logger.error("Error while Getting Class: " + e);
+			return specializations;
 		}
 	}
 
 	private List<Classification> getClassifications(String id, Repository rep)
 			throws Exception {
+		List<Classification> classifications = new ArrayList<Classification>();
 		try {
 			String sparql = "";
 			String relativeUri = "";
-
-			List<Classification> classifications = new ArrayList<Classification>();
 			Query getClassification;
 			QueryBindings queryBindings;
 
@@ -611,15 +613,14 @@ public class RefDataProvider {
 
 			return classifications;
 		} catch (Exception e) {
-			// _logger.Error("Error in GetClassifications: " + e);
-			throw e;// new Exception("Error while Getting Class: " + id + ".\n"
-					// + e.ToString(), e);
+			logger.error("Error in GetClassifications: " + e);
+			return classifications;
 		}
 	}
 
 	private List<Classification> processClassifications(Repository repository,
 			String sparql, QueryBindings queryBindings) throws Exception {
-		Results res = null;
+		//Results res = null;
 		Results sparqlResults = queryFromRepository(repository, sparql);
 
 		List<Hashtable<String, String>> results = bindQueryResults(
@@ -684,7 +685,8 @@ public class RefDataProvider {
 				qmxf.setTemplateDefinitions(templateDefinitions);
 			}
 		} catch (RuntimeException ex) {
-			// _logger.Error("Error in GetTemplate: " + ex);
+			logger.error("Error in GetTemplate: " + ex);
+			return qmxf;
 		}
 
 		return qmxf;
@@ -708,7 +710,8 @@ public class RefDataProvider {
 				qmxf.getTemplateDefinitions().addAll(templateDefinition);
 			}
 		} catch (RuntimeException ex) {
-			// _logger.Error("Error in GetTemplate: " + ex);
+			logger.error("Error in GetTemplate: " + ex);
+			return qmxf;
 		}
 
 		return qmxf;
@@ -788,14 +791,15 @@ public class RefDataProvider {
 
 			return templateDefinitionList;
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetTemplateDefinition: " + e);
-			throw new RuntimeException("Error while Getting Class: " + id
-					+ ".\n" + e.toString(), e);
+			logger.error("Error in GetTemplateDefinition: " + e);
+			return templateDefinitionList;
 		}
 	}
 
 	private List<RoleDefinition> getRoleDefinition(String id,
 			Repository repository) throws Exception {
+		
+		List<RoleDefinition> roleDefinitions = new ArrayList<RoleDefinition>();
 		try {
 			String sparql = "";
 			String relativeUri = "";
@@ -805,7 +809,7 @@ public class RefDataProvider {
 			Description description = new Description();
 			org.ids_adi.ns.qxf.model.Status status = new org.ids_adi.ns.qxf.model.Status();
 
-			List<RoleDefinition> roleDefinitions = new ArrayList<RoleDefinition>();
+			
 			List<Entity> resultEntities = new ArrayList<Entity>();
 
 			switch (repository.getRepositoryType()) {
@@ -868,9 +872,8 @@ public class RefDataProvider {
 
 			return roleDefinitions;
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetRoleDefinition: " + e);
-			throw new RuntimeException("Error while Getting Class: " + id
-					+ ".\n" + e.toString(), e);
+			logger.error("Error in GetRoleDefinition: " + e);
+			return roleDefinitions;
 		}
 	}
 
@@ -971,27 +974,22 @@ public class RefDataProvider {
 			}
 			return templateQualificationList;
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetTemplateQualification: " + e);
-			throw new RuntimeException("Error while Getting Template: " + id
-					+ ".\n" + e.toString(), e);
+			logger.error("Error in GetTemplateQualification: " + e);
+			return templateQualificationList;
 		}
 	}
 
 	private List<RoleQualification> getRoleQualification(String id,
 			Repository rep) throws Exception {
+		
+		List<RoleQualification> roleQualifications = new ArrayList<RoleQualification>();
 		try {
 			String rangeSparql = "";
-
 			String[] names = null;
-
 			String referenceSparql = "";
-
 			String valueSparql = "";
-
 			Description description = new Description();
 			org.ids_adi.ns.qxf.model.Status status = new org.ids_adi.ns.qxf.model.Status();
-
-			List<RoleQualification> roleQualifications = new ArrayList<RoleQualification>();
 
 			for (Repository repository : _repositories) {
 				if (rep != null) {
@@ -1152,9 +1150,8 @@ public class RefDataProvider {
 			}
 			return roleQualifications;
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetRoleQualification: " + e);
-			throw new RuntimeException("Error while Getting Class: " + id
-					+ ".\n" + e.toString(), e);
+			logger.error("Error in GetRoleQualification: " + e);
+			return roleQualifications;
 		}
 	}
 
@@ -1742,84 +1739,33 @@ public class RefDataProvider {
 										language = "@" + existingName.getLang();
 
 									if (existingName != null) {
-										if (!existingName.getValue()
-												.equalsIgnoreCase(
-														name.getValue())) {
+										if (!existingName.getValue().equalsIgnoreCase(name.getValue())) {
 											hasDeletes = true;
-											sparqlStmts
-													.append(String
-															.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
-																	identifier,
-																	existingName
-																			.getValue(),
-																	language));
-											sparqlStmts
-													.append(String
-															.format("tpl:{0} rdf:type p8:TemplateDescription .",
-																	identifier));
-											sparqlStmts
-													.append(String
-															.format("tpl:{0} rdf:hasTemplate p8:{1} .",
-																	identifier,
-																	existingName
-																			.getValue()
-																			.replaceFirst(
-																					existingName
-																							.getValue()
-																							.substring(
-																									0,
-																									existingName
-																											.getValue()
-																											.lastIndexOf(
-																													"_") + 1),
-																					"")));
+											sparqlStmts.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+														identifier,existingName.getValue(), language));
+											sparqlStmts.append(String.format("tpl:{0} rdf:type p8:TemplateDescription .",identifier));
+											sparqlStmts.append(String.format("tpl:{0} rdf:hasTemplate p8:{1} .",
+														identifier,	existingName.getValue().replaceFirst(
+														existingName.getValue().substring(0,existingName.getValue()
+														.lastIndexOf("_") + 1),	"")));
 
-											sparqlAdd
-													.append(String
-															.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
-																	identifier,
-																	name.getValue(),
-																	language));
-											sparqlAdd
-													.append(String
-															.format("tpl:{0} rdf:type p8:TemplateDescription .",
-																	identifier));
-											sparqlAdd
-													.append(String
-															.format("tpl:{0} rdf:hasTemplate p8:{1} .",
-																	identifier,
-																	name.getValue()
-																			.replaceFirst(
-																					name.getValue()
-																							.substring(
-																									0,
-																									name.getValue()
-																											.lastIndexOf(
-																													"_") + 1),
-																					"")));
+											sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .",
+														identifier,	name.getValue(),language));
+											sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateDescription .",	identifier));
+											sparqlAdd.append(String.format("tpl:{0} rdf:hasTemplate p8:{1} .",	identifier,	name.getValue()
+														.replaceFirst(name.getValue().substring(0, name.getValue().lastIndexOf("_") + 1),"")));
 										}
 									}
 								}
 
 								// role count
-								if (existingTemplate.getRoleQualifications()
-										.size() != newTemplateQualification
+								if (existingTemplate.getRoleQualifications().size() != newTemplateQualification
 										.getRoleQualifications().size()) {
 									hasDeletes = true;
-									sparqlStmts
-											.append(String
-													.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .",
-															identifier,
-															existingTemplate
-																	.getRoleQualifications()
-																	.size()));
-									sparqlAdd
-											.append(String
-													.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .",
-															identifier,
-															newTemplateQualification
-																	.getRoleQualifications()
-																	.size()));
+									sparqlStmts.append(String.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .",	identifier, 
+											existingTemplate.getRoleQualifications().size()));
+									sparqlAdd.append(String.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .",	identifier,
+											newTemplateQualification.getRoleQualifications().size()));
 								}
 
 								for (Specialization spec : newTemplateQualification
@@ -2228,7 +2174,7 @@ public class RefDataProvider {
 		} catch (Exception ex) {
 			String errMsg = "Error in PostTemplate: " + ex;
 			Status status = new Status();
-
+			logger.error("Error in PostTemplate: " + ex);
 			response.setLevel(Level.ERROR);
 			status.getMessages().getItems().add(errMsg);
 		}
@@ -2253,7 +2199,7 @@ public class RefDataProvider {
 				index++;
 			}
 		} catch (Exception ex) {
-			// throw ex;
+			logger.error(ex);
 
 		}
 		return index;
@@ -2290,15 +2236,15 @@ public class RefDataProvider {
 	}
 
 	public List<Repository> getRepositories() throws Exception {
-		List<Repository> repositoryList;
+		List<Repository> repositoryList = new ArrayList<Repository>();
 		try {
 			Federation federation = getFederation();
-			repositoryList = new ArrayList<Repository>();
 			for (Repository repo : federation.getRepositories().getItems()) {
 				repositoryList.add(repo);
 			}
 		} catch (Exception ex) {
-			throw ex;
+			logger.error(ex);
+			return repositoryList;
 		}
 		return repositoryList;
 
@@ -2397,17 +2343,14 @@ public class RefDataProvider {
 						tempVar2.setRepository(repository.getName());
 						Entity resultEntity = tempVar2;
 
-						// Utility.SearchAndInsert(queryResult, resultEntity,
-						// Entity.sortAscending());
 						entityList.add(resultEntity);
 					}
 				}
 			}
 			Collections.sort(entityList, new EntityComparator());
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetClassTemplates: " + e);
-			throw new RuntimeException("Error while Finding " + id + ".\n"
-					+ e.toString(), e);
+			logger.error("Error in GetClassTemplates: " + e);
+			return response;
 		}
 		return response;
 	}
@@ -2417,9 +2360,8 @@ public class RefDataProvider {
 		try {
 			return searchPage(query, 0, 0);
 		} catch (RuntimeException ex) {
-			// _logger.Error("Error in Search: " + ex);
-			throw new RuntimeException("Error while Searching " + query + ".\n"
-					+ ex.toString(), ex);
+			logger.error("Error in Search: " + ex);
+			return new org.iringtools.refdata.response.Response();
 		}
 	}
 
@@ -2493,30 +2435,31 @@ public class RefDataProvider {
 			}
 			return response;
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in SearchPage: " + e);
-			throw new RuntimeException("Error while Finding " + query + ".\n"
-					+ e.toString(), e);
+			logger.error("Error in SearchPage: " + e);
+			return response;
 		}
 	}
 
 	private org.iringtools.refdata.response.Response getRequestedPage(
 			org.iringtools.refdata.response.Response entities, int startIdx,
 			int pageSize) {
-		try {
+		
 			org.iringtools.refdata.response.Response page = new org.iringtools.refdata.response.Response();
-			page.setTotal(entities.getEntities().getItems().size());
+			try {
+			   page.setTotal(entities.getEntities().getItems().size());
 
-			for (int i = startIdx; i < startIdx + pageSize; i++) {
+			  for (int i = startIdx; i < startIdx + pageSize; i++) {
 				if (entities.getEntities().getItems().size() == i) {
 					break;
 				}
 				Entity entity = entities.getEntities().getItems().get(i);
 				page.getEntities().getItems().add(i, entity);
-			}
+			 }
 
 			return page;
 		} catch (RuntimeException ex) {
-			throw ex;
+			logger.error(ex);
+			return page;
 		}
 	}
 
@@ -2560,9 +2503,8 @@ public class RefDataProvider {
 			response.setTotal(entityList.size());
 			Collections.sort(entityList, new EntityComparator());
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetSuperClasses: " + e);
-			throw new RuntimeException("Error while Finding " + id + ".\n"
-					+ e.toString(), e);
+			logger.error("Error in GetSuperClasses: " + e);
+			return response;
 		}
 		return response;
 	}
@@ -2616,7 +2558,7 @@ public class RefDataProvider {
 						tempVar.setUri(result.get("uri"));
 						tempVar.setLabel(names[0]);
 						tempVar.setLang(language);
-						Entity resultEntity = tempVar;
+					//	Entity resultEntity = tempVar;
 						entityList.add(tempVar);
 					}
 				} else {
@@ -2643,9 +2585,8 @@ public class RefDataProvider {
 			response.setTotal(entityList.size());
 			Collections.sort(entityList, new EntityComparator());
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetSubClasses: " + e);
-			throw new RuntimeException("Error while Finding " + id + ".\n"
-					+ e.toString(), e);
+			logger.error("Error in GetSubClasses: " + e);
+			return response;
 		}
 		return response;
 	}
@@ -2721,9 +2662,8 @@ public class RefDataProvider {
 			}
 			Collections.sort(entityList, new EntityComparator());
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetAllSuperClasses: " + e);
-			throw new RuntimeException("Error while Finding " + id + ".\n"
-					+ e.toString(), e);
+			logger.error("Error in GetAllSuperClasses: " + e);
+			return response;
 		}
 
 		return response;
@@ -2756,8 +2696,8 @@ public class RefDataProvider {
 				idsAdiId = messageList.get(0);
 			}
 		} catch (Exception e) {
-			// logger.Error("Error in createIdsAdiId: " + e);
-			System.out.println("Error in createIdsAdiId: " + e);
+			logger.error("Error in createIdsAdiId: " + e);
+			return idsAdiId;
 		}
 		return idsAdiId;
 	}
@@ -2792,16 +2732,15 @@ public class RefDataProvider {
 
 	private List<RoleDefinition> getRoleDefinition(String id) throws Exception,
 			HttpClientException {
+		
+		List<RoleDefinition> roleDefinitions = new ArrayList<RoleDefinition>();
 		try {
 			String sparql = "";
-			String relativeUri = "";
 			String sparqlQuery = "";
 			String[] names = null;
 
 			Description description = new Description();
 			org.ids_adi.ns.qxf.model.Status status = new org.ids_adi.ns.qxf.model.Status();
-
-			java.util.ArrayList<RoleDefinition> roleDefinitions = new java.util.ArrayList<RoleDefinition>();
 
 			List<Entity> resultEntities = new ArrayList<Entity>();
 
@@ -2864,9 +2803,8 @@ public class RefDataProvider {
 
 			return roleDefinitions;
 		} catch (RuntimeException e) {
-			// _logger.Error("Error in GetRoleDefinition: " + e);
-			throw new RuntimeException("Error while Getting Class: " + id
-					+ ".\n" + e.toString(), e);
+			logger.error("Error in GetRoleDefinition: " + e);
+			return roleDefinitions;
 		}
 	}
 
@@ -2874,8 +2812,9 @@ public class RefDataProvider {
 			QueryBindings queryBindings, Results sparqlResults) {
 		String sBinding = "";
 		String qBinding = "";
+		List<Hashtable<String, String>> results = new ArrayList<Hashtable<String, String>>();
 		try {
-			List<Hashtable<String, String>> results = new ArrayList<Hashtable<String, String>>();
+			
 			for (Result sparqlResult : sparqlResults.getResults()) {
 				Hashtable<String, String> result = new Hashtable<String, String>();
 				String sortKey = "";
@@ -2912,14 +2851,17 @@ public class RefDataProvider {
 			}
 			return results;
 		} catch (RuntimeException ex) {
-			throw ex;
+			logger.error(ex);
+			return results;
 		}
 	}
 
 	private String makeUniqueKey(Hashtable<String, String> hashtable,
 			String duplicateKey) {
+		
+		String newKey = "";
 		try {
-			String newKey = "";
+			
 			for (int i = 2; i < Integer.MAX_VALUE; i++) {
 				String postFix = " (" + (new Integer(i)).toString() + ")";
 				if (!hashtable.containsKey(duplicateKey + postFix)) {
@@ -2929,12 +2871,13 @@ public class RefDataProvider {
 			}
 			return newKey;
 		} catch (RuntimeException ex) {
-			throw ex;
+			logger.error(ex);
+			return newKey;
 		}
 	}
 
 	private Results queryFromRepository(Repository repository, String sparql)
-			throws HttpClientException, UnsupportedEncodingException {
+			throws HttpClientException, UnsupportedEncodingException, JAXBException {
 		Sparql sparqlResults = new Sparql();
 		Results results = new Results();
 		String message = "query=" + URLEncoder.encode(sparql, "UTF-8");
@@ -2943,15 +2886,16 @@ public class RefDataProvider {
 			NetworkCredentials credentials = new NetworkCredentials();
 			HttpClient sparqlClient = new HttpClient(repository.getUri());
 			sparqlClient.setNetworkCredentials(credentials);
-			sparqlResults = sparqlClient.PostMessage(Sparql.class, "", message);
+			sparqlResults = sparqlClient.postMessage(Sparql.class, "", message);
 
 			results = sparqlResults.getResults();
 		} catch (RuntimeException ex) {
-			return results = null;
+			logger.error(ex);
+			return results;
 		}
 		return results;
 	}
-
+ 
 	private Query getQuery(String queryName) {
 		Query query = null;
 		List<QueryItem> items = _queries.getItems();

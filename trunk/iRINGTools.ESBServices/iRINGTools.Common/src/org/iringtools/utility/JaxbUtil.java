@@ -86,6 +86,10 @@ public class JaxbUtil
   	  Unmarshaller u = jc.createUnmarshaller();
   	  return (T)u.unmarshal(stream);
     }
+    catch (JAXBException ex)
+    {
+    	return null;
+    }
     finally
     {
       stream.close();
