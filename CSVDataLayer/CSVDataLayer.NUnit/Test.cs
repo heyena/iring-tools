@@ -25,7 +25,7 @@ namespace iRINGTools.SDK.CSVDataLayer
             _settings = new NameValueCollection();
 
             _settings["ProjectName"] = "12345_000";
-            _settings["XmlPath"] = @"..\CSVDataLayer\12345_000\";
+            _settings["XmlPath"] = @"..\CSVDataLayer.NUnit\12345_000\";
             _settings["ApplicationName"] = "CSV";
             _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
 

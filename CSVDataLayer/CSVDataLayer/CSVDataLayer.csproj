@@ -91,11 +91,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="12345_000\BindingConfiguration.12345_000.CSV.xml" />
-    <Content Include="12345_000\Configuration.CSV.xml" />
-    <Content Include="12345_000\DataDictionary.CSV.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
       <Visible>False</Visible>
       <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
@@ -111,13 +106,6 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="12345_000\12345_000.CSV.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="12345_000\12345_000.CSV.Default.config" />
-    <None Include="12345_000\CSV\Equipment.csv" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
