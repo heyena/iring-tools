@@ -65,6 +65,16 @@
       <Name>CSVDataLayer</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="12345_000\12345_000.CSV.config" />
+    <None Include="12345_000\CSV\Equipment.csv" />
+    <None Include="12345_000\CSV\Equipment.Original.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="12345_000\BindingConfiguration.12345_000.CSV.xml" />
+    <Content Include="12345_000\Configuration.CSV.xml" />
+    <Content Include="12345_000\DataDictionary.CSV.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
