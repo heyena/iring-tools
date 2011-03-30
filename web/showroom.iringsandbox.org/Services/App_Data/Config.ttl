@@ -23,7 +23,7 @@ _:sqlStore a dnr:TripleStore ;
 _:sqlServer a dnr:SqlIOManager ;
         dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
         dnr:server ".\SQLEXPRESS" ;
-        dnr:database "SHOWROOMFacadeDb" ;
+        dnr:database "showroom.facade" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
 <dotnetrdf:/Services/SandboxService/*> a dnr:HttpHandler ;
@@ -50,6 +50,6 @@ _:sqlStoreS a dnr:TripleStore ;
 _:sqlServerS a dnr:SqlIOManager ;
         dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
         dnr:server ".\SQLEXPRESS" ;
-        dnr:database "SHOWROOMSandboxDb" ;
+        dnr:database "showroom.sandbox" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .		
