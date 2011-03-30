@@ -8,9 +8,10 @@ namespace NUnit
 {
     class Program
     {
+        [STAThread]
         static void Main()
         {
-            string commandLine = @"/run ../../../../../CSVDataLayer.NUnit/CSVDataLayer.NUnit.csproj";
+            string commandLine = @"/run ../../../../../SPP3DDataLayer.NUnit/SPP3DDataLayer.NUnit.csproj";
 
             string[] args = commandLine.Split(' ');
             AppEntry.Main(args);
