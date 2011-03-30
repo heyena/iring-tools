@@ -17,7 +17,8 @@ namespace iRINGTools.SDK.SPPIDDataLayer
     public class SPPIDDataLayer : BaseDataLayer, IDataLayer2
     {
         private List<IDataObject> _dataObjects = null;
-        private ILMADataSource _projDatasource = null;        // SPPID DataSource
+        //private ILMADataSource _projDatasource = null;        // SPPID DataSource
+        private Llama.LMADataSource _projDatasource = null;        // SPPID DataSource
 
         //NOTE: This is required to deliver settings to constructor.
         //NOTE: Other objects could be requested on an as needed basis.
@@ -31,7 +32,8 @@ namespace iRINGTools.SDK.SPPIDDataLayer
             string projectStr = _settings["SPPIDProjectNumber"];
             projectStr += "!" + projectStr;     // per TR-88021 in SPPID 2007 SP4
 
-            _projDatasource = kernel.Get<ILMADataSource>();
+            //_projDatasource = kernel.Get<ILMADataSource>();
+            _projDatasource = new Llama.LMADataSource();
             _projDatasource.ProjectNumber = projectStr;
             _projDatasource.set_SiteNode(siteNode);
         }
@@ -176,8 +178,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
                 throw new Exception(
                   "Error while getting a list of data objects of type [" + objectType + "].",
-                  ex
-                );
+                  ex);
             }
         }
 
@@ -196,8 +197,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
                 throw new Exception(
                   "Error while getting a count of type [" + objectType + "].",
-                  ex
-                );
+                  ex);
             }
         }
 
@@ -223,8 +223,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
                 throw new Exception(
                   "Error while getting a list of identifiers of type [" + objectType + "].",
-                  ex
-                );
+                  ex);
             }
         }
 
@@ -286,8 +285,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
                 throw new Exception(
                   "Error while posting dataObjects of type [" + objectType + "].",
-                  ex
-                );
+                  ex);
             }
         }
 
@@ -320,8 +318,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 string uri = String.Format(
                     "{0}Configuration.{1}.xml",
                     _settings["XmlPath"],
-                    _settings["ApplicationName"]
-                );
+                    _settings["ApplicationName"]);
 
                 XDocument configDocument = XDocument.Load(uri);
                 _configuration = configDocument.Element("configuration");
@@ -350,8 +347,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 string path = String.Format(
                     "{0}\\{1}.csv",
                     _settings["SPPIDFolderPath"],
-                    objectType
-                );
+                    objectType);
 
                 IDataObject dataObject = null;
                 TextReader reader = new StreamReader(path);
@@ -436,8 +432,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
                 throw new Exception(
                   "Error while forming a dataObject of type [" + objectType + "] from SPPID.",
-                  ex
-                );
+                  ex);
             }
         }
 
@@ -453,8 +448,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 string path = String.Format(
                   "{0}\\{1}.csv",
                   _settings["SPPIDFolderPath"],
-                  objectType
-                );
+                  objectType);
 
                 //TODO: Need to update file, not replace it!
                 TextWriter writer = new StreamWriter(path);
@@ -480,8 +474,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                         string message = String.Format(
                           "Error while posting dataObject [{0}]. {1}",
                           dataObject.GetPropertyValue("Tag"),
-                          ex.ToString()
-                        );
+                          ex.ToString());
 
                         status.Messages.Add(message);
                     }
@@ -525,8 +518,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
                 throw new Exception(
                   "Error while forming a CSV row of type [" + objectType + "] from a DataObject.",
-                  ex
-                );
+                  ex);
             }
         }
     }
