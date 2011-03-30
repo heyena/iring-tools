@@ -8,7 +8,7 @@
     <ProjectGuid>{FF781DFB-FA75-4A26-A936-AF2BF38189C8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SP3DDataLayer</RootNamespace>
+    <RootNamespace>iRINGTools.SDK.SP3DDataLayer</RootNamespace>
     <AssemblyName>SP3DDataLayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
