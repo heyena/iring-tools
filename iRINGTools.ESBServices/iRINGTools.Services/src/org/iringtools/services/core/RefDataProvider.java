@@ -1380,7 +1380,7 @@ public class RefDataProvider {
 									// RoleDefinition existingRole =
 									// existingTemplate.roleDefinition.Find(r =>
 									// r.identifier == role.identifier);
-									RoleDefinition existingRole = new RoleDefinition();
+									RoleDefinition existingRole = null;
 									for (RoleDefinition tempRoleDef : existingTemplate
 											.getRoleDefinitions()) {
 										if (role.getId().equalsIgnoreCase(
@@ -1847,7 +1847,7 @@ public class RefDataProvider {
 									// RoleQualification existingRole =
 									// existingTemplate.roleQualification.Find(r
 									// => r.identifier == role.identifier);
-									RoleQualification existingRole = new RoleQualification();
+									RoleQualification existingRole = null;
 									for (RoleQualification tempExistingRole : existingTemplate
 											.getRoleQualifications()) {
 										if (role.getId().equalsIgnoreCase(
