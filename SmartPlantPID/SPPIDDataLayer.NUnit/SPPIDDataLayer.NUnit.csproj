@@ -65,7 +65,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="12345_000\12345_000.SPPID.config" />
-    <None Include="12345_000\12345_000.SPPID.Default.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="12345_000\BindingConfiguration.12345_000.SPPID.xml">
