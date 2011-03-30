@@ -10,7 +10,7 @@ namespace NUnit
     {
         static void Main()
         {
-            string commandLine = @"/run ../../../../../CSVDataLayer.NUnit/CSVDataLayer.NUnit.csproj";
+            string commandLine = @"/run ../../../../../SPPIDDataLayer.NUnit/SPPIDDataLayer.NUnit.csproj";
 
             string[] args = commandLine.Split(' ');
             AppEntry.Main(args);
