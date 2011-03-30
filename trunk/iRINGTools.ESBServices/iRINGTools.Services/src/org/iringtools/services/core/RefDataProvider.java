@@ -1233,7 +1233,7 @@ public class RefDataProvider {
 
 						templateName = newTemplateDefinition.getNames().get(0)
 								.getValue();
-						// check for exisitng template
+						// check for exisiting template
 						Qmxf existingQmxf = new Qmxf();
 						if (identifier != null) {
 							// existingQmxf = getTemplate(identifier,
@@ -2880,13 +2880,12 @@ public class RefDataProvider {
 			throws HttpClientException, UnsupportedEncodingException, JAXBException {
 		Sparql sparqlResults = new Sparql();
 		Results results = new Results();
-		String message = "query=" + URLEncoder.encode(sparql, "UTF-8");
 		try {
 			// TODO need to look at credentials
 			NetworkCredentials credentials = new NetworkCredentials();
 			HttpClient sparqlClient = new HttpClient(repository.getUri());
 			sparqlClient.setNetworkCredentials(credentials);
-			sparqlResults = sparqlClient.postMessage(Sparql.class, "", message);
+			sparqlResults = sparqlClient.postSparql(Sparql.class, "", sparql, "");
 
 			results = sparqlResults.getResults();
 		} catch (RuntimeException ex) {
