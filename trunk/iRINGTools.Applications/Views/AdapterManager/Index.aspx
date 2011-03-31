@@ -4,8 +4,9 @@
 <head id="Head1" runat="server">
     <title>Adapter Manager</title>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/resources/css/ext-all.css"/>
-    <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/examples/ux/css/ux-all.css"/>    
-    <link rel="stylesheet" type="text/css" href="../../Content/css/AdapterManager.css"/>    
+    <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/examples/ux/css/ux-all.css"/>
+    <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/resources/css/xtheme-gray.css" /> 
+    <link rel="stylesheet" type="text/css" href="../../Content/css/AdapterManager-gray.css"/> 
 
     <!-- ExtJS library: base/adapter -->
     <script src="../../Scripts/ext-3.3.1/adapter/ext/ext-base.js" type="text/javascript"></script>
@@ -15,22 +16,34 @@
     <script src="../../Scripts/ext-3.3.1/examples/ux/ux-all.js" type="text/javascript"></script>
             
     <!-- extensions -->    
-    <script src="../../Scripts/iringtools/adaptermanager/App.js" type="text/javascript"></script>    
-    <script src="../../Scripts/iringtools/adaptermanager/ActionPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/adaptermanager/DirectoryPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/adaptermanager/MappingPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/adaptermanager/SearchPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/adaptermanager/ScopePanel.js" type="text/javascript"></script>        
-    <script src="../../Scripts/iringtools/adaptermanager/ApplicationPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/adaptermanager/AjaxRowExpander.js" type="text/javascript"></script>    
-    <script src="../../Scripts/iringtools/adaptermanager/ExcelLibrary.js" type="text/javascript"></script>
+    <script src="../../Scripts/iringtools/AdapterManager/App.js" type="text/javascript"></script>    
+    <script src="../../Scripts/iringtools/AdapterManager/ActionPanel.js" type="text/javascript"></script>
+    <script src="../../Scripts/iringtools/AdapterManager/DirectoryPanel.js" type="text/javascript"></script>
+    <script src="../../Scripts/iringtools/AdapterManager/MappingPanel.js" type="text/javascript"></script>
+    <script src="../../Scripts/iringtools/AdapterManager/SearchPanel.js" type="text/javascript"></script>
+    <script src="../../Scripts/iringtools/AdapterManager/ScopePanel.js" type="text/javascript"></script>        
+    <script src="../../Scripts/iringtools/AdapterManager/ApplicationPanel.js" type="text/javascript"></script>
+    <script src="../../Scripts/iringtools/AdapterManager/AjaxRowExpander.js" type="text/javascript"></script>    
+    <script src="../../Scripts/iringtools/AdapterManager/ExcelLibrary.js" type="text/javascript"></script>
 
     <!-- page specific -->    
-    <script src="../../Scripts/iringtools/adaptermanager/AdapterManager.js" type="text/javascript"></script>    
+    <script src="../../Scripts/iringtools/AdapterManager/AdapterManager.js" type="text/javascript"></script>    
 </head>
 <body>    
-    <div id="header" class="banner">
+    <%--<div id="header" class="exchangeBanner">
         <h1><img src="../../Content/img/iRINGTools_logo.png" />&nbsp; Adapter Manager</h1>
-    </div>    
+    </div>--%>
+    <div id="header" class="exchangeBanner">
+    <span style="float:left">
+      <img src="../../Content/img/iRINGTools_logo.png" 
+         style="margin:0 0 0 11px; vertical-align:-20%">         
+            <span style="margin:0 0 0 6px;"><font size="5px"
+        style="font-family: Arial, Helvetica, Sans-Serif">Adapter Manager</font></span>
+    </span>
+    <span style="float:right;margin:18px 36px 1px 0"><a
+        href="http://iringug.org/wiki/index.php?title=ESBUsersGuide" target="_blank"  class="headerLnkBlack">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a 
+        id="about-link" href="#" class="headerLnkBlack">About</a>
+    </span>
+  </div>    
 </body>
 </html>

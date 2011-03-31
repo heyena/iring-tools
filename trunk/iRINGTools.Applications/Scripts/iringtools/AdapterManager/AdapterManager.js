@@ -8,6 +8,36 @@ var App = new Ext.App({});
 Ext.onReady(function () {
   Ext.QuickTips.init();
 
+  Ext.get('about-link').on('click', function () {
+    var win = new Ext.Window({
+      title: 'About Adapter Manager',
+      bodyStyle: 'background-color:white;padding:5px',
+      width: 700,
+      height: 500,
+      closable: true,
+      resizable: false,
+      autoScroll: true,
+      buttons: [{
+        text: 'Close',
+        handler: function () {
+          Ext.getBody().unmask();
+          win.close();
+        }
+      }],
+      autoLoad: 'about.html',
+			listeners: {
+        close: {
+          fn: function () {
+            Ext.getBody().unmask();
+          }
+        }
+      }
+    });
+
+		Ext.getBody().mask();
+		win.show();
+  });
+
   /*
   var actionPanel = new AdapterManager.ActionPanel({
   id: 'action-panel',

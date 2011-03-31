@@ -132,9 +132,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="about.html" />
     <Content Include="ClientBin\ApplicationEditor.xap" />
     <Content Include="ClientBin\MappingEditor.xap" />
     <Content Include="ClientBin\ReferenceDataEditor.xap" />
+    <Content Include="Content\css\adaptermanager-gray.css" />
     <Content Include="Content\css\adaptermanager.css" />
     <Content Include="Content\css\interface.css" />
     <Content Include="Content\css\iring-tools.css" />
@@ -4663,6 +4665,19 @@
     <Content Include="Scripts\iringtools\AdapterManager\MappingPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\SearchPanel.js" />
+    <Content Include="Scripts\iringtools\jquery-1.4.1-vsdoc.js" />
+    <Content Include="Scripts\iringtools\jquery-1.4.1.js" />
+    <Content Include="Scripts\iringtools\jquery-1.4.1.min.js" />
+    <Content Include="Scripts\iringtools\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\iringtools\jquery.validate.js" />
+    <Content Include="Scripts\iringtools\jquery.validate.min.js" />
+    <Content Include="Scripts\iringtools\MicrosoftAjax.debug.js" />
+    <Content Include="Scripts\iringtools\MicrosoftAjax.js" />
+    <Content Include="Scripts\iringtools\MicrosoftMvcAjax.debug.js" />
+    <Content Include="Scripts\iringtools\MicrosoftMvcAjax.js" />
+    <Content Include="Scripts\iringtools\MicrosoftMvcValidation.debug.js" />
+    <Content Include="Scripts\iringtools\MicrosoftMvcValidation.js" />
+    <Content Include="Scripts\iringtools\Silverlight.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\AppEditor\Index.aspx" />

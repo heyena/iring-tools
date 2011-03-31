@@ -87,10 +87,10 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             valueField: 'name',
             displayField: 'name',
             hiddenName: 'assembly',
-            value: dataLayer,           
+            value: dataLayer,
             hiddenValue: assembly
         });
-                
+
         that = this;
 
         this.form = new Ext.FormPanel({
@@ -188,8 +188,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     },
 
     onSave: function () {
-        var that = this;    // consists the main/previous class object
-
+        var that = this;    // consists the main/previous class object      
         this.form.getForm().submit({
             waitMsg: 'Saving Data...',
             success: function (f, a) {
