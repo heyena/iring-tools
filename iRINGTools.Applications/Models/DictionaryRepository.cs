@@ -179,13 +179,13 @@ namespace iRINGTools.Web.Models
           Description = description,
           Applications = new ScopeApplications()
         };
+				scopes.Add(scope);
       }
       else
       {
         scope.Name = name;
         scope.Description = description;
-      }
-
+      }			
       return PostScopes(scopes);
     }
 
