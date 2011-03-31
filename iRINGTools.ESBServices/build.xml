@@ -41,4 +41,13 @@
       <fileset dir="${iRINGTools.Services.location}/dist" />
     </copy>
   </target>
+  
+  <target name="deploy" depends="dist">
+    <copy todir="c:/bamboo.iringtools.org/dist">
+      <fileset dir="dist"/>
+    </copy>
+    <copy todir="c:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps">
+      <fileset dir="dist" excludes="*.jar"/>
+    </copy>
+  </target>
 </project>
