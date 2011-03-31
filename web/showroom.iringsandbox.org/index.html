@@ -3,8 +3,93 @@
 <meta http-equiv="cache-control" content="no-cache">
 <link rel="stylesheet" type="text/css" href="css/iring-sandbox.css">
 <title>iRINGSandbox Showroom</title>
+<script type="text/javascript">
+function getXmlHttpConnection() {
+  var xmlHttp = null;
+
+  try {
+    xmlHttp = new XMLHttpRequest();  // Firefox, Opera 8.0+, Safari
+  }
+  catch(e) {
+    try {
+      xmlHttp = new ActiveXObject('Msxml2.XMLHTTP');  // IE
+    }
+    catch(e) {
+      try {
+        xmlHttp = new ActiveXObject('Microsoft.XMLHTTP');
+      }
+      catch(e) {
+        return false;
+      }
+    }
+  }
+
+  return xmlHttp;
+}
+
+function sendRequest(url, callback) {
+  var i = url.indexOf('?');
+  var action = url.substring(0, i);
+  var params = url.substring(i + 1);    
+  var xmlHttp = getXmlHttpConnection();
+    
+  if (xmlHttp != null) {
+    xmlHttp.open('GET', url, true);
+    xmlHttp.send();
+    
+    var interval = window.setInterval(
+      function() {
+        if (xmlHttp.readyState == 4) {
+          window.clearInterval(interval);
+		  callback(xmlHttp.responseText);
+          xmlHttp = null;
+        }
+      }
+    );
+  }
+}
+
+function loadXml(xml) {
+  var xmlDoc = null;
+  
+	if (window.DOMParser) {
+		parser = new DOMParser();
+		xmlDoc = parser.parseFromString(xml, "text/xml");
+	}
+	else { // IE
+		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.async = "false";
+		xmlDoc.loadXML(xml);
+	} 
+
+	return xmlDoc;
+}
+
+function setVersion(versionXml) {
+  var xmlDoc = loadXml(versionXml);
+
+  if (xmlDoc != null) {    
+    var major = xmlDoc.getElementsByTagName('major')[0].firstChild.nodeValue;;
+    document.getElementById('major').innerHTML = major;
+
+    var minor = xmlDoc.getElementsByTagName('minor')[0].firstChild.nodeValue;
+    document.getElementById('minor').innerHTML = minor;
+    
+    var build = xmlDoc.getElementsByTagName('build')[0].firstChild.nodeValue;
+    document.getElementById('build').innerHTML = build;
+    
+    var revision = xmlDoc.getElementsByTagName('revision')[0].firstChild.nodeValue;
+    document.getElementById('revision').innerHTML = revision;
+  }
+}
+
+function getVersion() { 
+  var url = 'http://showroom.iringsandbox.org/Services/AdapterService/version';
+  sendRequest(url, setVersion);
+}
+</script>
 </head>
-<body>
+<body onload="getVersion()">
 <div class="banner">
 	<h1><img src="img/iring-sandbox-logo.png" />&nbsp; Showroom</h1>
 </div>
@@ -23,7 +108,7 @@ ISO 15926 formats (part7, part8 or part9).
 	<p  class="title" align="center">Still not sure where to start?  Click <a href="Apps/MappingEditor">here!</a></p>
 </div>
 <br/>
-<h1>iRINGTools Version 2.0</h1>
+<h1>iRINGTools Version <span id="major"></span>.<span id="minor"></span>.<span id="build"></span>.<span id="revision"></span></h1>
 <hr/>
 <table width="100%">
 	<tr valign=top>
