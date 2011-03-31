@@ -2196,7 +2196,275 @@ public class RefDataProvider
 
   public Response postClass(Qmxf qmxf)
   {
-    return new Response();
+	  Response response = new Response();
+      response.setLevel(Level.SUCCESS);
+      boolean qn = false;
+      ReferenceObject qName = null;
+      
+      
+      try
+      {
+          Repository repository = getRepository(qmxf.getTargetRepository());
+
+          if (repository == null || repository.isIsReadOnly())
+          {
+              Status status = new Status();
+              response.setLevel(Level.ERROR);
+              
+              if (repository == null)
+                  status.getMessages().getItems().add("Repository not found!");
+              else
+                  status.getMessages().getItems().add("Repository [" + qmxf.getTargetRepository() + "] is read-only!");
+
+              //_response.Append(status);
+          }
+          else
+          {
+              String registry = _useExampleRegistryBase ? _settings.get("ExampleRegistryBase") : _settings.get("ClassRegistryBase");
+              StringBuilder sparqlDelete = new StringBuilder();
+
+              for (ClassDefinition clsDef : qmxf.getClassDefinitions())
+              {
+
+                  String language = null;
+                  List<String> names = new ArrayList<String>();
+                  StringBuilder sparqlAdd = new StringBuilder();
+                  sparqlAdd.append(insertData);
+                  boolean hasDeletes = false;
+                  int classCount = 0;
+                  String clsId = getIdFromURI(clsDef.getId());
+                  Qmxf existingQmxf = new Qmxf();
+
+                  if (clsId!=null)
+                  {
+                      existingQmxf = getClass(clsId, repository);
+                  }
+
+                  // delete class
+                  if (existingQmxf.getClassDefinitions().size() > 0)
+                  {
+                      StringBuilder sparqlStmts = new StringBuilder();
+
+
+                      for (ClassDefinition existingClsDef : existingQmxf.getClassDefinitions())
+                      {
+                          for (Name clsName : clsDef.getNames())
+                          {
+                              //QMXFName existingName = existingClsDef.name.Find(n => n.lang == clsName.lang);
+                              Name existingName = new Name();
+								for (Name tempName : existingClsDef.getNames()) {
+									if (clsName.getLang().equalsIgnoreCase(tempName.getLang())) {
+										existingName = tempName;
+									}
+								}
+								
+								
+                              if (existingName != null)
+                              {
+                                  if (!existingName.getValue().equalsIgnoreCase(clsName.getValue()))
+                                  {
+                                      hasDeletes = true;
+                                      sparqlStmts.append(String.format(" rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string . ", clsId, existingName.getValue(), clsName.getLang()));
+                                      sparqlAdd.append(String.format(" rdl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .", clsId, clsName.getValue(), clsName.getLang()));
+                                  }
+                              }
+
+                              for (Description description : clsDef.getDescriptions())
+                              {
+                                  //Description existingDescription = existingClsDef.description.Find(d => d.lang == description.lang);
+                              	Description existingDescription = new Description();
+  								for (Description tempDesc : existingClsDef.getDescriptions()) {
+  									if (description.getLang().equalsIgnoreCase(tempDesc.getLang())) {
+  										existingDescription = tempDesc;
+  									}
+  								}
+                                  if (existingDescription != null)
+                                  {
+                                      if (!existingDescription.getValue().equalsIgnoreCase(description.getValue()))
+                                      {
+                                          hasDeletes = true;
+                                          sparqlStmts.append(String.format(" rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string . ", clsId, existingDescription.getValue(), description.getLang()));
+                                          sparqlAdd.append(String.format(" rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", clsId, description.getValue(), description.getLang()));
+                                      }
+                                  }
+                              }
+
+                              // delete specialization
+                              for (Specialization spec : clsDef.getSpecializations())
+                              {
+
+                                  //Specialization existingSpec = existingClsDef.specialization.Find(s => s.reference == spec.reference);
+                                  Specialization existingSpec = new Specialization();
+  								for (Specialization tempSpec : existingClsDef.getSpecializations()) {
+  									if (spec.getReference().equalsIgnoreCase(tempSpec.getReference())) {
+  										existingSpec = tempSpec;
+  									}
+  								}
+                                  if (existingSpec != null && existingSpec.getReference() != null)
+                                  {
+                                      if (!existingSpec.getReference().equalsIgnoreCase(spec.getReference()))
+                                      {
+                                          hasDeletes = true;
+                                          qn = _nsmap.ReduceToQName(existingSpec.getReference(), qName);
+                                          sparqlStmts.append(String.format("  ?a dm:hasSubclass {0} . ", qName));
+                                          qn = _nsmap.ReduceToQName(spec.getReference(), qName);
+                                          if (qn)
+                                              sparqlAdd.append(String.format(" ?a rdfs:subClassOf {0} .", qName));
+                                      }
+                                  }
+                              }
+
+                              // delete classification
+                              for (Classification clsif : clsDef.getClassifications())
+                              {
+                                  //Classification existingClasif = existingClsDef.classification.Find(c => c.reference == clsif.reference);
+                              	Classification existingClasif = new Classification();
+  								for (Classification tempClasif : existingClsDef.getClassifications()) {
+  									if (clsif.getReference().equalsIgnoreCase(tempClasif.getReference())) {
+  										existingClasif = tempClasif;
+  									}
+  								}
+
+                                  if (existingClasif != null && existingClasif.getReference() != null)
+                                  {
+                                      if (!existingClasif.getReference().equalsIgnoreCase(clsif.getReference()))
+                                      {
+                                          hasDeletes = true;
+                                          qn = _nsmap.ReduceToQName(existingClasif.getReference(), qName);
+                                          if (qn)
+                                          {
+                                              sparqlStmts.append(String.format(" ?a dm:hasClassified {0} .", qName));
+                                              sparqlStmts.append(String.format(" ?a dm:hasClassifier {0} .", qName));
+                                          }
+                                          qn = _nsmap.ReduceToQName(clsif.getReference(), qName);
+                                          if (qn)
+                                          {
+                                              sparqlAdd.append(String.format(" ?a dm:hasClassified {0} .", qName));
+                                              sparqlAdd.append(String.format(" ?a dm:hasClassifier {0} .", qName));
+                                          }
+
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                      if (sparqlStmts.length() > 0)
+                      {
+                          sparqlDelete.append(deleteWhere);
+                          sparqlDelete.append(sparqlStmts);
+                          sparqlDelete.append(" }; ");
+                      }
+                  }
+
+                  // add class
+                  if (hasDeletes)
+                  {
+                      sparqlAdd.append("}");
+                  }
+                  else
+                      for (Name clsName : clsDef.getNames())
+                      {
+                          String clsLabel = clsName.getValue().split("@")[0];
+
+                          if (clsName.getLang()==null)
+                              language = "@" + defaultLanguage;
+                          else
+                              language = "@" + clsName.getLang();
+
+                          if (clsId==null)
+                          {
+                              String newClsName = "Class definition " + clsLabel;
+
+                              clsId = createIdsAdiId(registry, newClsName);
+                              clsId = getIdFromURI(clsId);
+                          }
+
+                          // append label
+                          sparqlAdd.append(String.format(" rdl:{0} rdf:type owl:Class .", clsId));
+                          sparqlAdd.append(String.format(" rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", clsId, clsLabel, language));
+
+                          // append entity type
+                          if (clsDef.getEntityType()!= null && clsDef.getEntityType().getReference()!=null)
+                          {
+                              qn = _nsmap.ReduceToQName(clsDef.getEntityType().getReference(), qName);
+
+                              if (qn)
+                                  sparqlAdd.append(String.format(" rdl:{0} rdf:type {1} .", clsId, qName));
+
+                          }
+
+                          // append description
+                          for (Description desc : clsDef.getDescriptions())
+                          {
+                              if (desc.getValue()!=null)
+                              {
+                                  if (desc.getLang()==null)
+                                      language = "@" + defaultLanguage;
+                                  else
+                                      language = "@" + desc.getLang();
+                                  String description = desc.getValue().split("@")[0];
+                                  sparqlAdd.append(String.format(" rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string . ", clsId, description, language));
+                              }
+                          }
+
+                          // append specialization
+                          for (Specialization spec : clsDef.getSpecializations())
+                          {
+                              if (spec.getReference()!=null)
+                              {
+                                  qn = _nsmap.ReduceToQName(spec.getReference(), qName);
+                                  if (qn)
+                                      sparqlAdd.append(String.format(" rdl:{0} rdfs:subClassOf {1} .", clsId, qName));
+                              }
+                          }
+
+                          classCount = clsDef.getClassifications().size();
+
+                          // append classification
+                          for (Classification clsif : clsDef.getClassifications())
+                          {
+                              if (clsif.getReference()!=null)
+                              {
+                                  qn = _nsmap.ReduceToQName(clsif.getReference(), qName);
+                                  if(qn){
+	                                    if (repository.getRepositoryType()== RepositoryType.PART_8)
+	                                    {
+	                                        sparqlAdd.append(String.format("rdl:{0} rdf:type {1} .", clsId, qName));
+	
+	                                    }
+	                                    else {
+	                                        sparqlAdd.append(String.format("rdl:{0} dm:hasClassifier {1} .", clsId, qName));
+	                                        sparqlAdd.append(String.format("{0} dm:hasClassified rdl:{1} .", qName, clsId));
+	                                    }
+                                  }
+                              }
+                          }
+
+                          sparqlAdd.append("}");
+                      }
+                  sparqlBuilder.append(prefix);
+                  sparqlBuilder.append(sparqlDelete);
+                  sparqlBuilder.append(sparqlAdd);
+
+                  String sparql = sparqlBuilder.toString();
+                  Response postResponse = postToRepository(repository, sparql);
+                  //response.append(postResponse);
+              }
+          }
+      }
+      catch (Exception ex)
+      {
+          String errMsg = "Error in PostClass: " + ex;
+          Status status = new Status();
+
+          response.setLevel(Level.ERROR);
+          status.getMessages().getItems().add(errMsg);
+          //response.Append(status);
+
+          //_logger.Error(errMsg);
+      }
+
+      return response;
   }
 
   public List<Repository> getRepositories() throws Exception
