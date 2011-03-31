@@ -43,11 +43,13 @@
   </target>
   
   <target name="deploy" depends="dist">
-    <copy todir="c:/bamboo.iringtools.org/dist">
-      <fileset dir="dist"/>
-    </copy>
-    <copy todir="c:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps">
-      <fileset dir="dist" excludes="*.jar"/>
-    </copy>
+    <copy file="dist/iringtools-apps.war" 
+	      tofile="c:/bamboo.iringtools.org/dist/apps.war"/>
+    <copy file="dist/iringtools-services.war" 
+	      tofile="c:/bamboo.iringtools.org/dist/services.war"/>
+    <copy file="dist/iringtools-apps.war" 
+	      tofile="c:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps/apps.war"/>
+    <copy file="dist/iringtools-services.war" 
+	      tofile="c:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps/services.war"/>    
   </target>
 </project>
