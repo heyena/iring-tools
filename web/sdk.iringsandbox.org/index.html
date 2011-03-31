@@ -3,8 +3,50 @@
 <meta http-equiv="cache-control" content="no-cache">
 <link rel="stylesheet" type="text/css" href="css/iring-sandbox.css">
 <title>iRINGSandbox SDK Testing</title>
+<script type="text/javascript" src="./js/sendRequest.js"></script>
+<script type="text/javascript">
+function loadXml(xml) {
+  var xmlDoc = null;
+  
+	if (window.DOMParser) {
+		parser = new DOMParser();
+		xmlDoc = parser.parseFromString(xml, "text/xml");
+	}
+	else { // IE
+		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.async = "false";
+		xmlDoc.loadXML(xml);
+	} 
+
+	return xmlDoc;
+}
+
+function setVersion(versionXml) {
+  var xmlDoc = loadXml(versionXml);
+
+  if (xmlDoc != null) {    
+    var major = xmlDoc.getElementsByTagName('major')[0].firstChild.nodeValue;;
+    document.getElementById('major').innerHTML = major;
+
+    var minor = xmlDoc.getElementsByTagName('minor')[0].firstChild.nodeValue;
+    document.getElementById('minor').innerHTML = minor;
+    
+    var build = xmlDoc.getElementsByTagName('build')[0].firstChild.nodeValue;
+    document.getElementById('build').innerHTML = build;
+    
+    var revision = xmlDoc.getElementsByTagName('revision')[0].firstChild.nodeValue;
+    document.getElementById('revision').innerHTML = revision;
+  }
+}
+
+function getVersion() { 
+  var url = 'Services/AdapterService/version';
+  //var url = 'http://localhost:54321/adapter/version';
+  sendRequest(url, setVersion);
+}
+</script>
 </head>
-<body>
+<body onload="getVersion()">
 <div class="banner">
 	<h1><img src="img/iring-sandbox-logo.png" />&nbsp; SDK Testing Environment</h1>
 </div>
@@ -15,7 +57,7 @@ This environment is set aside for testing of DataLayers developed using the SDK.
 DataLayer developers can contact <a href="mailto:support@iringtools.org ">support@iringtools.org </a>.
 </p>
 <br/>
-<h1>iRINGTools Version 2.0</h1>
+<h1>iRINGTools Version <span id="major"></span>.<span id="minor"></span>.<span id="build"></span>.<span id="revision"></span></h1>
 <hr/>
 <table width="100%">
 	<tr valign=top>
