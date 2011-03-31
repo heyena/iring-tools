@@ -3,6 +3,8 @@
   <property name="iRINGTools.Apps.location" value="./iRINGTools.Apps" />
   <property name="iRINGTools.Mediators.location" value="./iRINGTools.Mediators" />
   <property name="iRINGTools.Services.location" value="./iRINGTools.Services" />
+  <property name="tomcat.webapps.location" value="c:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps" />
+  <property name="bamboo.dist.location" value="c:/bamboo.iringtools.org/dist" />
 
   <path id="svnant.classpath">
     <fileset dir="${basedir}/libraries/svnant-1.3.0">
@@ -43,13 +45,8 @@
   </target>
   
   <target name="deploy" depends="dist">
-    <copy file="dist/iringtools-apps.war" 
-	      tofile="c:/bamboo.iringtools.org/dist/apps.war"/>
-    <copy file="dist/iringtools-services.war" 
-	      tofile="c:/bamboo.iringtools.org/dist/services.war"/>
-    <copy file="dist/iringtools-apps.war" 
-	      tofile="c:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps/apps.war"/>
-    <copy file="dist/iringtools-services.war" 
-	      tofile="c:/Program Files/Apache Software Foundation/Tomcat 6.0/webapps/services.war"/>    
+    <copy file="dist/iringtools-apps.war" tofile="${tomcat.webapps.location}/apps.war"/>
+    <copy file="dist/iringtools-services.war" tofile="${tomcat.webapps.location}/services.war"/>
+    <jar destfile="${bamboo.dist.location}/iRINGTools-Services.zip" basedir="dist"/>    
   </target>
 </project>
