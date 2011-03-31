@@ -145,6 +145,8 @@
                $(SDKDir)\*\*\*\.svn\**;">                    
     </SDKDeployment>
 
+    <Deployments Include="$(DeploymentDir)\*.zip" />
+    
     <SDKLib
       Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
              Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;">
@@ -332,6 +334,10 @@
   <Target Name="Build" DependsOnTargets="CoreBuild; SDKBuild"/>
 
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild; SDKBuild"/>
+  
+  <Target Name="Distribute">
+    <Copy SourceFiles="@(Deployments)" DestinationFolder="c:\bamboo.iringtools.org\dist"/>
+  </Target>
 
-  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
+  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages; Distribute"/>
 </Project>
