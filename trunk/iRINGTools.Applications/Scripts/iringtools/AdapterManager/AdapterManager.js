@@ -92,6 +92,10 @@ Ext.onReady(function () {
       url: 'directory/scope'
     });
 
+    newTab.on('save', function (panel) {      
+      directoryPanel.reload();
+    }, this);
+
     contentPanel.add(newTab);
     contentPanel.activate(newTab);
 
