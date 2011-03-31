@@ -81,7 +81,7 @@ Ext.onReady(function () {
     id: 'nav-panel',
     title: 'Directory',
     region: 'west',
-    width: 250,
+    width: 260,
 
     collapseMode: 'mini',
     collapsible: true,
@@ -268,7 +268,7 @@ Ext.onReady(function () {
         region: 'north',
         applyTo: 'header',
         border: false,
-        height: 60
+        height: 55
       },
       directoryPanel,
       contentPanel,
