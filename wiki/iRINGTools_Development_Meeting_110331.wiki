@@ -1,5 +1,5 @@
+#summary Date: 2011/3/31 Time: 08:00 EST
 #labels Meeting
-#03/31/2011
 
 =Attendees=
  * Koos
