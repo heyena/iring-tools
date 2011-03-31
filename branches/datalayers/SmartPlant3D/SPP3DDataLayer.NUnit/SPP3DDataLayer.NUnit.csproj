@@ -61,14 +61,20 @@
     <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\SP3DDataLayer\SP3DDataLayer.csproj">
+      <Project>{FF781DFB-FA75-4A26-A936-AF2BF38189C8}</Project>
+      <Name>SP3DDataLayer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <None Include="12345_000\12345_000.SP3D.config" />
+    <None Include="12345_000\Equipment.csv" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="12345_000\BindingConfiguration.12345_000.SP3D.xml" />
     <Content Include="12345_000\Configuration.SP3D.xml" />
-    <Content Include="12345_000\DataDictionary.SP3D.xml" />
+    <Content Include="12345_000\DataDictionary.SP3D_ols.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
