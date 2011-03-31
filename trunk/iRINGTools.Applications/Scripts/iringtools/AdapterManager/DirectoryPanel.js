@@ -13,7 +13,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   collapsed: false,
 
   layout: 'border',
-  border: true,
+  border: false,
   split: true,
 
   navigationUrl: null,
@@ -75,7 +75,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       region: 'center',
       collapseMode: 'mini',
       height: 300,
-      layout: 'fit',
+      //layout: 'fit',
       border: false,
       split: true,
       expandAll: true,
