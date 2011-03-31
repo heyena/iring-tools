@@ -26,7 +26,9 @@
     <SDKDir>$(MSBuildProjectDirectory)\iRINGTools.SDK</SDKDir>
     <SDKLibDir>$(SDKDir)\lib</SDKLibDir>
     
-    <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
+    <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>        
+    <DistDir>c:\bamboo.iringtools.org\dist</DistDir>
+    
     <ServicesDeploymentDir>$(DeploymentDir)\iRINGTools\Services</ServicesDeploymentDir>
     <AppsDeploymentDir>$(DeploymentDir)\iRINGTools\Apps</AppsDeploymentDir>
     <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
@@ -144,8 +146,6 @@
                $(SDKDir)\*\*\.svn\**;
                $(SDKDir)\*\*\*\.svn\**;">                    
     </SDKDeployment>
-
-    <Deployments Include="$(DeploymentDir)\*.zip" />
     
     <SDKLib
       Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
@@ -336,7 +336,12 @@
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild; SDKBuild"/>
   
   <Target Name="Distribute">
-    <Copy SourceFiles="@(Deployments)" DestinationFolder="c:\bamboo.iringtools.org\dist"/>
+    <Copy SourceFiles="$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip" 
+          DestinationFiles="$(DistDir)\iRINGTools-Adapter.zip">
+    </Copy>
+    <Copy SourceFiles="$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip" 
+          DestinationFiles="$(DistDir)\iRINGTools-SDK.zip">
+    </Copy>
   </Target>
 
   <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages; Distribute"/>
