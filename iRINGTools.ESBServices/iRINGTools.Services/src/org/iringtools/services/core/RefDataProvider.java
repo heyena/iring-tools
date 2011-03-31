@@ -2704,7 +2704,8 @@ public class RefDataProvider
     try
     {
       page.setTotal(entities.getEntities().getItems().size());
-
+      Entities ent = new Entities();
+      page.setEntities(ent);
       for (int i = startIdx; i < startIdx + pageSize; i++)
       {
         if (entities.getEntities().getItems().size() == i)
@@ -2712,7 +2713,8 @@ public class RefDataProvider
           break;
         }
         Entity entity = entities.getEntities().getItems().get(i);
-        page.getEntities().getItems().add(i, entity);
+        ent.getItems().add(entity);
+       // page.getEntities().getItems().add(i, entity);
       }
 
       return page;
