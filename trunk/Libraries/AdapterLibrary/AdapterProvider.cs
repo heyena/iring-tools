@@ -1484,7 +1484,7 @@ namespace org.iringtools.adapter
           {
             foreach (System.Type t in asm.GetTypes())
             {
-              if (!t.IsInterface && ti.IsAssignableFrom(t))
+              if (!t.IsInterface && ti.IsAssignableFrom(t) && t.IsAbstract.Equals(false))
               {
                 DataLayer dataLayer = new DataLayer { Assembly = t.FullName, Name = asm.FullName.Split(',')[0] };
                 dataLayerAssemblies.Add(dataLayer);
