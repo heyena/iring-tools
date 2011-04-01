@@ -15,6 +15,14 @@ public class RefDataController implements ServletRequestAware{
 	private RefDataModel refdata;
 	private Tree tree;
 	private Response response;
+	public Response getResponse() {
+		return response;
+	}
+
+	public void setResponse(Response response) {
+		this.response = response;
+	}
+
 	private HttpServletRequest httpRequest = null;
 	
 	public RefDataController()
