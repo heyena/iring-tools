@@ -214,7 +214,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     showContextMenu: function (node, event) {
        
-       // if (node.isSelected()) { // Commented to enable navigation menu either node is selected or not.
+        if (node.isSelected()) { 
             var x = event.browserEvent.clientX;
             var y = event.browserEvent.clientY;
 
@@ -227,7 +227,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
             } else if (obj.type == "ApplicationNode") {
                 this.applicationMenu.showAt([x, y]);
             }
-       // }
+        }
     },
 
     onNewScope: function (btn, ev) {
