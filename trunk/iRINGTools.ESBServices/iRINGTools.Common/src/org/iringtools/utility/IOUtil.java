@@ -3,6 +3,7 @@ package org.iringtools.utility;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,16 +31,33 @@ import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 
 public class IOUtil
 {
+  private static final int DEFAULT_BUFFER_SIZE = 1024;
+
+  public static byte[] toByteArray(InputStream stream) throws IOException 
+  {
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+    byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+    int n = 0;
+    
+    while ((n = stream.read(buffer)) != -1) {
+      output.write(buffer, 0, n);
+    }
+    
+    return output.toByteArray();
+  }
+  
   public static String toString(InputStream stream) throws IOException
   {
     BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
     StringWriter writer = new StringWriter();
-    char[] buffer = new char[2048];
+    char[] buffer = new char[DEFAULT_BUFFER_SIZE];
 
-    int actualSize;
-    while ((actualSize = reader.read(buffer)) != -1)
-      writer.write(buffer, 0, actualSize);
-
+    int n;
+    while ((n = reader.read(buffer)) != -1) {
+      writer.write(buffer, 0, n);
+    }
+    
     return writer.toString();
   }
 
@@ -133,9 +151,10 @@ public class IOUtil
     FileWriter out = new FileWriter(outputFile);
     int c;
 
-    while ((c = in.read()) != -1)
+    while ((c = in.read()) != -1) {
       out.write(c);
-
+    }
+    
     in.close();
     out.close();
   }
