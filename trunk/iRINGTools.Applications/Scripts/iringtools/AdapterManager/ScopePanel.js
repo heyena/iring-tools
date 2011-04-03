@@ -87,7 +87,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
         return [{
             xtype: "tbbutton",
             text: 'Save',
-            icon: 'resources/images/16x16/document-save.png',
+            icon: 'Content/img//16x16/document-save.png',
             tooltip: 'Save',
             disabled: false,
             handler: this.onSave,
@@ -95,7 +95,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
         }, {
             xtype: "tbbutton",
             text: 'Clear',
-            icon: 'resources/images/16x16/edit-clear.png',
+            icon: 'Content/img/16x16/edit-clear.png',
             tooltip: 'Clear',
             disabled: false,
             handler: this.onReset,
