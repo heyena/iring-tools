@@ -186,7 +186,11 @@ Ext.onReady(function () {
       record: node.attributes.record,
       url: 'directory/application',
       closable: true
-    });
+     });
+
+    newTab.on('save', function (panel) {
+			directoryPanel.reload();
+    }, this);
 
     newTab.on('configure', function (panel, scope, application) {
 

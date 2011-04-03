@@ -139,7 +139,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         return [{
             xtype: "tbbutton",
             text: 'Configure',
-            icon: 'resources/images/16x16/document-save.png',
+            //icon: 'Content/img/16x16/document-save.png',
             tooltip: 'Configure',
             disabled: false,
             handler: this.onConfigure,
@@ -147,7 +147,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         }, {
             xtype: "tbbutton",
             text: 'Save',
-            icon: 'resources/images/16x16/document-save.png',
+            icon: 'Content/img/16x16/document-save.png',
             tooltip: 'Save',
             disabled: false,
             handler: this.onSave,
@@ -155,7 +155,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         }, {
             xtype: "tbbutton",
             text: 'Clear',
-            icon: 'resources/images/16x16/edit-clear.png',
+            icon: 'Content/img/16x16/edit-clear.png',
             tooltip: 'Clear',
             disabled: false,
             handler: this.onReset,
