@@ -14,21 +14,21 @@ namespace iRINGTools.Web.Controllers
   public class DirectoryController : Controller
   {
 
-    IDictionaryRepository _dictionaryRepository;
+    IAdapterRepository _repository;
 
     public DirectoryController()
-      : this(new DictionaryRepository())
+      : this(new AdapterRepository())
     {
     }
 
-    public DirectoryController(IDictionaryRepository dictionary)
+    public DirectoryController(IAdapterRepository repository)
     {
-      _dictionaryRepository = dictionary;
+      _repository = repository;
     }
 
     public ActionResult Index()
     {
-      return View(_dictionaryRepository.GetScopes());
+      return View(_repository.GetScopes());
     }
 
     public ActionResult GetNode(FormCollection form)
@@ -41,7 +41,7 @@ namespace iRINGTools.Web.Controllers
 
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-            foreach (ScopeProject scope in _dictionaryRepository.GetScopes())
+            foreach (ScopeProject scope in _repository.GetScopes())
             {
 
               JsonTreeNode node = new JsonTreeNode
@@ -68,11 +68,11 @@ namespace iRINGTools.Web.Controllers
 
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-            ScopeProject scope = _dictionaryRepository.GetScope(form["node"]);
+            ScopeProject scope = _repository.GetScope(form["node"]);
 
             foreach (ScopeApplication application in scope.Applications)
             {
-              DataLayer dataLayer = _dictionaryRepository.GetDataLayer(scope.Name, application.Name);
+              DataLayer dataLayer = _repository.GetDataLayer(scope.Name, application.Name);
 
               JsonTreeNode node = new JsonTreeNode
               {
@@ -153,7 +153,7 @@ namespace iRINGTools.Web.Controllers
             string scopeName = context.Split('/')[0];
             string applicationName = context.Split('/')[1];
 
-            Mapping mapping = _dictionaryRepository.GetMapping(scopeName, applicationName);
+            Mapping mapping = _repository.GetMapping(scopeName, applicationName);
 
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
@@ -182,7 +182,7 @@ namespace iRINGTools.Web.Controllers
             string scopeName = context.Split('/')[0];
             string applicationName = context.Split('/')[1];
 
-            DataDictionary dictionary = _dictionaryRepository.GetDictionary(scopeName, applicationName);
+            DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
 
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
@@ -213,7 +213,7 @@ namespace iRINGTools.Web.Controllers
             string applicationName = context.Split('/')[1];
             string dataObjectName = context.Split('/')[4];
 
-            DataDictionary dictionary = _dictionaryRepository.GetDictionary(scopeName, applicationName);
+            DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
             DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName == dataObjectName);
 
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
@@ -245,7 +245,7 @@ namespace iRINGTools.Web.Controllers
             string scopeName = context.Split('/')[0];
             string applicationName = context.Split('/')[1];
 
-            Mapping mapping = _dictionaryRepository.GetMapping(scopeName, applicationName);
+            Mapping mapping = _repository.GetMapping(scopeName, applicationName);
 
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
@@ -279,7 +279,7 @@ namespace iRINGTools.Web.Controllers
 
     public ActionResult DataLayers()
     {
-      DataLayers dataLayers = _dictionaryRepository.GetDataLayers();
+      DataLayers dataLayers = _repository.GetDataLayers();
 
       JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
       container.items = dataLayers;
@@ -291,21 +291,21 @@ namespace iRINGTools.Web.Controllers
 
     public JsonResult Scope(FormCollection form)
     {      
-      string success = _dictionaryRepository.UpdateScope(form["scope"], form["name"], form["description"]);
+      string success = _repository.UpdateScope(form["scope"], form["name"], form["description"]);
             
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult Application(FormCollection form)
     {
-      string success = _dictionaryRepository.UpdateApplication(form["scope"], form["application"], form["Name"], form["Description"]);
+      string success = _repository.UpdateApplication(form["Scope"], form["Application"], form["Name"], form["Description"], form["assembly"]);
             
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult DeleteScope(FormCollection form)
     { 
-      _dictionaryRepository.DeleteScope(form["nodeid"]);
+      _repository.DeleteScope(form["nodeid"]);
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
@@ -316,7 +316,7 @@ namespace iRINGTools.Web.Controllers
       string scope = context.Split('/')[0];
       string application = context.Split('/')[1];
 
-      _dictionaryRepository.DeleteApplication(scope, application);
+      _repository.DeleteApplication(scope, application);
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
