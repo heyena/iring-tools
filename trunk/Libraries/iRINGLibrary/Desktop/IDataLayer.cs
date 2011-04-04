@@ -88,5 +88,7 @@ namespace org.iringtools.library
 
     Response Configure(XElement configuration);
 
+    XElement GetConfiguration();
+
   }
 }

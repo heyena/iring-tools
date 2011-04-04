@@ -207,14 +207,12 @@ namespace org.iringtools.services
       return _adapterProvider.Configure(projectName, applicationName, HttpContext.Current.Request);
     }
 
-    /*
-    [Description("Upload files for data layer in the service.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectname}/{applicationName}/upload")]
-    public Response Upload(String projectName, String applicationName)
-    { 
-      return _adapterProvider.Upload(projectName, applicationName, HttpContext.Current.Request.Files);
+    [Description("Get configuration for a selected data layer in the service.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{projectname}/{applicationName}/configuration")]
+    public XElement GetConfiguration(String projectName, String applicationName)
+    {
+      return _adapterProvider.GetConfiguration(projectName, applicationName);
     }
-    */
 
     #endregion
   }

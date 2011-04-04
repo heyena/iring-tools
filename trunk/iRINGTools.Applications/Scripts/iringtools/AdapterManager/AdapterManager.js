@@ -194,14 +194,13 @@ Ext.onReady(function () {
 
     newTab.on('configure', function (panel, scope, application) {
 
-      if (application.DataLayer = 'ExcelLibrary') {
+      if (application.DataLayer == 'ExcelLibrary') {
 
         var newConfig = new AdapterManager.ExcelLibraryPanel({
           id: 'tab-c.' + scope.Name + '.' + application.Name,
           title: 'Configure - ' + scope.Name + '.' + application.Name,
           scope: scope,
           application: application,
-
           url: 'excel/configure',
           closable: true
         });
@@ -209,7 +208,7 @@ Ext.onReady(function () {
         contentPanel.add(newConfig);
         contentPanel.activate(newConfig);
 
-      } else if (application.DataLayer = 'NHibernateLibrary') {
+      } else if (application.DataLayer == 'NHibernateLibrary') {
 
       } else {
 

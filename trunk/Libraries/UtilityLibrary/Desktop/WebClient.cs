@@ -32,14 +32,15 @@ using System.Web;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace org.iringtools.utility
-{
+{  
     public class MultiPartMessage
     {
       public MultipartMessageType type { get; set; }
       public string name { get; set; }
-      public string message { get; set; }
+      public object message { get; set; }
       public string fileName { get; set; }
       public string mimeType { get; set; }      
     }
@@ -59,6 +60,7 @@ namespace org.iringtools.utility
 
         private const string NEW_LINE = "\r\n";
         private const int TIMEOUT = 300000;
+        private Encoding encoding = Encoding.UTF8;
 
         public WebHttpClient(string baseUri)
             : this(baseUri, String.Empty, String.Empty, String.Empty)
@@ -438,31 +440,34 @@ namespace org.iringtools.utility
                 request.Method = "POST";
                 request.Timeout = TIMEOUT;
                 MemoryStream stream = new MemoryStream();
-                StreamWriter writer = new StreamWriter(stream);
-
+                string header = string.Empty;
+                
                 foreach (MultiPartMessage requestMessage in requestMessages)
-                {
-                  writer.Write("--" + _boundary + NEW_LINE);
-
+                {                  
                   if (requestMessage.type == MultipartMessageType.File)
-                  {                    
-                    writer.Write("Content-Disposition: file; name=\"{1}\"; filename=\"{2}\"{3}", requestMessage.mimeType, requestMessage.name, requestMessage.fileName, NEW_LINE);                    
-                    writer.Write("Content-Type: {0}; {1}", requestMessage.mimeType, NEW_LINE);                                      
+                  {
+                    header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
+                    stream.Write(encoding.GetBytes(header), 0, header.Length);
+
+                    //byte[] fileData = (byte[])requestMessage.message;
+                    //stream.Write(fileData, 0, fileData.Length);
+
+                    Stream fileData = (Stream)requestMessage.message;
+                    fileData.CopyTo(stream);
                   }
                   else
                   {
-                    writer.Write("Content-Disposition: form-data; name=\"{0}\"{1}", requestMessage.name, NEW_LINE);
+                    header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
+                    stream.Write(encoding.GetBytes(header), 0, header.Length);
                   }
-                  writer.Flush();
-
-                  writer.Write(NEW_LINE + requestMessage.message);
-                  writer.Write(NEW_LINE);
-                  writer.Write("--{0}--{1}", _boundary, NEW_LINE);
-                  writer.Flush();
+                                    
                 }
 
-                PrepareCredentials(request);
+                header = string.Format("--{0}--\r\n", _boundary);
+                stream.Write(encoding.GetBytes(header), 0, header.Length);
 
+                PrepareCredentials(request);
+              
                 request.ContentLength = stream.Length;
                 request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();

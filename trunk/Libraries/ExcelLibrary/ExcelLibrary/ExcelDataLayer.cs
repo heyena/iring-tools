@@ -381,7 +381,7 @@ namespace org.iringtools.adapter.datalayer
       _response.Messages = new Messages();
       try
       {
-        _provider.Configure(Utility.DeserializeDataContract<ExcelConfiguration>(configuration.ToString()));
+        _provider.SaveConfiguration(Utility.DeserializeFromXElement<ExcelConfiguration>(configuration));
                 
         _response.Messages.Add("DataLayer configuration Saved successfully");
         _response.Level = StatusLevel.Success;
