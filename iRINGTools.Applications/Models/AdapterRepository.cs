@@ -14,14 +14,14 @@ using org.iringtools.mapping;
 
 namespace iRINGTools.Web.Models
 {
-  public class DictionaryRepository : IDictionaryRepository
+  public class AdapterRepository : IAdapterRepository
   {
     private NameValueCollection _settings = null;
     private WebHttpClient _client = null;
     private string _refDataServiceURI = string.Empty;
     
     [Inject]
-    public DictionaryRepository()
+    public AdapterRepository()
     {
       _settings = ConfigurationManager.AppSettings;
       _client = new WebHttpClient(_settings["AdapterServiceUri"]);
@@ -199,7 +199,7 @@ namespace iRINGTools.Web.Models
       return PostScopes(scopes);
     }
     
-    public string UpdateApplication(string scopeName, string applicationName, string name, string description)
+    public string UpdateApplication(string scopeName, string applicationName, string name, string description, string assembly)
     {
       ScopeProjects scopes = GetScopes();
       ScopeProject scope = scopes.FirstOrDefault<ScopeProject>(o => o.Name == scopeName);

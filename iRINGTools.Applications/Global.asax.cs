@@ -55,7 +55,7 @@ namespace iRINGTools.Web
       //Bind<IFormsAuthentication>().To<FormsAuthenticationService>();
       //Bind<IMembershipService>().To<AccountMembershipService>();
       //Bind<MembershipProvider>().ToConstant(Membership.Provider);
-      Bind<IDictionaryRepository>().To<DictionaryRepository>();
+      Bind<IAdapterRepository>().To<AdapterRepository>();
       Bind<org.iringtools.datalayer.excel.IExcelRepository>().To<org.iringtools.datalayer.excel.ExcelRepository>();
     }
   }

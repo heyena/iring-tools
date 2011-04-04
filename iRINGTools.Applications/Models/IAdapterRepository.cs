@@ -8,7 +8,7 @@ using org.iringtools.mapping;
 
 namespace iRINGTools.Web.Models
 {
-  public interface IDictionaryRepository
+  public interface IAdapterRepository
   {
     ScopeProjects GetScopes();
 
@@ -28,7 +28,7 @@ namespace iRINGTools.Web.Models
 
     string DeleteScope(string scopeName);
 
-    string UpdateApplication(string scopeName, string applicationName, string name, string description);
+    string UpdateApplication(string scopeName, string applicationName, string name, string description, string assembly);
 
     string DeleteApplication(string scopeName, string applicationName);
     

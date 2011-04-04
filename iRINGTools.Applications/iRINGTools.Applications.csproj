@@ -108,8 +108,8 @@
     <Compile Include="Helpers\JsonArray.cs" />
     <Compile Include="Helpers\JsonContainer.cs" />
     <Compile Include="Helpers\JsonTreeNode.cs" />
-    <Compile Include="Models\DictionaryRepository.cs" />
-    <Compile Include="Models\IDictionaryRepository.cs" />
+    <Compile Include="Models\AdapterRepository.cs" />
+    <Compile Include="Models\IAdapterRepository.cs" />
     <Compile Include="Models\IRefDataRepository.cs" />
     <Compile Include="Models\RefDataRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
