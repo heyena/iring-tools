@@ -2,8 +2,8 @@ package org.iringtools.models;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.ids_adi.ns.qxf.model.Qmxf;
 import org.iringtools.refdata.response.Response;
-import org.iringtools.refdata.response.Entity;
 import org.iringtools.utility.HttpClient;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -49,6 +49,56 @@ public class RefDataModel
     }
     return response;
   }
+  
+  public Qmxf getClass(String id){
+	  
+	  Qmxf qmxf = null;
+	  
+	  try{
+		  qmxf = httpClient.get(Qmxf.class, "/classes/"+id);
+	  }catch(Exception e){
+		  
+	  }
+	  return qmxf;
+	  
+	  
+  }
+  public Response getSuperClasses(String id){
+	  
+	  
+	  try{
+		  response = httpClient.get(Response.class, "/classes/"+id+"/superclasses");
+	  }catch(Exception e){
+		  
+	  }
+	  return response;
+	  
+	  
+  }
+  public Response getSubClasses(String id){
+	  
+	  
+	  try{
+		  response = httpClient.get(Response.class, "/classes/"+id+"/subclasses");
+	  }catch(Exception e){
+		  
+	  }
+	  return response;
+	  
+	  
+}
+  public Response getTemplates(String id){
+	  
+  
+	  try{
+		  response = httpClient.get(Response.class, "/classes/"+id+"/templates");
+	  }catch(Exception e){
+		  
+	  }
+	  return response;
+	  
+	  
+}
 
 /*  public Tree toTree()
   {
