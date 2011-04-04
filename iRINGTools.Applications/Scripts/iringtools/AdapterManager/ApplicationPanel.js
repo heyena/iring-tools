@@ -91,7 +91,12 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             hiddenValue: assembly
         });
 
-        that = this;
+        cmbDataLayers.on('select', function (combo, record, index) {
+            this.record.DataLayer = record.data.name;
+            this.record.Assembly = record.data.assembly;
+        }, this);
+
+        //that = this;
 
         this.form = new Ext.FormPanel({
             labelWidth: 150, // label settings here cascade unless

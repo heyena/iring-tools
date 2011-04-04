@@ -17,6 +17,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using org.iringtools.datalayer.excel;
+using System.Text;
 
 namespace org.iringtools.datalayer.excel
 {
@@ -49,8 +50,6 @@ namespace org.iringtools.datalayer.excel
     public ExcelController(IExcelRepository repository)            
     {
       _settings = ConfigurationManager.AppSettings;
-      _settings["XmlPath"] = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".\\App_Data\\");
-
       _excelRepository = repository;
     }    
 
@@ -75,9 +74,13 @@ namespace org.iringtools.datalayer.excel
         if (hpf.ContentLength == 0)
           continue;
 
-        string location = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"]);
-        savedFileName = Path.Combine(location, Path.GetFileName(hpf.FileName));        
+        string location = _settings["Upload"];
+        
+        if (!Path.IsPathRooted(location))
+          location = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, location);
 
+        savedFileName = Path.Combine(location, Path.GetFileName(hpf.FileName));        
+        
         Directory.CreateDirectory(location);
         hpf.SaveAs(savedFileName);
 
@@ -90,6 +93,11 @@ namespace org.iringtools.datalayer.excel
           Generate = generate,
           Worksheets = generate ? null : new List<ExcelWorksheet>()
         };
+
+        location = _settings["XmlPath"];
+
+        if (!Path.IsPathRooted(location))
+          location = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, location);
 
         savedFileName = Path.Combine(location, "excel-configuration." + form["Scope"] + "." + form["Application"] + ".xml");
 
@@ -170,53 +178,9 @@ namespace org.iringtools.datalayer.excel
     public ActionResult Configure(FormCollection form)
     {      
       ExcelConfiguration configuration = _excelRepository.GetConfiguration(form["Scope"], form["Application"]);
-      string sourceFile = configuration.Location;
-      configuration.Location = Path.GetFileName(sourceFile);
-
-      WebHttpClient client = new WebHttpClient(_settings["AdapterServiceUri"]);
-      List<MultiPartMessage> requestMessages = new List<MultiPartMessage>();
-            
-      FileStream source = System.IO.File.OpenRead(configuration.Location);
-
-      requestMessages.Add(new MultiPartMessage
-      {
-        fileName = Path.GetFileName(sourceFile),
-        message = Utility.SerializeFromStream(source),
-        mimeType = Utility.GetMimeType(sourceFile),
-        name = "SourceFile",
-        type = MultipartMessageType.File
-      });
-
-      requestMessages.Add(new MultiPartMessage
-      {
-        message = form["Scope"],
-        name = "Scope",
-        type = MultipartMessageType.FormData
-      });
-
-      requestMessages.Add(new MultiPartMessage
-      {
-        message = form["Application"],
-        name = "Application",
-        type = MultipartMessageType.FormData
-      });
-
-      requestMessages.Add(new MultiPartMessage
-      {
-        message = form["DataLayer"],
-        name = "DataLayer",
-        type = MultipartMessageType.FormData
-      });
-
-      requestMessages.Add(new MultiPartMessage
-      {
-        message = Utility.SerializeXml<XElement>(Utility.SerializeToXElement(configuration)),
-        name = "Configuration",
-        type = MultipartMessageType.FormData
-      });
-
-      client.PostMultipartMessage("/configure", requestMessages);
-
+      
+      _excelRepository.Configure(configuration);
+      
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 

@@ -1072,6 +1072,11 @@ namespace org.iringtools.adapter
 
     private void InitializeDataLayer()
     {
+      InitializeDataLayer(true);
+    }
+
+    private void InitializeDataLayer(bool setDictionary)
+    {
       try
       {
         if (!_isDataLayerInitialized)
@@ -1096,16 +1101,25 @@ namespace org.iringtools.adapter
             _logger.Debug(ex.ToString());
             _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
           }
-          
-          _dataDictionary = _dataLayer.GetDictionary();
-          _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
-          _isDataLayerInitialized = true;
+
+          if (setDictionary)
+            InitializeDictionary();
         }
       }
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error initializing application: {0}", ex));
         throw new Exception(string.Format("Error initializing application: {0})", ex));
+      }
+    }
+
+    private void InitializeDictionary() 
+    {
+      if (!_isDataLayerInitialized)
+      {
+        _dataDictionary = _dataLayer.GetDictionary();
+        _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
+        _isDataLayerInitialized = true;
       }
     }
 
@@ -1486,7 +1500,9 @@ namespace org.iringtools.adapter
             {
               if (!t.IsInterface && ti.IsAssignableFrom(t) && t.IsAbstract.Equals(false))
               {
-                DataLayer dataLayer = new DataLayer { Assembly = t.FullName, Name = asm.FullName.Split(',')[0] };
+                string name = asm.FullName.Split(',')[0];
+                string assembly = string.Format("{0}, {1}", t.FullName, name);
+                DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name };
                 dataLayerAssemblies.Add(dataLayer);
               }
             }
@@ -1500,78 +1516,6 @@ namespace org.iringtools.adapter
 
       return dataLayerAssemblies;
     }
-
-    public Response Configure(string projectName, string applicationName, XElement config)
-    {
-      Response response = new Response();
-      response.Messages = new Messages();
-
-      try
-      {
-        InitializeScope(projectName, applicationName, false);
-
-        string dataLayer = config.Elements("DataLayer").First().Value;
-        XElement configuration = config.Elements("Configuration").First();
-
-        XElement binding = new XElement("module",
-        new XAttribute("name", _settings["Scope"]),
-          new XElement("bind",
-            new XAttribute("name", "DataLayer"),
-            new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
-            new XAttribute("to", dataLayer)
-          )
-        );
-
-        binding.Save(_settings["BindingConfigurationPath"]);
-        _kernel.Load(_settings["BindingConfigurationPath"]);
-
-        InitializeDataLayer();
-
-        ((IDataLayer2)_dataLayer).Configure(configuration);
-
-      }
-      catch (Exception ex)
-      {
-        response.Messages.Add(String.Format("Failed to Save Configuration[{0}]", _settings["Scope"]));
-        response.Messages.Add(ex.Message);
-        response.Level = StatusLevel.Error;
-      }
-      return response;
-    }
-    
-    /*
-    public Response Upload(string projectName, string applicationName, HttpFileCollection files)
-    {
-      Response response = new Response();
-      response.Messages = new Messages();
-
-      try
-      {
-        string savedFileName = string.Empty;
-
-        foreach (string file in files)
-        {
-          HttpPostedFile hpf = files[file] as HttpPostedFile;
-          if (hpf.ContentLength == 0)
-            continue;
-
-          savedFileName = Path.Combine(
-          AppDomain.CurrentDomain.BaseDirectory,
-          _settings["XmlPath"],
-          Path.GetFileName(hpf.FileName));
-          hpf.SaveAs(savedFileName);
-        }
-
-      }
-      catch (Exception ex)
-      {
-        response.Messages.Add(String.Format("Failed to Upload Files[{0}]", _settings["Scope"]));
-        response.Messages.Add(ex.Message);
-        response.Level = StatusLevel.Error;
-      }
-      return response;
-
-    }*/
 
     public Response Configure(string projectName, string applicationName, HttpRequest httpRequest)
     {
@@ -1612,9 +1556,11 @@ namespace org.iringtools.adapter
         binding.Save(_settings["BindingConfigurationPath"]);
         _kernel.Load(_settings["BindingConfigurationPath"]);
 
-        InitializeDataLayer();
+        InitializeDataLayer(false);
 
         ((IDataLayer2)_dataLayer).Configure(configuration);
+
+        InitializeDictionary();
 
       }
       catch (Exception ex)
@@ -1624,6 +1570,22 @@ namespace org.iringtools.adapter
         response.Level = StatusLevel.Error;
       }
       return response;
+    }
+
+    public XElement GetConfiguration(string projectName, string applicationName)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        return ((IDataLayer2)_dataLayer).GetConfiguration();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
+        throw new Exception(string.Format("Error getting configuration: {0}", ex));
+      }
     }
   }
 

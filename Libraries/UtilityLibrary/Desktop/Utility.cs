@@ -538,6 +538,51 @@ namespace org.iringtools.utility
       }
     }
 
+    public static MemoryStream ReadStream(string path)
+    {
+      MemoryStream stream = null;
+      FileStream fileStream = null;
+
+      try
+      {
+        fileStream = new FileStream(path, FileMode.Open);
+        stream = fileStream.ToMemoryStream();
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error while reading stream from " + path + ".", exception);
+      }
+      finally
+      {
+        if (fileStream != null) fileStream.Close();
+      }
+
+      return stream;
+    }
+
+
+    public static MemoryStream ToMemoryStream(this Stream requestStream)
+    {
+      MemoryStream usableStream = new MemoryStream();
+
+      byte[] buffer = new byte[10000];
+
+      int bytesRead = 0;
+
+      do
+      {
+
+        bytesRead = requestStream.Read(buffer, 0, buffer.Length);
+
+        usableStream.Write(buffer, 0, bytesRead);
+
+      } while (bytesRead > 0);
+
+      usableStream.Position = 0;
+
+      return usableStream;
+    }
+
     public static T DeserializeDataContract<T>(this string xml)
     {
       return Deserialize<T>(xml, true);

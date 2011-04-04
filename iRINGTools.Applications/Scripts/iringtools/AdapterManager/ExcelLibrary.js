@@ -295,7 +295,7 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
             }
         });
 
-    }    
+    }
 
 });
 
@@ -356,9 +356,8 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
         }
 
         this.form = new AdapterManager.ExcelSourcePanel({
-            scope: scope,
-            application: application,
-            dataLayer: dataLayer,         
+            scope: this.scope,
+            application: this.application,            
             url: 'excel/upload',
         });
 

@@ -22,33 +22,35 @@ using org.iringtools.adapter.datalayer;
 namespace org.iringtools.datalayer.excel
 {
   
-  public class ExcelProvider
+  public class ExcelProvider: IDisposable
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ExcelProvider));
     private AdapterSettings _settings = null;
-    private string _configurationPath = string.Empty;
-        
+            
     private Excel.Application _xlApplication = null;
     private Excel.Workbook _xlWorkBook = null;
 
-    public ExcelConfiguration Configuration { get; private set; }
-
+    public ExcelConfiguration Configuration { get; set; }
+        
     public ExcelProvider(AdapterSettings settings)
     {
       _settings = settings;
-      _configurationPath = _settings["XmlPath"] + "excel-configuration." + _settings["Scope"] + ".xml";      
-      Configuration = Utility.Read<ExcelConfiguration>(_configurationPath);
 
-      _xlApplication = new Excel.Application();
-      _xlWorkBook = _xlApplication.Workbooks.Open(Configuration.Location, 0, true, 5, "", "", true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, "\t", false, false, 0, true, 1, 0);
-            
-      if (Configuration.Generate)
+      if (File.Exists(_configurationPath))
       {
-        Configuration = ProcessConfiguration(Configuration);
-        Configuration.Generate = false;
-        Utility.Write<ExcelConfiguration>(Configuration, _configurationPath, true);
+        Configuration = Utility.Read<ExcelConfiguration>(_configurationPath);
+
+        _xlApplication = new Excel.Application();
+        _xlWorkBook = _xlApplication.Workbooks.Open(Configuration.Location, 0, true, 5, Type.Missing, Type.Missing, true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, Type.Missing, false, false, Type.Missing, true, 1, Type.Missing);
+
+        if (Configuration.Generate)
+        {
+          Configuration = ProcessConfiguration(Configuration);
+          Configuration.Generate = false;
+          Utility.Write<ExcelConfiguration>(Configuration, _configurationPath, true);
+        }
       }
-    }    
+    }
 
     ~ExcelProvider()
     {
@@ -72,6 +74,24 @@ namespace org.iringtools.datalayer.excel
       }
 
       GC.Collect();
+    }
+
+    public void Dispose()
+    {
+      Close();
+    }
+
+    private string _configurationPath
+    {
+      get
+      {
+        string path = Path.Combine(_settings["XmlPath"], "excel-configuration." + _settings["Scope"] + ".xml");
+
+        if (!Path.IsPathRooted(path))
+          path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+
+        return path;
+      }
     }
 
     private List<ExcelColumn> GetColumns(Excel.Worksheet xlWorksheet, ExcelWorksheet cfWorksheet)
@@ -205,31 +225,33 @@ namespace org.iringtools.datalayer.excel
       {        
         Worksheets = new List<ExcelWorksheet>();
 
-        foreach (Excel.Worksheet xlWorksheet in _xlWorkBook.Worksheets)
+        if (_xlWorkBook != null)
         {
-          ExcelWorksheet cfWorksheet = new ExcelWorksheet()
+          foreach (Excel.Worksheet xlWorksheet in _xlWorkBook.Worksheets)
           {
-            Name = xlWorksheet.Name,
-            Label = xlWorksheet.Name,
-            HeaderIdx = 1,
-            DataIdx = 2
-          };
-
-          if (withColumns)
-          {
-            cfWorksheet.Columns = GetColumns(GetRange(xlWorksheet, cfWorksheet.Range), cfWorksheet.HeaderIdx);
-
-            if (cfWorksheet.Columns != null && cfWorksheet.Columns.Count > 0)
+            ExcelWorksheet cfWorksheet = new ExcelWorksheet()
             {
-              cfWorksheet.Identifier = cfWorksheet.Columns[0].Name;
+              Name = xlWorksheet.Name,
+              Label = xlWorksheet.Name,
+              HeaderIdx = 1,
+              DataIdx = 2
+            };
+
+            if (withColumns)
+            {
+              cfWorksheet.Columns = GetColumns(GetRange(xlWorksheet, cfWorksheet.Range), cfWorksheet.HeaderIdx);
+
+              if (cfWorksheet.Columns != null && cfWorksheet.Columns.Count > 0)
+              {
+                cfWorksheet.Identifier = cfWorksheet.Columns[0].Name;
+                Worksheets.Add(cfWorksheet);
+              }
+            }
+            else
+            {
               Worksheets.Add(cfWorksheet);
             }
           }
-          else
-          {
-            Worksheets.Add(cfWorksheet);
-          }
-            
         }
 
       }
@@ -449,9 +471,12 @@ namespace org.iringtools.datalayer.excel
       return cfWorksheet.Identifier;
     }
 
-    public void Configure(ExcelConfiguration excelConfiguration)
-    {
+    public void SaveConfiguration(ExcelConfiguration excelConfiguration)
+    {      
       Utility.Write<ExcelConfiguration>(excelConfiguration, _configurationPath, true);
-    }
+
+      Configuration = excelConfiguration;
+    }    
+    
   }
 }
