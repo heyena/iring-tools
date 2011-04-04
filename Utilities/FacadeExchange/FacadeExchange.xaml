@@ -55,7 +55,7 @@
              Margin="84,93,89,0" 
              VerticalAlignment="Top" 
              VerticalContentAlignment="Center"
-             Text="http://localhost:65432/AdapterService" Grid.ColumnSpan="3" />
+             Text="" Grid.ColumnSpan="3" />
         <CheckBox Name="chkboxAdapterCredentials" 
              Content="Adapter Service"
              Height="18" Margin="39,66,0,0" 
@@ -159,7 +159,7 @@
                   Name="textBoxTargetURL"
                   Grid.Column="1" VerticalAlignment="Top" 
                   VerticalContentAlignment="Center" 
-                  Text="http://localhost:65432/InterfaceService/query" Grid.ColumnSpan="4" />
+                  Text="" Grid.ColumnSpan="4" />
         <Button Content="Connect" Height="28"
                 Width="75"
                 VerticalAlignment="Top"

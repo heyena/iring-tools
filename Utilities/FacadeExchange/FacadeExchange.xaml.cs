@@ -56,6 +56,9 @@ namespace org.iringtools.utils.exchange
 
       listBoxResults.ItemsSource = _messages;
 
+      textBoxAdapterURL.Text = ConfigurationManager.AppSettings["DefaultAdapterURL"];
+      textBoxTargetURL.Text = ConfigurationManager.AppSettings["DefaultFacadeURL"];
+
       _proxyHost = ConfigurationManager.AppSettings["ProxyHost"];
       _proxyPort = ConfigurationManager.AppSettings["ProxyPort"];
       _proxyCredentialToken = ConfigurationManager.AppSettings["ProxyCredentialToken"];
@@ -87,7 +90,7 @@ namespace org.iringtools.utils.exchange
             if (adapterConnect && facadeConnect)
             {
                 #region Prepare proxy and facade credentials if required
-                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+                if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
                 {
                     WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
                     proxy.Credentials = CredentialCache.DefaultCredentials;
@@ -116,8 +119,11 @@ namespace org.iringtools.utils.exchange
                 client.Headers["Content-type"] = "application/xml";
                 client.Encoding = Encoding.UTF8;
 
+                string rootUrl = textBoxAdapterURL.Text.Substring(0, textBoxAdapterURL.Text.LastIndexOf("/"));
+                string localFacadeUrl = rootUrl + "/facade/svc";
+
                 Uri pullURI = new Uri(
-                    textBoxAdapterURL.Text + "/" +
+                    localFacadeUrl + "/" +
                     _project.Name + "/" +
                     _application.Name + "/" +
                     _graph.name + "/pull");
@@ -132,11 +138,9 @@ namespace org.iringtools.utils.exchange
                     targetCredentials.Encrypt();
                 }
                 string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-                request.Add("targetUri", textBoxTargetURL.Text);
+                request.Add("targetEndpointUri", textBoxTargetURL.Text);
                 request.Add("targetCredentials", targetCredentialsXML);
                 request.Add("targetGraphBaseUri", comboBoxGraphUri.Text);
-                request.Add("graphName", comboBoxGraphName.Text);
-                request.Add("filter", "");
 
                 string message = Utility.SerializeDataContract<Request>(request);
 
@@ -175,7 +179,7 @@ namespace org.iringtools.utils.exchange
             if (connect)
             {
                 #region Prepare proxy and facade credentials if required
-                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+              if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
                 {
                     WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
                     proxy.Credentials = CredentialCache.DefaultCredentials;
@@ -198,7 +202,10 @@ namespace org.iringtools.utils.exchange
 
                 client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
 
-                Uri refreshURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/" + comboBoxGraphName.Text + "/refresh");
+                string rootUrl = textBoxAdapterURL.Text.Substring(0, textBoxAdapterURL.Text.LastIndexOf("/"));
+                string localFacadeUrl = rootUrl + "/facade/svc";
+
+                Uri refreshURI = new Uri(localFacadeUrl + "/" + _project.Name + "/" + _application.Name + "/" + comboBoxGraphName.Text + "/refresh");
 
                 client.DownloadStringAsync(refreshURI);
             }
@@ -238,7 +245,7 @@ namespace org.iringtools.utils.exchange
             if (connect)
             {
                 #region Prepare proxy and facade credentials if required
-                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+                if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
                 {
                     WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
                     proxy.Credentials = CredentialCache.DefaultCredentials;
@@ -309,11 +316,12 @@ namespace org.iringtools.utils.exchange
                 _messages.Add(new StatusMessage { Message = "Fetching graphs from Façade...", ImageName = "Resources/info_22.png" });
 
                 string sparql = "SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } }";
-
+                //string sparql = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT * WHERE {?uri rdfs:label ?label} ORDER BY ?label LIMIT 1";
                 SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(textBoxTargetURL.Text), "");
+                endpoint.DefaultGraphs.Add("");
 
                 #region Prepare proxy and facade credentials if required
-                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+                if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
                 {
                     WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
                     proxy.Credentials = CredentialCache.DefaultCredentials;
@@ -330,7 +338,17 @@ namespace org.iringtools.utils.exchange
 
                 try
                 {
-                    SparqlResultSet results = endpoint.QueryWithResultSet(sparql);
+                    SparqlResultSet results = new SparqlResultSet();
+                    try
+                    {
+                      results = endpoint.QueryWithResultSet(sparql);
+                    }
+                    //Handle dotNetRDF Deserialization Bug
+                    catch (Exception ex)
+                    {
+                      if (ex.Message != "Unable to Parse a SPARQL Result Set since a <binding> element contains an unexpected element <result>!")
+                        throw ex;
+                    }
 
                     _graphUris = new List<string>();
                     _graphUris.Add("[Default Graph]");
@@ -417,7 +435,7 @@ namespace org.iringtools.utils.exchange
             {
                 WebClient client = new WebClient();
                 #region Prepare proxy and facade credentials if required
-                if (_proxyHost != String.Empty && _proxyPort != String.Empty)
+                if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
                 {
                     WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
                     proxy.Credentials = CredentialCache.DefaultCredentials;

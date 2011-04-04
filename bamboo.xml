@@ -2,7 +2,7 @@
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
 
   <PropertyGroup>
-    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs; $(MSBuildProjectDirectory)\iRINGTools.SDK\AssemblyInfo.cs</AssemblyInfoFile>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs;</AssemblyInfoFile> <!--$(MSBuildProjectDirectory)\iRINGTools.SDK\AssemblyInfo.cs-->
     <Major>2</Major>
     <Minor>1</Minor>
     <Build>0</Build>
@@ -195,11 +195,11 @@
       <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
     </DeploymentPackage>
-    <DeploymentPackage Include="*" Exclude="">
+    <!--<DeploymentPackage Include="*" Exclude="">
       <Options>a -tzip -r</Options>
       <FileSet>$(SDKDeploymentDir)\*</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip</ZipFile>
-    </DeploymentPackage>
+    </DeploymentPackage>-->
   </ItemGroup>
 
   <Target Name="Version">
@@ -294,7 +294,7 @@
     <Copy SourceFiles="@(LandingDeployment)"
           DestinationFiles="@(LandingDeployment->'$(LandingDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
 
-    <Message Text="Creating SDK deployment ..." />
+    <!--<Message Text="Creating SDK deployment ..." />
     <Copy SourceFiles="@(SDKDeployment)"
           DestinationFiles="@(SDKDeployment->'$(SDKDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(SDKDeploymentDir)\CSVDataLayer\12345_000.CSV_Default.config $(SDKDeploymentDir)\CSVDataLayer\12345_000.CSV.config" />
@@ -309,7 +309,7 @@
     <Copy SourceFiles="@(SDKLibConfiguration)"
           DestinationFiles="@(SDKLibConfiguration ->'$(SDKLibDeploymentDir)\configuration\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Copy SourceFiles="@(SDKLibFlee)"
-          DestinationFiles="@(SDKLibFlee ->'$(SDKLibDeploymentDir)\flee-0.9.26.0\%(RecursiveDir)%(Filename)%(Extension)')" />
+          DestinationFiles="@(SDKLibFlee ->'$(SDKLibDeploymentDir)\flee-0.9.26.0\%(RecursiveDir)%(Filename)%(Extension)')" />-->
   </Target>
 
   <Target Name="DeployToSDK">
@@ -331,17 +331,17 @@
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
   </Target>
 
-  <Target Name="Build" DependsOnTargets="CoreBuild; SDKBuild"/>
+  <Target Name="Build" DependsOnTargets="CoreBuild;"/>
 
-  <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild; SDKBuild"/>
+  <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild;"/>
   
   <Target Name="Distribute">
     <Copy SourceFiles="$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip" 
           DestinationFiles="$(DistDir)\iRINGTools-Adapter.zip">
     </Copy>
-    <Copy SourceFiles="$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip" 
+    <!--<Copy SourceFiles="$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip" 
           DestinationFiles="$(DistDir)\iRINGTools-SDK.zip">
-    </Copy>
+    </Copy>-->
   </Target>
 
   <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages; Distribute"/>

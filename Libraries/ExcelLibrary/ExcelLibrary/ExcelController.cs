@@ -178,8 +178,8 @@ namespace org.iringtools.datalayer.excel
     public ActionResult Configure(FormCollection form)
     {      
       ExcelConfiguration configuration = _excelRepository.GetConfiguration(form["Scope"], form["Application"]);
-      
-      _excelRepository.Configure(configuration);
+
+      _excelRepository.Configure(form["scope"], form["application"], form["datalayer"], configuration);
       
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
