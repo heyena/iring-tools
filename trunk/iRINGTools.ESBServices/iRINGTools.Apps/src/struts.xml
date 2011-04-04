@@ -60,12 +60,32 @@
 	</package>
 	
   <package name="federation-manager" extends="json-default">
-      <action name="refdata" class="org.iringtools.controllers.RefDataController" method="searchPage">
+    <action name="refdata" class="org.iringtools.controllers.RefDataController" method="searchPage">
       <result type="json">
         <param name="root">response</param>
       </result>
     </action>
   
+	<action name="class" class="org.iringtools.controllers.RefDataController" method="getClassifications">
+      <result type="json">
+        <param name="root">qmxf</param>
+      </result>
+    </action>
+    <action name="superClass" class="org.iringtools.controllers.RefDataController" method="getSuperClasses">
+      <result type="json">
+        <param name="root">response</param>
+      </result>
+    </action>
+    <action name="subClass" class="org.iringtools.controllers.RefDataController" method="getSubClasses">
+      <result type="json">
+        <param name="root">response</param>
+      </result>
+    </action>
+    <action name="template" class="org.iringtools.controllers.RefDataController" method="getTemplates">
+      <result type="json">
+        <param name="root">response</param>
+      </result>
+    </action>
   
     <action name="federation" class="org.iringtools.controllers.FederationController" method="getFederation">
       <result type="json">

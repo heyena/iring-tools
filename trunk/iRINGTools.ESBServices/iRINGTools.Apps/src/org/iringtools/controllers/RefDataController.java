@@ -3,6 +3,7 @@ package org.iringtools.controllers;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts2.interceptor.ServletRequestAware;
+import org.ids_adi.ns.qxf.model.Qmxf;
 import org.iringtools.models.RefDataModel;
 import org.iringtools.refdata.response.Response;
 import org.iringtools.widgets.tree.Tree;
@@ -15,6 +16,15 @@ public class RefDataController implements ServletRequestAware{
 	private RefDataModel refdata;
 	private Tree tree;
 	private Response response;
+	private Qmxf qmxf;
+	public Qmxf getQmxf() {
+		return qmxf;
+	}
+
+	public void setQmxf(Qmxf qmxf) {
+		this.qmxf = qmxf;
+	}
+
 	public Response getResponse() {
 		return response;
 	}
@@ -55,5 +65,28 @@ public class RefDataController implements ServletRequestAware{
     	//System.out.println("Finished........."+response.getEntities().getItems().size());
     	 return Action.SUCCESS;
     	}
+	
+	public String getClassifications(){
+		String id = httpRequest.getParameter("id");
+		qmxf = refdata.getClass(id);
+		return Action.SUCCESS;
+	}
+	public String getSuperClasses(){
+		String id = httpRequest.getParameter("id");
+		response = refdata.getSuperClasses(id);
+		return Action.SUCCESS;
+	}
+	
+	public String getSubClasses(){
+		String id = httpRequest.getParameter("id");
+		response = refdata.getSubClasses(id);
+		return Action.SUCCESS;
+	}
+	
+	public String getTemplates(){
+		String id = httpRequest.getParameter("id");
+		response = refdata.getTemplates(id);
+		return Action.SUCCESS;
+	}
 	
 }
