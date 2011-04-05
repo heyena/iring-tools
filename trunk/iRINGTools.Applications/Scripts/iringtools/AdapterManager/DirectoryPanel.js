@@ -253,6 +253,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         } else if (obj.type == "ApplicationNode") {
             this.applicationMenu.showAt([x, y]);
         }
+        this.directoryPanel.getSelectionModel().select(node);
+        this.onClick(node);
         //}
     },
 
@@ -268,6 +270,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     onEditScope: function (btn, ev) {
         var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+        // alert(this.directoryPanel.tabContainer.getActiveTab());
         this.fireEvent('EditScope', this, node);
     },
 
@@ -322,6 +325,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     onClick: function (node) {
         try {
             this.propertyPanel.setSource(node.attributes.record);
+
         } catch (e) {
             //  alert(e);
         }
