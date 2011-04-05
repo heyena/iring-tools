@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="iRINGLibrary, Version=2.1.0.2980, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\iRINGLibrary.dll</HintPath>
+      <HintPath>lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>lib\log4net\log4net.dll</HintPath>
@@ -51,7 +51,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="UtilityLibrary, Version=2.1.0.2980, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>Libs\UtilityLibrary.dll</HintPath>
+      <HintPath>lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
