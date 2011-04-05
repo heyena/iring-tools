@@ -39,8 +39,8 @@ namespace org.iringtools.datalayer.excel
   {
 
     private NameValueCollection _settings = null;
-
-    IExcelRepository _excelRepository { get; set; }
+    private IExcelRepository _repository { get; set; }
+    private string _keyFormat = "Configuration.{0}.{1}";
     
     public ExcelController()
       : this(new ExcelRepository())
@@ -50,7 +50,7 @@ namespace org.iringtools.datalayer.excel
     public ExcelController(IExcelRepository repository)            
     {
       _settings = ConfigurationManager.AppSettings;
-      _excelRepository = repository;
+      _repository = repository;
     }    
 
     //
@@ -84,91 +84,111 @@ namespace org.iringtools.datalayer.excel
         Directory.CreateDirectory(location);
         hpf.SaveAs(savedFileName);
 
-        if (form["Generate"] != null)
-          generate = true;
-
         ExcelConfiguration configuration = new ExcelConfiguration()
         {
-          Location = savedFileName,
-          Generate = generate,
-          Worksheets = generate ? null : new List<ExcelWorksheet>()
+          Location = savedFileName
         };
 
-        location = _settings["XmlPath"];
+        if (form["Generate"] != null)
+        {
+          configuration = _repository.ProcessConfiguration(configuration);
+        }
+        else
+        {
+          configuration.Generate = false;
+          configuration.Worksheets = new List<ExcelWorksheet>();
+        }
 
-        if (!Path.IsPathRooted(location))
-          location = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, location);
-
-        savedFileName = Path.Combine(location, "excel-configuration." + form["Scope"] + "." + form["Application"] + ".xml");
-
-        Utility.Write<ExcelConfiguration>(configuration, savedFileName, true);        
-
+        SetConfiguration(form["Scope"], form["Application"], configuration);
+        
         break;
       }
                   
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);      
+    }
+    
+    private ExcelConfiguration GetConfiguration(string scope, string application)
+    {
+      string key = string.Format(_keyFormat, scope, application);
+
+      if (Session[key] == null) 
+      {
+        Session[key] = _repository.GetConfiguration(scope, application);
+      }
+
+      return (ExcelConfiguration)Session[key];
+    }
+
+    private void SetConfiguration(string scope, string application, ExcelConfiguration configuration)
+    {
+      string key = string.Format(_keyFormat, scope, application);
+
+      Session[key] = configuration;
     }
         
     public JsonResult GetNode(FormCollection form)
     {      
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-      if (_excelRepository != null)
+      if (_repository != null)
       {        
-        ExcelConfiguration configuration = _excelRepository.GetConfiguration(form["Scope"], form["Application"]);
+        ExcelConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
 
-        switch (form["type"])
+        if (configuration != null)
         {
-          case "ExcelWorkbookNode":
-            {
-              List<ExcelWorksheet> worksheets = configuration.Worksheets;
-
-              if (worksheets != null)
+          switch (form["type"])
+          {
+            case "ExcelWorkbookNode":
               {
-                foreach (ExcelWorksheet worksheet in worksheets)
+                List<ExcelWorksheet> worksheets = configuration.Worksheets;
+
+                if (worksheets != null)
                 {
-                  List<JsonTreeNode> columnNodes = new List<JsonTreeNode>();
-
-                  if (worksheet.Columns != null)
+                  foreach (ExcelWorksheet worksheet in worksheets)
                   {
-                    foreach (ExcelColumn column in worksheet.Columns)
+                    List<JsonTreeNode> columnNodes = new List<JsonTreeNode>();
+
+                    if (worksheet.Columns != null)
                     {
-                      JsonTreeNode columnNode = new JsonTreeNode
-                      {
-                        nodeType = "async",
-                        type = "ExcelColumnNode",
-                        icon = "Content/img/excelcolumn.png",
-                        id = column.Name,
-                        text = column.Name,                        
-                        expanded = false,
-                        leaf = true,
-                        children = null,
-                        record = column
-                      };
+                      foreach (ExcelColumn column in worksheet.Columns)
+                      { 
+                        JsonTreeNode columnNode = new JsonTreeNode
+                        {
+                          nodeType = "async",
+                          type = "ExcelColumnNode",
+                          icon = "Content/img/excelcolumn.png",
+                          id = worksheet.Name + "/" + column.Name,
+                          text = column.Name.Equals(column.Label) ? column.Name : string.Format("{0} [{1}]", column.Name, column.Label),
+                          expanded = false,
+                          leaf = true,
+                          children = null,
+                          record = column
+                        };
 
-                      columnNodes.Add(columnNode);
+                        columnNodes.Add(columnNode);
+                      }
                     }
+
+                    JsonTreeNode node = new JsonTreeNode
+                    {
+                      nodeType = "async",
+                      type = "ExcelWorksheetNode",
+                      icon = "Content/img/excelworksheet.png",
+                      id = worksheet.Name,
+                      text = worksheet.Name.Equals(worksheet.Label) ? worksheet.Name : string.Format("{0} [{1}]", worksheet.Name, worksheet.Label),
+                      expanded = false,
+                      leaf = false,
+                      children = columnNodes,
+                      record = worksheet
+                    };
+
+                    nodes.Add(node);
                   }
-                  
-                  JsonTreeNode node = new JsonTreeNode
-                  {
-                    nodeType = "async",
-                    type = "ExcelWorksheetNode",
-                    icon = "Content/img/excelworksheet.png",
-                    id = worksheet.Name,
-                    text = worksheet.Name,                    
-                    expanded = false,
-                    leaf = false,
-                    children = columnNodes,
-                    record = worksheet
-                  };
-
-                  nodes.Add(node);
                 }
-              }
 
-              break;
-            }
+                break;
+              }
+          }
         }
       }
 
@@ -176,12 +196,18 @@ namespace org.iringtools.datalayer.excel
     }
 
     public ActionResult Configure(FormCollection form)
-    {      
-      ExcelConfiguration configuration = _excelRepository.GetConfiguration(form["Scope"], form["Application"]);
+    {
+      ExcelConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
 
-      _excelRepository.Configure(form["scope"], form["application"], form["datalayer"], configuration);
-      
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      if (configuration != null)
+      {
+        _repository.Configure(form["scope"], form["application"], form["datalayer"], configuration);
+        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      }
+      else
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
     }
 
   }

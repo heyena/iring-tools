@@ -49,9 +49,7 @@ namespace org.iringtools.adapter.datalayer
   }
 
   public class ExcelDataLayer : BaseDataLayer, IDataLayer2
-  {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(ExcelDataLayer));
-    private AdapterSettings _settings = null;
+  {    
     private ExcelProvider _provider = null;
 
     [Inject]
@@ -263,7 +261,7 @@ namespace org.iringtools.adapter.datalayer
           dataObjects = new List<DataObject>()
         };
 
-        foreach (ExcelWorksheet worksheet in _provider.GetWorksheets())
+        foreach (ExcelWorksheet worksheet in _provider.Configuration.Worksheets)
         {
           DataObject dataObject = new DataObject()
           {
@@ -395,10 +393,16 @@ namespace org.iringtools.adapter.datalayer
       return _response;
     }
 
+    public override XElement GetConfiguration()
+    {
+      return Utility.SerializeToXElement<ExcelConfiguration>(_provider.Configuration);
+    }
+
     public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
     {
       throw new NotImplementedException();
     }
+    
   }
 
 }

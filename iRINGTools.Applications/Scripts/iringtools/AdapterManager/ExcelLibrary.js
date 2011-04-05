@@ -40,7 +40,7 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
     initComponent: function () {
 
         this.addEvents({
-            next: true
+            uploaded: true
         });
 
         var scope = "";
@@ -57,17 +57,17 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
             dataLayer = this.application.Assembly;
         }
 
-        this.btnNext = new Ext.Button({
-            text: 'Next',
+        this.btnUpload = new Ext.Button({
+            text: 'Upload',
             //icon: 'resources/images/16x16/document-save.png',
             //tooltip: 'Save',
             disabled: false,
-            handler: this.onNext,
+            handler: this.onUpload,
             scope: this
         });
 
-        this.btnPrev = new Ext.Button({
-            text: 'Prev',
+        this.btnCancel = new Ext.Button({
+            text: 'Cancel',
             //icon: 'resources/images/16x16/document-save.png',
             //tooltip: 'Save',
             disabled: true,
@@ -76,8 +76,8 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
 
         this.bbar = new Ext.Toolbar();
         this.bbar.addButton(new Ext.Toolbar.Fill());
-        this.bbar.addButton(this.btnPrev);
-        this.bbar.addButton(this.btnNext);
+        this.bbar.addButton(this.btnUpload);
+        this.bbar.addButton(this.btnCancel);
 
         this.items = [
             { xtype: 'hidden', name: 'Scope', value: scope },
@@ -100,7 +100,7 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
         AdapterManager.ExcelSourcePanel.superclass.initComponent.call(this);
     },
     
-    onNext: function () {
+    onUpload: function () {
         
         that = this;
 
@@ -108,11 +108,9 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
             waitMsg: 'Uploading file...',
             url: this.url,
             success: function (f, a) {
-                Ext.Msg.alert('Success', 'Uploaded file "' + f.items.items[3].value + '" to the server');
-                that.fireEvent('Next', that, f.items.items[3].value);
-            },
+                that.fireEvent('Uploaded', that, f.items.items[3].value);            },
             failure: function (f, a) {
-                Ext.Msg.alert('Warning', 'Error uploading file!')
+                Ext.Msg.alert('Warning', 'Error uploading file "' + f.items.items[3].value + '"!');
             }
         });
     }
@@ -138,7 +136,6 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
 
     scope: null,
     application: null,
-    filename: null,
     url: null,
 
     configurationPanel: null,
@@ -151,9 +148,9 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
     */
     initComponent: function () {
 
-        this.addEvents({            
+        this.addEvents({
             ReloadNode: true,
-            Next: true            
+            Next: true
         });
 
         var scope = "";
@@ -178,33 +175,10 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
 
         this.tbar = this.buildToolbar();
 
-        this.btnNext = new Ext.Button({
-            text: 'Next',
-            //icon: 'resources/images/16x16/document-save.png',
-            //tooltip: 'Save',
-            disabled: false,
-            handler: this.onNext,
-            scope: this
-        });
-
-        this.btnPrev = new Ext.Button({
-            text: 'Prev',
-            //icon: 'resources/images/16x16/document-save.png',
-            //tooltip: 'Save',
-            disabled: true,
-            scope: this
-        });
-
-        this.bbar = new Ext.Toolbar();
-        this.bbar.addButton(new Ext.Toolbar.Fill());
-        this.bbar.addButton(this.btnPrev);
-        this.bbar.addButton(this.btnNext);
-                
         this.treeLoader = new Ext.tree.TreeLoader({
-            baseParams: { 
-                scope: scope, 
+            baseParams: {
+                scope: scope,
                 application: application,
-                filename: this.filename,
                 type: null
             },
             url: this.url
@@ -233,10 +207,10 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
             expandAll: true,
             rootVisible: true,
             lines: true,
-            autoScroll: true,            
+            autoScroll: true,
             useArrows: true,
             loader: this.treeLoader,
-            root: this.rootNode            
+            root: this.rootNode
         });
 
         this.configurationPanel.on('contextmenu', this.showContextMenu, this);
@@ -263,34 +237,71 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
       {
           text: 'Reload',
           handler: this.onReload,
+          icon: 'Content/img/16x16/view-refresh.png',
+          scope: this
+      },
+      {
+          text: 'Save',
+          handler: this.onSave,
+          icon: 'Content/img/16x16/document-save.png',
+          scope: this
+      },
+      {
+          text: 'Upload',
+          handler: this.onUpload,
           //icon: 'Content/img/list-remove.png',
           scope: this
-      }
+      }      
     ]
     },
-        
-    onReload: function () {        
+
+    onReload: function () {
         this.configurationPanel.root.reload();
     },
 
-    onReloadNode: function (node) {        
+    onReloadNode: function (node) {
         node.reload();
-    }, 
+    },
 
-    onNext: function (panel) {        
+    onUpload: function (panel) {
         
-        Ext.Ajax.request({            
+        var form = new AdapterManager.ExcelSourcePanel({
+            scope: this.scope,
+            application: this.application,            
+            url: 'excel/upload',
+        });
+                
+        var newWin = new Ext.Window({
+            width: 400,
+            layout: 'fit',            
+            height:300,
+            autoScroll:true,
+            modal: true,
+            items: form
+        });
+
+        form.on('uploaded', function() {
+            newWin.close();
+            this.configurationPanel.root.reload();
+        }, this);
+
+        newWin.show();
+    },
+
+    onSave: function (panel) {
+
+        Ext.Ajax.request({
             url: 'excel/configure',    // where you wanna post
             method: 'POST',
-            success: function(f, a) {
-                
+            success: function (f, a) {
+
             },   // function called on success
-            failure: function(f, a) {
-                
+            failure: function (f, a) {
+
             },
-            params: { 
-                Scope: this.scope.Name, 
-                Application: this.application.Name, 
+            params: {
+                Scope: this.scope.Name,
+                Application: this.application.Name,
                 DataLayer: this.application.Assembly
             }
         });
@@ -319,8 +330,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
     split: true,
 
     scope: null,
-    application: null,
-    form: null,
+    application: null,    
     configurationPanel: null,
     url: null,
 
@@ -355,36 +365,20 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             dataLayer = this.application.Assembly;
         }
 
-        this.form = new AdapterManager.ExcelSourcePanel({
+        this.configurationPanel = new AdapterManager.ConfigurationPanel({
             scope: this.scope,
-            application: this.application,            
-            url: 'excel/upload',
+            application: this.application,
+            url: 'excel/getnode'
         });
 
-        this.form.on('Next', this.onNext, this);
+        //this.form.on('Next', this.onNext, this);
 
         this.items = [
-            this.form
+            this.configurationPanel
         ];
 
         // super
         AdapterManager.ExcelLibraryPanel.superclass.initComponent.call(this);
-    },
-
-    onNext: function(panel, filename) {
-        
-        var configPanel = new  AdapterManager.ConfigurationPanel({
-            scope: this.scope,
-            application: this.application,
-            filename: filename,
-            url: 'excel/getnode'
-        });
-
-        this.items.add(configPanel);
-
-        var idx = this.items.getCount() - 1;
-        this.layout.setActiveItem(idx);
-        this.activeItem = idx;
-    }
+    }    
 
 });
