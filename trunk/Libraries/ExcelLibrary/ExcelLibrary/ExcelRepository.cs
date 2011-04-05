@@ -18,9 +18,11 @@ namespace org.iringtools.datalayer.excel
   {
     ExcelConfiguration GetConfiguration(string scope, string application);
 
-    List<ExcelWorksheet> GetWorksheets(string scope, string application);
+    ExcelConfiguration ProcessConfiguration(ExcelConfiguration configuration);
 
-    List<ExcelColumn> GetColumns(string scope, string application, string worksheetName);
+    //List<ExcelWorksheet> GetWorksheets(ExcelConfiguration configuration);
+
+    //List<ExcelColumn> GetColumns(string scope, string application, string worksheetName);
 
     void Configure(string scope, string application, string datalayer, ExcelConfiguration configuration);
   }
@@ -39,31 +41,36 @@ namespace org.iringtools.datalayer.excel
       _client = new WebHttpClient(_settings["AdapterServiceUri"]);
     }
 
-    private ExcelProvider InitializeProvider(string scope, string application)
-    {
-      _settings["Scope"] = string.Format("{0}.{1}", scope, application);
-
+    private ExcelProvider InitializeProvider(ExcelConfiguration configuration)
+    {      
       if (_provider == null)
       {
-        _provider = new ExcelProvider(_settings);
+        _provider = new ExcelProvider(configuration);
       }
 
       return _provider;
     }
-    
-    public List<ExcelWorksheet> GetWorksheets(string scope, string application)
+
+    public List<ExcelWorksheet> GetWorksheets(ExcelConfiguration configuration)
     {
-      using (InitializeProvider(scope, application))
+      using (InitializeProvider(configuration))
       {
         return _provider.GetWorksheets();
       }
     }
 
-    public List<ExcelColumn> GetColumns(string scope, string application, string worksheetName)
-    {      
-      using (InitializeProvider(scope, application))
+    public List<ExcelColumn> GetColumns(ExcelConfiguration configuration, string worksheetName)
+    {
+      using (InitializeProvider(configuration))
       {
         return _provider.GetColumns(worksheetName);
+      }
+    }
+
+    public ExcelConfiguration ProcessConfiguration(ExcelConfiguration configuration) {
+      using (InitializeProvider(configuration))
+      {
+        return _provider.ProcessConfiguration(configuration);
       }
     }
 
@@ -102,17 +109,24 @@ namespace org.iringtools.datalayer.excel
     }
 
     public ExcelConfiguration GetConfiguration(string scope, string application)
-    {       
-      using (InitializeProvider(scope, application))
+    {
+      ExcelConfiguration obj = null;
+
+      try
       {
-        //XElement element = _client.Get<XElement>("{0}/{1}/configuration");
-        //if (!element.IsEmpty)
-        //{
-        //   ExcelConfiguration config = Utility.DeserializeFromXElement<ExcelConfiguration>(element);
-        //    _provider.SaveConfiguration(config);          
-        //}
-        return _provider.Configuration;
+        XElement element = _client.Get<XElement>(string.Format("/{0}/{1}/configuration", scope, application));
+        if (!element.IsEmpty)
+        {
+          obj = Utility.DeserializeFromXElement<ExcelConfiguration>(element);
+        }
       }
+      catch (Exception ex)
+      {
+        
+      }
+      
+      return obj;
+
     }
   }
 }

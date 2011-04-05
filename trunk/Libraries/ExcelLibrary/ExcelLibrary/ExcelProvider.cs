@@ -31,17 +31,19 @@ namespace org.iringtools.datalayer.excel
     private Excel.Workbook _xlWorkBook = null;
 
     public ExcelConfiguration Configuration { get; set; }
-        
+
+    public ExcelProvider(ExcelConfiguration configuration)
+    {
+      InitializeProvider(configuration);      
+    }
+
     public ExcelProvider(AdapterSettings settings)
     {
       _settings = settings;
 
       if (File.Exists(_configurationPath))
       {
-        Configuration = Utility.Read<ExcelConfiguration>(_configurationPath);
-
-        _xlApplication = new Excel.Application();
-        _xlWorkBook = _xlApplication.Workbooks.Open(Configuration.Location, 0, true, 5, Type.Missing, Type.Missing, true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, Type.Missing, false, false, Type.Missing, true, 1, Type.Missing);
+        InitializeProvider(Utility.Read<ExcelConfiguration>(_configurationPath));
 
         if (Configuration.Generate)
         {
@@ -51,7 +53,7 @@ namespace org.iringtools.datalayer.excel
         }
       }
     }
-
+    
     ~ExcelProvider()
     {
       Close();
@@ -94,6 +96,17 @@ namespace org.iringtools.datalayer.excel
       }
     }
 
+    public void InitializeProvider(ExcelConfiguration configuration)
+    {
+      if (configuration != null)
+      {
+        Configuration = configuration;
+
+        _xlApplication = new Excel.Application();
+        _xlWorkBook = _xlApplication.Workbooks.Open(Configuration.Location, 0, true, 5, Type.Missing, Type.Missing, true, Microsoft.Office.Interop.Excel.XlPlatform.xlWindows, Type.Missing, false, false, Type.Missing, true, 1, Type.Missing);        
+      }
+    }
+
     private List<ExcelColumn> GetColumns(Excel.Worksheet xlWorksheet, ExcelWorksheet cfWorksheet)
     {
       return GetColumns(GetRange(xlWorksheet, cfWorksheet.Range), cfWorksheet);
@@ -117,6 +130,7 @@ namespace org.iringtools.datalayer.excel
             {
               Index = i,
               Name = header,
+              Label = header,
               DataType = DataType.String
             };
 
@@ -147,13 +161,13 @@ namespace org.iringtools.datalayer.excel
       return xlRange;
     }
 
-    private ExcelConfiguration ProcessConfiguration(ExcelConfiguration config)
+    public ExcelConfiguration ProcessConfiguration(ExcelConfiguration configuration)
     {
       try
       {         
-        if (config.Worksheets == null || config.Worksheets.Count == 0)
+        if (configuration.Worksheets == null || configuration.Worksheets.Count == 0)
         {
-          config.Worksheets = new List<ExcelWorksheet>();
+          configuration.Worksheets = new List<ExcelWorksheet>();
 
           foreach (Excel.Worksheet xlWorksheet in _xlWorkBook.Worksheets)
           {
@@ -170,14 +184,14 @@ namespace org.iringtools.datalayer.excel
             if (cfWorksheet.Columns != null && cfWorksheet.Columns.Count > 0)
             {
               cfWorksheet.Identifier = cfWorksheet.Columns[0].Name;
-              config.Worksheets.Add(cfWorksheet);
+              configuration.Worksheets.Add(cfWorksheet);
             }
           }
         }
         else
         {
 
-          foreach (ExcelWorksheet cfWorksheet in config.Worksheets)
+          foreach (ExcelWorksheet cfWorksheet in configuration.Worksheets)
           {
             if (cfWorksheet.Columns == null)
             {
@@ -197,17 +211,17 @@ namespace org.iringtools.datalayer.excel
               }
               else
               {
-                _logger.Error("Excel Workbook [" + config.Location + "] doesn't have a Worksheet named " + cfWorksheet.Name + ".");
+                _logger.Error("Excel Workbook [" + configuration.Location + "] doesn't have a Worksheet named " + cfWorksheet.Name + ".");
               }
             }
           }
         }
-        return config;
+        return configuration;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error Processing Excel Configuration File [" + config.Location + "]: " + ex);
-        return config;
+        _logger.Error("Error Processing Excel Configuration File [" + configuration.Location + "]: " + ex);
+        return configuration;
       }
 
     }
@@ -215,7 +229,7 @@ namespace org.iringtools.datalayer.excel
     public List<ExcelWorksheet> GetWorksheets()
     {
       return GetWorksheets(false);
-    }    
+    }
 
     public List<ExcelWorksheet> GetWorksheets(bool withColumns)
     {      
