@@ -75,20 +75,17 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
         var cmbDataLayers = new Ext.form.ComboBox({
             fieldLabel: 'Data Layer',
-            name: 'DataLayer',
             boxMaxWidth: 250,
             width: 250,
             forceSelection: true,
             typeAhead: true,
             triggerAction: 'all',
             lazyRender: true,
-            mode: 'local',
+            mode: 'remote',
             store: dataLayersStore,
-            valueField: 'name',
             displayField: 'name',
-            hiddenName: 'assembly',
-            value: dataLayer,
-            hiddenValue: assembly
+            valueField: 'assembly',
+            hiddenName: 'Assembly'
         });
 
         cmbDataLayers.on('select', function (combo, record, index) {
