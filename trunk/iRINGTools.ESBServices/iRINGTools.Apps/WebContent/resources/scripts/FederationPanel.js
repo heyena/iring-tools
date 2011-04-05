@@ -306,115 +306,174 @@ FederationManager.FederationPanel = Ext
               });
             }
             
+               
+            
             for (var i in properties) {
-              var listItem = {};
-              var fname = i;
-              var value = '';
-              
-              switch (fname) {
-              case "Description":
-                listItem.xtype = 'textarea';
+            	if (i != 'URI' && i != 'Update URI'){
+	              var listItem = {};
+	              var fname = i;
+	              var value = '';
+	              
+	              switch (fname) {
+	              case "Description":
+	                listItem.xtype = 'textarea';
+	                listItem.width = 230;
+	                break;
+	                
+	              case "URI":
+	                listItem.xtype = 'textfield';
+	                listItem.width = 230;
+	                break;
+	                
+	              case "Read Only":
+	              case "Writable":
+	                listItem.xtype = 'combo';
+	                listItem.width = 230;
+	                listItem.triggerAction = 'all';
+	                listItem.editable = false;
+	                listItem.mode = 'local';
+	                listItem.store = ["true", "false"];
+	                listItem.displayField = properties[i];                
+	                break;
+	                
+	              case 'Repository Type':
+	                listItem.xtype = 'combo';
+	                listItem.width = 230;
+	                listItem.triggerAction = 'all';
+	                listItem.editable = false;
+	                listItem.mode = 'local';
+	                listItem.store = ['RDS/WIP', 'Camelot', 'Part8'];
+	                listItem.displayField = properties[i];
+	                break;
+	                
+	              case 'ID Generator':
+	                // get all the IDGenerators
+	            	 var rootNode = this.federationPanel.getRootNode();
+	                 var namespaceParentNode = rootNode.findChild('identifier', 'idGenerator');
+	                 var allIDGenerators = this.getNamespaces(namespaceParentNode);
+	
+	                listItem.xtype = 'combo';
+	                listItem.hiddenName = 'ID Generator';
+	                listItem.width = 230;
+	                listItem.triggerAction = 'all';
+	                listItem.editable = false;
+	                listItem.mode = 'local';
+	                listItem.store = allIDGenerators;
+	                listItem.displayField = properties[i];
+	                break;
+	                
+	              case 'Namespace List':
+	                var selNamespaces = new Array();
+	                var selNamespaceIds = new Array();
+	                
+	                if (properties[i] != null && properties[i] != '') {
+	                  var selNamespaceList = Ext.util.JSON.decode(properties[i]);
+	                  
+	                  for (var namespaceId in selNamespaceList) {
+	                    var selNameSpaceItem = [namespaceId, selNamespaceList[namespaceId]];
+	                    selNamespaces.push(selNameSpaceItem);
+	                    selNamespaceIds.push(namespaceId);
+	                  }
+	                }
+	
+	                var rootNode = this.federationPanel.getRootNode();
+	                var namespaceParentNode = rootNode.findChild('identifier', 'namespace');
+	                var availNamespaces = this.getNamespaces(namespaceParentNode, selNamespaceIds);
+	
+	                listItem.xtype = 'itemselector';
+	                listItem.fieldLabel = 'Namespace List';
+	                listItem.name = 'itemselector';
+	                listItem.imagePath = './resources/ext-3.3.0/ux/images/';
+	                listItem.multiselects = [{
+	                  store: availNamespaces,
+	                  width: 200,
+	                  height: 150,
+	                  displayField: 'text', 
+	                  valueField: 'value'
+	                },{ 
+	                  store: selNamespaces,
+	                  width: 200,
+	                  height: 150
+	                }]; 
+	                break;
+	                
+	              default:
+	                listItem.xtype = 'textfield';
+	                listItem.width = 230;
+	                break;
+	              }
+	
+	              if (formType == 'editForm') {
+	                value = properties[i];
+	                label = node.parentNode.text + ' : ' + obj['text'];
+	              } 
+	              else {
+	                label = obj['text'] + ':(New)';
+	              }
+	              
+	              listItem.fieldLabel = i;
+	              listItem.name = i;
+	              listItem.allowBlank = false;
+	              listItem.blankText = 'This Field is required';
+	              listItem.value = value;
+	              
+	              listItems.push(listItem);
+	            }
+            }
+            
+            for (var i in properties) {
+            	if (i == 'URI'){
+	              var listItem = {};
+	              var fname = i;
+	              var value = '';
+	              
+	              listItem.xtype = 'textfield';
+	              listItem.width = 230;
+	              
+	
+	              if (formType == 'editForm') {
+	                value = properties[i];
+	                label = node.parentNode.text + ' : ' + obj['text'];
+	              } 
+	              else {
+	                label = obj['text'] + ':(New)';
+	              }
+	              
+	              listItem.fieldLabel = i;
+	              listItem.name = i;
+	              listItem.allowBlank = false;
+	              listItem.blankText = 'This Field is required';
+	              listItem.value = value;
+	              
+	              listItems.push(listItem);
+	            }
+            }
+            
+            for (var i in properties) {
+            	if (i == 'Update URI'){
+	              var listItem = {};
+	              var fname = i;
+	              var value = '';
+	              listItem.xtype = 'textfield';
                 listItem.width = 230;
-                break;
-                
-              case "URI":
-                listItem.xtype = 'textfield';
-                listItem.width = 230;
-                break;
-                
-              case "Read Only":
-              case "Writable":
-                listItem.xtype = 'combo';
-                listItem.width = 230;
-                listItem.triggerAction = 'all';
-                listItem.editable = false;
-                listItem.mode = 'local';
-                listItem.store = ["true", "false"];
-                listItem.displayField = properties[i];                
-                break;
-                
-              case 'Repository Type':
-                listItem.xtype = 'combo';
-                listItem.width = 230;
-                listItem.triggerAction = 'all';
-                listItem.editable = false;
-                listItem.mode = 'local';
-                listItem.store = ['RDS/WIP', 'Camelot', 'Part8'];
-                listItem.displayField = properties[i];
-                break;
-                
-              case 'ID Generator':
-                // get all the IDGenerators
-            	 var rootNode = this.federationPanel.getRootNode();
-                 var namespaceParentNode = rootNode.findChild('identifier', 'idGenerator');
-                 var allIDGenerators = this.getNamespaces(namespaceParentNode);
-
-                listItem.xtype = 'combo';
-                listItem.hiddenName = 'ID Generator';
-                listItem.width = 230;
-                listItem.triggerAction = 'all';
-                listItem.editable = false;
-                listItem.mode = 'local';
-                listItem.store = allIDGenerators;
-                listItem.displayField = properties[i];
-                break;
-                
-              case 'Namespace List':
-                var selNamespaces = new Array();
-                var selNamespaceIds = new Array();
-                
-                if (properties[i] != null && properties[i] != '') {
-                  var selNamespaceList = Ext.util.JSON.decode(properties[i]);
-                  
-                  for (var namespaceId in selNamespaceList) {
-                    var selNameSpaceItem = [namespaceId, selNamespaceList[namespaceId]];
-                    selNamespaces.push(selNameSpaceItem);
-                    selNamespaceIds.push(namespaceId);
-                  }
-                }
-
-                var rootNode = this.federationPanel.getRootNode();
-                var namespaceParentNode = rootNode.findChild('identifier', 'namespace');
-                var availNamespaces = this.getNamespaces(namespaceParentNode, selNamespaceIds);
-
-                listItem.xtype = 'itemselector';
-                listItem.fieldLabel = 'Namespace List';
-                listItem.name = 'itemselector';
-                listItem.imagePath = './resources/ext-3.3.0/ux/images/';
-                listItem.multiselects = [{
-                  store: availNamespaces,
-                  width: 200,
-                  height: 150,
-                  displayField: 'text', 
-                  valueField: 'value'
-                },{ 
-                  store: selNamespaces,
-                  width: 200,
-                  height: 150
-                }]; 
-                break;
-                
-              default:
-                listItem.xtype = 'textfield';
-                listItem.width = 230;
-                break;
-              }
-
-              if (formType == 'editForm') {
-                value = properties[i];
-                label = node.parentNode.text + ' : ' + obj['text'];
-              } 
-              else {
-                label = obj['text'] + ':(New)';
-              }
-              
-              listItem.fieldLabel = i;
-              listItem.name = i;
-              listItem.allowBlank = false;
-              listItem.blankText = 'This Field is required';
-              listItem.value = value;
-              
-              listItems.push(listItem);
+	              
+	
+	              if (formType == 'editForm') {
+	                value = properties[i];
+	                label = node.parentNode.text + ' : ' + obj['text'];
+	              } 
+	              else {
+	                label = obj['text'] + ':(New)';
+	              }
+	              
+	              listItem.fieldLabel = i;
+	              listItem.name = i;
+	              listItem.allowBlank = false;
+	              listItem.blankText = 'This Field is required';
+	              listItem.value = value;
+	              
+	              listItems.push(listItem);
+	            }
             }
             
             this.fireEvent('opentab', this, node, label, listItems);

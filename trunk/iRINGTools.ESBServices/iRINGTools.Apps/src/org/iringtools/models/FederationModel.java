@@ -188,12 +188,12 @@ public class FederationModel
 
     // For New Form
     repositoriesNode.getProperties().put("Name", "");
-    repositoriesNode.getProperties().put("Description", "");
-    repositoriesNode.getProperties().put("Read Only", "");
+    repositoriesNode.getProperties().put("Description", "");    
     repositoriesNode.getProperties().put("Repository Type", "");
-    repositoriesNode.getProperties().put("Update URI", "");
-    repositoriesNode.getProperties().put("URI", "");
     repositoriesNode.getProperties().put("Namespace List", "");
+    repositoriesNode.getProperties().put("Read Only", "");
+    repositoriesNode.getProperties().put("URI", "");
+    repositoriesNode.getProperties().put("Update URI", "");    
     
     treeNodes.add(repositoriesNode);
     List<Node> repositoryNodes = repositoriesNode.getChildren();
@@ -208,13 +208,15 @@ public class FederationModel
 
       Map<String, String> properties = repositoryNode.getProperties();
 
-      properties.put("Id", repository.getId());
+      
       properties.put("Name", repository.getName());
       properties.put("Description", repository.getDescription());
-      properties.put("Read Only", String.valueOf(repository.isIsReadOnly()));
       properties.put("Repository Type", repository.getRepositoryType().value());
-      properties.put("Update URI", repository.getUpdateUri());
+      properties.put("Id", repository.getId());
+      properties.put("Read Only", String.valueOf(repository.isIsReadOnly()));
       properties.put("URI", repository.getUri());
+      properties.put("Update URI", repository.getUpdateUri());
+      
       
       if (repository.getNamespaces() != null)
       {
@@ -299,12 +301,12 @@ public class FederationModel
         if (httpRequest.getParameter("nodeID") != null)
           repository.setId(httpRequest.getParameter("nodeID").replaceFirst("repository", ""));
         System.out.println("Description :" + httpRequest.getParameter("Description"));
-        repository.setDescription(httpRequest.getParameter("Description"));
-        repository.setUri(httpRequest.getParameter("URI"));
         repository.setName(httpRequest.getParameter("Name"));
+        repository.setDescription(httpRequest.getParameter("Description"));
         repository.setRepositoryType(RepositoryType.fromValue(httpRequest.getParameter("Repository Type")));
-        repository.setUpdateUri(httpRequest.getParameter("Update URI"));
         repository.setIsReadOnly(Boolean.parseBoolean(httpRequest.getParameter("Read Only")));
+        repository.setUri(httpRequest.getParameter("URI"));        
+        repository.setUpdateUri(httpRequest.getParameter("Update URI"));
         if (httpRequest.getParameter("Namespace List") != null)
         {
           StringTokenizer st = new StringTokenizer(httpRequest.getParameter("Namespace List"), ",");
