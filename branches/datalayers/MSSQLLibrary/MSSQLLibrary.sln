@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSSQLLibrary", "MSSQLLibrar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSSQLLibrary.Tests", "MSSQLLibrary.Tests\MSSQLLibrary.Tests.csproj", "{45B18894-A1E4-4E4A-A037-BD57AE947064}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnit.Runner", "NUnit.Runner\NUnit.Runner.csproj", "{5A3D3552-1775-4E71-91B1-89EC8E766D39}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,16 +35,6 @@ Global
 		{45B18894-A1E4-4E4A-A037-BD57AE947064}.Release|Mixed Platforms.Build.0 = Debug|Any CPU
 		{45B18894-A1E4-4E4A-A037-BD57AE947064}.Release|x86.ActiveCfg = Release|x86
 		{45B18894-A1E4-4E4A-A037-BD57AE947064}.Release|x86.Build.0 = Release|x86
-		{5A3D3552-1775-4E71-91B1-89EC8E766D39}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{5A3D3552-1775-4E71-91B1-89EC8E766D39}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5A3D3552-1775-4E71-91B1-89EC8E766D39}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5A3D3552-1775-4E71-91B1-89EC8E766D39}.Debug|x86.ActiveCfg = Debug|x86
-		{5A3D3552-1775-4E71-91B1-89EC8E766D39}.Debug|x86.Build.0 = Debug|x86
-		{5A3D3552-1775-4E71-91B1-89EC8E766D39}.Release|Any CPU.ActiveCfg = Release|x86
-		{5A3D3552-1775-4E71-91B1-89EC8E766D39}.Release|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5A3D3552-1775-4E71-91B1-89EC8E766D39}.Release|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5A3D3552-1775-4E71-91B1-89EC8E766D39}.Release|x86.ActiveCfg = Release|x86
-		{5A3D3552-1775-4E71-91B1-89EC8E766D39}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
