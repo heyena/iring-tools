@@ -33,7 +33,7 @@
   <ItemGroup>
     <Reference Include="iRINGLibrary, Version=2.1.0.2980, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CSVDataLayer\CSVDataLayer\bin\Debug\iRINGLibrary.dll</HintPath>
+      <HintPath>Libs\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>lib\log4net\log4net.dll</HintPath>
@@ -51,7 +51,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="UtilityLibrary, Version=2.1.0.2980, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\CSVDataLayer\CSVDataLayer\bin\Debug\UtilityLibrary.dll</HintPath>
+      <HintPath>Libs\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
