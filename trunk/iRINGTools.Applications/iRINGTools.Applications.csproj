@@ -142,9 +142,14 @@
     <Content Include="Content\css\iring-tools.css" />
     <Content Include="Content\css\reset.css" />
     <Content Include="Content\css\sparql.css" />
+    <Content Include="Content\img\16x16\application-x-executable.png" />
+    <Content Include="Content\img\16x16\document-new.png" />
+    <Content Include="Content\img\16x16\document-open.png" />
+    <Content Include="Content\img\16x16\document-properties.png" />
     <Content Include="Content\img\16x16\document-save.png" />
     <Content Include="Content\img\16x16\edit-clear.png" />
     <Content Include="Content\img\16x16\edit-delete.png" />
+    <Content Include="Content\img\16x16\mapping.png" />
     <Content Include="Content\img\16x16\view-refresh.png" />
     <Content Include="Content\img\applications-internet.png" />
     <Content Include="Content\img\blue-fade.png" />
@@ -4658,17 +4663,6 @@
     <Content Include="Scripts\ext-3.3.1\welcome\images\logo-sencha-sm.png" />
     <Content Include="Scripts\ext-3.3.1\welcome\images\social_sprite.gif" />
     <Content Include="Scripts\ext-3.3.1\welcome\images\social_sprite.png" />
-    <Content Include="Scripts\iringtools\AdapterManager\ActionPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\AdapterManager.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\AjaxRowExpander.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\App.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ApplicationPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\DictionaryPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\DirectoryPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ExcelLibrary.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\MappingPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\SearchPanel.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\AppEditor\Index.aspx" />
@@ -4708,6 +4702,7 @@
     <Folder Include="Scripts\ext-3.3.1\src\ext-core\examples\tabs\images\" />
     <Folder Include="Scripts\ext-3.3.1\src\ext-core\test\yui_2.6.0\yui\build\logger\assets\skins\sam\" />
     <Folder Include="Scripts\ext-3.3.1\src\ext-core\test\yui_2.6.0\yui\build\yuitest\assets\skins\sam\" />
+    <Folder Include="Scripts\iringtools\AdapterManager\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
