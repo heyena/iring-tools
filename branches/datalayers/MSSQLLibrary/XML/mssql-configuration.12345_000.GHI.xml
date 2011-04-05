@@ -1,6 +1,6 @@
 <ArrayOfSqlObject xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.adapter.datalayer" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <SqlObject>
-    <ConnectionString>Data Source=brisqltst02;Initial Catalog=H300020ProjDb;User ID=iRINGUser;Password=iRINGUser</ConnectionString>
+    <ConnectionString>Data Source=localhost\SQLEXPRESS;Initial Catalog=DM;User ID=iRINGUser;Password=iRINGUser</ConnectionString>
     <CreateStatus>NEW</CreateStatus>
     <DeleteQuery>UPDATE VALVE SET PROJ_STAT = 'DEL'</DeleteQuery>
     <IdentifierMap>VAREA-VTYP-VNUM</IdentifierMap>
@@ -52,7 +52,7 @@
     <StatusProperty>CONST_TYPE</StatusProperty>
   </SqlObject>
   <SqlObject>
-    <ConnectionString>Data Source=brisqltst02;Initial Catalog=H300020ProjDb;User ID=rdladmin;Password=Lm!1N2w</ConnectionString>
+    <ConnectionString>Data Source=localhost\SQLEXPRESS;Initial Catalog=DM;User ID=iRINGUser;Password=iRINGUser</ConnectionString>
     <CreateStatus>NEW</CreateStatus>
     <DeleteQuery>UPDATE INSTR SET PROJ_STAT = 'DEL'</DeleteQuery>
     <IdentifierMap>IAREA-ITYP-INUM</IdentifierMap>
@@ -89,7 +89,7 @@
     <StatusProperty>PROJ_STAT</StatusProperty>
   </SqlObject>
   <SqlObject>
-    <ConnectionString>Data Source=brisqltst02;Initial Catalog=H300020ProjDb;User ID=rdladmin;Password=Lm!1N2w</ConnectionString>
+    <ConnectionString>Data Source=localhost\SQLEXPRESS;Initial Catalog=DM;User ID=iRINGUser;Password=iRINGUser</ConnectionString>
     <CreateStatus>NEW</CreateStatus>
     <DeleteQuery>UPDATE MOTOR SET CONST_TYPE = 'DEL'</DeleteQuery>
     <IdentifierMap>EAREA-ETYP-ENUM</IdentifierMap>
