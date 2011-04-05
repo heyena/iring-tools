@@ -7,6 +7,7 @@ Ext.ns('FederationManager');
 //image path
 var IMG_CLASS = 'Content/img/class.png';
 var IMG_TEMPLATE = 'Content/img/template.png';
+
 //renderer function
 function renderIcon(value, p, record) {
     var label = null;
@@ -28,13 +29,13 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
     limit: 100,
     refClassTabPanel:null,
     propertyPanel:null,
-
+    searchStore:null,
     /**
     * initComponent
     * @protected
     */
     initComponent: function () {
-        this.tbar = this.buildToolbar();
+    	this.tbar = this.buildToolbar();
         this.propertyPanel = new Ext.grid.PropertyGrid( {
             id : 'class-property-panel',
             title : 'Details',
@@ -74,30 +75,46 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         // super
         FederationManager.SearchPanel.superclass.initComponent.call(this);
     },
-
-    buildToolbar: function () {
-        return [ ' Search:  ',' ',
+      buildToolbar: function () {
+        return [ 
                  {
         			xtype: 'textfield',
         			allowBlank:false,
         			blankText :'This field can not be blank',
         			name: 'referencesearch',
         			id:'referencesearch',
-        			listeners: {
+        			style: {
+        	            marginLeft: '15px'
+        	        },
+        	        scope:this,
+        	        listeners: {
         	              specialkey: function(f,e){
         	                if (e.getKey() == e.ENTER) {
-        	                    alert("about to search: "+Ext.get('referencesearch').getValue());
+        	                	var query = Ext.get('referencesearch').getValue();
+        	                	//alert(query);
         	                }
         	              }
         	            }
-            	},
-                 {
-                	xtype: 'checkbox',
-               	  	boxLabel:'Reset',
-               	  	text: 'Reset',
-               	  	name: 'reset'
-               	  },
-               	  {
+            	 },
+            	 {
+                 		xtype: 'checkbox',
+                	  	boxLabel:'Reset',
+                	  	text: 'Reset',
+                	  	name: 'reset',
+                	  	style: {
+            	            marginRight: '5px',
+            	            marginLeft: '5px'
+            	            
+            	        }
+                },
+                {
+				    xtype : "tbbutton",
+				    text : 'Search',
+                    handler: this.onSearch,
+                    scope : this
+	
+				},
+				{
                      xtype : "tbbutton",
                      text : 'Promote',
                      //icon : 'resources/images/16x16/view-refresh.png',
@@ -138,6 +155,38 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
                      handler: this.onTemplateEdit,
                      scope : this
                    }];
+      },
+      onSearch: function(){
+    	  var searchText = Ext.get('referencesearch').getValue();
+    	  	  var tree = new Ext.tree.TreePanel({
+            	  title:searchText,
+                  useArrows: true,
+                  animate: true,
+                  lines : false,
+                  id:'tab_'+searchText,
+                  autoScroll : true,
+                  style : 'padding-left:10px;',
+                  border: false,
+                  closable:true,
+                  rootVisible: false,
+                  dataUrl: 'resources/myjson.json',
+                  maskDisabled: true, 
+                  //dataUrl:this.searchUrl,
+                  root: {
+                      nodeType: 'async',
+                      draggable: false
+                  }/*,
+                  listeners: {
+                      click: function(n) {
+                          Ext.Msg.alert('Navigation Tree Click', 'You clicked: "' + n.attributes.text + '"');
+                      }
+                  }*/
+              });
+              //tree.render('aa');
+              tree.getRootNode().expand();
+              this.refClassTabPanel.add(tree).show();
+    	  
+        
       },
     load: function () {
         //this.searchStore.load({ params: { start: 0, limit: this.limit} });
