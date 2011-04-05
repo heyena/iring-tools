@@ -118,29 +118,31 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
 });
 
 /**
-* @class AdapterManager.ConfigurationPanel
+* @class AdapterManager.ExcelLibraryPanel
 * @extends Panel
 * @author by Gert Jansen van Rensburg
 */
-AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
-    title: 'Directory',
-    width: 220,
+AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
+    title: 'ExcelLibrary',
+    width: 120,
 
     collapseMode: 'mini',
-    collapsible: true,
-    collapsed: false,
+    //collapsible: true,
+    //collapsed: false,
+    closable: true,
 
     layout: 'border',
     border: true,
     split: true,
 
     scope: null,
-    application: null,
+    application: null,    
+    configurationPanel: null,
+    propertyPanel: null,
     url: null,
 
-    configurationPanel: null,
-    rootNode: null,
-    treeLoader: null,
+    btnNext: null,
+    btnPrev: null,
 
     /**
     * initComponent
@@ -149,8 +151,11 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
     initComponent: function () {
 
         this.addEvents({
-            ReloadNode: true,
-            Next: true
+            save: true,
+            reset: true,
+            validate: true,
+            refresh: true,
+            selectionchange: true
         });
 
         var scope = "";
@@ -167,13 +172,16 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
             dataLayer = this.application.Assembly;
         }
 
-        var path = "";
-
-        if (this.path != null) {
-            path = this.path;
-        }
-
         this.tbar = this.buildToolbar();
+
+        this.workbookMenu = new Ext.menu.Menu();
+        this.workbookMenu.add(this.buildWorkbookMenu());
+
+        this.worksheetMenu = new Ext.menu.Menu();
+        this.worksheetMenu.add(this.buildWorksheetMenu());
+
+        this.columnMenu = new Ext.menu.Menu();
+        this.columnMenu.add(this.buildColumnMenu());
 
         this.treeLoader = new Ext.tree.TreeLoader({
             baseParams: {
@@ -181,7 +189,7 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
                 application: application,
                 type: null
             },
-            url: this.url
+            url: 'excel/getnode'
         });
 
         this.treeLoader.on("beforeload", function (treeLoader, node) {
@@ -198,10 +206,8 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
         });
 
         this.configurationPanel = new Ext.tree.TreePanel({
-            region: 'center',
-            collapseMode: 'mini',
-            height: 300,
             layout: 'fit',
+            region: 'center',
             border: false,
             split: true,
             expandAll: true,
@@ -214,24 +220,39 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
         });
 
         this.configurationPanel.on('contextmenu', this.showContextMenu, this);
-
+        this.configurationPanel.on('click', this.onClick, this);
+       
+        this.propertyPanel = new Ext.grid.PropertyGrid({
+            title: 'Details',
+            region: 'east',            
+            width: 200,
+            split: true,
+            collapseMode: 'mini',
+            stripeRows: true,
+            collapsible: true,
+            autoScroll: true,
+            border: false,
+            frame: false,
+            height: 150,
+            // bodyStyle: 'padding-bottom:15px;background:#eee;',
+            source: {},
+            listeners: {
+                // to disable editable option of the property grid
+                beforeedit: function (e) {
+                    e.cancel = true;
+                }
+            }
+        });
+        
         this.items = [
-            this.configurationPanel
+            this.configurationPanel,
+            this.propertyPanel
         ];
 
-        var state = Ext.state.Manager.get("AdapterManager");
-
-        if (state) {
-            if (this.configurationPanel.expandPath(state) == false) {
-                Ext.state.Manager.clear("AdapterManager");
-                this.configurationPanel.root.reload();
-            }
-        }
-
         // super
-        AdapterManager.ConfigurationPanel.superclass.initComponent.call(this);
+        AdapterManager.ExcelLibraryPanel.superclass.initComponent.call(this);
     },
-
+    
     buildToolbar: function () {
         return [
       {
@@ -253,6 +274,111 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
           scope: this
       }      
     ]
+    },
+
+    buildWorkbookMenu: function () {
+        return [
+            {
+                text: 'Add Worksheet(s)',
+                handler: this.onAddWorkSheets,
+                icon: 'Content/img/16x16/document-new.png',
+                scope: this
+            },
+            {
+                text: 'Reload Worksheets',
+                handler: this.onReloadNode,
+                icon: 'Content/img/16x16/view-refresh.png',
+                scope: this
+            }
+        ]
+    },
+
+    buildWorksheetMenu: function () {
+        return [
+            {
+                text: 'Edit Worksheet',
+                handler: this.onEditWorksheet,
+                icon: 'Content/img/16x16/document-open.png',
+                scope: this
+            },
+            {
+                text: 'Remove Worksheet',
+                handler: this.onRemoveWorksheet,
+                icon: 'Content/img/16x16/edit-delete.png',
+                scope: this
+            },
+            {
+                text: 'Reload Worksheet',
+                handler: this.onReloadNode,
+                icon: 'Content/img/16x16/view-refresh.png',
+                scope: this
+            },
+            {
+                xtype: 'menuseparator'
+            },
+            {
+                text: 'Add Worksheet(s)',
+                handler: this.onAddWorksheets,
+                icon: 'Content/img/16x16/document-new.png',
+                scope: this
+            },
+            {
+                text: 'Add Column(s)',
+                handler: this.onAddColumns,
+                icon: 'Content/img/16x16/document-new.png',
+                scope: this
+            }
+        ]
+    },
+
+    buildColumnMenu: function () {
+        return [
+            {
+                text: 'Rename Column',
+                handler: this.onRenameColumn,
+                icon: 'Content/img/16x16/document-open.png',
+                scope: this
+            },
+            {
+                text: 'Remove Column',
+                handler: this.onRemoveColumn,
+                icon: 'Content/img/16x16/edit-delete.png',
+                scope: this
+            },
+            {
+                text: 'Reload Column',
+                handler: this.onReloadNode,
+                icon: 'Content/img/16x16/view-refresh.png',
+                scope: this
+            },
+            {
+                xtype: 'menuseparator'
+            },
+            {
+                text: 'Add Column(s)',
+                handler: this.onAddColumns,
+                icon: 'Content/img/16x16/document-new.png',
+                scope: this
+            }
+        ]
+    },
+
+    onAddWorksheets: function(node) {
+    },
+
+    onAddColumns: function(node) {
+    },
+
+    onEditWorksheet: function(node) {
+    },
+
+    onRemoveWorksheet: function(node) {
+    },
+
+    onRenameColumn: function(node) {
+    },
+
+    onRemoveColumn: function(node) {
     },
 
     onReload: function () {
@@ -306,79 +432,32 @@ AdapterManager.ConfigurationPanel = Ext.extend(Ext.Panel, {
             }
         });
 
-    }
+    },
+    
+    showContextMenu: function (node, event) {
 
-});
+        //  if (node.isSelected()) { 
+        var x = event.browserEvent.clientX;
+        var y = event.browserEvent.clientY;
 
-/**
-* @class AdapterManager.ExcelLibraryPanel
-* @extends Panel
-* @author by Gert Jansen van Rensburg
-*/
-AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
-    title: 'ExcelLibrary',
-    width: 120,
+        var obj = node.attributes;
 
-    collapseMode: 'mini',
-    //collapsible: true,
-    //collapsed: false,
-    closable: true,
-
-    layout: 'card',
-    activeItem: 0,
-    border: true,
-    split: true,
-
-    scope: null,
-    application: null,    
-    configurationPanel: null,
-    url: null,
-
-    btnNext: null,
-    btnPrev: null,
-
-    /**
-    * initComponent
-    * @protected
-    */
-    initComponent: function () {
-
-        this.addEvents({
-            save: true,
-            reset: true,
-            validate: true,
-            refresh: true,
-            selectionchange: true
-        });
-
-        var scope = "";
-
-        if (this.scope != null) {
-            scope = this.scope.Name;
+        if (obj.type == "ExcelWorkbookNode") {
+            this.workbookMenu.showAt([x, y]);
+        } else if (obj.type == "ExcelWorksheetNode") {
+            this.worksheetMenu.showAt([x, y]);
+        } else if (obj.type == "ExcelColumnNode") {
+            this.columnMenu.showAt([x, y]);
         }
+        //}
+    },
 
-        var application = "";
-        var dataLayer = "";
-
-        if (this.application != null) {
-            application = this.application.Name;
-            dataLayer = this.application.Assembly;
+    onClick: function (node) {
+        try {
+            this.propertyPanel.setSource(node.attributes.record);
+        } catch (e) {
+            //  alert(e);
         }
-
-        this.configurationPanel = new AdapterManager.ConfigurationPanel({
-            scope: this.scope,
-            application: this.application,
-            url: 'excel/getnode'
-        });
-
-        //this.form.on('Next', this.onNext, this);
-
-        this.items = [
-            this.configurationPanel
-        ];
-
-        // super
-        AdapterManager.ExcelLibraryPanel.superclass.initComponent.call(this);
-    }    
+    }  
 
 });
