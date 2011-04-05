@@ -123,3 +123,10 @@ a.breadcrumb {
   background-position:left bottom;
   height: 65px;
 }
+
+.tabsScope {
+    background-image:url('../img/system-file-manager.png') !important;
+}
+.tabsApplication {
+    background-image:url('../img/applications-internet.png') !important;
+}
