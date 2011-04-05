@@ -123,7 +123,8 @@ Ext.onReady(function () {
         });
 
         newTab.on('save', function (panel) {
-            directoryPanel.reload();
+            contentPanel.removeAll(true);
+           directoryPanel.reload();
         }, this);
 
         contentPanel.add(newTab);
@@ -190,6 +191,7 @@ Ext.onReady(function () {
         });
 
         newTab.on('save', function (panel) {
+            contentPanel.remove(panel);
             directoryPanel.reload();
         }, this);
 
