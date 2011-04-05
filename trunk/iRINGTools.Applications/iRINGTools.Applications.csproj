@@ -142,7 +142,6 @@
     <Content Include="Content\css\iring-tools.css" />
     <Content Include="Content\css\reset.css" />
     <Content Include="Content\css\sparql.css" />
-    <Content Include="Content\img\16x16\application-x-executable.png" />
     <Content Include="Content\img\16x16\document-new.png" />
     <Content Include="Content\img\16x16\document-open.png" />
     <Content Include="Content\img\16x16\document-properties.png" />
