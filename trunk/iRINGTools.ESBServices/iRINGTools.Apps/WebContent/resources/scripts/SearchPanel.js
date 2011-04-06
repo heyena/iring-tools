@@ -4,22 +4,6 @@ Ext.ns('FederationManager');
 * @author by Aswini Nayak
 */
 
-//image path
-var IMG_CLASS = 'Content/img/class.png';
-var IMG_TEMPLATE = 'Content/img/template.png';
-
-//renderer function
-function renderIcon(value, p, record) {
-    var label = null;
-
-    if (record.data.Uri.indexOf("tpl") != -1) {
-        label = '<img src="' + IMG_TEMPLATE + '" align="top"> ' + value;
-    } else {
-        label = '<img src="' + IMG_CLASS + '" align="top"> ' + value;
-    }
-    return label;
-}
-
 FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
     title: 'Reference Data Search',
     layout: 'border',
@@ -50,7 +34,6 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         	collapsed : false,
             border : true,
             frame : true,
-            //bodyStyle: 'padding-bottom:15px;background:#eee;',
             source : {},
             listeners : {
               // to disable editable option of the property grid
@@ -99,19 +82,20 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
             	 {
                  		xtype: 'checkbox',
                 	  	boxLabel:'Reset',
-                	  	text: 'Reset',
                 	  	name: 'reset',
                 	  	style: {
             	            marginRight: '5px',
-            	            marginLeft: '5px'
-            	            
+            	            marginLeft: '3px'
             	        }
                 },
                 {
 				    xtype : "tbbutton",
 				    text : 'Search',
                     handler: this.onSearch,
-                    scope : this
+                    scope : this,
+            	  	style: {
+        	            marginLeft: '5px'
+        	        }
 	
 				},
 				{
@@ -158,39 +142,50 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
       },
       onSearch: function(){
     	  var searchText = Ext.get('referencesearch').getValue();
+    	  
+    	  var treeLoader =  new Ext.tree.TreeLoader({
+    		  requestMethod: 'POST',
+              url: this.searchUrl,
+              baseParams: { 
+            	  query: searchText,
+            	  limit:this.limit,
+            	  start:0
+            	}
+    	    });
+    	  
     	  	  var tree = new Ext.tree.TreePanel({
             	  title:searchText,
                   useArrows: true,
+                  maskDisabled:false,
                   animate: true,
                   lines : false,
                   id:'tab_'+searchText,
                   autoScroll : true,
-                  style : 'padding-left:10px;',
+                  style : 'padding-left:5px;',
                   border: false,
                   closable:true,
                   rootVisible: false,
-                  dataUrl: 'resources/myjson.json',
                   maskDisabled: true, 
-                  //dataUrl:this.searchUrl,
+                  loader:treeLoader ,
                   root: {
                       nodeType: 'async',
                       draggable: false
-                  }/*,
-                  listeners: {
-                      click: function(n) {
-                          Ext.Msg.alert('Navigation Tree Click', 'You clicked: "' + n.attributes.text + '"');
-                      }
-                  }*/
+                  },
+                  containerScroll: true
               });
-              //tree.render('aa');
+    	  	tree.on('beforeload', function(node){
+    	  	    //treeLoader.baseParams = {'test': 123};
+    	  	    //tree.load(tree);
+    	  	    //tree.expand(false, false);
+    	  		//this.getEl().mask('Loading...');
+    	  	}); 
               tree.getRootNode().expand();
+              tree.on('click', this.onClick, this);
               this.refClassTabPanel.add(tree).show();
-    	  
-        
       },
-    load: function () {
-        //this.searchStore.load({ params: { start: 0, limit: this.limit} });
-        return;
-    }
+      onClick : function() {
+    	  
+    	//  Ext.Msg.alert('Navigation Tree Click', 'You clicked: "' + this.attributes.properties.uri + '"');
+      }
 
 });
