@@ -62,7 +62,7 @@
   <package name="federation-manager" extends="json-default">
     <action name="refdata" class="org.iringtools.controllers.RefDataController" method="searchPage">
       <result type="json">
-        <param name="root">response</param>
+        <param name="root">tree.nodes</param>
       </result>
     </action>
   
