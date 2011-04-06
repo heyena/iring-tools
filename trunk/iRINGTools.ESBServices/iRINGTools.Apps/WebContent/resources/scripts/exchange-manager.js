@@ -518,7 +518,7 @@ Ext.onReady(function(){
       height: 500,
       closable: true,
       resizable: false,
-      autoScroll: false,                
+      autoScroll: true,                
       buttons: [{
         text: 'Close',
         handler: function(){

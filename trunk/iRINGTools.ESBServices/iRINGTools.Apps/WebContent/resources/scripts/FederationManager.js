@@ -13,24 +13,54 @@ Ext.onReady(function () {
 
 	Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
 	Ext.QuickTips.init();
-
+	
+	Ext.get('about-link').on('click', function(){
+    var win = new Ext.Window({    
+      title: 'About Exchange Manager',
+      bodyStyle: 'background-color:white;padding:5px',
+      width: 700,
+      height: 500,
+      closable: true,
+      resizable: false,
+      autoScroll: true,                
+      buttons: [{
+        text: 'Close',
+        handler: function(){
+          Ext.getBody().unmask();
+          win.close();
+        }
+      }],
+      autoLoad: 'about-federation.html',
+      listeners: {
+        close:{
+          fn: function(){
+            Ext.getBody().unmask();
+          }
+        }
+      }
+    });
+    
+    Ext.getBody().mask();    
+    win.show();
+  });
+  
 	Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-	 federationPanel = new FederationManager.FederationPanel({
-	  id:'federation-panel',
-	  region:'west',
-
-	  collapsible: false,
-	  collapsed: false,
-
-	  border: false,
-	  frame: false,
-	  split: true,
-	  width: 260,
-  	  minSize: 175,
-  	  maxSize: 500,
-	  url: 'federation'
-	});
+	federationPanel = new FederationManager.FederationPanel({
+		id:'federation-panel',
+		region:'west',
+		
+		collapsible: false,
+		collapsed: false,
+		
+		border: false,
+		frame: false,
+		split: true,
+		width: 260,
+		  minSize: 175,
+		  maxSize: 500,
+		url: 'federation'
+		});
 
 	var tabPanel = new Ext.TabPanel({
 		region: 'center',
@@ -41,65 +71,65 @@ Ext.onReady(function () {
 		enableTabScroll: true                
 	});
 
-         tabPanel.on('tabChange', function(tabContainer){
-            if(tabContainer.items.length !=0){ // check is there any tab
-            var nodeObj = federationPanel.getNodeBySelectedTab(tabContainer.getActiveTab());
-            if(nodeObj){
-                federationPanel.selectNode(nodeObj);
-            }
-           }else{
-              // code for unselect
-           }
-        });
+	tabPanel.on('tabChange', function(tabContainer){
+		if(tabContainer.items.length !=0){ // check is there any tab
+		  var nodeObj = federationPanel.getNodeBySelectedTab(tabContainer.getActiveTab());
+		  if(nodeObj){
+	      federationPanel.selectNode(nodeObj);
+		  }
+		}else{
+	    // code for unselect
+		}
+	});
         
 	federationPanel.on('opentab', function(panel, node, label, formData) {
-                var tabIconClass;
-                
-                if(node.parentNode.text == 'ID Generators'|| node.text == 'ID Generators'){
-                        tabIconClass = 'tabsIdGen';
-                }else if(node.parentNode.text == 'Namespaces'|| node.text == 'Namespaces'){
-                        tabIconClass = 'tabsNameSpace';
-                }else if(node.parentNode.text == 'Repositories' || node.text == 'Repositories'){
-                        tabIconClass = 'tabsRepository';
-                }
-                var newTab = new FederationManager.ContentPanel({
-                        title: label,
-                        id:'tab-' + node.id,
-                        configData: formData,
-                        nId:node.id,
-                        url: 'postFederation',                        
-                        single: true, // important, as many layouts can occur
-                        layout:'fit',
-                        iconCls: tabIconClass,
-                        closable: true,
-                        defaults:{
-                                layout:'form',
-                                labelWidth:100,
+    var tabIconClass;
+    
+    if(node.parentNode.text == 'ID Generators'|| node.text == 'ID Generators'){
+      tabIconClass = 'tabsIdGen';
+    }else if(node.parentNode.text == 'Namespaces'|| node.text == 'Namespaces'){
+      tabIconClass = 'tabsNameSpace';
+    }else if(node.parentNode.text == 'Repositories' || node.text == 'Repositories'){
+      tabIconClass = 'tabsRepository';
+    }
+    var newTab = new FederationManager.ContentPanel({
+      title: label,
+      id:'tab-' + node.id,
+      configData: formData,
+      nId:node.id,
+      url: 'postFederation',                        
+      single: true, // important, as many layouts can occur
+      layout:'fit',
+      iconCls: tabIconClass,
+      closable: true,
+      defaults:{
+        layout:'form',
+        labelWidth:100,
 
-                                // as we use deferredRender:false we mustn't
-                                // render tabs into display:none containers
-                                hideMode:'offsets',                                
-                                deferredRender: false
-                        }                        
-                });
+        // as we use deferredRender:false we mustn't
+        // render tabs into display:none containers
+        hideMode:'offsets',                                
+        deferredRender: false
+      }                        
+    });
 
-                Ext.getCmp('contentPanel').enable();
-                tabPanel.add(newTab).show();
+    Ext.getCmp('contentPanel').enable();
+    tabPanel.add(newTab).show();
 
 	});
 
-	 var searchPanel = new FederationManager.SearchPanel({
-		    id: 'search-panel',
-		    title: 'Reference Data Search',
-		    region: 'south',
-		    height: 300,
-		    collapseMode: 'mini',
-		    collapsible: true,
-		    collapsed: false,
-		    searchUrl: 'refdata',
-		    limit: 100
-		  });
-	  
+	var searchPanel = new FederationManager.SearchPanel({
+    id: 'search-panel',
+    title: 'Reference Data Search',
+    region: 'south',
+    height: 300,
+    collapseMode: 'mini',
+    collapsible: true,
+    collapsed: false,
+    searchUrl: 'refdata',
+    limit: 100
+  });
+
 		
 		
 	var viewport = new Ext.Viewport({

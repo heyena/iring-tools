@@ -413,7 +413,9 @@ FederationManager.FederationPanel = Ext
 	                label = node.parentNode.text + ' : ' + obj['text'];
 	              } 
 	              else {
-	                label = obj['text'] + ':(New)';
+	                label = obj['text'] + ':(New)';	                
+	                if (i == 'Id')
+	                	value = parseInt(node.lastChild.attributes.identifier) + 1;
 	              }
 	              
 	              listItem.fieldLabel = i;
@@ -421,6 +423,10 @@ FederationManager.FederationPanel = Ext
 	              listItem.allowBlank = false;
 	              listItem.blankText = 'This Field is required';
 	              listItem.value = value;
+	              if (i == 'Id') {
+	              	listItem.disabled = true;
+	              	listItem.blankText = '';
+	              }
 	              
 	              listItems.push(listItem);
 	            }
