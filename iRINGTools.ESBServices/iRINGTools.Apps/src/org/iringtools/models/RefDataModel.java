@@ -53,11 +53,11 @@ public class RefDataModel
     	response = httpClient.get(Response.class, "/search/"+query+"/"+start+"/"+limit);
         
         List<Node> treeNodes = tree.getNodes();
-    	TreeNode node = null;
+        LeafNode node = null;
 
     	for (Entity entity : response.getEntities().getItems())
         {
-    		node = new TreeNode();
+    		node = new LeafNode();
         	//node.setIdentifier("idGenerator");
         	node.setText(entity.getLabel()+" ("+entity.getRepository()+")");
         	if(entity.getUri().contains("rdl.rdlfacade.org")){
