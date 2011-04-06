@@ -304,15 +304,15 @@ FederationManager.FederationPanel = Ext
                 name: 'parentNodeID',  // it will contain "ID Generators||Namespaces||Repositories
                 value: parentNode.attributes.identifier  // value of the field
               });
-            }
+            }    
             
-               
+            var readOnly = '';            
             
             for (var i in properties) {
             	if (i != 'URI' && i != 'Update URI'){
 	              var listItem = {};
 	              var fname = i;
-	              var value = '';
+	              var value = '';	              
 	              
 	              switch (fname) {
 	              case "Description":
@@ -320,12 +320,7 @@ FederationManager.FederationPanel = Ext
 	                listItem.width = 230;
 	                break;
 	                
-	              case "URI":
-	                listItem.xtype = 'textfield';
-	                listItem.width = 230;
-	                break;
-	                
-	              case "Read Only":
+	              case "Read Only":	              	
 	              case "Writable":
 	                listItem.xtype = 'combo';
 	                listItem.width = 230;
@@ -333,7 +328,17 @@ FederationManager.FederationPanel = Ext
 	                listItem.editable = false;
 	                listItem.mode = 'local';
 	                listItem.store = ["true", "false"];
-	                listItem.displayField = properties[i];                
+	                listItem.displayField = properties[i];    
+	                listItem.listeners = {'select' : function(combo, record, index) {
+											var tab = Ext.getCmp('contentPanel').getActiveTab();											
+											var textfield = tab.items.map['data-form'].items.map['update-uri'];
+											if (record.data.field1 == 'true')
+												textfield.disable();
+											else 
+												textfield.enable();
+										}
+									};
+	                readOnly = properties[i];
 	                break;
 	                
 	              case 'Repository Type':
@@ -428,8 +433,7 @@ FederationManager.FederationPanel = Ext
 	              var value = '';
 	              
 	              listItem.xtype = 'textfield';
-	              listItem.width = 230;
-	              
+	              listItem.width = 230;	              
 	
 	              if (formType == 'editForm') {
 	                value = properties[i];
@@ -455,8 +459,7 @@ FederationManager.FederationPanel = Ext
 	              var fname = i;
 	              var value = '';
 	              listItem.xtype = 'textfield';
-                listItem.width = 230;
-	              
+                listItem.width = 230;	              
 	
 	              if (formType == 'editForm') {
 	                value = properties[i];
@@ -468,9 +471,15 @@ FederationManager.FederationPanel = Ext
 	              
 	              listItem.fieldLabel = i;
 	              listItem.name = i;
+	              listItem.id = 'update-uri';
 	              listItem.allowBlank = false;
 	              listItem.blankText = 'This Field is required';
 	              listItem.value = value;
+	              
+	              if(readOnly == 'true')
+	              	listItem.disabled = true;
+	              else
+	              	listItem.disabled = false;	              
 	              
 	              listItems.push(listItem);
 	            }
