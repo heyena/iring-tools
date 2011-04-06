@@ -56,7 +56,7 @@ public class RefDataController implements ServletRequestAware{
 		//System.out.println("callled.........");
 		String query=httpRequest.getParameter("query");
     	if(query!=null){
-    		response = refdata.populate(httpRequest);
+    		tree = refdata.populate(httpRequest);
     		//	tree = refdata.toTree();
     	       
     	}else{

@@ -1,10 +1,20 @@
 package org.iringtools.models;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.ids_adi.ns.qxf.model.Qmxf;
+import org.iringtools.refdata.federation.IDGenerator;
+import org.iringtools.refdata.response.Entities;
+import org.iringtools.refdata.response.Entity;
 import org.iringtools.refdata.response.Response;
 import org.iringtools.utility.HttpClient;
+import org.iringtools.widgets.tree.LeafNode;
+import org.iringtools.widgets.tree.Node;
+import org.iringtools.widgets.tree.Tree;
+import org.iringtools.widgets.tree.TreeNode;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -30,24 +40,43 @@ public class RefDataModel
     //responseEntity=null;
   }
 
-  public Response populate(HttpServletRequest httpRequest)
+  public Tree populate(HttpServletRequest httpRequest)
   {
-    try
-    {
+	  Tree tree = new Tree();
+	  try
+	  {	
     	String query=httpRequest.getParameter("query");
     	String start=httpRequest.getParameter("start");
     	String limit=httpRequest.getParameter("limit");
-    	//System.out.print("%%%%%%%%%"+query+"====="+start+"====="+limit);
+    	System.out.print("%%%%%%%%%"+query+"====="+start+"====="+limit);
     	
     	response = httpClient.get(Response.class, "/search/"+query+"/"+start+"/"+limit);
-    	//response = httpClient.get(Response.class, "/search/"+query);
+        
+        List<Node> treeNodes = tree.getNodes();
+    	TreeNode node = null;
+
+    	for (Entity entity : response.getEntities().getItems())
+        {
+    		node = new TreeNode();
+        	//node.setIdentifier("idGenerator");
+        	node.setText(entity.getLabel()+" ("+entity.getRepository()+")");
+        	if(entity.getUri().contains("rdl.rdlfacade.org")){
+        		node.setIconCls("class");
+        	}else{
+        		node.setIconCls("template");
+        	}
+        	node.getProperties().put("lang", entity.getLang());
+        	node.getProperties().put("uri", entity.getUri());
+
+        	treeNodes.add(node);
+        }
     }
     catch (Exception e)
     {
       System.out.println("Exception in populate");
       e.printStackTrace();
     }
-    return response;
+    return tree;
   }
   
   public Qmxf getClass(String id){
