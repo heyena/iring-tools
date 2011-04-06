@@ -31,6 +31,7 @@ namespace iRINGTools.Web.Models
     string UpdateApplication(string scopeName, string applicationName, string name, string description, string assembly);
 
     string DeleteApplication(string scopeName, string applicationName);
-    
+
+    DataProviders GetDataProviders();
   }
 }

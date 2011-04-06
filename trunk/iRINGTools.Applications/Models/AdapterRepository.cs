@@ -238,6 +238,10 @@ namespace iRINGTools.Web.Models
       return PostScopes(scopes);
     }
 
-
+    public DataProviders GetDataProviders()
+    {
+      WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+      return client.Get<DataProviders>("/providers", true);
+    }
   }
 }
