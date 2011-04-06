@@ -238,7 +238,7 @@
 		</xsl:comment>
 		<xsl:comment>
 			Specialization.</xsl:comment>
-		<qxf:relationship instance-of="http://dm.rdlfacade.org/data#Specialization">
+		<qxf:relationship id="{substring-after(@qualifies, '#')}-{substring-after(@id, '#')}" instance-of="http://dm.rdlfacade.org/data#Specialization">
 			<qxf:property instance-of="http://dm.rdlfacade.org/data#hasSuperclass" reference="{@qualifies}"/>
 			<qxf:property instance-of="http://dm.rdlfacade.org/data#hasSubclass" reference="{@id}"/>
 		</qxf:relationship>
@@ -247,7 +247,7 @@
 			<xsl:comment>..... Role qualification .....</xsl:comment>
 			<xsl:if test="qmxf:value/@reference">
 				<xsl:comment>Reference restriction</xsl:comment>
-				<qxf:relationship instance-of="http://tpl.rdlfacade.org/data#R40103148466">
+				<qxf:relationship id="{@id}" instance-of="http://tpl.rdlfacade.org/data#R40103148466">
 					<qxf:property instance-of="http://tpl.rdlfacade.org/data#R49267603385" reference="{../@id}"/>
 					<qxf:property instance-of="http://tpl.rdlfacade.org/data#R30741601855" reference="{@qualifies}"/>
 					<qxf:property instance-of="http://tpl.rdlfacade.org/data#R21129944603" reference="{qmxf:value/@reference}"/>
@@ -255,7 +255,7 @@
 			</xsl:if>
 			<xsl:if test="qmxf:value/@as">
 				<xsl:comment>Value restriction</xsl:comment>
-				<qxf:relationship instance-of="http://tpl.rdlfacade.org/data#R67036823327">
+				<qxf:relationship id="{@id}" instance-of="http://tpl.rdlfacade.org/data#R67036823327">
 					<qxf:property instance-of="http://tpl.rdlfacade.org/data#R56456315674" reference="{../@id}"/>
 					<qxf:property instance-of="http://tpl.rdlfacade.org/data#R89867215482" reference="{@qualifies}"/>
 					<qxf:property instance-of="http://tpl.rdlfacade.org/data#R29577887690" as="{qmxf:value/@as}">
@@ -265,7 +265,7 @@
 			</xsl:if>
 			<xsl:if test="@range">
 				<xsl:comment>Range restriction</xsl:comment>
-				<qxf:relationship instance-of="http://tpl.rdlfacade.org/data#R76288246068">
+				<qxf:relationship id="{@id}" instance-of="http://tpl.rdlfacade.org/data#R76288246068">
 					<qxf:property instance-of="http://tpl.rdlfacade.org/data#R99672026745" reference="{../@id}"/>
 					<qxf:property instance-of="http://tpl.rdlfacade.org/data#R91125890543" reference="{@qualifies}"/>
 					<qxf:property instance-of="http://tpl.rdlfacade.org/data#R98983340497" reference="{@range}"/>
@@ -299,7 +299,7 @@
 		<!-- @todo consider making tpl-specific entries? -->
 		<xsl:comment>
 			Specialization.</xsl:comment>
-		<qxf:relationship instance-of="http://dm.rdlfacade.org/data#Specialization">
+		<qxf:relationship id="{@id}" instance-of="http://dm.rdlfacade.org/data#Specialization">
 			<qxf:property instance-of="http://dm.rdlfacade.org/data#hasSuperclass" reference="{@reference}"/>
 			<qxf:property instance-of="http://dm.rdlfacade.org/data#hasSubclass" reference="{../@id}"/>
 		</qxf:relationship>
