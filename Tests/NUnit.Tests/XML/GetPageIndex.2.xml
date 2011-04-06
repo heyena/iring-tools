@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<LinesList total="31" xmlns="http://www.example.com/12345_000/ABC/Lines">
-  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90004-SC">
+<LinesList total="31" xmlns="http://www.example.com/12345_000/ABC/LINES">
+  <Lines uri="http://www.example.com/12345_000/ABC/LINES/90004-SC">
     <Tag>90004-SC</Tag>
   </Lines>
-  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90004-SL">
+  <Lines uri="http://www.example.com/12345_000/ABC/LINES/90004-SL">
     <Tag>90004-SL</Tag>
   </Lines>
-  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90005-RV">
+  <Lines uri="http://www.example.com/12345_000/ABC/LINES/90005-RV">
     <Tag>90005-RV</Tag>
   </Lines>
-  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90006-O">
+  <Lines uri="http://www.example.com/12345_000/ABC/LINES/90006-O">
     <Tag>90006-O</Tag>
   </Lines>
-  <Lines uri="http://www.example.com/12345_000/ABC/Lines/90006-SL">
+  <Lines uri="http://www.example.com/12345_000/ABC/LINES/90006-SL">
     <Tag>90006-SL</Tag>
   </Lines>
 </LinesList>
