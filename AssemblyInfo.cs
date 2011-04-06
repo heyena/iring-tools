@@ -8,5 +8,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("2.0.4.2965")]
-[assembly: AssemblyFileVersion("2.0.4.2965")]
+[assembly: AssemblyVersion("2.0.5.3133")]
+[assembly: AssemblyFileVersion("2.0.5.3133")]
