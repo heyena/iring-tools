@@ -103,3 +103,9 @@ p {
   border: 0 none;
   overflow: auto
 }
+.x-tree-node .class{
+	background-image: url(../images/16x16/class-badge.png);
+}
+.x-tree-node .template{
+	background-image: url(../images/16x16/template-badge.png);
+}
