@@ -126,7 +126,7 @@ namespace org.iringtools.adapter.projection
     }
 
     public abstract XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);
-    public abstract XDocument ToXml(string graphName, string className, string classIdentifier, ref IDataObject dataObject);
+    public abstract XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier);
     public abstract IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument);
 
     //propertyPath = "Instrument.LineItems.Tag";
