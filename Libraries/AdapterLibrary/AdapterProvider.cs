@@ -541,21 +541,15 @@ namespace org.iringtools.adapter
     {
       try
       {
+        bool requestingGraph = false;
+
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
         IList<string> index = new List<string>();
 
         string dataObjectName = String.Empty;
-        if (format != null)
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-        }
-        else
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>("data");
-        }
-
+        
         _graphMap = _mapping.FindGraphMap(graphName);
         DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == graphName.ToUpper());
 
@@ -563,6 +557,8 @@ namespace org.iringtools.adapter
         {
           graphName = _graphMap.name;
           dataObjectName = _graphMap.dataObjectMap;
+
+          requestingGraph = true;
         }
         else if (dataObject != null)
         {
@@ -572,6 +568,27 @@ namespace org.iringtools.adapter
         else
         {
           throw new FileNotFoundException("Requested graph or dataObject not found.");
+        }
+
+        bool requestedPart7Format = false;
+
+        if (format != null)
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+
+          if (_projectionEngine.GetType().BaseType == typeof(BasePart7ProjectionEngine))
+          {
+            requestedPart7Format = true;
+          }
+        }
+        else if (requestingGraph)
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>("xml");
+          requestedPart7Format = true;
+        }
+        else 
+        {
+          _projectionEngine = _kernel.Get<IProjectionLayer>("data");
         }
 
         if (limit == 0)
@@ -641,7 +658,14 @@ namespace org.iringtools.adapter
 
         _projectionEngine.FullIndex = fullIndex;
 
-        return _projectionEngine.ToXml(graphName, ref _dataObjects);
+        if (requestedPart7Format)
+        {
+          return _projectionEngine.ToXml(graphName, ref _dataObjects);
+        }
+        else
+        {
+          return _projectionEngine.ToXml(dataObjectName, ref _dataObjects);
+        }
       }
       catch (Exception ex)
       {

@@ -69,7 +69,8 @@ namespace org.iringtools.library
         }
       }
 
-      throw new Exception("Graph [" + graphName + "] does not exist.");
+      //throw new Exception("Graph [" + graphName + "] does not exist.");
+      return null;
     }
 
     public string ResolveValueList(string valueList, string value)

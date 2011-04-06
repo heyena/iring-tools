@@ -13,7 +13,7 @@
     <RootNamespace>org.iringtools.services</RootNamespace>
     <AssemblyName>iRINGTools.Services</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,6 +49,10 @@
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Bechtel.CompletionsModule.CMDataLayer, Version=1.2.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Bechtel.CompletionsModule.CMDataLayer.dll</HintPath>
     </Reference>
     <Reference Include="dotNetRDF, Version=0.3.0.20182, Culture=neutral, PublicKeyToken=4329bfa42a2fc001, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -162,6 +166,10 @@
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\bechtel-datalayers\eFormsDataLayerv10\eFormsDataLayerv10\eFormsDataLayerv10.csproj">
+      <Project>{0631ED55-898B-44DF-AB39-9026A2AFAA3F}</Project>
+      <Name>eFormsDataLayerv10</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
       <Name>NHibernateLibrary</Name>
@@ -189,12 +197,11 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>65432</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl>http://localhost:65432/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

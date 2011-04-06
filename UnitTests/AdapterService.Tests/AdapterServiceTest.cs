@@ -240,8 +240,6 @@ namespace AdapterService.Tests
         //Assert.IsFalse(actual.Level == StatusLevel.Error);
     //}
 
-
-
     //[TestMethod]
     //public void PostDTOTest()
     //{
