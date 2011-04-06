@@ -8,6 +8,7 @@ namespace NUnit
 {
     class Program
     {
+        [STAThread]
         static void Main()
         {
             string commandLine = @"/run ../../../../../SPPIDDataLayer.NUnit/SPPIDDataLayer.NUnit.csproj";
