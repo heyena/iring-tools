@@ -25,6 +25,7 @@
     <script src="../../Scripts/iringtools/AdapterManager/ApplicationPanel.js" type="text/javascript"></script>
     <script src="../../Scripts/iringtools/AdapterManager/AjaxRowExpander.js" type="text/javascript"></script>    
     <script src="../../Scripts/iringtools/AdapterManager/ExcelLibrary.js" type="text/javascript"></script>
+    <script src="../../Scripts/iringtools/AdapterManager/NHibernateConfigWizard.js" type="text/javascript"></script>
 
     <!-- page specific -->    
     <script src="../../Scripts/iringtools/AdapterManager/AdapterManager.js" type="text/javascript"></script>    
