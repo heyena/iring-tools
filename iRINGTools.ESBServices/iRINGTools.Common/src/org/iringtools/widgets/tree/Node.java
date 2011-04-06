@@ -7,6 +7,7 @@ public abstract class Node
   protected String text;
   protected String iconCls;
   protected String identifier;
+  protected boolean hidden = false;
   protected HashMap<String, String> properties;
 
   public String getText()
@@ -17,6 +18,16 @@ public abstract class Node
   public void setText(String value)
   {
     this.text = value;
+  }
+  
+  public boolean getHidden()
+  {
+    return hidden;
+  }
+
+  public void setHidden(boolean value)
+  {
+    this.hidden = value;
   }
 
   public String getIconCls()

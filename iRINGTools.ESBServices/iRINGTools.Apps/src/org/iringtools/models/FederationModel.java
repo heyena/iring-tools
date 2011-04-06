@@ -118,6 +118,7 @@ public class FederationModel
     generatorNodeDef.setIconCls("generator");
     generatorNodeDef.getProperties().put("Id", "idGenerator0");    
     generatorNodeDef.setLeaf(true);
+    generatorNodeDef.setHidden(true);
     generatorNodes.add(generatorNodeDef);
 
     for (IDGenerator idgenerator : federation.getIdGenerators().getItems())
