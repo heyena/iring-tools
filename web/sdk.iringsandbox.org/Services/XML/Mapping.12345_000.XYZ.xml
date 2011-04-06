@@ -51,7 +51,7 @@
                   <name>hasScale</name>
                   <dataType>xsd:string</dataType>
                   <propertyName>LINES.UOM_DESTEMPERATURE</propertyName>
-                  <valueListName>Temperature</valueListName>
+                  <valueList>Temperature</valueList>
                 </RoleMap>
                 <RoleMap>
                   <type>Reference</type>
