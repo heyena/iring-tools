@@ -96,13 +96,12 @@ Ext.onReady(function () {
 		    collapseMode: 'mini',
 		    collapsible: true,
 		    collapsed: false,
-		    searchUrl: '../services/refdata',
+		    searchUrl: 'refdata',
 		    limit: 100
 		  });
-	  // Load Stores
-	  searchPanel.load();
 	  
-	  
+		
+		
 	var viewport = new Ext.Viewport({
 		layout: 'border',
 		renderTo: Ext.getBody(),
