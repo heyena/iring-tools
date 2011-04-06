@@ -96,13 +96,15 @@ namespace org.iringtools.adapter.projection
 
       return new XDocument(rootElement);
     }
-
-    public override XDocument ToXml(string graphName, string className, string classIdentifier, ref IDataObject dataObject)
+                    
+    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
     {
       XElement rootElement = null;
 
       try
       {
+        IDataObject dataObject = dataObjects.FirstOrDefault();
+
         _graphMap = _mapping.FindGraphMap(graphName);
 
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 && dataObject != null)

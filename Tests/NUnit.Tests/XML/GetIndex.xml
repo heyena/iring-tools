@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<LinesList total="31" xmlns="http://www.example.com/12345_000/ABC/LINES">
+<LinesList total="32" xmlns="http://www.example.com/12345_000/ABC/LINES">
+  <Lines uri="http://www.example.com/12345_000/ABC/LINES/66015-O">
+    <Tag>66015-O</Tag>
+  </Lines>
   <Lines uri="http://www.example.com/12345_000/ABC/LINES/90002-RV">
     <Tag>90002-RV</Tag>
   </Lines>

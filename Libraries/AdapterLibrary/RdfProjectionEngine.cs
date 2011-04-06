@@ -75,7 +75,7 @@ namespace org.iringtools.adapter.projection
       return rdfDoc;
     }
 
-    public override XDocument ToXml(string graphName, string className, string classIdentifier, ref IDataObject dataObject)
+    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
     {
       XDocument rdfDoc = null;
 
@@ -87,6 +87,8 @@ namespace org.iringtools.adapter.projection
 
       try
       {
+        IDataObject dataObject = dataObjects.FirstOrDefault();
+
         _graphMap = _mapping.FindGraphMap(graphName);
 
         if (_graphMap != null && _graphMap.classTemplateListMaps.Count > 0 && dataObject != null)
@@ -222,8 +224,8 @@ namespace org.iringtools.adapter.projection
     // build RDF that's rooted at className with classIdentifier
     private XElement BuildRdfXml(string startClassName, string startClassIdentifier)
     {
-      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateMap = 
-        _graphMap.GetClassTemplateListMapByName(startClassName);
+      KeyValuePair<ClassMap, List<TemplateMap>> classTemplateMap = String.IsNullOrEmpty(startClassName) ?
+        _graphMap.classTemplateListMaps.First() : _graphMap.GetClassTemplateListMapByName(startClassName);
 
       if (classTemplateMap.Key != null)
       {
