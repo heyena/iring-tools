@@ -1,55 +1,46 @@
-#summary Date: 2011/3/30
+#summary Date: 2011/4/7
 #labels Meeting
 
 *Attendance*
   * Aswini
   * Mohamed
-  * Rashmi 
+  * Rashmi
   * Koos
 
 *Status*
 
-Koos
-  * looking at the issue of connecting to DotNetRDF
-  * handle crashes gracefully
-  * waiting for latest iringsandbox deployment
-
 Aswini
-  * Search Panel ui
-  * Search Panel Ui should be similar to the refdataeditor searchpanel in C#
+  * Search is returning a tree, but getsuperclasses etc.. are not working
+  * Koos: same problem in the mapping editor, build the whole tree everytime!.
+  * No way to store context.
+  * Tried several options
+
+Koos
+  * Tested the search panel. Fails when there are spaces in the name.
+  * Java URI encoding replaces spaces with '+'
+  * Issue added to JIRA
+  * FederationManager vs. RefDataManager on the UI
+  * Worried about MappingEditor implementation using ExtJS
+  * Ext JS Framework not Flexible
 
 Rashmi
-  * will working between iRING and IIP
-     
-Mohamed
-  * will focus on RefDataManager ui
+  * JSON Results for the tree - DONE
+  * working on the Ext JS Forms; AddClass and AddTemplate
 
+Mohamed
+  * What do i do in order to not mess up my repository?
+  * will install subclipse
 
 *Assignments*
-  * Post Template - has some dead code (code that will never execute) - Rashmi
-     * some queries do not consider the repository type.
-     * Koos and Rashmi to communicate through email to clean Post Template
- 
-  * Revisit the queries (part8 sparql queries) - Mohd/Koos
- 
-  * Postclass needs to be ported to java - Rashmi
 
-  * Search panel backend is not working
-     * need to call referencedataservice through federationManager
-     * text box with button to fire request to the federationManager (search function) - Aswini/Rashmi
-     * views the results as a tree (the children are static) - Aswini
-          * clicking on each child generates a new call to the federationManager (e.g. getSubClass, getSuperClass, getTemplates) - Aswini/Mohd/Koos
-          * This will require looking at the C#
-  
-  * Posting a query in Java (Posttorepository) - Mohd/Rashmi
+Koos
+  * Will discuss with rest of the team EXT JS lazy loading issue
 
-  * Will focus on the ui design for the RefDataManager - Mohd/Darius
-     * revising the existing design
-     * coming up with the RefDataEditor design
-          * going to be a tab
-          * going to depend on qmxf which hasnt changned
-     * where do we place the details panel for the refdataeditor?
+Aswini
+  * work on the Tree based on the feedback from EXt JS issue
 
-  * C# ui deals with RefDataEntities inside a Response - Koos
-     * Java ui deals with JSON
-     * convert RefDataEntities into JSON
+Rashmi
+  * will continue working on the EXT JS Forms
+     
+Mohamed
+  * to figure out Posttorepository in Java
