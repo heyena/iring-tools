@@ -47,17 +47,17 @@ namespace org.iringtools.utils.exchange
         string _adapterCredentialDomain = String.Empty;
         string _adapterCredentialUsername = String.Empty;
         string _adapterCredentialPassword = String.Empty;
-        WebClient adapterClient = new WebClient();
-        bool isadapterDiaglogShown = false;
-        WebClient facedeClient = new WebClient();
-        bool isfacedeDiaglogShown = false;
+        const string DEFAULT_GRAPH = "[Default Graph]";
         #endregion
 
         public FacadeExchange()
         {
             InitializeComponent();
 
-            listBoxResults.ItemsSource = _messages;
+      listBoxResults.ItemsSource = _messages;
+
+      textBoxAdapterURL.Text = ConfigurationManager.AppSettings["DefaultAdapterURL"];
+      textBoxTargetURL.Text = ConfigurationManager.AppSettings["DefaultFacadeURL"];
 
             _proxyHost = ConfigurationManager.AppSettings["ProxyHost"];
             _proxyPort = ConfigurationManager.AppSettings["ProxyPort"];
@@ -77,48 +77,39 @@ namespace org.iringtools.utils.exchange
                 bool adapterConnect;
                 bool facadeConnect;
 
+            if (chkboxAdapterCredentials.IsChecked == true)
+                adapterConnect = ShowLoginDialog(CredentialType.Adapter) == true;
+            else
+                adapterConnect = true;
+
+            if (chkboxFacadeCredentials.IsChecked == true)
+                facadeConnect = ShowLoginDialog(CredentialType.Facade) == true;
+            else
+                facadeConnect = true;
+
+            if (adapterConnect && facadeConnect)
+            {
+                #region Prepare proxy and facade credentials if required
+                if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
+                {
+                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                    proxy.Credentials = CredentialCache.DefaultCredentials;
+                    client.Proxy = proxy;
+                }
+                else
+                {
+                    client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                }
                 if (chkboxAdapterCredentials.IsChecked == true)
                 {
-                    if (isadapterDiaglogShown == false)
-                        adapterConnect = ShowLoginDialog(CredentialType.Adapter) == true;
-                    else
-                        adapterConnect = true;
+                    NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
+                    client.Credentials = credential;
                 }
                 else
-                    adapterConnect = true;
-                if (chkboxFacadeCredentials.IsChecked == true)
                 {
-                    if (isfacedeDiaglogShown == false)
-                        facadeConnect = ShowLoginDialog(CredentialType.Facade) == true;
-                    else
-                        facadeConnect = true;
+                    client.Credentials = CredentialCache.DefaultCredentials;
                 }
-                else
-                    facadeConnect = true;
-
-                if (adapterConnect && facadeConnect)
-                {
-                    #region Prepare proxy and facade credentials if required
-                    if (_proxyHost != String.Empty && _proxyPort != String.Empty)
-                    {
-                        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
-                        proxy.Credentials = CredentialCache.DefaultCredentials;
-                        client.Proxy = proxy;
-                    }
-                    else
-                    {
-                        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-                    }
-                    if (isfacedeDiaglogShown == true)
-                    {
-                        //NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
-                        client.Credentials = facedeClient.Credentials;
-                    }
-                    else
-                    {
-                        client.Credentials = CredentialCache.DefaultCredentials;
-                    }
-                    #endregion
+                #endregion
 
                     //client.Credentials = CredentialCache.DefaultCredentials;
 
@@ -128,28 +119,34 @@ namespace org.iringtools.utils.exchange
                     client.Headers["Content-type"] = "application/xml";
                     client.Encoding = Encoding.UTF8;
 
-                    Uri pullURI = new Uri(
-                        textBoxAdapterURL.Text + "/" +
-                        _project.Name + "/" +
-                        _application.Name + "/" +
-                        _graph.name + "/pull");
+                string localFacadeUrl = textBoxAdapterURL.Text;
 
-                    Request request = new Request();
-                    WebCredentials targetCredentials = new WebCredentials();
-                    if (chkboxFacadeCredentials.IsChecked == true)
-                    {
-                        targetCredentials.domain = _facadeCredentialDomain;
-                        targetCredentials.userName = _facadeCredentialUsername;
-                        targetCredentials.password = _facadeCredentialPassword;
-                        targetCredentials.Encrypt();
-                    }
-                    string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
-                    request.Add("targetUri", textBoxTargetURL.Text);
-                    request.Add("targetCredentials", targetCredentialsXML);
-                    request.Add("targetGraphBaseUri", comboBoxGraphUri.Text);
-                    request.Add("graphName", comboBoxGraphName.Text);
-                    request.Add("filter", "");
+                Uri pullURI = new Uri(
+                    localFacadeUrl + "/" +
+                    _project.Name + "/" +
+                    _application.Name + "/" +
+                    _graph.name + "/pull");
 
+                Request request = new Request();
+                WebCredentials targetCredentials = new WebCredentials();
+                if (chkboxFacadeCredentials.IsChecked == true)
+                {
+                    targetCredentials.domain = _facadeCredentialDomain;
+                    targetCredentials.userName = _facadeCredentialUsername;
+                    targetCredentials.password = _facadeCredentialPassword;
+                    targetCredentials.Encrypt();
+                }
+                string targetCredentialsXML = Utility.Serialize<WebCredentials>(targetCredentials, true);
+                request.Add("targetUri", textBoxTargetURL.Text);
+                request.Add("targetCredentials", targetCredentialsXML);
+                if (comboBoxGraphUri.Text == DEFAULT_GRAPH)
+                {
+                  request.Add("targetGraphBaseUri", "");
+                }
+                else
+                {
+                  request.Add("targetGraphBaseUri", comboBoxGraphUri.Text);
+                }
                     string message = Utility.SerializeDataContract<Request>(request);
 
                     client.UploadStringAsync(pullURI, message);
@@ -179,38 +176,40 @@ namespace org.iringtools.utils.exchange
                 WebClient client = new WebClient();
                 bool connect;
 
-                if (isadapterDiaglogShown == false)
-                    connect = ShowLoginDialog(CredentialType.Adapter) == true;
-                else
-                    connect = true;
+            if (chkboxAdapterCredentials.IsChecked == true)
+                connect = ShowLoginDialog(CredentialType.Adapter) == true;
+            else
+                connect = true;
 
-                if (connect)
+            if (connect)
+            {
+                #region Prepare proxy and facade credentials if required
+              if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
                 {
-                    #region Prepare proxy and facade credentials if required
-                    if (_proxyHost != String.Empty && _proxyPort != String.Empty)
-                    {
-                        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
-                        proxy.Credentials = CredentialCache.DefaultCredentials;
-                        client.Proxy = proxy;
-                    }
-                    else
-                    {
-                        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-                    }
-                    if (isadapterDiaglogShown == true)
-                    {
-                        // NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
-                        client.Credentials = adapterClient.Credentials;
-                    }
-                    else
-                    {
-                        client.Credentials = CredentialCache.DefaultCredentials;
-                    }
-                    #endregion
+                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                    proxy.Credentials = CredentialCache.DefaultCredentials;
+                    client.Proxy = proxy;
+                }
+                else
+                {
+                    client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                }
+                if (chkboxAdapterCredentials.IsChecked == true)
+                {
+                    NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
+                    client.Credentials = credential;
+                }
+                else
+                {
+                    client.Credentials = CredentialCache.DefaultCredentials;
+                }
+                #endregion
 
                     client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_DownloadStringCompleted);
 
-                    Uri refreshURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/" + comboBoxGraphName.Text + "/refresh");
+                string localFacadeUrl = textBoxAdapterURL.Text;
+
+                Uri refreshURI = new Uri(localFacadeUrl + "/" + _project.Name + "/" + _application.Name + "/" + comboBoxGraphName.Text + "/refresh");
 
                     client.DownloadStringAsync(refreshURI);
                 }
@@ -240,44 +239,37 @@ namespace org.iringtools.utils.exchange
 
                 Uri scopesURI = new Uri(textBoxAdapterURL.Text + "/scopes");
 
-                WebClient client = new WebClient();
-                bool connect;
-                if (chkboxAdapterCredentials.IsChecked == true)
+            WebClient client = new WebClient();
+            bool connect;
+
+            if (chkboxAdapterCredentials.IsChecked == true)
+                connect = ShowLoginDialog(CredentialType.Adapter) == true;
+            else
+                connect = true;
+
+            if (connect)
+            {
+                #region Prepare proxy and facade credentials if required
+                if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
                 {
-                    if (isadapterDiaglogShown == false)
-                        connect = ShowLoginDialog(CredentialType.Adapter) == true;
-                    else
-                        connect = true;
+                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                    proxy.Credentials = CredentialCache.DefaultCredentials;
+                    client.Proxy = proxy;
                 }
                 else
-                    connect = true;
-
-                if (connect)
                 {
-                    #region Prepare proxy and facade credentials if required
-                    if (_proxyHost != String.Empty && _proxyPort != String.Empty)
-                    {
-                        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
-                        proxy.Credentials = CredentialCache.DefaultCredentials;
-                        client.Proxy = proxy;
-
-                    }
-                    else
-                    {
-                        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-                    }
-                    if (isadapterDiaglogShown == true)
-                    {
-                        NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
-                        client.Credentials = credential;
-                        adapterClient.Credentials = credential;
-
-                    }
-                    else
-                    {
-                        client.Credentials = CredentialCache.DefaultCredentials;
-                    }
-                    #endregion
+                    client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                }
+                if (chkboxAdapterCredentials.IsChecked == true)
+                {
+                    NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
+                    client.Credentials = credential;
+                }
+                else
+                {
+                    client.Credentials = CredentialCache.DefaultCredentials;
+                }
+                #endregion
 
                     client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetScopesCompleted);
 
@@ -319,42 +311,52 @@ namespace org.iringtools.utils.exchange
                 _messages.Clear();
                 bool connect;
 
-                if (isfacedeDiaglogShown != true && chkboxFacadeCredentials.IsChecked == true)
-                    connect = ShowLoginDialog(CredentialType.Facade) == true;
-                else
-                    connect = true;
+            if (chkboxFacadeCredentials.IsChecked == true)
+                connect = ShowLoginDialog(CredentialType.Facade) == true;
+            else
+                connect = true;
 
                 if (connect)
                 {
                     _messages.Add(new StatusMessage { Message = "Fetching graphs from Façade...", ImageName = "Resources/info_22.png" });
 
-                    string sparql = "SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } }";
+                string sparql = "SELECT DISTINCT ?g WHERE { GRAPH ?g { ?s ?p ?o } }";
+                //string sparql = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> SELECT * WHERE {?uri rdfs:label ?label} ORDER BY ?label LIMIT 1";
+                SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(textBoxTargetURL.Text), "");
+                endpoint.DefaultGraphs.Add("");
 
-                    SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(textBoxTargetURL.Text), "");
+                #region Prepare proxy and facade credentials if required
+                if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
+                {
+                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                    proxy.Credentials = CredentialCache.DefaultCredentials;
+                    endpoint.Proxy = proxy;
+                }
+                if (chkboxFacadeCredentials.IsChecked == true)
+                {
+                    endpoint.Credentials = new NetworkCredential();
+                    endpoint.Credentials.Domain = _facadeCredentialDomain;
+                    endpoint.Credentials.UserName = _facadeCredentialUsername;
+                    endpoint.Credentials.Password = _facadeCredentialPassword;
+                }
+                #endregion
 
-                    #region Prepare proxy and facade credentials if required
-                    if (_proxyHost != String.Empty && _proxyPort != String.Empty)
-                    {
-                        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
-                        proxy.Credentials = CredentialCache.DefaultCredentials;
-                        endpoint.Proxy = proxy;
-                    }
-                    if (isfacedeDiaglogShown == true && chkboxFacadeCredentials.IsChecked == true)
-                    {
-                        endpoint.Credentials = new NetworkCredential();
-                        endpoint.Credentials.Domain = _facadeCredentialDomain;
-                        endpoint.Credentials.UserName = _facadeCredentialUsername;
-                        endpoint.Credentials.Password = _facadeCredentialPassword;
-                        facedeClient.Credentials = endpoint.Credentials;
-                    }
-                    #endregion
-
+                try
+                {
+                    SparqlResultSet results = new SparqlResultSet();
                     try
                     {
-                        SparqlResultSet results = endpoint.QueryWithResultSet(sparql);
+                      results = endpoint.QueryWithResultSet(sparql);
+                    }
+                    //Handle dotNetRDF Deserialization Bug
+                    catch (Exception ex)
+                    {
+                      if (ex.Message != "Unable to Parse a SPARQL Result Set since a <binding> element contains an unexpected element <result>!")
+                        throw ex;
+                    }
 
                         _graphUris = new List<string>();
-                        _graphUris.Add("[Default Graph]");
+                        _graphUris.Add(DEFAULT_GRAPH);
                         foreach (SparqlResult result in results.Results)
                         {
                             string uri = result.Value("g").ToString();
@@ -434,30 +436,30 @@ namespace org.iringtools.utils.exchange
             {
                 _application = (ScopeApplication)comboBoxAppName.SelectedItem;
 
-                if (_application != null && _application.Name != null && _application.Name != String.Empty)
+            if (_application != null && _application.Name != null && _application.Name != String.Empty)
+            {
+                WebClient client = new WebClient();
+                #region Prepare proxy and facade credentials if required
+                if (!String.IsNullOrEmpty(_proxyHost) && !String.IsNullOrEmpty(_proxyPort))
                 {
-                    WebClient client = new WebClient();
-                    #region Prepare proxy and facade credentials if required
-                    if (_proxyHost != String.Empty && _proxyPort != String.Empty)
-                    {
-                        WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
-                        proxy.Credentials = CredentialCache.DefaultCredentials;
-                        client.Proxy = proxy;
-                    }
-                    else
-                    {
-                        client.Proxy.Credentials = CredentialCache.DefaultCredentials;
-                    }
-                    if (chkboxAdapterCredentials.IsChecked == true)
-                    {
-                        NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
-                        client.Credentials = credential;
-                    }
-                    else
-                    {
-                        client.Credentials = CredentialCache.DefaultCredentials;
-                    }
-                    #endregion
+                    WebProxy proxy = new WebProxy(_proxyHost, Convert.ToInt16(_proxyPort));
+                    proxy.Credentials = CredentialCache.DefaultCredentials;
+                    client.Proxy = proxy;
+                }
+                else
+                {
+                    client.Proxy.Credentials = CredentialCache.DefaultCredentials;
+                }
+                if (chkboxAdapterCredentials.IsChecked == true)
+                {
+                    NetworkCredential credential = new NetworkCredential(_adapterCredentialUsername, _adapterCredentialPassword, _adapterCredentialDomain);
+                    client.Credentials = credential;
+                }
+                else
+                {
+                    client.Credentials = CredentialCache.DefaultCredentials;
+                }
+                #endregion
 
                     client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetMappingCompleted);
 
@@ -619,20 +621,18 @@ namespace org.iringtools.utils.exchange
             }
         }
 
-        private bool ShowLoginDialog(CredentialType credentialType)
+    private bool ShowLoginDialog(CredentialType credentialType)
+    {
+        Login login = new Login();
+        login.Owner = this;
+        if (credentialType == CredentialType.Adapter)
         {
-            Login login = new Login();
-            login.Owner = this;
-            if (credentialType == CredentialType.Adapter)
-            {
-                login.txtBlockTitle.Text = "Adapter Credentials";
-                isadapterDiaglogShown = true;
-            }
-            else if (credentialType == CredentialType.Facade)
-            {
-                login.txtBlockTitle.Text = "Façade Credentials";
-                isfacedeDiaglogShown = true;
-            }
+            login.txtBlockTitle.Text = "Adapter Credentials";
+        }
+        else if (credentialType == CredentialType.Facade)
+        {
+            login.txtBlockTitle.Text = "Façade Credentials";
+        }
 
             login.ShowDialog();
 
@@ -667,36 +667,11 @@ namespace org.iringtools.utils.exchange
             public string Message { get; set; }
         }
 
-        private void chkboxAdapterCredentials_Checked(object sender, RoutedEventArgs e)
-        {
-            CheckBox _checkbox = sender as CheckBox;
-
-            if (_checkbox.IsChecked == true)
-            {
-                isadapterDiaglogShown = false;
-            }
-        }
-
-        private void chkboxFacadeCredentials_Checked(object sender, RoutedEventArgs e)
-        {
-            CheckBox _checkbox = sender as CheckBox;
-
-            if (_checkbox.IsChecked == true)
-            {
-                isfacedeDiaglogShown = false;
-            }
-        }
-
-        private void chkboxAdapterCredentials_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        //public string AdapterCredentialDomain
-        //{
-        //    get { return _adapterCredentialDomain; }
-        //    set { _adapterCredentialDomain = value; }
-        //}
+    //public string AdapterCredentialDomain
+    //{
+    //    get { return _adapterCredentialDomain; }
+    //    set { _adapterCredentialDomain = value; }
+    //}
 
         //public string AdapterCredentialUsername
         //{
