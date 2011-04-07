@@ -36,12 +36,16 @@
             <h2>iRINGTools Applications</h2>
             <ul>
               <li>
-                <a href="<%=Request.Url.Scheme + "://" + Request.Url.Host%>:8080/apps/xchmgr">
-                Exchange Manager</a>
+                <a href="http://localhost:8080/apps/xchmgr">
+                ExchangeManager</a>
               </li>
               <li>
-                <a href="<%=Request.Url.Scheme + "://" + Request.Url.Host%>:8080/apps/fedmgr">
-                Federation Manager</a>
+                <a href="http://localhost:8080/apps/fedmgr">
+                FederationManager</a>
+              </li>
+                <li>
+                <a href="Apps/AdapterManager">
+                AdapterManager</a>
               </li>
               <li>
                 <a href="Apps/RefDataEditor">
@@ -55,19 +59,19 @@
                 <a href="Apps/MappingEditor">
                 Mapping Editor</a>
               </li>
+              <li>
+                <a href="services/facade/sparql/query">
+                Facade Query</a>
+              </li>
+              <li>
+                <a href="services/sandbox/sparql/query">
+                Sandbox Query</a>
+              </li>
             </ul>
           </td>
           <td>
             <h2>iRINGTools Services</h2>
             <ul>
-              <li>
-                <a href="services/facade/query">
-                Interface Service</a>
-              </li>
-              <li>
-                <a href="services/sandbox/query">
-                Sandbox Service</a>
-              </li>
               <li>
                 <a href="services/refdata/help">
                 Reference Data Service</a>
@@ -87,6 +91,14 @@
               <li>
                 <a href="services/dxfr/help">
                 Data Transfer Service</a>
+              </li>
+              <li>
+                <a href="services/facade/svc/help">
+                Facade Service</a>
+              </li>
+              <li>
+                <a href="services/sandbox/svc/help">
+                Sandbox Service</a>
               </li>
             </ul>
           </td>
