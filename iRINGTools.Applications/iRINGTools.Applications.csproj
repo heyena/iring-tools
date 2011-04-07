@@ -110,7 +110,9 @@
     <Compile Include="Helpers\JsonTreeNode.cs" />
     <Compile Include="Models\AdapterRepository.cs" />
     <Compile Include="Models\IAdapterRepository.cs" />
+    <Compile Include="Models\IMappingRepository.cs" />
     <Compile Include="Models\IRefDataRepository.cs" />
+    <Compile Include="Models\MappingRepository.cs" />
     <Compile Include="Models\RefDataRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\AppEditor\Index.aspx.cs">

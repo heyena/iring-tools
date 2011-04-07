@@ -261,7 +261,9 @@ Ext.onReady(function () {
         var newTab = new AdapterManager.MappingPanel({
             title: 'Mapping - ' + scope.text + "." + application.text,
             scope: scope.attributes.record,
-            application: application.attributes.record
+            record: node.attributes.record,
+            application: application.attributes.record,
+            navigationUrl: 'mapping/getnode'
         });
 
         contentPanel.add(newTab);

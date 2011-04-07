@@ -23,16 +23,18 @@ namespace iRINGTools.Web.Controllers
   public class MappingController : Controller
   {
 
-    NameValueCollection _settings = null;
-    string _adapterServiceURI = String.Empty;
-    string _refDataServiceURI = String.Empty;
+    private NameValueCollection _settings = null;
+    private IMappingRepository _repository { get; set; }
+    private string _keyFormat = "Mapping.{0}.{1}";
 
     public MappingController()
+      : this(new MappingRepository())
+    { }
+    public MappingController(IMappingRepository repository)
     {
       _settings = ConfigurationManager.AppSettings;
-      _adapterServiceURI = _settings["AdapterServiceUri"];
-      _refDataServiceURI = _settings["ReferenceDataServiceUri"];
-    }   
+      _repository = repository;
+    }
 
     //
     // GET: /Mapping/
@@ -42,119 +44,183 @@ namespace iRINGTools.Web.Controllers
       return View();
     }
 
-    public JsonResult GetNode(FormCollection form) 
+    private void GetMapping(string scope, string application)
     {
+      string key = string.Format(_keyFormat, scope, application);
 
-      string format = String.Empty;
-      string adapterServiceURI = _adapterServiceURI;
-
-      if (Request.QueryString["format"] != null)
-        format = Request.QueryString["format"].ToUpper();
-
-      if (Request.QueryString["remote"] != null)
-        adapterServiceURI = Request.QueryString["remote"] + "/adapter";
-
-      WebHttpClient client = new WebHttpClient(adapterServiceURI);
-
-      switch (form["type"]) {
-        case "GraphNode" :
-          {
-            string context = form["node"];
-
-            Mapping mapping = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", context.Split('/')[0], context.Split('/')[1]), true);
-
-            GraphMap graph = mapping.graphMaps.FirstOrDefault(o => o.name == context.Split('/')[2]);
-
-            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
-            foreach (ClassTemplateMap template in graph.classTemplateMaps)
-            {
-              JsonTreeNode node = new JsonTreeNode
-              {
-                nodeType = "async",
-                type = "ClassTemplateNode",
-                icon = "Content/img/class-map.png",
-                id = context + "/" + template.classMap.name,
-                text = template.classMap.name,
-                expanded = false,
-                leaf = false,
-                children = null
-              };
-
-              nodes.Add(node);
-            }
-
-            return Json(nodes, JsonRequestBehavior.AllowGet);
-          }
-        case "ClassTemplateNode":
-          {
-            string context = form["node"];
-
-            Mapping mapping = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", context.Split('/')[0], context.Split('/')[1]), true);
-
-            GraphMap graph = mapping.graphMaps.FirstOrDefault(o => o.name == context.Split('/')[2]);
-            ClassTemplateMap classTemplate = graph.classTemplateMaps.FirstOrDefault(o => o.classMap.name == context.Split('/')[3]);
-
-            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                        
-            foreach (TemplateMap template in classTemplate.templateMaps)
-            {
-              JsonTreeNode node = new JsonTreeNode
-              {
-                nodeType = "async",
-                type = "TemplateNode",
-                icon = "Content/img/valuelist.png",
-                id = context + "/" + template.name,
-                text = template.name,
-                expanded = false,
-                leaf = false,
-                children = null
-              };
-
-              nodes.Add(node);
-            }
-
-            return Json(nodes, JsonRequestBehavior.AllowGet);
-          }
-        case "TemplateNode":
-          {
-            string context = form["node"];
-
-            Mapping mapping = client.Get<Mapping>(String.Format("/{0}/{1}/mapping", context.Split('/')[0], context.Split('/')[1]), true);
-
-            GraphMap graph = mapping.graphMaps.FirstOrDefault(o => o.name == context.Split('/')[2]);
-            ClassTemplateMap classTemplate = graph.classTemplateMaps.FirstOrDefault(o => o.classMap.name == context.Split('/')[3]);
-            TemplateMap template = classTemplate.templateMaps.FirstOrDefault(o => o.name == context.Split('/')[4]);
-
-            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
-            foreach (RoleMap role in template.roleMaps)
-            {
-              JsonTreeNode node = new JsonTreeNode
-              {
-                nodeType = "async",
-                type = "TemplateNode",
-                icon = "Content/img/role.png",
-                id = context + "/" + role.name,
-                text = role.name,
-                expanded = false,
-                leaf = false,
-                children = null
-              };
-
-              nodes.Add(node);
-            }
-
-            return Json(nodes, JsonRequestBehavior.AllowGet);
-          }
-        default: 
-          {
-            break;
-          }
+      if (Session[key] == null)
+      {
+        Session[key] = _repository.GetMapping(scope, application);
       }
-
-      return Json(new { success = false }, JsonRequestBehavior.AllowGet);
     }
 
+
+    public JsonResult GetNode(FormCollection form)
+    {
+      GraphMap graphMap = null;
+      ClassMap graphclassMap = null;
+      char[] delimiters = new char[] { '/' };
+      string format = String.Empty;
+      string context = form["node"];
+
+      string[] variables = context.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+      string scope = variables[0];
+      string application = variables[1];
+      string key = string.Format(_keyFormat, scope, application);
+
+      if (Session[key] == null)
+        GetMapping(scope, application);
+      Mapping mapping = (Mapping)Session[key];
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+      if (variables.Count() > 2)
+      {
+        graphMap = mapping.graphMaps.FirstOrDefault(c => c.name == variables[2]);
+        graphclassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
+      }
+      switch (form["type"])
+      {
+        case "mapping":
+          break;
+        case "GraphMapNode":
+          if (graphMap != null)
+          {
+
+            foreach (var templateMaps in graphMap.classTemplateMaps)
+            {
+              if (templateMaps.classMap.name != graphclassMap.name) continue;
+              foreach (var templateMap in templateMaps.templateMaps)
+              {
+
+                JsonTreeNode templateNode = GetTemplateNode(templateMap, context);
+                nodes.Add(templateNode);
+              }
+            }
+          }
+          break;
+        case "ClassMapNode":
+          var classMapId = form["record"];
+          if (graphMap != null)
+          {
+            foreach (var templateMaps in graphMap.classTemplateMaps)
+            {
+              if (templateMaps.classMap.id == graphclassMap.id) continue;
+              foreach (var templateMap in templateMaps.templateMaps)
+              {
+
+                JsonTreeNode templateNode = GetTemplateNode(templateMap, context);
+                nodes.Add(templateNode);
+              }
+            }
+          }
+          break;
+        case "TemplateMapNode":
+          var templateId = form["record"];
+          if (graphMap != null)
+          {
+
+            foreach (var templateMaps in graphMap.classTemplateMaps)
+            {
+              if (templateMaps.classMap.name != graphclassMap.name) continue;
+              foreach (var templateMap in templateMaps.templateMaps)
+              {
+                if (templateMap.id != templateId) continue;
+                foreach (var role in templateMap.roleMaps)
+                {
+                  JsonTreeNode roleNode = GetRoleNode(role, context);
+                  nodes.Add(roleNode);
+                  if (role.classMap != null && role.classMap.id != graphclassMap.id)
+                  {
+                    JsonTreeNode classNode = GetClassNode(role.classMap, context);
+                    if (roleNode.children == null)
+                      roleNode.children = new List<JsonTreeNode>();
+                    roleNode.children.Add(classNode);
+                  }
+                }
+              }
+            }
+          }
+          break;
+        case "RoleMapNode":
+          break;
+        default:
+          foreach (var graph in mapping.graphMaps)
+          {
+            JsonTreeNode graphNode = GetGraphNode(graph, context);
+
+            nodes.Add(graphNode);
+          }
+          break;
+      }
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    private JsonTreeNode GetRoleNode(RoleMap role, string context)
+    {
+      JsonTreeNode templateNode = new JsonTreeNode
+      {
+        nodeType = "async",
+        type = "RoleMapNode",
+        icon = "Content/img/role-map.png",
+        id = context + "/" + role.name,
+        text = role.name,
+        expanded = false,
+        leaf = false,
+        children = null,
+        record = role.id
+      };
+      return templateNode;
+    }
+
+    private JsonTreeNode GetClassNode(ClassMap classMap, string context)
+    {
+      JsonTreeNode classNode = new JsonTreeNode
+      {
+        nodeType = "async",
+        type = "ClassMapNode",
+        icon = "Content/img/class-map.png",
+        id = context + "/" + classMap.name,
+        text = classMap.name,
+        expanded = false,
+        leaf = false,
+        children = null,
+        record = classMap.id
+      };
+      return classNode;
+    }
+
+    private JsonTreeNode GetTemplateNode(TemplateMap templateMap, string context)
+    {
+      JsonTreeNode templateNode = new JsonTreeNode
+      {
+        nodeType = "async",
+        type = "TemplateMapNode",
+        icon = "Content/img/template-map.png",
+        id = context + "/" + templateMap.name,
+        text = templateMap.name,
+        expanded = false,
+        leaf = false,
+        children = null,
+        record = templateMap.id
+      };
+      return templateNode;
+    }
+
+    private JsonTreeNode GetGraphNode(GraphMap graph, string context)
+    {
+      JsonTreeNode graphNode = new JsonTreeNode
+      {
+        nodeType = "async",
+        type = "GraphMapNode",
+        icon = "Content/img/class-map.png",
+        id = context + "/" + graph.name,
+        text = graph.name,
+        expanded = false,
+        leaf = false,
+        children = null,
+        record = graph.name
+
+      };
+      return graphNode;
+    }
   }
 }
