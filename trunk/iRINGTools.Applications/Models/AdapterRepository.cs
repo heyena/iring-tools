@@ -248,9 +248,13 @@ namespace iRINGTools.Web.Models
                     application.Description = description;
                 }
             }
-            //UpdateBinding--
+
+            //First Step: Save Scopes
+            string result= PostScopes(scopes);
+
+            //Second Step: UpdateBinding
             UpdateBinding(scopeName, applicationName, assembly);
-            return PostScopes(scopes);
+            return result;
         }
 
         public string DeleteApplication(string scopeName, string applicationName)
