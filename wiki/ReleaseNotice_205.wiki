@@ -1,10 +1,11 @@
 #summary Date: 2011/4/6
-=iRINGTools-2.00.05.3135=
+#labels Featured
+=iRINGTools-2.00.05.3149=
 
 A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_204 iRINGTools 2.0] that includes bug fixes.  
 
 The download is available [http://iring-tools.googlecode.com/files/iRINGTools-2.0.5.zip here].  
-The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGTools-SDK-2.0.5.zip here]
+The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGTools-SDK-2.0.4.zip here]
 
 [http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v2.0.1.pdf Installation Guide]
 
@@ -14,7 +15,9 @@ The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGToo
 
 == New Features ==
  * Improved dotNetRDF endpoints
+ * Improved QMXF Generator and Transforms.
 == Bugs Fixed ==
- * 
+ * Related Item URIs have been fixed to maintain compatibility.
+ * Repositories.xml was old.
 
 Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
