@@ -1,5 +1,5 @@
 @prefix dnr: <http://www.dotnetrdf.org/configuration#> .
-<dotnetrdf:/facade/sparql/*> a dnr:HttpHandler ;
+<dotnetrdf:/services/facade/sparql/*> a dnr:HttpHandler ;
         dnr:cacheDuration "0";
         dnr:queryProcessor _:qProc ;
         dnr:updateProcessor _:uProc ;
@@ -26,7 +26,7 @@ _:sqlServer a dnr:SqlIOManager ;
         dnr:database "FacadeDb" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
-<dotnetrdf:/sandbox/sparql/*> a dnr:HttpHandler ;
+<dotnetrdf:/services/sandbox/sparql/*> a dnr:HttpHandler ;
         dnr:cacheDuration "0";
         dnr:queryProcessor _:qProcS ;
         dnr:updateProcessor _:uProcS ;
