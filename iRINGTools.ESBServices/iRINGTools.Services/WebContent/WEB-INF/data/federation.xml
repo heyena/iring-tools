@@ -35,7 +35,7 @@
 		</namespace>
 	</namespaces>
 	<repositories>
-		<sequenceId>4</sequenceId>
+		<sequenceId>3</sequenceId>
 		<repository>
 			<id>1</id>
 			<description>RDS/WIP Part 4 Reference Data Library</description>
