@@ -269,8 +269,19 @@ FederationManager.FederationPanel = Ext
             
             return namespaces;
           },
+          
           getNodesIDTitleByID : function() {},
-
+          
+          getNewChildId : function(node) {
+          	var newId = 0, childId;
+          	for (var i = 0; i< node.childNodes.length; i++) {
+          		childId = parseInt(node.childNodes[i].attributes.identifier);
+          		if (newId < childId)
+          			newId = childId;
+          	}
+          	return newId + 1;
+          },
+          
           openTab : function(node, formType) {
             var obj = node.attributes;
             var properties = node.attributes.properties;
@@ -330,8 +341,8 @@ FederationManager.FederationPanel = Ext
 	                listItem.store = ["true", "false"];
 	                listItem.displayField = properties[i];    
 	                listItem.listeners = {'select' : function(combo, record, index) {
-											var tab = Ext.getCmp('contentPanel').getActiveTab();											
-											var textfield = tab.items.map['data-form'].items.map['update-uri'];
+											var tab = Ext.getCmp('contentPanel').getItem('tab-' + node.id);											
+											var textfield = tab.items.map['data-form'].items.map[node.id + '_update-uri'];
 											if (record.data.field1 == 'true')
 												textfield.disable();
 											else 
@@ -415,7 +426,7 @@ FederationManager.FederationPanel = Ext
 	              else {
 	                label = obj['text'] + ':(New)';	                
 	                if (i == 'Id')
-	                	value = parseInt(node.lastChild.attributes.identifier) + 1;
+	                	value = this.getNewChildId(node);
 	              }
 	              
 	              listItem.fieldLabel = i;
@@ -477,15 +488,17 @@ FederationManager.FederationPanel = Ext
 	              
 	              listItem.fieldLabel = i;
 	              listItem.name = i;
-	              listItem.id = 'update-uri';
+	              listItem.id = node.id + '_update-uri';
 	              listItem.allowBlank = false;
-	              listItem.blankText = 'This Field is required';
+	              
 	              listItem.value = value;
 	              
-	              if(readOnly == 'true')
+	              if(readOnly == 'true'){
 	              	listItem.disabled = true;
-	              else
-	              	listItem.disabled = false;	              
+	              }else{
+	              	listItem.disabled = false;	
+	              	listItem.blankText = 'This Field is required';
+	              }
 	              
 	              listItems.push(listItem);
 	            }
