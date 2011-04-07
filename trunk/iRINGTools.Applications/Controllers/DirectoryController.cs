@@ -298,7 +298,19 @@ namespace iRINGTools.Web.Controllers
 
     public JsonResult Application(FormCollection form)
     {
-      string success = _repository.UpdateApplication(form["Scope"], form["Application"], form["Name"], form["Description"], form["assembly"]);
+        #region Works in case of New Application
+        string name = string.Empty;
+        if (form["Application"] == string.Empty)
+        {
+            name = form["Name"];
+        }
+        else
+        {
+            name = form["Application"];
+        } 
+        #endregion
+
+        string success = _repository.UpdateApplication(form["Scope"], name, form["Name"], form["Description"], form["assembly"]);
             
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }

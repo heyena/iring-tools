@@ -53,13 +53,11 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         var assembly = "";
 
         if (this.record != null) {
-            if (this.record.DataLayer) {
                 name = this.record.Name;
                 description = this.record.Description;
                 dataLayer = this.record.DataLayer;
                 assembly = this.record.Assembly;
-            }
-        }
+      }
 
         var dataLayersStore = new Ext.data.JsonStore({
             // store configs            
@@ -91,16 +89,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         });
 
         cmbDataLayers.on('select', function (combo, record, index) {
-            if (this.record == null) {
-                this.record = this.form.getForm().getFieldValues();
-            }
             this.record.DataLayer = record.data.name;
             this.record.Assembly = record.data.assembly;
-        }, this);
-
-        cmbDataLayers.on('blur', function (combo) {
-            var val = combo.getRawValue();
-            combo.setRawValue.defer(1, combo, [val]);
         }, this);
 
         //that = this;
@@ -196,12 +186,12 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     },
 
     onConfigure: function () {
-        var name = this.form.getForm().getFieldValues().Name;
-        this.fireEvent('configure', this, this.scope, this.record, name);
+        var appName = this.form.getForm().getFieldValues().Name;
+        this.fireEvent('configure', this, this.scope, this.record, appName);
     },
 
     onSave: function () {
-        var that = this;    // consists the main/previous class object      
+        var that = this;    // consists the main/prappNameclass object      
         this.form.getForm().submit({
             waitMsg: 'Saving Data...',
             success: function (f, a) {

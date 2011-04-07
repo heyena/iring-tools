@@ -1,4 +1,4 @@
-﻿/// <reference path="../ext-3.2.1/adapter/ext/ext-base.js" />
+﻿// <reference path="../ext-3.2.1/adapter/ext/ext-base.js" />
 /// <reference path="../ext-3.2.1/ext-all.js" />
 /// <reference path="../ext-3.2.1/ux/ux-all.js" />
 
@@ -154,7 +154,7 @@ Ext.onReady(function () {
         }
 
         var newTab = new AdapterManager.ApplicationPanel({
-            id: 'Apptab-' + node.id,
+            id: 'tab-' + node.id,
             title: 'Application - ' + node.parentNode.text + '.(new)',
             scope: node.attributes.record,
             record: null,
@@ -168,38 +168,14 @@ Ext.onReady(function () {
             directoryPanel.reload();
         }, this);
 
-        //------------------
-
-        newTab.on('configure', function (panel, scope, application,name) {
-
-            if (application.DataLayer == 'ExcelLibrary') {
-                var newConfig = new AdapterManager.ExcelLibraryPanel({
-                    id: 'tab-c.' + scope.Name + '.' + name,
-                    title: 'Configure - ' + scope.Name + '.' + name,
-                    scope: scope,
-                    application: application,
-                    url: 'excel/configure',
-                    closable: true
-                });
-
-                contentPanel.add(newConfig);
-                contentPanel.activate(newConfig);
-
-            } else if (application.DataLayer == 'NHibernateLibrary') {
-
-            } else {
-
-            }
-
-        }, this);
-        //--------------------------
         contentPanel.add(newTab);
         contentPanel.activate(newTab);
 
     }, this);
 
     directoryPanel.on('editapplication', function (npanel, node) {
-        if (node == undefined || node == null) return;
+        if (node == undefined || node == null)
+            return;
 
         var newTab = new AdapterManager.ApplicationPanel({
             id: 'tab-' + node.id,
@@ -216,6 +192,36 @@ Ext.onReady(function () {
             directoryPanel.reload();
         }, this);
 
+        newTab.on('configure', function (panel, scope, application) {
+
+            if (application.DataLayer == 'ExcelLibrary') {
+
+                var newConfig = new AdapterManager.ExcelLibraryPanel({
+                    id: 'tab-c.' + scope.Name + '.' + application.Name,
+                    title: 'Configure - ' + scope.Name + '.' + application.Name,
+                    scope: scope,
+                    application: application,
+                    url: 'excel/configure',
+                    closable: true
+                });
+
+                contentPanel.add(newConfig);
+                contentPanel.activate(newConfig);
+
+            }
+            else if (application.DataLayer == 'NHibernateLibrary') {
+                var nhConfigWizard = new AdapterManager.NHibernateConfigWizard({
+                    url: 'actionUrl'
+                })
+
+                contentPanel.add(nhConfigWizard);
+                contentPanel.activate(nhConfigWizard);
+            }
+            else {
+
+            }
+
+        }, this);
 
         contentPanel.add(newTab);
         contentPanel.activate(newTab);
