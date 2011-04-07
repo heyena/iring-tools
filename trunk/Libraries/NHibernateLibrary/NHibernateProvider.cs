@@ -214,17 +214,17 @@ namespace org.iringtools.nhibernate
           switch (dbProvider)
           {
             case "MSSQL2008":
-              dbDictionary.Provider = Provider.MsSql2008;
+              dbDictionary.Provider = Provider.MsSql2008.ToString();
               properties.Add("dialect", "NHibernate.Dialect.MsSql2008Dialect");
               break;
 
             case "MSSQL2005":
-              dbDictionary.Provider = Provider.MsSql2005;
+              dbDictionary.Provider = Provider.MsSql2005.ToString();
               properties.Add("dialect", "NHibernate.Dialect.MsSql2005Dialect");
               break;
 
             case "MSSQL2000":
-              dbDictionary.Provider = Provider.MsSql2000;
+              dbDictionary.Provider = Provider.MsSql2000.ToString();
               properties.Add("dialect", "NHibernate.Dialect.MsSql2000Dialect");
               break;
 
@@ -246,22 +246,22 @@ namespace org.iringtools.nhibernate
           switch (dbProvider)
           {
             case "ORACLE10G":
-              dbDictionary.Provider = Provider.Oracle10g;
+              dbDictionary.Provider = Provider.Oracle10g.ToString();
               properties.Add("dialect", "NHibernate.Dialect.Oracle10gDialect");
               break;
 
             case "ORACLE9I":
-              dbDictionary.Provider = Provider.Oracle9i;
+              dbDictionary.Provider = Provider.Oracle9i.ToString();
               properties.Add("dialect", "NHibernate.Dialect.Oracle9iDialect");
               break;
 
             case "ORACLE8I":
-              dbDictionary.Provider = Provider.Oracle8i;
+              dbDictionary.Provider = Provider.Oracle8i.ToString();
               properties.Add("dialect", "NHibernate.Dialect.Oracle8iDialect");
               break;
 
             case "ORACLELITE":
-              dbDictionary.Provider = Provider.OracleLite;
+              dbDictionary.Provider = Provider.OracleLite.ToString();
               properties.Add("dialect", "NHibernate.Dialect.OracleLiteDialect");
               break;
 
@@ -279,15 +279,15 @@ namespace org.iringtools.nhibernate
           switch (dbProvider)
           {
             case "MYSQL3":
-              dbDictionary.Provider = Provider.MySql3;
+              dbDictionary.Provider = Provider.MySql3.ToString();
               properties.Add("dialect", "NHibernate.Dialect.MySQLDialect");
               break;
             case "MYSQL4":
-              dbDictionary.Provider = Provider.MySql4;
+              dbDictionary.Provider = Provider.MySql4.ToString();
               properties.Add("dialect", "NHibernate.Dialect.MySQLDialect");
               break;
             case "MYSQL5":
-              dbDictionary.Provider = Provider.MySql5;
+              dbDictionary.Provider = Provider.MySql5.ToString();
               properties.Add("dialect", "NHibernate.Dialect.MySQL5Dialect");
               break;
           }

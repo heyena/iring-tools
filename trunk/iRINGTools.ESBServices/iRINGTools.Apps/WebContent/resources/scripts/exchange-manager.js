@@ -481,12 +481,12 @@ function submitExchange(userResponse) {
     Ext.Ajax.request({
       url: 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed=' + reviewed,
       timeout: 600000,  // in milliseconds default 3000 
-      success: function(response, opts) {
+      success: function(response, request) {
         var responseText = Ext.util.JSON.decode(response.responseText);
         var message = 'Data exchange [' + exchange + '] result: \r' + responseText;
         showDialog(400, 100, 'Exchange Result', message, Ext.Msg.OK, null);
       },
-      failure: function(response, opts) {
+      failure: function(response, request) {
         var responseText = Ext.util.JSON.decode(response.responseText);
         showDialog(660, 300, 'Exchange Error (' + response.status + ')', 
           'Error while exchanging [' + exchange + ']. ' + responseText, Ext.Msg.OK, null);

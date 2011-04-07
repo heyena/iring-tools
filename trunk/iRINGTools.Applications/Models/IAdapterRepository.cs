@@ -24,14 +24,18 @@ namespace iRINGTools.Web.Models
 
     DataDictionary GetDictionary(string scope, string application);
 
-    string UpdateScope(string scopeName, string name, string description);
+    string UpdateScope(string scope, string name, string description);
 
-    string DeleteScope(string scopeName);
+    string DeleteScope(string scope);
 
-    string UpdateApplication(string scopeName, string applicationName, string name, string description, string assembly);
+    string UpdateApplication(string scope, string application, string name, string description, string assembly);
 
-    string DeleteApplication(string scopeName, string applicationName);
+    string DeleteApplication(string scope, string application);
 
     DataProviders GetDataProviders();
+
+    DatabaseDictionary GetDatabaseDictionary(string scope, string application);
+
+    DataObjects GetDataObjects(string scope, string application);
   }
 }
