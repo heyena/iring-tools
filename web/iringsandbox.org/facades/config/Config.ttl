@@ -26,3 +26,30 @@ _:sqlServerB a dnr:SqlIOManager ;
         dnr:database "BentleyFiatech2011Db" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
+<dotnetrdf:/facades/bentleypid/*> a dnr:HttpHandler ;
+        dnr:cacheDuration "0";
+        dnr:queryProcessor _:qProcBpid ;
+        dnr:updateProcessor _:uProcBpid ;
+        dnr:protocolProcessor _:pProcBpid ;
+		dnr:stylesheet "../css/interface.css" ;		
+        dnr:introText "~/config/BentleyFiatechPIDIntro.txt" ;
+        dnr:type "VDS.RDF.Web.SparqlServer" ;
+        dnr:defaultQueryFile "~/config/AllQuery.txt" .
+_:qProcBpid a dnr:SparqlQueryProcessor ;
+        dnr:type "VDS.RDF.Query.LeviathanQueryProcessor" ;
+        dnr:usingStore _:sqlStoreBpid .
+_:uProcBpid a dnr:SparqlUpdateProcessor ;
+        dnr:type "VDS.RDF.Update.LeviathanUpdateProcessor" ;
+        dnr:usingStore _:sqlStoreBpid .
+_:pProcBpid a dnr:SparqlHttpProtocolProcessor ;
+        dnr:type "VDS.RDF.Update.Protocol.LeviathanProtocolProcessor" ;
+        dnr:usingStore _:sqlStoreBpid .
+_:sqlStoreBpid a dnr:TripleStore ;
+        dnr:type "VDS.RDF.SqlTripleStore" ;
+        dnr:sqlManager _:sqlServerBpid .		
+_:sqlServerBpid a dnr:SqlIOManager ;
+        dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
+        dnr:server ".\SQLEXPRESS" ;
+        dnr:database "BentleyFiatechPIDDb" ;
+        dnr:user "dotNetRDF" ;
+        dnr:password "dotNetRDF" .
