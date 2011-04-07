@@ -61,16 +61,15 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
         var dataLayersStore = new Ext.data.JsonStore({
             // store configs            
-            autoLoad: true,
             autoDestroy: true,
             url: 'directory/dataLayers',
             // reader configs
             root: 'items',
             idProperty: 'assembly',
             fields: [
-        { name: 'assembly', mapping: 'Assembly', allowBlank: false },
-        { name: 'name', mapping: 'Name', allowBlank: false }
-      ]
+                { name: 'assembly', mapping: 'Assembly', allowBlank: false },
+                { name: 'name', mapping: 'Name', allowBlank: false }
+            ]
         });
 
         var cmbDataLayers = new Ext.form.ComboBox({
@@ -81,18 +80,22 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             typeAhead: true,
             triggerAction: 'all',
             lazyRender: true,
-            mode: 'remote',
-            store: dataLayersStore,
+            //mode: 'remote',
+            store: dataLayersStore,            
             displayField: 'name',
-            valueField: 'name',
-            value: dataLayer,
+            valueField: 'assembly',
             hiddenName: 'Assembly',
-            hiddenValue: assembly
+            value: assembly
         });
                 
         cmbDataLayers.on('select', function (combo, record, index) {
             this.record.DataLayer = record.data.name;
             this.record.Assembly = record.data.assembly;
+        }, this);
+
+        cmbDataLayers.on('blur', function (combo) {
+            var val = combo.getRawValue();
+            combo.setRawValue.defer(1, combo, [val]);
         }, this);
 
         //that = this;
