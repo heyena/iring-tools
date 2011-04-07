@@ -81,14 +81,17 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             triggerAction: 'all',
             lazyRender: true,
             //mode: 'remote',
-            store: dataLayersStore,            
+            store: dataLayersStore,
             displayField: 'name',
             valueField: 'assembly',
             hiddenName: 'Assembly',
             value: assembly
         });
-                
+
         cmbDataLayers.on('select', function (combo, record, index) {
+            if (this.record == null) {
+                this.record = this.form.getForm().getFieldValues();
+            }
             this.record.DataLayer = record.data.name;
             this.record.Assembly = record.data.assembly;
         }, this);
@@ -132,7 +135,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
   		this.form
   	];
 
-        this.on('close', this.onCloseTab, this)
+        this.on('close', this.onCloseTab, this);
 
         // super
         AdapterManager.ApplicationPanel.superclass.initComponent.call(this);
@@ -191,7 +194,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     },
 
     onConfigure: function () {
-        this.fireEvent('configure', this, this.scope, this.record);
+        var name = this.form.getForm().getFieldValues().Name;
+        this.fireEvent('configure', this, this.scope, this.record, name);
     },
 
     onSave: function () {
