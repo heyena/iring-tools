@@ -599,7 +599,7 @@ namespace ApplicationEditor
         DatabaseDictionary dict = new DatabaseDictionary()
         {
           ConnectionString = connectionstring,
-          Provider = (Provider)Enum.Parse(typeof(Provider), newProvider, true),
+          Provider = ((Provider)Enum.Parse(typeof(Provider), newProvider, true)).ToString(),
           SchemaName = tbSchemaName.Text,
           dataObjects = new List<org.iringtools.library.DataObject>(),
         };
@@ -716,7 +716,7 @@ namespace ApplicationEditor
             tbNewDatabase.Text,
             tbUserID.Text,
             tbPassword.Password);
-          databaseDictionary.Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+          databaseDictionary.Provider = cbProvider.SelectedItem.ToString();
           databaseDictionary.SchemaName = tbSchemaName.Text;
           _dal.SaveDatabaseDictionary(databaseDictionary, _currentProject.Name, _currentApplication.Name);
 
@@ -1132,7 +1132,7 @@ namespace ApplicationEditor
           dict = new DatabaseDictionary
           {
             ConnectionString = connString,
-            Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true),
+            Provider = cbProvider.SelectedItem.ToString(),
             SchemaName = tbSchemaName.Text,
           };
           tvwItemDestinationRoot.Tag = dict;
@@ -1145,7 +1145,7 @@ namespace ApplicationEditor
         {
           dict = tvwItemDestinationRoot.Tag as DatabaseDictionary;
           dict.ConnectionString = connString;
-          dict.Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+          dict.Provider = cbProvider.SelectedItem.ToString();
           dict.SchemaName = tbSchemaName.Text;
         }
 
@@ -1921,7 +1921,7 @@ namespace ApplicationEditor
         dict = new DatabaseDictionary
         {
           ConnectionString = connString,
-          Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true),
+          Provider = cbProvider.SelectedItem.ToString(),
           SchemaName = tbSchemaName.Text,
         };
         tvwItemDestinationRoot.Tag = dict;
@@ -1930,7 +1930,7 @@ namespace ApplicationEditor
       {
         dict = tvwItemDestinationRoot.Tag as DatabaseDictionary;
         dict.ConnectionString = connString;
-        dict.Provider = (Provider)Enum.Parse(typeof(Provider), cbProvider.SelectedItem.ToString(), true);
+        dict.Provider = cbProvider.SelectedItem.ToString();
         dict.SchemaName = tbSchemaName.Text;
       }
 

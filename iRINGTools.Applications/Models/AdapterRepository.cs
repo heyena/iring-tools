@@ -268,10 +268,24 @@ namespace iRINGTools.Web.Models
             return PostScopes(scopes);
         }
 
+        #region NHibernate Configuration Wizard support methods
         public DataProviders GetDataProviders()
         {
-            WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-            return client.Get<DataProviders>("/providers", true);
+          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+          return client.Get<DataProviders>("/providers");
         }
+
+        public DatabaseDictionary GetDatabaseDictionary(string scope, string application)
+        {
+          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+          return client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+        }
+ 
+        public DataObjects GetDataObjects(string scope, string application)
+        {
+          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+          return client.Get<DataObjects>(String.Format("/{0}/{1}/objects", scope, application));
+        }
+        #endregion
     }
 }

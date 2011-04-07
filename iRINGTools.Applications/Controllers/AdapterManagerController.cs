@@ -39,6 +39,28 @@ namespace iRINGTools.Web.Controllers
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }
+
+    public ActionResult DatabaseDictionary(FormCollection form)
+    {
+      string scope = form["scope"];
+      string application = form["app"];
+      DatabaseDictionary dbDict = _repository.GetDatabaseDictionary(scope, application);
+      return Json(dbDict, JsonRequestBehavior.AllowGet);
+    }
+
+    public ActionResult DataObjects(FormCollection form)
+    {
+      string scope = form["scope"];
+      string application = form["app"];
+      DataObjects dataObjects = _repository.GetDataObjects(scope, application);
+
+      JsonContainer<DataObjects> container = new JsonContainer<DataObjects>();
+      container.items = dataObjects;
+      container.success = true;
+      container.total = dataObjects.Count;
+
+      return Json(container, JsonRequestBehavior.AllowGet);
+    }
   }
 
   public class DBProvider

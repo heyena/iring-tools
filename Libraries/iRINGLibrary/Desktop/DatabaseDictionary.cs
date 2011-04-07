@@ -35,13 +35,14 @@ namespace org.iringtools.library
   public class DatabaseDictionary : DataDictionary
   {
     [DataMember(Name = "provider", IsRequired = true, Order = 0)]
-    public Provider Provider { get; set; }
+    public string Provider { get; set; }
 
     [DataMember(Name = "connectionString", IsRequired = true, Order = 1)]
     public string ConnectionString { get; set; }
 
     [DataMember(Name = "schemaName", IsRequired = true, Order = 2)]
     public string SchemaName { get; set; }
+
     [DataMember(EmitDefaultValue = false, Order = 3)]
     public IdentityConfiguration IdentityConfiguration { get; set; }
   }

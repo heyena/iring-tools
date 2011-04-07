@@ -210,12 +210,19 @@ Ext.onReady(function () {
 
             }
             else if (application.DataLayer == 'NHibernateLibrary') {
-                var nhConfigWizard = new AdapterManager.NHibernateConfigWizard({
-                    url: 'actionUrl'
-                })
-
-                contentPanel.add(nhConfigWizard);
-                contentPanel.activate(nhConfigWizard);
+                var nhConfigWizard = contentPanel.getItem('nh-config-wizard');  
+              
+                if (nhConfigWizard){
+                  nhConfigWizard.show();
+                }
+                else {
+                  nhConfigWizard = new AdapterManager.NHibernateConfigWizard({
+                      scope: scope,
+                      app: application
+                  });
+                  contentPanel.add(nhConfigWizard);
+                  contentPanel.activate(nhConfigWizard);
+                }
             }
             else {
 

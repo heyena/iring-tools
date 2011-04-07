@@ -134,7 +134,9 @@ namespace org.iringtools.nhibernate
           #endregion Compile entities
 
           #region Writing memory data to disk
-          string hibernateConfig = CreateConfiguration(dbSchema.Provider, dbSchema.ConnectionString, dbSchema.SchemaName);
+          string hibernateConfig = CreateConfiguration(
+            (Provider)Enum.Parse(typeof(Provider), dbSchema.Provider, true), 
+            dbSchema.ConnectionString, dbSchema.SchemaName);
           Utility.WriteString(hibernateConfig, _settings["XmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(mappingXml, _settings["XmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
