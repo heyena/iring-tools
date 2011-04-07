@@ -53,10 +53,12 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         var assembly = "";
 
         if (this.record != null) {
-            name = this.record.Name;
-            description = this.record.Description;
-            dataLayer = this.record.DataLayer;
-            assembly = this.record.Assembly;
+            if (this.record.DataLayer) {
+                name = this.record.Name;
+                description = this.record.Description;
+                dataLayer = this.record.DataLayer;
+                assembly = this.record.Assembly;
+            }
         }
 
         var dataLayersStore = new Ext.data.JsonStore({
