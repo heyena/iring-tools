@@ -257,7 +257,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
   onEditScope: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    // alert(this.directoryPanel.tabContainer.getActiveTab());
     this.fireEvent('EditScope', this, node);
   },
 

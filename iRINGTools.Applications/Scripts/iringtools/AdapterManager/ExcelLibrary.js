@@ -93,7 +93,7 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
                     iconCls: 'upload-icon'
                 }
             },
-            { xtype: 'checkbox', name: 'Generate', boxLabel: 'Generate Configuration' },
+            { xtype: 'checkbox', name: 'Generate', boxLabel: 'Generate Configuration' }
         ];
 
         // super
@@ -394,7 +394,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
         var form = new AdapterManager.ExcelSourcePanel({
             scope: this.scope,
             application: this.application,            
-            url: 'excel/upload',
+            url: 'excel/upload'
         });
                 
         var newWin = new Ext.Window({
