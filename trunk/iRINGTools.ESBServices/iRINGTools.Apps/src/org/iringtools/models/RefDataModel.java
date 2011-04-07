@@ -58,7 +58,7 @@ public class RefDataModel
     	for (Entity entity : response.getEntities().getItems())
         {
     		node = new LeafNode();
-        	//node.setIdentifier("idGenerator");
+        	node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
         	node.setText(entity.getLabel()+" ("+entity.getRepository()+")");
         	if(entity.getUri().contains("rdl.rdlfacade.org")){
         		node.setIconCls("class");
