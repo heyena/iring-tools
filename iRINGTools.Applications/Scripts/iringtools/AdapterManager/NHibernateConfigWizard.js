@@ -24,98 +24,94 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
     
     var dsForm = new Ext.FormPanel({
       id: 'ds-form',
-      labelWidth: 160,
+      itemCls: 'FormFont',
       bodyStyle: 'padding:15px',
       border: false,
       frame: true,
+      layout: 'column',
+      labelWidth: 140,
       monitorValid: true,
       items: [{
-        xtype: 'label',
-        fieldLabel: 'Configure Data Source',
-        labelSeparator: '',
-        style: {
-          marginBottom: '50px'
-        },
-        anchor: '100% -100'
-      },{
-        xtype: 'combo',
-        fieldLabel: 'Database Provider',
-        hiddenName: 'provider',
-        allowBlank: false,
-        mode: 'local',
-        triggerAction: 'all',
-        editable: false,
-        store: providersStore,
-        displayField: 'Provider',
-        valueField: 'Provider',
-        anchor: '40%'
-      },{
-        xtype: 'textfield',
-        name: 'dbInstance',
-        fieldLabel: 'Database Instance',
-        allowBlank: false,       
-        anchor: '40%'
-      },{
-        xtype: 'textfield',
-        name: 'dbName',
-        fieldLabel: 'Database Name',
-        allowBlank: false,       
-        anchor: '40%'
-      },{
-        xtype: 'textfield',
-        name: 'schema',
-        fieldLabel: 'Schema Name',
-        allowBlank: false,
-        anchor: '40%'
-      },{
-        xtype: 'textfield',
-        name: 'userId',
-        fieldLabel: 'User ID',
-        allowBlank: false,
-        anchor: '40%'
-      },{
-        xtype: 'textfield',
-        inputType: 'password',
-        name: 'password',
-        fieldLabel: 'Password',
-        allowBlank: false,
-        anchor: '40%'
-      }],
-      buttons: [{
-        text: 'Next',
-        formBind: true,
-        handler: function(button) {
-          var form = wizard.getLayout().activeItem;
-          var formIndex = wizard.items.indexOf(form);
+				defaults: {xtype: 'fieldset', layout:'form', anchor:'100%'},
+        items:[{
+					title:'Configure Data Source',
+					defaultType: 'textfield',					
+					defaults: {anchor:'100%', allowBlank:false},
+					items:[{    
+						fieldLabel: 'Database Provider',
+						xtype: 'combo',						
+						hiddenName: 'provider',
+						allowBlank: false,
+						mode: 'local',
+						triggerAction: 'all',
+						editable: false,
+						store: providersStore,						
+						displayField: 'Provider',
+						valueField: 'Provider'
+					},{
+						fieldLabel: 'Database Instance',
+						xtype: 'textfield',
+						name: 'dbInstance',						
+						allowBlank: false						
+					},{
+						fieldLabel: 'Database Name',
+						xtype: 'textfield',
+						name: 'dbName',			
+						allowBlank: false
+					},{
+						fieldLabel: 'Schema Name',
+						xtype: 'textfield',
+						name: 'schema',						
+						allowBlank: false						
+					},{
+						xtype: 'textfield',
+						name: 'userId',
+						fieldLabel: 'User ID',
+						allowBlank: false
+					},{
+						fieldLabel: 'Password',
+						xtype: 'textfield',
+						inputType: 'password',
+						name: 'password',						
+						allowBlank: false
+					}]
+				}]
+			}],
+			buttons: [{
+				text: 'Next',
+				formBind: true,
+				handler: function(button) {
+					var form = wizard.getLayout().activeItem;
+					var formIndex = wizard.items.indexOf(form);
           
-          form.getForm().submit({
-            url: 'AdapterManager/DataObjects',
-            success: function(f, a) {
-              wizard.getLayout().setActiveItem(formIndex + 1);
-            },
-            failure: function(f, a) {
-              Ext.Msg.show({
-                title: 'Error',
-                msg: a.response.responseText,
-                modal: true,
-                icon: Ext.Msg.ERROR,
-                buttons: Ext.Msg.OK
-              });
-            },
-            params: {
-              scope: scopeName,
-              app: appName
-            },
-            waitMsg: 'Processing ...'
-          });
-        }
-      },{
-        text: 'Cancel',
-        handler: function() {
-          wizard.destroy();
-        }
-      }]
-    });
+					form.getForm().submit({
+						url: 'AdapterManager/DataObjects',
+						success: function(f, a) {
+							wizard.getLayout().setActiveItem(formIndex + 1);
+						},
+						failure: function(f, a) {
+							Ext.Msg.show({
+								title: 'Error',
+								msg: a.response.responseText,
+								modal: true,
+								icon: Ext.Msg.ERROR,
+								buttons: Ext.Msg.OK
+							});
+						},
+						params: {
+							scope: scopeName,
+							app: appName
+						},
+						waitMsg: 'Processing ...'
+					});
+				}
+			},{
+				text: 'Cancel',
+				handler: function() {
+					wizard.destroy();
+				}
+			}]
+		});
 
     var importForm = new Ext.FormPanel({
       id: 'import-form',
