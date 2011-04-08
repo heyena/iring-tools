@@ -42,5 +42,13 @@ namespace iRINGTools.Web.Models
 
       return obj;
     }
+
+    public Mapping UpdateMapping(string scopeName, string applicationName)
+    {
+      Mapping obj = null;
+      try
+      {
+
+    }
   }
 }
