@@ -9,34 +9,31 @@
     <link rel="stylesheet" type="text/css" href="../../Content/css/AdapterManager-gray.css"/> 
 
     <!-- ExtJS library: base/adapter -->
-    <script src="../../Scripts/ext-3.3.1/adapter/ext/ext-base.js" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/adapter/ext/ext-base.js") %>" type="text/javascript"></script>
     
     <!-- ExtJS library: all widgets -->
-    <script src="../../Scripts/ext-3.3.1/ext-all.js" type="text/javascript"></script>
-    <script src="../../Scripts/ext-3.3.1/examples/ux/ux-all.js" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ux-all.js") %>" type="text/javascript"></script>
             
     <!-- extensions -->    
-    <script src="../../Scripts/iringtools/AdapterManager/App.js" type="text/javascript"></script>    
-    <script src="../../Scripts/iringtools/AdapterManager/ActionPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/AdapterManager/DirectoryPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/AdapterManager/MappingPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/AdapterManager/SearchPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/AdapterManager/ScopePanel.js" type="text/javascript"></script>        
-    <script src="../../Scripts/iringtools/AdapterManager/ApplicationPanel.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/AdapterManager/AjaxRowExpander.js" type="text/javascript"></script>    
-    <script src="../../Scripts/iringtools/AdapterManager/ExcelLibrary.js" type="text/javascript"></script>
-    <script src="../../Scripts/iringtools/AdapterManager/NHibernateConfigWizard.js" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/App.js") %>" type="text/javascript"></script>    
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ActionPanel.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/DirectoryPanel.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/MappingPanel.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/SearchPanel.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ScopePanel.js") %>" type="text/javascript"></script>        
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ApplicationPanel.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AjaxRowExpander.js") %>" type="text/javascript"></script>    
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ExcelLibrary.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigWizard.js") %>" type="text/javascript"></script>
 
     <!-- page specific -->    
-    <script src="../../Scripts/iringtools/AdapterManager/AdapterManager.js" type="text/javascript"></script>    
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AdapterManager.js") %>" type="text/javascript"></script>    
 </head>
 <body>    
-    <%--<div id="header" class="exchangeBanner">
-        <h1><img src="../../Content/img/iRINGTools_logo.png" />&nbsp; Adapter Manager</h1>
-    </div>--%>
     <div id="header" class="exchangeBanner">
     <span style="float:left">
-      <img src="../../Content/img/iRINGTools_logo.png" 
+      <img src="<%: Url.Content("~/Content/img/iRINGTools_logo.png") %>" 
          style="margin:0 0 0 11px; vertical-align:-20%">         
             <span style="margin:0 0 0 6px;"><font size="5px"
         style="font-family: Arial, Helvetica, Sans-Serif">Adapter Manager</font></span>
