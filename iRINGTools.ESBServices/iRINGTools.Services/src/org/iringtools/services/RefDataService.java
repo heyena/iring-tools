@@ -1,6 +1,5 @@
 package org.iringtools.services;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -10,11 +9,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.PathSegment;
 import javax.xml.bind.JAXBException;
 
-import org.apache.cxf.jaxrs.model.Parameter;
 import org.apache.log4j.Logger;
 import org.ids_adi.ns.qxf.model.Qmxf;
 import org.iringtools.common.response.Response;
@@ -23,8 +19,6 @@ import org.iringtools.refdata.federation.IDGenerator;
 import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.refdata.queries.Queries;
-import org.iringtools.refdata.response.Entities;
-import org.iringtools.refdata.response.Entity;
 import org.iringtools.services.core.RefDataProvider;
 
 @Path("/")

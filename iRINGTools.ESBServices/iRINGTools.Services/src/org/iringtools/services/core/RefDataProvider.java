@@ -4,16 +4,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.xml.bind.JAXBException;
@@ -30,6 +25,7 @@ import org.ids_adi.ns.qxf.model.RoleQualification;
 import org.ids_adi.ns.qxf.model.Specialization;
 import org.ids_adi.ns.qxf.model.TemplateDefinition;
 import org.ids_adi.ns.qxf.model.TemplateQualification;
+import org.iringtools.common.Version;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
@@ -47,6 +43,8 @@ import org.iringtools.refdata.queries.QueryBinding;
 import org.iringtools.refdata.queries.QueryBindings;
 import org.iringtools.refdata.queries.QueryItem;
 import org.iringtools.refdata.queries.SPARQLBindingType;
+import org.iringtools.refdata.response.Entities;
+import org.iringtools.refdata.response.Entity;
 import org.iringtools.utility.EntityComparator;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
@@ -59,10 +57,6 @@ import org.w3._2005.sparql.results.Binding;
 import org.w3._2005.sparql.results.Result;
 import org.w3._2005.sparql.results.Results;
 import org.w3._2005.sparql.results.Sparql;
-import org.iringtools.refdata.response.*;
-import org.ids_adi.ns.qxf.model.Restriction;
-
-import org.iringtools.common.Version;
 
 public class RefDataProvider
 {
