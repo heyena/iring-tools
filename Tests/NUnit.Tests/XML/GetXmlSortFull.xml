@@ -1,5 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Lines xmlns:i="http://www.w3.org/2001/XMLSchema-instance#" xmlns:rdl="http://rdl.rdlfacade.org/data#" xmlns:tpl="http://tpl.rdlfacade.org/data#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" total="31" xmlns="http://www.example.com/12345_000/ABC">
+<Lines xmlns:i="http://www.w3.org/2001/XMLSchema-instance#" xmlns:rdl="http://rdl.rdlfacade.org/data#" xmlns:tpl="http://tpl.rdlfacade.org/data#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" total="32" xmlns="http://www.example.com/12345_000/ABC">
+  <PipingNetworkSystem rdlUri="rdl:R19192462550" id="66015-O">
+    <IdentificationByTag rdlUri="tpl:R66921101783" possessorRole="tpl:R44537504070">
+      <hasIdentificationType rdlUri="tpl:R30790108016" reference="rdl:R40471041754" />
+      <valIdentifier rdlUri="tpl:R22674749688">66015-O</valIdentifier>
+    </IdentificationByTag>
+    <PlantAreaHasPlantObject rdlUri="tpl:R41248767846" possessorRole="tpl:R77585325576">
+      <assemblyType rdlUri="tpl:R62157498012" reference="rdl:R30942378492" />
+      <whole rdlUri="tpl:R62348020201">
+        <PlantArea rdlUri="rdl:R49658319833" id="66">
+          <IdentificationByTag rdlUri="tpl:R66921101783" possessorRole="tpl:R44537504070">
+            <hasIdentificationType rdlUri="tpl:R30790108016" reference="rdl:R40471041754" />
+            <valIdentifier rdlUri="tpl:R22674749688">66</valIdentifier>
+          </IdentificationByTag>
+        </PlantArea>
+      </whole>
+    </PlantAreaHasPlantObject>
+    <NominalDiameter rdlUri="tpl:R77443358818" possessorRole="tpl:R16314127825">
+      <hasType rdlUri="tpl:R59896853239" reference="rdl:R17622148043" />
+      <hasScale rdlUri="tpl:R93884193692" reference="http://rdl.rdlfacade.org/data#R52054275374" />
+      <valValue rdlUri="tpl:R90688063648">0</valValue>
+    </NominalDiameter>
+  </PipingNetworkSystem>
   <PipingNetworkSystem rdlUri="rdl:R19192462550" id="90006-O">
     <IdentificationByTag rdlUri="tpl:R66921101783" possessorRole="tpl:R44537504070">
       <hasIdentificationType rdlUri="tpl:R30790108016" reference="rdl:R40471041754" />
