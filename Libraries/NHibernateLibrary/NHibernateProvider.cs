@@ -121,6 +121,7 @@ namespace org.iringtools.nhibernate
       _response.Append(status);
       return _response;
     }
+
     public DatabaseDictionary GetDictionary(string projectName, string applicationName)
     {
       DatabaseDictionary databaseDictionary = new DatabaseDictionary();
@@ -146,6 +147,7 @@ namespace org.iringtools.nhibernate
       }
       return databaseDictionary;
     }
+
     public Response PostDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
     {
       Status status = new Status();
@@ -168,6 +170,7 @@ namespace org.iringtools.nhibernate
       _response.Append(status);
       return _response;
     }
+
     public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName)
     {
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
@@ -378,6 +381,7 @@ namespace org.iringtools.nhibernate
         return dbDictionary;
       }
     }
+
     public DataRelationships GetRelationships()
     {
       try
@@ -390,6 +394,7 @@ namespace org.iringtools.nhibernate
         return null;
       }
     }
+
     public DataProviders GetProviders()
     {
       try
@@ -402,10 +407,12 @@ namespace org.iringtools.nhibernate
         return null;
       }
     }
+
     public DataObjects GetSchemaObjects(string projectName, string applicationName)
     {
       DataObjects tableNames = new DataObjects();
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
+
       try
       {
         InitializeScope(projectName, applicationName);
@@ -453,6 +460,7 @@ namespace org.iringtools.nhibernate
         return tableNames;
       }
     }
+
     public DataObject GetSchemaObjectSchema(string projectName, string applicationName, string schemaObjectName)
     {
       List<string> tableNames = new List<string>();
@@ -552,6 +560,7 @@ namespace org.iringtools.nhibernate
         return dataObject;
       }
     }    
+
     public VersionInfo GetVersion()
     {
       Version version = this.GetType().Assembly.GetName().Version;
@@ -562,6 +571,48 @@ namespace org.iringtools.nhibernate
         Build = version.Build,
         Revision = version.Revision
       };
+    }
+
+    public DataObjects GetSchemaObjects(string projectName, string applicationName, string dbProvider, string dbServer, 
+      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
+    {
+      DataObjects schemaObjects = new DataObjects();
+      
+      try
+      {
+        InitializeScope(projectName, applicationName);
+
+        string connStr = "Data Source=" + dbServer + "\\" + dbInstance + ";Initial Catalog=" + dbName + 
+          ";User ID=" + dbUserName + ";Password=" + dbPassword;
+
+        Dictionary<string, string> properties = new Dictionary<string, string>();
+        properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
+        properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
+        properties.Add("connection.connection_string", connStr);
+        properties.Add("connection.driver_class", GetConnectionDriver(dbProvider));
+        properties.Add("dialect", GetDatabaseDialect(dbProvider));
+
+        NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
+        config.AddProperties(properties);
+
+        ISessionFactory sessionFactory = config.BuildSessionFactory();
+        ISession session = sessionFactory.OpenSession();
+        string sql = GetDatabaseMetaquery(dbProvider, dbName, dbSchema);
+        ISQLQuery query = session.CreateSQLQuery(sql);
+
+        foreach (string tableName in query.List<string>())
+        {
+          schemaObjects.Add(tableName);
+        }
+
+        session.Close();
+      }
+      catch (Exception ex)
+      {
+        throw ex;
+      }
+
+      return schemaObjects;
     }
     #endregion
 

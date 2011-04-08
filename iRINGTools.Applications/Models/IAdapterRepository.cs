@@ -36,6 +36,7 @@ namespace iRINGTools.Web.Models
 
     DatabaseDictionary GetDatabaseDictionary(string scope, string application);
 
-    DataObjects GetDataObjects(string scope, string application);
+    DataObjects GetSchemaObjects(string scope, string application, string dbProvider, string dbServer,
+      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword);
   }
 }

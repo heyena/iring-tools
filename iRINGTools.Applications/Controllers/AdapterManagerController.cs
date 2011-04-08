@@ -42,17 +42,15 @@ namespace iRINGTools.Web.Controllers
 
     public ActionResult DatabaseDictionary(FormCollection form)
     {
-      string scope = form["scope"];
-      string application = form["app"];
-      DatabaseDictionary dbDict = _repository.GetDatabaseDictionary(scope, application);
+      DatabaseDictionary dbDict = _repository.GetDatabaseDictionary(form["scope"], form["app"]);
       return Json(dbDict, JsonRequestBehavior.AllowGet);
     }
 
-    public ActionResult DataObjects(FormCollection form)
+    public ActionResult SchemaObjects(FormCollection form)
     {
-      string scope = form["scope"];
-      string application = form["app"];
-      DataObjects dataObjects = _repository.GetDataObjects(scope, application);
+      DataObjects dataObjects = _repository.GetSchemaObjects(
+        form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"], 
+        form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"]);
 
       JsonContainer<DataObjects> container = new JsonContainer<DataObjects>();
       container.items = dataObjects;

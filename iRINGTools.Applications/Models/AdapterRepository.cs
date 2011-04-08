@@ -280,11 +280,13 @@ namespace iRINGTools.Web.Models
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
           return client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
         }
- 
-        public DataObjects GetDataObjects(string scope, string application)
+
+        public DataObjects GetSchemaObjects(string scope, string application, string dbProvider, string dbServer,
+          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
         {
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          return client.Get<DataObjects>(String.Format("/{0}/{1}/objects", scope, application));
+          return client.Get<DataObjects>(String.Format("/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/objects", 
+            scope, application, dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword));
         }
         #endregion
     }
