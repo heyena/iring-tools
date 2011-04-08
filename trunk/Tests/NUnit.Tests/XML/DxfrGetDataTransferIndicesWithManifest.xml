@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ArrayOfdataTransferIndex xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/dxfr/dti">
   <dataTransferIndex>
+    <identifier>66015-O</identifier>
+    <hashValue i:nil="true" />
+    <transferType>Sync</transferType>
+    <sortIndex i:nil="true" />
+  </dataTransferIndex>
+  <dataTransferIndex>
     <identifier>90002-RV</identifier>
     <hashValue i:nil="true" />
     <transferType>Sync</transferType>
