@@ -142,6 +142,10 @@ namespace iRINGTools.Web.Controllers
                       roleNode.children = new List<JsonTreeNode>();
                     roleNode.children.Add(classNode);
                   }
+                  else
+                  {
+                    roleNode.leaf = true;
+                  }
                 }
               }
             }
@@ -155,14 +159,15 @@ namespace iRINGTools.Web.Controllers
 
     private JsonTreeNode GetRoleNode(RoleMap role, string context)
     {
-
       JsonTreeNode templateNode = new JsonTreeNode
       {
         nodeType = "async",
         type = "RoleMapNode",
         icon = "Content/img/role-map.png",
         id = context + "/" + role.name,
-        text = role.IsMapped() ? string.Format("{0} [{1}]", role.name, role.value) : string.Format("{0} [{1}]", role.name, "unmapped"),
+        text = role.IsMapped() ? string.Format("{0}{1}", 
+                                 role.name, "") : 
+                                 string.Format("{0}{1}", role.name, "[unmapped]"),
         expanded = false,
         leaf = false,
         children = null,
