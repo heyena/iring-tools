@@ -44,7 +44,7 @@ namespace iRINGTools.Web.Controllers
       return View();
     }
 
-    private void GetMapping(string scope, string application)
+    private Mapping GetMapping(string scope, string application)
     {
       string key = string.Format(_keyFormat, scope, application);
 
@@ -52,6 +52,8 @@ namespace iRINGTools.Web.Controllers
       {
         Session[key] = _repository.GetMapping(scope, application);
       }
+
+      return (Mapping)Session[key];
     }
 
 
@@ -67,10 +69,9 @@ namespace iRINGTools.Web.Controllers
       string scope = variables[0];
       string application = variables[1];
       string key = string.Format(_keyFormat, scope, application);
+        
+      Mapping mapping = GetMapping(scope, application);
 
-      if (Session[key] == null)
-        GetMapping(scope, application);
-      Mapping mapping = (Mapping)Session[key];
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
       if (variables.Count() > 2)
       {
@@ -79,7 +80,13 @@ namespace iRINGTools.Web.Controllers
       }
       switch (form["type"])
       {
-        case "mapping":
+        case "MappingNode":
+          foreach (var graph in mapping.graphMaps)
+          {
+            JsonTreeNode graphNode = GetGraphNode(graph, context);
+
+            nodes.Add(graphNode);
+          }
           break;
         case "GraphMapNode":
           if (graphMap != null)
@@ -98,7 +105,7 @@ namespace iRINGTools.Web.Controllers
           }
           break;
         case "ClassMapNode":
-          var classMapId = form["record"];
+          var classMapId = form["id"];
           if (graphMap != null)
           {
             foreach (var templateMaps in graphMap.classTemplateMaps)
@@ -114,7 +121,7 @@ namespace iRINGTools.Web.Controllers
           }
           break;
         case "TemplateMapNode":
-          var templateId = form["record"];
+          var templateId = form["id"];
           if (graphMap != null)
           {
 
@@ -141,32 +148,25 @@ namespace iRINGTools.Web.Controllers
           }
           break;
         case "RoleMapNode":
-          break;
-        default:
-          foreach (var graph in mapping.graphMaps)
-          {
-            JsonTreeNode graphNode = GetGraphNode(graph, context);
-
-            nodes.Add(graphNode);
-          }
-          break;
+          break;        
       }
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
     private JsonTreeNode GetRoleNode(RoleMap role, string context)
     {
+
       JsonTreeNode templateNode = new JsonTreeNode
       {
         nodeType = "async",
         type = "RoleMapNode",
         icon = "Content/img/role-map.png",
         id = context + "/" + role.name,
-        text = role.name,
+        text = role.IsMapped() ? string.Format("{0} [{1}]", role.name, role.value) : string.Format("{0} [{1}]", role.name, "unmapped"),
         expanded = false,
         leaf = false,
         children = null,
-        record = role.id
+        record = role
       };
       return templateNode;
     }
@@ -183,7 +183,7 @@ namespace iRINGTools.Web.Controllers
         expanded = false,
         leaf = false,
         children = null,
-        record = classMap.id
+        record = classMap
       };
       return classNode;
     }
@@ -200,7 +200,7 @@ namespace iRINGTools.Web.Controllers
         expanded = false,
         leaf = false,
         children = null,
-        record = templateMap.id
+        record = templateMap
       };
       return templateNode;
     }
@@ -217,7 +217,7 @@ namespace iRINGTools.Web.Controllers
         expanded = false,
         leaf = false,
         children = null,
-        record = graph.name
+        record = graph
 
       };
       return graphNode;
