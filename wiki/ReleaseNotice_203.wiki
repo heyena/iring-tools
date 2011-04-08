@@ -1,5 +1,4 @@
 #summary Date: 2011/3/4
-#labels Featured
 = *iRINGTools* 2.00.03.2742 =
 
 A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_203 iRINGTools 2.0] that includes bug fixes.  
