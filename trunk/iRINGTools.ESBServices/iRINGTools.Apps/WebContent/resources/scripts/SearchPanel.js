@@ -3,7 +3,7 @@ Ext.ns('FederationManager');
 * @class FederationManager.SearchPanel
 * @author by Aswini Nayak
 */
-
+var treeLoader,searchText;
 FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
     title: 'Reference Data Search',
     layout: 'border',
@@ -141,22 +141,19 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
                    }];
       },
       onSearch: function(){
-    	  var searchText = Ext.get('referencesearch').getValue();
-    	  
-    	  var treeLoader =  new Ext.tree.TreeLoader({
+    	  searchText = Ext.get('referencesearch').getValue();
+    	  treeLoader =  new Ext.tree.TreeLoader({
     		  requestMethod: 'POST',
               url: this.searchUrl,
-              baseParams: { 
+    		  baseParams: { 
             	  query: searchText,
             	  limit:this.limit,
             	  start:0
             	}
     	    });
-    	  
     	  	  var tree = new Ext.tree.TreePanel({
             	  title:searchText,
                   useArrows: true,
-                  maskDisabled:false,
                   animate: true,
                   lines : false,
                   id:'tab_'+searchText,
@@ -165,27 +162,74 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
                   border: false,
                   closable:true,
                   rootVisible: false,
-                  maskDisabled: true, 
                   loader:treeLoader ,
                   root: {
                       nodeType: 'async',
+                      qtipCfg:'Aswini',
                       draggable: false
                   },
                   containerScroll: true
               });
+    	  	  
+    	  //	tree.on('beforeexpandnode', this.restrictExpand, this);
+
     	  	tree.on('beforeload', function(node){
-    	  	    //treeLoader.baseParams = {'test': 123};
-    	  	    //tree.load(tree);
-    	  	    //tree.expand(false, false);
-    	  		//this.getEl().mask('Loading...');
+    	  		Ext.getCmp('content-pane').getEl().mask('Loading...');
     	  	}); 
+    		tree.on('load', function(node){
+    	  		Ext.getCmp('content-pane').getEl().unmask();
+    	  	});
               tree.getRootNode().expand();
               tree.on('click', this.onClick, this);
               this.refClassTabPanel.add(tree).show();
       },
-      onClick : function() {
-    	  
-    	//  Ext.Msg.alert('Navigation Tree Click', 'You clicked: "' + this.attributes.properties.uri + '"');
+      onClick : function(node) {
+    	  switch(node.attributes.text){
+    	  case "Classifications":
+    		 // alert("send request for classifications:"+'class/'+node.parentNode.attributes.identifier);
+    		  treeLoader.url="class";
+    	  	  treeLoader.baseParams = {
+    	  			  id:node.parentNode.attributes.identifier,
+    	  			  query: searchText,
+                	  limit:this.limit,
+                	  start:0
+                	  };
+    		  break;
+    	  case "Superclasses":
+    		  //alert("send request for Superclasses:"+'superClass/'+node.parentNode.attributes.identifier);
+    		  treeLoader.url="superClass";
+    	  	  treeLoader.baseParams = {
+    	  			  id:node.parentNode.attributes.identifier,
+    	  			  query: searchText,
+                	  limit:this.limit,
+                	  start:0
+                	  };
+
+    		  break;
+    	  case "Subclasses":
+    		  //alert("send request for Subclasses:"+'subClasses/'+node.parentNode.attributes.identifier);
+    		  treeLoader.url="subClass";
+    	  	  treeLoader.baseParams = {
+    	  			  id:node.parentNode.attributes.identifier,
+    	  			  query: searchText,
+                	  limit:this.limit,
+                	  start:0
+                	  };
+    		  break;
+    	  case "Templates":
+    		  //alert("send request for Subclasses:"+'subClasses/'+node.parentNode.attributes.identifier);
+    		  treeLoader.url="template";
+    	  	  treeLoader.baseParams = {
+    	  			  id:node.parentNode.attributes.identifier,
+    	  			  query: searchText,
+                	  limit:this.limit,
+                	  start:0
+                	  };
+    		  break;
+
+    		  
+    	  }
+    	  node.expand();
       }
 
 });
