@@ -1,0 +1,18 @@
+#summary Date: 2011/4/7
+=iRINGTools-2.00.06.3171=
+
+A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_206 iRINGTools 2.0] that includes bug fixes.  
+
+The download is available [http://iring-tools.googlecode.com/files/iRINGTools-2.0.6.zip here].  
+The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGTools-SDK-2.0.6.zip here]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v2.0.1.pdf Installation Guide]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_Users_Guide_v2.0.1.pdf Users Guide]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_SDK_Guide_v2.0.2.pdf SDK Guide]
+
+== Bugs Fixed ==
+ * Fixed facade exchange utility
+
+Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
