@@ -48,7 +48,7 @@ namespace org.iringtools.adapter.datalayer
     }
   }
 
-  public class ExcelDataLayer : BaseDataLayer, IDataLayer2
+  public class ExcelDataLayer : BaseConfigurableDataLayer, IDataLayer2
   {    
     private ExcelProvider _provider = null;
 

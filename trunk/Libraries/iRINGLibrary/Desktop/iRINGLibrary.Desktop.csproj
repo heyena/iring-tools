@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterSettings.cs" />
+    <Compile Include="BaseConfigurableDataLayer.cs" />
     <Compile Include="BaseDataLayer.cs" />
     <Compile Include="DataLayerConfig.cs" />
     <Compile Include="DataLayers.cs" />

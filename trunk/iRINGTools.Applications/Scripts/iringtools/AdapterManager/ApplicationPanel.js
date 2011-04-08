@@ -53,11 +53,11 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
         var assembly = "";
 
         if (this.record != null) {
-                name = this.record.Name;
-                description = this.record.Description;
-                dataLayer = this.record.DataLayer;
-                assembly = this.record.Assembly;
-      }
+            name = this.record.Name;
+            description = this.record.Description;
+            dataLayer = this.record.DataLayer;
+            assembly = this.record.Assembly;
+        }
 
         var dataLayersStore = new Ext.data.JsonStore({
             // store configs            
@@ -68,7 +68,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             idProperty: 'assembly',
             fields: [
                 { name: 'assembly', mapping: 'Assembly', allowBlank: false },
-                { name: 'name', mapping: 'Name', allowBlank: false }
+                { name: 'name', mapping: 'Name', allowBlank: false },
+                { name: 'configurable', mapping: 'Configurable', allowBlank: false }
             ]
         });
 
@@ -112,20 +113,19 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             defaultType: 'textfield',
 
             items: [
-        { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 250, value: scope, allowBlank: false },
-        { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 250, value: name, allowBlank: false },
-        { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 250, value: name, allowBlank: false },
-        { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 250, value: description },
-        cmbDataLayers
-      ],
+                { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 250, value: scope, allowBlank: false },
+                { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 250, value: name, allowBlank: false },
+                { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 250, value: name, allowBlank: false },
+                { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 250, value: description },
+                cmbDataLayers
+            ],
             buttonAlign: 'left', // buttons aligned to the left            
             autoDestroy: false
-
         });
 
         this.items = [
-  		this.form
-  	];
+  		    this.form
+  	    ];
 
         this.on('close', this.onCloseTab, this);
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.IO;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +18,6 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using org.iringtools.datalayer.excel;
-using System.Text;
 
 namespace org.iringtools.datalayer.excel
 {
@@ -33,6 +33,15 @@ namespace org.iringtools.datalayer.excel
     public string nodeType { get; set; }
     public object @checked { get; set; }
     public object record { get; set; }
+  }
+
+  public class JsonContainer<T>
+  {
+    public T items { get; set; }
+    public string message { get; set; }
+    public Boolean success { get; set; }
+    public int total { get; set; }
+    public string errors { get; set; }
   }
 
   public class ExcelController : Controller
@@ -64,8 +73,7 @@ namespace org.iringtools.datalayer.excel
     public ActionResult Upload(FormCollection form)
     {
       string savedFileName = string.Empty;
-      bool generate = false;
-
+      
       HttpFileCollectionBase files = Request.Files;
             
       foreach (string file in files)
@@ -208,6 +216,48 @@ namespace org.iringtools.datalayer.excel
       {
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
+    }
+
+    public JsonResult GetWorksheets(FormCollection form)
+    {
+      JsonContainer<List<ExcelWorksheet>> container = new JsonContainer<List<ExcelWorksheet>>();
+      container.items = _repository.GetWorksheets(GetConfiguration(form["scope"], form["application"]));
+      container.success = true;      
+
+      return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult GetColumns(FormCollection form)
+    {
+      JsonContainer<List<ExcelColumn>> container = new JsonContainer<List<ExcelColumn>>();
+      container.items = _repository.GetColumns(GetConfiguration(form["scope"], form["application"]), form["worksheet"]);
+      container.success = true;
+
+      return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult AddWorksheets(FormCollection form)
+    {
+      ExcelConfiguration configuration = GetConfiguration(form["scope"], form["application"]);
+      List<ExcelWorksheet> worksheets = _repository.GetWorksheets(configuration);
+
+      List<string> worksheetNames = new List<string>(); //Utility.Deserialize<List<string>>(form["worksheets"], true);
+
+      foreach(string worksheetName in worksheetNames) {
+        ExcelWorksheet worksheet = worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == worksheetName);
+        //ExcelWorksheet worksheet = worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == worksheetName);
+        //if (worksheet != null && configuration.Worksheets.Exists(Pred)
+        {
+          configuration.Worksheets.Add(worksheet);
+        }
+      }
+      
+      return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+    }
+
+    public ActionResult AddColumns(FormCollection form)
+    {
+      return Json(new { success = false }, JsonRequestBehavior.AllowGet);
     }
 
   }
