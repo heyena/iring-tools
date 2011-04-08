@@ -3,136 +3,157 @@
 AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
   scope: null,
   app: null,
-  
+
   constructor: function(config) {
     config = config || {};
-    
+
     var wizard = this;
     var scopeName = config.scope.Name;
     var appName = config.app.Name;
-    
+
     var providersStore = new Ext.data.JsonStore({
       autoLoad: true,
       autoDestroy: true,
       url: 'AdapterManager/DataProviders',
       root: 'items',
       idProperty: 'Provider',
-      fields: [{ 
+      fields: [{
         name: 'Provider'
       }]
     });
-    
-    var dsForm = new Ext.FormPanel({
-      id: 'ds-form',
-      itemCls: 'FormFont',
-      bodyStyle: 'padding:15px',
-      border: false,
-      frame: true,
-      layout: 'column',
-      labelWidth: 140,
-      monitorValid: true,
-      items: [{
-				defaults: {xtype: 'fieldset', layout:'form', anchor:'100%'},
-        items:[{
-					title:'Configure Data Source',
-					defaultType: 'textfield',					
-					defaults: {anchor:'100%', allowBlank:false},
-					items:[{    
-						fieldLabel: 'Database Provider',
-						xtype: 'combo',						
-						hiddenName: 'provider',
-						allowBlank: false,
-						mode: 'local',
-						triggerAction: 'all',
-						editable: false,
-						store: providersStore,						
-						displayField: 'Provider',
-						valueField: 'Provider'
-					},{
-						fieldLabel: 'Database Instance',
-						xtype: 'textfield',
-						name: 'dbInstance',						
-						allowBlank: false						
-					},{
-						fieldLabel: 'Database Name',
-						xtype: 'textfield',
-						name: 'dbName',			
-						allowBlank: false
-					},{
-						fieldLabel: 'Schema Name',
-						xtype: 'textfield',
-						name: 'schema',						
-						allowBlank: false						
-					},{
-						xtype: 'textfield',
-						name: 'userId',
-						fieldLabel: 'User ID',
-						allowBlank: false
-					},{
-						fieldLabel: 'Password',
-						xtype: 'textfield',
-						inputType: 'password',
-						name: 'password',						
-						allowBlank: false
-					}]
-				}]
-			}],
-			buttons: [{
-				text: 'Next',
-				formBind: true,
-				handler: function(button) {
-					var form = wizard.getLayout().activeItem;
-					var formIndex = wizard.items.indexOf(form);
-          
-					form.getForm().submit({
-						url: 'AdapterManager/DataObjects',
-						success: function(f, a) {
-							wizard.getLayout().setActiveItem(formIndex + 1);
-						},
-						failure: function(f, a) {
-							Ext.Msg.show({
-								title: 'Error',
-								msg: a.response.responseText,
-								modal: true,
-								icon: Ext.Msg.ERROR,
-								buttons: Ext.Msg.OK
-							});
-						},
-						params: {
-							scope: scopeName,
-							app: appName
-						},
-						waitMsg: 'Processing ...'
-					});
-				}
-			},{
-				text: 'Cancel',
-				handler: function() {
-					wizard.destroy();
-				}
-			}]
-		});
 
-    var importForm = new Ext.FormPanel({
-      id: 'import-form',
+    var dsConfigPanel = new Ext.FormPanel({
       labelWidth: 160,
       bodyStyle: 'padding:15px',
-      border: false,
-      frame: true,
       monitorValid: true,
+      defaults: {anchor: '40%'},
       items: [{
         xtype: 'label',
-        fieldLabel: 'Select tables to import',
+        fieldLabel: 'Configure Data Source',
         labelSeparator: '',
-        style: {
-          marginBottom: '50'
-        },
         anchor: '100% -100'
+      }, {
+        xtype: 'combo',
+        fieldLabel: 'Database Provider',
+        hiddenName: 'dbProvider',
+        allowBlank: false,
+        mode: 'local',
+        triggerAction: 'all',
+        editable: false,
+        store: providersStore,
+        displayField: 'Provider',
+        valueField: 'Provider'
       },{
         xtype: 'textfield',
-        name: 'table',
-        fieldLabel: 'table',
-        anchor: '40%'
+        name: 'dbServer',
+        fieldLabel: 'Database Server',
+        allowBlank: false
+      },{
+        xtype: 'textfield',
+        name: 'dbInstance',
+        fieldLabel: 'Database Instance',
+        allowBlank: false
+      },{
+        xtype: 'textfield',
+        name: 'dbName',
+        fieldLabel: 'Database Name',
+        allowBlank: false
+      },{
+        xtype: 'textfield',
+        name: 'dbSchema',
+        fieldLabel: 'Schema Name',
+        allowBlank: false
+      },{
+        xtype: 'textfield',
+        name: 'dbUserName',
+        fieldLabel: 'User Name',
+        allowBlank: false
+      },{
+        xtype: 'textfield',
+        inputType: 'password',
+        name: 'dbPassword',
+        fieldLabel: 'Password',
+        allowBlank: false
+      }],
+      buttons: [{
+        text: 'Next',
+        formBind: true,
+        handler: function(button) {
+          var form = wizard.getLayout().activeItem;
+          var formIndex = wizard.items.indexOf(form);
+          var dsConfigForm = dsConfigPanel.getForm();
+          
+          form.getForm().submit({
+            url: 'AdapterManager/SchemaObjects',
+            timeout: 600000,
+            params: {
+              scope: scopeName,
+              app: appName
+            },
+            success: function(f, a) {
+              var schemaObjects = Ext.util.JSON.decode(a.response.responseText);
+              
+              if (schemaObjects.items.length > 0) {
+                // populate available tables  
+                var tableSelector = tablesConfigPanel.getForm().findField('tableSelector');      
+                var availItems = new Array();
+                
+                for (var i = 0; i < schemaObjects.items.length; i++) {
+                  var schemaObject = schemaObjects.items[i];
+                  var selected = false;
+                  
+                  for (var j = 0; j < tableSelector.toData.length; j++) {
+                    if (schemaObject == tableSelector.toData[j][1]) {
+                      selected = true;
+                      break;
+                    }
+                  }
+                  
+                  if (!selected) {
+                    availItems[i] = [schemaObject, schemaObject];   
+                  }
+                }
+                  
+                tableSelector.fromData = availItems;            
+                wizard.getLayout().setActiveItem(formIndex + 1);
+              }
+            },
+            failure: function(f, a) {
+              Ext.Msg.show({
+                title: 'Error',
+                msg: a.response.responseText,
+                modal: true,
+                icon: Ext.Msg.ERROR,
+                buttons: Ext.Msg.OK
+              });
+            },
+            waitMsg: 'Processing ...'
+          });
+        }
+      },{
+        text: 'Cancel',
+        handler: function() {
+          wizard.destroy();
+        }
+      }]
+    });
+
+    var tablesConfigPanel = new Ext.FormPanel({
+      labelWidth: 200,
+      bodyStyle: 'padding:15px',
+      monitorValid: true,
+      items: [{
+        xtype: 'itemselector',
+        name: 'tableSelector',
+        fieldLabel: 'Configure Tables',
+        imagePath: 'scripts/ext-3.3.1/ux/multiselect/',
+        fromLegend: 'Available',
+        toLegend: 'Selected',
+        msWidth: 250,
+        msHeight: 300,
+        dataFields: ['tableName', 'tableValue'],
+        displayField: 'tableName',
+        valueField: 'tableValue'
       }],
       buttons: [{
         text: 'Prev',
@@ -156,20 +177,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         }
       }]
     });
-    
-    var dictionaryForm = new Ext.FormPanel({
-      id: 'dictionary-form',
+
+    var tablesEditingPanel = new Ext.FormPanel({
       labelWidth: 160,
       bodyStyle: 'padding:15px',
-      border: false,
-      frame: true,
       items: [{
         xtype: 'label',
         fieldLabel: 'Configure Database Dictionary',
         labelSeparator: '',
-        style: {
-          marginBottom: '50'
-        },
         anchor: '100% -100'
       },{
         xtype: 'textfield',
@@ -199,16 +214,16 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         }
       }]
     });
-    
+
     Ext.apply(this, {
       id: 'nh-config-wizard',
       title: 'NHibernate Configuration Wizard',
       closable: true,
       layout: 'card',
       activeItem: 0,
-      items: [dsForm, importForm, dictionaryForm]
+      items: [dsConfigPanel, tablesConfigPanel, tablesEditingPanel]
     });
-    
+
     Ext.Ajax.request({
       url: 'AdapterManager/DatabaseDictionary',
       method: 'POST',
@@ -218,33 +233,48 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
       },
       success: function(response, request) {
         var dbDict = Ext.util.JSON.decode(response.responseText);
-        
+
         if (dbDict) {
-          var form = dsForm.getForm();
+          // populate data source form
+          var dsConfigForm = dsConfigPanel.getForm();
           var connStr = dbDict.ConnectionString;
           var connStrParts = connStr.split(';');
-          
-          for (var i = 0; i < connStrParts.length; i++) {
+
+          for ( var i = 0; i < connStrParts.length; i++) {
             var pair = connStrParts[i].split('=');
-            
+
             switch (pair[0].toUpperCase()) {
-              case 'DATA SOURCE':
-                form.findField('dbInstance').setValue(pair[1]);
-                break;              
-              case 'INITIAL CATALOG':
-                form.findField('dbName').setValue(pair[1]);
-                break;          
-              case 'USER ID':
-                form.findField('userId').setValue(pair[1]);
-                break;          
-              case 'PASSWORD':
-                form.findField('password').setValue(pair[1]);
-                break;
+            case 'DATA SOURCE':
+              var dsValue = pair[1].split('\\');
+              var dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
+              dsConfigForm.findField('dbServer').setValue(dbServer);
+              dsConfigForm.findField('dbInstance').setValue(dsValue[1]);
+              break;
+            case 'INITIAL CATALOG':
+              dsConfigForm.findField('dbName').setValue(pair[1]);
+              break;
+            case 'USER ID':
+              dsConfigForm.findField('dbUserName').setValue(pair[1]);
+              break;
+            case 'PASSWORD':
+              dsConfigForm.findField('dbPassword').setValue(pair[1]);
+              break;
             }
           }
+
+          dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
+          dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
+
+          // populate selected tables
+          var tableSelector = tablesConfigPanel.getForm().findField('tableSelector');      
+          var selectedItems = new Array();
           
-          form.findField('provider').setValue(dbDict.Provider);          
-          form.findField('schema').setValue(dbDict.SchemaName);
+          for (var i = 0; i < dbDict.dataObjects.length; i++) {
+            var dataObject = dbDict.dataObjects[i];
+            selectedItems[i] = [dataObject.tableName, dataObject.tableName];
+          }
+            
+          tableSelector.toData = selectedItems;
         }
       },
       failure: function(response, request) {

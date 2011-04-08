@@ -95,6 +95,18 @@ namespace org.iringtools.services
       return _NHibernateProvider.GetSchemaObjects(project, application);
     }
 
+    //TODO: create request object and do post
+    [WebGet(UriTemplate = "/{project}/{application}/{dbProvider}/{dbServer}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/objects")]
+    public DataObjects GetSchemaObjects2(string project, string application, string dbProvider, string dbServer,
+      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+      
+      return _NHibernateProvider.GetSchemaObjects(project, application, dbProvider, dbServer, dbInstance, 
+        dbName, dbSchema, dbUserName, dbPassword);
+    }
+
     [WebGet(UriTemplate = "/{project}/{application}/objects/{objectName}")]
     public DataObject GetSchemaObjectSchema(string project, string application, string objectName)
     {

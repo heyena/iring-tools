@@ -5,6 +5,7 @@
     <title>Adapter Manager</title>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/resources/css/ext-all.css"/>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/examples/ux/css/ux-all.css"/>
+    <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/ux/multiselect/Multiselect.css">
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/resources/css/xtheme-gray.css" /> 
     <link rel="stylesheet" type="text/css" href="../../Content/css/AdapterManager-gray.css"/> 
 
@@ -14,6 +15,8 @@
     <!-- ExtJS library: all widgets -->
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ux-all.js") %>" type="text/javascript"></script>
+    <script src="../../Scripts/ext-3.3.1/ux/multiselect/Multiselect.js" type="text/javascript"></script>
+    <script src="../../Scripts/ext-3.3.1/ux/multiselect/DDView.js" type="text/javascript"></script>
             
     <!-- extensions -->    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/App.js") %>" type="text/javascript"></script>    
