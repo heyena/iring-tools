@@ -125,8 +125,30 @@ a.breadcrumb {
 }
 
 .tabsScope {
-    background-image:url('../img/system-file-manager.png') !important;
+  background-image:url('../img/system-file-manager.png') !important;
 }
 .tabsApplication {
-    background-image:url('../img/applications-internet.png') !important;
+  background-image:url('../img/applications-internet.png') !important;
 }
+
+
+.FormFont 
+{
+  font-family:tahoma,arial,helvetica,sans-serif;
+  font-size:14px;
+  font-style:normal;
+  font-weight:normal;
+  line-height:normal;
+  width:400px; 
+  height:28px;
+}
+
+.x-fieldset legend {
+  padding-top: 1px;
+  font-family:tahoma,arial,helvetica,sans-serif;
+  font-size:14px;
+  font-style:normal;
+  font-weight:normal;  
+  color: Black;
+}
+
