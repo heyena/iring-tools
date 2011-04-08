@@ -275,7 +275,12 @@ public class FederationModel
       {
         IDGenerator idgenerator = new IDGenerator();
         if (httpRequest.getParameter("nodeID") != null)
-          idgenerator.setId(httpRequest.getParameter("nodeID").replaceFirst("idgenerator", ""));
+        {
+        	String nodeIdParameter = httpRequest.getParameter("nodeID");
+        	if (nodeIdParameter.contains("idgenerator"))
+        		nodeIdParameter = nodeIdParameter.replaceFirst("idgenerator", "");
+          idgenerator.setId(nodeIdParameter);
+        }
         idgenerator.setName(httpRequest.getParameter("Name"));
         idgenerator.setUri(httpRequest.getParameter("URI"));
         idgenerator.setDescription(httpRequest.getParameter("Description"));
@@ -287,7 +292,12 @@ public class FederationModel
       {
         Namespace namespace = new Namespace();
         if (httpRequest.getParameter("nodeID") != null)
-          namespace.setId(httpRequest.getParameter("nodeID").replaceFirst("namespace", ""));
+        {
+        	String nodeIdParameter = httpRequest.getParameter("nodeID");
+        	if (nodeIdParameter.contains("namespace"))
+        		nodeIdParameter = nodeIdParameter.replaceFirst("namespace", "");
+          namespace.setId(nodeIdParameter);
+        }
         namespace.setUri(httpRequest.getParameter("URI"));
         namespace.setAlias(httpRequest.getParameter("Alias"));
         namespace.setIsWritable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
@@ -299,8 +309,14 @@ public class FederationModel
       else if ("repository".equalsIgnoreCase(httpRequest.getParameter("parentNodeID")))
       {
         Repository repository = new Repository();
-        if (httpRequest.getParameter("nodeID") != null)
-          repository.setId(httpRequest.getParameter("nodeID").replaceFirst("repository", ""));
+        if (httpRequest.getParameter("nodeID") != null) 
+        {
+        	String nodeIdParameter = httpRequest.getParameter("nodeID");
+        	if (nodeIdParameter.contains("repository"))
+        		nodeIdParameter = nodeIdParameter.replaceFirst("repository", "");
+          repository.setId(nodeIdParameter);
+        }
+        
         System.out.println("Description :" + httpRequest.getParameter("Description"));
         repository.setName(httpRequest.getParameter("Name"));
         repository.setDescription(httpRequest.getParameter("Description"));
