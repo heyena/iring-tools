@@ -1500,9 +1500,10 @@ namespace org.iringtools.adapter
             {
               if (!t.IsInterface && ti.IsAssignableFrom(t) && t.IsAbstract.Equals(false))
               {
+                bool configurable = t.BaseType.Equals(typeof(BaseConfigurableDataLayer));
                 string name = asm.FullName.Split(',')[0];
                 string assembly = string.Format("{0}, {1}", t.FullName, name);
-                DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name };
+                DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
                 dataLayerAssemblies.Add(dataLayer);
               }
             }

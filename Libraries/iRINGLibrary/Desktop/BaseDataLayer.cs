@@ -16,7 +16,7 @@ namespace org.iringtools.library
     //protected XElement _configuration = null;
 
     protected static readonly ILog _logger = LogManager.GetLogger(typeof(IDataLayer));
-
+        
     public virtual IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
       try

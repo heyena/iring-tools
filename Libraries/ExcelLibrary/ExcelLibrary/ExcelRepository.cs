@@ -20,9 +20,9 @@ namespace org.iringtools.datalayer.excel
 
     ExcelConfiguration ProcessConfiguration(ExcelConfiguration configuration);
 
-    //List<ExcelWorksheet> GetWorksheets(ExcelConfiguration configuration);
+    List<ExcelWorksheet> GetWorksheets(ExcelConfiguration configuration);
 
-    //List<ExcelColumn> GetColumns(string scope, string application, string worksheetName);
+    List<ExcelColumn> GetColumns(ExcelConfiguration configuration, string worksheetName);
 
     void Configure(string scope, string application, string datalayer, ExcelConfiguration configuration);
   }

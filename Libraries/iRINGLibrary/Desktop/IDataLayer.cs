@@ -66,29 +66,8 @@ namespace org.iringtools.library
 
   public interface IDataLayer2 : IDataLayer
   {
-    IList<IDataObject> Create(string objectType, IList<string> identifiers);
-
-    long GetCount(string objectType, DataFilter filter);
-
-    IList<string> GetIdentifiers(string objectType, DataFilter filter);
-
-    IList<IDataObject> Get(string objectType, IList<string> identifiers);
-
-    IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex);
-
-    Response Post(IList<IDataObject> dataObjects);
-
-    Response Delete(string objectType, IList<string> identifiers);
-
-    Response Delete(string objectType, DataFilter filter);
-
-    DataDictionary GetDictionary();
-
-    IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
-
     Response Configure(XElement configuration);
 
     XElement GetConfiguration();
-
   }
 }

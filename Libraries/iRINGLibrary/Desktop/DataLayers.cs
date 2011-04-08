@@ -18,6 +18,10 @@ namespace org.iringtools.library
     [XmlElement]
     [DataMember(Name = "name", Order = 2, EmitDefaultValue = false)]
     public string Name { get; set; }
+
+    [XmlElement]
+    [DataMember(Name = "configurable", Order = 3, EmitDefaultValue = false)]
+    public bool Configurable { get; set; }
   }
 
   [CollectionDataContract(Name = "dataLayers", Namespace = "http://www.iringtools.org/library", ItemName = "dataLayer")]

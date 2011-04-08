@@ -20,7 +20,7 @@ using org.iringtools.nhibernate;
 
 namespace org.iringtools.adapter.datalayer
 {
-  public class NHibernateDataLayer : BaseDataLayer, IDataLayer2
+  public class NHibernateDataLayer : BaseConfigurableDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
     private string _dataDictionaryPath = String.Empty;
