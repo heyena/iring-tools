@@ -1,106 +1,249 @@
 ﻿Ext.ns('AdapterManager');
 /**
-* @class AdapterManager.SearchPanel
-* @extends TreePanel
-* @author by Gert Jansen van Rensburg
+* @class FederationManager.SearchPanel
+* @author by Aswini Nayak
 */
-
-//image path
-var IMG_CLASS = 'Content/img/class.png';
-var IMG_TEMPLATE = 'Content/img/template.png';
-//renderer function
-function renderIcon(value, p, record) {
-    var label = null;
-
-    if (record.data.Uri.indexOf("tpl") != -1) {
-        label = '<img src="' + IMG_TEMPLATE + '" align="top"> ' + value;
-    } else {
-        label = '<img src="' + IMG_CLASS + '" align="top"> ' + value;
-    }
-    return label;
-}
-
+var treeLoader, searchText;
 AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
-    title: 'Reference Data Search',
+  title: 'Reference Data Search',
+  layout: 'border',
+  border: true,
+  split: true,
+  searchUrl: null,
+  limit: 100,
+  refClassTabPanel: null,
+  propertyPanel: null,
+  searchStore: null,
+  /**
+  * initComponent
+  * @protected
+  */
+  initComponent: function () {
+    this.tbar = this.buildToolbar();
+    this.propertyPanel = new Ext.grid.PropertyGrid({
+      id: 'class-property-panel',
+      title: 'Details',
+      region: 'east',
+      // layout: 'fit',
+      stripeRows: true,
+      collapsible: true,
+      autoScroll: true,
+      width: 350,
+      split: true,
+      bodyBorder: true,
+      collapsed: false,
+      border: true,
+      frame: true,
+      source: {},
+      listeners: {
+        // to disable editable option of the property grid
+        beforeedit: function (e) {
+          e.cancel = true;
+        }
+      }
+    });
 
-    layout: 'fit',
-    border: true,
-    split: true,
+    this.refClassTabPanel = new Ext.TabPanel({
+      id: 'content-pane',
+      region: 'center',
+      deferredRender: false,
+      enableTabScroll: true,
+      border: true,
+      activeItem: 0
+    });
 
-    searchStore: null,
-    searchExpander: null,
-    searchColumnmodel: null,
-    searchUrl: null,
-    limit: 100,
 
-    /**
-    * initComponent
-    * @protected
-    */
-    initComponent: function () {
+    this.items = [this.refClassTabPanel, this.propertyPanel];
 
-        this.searchStore = new Ext.data.JsonStore({
-            root: 'items',
-            totalProperty: 'total',
-            idProperty: 'Label',
-            fields: [
-              { name: 'Uri', allowBlank: false },
-              { name: 'Label', allowBlank: false },
-              { name: 'Repository', allowBlank: false }
-            ],
-            proxy: new Ext.data.HttpProxy({
-                url: this.searchUrl,
-                timeout: 12000
-            }),
-            baseParams: { limit: this.limit }
-        });
+    // super
+    AdapterManager.SearchPanel.superclass.initComponent.call(this);
+  },
+  buildToolbar: function () {
+    return [
+                 {
+                   xtype: 'textfield',
+                   allowBlank: false,
+                   blankText: 'This field can not be blank',
+                   name: 'referencesearch',
+                   id: 'referencesearch',
+                   style: {
+                     marginLeft: '15px'
+                   },
+                   scope: this,
+                   listeners: {
+                     specialkey: function (f, e) {
+                       if (e.getKey() == e.ENTER) {
+                         var query = Ext.get('referencesearch').getValue();
+                         //alert(query);
+                       }
+                     }
+                   }
+                 },
+            	 {
+            	   xtype: 'checkbox',
+            	   boxLabel: 'Reset',
+            	   name: 'reset',
+            	   style: {
+            	     marginRight: '5px',
+            	     marginLeft: '3px'
+            	   }
+            	 },
+                {
+                  xtype: "tbbutton",
+                  text: 'Search',
+                  handler: this.onSearch,
+                  scope: this,
+                  style: {
+                    marginLeft: '5px'
+                  }
 
-        this.searchExpander = new AdapterManager.AjaxRowExpander({
-            tpl: new Ext.Template(
-            '<p><b>Uri:</b> {Uri}</p><br>',
-            '<p><b>Description:</b> {Desc}</p>'
-          )
-        },'');
+                },
+				{
+				  xtype: "tbbutton",
+				  text: 'Promote',
+				  //icon : 'resources/images/16x16/view-refresh.png',
+				  tooltip: 'Promote',
+				  disabled: false,
+				  handler: this.onPromote,
+				  scope: this
+				},
+                   {
+                     xtype: "tbbutton",
+                     text: 'Add Class',
+                     tooltip: 'Add Class',
+                     disabled: false,
+                     handler: this.onClassAdd,
+                     scope: this
+                   },
+                   {
+                     xtype: "tbbutton",
+                     text: 'Edit Class',
+                     tooltip: 'Edit Class',
+                     disabled: true,
+                     handler: this.onClassEdit,
+                     scope: this
+                   },
+                   {
+                     xtype: "tbbutton",
+                     text: 'Add Template',
+                     tooltip: 'Add Template',
+                     disabled: false,
+                     handler: this.onTemplateAdd,
+                     scope: this
+                   },
+                   {
+                     xtype: "tbbutton",
+                     text: 'Edit Template',
+                     tooltip: 'Edit Template',
+                     disabled: true,
+                     handler: this.onTemplateEdit,
+                     scope: this
+                   }];
+  },
+  onSearch: function () {
+    searchText = Ext.get('referencesearch').getValue();
+    treeLoader = new Ext.tree.TreeLoader({
+      requestMethod: 'POST',
+      url: this.searchUrl,
+      baseParams: {
+        type: null,
+        query: searchText,
+        limit: this.limit,
+        start: 0
+      }
+    });
+    var tree = new Ext.tree.TreePanel({
+      title: searchText,
+      useArrows: true,
+      animate: true,
+      lines: false,
+      id: 'tab_' + searchText,
+      autoScroll: true,
+      style: 'padding-left:5px;',
+      border: false,
+      closable: true,
+      rootVisible: false,
+      loader: treeLoader,
+      root: {
+        nodeType: 'async',
+        qtipCfg: 'Aswini',
+        draggable: false
+      },
+      containerScroll: true
+    });
 
-        this.searchExpander.on('beforeexpand', function (record, body, rowIndex) {
-            alert(record);
-        });
+    //	tree.on('beforeexpandnode', this.restrictExpand, this);
 
-        this.tbar = [
-          'Search: ', ' ',
-          new Ext.ux.form.SearchField({
-              store: this.searchStore,
-              width: 320
-          }, ' ', { text: '' })
-        ];
+    tree.on('beforeload', function (node) {
+      Ext.getCmp('content-pane').getEl().mask('Loading...');
+    });
+    tree.on('load', function (node) {
+      Ext.getCmp('content-pane').getEl().unmask();
+    });
+    tree.getRootNode().expand();
+    tree.on('click', this.onClick, this);
+    this.refClassTabPanel.add(tree).show();
+  },
+  onClick: function (node) {
+    switch (node.attributes.text) {
+      case "Classifications":
+        // alert("send request for classifications:"+'class/'+node.parentNode.attributes.identifier);
+        treeLoader.url = "refdata/classes";
+        treeLoader.baseParams = {
+          id: node.parentNode.attributes.identifier,
+          query: searchText,
+          limit: this.limit,
+          start: 0,
+          type: node.attributes.type
+        };
+        break;
+      case "Superclasses":
+        //alert("send request for Superclasses:"+'superClass/'+node.parentNode.attributes.identifier);
+        treeLoader.url = "refdata/superClasses";
+        treeLoader.baseParams = {
+          id: node.parentNode.attributes.identifier,
+          query: searchText,
+          limit: this.limit,
+          start: 0
+        };
 
-        this.bbar = new Ext.PagingToolbar({
-            store: this.searchStore,
-            pageSize: this.limit,
-            displayInfo: true,
-            displayMsg: 'Results {0} - {1} of {2}',
-            emptyMsg: "No results to display"
-        });
+        break;
+      case "Subclasses":
+        //alert("send request for Subclasses:"+'subClasses/'+node.parentNode.attributes.identifier);
+        treeLoader.url = "refdata/subClasses";
+        treeLoader.baseParams = {
+          id: node.parentNode.attributes.identifier,
+          query: searchText,
+          limit: this.limit,
+          start: 0
+        };
+        break;
+      case "Templates":
+        //alert("send request for Subclasses:"+'subClasses/'+node.parentNode.attributes.identifier);
+        treeLoader.url = "refdata/templates";
+        treeLoader.baseParams = {
+          id: node.parentNode.attributes.identifier,
+          query: searchText,
+          limit: this.limit,
+          start: 0
+        };
+        break;
+      default:
+        if (node.attributes.type == 'templateNode') {
+          treeLoader.url = "refdata/roles";
+          treeLoader.baseParams = {
+            id: node.parentNode.attributes.identifier,
+            query: searchText,
+            limit: this.limit,
+            start: 0
+          };
+        };
+        break;
 
-        this.items = new Ext.grid.GridPanel({
-            border: false,
-            store: this.searchStore,
-            plugins: this.searchExpander,
-            cm: new Ext.grid.ColumnModel([
-        this.searchExpander,
-        { header: "Label", width: 400, sortable: true, dataIndex: 'Label', renderer: renderIcon },
-        { header: "Repository", width: 150, sortable: true, dataIndex: 'Repository' },
-        { header: "Uri", width: 400, sortable: true, dataIndex: 'Uri', hidden: true }
-      ])
-        });
 
-        // super
-        AdapterManager.SearchPanel.superclass.initComponent.call(this);
-    },
 
-    load: function () {
-        this.searchStore.load({ params: { start: 0, limit: this.limit} });
-        return;
     }
+    node.expand();
+  }
 
 });

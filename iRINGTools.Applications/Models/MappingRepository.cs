@@ -43,7 +43,7 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
-        public Mapping UpdateMapping(string scopeName, string applicationName)
+        public void UpdateMapping(string scopeName, string applicationName)
         {
             Mapping obj = null;
             try
@@ -52,7 +52,7 @@ namespace iRINGTools.Web.Models
             catch (Exception ex)
             {
             }
-            return obj;
+          
         }
     }
 }

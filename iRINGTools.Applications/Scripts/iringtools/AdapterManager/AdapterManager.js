@@ -45,19 +45,17 @@ Ext.onReady(function () {
     * collapseMode: 'mini', collapsible: true, collapsed: false });
     */
 
-    var searchPanel = new AdapterManager.SearchPanel({
+      var searchPanel = new AdapterManager.SearchPanel({
         id: 'search-panel',
         title: 'Reference Data Search',
         region: 'south',
         height: 300,
-
         collapseMode: 'mini',
         collapsible: true,
         collapsed: false,
-
-        searchUrl: 'refdata',
+        searchUrl: 'refdata/getnode',
         limit: 100
-    });
+      });
 
     var contentPanel = new Ext.TabPanel({
         id: 'content-panel',
@@ -272,7 +270,7 @@ Ext.onReady(function () {
     }, this);
 
     // Load Stores
-    searchPanel.load();
+   // searchPanel.load();
 
     // Finally, build the main layout once all the pieces are ready. This is also
     // a good

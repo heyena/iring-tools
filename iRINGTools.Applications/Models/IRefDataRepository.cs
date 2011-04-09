@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using org.iringtools.library;
+using org.ids_adi.qmxf;
 
 namespace iRINGTools.Web.Models
 {
@@ -22,5 +23,7 @@ namespace iRINGTools.Web.Models
     Entities GetSubClasses(string classId);
 
     Entities GetClassTemplates(string classId);
+
+    QMXF GetClasses(string classId);
   }
 }
