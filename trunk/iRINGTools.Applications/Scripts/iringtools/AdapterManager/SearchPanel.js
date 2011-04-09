@@ -28,7 +28,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       stripeRows: true,
       collapsible: true,
       autoScroll: true,
-      width: 350,
+      width: 450,
       split: true,
       bodyBorder: true,
       collapsed: false,
@@ -97,48 +97,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
                     marginLeft: '5px'
                   }
 
-                },
-				{
-				  xtype: "tbbutton",
-				  text: 'Promote',
-				  //icon : 'resources/images/16x16/view-refresh.png',
-				  tooltip: 'Promote',
-				  disabled: false,
-				  handler: this.onPromote,
-				  scope: this
-				},
-                   {
-                     xtype: "tbbutton",
-                     text: 'Add Class',
-                     tooltip: 'Add Class',
-                     disabled: false,
-                     handler: this.onClassAdd,
-                     scope: this
-                   },
-                   {
-                     xtype: "tbbutton",
-                     text: 'Edit Class',
-                     tooltip: 'Edit Class',
-                     disabled: true,
-                     handler: this.onClassEdit,
-                     scope: this
-                   },
-                   {
-                     xtype: "tbbutton",
-                     text: 'Add Template',
-                     tooltip: 'Add Template',
-                     disabled: false,
-                     handler: this.onTemplateAdd,
-                     scope: this
-                   },
-                   {
-                     xtype: "tbbutton",
-                     text: 'Edit Template',
-                     tooltip: 'Edit Template',
-                     disabled: true,
-                     handler: this.onTemplateEdit,
-                     scope: this
-                   }];
+                }];
   },
   onSearch: function () {
     searchText = Ext.get('referencesearch').getValue();
@@ -185,6 +144,10 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     this.refClassTabPanel.add(tree).show();
   },
   onClick: function (node) {
+    try {
+      this.propertyPanel.setSource(node.attributes.record);
+    } catch (e) {
+    };
     switch (node.attributes.text) {
       case "Classifications":
         // alert("send request for classifications:"+'class/'+node.parentNode.attributes.identifier);
@@ -232,7 +195,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
         if (node.attributes.type == 'templateNode') {
           treeLoader.url = "refdata/roles";
           treeLoader.baseParams = {
-            id: node.parentNode.attributes.identifier,
+            id: node.attributes.identifier,
             query: searchText,
             limit: this.limit,
             start: 0
