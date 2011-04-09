@@ -74,5 +74,11 @@ namespace iRINGTools.Web.Models
       return _client.Get<QMXF>(relativeUri);
     }
 
+    public QMXF GetTemplate(string id)
+    {
+      relativeUri = string.Format("/templates/{0}", id);
+      return _client.Get<QMXF>(relativeUri);
+    }
+
   }
 }
