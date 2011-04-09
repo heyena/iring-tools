@@ -26,7 +26,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   scope: null,
   application: null,
   graph: null,
-
+  m_window: null,
   mappingMenu: null,
   graphmapMenu: null,
   templatemapMenu: null,
@@ -124,6 +124,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       }
     });
 
+
+
     this.items = [
           this.propertyPanel,
           this.mappingPanel
@@ -191,6 +193,31 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onAddGraphMap: function (node) {
+    this.m_window = new Ext.Window({
+      closable: true,
+      modal: true,
+      layout: 'auto',
+      title: 'Add new GraphMap to Mapping',
+      items: [{
+        xtype: 'label',
+        fieldLabel: 'Class Id',
+        labelSeparator: ':'
+      }, {
+        xtype: 'textfield',
+        name: 'dbServer'
+      }],
+      buttons: [{
+                    text:'Submit'          
+                }],
+      height: 300,
+      width: 400,
+      closeAction: 'hide'
+    });
+
+    this.on('hide', function () {
+      this.m_window.hide();
+    });
+    this.m_window.show();
   },
 
   buildGraphmapMenu: function () {
@@ -263,10 +290,10 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
              scope: this
            },
            {
-           text: 'Reset Mapping',
-           handler: this.onResetMapping,
-           //icon: '',
-           scope: this
+             text: 'Reset Mapping',
+             handler: this.onResetMapping,
+             //icon: '',
+             scope: this
            }
         ]
   },

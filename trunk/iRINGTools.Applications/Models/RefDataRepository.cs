@@ -9,6 +9,7 @@ using System.Web;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
+using org.ids_adi.qmxf;
 
 namespace iRINGTools.Web.Models
 {
@@ -67,5 +68,11 @@ namespace iRINGTools.Web.Models
       relativeUri = string.Format("/classes/{0}/templates", classId);
       return _client.Get<Entities>(relativeUri);
     }
+    public QMXF GetClasses(string classId)
+    {
+      relativeUri = string.Format("/classes/{0}", classId);
+      return _client.Get<QMXF>(relativeUri);
+    }
+
   }
 }

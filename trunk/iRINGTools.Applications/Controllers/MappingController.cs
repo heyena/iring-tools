@@ -56,6 +56,23 @@ namespace iRINGTools.Web.Controllers
       return (Mapping)Session[key];
     }
 
+    public JsonResult AddClassMap(FormCollection form)
+    {
+      JsonTreeNode nodes = new JsonTreeNode();
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult AddTemplateMap(FormCollection form)
+    {
+      JsonTreeNode nodes = new JsonTreeNode();
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult AddGraphMap(FormCollection form)
+    {
+      JsonTreeNode nodes = new JsonTreeNode();
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
 
     public JsonResult GetNode(FormCollection form)
     {
