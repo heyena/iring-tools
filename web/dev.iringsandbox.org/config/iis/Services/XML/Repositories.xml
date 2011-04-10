@@ -22,13 +22,6 @@
     <uri>http://rdl.rdlfacade.org/data</uri>
   </repository>
   <repository>
-    <description>RDS/WIP Part 7 Template Library</description>
-    <isReadOnly>true</isReadOnly>
-    <name>Templates</name>
-    <repositoryType>RDSWIP</repositoryType>
-    <uri>http://tpl.rdlfacade.org/data</uri>
-  </repository>
-  <repository>
     <description>RDS/Proto and P7 Initial Set Templates</description>
     <isReadOnly>true</isReadOnly>
     <name>Proto and Initial</name>
