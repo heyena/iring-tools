@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <directory xmlns="http://www.iringtools.org/directory">
   <scope>
-    <name>12345_000</name>
+	<name>12345_000</name>
     <applicationData>
       <application>
         <id>1</id>
@@ -49,118 +49,5 @@
         </exchanges>
       </commodity>
     </dataExchanges>
-  </scope>
-	<scope>
-		<name>25027</name>
-		<applicationData>
-			<application>
-				<id>3</id>
-				<name>CM</name>
-				<description>ORACLE Completions Module</description>
-        <baseUri>http://labst9413/services/dxfr</baseUri>
-				<graphs>
-					<graph>
-						<id>3</id>
-						<name>Documents</name>
-						<description>Completions Documents</description>
-						<commodity>Document</commodity>
-					</graph>
-				</graphs>
-			</application>
-		</applicationData>
-	</scope>
-	<scope>
-		<name>44444</name>
-		<applicationData>
-			<application>
-				<id>5</id>
-				<name>CM</name>
-				<description>SQLServer Completions Module</description>
-        <baseUri>http://labst9413/services/dxfr</baseUri>
-				<graphs>
-					<graph>
-						<id>6</id>
-						<name>Documents</name>
-						<description>Completions Documents</description>
-						<commodity>Document</commodity>
-					</graph>
-				</graphs>
-			</application>
-		</applicationData>
-	</scope>
-	<scope>
-		<name>ComplianceWorks</name>
-		<applicationData>
-			<application>
-				<id>6</id>
-				<name>eForms</name>
-				<description>eForms</description>
-        <baseUri>http://labst9413/services/dxfr</baseUri>
-				<graphs>
-					<graph>
-						<id>7</id>
-						<name>Forms</name>
-						<description>eForms Document Types</description>
-						<commodity>DocumentType</commodity>
-					</graph>
-					<graph>
-						<id>8</id>
-						<name>Folders</name>
-						<description>eForms Project Hierarchy</description>
-						<commodity>DocumentFolder</commodity>
-					</graph>
-				</graphs>
-			</application>
-		</applicationData>
-	</scope>
-	<scope>
-		<name>Dulles</name>
-		<applicationData>
-			<application>
-				<id>7</id>
-				<name>eForms</name>
-				<description>eForms</description>
-        <baseUri>http://labst9413/services/dxfr</baseUri>
-				<graphs>
-					<graph>
-						<id>9</id>
-						<name>Forms</name>
-						<description>eForms Document Types</description>
-						<commodity>DocumentType</commodity>
-					</graph>
-					<graph>
-						<id>10</id>
-						<name>Folders</name>
-						<description>eForms Project Hierarchy</description>
-						<commodity>DocumentFolder</commodity>
-					</graph>
-				</graphs>
-			</application>
-		</applicationData>
-	</scope>
-	<scope>
-		<name>ServiceTest</name>
-		<applicationData>
-			<application>
-				<id>4</id>
-				<name>eForms</name>
-				<description>eForms</description>
-        <baseUri>http://labst9413/services/dxfr</baseUri>
-				<graphs>
-					<graph>
-						<id>4</id>
-						<name>Forms</name>
-						<description>eForms Document Types</description>
-						<commodity>DocumentType</commodity>
-					</graph>
-					<graph>
-						<id>5</id>
-						<name>Folders</name>
-						<description>eForms Project Hierarchy</description>
-						<commodity>DocumentFolder</commodity>
-					</graph>
-				</graphs>
-			</application>
-		</applicationData>
 	</scope>
 </directory>
