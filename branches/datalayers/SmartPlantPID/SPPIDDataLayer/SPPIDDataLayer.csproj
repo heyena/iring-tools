@@ -74,6 +74,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -91,6 +92,7 @@
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="AppConfiguration.cs" />
     <Compile Include="ILMADataSource.cs" />
     <Compile Include="MockLMADataSource.cs" />
     <Compile Include="SPPIDDataLayer.cs" />
@@ -112,6 +114,24 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\SPPIDDataLayer.NUnit\12345_000\BindingConfiguration.12345_000.SPPID.xml">
+      <Link>BindingConfiguration.12345_000.SPPID.xml</Link>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\SPPIDDataLayer.NUnit\12345_000\Configuration.SPPID.xml">
+      <Link>Configuration.SPPID.xml</Link>
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="..\SPPIDDataLayer.NUnit\12345_000\DataDictionary.SPPID.xml">
+      <Link>DataDictionary.SPPID.xml</Link>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\SPPIDDataLayer.NUnit\12345_000\12345_000.SPPID.config">
+      <Link>12345_000.SPPID.config</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
