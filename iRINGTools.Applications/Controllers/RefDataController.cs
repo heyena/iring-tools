@@ -36,11 +36,17 @@ namespace iRINGTools.Web.Controllers
       _refdataRepository = repository;
     }
 
-    public JsonResult Index(FormCollection collection)
+    public JsonResult Index(FormCollection form)
     {
-      string query = collection["query"];
-      string start = collection["start"];
-      string limit = collection["limit"];
+      
+      int start = 0;
+      int limit = 100;
+      string id = form["id"];
+      string query = form["query"];
+
+      Int32.TryParse(form["limit"], out limit);
+      Int32.TryParse(form["start"], out start);
+
       JsonContainer<List<Entity>> container = new JsonContainer<List<Entity>>();
 
       if (!string.IsNullOrEmpty(query))
@@ -57,77 +63,157 @@ namespace iRINGTools.Web.Controllers
 
     public JsonResult GetNode(FormCollection form)
     {
-      string start = form["start"];
-      string limit = form["limit"];
-      string query = form["query"];
+      int start = 0;
+      int limit = 100;
+
+      string id = form["id"];
       string searchtype = form["type"];
-      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+      string query = form["query"];      
+      Int32.TryParse(form["limit"], out limit);
+      Int32.TryParse(form["start"], out start);
+
+      List<JsonTreeNode> nodes = null;
+
       if (!string.IsNullOrEmpty(query))
       {
-        RefDataEntities dataEntities = _refdataRepository.Search(query, start, limit);
-        foreach (Entity entity in dataEntities.Entities.Values.ToList<Entity>())
+        switch (searchtype)
+        {
+          case "SearchNode":
+            nodes = GetClasses(query, start, limit);
+            break;
+          case "ClassificationsNode":
+            nodes = GetClasses(id);
+            break;
+          case "SuperclassesNode":
+            nodes = GetSuperClasses(id);
+            break;
+          case "SubclassesNode":
+            nodes = GetSubClasses(id);
+            break;
+          case "ClassTemplatesNode":
+            nodes = GetTemplates(id);
+            break;
+          case "TemplateNode":
+            nodes = GetRoles(id);
+            break;
+          default:
+            nodes = new List<JsonTreeNode>();
+            break;
+        }
+      }
+        
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    private List<JsonTreeNode> GetDefaultChildren(string label)
+    {
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+      JsonTreeNode clasifNode = new JsonTreeNode
+      {
+        id = ("Classifications" + label).GetHashCode().ToString(),
+        children = null,
+        leaf = false,
+        text = "Classifications",
+        type = "ClassificationsNode",
+        expanded = false
+      };
+      nodes.Add(clasifNode);
+      JsonTreeNode supersNode = new JsonTreeNode
+      {
+        id = ("Superclasses" + label).GetHashCode().ToString(),
+        children = null,
+        leaf = false,
+        text = "Superclasses",
+        type = "SuperclassesNode",
+        expanded = false
+      };
+      nodes.Add(supersNode);
+      JsonTreeNode subsNode = new JsonTreeNode
+      {
+        id = ("Subclasses" + label).GetHashCode().ToString(),
+        children = null,
+        leaf = false,
+        text = "Subclasses",
+        type = "SubclassesNode",
+        expanded = false
+      };
+      nodes.Add(subsNode);
+      JsonTreeNode tempsNode = new JsonTreeNode
+      {
+        id = ("Templates" + label).GetHashCode().ToString(),
+        children = null,
+        leaf = false,
+        text = "Templates",
+        type = "ClassTemplatesNode",
+        expanded = false
+      };
+      nodes.Add(tempsNode);
+
+      return nodes;
+    }
+
+    private List<JsonTreeNode> GetClasses(string query, int start, int limit)
+    {
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+      RefDataEntities dataEntities = _refdataRepository.Search(query, start, limit);
+
+      foreach (Entity entity in dataEntities.Entities.Values.ToList<Entity>())
+      {
+        string label = entity.Label + '[' + entity.Repository + ']';
+
+        JsonTreeNode node = new JsonTreeNode
+        {
+          nodeType = "async",
+          type = "ClassNode",
+          icon = "Content/img/class.png",
+          identifier = entity.Uri.Split('#')[1],
+          id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+          text = label,
+          expanded = false,
+          leaf = false,
+          children = GetDefaultChildren(label),
+          record = entity
+        };
+        
+        nodes.Add(node);
+      }
+
+      return nodes;
+    }
+
+    private List<JsonTreeNode> GetClasses(string classId)
+    {
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+      if (!string.IsNullOrEmpty(classId))
+      {
+        QMXF dataEntities = _refdataRepository.GetClasses(classId);
+        foreach (var entity in dataEntities.classDefinitions)
         {
           JsonTreeNode node = new JsonTreeNode
           {
             nodeType = "async",
-            type = "classNode",
+            type = "ClassNode",
             icon = "Content/img/class.png",
-            identifier = entity.Uri.Split('#')[1],
-            id = (entity.Label + entity.Repository).GetHashCode().ToString(),
-            text = entity.Label + '[' + entity.Repository + ']',
+            identifier = entity.identifier.Split('#')[1],
+            id = (entity.name[0].value).GetHashCode().ToString(),
+            text = entity.name[0].value,
             expanded = false,
             leaf = false,
-            children = new List<JsonTreeNode>(),
+            children = GetDefaultChildren(entity.name[0].value),
             record = entity
           };
-          JsonTreeNode clasifNode = new JsonTreeNode
-          {
-            id = ("Classifications" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Classifications",
-            expanded = false
-          };
-          node.children.Add(clasifNode);
-          JsonTreeNode supersNode = new JsonTreeNode
-          {
-            id = ("Superclasses" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Superclasses",
-            expanded = false
-          };
-          node.children.Add(supersNode);
-          JsonTreeNode subsNode = new JsonTreeNode
-          {
-            id = ("Subclasses" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Subclasses",
-            expanded = false
-          };
-          node.children.Add(subsNode);
-          JsonTreeNode tempsNode = new JsonTreeNode
-          {
-            id = ("Templates" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Templates",
-            expanded = false
-          };
-          node.children.Add(tempsNode);
           nodes.Add(node);
         }
       }
-      return Json(nodes, JsonRequestBehavior.AllowGet);
+      return nodes;
     }
-
-    public JsonResult SubClasses(FormCollection form)
-    {
-      string classId = form["id"];
-      string searchtype = Request.QueryString["type"];
+     
+    private List<JsonTreeNode> GetSubClasses(string classId)
+    {      
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
 
       if (!string.IsNullOrEmpty(classId))
       {
@@ -137,65 +223,27 @@ namespace iRINGTools.Web.Controllers
           JsonTreeNode node = new JsonTreeNode
           {
             nodeType = "async",
-            type = "subclassNode",
+            type = "SubclassNode",
             icon = "Content/img/class.png",
             identifier = entity.Uri.Split('#')[1],
             id = (entity.Label + entity.Repository).GetHashCode().ToString(),
             text = entity.Label,
             expanded = false,
             leaf = false,
-            children = new List<JsonTreeNode>(),
+            children = GetDefaultChildren(entity.Label),
             record = entity
           };
-          JsonTreeNode clasifNode = new JsonTreeNode
-          {
-            id = ("Classifications" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Classifications",
-            expanded = false
-          };
-          node.children.Add(clasifNode);
-          JsonTreeNode supersNode = new JsonTreeNode
-          {
-            id = ("Superclasses" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Superclasses",
-            expanded = false
-          };
-          node.children.Add(supersNode);
-          JsonTreeNode subsNode = new JsonTreeNode
-          {
-            id = ("Subclasses" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Subclasses",
-            expanded = false
-          };
-          node.children.Add(subsNode);
-          JsonTreeNode tempsNode = new JsonTreeNode
-          {
-            id = ("Templates" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Templates",
-            expanded = false
-          };
-          node.children.Add(tempsNode);
+          
           nodes.Add(node);
         }
       }
 
-      return Json(nodes, JsonRequestBehavior.AllowGet);
+      return nodes;
     }
 
-    public JsonResult SuperClasses(FormCollection form)
+    private List<JsonTreeNode> GetSuperClasses(string classId)
     {
-
-      string searchtype = Request.QueryString["type"];
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-      string classId = form["id"];
 
       if (!string.IsNullOrEmpty(classId))
       {
@@ -205,62 +253,25 @@ namespace iRINGTools.Web.Controllers
           JsonTreeNode node = new JsonTreeNode
           {
             nodeType = "async",
-            type = "superClassNode",
+            type = "SuperClassNode",
             icon = "Content/img/class.png",
             identifier = entity.Uri.Split('#')[1],
             id = (entity.Label + entity.Repository).GetHashCode().ToString(),
             text = entity.Label,
             expanded = false,
             leaf = false,
-            children = new List<JsonTreeNode>(),
+            children = GetDefaultChildren(entity.Label),
             record = entity
           };
-          JsonTreeNode clasifNode = new JsonTreeNode
-          {
-            id = ("Classifications" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Classifications",
-            expanded = false
-          };
-          node.children.Add(clasifNode);
-          JsonTreeNode supersNode = new JsonTreeNode
-          {
-            id = ("Superclasses" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Superclasses",
-            expanded = false
-          };
-          node.children.Add(supersNode);
-          JsonTreeNode subsNode = new JsonTreeNode
-          {
-            id = ("Subclasses" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Subclasses",
-            expanded = false
-          };
-          node.children.Add(subsNode);
-          JsonTreeNode tempsNode = new JsonTreeNode
-          {
-            id = ("Templates" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Templates",
-            expanded = false
-          };
-          node.children.Add(tempsNode);
           nodes.Add(node);
         }
       }
-      return Json(nodes, JsonRequestBehavior.AllowGet);
+
+      return nodes;
     }
 
-    public JsonResult Templates(FormCollection form)
-    {
-      string searchtype = Request.QueryString["type"];
-      string classId = form["id"];
+    private List<JsonTreeNode> GetTemplates(string classId)
+    {      
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
       if (!string.IsNullOrEmpty(classId))
@@ -271,7 +282,7 @@ namespace iRINGTools.Web.Controllers
           JsonTreeNode node = new JsonTreeNode
           {
             nodeType = "async",
-            type = "templateNode",
+            type = "TemplateNode",
             icon = "Content/img/template.png",
             id = (entity.Label + entity.Repository).GetHashCode().ToString(),
             identifier = entity.Uri.Split('#')[1],
@@ -286,99 +297,27 @@ namespace iRINGTools.Web.Controllers
         }
       }
 
-      return Json(nodes, JsonRequestBehavior.AllowGet);
-    }
+      return nodes;
+    }    
 
-    public JsonResult Classes(FormCollection form)
-    {
-      string searchtype = Request.QueryString["type"];
-      string classId = form["id"];
+    private List<JsonTreeNode> GetRoles(string Id)
+    {      
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-      if (!string.IsNullOrEmpty(classId))
-      {
-        QMXF dataEntities = _refdataRepository.GetClasses(classId);
-        foreach (var entity in dataEntities.classDefinitions)
-        {
-          JsonTreeNode node = new JsonTreeNode
-          {
-            nodeType = "async",
-            type = searchtype,
-            icon = "Content/img/class.png",
-            identifier = entity.identifier.Split('#')[1],
-            id = (entity.name[0].value).GetHashCode().ToString(),
-            text = entity.name[0].value,
-            expanded = false,
-            leaf = false,
-            children = new List<JsonTreeNode>(),
-            record = entity
-          };
-          JsonTreeNode clasifNode = new JsonTreeNode
-          {
-            id = ("Classifications" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Classifications",
-            expanded = false
-          };
-          node.children.Add(clasifNode);
-          JsonTreeNode supersNode = new JsonTreeNode
-          {
-            id = ("Superclasses" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Superclasses",
-            expanded = false
-          };
-          node.children.Add(supersNode);
-          JsonTreeNode subsNode = new JsonTreeNode
-          {
-            id = ("Subclasses" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Subclasses",
-            expanded = false
-          };
-          node.children.Add(subsNode);
-          JsonTreeNode tempsNode = new JsonTreeNode
-          {
-            id = ("Templates" + node.text).GetHashCode().ToString(),
-            children = null,
-            leaf = false,
-            text = "Templates",
-            expanded = false
-          };
-          node.children.Add(tempsNode);
-          nodes.Add(node);
-        }
-      }
-      return Json(nodes, JsonRequestBehavior.AllowGet);
-    }
 
-    public JsonResult Roles(FormCollection form)
-    {
-      object entities = null;
-      string Id = form["id"];
-      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
       if (!string.IsNullOrEmpty(Id))
       {
         QMXF dataEntities = _refdataRepository.GetTemplate(Id);
+        
         if (dataEntities.templateDefinitions.Count > 0)
         {
-          entities = dataEntities.templateDefinitions;
-        }
-        else
-        {
-          entities = dataEntities.templateQualifications;
-        }
-        if (entities is List<TemplateDefinition>)
-        {
-          foreach (var entity in entities as List<TemplateDefinition>)
+          foreach (var entity in dataEntities.templateDefinitions)
           {
             foreach (var role in entity.roleDefinition)
             {
               JsonTreeNode entityNode = new JsonTreeNode
               {
                 id = ("Roles" + role.name[0].value).GetHashCode().ToString(),
+                type = "RoleNode",
                 icon = "Content/img/role.png",
                 children = null,
                 leaf = true,
@@ -389,17 +328,17 @@ namespace iRINGTools.Web.Controllers
               nodes.Add(entityNode);
             }
           }
-
         }
-        else
+        else if (dataEntities.templateQualifications.Count > 0)
         {
-          foreach (var entity in entities as List<TemplateQualification>)
+          foreach (var entity in dataEntities.templateQualifications)
           {
             foreach (var role in entity.roleQualification)
             {
               JsonTreeNode entityNode = new JsonTreeNode
               {
                 id = ("Roles" + role.name[0].value).GetHashCode().ToString(),
+                type = "RoleNode",
                 text = role.name[0].value,
                 icon = "Content/img/role.png",
                 children = null,
@@ -410,10 +349,10 @@ namespace iRINGTools.Web.Controllers
               nodes.Add(entityNode);
             }
           }
-
         }
       }
-      return Json(nodes, JsonRequestBehavior.AllowGet);
+
+      return nodes;
     }
   }
 }
