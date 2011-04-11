@@ -99,10 +99,13 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   },
   onSearch: function () {
 
+    var searchText = Ext.get('referencesearch').getValue();
+
     var treeLoader = new Ext.tree.TreeLoader({
       requestMethod: 'POST',
       url: this.searchUrl,
       baseParams: {
+        id: null,
         type: null,
         query: searchText,
         limit: this.limit,
@@ -110,11 +113,13 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       }
     });
 
-    this.treeLoader.on("beforeload", function (treeLoader, node) {
+    treeLoader.on("beforeload", function (treeLoader, node) {
       treeLoader.baseParams.type = node.attributes.type;
-      treeLoader.baseParams.query = Ext.get('referencesearch').getValue();
+      treeLoader.baseParams.query = searchText;
       treeLoader.baseParams.limit = this.limit;
       treeLoader.baseParams.start = 0;
+      if (node.parentNode != undefined) 
+        treeLoader.baseParams.id = node.parentNode.attributes.identifier;
     }, this);
 
     var tree = new Ext.tree.TreePanel({
