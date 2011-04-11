@@ -336,7 +336,7 @@
           DestinationFiles="@(SDKLibFlee ->'$(SDKLibDir)\flee-0.9.26.0\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
-  <Target Name="CreatePackages" >
+  <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
   </Target>
 
