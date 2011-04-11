@@ -26,7 +26,7 @@ namespace iRINGTools.Web.Models
       _client = new WebHttpClient(_settings["ReferenceDataServiceUri"]);
     }
 
-    public RefDataEntities Search(string query, string start, string limit)
+    public RefDataEntities Search(string query, int start, int limit)
     {
       relativeUri = string.Format("/search/{0}/{1}/{2}", query, start, limit);
       return _client.Get<RefDataEntities>(relativeUri);

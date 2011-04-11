@@ -3,7 +3,6 @@
 * @class FederationManager.SearchPanel
 * @author by Aswini Nayak
 */
-var treeLoader, searchText;
 AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   title: 'Reference Data Search',
   layout: 'border',
@@ -74,7 +73,6 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
                      specialkey: function (f, e) {
                        if (e.getKey() == e.ENTER) {
                          var query = Ext.get('referencesearch').getValue();
-                         //alert(query);
                        }
                      }
                    }
@@ -100,8 +98,8 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
                 }];
   },
   onSearch: function () {
-    searchText = Ext.get('referencesearch').getValue();
-    treeLoader = new Ext.tree.TreeLoader({
+
+    var treeLoader = new Ext.tree.TreeLoader({
       requestMethod: 'POST',
       url: this.searchUrl,
       baseParams: {
@@ -111,6 +109,14 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
         start: 0
       }
     });
+
+    this.treeLoader.on("beforeload", function (treeLoader, node) {
+      treeLoader.baseParams.type = node.attributes.type;
+      treeLoader.baseParams.query = Ext.get('referencesearch').getValue();
+      treeLoader.baseParams.limit = this.limit;
+      treeLoader.baseParams.start = 0;
+    }, this);
+
     var tree = new Ext.tree.TreePanel({
       title: searchText,
       useArrows: true,
@@ -126,7 +132,8 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       root: {
         nodeType: 'async',
         qtipCfg: 'Aswini',
-        draggable: false
+        draggable: false,
+        type: 'SearchNode'
       },
       containerScroll: true
     });
@@ -148,65 +155,6 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       this.propertyPanel.setSource(node.attributes.record);
     } catch (e) {
     };
-    switch (node.attributes.text) {
-      case "Classifications":
-        // alert("send request for classifications:"+'class/'+node.parentNode.attributes.identifier);
-        treeLoader.url = "refdata/classes";
-        treeLoader.baseParams = {
-          id: node.parentNode.attributes.identifier,
-          query: searchText,
-          limit: this.limit,
-          start: 0,
-          type: node.attributes.type
-        };
-        break;
-      case "Superclasses":
-        //alert("send request for Superclasses:"+'superClass/'+node.parentNode.attributes.identifier);
-        treeLoader.url = "refdata/superClasses";
-        treeLoader.baseParams = {
-          id: node.parentNode.attributes.identifier,
-          query: searchText,
-          limit: this.limit,
-          start: 0
-        };
-
-        break;
-      case "Subclasses":
-        //alert("send request for Subclasses:"+'subClasses/'+node.parentNode.attributes.identifier);
-        treeLoader.url = "refdata/subClasses";
-        treeLoader.baseParams = {
-          id: node.parentNode.attributes.identifier,
-          query: searchText,
-          limit: this.limit,
-          start: 0
-        };
-        break;
-      case "Templates":
-        //alert("send request for Subclasses:"+'subClasses/'+node.parentNode.attributes.identifier);
-        treeLoader.url = "refdata/templates";
-        treeLoader.baseParams = {
-          id: node.parentNode.attributes.identifier,
-          query: searchText,
-          limit: this.limit,
-          start: 0
-        };
-        break;
-      default:
-        if (node.attributes.type == 'templateNode') {
-          treeLoader.url = "refdata/roles";
-          treeLoader.baseParams = {
-            id: node.attributes.identifier,
-            query: searchText,
-            limit: this.limit,
-            start: 0
-          };
-        };
-        break;
-
-
-
-    }
-    node.expand();
   }
 
 });

@@ -12,7 +12,7 @@ namespace iRINGTools.Web.Models
 
     RefDataEntities Search(string query);
 
-    RefDataEntities Search(string query, string start, string limit);
+    RefDataEntities Search(string query, int start, int limit);
 
     RefDataEntities SearchReset(string query);
 
