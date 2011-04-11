@@ -83,8 +83,7 @@ Ext.onReady(function () {
 	});
         
 	federationPanel.on('opentab', function(panel, node, label, formData) {
-    var tabIconClass;
-    alert("Inside "+label);
+    var tabIconClass;    
     if(node.parentNode.text == 'ID Generators'|| node.text == 'ID Generators'){
       tabIconClass = 'tabsIdGen';
     }else if(node.parentNode.text == 'Namespaces'|| node.text == 'Namespaces'){

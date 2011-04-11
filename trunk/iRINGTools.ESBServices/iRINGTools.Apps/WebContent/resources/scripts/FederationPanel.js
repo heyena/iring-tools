@@ -270,17 +270,7 @@ FederationManager.FederationPanel = Ext
             return namespaces;
           },
           
-          getNodesIDTitleByID : function() {},
-          
-          getNewChildId : function(node) {
-          	var newId = 0, childId;
-          	for (var i = 0; i< node.childNodes.length; i++) {
-          		childId = parseInt(node.childNodes[i].attributes.identifier);
-          		if (newId < childId)
-          			newId = childId;
-          	}
-          	return newId + 1;
-          },
+          getNodesIDTitleByID : function() {}, 
           
           openTab : function(node, formType) {
             var obj = node.attributes;
@@ -315,43 +305,47 @@ FederationManager.FederationPanel = Ext
                 name: 'parentNodeID',  // it will contain "ID Generators||Namespaces||Repositories
                 value: parentNode.attributes.identifier  // value of the field
               });
-            }    
-            
-            var readOnly = '';            
+            }               
             
             for (var i in properties) {
-            	if (i != 'URI' && i != 'Update URI'){
-	              var listItem = {};
-	              var fname = i;
-	              var value = '';	              
-	              
-	              switch (fname) {
-	              case "Description":
+            	if (i != 'Alias')
+            		continue;
+              var listItem = {};
+              var fname = i;
+              var value = '';	 
+              listItem.xtype = 'textfield';
+              listItem.width = 230;
+              
+              if (formType == 'editForm') {
+                value = properties[i];
+                label = node.parentNode.text + ' : ' + obj['text'];
+              } 
+              else {
+                label = obj['text'] + ':(New)';
+              }
+              
+              listItem.fieldLabel = i;
+              listItem.name = i;
+              listItem.allowBlank = false;
+              //listItem.blankText = 'This Field is required';
+              listItem.value = value;
+              listItems.push(listItem);
+            }
+            
+            for (var i in properties) {
+            	if (i == 'Update URI' || i == 'Read Only' || i == 'Writable' || i == 'Alias' || i == 'ID Generator')
+            		continue;
+              var listItem = {};
+              var fname = i;
+              var value = '';	              
+              
+              switch (fname) {
+	              case "Description": 
 	                listItem.xtype = 'textarea';
 	                listItem.width = 230;
-	                break;
-	                
-	              case "Read Only":	              	
-	              case "Writable":
-	                listItem.xtype = 'combo';
-	                listItem.width = 230;
-	                listItem.triggerAction = 'all';
-	                listItem.editable = false;
-	                listItem.mode = 'local';
-	                listItem.store = ["true", "false"];
-	                listItem.displayField = properties[i];    
-	                listItem.listeners = {'select' : function(combo, record, index) {
-											var tab = Ext.getCmp('contentPanel').getItem('tab-' + node.id);											
-											var textfield = tab.items.map['data-form'].items.map[node.id + '_update-uri'];
-											if (record.data.field1 == 'true')
-												textfield.disable();
-											else 
-												textfield.enable();
-										}
-									};
-	                readOnly = properties[i];
-	                break;
-	                
+	                break;	                    
+	              case 'Id':
+	              	continue;
 	              case 'Repository Type':
 	                listItem.xtype = 'combo';
 	                listItem.width = 230;
@@ -360,23 +354,7 @@ FederationManager.FederationPanel = Ext
 	                listItem.mode = 'local';
 	                listItem.store = ['RDS/WIP', 'Camelot', 'Part8'];
 	                listItem.displayField = properties[i];
-	                break;
-	                
-	              case 'ID Generator':
-	                // get all the IDGenerators
-	            	 var rootNode = this.federationPanel.getRootNode();
-	                 var namespaceParentNode = rootNode.findChild('identifier', 'idGenerator');
-	                 var allIDGenerators = this.getNamespaces(namespaceParentNode);
-	
-	                listItem.xtype = 'combo';
-	                listItem.hiddenName = 'ID Generator';
-	                listItem.width = 230;
-	                listItem.triggerAction = 'all';
-	                listItem.editable = false;
-	                listItem.mode = 'local';
-	                listItem.store = allIDGenerators;
-	                listItem.displayField = properties[i];
-	                break;
+	                break;	              
 	                
 	              case 'Namespace List':
 	                var selNamespaces = new Array();
@@ -417,91 +395,174 @@ FederationManager.FederationPanel = Ext
 	                listItem.xtype = 'textfield';
 	                listItem.width = 230;
 	                break;
-	              }
-	
-	              if (formType == 'editForm') {
-	                value = properties[i];
-	                label = node.parentNode.text + ' : ' + obj['text'];
-	              } 
-	              else {
-	                label = obj['text'] + ':(New)';	                
-	                if (i == 'Id')
-	                	value = this.getNewChildId(node);
-	              }
-	              
-	              listItem.fieldLabel = i;
-	              listItem.name = i;
-	              listItem.allowBlank = false;
-	              listItem.blankText = 'This Field is required';
-	              listItem.value = value;
-	              if (i == 'Id') {
-	              	listItem.disabled = true;
-	              	listItem.blankText = '';
-	              }
-	              
-	              listItems.push(listItem);
-	            }
+              }
+
+              if (formType == 'editForm') {
+                value = properties[i];
+                label = node.parentNode.text + ' : ' + obj['text'];
+              } 
+              else {
+                label = obj['text'] + ':(New)';	                
+              
+              }
+              
+              listItem.fieldLabel = i;
+              listItem.name = i;
+              listItem.allowBlank = false;
+              listItem.blankText = 'This Field is required';
+              listItem.value = value;             
+              listItems.push(listItem);	            
+            }
+            
+            var readOnly = '';
+            var writeable = '';
+            for (var i in properties) {
+            	if (i != 'Read Only' && i != 'Writable')
+            		continue;
+              var listItem = {};
+              var fname = i;
+              var value = '';	              
+          	
+              listItem.xtype = 'combo';
+              listItem.width = 230;
+              listItem.triggerAction = 'all';
+              listItem.editable = false;
+              listItem.mode = 'local';
+              listItem.store = ["true", "false"];
+              listItem.displayField = properties[i];    
+              
+              switch (fname) { 
+              	case 'Read Only':
+		              listItem.listeners = {'select' : function(combo, record, index) {
+											var tab = Ext.getCmp('contentPanel').getItem('tab-' + node.id);											
+											var textfield= tab.items.map['data-form'].items.map[node.id + '_update-uri'];
+											listItem.width = 230;
+											if (record.data.field1 == 'true'){
+												listItem.blankText = '';
+												textfield.reset();
+												textfield.disable();												
+											}
+											else{
+												textfield.enable();	
+												listItem.blankText = 'This Field is required';
+											}
+										}
+									};
+		              readOnly = properties[i];
+		              break;
+              	case 'Writable':
+              		listItem.listeners = {'select' : function(combo, record, index) {
+										var tab = Ext.getCmp('contentPanel').getItem('tab-' + node.id);											
+										var textfield = tab.items.map['data-form'].items.map[node.id + '_id-generator'];
+		                listItem.width = 230;
+										if (record.data.field1 == 'false'){											
+											textfield.setValue('None');		
+											textfield.disable();										
+										}
+										else {
+											textfield.enable();
+										}
+									}
+								};
+	              writeable = properties[i];
+	              break;		            
+              }
+
+              if (formType == 'editForm') {
+                value = properties[i];
+                label = node.parentNode.text + ' : ' + obj['text'];
+              } 
+              else {
+                label = obj['text'] + ':(New)';
+              }
+              
+              listItem.fieldLabel = i;
+              listItem.name = i;
+              listItem.allowBlank = false;             
+              listItem.value = value;              
+              listItems.push(listItem);
+	            
             }
             
             for (var i in properties) {
-            	if (i == 'URI'){
-	              var listItem = {};
-	              var fname = i;
-	              var value = '';
-	              
-	              listItem.xtype = 'textfield';
-	              listItem.width = 230;	              
-	
-	              if (formType == 'editForm') {
-	                value = properties[i];
-	                label = node.parentNode.text + ' : ' + obj['text'];
-	              } 
-	              else {
-	                label = obj['text'] + ':(New)';
-	              }
-	              
-	              listItem.fieldLabel = i;
-	              listItem.name = i;
-	              listItem.allowBlank = false;
-	              listItem.blankText = 'This Field is required';
-	              listItem.value = value;
-	              
-	              listItems.push(listItem);
-	            }
+            	if (i != 'Update URI')
+            		continue;
+              var listItem = {};
+              var fname = i;
+              var value = '';
+              listItem.xtype = 'textfield';
+              listItem.width = 230;	              
+
+              if (formType == 'editForm') {
+                value = properties[i];
+                label = node.parentNode.text + ' : ' + obj['text'];
+              } 
+              else {
+                label = obj['text'] + ':(New)';
+              }
+              
+              listItem.fieldLabel = i;
+              listItem.name = i;
+              listItem.id = node.id + '_update-uri';
+              listItem.allowBlank = false;
+              
+              listItem.value = value;
+              
+              if(readOnly == 'true'){
+              	listItem.blankText = '';
+              	listItem.disabled = true;              	
+              }else{
+              	listItem.disabled = false;	
+              	listItem.blankText = 'This Field is required';
+              }              
+              listItems.push(listItem);	            
             }
             
             for (var i in properties) {
-            	if (i == 'Update URI'){
-	              var listItem = {};
-	              var fname = i;
-	              var value = '';
-	              listItem.xtype = 'textfield';
-                listItem.width = 230;	              
-	
-	              if (formType == 'editForm') {
-	                value = properties[i];
-	                label = node.parentNode.text + ' : ' + obj['text'];
-	              } 
-	              else {
-	                label = obj['text'] + ':(New)';
-	              }
-	              
-	              listItem.fieldLabel = i;
-	              listItem.name = i;
-	              listItem.id = node.id + '_update-uri';
-	              listItem.allowBlank = false;
-	              
-	              listItem.value = value;
-	              
-	              if(readOnly == 'true'){
-	              	listItem.disabled = true;
-	              }else{
-	              	listItem.disabled = false;	
-	              	listItem.blankText = 'This Field is required';
-	              }
-	              
-	              listItems.push(listItem);
-	            }
+            	if (i != 'ID Generator')
+            		continue;
+              var listItem = {};
+              var fname = i;
+              var value = '';
+           
+              // get all the IDGenerators
+							var rootNode = this.federationPanel.getRootNode();
+							var namespaceParentNode = rootNode.findChild('identifier', 'idGenerator');
+							var allIDGenerators = this.getNamespaces(namespaceParentNode);
+
+              listItem.xtype = 'combo';
+              listItem.hiddenName = 'ID Generator';
+              listItem.id = node.id + '_id-generator';
+              listItem.width = 230;
+              listItem.triggerAction = 'all';
+              listItem.editable = false;
+              listItem.mode = 'local';
+              listItem.store = allIDGenerators;
+              listItem.displayField = properties[i];      
+              listItem.blankText = '';
+
+              if (formType == 'editForm') {
+                value = properties[i];
+                label = node.parentNode.text + ' : ' + obj['text'];
+              } 
+              else {
+                label = obj['text'] + ':(New)';
+              }
+              
+              listItem.fieldLabel = i;
+              listItem.name = i;             
+              listItem.allowBlank = false;             
+              
+              if(writeable == 'false'){
+              	listItem.disabled = true;
+              	listItem.value = 'None';
+              }else{
+              	listItem.disabled = false;              	
+              	listItem.value = value;
+              }
+              
+              listItems.push(listItem);
+	            
             }
             
             this.fireEvent('opentab', this, node, label, listItems);
