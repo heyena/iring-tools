@@ -919,6 +919,12 @@ namespace org.iringtools.adapter.datalayer
         string schemaName = dbDictionary.SchemaName;
         string parsedConnStr = ParseConnectionString(connString, dbProvider);
 
+        _logger.DebugFormat("ConnectString: {0} \r\n Provider: {1} \r\n SchemaName: {2} \r\n Parsed: {3}",
+            connString,
+            dbProvider,
+            schemaName,
+            parsedConnStr);
+
         Dictionary<string, string> properties = new Dictionary<string, string>();
 
         dbDictionary.ConnectionString = parsedConnStr;
@@ -936,6 +942,10 @@ namespace org.iringtools.adapter.datalayer
         ISessionFactory sessionFactory = config.BuildSessionFactory();
         ISession session = sessionFactory.OpenSession();
         string sql = GetDatabaseMetaquery(dbProvider, parsedConnStr.Split(';')[1].Split('=')[1], schemaName);
+
+        _logger.DebugFormat("SQL: {0}",
+            sql);
+
         ISQLQuery query = session.CreateSQLQuery(sql);
 
         DataObjects metadataList = new DataObjects();
