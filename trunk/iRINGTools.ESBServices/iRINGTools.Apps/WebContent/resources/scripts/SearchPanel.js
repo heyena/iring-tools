@@ -24,7 +24,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
            refresh : true,
              edit : true,
             addnew : true,
-            openAddTab : true,
+            openAddClassTab : true,
             load : true,
             beforeload : true,
             selectionchange : true
@@ -243,11 +243,16 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
     	  node.expand();
       },
       onClassAdd : function(btn, ev) {
-          this.openAddTab();
+          this.openAddClassTab();
 
        },
+       
+      onTemplateAdd : function(btn, ev){
+    	  this.onTemplateAdd();
+      },
+       
       
-       openAddTab : function(){
+       openAddClassTab : function(){
           var listItems = new Array();
           var label = 'Add Class';
           
@@ -315,6 +320,61 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         	        	 								       
         	        	 								       ]
         	        	 						}];
+
+         listItems.push(listItem);
+         this.fireEvent('openAddTab', this,label, listItems);
+        
+      },
+      
+      onTemplateAdd : function(){
+          var listItems = new Array();
+          var label = 'Add Template';
+          
+          listItems.push({
+            xtype: 'hidden',
+            name: 'formType',
+            value: 'newTemplate'
+          });
+
+       
+   
+          
+         var listItem = [{xtype: 'radiogroup',fieldLabel: 'Template Type',
+                         items: [
+                             {boxLabel: 'Base Template', name: 'tempType', checked: true},
+                             {boxLabel: 'Specialized Template', name: 'tempType'}]},
+
+                         {fieldLabel:'Name',name:'name', xtype:'textfield', width:400},
+						 {fieldLabel:'Parent Template',name:'parentTemplate', xtype:'textfield', width:400},
+						 {xtype: 'fieldset', layout:'column', border:false,
+	        	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
+	        	 						items:[{xtype:'fieldset',title:'Description',
+	        	 							items:[{name:'description', xtype:'textarea', width:200}]},
+	        	 							{xtype: 'fieldset',title:'Status',
+	          	 				        	  items:[
+	          	 				        	         {fieldLabel:'Authority',name:'authority', xtype:'textfield', width:200},
+	          	 				        	         {fieldLabel:'Recorded',name:'recorded', xtype:'textfield', width:200},
+	          	 				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'datefield', width:200},
+	          	 				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'datefield', width:200}
+	          	 				        	         ]
+	          	 				          }]},
+	        	 						{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
+	        	        	 					items:[{xtype:'fieldset',title:'Role Definition',
+	    	        	 							items:[{name:'roleDefinition', xtype:'textarea', width:200},
+	    	        	 							       {fieldLabel:'Id',name:'id', xtype:'textfield', width:200},
+	    	          	 				        	       {fieldLabel:'Name',name:'name', xtype:'textfield', width:200},
+	    	          	 				        	       {fieldLabel:'Description',name:'description', xtype:'textfield', width:200},
+	    	          	 				        	       {xtype: 'fieldset', layout:'column', border:false,
+	    	          	        	        	 				items:[{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
+	    	          	        	        	 					items:[{ xtype : "tbbutton",text : 'Edit..',tooltip : 'Edit', width:70}]},
+	    	          	        	        	 					   {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
+		    	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Add',tooltip : 'Add', width:70}]},
+		    	          	        	        	 				    {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
+		    	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Remove',tooltip : 'Remove', width:70}]},
+		    	          	        	        	 					{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
+			    	          	        	        	 			items:[{ xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:70}]}
+	    	          	        	        	 					       ]}]
+	    	          	 				        	       }	]}]}];
 
          listItems.push(listItem);
          this.fireEvent('openAddTab', this,label, listItems);
