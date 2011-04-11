@@ -461,6 +461,7 @@ FederationManager.FederationPanel = Ext
 										}
 										else {
 											textfield.enable();
+											textfield.reset();
 										}
 									}
 								};
