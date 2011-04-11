@@ -415,6 +415,8 @@ namespace org.iringtools.nhibernate
 
       try
       {
+          _logger.Debug("I'm in!!!");
+
         InitializeScope(projectName, applicationName);
         if (File.Exists(_settings["DBDictionaryPath"]))
           dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
@@ -440,14 +442,35 @@ namespace org.iringtools.nhibernate
         properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
         properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
         properties.Add("connection.connection_string", parsedConnStr);
-        properties.Add("connection.driver_class", GetConnectionDriver(dbProvider));
-        properties.Add("dialect", GetDatabaseDialect(dbProvider));
+
+        string connDriver = GetConnectionDriver(dbProvider);
+
+        _logger.DebugFormat("connection.driver_class: {0}", connDriver);
+
+        properties.Add("connection.driver_class", connDriver);
+
+        string databaseDialect = GetConnectionDriver(dbProvider);
+
+        _logger.DebugFormat("dialect: {0}", databaseDialect);
+
+        properties.Add("dialect", databaseDialect);
 
         NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
+
+        _logger.Debug("Adding Properties to Config");
+
         config.AddProperties(properties);
 
+        _logger.Debug("Building Session Factory");
+
         ISessionFactory sessionFactory = config.BuildSessionFactory();
+
+        _logger.Debug("About to Open Session");
+
         ISession session = sessionFactory.OpenSession();
+
+        _logger.Debug("Session Open");
+
         string sql = GetDatabaseMetaquery(dbProvider, parsedConnStr.Split(';')[1].Split('=')[1], schemaName);
 
         _logger.DebugFormat("SQL: {0}",
@@ -465,8 +488,11 @@ namespace org.iringtools.nhibernate
         tableNames = metadataList;
         return tableNames;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+        _logger.ErrorFormat("Error while Getting Schema Objects from database. {0}",
+              ex.ToString());
+
         return tableNames;
       }
     }
