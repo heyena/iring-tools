@@ -223,7 +223,7 @@ namespace iRINGTools.Web.Controllers
               JsonTreeNode node = new JsonTreeNode
               {
                 nodeType = "async",
-                type = "DataPropertyNode",
+                type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
                 icon = (dataObject.isKeyProperty(property.propertyName)) ? "Content/img/key.png" : "Content/img/property.png",
                 id = context + "/" + property.propertyName,
                 text = property.propertyName,

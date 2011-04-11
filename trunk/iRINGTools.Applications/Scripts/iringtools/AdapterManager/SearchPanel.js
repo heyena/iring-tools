@@ -97,6 +97,16 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
 
                 }];
   },
+
+  getActiveTab: function () {
+    return this.refClassTabPanel.getActiveTab();
+  },
+
+  getSelectedNode: function () {
+    var activeTab = this.getActiveTab();
+    return activeTab.getSelectionModel().getSelectedNode();
+  },
+
   onSearch: function () {
 
     var searchText = Ext.get('referencesearch').getValue();
@@ -118,8 +128,10 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       treeLoader.baseParams.query = searchText;
       treeLoader.baseParams.limit = this.limit;
       treeLoader.baseParams.start = 0;
-      if (node.parentNode != undefined) 
+      if (node.parentNode != undefined)
         treeLoader.baseParams.id = node.parentNode.attributes.identifier;
+      if (node.attributes.type == 'TemplateNode')
+        treeLoader.baseParams.id = node.attributes.identifier;
     }, this);
 
     var tree = new Ext.tree.TreePanel({
