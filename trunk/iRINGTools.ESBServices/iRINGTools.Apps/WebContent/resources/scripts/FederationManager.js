@@ -84,7 +84,7 @@ Ext.onReady(function () {
         
 	federationPanel.on('opentab', function(panel, node, label, formData) {
     var tabIconClass;
-    
+    alert("Inside "+label);
     if(node.parentNode.text == 'ID Generators'|| node.text == 'ID Generators'){
       tabIconClass = 'tabsIdGen';
     }else if(node.parentNode.text == 'Namespaces'|| node.text == 'Namespaces'){
@@ -117,6 +117,7 @@ Ext.onReady(function () {
     tabPanel.add(newTab).show();
 
 	});
+	
 
 	var searchPanel = new FederationManager.SearchPanel({
     id: 'search-panel',
@@ -130,7 +131,33 @@ Ext.onReady(function () {
     limit: 100
   });
 
-		
+	searchPanel.on('openAddTab', function(panel, label, formData) {
+	    var newTab = new FederationManager.ContentPanel({
+	    	title: label,
+	        id:'rashi',
+	        configData: formData,
+	        //nId:node.id,
+	        //url: 'postFederation',                        
+	        single: true, // important, as many layouts can occur
+	        layout:'fit',
+	        autoScroll: true,
+	        iconCls: 'tabsClass',
+	        closable: true,
+	        defaults:{
+	          layout:'form',
+	          labelWidth:100,
+
+	          // as we use deferredRender:false we mustn't
+	          // render tabs into display:none containers
+	          hideMode:'offsets',                                
+	          deferredRender: false
+	        }                         
+	    });
+
+	    Ext.getCmp('contentPanel').enable();
+	    tabPanel.add(newTab).show();
+
+		});
 		
 	var viewport = new Ext.Viewport({
 		layout: 'border',

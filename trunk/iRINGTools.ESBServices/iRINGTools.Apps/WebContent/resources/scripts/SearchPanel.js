@@ -19,6 +19,17 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
     * @protected
     */
     initComponent: function () {
+    	this.addEvents( {
+            click : true,
+           refresh : true,
+             edit : true,
+            addnew : true,
+            openAddTab : true,
+            load : true,
+            beforeload : true,
+            selectionchange : true
+          });
+    	
     	this.tbar = this.buildToolbar();
         this.propertyPanel = new Ext.grid.PropertyGrid( {
             id : 'class-property-panel',
@@ -230,6 +241,84 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
     		  
     	  }
     	  node.expand();
+      },
+      onClassAdd : function(btn, ev) {
+          this.openAddTab();
+
+       },
+      
+       openAddTab : function(){
+          var listItems = new Array();
+          var label = 'Add Class';
+          
+          listItems.push({
+            xtype: 'hidden',
+            name: 'formType',
+            value: 'newClass'
+          });
+
+       
+   
+          
+         var listItem = [{xtype: 'fieldset', layout:'column', border:false,
+        	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
+        	 					items:[
+        	 				          {fieldLabel:'Name',name:'name', xtype:'textfield', width:200},
+        	 				          {xtype: 'fieldset',title:'Description',
+	        	 				    	  items: [
+	        	 				    	          {name:'description', xtype:'textarea', width:200}
+	        	 				    	          ]
+                                      },
+        	 				          {xtype: 'fieldset',title:'Status',
+        	 				        	  items:[
+        	 				        	         {fieldLabel:'Authority',name:'authority', xtype:'textfield', width:200},
+        	 				        	         {fieldLabel:'Recorded',name:'recorded', xtype:'textfield', width:200},
+        	 				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'datefield', width:200},
+        	 				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'datefield', width:200}
+        	 				        	         ]
+        	 				          }]},
+        	 				          {columnWidth:.5,layout: 'form',
+        	        	 				items:[
+        	        	 				      {fieldLabel:'Entity Type',name:'entityType', xtype:'textfield', width:200},
+        	        	 				     {xtype: 'fieldset',title:'Specialization',
+        	        	 				    	  items: [
+        	        	 				    	          {name:'specialization', xtype:'textarea', width:200},
+        	        	 				    	          {xtype: 'fieldset', border:false, layout:'column', 
+        	        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
+        	        	 				    	        		  	{columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
+        	        	 				    	        	  ]}
+        	        	 				    	          ]
+                                              },
+                                              {xtype: 'fieldset',title:'Classification',
+        	        	 				    	  items: [
+        	        	 				    	          {name:'classification', xtype:'textarea', width:200},
+        	        	 				    	         {xtype: 'fieldset', border:false, layout:'column', 
+        	        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
+        	        	 				    	        	         {columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
+        	        	 				    	        	  ]}
+        	        	 				    	          ]
+                                              }]
+        	 				        }]},
+        	 				       {xtype: 'fieldset', layout:'column', border:false,
+        	        	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
+        	        	 					items:[{xtype:'combo',store: ['iRING Sandbox (Read Only)', 'My Private Sandbox', 'ReferenceData (Read Only)', 'Proto and Initial (Read Only)'],
+        	        	 							fieldLabel:'Target Repo', width:200}]},
+        	        	 						{columnWidht:.1, layout:'form', 
+        	        	 								items:[
+        	        	 								       { xtype : "tbbutton",text : 'Ok',tooltip : 'Ok', width:120}]},
+        	        	 						{columnWidht:.2, layout:'form', 
+        	        	        	 					items:[		       
+        	        	 								       { xtype : "tbbutton",text : 'Cancel',tooltip : 'Cancel', width:120}]},
+        	        	 						{columnWidht:.2, layout:'form', 
+        	        	        	 					items:[
+        	        	 								       { xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:120}]}
+        	        	 								       
+        	        	 								       ]
+        	        	 						}];
+
+         listItems.push(listItem);
+         this.fireEvent('openAddTab', this,label, listItems);
+        
       }
 
 });
