@@ -68,7 +68,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       id: 'root',
       text: 'Scopes',
       expanded: true,
-      draggable: false,
+      draggable: true,
       icon: 'Content/img/internet-web-browser.png',
       type: 'ScopesNode'
     });
@@ -95,6 +95,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     });
 
     this.directoryPanel = new Ext.tree.TreePanel({
+      id: 'directoryPanel',
       region: 'center',
       collapseMode: 'mini',
       height: 300,
@@ -108,7 +109,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       //singleExpand: true,
       useArrows: true,
       loader: this.treeLoader,
-      root: this.rootNode
+      root: this.rootNode,
+      
     });
 
     this.directoryPanel.on('contextmenu', this.showContextMenu, this);
@@ -130,6 +132,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     // super
     AdapterManager.DirectoryPanel.superclass.initComponent.call(this);
+  },
+
+  getSelectedNode: function (){
+    var selectedNode = this.directoryPanel.getSelectionModel().getSelectedNode();
+    return selectedNode;
   },
 
   buildToolbar: function () {

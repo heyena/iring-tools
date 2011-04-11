@@ -10,14 +10,10 @@ Ext.ns('AdapterManager');
 AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
   height: 300,
-  minSize: 150,
-
-  autoScroll: true,
+  minSize: 150, autoScroll: true,
   layout: 'border',
-
   split: true,
   closable: true,
-
   navigationUrl: null,
   propertyPanel: null,
   mappingPanel: null,
@@ -32,11 +28,16 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   templatemapMenu: null,
   rolemapMenu: null,
   classmapMenu: null,
+  directoryPanel: null,
+  searchPanel: null,
+  popupWindow: null,
+  popupForm: null,
   /**
   * initComponent
   * @protected
   */
   initComponent: function () {
+
 
     this.tbar = this.buildToolbar();
 
@@ -163,7 +164,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     try {
       this.propertyPanel.setSource(node.attributes.record);
     } catch (e) {
-      //  alert(e);
+
     }
   },
 
@@ -182,42 +183,14 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
               handler: this.onAddGraphMap,
               icon: 'Content/img/16x16/document-new.png',
               scope: this
-            }//,
-    //            {
-    //              text: 'Reload Mapping',
-    //              handler: this.onReloadNode,
-    //              icon: 'Content/img/16x16/view-refresh.png',
-    //              scope: this
-    //           }
+            }
         ]
   },
 
   onAddGraphMap: function (node) {
-    this.m_window = new Ext.Window({
-      closable: true,
-      modal: true,
-      layout: 'auto',
-      title: 'Add new GraphMap to Mapping',
-      items: [{
-        xtype: 'label',
-        fieldLabel: 'Class Id',
-        labelSeparator: ':'
-      }, {
-        xtype: 'textfield',
-        name: 'dbServer'
-      }],
-      buttons: [{
-                    text:'Submit'          
-                }],
-      height: 300,
-      width: 400,
-      closeAction: 'hide'
-    });
+    var propertyNode = this.directoryPanel.getSelectedNode();
+    var searchNode = this.searchPanel.getSelectedNode();
 
-    this.on('hide', function () {
-      this.m_window.hide();
-    });
-    this.m_window.show();
   },
 
   buildGraphmapMenu: function () {
@@ -250,13 +223,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
               handler: this.onDeleteTemplateMap,
               icon: 'Content/img/16x16/edit-delete.png',
               scope: this
-            }//,
-    //            {
-    //              text: 'Reload TemplateMap',
-    //              handler: this.onReloadNode,
-    //              icon: 'Content/img/16x16/view-refresh.png',
-    //              scope: this
-    //            }
+            }
         ]
   },
 

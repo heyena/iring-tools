@@ -249,7 +249,9 @@ Ext.onReady(function () {
                 Ext.Msg.alert('Warning', 'Error!!!');
             }
         });
-    }, this);
+          }, this);
+
+
 
     directoryPanel.on('openmapping', function (npanel, node) {
 
@@ -261,7 +263,9 @@ Ext.onReady(function () {
             scope: scope.attributes.record,
             record: node.attributes.record,
             application: application.attributes.record,
-            navigationUrl: 'mapping/getnode'
+            navigationUrl: 'mapping/getnode',
+            searchPanel: searchPanel,
+            directoryPanel: directoryPanel
         });
 
         contentPanel.add(newTab);
