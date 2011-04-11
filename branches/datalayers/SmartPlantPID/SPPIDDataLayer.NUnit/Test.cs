@@ -24,6 +24,16 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
         public SPPIDDataLayerTest()
         {
+            // N inject magic
+            var ninjectSettings = new NinjectSettings { LoadExtensions = false };
+            _kernel = new StandardKernel(ninjectSettings);
+
+            _kernel.Load(new XmlExtensionModule());
+
+            _kernel.Bind<AdapterSettings>().ToSelf().InSingletonScope();
+            _adapterSettings = _kernel.Get<AdapterSettings>();
+
+            // Start with some generic settings
             _settings = new NameValueCollection();
 
             _settings["XmlPath"] = @".\12345_000\";
@@ -35,12 +45,11 @@ namespace iRINGTools.SDK.SPPIDDataLayer
             _settings["BaseDirectoryPath"] = _baseDirectory;
             Directory.SetCurrentDirectory(_baseDirectory);
 
-            _adapterSettings = new AdapterSettings();
             _adapterSettings.AppendSettings(_settings);
 
+            // Add our specific settings
             string appSettingsPath = String.Format("{0}12345_000.SPPID.config",
-                _adapterSettings["XmlPath"]
-            );
+                _adapterSettings["XmlPath"]);
 
             if (File.Exists(appSettingsPath))
             {
@@ -48,22 +57,16 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 _adapterSettings.AppendSettings(appSettings);
             }
 
-            var ninjectSettings = new NinjectSettings { LoadExtensions = false };
-            _kernel = new StandardKernel(ninjectSettings);
-
-            _kernel.Load(new XmlExtensionModule());
-
+            // and run the thing
             string relativePath = String.Format(@"{0}BindingConfiguration.{1}.{2}.xml",
-            _settings["XmlPath"],
-            _settings["ProjectName"],
-            _settings["ApplicationName"]
-          );
+                _settings["XmlPath"],
+                _settings["ProjectName"],
+                _settings["ApplicationName"]);
 
-            //Ninject Extension requires fully qualified path.
+            // Ninject Extension requires fully qualified path.
             string bindingConfigurationPath = Path.Combine(
-              _settings["BaseDirectoryPath"],
-              relativePath
-            );
+                _settings["BaseDirectoryPath"],
+                relativePath);
 
             _kernel.Load(bindingConfigurationPath);
 
