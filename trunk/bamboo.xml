@@ -337,7 +337,7 @@
   </Target>
 
   <Target Name="CreatePackages" >
-    <Exec Command="@echo $(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
+    <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="CoreBuild;"/>
