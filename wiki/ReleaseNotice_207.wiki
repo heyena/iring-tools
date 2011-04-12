@@ -1,7 +1,7 @@
 #summary Date: 2011/4/12
 =iRINGTools-2.00.07.3240=
 
-A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_207 iRINGTools 2.0] that includes bug fixes.  
+A patch release of iRINGTools 2.0 that includes bug fixes.  
 
 The download is available [http://iring-tools.googlecode.com/files/iRINGTools-2.0.7.zip here].  
 The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGTools-SDK-2.0.6.zip here]
@@ -13,6 +13,6 @@ The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGToo
 [http://iring-tools.googlecode.com/files/iRINGTools_SDK_Guide_v2.0.2.pdf SDK Guide]
 
 == Bugs Fixed ==
- * Several critical files were inadvertently omitted from the 2.0.6 release
+ * Includes several critical files that were inadvertently omitted in the 2.0.6 release
 
 Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
