@@ -16,6 +16,7 @@ using org.iringtools.utility;
 using iRINGTools.Web.Helpers;
 using iRINGTools.Web.Models;
 using org.ids_adi.qmxf;
+using org.iringtools.mapping;
 
 namespace iRINGTools.Web.Controllers
 {
@@ -23,7 +24,7 @@ namespace iRINGTools.Web.Controllers
   {
 
     IRefDataRepository _refdataRepository = null;
-    NameValueCollection _settings = null;
+    NamespaceMapper _nsMap = new NamespaceMapper();
     string _adapterServiceURI = String.Empty;
     string _refDataServiceURI = String.Empty;
 

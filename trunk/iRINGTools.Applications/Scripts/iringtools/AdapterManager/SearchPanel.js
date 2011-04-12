@@ -104,6 +104,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
 
   getSelectedNode: function () {
     var activeTab = this.getActiveTab();
+    if(activeTab != undefined)
     return activeTab.getSelectionModel().getSelectedNode();
   },
 
@@ -136,6 +137,8 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
 
     var tree = new Ext.tree.TreePanel({
       title: searchText,
+      enableDrag: true,
+      ddGroup: 'refdataGroup',
       useArrows: true,
       animate: true,
       lines: false,
@@ -148,8 +151,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       loader: treeLoader,
       root: {
         nodeType: 'async',
-        qtipCfg: 'Aswini',
-        draggable: false,
+       // draggable: true,
         type: 'SearchNode'
       },
       containerScroll: true

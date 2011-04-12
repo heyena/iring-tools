@@ -30,8 +30,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   classmapMenu: null,
   directoryPanel: null,
   searchPanel: null,
-  popupWindow: null,
-  popupForm: null,
+  m_Form: null,
   /**
   * initComponent
   * @protected
@@ -187,9 +186,90 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         ]
   },
 
+
+
   onAddGraphMap: function (node) {
-    var propertyNode = this.directoryPanel.getSelectedNode();
-    var searchNode = this.searchPanel.getSelectedNode();
+ //   var objectName = new Ext.form.TextField({
+//      fieldLabel: 'Object Name',
+//      width: 170,
+//      render: this.getPropertyDropZone
+//    });
+
+//    var propertyName = new Ext.form.TextField({
+//      fieldLabel: 'Key Property Name',
+//      width: 170
+//    });
+
+//    var className = new Ext.form.TextField({
+//      fieldLabel: 'Class Label',
+//      width: 170,
+//      render: this.getClassDropZone
+//    });
+
+//    var uri = new Ext.form.TextField({
+//      fieldLabel: 'Uri',
+//      width: 120
+//    });
+
+    this.m_Form = new Ext.form.FormPanel({
+      id: 'target',
+      layout: 'auto',
+      items: [
+             { xtype: 'textfield', fieldLabel: 'Object Name', width: 120, id: 'objectName', name: 'objectName', render: this.getPropertyDropZone },
+             { xtype: 'textfield', fieldLabel: 'Key Property Name', width: 120, name: 'propertyName' },
+             { xtype: 'textfield', fieldLabel: 'Class Label', width: 120, name: 'className'},//, render: this.getClassDropZone },
+             { xtype: 'textfield', fieldLabel: 'Uri', width: 120, name: 'uriName' }
+             ]
+    });
+
+
+    this.m_window = new Ext.Window({
+      closable: true,
+      modal: false,
+      layout: 'auto',
+      title: 'Add new GraphMap to Mapping',
+      items: this.m_Form,
+      buttons: [{
+        text: 'Submit',
+        handler: this.submit
+      }],
+      height: 280,
+      width: 430,
+      closeAction: 'hide',
+      plain: true
+    });
+
+    this.m_window.show();
+  },
+
+  getPropertyDropZone: function (d) {
+//    d.dragZone = new Ext.dd.DropZone(d.getEl(), {
+//      ddGroup: 'propertyGroup',
+//      notifyDrop: function (propdd, e, node) {
+//        if (node.node.attributes.type != 'KeyDataPropertyNode') {
+//          Ext.Msg.show({ title: 'invalid selection',
+//            msg: 'Please select a key property node',
+//            modal: true,
+//            icon: Ext.Msg.ERROR,
+//            buttons: Ext.Msg.OK
+//          });
+//          return false;
+//        }
+//      }
+    //    });
+   
+  },
+
+  getClassDropZone: function (d) {
+  },
+
+  onSuccess: function () {
+  },
+
+  onFailure: function () {
+  },
+
+  submit: function () {
 
   },
 
