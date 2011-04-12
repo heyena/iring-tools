@@ -116,7 +116,7 @@ public class FederationModel
     generatorNodeDef.setIdentifier("idGenerator0");
     generatorNodeDef.setText("None");
     generatorNodeDef.setIconCls("generator");
-    generatorNodeDef.getProperties().put("Id", "idGenerator0");    
+    generatorNodeDef.getProperties().put("Id", "0");    
     generatorNodeDef.setLeaf(true);
     generatorNodeDef.setHidden(true);
     generatorNodes.add(generatorNodeDef);
@@ -173,7 +173,7 @@ public class FederationModel
       
       if (namespace.getIdGenerator() != null)
       {
-        properties.put("ID Generator", "idgenerator" + namespace.getIdGenerator());
+        properties.put("ID Generator", namespace.getIdGenerator());
       }
 
       namespaceNodes.add(namespaceNode);
@@ -302,8 +302,18 @@ public class FederationModel
         namespace.setAlias(httpRequest.getParameter("Alias"));
         namespace.setIsWritable(Boolean.parseBoolean(httpRequest.getParameter("Writable")));
         namespace.setDescription(httpRequest.getParameter("Description"));
-        namespace.setIdGenerator(httpRequest.getParameter("ID Generator").replaceFirst("idgenerator", ""));
-
+        
+        String idGeneratorParameter="";
+        try {
+        	idGeneratorParameter = httpRequest.getParameter("ID Generator");
+        	idGeneratorParameter = idGeneratorParameter.replaceFirst("idgenerator", "");          
+        }
+        catch (Exception e)
+        {
+        	idGeneratorParameter="0";
+          e.printStackTrace();
+        }
+        namespace.setIdGenerator(idGeneratorParameter);
         response = httpClient.post(Response.class, "/namespace", namespace);
       }
       else if ("repository".equalsIgnoreCase(httpRequest.getParameter("parentNodeID")))
