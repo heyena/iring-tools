@@ -438,13 +438,13 @@ FederationManager.FederationPanel = Ext
 											var textfield= tab.items.map['data-form'].items.map[node.id + '_update-uri'];
 											listItem.width = 230;
 											if (record.data.field1 == 'true'){
-												listItem.blankText = '';
-												textfield.reset();
+												textfield.setValue('');
+												textfield.clearInvalid();
 												textfield.disable();												
 											}
 											else{
 												textfield.enable();	
-												listItem.blankText = 'This Field is required';
+												//listItem.blankText = 'This Field is required';
 											}
 										}
 									};
@@ -456,12 +456,12 @@ FederationManager.FederationPanel = Ext
 										var textfield = tab.items.map['data-form'].items.map[node.id + '_id-generator'];
 		                listItem.width = 230;
 										if (record.data.field1 == 'false'){											
-											textfield.setValue('None');		
+											textfield.setValue('None');	
 											textfield.disable();										
 										}
 										else {
-											textfield.enable();
-											textfield.reset();
+											textfield.setValue('1');	;
+											textfield.enable();											
 										}
 									}
 								};
@@ -619,3 +619,41 @@ FederationManager.FederationPanel = Ext
             Ext.getBody().mask('Loading...', 'x-mask-loading');
           }
         });
+
+//Overrides
+Ext.override(Ext.form.ComboBox, {
+    setValue: function (v) {
+        var text = v;
+        if (this.valueField) {
+            if (this.mode == 'remote' && !Ext.isDefined(this.store.totalLength)) {
+                this.store.on('load', this.setValue.createDelegate(this, arguments), null, { single: true });
+                if (this.store.lastOptions === null) {
+                    var params;
+                    if (this.valueParam) {
+                        params = {};
+                        params[this.valueParam] = v;
+                    } else {
+                        var q = this.allQuery;
+                        this.lastQuery = q;
+                        this.store.setBaseParam(this.queryParam, q);
+                        params = this.getParams(q);
+                    }
+                    this.store.load({ params: params });
+                }
+                return;
+            }
+            var r = this.findRecord(this.valueField, v);
+            if (r) {
+                text = r.data[this.displayField];
+            } else if (this.valueNotFoundText !== undefined) {
+                text = this.valueNotFoundText;
+            }
+        }
+        this.lastSelectionText = text;
+        if (this.hiddenField) {
+            this.hiddenField.value = v;
+        }
+        Ext.form.ComboBox.superclass.setValue.call(this, text);
+        this.value = v;
+    }
+});

@@ -1,14 +1,10 @@
 package org.iringtools.models;
 
-import java.net.URLEncoder;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.ids_adi.ns.qxf.model.Qmxf;
-import org.iringtools.refdata.federation.IDGenerator;
-import org.iringtools.refdata.response.Entities;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.refdata.response.Response;
 import org.iringtools.utility.HttpClient;
