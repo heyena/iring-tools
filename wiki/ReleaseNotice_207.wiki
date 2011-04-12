@@ -1,5 +1,5 @@
 #summary Date: 2011/4/12
-=iRINGTools-2.00.07.3171=
+=iRINGTools-2.00.07.3240=
 
 A patch release of [http://code.google.com/p/iring-tools/wiki/ReleaseNotice_207 iRINGTools 2.0] that includes bug fixes.  
 
