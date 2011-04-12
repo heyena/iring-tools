@@ -8,6 +8,10 @@
         <name>ABC</name>
         <description>Test Application</description>
       </application>
+	  <application>
+        <name>DEF</name>
+        <description>Test Application</description>
+      </application>
     </applications>
   </scope>
 </scopes>

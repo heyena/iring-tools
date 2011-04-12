@@ -1,4 +1,5 @@
-<DatabaseDictionary xmlns="http://ns.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+<DatabaseDictionary xmlns="http://ns.iringtools.org/library"
+xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <dataObjects>
     <DataObject>
       <tableName>EQUIPMENT</tableName>
@@ -154,7 +155,7 @@
           <keyType>unassigned</keyType>
         </DataProperty>
       </dataProperties>
-      <dataRelationships/>
+      <dataRelationships />
     </DataObject>
     <DataObject>
       <tableName>LINES</tableName>
@@ -414,7 +415,7 @@
           <keyType>unassigned</keyType>
         </DataProperty>
       </dataProperties>
-      <dataRelationships/>
+      <dataRelationships />
     </DataObject>
     <DataObject>
       <tableName>INSTRUMENTS</tableName>
@@ -602,7 +603,7 @@
           <keyType>unassigned</keyType>
         </DataProperty>
       </dataProperties>
-      <dataRelationships/>
+      <dataRelationships />
     </DataObject>
     <DataObject>
       <tableName>VALVES</tableName>
@@ -758,10 +759,11 @@
           <keyType>unassigned</keyType>
         </DataProperty>
       </dataProperties>
-      <dataRelationships/>
+      <dataRelationships />
     </DataObject>
   </dataObjects>
   <provider>MsSql2008</provider>
-  <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=DEF;User ID=def;Password=def;</connectionString>
+  <connectionString>Data Source=.\SQLEXPRESS;Initial
+  Catalog=DEF;User ID=def;Password=def;</connectionString>
   <schemaName>dbo</schemaName>
 </DatabaseDictionary>
