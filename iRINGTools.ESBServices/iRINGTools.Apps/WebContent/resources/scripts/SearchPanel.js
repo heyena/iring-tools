@@ -70,6 +70,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         FederationManager.SearchPanel.superclass.initComponent.call(this);
     },
       buildToolbar: function () {
+    	  var SearchPanel=this;
         return [ 
                  {
         			xtype: 'textfield',
@@ -81,11 +82,10 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         	            marginLeft: '15px'
         	        },
         	        scope:this,
-        	        listeners: {
+        	       listeners: {
         	              specialkey: function(f,e){
         	                if (e.getKey() == e.ENTER) {
-        	                	var query = Ext.get('referencesearch').getValue();
-        	                	//alert(query);
+        	                	SearchPanel.onSearch();
         	                }
         	              }
         	            }
@@ -151,107 +151,88 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
                      scope : this
                    }];
       },
-      onSearch: function(){
-    	  searchText = Ext.get('referencesearch').getValue();
-    	  treeLoader =  new Ext.tree.TreeLoader({
-    		  requestMethod: 'POST',
-              url: this.searchUrl,
-    		  baseParams: { 
-            	  query: searchText,
-            	  limit:this.limit,
-            	  start:0
-            	}
-    	    });
-    	  	  var tree = new Ext.tree.TreePanel({
-            	  title:searchText,
-                  useArrows: true,
-                  animate: true,
-                  lines : false,
-                  id:'tab_'+searchText,
-                  autoScroll : true,
-                  style : 'padding-left:5px;',
-                  border: false,
-                  closable:true,
-                  rootVisible: false,
-                  loader:treeLoader ,
-                  root: {
-                      nodeType: 'async',
-                      qtipCfg:'Aswini',
-                      draggable: false
-                  },
-                  containerScroll: true
-              });
-    	  	  
-    	  //	tree.on('beforeexpandnode', this.restrictExpand, this);
+      onSearch: function () {
+  	    var searchText = Ext.get('referencesearch').getValue();
+  	    var treeLoader = new Ext.tree.TreeLoader({
+  	      requestMethod: 'POST',
+  	      url: this.searchUrl,
+  	      baseParams: {
+  	        id: null,
+  	        type: null,
+  	        query: searchText,
+  	        limit: this.limit,
+  	        start: 0
+  	      }
+  	    });
 
-    	  	tree.on('beforeload', function(node){
-    	  		Ext.getCmp('content-pane').getEl().mask('Loading...');
-    	  	}); 
-    		tree.on('load', function(node){
-    	  		Ext.getCmp('content-pane').getEl().unmask();
-    	  	});
-              tree.getRootNode().expand();
-              tree.on('click', this.onClick, this);
-              this.refClassTabPanel.add(tree).show();
-      },
-      onClick : function(node) {
-    	  switch(node.attributes.text){
-    	  case "Classifications":
-    		 // alert("send request for classifications:"+'class/'+node.parentNode.attributes.identifier);
-    		  treeLoader.url="class";
-    	  	  treeLoader.baseParams = {
-    	  			  id:node.parentNode.attributes.identifier,
-    	  			  query: searchText,
-                	  limit:this.limit,
-                	  start:0
-                	  };
-    		  break;
-    	  case "Superclasses":
-    		  //alert("send request for Superclasses:"+'superClass/'+node.parentNode.attributes.identifier);
-    		  treeLoader.url="superClass";
-    	  	  treeLoader.baseParams = {
-    	  			  id:node.parentNode.attributes.identifier,
-    	  			  query: searchText,
-                	  limit:this.limit,
-                	  start:0
-                	  };
+  	    treeLoader.on("beforeload", function (treeLoader, node) {
+  	      treeLoader.baseParams.type = node.attributes.type;
+  	      switch(node.text){
+      	  case "Classifications":
+      		  treeLoader.url="class";
+      		  //treeLoader.url="resources/myjson_class.json";
+      		  break;
+      	  case "Superclasses":
+      		  treeLoader.url="superClass";
+      		  break;
+      	  case "Subclasses":
+      		  treeLoader.url="subClass";
+      		  break;
+      	  case "Templates":
+      		  treeLoader.url="template";
+      		  break;
+  	      }
+  	      treeLoader.baseParams.query = searchText;
+  	      treeLoader.baseParams.limit = this.limit;
+  	      treeLoader.baseParams.start = 0;
+  	      if (node.parentNode != undefined)
+  	        treeLoader.baseParams.id = node.parentNode.attributes.identifier;
+  	      if (node.attributes.type == 'TemplateNode')
+  	        treeLoader.baseParams.id = node.attributes.identifier;
+  	    }, this);
+  	    
+  	    
+  	    var tree = new Ext.tree.TreePanel({
+  	      title: searchText,
+  	      useArrows: true,
+  	      animate: true,
+  	      lines: false,
+  	      id: 'tab_' + searchText,
+  	      autoScroll: true,
+  	      style: 'padding-left:5px;',
+  	      border: false,
+  	      closable: true,
+  	      rootVisible: false,
+  	      loader: treeLoader,
+  	      root: {
+  	        nodeType: 'async',
+  	        draggable: false,
+  	        type: 'SearchNode'
+  	      },
+  	      containerScroll: true
+  	    });
 
-    		  break;
-    	  case "Subclasses":
-    		  //alert("send request for Subclasses:"+'subClasses/'+node.parentNode.attributes.identifier);
-    		  treeLoader.url="subClass";
-    	  	  treeLoader.baseParams = {
-    	  			  id:node.parentNode.attributes.identifier,
-    	  			  query: searchText,
-                	  limit:this.limit,
-                	  start:0
-                	  };
-    		  break;
-    	  case "Templates":
-    		  //alert("send request for Subclasses:"+'subClasses/'+node.parentNode.attributes.identifier);
-    		  treeLoader.url="template";
-    	  	  treeLoader.baseParams = {
-    	  			  id:node.parentNode.attributes.identifier,
-    	  			  query: searchText,
-                	  limit:this.limit,
-                	  start:0
-                	  };
-    		  break;
-
-    		  
-    	  }
-    	  node.expand();
-      },
+  	    tree.on('beforeload', function (node) {
+  	      Ext.getCmp('content-pane').getEl().mask('Loading...');
+  	    });
+  	    tree.on('load', function (node) {
+  	      Ext.getCmp('content-pane').getEl().unmask();
+  	    });
+  	    tree.getRootNode().expand();
+	    tree.on('click', this.onClick,this);
+  	    this.refClassTabPanel.add(tree).show();
+  	  },
+  	onClick: function (node) {
+  		try {
+  	      this.propertyPanel.setSource(node.attributes.properties);
+  	    } catch (e) {
+  	    }},
       onClassAdd : function(btn, ev) {
           this.openAddClassTab();
-
        },
-       
       onTemplateAdd : function(btn, ev){
     	  this.onTemplateAdd();
       },
-       
-      
        openAddClassTab : function(){
           var listItems = new Array();
           var label = 'Add Class';
@@ -261,9 +242,6 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
             name: 'formType',
             value: 'newClass'
           });
-
-       
-   
           
          var listItem = [{xtype: 'fieldset', layout:'column', border:false,
         	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
@@ -335,10 +313,6 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
             name: 'formType',
             value: 'newTemplate'
           });
-
-       
-   
-          
          var listItem = [{xtype: 'radiogroup',fieldLabel: 'Template Type',
                          items: [
                              {boxLabel: 'Base Template', name: 'tempType', checked: true},
