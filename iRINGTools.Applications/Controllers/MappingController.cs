@@ -22,7 +22,7 @@ namespace iRINGTools.Web.Controllers
 {
   public class MappingController : Controller
   {
-
+    NamespaceMapper _nsMap = new NamespaceMapper();
     private NameValueCollection _settings = null;
     private IMappingRepository _repository { get; set; }
     private string _keyFormat = "Mapping.{0}.{1}";
@@ -68,11 +68,6 @@ namespace iRINGTools.Web.Controllers
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
-    public JsonResult AddGraphMap(FormCollection form)
-    {
-      JsonTreeNode nodes = new JsonTreeNode();
-      return Json(nodes, JsonRequestBehavior.AllowGet);
-    }
 
     public JsonResult GetNode(FormCollection form)
     {
@@ -243,6 +238,53 @@ namespace iRINGTools.Web.Controllers
 
       };
       return graphNode;
+    }
+
+    public JsonResult AddGraphMap(FormCollection form)
+    {
+      try
+      {
+        string qName = string.Empty;
+
+        char[] delimiters = new char[] { '/' };
+        string format = String.Empty;
+        string propertyCtx = form["propertyNode"];
+
+        string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string scope = dataObjectVars[0];
+        string application = dataObjectVars[1];
+        Mapping mapping = GetMapping(scope, application);
+
+        string graphName = form["graphName"];
+        string classLabel = form["classLabel"];
+        string keyProperty = dataObjectVars[5];
+        string dataObject = dataObjectVars[4];
+        string classId = form["classId"];
+        bool qn = false;
+
+        qn = _nsMap.ReduceToQName(classId, out qName);
+
+        GraphMap graphMap = new GraphMap
+        {
+          name = graphName,
+          dataObjectName = dataObject
+        };
+        ClassMap classMap = new ClassMap
+        {
+          name = classLabel,
+          id = qName
+        };
+
+        classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
+
+        graphMap.AddClassMap(null, classMap);
+        mapping.graphMaps.Add(graphMap);
+      }
+      catch (Exception ex)
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
   }
 }

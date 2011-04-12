@@ -60,7 +60,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     });
 
     this.treeLoader.on("beforeload", function (treeLoader, node) {
-        treeLoader.baseParams.type = node.attributes.type;
+      treeLoader.baseParams.type = node.attributes.type;
 
     }, this);
 
@@ -96,6 +96,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     this.directoryPanel = new Ext.tree.TreePanel({
       id: 'directoryPanel',
+      enableDrag: true,
+      ddGroup: 'propertyGroup',
       region: 'center',
       collapseMode: 'mini',
       height: 300,
@@ -109,8 +111,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       //singleExpand: true,
       useArrows: true,
       loader: this.treeLoader,
-      root: this.rootNode,
-      
+      root: this.rootNode
+
     });
 
     this.directoryPanel.on('contextmenu', this.showContextMenu, this);
@@ -134,7 +136,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     AdapterManager.DirectoryPanel.superclass.initComponent.call(this);
   },
 
-  getSelectedNode: function (){
+  getSelectedNode: function () {
     var selectedNode = this.directoryPanel.getSelectionModel().getSelectedNode();
     return selectedNode;
   },
@@ -142,11 +144,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildToolbar: function () {
     return [
 			{
-				xtype: 'button',
-				text: 'Reload Tree',
-				handler: this.onReload,
-				icon: 'Content/img/16x16/view-refresh.png',
-				scope: this
+			  xtype: 'button',
+			  text: 'Reload Tree',
+			  handler: this.onReload,
+			  icon: 'Content/img/16x16/view-refresh.png',
+			  scope: this
 			}
 		]
   },
@@ -154,16 +156,16 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildScopesMenu: function () {
     return [
 			{
-				text: 'New Scope',
-				handler: this.onNewScope,
-				icon: 'Content/img/16x16/document-new.png',
-				scope: this
+			  text: 'New Scope',
+			  handler: this.onNewScope,
+			  icon: 'Content/img/16x16/document-new.png',
+			  scope: this
 			},
 			{
-				text: 'Reload Scopes',
-				handler: this.onReloadNode,
-				icon: 'Content/img/16x16/view-refresh.png',
-				scope: this
+			  text: 'Reload Scopes',
+			  handler: this.onReloadNode,
+			  icon: 'Content/img/16x16/view-refresh.png',
+			  scope: this
 			}
 		]
   },
@@ -171,63 +173,63 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildScopeMenu: function () {
     return [
 			{
-				text: 'Edit Scope',
-				handler: this.onEditScope,
-				icon: 'Content/img/16x16/document-properties.png',
-				scope: this
+			  text: 'Edit Scope',
+			  handler: this.onEditScope,
+			  icon: 'Content/img/16x16/document-properties.png',
+			  scope: this
 			},
 			{
-				text: 'Delete Scope',
-				handler: this.onDeleteScope,
-				icon: 'Content/img/16x16/edit-delete.png',
-				scope: this
+			  text: 'Delete Scope',
+			  handler: this.onDeleteScope,
+			  icon: 'Content/img/16x16/edit-delete.png',
+			  scope: this
 			},
 			{
-				text: 'Reload Scope',
-				handler: this.onReloadNode,
-				icon: 'Content/img/16x16/view-refresh.png',
-				scope: this
+			  text: 'Reload Scope',
+			  handler: this.onReloadNode,
+			  icon: 'Content/img/16x16/view-refresh.png',
+			  scope: this
 			},
 			{
-				xtype: 'menuseparator'
+			  xtype: 'menuseparator'
 			},
 			{
-				text: 'New Application',
-				handler: this.onNewApplication,
-				icon: 'Content/img/list-add.png',
-				scope: this
-			}								
+			  text: 'New Application',
+			  handler: this.onNewApplication,
+			  icon: 'Content/img/list-add.png',
+			  scope: this
+			}
 		]
   },
 
   buildApplicationMenu: function () {
-    return [				
+    return [
 			{
-				text: 'Edit Application',
-				handler: this.onEditApplication,
-				icon: 'Content/img/16x16/document-properties.png',
-				scope: this
+			  text: 'Edit Application',
+			  handler: this.onEditApplication,
+			  icon: 'Content/img/16x16/document-properties.png',
+			  scope: this
 			},
 			{
-				text: 'Delete Application',
-				handler: this.onDeleteApplication,
-				icon: 'Content/img/16x16/edit-delete.png',
-				scope: this
+			  text: 'Delete Application',
+			  handler: this.onDeleteApplication,
+			  icon: 'Content/img/16x16/edit-delete.png',
+			  scope: this
 			},
 			{
-				text: 'Reload Application',
-				handler: this.onReloadNode,
-				icon: 'Content/img/16x16/view-refresh.png',
-				scope: this
+			  text: 'Reload Application',
+			  handler: this.onReloadNode,
+			  icon: 'Content/img/16x16/view-refresh.png',
+			  scope: this
 			},
 			{
-				xtype: 'menuseparator'
+			  xtype: 'menuseparator'
 			},
 			{
-				text: 'Open Mapping',
-				handler: this.onOpenMapping,
-				icon: 'Content/img/16x16/mapping.png',
-				scope: this
+			  text: 'Open Mapping',
+			  handler: this.onOpenMapping,
+			  icon: 'Content/img/16x16/mapping.png',
+			  scope: this
 			}
 		]
   },
@@ -241,11 +243,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     var obj = node.attributes;
 
     if (obj.type == "ScopesNode") {
-        this.scopesMenu.showAt([x, y]);
+      this.scopesMenu.showAt([x, y]);
     } else if (obj.type == "ScopeNode") {
-        this.scopeMenu.showAt([x, y]);
+      this.scopeMenu.showAt([x, y]);
     } else if (obj.type == "ApplicationNode") {
-        this.applicationMenu.showAt([x, y]);
+      this.applicationMenu.showAt([x, y]);
     }
     this.directoryPanel.getSelectionModel().select(node);
     this.onClick(node);
@@ -301,7 +303,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     var tabid = tab.id;
     nodeId = tabid.substr(4, tabid.length)  // tabid is "tab-jf23dfj-sd3fas-df33s-s3df"
     return this.getNodeById(nodeId)        // get the NODE using nodeid
-	},
+  },
 
   getNodeById: function (nodeId) {
     if (this.directoryPanel.getNodeById(nodeId)) { //if nodeID exists it will find out NODE
@@ -320,7 +322,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       this.propertyPanel.setSource(node.attributes.record);
 
     } catch (e) {
-        //  alert(e);
+      //  alert(e);
     }
   }
 });
