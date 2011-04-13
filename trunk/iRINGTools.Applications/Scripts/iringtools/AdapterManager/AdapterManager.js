@@ -204,7 +204,8 @@ Ext.onReady(function () {
 
             }
             else if (application.DataLayer == 'NHibernateLibrary') {
-                var nhConfigWizard = contentPanel.getItem('nh-config-wizard');  
+                var nhConfigId = scope.Name + '.' + application.Name + '-nh-config-wizard';
+                var nhConfigWizard = contentPanel.getItem(nhConfigId);  
               
                 if (nhConfigWizard) {
                   nhConfigWizard.show();

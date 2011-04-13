@@ -609,36 +609,23 @@ namespace org.iringtools.nhibernate
       };
     }
 
-    public DataObjects GetSchemaObjects(string projectName, string applicationName, string dbProvider, string dbServer, 
-      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
+    public List<string> GetTableNames(string projectName, string applicationName, string dbProvider, 
+      string dbServer, string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
     {
-      DataObjects schemaObjects = new DataObjects();
+      List<string> tableNames = new List<string>();
       
       try
       {
         InitializeScope(projectName, applicationName);
 
-        string connStr = "Data Source=" + dbServer + "\\" + dbInstance + ";Initial Catalog=" + dbName + 
-          ";User ID=" + dbUserName + ";Password=" + dbPassword;
-
-        Dictionary<string, string> properties = new Dictionary<string, string>();
-        properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
-        properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
-        properties.Add("connection.connection_string", connStr);
-        properties.Add("connection.driver_class", GetConnectionDriver(dbProvider));
-        properties.Add("dialect", GetDatabaseDialect(dbProvider));
-
-        NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
-        config.AddProperties(properties);
-
-        ISessionFactory sessionFactory = config.BuildSessionFactory();
-        ISession session = sessionFactory.OpenSession();
+        List<DataObject> dataObjects = new List<DataObject>();
+        ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword);
         string sql = GetDatabaseMetaquery(dbProvider, dbName, dbSchema);
         ISQLQuery query = session.CreateSQLQuery(sql);
 
         foreach (string tableName in query.List<string>())
         {
-          schemaObjects.Add(tableName);
+          tableNames.Add(tableName);
         }
 
         session.Close();
@@ -648,11 +635,107 @@ namespace org.iringtools.nhibernate
         throw ex;
       }
 
-      return schemaObjects;
+      return tableNames;
+    }
+
+    public List<DataObject> GetDBObjects(string projectName, string applicationName, string dbProvider, string dbServer,
+      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames)
+    {
+      List<DataObject> dataObjects = new List<DataObject>();
+      ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword);
+
+      foreach (string tableName in tableNames.Split(','))
+      {
+        DataObject dataObject = new DataObject() 
+        {
+          tableName = tableName,
+          objectName = Utility.NameSafe(tableName) 
+        };
+
+        string sql = GetTableMetaQuery(dbProvider, dbName, dbSchema, tableName);
+        ISQLQuery query = session.CreateSQLQuery(sql);
+        IList<object[]> metadataList = query.List<object[]>();  
+
+        foreach (object[] metadata in metadataList)
+        {
+          string columnName = Convert.ToString(metadata[0]);
+          string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
+          int dataLength = Convert.ToInt32(metadata[2]);
+          bool isIdentity = Convert.ToBoolean(metadata[3]);
+          string nullable = Convert.ToString(metadata[4]).ToUpper();
+          bool isNullable = (nullable == "Y" || nullable == "TRUE");
+          string constraint = Convert.ToString(metadata[5]);
+
+          if (String.IsNullOrEmpty(constraint)) // process columns
+          {
+            DataProperty column = new DataProperty()
+            {
+              columnName = columnName,
+              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              dataLength = dataLength,
+              isNullable = isNullable,
+              propertyName = Utility.NameSafe(columnName) 
+            };
+
+            dataObject.dataProperties.Add(column);
+          }
+          else
+          {
+            KeyType keyType = KeyType.assigned;
+
+            if (isIdentity)
+            {
+              keyType = KeyType.identity;
+            }
+            else if (constraint.ToUpper() == "FOREIGN KEY" || constraint.ToUpper() == "R")
+            {
+              keyType = KeyType.foreign;
+            }
+
+            DataProperty key = new DataProperty()
+            {
+              columnName = columnName,
+              dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
+              dataLength = dataLength,
+              isNullable = isNullable,
+              keyType = keyType,
+              propertyName = Utility.NameSafe(columnName),
+            };
+
+            dataObject.addKeyProperty(key);
+          }
+        }
+
+        dataObjects.Add(dataObject);
+      }
+
+      session.Close();
+
+      return dataObjects;
     }
     #endregion
 
     #region private methods
+    private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema, 
+      string dbUserName, string dbPassword)
+    {
+      string connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}", 
+        dbServer, dbInstance, dbName, dbUserName, dbPassword);
+      Dictionary<string, string> properties = new Dictionary<string, string>();
+
+      properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
+      properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
+      properties.Add("connection.connection_string", connStr);
+      properties.Add("connection.driver_class", GetConnectionDriver(dbProvider));
+      properties.Add("dialect", GetDatabaseDialect(dbProvider));
+
+      NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
+      config.AddProperties(properties);
+
+      ISessionFactory sessionFactory = config.BuildSessionFactory();
+      return sessionFactory.OpenSession();
+    }
+
     private string GetTableMetaQuery(string dbProvider, string databaseName, string schemaName, string objectName)
     {
       string tableQuery = string.Empty;

@@ -5,6 +5,7 @@ using System.Web;
 
 using org.iringtools.library;
 using org.iringtools.mapping;
+using iRINGTools.Web.Helpers;
 
 namespace iRINGTools.Web.Models
 {
@@ -31,12 +32,5 @@ namespace iRINGTools.Web.Models
     string UpdateApplication(string scope, string application, string name, string description, string assembly);
 
     string DeleteApplication(string scope, string application);
-
-    DataProviders GetDataProviders();
-
-    DatabaseDictionary GetDatabaseDictionary(string scope, string application);
-
-    DataObjects GetSchemaObjects(string scope, string application, string dbProvider, string dbServer,
-      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword);
   }
 }
