@@ -100,6 +100,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       ddGroup: 'propertyGroup',
       region: 'center',
       collapseMode: 'mini',
+      lines: true,
       height: 300,
       //layout: 'fit',
       border: false,

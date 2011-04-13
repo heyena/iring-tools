@@ -20,7 +20,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
   record: null,
   form: null,
   url: null,
-  
+  iconCls: 'tabsScope',
 
   /**
   * initComponent

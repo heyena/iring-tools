@@ -86,6 +86,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       collapseMode: 'mini',
       height: 300,
       layout: 'fit',
+      lines: true,
       expandAll: true,
       rootVisible: true,
       lines: true,
