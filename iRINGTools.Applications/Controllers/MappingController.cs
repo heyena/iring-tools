@@ -85,86 +85,87 @@ namespace iRINGTools.Web.Controllers
       Mapping mapping = GetMapping(scope, application);
 
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-      if (variables.Count() > 2)
-      {
-        graphMap = mapping.graphMaps.FirstOrDefault(c => c.name == variables[2]);
+     // if (variables.Count() > 2)
+      //{
+        graphMap = mapping.graphMaps.FirstOrDefault();
+        if (graphMap != null)
         graphclassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
-      }
-      switch (form["type"])
-      {
-        case "MappingNode":
-          foreach (var graph in mapping.graphMaps)
-          {
-            JsonTreeNode graphNode = GetGraphNode(graph, context);
-
-            nodes.Add(graphNode);
-          }
-          break;
-        case "GraphMapNode":
-          if (graphMap != null)
-          {
-
-            foreach (var templateMaps in graphMap.classTemplateMaps)
+      //}
+        switch (form["type"])
+        {
+          case "MappingNode":
+            foreach (var graph in mapping.graphMaps)
             {
-              if (templateMaps.classMap.name != graphclassMap.name) continue;
-              foreach (var templateMap in templateMaps.templateMaps)
-              {
+              JsonTreeNode graphNode = GetGraphNode(graph, context);
 
-                JsonTreeNode templateNode = GetTemplateNode(templateMap, context);
-                nodes.Add(templateNode);
-              }
+              nodes.Add(graphNode);
             }
-          }
-          break;
-        case "ClassMapNode":
-          var classMapId = form["id"];
-          if (graphMap != null)
-          {
-            foreach (var templateMaps in graphMap.classTemplateMaps)
+            break;
+          case "GraphMapNode":
+            if (graphMap != null)
             {
-              if (templateMaps.classMap.id == graphclassMap.id) continue;
-              foreach (var templateMap in templateMaps.templateMaps)
-              {
 
-                JsonTreeNode templateNode = GetTemplateNode(templateMap, context);
-                nodes.Add(templateNode);
-              }
-            }
-          }
-          break;
-        case "TemplateMapNode":
-          var templateId = form["id"];
-          if (graphMap != null)
-          {
-
-            foreach (var templateMaps in graphMap.classTemplateMaps)
-            {
-              if (templateMaps.classMap.name != graphclassMap.name) continue;
-              foreach (var templateMap in templateMaps.templateMaps)
+              foreach (var templateMaps in graphMap.classTemplateMaps)
               {
-                if (templateMap.id != templateId) continue;
-                foreach (var role in templateMap.roleMaps)
+                if (templateMaps.classMap.name != graphclassMap.name) continue;
+                foreach (var templateMap in templateMaps.templateMaps)
                 {
-                  JsonTreeNode roleNode = GetRoleNode(role, context);
-                  nodes.Add(roleNode);
-                  if (role.classMap != null && role.classMap.id != graphclassMap.id)
+
+                  JsonTreeNode templateNode = GetTemplateNode(templateMap, context);
+                  nodes.Add(templateNode);
+                }
+              }
+            }
+            break;
+          case "ClassMapNode":
+            var classMapId = form["id"];
+            if (graphMap != null)
+            {
+              foreach (var templateMaps in graphMap.classTemplateMaps)
+              {
+                if (templateMaps.classMap.id == graphclassMap.id) continue;
+                foreach (var templateMap in templateMaps.templateMaps)
+                {
+
+                  JsonTreeNode templateNode = GetTemplateNode(templateMap, context);
+                  nodes.Add(templateNode);
+                }
+              }
+            }
+            break;
+          case "TemplateMapNode":
+            var templateId = form["id"];
+            if (graphMap != null)
+            {
+
+              foreach (var templateMaps in graphMap.classTemplateMaps)
+              {
+                if (templateMaps.classMap.name != graphclassMap.name) continue;
+                foreach (var templateMap in templateMaps.templateMaps)
+                {
+                  if (templateMap.id != templateId) continue;
+                  foreach (var role in templateMap.roleMaps)
                   {
-                    JsonTreeNode classNode = GetClassNode(role.classMap, context);
-                    if (roleNode.children == null)
-                      roleNode.children = new List<JsonTreeNode>();
-                    roleNode.children.Add(classNode);
-                  }
-                  else
-                  {
-                    roleNode.leaf = true;
+                    JsonTreeNode roleNode = GetRoleNode(role, context);
+                    nodes.Add(roleNode);
+                    if (role.classMap != null && role.classMap.id != graphclassMap.id)
+                    {
+                      JsonTreeNode classNode = GetClassNode(role.classMap, context);
+                      if (roleNode.children == null)
+                        roleNode.children = new List<JsonTreeNode>();
+                      roleNode.children.Add(classNode);
+                    }
+                    else
+                    {
+                      roleNode.leaf = true;
+                    }
                   }
                 }
               }
             }
-          }
-          break;
-        case "RoleMapNode":
-          break;        
+            break;
+          case "RoleMapNode":
+            break;
       }
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
@@ -242,14 +243,15 @@ namespace iRINGTools.Web.Controllers
 
     public JsonResult AddGraphMap(FormCollection form)
     {
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
       try
       {
         string qName = string.Empty;
 
         char[] delimiters = new char[] { '/' };
         string format = String.Empty;
-        string propertyCtx = form["propertyNode"];
-
+        string propertyCtx = form["objectName"];
+        if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
         string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
@@ -259,7 +261,7 @@ namespace iRINGTools.Web.Controllers
         string classLabel = form["classLabel"];
         string keyProperty = dataObjectVars[5];
         string dataObject = dataObjectVars[4];
-        string classId = form["classId"];
+        string classId = form["classUrl"];
         bool qn = false;
 
         qn = _nsMap.ReduceToQName(classId, out qName);
@@ -278,7 +280,46 @@ namespace iRINGTools.Web.Controllers
         classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
 
         graphMap.AddClassMap(null, classMap);
+        if (mapping.graphMaps == null)
+          mapping.graphMaps = new GraphMaps();
         mapping.graphMaps.Add(graphMap);
+        nodes.Add(GetGraphNode(graphMap, "MappingNode"));
+      }
+      catch (Exception ex)
+      {
+        return Json(nodes, JsonRequestBehavior.AllowGet);
+      }
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult UpdateMapping(FormCollection form)
+    {
+      string scope = form["scope"];
+      string application = form["application"];
+      Mapping mapping = GetMapping(scope, application);
+      try
+      {
+        _repository.UpdateMapping(scope, application, mapping);
+      }
+      catch (Exception ex)
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult DeleteGraph(FormCollection form)
+    {
+      
+      try
+      {
+        string scope = form["scope"];
+        string application = form["application"];
+        Mapping mapping = GetMapping(scope, application);
+        string graphName = form["mappingNode"].Split('/')[2];
+        GraphMap graphMap = mapping.FindGraphMap(graphName);
+        if (graphMap != null)
+          mapping.graphMaps.Remove(graphMap);
       }
       catch (Exception ex)
       {

@@ -265,7 +265,8 @@ Ext.onReady(function () {
             application: application.attributes.record,
             navigationUrl: 'mapping/getnode',
             searchPanel: searchPanel,
-            directoryPanel: directoryPanel
+            directoryPanel: directoryPanel,
+            m_window: null
         });
 
         contentPanel.add(newTab);
