@@ -68,7 +68,7 @@
   
 	<action name="class" class="org.iringtools.controllers.RefDataController" method="getClassifications">
       <result type="json">
-        <param name="root">qmxf</param>
+        <param name="root">tree.nodes</param>
       </result>
     </action>
     <action name="superClass" class="org.iringtools.controllers.RefDataController" method="getSuperClasses">
