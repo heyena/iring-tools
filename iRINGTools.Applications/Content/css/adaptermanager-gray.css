@@ -17,35 +17,35 @@ a:active {color: black}
 }
 
 .x-tree-node .scope {
-  background-image: url(../images/cabinet.png);
+  background-image: url(../img/cabinet.png);
 }
 
 .x-tree-node-collapsed .folder {
-  background-image: url(../images/folder-close.png);
+  background-image: url(../img/folder-close.png);
 }
 
 .x-tree-node-expanded .folder {
-  background-image: url(../images/folder-open.png);
+  background-image: url(../img/folder-open.png);
 }
 
 .x-tree-node .exchange {
-  background-image: url(../images/exchange-grid.png);
+  background-image: url(../img/exchange-grid.png);
 }
 
 .x-tree-node .application {
-  background-image: url(../images/application.png);
+  background-image: url(../img/application.png);
 }
 
 .x-tree-node .graph {
-  background-image: url(../images/app-grid.png);
+  background-image: url(../img/app-grid.png);
 }
 
 .x-tree-node .commodity {
-  background-image: url(../images/class-badge-small.png);
+  background-image: url(../img/class-badge-small.png);
 }
 
 .blue-fade {
-  background-image: url(../images/blue-fade.png);
+  background-image: url(../img/blue-fade.png);
   background-repeat: repeat-x;
   -webkit-user-select: none;
 	-moz-user-select: none;

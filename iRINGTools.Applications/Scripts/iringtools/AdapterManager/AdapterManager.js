@@ -91,8 +91,7 @@ Ext.onReady(function () {
             id: 'tab-' + node.id,
             title: 'Scope - (New)',
             record: node.attributes.record,
-            url: 'directory/scope',
-            iconCls: 'tabsScope'
+            url: 'directory/scope'
         });
 
         newTab.on('save', function (panel) {
@@ -111,8 +110,7 @@ Ext.onReady(function () {
             id: 'tab-' + node.id,
             title: 'Scope - ' + node.text,
             record: node.attributes.record,
-            url: 'directory/scope',
-            iconCls: 'tabsScope'
+            url: 'directory/scope'
         });
 
         newTab.on('save', function (panel) {
@@ -157,8 +155,7 @@ Ext.onReady(function () {
             scope: node.attributes.record,
             record: null,
             url: 'directory/application',
-            closable: true,
-            iconCls: 'tabsApplication'
+            closable: true
         });
 
         newTab.on('save', function (panel) {
@@ -181,8 +178,7 @@ Ext.onReady(function () {
             scope: node.parentNode.attributes.record,
             record: node.attributes.record,
             url: 'directory/application',
-            closable: true,
-            iconCls: 'tabsApplication'
+            closable: true
         });
 
         newTab.on('save', function (panel) {

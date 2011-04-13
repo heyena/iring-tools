@@ -21,6 +21,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     record: null,
     form: null,
     url: null,
+		iconCls: 'tabsApplication',
 
     /**
     * initComponent

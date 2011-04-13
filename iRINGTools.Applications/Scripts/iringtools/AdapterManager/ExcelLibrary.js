@@ -210,6 +210,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             region: 'center',
             border: false,
             split: true,
+            lines: true,
             expandAll: true,
             rootVisible: true,
             lines: true,

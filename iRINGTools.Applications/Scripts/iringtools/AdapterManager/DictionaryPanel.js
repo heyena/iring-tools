@@ -82,6 +82,7 @@ AdapterManager.DictionaryPanel = Ext.extend(Ext.Panel, {
       collapseMode: 'mini',
       height: 300,
       layout: 'fit',
+      lines: true,
       border: false,
       split: true,
       expandAll: true,
