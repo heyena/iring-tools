@@ -8,7 +8,10 @@ public abstract class Node
   protected String iconCls;
   protected String identifier;
   protected boolean hidden = false;
-  protected HashMap<String, String> properties;
+  protected String type;
+  protected Object record;
+
+protected HashMap<String, String> properties;
 
   public String getText()
   {
@@ -50,6 +53,14 @@ public abstract class Node
     this.identifier = value;
   }
 
+  public String getType() {
+	return type;
+  }
+
+  public void setType(String type) {
+	this.type = type;
+	}
+
   public HashMap<String, String> getProperties()
   {
     if (properties == null)
@@ -63,4 +74,13 @@ public abstract class Node
   {
     this.properties = properties;
   }
+  
+  public Object getRecord() {
+		return record;
+	}
+
+	public void setRecord(Object record) {
+		this.record = record;
+	}
+
 }
