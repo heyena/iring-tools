@@ -7,6 +7,7 @@ import org.ids_adi.ns.qxf.model.Qmxf;
 import org.iringtools.models.RefDataModel;
 import org.iringtools.refdata.response.Response;
 import org.iringtools.widgets.tree.Tree;
+import org.iringtools.widgets.tree.Type;
 
 import com.opensymphony.xwork2.Action;
 
@@ -53,24 +54,34 @@ public class RefDataController implements ServletRequestAware{
 		} 
 	
 	public String searchPage() {
-		//System.out.println("callled.........");
 		String query=httpRequest.getParameter("query");
-    	if(query!=null){
-    		tree = refdata.populate(httpRequest);
-    		//	tree = refdata.toTree();
-    	       
-    	}else{
-    		//System.out.println('{"items":null,"message":null,"success":false,"total":0,"errors":null}');
-    	}
-    	//System.out.println("Finished........."+response.getEntities().getItems().size());
-    	 return Action.SUCCESS;
+		Type type = Type.fromValue(httpRequest.getParameter("type"));
+		switch(type){
+		case SEARCH:
+			tree = refdata.populate(httpRequest);
+			break;
+		case CLASS:
+			tree = refdata.getClass(httpRequest.getParameter("id"));
+			break;
+		case SUPERCLASS:
+			response = refdata.getSuperClasses(httpRequest.getParameter("id"));
+			break;
+		case SUBCLASS:
+			response = refdata.getSubClasses(httpRequest.getParameter("id"));
+			break;
+		case CLASSTEMPLATE:
+			response = refdata.getTemplates(httpRequest.getParameter("id"));
+			break;
+		}
+    	
+		return Action.SUCCESS;
     	}
 	
-	public String getClassifications(){
+	/*public String getClassifications(){
 		String id = httpRequest.getParameter("id");
-		qmxf = refdata.getClass(id);
+		tree = refdata.getClass("R19192462550");
 		return Action.SUCCESS;
-	}
+	}*/
 	public String getSuperClasses(){
 		String id = httpRequest.getParameter("id");
 		response = refdata.getSuperClasses(id);

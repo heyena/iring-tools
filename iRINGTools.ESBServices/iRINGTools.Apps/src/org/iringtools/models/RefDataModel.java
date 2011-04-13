@@ -12,6 +12,7 @@ import org.iringtools.widgets.tree.LeafNode;
 import org.iringtools.widgets.tree.Node;
 import org.iringtools.widgets.tree.Tree;
 import org.iringtools.widgets.tree.TreeNode;
+import org.iringtools.widgets.tree.Type;
 
 import com.opensymphony.xwork2.ActionContext;
 
@@ -46,9 +47,7 @@ public class RefDataModel
     	String start=httpRequest.getParameter("start");
     	String limit=httpRequest.getParameter("limit");
     	
-    	//query = URLEncoder.encode(query, "UTF-8");
     	query = query.replaceAll(" ", "%20");
-    	//System.out.print("%%%%%%%%%"+query+"====="+start+"====="+limit);
     	
     	response = httpClient.get(Response.class, "/search/"+query+"/"+start+"/"+limit);
         
@@ -62,24 +61,15 @@ public class RefDataModel
         	node.setText(entity.getLabel()+" ("+entity.getRepository()+")");
         	if(entity.getUri().contains("rdl.rdlfacade.org")){
         		node.setIconCls("class");
+        		node.setType(Type.CLASS.value());
         	}else{
         		node.setIconCls("template");
+        		node.setType(Type.TEMPLATE.value());
         	}
         	node.getProperties().put("lang", entity.getLang());
         	node.getProperties().put("uri", entity.getUri());
         	List<Node> childrenNodes = node.getChildren();
-        	LeafNode childNode = new LeafNode();
-        	childNode.setText("Classifications");
-        	childrenNodes.add(childNode);
-        	childNode = new LeafNode();
-        	childNode.setText("Superclasses");
-        	childrenNodes.add(childNode);
-        	childNode = new LeafNode();
-        	childNode.setText("Subclasses");
-        	childrenNodes.add(childNode);
-        	childNode = new LeafNode();
-        	childNode.setText("Templates");
-        	childrenNodes.add(childNode);
+        	childrenNodes = getDefaultChildren(childrenNodes);
         	treeNodes.add(node);
         }
     }
@@ -91,13 +81,29 @@ public class RefDataModel
     return tree;
   }
   
-  public Qmxf getClass(String id){
+  public Tree getClass(String id){
 	  Qmxf qmxf = null;
+	  Tree tree = new Tree();
+	  System.out.println("Inside getClass");
 	  try{
 		  qmxf = httpClient.get(Qmxf.class, "/classes/"+id);
+		  
+		  List<Node> treeNodes = tree.getNodes();
+	      TreeNode node = new TreeNode();
+	      //ClassDefinition classDef = qmxf.getClassDefinitions().get(0);
+	      node.setText(qmxf.getClassDefinitions().get(0).getNames().get(0).getValue());
+	      node.setRecord(qmxf.getClassDefinitions().get(0));
+	      node.setIconCls("class");
+  		  node.setType(Type.CLASS.value());
+  		  List<Node> childrenNodes = node.getChildren();
+    	  childrenNodes = getDefaultChildren(childrenNodes);
+    	  treeNodes.add(node);
+	      
 	  }catch(Exception e){
+		  System.out.println("Exception in getClass");
+	      e.printStackTrace();
 	  }
-	  return qmxf;
+	  return tree;
 	  
 	  
   }
@@ -131,4 +137,26 @@ public class RefDataModel
 	  
 	  
 }
+  private List<Node> getDefaultChildren(List<Node> childrenNodes)
+  {
+	  
+	  	LeafNode childNode = new LeafNode();
+	  	childNode.setText("Classifications");
+	  	childNode.setType(Type.CLASSIFICATION.value());
+	  	childrenNodes.add(childNode);
+	  	childNode = new LeafNode();
+	  	childNode.setText("Superclasses");
+	  	childNode.setType(Type.SUPERCLASS.value());
+	  	childrenNodes.add(childNode);
+	  	childNode = new LeafNode();
+	  	childNode.setText("Subclasses");
+	  	childNode.setType(Type.SUBCLASS.value());
+	  	childrenNodes.add(childNode);
+	  	childNode = new LeafNode();
+	  	childNode.setText("Templates");
+	  	childNode.setType(Type.CLASSTEMPLATE.value());
+	  	childrenNodes.add(childNode);
+
+    return childrenNodes;
+  }
 }
