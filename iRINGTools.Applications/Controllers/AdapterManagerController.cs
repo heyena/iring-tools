@@ -3,16 +3,17 @@ using System.Web.Mvc;
 using iRINGTools.Web.Models;
 using org.iringtools.library;
 using iRINGTools.Web.Helpers;
+using System;
 
 namespace iRINGTools.Web.Controllers
 {
   public class AdapterManagerController : Controller
   {
-    private IAdapterRepository _repository;
+    private AdapterRepository _repository;
 
     public AdapterManagerController() : this(new AdapterRepository()) {}
 
-    public AdapterManagerController(IAdapterRepository repository)
+    public AdapterManagerController(AdapterRepository repository)
     {
       _repository = repository;
     }
@@ -22,9 +23,9 @@ namespace iRINGTools.Web.Controllers
       return View();
     }
 
-    public ActionResult DataProviders()
+    public ActionResult DBProviders()
     {
-      DataProviders dataProviders = _repository.GetDataProviders();
+      DataProviders dataProviders = _repository.GetDBProviders();
 
       List<DBProvider> providers = new List<DBProvider>();
       foreach (Provider dataProvider in dataProviders)
@@ -40,24 +41,33 @@ namespace iRINGTools.Web.Controllers
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
-    public ActionResult DatabaseDictionary(FormCollection form)
+    public ActionResult DBDictionary(FormCollection form)
     {
-      DatabaseDictionary dbDict = _repository.GetDatabaseDictionary(form["scope"], form["app"]);
+      DatabaseDictionary dbDict = _repository.GetDBDictionary(form["scope"], form["app"]);
       return Json(dbDict, JsonRequestBehavior.AllowGet);
     }
 
-    public ActionResult SchemaObjects(FormCollection form)
+    public ActionResult TableNames(FormCollection form)
     {
-      DataObjects dataObjects = _repository.GetSchemaObjects(
-        form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"], 
+      List<string> dataObjects = _repository.GetTableNames(
+        form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
         form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"]);
 
-      JsonContainer<DataObjects> container = new JsonContainer<DataObjects>();
+      JsonContainer<List<string>> container = new JsonContainer<List<string>>();
       container.items = dataObjects;
       container.success = true;
       container.total = dataObjects.Count;
 
       return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    public ActionResult DBObjects(FormCollection form)
+    {
+      List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
+        form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+        form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"]);
+
+      return Json(dbObjects, JsonRequestBehavior.AllowGet);
     }
   }
 

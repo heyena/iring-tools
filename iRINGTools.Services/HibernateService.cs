@@ -47,36 +47,20 @@ namespace org.iringtools.services
     }
     #endregion
 
-    [WebGet(UriTemplate = "/{project}/{application}/dictionary")]
-    public DatabaseDictionary GetDictionary(string project, string application)
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{application}/dictionary")]
+    public Response PostDictionary(string scope, string application, DatabaseDictionary dictionary)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
-      return _NHibernateProvider.GetDictionary(project, application);
+      return _NHibernateProvider.PostDictionary(scope, application, dictionary);
     }
 
-    [WebInvoke(Method = "POST", UriTemplate = "/{project}/{application}/dictionary")]
-    public Response PostDictionary(string project, string application, DatabaseDictionary dictionary)
+    [WebGet(UriTemplate = "/{scope}/{application}/generate")]
+    public Response Generate(string scope, string application)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
-      return _NHibernateProvider.PostDictionary(project, application, dictionary);
-    }
-
-    [WebGet(UriTemplate = "/{project}/{application}/generate")]
-    public Response Generate(string project, string application)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-      return _NHibernateProvider.Generate(project, application);
-    }
-
-    [WebGet(UriTemplate = "/providers")]
-    public DataProviders GetProviders()
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-      return _NHibernateProvider.GetProviders();
+      return _NHibernateProvider.Generate(scope, application);
     }
 
     [WebGet(UriTemplate = "/relationships")]
@@ -87,48 +71,62 @@ namespace org.iringtools.services
       return _NHibernateProvider.GetRelationships();
     }
 
-    [WebGet(UriTemplate = "/{project}/{application}/objects")]
-    public DataObjects GetSchemaObjects(string project, string application)
+    [WebGet(UriTemplate = "/{scope}/{application}/objects")]
+    public DataObjects GetSchemaObjects(string scope, string application)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
-      return _NHibernateProvider.GetSchemaObjects(project, application);
+      return _NHibernateProvider.GetSchemaObjects(scope, application);
     }
 
-    //TODO: create request object and do post
-    [WebGet(UriTemplate = "/{project}/{application}/{dbProvider}/{dbServer}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/objects")]
-    public DataObjects GetSchemaObjects2(string project, string application, string dbProvider, string dbServer,
+    [WebGet(UriTemplate = "/{scope}/{application}/objects/{objectName}")]
+    public DataObject GetSchemaObjectSchema(string scope, string application, string objectName)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+      return _NHibernateProvider.GetSchemaObjectSchema(scope, application, objectName);
+    }
+    
+    #region NHibernate Config Wizard support URIs
+    [WebGet(UriTemplate = "/providers")]
+    public DataProviders GetProviders()
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+      return _NHibernateProvider.GetProviders();
+    }
+
+    [WebGet(UriTemplate = "/{scope}/{application}/dictionary")]
+    public DatabaseDictionary GetDictionary(string scope, string application)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+      return _NHibernateProvider.GetDictionary(scope, application);
+    }
+
+    ///TODO: create request object and do post or encrypt password
+    [WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/tables")]
+    public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,
       string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
-      
-      return _NHibernateProvider.GetSchemaObjects(project, application, dbProvider, dbServer, dbInstance, 
+
+      return _NHibernateProvider.GetTableNames(scope, application, dbProvider, dbServer, dbInstance,
         dbName, dbSchema, dbUserName, dbPassword);
     }
 
-    [WebGet(UriTemplate = "/{project}/{application}/objects/{objectName}")]
-    public DataObject GetSchemaObjectSchema(string project, string application, string objectName)
+    [WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/{tableNames}/objects")]
+    public List<DataObject> GetDBObjects(string scope, string application, string dbProvider, string dbServer,
+      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
-      return _NHibernateProvider.GetSchemaObjectSchema(project, application, objectName);
+
+      return _NHibernateProvider.GetDBObjects(scope, application, dbProvider, dbServer, dbInstance,
+        dbName, dbSchema, dbUserName, dbPassword, tableNames);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    #endregion
   }
 }

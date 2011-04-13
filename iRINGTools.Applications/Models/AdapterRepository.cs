@@ -10,6 +10,7 @@ using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
+using iRINGTools.Web.Helpers;
 
 
 namespace iRINGTools.Web.Models
@@ -269,24 +270,118 @@ namespace iRINGTools.Web.Models
         }
 
         #region NHibernate Configuration Wizard support methods
-        public DataProviders GetDataProviders()
+        public DataProviders GetDBProviders()
         {
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
           return client.Get<DataProviders>("/providers");
         }
 
-        public DatabaseDictionary GetDatabaseDictionary(string scope, string application)
+        public DatabaseDictionary GetDBDictionary(string scope, string application)
         {
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
           return client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
         }
 
-        public DataObjects GetSchemaObjects(string scope, string application, string dbProvider, string dbServer,
+        public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,
           string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
         {
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          return client.Get<DataObjects>(String.Format("/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/objects", 
+          return client.Get<List<string>>(String.Format("/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/tables", 
             scope, application, dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword));
+        }
+
+        //TODO: use appropriate icons especially node with children
+        public List<JsonTreeNode> GetDBObjects(string scope, string application, string dbProvider, string dbServer,
+          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames)
+        {
+          List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
+
+          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+          List<DataObject> dataObjects = client.Get<List<DataObject>>(String.Format("/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/objects",
+            scope, application, dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword, tableNames));
+
+          foreach (DataObject dataObject in dataObjects)
+          {
+            JsonTreeNode keyPropertiesNode = new JsonTreeNode()
+            {
+              text = "Keys",
+              type = "keys",
+              leaf = false,
+              children = new List<JsonTreeNode>()
+            };
+
+            JsonTreeNode dataPropertiesNode = new JsonTreeNode()
+            {
+              text = "Properties",
+              type = "properties",
+              leaf = false,
+              children = new List<JsonTreeNode>()
+            };
+
+            JsonTreeNode relationshipsNode = new JsonTreeNode()
+            {
+              text = "Relationships",
+              type = "relationships",
+              leaf = false,
+              children = new List<JsonTreeNode>()
+            };
+
+            // create data object node
+            JsonTreeNode dataObjectNode = new JsonTreeNode()
+            {
+              text = dataObject.tableName,
+              type = "dataObject",
+              leaf = false,
+              children = new List<JsonTreeNode>()
+              {
+                keyPropertiesNode, dataPropertiesNode, relationshipsNode
+              }
+            };
+
+            // add key/data property nodes
+            foreach (DataProperty dataProperty in dataObject.dataProperties)
+            {
+              if (dataObject.isKeyProperty(dataProperty.propertyName))
+              {
+                JsonTreeNode keyPropertyNode = new JsonTreeNode()
+                {
+                  text = dataProperty.columnName,
+                  type = "keyProperty",
+                  leaf = true
+                };
+
+                keyPropertiesNode.children.Add(keyPropertyNode);
+              }
+              else
+              {
+                JsonTreeNode dataPropertyNode = new JsonTreeNode()
+                {
+                  text = dataProperty.columnName,
+                  type = "dataProperty",
+                  leaf = true
+                };
+
+                dataPropertiesNode.children.Add(dataPropertyNode);
+              }
+            }
+
+            // add relationship nodes
+            foreach (DataRelationship relationship in dataObject.dataRelationships)
+            {
+              JsonTreeNode relationshipNode = new JsonTreeNode()
+              {
+                text = relationship.relationshipName,
+                type = "relationship",
+                leaf = true
+              };
+
+              dataPropertiesNode.children.Add(relationshipNode);
+            }
+
+            dbObjectNodes.Add(dataObjectNode);
+          }
+
+          return dbObjectNodes;
         }
         #endregion
     }
