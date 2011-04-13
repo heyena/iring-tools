@@ -157,7 +157,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildScopesMenu: function () {
     return [
 			{
-			  text: 'New Scope',
+			  text: 'Add Scope',
 			  handler: this.onNewScope,
 			  icon: 'Content/img/16x16/document-new.png',
 			  scope: this
@@ -185,17 +185,17 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  icon: 'Content/img/16x16/edit-delete.png',
 			  scope: this
 			},
-			{
-			  text: 'Reload Scope',
-			  handler: this.onReloadNode,
-			  icon: 'Content/img/16x16/view-refresh.png',
-			  scope: this
-			},
+//			{
+//			  text: 'Reload Scope',
+//			  handler: this.onReloadNode,
+//			  icon: 'Content/img/16x16/view-refresh.png',
+//			  scope: this
+//			},
 			{
 			  xtype: 'menuseparator'
 			},
 			{
-			  text: 'New Application',
+			  text: 'Add Application',
 			  handler: this.onNewApplication,
 			  icon: 'Content/img/list-add.png',
 			  scope: this
@@ -217,12 +217,12 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  icon: 'Content/img/16x16/edit-delete.png',
 			  scope: this
 			},
-			{
-			  text: 'Reload Application',
-			  handler: this.onReloadNode,
-			  icon: 'Content/img/16x16/view-refresh.png',
-			  scope: this
-			},
+//			{
+//			  text: 'Reload Application',
+//			  handler: this.onReloadNode,
+//			  icon: 'Content/img/16x16/view-refresh.png',
+//			  scope: this
+//			},
 			{
 			  xtype: 'menuseparator'
 			},
