@@ -109,7 +109,7 @@
                   <type>Property</type>
                   <roleId>tpl:R93884193692</roleId>
                   <name>hasScale</name>
-                  <dataType>xsd:double</dataType>
+                  <dataType>xsd:string</dataType>
                   <propertyName>LINES.UOM_NOMDIAMETER</propertyName>
                   <valueList>Length</valueList>
                 </RoleMap>
@@ -234,6 +234,10 @@
       <valueMaps>
         <ValueMap>
           <internalValue>mm</internalValue>
+          <uri>rdl:R369704882831</uri>
+        </ValueMap>
+        <ValueMap>
+          <internalValue>METER</internalValue>
           <uri>rdl:R52054275374</uri>
         </ValueMap>
         <ValueMap>
