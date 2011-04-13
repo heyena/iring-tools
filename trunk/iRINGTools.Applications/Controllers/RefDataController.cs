@@ -163,18 +163,18 @@ namespace iRINGTools.Web.Controllers
       foreach (Entity entity in dataEntities.Entities.Values.ToList<Entity>())
       {
         string label = entity.Label + '[' + entity.Repository + ']';
-
+        string prefix = _nsMap.GetPrefix(new Uri(entity.Uri.Substring(0, entity.Uri.LastIndexOf("#") +1)));
         JsonTreeNode node = new JsonTreeNode
         {
           nodeType = "async",
-          type = "ClassNode",
-          icon = "Content/img/class.png",
+          type = (prefix.Equals("rdl")) ? "ClassNode" : "TemplateNode",
+          icon = (prefix.Equals("rdl")) ? "Content/img/class.png" : "Content/img/template.png",
           identifier = entity.Uri.Split('#')[1],
           id = (entity.Label + entity.Repository).GetHashCode().ToString(),
           text = label,
           expanded = false,
           leaf = false,
-          children = GetDefaultChildren(label),
+          children = (prefix.Equals("rdl")) ? GetDefaultChildren(label) : null,
           record = entity
         };
         

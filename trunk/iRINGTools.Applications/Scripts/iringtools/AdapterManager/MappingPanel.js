@@ -73,13 +73,14 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       id: this.scope.Name + "/" + this.application.Name,
       text: 'Mapping',
       expanded: true,
-      draggable: false,
       icon: 'Content/img/internet-web-browser.png',
       type: 'MappingNode'
     });
 
     this.mappingPanel = new Ext.tree.TreePanel({
       region: 'center',
+      enableDD: true,
+      ddGroup: 'mappingGroup',
       split: true,
       border: true,
       collapseMode: 'mini',
@@ -136,6 +137,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
   },
 
+  getSelectedNode: function () {
+    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+    return node;
+  },
+
+
   buildToolbar: function () {
     return [
       {
@@ -157,6 +164,22 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         scope: this
       }
     ]
+  },
+
+  onSave: function (c) {
+    Ext.Ajax.request({
+      url: 'mapping/updateMapping',
+      method: 'POST',
+      params: {
+        Scope: this.scope.Name,
+        Application: this.application.Name
+
+      },
+      success: function (result, request) {
+        Ext.Msg.alert('Success', 'Mapping saved to the server');
+      },
+      failure: function (result, request) { }
+    })
   },
 
   onClick: function (node) {
@@ -189,88 +212,108 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
 
   onAddGraphMap: function (node) {
- //   var objectName = new Ext.form.TextField({
-//      fieldLabel: 'Object Name',
-//      width: 170,
-//      render: this.getPropertyDropZone
-//    });
-
-//    var propertyName = new Ext.form.TextField({
-//      fieldLabel: 'Key Property Name',
-//      width: 170
-//    });
-
-//    var className = new Ext.form.TextField({
-//      fieldLabel: 'Class Label',
-//      width: 170,
-//      render: this.getClassDropZone
-//    });
-
-//    var uri = new Ext.form.TextField({
-//      fieldLabel: 'Uri',
-//      width: 120
-//    });
-
     this.m_Form = new Ext.form.FormPanel({
       id: 'target',
-      layout: 'auto',
-      items: [
-             { xtype: 'textfield', fieldLabel: 'Object Name', width: 120, id: 'objectName', name: 'objectName', render: this.getPropertyDropZone },
-             { xtype: 'textfield', fieldLabel: 'Key Property Name', width: 120, name: 'propertyName' },
-             { xtype: 'textfield', fieldLabel: 'Class Label', width: 120, name: 'className'},//, render: this.getClassDropZone },
-             { xtype: 'textfield', fieldLabel: 'Uri', width: 120, name: 'uriName' }
-             ]
+      layout: 'form',
+      method: 'POST',
+      url: 'mapping/addgraphmap',
+      html: '<div class="property-target" '
+          + 'style="border:1px silver solid;margin:10px;padding:8px;height:40px">'
+          + 'Drop a Key Property Node here.</div>'
+          + '<div class="class-target" '
+          + 'style="border:1px silver solid;margin:10px;padding:8px;height:40px">'
+          + 'Drop a Class Node here. </div>',
+      items: [{ xtype: 'textfield', name: 'graphName', fieldLabel: 'Graph Name', value: '', required: true },
+              { xtype: 'hidden', name: 'objectName' },
+              { xtype: 'hidden', name: 'classLabel' },
+              { xtype: 'hidden', name: 'classUrl' },
+              { xtype: 'hidden', name: 'mappingNode', value: this.rootNode }
+             ],
+      afterRender: function () {
+        Ext.FormPanel.prototype.afterRender.apply(this, arguments);
+        Ext.getCmp('target').body.child('div.property-target').update(null)
+        Ext.getCmp('target').body.child('div.class-target').update(null)
+        var propertyTarget = this.body.child('div.property-target');
+        var propertydd = new Ext.dd.DropTarget(propertyTarget, {
+          ddGroup: 'propertyGroup',
+          notifyDrop: function (propertydd, e, node) {
+            if (node.node.attributes.type != 'KeyDataPropertyNode') {
+              Ext.Msg.show({
+                title: 'Invalid Selection',
+                msg: 'Please slect a Key Property...',
+                icon: Ext.MessageBox.ERROR,
+                buttons: Ext.Msg.CANCEL
+              });
+              return false;
+            }
+            Ext.get('objectName').dom.value = node.node.id;
+            var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + node.node.id.split('/')[5] + '</b></td></tr>'
+            msg += '</table>'
+            Ext.getCmp('target').body.child('div.property-target').update(msg)
+            return true;
+
+          } //eo notifyDrop
+        }); //eo propertydd
+        var classTarget = this.body.child('div.class-target');
+        var classdd = new Ext.dd.DropTarget(classTarget, {
+          ddGroup: 'refdataGroup',
+          notifyDrop: function (classdd, e, node) {
+            if (node.node.attributes.type != 'ClassNode') {
+              Ext.Msg.show({
+                title: 'Invalid Selection',
+                msg: 'Please slect a RDL Class...',
+                icon: Ext.MessageBox.ERROR,
+                buttons: Ext.Msg.CANCEL
+              });
+              return false;
+            }
+            Ext.get('classLabel').dom.value = node.node.attributes.record.Label;
+            Ext.get('classUrl').dom.value = node.node.attributes.record.Uri;
+            var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + node.node.attributes.record.Label + '</b></td></tr>'
+            msg += '</table>'
+            Ext.getCmp('target').body.child('div.class-target').update(msg)
+            return true;
+
+          } //eo notifyDrop
+        }); //eo propertydd
+      }
     });
 
 
     this.m_window = new Ext.Window({
       closable: true,
+      id: 'mwin',
       modal: false,
       layout: 'auto',
       title: 'Add new GraphMap to Mapping',
+      renderTo: Ext.getBody(),
       items: this.m_Form,
-      buttons: [{
-        text: 'Submit',
-        handler: this.submit
-      }],
-      height: 280,
+      buttons: [{ text: 'Submit', scope: this, handler: this.submit}],
+      height: 200,
       width: 430,
       closeAction: 'hide',
-      plain: true
+      plain: true,
+      scope: this
     });
 
     this.m_window.show();
   },
 
-  getPropertyDropZone: function (d) {
-//    d.dragZone = new Ext.dd.DropZone(d.getEl(), {
-//      ddGroup: 'propertyGroup',
-//      notifyDrop: function (propdd, e, node) {
-//        if (node.node.attributes.type != 'KeyDataPropertyNode') {
-//          Ext.Msg.show({ title: 'invalid selection',
-//            msg: 'Please select a key property node',
-//            modal: true,
-//            icon: Ext.Msg.ERROR,
-//            buttons: Ext.Msg.OK
-//          });
-//          return false;
-//        }
-//      }
-    //    });
-   
-  },
-
-  getClassDropZone: function (d) {
-  },
-
-  onSuccess: function () {
-  },
-
-  onFailure: function () {
-  },
-
   submit: function () {
+    var form = Ext.getCmp('target');
+    var win = Ext.getCmp('mwin');
+    form.getForm().submit({
+      waitMsg: 'Posting GraphMap...',
+      success: function (f, a) {
+        form.getForm().reset();
+        this.onReload();
+      },
+      failure: function (f, a) {
+        Ext.Msg.alert('Warning', 'Error adding graphmap "' + a.response + '"!');
+      }
+    });
 
+    win.hide();
   },
 
   buildGraphmapMenu: function () {
@@ -294,6 +337,21 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onDeleteGraphMap: function (node) {
+    var node = this.getSelectedNode();
+    Ext.Ajax.request({
+      url: 'mapping/deleteGraph',
+      method: 'POST',
+      params: {
+        Scope: this.scope.Name,
+        Application: this.application.Name,
+        'mappingNode': node.id
+      },
+      success: function (result, request) {
+        this.onReload();
+        Ext.Msg.alert('Success', 'Graph removed from mapping');
+      },
+      failure: function (result, request) { }
+    })
   },
 
   buildTemplateMapMenu: function () {

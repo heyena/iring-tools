@@ -43,16 +43,16 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
-        public void UpdateMapping(string scopeName, string applicationName)
+        public void UpdateMapping(string scopeName, string applicationName, Mapping mapping)
         {
-            Mapping obj = null;
+          XElement mappingXml = XElement.Parse(Utility.SerializeDataContract<Mapping>(mapping));
             try
             {
+              _client.Post<XElement>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), mappingXml, true);
             }
             catch (Exception ex)
             {
-            }
-          
+            }         
         }
     }
 }
