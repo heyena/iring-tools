@@ -32,13 +32,18 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       bodyBorder: true,
       collapsed: false,
       border: true,
+      selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
       frame: true,
       source: {},
       listeners: {
-        // to disable editable option of the property grid
-        beforeedit: function (e) {
-          e.cancel = true;
-        }
+      	// to copy but not edit content of property grid				
+      	afteredit: function (e) {
+      		var propertypan = Ext.getCmp('search-panel').items.map['class-property-panel'];
+      		propertypan.getSelectionModel().selections.items[0].data.value = e.originalValue;
+      		e.record.data.value = e.originalValue;
+      		e.value = e.originalValue;
+      		propertypan.getView().refresh();
+      	}
       }
     });
 

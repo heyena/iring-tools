@@ -307,13 +307,18 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             border: false,
             frame: false,
             height: 150,
+            selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
             // bodyStyle: 'padding-bottom:15px;background:#eee;',
             source: {},
             listeners: {
-                // to disable editable option of the property grid
-                beforeedit: function (e) {
-                    e.cancel = true;
-                }
+            	// to copy but not edit content of property grid				
+            	afteredit: function (e) {
+            		var propertypan = Ext.getCmp('nav-panel').items.map['property-panel'];
+            		propertypan.getSelectionModel().selections.items[0].data.value = e.originalValue;
+            		e.record.data.value = e.originalValue;
+            		e.value = e.originalValue;
+            		propertypan.getView().refresh();
+            	}
             }
         });
         
