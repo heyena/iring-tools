@@ -99,8 +99,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       enableDrag: true,
       ddGroup: 'propertyGroup',
       region: 'center',
-      collapseMode: 'mini',
-      lines: true,
+      collapseMode: 'mini',      
       height: 300,
       //layout: 'fit',
       border: false,
@@ -109,8 +108,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       rootVisible: true,
       lines: true,
       autoScroll: true,
-      //singleExpand: true,
-      useArrows: true,
+      //singleExpand: true,     
       loader: this.treeLoader,
       root: this.rootNode
 

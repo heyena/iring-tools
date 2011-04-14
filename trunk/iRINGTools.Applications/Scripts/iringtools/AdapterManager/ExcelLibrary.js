@@ -214,8 +214,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             expandAll: true,
             rootVisible: true,
             lines: true,
-            autoScroll: true,
-            useArrows: true,
+            autoScroll: true,            
             loader: this.treeLoader,
             root: this.rootNode
         });

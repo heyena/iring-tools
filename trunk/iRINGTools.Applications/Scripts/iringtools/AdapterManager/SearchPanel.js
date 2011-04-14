@@ -140,8 +140,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     var tree = new Ext.tree.TreePanel({
       title: searchText,
       enableDrag: true,
-      ddGroup: 'refdataGroup',
-      useArrows: true,
+      ddGroup: 'refdataGroup',      
       animate: true,
       lines: true,
       id: 'tab_' + searchText,
