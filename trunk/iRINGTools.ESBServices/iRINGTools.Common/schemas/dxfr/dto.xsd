@@ -102,7 +102,7 @@
       <xs:element name="type" type="RoleType" minOccurs="0" maxOccurs="1"/>
       <xs:element name="roleId" type="xs:string" minOccurs="1" maxOccurs="1"/>
       <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="dataType" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="dataType" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="oldValue" type="xs:string" minOccurs="0" maxOccurs="1" />
       <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1" />
       <xs:element name="relatedClassId" type="xs:string" minOccurs="0" maxOccurs="1" />
