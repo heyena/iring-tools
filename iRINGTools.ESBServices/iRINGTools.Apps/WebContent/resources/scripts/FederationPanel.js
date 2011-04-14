@@ -14,6 +14,8 @@ FederationManager.FederationPanel = Ext
 
           federationPanel : null,
           propertyPanel : null,
+          contextMenu: null,
+          contextRepoMenu:null,
 
           /**
            * initComponent
@@ -34,7 +36,16 @@ FederationManager.FederationPanel = Ext
             });
 
             this.tbar = this.buildToolbar();
+            
+            this.contextMenu = new Ext.menu.Menu();
+	    	this.contextMenu.add(this.buildContextMenu());
 
+            
+            
+            this.contextRepoMenu = new Ext.menu.Menu();
+            this.contextRepoMenu.add(this.buildRepoContextMenu());
+
+            
             this.federationPanel = new Ext.tree.TreePanel( {
               region : 'center',
               border : false,
@@ -91,6 +102,7 @@ FederationManager.FederationPanel = Ext
             this.federationPanel.on('refresh', this.onRefresh, this);
             this.federationPanel.getSelectionModel().on('selectionchange',
                 this.onSelectionChange, this, this);
+            this.federationPanel.on('contextmenu', this.showContextMenu, this);
 
             var state = Ext.state.Manager.get("federation-state");
 
@@ -104,7 +116,23 @@ FederationManager.FederationPanel = Ext
             // super
             FederationManager.FederationPanel.superclass.initComponent.call(this);
           },
+          showContextMenu: function (node, event) {
+        	    if (node.isSelected()) {
+        	      var x = event.browserEvent.clientX;
+        	      var y = event.browserEvent.clientY;
 
+        	      if(node.parentNode.text == 'Repositories' || node.text == 'Repositories'){
+        	    	  this.contextRepoMenu.showAt([x, y]); 
+        	      }else{
+        	    	  this.contextMenu.showAt([x, y]);
+        	      }
+        	      /*} else if (obj.type == "ScopeNode") {
+        	        this.scopeMenu.showAt([x, y]);
+        	      } else if (obj.type == "ApplicationNode") {
+        	        this.applicationMenu.showAt([x, y]);
+        	      }*/
+        	    }
+        	  },
           buildToolbar : function() {
             return [ {
               xtype : "tbbutton",
@@ -139,7 +167,65 @@ FederationManager.FederationPanel = Ext
               scope : this
             } ];
           },
-
+          buildContextMenu: function () {
+        	    return [
+        	      {
+        	        text: 'Open',
+        	        handler: this.onEdit,
+        	        icon : 'resources/images/16x16/document-open.png',
+        	        scope: this
+        	      },
+        	      {
+        	        text: 'Add',
+        	        handler: this.onAddnew,
+        	        icon : 'resources/images/16x16/document-new.png',
+        	        scope: this
+        	      },
+        	      {
+        	        text: 'Delete',
+        	        handler: this.onDelete,
+        	        icon : 'resources/images/16x16/edit-delete.png',
+        	        scope: this
+        	      }]
+        	  },
+        	  
+        	  buildRepoContextMenu: function () {
+            	    return [
+            	      {
+            	        text: 'Open',
+            	        handler: this.onEdit,
+            	        icon : 'resources/images/16x16/document-open.png',
+            	        scope: this
+            	      },
+            	      {
+            	        text: 'Add',
+            	        handler: this.onAddnew,
+            	        icon : 'resources/images/16x16/document-new.png',
+            	        scope: this
+            	      },
+            	      {
+            	        text: 'Delete',
+            	        handler: this.onDelete,
+            	        icon : 'resources/images/16x16/edit-delete.png',
+            	        scope: this
+            	      },
+            	      {
+            	        xtype: 'menuseparator'
+            	      },
+            	      {
+            	        text: 'Add Class',
+            	        //handler: this.onNewApplication,
+            	        icon: 'resources/images/16x16/class-badge.png',
+            	        scope: this
+            	      },
+            	      {
+              	        text: 'Add Template',
+              	        //handler: this.onNewApplication,
+              	        icon: 'resources/images/16x16/template-badge.png',
+              	        scope: this
+              	      }
+            	    ]
+            	  },
           onDelete : function() {
             that = this;
             var node = this.getSelectedNode();
