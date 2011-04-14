@@ -763,7 +763,6 @@ xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
     </dataObject>
   </dataObjects>
   <provider>MsSql2008</provider>
-  <connectionString>Data Source=.\SQLEXPRESS;Initial
-  Catalog=ABC;User ID=abc;Password=abc;</connectionString>
+  <connectionString>Data Source=.\SQLEXPRESS;Initial Catalog=ABC;User ID=abc;Password=abc;</connectionString>
   <schemaName>dbo</schemaName>
 </databaseDictionary>
