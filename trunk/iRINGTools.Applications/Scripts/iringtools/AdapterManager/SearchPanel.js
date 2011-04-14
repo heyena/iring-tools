@@ -58,6 +58,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     AdapterManager.SearchPanel.superclass.initComponent.call(this);
   },
   buildToolbar: function () {
+    var that = this;
     return [
                  {
                    xtype: 'textfield',
@@ -72,7 +73,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
                    listeners: {
                      specialkey: function (f, e) {
                        if (e.getKey() == e.ENTER) {
-                         var query = Ext.get('referencesearch').getValue();
+                         that.onSearch();
                        }
                      }
                    }
@@ -104,8 +105,8 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
 
   getSelectedNode: function () {
     var activeTab = this.getActiveTab();
-    if(activeTab != undefined)
-    return activeTab.getSelectionModel().getSelectedNode();
+    if (activeTab != undefined)
+      return activeTab.getSelectionModel().getSelectedNode();
   },
 
   onSearch: function () {
@@ -151,7 +152,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       loader: treeLoader,
       root: {
         nodeType: 'async',
-       // draggable: true,
+        // draggable: true,
         type: 'SearchNode'
       },
       containerScroll: true
