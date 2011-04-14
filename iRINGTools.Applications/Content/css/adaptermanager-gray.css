@@ -130,7 +130,9 @@ a.breadcrumb {
 .tabsApplication {
   background-image:url('../img/applications-internet.png') !important;
 }
-
+.tabsClass {
+  background-image:url('../img/class.png') !important;
+}
 
 .wizard-config 
 {
