@@ -71,16 +71,6 @@
         <param name="root">tree.nodes</param>
       </result>
     </action>
-    <action name="superClass" class="org.iringtools.controllers.RefDataController" method="getSuperClasses">
-      <result type="json">
-        <param name="root">response</param>
-      </result>
-    </action>
-    <action name="subClass" class="org.iringtools.controllers.RefDataController" method="getSubClasses">
-      <result type="json">
-        <param name="root">response</param>
-      </result>
-    </action>
     <action name="template" class="org.iringtools.controllers.RefDataController" method="getTemplates">
       <result type="json">
         <param name="root">response</param>

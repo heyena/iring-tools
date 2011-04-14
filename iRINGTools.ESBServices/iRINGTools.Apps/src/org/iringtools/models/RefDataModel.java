@@ -90,7 +90,6 @@ public class RefDataModel
 		  
 		  List<Node> treeNodes = tree.getNodes();
 	      TreeNode node = new TreeNode();
-	      //ClassDefinition classDef = qmxf.getClassDefinitions().get(0);
 	      node.setText(qmxf.getClassDefinitions().get(0).getNames().get(0).getValue());
 	      node.setRecord(qmxf.getClassDefinitions().get(0));
 	      node.setIconCls("class");
@@ -107,26 +106,37 @@ public class RefDataModel
 	  
 	  
   }
-  public Response getSuperClasses(String id){
+  public Tree getSubSuperClasses(String id, String classType){
+	  Tree tree = new Tree();
+	  System.out.println("Inside getSuperClasses");
 	  try{
-		  response = httpClient.get(Response.class, "/classes/"+id+"/superclasses");
+		  String url = classType.equalsIgnoreCase("Sub")?"/classes/"+id+"/subclasses":"/classes/"+id+"/superclasses";
+		  response = httpClient.get(Response.class,url);
+		  
+		  List<Node> treeNodes = tree.getNodes();
+	      TreeNode node;
+	      for (Entity entity : response.getEntities().getItems())
+	       {
+	    	  node = new TreeNode();
+		      node.setText(entity.getLabel());
+		      node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
+		      node.setRecord(entity);
+		      node.setIconCls("class");
+	  		  node.setType(classType.equalsIgnoreCase("Sub")?Type.SUBCLASS.value():Type.SUPERCLASS.value());
+	  		  List<Node> childrenNodes = node.getChildren();
+	    	  childrenNodes = getDefaultChildren(childrenNodes);
+	    	  treeNodes.add(node);
+	       }
+	      
+	  
+		  
 	  }catch(Exception e){
 		  
 	  }
-	  return response;
+	  return tree;
 	  
 	  
   }
-  public Response getSubClasses(String id){
-	  try{
-		  response = httpClient.get(Response.class, "/classes/"+id+"/subclasses");
-	  }catch(Exception e){
-		  
-	  }
-	  return response;
-	  
-	  
-}
   public Response getTemplates(String id){
 	  try{
 		  response = httpClient.get(Response.class, "/classes/"+id+"/templates");
