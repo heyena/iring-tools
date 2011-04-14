@@ -56,7 +56,7 @@ Ext.onReady(function () {
         searchUrl: 'refdata/getnode',
         limit: 100
       });
-
+      
     var contentPanel = new Ext.TabPanel({
         id: 'content-panel',
         region: 'center',
@@ -66,7 +66,19 @@ Ext.onReady(function () {
         enableTabScroll: true,
         border: true,
         split: true
-    });
+      });
+
+      var centrePanel = new Ext.Panel({
+        id: 'centre-panel',
+        region: 'center',
+        layout: 'border',
+        collapsible: false,
+        closable: true,
+        enableTabScroll: true,
+        border: true,
+        split: true,
+        items: [searchPanel, contentPanel]
+      });
 
     var directoryPanel = new AdapterManager.DirectoryPanel({
         id: 'nav-panel',
@@ -286,7 +298,7 @@ Ext.onReady(function () {
             applyTo: 'header',
             border: false,
             height: 55
-        }, directoryPanel, contentPanel, searchPanel],
+          }, directoryPanel, centrePanel],
         listeners: {
             render: function () {
                 // After the component has been rendered, disable the default browser

@@ -57,28 +57,12 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
             dataLayer = this.application.Assembly;
         }
 
-        this.btnUpload = new Ext.Button({
-            text: 'Upload',
-            //icon: 'resources/images/16x16/document-save.png',
-            //tooltip: 'Save',
-            disabled: false,
-            handler: this.onUpload,
-            scope: this
-        });
-
-        this.btnCancel = new Ext.Button({
-            text: 'Cancel',
-            //icon: 'resources/images/16x16/document-save.png',
-            //tooltip: 'Save',
-            disabled: true,
-            scope: this
-        });
-
-        this.bbar = new Ext.Toolbar();
-        this.bbar.addButton(new Ext.Toolbar.Fill());
-        this.bbar.addButton(this.btnUpload);
-        this.bbar.addButton(this.btnCancel);
-
+        this.bbar = [
+          '->',
+          {xtype: 'button', text: 'Upload', scope: this, handler: this.onUpload},
+          {xtype: 'button', text: 'Cancel', scope: this}
+        ]
+        
         this.items = [
             { xtype: 'hidden', name: 'Scope', value: scope },
             { xtype: 'hidden', name: 'Application', value: application },
@@ -100,8 +84,7 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
         AdapterManager.ExcelSourcePanel.superclass.initComponent.call(this);
     },
     
-    onUpload: function () {
-        
+    onUpload: function () {        
         that = this;
 
         this.getForm().submit({
@@ -114,6 +97,96 @@ AdapterManager.ExcelSourcePanel = Ext.extend(Ext.FormPanel, {
             }
         });
     }
+
+});
+
+/**
+* @class AdapterManager.ExcelWorksheetSelectionPanel
+* @extends FormPanel
+* @author by Gert Jansen van Rensburg
+*/
+AdapterManager.ExcelWorksheetSelection = Ext.extend(Ext.FormPanel, {
+  width: 120,
+  layout: 'fit',
+
+  frame: true,
+  border: true,
+
+  fileUpload: true,
+  labelWidth: 150, // label settings here cascade unless    
+  method: 'POST',
+  bodyStyle: 'padding:10px 5px 0',
+
+  border: false, // removing the border of the form
+  defaults: {
+    width: 330,
+    msgTarget: 'side'
+  },
+  defaultType: 'textfield',
+  buttonAlign: 'left', // buttons aligned to the left            
+  autoDestroy: false,
+
+  scope: null,
+  application: null,
+  dataLayer: null,
+
+  btnNext: null,
+  btnPrev: null,
+
+  /**
+  * initComponent
+  * @protected
+  */
+  initComponent: function () {
+
+    this.addEvents({
+      uploaded: true
+    });
+
+    var scope = "";
+
+    if (this.scope != null) {
+      scope = this.scope.Name;
+    }
+
+    var application = "";
+    var dataLayer = "";
+
+    if (this.application != null) {
+      application = this.application.Name;
+      dataLayer = this.application.Assembly;
+    }
+
+    this.bbar = [
+      '->',
+      { xtype: 'button', text: 'Upload', scope: this, handler: this.onUpload },
+      { xtype: 'button', text: 'Cancel', scope: this }
+    ]
+
+    this.items = [
+      { xtype: 'hidden', name: 'Scope', value: scope },
+      { xtype: 'hidden', name: 'Application', value: application },
+      { xtype: 'hidden', name: 'Application', value: application }
+    ];
+
+    // super
+    AdapterManager.ExcelWorksheetSelection.superclass.initComponent.call(this);
+  },
+
+  onUpload: function () {
+    that = this;
+
+    this.getForm().submit({
+      waitMsg: 'Uploading file...',
+      url: this.url,
+      success: function (f, a) {
+        that.fireEvent('Uploaded', that, f.items.items[3].value);
+      },
+      failure: function (f, a) {
+        Ext.Msg.alert('Warning', 'Error uploading file "' + f.items.items[3].value + '"!');
+      }
+    });
+  }
 
 });
 
@@ -363,7 +436,8 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
         ]
     },
 
-    onAddWorksheets: function(node) {
+    onAddWorksheets: function (node) {
+
     },
 
     onAddColumns: function(node) {
