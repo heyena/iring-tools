@@ -109,7 +109,7 @@ namespace org.iringtools.datalayer.excel
 
         SetConfiguration(form["Scope"], form["Application"], configuration);
         
-        break;
+        //break;
       }
                   
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);      

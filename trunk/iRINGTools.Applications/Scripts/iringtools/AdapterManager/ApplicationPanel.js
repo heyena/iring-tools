@@ -40,9 +40,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             configure: true
         });
 
-        this.tbar = this.buildToolbar();
-
         var scope = "";
+        var showconfigure = "";
 
         if (this.scope != null) {
             scope = this.scope.Name;
@@ -58,7 +57,13 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             description = this.record.Description;
             dataLayer = this.record.DataLayer;
             assembly = this.record.Assembly;
+            showconfigure = false;
         }
+        else {
+            showconfigure = true;
+        }
+
+        this.tbar = this.buildToolbar(showconfigure);
 
         var dataLayersStore = new Ext.data.JsonStore({
             // store configs            
@@ -138,13 +143,13 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
     },
 
-    buildToolbar: function () {
+    buildToolbar: function (showconfigure) {
         return [{
             xtype: "tbbutton",
             text: 'Configure',
             //icon: 'Content/img/16x16/document-save.png',
             tooltip: 'Configure',
-            disabled: false,
+            disabled: showconfigure,
             handler: this.onConfigure,
             scope: this
         }, {
@@ -187,9 +192,22 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     },
 
     onConfigure: function () {
-        var appName = this.form.getForm().getFieldValues().Name;
-        this.fireEvent('configure', this, this.scope, this.record, appName);
+        var that = this;
+        this.form.getForm().submit({
+            //  waitMsg: 'Saving Data...',
+            success: function (f, a) {
+                var record = f.getFieldValues();
+                var datalayer = that.record.DataLayer;
+                that.record = record;
+                that.fireEvent('configure', that, that.scope, that.record, datalayer);
+            },
+            failure: function (f, a) {
+                alert('Warning', 'Error saving changes!')
+            }
+        });
+
     },
+
 
     onSave: function () {
         var that = this;    // consists the main/prappNameclass object      
