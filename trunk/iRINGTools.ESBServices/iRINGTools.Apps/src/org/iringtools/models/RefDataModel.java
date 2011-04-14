@@ -66,8 +66,7 @@ public class RefDataModel
         		node.setIconCls("template");
         		node.setType(Type.TEMPLATE.value());
         	}
-        	node.getProperties().put("lang", entity.getLang());
-        	node.getProperties().put("uri", entity.getUri());
+        	node.setRecord(entity);
         	List<Node> childrenNodes = node.getChildren();
         	childrenNodes = getDefaultChildren(childrenNodes);
         	treeNodes.add(node);
@@ -137,16 +136,40 @@ public class RefDataModel
 	  
 	  
   }
-  public Response getTemplates(String id){
+  public Tree getTemplates(String id){
+	  Tree tree = new Tree();
+	  System.out.println("Inside getTemplates");
 	  try{
 		  response = httpClient.get(Response.class, "/classes/"+id+"/templates");
+		  List<Node> treeNodes = tree.getNodes();
+	      TreeNode node;
+	      for (Entity entity : response.getEntities().getItems())
+	       {
+	    	  node = new TreeNode();
+		      node.setText(entity.getLabel());
+		      node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
+		      node.setRecord(entity);
+		      node.setIconCls("template");
+	  		  node.setType(Type.ROLENODE.value());
+	    	  treeNodes.add(node);
+	       }
 	  }catch(Exception e){
 		  
 	  }
-	  return response;
+	  return tree;
 	  
 	  
 }
+  public Qmxf getRole(String templateId){
+	  Qmxf qmxf = null;
+	  try{
+		  qmxf = httpClient.get(Qmxf.class, "/templates/"+templateId);
+			  //R85736598359
+	  }catch(Exception e){
+		  
+	  }
+	  return qmxf;
+  }
   private List<Node> getDefaultChildren(List<Node> childrenNodes)
   {
 	  

@@ -70,7 +70,10 @@ public class RefDataController implements ServletRequestAware{
 			tree = refdata.getSubSuperClasses(httpRequest.getParameter("id"), "Sub");
 			break;
 		case CLASSTEMPLATE:
-			response = refdata.getTemplates(httpRequest.getParameter("id"));
+			tree = refdata.getTemplates(httpRequest.getParameter("id"));
+			break;
+		case ROLENODE:
+			qmxf = refdata.getRole(httpRequest.getParameter("id"));
 			break;
 		}
     	
@@ -79,7 +82,11 @@ public class RefDataController implements ServletRequestAware{
 	
 	public String getTemplates(){
 		String id = httpRequest.getParameter("id");
-		response = refdata.getTemplates(id);
+		tree = refdata.getTemplates("R20735180747");
+		return Action.SUCCESS;
+	}
+	public String getRoles(){
+		qmxf = refdata.getRole("R85736598359");
 		return Action.SUCCESS;
 	}
 	
