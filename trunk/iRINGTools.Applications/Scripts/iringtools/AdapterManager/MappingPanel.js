@@ -10,7 +10,7 @@ Ext.ns('AdapterManager');
 AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
   height: 300,
-  minSize: 150, autoScroll: true,
+  minSize: 150,
   layout: 'border',
   split: true,
   closable: true,
@@ -22,7 +22,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   scope: null,
   application: null,
   graph: null,
-  //  m_window: null,
+
   mappingMenu: null,
   graphmapMenu: null,
   templatemapMenu: null,
@@ -36,8 +36,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   * @protected
   */
   initComponent: function () {
-
-
+  
     this.tbar = this.buildToolbar();
 
     this.mappingMenu = new Ext.menu.Menu();
@@ -167,12 +166,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
   },
 
-  getSelectedNode: function () {
-    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
-    return node;
-  },
-
-
   buildToolbar: function () {
     return [
       {
@@ -196,6 +189,96 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     ]
   },
 
+  buildMappingMenu: function () {
+    return [
+          {
+            text: 'Add GraphMap',
+            handler: this.onAddGraphMap,
+            icon: 'Content/img/16x16/document-new.png',
+            scope: this
+          }
+      ]
+  },
+
+  buildGraphmapMenu: function () {
+    return [
+      {
+        text: 'Delete GraphMap',
+        handler: this.onDeleteGraphMap,
+        icon: 'Content/img/16x16/edit-delete.png',
+        scope: this
+      }
+    ]
+  },
+  
+  buildTemplateMapMenu: function () {
+    return [
+          {
+            text: 'Delete TemplateMap',
+            handler: this.onDeleteTemplateMap,
+            icon: 'Content/img/16x16/edit-delete.png',
+            scope: this
+          }
+      ]
+  },
+
+  buildRoleMapMenu: function () {
+    return [
+          {
+            text: 'Add ClassMap',
+            handler: this.onAddClassMap,
+            icon: 'Content/img/16x16/document-new.png',
+            scope: this
+          },
+          {
+            text: 'Make Possessor',
+            handler: this.onMakePossessor,
+            // icon: 'Content/img/16x16/view-refresh.png',
+            scope: this
+          },
+          {
+            text: 'Map Property',
+            handler: this.onMapProperty,
+            // icon: '',
+            scope: this
+          },
+          {
+            text: 'Map ValueList',
+            handler: this.onMapValueList,
+            // icon: '',
+            scope: this
+          },
+          {
+            text: 'Reset Mapping',
+            handler: this.onResetMapping,
+            //icon: '',
+            scope: this
+          }
+      ]
+  },
+    
+  buildClassMapMenu: function () {
+    return [
+    //            {
+    //              text: 'Add TemplateMap',
+    //              handler: this.onAddTemplateMap,
+    //              icon: 'Content/img/16x16/document-new.png',
+    //              scope: this
+    //            },
+          {
+          text: 'Delete ClassMap',
+          handler: this.onDeleteClassMap,
+          icon: 'Content/img/16x16/edit-delete.png',
+          scope: this
+        }
+      ]
+  },
+
+  getSelectedNode: function () {
+    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+    return node;
+  },
+
   onSave: function (c) {
     Ext.Ajax.request({
       url: 'mapping/updateMapping',
@@ -203,7 +286,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       params: {
         Scope: this.scope.Name,
         Application: this.application.Name
-
       },
       success: function (result, request) {
         Ext.Msg.alert('Success', 'Mapping saved to the server');
@@ -228,17 +310,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     node.reload();
   },
 
-  buildMappingMenu: function () {
-    return [
-            {
-              text: 'Add GraphMap',
-              handler: this.onAddGraphMap,
-              icon: 'Content/img/16x16/document-new.png',
-              scope: this
-            }
-        ]
-  },
-
   onAddGraphMap: function (node) {
     var formid = 'target-' + this.scope.Name + '-' + this.application.Name;
     var form = new Ext.form.FormPanel({
@@ -248,8 +319,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.submit },
-        { text: 'Close', handler: this.hide }
+        { text: 'Submit', scope: this, handler: this.onSubmit },
+        { text: 'Close', scope: this, handler: this.onClose }
         ],
       url: 'mapping/addgraphmap',
       items: [{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true }, //, value: '' },
@@ -265,7 +336,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
           + 'Drop a Class Node here. </div>',
 
-      afterRender: function (c) {
+      afterRender: function (cmp) {
         Ext.FormPanel.prototype.afterRender.apply(this, arguments);
 
         var propertyTarget = this.body.child('div.property-target' + formid);
@@ -320,11 +391,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         }); //eo propertydd
       }
     });
-
-
+    
     var win = new Ext.Window({
-      closable: true,
-      id: 'mwin',
+      closable: true,      
       modal: false,
       layout: 'form',
       title: 'Add new GraphMap to Mapping',
@@ -338,7 +407,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     win.show();
   },
 
-  hide: function (btn, e) {
+  onClose: function (btn, e) {
     if (btn != undefined) {
       var win = btn.findParentByType('window');
       if (win != undefined)
@@ -346,14 +415,14 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     }
   },
 
-  submit: function (btn, e) {
-    var that = this;
+  onSubmit: function (btn, e) {
     var form = btn.findParentByType('form');
     var win = btn.findParentByType('window');
     var objectname = Ext.get('objectName').dom.value;
     var classlabel = Ext.get('classLabel').dom.value;
     var classuri = Ext.get('classUrl').dom.value;
     var graphname = Ext.get('graphName').dom.value;
+
     if (form.getForm().isValid());
     Ext.Ajax.request({
       url: 'mapping/addgraphmap',
@@ -366,25 +435,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       success: function (result, request) {
         win.close();
-        that.onReload();
         Ext.Msg.show({ title: 'Success', msg: 'Added GraphMap to mapping', icon: Ext.MessageBox.SUCCESS, buttons: Ext.Msg.OK });
       },
       failure: function (result, request) {
         Ext.Msg.show({ title: 'Failure', msg: 'Failed to Add GraphMap to mapping', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
       }
     })
-  },
-
-  buildGraphmapMenu: function () {
-    return [
-
-                {
-                  text: 'Delete GraphMap',
-                  handler: this.onDeleteGraphMap,
-                  icon: 'Content/img/16x16/edit-delete.png',
-                  scope: this
-                }
-        ]
   },
 
   onAddTemplateMap: function (node) {
@@ -409,55 +465,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     })
   },
 
-  buildTemplateMapMenu: function () {
-    return [
-            {
-              text: 'Delete TemplateMap',
-              handler: this.onDeleteTemplateMap,
-              icon: 'Content/img/16x16/edit-delete.png',
-              scope: this
-            }
-        ]
-  },
-
   onDeleteTemplateMap: function (node) {
   },
-
-  buildRoleMapMenu: function () {
-    return [
-            {
-              text: 'Add ClassMap',
-              handler: this.onAddClassMap,
-              icon: 'Content/img/16x16/document-new.png',
-              scope: this
-            },
-            {
-              text: 'Make Possessor',
-              handler: this.onMakePossessor,
-              // icon: 'Content/img/16x16/view-refresh.png',
-              scope: this
-            },
-           {
-             text: 'Map Property',
-             handler: this.onMapProperty,
-             // icon: '',
-             scope: this
-           },
-           {
-             text: 'Map ValueList',
-             handler: this.onMapValueList,
-             // icon: '',
-             scope: this
-           },
-           {
-             text: 'Reset Mapping',
-             handler: this.onResetMapping,
-             //icon: '',
-             scope: this
-           }
-        ]
-  },
-
+  
   onResetMapping: function (node) {
   },
 
@@ -471,23 +481,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onAddClassMap: function (node) {
-  },
-
-  buildClassMapMenu: function () {
-    return [
-    //            {
-    //              text: 'Add TemplateMap',
-    //              handler: this.onAddTemplateMap,
-    //              icon: 'Content/img/16x16/document-new.png',
-    //              scope: this
-    //            },
-            {
-            text: 'Delete ClassMap',
-            handler: this.onDeleteClassMap,
-            icon: 'Content/img/16x16/edit-delete.png',
-            scope: this
-          }
-        ]
   },
 
   onDeleteClassMap: function (node) {
