@@ -1,16 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <response xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/common/response">
   <level>Success</level>
-  <dateTimeStamp>2011-04-08T10:03:40.2849487-04:00</dateTimeStamp>
+  <dateTimeStamp>2011-04-14T13:50:06.6022395-04:00</dateTimeStamp>
   <statusList>
-    <status>
-      <level>Success</level>
-      <identifier>90002-RV</identifier>
-      <results />
-      <messages>
-        <message>Record [90002-RV] have been saved successfully.</message>
-      </messages>
-    </status>
     <status>
       <level>Success</level>
       <identifier>90002-SW</identifier>
@@ -261,10 +253,10 @@
     </status>
     <status>
       <level>Success</level>
-      <identifier>66015-O</identifier>
+      <identifier>90002-RV</identifier>
       <results />
       <messages>
-        <message>Record [66015-O] have been deleted successfully.</message>
+        <message>Record [90002-RV] have been deleted successfully.</message>
       </messages>
     </status>
   </statusList>

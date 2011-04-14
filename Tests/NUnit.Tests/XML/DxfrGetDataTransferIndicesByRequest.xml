@@ -2,38 +2,26 @@
 <ArrayOfdataTransferIndex xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/dxfr/dti">
   <dataTransferIndex>
     <identifier>90003-SC</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
     <sortIndex>90003-SC</sortIndex>
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90005-RV</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
     <sortIndex>90005-RV</sortIndex>
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90010-O</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
     <sortIndex>90010-O</sortIndex>
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90011-O</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
     <sortIndex>90011-O</sortIndex>
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90014-RV</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
     <sortIndex>90014-RV</sortIndex>
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90058-O</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
     <sortIndex>90058-O</sortIndex>
   </dataTransferIndex>
 </ArrayOfdataTransferIndex>
