@@ -1,18 +1,18 @@
 <repositories xmlns="http://www.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
   <repository>
-    <description>SDK Sandbox</description>
+    <description>Development Sandbox</description>
     <isReadOnly>false</isReadOnly>
     <name>My Private Sandbox</name>
     <repositoryType>Camelot</repositoryType>
-    <uri>http://sdk.iringsandbox.org/Services/SandboxService/query</uri>
-    <updateUri>http://sdk.iringsandbox.org/Services/SandboxService/update</updateUri>
+    <uri>http://dev.iringsandbox.org/services/sandbox/sparql/query</uri>
+    <updateUri>http://dev.iringsandbox.org/services/sandbox/sparql/update</updateUri>
   </repository>
   <repository>
     <description>iRING Sandbox</description>
     <isReadOnly>true</isReadOnly>
     <name>iRING Sandbox</name>
     <repositoryType>Camelot</repositoryType>
-    <uri>http://www.iringsandbox.org/SandboxService/sparql</uri>
+    <uri>http://www.iringsandbox.org/repositories/sandbox/query</uri>
   </repository>
   <repository>
     <description>RDS/WIP Part 4 Reference Data Library</description>
@@ -26,6 +26,6 @@
     <isReadOnly>true</isReadOnly>
     <name>Proto and Initial</name>
     <repositoryType>Camelot</repositoryType>
-    <uri>http://facade.iringsandbox.org/TemporaryInitialSetTemplates/sparql</uri>
+    <uri>http://www.iringsandbox.org/repositories/tempInitSet/query</uri>
   </repository>
 </repositories>
