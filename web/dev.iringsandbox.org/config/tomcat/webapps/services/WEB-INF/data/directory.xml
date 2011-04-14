@@ -98,7 +98,7 @@
           </exchange>
           <exchange>
             <id>3</id>
-            <name>SDK.DEF -&gt; 12345_000.ABC</name>
+            <name>12345_000.ABC -&gt; SDK.DEF</name>
             <description>Line Exchange</description>
           </exchange>
         </exchanges>
