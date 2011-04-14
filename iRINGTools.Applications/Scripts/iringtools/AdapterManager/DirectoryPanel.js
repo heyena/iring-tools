@@ -161,13 +161,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  handler: this.onNewScope,
 			  icon: 'Content/img/16x16/document-new.png',
 			  scope: this
-			},
-			{
-			  text: 'Reload Scopes',
-			  handler: this.onReloadNode,
-			  icon: 'Content/img/16x16/view-refresh.png',
-			  scope: this
 			}
+//			{
+//			  text: 'Reload Scopes',
+//			  handler: this.onReloadNode,
+//			  icon: 'Content/img/16x16/view-refresh.png',
+//			  scope: this
+//			}
 		]
   },
 
