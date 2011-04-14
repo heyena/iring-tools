@@ -51,26 +51,26 @@ namespace org.iringtools.adapter
     [DataMember(Name = "dataTransferIndexList",  Order = 2)]
     public List<DataTransferIndex> DataTransferIndexList { get; set; }
 
-    [DataMember(Name = "sortType", Order = 3)]
+    [DataMember(Name = "sortType", Order = 3, EmitDefaultValue = false)]
     public string SortType { get; set; }
 
-    [DataMember(Name = "sortOrder", Order = 4)]
+    [DataMember(Name = "sortOrder", Order = 4, EmitDefaultValue = false)]
     public string SortOrder { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/dxfr/dti", Name = "dataTransferIndex")]
   public class DataTransferIndex
   {
-    [DataMember(Name = "identifier", Order = 0)]
+    [DataMember(Name = "identifier", Order = 0, EmitDefaultValue = false)]
     public string Identifier { get; set; }
 
-    [DataMember(Name = "hashValue", Order = 1)]
+    [DataMember(Name = "hashValue", Order = 1, EmitDefaultValue = false)]
     public string HashValue { get; set; }
 
-    [DataMember(Name = "transferType", Order = 2)]
+    [DataMember(Name = "transferType", Order = 2, EmitDefaultValue = false)]
     public TransferType TransferType { get; set; }
 
-    [DataMember(Name = "sortIndex", Order = 3)]
+    [DataMember(Name = "sortIndex", Order = 3, EmitDefaultValue = false)]
     public string SortIndex { get; set; }
   }
 }

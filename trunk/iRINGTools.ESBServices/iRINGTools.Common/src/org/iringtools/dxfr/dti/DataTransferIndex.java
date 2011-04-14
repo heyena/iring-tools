@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="hashValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dti}TransferType"/>
- *         &lt;element name="sortIndex" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="sortIndex" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -44,7 +44,6 @@ public class DataTransferIndex {
     protected String hashValue;
     @XmlElement(required = true)
     protected TransferType transferType;
-    @XmlElement(required = true)
     protected String sortIndex;
 
     /**

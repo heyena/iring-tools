@@ -18,8 +18,7 @@ namespace iRINGTools.Web.Helpers
             text: 'A child Node',
             leaf: true
         }]
-   }] 
-   
+   }]    
   */
 
   public class JsonTreeNode
@@ -35,6 +34,6 @@ namespace iRINGTools.Web.Helpers
     public string nodeType { get; set; }
     public object @checked { get; set; }
     public object record { get; set; }
-  }
-  
+    public Dictionary<string, string> properties { get; set; }
+  }  
 }

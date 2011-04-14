@@ -71,7 +71,7 @@ public class HttpClient
   {
     return post(responseClass, "", requestEntity);
   }
-  
+
   public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity) throws HttpClientException
   {
     try
@@ -101,14 +101,14 @@ public class HttpClient
     }
   }
 
-  public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData, 
+  public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData,
       Map<String, String> headers) throws HttpClientException
   {
     try
     {
       URLConnection conn = getConnection(POST, relativeUri);
-      
-      for(Entry<String, String> pair : headers.entrySet())
+
+      for (Entry<String, String> pair : headers.entrySet())
       {
         conn.setRequestProperty(pair.getKey(), pair.getValue());
       }
@@ -123,11 +123,11 @@ public class HttpClient
           {
             requestEntity.append('&');
           }
-          
+
           requestEntity.append(pair.getKey() + "=" + URLEncoder.encode(pair.getValue(), "UTF-8"));
         }
       }
-      
+
       DataOutputStream requestStream = new DataOutputStream(conn.getOutputStream());
       requestStream.writeBytes(requestEntity.toString());
       requestStream.flush();
@@ -141,31 +141,31 @@ public class HttpClient
     catch (Exception ex)
     {
       throw new HttpClientException(ex.toString());
-    }       
+    }
   }
-  
-  public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData) 
-    throws HttpClientException
+
+  public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData)
+      throws HttpClientException
   {
     Map<String, String> headers = new HashMap<String, String>();
-    headers.put("Content-Type", "application/x-www-form-urlencoded");    
-    return postFormData(responseClass, relativeUri, formData, headers);    
+    headers.put("Content-Type", "application/x-www-form-urlencoded");
+    return postFormData(responseClass, relativeUri, formData, headers);
   }
-  
-  public <T> T postSparql(Class<T> responseClass, String relativeUri, String query, String defaultGraphUri) 
-    throws HttpClientException
+
+  public <T> T postSparql(Class<T> responseClass, String relativeUri, String query, String defaultGraphUri)
+      throws HttpClientException
   {
     Map<String, String> headers = new HashMap<String, String>();
     headers.put("Content-Type", "application/x-www-form-urlencoded");
     headers.put("Accept", "application/sparql-results+xml");
-    
+
     Map<String, String> formData = new HashMap<String, String>();
     formData.put("query", query);
     formData.put("default-graph-uri", (defaultGraphUri != null) ? defaultGraphUri : "");
-    
+
     return postFormData(responseClass, relativeUri, formData, headers);
   }
-  
+
   public void setBaseUri(String baseUri)
   {
     this.baseUri = baseUri;

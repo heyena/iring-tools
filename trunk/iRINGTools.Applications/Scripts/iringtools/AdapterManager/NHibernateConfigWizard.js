@@ -201,35 +201,39 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
     });
 
     var dataPropFields = [{
+      name: 'columnName',
       fieldLabel: 'Column Name',
-      value: 'Column Name',
       disabled: true
     },{
-      fieldLabel: 'Property Name',
-      value: 'Property Name'
+      name: 'propertyName',
+      fieldLabel: 'Property Name'
     },{
-      fieldLabel: 'Data Type',
-      value: 'Data Type'
+      name: 'dataType',
+      fieldLabel: 'Data Type'
     },{
-      fieldLabel: 'Data Length',
-      value: 'Data Length'
+      xtype: 'numberfield',
+      name: 'dataLength',
+      fieldLabel: 'Data Length'
     },{
-      xtype: 'radiogroup',
+      xtype: 'radiogroup',      
       fieldLabel: 'Nullable',
+      name: 'nullableGroup',
       items: [
         {boxLabel: 'Yes', name: 'nullable', inputValue: true, checked: true},
         {boxLabel: 'No', name: 'nullable', inputValue: false}
       ]
     },{
       xtype: 'radiogroup',
-      fieldLabel: 'Show on Index',
+      name: 'showOnIndexGroup',
+      fieldLabel: 'Show on Index',      
       items: [
         {boxLabel: 'Yes', name: 'showOnIndex', inputValue: true},
         {boxLabel: 'No', name: 'showOnIndex', inputValue: false, checked: true}
       ]
     },{
-      fieldLabel: 'Number of Decimals',
-      value: 'numOfDecimals'
+      xtype: 'numberfield',
+      name: 'numberOfDecimals',      
+      fieldLabel: 'Number of Decimals'
     }];
     
     var tablesConfigPanel = new Ext.Panel({
@@ -252,14 +256,64 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           containerScroll: true,
           rootVisible: true,
           root: {
-            text: 'Data Dictionary'
+            text: 'Data Objects'
           },
           loader: new Ext.tree.TreeLoader(),
           listeners: {
             click: function(node, e) {
-              // show appropriate edit pane (table config activeItem)
-              switch (node.type) {
+              var editPane = tablesConfigPanel.items.items[1];
+              var editPaneLayout = editPane.getLayout();
               
+              switch (node.attributes.type.toUpperCase()) {                
+              case 'DATAOBJECT':
+                editPaneLayout.setActiveItem(0);
+                break;
+                
+              case 'KEYS':
+                editPaneLayout.setActiveItem(1);
+                break;
+                
+              case 'KEYPROPERTY':
+                editPaneLayout.setActiveItem(2);
+                break;
+                
+              case 'PROPERTIES':
+                editPaneLayout.setActiveItem(3);
+                break;
+                
+              case 'DATAPROPERTY':
+                var form = editPane.items.items[4].getForm();
+                
+                form.findField('columnName').setValue(node.attributes.properties.columnName);
+                form.findField('propertyName').setValue(node.attributes.properties.propertyName);
+                form.findField('dataType').setValue(node.attributes.properties.dataType);
+                form.findField('dataLength').setValue(node.attributes.properties.dataLength);
+                
+                if (node.attributes.properties.nullable.toUpperCase() == 'TRUE') {
+                  form.findField('nullableGroup').items[0].checked = true;
+                }
+                else {
+                  form.findField('nullableGroup').items[1].checked = true;
+                }
+                
+                if (node.attributes.properties.showOnIndex.toUpperCase() == 'TRUE') {
+                  form.findField('showOnIndexGroup').items[0].checked = true;
+                }
+                else {
+                  form.findField('showOnIndexGroup').items[1].checked = true;
+                }
+                  
+                form.findField('numberOfDecimals').setValue(node.attributes.properties.numberOfDecimals);
+                editPaneLayout.setActiveItem(4);
+                break;
+                
+              case 'RELATIONSHIPS':
+                editPaneLayout.setActiveItem(5);
+                break;
+                
+              case 'RELATIONSHIP':
+                editPaneLayout.setActiveItem(6);
+                break;
               }
             } 
           }
@@ -268,12 +322,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         xtype: 'panel',
         region: 'center',
         layout: 'card',
-        //activeItem: 5,
         bodyStyle: 'background:#eee',
         items: [{                
           // table attributes card
           xtype: 'form',
-          name: 'Table Attributes',
+          name: 'dataObject',
           monitorValid: true,
           labelWidth: 160,
           defaults: {xtype: 'textfield', anchor:'60%'},
@@ -293,7 +346,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         },{
           // key attributes card
           xtype: 'form',
-          name: 'Key Attributes',
+          name: 'keyProperty',
           monitorValid: true,
           labelWidth: 160,
           defaults: {xtype: 'textfield', allowBlank: false, anchor: '60%'},
@@ -320,15 +373,17 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         },{
           // property attributes card
           xtype: 'form',
-          name: 'Property Attributes',
+          name: 'dataProperty',
           monitorValid: true,
           labelWidth: 160,
           defaults: {xtype: 'textfield', allowBlank: false, anchor: '60%'},
           items: [dataPropFields]
         },{
+          // relationships
+        },{
           // relationship editing card; update tree as needed
           xtype: 'form',
-          name: 'Relationship Config',
+          name: 'relationship',
           monitorValid: true,
           labelWidth: 160,
           defaults: {xtype: 'textfield', allowBlank: false, anchor: '60%'},
@@ -503,5 +558,28 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
     });
 
     AdapterManager.NHibernateConfigWizard.superclass.constructor.apply(this, arguments);
+  },
+  
+  setDataPropertyFields: function(form, attributes) {
+    form.findField('columnName').setValue(node.attributes.properties.columnName);
+    form.findField('propertyName').setValue(node.attributes.properties.propertyName);
+    form.findField('dataType').setValue(node.attributes.properties.dataType);
+    form.findField('dataLength').setValue(node.attributes.properties.dataLength);
+    
+    if (node.attributes.properties.nullable.toUpperCase() == 'TRUE') {
+      form.findField('nullableGroup').items[0].checked = true;
+    }
+    else {
+      form.findField('nullableGroup').items[1].checked = true;
+    }
+    
+    if (node.attributes.properties.showOnIndex.toUpperCase() == 'TRUE') {
+      form.findField('showOnIndexGroup').items[0].checked = true;
+    }
+    else {
+      form.findField('showOnIndexGroup').items[1].checked = true;
+    }
+      
+    form.findField('numberOfDecimals').setValue(node.attributes.properties.numberOfDecimals);
   }
 });
