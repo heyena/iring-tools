@@ -1,4 +1,4 @@
-#summary Date: 2011/3/31 Time: 08:00 EST
+#summary Date: 2011/03/31 Time: 08:00 EST
 #labels Meeting
 
 =Attendees=
