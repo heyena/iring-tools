@@ -17,15 +17,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="type" type="{http://www.iringtools.org/dxfr/dto}RoleType"/>
+ *         &lt;element name="type" type="{http://www.iringtools.org/dxfr/dto}RoleType" minOccurs="0"/>
  *         &lt;element name="roleId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="dataType" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="oldValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="relatedClassId" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="relatedClassName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="hasValueMap" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="dataType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="oldValue" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="relatedClassId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="relatedClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="hasValueMap" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -48,23 +48,17 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class RoleObject {
 
-    @XmlElement(required = true)
     protected RoleType type;
     @XmlElement(required = true)
     protected String roleId;
     @XmlElement(required = true)
     protected String name;
-    @XmlElement(required = true)
     protected String dataType;
-    @XmlElement(required = true)
     protected String oldValue;
-    @XmlElement(required = true)
     protected String value;
-    @XmlElement(required = true)
     protected String relatedClassId;
-    @XmlElement(required = true)
     protected String relatedClassName;
-    protected boolean hasValueMap;
+    protected Boolean hasValueMap;
 
     /**
      * Gets the value of the type property.
@@ -261,16 +255,24 @@ public class RoleObject {
     /**
      * Gets the value of the hasValueMap property.
      * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
      */
-    public boolean isHasValueMap() {
+    public Boolean isHasValueMap() {
         return hasValueMap;
     }
 
     /**
      * Sets the value of the hasValueMap property.
      * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
      */
-    public void setHasValueMap(boolean value) {
+    public void setHasValueMap(Boolean value) {
         this.hasValueMap = value;
     }
 

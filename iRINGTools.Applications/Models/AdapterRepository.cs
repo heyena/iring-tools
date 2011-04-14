@@ -341,12 +341,24 @@ namespace iRINGTools.Web.Models
             // add key/data property nodes
             foreach (DataProperty dataProperty in dataObject.dataProperties)
             {
+              Dictionary<string, string> properties = new Dictionary<string, string>()
+              {
+                {"columnName", dataProperty.columnName},
+                {"propertyName", dataProperty.propertyName},
+                {"dataType", dataProperty.dataType.ToString()},
+                {"dataLength", dataProperty.dataLength.ToString()},
+                {"nullable", dataProperty.isNullable.ToString()},
+                {"showOnIndex", dataProperty.showOnIndex.ToString()},
+                {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
+              };
+
               if (dataObject.isKeyProperty(dataProperty.propertyName))
               {
                 JsonTreeNode keyPropertyNode = new JsonTreeNode()
                 {
                   text = dataProperty.columnName,
                   type = "keyProperty",
+                  properties = properties,
                   leaf = true
                 };
 
@@ -354,11 +366,14 @@ namespace iRINGTools.Web.Models
               }
               else
               {
+                properties.Add("keyType", dataProperty.keyType.ToString());
+
                 JsonTreeNode dataPropertyNode = new JsonTreeNode()
                 {
                   text = dataProperty.columnName,
                   type = "dataProperty",
-                  leaf = true
+                  leaf = true,
+                  properties = properties
                 };
 
                 dataPropertiesNode.children.Add(dataPropertyNode);

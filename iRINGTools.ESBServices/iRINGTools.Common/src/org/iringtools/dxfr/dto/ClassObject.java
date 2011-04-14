@@ -20,8 +20,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="classId" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="templateObjects" type="{http://www.iringtools.org/dxfr/dto}TemplateObjects"/>
- *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType"/>
+ *         &lt;element name="templateObjects" type="{http://www.iringtools.org/dxfr/dto}TemplateObjects" minOccurs="0"/>
+ *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -46,9 +46,7 @@ public class ClassObject {
     protected String name;
     @XmlElement(required = true)
     protected String identifier;
-    @XmlElement(required = true)
     protected TemplateObjects templateObjects;
-    @XmlElement(required = true)
     protected TransferType transferType;
 
     /**
