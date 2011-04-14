@@ -2,50 +2,26 @@
 <ArrayOfdataTransferIndex xmlns:i="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iringtools.org/dxfr/dti">
   <dataTransferIndex>
     <identifier>90002-RV</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
-    <sortIndex i:nil="true" />
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90002-SW</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
-    <sortIndex i:nil="true" />
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90003-V</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
-    <sortIndex i:nil="true" />
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90004-SC</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
-    <sortIndex i:nil="true" />
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90007-SL</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
-    <sortIndex i:nil="true" />
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90026-RV</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
-    <sortIndex i:nil="true" />
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90042-RV</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
-    <sortIndex i:nil="true" />
   </dataTransferIndex>
   <dataTransferIndex>
     <identifier>90043-RV</identifier>
-    <hashValue i:nil="true" />
-    <transferType>Sync</transferType>
-    <sortIndex i:nil="true" />
   </dataTransferIndex>
 </ArrayOfdataTransferIndex>
