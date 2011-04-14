@@ -48,7 +48,8 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       deferredRender: false,
       enableTabScroll: true,
       border: true,
-      activeItem: 0
+      activeItem: 0,
+			iconCls: 'tabsClass'
     });
 
 
@@ -142,7 +143,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       ddGroup: 'refdataGroup',
       useArrows: true,
       animate: true,
-      lines: false,
+      lines: true,
       id: 'tab_' + searchText,
       autoScroll: true,
       style: 'padding-left:5px;',
