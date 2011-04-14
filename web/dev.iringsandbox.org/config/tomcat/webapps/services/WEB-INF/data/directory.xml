@@ -11,7 +11,7 @@
         <graphs>
           <graph>
             <id>1</id>
-            <name>LINES</name>
+            <name>Lines</name>
             <description>ABC Line List</description>
             <commodity>PipingNetworkSystem</commodity>
           </graph>
@@ -25,7 +25,7 @@
         <graphs>
           <graph>
             <id>2</id>
-            <name>LINES</name>
+            <name>Lines</name>
             <description>DEF Line List</description>
             <commodity>PipingNetworksSystem</commodity>
           </graph>
@@ -38,12 +38,12 @@
         <exchanges>
           <exchange>
             <id>1</id>
-            <name>SDK.ABC -&gt; SDK.DEF</name>
+            <name>Lines: SDK.ABC -&gt; SDK.DEF</name>
             <description>Line Exchange</description>
           </exchange>
           <exchange>
             <id>2</id>
-            <name>SDK.DEF -&gt; SDK.ABC</name>
+            <name>Lines: SDK.DEF -&gt; SDK.ABC</name>
             <description>Line Exchange</description>
           </exchange>
         </exchanges>
@@ -61,7 +61,7 @@
         <graphs>
           <graph>
             <id>1</id>
-            <name>LINES</name>
+            <name>Lines</name>
             <description>ABC Line List</description>
             <commodity>PipingNetworkSystem</commodity>
           </graph>
@@ -75,7 +75,7 @@
         <graphs>
           <graph>
             <id>2</id>
-            <name>LINES</name>
+            <name>Lines</name>
             <description>DEF Line List</description>
             <commodity>PipingNetworksSystem</commodity>
           </graph>
@@ -88,17 +88,17 @@
         <exchanges>
           <exchange>
             <id>1</id>
-            <name>12345_000.ABC -&gt; 12345_000.DEF</name>
+            <name>Lines: 12345_000.ABC -&gt; 12345_000.DEF</name>
             <description>Line Exchange</description>
           </exchange>
           <exchange>
             <id>2</id>
-            <name>12345_000.DEF -&gt; 12345_000.ABC</name>
+            <name>Lines: 12345_000.DEF -&gt; 12345_000.ABC</name>
             <description>Line Exchange</description>
           </exchange>
           <exchange>
             <id>3</id>
-            <name>12345_000.ABC -&gt; SDK.DEF</name>
+            <name>Lines: 12345_000.ABC -&gt; SDK.DEF</name>
             <description>Line Exchange</description>
           </exchange>
         </exchanges>
