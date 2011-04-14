@@ -64,10 +64,10 @@ public class RefDataController implements ServletRequestAware{
 			tree = refdata.getClass(httpRequest.getParameter("id"));
 			break;
 		case SUPERCLASS:
-			response = refdata.getSuperClasses(httpRequest.getParameter("id"));
+			tree = refdata.getSubSuperClasses(httpRequest.getParameter("id"),"Super");
 			break;
 		case SUBCLASS:
-			response = refdata.getSubClasses(httpRequest.getParameter("id"));
+			tree = refdata.getSubSuperClasses(httpRequest.getParameter("id"), "Sub");
 			break;
 		case CLASSTEMPLATE:
 			response = refdata.getTemplates(httpRequest.getParameter("id"));
@@ -76,23 +76,6 @@ public class RefDataController implements ServletRequestAware{
     	
 		return Action.SUCCESS;
     	}
-	
-	/*public String getClassifications(){
-		String id = httpRequest.getParameter("id");
-		tree = refdata.getClass("R19192462550");
-		return Action.SUCCESS;
-	}*/
-	public String getSuperClasses(){
-		String id = httpRequest.getParameter("id");
-		response = refdata.getSuperClasses(id);
-		return Action.SUCCESS;
-	}
-	
-	public String getSubClasses(){
-		String id = httpRequest.getParameter("id");
-		response = refdata.getSubClasses(id);
-		return Action.SUCCESS;
-	}
 	
 	public String getTemplates(){
 		String id = httpRequest.getParameter("id");
