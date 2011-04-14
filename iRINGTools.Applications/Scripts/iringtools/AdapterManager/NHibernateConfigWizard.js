@@ -417,7 +417,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           items: [{
             xtype: 'itemselector',
             name: 'propertySelector',
-            fieldLabel: 'Select Keys',
+            fieldLabel: 'Select Properties',
             imagePath: 'scripts/ext-3.3.1/ux/multiselect/',
             fromLegend: 'Available',
             toLegend: 'Selected',
@@ -439,7 +439,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           items: [{
             xtype: 'itemselector',
             name: 'relationshipSelector',
-            fieldLabel: 'Select Keys',
+            fieldLabel: 'Select Relationships',
             imagePath: 'scripts/ext-3.3.1/ux/multiselect/',
             fromLegend: 'Available',
             toLegend: 'Selected',
