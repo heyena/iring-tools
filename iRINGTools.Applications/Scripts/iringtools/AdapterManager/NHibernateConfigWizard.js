@@ -10,7 +10,32 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
     var wizard = this;
     var scopeName = config.scope.Name;
     var appName = config.app.Name;
-
+    
+    var setDataPropertyFields = function(form, properties) {
+      if (form && properties) {
+        form.findField('columnName').setValue(properties.columnName);
+        form.findField('propertyName').setValue(properties.propertyName);
+        form.findField('dataType').setValue(properties.dataType);
+        form.findField('dataLength').setValue(properties.dataLength);
+        
+        if (properties.nullable.toUpperCase() == 'TRUE') {
+          form.findField('nullable').setValue(true);
+        }
+        else {
+          form.findField('nullable').setValue(false);
+        }
+        
+        if (properties.showOnIndex.toUpperCase() == 'TRUE') {
+          form.findField('showOnIndex').setValue(true);
+        }
+        else {
+          form.findField('showOnIndex').setValue(false);
+        }
+          
+        form.findField('numberOfDecimals').setValue(properties.numberOfDecimals);
+      }
+    };
+    
     var providersStore = new Ext.data.JsonStore({
       autoLoad: true,
       autoDestroy: true,
@@ -170,10 +195,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           var form = wizard.getLayout().activeItem;
           var formIndex = wizard.items.indexOf(form);
           var dsConfigForm = dsConfigPanel.getForm();
-          var tablesSelForm = tablesSelectionPanel.getForm();
-          
+          var tablesSelForm = tablesSelectionPanel.getForm();          
           var dbObjectsTree = tablesConfigPanel.items.items[0].items.items[0];
           var treeLoader = dbObjectsTree.getLoader();
+          
+          //var editPane = tablesConfigPanel.items.items[1];
+          //editPane.getLayout().setActiveItem(0);
           
           treeLoader.dataUrl = 'AdapterManager/DBObjects';
           treeLoader.baseParams = {
@@ -215,21 +242,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
       name: 'dataLength',
       fieldLabel: 'Data Length'
     },{
-      xtype: 'radiogroup',      
-      fieldLabel: 'Nullable',
-      name: 'nullableGroup',
-      items: [
-        {boxLabel: 'Yes', name: 'nullable', inputValue: true, checked: true},
-        {boxLabel: 'No', name: 'nullable', inputValue: false}
-      ]
+      xtype: 'checkbox',
+      name: 'nullable',
+      fieldLabel: 'Nullable'
     },{
-      xtype: 'radiogroup',
-      name: 'showOnIndexGroup',
-      fieldLabel: 'Show on Index',      
-      items: [
-        {boxLabel: 'Yes', name: 'showOnIndex', inputValue: true},
-        {boxLabel: 'No', name: 'showOnIndex', inputValue: false, checked: true}
-      ]
+      xtype: 'checkbox',
+      name: 'showOnIndex',
+      fieldLabel: 'Show on Index'
     },{
       xtype: 'numberfield',
       name: 'numberOfDecimals',      
@@ -245,6 +264,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         minWidth: 240,
         width: 300,
         split: true,
+        autoScroll: true,
         bodyStyle: 'background:#fff',
         items: [{
           xtype: 'treepanel',
@@ -270,44 +290,63 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                 break;
                 
               case 'KEYS':
+                var form = editPane.items.items[1].getForm();
+                var itemSelector = form.findField('keySelector');      
+                var availItems = new Array();
+                
+                for (var i = 0; i < node.childNodes.length; i++) {
+                  var keyName = node.childNodes[i].text;
+                  availItems[i] = [keyName, keyName];
+                }
+                  
+                itemSelector.fromData = availItems; 
+                itemSelector.toData = [];
+                
                 editPaneLayout.setActiveItem(1);
                 break;
                 
               case 'KEYPROPERTY':
+                var form = editPane.items.items[2].getForm(); 
+                form.findField('keyType').setValue(node.attributes.properties.keyType.toLowerCase());
+                setDataPropertyFields(form, node.attributes.properties);                
                 editPaneLayout.setActiveItem(2);
                 break;
                 
               case 'PROPERTIES':
+                var form = editPane.items.items[3].getForm();
+                var itemSelector = form.findField('propertySelector');      
+                var availItems = new Array();
+                
+                for (var i = 0; i < node.childNodes.length; i++) {
+                  var itemName = node.childNodes[i].text;
+                  availItems[i] = [itemName, itemName];
+                }
+                  
+                itemSelector.fromData = availItems; 
+                itemSelector.toData = [];
+                
                 editPaneLayout.setActiveItem(3);
                 break;
                 
               case 'DATAPROPERTY':
-                var form = editPane.items.items[4].getForm();
-                
-                form.findField('columnName').setValue(node.attributes.properties.columnName);
-                form.findField('propertyName').setValue(node.attributes.properties.propertyName);
-                form.findField('dataType').setValue(node.attributes.properties.dataType);
-                form.findField('dataLength').setValue(node.attributes.properties.dataLength);
-                
-                if (node.attributes.properties.nullable.toUpperCase() == 'TRUE') {
-                  form.findField('nullableGroup').items[0].checked = true;
-                }
-                else {
-                  form.findField('nullableGroup').items[1].checked = true;
-                }
-                
-                if (node.attributes.properties.showOnIndex.toUpperCase() == 'TRUE') {
-                  form.findField('showOnIndexGroup').items[0].checked = true;
-                }
-                else {
-                  form.findField('showOnIndexGroup').items[1].checked = true;
-                }
-                  
-                form.findField('numberOfDecimals').setValue(node.attributes.properties.numberOfDecimals);
+                var form = editPane.items.items[4].getForm();                
+                setDataPropertyFields(form, node.attributes.properties);
                 editPaneLayout.setActiveItem(4);
                 break;
                 
               case 'RELATIONSHIPS':
+                var form = editPane.items.items[5].getForm();
+                var itemSelector = form.findField('relationshipSelector');      
+                var availItems = new Array();
+                
+                for (var i = 0; i < node.childNodes.length; i++) {
+                  var itemName = node.childNodes[i].text;
+                  availItems[i] = [itemName, itemName];
+                }
+                  
+                itemSelector.fromData = availItems; 
+                itemSelector.toData = [];
+                
                 editPaneLayout.setActiveItem(5);
                 break;
                 
@@ -322,9 +361,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         xtype: 'panel',
         region: 'center',
         layout: 'card',
-        bodyStyle: 'background:#eee',
+        bodyStyle: 'background:#eee;padding:15px',
         items: [{                
-          // table attributes card
           xtype: 'form',
           name: 'dataObject',
           monitorValid: true,
@@ -342,36 +380,54 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             value: ','
           }]
         },{
-          // keys selection card; update tree as needed
+          xtype: 'form',
+          items: [{
+            xtype: 'itemselector',
+            name: 'keySelector',
+            fieldLabel: 'Select Keys',
+            imagePath: 'scripts/ext-3.3.1/ux/multiselect/',
+            fromLegend: 'Available',
+            toLegend: 'Selected',
+            msWidth: 250,
+            msHeight: 300,
+            dataFields: ['keyName', 'keyValue'],
+            displayField: 'keyName',
+            valueField: 'keyValue'
+          }]
         },{
-          // key attributes card
           xtype: 'form',
           name: 'keyProperty',
           monitorValid: true,
           labelWidth: 160,
           defaults: {xtype: 'textfield', allowBlank: false, anchor: '60%'},
-          items: [{
+          items: [dataPropFields, {
             xtype: 'combo',
             name: 'keyType',
             fieldLabel: 'Key Type',
             store: new Ext.data.SimpleStore({
               fields: ['value', 'name'],
-              data: [['Assigned', 'Assigned'], ['Unassigned', 'Unassigned']],
-              autoLoad: false,
-              listeners: {
-                load: function(e){
-                  //form.getForm().findField('keyType').setValue('assigned');
-                }
-              }
+              data: [['assigned', 'Assigned'], ['unassigned', 'Unassigned']]
             }),
             displayField: 'name',
             valueField: 'value',
             mode: 'local'
-          }, dataPropFields]
+          }]
         },{
-          // properties selection card; update tree as needed
+          xtype: 'form',
+          items: [{
+            xtype: 'itemselector',
+            name: 'propertySelector',
+            fieldLabel: 'Select Keys',
+            imagePath: 'scripts/ext-3.3.1/ux/multiselect/',
+            fromLegend: 'Available',
+            toLegend: 'Selected',
+            msWidth: 250,
+            msHeight: 300,
+            dataFields: ['propertyName', 'propertyValue'],
+            displayField: 'propertyName',
+            valueField: 'propertyValue'
+          }]
         },{
-          // property attributes card
           xtype: 'form',
           name: 'dataProperty',
           monitorValid: true,
@@ -379,9 +435,21 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           defaults: {xtype: 'textfield', allowBlank: false, anchor: '60%'},
           items: [dataPropFields]
         },{
-          // relationships
+          xtype: 'form',
+          items: [{
+            xtype: 'itemselector',
+            name: 'relationshipSelector',
+            fieldLabel: 'Select Keys',
+            imagePath: 'scripts/ext-3.3.1/ux/multiselect/',
+            fromLegend: 'Available',
+            toLegend: 'Selected',
+            msWidth: 250,
+            msHeight: 300,
+            dataFields: ['relationshipName', 'relationshipValue'],
+            displayField: 'relationshipName',
+            valueField: 'relationshipValue'
+          }]
         },{
-          // relationship editing card; update tree as needed
           xtype: 'form',
           name: 'relationship',
           monitorValid: true,
@@ -393,13 +461,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             fieldLabel: 'Related Object',
             store: new Ext.data.SimpleStore({
               fields: ['value', 'name'],
-              data: [['r1', 'related object 1'], ['r2', 'related object2']],
-              autoLoad: false,
-              listeners: {
-                load: function(e){
-                  //form.getForm().findField('keyType').setValue('assigned');
-                }
-              }
+              data: [['r1', 'related object 1'], ['r2', 'related object2']]
             }),
             displayField: 'name',
             valueField: 'value',
@@ -410,13 +472,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             fieldLabel: 'Relationship Type',
             store: new Ext.data.SimpleStore({
               fields: ['value', 'name'],
-              data: [['OneToOne', 'One To One'], ['OneToMany', 'One To Many']],
-              autoLoad: false,
-              listeners: {
-                load: function(e){
-                  //form.getForm().findField('keyType').setValue('assigned');
-                }
-              }
+              data: [['OneToOne', 'One To One'], ['OneToMany', 'One To Many']]
             }),
             displayField: 'name',
             valueField: 'value',
@@ -449,13 +505,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
               tpl: tpl,
               store: new Ext.data.SimpleStore({
                 fields: ['value', 'name'],
-                data: [['Prop1a', 'p1a'], ['Prop2a', 'p2a'], ['Prop3a', 'p3a']],
-                autoLoad: false,
-                listeners: {
-                  load: function(e){
-                    //form.getForm().findField('keyType').setValue('assigned');
-                  }
-                }
+                data: [['Prop1a', 'p1a'], ['Prop2a', 'p2a'], ['Prop3a', 'p3a']]
               }),
               displayField: 'name',
               valueField: 'value',
@@ -558,28 +608,5 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
     });
 
     AdapterManager.NHibernateConfigWizard.superclass.constructor.apply(this, arguments);
-  },
-  
-  setDataPropertyFields: function(form, attributes) {
-    form.findField('columnName').setValue(node.attributes.properties.columnName);
-    form.findField('propertyName').setValue(node.attributes.properties.propertyName);
-    form.findField('dataType').setValue(node.attributes.properties.dataType);
-    form.findField('dataLength').setValue(node.attributes.properties.dataLength);
-    
-    if (node.attributes.properties.nullable.toUpperCase() == 'TRUE') {
-      form.findField('nullableGroup').items[0].checked = true;
-    }
-    else {
-      form.findField('nullableGroup').items[1].checked = true;
-    }
-    
-    if (node.attributes.properties.showOnIndex.toUpperCase() == 'TRUE') {
-      form.findField('showOnIndexGroup').items[0].checked = true;
-    }
-    else {
-      form.findField('showOnIndexGroup').items[1].checked = true;
-    }
-      
-    form.findField('numberOfDecimals').setValue(node.attributes.properties.numberOfDecimals);
   }
 });

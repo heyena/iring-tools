@@ -354,6 +354,8 @@ namespace iRINGTools.Web.Models
 
               if (dataObject.isKeyProperty(dataProperty.propertyName))
               {
+                properties.Add("keyType", dataProperty.keyType.ToString());
+
                 JsonTreeNode keyPropertyNode = new JsonTreeNode()
                 {
                   text = dataProperty.columnName,
@@ -366,8 +368,6 @@ namespace iRINGTools.Web.Models
               }
               else
               {
-                properties.Add("keyType", dataProperty.keyType.ToString());
-
                 JsonTreeNode dataPropertyNode = new JsonTreeNode()
                 {
                   text = dataProperty.columnName,
