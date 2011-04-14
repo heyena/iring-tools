@@ -61,43 +61,44 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   buildToolbar: function () {
     var that = this;
     return [
-                 {
-                   xtype: 'textfield',
-                   allowBlank: false,
-                   blankText: 'This field can not be blank',
-                   name: 'referencesearch',
-                   id: 'referencesearch',
-                   style: {
-                     marginLeft: '15px'
-                   },
-                   scope: this,
-                   listeners: {
-                     specialkey: function (f, e) {
-                       if (e.getKey() == e.ENTER) {
-                         that.onSearch();
-                       }
-                     }
-                   }
-                 },
-            	 {
-            	   xtype: 'checkbox',
-            	   boxLabel: 'Reset',
-            	   name: 'reset',
-            	   style: {
-            	     marginRight: '5px',
-            	     marginLeft: '3px'
-            	   }
-            	 },
-                {
-                  xtype: "tbbutton",
-                  text: 'Search',
-                  handler: this.onSearch,
-                  scope: this,
-                  style: {
-                    marginLeft: '5px'
-                  }
-
-                }];
+      {
+        xtype: 'textfield',
+        allowBlank: false,
+        blankText: 'This field can not be blank',
+        name: 'referencesearch',
+        id: 'referencesearch',
+        style: {
+          marginLeft: '15px'
+        },
+        scope: this,
+        listeners: {
+          specialkey: function (f, e) {
+            if (e.getKey() == e.ENTER) {
+              that.onSearch();
+            }
+          }
+        }
+      },
+      {
+        xtype: 'button',
+        icon: 'Content/img/16x16/document-properties.png',
+        handler: this.onSearch,
+        scope: this,
+        style: {
+          marginRight: '5px',
+          marginLeft: '3px'
+        }
+      },
+      {
+        xtype: 'checkbox',
+        boxLabel: 'Reset',
+        name: 'reset',
+        scope: this,
+        style: {
+          marginRight: '5px'          
+        }
+      }      
+    ];
   },
 
   getActiveTab: function () {
