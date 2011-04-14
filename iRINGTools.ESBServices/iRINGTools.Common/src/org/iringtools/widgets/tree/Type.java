@@ -8,7 +8,9 @@ public enum Type {
     CLASSIFICATION("ClassificationsNode"),
     SUPERCLASS("SuperclassesNode"),
     SUBCLASS("SubclassesNode"),
-    CLASSTEMPLATE("ClassTemplatesNode");
+    CLASSTEMPLATE("ClassTemplatesNode"),
+    ROLENODE("RolesNode");
+	
     private final String value;
 
     Type(String v) {
