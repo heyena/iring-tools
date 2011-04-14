@@ -268,8 +268,9 @@ Ext.onReady(function () {
         var application = node;
 
         var newTab = new AdapterManager.MappingPanel({
-            title: 'Mapping - ' + scope.text + "." + application.text,
-            scope: scope.attributes.record,
+        		title: 'Mapping - ' + scope.text + "." + application.text,
+						id: 'Mapping - ' + scope.text + "-" + application.text,
+						scope: scope.attributes.record,
             record: node.attributes.record,
             application: application.attributes.record,
             navigationUrl: 'mapping/getnode',
