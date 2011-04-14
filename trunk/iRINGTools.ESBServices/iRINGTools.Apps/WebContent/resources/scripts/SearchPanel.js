@@ -38,6 +38,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
             // layout: 'fit',
             stripeRows : true,
             collapsible : true,
+//            columnLines : true,
             autoScroll : true,
             width:350,
         	split: true,
@@ -70,7 +71,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         FederationManager.SearchPanel.superclass.initComponent.call(this);
     },
       buildToolbar: function () {
-    	  var SearchPanel=this;
+    	  var that=this;
         return [ 
                  {
         			xtype: 'textfield',
@@ -85,7 +86,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         	       listeners: {
         	              specialkey: function(f,e){
         	                if (e.getKey() == e.ENTER) {
-        	                	SearchPanel.onSearch();
+        	                	that.onSearch();
         	                }
         	              }
         	            }
@@ -156,6 +157,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    var treeLoader = new Ext.tree.TreeLoader({
   	      requestMethod: 'POST',
   	      url: this.searchUrl,
+  	      //url:"resources/myjson.json",
   	      baseParams: {
   	        id: null,
   	        type: null,
@@ -166,23 +168,8 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    });
 
   	    treeLoader.on("beforeload", function (treeLoader, node) {
-  	      treeLoader.baseParams.type = node.attributes.type;
-  	      switch(node.text){
-      	  case "Classifications":
-      		  treeLoader.url="class";
-      		  //treeLoader.url="resources/myjson_class.json";
-      		  break;
-      	  case "Superclasses":
-      		  treeLoader.url="superClass";
-      		  break;
-      	  case "Subclasses":
-      		  treeLoader.url="subClass";
-      		  break;
-      	  case "Templates":
-      		  treeLoader.url="template";
-      		  break;
-  	      }
-  	      treeLoader.baseParams.query = searchText;
+  	    treeLoader.baseParams.type = node.attributes.type;
+  	    treeLoader.baseParams.query = searchText;
   	      treeLoader.baseParams.limit = this.limit;
   	      treeLoader.baseParams.start = 0;
   	      if (node.parentNode != undefined)
@@ -224,7 +211,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	  },
   	onClick: function (node) {
   		try {
-  	      this.propertyPanel.setSource(node.attributes.properties);
+  	      this.propertyPanel.setSource(node.attributes.record);
   	    } catch (e) {
   	    }},
       onClassAdd : function(btn, ev) {
