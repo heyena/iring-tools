@@ -89,8 +89,7 @@ AdapterManager.DictionaryPanel = Ext.extend(Ext.Panel, {
       rootVisible: true,
       lines: true,
       autoScroll: true,
-      //singleExpand: true,
-      useArrows: true,
+      //singleExpand: true,     
       loader: this.treeLoader,
       root: this.rootNode
     });
