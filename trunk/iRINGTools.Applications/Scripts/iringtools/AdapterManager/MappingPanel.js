@@ -99,18 +99,18 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       listeners: {
         beforenodedrop: {
           fn: function (e) {
-            var nodetype, icn, txt, lf = null;
+
+
             if (e.data.node.attributes.type == 'TemplateNode') {
-              nodetype = 'TemplateMapNode';
-              icn = 'Content/img/template-map.png';
-              txt = e.data.node.attributes.record.Label;
-              lf = false;
+              var nodetype = 'TemplateMapNode'
+              var icn = 'Content/img/template-map.png';
+              var txt = e.data.node.attributes.record.Label;
+              var ident = e.data.node.attributes.identifier;
+              var rec = e.data.node.attributes.record;
+
             }
             else {
-              nodetype = 'RoleMapNode';
-              icn = 'Content/img/role-map.png';
-              txt = e.data.node.attributes.text;
-              lf = true;
+              return false;
             }
             e.cancel = false;
             e.dropNode = [];
@@ -240,27 +240,35 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onAddGraphMap: function (node) {
+    var formid = 'target-' + this.scope.Name + '-' + this.application.Name;
     var form = new Ext.form.FormPanel({
-      id: 'target',
+      id: formid,
       layout: 'form',
       method: 'POST',
+      border: false,
+      frame: false,
+      bbar: [
+        { text: 'Submit', scope: this, handler: this.submit },
+        { text: 'Close', handler: this.hide }
+        ],
       url: 'mapping/addgraphmap',
-      items: [{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: '  Graph Name', width: 120 }, //, value: '' },
+      items: [{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true }, //, value: '' },
               {xtype: 'hidden', name: 'objectName', id: 'objectName' },
               { xtype: 'hidden', name: 'classLabel', id: 'classLabel' },
               { xtype: 'hidden', name: 'classUrl', id: 'classUrl' },
               { xtype: 'hidden', name: 'mappingNode', id: 'mappingNode', value: this.rootNode }
              ],
-      html: '<div class="property-target" '
+      html: '<div class="property-target' + formid + '" '
           + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
           + 'Drop a Key Property Node here.</div>'
-          + '<div class="class-target" '
+          + '<div class="class-target' + formid + '" '
           + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
           + 'Drop a Class Node here. </div>',
 
-      afterRender: function () {
+      afterRender: function (c) {
         Ext.FormPanel.prototype.afterRender.apply(this, arguments);
-        var propertyTarget = this.body.child('div.property-target');
+
+        var propertyTarget = this.body.child('div.property-target' + formid);
         var propertydd = new Ext.dd.DropTarget(propertyTarget, {
           ddGroup: 'propertyGroup',
           notifyEnter: function (dd, e, data) {
@@ -283,12 +291,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
               Ext.get('objectName').dom.value = data.node.id;
               var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.id.split('/')[5] + '</b></td></tr>'
               msg += '</table>'
-              Ext.getCmp('target').body.child('div.property-target').update(msg)
+              Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg)
               return true;
-            }           
+            }
           } //eo notifyDrop
         }); //eo propertydd
-        var classTarget = this.body.child('div.class-target');
+        var classTarget = this.body.child('div.class-target' + formid);
         var classdd = new Ext.dd.DropTarget(classTarget, {
           ddGroup: 'refdataGroup',
           notifyDrop: function (classdd, e, data) {
@@ -305,7 +313,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             Ext.get('classUrl').dom.value = data.node.attributes.record.Uri;
             var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + data.node.attributes.record.Label + '</b></td></tr>'
             msg += '</table>'
-            Ext.getCmp('target').body.child('div.class-target').update(msg)
+            Ext.getCmp(formid).body.child('div.class-target' + formid).update(msg)
             return true;
 
           } //eo notifyDrop
@@ -321,61 +329,61 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       layout: 'form',
       title: 'Add new GraphMap to Mapping',
       items: form,
-      buttons: [
-        { text: 'Submit', scope: this, handler: this.submit },
-        { text: 'Close', handler: this.hide }
-        ],
       height: 200,
       width: 430,
-      closeAction: 'hide',
       plain: true,
       scope: this
     });
 
-
-
     win.show();
   },
 
-  hide: function () {
-    var win = Ext.getCmp('mwin')
-    var form = Ext.getCmp('target');
-    form.getForm().reset();
-    win.close();
+  hide: function (btn, e) {
+    if (btn != undefined) {
+      var win = btn.findParentByType('window');
+      if (win != undefined)
+        win.close();
+    }
   },
 
-  submit: function () {
-    var form = Ext.getCmp('target');
-    var win = Ext.getCmp('mwin');
+  submit: function (btn, e) {
     var that = this;
-    form.getForm().submit({
-      waitMsg: 'Posting GraphMap...',
-      success: function (f, a) {
-        this.reset();
-        that.onReload();
+    var form = btn.findParentByType('form');
+    var win = btn.findParentByType('window');
+    var objectname = Ext.get('objectName').dom.value;
+    var classlabel = Ext.get('classLabel').dom.value;
+    var classuri = Ext.get('classUrl').dom.value;
+    var graphname = Ext.get('graphName').dom.value;
+    if (form.getForm().isValid());
+    Ext.Ajax.request({
+      url: 'mapping/addgraphmap',
+      method: 'POST',
+      params: {
+        objectName: objectname,
+        classLabel: classlabel,
+        classUrl: classuri,
+        graphName: graphname
       },
-      failure: function (f, a) {
-        Ext.Msg.alert('Warning', 'Error adding graphmap "' + a.response + '"!');
+      success: function (result, request) {
+        win.close();
+        that.onReload();
+        Ext.Msg.show({ title: 'Success', msg: 'Added GraphMap to mapping', icon: Ext.MessageBox.SUCCESS, buttons: Ext.Msg.OK });
+      },
+      failure: function (result, request) {
+        Ext.Msg.show({ title: 'Failure', msg: 'Failed to Add GraphMap to mapping', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
       }
-    });
-
-    win.hide();
+    })
   },
 
   buildGraphmapMenu: function () {
     return [
-    //            {
-    //              text: 'Add TemplateMap',
-    //              handler: this.onAddTemplateMap,
-    //              icon: 'Content/img/16x16/document-new.png',
-    //              scope: this
-    //            },
+
                 {
-                text: 'Delete GraphMap',
-                handler: this.onDeleteGraphMap,
-                icon: 'Content/img/16x16/edit-delete.png',
-                scope: this
-              }
+                  text: 'Delete GraphMap',
+                  handler: this.onDeleteGraphMap,
+                  icon: 'Content/img/16x16/edit-delete.png',
+                  scope: this
+                }
         ]
   },
 

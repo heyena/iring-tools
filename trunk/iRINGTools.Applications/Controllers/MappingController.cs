@@ -85,12 +85,12 @@ namespace iRINGTools.Web.Controllers
       Mapping mapping = GetMapping(scope, application);
 
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-     // if (variables.Count() > 2)
-      //{
-        graphMap = mapping.graphMaps.FirstOrDefault();
-        if (graphMap != null)
+      if (variables.Count() > 2)
+        graphMap = mapping.graphMaps.FirstOrDefault<GraphMap>(o => o.name == variables[2]);
+
+      if (graphMap != null)
         graphclassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
-      //}
+
         switch (form["type"])
         {
           case "MappingNode":
@@ -256,7 +256,7 @@ namespace iRINGTools.Web.Controllers
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
         Mapping mapping = GetMapping(scope, application);
-
+        string context = string.Format("{0}/{1}", scope, application);
         string graphName = form["graphName"];
         string classLabel = form["classLabel"];
         string keyProperty = dataObjectVars[5];
@@ -283,7 +283,7 @@ namespace iRINGTools.Web.Controllers
         if (mapping.graphMaps == null)
           mapping.graphMaps = new GraphMaps();
         mapping.graphMaps.Add(graphMap);
-        nodes.Add(GetGraphNode(graphMap, "MappingNode"));
+        nodes.Add(GetGraphNode(graphMap, context));
       }
       catch (Exception ex)
       {

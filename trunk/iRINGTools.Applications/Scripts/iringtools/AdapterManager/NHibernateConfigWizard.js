@@ -252,7 +252,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           containerScroll: true,
           rootVisible: true,
           root: {
-            text: 'Data Dictionary',
+            text: 'Data Dictionary'
           },
           loader: new Ext.tree.TreeLoader(),
           listeners: {
