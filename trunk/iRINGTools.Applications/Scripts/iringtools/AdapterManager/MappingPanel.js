@@ -264,19 +264,28 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         var propertydd = new Ext.dd.DropTarget(propertyTarget, {
           ddGroup: 'propertyGroup',
           notifyEnter: function (dd, e, data) {
-            Ext.dd.DropTarget.  superclass.notifyEnter.call(dd, e, data);
-            if(data.node.attributes.type != 'KeyDataPropertyNode')
-             return false;
-             else
-              return true;
+            if (data.node.attributes.type != 'KeyDataPropertyNode')
+              return this.dropNotAllowed;
+            else
+              return this.dropAllowed;
           },
-          
+          notifyOver: function (dd, e, data) {
+            if (data.node.attributes.type != 'KeyDataPropertyNode')
+              return this.dropNotAllowed;
+            else
+              return this.dropAllowed;
+          },
           notifyDrop: function (dd, e, data) {
-            Ext.get('objectName').dom.value = node.node.id;
-            var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.id.split('/')[5] + '</b></td></tr>'
-            msg += '</table>'
-            Ext.getCmp('target').body.child('div.property-target').update(msg)
-            return true;
+            if (data.node.attributes.type != 'KeyDataPropertyNode') {
+              return false;
+            }
+            else {
+              Ext.get('objectName').dom.value = data.node.id;
+              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.id.split('/')[5] + '</b></td></tr>'
+              msg += '</table>'
+              Ext.getCmp('target').body.child('div.property-target').update(msg)
+              return true;
+            }           
           } //eo notifyDrop
         }); //eo propertydd
         var classTarget = this.body.child('div.class-target');
