@@ -109,8 +109,7 @@ xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
                   <id>tpl:R93884193692</id>
                   <name>hasScale</name>
                   <dataType>xsd:string</dataType>
-                  <propertyName>
-                  LINES.UOM_NOMDIAMETER</propertyName>
+                  <propertyName>LINES.UOM_NOMDIAMETER</propertyName>
                   <valueListName>Length</valueListName>
                 </roleMap>
                 <roleMap>
