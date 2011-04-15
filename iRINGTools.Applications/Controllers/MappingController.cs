@@ -28,6 +28,7 @@ namespace iRINGTools.Web.Controllers
     private RefDataRepository _refdata = null;
     private IMappingRepository _repository { get; set; }
     private string _keyFormat = "Mapping.{0}.{1}";
+    private const string  unMappedToken = "[unmapped]";
 
     public MappingController()
       : this(new MappingRepository())
@@ -235,7 +236,42 @@ namespace iRINGTools.Web.Controllers
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult MakePossessor(FormCollection form)
+    {
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
+      try
+      {
+        string mappingNode = form["mappingNode"];
+
+        char[] delimiters = new char[] { '/' };
+        string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string scope = dataObjectVars[0];
+        string application = dataObjectVars[1];
+        string graph = dataObjectVars[2];
+        string templateName = dataObjectVars[3];
+        string roleName = dataObjectVars[4];
+        string context = string.Format("{0}/{1}", scope, application);
+        Mapping mapping = GetMapping(scope, application);
+        GraphMap graphMap = mapping.FindGraphMap(graph);
+        foreach (var ctemplateMaps in graphMap.classTemplateMaps)
+        {
+          TemplateMap tmap = ctemplateMaps.templateMaps.FirstOrDefault(c => c.name == templateName);
+          RoleMap roleMap  = tmap.roleMaps.FirstOrDefault(c=>c.name == roleName);
+          roleMap.type = RoleType.Possessor;
+          roleMap.value = string.Empty;
+          roleMap.dataType = string.Empty;
+          JsonTreeNode rolenode = GetRoleNode(roleMap, context);
+          rolenode.text.Replace(unMappedToken, "");
+          nodes.Add(rolenode);
+        }
+      }
+      catch (Exception ex)
+      {
+        return Json(nodes, JsonRequestBehavior.AllowGet);
+      }
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
 
     private JsonTreeNode GetRoleNode(RoleMap role, string context)
     {
@@ -247,7 +283,7 @@ namespace iRINGTools.Web.Controllers
         id = context + "/" + role.name,
         text = role.IsMapped() ? string.Format("{0}{1}", 
                                  role.name, "") : 
-                                 string.Format("{0}{1}", role.name, "[unmapped]"),
+                                 string.Format("{0}{1}", role.name, unMappedToken),
         expanded = false,
         leaf = false,
         children = null,
