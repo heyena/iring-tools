@@ -69,7 +69,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       treeLoader.baseParams.type = node.attributes.type;
       if (node.attributes.record != undefined) {
         treeLoader.baseParams.id = node.attributes.record.id;
-  //      if node.attributes.record
+        //      if node.attributes.record
       }
     }, this);
 
@@ -343,7 +343,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmit },
+        { text: 'Submit', scope: this, handler: this.onSubmit2 },
         { text: 'Close', scope: this, handler: this.onClose }
         ],
       url: 'mapping/addgraphmap',
@@ -467,6 +467,31 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       })
   },
 
+    onSubmit2: function (btn, e) {
+      var form = btn.findParentByType('form');
+      var win = btn.findParentByType('window');
+      var objectname = Ext.get('objectName').dom.value;
+      var classlabel = Ext.get('classLabel').dom.value;
+      var classuri = Ext.get('classUrl').dom.value;
+
+      if (form.getForm().isValid())
+        Ext.Ajax.request({
+          url: 'mapping/addclassmap',
+          method: 'POST',
+          params: {
+            objectName: objectname,
+            classLabel: classlabel,
+            classUrl: classuri
+          },
+          success: function (result, request) {
+            win.close();
+            Ext.Msg.show({ title: 'Success', msg: 'Added ClassMap to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+          },
+          failure: function (result, request) {
+            Ext.Msg.show({ title: 'Failure', msg: 'Failed to Add ClassMap to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
+          }
+        })
+    },
   onAddTemplateMap: function (node) {
   },
 
@@ -520,28 +545,120 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   onMapValueList: function (node) {
   },
 
-  onMakePossessor: function (node) {
+  onMakePossessor: function () {
     var that = this;
-    var node = that.mappingPanel.getSelectionModel().getSelectedNode();
+    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
     Ext.Ajax.request({
       url: 'mapping/makePossessor',
       method: 'POST',
       params: {
-        Scope: this.scope.Name,
-        Application: this.application.Name,
-        mappingNode: node.attributes.id,
-        parentIdentifier: node.parentNode.attributes.identifier,
-        identifier: node.attributes.identifier
+        mappingNode: node.attributes.id
       },
       success: function (result, request) {
         that.mappingPanel.root.reload();
-        Ext.Msg.show({ title: 'Success', msg: 'Made [' + node.id.split('/')[4] + '] possessor role', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        Ext.Msg.show({ title: 'Success', msg: 'Made [' + node.attributes.id.split('/')[4] + '] possessor role', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
       },
       failure: function (result, request) { }
     })
   },
 
-  onAddClassMap: function (node) {
+  onAddClassMap: function () {
+    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+    var formid = 'classtarget-' + this.scope.Name + '-' + this.application.Name;
+    var form = new Ext.form.FormPanel({
+      id: formid,
+      layout: 'form',
+      method: 'POST',
+      border: false,
+      frame: false,
+      bbar: [
+        { text: 'Submit', scope: this, handler: this.onSubmit2 },
+        { text: 'Close', scope: this, handler: this.onClose }
+        ],
+      url: 'mapping/addclassmap',
+      items: [
+      //{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true, value: null },
+              { xtype: 'hidden', name: 'objectName', id: 'objectName' },
+              { xtype: 'hidden', name: 'classLabel', id: 'classLabel' },
+              { xtype: 'hidden', name: 'classUrl', id: 'classUrl' },
+              { xtype: 'hidden', name: 'mappingNode', id: 'mappingNode', value: this.rootNode }
+             ],
+      html: '<div class="property-target' + formid + '" '
+          + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
+          + 'Drop a Property Node here.</div>'
+          + '<div class="class-target' + formid + '" '
+          + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
+          + 'Drop a Class Node here. </div>',
+
+      afterRender: function (cmp) {
+        Ext.FormPanel.prototype.afterRender.apply(this, arguments);
+
+        var propertyTarget = this.body.child('div.property-target' + formid);
+        var propertydd = new Ext.dd.DropTarget(propertyTarget, {
+          ddGroup: 'propertyGroup',
+          notifyEnter: function (dd, e, data) {
+            if (data.node.attributes.type != 'DataPropertyNode')
+              return this.dropNotAllowed;
+            else
+              return this.dropAllowed;
+          },
+          notifyOver: function (dd, e, data) {
+            if (data.node.attributes.type != 'DataPropertyNode')
+              return this.dropNotAllowed;
+            else
+              return this.dropAllowed;
+          },
+          notifyDrop: function (dd, e, data) {
+            if (data.node.attributes.type != 'DataPropertyNode') {
+              return false;
+            }
+            else {
+              Ext.get('objectName').dom.value = data.node.id;
+              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.id.split('/')[5] + '</b></td></tr>'
+              msg += '</table>'
+              Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg)
+              return true;
+            }
+          } //eo notifyDrop
+        }); //eo propertydd
+        var classTarget = this.body.child('div.class-target' + formid);
+        var classdd = new Ext.dd.DropTarget(classTarget, {
+          ddGroup: 'refdataGroup',
+          notifyDrop: function (classdd, e, data) {
+            if (data.node.attributes.type != 'ClassNode') {
+              Ext.Msg.show({
+                title: 'Invalid Selection',
+                msg: 'Please slect a RDL Class...',
+                icon: Ext.MessageBox.ERROR,
+                buttons: Ext.Msg.CANCEL
+              });
+              return false;
+            }
+            Ext.get('classLabel').dom.value = data.node.attributes.record.Label;
+            Ext.get('classUrl').dom.value = data.node.attributes.record.Uri;
+            var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + data.node.attributes.record.Label + '</b></td></tr>'
+            msg += '</table>'
+            Ext.getCmp(formid).body.child('div.class-target' + formid).update(msg)
+            return true;
+
+          } //eo notifyDrop
+        }); //eo propertydd
+      }
+    });
+
+    var win = new Ext.Window({
+      closable: true,
+      modal: false,
+      layout: 'form',
+      title: 'Add new ClassMap to RoleMAp',
+      items: form,
+      height: 180,
+      width: 430,
+      plain: true,
+      scope: this
+    });
+
+    win.show();
   },
 
   onDeleteClassMap: function (node) {
