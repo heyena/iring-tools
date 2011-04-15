@@ -187,14 +187,16 @@ namespace iRINGTools.Web.Controllers
             var classMapId = form["id"];
             if (graphMap != null)
             {
-              foreach (var templateMaps in graphMap.classTemplateMaps)
+              foreach (var classTemplateMap in graphMap.classTemplateMaps)
               {
-                if (templateMaps.classMap.id == graphclassMap.id) continue;
-                foreach (var templateMap in templateMaps.templateMaps)
+                if (classTemplateMap.classMap.id == classMapId)
                 {
-
-                  JsonTreeNode templateNode = GetTemplateNode(templateMap, context);
-                  nodes.Add(templateNode);
+                  foreach (var templateMap in classTemplateMap.templateMaps)
+                  {
+                    JsonTreeNode templateNode = GetTemplateNode(templateMap, context);
+                    nodes.Add(templateNode);
+                  }
+                  break;
                 }
               }
             }
