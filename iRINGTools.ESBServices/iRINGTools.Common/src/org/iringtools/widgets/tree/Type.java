@@ -9,7 +9,7 @@ public enum Type {
     SUPERCLASS("SuperclassesNode"),
     SUBCLASS("SubclassesNode"),
     CLASSTEMPLATE("ClassTemplatesNode"),
-    ROLENODE("RolesNode");
+    TEMPLATENODE("TemplateNode");
 	
     private final String value;
 
