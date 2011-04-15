@@ -57,15 +57,18 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     this.treeLoader = new Ext.tree.TreeLoader({
       baseParams: {
         type: null,
-        id: null
+        id: null,
+        range: null
       },
       url: this.navigationUrl
     });
 
     this.treeLoader.on("beforeload", function (treeLoader, node) {
       treeLoader.baseParams.type = node.attributes.type;
-      if (node.attributes.record != undefined)
+      if (node.attributes.record != undefined) {
         treeLoader.baseParams.id = node.attributes.record.id;
+  //      if node.attributes.record
+      }
     }, this);
 
     this.rootNode = new Ext.tree.AsyncTreeNode({
@@ -142,13 +145,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         this.mappingPanel.root.reload();
       }
     }
-
-
-    // Ext.state.Manager.set('mapping-state-'+this.scope.Name+'-'+this.application.Name, node.getPath());
-
-
-    //Ext.state.Manager.clear('mapping-state-'+this.scope.Name+'-'+this.application.Name);
-
 
     // super
     AdapterManager.MappingPanel.superclass.initComponent.call(this);
@@ -505,7 +501,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         identifier: node.attributes.identifier
       },
       success: function (result, request) {
-        that.mappingPanel.root.reload(); 
+        that.mappingPanel.root.reload();
         Ext.Msg.show({ title: 'Success', msg: 'Template [' + node.id.split('/')[3] + '] removed from mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
       },
       failure: function (result, request) { }
@@ -523,6 +519,24 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onMakePossessor: function (node) {
+    var that = this;
+    var node = that.mappingPanel.getSelectionModel().getSelectedNode();
+    Ext.Ajax.request({
+      url: 'mapping/makePossessor',
+      method: 'POST',
+      params: {
+        Scope: this.scope.Name,
+        Application: this.application.Name,
+        mappingNode: node.attributes.id,
+        parentIdentifier: node.parentNode.attributes.identifier,
+        identifier: node.attributes.identifier
+      },
+      success: function (result, request) {
+        that.mappingPanel.root.reload();
+        Ext.Msg.show({ title: 'Success', msg: 'Made [' + node.id.split('/')[4] + '] possessor role', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+      },
+      failure: function (result, request) { }
+    })
   },
 
   onAddClassMap: function (node) {
