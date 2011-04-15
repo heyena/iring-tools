@@ -142,15 +142,15 @@ public class RefDataModel
 	  try{
 		  response = httpClient.get(Response.class, "/classes/"+id+"/templates");
 		  List<Node> treeNodes = tree.getNodes();
-	      TreeNode node;
+	      LeafNode node;
 	      for (Entity entity : response.getEntities().getItems())
 	       {
-	    	  node = new TreeNode();
+	    	  node = new LeafNode();
 		      node.setText(entity.getLabel());
 		      node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
 		      node.setRecord(entity);
 		      node.setIconCls("template");
-	  		  node.setType(Type.ROLENODE.value());
+	  		  node.setType(Type.TEMPLATENODE.value());
 	    	  treeNodes.add(node);
 	       }
 	  }catch(Exception e){
