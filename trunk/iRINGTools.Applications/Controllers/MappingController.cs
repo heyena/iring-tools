@@ -17,6 +17,7 @@ using org.iringtools.mapping;
 
 using iRINGTools.Web.Helpers;
 using iRINGTools.Web.Models;
+using org.ids_adi.qmxf;
 
 namespace iRINGTools.Web.Controllers
 {
@@ -24,6 +25,7 @@ namespace iRINGTools.Web.Controllers
   {
     NamespaceMapper _nsMap = new NamespaceMapper();
     private NameValueCollection _settings = null;
+    private RefDataRepository _refdata = null;
     private IMappingRepository _repository { get; set; }
     private string _keyFormat = "Mapping.{0}.{1}";
 
@@ -34,6 +36,7 @@ namespace iRINGTools.Web.Controllers
     {
       _settings = ConfigurationManager.AppSettings;
       _repository = repository;
+      _refdata = new RefDataRepository();
     }
 
     //
@@ -65,6 +68,68 @@ namespace iRINGTools.Web.Controllers
     public JsonResult AddTemplateMap(FormCollection form)
     {
       JsonTreeNode nodes = new JsonTreeNode();
+      try
+      {
+        string qName = string.Empty;
+
+        char[] delimiters = new char[] { '/' };
+        string format = String.Empty;
+        string propertyCtx = form["ctx"];
+        string nodeType = form["nodetype"];
+        string parentType = form["parentType"];
+        string parentId = form["parentId"];
+        string identifier = form["id"];
+
+        if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
+
+        string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string scope = dataObjectVars[0];
+        string application = dataObjectVars[1];
+        string graph = dataObjectVars[2];
+        string context = string.Format("{0}/{1}", scope, application);
+        ClassMap selectedClassMap = null;
+        Mapping mapping = GetMapping(scope, application);
+        GraphMap graphMap = mapping.FindGraphMap(graph);
+        QMXF newtemplate = _refdata.GetTemplate(identifier);
+        if (parentType == "GraphMapNode")
+        {
+          selectedClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
+        }
+        else if(parentType == "ClassMapNode")
+        {
+          selectedClassMap = graphMap.classTemplateMaps.FirstOrDefault(g => g.classMap.id == parentId).classMap;
+        }
+        object template = null;
+        TemplateMap templateMap = new TemplateMap();
+        if (newtemplate.templateDefinitions.Count > 0)
+        {
+          // graphMap.AddTemplateMap(
+          foreach (var defs in newtemplate.templateDefinitions)
+          {
+            template = defs;
+            templateMap.id = defs.identifier;
+            templateMap.name = defs.name[0].value;
+            templateMap.type = TemplateType.Definition;
+            GetRoleMaps(selectedClassMap.id, template, templateMap);
+          }
+        }
+        else
+        {
+          foreach (var quals in newtemplate.templateQualifications)
+          {
+            template = quals;
+            templateMap.id = quals.identifier;
+            templateMap.name = quals.name[0].value;
+            templateMap.type = TemplateType.Qualification;
+            GetRoleMaps(selectedClassMap.id, template, templateMap);
+          }
+        }
+        graphMap.AddTemplateMap(selectedClassMap, templateMap);
+      }
+      catch (Exception ex)
+      {
+        return Json(nodes, JsonRequestBehavior.AllowGet);
+      }
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
@@ -170,6 +235,8 @@ namespace iRINGTools.Web.Controllers
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
+
+
     private JsonTreeNode GetRoleNode(RoleMap role, string context)
     {
       JsonTreeNode templateNode = new JsonTreeNode
@@ -193,6 +260,7 @@ namespace iRINGTools.Web.Controllers
     {
       JsonTreeNode classNode = new JsonTreeNode
       {
+        identifier = classMap.id,
         nodeType = "async",
         type = "ClassMapNode",
         icon = "Content/img/class-map.png",
@@ -211,6 +279,7 @@ namespace iRINGTools.Web.Controllers
       JsonTreeNode templateNode = new JsonTreeNode
       {
         nodeType = "async",
+        identifier = templateMap.id,
         type = "TemplateMapNode",
         icon = "Content/img/template-map.png",
         id = context + "/" + templateMap.name,
@@ -228,6 +297,7 @@ namespace iRINGTools.Web.Controllers
       JsonTreeNode graphNode = new JsonTreeNode
       {
         nodeType = "async",
+        identifier = graph.classTemplateMaps.FirstOrDefault().classMap.id,
         type = "GraphMapNode",
         icon = "Content/img/class-map.png",
         id = context + "/" + graph.name,
@@ -308,7 +378,7 @@ namespace iRINGTools.Web.Controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
-    public JsonResult DeleteGraph(FormCollection form)
+    public JsonResult DeleteGraphMap(FormCollection form)
     {
       
       try
@@ -326,6 +396,130 @@ namespace iRINGTools.Web.Controllers
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult DeleteTemplateMap(FormCollection form)
+    {
+
+      try
+      {
+        string scope = form["scope"];
+        string application = form["application"];
+        Mapping mapping = GetMapping(scope, application);
+        string parentNode = form["mappingNode"].Split('/')[2];
+        string templateId = form["identifier"];
+        string parentClassId = form["parentIdentifier"];
+        GraphMap graphMap = mapping.FindGraphMap(parentNode);
+        graphMap.DeleteTemplateMap(parentClassId, templateId);
+      }
+      catch (Exception ex)
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+
+    private void GetRoleMaps(string classId, object template, TemplateMap currentTemplateMap)
+    {
+      if (currentTemplateMap.roleMaps == null)
+        currentTemplateMap.roleMaps = new RoleMaps();
+
+      if (template is TemplateDefinition)
+      {
+        TemplateDefinition templateDefinition = (TemplateDefinition)template;
+        List<RoleDefinition> roleDefinitions = templateDefinition.roleDefinition;
+
+        foreach (RoleDefinition roleDefinition in roleDefinitions)
+        {
+          string range = roleDefinition.range;
+          RoleMap roleMap = new RoleMap();
+          if (range != classId && range.StartsWith("xsd:"))
+          {
+            roleMap.type = RoleType.DataProperty;
+            roleMap.name = roleDefinition.name.FirstOrDefault().value;
+            roleMap.dataType = range;
+            roleMap.propertyName = string.Empty;
+            roleMap.id = roleDefinition.identifier;
+
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+          else if (range != classId && !range.StartsWith("xsd:"))
+          {
+
+            roleMap.type = RoleType.ObjectProperty;
+            roleMap.name = roleDefinition.name.FirstOrDefault().value;
+
+            roleMap.dataType = range;
+            roleMap.propertyName = string.Empty;
+            roleMap.id = roleDefinition.identifier;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+          else if (range == classId)
+          {
+            roleMap.type = RoleType.Possessor;
+            roleMap.name = roleDefinition.name.FirstOrDefault().value;
+            roleMap.dataType = range;
+            roleMap.propertyName = string.Empty;
+            roleMap.id = roleDefinition.identifier;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+        }
+      }
+      if (template is TemplateQualification)
+      {
+        TemplateQualification templateQualification = (TemplateQualification)template;
+        List<RoleQualification> roleQualifications = templateQualification.roleQualification;
+
+        foreach (RoleQualification roleQualification in roleQualifications)
+        {
+          string range = roleQualification.range;
+          RoleMap roleMap = new RoleMap();
+
+          roleMap.name = roleQualification.name.FirstOrDefault().value;
+          roleMap.id = roleQualification.qualifies;
+
+          if (roleQualification.value != null)  // fixed role
+          {
+            if (!String.IsNullOrEmpty(roleQualification.value.reference))
+            {
+              roleMap.type = RoleType.Reference;
+              roleMap.value = roleQualification.value.reference;
+            }
+            else if (!String.IsNullOrEmpty(roleQualification.value.text))  // fixed role is a literal
+            {
+              roleMap.type = RoleType.FixedValue;
+              roleMap.value = roleQualification.value.text;
+              roleMap.dataType = roleQualification.value.As;
+            }
+
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+          else if (range != classId && range.StartsWith("xsd:")) // property role
+          {
+            roleMap.type = RoleType.DataProperty;
+            roleMap.dataType = range;
+            roleMap.propertyName = String.Empty;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+          else if (range != classId && !range.StartsWith("xsd:"))
+          {
+            roleMap.type = RoleType.ObjectProperty;
+
+            roleMap.dataType = range;
+            roleMap.propertyName = String.Empty;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+
+          else if (range == classId)    // class role
+          {
+            roleMap.type = RoleType.Possessor;
+
+            roleMap.dataType = range;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+        }
+      }
     }
   }
 }

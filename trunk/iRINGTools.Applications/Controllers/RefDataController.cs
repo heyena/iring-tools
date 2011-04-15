@@ -39,7 +39,7 @@ namespace iRINGTools.Web.Controllers
 
     public JsonResult Index(FormCollection form)
     {
-      
+
       int start = 0;
       int limit = 100;
       string id = form["id"];
@@ -69,7 +69,7 @@ namespace iRINGTools.Web.Controllers
 
       string id = form["id"];
       string searchtype = form["type"];
-      string query = form["query"];      
+      string query = form["query"];
       Int32.TryParse(form["limit"], out limit);
       Int32.TryParse(form["start"], out start);
 
@@ -97,12 +97,15 @@ namespace iRINGTools.Web.Controllers
           case "TemplateNode":
             nodes = GetRoles(id);
             break;
+          case "RoleNode":
+            nodes = GetRoleClass(id);
+            break;
           default:
             nodes = new List<JsonTreeNode>();
             break;
         }
       }
-        
+
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
@@ -163,7 +166,7 @@ namespace iRINGTools.Web.Controllers
       foreach (Entity entity in dataEntities.Entities.Values.ToList<Entity>())
       {
         string label = entity.Label + '[' + entity.Repository + ']';
-        string prefix = _nsMap.GetPrefix(new Uri(entity.Uri.Substring(0, entity.Uri.LastIndexOf("#") +1)));
+        string prefix = _nsMap.GetPrefix(new Uri(entity.Uri.Substring(0, entity.Uri.LastIndexOf("#") + 1)));
         JsonTreeNode node = new JsonTreeNode
         {
           nodeType = "async",
@@ -177,7 +180,7 @@ namespace iRINGTools.Web.Controllers
           children = (prefix.Equals("rdl")) ? GetDefaultChildren(label) : null,
           record = entity
         };
-        
+
         nodes.Add(node);
       }
 
@@ -211,9 +214,9 @@ namespace iRINGTools.Web.Controllers
       }
       return nodes;
     }
-     
+
     private List<JsonTreeNode> GetSubClasses(string classId)
-    {      
+    {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
       if (!string.IsNullOrEmpty(classId))
@@ -234,7 +237,7 @@ namespace iRINGTools.Web.Controllers
             children = GetDefaultChildren(entity.Label),
             record = entity
           };
-          
+
           nodes.Add(node);
         }
       }
@@ -272,7 +275,7 @@ namespace iRINGTools.Web.Controllers
     }
 
     private List<JsonTreeNode> GetTemplates(string classId)
-    {      
+    {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
       if (!string.IsNullOrEmpty(classId))
@@ -299,16 +302,40 @@ namespace iRINGTools.Web.Controllers
       }
 
       return nodes;
-    }    
+    }
+    private List<JsonTreeNode> GetRoleClass(string id)
+    {
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+      if (!string.IsNullOrEmpty(id))
+      {
+        Entity entity = _refdataRepository.GetClassLabel(id);
+        if (entity != null && entity.Uri != null)
+        {
+          JsonTreeNode classNode = new JsonTreeNode
+          {
+            identifier = entity.Uri.Split('#')[1],
+            leaf = false,
+            children = null,
+            id = ("ClassMap" + entity.Label).GetHashCode().ToString(),
+            record = entity,
+            type = "ClassNode",
+            icon = "Content/img/class.png"
+          };
+          nodes.Add(classNode);
+        }
+      }
+      return nodes;
+    }
 
     private List<JsonTreeNode> GetRoles(string Id)
-    {      
+    {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
       if (!string.IsNullOrEmpty(Id))
       {
         QMXF dataEntities = _refdataRepository.GetTemplate(Id);
-        
+
         if (dataEntities.templateDefinitions.Count > 0)
         {
           foreach (var entity in dataEntities.templateDefinitions)
@@ -321,7 +348,7 @@ namespace iRINGTools.Web.Controllers
                 type = "RoleNode",
                 icon = "Content/img/role.png",
                 children = null,
-                leaf = true,
+                leaf = false,
                 text = role.name[0].value,
                 identifier = role.identifier,
                 record = role
@@ -343,7 +370,7 @@ namespace iRINGTools.Web.Controllers
                 text = role.name[0].value,
                 icon = "Content/img/role.png",
                 children = null,
-                leaf = true,
+                leaf = false,
                 identifier = role.identifier,
                 record = role
               };
