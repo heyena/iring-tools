@@ -180,7 +180,9 @@ namespace org.iringtools.mapping
 
     public static bool IsMapped(this RoleMap roleMap)
     {
-      return roleMap.classMap != null || !String.IsNullOrEmpty(roleMap.propertyName) || !String.IsNullOrEmpty(roleMap.value);     
+      return roleMap.classMap != null ||
+        !String.IsNullOrEmpty(roleMap.propertyName) || 
+        !String.IsNullOrEmpty(roleMap.value) || roleMap.type == RoleType.Possessor;     
     }
 
       public static string ResolveValueMap(this Mapping mapping, string valueListName, string qualifiedUri)
