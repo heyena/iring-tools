@@ -368,6 +368,7 @@ namespace iRINGTools.Web.Controllers
         string keyProperty = dataObjectVars[5];
         string dataObject = dataObjectVars[4];
         string classId = form["classUrl"];
+
         bool qn = false;
 
         qn = _nsMap.ReduceToQName(classId, out qName);
