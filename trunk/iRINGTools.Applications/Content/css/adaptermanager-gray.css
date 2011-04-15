@@ -133,6 +133,9 @@ a.breadcrumb {
 .tabsClass {
   background-image:url('../img/class.png') !important;
 }
+.tabsMapping {
+  background-image:url('../img/16x16/mapping.png') !important;
+}
 
 .wizard-config 
 {
