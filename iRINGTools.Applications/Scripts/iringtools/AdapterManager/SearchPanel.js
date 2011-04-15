@@ -20,7 +20,6 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   initComponent: function () {
     this.tbar = this.buildToolbar();
     this.propertyPanel = new Ext.grid.PropertyGrid({
-      id: 'class-property-panel',
       title: 'Details',
       region: 'east',
       // layout: 'fit',
@@ -36,14 +35,16 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       frame: true,
       source: {},
       listeners: {
-      	// to copy but not edit content of property grid				
-      	afteredit: function (e) {
-      		var propertypan = Ext.getCmp('search-panel').items.map['class-property-panel'];
-      		propertypan.getSelectionModel().selections.items[0].data.value = e.originalValue;
-      		e.record.data.value = e.originalValue;
-      		e.value = e.originalValue;
-      		propertypan.getView().refresh();
-      	}
+        beforeedit: function (e) {
+          e.cancel = true;
+        },
+        // to copy but not edit content of property grid				
+        afteredit: function (e) {
+          e.grid.getSelectionModel().selections.items[0].data.value = e.originalValue;
+          e.record.data.value = e.originalValue;
+          e.value = e.originalValue;
+          e.grid.getView().refresh();
+        }
       }
     });
 
@@ -54,7 +55,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       enableTabScroll: true,
       border: true,
       activeItem: 0,
-			iconCls: 'tabsClass'
+      iconCls: 'tabsClass'
     });
 
 
@@ -68,7 +69,6 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     return [
       {
         xtype: 'textfield',
-        allowBlank: false,
         blankText: 'This field can not be blank',
         name: 'referencesearch',
         id: 'referencesearch',
@@ -100,9 +100,9 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
         name: 'reset',
         scope: this,
         style: {
-          marginRight: '5px'          
+          marginRight: '5px'
         }
-      }      
+      }
     ];
   },
 
@@ -117,64 +117,65 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   },
 
   onSearch: function () {
-
     var searchText = Ext.get('referencesearch').getValue();
+    if (searchText != '') {
 
-    var treeLoader = new Ext.tree.TreeLoader({
-      requestMethod: 'POST',
-      url: this.searchUrl,
-      baseParams: {
-        id: null,
-        type: null,
-        query: searchText,
-        limit: this.limit,
-        start: 0
-      }
-    });
+      var treeLoader = new Ext.tree.TreeLoader({
+        requestMethod: 'POST',
+        url: this.searchUrl,
+        baseParams: {
+          id: null,
+          type: null,
+          query: searchText,
+          limit: this.limit,
+          start: 0
+        }
+      });
 
-    treeLoader.on("beforeload", function (treeLoader, node) {
-      treeLoader.baseParams.type = node.attributes.type;
-      treeLoader.baseParams.query = searchText;
-      treeLoader.baseParams.limit = this.limit;
-      treeLoader.baseParams.start = 0;
-      if (node.parentNode != undefined)
-        treeLoader.baseParams.id = node.parentNode.attributes.identifier;
-      if (node.attributes.type == 'TemplateNode')
-        treeLoader.baseParams.id = node.attributes.identifier;
-    }, this);
+      treeLoader.on("beforeload", function (treeLoader, node) {
+        treeLoader.baseParams.type = node.attributes.type;
+        treeLoader.baseParams.query = searchText;
+        treeLoader.baseParams.limit = this.limit;
+        treeLoader.baseParams.start = 0;
+        if (node.parentNode != undefined)
+          treeLoader.baseParams.id = node.parentNode.attributes.identifier;
+        if (node.attributes.type == 'TemplateNode')
+          treeLoader.baseParams.id = node.attributes.identifier;
+      }, this);
 
-    var tree = new Ext.tree.TreePanel({
-      title: searchText,
-      enableDrag: true,
-      ddGroup: 'refdataGroup',      
-      animate: true,
-      lines: true,
-      id: 'tab_' + searchText,
-      autoScroll: true,
-      style: 'padding-left:5px;',
-      border: false,
-      closable: true,
-      rootVisible: false,
-      loader: treeLoader,
-      root: {
-        nodeType: 'async',
-        // draggable: true,
-        type: 'SearchNode'
-      },
-      containerScroll: true
-    });
+      var tree = new Ext.tree.TreePanel({
+        title: searchText,
+        enableDrag: true,
+        ddGroup: 'refdataGroup',
+        animate: true,
+        lines: true,
+        id: 'tab_' + searchText,
+        autoScroll: true,
+        style: 'padding-left:5px;',
+        border: false,
+        closable: true,
+        rootVisible: false,
+        loader: treeLoader,
+        root: {
+          nodeType: 'async',
+          // draggable: true,
+          type: 'SearchNode'
+        },
+        containerScroll: true
+      });
 
-    //	tree.on('beforeexpandnode', this.restrictExpand, this);
+      //	tree.on('beforeexpandnode', this.restrictExpand, this);
 
-    tree.on('beforeload', function (node) {
-      Ext.getCmp('content-pane').getEl().mask('Loading...');
-    });
-    tree.on('load', function (node) {
-      Ext.getCmp('content-pane').getEl().unmask();
-    });
-    tree.getRootNode().expand();
-    tree.on('click', this.onClick, this);
-    this.refClassTabPanel.add(tree).show();
+      tree.on('beforeload', function (node) {
+        Ext.getCmp('content-pane').getEl().mask('Loading...');
+      });
+      tree.on('load', function (node) {
+        Ext.getCmp('content-pane').getEl().unmask();
+      });
+      tree.getRootNode().expand();
+      tree.on('click', this.onClick, this);
+      this.refClassTabPanel.add(tree).show();
+    }
   },
   onClick: function (node) {
     try {

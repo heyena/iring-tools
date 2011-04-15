@@ -311,13 +311,15 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             // bodyStyle: 'padding-bottom:15px;background:#eee;',
             source: {},
             listeners: {
-            	// to copy but not edit content of property grid				
+              beforeedit: function (e) {
+                e.cancel = true;
+              },
+              // to copy but not edit content of property grid
             	afteredit: function (e) {
-            		var propertypan = Ext.getCmp('nav-panel').items.map['property-panel'];
-            		propertypan.getSelectionModel().selections.items[0].data.value = e.originalValue;
+            	  e.grid.getSelectionModel().selections.items[0].data.value = e.originalValue;
             		e.record.data.value = e.originalValue;
             		e.value = e.originalValue;
-            		propertypan.getView().refresh();
+            		e.grid.getView().refresh();
             	}
             }
         });
