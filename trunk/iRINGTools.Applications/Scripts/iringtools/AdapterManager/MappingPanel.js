@@ -31,6 +31,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   directoryPanel: null,
   searchPanel: null,
 
+  iconCls: 'tabsMapping',
+
   /**
   * initComponent
   * @protected
@@ -75,7 +77,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       id: this.scope.Name + "/" + this.application.Name,
       text: 'Mapping',
       expanded: true,
-      icon: 'Content/img/internet-web-browser.png',
+      icon: 'Content/img/16x16/mapping.png',
       type: 'MappingNode'
     });
 
