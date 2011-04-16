@@ -16,9 +16,9 @@
 
   <xs:complexType name="DataTransferObjects">
     <xs:sequence>
-      <xs:element name="scopeName" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="appName" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="dataTransferObjectList" type="DataTransferObjectList" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="scopeName" type="xs:string" />
+      <xs:element name="appName" type="xs:string" />
+      <xs:element name="dataTransferObjectList" type="DataTransferObjectList" />
     </xs:sequence>
   </xs:complexType>
   
@@ -36,9 +36,9 @@
 
   <xs:complexType name="DataTransferObject">
     <xs:sequence>
-      <xs:element name="identifier" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="classObjects" type="ClassObjects" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="transferType" type="TransferType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="identifier" type="xs:string" />
+      <xs:element name="classObjects" type="ClassObjects" />
+      <xs:element name="transferType" type="TransferType" />
     </xs:sequence>
   </xs:complexType>
 
@@ -56,11 +56,11 @@
 
   <xs:complexType name="ClassObject">
     <xs:sequence>
-      <xs:element name="classId" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="identifier" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="templateObjects" type="TemplateObjects" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="transferType" type="TransferType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="classId" type="xs:string" />
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="identifier" type="xs:string" />
+      <xs:element name="templateObjects" type="TemplateObjects" />
+      <xs:element name="transferType" type="TransferType" />
     </xs:sequence>
   </xs:complexType>
 
@@ -78,10 +78,10 @@
 
   <xs:complexType name="TemplateObject">
     <xs:sequence>
-      <xs:element name="templateId" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1" />
-      <xs:element name="roleObjects" type="RoleObjects" minOccurs="0" maxOccurs="1" />
-      <xs:element name="transferType" type="TransferType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="templateId" type="xs:string" />
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="roleObjects" type="RoleObjects" />
+      <xs:element name="transferType" type="TransferType" />
     </xs:sequence>
   </xs:complexType>
 
@@ -99,15 +99,15 @@
 
   <xs:complexType name="RoleObject">
     <xs:sequence>
-      <xs:element name="type" type="RoleType" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="roleId" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="dataType" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="oldValue" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="value" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="relatedClassId" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="relatedClassName" type="xs:string" minOccurs="0" maxOccurs="1" />
-      <xs:element name="hasValueMap" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="type" type="RoleType" />
+      <xs:element name="roleId" type="xs:string" />
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="dataType" type="xs:string" />
+      <xs:element name="oldValue" type="xs:string" />
+      <xs:element name="value" type="xs:string" />
+      <xs:element name="relatedClassId" type="xs:string" />
+      <xs:element name="relatedClassName" type="xs:string" />
+      <xs:element name="hasValueMap" type="xs:boolean"/>
     </xs:sequence>
   </xs:complexType>
 

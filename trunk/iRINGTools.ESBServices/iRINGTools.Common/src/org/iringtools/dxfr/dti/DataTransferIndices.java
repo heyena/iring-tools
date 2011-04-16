@@ -3,6 +3,7 @@ package org.iringtools.dxfr.dti;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -17,11 +18,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="scopeName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="appName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="dataTransferIndexList" type="{http://www.iringtools.org/dxfr/dti}DataTransferIndexList" minOccurs="0"/>
- *         &lt;element name="sortType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="sortOrder" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="scopeName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="appName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="dataTransferIndexList" type="{http://www.iringtools.org/dxfr/dti}DataTransferIndexList"/>
+ *         &lt;element name="sortType" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="sortOrder" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -41,10 +42,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "dataTransferIndices")
 public class DataTransferIndices {
 
+    @XmlElement(required = true)
     protected String scopeName;
+    @XmlElement(required = true)
     protected String appName;
+    @XmlElement(required = true)
     protected DataTransferIndexList dataTransferIndexList;
+    @XmlElement(required = true)
     protected String sortType;
+    @XmlElement(required = true)
     protected String sortOrder;
 
     /**
