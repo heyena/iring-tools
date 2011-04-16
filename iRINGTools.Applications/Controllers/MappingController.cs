@@ -63,6 +63,59 @@ namespace iRINGTools.Web.Controllers
     public JsonResult AddClassMap(FormCollection form)
     {
       JsonTreeNode nodes = new JsonTreeNode();
+      try
+      {
+        char[] delimiters = new char[] { '/' };
+        string propertyCtx = form["objectName"];
+        string mappingNode = form["mappingNode"];
+        if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("Object Name/Property Name has no value");
+        string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string[] mappingVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string scope = dataObjectVars[0];
+        string application = dataObjectVars[1];
+        string dataObject = dataObjectVars[4];
+        string propertyName = dataObjectVars[5];
+        string graphName = mappingVars[2];
+        string templateName = mappingVars[3];
+        string roleName = mappingVars[4];
+        string classId = form["classUrl"];
+        string classLabel = form["classLabel"];
+
+        ClassMap classMap = new ClassMap();
+        TemplateMap templateMap = null;
+        Mapping mapping = GetMapping(scope, application);
+        GraphMap graphMap = mapping.FindGraphMap(graphName);
+        
+        foreach (var classTemplateMaps in graphMap.classTemplateMaps)
+        {
+          foreach (var tMap in classTemplateMaps.templateMaps)
+          {
+            if (tMap.name == templateName)
+            {
+              foreach (var role in tMap.roleMaps)
+              {
+                if (role.name == roleName)
+                {
+                  role.type = RoleType.Reference;
+                  role.value = classId;
+                  classMap.name = classLabel;
+                  classMap.id = classId;
+                  classMap.identifiers = new Identifiers();
+                  classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, propertyName));
+                  graphMap.AddClassMap(role, classMap);
+                  role.classMap = classMap;
+                  nodes.children.Add(GetClassNode(classMap, mappingNode));
+                  break;
+                }
+              }
+            }
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        return Json(nodes, JsonRequestBehavior.AllowGet);
+      }
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
@@ -91,6 +144,7 @@ namespace iRINGTools.Web.Controllers
         ClassMap selectedClassMap = null;
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graph);
+        ClassMap graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
         QMXF newtemplate = _refdata.GetTemplate(identifier);
         if (parentType == "GraphMapNode")
         {
@@ -98,7 +152,15 @@ namespace iRINGTools.Web.Controllers
         }
         else if(parentType == "ClassMapNode")
         {
-          selectedClassMap = graphMap.classTemplateMaps.FirstOrDefault(g => g.classMap.id == parentId).classMap;
+          foreach(var classTemplateMap in graphMap.classTemplateMaps)
+          {
+            if (classTemplateMap.classMap.id == parentId)
+            {
+              selectedClassMap = classTemplateMap.classMap;
+              break;
+            }
+          }
+            
         }
         object template = null;
         TemplateMap templateMap = new TemplateMap();
@@ -108,7 +170,7 @@ namespace iRINGTools.Web.Controllers
           foreach (var defs in newtemplate.templateDefinitions)
           {
             template = defs;
-            templateMap.id = defs.identifier;
+            templateMap.id = "tpl:" + defs.identifier;
             templateMap.name = defs.name[0].value;
             templateMap.type = TemplateType.Definition;
             GetRoleMaps(selectedClassMap.id, template, templateMap);
@@ -119,7 +181,7 @@ namespace iRINGTools.Web.Controllers
           foreach (var quals in newtemplate.templateQualifications)
           {
             template = quals;
-            templateMap.id = quals.identifier;
+            templateMap.id = "tpl:" + quals.identifier;
             templateMap.name = quals.name[0].value;
             templateMap.type = TemplateType.Qualification;
             GetRoleMaps(selectedClassMap.id, template, templateMap);
