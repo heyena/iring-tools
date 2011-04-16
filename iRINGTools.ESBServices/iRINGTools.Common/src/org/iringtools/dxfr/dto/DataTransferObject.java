@@ -18,8 +18,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="classObjects" type="{http://www.iringtools.org/dxfr/dto}ClassObjects" minOccurs="0"/>
- *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType" minOccurs="0"/>
+ *         &lt;element name="classObjects" type="{http://www.iringtools.org/dxfr/dto}ClassObjects"/>
+ *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dto}TransferType"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -38,7 +38,9 @@ public class DataTransferObject {
 
     @XmlElement(required = true)
     protected String identifier;
+    @XmlElement(required = true)
     protected ClassObjects classObjects;
+    @XmlElement(required = true)
     protected TransferType transferType;
 
     /**

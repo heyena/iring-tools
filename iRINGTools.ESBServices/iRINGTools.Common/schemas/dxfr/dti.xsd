@@ -15,11 +15,11 @@
 
   <xs:complexType name="DataTransferIndices">
     <xs:sequence>
-      <xs:element name="scopeName" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="appName" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="dataTransferIndexList" type="DataTransferIndexList" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="sortType" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="sortOrder" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="scopeName" type="xs:string" />
+      <xs:element name="appName" type="xs:string" />
+      <xs:element name="dataTransferIndexList" type="DataTransferIndexList" />
+      <xs:element name="sortType" type="xs:string" />
+      <xs:element name="sortOrder" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 
@@ -37,10 +37,10 @@
 
   <xs:complexType name="DataTransferIndex">
     <xs:sequence>
-      <xs:element name="identifier" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="hashValue" type="xs:string" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="transferType" type="TransferType" minOccurs="1" maxOccurs="1"/>
-      <xs:element name="sortIndex" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="identifier" type="xs:string" />
+      <xs:element name="hashValue" type="xs:string" />
+      <xs:element name="transferType" type="TransferType" />
+      <xs:element name="sortIndex" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 
