@@ -206,7 +206,7 @@ namespace iRINGTools.Web.Controllers
             if (graphMap != null)
             {
               string className = graphClassMap.name;
-              if (variables.Count() > 3)
+              if (variables.Count() > 4)
               {
                 className = variables[variables.Count() - 2];
               }
