@@ -301,7 +301,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       txt = e.data.node.attributes.record.Label;
       templateId = e.data.node.attributes.identifier;
       rec = e.data.node.attributes.record;
-      context = e.tree.root.id + '/' + e.target.text + '/' + txt;
+      context = e.target.id + '/' + txt;
       lf = false;
 
       e.tree.getEl().mask('Loading...');
@@ -343,7 +343,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmit2 },
+        { text: 'Submit', scope: this, handler: this.onSubmitGraphMap },
         { text: 'Close', scope: this, handler: this.onClose }
         ],
       url: 'mapping/addgraphmap',
@@ -439,14 +439,14 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     }
   },
 
-  onSubmit: function (btn, e) {
+  onSubmitGraphMap: function (btn, e) {
     var form = btn.findParentByType('form');
     var win = btn.findParentByType('window');
     var objectname = Ext.get('objectName').dom.value;
     var classlabel = Ext.get('classLabel').dom.value;
     var classuri = Ext.get('classUrl').dom.value;
     var graphname = Ext.get('graphName').dom.value;
-
+    var that = this;
     if (form.getForm().isValid())
       Ext.Ajax.request({
         url: 'mapping/addgraphmap',
@@ -458,7 +458,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           graphName: graphname
         },
         success: function (result, request) {
-          win.close();
+          that.onReload();
           Ext.Msg.show({ title: 'Success', msg: 'Added GraphMap to mapping', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
         },
         failure: function (result, request) {
@@ -467,37 +467,39 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       })
   },
 
-    onSubmit2: function (btn, e) {
-      var form = btn.findParentByType('form');
-      var win = btn.findParentByType('window');
-      var objectname = Ext.get('objectName').dom.value;
-      var classlabel = Ext.get('classLabel').dom.value;
-      var classuri = Ext.get('classUrl').dom.value;
-
-      if (form.getForm().isValid())
-        Ext.Ajax.request({
-          url: 'mapping/addclassmap',
-          method: 'POST',
-          params: {
-            objectName: objectname,
-            classLabel: classlabel,
-            classUrl: classuri
-          },
-          success: function (result, request) {
-            win.close();
-            Ext.Msg.show({ title: 'Success', msg: 'Added ClassMap to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
-          },
-          failure: function (result, request) {
-            Ext.Msg.show({ title: 'Failure', msg: 'Failed to Add ClassMap to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
-          }
-        })
-    },
+  onSubmitClassMap: function (btn, e) {
+    var that = this;
+    var form = btn.findParentByType('form');
+    var win = btn.findParentByType('window');
+    var objectname = Ext.get('objectName').dom.value;
+    var classlabel = Ext.get('classLabel').dom.value;
+    var classurl = Ext.get('classUrl').dom.value;
+    var mapNode = Ext.get('mappingNode').dom.value;
+    if (form.getForm().isValid())
+      Ext.Ajax.request({
+        url: 'mapping/addclassmap',
+        method: 'POST',
+        params: {
+          objectName: objectname,
+          classLabel: classlabel,
+          classUrl: classurl,
+          mappingNode: that.mappingPanel.getSelectionModel().getSelectedNode().attributes.id
+        },
+        success: function (result, request) {
+          win.close();
+          Ext.Msg.show({ title: 'Success', msg: 'Added ClassMap to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+        },
+        failure: function (result, request) {
+          Ext.Msg.show({ title: 'Failure', msg: 'Failed to Add ClassMap to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
+        }
+      })
+  },
   onAddTemplateMap: function (node) {
   },
 
-  onDeleteGraphMap: function (node) {
+  onDeleteGraphMap: function () {
     var that = this;
-    //var node = this.getSelectedNode();
+    var node = this.getSelectedNode();
     Ext.Ajax.request({
       url: 'mapping/deleteGraphMap',
       method: 'POST',
@@ -563,7 +565,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onAddClassMap: function () {
-    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+    var mapnode = this.mappingPanel.getSelectionModel().getSelectedNode();
     var formid = 'classtarget-' + this.scope.Name + '-' + this.application.Name;
     var form = new Ext.form.FormPanel({
       id: formid,
@@ -572,13 +574,13 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmit2 },
+        { text: 'Submit', scope: this, handler: this.onSubmitClassMap },
         { text: 'Close', scope: this, handler: this.onClose }
         ],
       url: 'mapping/addclassmap',
       items: [
       //{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true, value: null },
-              { xtype: 'hidden', name: 'objectName', id: 'objectName' },
+              {xtype: 'hidden', name: 'objectName', id: 'objectName' },
               { xtype: 'hidden', name: 'classLabel', id: 'classLabel' },
               { xtype: 'hidden', name: 'classUrl', id: 'classUrl' },
               { xtype: 'hidden', name: 'mappingNode', id: 'mappingNode', value: this.rootNode }
@@ -592,7 +594,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
       afterRender: function (cmp) {
         Ext.FormPanel.prototype.afterRender.apply(this, arguments);
-
+        var that = this;
         var propertyTarget = this.body.child('div.property-target' + formid);
         var propertydd = new Ext.dd.DropTarget(propertyTarget, {
           ddGroup: 'propertyGroup',
@@ -624,6 +626,18 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         var classTarget = this.body.child('div.class-target' + formid);
         var classdd = new Ext.dd.DropTarget(classTarget, {
           ddGroup: 'refdataGroup',
+          notifyEnter: function (dd, e, data) {
+            if (data.node.attributes.record.type != 'DataPropertyNode')
+              return this.dropNotAllowed;
+            else
+              return this.dropAllowed;
+          },
+          notifyOver: function (dd, e, data) {
+            if (data.node.attributes.type != 'DataPropertyNode')
+              return this.dropNotAllowed;
+            else
+              return this.dropAllowed;
+          },
           notifyDrop: function (classdd, e, data) {
             if (data.node.attributes.type != 'ClassNode') {
               Ext.Msg.show({
@@ -636,6 +650,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             }
             Ext.get('classLabel').dom.value = data.node.attributes.record.Label;
             Ext.get('classUrl').dom.value = data.node.attributes.record.Uri;
+            var mapNode = Ext.get('mappingPanel')
+            Ext.get('mappingNode').dom.value = mapnode.attributes.id;
             var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + data.node.attributes.record.Label + '</b></td></tr>'
             msg += '</table>'
             Ext.getCmp(formid).body.child('div.class-target' + formid).update(msg)
