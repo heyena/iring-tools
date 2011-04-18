@@ -28,26 +28,27 @@
 		</fileset>
 	</path>
 
-	<path id="jaxb-ri-20100511.userclasspath">
-		<fileset dir="../libraries/jaxb-ri-20100511/lib">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
+  <path id="log4j-1.2.16.userclasspath">
+    <fileset dir="../libraries/apache-log4j-1.2.16">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
 
-	<path id="log4j-1.2.16.userclasspath">
-		<fileset dir="../libraries/apache-log4j-1.2.16">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
+  <path id="jaxb-ri-20100511.userclasspath">
+  	<fileset dir="../libraries/jaxb-ri-20100511/lib">
+  	  <include name="**/*.jar" />
+    </fileset>
+  </path>
 
 	<target name="generate">
 		<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
-			<classpath refid="jaxb-ri-20100511.userclasspath" />
+      <classpath refid="jaxb-ri-20100511.userclasspath" />
 		</taskdef>
 		<xjc destdir="src" extension="true">
-			<schema dir="schemas" includes="**/*.xsd" />
+			<schema dir="schemas" includes="**/test.xsd" />
 			<arg value="-no-header" />
-			<arg value="-Xcollection-setter-injector" />
+      <arg value="-Xcollection-setter-injector" />
+			<arg value="-Xboolean-getter" />
 		</xjc>
 	</target>
 
