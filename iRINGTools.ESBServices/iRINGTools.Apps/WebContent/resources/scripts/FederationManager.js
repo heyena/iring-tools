@@ -130,10 +130,10 @@ Ext.onReady(function () {
     limit: 100
   });
 
-	searchPanel.on('openAddTab', function(panel, label, formData) {
+	searchPanel.on('openAddTab', function(panel, tabId, label, formData) {
 	    var newTab = new FederationManager.ContentPanel({
 	    	title: label,
-	        id:'rashi',
+	        id:tabId,
 	        configData: formData,
 	        //nId:node.id,
 	        //url: 'postFederation',                        
