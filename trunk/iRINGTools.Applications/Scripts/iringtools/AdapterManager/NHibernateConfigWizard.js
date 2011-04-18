@@ -127,8 +127,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   var tableName = tableNames.items[i];
                   var selected = false;
                   
-                  for (var j = 0; j < tableSelector.toData.length; j++) {
-                    if (tableName == tableSelector.toData[j][1]) {
+                  for (var j = 0; j < tableSelector.multiselects[1].store.length; j++) {
+                    if (tableName == tableSelector.multiselects[1].store[j][1]) {
                       selected = true;
                       break;
                     }
@@ -139,7 +139,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   }
                 }
                   
-                tableSelector.fromData = availItems;            
+                tableSelector.multiselects[0].store = availItems;
                 wizard.getLayout().setActiveItem(formIndex + 1);
               }
             },
@@ -172,14 +172,20 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         xtype: 'itemselector',
         name: 'tableNames',
         fieldLabel: 'Select Tables',
-        imagePath: 'scripts/ext-3.3.1/ux/multiselect/',
-        fromLegend: 'Available',
-        toLegend: 'Selected',
-        msWidth: 250,
-        msHeight: 300,
-        dataFields: ['tableName', 'tableValue'],
-        displayField: 'tableName',
-        valueField: 'tableValue'
+        imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+        multiselects: [{
+          width: 250,
+          height: 300,
+          store: [[]],
+          displayField: 'text',
+          valueField: 'value'
+        },{
+          width: 250,
+          height: 300,
+          store: [[]],
+          displayField: 'text',
+          valueField: 'value'
+        }]
       }],
       buttons: [{
         text: 'Prev',
@@ -299,8 +305,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   availItems[i] = [keyName, keyName];
                 }
                   
-                itemSelector.fromData = availItems; 
-                itemSelector.toData = [];
+                itemSelector.multiselects[0].store = availItems; 
+                itemSelector.multiselects[1].store = [];
                 
                 editPaneLayout.setActiveItem(1);
                 break;
@@ -322,8 +328,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   availItems[i] = [itemName, itemName];
                 }
                   
-                itemSelector.fromData = availItems; 
-                itemSelector.toData = [];
+                itemSelector.multiselects[0].store = availItems; 
+                itemSelector.multiselects[1].store = [];
                 
                 editPaneLayout.setActiveItem(3);
                 break;
@@ -344,8 +350,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   availItems[i] = [itemName, itemName];
                 }
                   
-                itemSelector.fromData = availItems; 
-                itemSelector.toData = [];
+                itemSelector.multiselects[0].store = availItems; 
+                itemSelector.multiselects[1].store = [];
                 
                 editPaneLayout.setActiveItem(5);
                 break;
@@ -385,14 +391,20 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             xtype: 'itemselector',
             name: 'keySelector',
             fieldLabel: 'Select Keys',
-            imagePath: 'scripts/ext-3.3.1/ux/multiselect/',
-            fromLegend: 'Available',
-            toLegend: 'Selected',
-            msWidth: 250,
-            msHeight: 300,
-            dataFields: ['keyName', 'keyValue'],
-            displayField: 'keyName',
-            valueField: 'keyValue'
+            imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+            multiselects: [{
+              width: 250,
+              height: 300,
+              store: [[]],
+              displayField: 'text',
+              valueField: 'value'
+            },{
+              width: 250,
+              height: 300,
+              store: [[]],
+              displayField: 'text',
+              valueField: 'value'
+            }]
           }]
         },{
           xtype: 'form',
@@ -418,14 +430,20 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             xtype: 'itemselector',
             name: 'propertySelector',
             fieldLabel: 'Select Properties',
-            imagePath: 'scripts/ext-3.3.1/ux/multiselect/',
-            fromLegend: 'Available',
-            toLegend: 'Selected',
-            msWidth: 250,
-            msHeight: 300,
-            dataFields: ['propertyName', 'propertyValue'],
-            displayField: 'propertyName',
-            valueField: 'propertyValue'
+            imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+            multiselects: [{
+              width: 250,
+              height: 300,
+              store: [[]],
+              displayField: 'text',
+              valueField: 'value'
+            },{
+              width: 250,
+              height: 300,
+              store: [[]],
+              displayField: 'text',
+              valueField: 'value'
+            }]
           }]
         },{
           xtype: 'form',
@@ -440,14 +458,20 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             xtype: 'itemselector',
             name: 'relationshipSelector',
             fieldLabel: 'Select Relationships',
-            imagePath: 'scripts/ext-3.3.1/ux/multiselect/',
-            fromLegend: 'Available',
-            toLegend: 'Selected',
-            msWidth: 250,
-            msHeight: 300,
-            dataFields: ['relationshipName', 'relationshipValue'],
-            displayField: 'relationshipName',
-            valueField: 'relationshipValue'
+            imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+            multiselects: [{
+              width: 250,
+              height: 300,
+              store: [[]],
+              displayField: 'text',
+              valueField: 'value'
+            },{
+              width: 250,
+              height: 300,
+              store: [[]],
+              displayField: 'text',
+              valueField: 'value'
+            }]
           }]
         },{
           xtype: 'form',
@@ -598,7 +622,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             selectedItems[i] = [dataObject.tableName, dataObject.tableName];
           }
             
-          tableSelector.toData = selectedItems;
+          tableSelector.multiselects[1].store = selectedItems;
         }
       },
       failure: function(response, request) {
