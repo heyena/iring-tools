@@ -554,7 +554,7 @@ public class DataModel
                 fields.add(field);
               }
 
-              if (roleObject.isHasValueMap())
+              if (roleObject.isHasValueMap() != null && roleObject.isHasValueMap())
               {
                 String roleObjectValue = roleObject.getValue();
                 roleObject.setValue(getValueMap(refServiceUri, roleObjectValue));
