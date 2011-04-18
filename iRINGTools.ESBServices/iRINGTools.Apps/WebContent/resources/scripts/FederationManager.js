@@ -135,8 +135,6 @@ Ext.onReady(function () {
 	    	title: label,
 	        id:tabId,
 	        configData: formData,
-	        //nId:node.id,
-	        //url: 'postFederation',                        
 	        single: true, // important, as many layouts can occur
 	        layout:'fit',
 	        autoScroll: true,
@@ -158,6 +156,18 @@ Ext.onReady(function () {
 
 		});
 		
+    var centrePanel = new Ext.Panel({
+        id: 'centre-panel',
+        region: 'center',
+        layout: 'border',
+        collapsible: false,
+        closable: true,
+        enableTabScroll: true,
+        border: true,
+        split: true,
+        items: [searchPanel, tabPanel]
+      });
+    
 	var viewport = new Ext.Viewport({
 		layout: 'border',
 		renderTo: Ext.getBody(),
@@ -170,8 +180,7 @@ Ext.onReady(function () {
 			contentEl:'header'
 		  },
 			federationPanel,
-			tabPanel,
-			searchPanel
+			centrePanel
 		]
 	});
 
