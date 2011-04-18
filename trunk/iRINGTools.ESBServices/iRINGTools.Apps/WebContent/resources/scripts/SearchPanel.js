@@ -181,9 +181,9 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    
   	    var tree = new Ext.tree.TreePanel({
   	      title: searchText,
-  	      useArrows: true,
+  	      //useArrows: true,
   	      animate: true,
-  	      lines: false,
+  	      lines: true,
   	      id: 'tab_' + searchText,
   	      autoScroll: true,
   	      style: 'padding-left:5px;',
@@ -223,6 +223,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
        openAddClassTab : function(){
           var listItems = new Array();
           var label = 'Add Class';
+          var tabId = 'addClass';
           
           listItems.push({
             xtype: 'hidden',
@@ -287,13 +288,14 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         	        	 						}];
 
          listItems.push(listItem);
-         this.fireEvent('openAddTab', this,label, listItems);
+         this.fireEvent('openAddTab', this,tabId,label, listItems);
         
       },
       
       onTemplateAdd : function(){
           var listItems = new Array();
           var label = 'Add Template';
+          var tabId = 'addTemplate';
           
           listItems.push({
             xtype: 'hidden',
@@ -338,7 +340,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
 	    	          	 				        	       }	]}]}];
 
          listItems.push(listItem);
-         this.fireEvent('openAddTab', this,label, listItems);
+         this.fireEvent('openAddTab', this,tabId, label, listItems);
         
       }
 
