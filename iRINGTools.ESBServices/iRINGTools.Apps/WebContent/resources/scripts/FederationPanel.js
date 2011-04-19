@@ -16,6 +16,7 @@ FederationManager.FederationPanel = Ext
           propertyPanel : null,
           contextMenu: null,
           contextRepoMenu:null,
+          contextRepoDisMenu:null,
 
           /**
            * initComponent
@@ -44,6 +45,10 @@ FederationManager.FederationPanel = Ext
             
             this.contextRepoMenu = new Ext.menu.Menu();
             this.contextRepoMenu.add(this.buildRepoContextMenu());
+            
+            this.contextRepoDisMenu = new Ext.menu.Menu();
+            this.contextRepoDisMenu.add(this.buildRepoDisContextMenu());
+            
 
             
             this.federationPanel = new Ext.tree.TreePanel( {
@@ -117,20 +122,28 @@ FederationManager.FederationPanel = Ext
             FederationManager.FederationPanel.superclass.initComponent.call(this);
           },
           showContextMenu: function (node, event) {
+        	   var dis;
         	    if (node.isSelected()) {
         	      var x = event.browserEvent.clientX;
         	      var y = event.browserEvent.clientY;
 
         	      if(node.parentNode.text == 'Repositories' || node.text == 'Repositories'){
-        	    	  this.contextRepoMenu.showAt([x, y]); 
+        	    	  var properties = node.attributes.properties;
+        	    	  dis=0;
+        	    		  for (var i in properties) {
+        	    			  if(i == 'Read Only' && properties[i]== 'true'){
+        	    				  dis=1;
+        	    				   break;
+        	    			  }
+        	    		  }
+        	    		  if(dis == 1){
+        	    			  this.contextRepoDisMenu.showAt([x, y]);
+        	    		  }else{
+        	    			  this.contextRepoMenu.showAt([x, y]);
+        	    		  }
         	      }else{
         	    	  this.contextMenu.showAt([x, y]);
         	      }
-        	      /*} else if (obj.type == "ScopeNode") {
-        	        this.scopeMenu.showAt([x, y]);
-        	      } else if (obj.type == "ApplicationNode") {
-        	        this.applicationMenu.showAt([x, y]);
-        	      }*/
         	    }
         	  },
           buildToolbar : function() {
@@ -191,41 +204,44 @@ FederationManager.FederationPanel = Ext
         	  
         	  buildRepoContextMenu: function () {
             	    return [
-            	      {
-            	        text: 'Open',
-            	        handler: this.onEdit,
-            	        icon : 'resources/images/16x16/document-open.png',
-            	        scope: this
-            	      },
-            	      {
-            	        text: 'Add',
-            	        handler: this.onAddnew,
-            	        icon : 'resources/images/16x16/document-new.png',
-            	        scope: this
-            	      },
-            	      {
-            	        text: 'Delete',
-            	        handler: this.onDelete,
-            	        icon : 'resources/images/16x16/edit-delete.png',
-            	        scope: this
-            	      },
+            	      this.buildContextMenu(),
             	      {
             	        xtype: 'menuseparator'
             	      },
             	      {
             	        text: 'Add Class',
-            	        //handler: this.onNewApplication,
+            	        handler: FederationManager.SearchPanel.onClassAdd,
             	        icon: 'resources/images/16x16/class-badge.png',
             	        scope: this
             	      },
             	      {
               	        text: 'Add Template',
-              	        //handler: this.onNewApplication,
+              	        handler: FederationManager.SearchPanel.onTemplateAdd,
               	        icon: 'resources/images/16x16/template-badge.png',
               	        scope: this
               	      }
             	    ]
             	  },
+             buildRepoDisContextMenu: function () {
+              	    return [
+              	      this.buildContextMenu(),
+              	      {
+              	        xtype: 'menuseparator'
+              	      },
+              	      {
+              	        text: 'Add Class',
+              	        disabled : true,
+              	        icon: 'resources/images/16x16/class-badge.png',
+              	        scope: this
+              	      },
+              	      {
+                	        text: 'Add Template',
+                	        disabled : true,
+                	        icon: 'resources/images/16x16/template-badge.png',
+                	        scope: this
+                	      }
+              	    ]
+              	  },
           onDelete : function() {
             that = this;
             var node = this.getSelectedNode();
