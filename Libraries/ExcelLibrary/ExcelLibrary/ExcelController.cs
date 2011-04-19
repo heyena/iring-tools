@@ -160,7 +160,7 @@ namespace org.iringtools.datalayer.excel
                                         {
                                             text = "Keys",
                                             type = "keys",
-                                            icon = "Content/img/key_new.png",
+                                           // icon = "Content/img/key_new.png",
                                             leaf = false,
                                             children = new List<JsonTreeNode>()
                                         };
@@ -169,7 +169,7 @@ namespace org.iringtools.datalayer.excel
                                         {
                                             text = "Properties",
                                             type = "properties",
-                                            icon = "Content/img/document-properties.png",
+                                        //    icon = "Content/img/document-properties.png",
                                             leaf = false,
                                             children = new List<JsonTreeNode>()
                                         };
