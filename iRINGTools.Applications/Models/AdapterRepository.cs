@@ -329,7 +329,7 @@ namespace iRINGTools.Web.Models
             // create data object node
             JsonTreeNode dataObjectNode = new JsonTreeNode()
             {
-              text = dataObject.tableName,
+              text = dataObject.objectName,
               type = "dataObject",
               leaf = false,
               children = new List<JsonTreeNode>()
@@ -358,7 +358,7 @@ namespace iRINGTools.Web.Models
 
                 JsonTreeNode keyPropertyNode = new JsonTreeNode()
                 {
-                  text = dataProperty.columnName,
+                  text = dataProperty.propertyName,
                   type = "keyProperty",
                   properties = properties,
                   leaf = true
@@ -370,9 +370,10 @@ namespace iRINGTools.Web.Models
               {
                 JsonTreeNode dataPropertyNode = new JsonTreeNode()
                 {
-                  text = dataProperty.columnName,
+                  text = dataProperty.propertyName,
                   type = "dataProperty",
                   leaf = true,
+                  hidden = true,
                   properties = properties
                 };
 
