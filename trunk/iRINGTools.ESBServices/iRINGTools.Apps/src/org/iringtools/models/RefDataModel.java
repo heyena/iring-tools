@@ -112,6 +112,7 @@ public class RefDataModel
 	      node.setRecord(hsMap);
 	      node.setIconCls("class");
   		  node.setType(Type.CLASS.value());
+  		  //***node.setHidden(true);
   		  List<Node> childrenNodes = node.getChildren();
     	  childrenNodes = getDefaultChildren(childrenNodes);
     	  treeNodes.add(node);
@@ -140,7 +141,8 @@ public class RefDataModel
 		      node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
 		      node.setRecord(entity);
 		      node.setIconCls("class");
-	  		  node.setType(classType.equalsIgnoreCase("Sub")?Type.SUBCLASS.value():Type.SUPERCLASS.value());
+	  		  //node.setType(classType.equalsIgnoreCase("Sub")?Type.SUBCLASS.value():Type.SUPERCLASS.value());
+	  		 node.setType(Type.CLASS.value());
 	  		  List<Node> childrenNodes = node.getChildren();
 	    	  childrenNodes = getDefaultChildren(childrenNodes);
 	    	  treeNodes.add(node);
