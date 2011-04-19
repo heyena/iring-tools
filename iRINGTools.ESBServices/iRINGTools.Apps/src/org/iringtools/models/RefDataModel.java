@@ -1,9 +1,12 @@
 package org.iringtools.models;
 
+import java.util.HashMap;
 import java.util.List;
+
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.ids_adi.ns.qxf.model.ClassDefinition;
 import org.ids_adi.ns.qxf.model.Qmxf;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.refdata.response.Response;
@@ -84,13 +87,29 @@ public class RefDataModel
 	  Qmxf qmxf = null;
 	  Tree tree = new Tree();
 	  System.out.println("Inside getClass");
+	  HashMap<String, String> hsMap = new HashMap<String, String>();
 	  try{
 		  qmxf = httpClient.get(Qmxf.class, "/classes/"+id);
 		  
 		  List<Node> treeNodes = tree.getNodes();
 	      TreeNode node = new TreeNode();
+	      ClassDefinition classDefinition = qmxf.getClassDefinitions().get(0);
 	      node.setText(qmxf.getClassDefinitions().get(0).getNames().get(0).getValue());
-	      node.setRecord(qmxf.getClassDefinitions().get(0));
+	      node.setIdentifier(classDefinition.getSpecializations().get(0).getReference().
+	    		  substring(classDefinition.getSpecializations().get(0).getReference().
+	    				  indexOf("#")+1,classDefinition.getSpecializations().get(0).getReference().length()));
+	      hsMap.put("Identifier", classDefinition.getSpecializations().get(0).getReference());
+	      hsMap.put("Repository", classDefinition.getRepository());
+	      hsMap.put("Entity Type", classDefinition.getEntityType().getReference());
+	      hsMap.put("Name", classDefinition.getNames().get(0).getValue());
+	      hsMap.put("Status Authority", classDefinition.getStatuses().get(0).getAuthority());
+	      hsMap.put("Status Class", classDefinition.getStatuses().get(0).getClazz());
+	      hsMap.put("Status From", classDefinition.getStatuses().get(0).getFrom());
+	      hsMap.put("Status To", classDefinition.getStatuses().get(0).getTo());
+	      hsMap.put("Description", classDefinition.getDescriptions().get(0).getValue());
+	      hsMap.put("URI", classDefinition.getSpecializations().get(0).getReference());
+	      
+	      node.setRecord(hsMap);
 	      node.setIconCls("class");
   		  node.setType(Type.CLASS.value());
   		  List<Node> childrenNodes = node.getChildren();
