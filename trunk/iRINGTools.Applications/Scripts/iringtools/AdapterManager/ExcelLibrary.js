@@ -602,9 +602,9 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
                         xtype: 'textfield'
                     },
                     items: [{
-                        fieldLabel: 'Table Name', allowBlank: false, disabled: true
+                        fieldLabel: 'Table Name', allowBlank: false, disabled: true, value:node.attributes.record.Name
                     }, {
-                        fieldLabel: 'Object Name', allowBlank: false
+                        fieldLabel: 'Object Name', allowBlank: false, value:node.attributes.record.Label
                     }, {
                         fieldLabel: 'Key Delimiter', value: ','
                     }],
@@ -634,6 +634,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
                     bodyStyle: 'padding:5px 5px 0',
                     border: false, // removing the border of the form
                      autoScroll: true,
+
                     frame: true,
                     closable: true,
                     defaults: {
