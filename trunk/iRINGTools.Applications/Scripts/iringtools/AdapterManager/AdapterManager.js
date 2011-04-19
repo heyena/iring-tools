@@ -199,9 +199,7 @@ Ext.onReady(function () {
         }, this);
 
         newTab.on('configure', function (panel, scope, application, dataLayer) {
-
             if (dataLayer == 'ExcelLibrary') {
-
                 var newConfig = new AdapterManager.ExcelLibraryPanel({
                     id: 'tab-c.' + scope.Name + '.' + application.Name,
                     title: 'Configure - ' + scope.Name + '.' + application.Name,
@@ -213,9 +211,8 @@ Ext.onReady(function () {
 
                 contentPanel.add(newConfig);
                 contentPanel.activate(newConfig);
-
             }
-            else if (dataLayer == 'NHibernateLibrary') {
+            else {
                 var nhConfigId = scope.Name + '.' + application.Name + '-nh-config-wizard';
                 var nhConfigWizard = contentPanel.getItem(nhConfigId);  
               
@@ -230,9 +227,6 @@ Ext.onReady(function () {
                   contentPanel.add(nhConfigWizard);
                   contentPanel.activate(nhConfigWizard);
                 }
-            }
-            else {
-
             }
 
         }, this);

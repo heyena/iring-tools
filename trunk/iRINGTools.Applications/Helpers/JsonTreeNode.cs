@@ -23,12 +23,18 @@ namespace iRINGTools.Web.Helpers
 
   public class JsonTreeNode
   {
+    public JsonTreeNode()
+    {
+      hidden = false;
+    }
+
     public string id { get; set; }
     public string identifier { get; set; }
     public string text { get; set; }
     public string icon { get; set; }
     public bool leaf { get; set; }
     public bool expanded { get; set; }
+    public bool hidden { get; set; }
     public List<JsonTreeNode> children { get; set; }
     public string type { get; set; }
     public string nodeType { get; set; }
