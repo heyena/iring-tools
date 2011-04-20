@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.ids_adi.ns.qxf.model.ClassDefinition;
+import org.ids_adi.ns.qxf.model.Classification;
 import org.ids_adi.ns.qxf.model.Qmxf;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.refdata.response.Response;
@@ -92,12 +93,11 @@ public class RefDataModel
 		  qmxf = httpClient.get(Qmxf.class, "/classes/"+id);
 		  
 		  List<Node> treeNodes = tree.getNodes();
-	      TreeNode node = new TreeNode();
+	      LeafNode node = new LeafNode();
 	      ClassDefinition classDefinition = qmxf.getClassDefinitions().get(0);
 	      node.setText(qmxf.getClassDefinitions().get(0).getNames().get(0).getValue());
-	      node.setIdentifier(classDefinition.getSpecializations().get(0).getReference().
-	    		  substring(classDefinition.getSpecializations().get(0).getReference().
-	    				  indexOf("#")+1,classDefinition.getSpecializations().get(0).getReference().length()));
+	      node.setIdentifier(classDefinition.getId().
+	    		  substring(classDefinition.getId().indexOf("#")+1,classDefinition.getId().length()));
 	      hsMap.put("Identifier", classDefinition.getSpecializations().get(0).getReference());
 	      hsMap.put("Repository", classDefinition.getRepository());
 	      hsMap.put("Entity Type", classDefinition.getEntityType().getReference());
@@ -112,10 +112,22 @@ public class RefDataModel
 	      node.setRecord(hsMap);
 	      node.setIconCls("class");
   		  node.setType(Type.CLASS.value());
-  		  //***node.setHidden(true);
-  		  List<Node> childrenNodes = node.getChildren();
-    	  childrenNodes = getDefaultChildren(childrenNodes);
+  		  node.setHidden(true);
+
     	  treeNodes.add(node);
+    	  
+    	  for(Classification classification : classDefinition.getClassifications()){
+    		  TreeNode treeNode = new TreeNode();
+    		  List<Node> childrenNodes = treeNode.getChildren();
+        	  childrenNodes = getDefaultChildren(childrenNodes);
+        	  treeNode.setIconCls("class");
+        	  treeNode.setText(classification.getLabel());
+        	  treeNode.setType(Type.CLASS.value());
+        	  treeNode.setIdentifier(classification.getReference().
+    	    		  substring(classification.getReference().indexOf("#")+1,classification.getReference().length()));
+        	  treeNodes.add(treeNode);
+    		  
+    	  }
 	      
 	  }catch(Exception e){
 		  System.out.println("Exception in getClass");
@@ -141,8 +153,7 @@ public class RefDataModel
 		      node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
 		      node.setRecord(entity);
 		      node.setIconCls("class");
-	  		  //node.setType(classType.equalsIgnoreCase("Sub")?Type.SUBCLASS.value():Type.SUPERCLASS.value());
-	  		 node.setType(Type.CLASS.value());
+	  		  node.setType(Type.CLASS.value());
 	  		  List<Node> childrenNodes = node.getChildren();
 	    	  childrenNodes = getDefaultChildren(childrenNodes);
 	    	  treeNodes.add(node);
