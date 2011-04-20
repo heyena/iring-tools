@@ -144,114 +144,54 @@ namespace org.iringtools.datalayer.excel
 
                 if (configuration != null)
                 {
+
                     switch (form["type"])
                     {
                         case "ExcelWorkbookNode":
                             {
                                 List<ExcelWorksheet> worksheets = configuration.Worksheets;
 
-
                                 if (worksheets != null)
                                 {
                                     foreach (ExcelWorksheet worksheet in worksheets)
                                     {
-                                        //-------------
-                                        JsonTreeNode keyPropertiesNode = new JsonTreeNode()
-                                        {
-                                            text = "Keys",
-                                            type = "keys",
-                                           // icon = "Content/img/key_new.png",
-                                            leaf = false,
-                                            children = new List<JsonTreeNode>()
-                                        };
-
-                                        JsonTreeNode dataPropertiesNode = new JsonTreeNode()
-                                        {
-                                            text = "Properties",
-                                            type = "properties",
-                                        //    icon = "Content/img/document-properties.png",
-                                            leaf = false,
-                                            children = new List<JsonTreeNode>()
-                                        };
-
-                                     
-                                        // create data object node
-                                        JsonTreeNode dataObjectNode = new JsonTreeNode()
-                                        {
-                                           
-                                             nodeType = "async",
-                                            type = "ExcelWorksheetNode",
-                                            icon = "Content/img/excelworksheet.png",
-                                             id = worksheet.Name,
-                                            text = worksheet.Name.Equals(worksheet.Label) ? worksheet.Name : string.Format("{0} [{1}]", worksheet.Name, worksheet.Label),
-                                            expanded = false,
-                                            leaf = false,
-                                            children = new List<JsonTreeNode>()
-                                           {
-                                         keyPropertiesNode, dataPropertiesNode
-                                           },
-                                             record = worksheet
-                                        };
-                                       
-
                                         List<JsonTreeNode> columnNodes = new List<JsonTreeNode>();
 
                                         if (worksheet.Columns != null)
                                         {
-                                          
                                             foreach (ExcelColumn column in worksheet.Columns)
                                             {
-                                                if (column.Name.ToUpper() == worksheet.Identifier.ToUpper())
+                                                JsonTreeNode columnNode = new JsonTreeNode
                                                 {
-                                                    JsonTreeNode keyNode = new JsonTreeNode
-                                                    {
-                                                        nodeType = "async",
-                                                        type = "ExcelColumnNode",
-                                                        icon = "Content/img/excelcolumn.png",
-                                                        id = worksheet.Name + "/" + worksheet.Identifier,
-                                                        text = column.Name.Equals(column.Label) ? column.Name : string.Format("{0} [{1}]", column.Name, column.Label),
-                                                        expanded = false,
-                                                        leaf = true,
-                                                        children = null,
-                                                        record = column
-                                                    };
-                                                    keyPropertiesNode.children.Add(keyNode);
-                                                }
-                                                else
-                                                {
+                                                    nodeType = "async",
+                                                    type = "ExcelColumnNode",
+                                                    icon = "Content/img/excelcolumn.png",
+                                                    id = worksheet.Name + "/" + column.Name,
+                                                    text = column.Name.Equals(column.Label) ? column.Name : string.Format("{0} [{1}]", column.Name, column.Label),
+                                                    expanded = false,
+                                                    leaf = true,
+                                                    children = null,
+                                                    record = column
+                                                };
 
-                                                    JsonTreeNode columnNode = new JsonTreeNode
-                                                    {
-                                                        nodeType = "async",
-                                                        type = "ExcelColumnNode",
-                                                        icon = "Content/img/excelcolumn.png",
-                                                        id = worksheet.Name + "/" + column.Name,
-                                                        text = column.Name.Equals(column.Label) ? column.Name : string.Format("{0} [{1}]", column.Name, column.Label),
-                                                        expanded = false,
-                                                        leaf = true,
-                                                        children = null,
-                                                        record = column
-                                                    };
-
-                                                    dataPropertiesNode.children.Add(columnNode);
-                                                }
+                                                columnNodes.Add(columnNode);
                                             }
                                         }
-                                        ////--
-                                        //JsonTreeNode node = new JsonTreeNode
-                                        //{
-                                        //    nodeType = "async",
-                                        //    type = "ExcelWorksheetNode",
-                                        //    icon = "Content/img/excelworksheet.png",
-                                        //    id = worksheet.Name,
-                                        //    text = worksheet.Name.Equals(worksheet.Label) ? worksheet.Name : string.Format("{0} [{1}]", worksheet.Name, worksheet.Label),
-                                        //    expanded = false,
-                                        //    leaf = false,
-                                        //    children = columnNodes,
-                                        //    record = worksheet
-                                        //};
 
-                                        nodes.Add(dataObjectNode);
+                                        JsonTreeNode node = new JsonTreeNode
+                                        {
+                                            nodeType = "async",
+                                            type = "ExcelWorksheetNode",
+                                            icon = "Content/img/excelworksheet.png",
+                                            id = worksheet.Name,
+                                            text = worksheet.Name.Equals(worksheet.Label) ? worksheet.Name : string.Format("{0} [{1}]", worksheet.Name, worksheet.Label),
+                                            expanded = false,
+                                            leaf = false,
+                                            children = columnNodes,
+                                            record = worksheet
+                                        };
+
+                                        nodes.Add(node);
                                     }
                                 }
 
