@@ -210,14 +210,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           treeLoader.baseParams = {
             scope: scopeName,
             app: appName,
-            dbProvider: dsConfigForm.findField("dbProvider").getValue(),
-            dbServer: dsConfigForm.findField("dbServer").getValue(),
-            dbInstance: dsConfigForm.findField("dbInstance").getValue(),
-            dbName: dsConfigForm.findField("dbName").getValue(),
-            dbSchema: dsConfigForm.findField("dbSchema").getValue(),
-            dbUserName: dsConfigForm.findField("dbUserName").getValue(),
-            dbPassword: dsConfigForm.findField("dbPassword").getValue(),
-            tableNames: tablesSelForm.findField("tableNames").getValue()
+            dbProvider: dsConfigForm.findField('dbProvider').getValue(),
+            dbServer: dsConfigForm.findField('dbServer').getValue(),
+            dbInstance: dsConfigForm.findField('dbInstance').getValue(),
+            dbName: dsConfigForm.findField('dbName').getValue(),
+            dbSchema: dsConfigForm.findField('dbSchema').getValue(),
+            dbUserName: dsConfigForm.findField('dbUserName').getValue(),
+            dbPassword: dsConfigForm.findField('dbPassword').getValue(),
+            tableNames: tablesSelForm.findField('tableNames').getValue()
           };
           
           dataObjectsPane.items.items[1].hide();
@@ -372,7 +372,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                     
                   itemSelector.multiselects[0].store = availItems; 
                   itemSelector.multiselects[1].store = selectedItems;
-                  itemSelector.selectedTreeNode = node;
+                  itemSelector.treeNode = node;
                   
                   editPaneLayout.setActiveItem(3);
                   break;
@@ -492,27 +492,27 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
               displayField: 'propertyName',
               valueField: 'propertyValue'
             }],
-            selectedTreeNode: null,
+            treeNode: null,
             listeners: {
               change: function(itemSelector, selectedValuesStr) {
                 var selectedValues = selectedValuesStr.split(',');
-                var selectedNode = itemSelector.selectedTreeNode;
+                var treeNode = itemSelector.treeNode;
                 
-                if (selectedNode.text.toLowerCase() == 'properties') {     
-                  for (var i = 0; i < selectedNode.childNodes.length; i++) {
+                if (treeNode.text.toLowerCase() == 'properties') {     
+                  for (var i = 0; i < treeNode.childNodes.length; i++) {
                     var found = false;
                     
                     for (var j = 0; j < selectedValues.length; j++) {                    
-                      if (selectedValues[j].toLowerCase() == selectedNode.childNodes[i].text.toLowerCase()) {
+                      if (selectedValues[j].toLowerCase() == treeNode.childNodes[i].text.toLowerCase()) {
                         found = true;
                         break;
                       }                        
                     }
                     
                     if (!found) 
-                      selectedNode.childNodes[i].getUI().hide();
+                      treeNode.childNodes[i].getUI().hide();
                     else
-                      selectedNode.childNodes[i].getUI().show();
+                      treeNode.childNodes[i].getUI().show();
                   }
                 }
               }
@@ -521,10 +521,25 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         },{
           xtype: 'form',
           name: 'dataProperty',
+          treeNode: null,
           monitorValid: true,
           labelWidth: 160,
           defaults: {xtype: 'textfield', allowBlank: false, anchor: '60%'},
-          items: [dataPropFields]
+          items: [dataPropFields],
+          buttonAlign: 'center',
+          buttons: [{
+            text: 'Apply',
+            handler: function(f) {
+              var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
+              alert(form.findField('propertyName').getValue());
+            }
+          },{
+            text: 'Reset',
+            handler: function(f) {
+              var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
+              form.reset();
+            }
+          }]
         },{
           xtype: 'form',
           items: [{
