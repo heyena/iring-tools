@@ -38,7 +38,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
             // layout: 'fit',
             stripeRows : true,
             collapsible : true,
-//            columnLines : true,
+     //       columnLines : true,
             autoScroll : true,
             width:350,
         	split: true,
@@ -92,24 +92,26 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         	            }
             	 },
             	 {
+ 				    xtype : "button",
+ 				    //text : 'Search',
+ 				    icon: 'resources/images/16x16/document-properties.png',
+                     handler: this.onSearch,
+                     scope : this,
+             	  	style: {
+         	            marginLeft: '5px'
+         	        }
+ 	
+ 				},{
                  		xtype: 'checkbox',
-                	  	boxLabel:'Reset',
+                	  	boxLabel:'<span style="margin-bottom:6px;color:red;padding:0 0 10 0;">Reset</span>',
                 	  	name: 'reset',
                 	  	style: {
             	            marginRight: '5px',
-            	            marginLeft: '3px'
+            	            marginLeft: '3px',
+            	            marginBottom: '6px'
             	        }
                 },
-                {
-				    xtype : "tbbutton",
-				    text : 'Search',
-                    handler: this.onSearch,
-                    scope : this,
-            	  	style: {
-        	            marginLeft: '5px'
-        	        }
-	
-				},
+                
 				{
                      xtype : "tbbutton",
                      text : 'Promote',
@@ -154,10 +156,9 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
       },
       onSearch: function () {
   	    var searchText = Ext.get('referencesearch').getValue();
-  	    var treeLoader = new Ext.tree.TreeLoader({
+  	    treeLoader = new Ext.tree.TreeLoader({
   	      requestMethod: 'POST',
   	      url: this.searchUrl,
-  	      //url:"resources/myjson.json",
   	      baseParams: {
   	        id: null,
   	        type: null,
@@ -170,12 +171,12 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    treeLoader.on("beforeload", function (treeLoader, node) {
   	    treeLoader.baseParams.type = node.attributes.type;
   	    treeLoader.baseParams.query = searchText;
-  	      treeLoader.baseParams.limit = this.limit;
-  	      treeLoader.baseParams.start = 0;
+  	    treeLoader.baseParams.limit = this.limit;
+  	    treeLoader.baseParams.start = 0;
   	      if (node.parentNode != undefined)
   	        treeLoader.baseParams.id = node.parentNode.attributes.identifier;
   	      if (node.attributes.type == 'TemplateNode')
-  	        treeLoader.baseParams.id = node.attributes.identifier;
+  	    	treeLoader.baseParams.id = node.attributes.identifier;
   	    }, this);
   	    
   	    
@@ -204,12 +205,26 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    });
   	    tree.on('load', function (node) {
   	      Ext.getCmp('content-pane').getEl().unmask();
-  	    });
+  	    if(node.attributes.text=="Classifications"){
+  	    try{
+	  	      node.parentNode.attributes.record=node.childNodes[0].attributes.record;
+	  	      this.propertyPanel.setSource(node.childNodes[0].attributes.record);
+	  	    }catch(e){}
+  	    }
+  	    },this);
   	    tree.getRootNode().expand();
 	    tree.on('click', this.onClick,this);
   	    this.refClassTabPanel.add(tree).show();
   	  },
   	onClick: function (node) {
+  		//alert("Node Type: "+node.attributes.type);
+  		if(node.attributes.type=="ClassNode"){
+    		  node.expand();
+    		  node.firstChild.expand();
+  		}else{
+  		  node.expand();
+  		}
+
   		try {
   	      this.propertyPanel.setSource(node.attributes.record);
   	    } catch (e) {
