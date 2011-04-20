@@ -98,7 +98,8 @@ public class RefDataModel
 	      node.setText(qmxf.getClassDefinitions().get(0).getNames().get(0).getValue());
 	      node.setIdentifier(classDefinition.getId().
 	    		  substring(classDefinition.getId().indexOf("#")+1,classDefinition.getId().length()));
-	      hsMap.put("Identifier", classDefinition.getSpecializations().get(0).getReference());
+	      hsMap.put("Identifier", classDefinition.getId());
+	      hsMap.put("URI", classDefinition.getId());
 	      hsMap.put("Repository", classDefinition.getRepository());
 	      hsMap.put("Entity Type", classDefinition.getEntityType().getReference());
 	      hsMap.put("Name", classDefinition.getNames().get(0).getValue());
@@ -107,7 +108,7 @@ public class RefDataModel
 	      hsMap.put("Status From", classDefinition.getStatuses().get(0).getFrom());
 	      hsMap.put("Status To", classDefinition.getStatuses().get(0).getTo());
 	      hsMap.put("Description", classDefinition.getDescriptions().get(0).getValue());
-	      hsMap.put("URI", classDefinition.getSpecializations().get(0).getReference());
+	  
 	      
 	      node.setRecord(hsMap);
 	      node.setIconCls("class");
