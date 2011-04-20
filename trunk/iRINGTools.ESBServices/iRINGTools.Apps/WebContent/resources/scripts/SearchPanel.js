@@ -103,7 +103,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
  	
  				},{
                  		xtype: 'checkbox',
-                	  	boxLabel:'<span style="margin-bottom:6px;color:red;padding:0 0 10 0;">Reset</span>',
+                	  	boxLabel:'Reset',
                 	  	name: 'reset',
                 	  	style: {
             	            marginRight: '5px',
