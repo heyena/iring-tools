@@ -21,7 +21,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
     record: null,
     form: null,
     url: null,
-		iconCls: 'tabsApplication',
+    iconCls: 'tabsApplication',
 
     /**
     * initComponent
@@ -197,7 +197,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             //  waitMsg: 'Saving Data...',
             success: function (f, a) {
                 var record = f.getFieldValues();
-                var datalayer = that.record.DataLayer;
+                //var datalayer = that.record.DataLayer; 
+                var datalayer = f.findField('Assembly').lastSelectionText;
                 that.record = record;
                 that.fireEvent('configure', that, that.scope, that.record, datalayer);
             },
