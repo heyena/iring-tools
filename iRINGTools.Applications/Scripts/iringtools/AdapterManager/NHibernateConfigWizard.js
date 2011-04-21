@@ -121,22 +121,25 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
               
               if (tableNames.items.length > 0) {
                 // populate available tables  
-                var tableSelector = tablesSelectorPane.getForm().findField('tableNames');      
+                var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');      
                 var availItems = new Array();
                 
                 for (var i = 0; i < tableNames.items.length; i++) {
                   var tableName = tableNames.items[i];
-                  var selected = false;
                   
-                  for (var j = 0; j < tableSelector.multiselects[1].store.length; j++) {
-                    if (tableName == tableSelector.multiselects[1].store[j][1]) {
-                      selected = true;
-                      break;
-                    }
-                  }
-                  
-                  if (!selected) {
-                    availItems[i] = [tableName, tableName];   
+                  if (tableName) {                	  
+	                var selected = false;
+	                  
+	                for (var j = 0; j < tableSelector.multiselects[1].store.length; j++) {
+	                  if (tableName == tableSelector.multiselects[1].store[j][1]) {
+	                    selected = true;
+	                    break;
+	                  }
+	                }
+	                  
+	                if (!selected) {
+	                  availItems.push([tableName, tableName]);   
+	                }
                   }
                 }
                   
@@ -171,7 +174,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
       monitorValid: true,
       items: [{
         xtype: 'itemselector',
-        name: 'tableNames',
+        name: 'tableSelector',
         fieldLabel: 'Select Tables',
         imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
         multiselects: [{
@@ -217,7 +220,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             dbSchema: dsConfigForm.findField('dbSchema').getValue(),
             dbUserName: dsConfigForm.findField('dbUserName').getValue(),
             dbPassword: dsConfigForm.findField('dbPassword').getValue(),
-            tableNames: tablesSelForm.findField('tableNames').getValue()
+            tableNames: tablesSelForm.findField('tableSelector').getValue()
           };
           
           dataObjectsPane.items.items[1].hide();
@@ -337,7 +340,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   
                   for (var i = 0; i < node.childNodes.length; i++) {
                     var keyName = node.childNodes[i].text;
-                    availItems[i] = [keyName, keyName];
+                    availItems.push([keyName, keyName]);
                   }
                     
                   itemSelector.multiselects[0].store = availItems; 
@@ -380,6 +383,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                 case 'DATAPROPERTY':
                   var form = editPane.items.items[4].getForm();                
                   setDataPropertyFields(form, node.attributes.properties);
+                  form.treeNode = node;
                   editPaneLayout.setActiveItem(4);
                   break;
                   
@@ -390,7 +394,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   
                   for (var i = 0; i < node.childNodes.length; i++) {
                     var itemName = node.childNodes[i].text;
-                    availItems[i] = [itemName, itemName];
+                    availItems.push([itemName, itemName]);
                   }
                     
                   itemSelector.multiselects[0].store = availItems; 
@@ -521,17 +525,24 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         },{
           xtype: 'form',
           name: 'dataProperty',
-          treeNode: null,
           monitorValid: true,
           labelWidth: 160,
           defaults: {xtype: 'textfield', allowBlank: false, anchor: '60%'},
           items: [dataPropFields],
+          treeNode: null,
           buttonAlign: 'center',
           buttons: [{
             text: 'Apply',
             handler: function(f) {
               var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
-              alert(form.findField('propertyName').getValue());
+              var treeNodeProps = form.treeNode.attributes.properties;
+              
+              treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
+              treeNodeProps['dataType'] = form.findField('dataType').getValue();
+              treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
+              treeNodeProps['nullable'] = form.findField('nullable').getValue();
+              treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
+              treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
             }
           },{
             text: 'Reset',
@@ -700,12 +711,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
 
           // populate selected tables
-          var tableSelector = tablesSelectorPane.getForm().findField('tableNames');      
+          var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');      
           var selectedItems = new Array();
           
           for (var i = 0; i < dbDict.dataObjects.length; i++) {
             var dataObject = dbDict.dataObjects[i];
-            selectedItems[i] = [dataObject.tableName, dataObject.tableName];
+            selectedItems.push([dataObject.tableName, dataObject.tableName]);
           }
             
           tableSelector.multiselects[1].store = selectedItems;
