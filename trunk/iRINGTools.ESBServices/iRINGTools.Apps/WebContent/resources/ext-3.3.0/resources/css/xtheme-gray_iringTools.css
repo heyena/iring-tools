@@ -1681,3 +1681,9 @@ body.x-body-masked .x-window-plain .x-window-mc {
 .tabsRepository {
     background-image:url(../images/default/tree/applications-database.png) !important;
 }
+.tabClass {
+    background-image:url(../images/gray/tabs/class-badge.png) !important;
+}
+.tabTemplate {
+    background-image:url(../images/gray/tabs/template-badge.png) !important;
+}
