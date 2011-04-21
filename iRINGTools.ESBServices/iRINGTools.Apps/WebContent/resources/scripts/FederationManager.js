@@ -9,6 +9,8 @@
  *
  */
 var federationPanel;
+var searchPanel;
+
 Ext.onReady(function () {
 
 	Ext.BLANK_IMAGE_URL = 'resources/images/s.gif';
@@ -81,7 +83,37 @@ Ext.onReady(function () {
 	    // code for unselect
 		}
 	});
-        
+	federationPanel.on('openAddTab', function(panel, tabId, label, formData) {
+		var tabIconClass;  
+		if(tabId == 'addTemplate'){
+			tabIconClass = 'tabTemplate';
+		}else{
+			tabIconClass ='tabClass';
+		}
+	    var newTab = new FederationManager.ClassTemplatePanel({
+	    	title: label,
+	        id:tabId,
+	        configData: formData,
+	        single: true, // important, as many layouts can occur
+	        layout:'fit',
+	        autoScroll: true,
+	        iconCls: tabIconClass,
+	        closable: true,
+	        defaults:{
+	          layout:'form',
+	          labelWidth:100,
+
+	          // as we use deferredRender:false we mustn't
+	          // render tabs into display:none containers
+	          hideMode:'offsets',                                
+	          deferredRender: false
+	        }                         
+	    });
+
+	    Ext.getCmp('contentPanel').enable();
+	    tabPanel.add(newTab).show();
+
+		});
 	federationPanel.on('opentab', function(panel, node, label, formData) {
     var tabIconClass;    
     if(node.parentNode.text == 'ID Generators'|| node.text == 'ID Generators'){
@@ -116,9 +148,8 @@ Ext.onReady(function () {
     tabPanel.add(newTab).show();
 
 	});
-	
 
-	var searchPanel = new FederationManager.SearchPanel({
+	searchPanel = new FederationManager.SearchPanel({
     id: 'search-panel',
     title: 'Reference Data Search',
     region: 'south',
@@ -131,14 +162,20 @@ Ext.onReady(function () {
   });
 
 	searchPanel.on('openAddTab', function(panel, tabId, label, formData) {
-	    var newTab = new FederationManager.ContentPanel({
+		var tabIconClass;  
+		if(tabId == 'addTemplate'){
+			tabIconClass = 'tabTemplate';
+		}else{
+			tabIconClass ='tabClass';
+		}
+	    var newTab = new FederationManager.ClassTemplatePanel({
 	    	title: label,
 	        id:tabId,
 	        configData: formData,
 	        single: true, // important, as many layouts can occur
 	        layout:'fit',
 	        autoScroll: true,
-	        iconCls: 'tabsClass',
+	        iconCls: tabIconClass,
 	        closable: true,
 	        defaults:{
 	          layout:'form',
