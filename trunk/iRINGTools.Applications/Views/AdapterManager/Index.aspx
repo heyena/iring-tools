@@ -8,7 +8,6 @@
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/ux/multiselect/Multiselect.css">
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/resources/css/xtheme-gray.css" /> 
     <link rel="stylesheet" type="text/css" href="../../Content/css/AdapterManager-gray.css"/> 
-
     <!-- ExtJS library: base/adapter -->
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/adapter/ext/ext-base.js") %>" type="text/javascript"></script>
     
@@ -27,7 +26,6 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AjaxRowExpander.js") %>" type="text/javascript"></script>    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ExcelLibrary.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigWizard.js") %>" type="text/javascript"></script>
-
     <!-- page specific -->    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AdapterManager.js") %>" type="text/javascript"></script>    
 </head>
