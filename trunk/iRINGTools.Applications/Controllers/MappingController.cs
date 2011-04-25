@@ -354,16 +354,16 @@ namespace iRINGTools.Web.Controllers
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
         string graphName = dataObjectVars[2];
-        string className = dataObjectVars[dataObjectVars.Count() - 3];
+        string classId = form["classId"];
         string templateName = dataObjectVars[dataObjectVars.Count() - 2];
         string roleName = dataObjectVars[dataObjectVars.Count() - 1];
         string context = string.Format("{0}/{1}", scope, application);
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
-        
+        ClassTemplateMap graphClassMap = graphMap.GetClassTemplateMap(classId);
         foreach (var ctemplateMaps in graphMap.classTemplateMaps)
         {
-          if (ctemplateMaps.classMap.name != className) continue;
+          if (!ctemplateMaps.classMap.id.Equals(classId)) continue;
           TemplateMap tmap = ctemplateMaps.templateMaps.FirstOrDefault(c => c.name == templateName);
           RoleMap roleMap  = tmap.roleMaps.FirstOrDefault(c=>c.name == roleName);
           roleMap.type = RoleType.Possessor;
@@ -555,7 +555,7 @@ namespace iRINGTools.Web.Controllers
         string scope = propertyCtx[0];
         string application = propertyCtx[1];
         string graphName = mappingCtx[2];
-        string className = mappingCtx[mappingCtx.Count() - 3];
+        string classId = form["classId"];
         string templateName = mappingCtx[mappingCtx.Count() - 2];
         string roleName = mappingCtx[mappingCtx.Count() - 1];
 
@@ -564,7 +564,7 @@ namespace iRINGTools.Web.Controllers
 
         foreach (var ctemplateMaps in graphMap.classTemplateMaps)
         {
-          if (ctemplateMaps.classMap.name != className) continue;
+          if (!ctemplateMaps.classMap.id.Equals(classId)) continue;
           TemplateMap tmap = ctemplateMaps.templateMaps.FirstOrDefault(c => c.name == templateName);
           RoleMap roleMap = tmap.roleMaps.FirstOrDefault(c => c.name == roleName);
           roleMap.propertyName =
