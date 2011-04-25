@@ -109,3 +109,6 @@ p {
 .x-tree-node .template{
 	background-image: url(../images/16x16/template-badge.png);
 }
+.x-tree-node .role{
+	background-image: url(../images/16x16/role-badge.png);
+}
