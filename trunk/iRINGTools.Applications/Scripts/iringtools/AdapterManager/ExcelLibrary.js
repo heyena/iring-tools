@@ -293,7 +293,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             expandAll: true,
             rootVisible: true,
             autoScroll: true,
-            width: 550,
+            width: 350,
             loader: this.treeLoader,
             root: this.rootNode
         });
@@ -337,15 +337,14 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             minWidth: 10,
             frame: false,
             border: false,
-            autoScroll: true
-
+             autoScroll: true,
         });
         //--------------------
 
         this.items = [
             this.configurationPanel,
-            this.tablesConfigPanel
-        //  this.propertyPanel
+            this.tablesConfigPanel,
+            this.propertyPanel
         ];
 
         // super
@@ -549,7 +548,8 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
         }
         //}
     },
-    onUpdate: function (panel) {
+
+onUpdate: function (panel) {
         var that = this;
         Ext.Ajax.request({
             url: 'excel/updateconfiguration',    // where you wanna post
@@ -674,7 +674,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             this.tablesConfigPanel.events.bodyresize.fire();
 
         } catch (e) {
-            alert(e);
+           // alert(e);
         }
     }
 
