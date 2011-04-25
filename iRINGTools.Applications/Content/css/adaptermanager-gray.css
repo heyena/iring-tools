@@ -157,3 +157,10 @@ a.breadcrumb {
   color: Black;
 }
 
+.white-label 
+{
+  padding-top: 1px;
+  font-family:tahoma,arial,helvetica,sans-serif;
+  font-size:2px;
+  color:White;
+}

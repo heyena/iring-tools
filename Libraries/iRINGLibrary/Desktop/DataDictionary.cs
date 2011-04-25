@@ -208,17 +208,21 @@ namespace org.iringtools.library
       this.propertyMaps = new List<PropertyMap>();
     }
 
-    [DataMember(IsRequired = true)]
+		[DataMember(Order = 0, Name = "propertyMaps", IsRequired = true)]
+		public List<PropertyMap> propertyMaps { get; set; }
+
+		[DataMember(Order = 1, Name = "relatedObjectName", IsRequired = true)]
+		public string relatedObjectName { get; set; }
+
+		[DataMember(Order = 2, Name = "relationshipName", IsRequired = true)]
     public string relationshipName { get; set; }
 
-    [DataMember(IsRequired = true)]
+		[DataMember(Order = 3, Name = "relationshipType", IsRequired = true)]
     public RelationshipType relationshipType { get; set; }
 
-    [DataMember(IsRequired = true)]
-    public string relatedObjectName { get; set; }
+		
 
-    [DataMember(IsRequired = true)]
-    public List<PropertyMap> propertyMaps { get; set; }
+		
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/library")]
