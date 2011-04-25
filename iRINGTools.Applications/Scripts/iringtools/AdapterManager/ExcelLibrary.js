@@ -293,7 +293,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             expandAll: true,
             rootVisible: true,
             autoScroll: true,
-            width: 350,
+            width: 550,
             loader: this.treeLoader,
             root: this.rootNode
         });
@@ -337,14 +337,15 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             minWidth: 10,
             frame: false,
             border: false,
-             autoScroll: true,
+            autoScroll: true
+
         });
         //--------------------
 
         this.items = [
             this.configurationPanel,
-            this.tablesConfigPanel,
-            this.propertyPanel
+            this.tablesConfigPanel
+        //  this.propertyPanel
         ];
 
         // super
@@ -548,50 +549,62 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
         }
         //}
     },
+    onUpdate: function (panel) {
+        var that = this;
+        Ext.Ajax.request({
+            url: 'excel/updateconfiguration',    // where you wanna post
+            method: 'POST',
+            success: function (f, a) {
+                that.configurationPanel.root.reload();
+            },   // function called on success
+            failure: function (f, a) {
+
+            },
+            params: {
+                Scope: this.scope.Name,
+                Application: this.application.Name,
+                DataLayer: this.application.Assembly,
+                Label: this.tablesConfigPanel.items.items[0].getForm().getFieldValues().Label,
+                Name: this.tablesConfigPanel.items.items[0].getForm().getFieldValues().Name
+            }
+        });
+    },
 
     onClick: function (node) {
         try {
-            this.propertyPanel.setSource(node.attributes.record);
-            //inform the user for saving
-            //loop through formpanel items to check dirty or not
+            //  this.propertyPanel.setSource(node.attributes.record);
+
             var obj = node.attributes
             var form = null;
 
-            var dataPropFields = [{
-                name: 'columnName',
-                fieldLabel: 'Column Name',
-                disabled: true
-            }, {
-                name: 'propertyName',
-                fieldLabel: 'Property Name'
-            }, {
-                name: 'dataType',
-                fieldLabel: 'Data Type'
-            }, {
-                xtype: 'numberfield',
-                name: 'dataLength',
-                fieldLabel: 'Data Length'
-            }, {
-                xtype: 'checkbox',
-                name: 'nullable',
-                fieldLabel: 'Nullable'
-            }, {
-                xtype: 'checkbox',
-                name: 'showOnIndex',
-                fieldLabel: 'Show on Index'
-            }, {
-                xtype: 'numberfield',
-                name: 'numberOfDecimals',
-                fieldLabel: 'Number of Decimals'
-            }];
+            if (this.tablesConfigPanel.items.getCount() > 0 && this.tablesConfigPanel.items.items[0].form.isDirty() == true) {
+                this.onUpdate(this);
+            }
+            //                var that = this;
+            //                
+            //                Ext.Msg.show({
+            //                    msg: 'Would you like to update the changes?',
+            //                    buttons: Ext.Msg.YESNO,
+            //                    icon: Ext.Msg.QUESTION, //'profile', // &lt;- customized icon
+            //                    fn: function (action) {
+            //                        if (action == 'yes') {
+            //                            that.onUpdate(that);
+            //                        }
+            //                        else if (action == 'no') {
+            //                            reviewed = false;
+            //                        }
+            //                    }
+            //                });
+
+            //            }
 
             if (obj.type == "ExcelWorksheetNode") {
                 form = new Ext.FormPanel({
-                    labelWidth: 150, // label settings here cascade unless
+                    labelWidth: 80, // label settings here cascade unless
                     url: null,
                     method: 'POST',
-                    bodyStyle: 'padding:10px 5px 0',
-                     autoScroll: true,
+                    bodyStyle: 'padding:5px 5px 0',
+                    autoScroll: true,
                     border: false, // removing the border of the form
 
                     frame: true,
@@ -601,82 +614,59 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
                         msgTarget: 'side',
                         xtype: 'textfield'
                     },
-                    items: [{
-                        fieldLabel: 'Table Name', allowBlank: false, disabled: true, value:node.attributes.record.Name
-                    }, {
-                        fieldLabel: 'Object Name', allowBlank: false, value:node.attributes.record.Label
-                    }, {
-                        fieldLabel: 'Key Delimiter', value: ','
-                    }],
+                    items: [{ xtype: 'hidden', name: 'Scope', value: this.scope },
+                            { xtype: 'hidden', name: 'Application', value: this.application },
+                            { xtype: 'hidden', name: 'DataLayer', value: this.dataLayer },
+                            { xtype: 'hidden', name: 'Name', value: node.attributes.record.Name },
+                            { fieldLabel: 'DataIdx', allowBlank: false, disabled: true, value: node.attributes.record.DataIdx },
+                            { fieldLabel: 'HeaderIdx', allowBlank: false, disabled: true, value: node.attributes.record.HeaderIdx },
+                            { fieldLabel: 'Identifier', allowBlank: false, disabled: true, value: node.attributes.record.Identifier },
+                            { fieldLabel: 'Name', allowBlank: false, disabled: true, value: node.attributes.record.Name },
+                            { fieldLabel: 'Label', name: 'Label', allowBlank: false, value: node.attributes.record.Label
+                            }],
                     buttons: [{
-                        text: 'Next',
+                        text: 'Save',
                         formBind: true,
-                        handler: function () {
-//                            var form = wizard.getLayout().activeItem;
-//                            var formIndex = wizard.items.indexOf(form);
-//                            wizard.getLayout().setActiveItem(formIndex + 1);
-                        }
-                    }, {
-                        text: 'Cancel',
-                        handler: function () {
-                          //  wizard.destroy();
-                        }
+                        handler: this.onUpdate,
+                        scope: this
                     }],
                     buttonAlign: 'left', // buttons aligned to the left            
-                    autoDestroy: false
+                    autoDestroy: true
                 });
-
             } else if (obj.type == "ExcelColumnNode") {
                 form = new Ext.FormPanel({
-                    labelWidth: 100, // label settings here cascade unless
+                    labelWidth: 50, // label settings here cascade unless
                     url: null,
                     method: 'POST',
                     bodyStyle: 'padding:5px 5px 0',
                     border: false, // removing the border of the form
-                     autoScroll: true,
+                    autoScroll: true,
 
                     frame: true,
                     closable: true,
                     defaults: {
-                        width: 100,
+                        width: 150,
                         msgTarget: 'side',
                         xtype: 'textfield'
                     },
-                    items: [dataPropFields, {
-                        fieldLabel: 'Key Name', width: 150, allowBlank: false, disabled: true
-                    }, {
-                        fieldLabel: 'Key Label', width: 150, allowBlank: false
-                    }, {
-                        xtype: 'combo',
-                        name: 'keyType',
-                        width: 150,
-                        fieldLabel: 'Key Type',
-                        store: new Ext.data.SimpleStore({
-                            fields: ['value', 'name'],
-                            data: [['assigned', 'Assigned'], ['unassigned', 'Unassigned']]
-                        }),
-                        displayField: 'name',
-                        valueField: 'value',
-                        mode: 'local'
-                    }],
+                    items: [{ xtype: 'hidden', name: 'Scope', value: this.scope },
+                            { xtype: 'hidden', name: 'Application', value: this.application },
+                            { xtype: 'hidden', name: 'DataLayer', value: this.dataLayer },
+                            { xtype: 'hidden', name: 'Name', value: node.attributes.record.Name },
+                            { fieldLabel: 'Datatype', allowBlank: false, disabled: true, value: node.attributes.record.Datatype },
+                            { fieldLabel: 'Index', allowBlank: false, disabled: true, value: node.attributes.record.Index },
+                            { fieldLabel: 'Name', allowBlank: false, disabled: true, value: node.attributes.record.Name },
+                            { fieldLabel: 'Label', name: 'Label', allowBlank: false, value: node.attributes.record.Label
+                            }],
                     buttons: [{
-                        text: 'Next',
+                        text: 'Save',
                         formBind: true,
-                        handler: function () {
-//                            var form = wizard.getLayout().activeItem;
-//                            var formIndex = wizard.items.indexOf(form);
-//                            wizard.getLayout().setActiveItem(formIndex + 1);
-                        }
-                    }, {
-                        text: 'Cancel',
-                        handler: function () {
-                            //wizard.destroy();
-                        }
+                        handler: this.onUpdate,
+                        scope: this
                     }],
                     buttonAlign: 'left', // buttons aligned to the left            
                     autoDestroy: false
                 });
-
             }
 
             this.tablesConfigPanel.removeAll();
@@ -684,7 +674,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             this.tablesConfigPanel.events.bodyresize.fire();
 
         } catch (e) {
-            // alert(e);
+            alert(e);
         }
     }
 
