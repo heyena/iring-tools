@@ -306,7 +306,8 @@ namespace iRINGTools.Web.Models
             {
               text = "Keys",
               type = "keys",
-              leaf = false,
+							leaf = false,
+							expanded = true,
               children = new List<JsonTreeNode>()
             };
 
@@ -315,6 +316,7 @@ namespace iRINGTools.Web.Models
               text = "Properties",
               type = "properties",
               leaf = false,
+							expanded = true,
               children = new List<JsonTreeNode>()
             };
 
@@ -322,7 +324,8 @@ namespace iRINGTools.Web.Models
             {
               text = "Relationships",
               type = "relationships",
-              leaf = false,
+							leaf = false,
+							expanded = true,
               children = new List<JsonTreeNode>()
             };
 
@@ -399,6 +402,8 @@ namespace iRINGTools.Web.Models
 
           return dbObjectNodes;
         }
+
+
         #endregion
     }
 }
