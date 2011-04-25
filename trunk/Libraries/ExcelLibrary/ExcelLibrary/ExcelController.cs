@@ -127,6 +127,33 @@ namespace org.iringtools.datalayer.excel
             return (ExcelConfiguration)Session[key];
         }
 
+        public ActionResult UpdateConfiguration(FormCollection form)
+        {
+            ExcelConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
+            if (configuration != null)
+            {
+                foreach (ExcelWorksheet workSheet in configuration.Worksheets)
+                {
+                    if (workSheet.Name == form["Name"])
+                        workSheet.Label = form["Label"];
+                    if (workSheet.Columns != null)
+                    {
+                        foreach (ExcelColumn column in workSheet.Columns)
+                        {
+                            if (column.Name == form["Name"])
+                                column.Label = form["Label"];
+                        }
+                    }
+                }
+                _repository.Configure(form["scope"], form["application"], form["datalayer"], configuration);
+                return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            }
+            else
+            {
+                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+            }
+           
+        }
         private void SetConfiguration(string scope, string application, ExcelConfiguration configuration)
         {
             string key = string.Format(_keyFormat, scope, application);
@@ -171,7 +198,14 @@ namespace org.iringtools.datalayer.excel
                                                     expanded = false,
                                                     leaf = true,
                                                     children = null,
-                                                    record = column
+                                                   // record = column
+                                                    record = new
+                                                    {
+                                                        Datatype=column.DataType.ToString(),
+                                                   Index=column.Index,
+                                                Label=column.Label.ToString(),
+                                                Name=column.Name.ToString()
+                                                    }
                                                 };
 
                                                 columnNodes.Add(columnNode);
