@@ -256,10 +256,11 @@ Ext.onReady(function () {
 
 
 
-    directoryPanel.on('openmapping', function (npanel, node) {
+    directoryPanel.on('addgraphmap', function (npanel, node) {
 
-        var scope = node.parentNode;
-        var application = node;
+        var scope = node.parentNode.parentNode;
+        var application = node.parentNode;
+
 
         var newTab = new AdapterManager.MappingPanel({
         		title: 'Mapping - ' + scope.text + "." + application.text,
@@ -276,6 +277,28 @@ Ext.onReady(function () {
         contentPanel.activate(newTab);
 
     }, this);
+
+      directoryPanel.on('opengraphmap', function (npanel, node) {
+        
+        var scope = node.parentNode.parentNode.parentNode;
+        var application = node.parentNode.parentNode;
+
+        var newTab = new AdapterManager.MappingPanel({
+          title: 'GraphMap - ' + scope.text + "." + application.text +'.'+node.text,
+          id: 'GraphMap - ' + scope.text + "-" + application.text + '.' + node.text,
+          scope: scope.attributes.record,
+          record: node.attributes.record,
+          application: application.attributes.record,
+          navigationUrl: 'mapping/getnode',
+          searchPanel: searchPanel,
+          directoryPanel: directoryPanel
+        });
+
+        contentPanel.add(newTab);
+        contentPanel.activate(newTab);
+
+      }, this);
+
 
     // Load Stores
    // searchPanel.load();

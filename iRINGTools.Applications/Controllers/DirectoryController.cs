@@ -15,6 +15,7 @@ namespace iRINGTools.Web.Controllers
     {
 
         IAdapterRepository _repository;
+        private string _keyFormat = "Mapping.{0}.{1}";
 
         public DirectoryController()
             : this(new AdapterRepository())
@@ -153,7 +154,7 @@ namespace iRINGTools.Web.Controllers
                         string scopeName = context.Split('/')[0];
                         string applicationName = context.Split('/')[1];
 
-                        Mapping mapping = _repository.GetMapping(scopeName, applicationName);
+                        Mapping mapping = GetMapping(scopeName, applicationName);
 
                         List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
@@ -255,7 +256,7 @@ namespace iRINGTools.Web.Controllers
                         string scopeName = context.Split('/')[0];
                         string applicationName = context.Split('/')[1];
 
-                        Mapping mapping = _repository.GetMapping(scopeName, applicationName);
+                        Mapping mapping = GetMapping(scopeName, applicationName);
 
                         List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
@@ -344,6 +345,19 @@ namespace iRINGTools.Web.Controllers
         }
 
         #region Private Methods
+
+        private Mapping GetMapping(string scope, string application)
+        {
+          string key = string.Format(_keyFormat, scope, application);
+
+          if (Session[key] == null)
+          {
+            Session[key] = _repository.GetMapping(scope, application);
+          }
+
+          return (Mapping)Session[key];
+        }
+
         private string getKeytype(string name, List<DataProperty> properties)
         {
             string keyType = string.Empty;

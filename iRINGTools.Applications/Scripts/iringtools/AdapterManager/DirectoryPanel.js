@@ -20,6 +20,10 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   directoryPanel: null,
   scopesMenu: null,
   scopeMenu: null,
+  valueListsMenu: null,
+  valueListMenu: null,
+  graphsMenu: null,
+  graphMenu: null,
   applicationMenu: null,
   rootNode: null,
   treeLoader: null,
@@ -53,6 +57,18 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     this.applicationMenu = new Ext.menu.Menu();
     this.applicationMenu.add(this.buildApplicationMenu());
+
+    this.valueListsMenu = new Ext.menu.Menu();
+    this.valueListsMenu.add(this.buildvalueListsMenu());
+
+    this.valueListMenu = new Ext.menu.Menu();
+    this.valueListMenu.add(this.buildvalueListMenu());
+
+    this.graphsMenu = new Ext.menu.Menu();
+    this.graphsMenu.add(this.buildGraphsMenu());
+
+    this.graphMenu = new Ext.menu.Menu();
+    this.graphMenu.add(this.buildGraphMenu());
 
     this.treeLoader = new Ext.tree.TreeLoader({
       baseParams: { type: null },
@@ -121,6 +137,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     this.directoryPanel.on('contextmenu', this.showContextMenu, this);
     this.directoryPanel.on('click', this.onClick, this);
+    this.directoryPanel.on('dblclick', this.onDoubleClick, this);
 
 
 
@@ -167,12 +184,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  icon: 'Content/img/16x16/document-new.png',
 			  scope: this
 			}
-    //			{
-    //			  text: 'Reload Scopes',
-    //			  handler: this.onReloadNode,
-    //			  icon: 'Content/img/16x16/view-refresh.png',
-    //			  scope: this
-    //			}
 		]
   },
 
@@ -190,20 +201,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  icon: 'Content/img/16x16/edit-delete.png',
 			  scope: this
 			},
-    //			{
-    //			  text: 'Reload Scope',
-    //			  handler: this.onReloadNode,
-    //			  icon: 'Content/img/16x16/view-refresh.png',
-    //			  scope: this
-    //			},
 			{
-			xtype: 'menuseparator'
-	},
+			  xtype: 'menuseparator'
+			},
 			{
-			  text: 'Add Application',
-			  handler: this.onNewApplication,
-			  icon: 'Content/img/list-add.png',
-			  scope: this
+			  text: 'Add Application'
 			}
 		]
   },
@@ -222,23 +224,68 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  icon: 'Content/img/16x16/edit-delete.png',
 			  scope: this
 			},
+			{
+			  xtype: 'menuseparator'
+			}//,
     //			{
-    //			  text: 'Reload Application',
-    //			  handler: this.onReloadNode,
-    //			  icon: 'Content/img/16x16/view-refresh.png',
+    //			  text: 'Open Mapping',
+    //			  handler: this.onOpenMapping,
+    //			  icon: 'Content/img/16x16/mapping.png',
     //			  scope: this
-    //			},
-			{
-			xtype: 'menuseparator'
-	},
-			{
-			  text: 'Open Mapping',
-			  handler: this.onOpenMapping,
-			  icon: 'Content/img/16x16/mapping.png',
-			  scope: this
-			}
+    //			}
 		]
   },
+
+  buildvalueListsMenu: function () {
+    return [
+    {
+      text: 'Add Value List',
+      handler: this.onNewValueList,
+      icon: 'Content/img/list-add.png',
+      scope: this
+    }
+    ]
+  },
+
+  buildvalueListMenu: function () {
+    return [
+    {
+      text: 'Edit Value List',
+      handler: this.onEditValueList,
+      icon: 'Content/img/16x16/document-properties.png',
+      scope: this
+    },
+    {
+      text: 'Delete ValueList',
+      handler: this.onDeleteValueList,
+      icon: 'Content/img/16x16/edit-delete.png',
+      scope: this
+    }
+    ]
+  },
+
+  buildGraphsMenu: function () {
+    return [
+    {
+      text: 'Add GraphMap',
+      handler: this.onAddGraphMap,
+      icon: 'Content/img/list-add.png',
+      scope: this
+    }
+    ]
+  },
+
+  buildGraphMenu: function () {
+    return [
+    {
+      text: 'Edit GraphMap',
+      handler: this.onEditGraphMap,
+      icon: 'Content/img/16x16/document-properties.png',
+      scope: this
+    }]
+  },
+
+
 
   showContextMenu: function (node, event) {
 
@@ -254,6 +301,14 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       this.scopeMenu.showAt([x, y]);
     } else if (obj.type == "ApplicationNode") {
       this.applicationMenu.showAt([x, y]);
+    } else if (obj.type == "ValueListsNode") {
+      this.valueListsMenu.showAt([x, y]);
+    } else if (obj.type == "ValueListNode") {
+      this.valueListMenu.showAt([x, y]);
+    } else if (obj.type == "GraphsNode") {
+      this.graphsMenu.showAt([x, y]);
+    } else if (obj.type == "GraphNode") {
+      this.graphMenu.showAt([x, y]);
     }
     this.directoryPanel.getSelectionModel().select(node);
     this.onClick(node);
@@ -263,6 +318,17 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   onNewScope: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('NewScope', this, node);
+  },
+
+  onAddGraphMap: function (btn, e) {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    this.fireEvent('addgraphmap', this, node);
+  },
+
+
+  onEditGraphMap: function (btn, e) {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    this.fireEvent('opengraphmap', this, node);
   },
 
   onNewApplication: function (btn, ev) {
@@ -278,11 +344,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   onEditApplication: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('EditApplication', this, node);
-  },
-
-  onOpenMapping: function (btn, ev) {
-    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    this.fireEvent('OpenMapping', this, node);
   },
 
   onDeleteScope: function (btn, ev) {
@@ -321,6 +382,14 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
   reload: function () {
     this.directoryPanel.root.reload();
+  },
+
+  onDoubleClick: function (node) {
+    if (node.attributes.type == 'GraphsNode') {
+      this.fireEvent('addgraphmap', this, node);
+    } else if (node.attributes.type == 'GraphNode') {
+      this.fireEvent('opengraphmap', this, node);
+    }
   },
 
   onClick: function (node) {

@@ -206,19 +206,21 @@ namespace iRINGTools.Web.Controllers
       char[] delimiters = new char[] { '/' };
       string format = String.Empty;
       string context = form["node"];
-
+      string[] formgraph = form["graph"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
       string[] variables = context.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
       string scope = variables[0];
       string application = variables[1];
+      string graphName = formgraph[formgraph.Count() - 1];
       string key = string.Format(_keyFormat, scope, application);
         
       Mapping mapping = GetMapping(scope, application);
 
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-      if (variables.Count() > 2)
-        graphMap = mapping.graphMaps.FirstOrDefault<GraphMap>(o => o.name == variables[2]);
+      if (!string.IsNullOrEmpty(graphName))
+        graphMap = mapping.graphMaps.FirstOrDefault<GraphMap>(o => o.name == graphName);
 
       if (graphMap != null)
+      {
         graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
 
         switch (form["type"])
@@ -226,6 +228,7 @@ namespace iRINGTools.Web.Controllers
           case "MappingNode":
             foreach (var graph in mapping.graphMaps)
             {
+              if (graphMap != null && graphMap.name != graph.name) continue;
               JsonTreeNode graphNode = GetGraphNode(graph, context);
 
               nodes.Add(graphNode);
@@ -303,6 +306,7 @@ namespace iRINGTools.Web.Controllers
             break;
           case "RoleMapNode":
             break;
+        }
       }
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
@@ -634,19 +638,26 @@ namespace iRINGTools.Web.Controllers
 
     public JsonResult GetLabels(FormCollection form)
     {
+      JsonArray jsonArray = new JsonArray();
       try
       {
+
           string scope = form["Scope"];
           string application = form["Application"]; 
           string recordId = form["recordId"];
           string roleType = form["roleType"];
           string roleValue = form["roleValue"];
+          if (!string.IsNullOrEmpty(recordId))
+          { 
+
+         //   jsonArray.Add( "recordId", _refdata.GetClassLabel(recordId.Split(':')[1]));
+          }
       }
       catch (Exception ex)
       {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+        return Json(jsonArray, JsonRequestBehavior.AllowGet);
       }
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      return Json(jsonArray, JsonRequestBehavior.AllowGet);
     }
 
     private void GetRoleMaps(string classId, object template, TemplateMap currentTemplateMap)
