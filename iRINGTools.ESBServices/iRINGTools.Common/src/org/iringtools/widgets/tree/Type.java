@@ -4,12 +4,12 @@ public enum Type {
 
 	SEARCH("SearchNode"),
     CLASS("ClassNode"),
-    TEMPLATE("TemplateNode"),
     CLASSIFICATION("ClassificationsNode"),
     SUPERCLASS("SuperclassesNode"),
     SUBCLASS("SubclassesNode"),
     CLASSTEMPLATE("ClassTemplatesNode"),
-    TEMPLATENODE("TemplateNode");
+    TEMPLATENODE("TemplateNode"),
+	ROLENODE("RoleNode");
 	
     private final String value;
 
