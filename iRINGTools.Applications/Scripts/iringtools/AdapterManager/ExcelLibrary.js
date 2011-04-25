@@ -570,6 +570,9 @@ onUpdate: function (panel) {
         });
     },
 
+    onReset:function(panel){
+    this.tablesConfigPanel.items.items[0].getForm().reset();
+    },
     onClick: function (node) {
         try {
             //  this.propertyPanel.setSource(node.attributes.record);
@@ -629,6 +632,10 @@ onUpdate: function (panel) {
                         formBind: true,
                         handler: this.onUpdate,
                         scope: this
+                       }, { text: 'Reset',
+                        formBind: true,
+                        handler: this.onReset,
+                        scope: this
                     }],
                     buttonAlign: 'left', // buttons aligned to the left            
                     autoDestroy: true
@@ -662,6 +669,10 @@ onUpdate: function (panel) {
                         text: 'Save',
                         formBind: true,
                         handler: this.onUpdate,
+                        scope: this
+                    },{ text: 'Reset',
+                        formBind: true,
+                        handler: this.onReset,
                         scope: this
                     }],
                     buttonAlign: 'left', // buttons aligned to the left            
