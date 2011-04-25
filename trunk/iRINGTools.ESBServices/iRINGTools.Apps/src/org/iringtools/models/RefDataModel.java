@@ -56,24 +56,31 @@ public class RefDataModel
     	response = httpClient.get(Response.class, "/search/"+query+"/"+start+"/"+limit);
         
         List<Node> treeNodes = tree.getNodes();
-        TreeNode node = null;
+        
 
     	for (Entity entity : response.getEntities().getItems())
         {
-    		node = new TreeNode();
-        	node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
-        	node.setText(entity.getLabel()+" ("+entity.getRepository()+")");
         	if(entity.getUri().contains("rdl.rdlfacade.org")){
+	    		TreeNode node = new TreeNode();
+	        	node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
+	        	node.setText(entity.getLabel()+" ("+entity.getRepository()+")");
         		node.setIconCls("class");
         		node.setType(Type.CLASS.value());
+            	List<Node> childrenNodes = node.getChildren();
+            	childrenNodes = getDefaultChildren(childrenNodes);
+            	node.setRecord(entity);
+            	treeNodes.add(node);
+
         	}else{
+        		LeafNode node = new LeafNode();
+	        	node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
+	        	node.setText(entity.getLabel()+" ("+entity.getRepository()+")");
         		node.setIconCls("template");
         		node.setType(Type.TEMPLATENODE.value());
+            	node.setRecord(entity);
+            	treeNodes.add(node);
+
         	}
-        	node.setRecord(entity);
-        	List<Node> childrenNodes = node.getChildren();
-        	childrenNodes = getDefaultChildren(childrenNodes);
-        	treeNodes.add(node);
         }
     }
     catch (Exception e)
