@@ -60,7 +60,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       baseParams: {
         type: null,
         id: null,
-        range: null
+        range: null,
+        graph: this.directoryPanel.getSelectedNode().attributes.id
       },
       url: this.navigationUrl
     });
@@ -69,9 +70,15 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       treeLoader.baseParams.type = node.attributes.type;
       if (node.attributes.record != undefined) {
         treeLoader.baseParams.id = node.attributes.record.id;
-        //      if node.attributes.record
       }
     }, this);
+
+    this.treeLoader.on('load', function (treeLoader, node) {
+      if (this.rootNode.hasChildNodes() == false) {
+        this.onAddGraphMap(node);
+      }
+    }, this);
+
 
     this.rootNode = new Ext.tree.AsyncTreeNode({
       id: this.scope.Name + "/" + this.application.Name,
@@ -92,7 +99,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       layout: 'fit',
       lines: true,
       expandAll: true,
-      rootVisible: true,
+      rootVisible: false,
       lines: true,
       autoScroll: true,
       //singleExpand: true,      
@@ -103,10 +110,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     });
 
+    this.mappingPanel.on('addgraphmap', this.onAddGraphMap, this);
     this.mappingPanel.on('beforenodedrop', this.onBeforeNodedrop, this);
     this.mappingPanel.on('expandnode', this.onExpandNode, this);
     this.mappingPanel.on('contextmenu', this.showContextMenu, this);
     this.mappingPanel.on('click', this.onClick, this);
+
 
     this.propertyPanel = new Ext.grid.PropertyGrid({
       title: 'Details',
@@ -270,29 +279,34 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     })
   },
 
+  onDoubleClick: function (node, e) {
+    if (node.attributes.type == '') {
+      doSometing();
+    }
+  },
+
   onClick: function (node) {
     try {
-      if (node.attributes.type == 'RoleMapNode') {
-        Ext.Ajax.request({
-          url: 'mapping/getlabels',
-          method: 'POST',
-          params: {
-            Scope: this.scope.Name,
-            Application: this.application.Name,
-            recordId: node.attributes.record.id,
-            roleType: node.attributes.record.type,
-            roleValue: node.attributes.record.value,
-            roleDataType: node.attributes.record.dataType
-          },
-          success: function (result, request) {
-            node.attribute.record.id = result.id;
-            node.attribute.record.value = result.value;
-            node.attribute.record.type = result.type;
-            Ext.Msg.show({ title: 'Success', msg: 'Mapping saved to the server', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
-          },
-          failure: function (result, request) { }
-        })
-      }
+//      if (node.attributes.type == 'RoleMapNode') {
+//        Ext.Ajax.request({
+//          url: 'mapping/getlabels',
+//          method: 'POST',
+//          params: {
+//            Scope: this.scope.Name,
+//            Application: this.application.Name,
+//            recordId: node.attributes.record.id,
+//            roleType: node.attributes.record.type,
+//            roleValue: node.attributes.record.value,
+//            roleDataType: node.attributes.record.dataType
+//          },
+//          success: function (result, request) {
+//            node.attribute.record.id = result.id;
+//            node.attribute.record.value = result.value;
+//            node.attribute.record.type = result.type;
+//          },
+//          failure: function (result, request) { }
+//        })
+//      }
       this.propertyPanel.setSource(node.attributes.record);
     } catch (e) {
 

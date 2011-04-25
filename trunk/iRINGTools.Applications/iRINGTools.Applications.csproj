@@ -96,6 +96,7 @@
     <Compile Include="ConfigFile.cs" />
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\AppEditorController.cs" />
+    <Compile Include="Controllers\Dictionary.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
@@ -4677,6 +4678,12 @@
     <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigWizard.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\SearchPanel.js" />
+    <Content Include="Scripts\sencha\android.css" />
+    <Content Include="Scripts\sencha\apple.css" />
+    <Content Include="Scripts\sencha\bb6.css" />
+    <Content Include="Scripts\sencha\sencha-touch-debug.js" />
+    <Content Include="Scripts\sencha\sencha-touch.css" />
+    <Content Include="Scripts\sencha\sencha-touch.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\AppEditor\Index.aspx" />
@@ -4876,7 +4883,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>12345</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
