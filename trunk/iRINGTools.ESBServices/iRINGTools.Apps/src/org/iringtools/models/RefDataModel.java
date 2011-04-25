@@ -3,12 +3,12 @@ package org.iringtools.models;
 import java.util.HashMap;
 import java.util.List;
 
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.ids_adi.ns.qxf.model.ClassDefinition;
 import org.ids_adi.ns.qxf.model.Classification;
 import org.ids_adi.ns.qxf.model.Qmxf;
+import org.ids_adi.ns.qxf.model.RoleQualification;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.refdata.response.Response;
 import org.iringtools.utility.HttpClient;
@@ -68,7 +68,7 @@ public class RefDataModel
         		node.setType(Type.CLASS.value());
         	}else{
         		node.setIconCls("template");
-        		node.setType(Type.TEMPLATE.value());
+        		node.setType(Type.TEMPLATENODE.value());
         	}
         	node.setRecord(entity);
         	List<Node> childrenNodes = node.getChildren();
@@ -193,15 +193,35 @@ public class RefDataModel
 	  
 	  
 }
-  public Qmxf getRole(String templateId){
+  public Tree getRole(String templateId){
+	  //System.out.println("Inside getRoles: "+templateId);
 	  Qmxf qmxf = null;
+	  Tree tree = new Tree();
+	  LeafNode node;
+	  List<Node> treeNodes = tree.getNodes();
+	  
 	  try{
 		  qmxf = httpClient.get(Qmxf.class, "/templates/"+templateId);
 			  //R85736598359
+		  HashMap<String, String> hsMap;// = new HashMap<String, String>();
+		  for(RoleQualification roleQualifications:qmxf.getTemplateQualifications().get(0).getRoleQualifications()){
+			  hsMap = new HashMap<String, String>();
+			  node = new LeafNode();
+		      node.setIdentifier(roleQualifications.getId());
+		      node.setIconCls("role");
+		      hsMap.put("Identifier",roleQualifications.getQualifies());
+		      hsMap.put("Name",roleQualifications.getNames().get(0).getValue());
+		      //hsMap.put("URI", roleQualifications.);
+		      node.setRecord(hsMap);
+	  		  node.setType(Type.ROLENODE.value());
+	  		  node.setText(roleQualifications.getNames().get(0).getValue());
+	    	  treeNodes.add(node);  
+		  }
+		  
 	  }catch(Exception e){
 		  
 	  }
-	  return qmxf;
+	  return tree;
   }
   private List<Node> getDefaultChildren(List<Node> childrenNodes)
   {
