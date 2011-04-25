@@ -56,11 +56,15 @@ public class RefDataController implements ServletRequestAware{
 	public String searchPage() {
 		//String query=httpRequest.getParameter("query");
 		Type type = Type.fromValue(httpRequest.getParameter("type"));
+
 		switch(type){
 		case SEARCH:
 			tree = refdata.populate(httpRequest);
 			break;
 		case CLASS:
+			tree = refdata.getClass(httpRequest.getParameter("id"));
+			break;
+		case CLASSIFICATION:
 			tree = refdata.getClass(httpRequest.getParameter("id"));
 			break;
 		case SUPERCLASS:
@@ -73,7 +77,7 @@ public class RefDataController implements ServletRequestAware{
 			tree = refdata.getTemplates(httpRequest.getParameter("id"));
 			break;
 		case TEMPLATENODE:
-			qmxf = refdata.getRole(httpRequest.getParameter("id"));
+			tree = refdata.getRole(httpRequest.getParameter("id"));
 			break;
 		}
     	
@@ -85,10 +89,10 @@ public class RefDataController implements ServletRequestAware{
 		tree = refdata.getTemplates(id);
 		return Action.SUCCESS;
 	}
-	public String getRoles(){
+	/*public String getRoles(){
 		String id = httpRequest.getParameter("id");
 		qmxf = refdata.getRole(id);
 		return Action.SUCCESS;
-	}
+	}*/
 	
 }
