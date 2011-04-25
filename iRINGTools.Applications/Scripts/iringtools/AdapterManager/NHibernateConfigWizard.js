@@ -746,14 +746,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             click: function(node, e) {     
               var editPane = dataObjectsPane.items.items[1];
 							var nodeType = node.attributes.type;
-							if (nodeType == null)
-								nodeType = node.attributes.attributes.type;
-
-//            if (node.attributes.type) {
-//              editPane.show();
-//              var editPaneLayout = editPane.getLayout();
-//              switch (node.attributes.type.toUpperCase()) { 
-
+							
 							if (nodeType) {
 								editPane.show();
 								var editPaneLayout = editPane.getLayout();
@@ -766,22 +759,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   
                 case 'KEYS':
                   var form = editPane.items.items[1].getForm();
-                  /*var itemSelector = form.findField('keySelector');      
-                  var availItems = new Array();
-                  
-                  for (var i = 0; i < node.childNodes.length; i++) {
-                    var keyName = node.childNodes[i].text;
-                    availItems.push([keyName, keyName]);
-                  }
-                    
-                  itemSelector.multiselects[0].store = availItems; 
-                  itemSelector.multiselects[1].store = [];*/
-                  
                   var itemSelector = form.findField('keySelector');      
                   var availItems = new Array();
                   var selectedItems = new Array();
                   
-                  node.expand();
+                  //node.expand();
                   
                   var propertiesNode = node.parentNode.childNodes[1];
                   
@@ -815,18 +797,19 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   
                 case 'KEYPROPERTY':
                   var form = editPane.items.items[2].getForm(); 
-                  form.findField('keyType').setValue(node.attributes.properties.keyType.toLowerCase());
                   setDataPropertyFields(form, node.attributes.properties);                
+                  form.findField('keyType').setValue(node.attributes.properties.keyType.toLowerCase());
+                  form.treeNode = node;
                   editPaneLayout.setActiveItem(2);
                   break;
                   
                 case 'PROPERTIES':
                   var form = editPane.items.items[3].getForm();
-                  var itemSelector = form.findField('propertySelector');      
+                  var itemSelector = form.findField('propertySelector');   
                   var availItems = new Array();
                   var selectedItems = new Array();
                   
-                  node.expand();
+                  //node.expand();
                   
                   for (var i = 0; i < node.childNodes.length; i++) {
                     var itemName = node.childNodes[i].text;
@@ -837,9 +820,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                       availItems.push([itemName, itemName]);
                   }
                     
-                  itemSelector.multiselects[0].store = availItems; 
-                  itemSelector.multiselects[1].store = selectedItems;
+                  itemSelector.multiselects[0].store = availItems;
+                  itemSelector.multiselects[1].store = selectedItems;                  
                   itemSelector.treeNode = node;
+                  itemSelector.doLayout();
                   
                   editPaneLayout.setActiveItem(3);
                   break;
@@ -915,30 +899,83 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             listeners: {
               change: function(itemSelector, selectedValuesStr) {
                 var selectedValues = selectedValuesStr.split(',');
-                var treeNode = itemSelector.treeNode;
+                var keysNode = itemSelector.treeNode;
+                var propertiesNode = keysNode.parentNode.childNodes[1];
                 
-                // if add key, remove from properties node
-                // if delete key, add back to properties node and show it
+                // a key has been added, move it to keys node and remove it from properties node
+                if (selectedValues.length > keysNode.childNodes.length) {
+                  // determine the new key
+                  for (var i = 0; i < selectedValues.length; i++) {
+                    var found = false;
                     
-                for (var i = 0; i < treeNode.childNodes.length; i++) {
-                  var found = false;
-                  
-                  for (var j = 0; j < selectedValues.length; j++) {                    
-                    if (selectedValues[j].toLowerCase() == treeNode.childNodes[i].text.toLowerCase()) {
-                      found = true;
-                      break;
-                    }                        
-                  }
-                  
-                  if (!found) {  // add key
-                    //treeNode.childNodes[i].getUI().hide();
-                    //alert('add');
-                  }
-                  else {
-                    var propertiesNode = treeNode.parentNode.childNodes[1];  
-                    //alert('here');
+                    for (var j = 0; j < keysNode.childNodes.length; j++) {
+                      if (keysNode.childNodes[j].text == selectedValues[i]) {
+                        found = true;
+                        break;
+                      }
+                    }
+                    
+                    // find the node in the properties node and move it to keys node
+                    if (!found) {
+                      var newKeyNode;
+                      
+                      for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
+                        if (propertiesNode.childNodes[jj].text == selectedValues[i]) {
+                          var properties = propertiesNode.childNodes[jj].attributes.properties;
+                          properties.keyType = 'assigned';
+                          
+                          newKeyNode = new Ext.tree.TreeNode({
+                            text: selectedValues[i],
+                            type: "keyProperty",
+                            leaf: true,
+                            hidden: false,
+                            properties: properties                            
+                          });
+                          
+                          propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
+                          break;
+                        }
+                      }
+                      
+                      if (newKeyNode) {
+                        keysNode.appendChild(newKeyNode);
+                        break;
+                      }
+                    }
                   }
                 }
+                else {  // a key has been deleted, remove it from keys node and add it back to properties node
+                  // determine the deleted key
+                  for (var i = 0; i < keysNode.childNodes.length; i++) {
+                    var found = false;
+                    
+                    for (var j = 0; j < selectedValues.length; j++) {
+                      if (selectedValues[j] == keysNode.childNodes[i].text) {
+                        found = true;
+                        break;
+                      }
+                    }
+                    
+                    // find the node in the keys node and move it to properties node
+                    if (!found) {                      
+                      var properties = keysNode.childNodes[i].attributes.properties;
+                      delete properties.keyType;
+                      
+                      var propertyNode = new Ext.tree.TreeNode({
+                        text: keysNode.childNodes[i].text,
+                        type: "dataProperty",
+                        leaf: true,
+                        properties: properties                            
+                      });
+                      
+                      propertiesNode.appendChild(propertyNode);
+                      keysNode.removeChild(keysNode.childNodes[i], true);
+                      break;
+                    }
+                  }
+                }  
+                
+                return true;
               }
             }
           }]
@@ -950,14 +987,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           defaults: {xtype: 'textfield', allowBlank: false, anchor: '60%'},
           items: [dataPropFields, {
             xtype: 'combo',
-            name: 'keyType',
             fieldLabel: 'Key Type',
             store: new Ext.data.SimpleStore({
               fields: ['value', 'name'],
-              data: [['assigned', 'Assigned'], ['unassigned', 'Unassigned']]
+              data: [['assigned', 'assigned'], ['unassigned', 'unassigned']]
             }),
             displayField: 'name',
             valueField: 'value',
+            hiddenName: 'keyType',
             mode: 'local'
           }],
           treeNode: null,
@@ -966,14 +1003,18 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             text: 'Apply',
             handler: function(f) {
               var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
-              var treeNodeProps = form.treeNode.attributes.properties;
               
-              treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
-              treeNodeProps['dataType'] = form.findField('dataType').getValue();
-              treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
-              treeNodeProps['nullable'] = form.findField('nullable').getValue();
-              treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
-              treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
+              if (form.treeNode) {
+                var treeNodeProps = form.treeNode.attributes.properties;
+                
+                treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
+                treeNodeProps['dataType'] = form.findField('dataType').getValue();
+                treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
+                treeNodeProps['nullable'] = form.findField('nullable').getValue();
+                treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
+                treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
+                treeNodeProps['keyType'] = form.findField('keyType').getValue();
+              }
             }
           },{
             text: 'Reset',
@@ -1022,6 +1063,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                     treeNode.childNodes[i].getUI().hide();
                   else
                     treeNode.childNodes[i].getUI().show();
+                  
+                  break;
                 }
               }
             }
@@ -1039,14 +1082,17 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
             text: 'Apply',
             handler: function(f) {
               var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
-              var treeNodeProps = form.treeNode.attributes.properties;
               
-              treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
-              treeNodeProps['dataType'] = form.findField('dataType').getValue();
-              treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
-              treeNodeProps['nullable'] = form.findField('nullable').getValue();
-              treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
-              treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
+              if (form.treeNode) {
+                var treeNodeProps = form.treeNode.attributes.properties;
+                
+                treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
+                treeNodeProps['dataType'] = form.findField('dataType').getValue();
+                treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
+                treeNodeProps['nullable'] = form.findField('nullable').getValue();
+                treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
+                treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
+              }
             }
           },{
             text: 'Reset',
