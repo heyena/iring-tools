@@ -174,14 +174,14 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    treeLoader.baseParams.query = searchText;
   	    treeLoader.baseParams.limit = this.limit;
   	    treeLoader.baseParams.start = 0;
-  	    
-        treeLoader.baseParams.id = node.attributes.identifier;
-	    if (node.attributes.type == 'ClassTemplatesNode' ||
-	    		node.attributes.type == 'SubclassesNode'){
-	  	    treeLoader.baseParams.id = node.parentNode.attributes.identifier;
-	    }
+  	 
+  		 if(node.parentNode && node.attributes.identifier==null){
+  			treeLoader.baseParams.id = node.parentNode.attributes.identifier;
+  		 }else{
+  	        treeLoader.baseParams.id = node.attributes.identifier;
+  		 }
 
-  	    
+ 	    
   	    }, this);
   	    
   	    
@@ -211,12 +211,10 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    tree.on('load', function (node) {
   	      Ext.getCmp('content-pane').getEl().unmask();
  	      
-  	    //if(node.attributes.type=="ClassNode"){
   	    try{
 	  	      node.parentNode.attributes.record=node.childNodes[0].attributes.record;
 	  	      this.propertyPanel.setSource(node.childNodes[0].attributes.record);
 	  	    }catch(e){}
-  	    //}
   	    },this);
   	    tree.getRootNode().expand();
 	    tree.on('click', this.onClick,this);
@@ -239,15 +237,13 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
     	  this.onTemplateAdd();
       },
       onClassEdit : function(btn, ev){
-    	  //var node = this.getSelectedNode();
-    	  //alert("hello :"+localNode.attributes.text);
     	  this.openAddClassTab(localNode);
       },
-       openAddClassTab : function(node){
+       openAddClassTab : function(parentNode){
           var listItems = new Array();
           var label = 'Add Class';
           var tabId = 'addClass';
-          
+          node = parentNode.childNodes[0];
           listItems.push({
             xtype: 'hidden',
             name: 'formType',
@@ -276,7 +272,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         	        	 				      {fieldLabel:'Entity Type',name:'entityType', xtype:'textfield', width:200, value:node.attributes.record["Entity Type"]},
         	        	 				     {xtype: 'fieldset',title:'Specialization',
         	        	 				    	  items: [
-        	        	 				    	          {name:'specialization', xtype:'textarea', width:200},
+        	        	 				    	          {name:'specialization', xtype:'multiselect', width:200,store:this.createStore(parentNode.childNodes[2].attributes.children)},
         	        	 				    	          {xtype: 'fieldset', border:false, layout:'column', 
         	        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
         	        	 				    	        		  	{columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
@@ -285,7 +281,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
                                               },
                                               {xtype: 'fieldset',title:'Classification',
         	        	 				    	  items: [
-        	        	 				    	          {name:'classification', xtype:'multiselect', width:200, store:eval(node.attributes.record["Classification"])},//this.createStore(node.childNodes[0])},
+        	        	 				    	          {name:'classification', xtype:'multiselect', width:200, store:this.createStore(parentNode.childNodes[1].attributes.children)},
         	        	 				    	         {xtype: 'fieldset', border:false, layout:'column', 
         	        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
         	        	 				    	        	         {columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
@@ -315,12 +311,11 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         
       },
       
-      createStore : function(node){
-    	  var obj = node.childNodes;
+      createStore : function(obj){
     	  var storeData = new Array();
-          for ( var i = 1; i < obj.length; i++) {
-            var nodeId = obj[i].attributes.identifier;
-            var data = [nodeId, obj[i].attributes.text];
+          for ( var i = 0; i < obj.length; i++) {
+            var nodeId = obj[i].identifier;
+            var data = [nodeId, obj[i].text];
             storeData.push(data);              
           }
           return storeData;
