@@ -664,6 +664,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     var win = btn.findParentByType('window');
     var objectname = Ext.get('objectNames').dom.value;
     var propertyNames = Ext.get('propertyName').dom.value;
+    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
     if (form.getForm().isValid())
       Ext.Ajax.request({
         url: 'mapping/mapvaluelist',
@@ -671,7 +672,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         params: {
           propertyName: propertyNames,
           objectNames: objectname,
-          mappingNode: that.mappingPanel.getSelectionModel().getSelectedNode().attributes.id
+          mappingNode: node.attributes.id,
+          classId: node.parentNode.parentNode.attributes.identifier
         },
         success: function (result, request) {
           that.onReload();
@@ -815,7 +817,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     win.show();
   },
 
-  onDeleteClassMap: function (node) {
+  onDeleteClassMap: function (mnode) {
     var that = this;
     var node = this.mappingPanel.getSelectionModel().getSelectedNode();
     Ext.Ajax.request({

@@ -360,7 +360,6 @@ namespace iRINGTools.Web.Controllers
         string context = string.Format("{0}/{1}", scope, application);
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
-        ClassTemplateMap graphClassMap = graphMap.GetClassTemplateMap(classId);
         foreach (var ctemplateMaps in graphMap.classTemplateMaps)
         {
           if (!ctemplateMaps.classMap.id.Equals(classId)) continue;
@@ -590,6 +589,7 @@ namespace iRINGTools.Web.Controllers
         string[] propertyCtx = objectNames.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = propertyCtx[0];
+        string classId = form["classId"];
         string application = propertyCtx[1];
         string graphName = mappingCtx[2];
         string templateName = mappingCtx[3];
@@ -599,13 +599,15 @@ namespace iRINGTools.Web.Controllers
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
 
-        var classTemplateMap = graphMap.classTemplateMaps.FirstOrDefault();
-        TemplateMap templateMap = classTemplateMap.templateMaps.Find(ctm => ctm.name == templateName);
-        RoleMap roleMap = templateMap.roleMaps.Find(rm => rm.name == roleName);
-        roleMap.valueListName = valueListName;
-        roleMap.propertyName =
-                string.Format("{0}.{1}",propertyName.Split(delimiters)[4],propertyName.Split(delimiters)[5]);
-
+        foreach (var ctemplateMaps in graphMap.classTemplateMaps)
+        {
+          if (!ctemplateMaps.classMap.id.Equals(classId)) continue;
+          TemplateMap tmap = ctemplateMaps.templateMaps.FirstOrDefault(c => c.name == templateName);
+          RoleMap roleMap = tmap.roleMaps.FirstOrDefault(c => c.name == roleName);
+          roleMap.valueListName = valueListName;
+          roleMap.propertyName =
+                string.Format("{0}.{1}", propertyName.Split(delimiters)[4], propertyName.Split(delimiters)[5]);
+        }
       }
       catch (Exception ex)
       {

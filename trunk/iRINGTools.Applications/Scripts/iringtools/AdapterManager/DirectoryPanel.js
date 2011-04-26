@@ -138,7 +138,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.directoryPanel.on('contextmenu', this.showContextMenu, this);
     this.directoryPanel.on('click', this.onClick, this);
     this.directoryPanel.on('dblclick', this.onDoubleClick, this);
-    this.directoryPanel.on('addgraphmap', this.onAddGraphmap, this);
+    this.directoryPanel.on('addgraphmap', this.AddGraphmap, this);
 
 
 
@@ -224,10 +224,10 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  handler: this.onDeleteApplication,
 			  icon: 'Content/img/16x16/edit-delete.png',
 			  scope: this
-			},
-			{
-			  xtype: 'menuseparator'
 			}//,
+    //{
+    //  xtype: 'menuseparator'
+    //	}//,
     //			{
     //			  text: 'Open Mapping',
     //			  handler: this.onOpenMapping,
@@ -269,7 +269,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     return [
     {
       text: 'Add GraphMap',
-      handler: this.onAddGraphMap,
+      handler: this.AddGraphMap,
       icon: 'Content/img/list-add.png',
       scope: this
     }
@@ -321,12 +321,12 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.fireEvent('NewScope', this, node);
   },
 
-  onAddGraphMap: function (btn, e) {
-    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    this.fireEvent('addgraphmap', this, node);
-  },
+  //  onAddGraphMap: function (btn, e) {
+  //    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+  //    this.fireEvent('addgraphmap', this, node);
+  //  },
 
-  onAddGraphMap: function (node) {
+  AddGraphMap: function (node) {
     var dirnode = this.directoryPanel.getSelectionModel().getSelectedNode();
     var formid = 'graphtarget-' + dirnode.parentNode.parentNode.text + '-' + dirnode.parentNode.text;
     var form = new Ext.form.FormPanel({
@@ -521,7 +521,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
   onDoubleClick: function (node) {
     if (node.attributes.type == 'GraphsNode') {
-      this.fireEvent('addgraphmap', this, node);
+      this.AddGraphMap(this);
     } else if (node.attributes.type == 'GraphNode') {
       this.fireEvent('opengraphmap', this, node);
     }
