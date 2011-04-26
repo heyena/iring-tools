@@ -4,6 +4,7 @@ Ext.ns('FederationManager');
 * @author by Aswini Nayak
 */
 var treeLoader,searchText;
+var localNode;
 FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
     title: 'Reference Data Search',
     layout: 'border',
@@ -133,7 +134,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
                      xtype : "tbbutton",
                      text : 'Edit Class',
                      tooltip : 'Edit Class',
-                     disabled : true,
+                     disabled : false,
                      handler: this.onClassEdit,
                      scope : this
                    },
@@ -173,10 +174,14 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    treeLoader.baseParams.query = searchText;
   	    treeLoader.baseParams.limit = this.limit;
   	    treeLoader.baseParams.start = 0;
-  	      if (node.parentNode != undefined)
-  	        treeLoader.baseParams.id = node.parentNode.attributes.identifier;
-  	      if (node.attributes.type == 'TemplateNode')
-  	    	treeLoader.baseParams.id = node.attributes.identifier;
+  	    
+        treeLoader.baseParams.id = node.attributes.identifier;
+	    if (node.attributes.type == 'ClassTemplatesNode' ||
+	    		node.attributes.type == 'SubclassesNode'){
+	  	    treeLoader.baseParams.id = node.parentNode.attributes.identifier;
+	    }
+
+  	    
   	    }, this);
   	    
   	    
@@ -205,28 +210,26 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    });
   	    tree.on('load', function (node) {
   	      Ext.getCmp('content-pane').getEl().unmask();
-  	    if(node.attributes.text=="Classifications"){
+ 	      
+  	    //if(node.attributes.type=="ClassNode"){
   	    try{
 	  	      node.parentNode.attributes.record=node.childNodes[0].attributes.record;
 	  	      this.propertyPanel.setSource(node.childNodes[0].attributes.record);
 	  	    }catch(e){}
-  	    }
+  	    //}
   	    },this);
   	    tree.getRootNode().expand();
 	    tree.on('click', this.onClick,this);
   	    this.refClassTabPanel.add(tree).show();
   	  },
   	onClick: function (node) {
-  		//alert("Node Type: "+node.attributes.type);
-  		if(node.attributes.type=="ClassNode"){
-    		  node.expand();
-    		  node.firstChild.expand();
-  		}else{
-  		  node.expand();
-  		}
+  		localNode = node;
+  		node.expand();
 
   		try {
-  	      this.propertyPanel.setSource(node.attributes.record);
+	  	      node.parentNode.attributes.record=node.childNodes[0].attributes.record;
+	  	      this.propertyPanel.setSource(node.childNodes[0].attributes.record);
+
   	    } catch (e) {
   	    }},
       onClassAdd : function(btn, ev) {
@@ -235,7 +238,12 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
       onTemplateAdd : function(btn, ev){
     	  this.onTemplateAdd();
       },
-       openAddClassTab : function(){
+      onClassEdit : function(btn, ev){
+    	  //var node = this.getSelectedNode();
+    	  //alert("hello :"+localNode.attributes.text);
+    	  this.openAddClassTab(localNode);
+      },
+       openAddClassTab : function(node){
           var listItems = new Array();
           var label = 'Add Class';
           var tabId = 'addClass';
@@ -249,23 +257,23 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
          var listItem = [{xtype: 'fieldset', layout:'column', border:false,
         	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
         	 					items:[
-        	 				          {fieldLabel:'Name',name:'name', xtype:'textfield', width:200},
+        	 				          {fieldLabel:'Name',name:'name', xtype:'textfield', width:200, value:node.attributes.record.Name},
         	 				          {xtype: 'fieldset',title:'Description',
 	        	 				    	  items: [
-	        	 				    	          {name:'description', xtype:'textarea', width:200}
+	        	 				    	          {name:'description', xtype:'textarea', width:200, value:node.attributes.record.Description}
 	        	 				    	          ]
                                       },
         	 				          {xtype: 'fieldset',title:'Status',
         	 				        	  items:[
-        	 				        	         {fieldLabel:'Authority',name:'authority', xtype:'textfield', width:200},
-        	 				        	         {fieldLabel:'Recorded',name:'recorded', xtype:'textfield', width:200},
-        	 				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'datefield', width:200},
-        	 				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'datefield', width:200}
+        	 				        	         {fieldLabel:'Authority',name:'authority', disabled : true,xtype:'textfield', width:200, value:node.attributes.record["Status Authority"]},
+        	 				        	         {fieldLabel:'Recorded',name:'recorded',disabled : true, xtype:'textfield', width:200, value:node.attributes.record["Status Class"]},
+        	 				        	         {fieldLabel:'Date From',name:'dateFrom', disabled : true, xtype:'textfield', width:200, value:node.attributes.record["Status From"]},
+        	 				        	         {fieldLabel:'Date To',name:'dateTo',disabled : true, xtype:'textfield', width:200, value:node.attributes.record["Status To"]}
         	 				        	         ]
         	 				          }]},
         	 				          {columnWidth:.5,layout: 'form',
         	        	 				items:[
-        	        	 				      {fieldLabel:'Entity Type',name:'entityType', xtype:'textfield', width:200},
+        	        	 				      {fieldLabel:'Entity Type',name:'entityType', xtype:'textfield', width:200, value:node.attributes.record["Entity Type"]},
         	        	 				     {xtype: 'fieldset',title:'Specialization',
         	        	 				    	  items: [
         	        	 				    	          {name:'specialization', xtype:'textarea', width:200},
@@ -277,7 +285,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
                                               },
                                               {xtype: 'fieldset',title:'Classification',
         	        	 				    	  items: [
-        	        	 				    	          {name:'classification', xtype:'textarea', width:200},
+        	        	 				    	          {name:'classification', xtype:'multiselect', width:200, store:eval(node.attributes.record["Classification"])},//this.createStore(node.childNodes[0])},
         	        	 				    	         {xtype: 'fieldset', border:false, layout:'column', 
         	        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
         	        	 				    	        	         {columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
@@ -306,6 +314,19 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
          this.fireEvent('openAddTab', this,tabId,label, listItems);
         
       },
+      
+      createStore : function(node){
+    	  var obj = node.childNodes;
+    	  var storeData = new Array();
+          for ( var i = 1; i < obj.length; i++) {
+            var nodeId = obj[i].attributes.identifier;
+            var data = [nodeId, obj[i].attributes.text];
+            storeData.push(data);              
+          }
+          return storeData;
+
+      },
+      
       
       onTemplateAdd : function(){
           var listItems = new Array();
