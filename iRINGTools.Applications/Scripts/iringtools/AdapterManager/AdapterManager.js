@@ -254,29 +254,27 @@ Ext.onReady(function () {
         });
           }, this);
 
+//    directoryPanel.on('addgraphmap', function (npanel, node) {
+
+//        var scope = node.parentNode.parentNode;
+//        var application = node.parentNode;
 
 
-    directoryPanel.on('addgraphmap', function (npanel, node) {
+//        var newTab = new AdapterManager.MappingPanel({
+//        		title: 'Mapping - ' + scope.text + "." + application.text,
+//						id: 'Mapping - ' + scope.text + "-" + application.text,
+//						scope: scope.attributes.record,
+//            record: node.attributes.record,
+//            application: application.attributes.record,
+//            navigationUrl: 'mapping/getnode',
+//            searchPanel: searchPanel,
+//            directoryPanel: directoryPanel
+//        });
 
-        var scope = node.parentNode.parentNode;
-        var application = node.parentNode;
+//        contentPanel.add(newTab);
+//        contentPanel.activate(newTab);
 
-
-        var newTab = new AdapterManager.MappingPanel({
-        		title: 'Mapping - ' + scope.text + "." + application.text,
-						id: 'Mapping - ' + scope.text + "-" + application.text,
-						scope: scope.attributes.record,
-            record: node.attributes.record,
-            application: application.attributes.record,
-            navigationUrl: 'mapping/getnode',
-            searchPanel: searchPanel,
-            directoryPanel: directoryPanel
-        });
-
-        contentPanel.add(newTab);
-        contentPanel.activate(newTab);
-
-    }, this);
+//    }, this);
 
       directoryPanel.on('opengraphmap', function (npanel, node) {
         
