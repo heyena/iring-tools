@@ -206,7 +206,10 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  xtype: 'menuseparator'
 			},
 			{
-			  text: 'Add Application'
+ 			  text: 'Add Application',
+			  handler: this.onNewApplication,
+			  icon: 'Content/img/list-add.png',
+			  scope: this
 			}
 		]
   },
