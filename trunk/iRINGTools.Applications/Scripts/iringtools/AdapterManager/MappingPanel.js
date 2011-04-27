@@ -29,6 +29,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   rolemapMenu: null,
   classmapMenu: null,
   directoryPanel: null,
+  contentPanel: null,
   searchPanel: null,
 
   iconCls: 'tabsMapping',
@@ -41,8 +42,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     this.tbar = this.buildToolbar();
 
-    this.mappingMenu = new Ext.menu.Menu();
-    this.mappingMenu.add(this.buildMappingMenu());
+//    this.mappingMenu = new Ext.menu.Menu();
+//    this.mappingMenu.add(this.buildMappingMenu());
 
     this.graphmapMenu = new Ext.menu.Menu();
     this.graphmapMenu.add(this.buildGraphmapMenu());
@@ -73,11 +74,11 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       }
     }, this);
 
-    this.treeLoader.on('load', function (treeLoader, node) {
-      if (this.rootNode.hasChildNodes() == false) {
-        this.onAddGraphMap(node);
-      }
-    }, this);
+    //    this.treeLoader.on('load', function (treeLoader, node) {
+    //      if (this.rootNode.hasChildNodes() == false) {
+    //        this.onAddGraphMap(node);
+    //      }
+    //    }, this);
 
 
     this.rootNode = new Ext.tree.AsyncTreeNode({
@@ -179,19 +180,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     ]
   },
 
-  buildMappingMenu: function () {
-    return [
-          {
-            text: 'Add GraphMap',
-            handler: this.onAddGraphMap,
-            icon: 'Content/img/16x16/document-new.png',
-            scope: this
-          }
-      ]
-  },
-
   buildGraphmapMenu: function () {
     return [
+  
       {
         text: 'Delete GraphMap',
         handler: this.onDeleteGraphMap,
@@ -254,6 +245,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             handler: this.onDeleteClassMap,
             icon: 'Content/img/16x16/edit-delete.png',
             scope: this
+          },
+          {
+            text: 'Change ClassMap',
+            handler: this.onChangeClassMap,
+            // icon:'',
+            scope: this
           }
       ]
   },
@@ -278,34 +275,28 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     })
   },
 
-  onDoubleClick: function (node, e) {
-    if (node.attributes.type == '') {
-      doSometing();
-    }
-  },
-
   onClick: function (node) {
     try {
-//      if (node.attributes.type == 'RoleMapNode') {
-//        Ext.Ajax.request({
-//          url: 'mapping/getlabels',
-//          method: 'POST',
-//          params: {
-//            Scope: this.scope.Name,
-//            Application: this.application.Name,
-//            recordId: node.attributes.record.id,
-//            roleType: node.attributes.record.type,
-//            roleValue: node.attributes.record.value,
-//            roleDataType: node.attributes.record.dataType
-//          },
-//          success: function (result, request) {
-//            node.attribute.record.id = result.id;
-//            node.attribute.record.value = result.value;
-//            node.attribute.record.type = result.type;
-//          },
-//          failure: function (result, request) { }
-//        })
-//      }
+      //      if (node.attributes.type == 'RoleMapNode') {
+      //        Ext.Ajax.request({
+      //          url: 'mapping/getlabels',
+      //          method: 'POST',
+      //          params: {
+      //            Scope: this.scope.Name,
+      //            Application: this.application.Name,
+      //            recordId: node.attributes.record.id,
+      //            roleType: node.attributes.record.type,
+      //            roleValue: node.attributes.record.value,
+      //            roleDataType: node.attributes.record.dataType
+      //          },
+      //          success: function (result, request) {
+      //            node.attribute.record.id = result.id;
+      //            node.attribute.record.value = result.value;
+      //            node.attribute.record.type = result.type;
+      //          },
+      //          failure: function (result, request) { }
+      //        })
+      //      }
       this.propertyPanel.setSource(node.attributes.record);
     } catch (e) {
 
@@ -405,7 +396,38 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         }
       })
   },
+
   onAddTemplateMap: function (node) {
+  },
+
+  onSubmitEditGraphName: function (btn, e) {
+    var that = this;
+    var form = btn.findParentByType('form');
+    var win = btn.findParentByType('window');
+    var graphname = Ext.get('graphName').dom.value;
+    var node = this.getSelectedNode();
+    Ext.Ajax.request({
+      url: 'mapping/editGraphName',
+      method: 'POST',
+      params: {
+        Scope: this.scope.Name,
+        Application: this.application.Name,
+        mappingNode: node.id,
+        graphName: graphname
+      },
+      success: function (result, request) {
+        Ext.Msg.show({ title: 'Success', msg: 'Graph [' + node.id.split('/')[2] + '] renamed to [' + graphname + ']', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        var oldName = node.id.split('/')[2];
+        that.rootNode.removeChild(node);
+        //var newid = node.id.replace(oldName, graphname);
+        //node.id = newid;
+        //that.rootNode.appendChild(node);
+        win.close();
+        that.contentPanel.removeAll(true);
+        that.directoryPanel.reload();
+      },
+      failure: function (result, request) { }
+    })
   },
 
   onDeleteGraphMap: function () {

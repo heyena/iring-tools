@@ -15,7 +15,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   layout: 'border',
   border: false,
   split: true,
-
+  contentPanel: null,
   navigationUrl: null,
   directoryPanel: null,
   scopesMenu: null,
@@ -206,7 +206,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  xtype: 'menuseparator'
 			},
 			{
- 			  text: 'Add Application',
+			  text: 'Add Application',
 			  handler: this.onNewApplication,
 			  icon: 'Content/img/list-add.png',
 			  scope: this
@@ -281,6 +281,12 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
   buildGraphMenu: function () {
     return [
+     {
+       text: 'Edit GraphName',
+       handler: this.onEditGraphName,
+       icon: 'Content/img/16x16/document-properties.png',
+       scope: this
+     },
     {
       text: 'Edit GraphMap',
       handler: this.onEditGraphMap,
@@ -324,10 +330,70 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.fireEvent('NewScope', this, node);
   },
 
-  //  onAddGraphMap: function (btn, e) {
-  //    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-  //    this.fireEvent('addgraphmap', this, node);
-  //  },
+
+  onEditGraphName: function () {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    var formid = 'graphtarget-' + node.id;
+    var form = new Ext.form.FormPanel({
+      id: formid,
+      layout: 'form',
+      method: 'POST',
+      border: false,
+      frame: false,
+      bbar: [
+        { text: 'Submit', scope: this, handler: this.onSubmitEditGraphName },
+        { text: 'Close', scope: this, handler: this.onClose }
+        ],
+      items: [
+              { xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true }
+             ]
+    });
+
+    var win = new Ext.Window({
+      closable: true,
+      modal: false,
+      layout: 'form',
+      title: 'Edit Graph Name',
+      items: form,
+      height: 120,
+      width: 430,
+      plain: true,
+      scope: this
+    });
+
+    win.show();
+  },
+
+  onSubmitEditGraphName: function (btn, e) {
+    var that = this;
+    var form = btn.findParentByType('form');
+    var win = btn.findParentByType('window');
+    var graphname = Ext.get('graphName').dom.value;
+    var node = this.getSelectedNode();
+    Ext.Ajax.request({
+      url: 'mapping/editGraphName',
+      method: 'POST',
+      params: {
+        //        Scope: this.scope.Name,
+        //        Application: this.application.Name,
+        mappingNode: node.id,
+        graphName: graphname
+      },
+      success: function (result, request) {
+        Ext.Msg.show({ title: 'Success', msg: 'Graph [' + node.id.split('/')[4] + '] renamed to [' + graphname + ']', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        win.close();
+        var oldid = node.id.split('/')[4];
+        var newid = node.id.replace(oldid, graphname);
+        node.id = newid;
+        node.text = graphname;
+        node.attributes.id = newid;
+        that.fireEvent('editgraphname', this, node);
+        that.fireEvent('opengraphmap', this, node);
+        that.directoryPanel.root.reload();
+      },
+      failure: function (result, request) { }
+    })
+  },
 
   AddGraphMap: function (node) {
     var dirnode = this.directoryPanel.getSelectionModel().getSelectedNode();

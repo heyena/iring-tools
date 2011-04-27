@@ -637,7 +637,27 @@ namespace iRINGTools.Web.Controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult EditGraphName(FormCollection form)
+    {
+      try 
+      {
+        char[] delimiters = new char[] { '/' };
+        string[] mappingCtx = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string oldGraphName = mappingCtx[4];
+        string newGraphName = form["graphName"];
+        string scope = mappingCtx[0];
+        string application = mappingCtx[1];
+        Mapping mapping = GetMapping(scope, application);
+        GraphMap graphMap = mapping.FindGraphMap(oldGraphName);
+        graphMap.name = newGraphName;
 
+      }
+      catch (Exception ex)
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
     public JsonResult GetLabels(FormCollection form)
     {
       JsonArray jsonArray = new JsonArray();
