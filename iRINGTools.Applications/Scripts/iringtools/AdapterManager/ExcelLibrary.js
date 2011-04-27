@@ -337,14 +337,14 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
             minWidth: 10,
             frame: false,
             border: false,
-             autoScroll: true,
+            autoScroll: true
         });
         //--------------------
 
         this.items = [
             this.configurationPanel,
             this.tablesConfigPanel
-           // this.propertyPanel
+        // this.propertyPanel
         ];
 
         // super
@@ -549,7 +549,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
         //}
     },
 
-onUpdate: function (panel) {
+    onUpdate: function (panel) {
         var that = this;
         Ext.Ajax.request({
             url: 'excel/updateconfiguration',    // where you wanna post
@@ -570,8 +570,8 @@ onUpdate: function (panel) {
         });
     },
 
-    onReset:function(panel){
-    this.tablesConfigPanel.items.items[0].getForm().reset();
+    onReset: function (panel) {
+        this.tablesConfigPanel.items.items[0].getForm().reset();
     },
     onClick: function (node) {
         try {
@@ -632,7 +632,7 @@ onUpdate: function (panel) {
                         formBind: true,
                         handler: this.onUpdate,
                         scope: this
-                       }, { text: 'Reset',
+                    }, { text: 'Reset',
                         formBind: true,
                         handler: this.onReset,
                         scope: this
@@ -670,7 +670,7 @@ onUpdate: function (panel) {
                         formBind: true,
                         handler: this.onUpdate,
                         scope: this
-                    },{ text: 'Reset',
+                    }, { text: 'Reset',
                         formBind: true,
                         handler: this.onReset,
                         scope: this
@@ -678,8 +678,65 @@ onUpdate: function (panel) {
                     buttonAlign: 'left', // buttons aligned to the left            
                     autoDestroy: false
                 });
-            }
+            } else if (obj.type == "Identifier") {
+                var availItems = new Array();
+                var selectedItems = new Array();
+                var itemSelector = new Array();
 
+                itemSelector = node.parentNode.attributes.record.Columns;
+
+                for (var i = 0; i < itemSelector.length; i++) {
+                    if (itemSelector[i].Name == node.parentNode.attributes.record.Identifier) {
+                        selectedItems.push([itemSelector[i].Name, itemSelector[i].Label]);
+                    }
+                    else {
+                        availItems.push([itemSelector[i].Name, itemSelector[i].Label]);
+                    }
+                }
+
+                form = new Ext.FormPanel({
+                    url: null,
+                    method: 'POST',
+                    bodyStyle: 'padding:5px 5px 0',
+                    border: false, // removing the border of the form
+                    autoScroll: true,
+
+                    frame: true,
+                    closable: true,
+                    items: [{
+                        xtype: 'itemselector',
+                        name: 'keySelector',
+                        fieldLabel: 'Select Keys',
+                        imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+                        multiselects: [{
+                            width: 150,
+                            height: 300,
+                            store: availItems,
+                            displayField: 'keyName',
+                            valueField: 'keyValue'
+                        }, {
+                            width: 150,
+                            height: 300,
+                            store: selectedItems,
+                            displayField: 'keyName',
+                            valueField: 'keyValue'
+                        }]
+                    }],
+                     buttons: [{
+                        text: 'Save',
+                        formBind: true,
+                      //  handler: this.onUpdate,
+                       // scope: this
+                    }, { text: 'Reset',
+                        formBind: true,
+                        handler: this.onReset,
+                        scope: this
+                    }],
+                    buttonAlign: 'left', // buttons aligned to the left            
+                    autoDestroy: false
+                });
+                
+            }
             this.tablesConfigPanel.removeAll();
             this.tablesConfigPanel.add(form);
             this.tablesConfigPanel.events.bodyresize.fire();
