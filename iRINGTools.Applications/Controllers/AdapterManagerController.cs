@@ -71,6 +71,15 @@ namespace iRINGTools.Web.Controllers
     }
   }
 
+	//public ActionResult SaveDBObjects()
+	//  {
+	//    List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
+	//      form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+	//      form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"]);
+
+	//    return Json(dbObjects, JsonRequestBehavior.AllowGet);
+	//}
+
   public class DBProvider
   {
     public string Provider { get; set; }
