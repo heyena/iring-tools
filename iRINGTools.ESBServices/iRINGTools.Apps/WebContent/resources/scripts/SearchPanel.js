@@ -207,11 +207,15 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    });
   	    tree.on('load', function (node) {
   	      Ext.getCmp('content-pane').getEl().unmask();
-  	      
- 	      // update the detail's panel with All properties
+
+  	    // during loading count the total children and update the Node Label As we are getting the counts for Superclasses and Classifications from JSON we don't require to cpunt manually 
+ 	    if(node.attributes.text=="Subclasses"||node.attributes.text=="Templates"){
+  	    	node.setText(node.attributes.text+' ('+node.childNodes.length+')');
+  	    }
+ 	    // update the detail's panel with All properties
  	      if(node.attributes.type=="ClassNode"){
-  	  	    try{
-  		  	      this.propertyPanel.setSource(node.childNodes[0].attributes.record);
+ 	    	try{
+  	  	  	    this.propertyPanel.setSource(node.childNodes[0].attributes.record);
   		  	    }catch(e){}
   	  	    }
   	    },this);
@@ -221,7 +225,6 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	  },
   	onClick: function (node) {
   		localNode = node;
-  		node.expand();
   		try {
 	  			if(node.attributes.type=="ClassNode" && node.childNodes[0]!=undefined){
 	  				this.propertyPanel.setSource(node.childNodes[0].attributes.record);
@@ -229,6 +232,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
 	  	  	    	this.propertyPanel.setSource(node.attributes.record);
 	  	  	    }
   			}catch(e){}
+  	  		node.expand();
   		
   		},
       onClassAdd : function(btn, ev) {
