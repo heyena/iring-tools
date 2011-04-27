@@ -29,6 +29,9 @@ namespace iRINGTools.Web.Controllers
     private IMappingRepository _repository { get; set; }
     private string _keyFormat = "Mapping.{0}.{1}";
     private const string  unMappedToken = "[unmapped]";
+    private char[] delimiters = new char[] { '/' };
+    private bool qn = false;
+    private string qName = string.Empty;
 
     public MappingController()
       : this(new MappingRepository())
@@ -65,9 +68,7 @@ namespace iRINGTools.Web.Controllers
       JsonTreeNode nodes = new JsonTreeNode();
       try
       {
-        bool qn = false;
-        string qName = string.Empty; 
-        char[] delimiters = new char[] { '/' };
+ 
         string propertyCtx = form["objectName"];
         string mappingNode = form["mappingNode"];
         if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("Object Name/Property Name has no value");
@@ -128,7 +129,6 @@ namespace iRINGTools.Web.Controllers
       {
         string qName = string.Empty;
 
-        char[] delimiters = new char[] { '/' };
         string format = String.Empty;
         string propertyCtx = form["ctx"];
         string nodeType = form["nodetype"];
@@ -203,7 +203,6 @@ namespace iRINGTools.Web.Controllers
     {
       GraphMap graphMap = null;
       ClassMap graphClassMap = null;
-      char[] delimiters = new char[] { '/' };
       string format = String.Empty;
       string context = form["node"];
       string[] formgraph = form["graph"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
@@ -317,7 +316,6 @@ namespace iRINGTools.Web.Controllers
       {
         string mappingNode = form["mappingNode"];
 
-        char[] delimiters = new char[] { '/' };
         string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
@@ -349,7 +347,6 @@ namespace iRINGTools.Web.Controllers
       {
         string mappingNode = form["mappingNode"];
 
-        char[] delimiters = new char[] { '/' };
         string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
@@ -461,7 +458,6 @@ namespace iRINGTools.Web.Controllers
       {
         string qName = string.Empty;
 
-        char[] delimiters = new char[] { '/' };
         string format = String.Empty;
         string propertyCtx = form["objectName"];
         if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
@@ -546,7 +542,6 @@ namespace iRINGTools.Web.Controllers
     {
       try
       {
-        char[] delimiters = new char[] { '/' };
         string mappingNode = form["mappingNode"];
         string propertyName = form["propertyName"];
         string[] propertyCtx = propertyName.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
@@ -582,7 +577,6 @@ namespace iRINGTools.Web.Controllers
     {
       try
       {
-        char[] delimiters = new char[] { '/' };
         string mappingNode = form["mappingNode"];
         string propertyName = form["propertyName"];
         string objectNames = form["objectNames"];
@@ -637,11 +631,115 @@ namespace iRINGTools.Web.Controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult DeleteValueList(FormCollection form)
+    {
+      try
+      {
+        string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string scope = context[0];
+        string application = context[1];
+        Mapping mapping = GetMapping(scope, application);
+        string deleteValueList = form["valueList"];
+        var valueListMap = mapping.valueListMaps.Find(c => c.name == deleteValueList);
+        if (valueListMap != null)
+          mapping.valueListMaps.Remove(valueListMap);
+      }
+      catch (Exception ex)
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult EditValuelist(FormCollection form)
+    {
+      try
+      {
+        string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string scope = context[0];
+        string oldValueList = context[context.Count() - 1];
+        string application = context[1];
+        Mapping mapping = GetMapping(scope, application);
+        string newvalueList = form["valueList"];
+        var valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
+        if (valueListMap != null)
+        {
+          valueListMap.name = newvalueList;
+        }
+
+      }
+      catch (Exception ex)
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult AddValueListMap(FormCollection form)
+    {
+      try
+      {
+        string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string scope = context[0];
+        string valueList = context[4];
+        string application = context[1];
+        string internalName = form["internalName"];
+        string classUrl = form["classUrl"];
+        qn = _nsMap.ReduceToQName(classUrl, out qName);
+        Mapping mapping = GetMapping(scope, application);
+        ValueListMap valuelistMap = mapping.valueListMaps.Find(c => c.name == valueList);
+        if (valueList != null)
+        {
+          ValueMap valueMap = new ValueMap
+          {
+             internalValue = internalName,
+             uri = qName
+          };
+          if (valuelistMap.valueMaps == null)
+            valuelistMap.valueMaps = new ValueMaps();
+          valuelistMap.valueMaps.Add(valueMap);
+        }
+
+      }
+      catch (Exception ex)
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult AddValueList(FormCollection form)
+    {
+      try
+      {
+        string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string scope = context[0];
+        string application = context[1];
+        Mapping mapping = GetMapping(scope, application);
+        string valueList = form["valueList"];
+        var valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
+        if (valueListMap == null)
+        {
+          ValueListMap valuelistMap = new ValueListMap
+          {
+            name = valueList
+         };
+
+          mapping.valueListMaps.Add(valuelistMap);
+        }
+      }
+      catch (Exception ex)
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
     public JsonResult EditGraphName(FormCollection form)
     {
       try 
       {
-        char[] delimiters = new char[] { '/' };
+        
         string[] mappingCtx = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string oldGraphName = mappingCtx[4];
         string newGraphName = form["graphName"];

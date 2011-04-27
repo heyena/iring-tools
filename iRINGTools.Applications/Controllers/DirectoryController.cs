@@ -167,9 +167,9 @@ namespace iRINGTools.Web.Controllers
                                 icon = "Content/img/valuelist.png",
                                 id = context + "/ValueList/" + valueList.name,
                                 text = valueList.name,
-                                expanded = true,
-                                leaf = true,
-                                children = new List<JsonTreeNode>()
+                                expanded = false,
+                                leaf = false,
+                                children = null
                             };
 
                             nodes.Add(node);
@@ -177,6 +177,35 @@ namespace iRINGTools.Web.Controllers
 
                         return Json(nodes, JsonRequestBehavior.AllowGet);
                     }
+                case "ValueListNode":
+                    {
+                      string context = form["node"];
+                      string scopeName = context.Split('/')[0];
+                      string applicationName = context.Split('/')[1];
+                      string valueList = context.Split('/')[4];
+                      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                      Mapping mapping = GetMapping(scopeName, applicationName);
+                      ValueListMap valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
+                      foreach (var valueMap in valueListMap.valueMaps)
+                      {
+                        JsonTreeNode node = new JsonTreeNode
+                        {
+                          nodeType = "async",
+                          type = "ListMapNode",
+                          icon = "Content/img/value.png",
+                          id = context + "/ValueMap/" + valueMap.internalValue,
+                          text = valueMap.internalValue,
+                          expanded = false,
+                          leaf = true,
+                          children = null,
+                          record = valueMap
+                        };
+
+                        nodes.Add(node);
+                      }
+                      return Json(nodes, JsonRequestBehavior.AllowGet);
+                    }
+
                 case "DataObjectsNode":
                     {
                         string context = form["node"];
