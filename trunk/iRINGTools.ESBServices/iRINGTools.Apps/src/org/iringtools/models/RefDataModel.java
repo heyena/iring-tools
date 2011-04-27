@@ -124,7 +124,7 @@ public class RefDataModel
 		  
 		   //other child nodes -- Classification Node
 		  	TreeNode childNode = new TreeNode();
-		  	childNode.setText("Classifications");
+		  	//**** childNode.setText("Classifications");
 		  	childNode.setType(Type.CLASSIFICATION.value());
 		  	List<Node> childClassNodes = childNode.getChildren();
 		  	
@@ -138,12 +138,14 @@ public class RefDataModel
 	    		  childClassNodes.add(classTreeNode);
 	    		  
 	    	  }
+			childNode.setText("Classifications ("+classDefinition.getClassifications().size()+")");
 		  	treeNodes.add(childNode);
+		  	
 		  	
 		  	
 		  	// Super class Node
 		  	childNode = new TreeNode();
-		  	childNode.setText("Superclasses");
+		  	//*** childNode.setText("Superclasses");
 		  	childNode.setType(Type.SUPERCLASS.value());
 		  	List<Node> childSuperNodes = childNode.getChildren();
 		  	
@@ -157,6 +159,7 @@ public class RefDataModel
 	    		  childSuperNodes.add(superTreeNode);
 	    		  
 	    	  }
+		  	childNode.setText("Superclasses ("+classDefinition.getClassifications().size()+")");
 		  	treeNodes.add(childNode);
 		  	
 		  	//Sub class Node
@@ -208,8 +211,6 @@ public class RefDataModel
 		  
 	  }
 	  return tree;
-	  
-	  
   }
   public Tree getTemplates(String id){
 	  Tree tree = new Tree();
