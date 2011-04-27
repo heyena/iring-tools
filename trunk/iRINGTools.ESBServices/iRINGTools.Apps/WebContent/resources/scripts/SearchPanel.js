@@ -174,14 +174,11 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    treeLoader.baseParams.query = searchText;
   	    treeLoader.baseParams.limit = this.limit;
   	    treeLoader.baseParams.start = 0;
-  	 
   		 if(node.parentNode && node.attributes.identifier==null){
   			treeLoader.baseParams.id = node.parentNode.attributes.identifier;
   		 }else{
   	        treeLoader.baseParams.id = node.attributes.identifier;
   		 }
-
- 	    
   	    }, this);
   	    
   	    
@@ -210,11 +207,13 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	    });
   	    tree.on('load', function (node) {
   	      Ext.getCmp('content-pane').getEl().unmask();
- 	      
-  	    try{
-	  	      node.parentNode.attributes.record=node.childNodes[0].attributes.record;
-	  	      this.propertyPanel.setSource(node.childNodes[0].attributes.record);
-	  	    }catch(e){}
+  	      
+ 	      // update the detail's panel with All properties
+ 	      if(node.attributes.type=="ClassNode"){
+  	  	    try{
+  		  	      this.propertyPanel.setSource(node.childNodes[0].attributes.record);
+  		  	    }catch(e){}
+  	  	    }
   	    },this);
   	    tree.getRootNode().expand();
 	    tree.on('click', this.onClick,this);
@@ -223,13 +222,15 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	onClick: function (node) {
   		localNode = node;
   		node.expand();
-
   		try {
-	  	      node.parentNode.attributes.record=node.childNodes[0].attributes.record;
-	  	      this.propertyPanel.setSource(node.childNodes[0].attributes.record);
-
-  	    } catch (e) {
-  	    }},
+	  			if(node.attributes.type=="ClassNode" && node.childNodes[0]!=undefined){
+	  				this.propertyPanel.setSource(node.childNodes[0].attributes.record);
+	  	  	    }else{
+	  	  	    	this.propertyPanel.setSource(node.attributes.record);
+	  	  	    }
+  			}catch(e){}
+  		
+  		},
       onClassAdd : function(btn, ev) {
           this.openAddClassTab();
        },
