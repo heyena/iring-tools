@@ -71,9 +71,10 @@ public class RefDataModel
 	        	}else{
 	        		node.setIconCls("template");
 	        		node.setType(Type.TEMPLATENODE.value());
+	        		node.setRecord(entity);
 
 	        	}
-            	node.setRecord(entity);
+            	//***node.setRecord(entity);
             	treeNodes.add(node);
 
         }
@@ -183,7 +184,7 @@ public class RefDataModel
   }
   public Tree getSubSuperClasses(String id, String classType){
 	  Tree tree = new Tree();
-	  System.out.println("Inside getSuperClasses");
+	 // System.out.println("Inside getSuperClasses");
 	  try{
 		  String url = classType.equalsIgnoreCase("Sub")?"/classes/"+id+"/subclasses":"/classes/"+id+"/superclasses";
 		  response = httpClient.get(Response.class,url);
@@ -195,7 +196,7 @@ public class RefDataModel
 	    	  node = new LeafNode();
 		      node.setText(entity.getLabel());
 		      node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
-		      node.setRecord(entity);
+		     //*** node.setRecord(entity);
 		      node.setIconCls("class");
 	  		  node.setType(Type.CLASS.value());
 	    	  treeNodes.add(node);
