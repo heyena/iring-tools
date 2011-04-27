@@ -726,7 +726,7 @@ AdapterManager.ExcelLibraryPanel = Ext.extend(Ext.Panel, {
                         text: 'Save',
                         formBind: true,
                       //  handler: this.onUpdate,
-                       // scope: this
+                        scope: this
                     }, { text: 'Reset',
                         formBind: true,
                         handler: this.onReset,
