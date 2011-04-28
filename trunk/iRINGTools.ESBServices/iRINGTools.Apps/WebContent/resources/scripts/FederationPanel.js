@@ -214,7 +214,7 @@ FederationManager.FederationPanel = Ext
             	      },
             	      {
             	        text: 'Add Class',
-            	        handler: this.openAddClassTab,
+            	        handler : this.openAddClassTab,
             	        icon: 'resources/images/16x16/class-badge.png',
             	        scope: this
             	      },
@@ -735,66 +735,7 @@ FederationManager.FederationPanel = Ext
                 name: 'formType',
                 value: 'newClass'
               });
-              
-             var listItem = [{xtype: 'fieldset', layout:'column', border:false,
-            	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-            	 					items:[
-            	 				          {fieldLabel:'Name',name:'name', xtype:'textfield', width:200},
-            	 				          {xtype: 'fieldset',title:'Description',
-    	        	 				    	  items: [
-    	        	 				    	          {name:'description', xtype:'textarea', width:200}
-    	        	 				    	          ]
-                                          },
-            	 				          {xtype: 'fieldset',title:'Status',
-            	 				        	  items:[
-            	 				        	         {fieldLabel:'Authority',name:'authority', xtype:'textfield', width:200},
-            	 				        	         {fieldLabel:'Recorded',name:'recorded', xtype:'textfield', width:200},
-            	 				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'datefield', width:200},
-            	 				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'datefield', width:200}
-            	 				        	         ]
-            	 				          }]},
-            	 				          {columnWidth:.5,layout: 'form',
-            	        	 				items:[
-            	        	 				      {fieldLabel:'Entity Type',name:'entityType', xtype:'textfield', width:200},
-            	        	 				     {xtype: 'fieldset',title:'Specialization',
-            	        	 				    	  items: [
-            	        	 				    	          {name:'specialization', xtype:'textarea', width:200},
-            	        	 				    	          {xtype: 'fieldset', border:false, layout:'column', 
-            	        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
-            	        	 				    	        		  	{columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
-            	        	 				    	        	  ]}
-            	        	 				    	          ]
-                                                  },
-                                                  {xtype: 'fieldset',title:'Classification',
-            	        	 				    	  items: [
-            	        	 				    	          {name:'classification', xtype:'textarea', width:200},
-            	        	 				    	         {xtype: 'fieldset', border:false, layout:'column', 
-            	        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
-            	        	 				    	        	         {columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
-            	        	 				    	        	  ]}
-            	        	 				    	          ]
-                                                  }]
-            	 				        }]},
-            	 				       {xtype: 'fieldset', layout:'column', border:false,
-            	        	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-            	        	 					items:[{xtype:'combo',store: ['iRING Sandbox (Read Only)', 'My Private Sandbox', 'ReferenceData (Read Only)', 'Proto and Initial (Read Only)'],
-            	        	 							fieldLabel:'Target Repo', width:200}]},
-            	        	 						{columnWidht:.1, layout:'form', 
-            	        	 								items:[
-            	        	 								       { xtype : "tbbutton",text : 'Ok',tooltip : 'Ok', width:120}]},
-            	        	 						{columnWidht:.2, layout:'form', 
-            	        	        	 					items:[		       
-            	        	 								       { xtype : "tbbutton",text : 'Cancel',tooltip : 'Cancel', width:120}]},
-            	        	 						{columnWidht:.2, layout:'form', 
-            	        	        	 					items:[
-            	        	 								       { xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:120}]}
-            	        	 								       
-            	        	 								       ]
-            	        	 						}];
-
-             listItems.push(listItem);
-             //this = FederationManager.SearchPanel;
-             this.fireEvent('openAddTab', this,tabId,label, listItems);
+             this.fireEvent('openAddTab', this,tabId,label, 'class', null);
             
           },
           
@@ -808,45 +749,8 @@ FederationManager.FederationPanel = Ext
                 name: 'formType',
                 value: 'newTemplate'
               });
-             var listItem = [{xtype: 'radiogroup',fieldLabel: 'Template Type',
-                             items: [
-                                 {boxLabel: 'Base Template', name: 'tempType', checked: true},
-                                 {boxLabel: 'Specialized Template', name: 'tempType'}]},
 
-                             {fieldLabel:'Name',name:'name', xtype:'textfield', width:400},
-    						 {fieldLabel:'Parent Template',name:'parentTemplate', xtype:'textfield', width:400},
-    						 {xtype: 'fieldset', layout:'column', border:false,
-    	        	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-    	        	 						items:[{xtype:'fieldset',title:'Description',
-    	        	 							items:[{name:'description', xtype:'textarea', width:200}]},
-    	        	 							{xtype: 'fieldset',title:'Status',
-    	          	 				        	  items:[
-    	          	 				        	         {fieldLabel:'Authority',name:'authority', xtype:'textfield', width:200},
-    	          	 				        	         {fieldLabel:'Recorded',name:'recorded', xtype:'textfield', width:200},
-    	          	 				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'datefield', width:200},
-    	          	 				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'datefield', width:200}
-    	          	 				        	         ]
-    	          	 				          }]},
-    	        	 						{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-    	        	        	 					items:[{xtype:'fieldset',title:'Role Definition',
-    	    	        	 							items:[{name:'roleDefinition', xtype:'textarea', width:200},
-    	    	        	 							       {fieldLabel:'Id',name:'id', xtype:'textfield', width:200},
-    	    	          	 				        	       {fieldLabel:'Name',name:'name', xtype:'textfield', width:200},
-    	    	          	 				        	       {fieldLabel:'Description',name:'description', xtype:'textfield', width:200},
-    	    	          	 				        	       {xtype: 'fieldset', layout:'column', border:false,
-    	    	          	        	        	 				items:[{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-    	    	          	        	        	 					items:[{ xtype : "tbbutton",text : 'Edit..',tooltip : 'Edit', width:70}]},
-    	    	          	        	        	 					   {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-    		    	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Add',tooltip : 'Add', width:70}]},
-    		    	          	        	        	 				    {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-    		    	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Remove',tooltip : 'Remove', width:70}]},
-    		    	          	        	        	 					{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-    			    	          	        	        	 			items:[{ xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:70}]}
-    	    	          	        	        	 					       ]}]
-    	    	          	 				        	       }	]}]}];
-
-             listItems.push(listItem);
-             this.fireEvent('openAddTab', this,tabId, label, listItems);
+             this.fireEvent('openAddTab', this,tabId, label, 'template', null);
             
           }
         });
