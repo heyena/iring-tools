@@ -163,16 +163,21 @@ public class RefDataModel
 		  	treeNodes.add(childNode);
 		  	
 		  	//Sub class Node
-		  	LeafNode subChildNode = new LeafNode();
-		  	subChildNode.setText("Subclasses");
-		  	subChildNode.setType(Type.SUBCLASS.value());
-		  	treeNodes.add(subChildNode);
+		  	childNode = new TreeNode();
+		  	childNode.setType(Type.SUBCLASS.value());
+		  	List<Node> childSubNodes = childNode.getChildren();
+		  	childSubNodes.addAll(getSubSuperClasses(id, "Sub").getNodes());
+		  	childNode.setText("Subclasses ("+childSubNodes.size()+")");
+		  	treeNodes.add(childNode);
 		  	
 		  	//Template Node
-		  	subChildNode = new LeafNode();
-		  	subChildNode.setText("Templates");
-		  	subChildNode.setType(Type.CLASSTEMPLATE.value());
-		  	treeNodes.add(subChildNode);
+		  	childNode = new TreeNode();
+		  	//childNode.setText("Templates");
+		  	childNode.setType(Type.CLASSTEMPLATE.value());
+		  	childSubNodes = childNode.getChildren();
+		  	childSubNodes.addAll(getTemplates(id).getNodes());
+		  	childNode.setText("Templates ("+childSubNodes.size()+")");
+		  	treeNodes.add(childNode);
 
     	  
     	  
