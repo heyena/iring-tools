@@ -134,7 +134,8 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
                      xtype : "tbbutton",
                      text : 'Edit Class',
                      tooltip : 'Edit Class',
-                     disabled : false,
+                     id : 'class-edit',
+                     disabled : true,
                      handler: this.onClassEdit,
                      scope : this
                    },
@@ -150,6 +151,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
                      xtype : "tbbutton",
                      text : 'Edit Template',
                      tooltip : 'Edit Template',
+                     id : 'temp-edit',
                      disabled : true,
                      handler: this.onTemplateEdit,
                      scope : this
@@ -225,6 +227,16 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	  },
   	onClick: function (node) {
   		localNode = node;
+  		if(node.attributes.type=="ClassNode")
+  			Ext.getCmp('class-edit').enable();
+  		else if(node.attributes.type=="TemplateNode")
+  			Ext.getCmp('temp-edit').enable();
+  		else{
+  			Ext.getCmp('class-edit').disable();
+  			Ext.getCmp('temp-edit').disable();
+  		}
+  			
+
   		try {
 	  			if(node.attributes.type=="ClassNode" && node.childNodes[0]!=undefined){
 	  				this.propertyPanel.setSource(node.childNodes[0].attributes.record);
@@ -235,148 +247,64 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	  		node.expand();
   		
   		},
-      onClassAdd : function(btn, ev) {
-          this.openAddClassTab();
-       },
-      onTemplateAdd : function(btn, ev){
-    	  this.onTemplateAdd();
-      },
-      onClassEdit : function(btn, ev){
-    	  this.openAddClassTab(localNode);
-      },
-       openAddClassTab : function(parentNode){
-          var listItems = new Array();
-          var label = 'Add Class';
-          var tabId = 'addClass';
-          node = parentNode.childNodes[0];
-          listItems.push({
-            xtype: 'hidden',
-            name: 'formType',
-            value: 'newClass'
-          });
+        onClassAdd : function(btn, ev) {
+            this.openAddClassTab(null);
+         },
+        onTemplateAdd : function(btn, ev){
+      	  this.openAddTemplateTab(null);
+        },
+        onClassEdit : function(btn, ev){
+      	  this.openAddClassTab(localNode);
+        },
+        onTemplateEdit : function(btn, ev){
+        	this.openAddTemplateTab(localNode);
+        },
+         openAddClassTab : function(parentNode){
+            var listItems = new Array();
+            var label = 'Add Class';
+            var tabId = 'addClass';
+            var node = null;
+            if(parentNode!=null){
+  	          node = parentNode.childNodes[0];
+  	          label = 'Edit {'+node.attributes.record.Name+'}';
+  	          tabId = node.attributes.record["Identifier"];
+            }
+            listItems.push({
+              xtype: 'hidden',
+              name: 'formType',
+              value: 'newClass'
+            });
+            
+           this.fireEvent('openAddTab', this,tabId,label, 'class', parentNode);
           
-         var listItem = [{xtype: 'fieldset', layout:'column', border:false,
-        	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-        	 					items:[
-        	 				          {fieldLabel:'Name',name:'name', xtype:'textfield', width:200, value:node.attributes.record.Name},
-        	 				          {xtype: 'fieldset',title:'Description',
-	        	 				    	  items: [
-	        	 				    	          {name:'description', xtype:'textarea', width:200, value:node.attributes.record.Description}
-	        	 				    	          ]
-                                      },
-        	 				          {xtype: 'fieldset',title:'Status',
-        	 				        	  items:[
-        	 				        	         {fieldLabel:'Authority',name:'authority', disabled : true,xtype:'textfield', width:200, value:node.attributes.record["Status Authority"]},
-        	 				        	         {fieldLabel:'Recorded',name:'recorded',disabled : true, xtype:'textfield', width:200, value:node.attributes.record["Status Class"]},
-        	 				        	         {fieldLabel:'Date From',name:'dateFrom', disabled : true, xtype:'textfield', width:200, value:node.attributes.record["Status From"]},
-        	 				        	         {fieldLabel:'Date To',name:'dateTo',disabled : true, xtype:'textfield', width:200, value:node.attributes.record["Status To"]}
-        	 				        	         ]
-        	 				          }]},
-        	 				          {columnWidth:.5,layout: 'form',
-        	        	 				items:[
-        	        	 				      {fieldLabel:'Entity Type',name:'entityType', xtype:'textfield', width:200, value:node.attributes.record["Entity Type"]},
-        	        	 				     {xtype: 'fieldset',title:'Specialization',
-        	        	 				    	  items: [
-        	        	 				    	          {name:'specialization', xtype:'multiselect', width:200,store:this.createStore(parentNode.childNodes[2].attributes.children)},
-        	        	 				    	          {xtype: 'fieldset', border:false, layout:'column', 
-        	        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
-        	        	 				    	        		  	{columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
-        	        	 				    	        	  ]}
-        	        	 				    	          ]
-                                              },
-                                              {xtype: 'fieldset',title:'Classification',
-        	        	 				    	  items: [
-        	        	 				    	          {name:'classification', xtype:'multiselect', width:200, store:this.createStore(parentNode.childNodes[1].attributes.children)},
-        	        	 				    	         {xtype: 'fieldset', border:false, layout:'column', 
-        	        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
-        	        	 				    	        	         {columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
-        	        	 				    	        	  ]}
-        	        	 				    	          ]
-                                              }]
-        	 				        }]},
-        	 				       {xtype: 'fieldset', layout:'column', border:false,
-        	        	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-        	        	 					items:[{xtype:'combo',store: ['iRING Sandbox (Read Only)', 'My Private Sandbox', 'ReferenceData (Read Only)', 'Proto and Initial (Read Only)'],
-        	        	 							fieldLabel:'Target Repo', width:200}]},
-        	        	 						{columnWidht:.1, layout:'form', 
-        	        	 								items:[
-        	        	 								       { xtype : "tbbutton",text : 'Ok',tooltip : 'Ok', width:120}]},
-        	        	 						{columnWidht:.2, layout:'form', 
-        	        	        	 					items:[		       
-        	        	 								       { xtype : "tbbutton",text : 'Cancel',tooltip : 'Cancel', width:120}]},
-        	        	 						{columnWidht:.2, layout:'form', 
-        	        	        	 					items:[
-        	        	 								       { xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:120}]}
-        	        	 								       
-        	        	 								       ]
-        	        	 						}];
-
-         listItems.push(listItem);
-         this.fireEvent('openAddTab', this,tabId,label, listItems);
+        },
         
-      },
-      
-      createStore : function(obj){
-    	  var storeData = new Array();
-          for ( var i = 0; i < obj.length; i++) {
-            var nodeId = obj[i].identifier;
-            var data = [nodeId, obj[i].text];
-            storeData.push(data);              
-          }
-          return storeData;
+        createStore : function(obj){
+      	  var storeData = new Array();
+            for ( var i = 0; i < obj.length; i++) {
+              var nodeId = obj[i].identifier;
+              var data = [nodeId, obj[i].text];
+              storeData.push(data);              
+            }
+            alert("storeData.length:"+storeData.length);
+            return storeData;
 
-      },
-      
-      
-      onTemplateAdd : function(){
+        },      
+        openAddTemplateTab : function(parentNode){
           var listItems = new Array();
           var label = 'Add Template';
           var tabId = 'addTemplate';
-          
+          if(parentNode!=null){
+  	          label = 'Edit {'+parentNode.attributes.record.label+'}';
+  	          tabId = label;//node.attributes.record["Identifier"];
+            }
           listItems.push({
             xtype: 'hidden',
             name: 'formType',
             value: 'newTemplate'
           });
-         var listItem = [{xtype: 'radiogroup',fieldLabel: 'Template Type',
-                         items: [
-                             {boxLabel: 'Base Template', name: 'tempType', checked: true},
-                             {boxLabel: 'Specialized Template', name: 'tempType'}]},
 
-                         {fieldLabel:'Name',name:'name', xtype:'textfield', width:400},
-						 {fieldLabel:'Parent Template',name:'parentTemplate', xtype:'textfield', width:400},
-						 {xtype: 'fieldset', layout:'column', border:false,
-	        	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-	        	 						items:[{xtype:'fieldset',title:'Description',
-	        	 							items:[{name:'description', xtype:'textarea', width:200}]},
-	        	 							{xtype: 'fieldset',title:'Status',
-	          	 				        	  items:[
-	          	 				        	         {fieldLabel:'Authority',name:'authority', xtype:'textfield', width:200},
-	          	 				        	         {fieldLabel:'Recorded',name:'recorded', xtype:'textfield', width:200},
-	          	 				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'datefield', width:200},
-	          	 				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'datefield', width:200}
-	          	 				        	         ]
-	          	 				          }]},
-	        	 						{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-	        	        	 					items:[{xtype:'fieldset',title:'Role Definition',
-	    	        	 							items:[{name:'roleDefinition', xtype:'textarea', width:200},
-	    	        	 							       {fieldLabel:'Id',name:'id', xtype:'textfield', width:200},
-	    	          	 				        	       {fieldLabel:'Name',name:'name', xtype:'textfield', width:200},
-	    	          	 				        	       {fieldLabel:'Description',name:'description', xtype:'textfield', width:200},
-	    	          	 				        	       {xtype: 'fieldset', layout:'column', border:false,
-	    	          	        	        	 				items:[{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-	    	          	        	        	 					items:[{ xtype : "tbbutton",text : 'Edit..',tooltip : 'Edit', width:70}]},
-	    	          	        	        	 					   {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-		    	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Add',tooltip : 'Add', width:70}]},
-		    	          	        	        	 				    {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-		    	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Remove',tooltip : 'Remove', width:70}]},
-		    	          	        	        	 					{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-			    	          	        	        	 			items:[{ xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:70}]}
-	    	          	        	        	 					       ]}]
-	    	          	 				        	       }	]}]}];
-
-         listItems.push(listItem);
-         this.fireEvent('openAddTab', this,tabId, label, listItems);
+         this.fireEvent('openAddTab', this,tabId, label, 'template', parentNode);
         
       }
 

@@ -161,7 +161,7 @@ Ext.onReady(function () {
     limit: 100
   });
 
-	searchPanel.on('openAddTab', function(panel, tabId, label, formData) {
+	searchPanel.on('openAddTab', function(panel, tabId, label, formType, formData) {
 		var tabIconClass;  
 		if(tabId == 'addTemplate'){
 			tabIconClass = 'tabTemplate';
@@ -171,7 +171,8 @@ Ext.onReady(function () {
 	    var newTab = new FederationManager.ClassTemplatePanel({
 	    	title: label,
 	        id:tabId,
-	        configData: formData,
+	        configData: formType,
+	        parentNode:formData,
 	        single: true, // important, as many layouts can occur
 	        layout:'fit',
 	        autoScroll: true,
@@ -192,6 +193,9 @@ Ext.onReady(function () {
 	    tabPanel.add(newTab).show();
 
 		});
+	searchPanel.on('onRemove', function(type) {
+		alert(type);
+	  });
 		
     var centrePanel = new Ext.Panel({
         id: 'centre-panel',
