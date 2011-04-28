@@ -94,7 +94,6 @@ public class RefDataModel
 	  HashMap<String, String> hsMap = new HashMap<String, String>();
 	  try{
 		  qmxf = httpClient.get(Qmxf.class, "/classes/"+id);
-		  
 		  List<Node> treeNodes = tree.getNodes();
 		  ClassDefinition classDefinition = qmxf.getClassDefinitions().get(0);
 		  //First hidden property node
@@ -113,6 +112,7 @@ public class RefDataModel
 	      hsMap.put("Status From", classDefinition.getStatuses().get(0).getFrom());
 	      hsMap.put("Status To", classDefinition.getStatuses().get(0).getTo());
 	      hsMap.put("Description", classDefinition.getDescriptions().get(0).getValue());
+	      
 	      
 	      node.setRecord(hsMap);
 	      node.setIconCls("class");
@@ -159,7 +159,7 @@ public class RefDataModel
 	    		  childSuperNodes.add(superTreeNode);
 	    		  
 	    	  }
-		  	childNode.setText("Superclasses ("+classDefinition.getClassifications().size()+")");
+		  	childNode.setText("Superclasses ("+classDefinition.getSpecializations().size()+")");
 		  	treeNodes.add(childNode);
 		  	
 		  	//Sub class Node
@@ -227,7 +227,7 @@ public class RefDataModel
 		      node.setRecord(entity);
 		      node.setIconCls("template");
 	  		  node.setType(Type.TEMPLATENODE.value());
-	    	  treeNodes.add(node);
+	  		  treeNodes.add(node);
 	       }
 	  }catch(Exception e){
 		  
@@ -236,8 +236,9 @@ public class RefDataModel
 	  
 	  
 }
+  
   public Tree getRole(String templateId){
-	  //System.out.println("Inside getRoles: "+templateId);
+	  System.out.println("Inside getRoles & the TemplateId: "+templateId);
 	  Qmxf qmxf = null;
 	  Tree tree = new Tree();
 	  LeafNode node;
@@ -247,8 +248,10 @@ public class RefDataModel
 		  qmxf = httpClient.get(Qmxf.class, "/templates/"+templateId);
 			  //R85736598359
 		  HashMap<String, String> hsMap;// = new HashMap<String, String>();
+		  
 		  for(RoleQualification roleQualifications:qmxf.getTemplateQualifications().get(0).getRoleQualifications()){
 			  hsMap = new HashMap<String, String>();
+			  
 			  node = new LeafNode();
 		      node.setIdentifier(roleQualifications.getId());
 		      node.setIconCls("role");
@@ -258,7 +261,20 @@ public class RefDataModel
 		      node.setRecord(hsMap);
 	  		  node.setType(Type.ROLENODE.value());
 	  		  node.setText(roleQualifications.getNames().get(0).getValue());
-	    	  treeNodes.add(node);  
+	  			
+	  		  
+	  		try{
+	  		 	if(!roleQualifications.getRange().isEmpty()){
+		  			if(roleQualifications.getRange().contains("rdl.rdlfacade.org")){
+		        	node.setLeaf(true);
+		        	/*String classId= roleQualifications.getRange().substring(roleQualifications.getRange().indexOf("#")+1,roleQualifications.getRange().length());
+		  			Tree roleClassNode = getClass(classId);*/
+		  			}else{
+		        		node.setLeaf(false);
+		        	}
+	  		 	}	  
+	  		 }catch(Exception e){}
+	    	treeNodes.add(node);  
 		  }
 		  
 	  }catch(Exception e){
