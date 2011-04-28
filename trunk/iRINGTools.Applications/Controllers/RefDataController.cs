@@ -23,11 +23,10 @@ namespace iRINGTools.Web.Controllers
     public class RefDataController : Controller
     {
 
-        IRefDataRepository _refdataRepository = null;
-        NamespaceMapper _nsMap = new NamespaceMapper();
-        string _adapterServiceURI = String.Empty;
-        string _refDataServiceURI = String.Empty;
-
+        private IRefDataRepository _refdataRepository = null;
+        private NamespaceMapper _nsMap = new NamespaceMapper();
+        private string _adapterServiceURI = String.Empty;
+        private string _refDataServiceURI = String.Empty;
         public RefDataController()
             : this(new RefDataRepository())
         { }
@@ -66,14 +65,19 @@ namespace iRINGTools.Web.Controllers
         {
             int start = 0;
             int limit = 100;
-
+            string roleClassId = string.Empty;
             string id = form["id"];
             string searchtype = form["type"];
             string query = form["query"];
+            string range = form["range"];
             Int32.TryParse(form["limit"], out limit);
             Int32.TryParse(form["start"], out start);
-
+           
             List<JsonTreeNode> nodes = null;
+            if (!string.IsNullOrEmpty(range))
+            {
+              roleClassId = range.Substring(range.LastIndexOf("#") + 1);
+            }
 
             if (!string.IsNullOrEmpty(query))
             {
@@ -98,7 +102,8 @@ namespace iRINGTools.Web.Controllers
                         nodes = GetRoles(id);
                         break;
                     case "RoleNode":
-                        nodes = GetRoleClass(id);
+                        if (string.IsNullOrEmpty(roleClassId)) break;
+                        nodes = GetRoleClass(roleClassId);
                         break;
                     case "ClassNode":
                         nodes = GetClasses(id);
@@ -377,16 +382,17 @@ namespace iRINGTools.Web.Controllers
 
             if (!string.IsNullOrEmpty(id))
             {
-                Entity entity = _refdataRepository.GetClassLabel(id);
-                if (entity != null && entity.Uri != null)
+                QMXF entity = _refdataRepository.GetClasses(id);
+                if (entity != null && entity.classDefinitions.Count > 0)
                 {
                     JsonTreeNode classNode = new JsonTreeNode
                     {
-                        identifier = entity.Uri.Split('#')[1],
+                        identifier = entity.classDefinitions[0].identifier.Split('#')[1],
                         leaf = false,
                         children = null,
-                        id = ("ClassMap" + entity.Label).GetHashCode().ToString(),
-                        record = entity,
+                        text = entity.classDefinitions[0].name[0].value,
+                        id = ("ClassMap" + entity.classDefinitions[0].name[0].value).GetHashCode().ToString(),
+                        record = entity.classDefinitions[0],
                         type = "ClassNode",
                         icon = "Content/img/class.png"
                     };

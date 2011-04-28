@@ -1,5 +1,7 @@
 ﻿/// <reference path="../ext-3.2.1/adapter/ext/ext-base.js" />
 /// <reference path="../ext-3.2.1/ext-all.js" />
+/// <reference path="../../ext-3.3.1/ext-all-debug-w-comments.js" />
+
 
 Ext.ns('AdapterManager');
 /**
@@ -42,9 +44,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     this.tbar = this.buildToolbar();
 
-//    this.mappingMenu = new Ext.menu.Menu();
-//    this.mappingMenu.add(this.buildMappingMenu());
-
     this.graphmapMenu = new Ext.menu.Menu();
     this.graphmapMenu.add(this.buildGraphmapMenu());
 
@@ -74,13 +73,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       }
     }, this);
 
-    //    this.treeLoader.on('load', function (treeLoader, node) {
-    //      if (this.rootNode.hasChildNodes() == false) {
-    //        this.onAddGraphMap(node);
-    //      }
-    //    }, this);
-
-
     this.rootNode = new Ext.tree.AsyncTreeNode({
       id: this.scope.Name + "/" + this.application.Name,
       text: 'Mapping',
@@ -102,11 +94,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       expandAll: true,
       rootVisible: false,
       lines: true,
-      autoScroll: true,
-      //singleExpand: true,      
+      autoScroll: true,     
       loader: this.treeLoader,
       root: this.rootNode,
-      //   dropConfig: {appendOnly:true},
       bbar: new Ext.ux.StatusBar({ defaultText: 'Ready', statusAlign: 'right' })
 
     });
@@ -115,7 +105,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     this.mappingPanel.on('expandnode', this.onExpandNode, this);
     this.mappingPanel.on('contextmenu', this.showContextMenu, this);
     this.mappingPanel.on('click', this.onClick, this);
-
 
     this.propertyPanel = new Ext.grid.PropertyGrid({
       title: 'Details',
@@ -130,7 +119,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       frame: false,
       height: 150,
       selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-      // bodyStyle: 'padding-bottom:15px;background:#eee;',
       source: {},
       listeners: {
         beforeedit: function (e) { e.cancel = true; },

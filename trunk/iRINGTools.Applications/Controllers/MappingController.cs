@@ -643,6 +643,7 @@ namespace iRINGTools.Web.Controllers
         var valueListMap = mapping.valueListMaps.Find(c => c.name == deleteValueList);
         if (valueListMap != null)
           mapping.valueListMaps.Remove(valueListMap);
+        _repository.UpdateMapping(scope, application, mapping);
       }
       catch (Exception ex)
       {
@@ -665,6 +666,7 @@ namespace iRINGTools.Web.Controllers
         if (valueListMap != null)
         {
           valueListMap.name = newvalueList;
+          _repository.UpdateMapping(scope, application, mapping);
         }
 
       }
@@ -698,6 +700,7 @@ namespace iRINGTools.Web.Controllers
           if (valuelistMap.valueMaps == null)
             valuelistMap.valueMaps = new ValueMaps();
           valuelistMap.valueMaps.Add(valueMap);
+          _repository.UpdateMapping(scope, application, mapping);
         }
 
       }
@@ -726,6 +729,7 @@ namespace iRINGTools.Web.Controllers
          };
 
           mapping.valueListMaps.Add(valuelistMap);
+          _repository.UpdateMapping(scope, application, mapping);
         }
       }
       catch (Exception ex)
@@ -748,7 +752,7 @@ namespace iRINGTools.Web.Controllers
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(oldGraphName);
         graphMap.name = newGraphName;
-
+        _repository.UpdateMapping(scope, application, mapping);
       }
       catch (Exception ex)
       {
