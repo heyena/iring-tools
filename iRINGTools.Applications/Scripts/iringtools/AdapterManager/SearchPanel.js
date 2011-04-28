@@ -188,13 +188,13 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     },
     onClick: function (node) {
         localNode = node;
-        alert(node.childNodes[0].attributes.record);
+      //alert(node.childNodes[0].attributes.record);
         try {
             if (node.attributes.text != "Subclasses" && node.attributes.text != "Templates" && node.attributes.text != "Superclasses" && node.attributes.text != "Classifications") {
                 this.propertyPanel.setSource(node.attributes.record);
             }
             else {
-                alert(node.childNodes[0].attributes.record);
+           //     alert(node.childNodes[0].attributes.record);
                 this.propertyPanel.setSource(node.childNodes[0].attributes.record);
             }
         } catch (e) { }
