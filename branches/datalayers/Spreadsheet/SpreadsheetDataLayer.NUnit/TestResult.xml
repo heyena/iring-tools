@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="C:\Users\vanr6572\Projects\iring-tools\branches\datalayers\Spreadsheet\SpreadsheetDataLayer.NUnit\SpreadsheetDataLayer.NUnit.csproj" total="3" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2011-04-28" time="23:32:15">
+  <environment nunit-version="2.5.8.10295" clr-version="4.0.30319.208" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Users\vanr6572\Projects\iring-tools\branches\datalayers\Spreadsheet\lib\nunit\NUnit.Runner\bin\Debug" machine-name="AUS10481" user="VANR6572" user-domain="HATCHGLOBAL" />
+  <culture-info current-culture="en-AU" current-uiculture="en-US" />
+  <test-suite type="Project" name="C:\Users\vanr6572\Projects\iring-tools\branches\datalayers\Spreadsheet\SpreadsheetDataLayer.NUnit\SpreadsheetDataLayer.NUnit.csproj" executed="True" result="Success" success="True" time="12.413" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="C:\Users\vanr6572\Projects\iring-tools\branches\datalayers\Spreadsheet\SpreadsheetDataLayer.NUnit\bin\Debug\SpreadsheetDataLayer.NUnit.dll" executed="True" result="Success" success="True" time="12.403" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="iRINGTools" executed="True" result="Success" success="True" time="12.400" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="SDK" executed="True" result="Success" success="True" time="12.398" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="SpreadsheetDataLayer" executed="True" result="Success" success="True" time="12.396" asserts="0">
+                    <results>
+                      <test-suite type="Namespace" name="NUnit" executed="True" result="Success" success="True" time="12.392" asserts="0">
+                        <results>
+                          <test-suite type="TestFixture" name="SpreadsheetDataLayerTest" executed="True" result="Success" success="True" time="12.389" asserts="0">
+                            <results>
+                              <test-case name="iRINGTools.SDK.SpreadsheetDataLayer.NUnit.SpreadsheetDataLayerTest.A_Delete" executed="True" result="Success" success="True" time="7.240" asserts="1" />
+                              <test-case name="iRINGTools.SDK.SpreadsheetDataLayer.NUnit.SpreadsheetDataLayerTest.Create" executed="True" result="Success" success="True" time="4.124" asserts="1" />
+                              <test-case name="iRINGTools.SDK.SpreadsheetDataLayer.NUnit.SpreadsheetDataLayerTest.GetDictionary" executed="True" result="Success" success="True" time="0.112" asserts="2" />
+                            </results>
+                          </test-suite>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
