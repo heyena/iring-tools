@@ -297,9 +297,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
        scope: this
      },
     {
-      text: 'Edit GraphMap',
+      text: 'Open GraphMap',
       handler: this.onEditGraphMap,
-      icon: 'Content/img/16x16/document-properties.png',
+      icon: 'Content/img/16x16/mapping.png',
       scope: this
     }]
   },
