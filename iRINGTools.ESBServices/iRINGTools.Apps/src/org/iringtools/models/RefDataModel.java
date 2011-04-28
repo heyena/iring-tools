@@ -238,10 +238,9 @@ public class RefDataModel
 }
   
   public Tree getRole(String templateId){
-	  System.out.println("Inside getRoles & the TemplateId: "+templateId);
+	  //System.out.println("Inside getRoles & the TemplateId: "+templateId);
 	  Qmxf qmxf = null;
 	  Tree tree = new Tree();
-	  LeafNode node;
 	  List<Node> treeNodes = tree.getNodes();
 	  
 	  try{
@@ -251,35 +250,66 @@ public class RefDataModel
 		  
 		  for(RoleQualification roleQualifications:qmxf.getTemplateQualifications().get(0).getRoleQualifications()){
 			  hsMap = new HashMap<String, String>();
-			  
-			  node = new LeafNode();
-		      node.setIdentifier(roleQualifications.getId());
-		      node.setIconCls("role");
-		      hsMap.put("Identifier",roleQualifications.getQualifies());
-		      hsMap.put("Name",roleQualifications.getNames().get(0).getValue());
-		      //hsMap.put("URI", roleQualifications.);
-		      node.setRecord(hsMap);
-	  		  node.setType(Type.ROLENODE.value());
-	  		  node.setText(roleQualifications.getNames().get(0).getValue());
-	  			
 	  		  
 	  		try{
-	  		 	if(!roleQualifications.getRange().isEmpty()){
-		  			if(roleQualifications.getRange().contains("rdl.rdlfacade.org")){
-		        	node.setLeaf(true);
-		        	/*String classId= roleQualifications.getRange().substring(roleQualifications.getRange().indexOf("#")+1,roleQualifications.getRange().length());
-		  			Tree roleClassNode = getClass(classId);*/
-		  			}else{
-		        		node.setLeaf(false);
-		        	}
-	  		 	}	  
-	  		 }catch(Exception e){}
-	    	treeNodes.add(node);  
+		  		 	if(roleQualifications.getRange()!=null && roleQualifications.getRange().contains("rdl.rdlfacade.org")){
+		  		 		TreeNode node = new TreeNode();
+		  		        node.setIdentifier(roleQualifications.getId());
+		  		        node.setIconCls("role");
+		  		        hsMap.put("Identifier",roleQualifications.getQualifies());
+		  		        hsMap.put("Name",roleQualifications.getNames().get(0).getValue());
+		  		        node.setRecord(hsMap);
+		  	  		    node.setType(Type.ROLENODE.value());
+		  	  		    node.setText(roleQualifications.getNames().get(0).getValue());
+
+		  	  		    //service call for class details
+			        	String classId= roleQualifications.getRange().substring(roleQualifications.getRange().indexOf("#")+1,roleQualifications.getRange().length());
+			        	LeafNode roleClassNode = getIndividualClassDtls(classId);
+			        	List<Node> childClassNodes = node.getChildren();
+			        	childClassNodes.add(roleClassNode);
+			        	treeNodes.add(node); 
+	  		 	}else{
+
+		  			  LeafNode node = new LeafNode();
+		  		      node.setIdentifier(roleQualifications.getId());
+		  		      node.setIconCls("role");
+		  		      hsMap.put("Identifier",roleQualifications.getQualifies());
+		  		      hsMap.put("Name",roleQualifications.getNames().get(0).getValue());
+		  		      node.setRecord(hsMap);
+		  		      node.setLeaf(true);
+		  	  		  node.setType(Type.ROLENODE.value());
+		  	  		  node.setText(roleQualifications.getNames().get(0).getValue());
+		  	  		 treeNodes.add(node); 
+		        }
+
+	  		 }catch(Exception e){
+	  			 System.out.println("Exception in getRole: "+e);
+	  		 }
 		  }
 		  
 	  }catch(Exception e){
 		  
 	  }
 	  return tree;
+  }
+  
+  public LeafNode getIndividualClassDtls(String id){
+	  Qmxf qmxf = null;
+	  //System.out.println("Inside getClassDtls");
+	  LeafNode node=null;
+	  try{
+		  qmxf = httpClient.get(Qmxf.class, "/classes/"+id);
+		  ClassDefinition classDefinition = qmxf.getClassDefinitions().get(0);
+	      node = new LeafNode();
+	      node.setText(classDefinition.getNames().get(0).getValue());
+	      node.setIdentifier(classDefinition.getId().
+	    		  substring(classDefinition.getId().indexOf("#")+1,classDefinition.getId().length()));
+		  node.setIconCls("class");
+		  node.setType(Type.CLASS.value());
+		  
+	  }catch(Exception e){
+		  
+	  }
+	  return node;
   }
 }
