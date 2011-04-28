@@ -227,11 +227,13 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	  },
   	onClick: function (node) {
   		localNode = node;
-  		if(node.attributes.type=="ClassNode")
+  		if(node.attributes.type=="ClassNode"){
   			Ext.getCmp('class-edit').enable();
-  		else if(node.attributes.type=="TemplateNode")
+  			Ext.getCmp('temp-edit').disable();
+  		}else if(node.attributes.type=="TemplateNode"){
+  			Ext.getCmp('class-edit').disable();
   			Ext.getCmp('temp-edit').enable();
-  		else{
+  		}else{
   			Ext.getCmp('class-edit').disable();
   			Ext.getCmp('temp-edit').disable();
   		}
