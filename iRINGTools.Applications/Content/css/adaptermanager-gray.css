@@ -149,18 +149,31 @@ a.breadcrumb {
 }
 
 .x-fieldset legend {
-  padding-top: 1px;
-  font-family:tahoma,arial,helvetica,sans-serif;
-  font-size:14px;
+  padding-top: 0px;
   font-style:normal;
-  font-weight:normal;  
+  font-weight:bold;  
   color: Black;
 }
 
-.white-label 
+.bold-label 
 {
-  padding-top: 1px;
-  font-family:tahoma,arial,helvetica,sans-serif;
-  font-size:2px;
-  color:White;
+   font-weight:bold;  
+}
+
+
+.white-label 
+{  
+  color:White;  
+  float: right;
+}
+
+.right
+{
+  position:absolute;
+  right:3px;
+}
+
+.fieldset
+{
+  border: 1px solid #000000;
 }
