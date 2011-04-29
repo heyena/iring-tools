@@ -173,12 +173,12 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
             tree.on('load', function (node) {
                 Ext.getCmp('content-pane').getEl().unmask();
 
-             
                 // update the detail's panel with All properties
-                try {
-                    this.propertyPanel.setSource(node.attributes.record);
-                } catch (e) { }
-
+                if (node.attributes.type == "ClassNode") {
+                    try {
+                        this.propertyPanel.setSource(node.childNodes[0].attributes.record);
+                    } catch (e) { }
+                }
             }, this);
             tree.getRootNode().expand();
             tree.on('click', this.onClick, this);
@@ -186,15 +186,11 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
         }
     },
     onClick: function (node) {
-        localNode = node;
-        //alert(node.childNodes[0].attributes.record);
         try {
-            if (node.attributes.type != "ClassificationsNode" && node.attributes.type != "SuperclassesNode" && node.attributes.type != "SubclassesNode" && node.attributes.type != "ClassTemplatesNode") {
+            if (node.attributes.type == "ClassNode" && node.childNodes[0] != undefined) {
+                this.propertyPanel.setSource(node.childNodes[0].attributes.record);
+            } else {
                 this.propertyPanel.setSource(node.attributes.record);
-            }
-            else {
-                //     alert(node.childNodes[0].attributes.record);
-                this.propertyPanel.setSource(node.parentNode.attributes.record);
             }
         } catch (e) { }
         node.expand();
