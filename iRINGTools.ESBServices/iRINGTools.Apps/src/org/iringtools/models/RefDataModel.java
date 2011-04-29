@@ -126,6 +126,7 @@ public class RefDataModel
 		  	TreeNode childNode = new TreeNode();
 		  	//**** childNode.setText("Classifications");
 		  	childNode.setType(Type.CLASSIFICATION.value());
+		  	childNode.setIconCls("folder");
 		  	List<Node> childClassNodes = childNode.getChildren();
 		  	
 		  	for(Classification classification : classDefinition.getClassifications()){
@@ -147,6 +148,7 @@ public class RefDataModel
 		  	childNode = new TreeNode();
 		  	//*** childNode.setText("Superclasses");
 		  	childNode.setType(Type.SUPERCLASS.value());
+		  	childNode.setIconCls("folder");
 		  	List<Node> childSuperNodes = childNode.getChildren();
 		  	
 		  	for(Specialization specialization : classDefinition.getSpecializations()){
@@ -165,6 +167,7 @@ public class RefDataModel
 		  	//Sub class Node
 		  	childNode = new TreeNode();
 		  	childNode.setType(Type.SUBCLASS.value());
+		  	childNode.setIconCls("folder");
 		  	List<Node> childSubNodes = childNode.getChildren();
 		  	childSubNodes.addAll(getSubSuperClasses(id, "Sub").getNodes());
 		  	childNode.setText("Subclasses ("+childSubNodes.size()+")");
@@ -174,6 +177,7 @@ public class RefDataModel
 		  	childNode = new TreeNode();
 		  	//childNode.setText("Templates");
 		  	childNode.setType(Type.CLASSTEMPLATE.value());
+		  	childNode.setIconCls("folder");
 		  	childSubNodes = childNode.getChildren();
 		  	childSubNodes.addAll(getTemplates(id).getNodes());
 		  	childNode.setText("Templates ("+childSubNodes.size()+")");
