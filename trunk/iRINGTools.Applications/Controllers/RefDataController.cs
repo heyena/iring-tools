@@ -102,8 +102,8 @@ namespace iRINGTools.Web.Controllers
                         nodes = GetRoles(id);
                         break;
                     case "RoleNode":
-                        if (string.IsNullOrEmpty(roleClassId)) break;
-                        nodes = GetRoleClass(roleClassId);
+                       if (string.IsNullOrEmpty(roleClassId)) break;
+                       nodes = GetRoleClass(roleClassId);
                         break;
                     case "ClassNode":
                         nodes = GetClasses(id);
@@ -195,6 +195,37 @@ namespace iRINGTools.Web.Controllers
             return nodes;
         }
 
+        private List<JsonTreeNode> GetTemplateRoleClasses(string classId)
+        {
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+            if (classId != string.Empty)
+            {
+                QMXF dataEntities = _refdataRepository.GetClasses(classId);
+
+                foreach (var entity in dataEntities.classDefinitions)
+                {
+                    string label = entity.name[0].value.ToString() + '[' + entity.repositoryName + ']';
+                    string prefix = _nsMap.GetPrefix(new Uri(entity.identifier.Substring(0, entity.identifier.LastIndexOf("#") + 1)));
+                    JsonTreeNode node = new JsonTreeNode
+                    {
+                        nodeType = "async",
+                        type = (prefix.Equals("rdl")) ? "ClassNode" : "TemplateNode",
+                        icon = (prefix.Equals("rdl")) ? "Content/img/class.png" : "Content/img/template.png",
+                        identifier = entity.identifier.Split('#')[1],
+                        id = (label + entity.repositoryName).GetHashCode().ToString(),
+                        text = label,
+                        expanded = false,
+                        leaf = false,
+                        //  children = (prefix.Equals("rdl")) ? GetDefaultChildren(label) : null,
+                        record = entity
+                    };
+
+                    nodes.Add(node);
+                }
+            }
+            return nodes;
+        }
+
         private List<JsonTreeNode> GetClasses(string classId)
         {
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
@@ -209,7 +240,7 @@ namespace iRINGTools.Web.Controllers
                     {
                         id = ("Classifications" + label).GetHashCode().ToString(),
                         children = new List<JsonTreeNode>(),
-                        icon = "Content/img/folder.png",
+                        iconCls = "folder",
                         leaf = false,
                         text = "Classifications",
                         type = "ClassificationsNode",
@@ -221,7 +252,7 @@ namespace iRINGTools.Web.Controllers
                     {
                         id = ("Superclasses" + label).GetHashCode().ToString(),
                         children = new List<JsonTreeNode>(),
-                        icon = "Content/img/folder.png",
+                        iconCls = "folder",
                         leaf = false,
                         text = "Superclasses",
                         type = "SuperclassesNode",
@@ -232,7 +263,7 @@ namespace iRINGTools.Web.Controllers
                     {
                         id = ("Subclasses" + label).GetHashCode().ToString(),
                         children = new List<JsonTreeNode>(),
-                        icon = "Content/img/folder.png",
+                        iconCls = "folder",
                         leaf = false,
                         text = "Subclasses",
                         type = "SubclassesNode",
@@ -243,7 +274,7 @@ namespace iRINGTools.Web.Controllers
                     {
                         id = ("Templates" + label).GetHashCode().ToString(),
                         children = new List<JsonTreeNode>(),
-                        icon = "Content/img/folder.png",
+                      iconCls="folder",
                         leaf = false,
                         text = "Templates",
                         type = "ClassTemplatesNode",
@@ -272,6 +303,7 @@ namespace iRINGTools.Web.Controllers
                     if (clasifNode.children.Count() == 0)
                     {
                         clasifNode.leaf = true;
+                        clasifNode.icon = "Content/img/folder.png";
                     }
                     foreach (var specialization in entity.specialization)
                     {
@@ -288,19 +320,22 @@ namespace iRINGTools.Web.Controllers
                             children = null,
                             record = specialization
                         };
-
+                        
                         supersNode.children.Add(leafNode);
                     }
                     supersNode.text = supersNode.text + "(" + supersNode.children.Count() + ")";
                     if (supersNode.children.Count() == 0)
                     {
                         supersNode.leaf = true;
+                        supersNode.icon = "Content/img/folder.png";
                     }
                     //Get Sub Classes
                     JsonTreeNode subClassNodes = GetSubClasses(classId,subsNode);
+                    
                     if (subClassNodes.children.Count() == 0)
                     {
                         subClassNodes.leaf = true;
+                        subClassNodes.icon = "Content/img/folder.png";
                     }
                     nodes.Add(subClassNodes);
 
@@ -309,11 +344,13 @@ namespace iRINGTools.Web.Controllers
                     if (templateNodes.children.Count() == 0)
                     {
                         templateNodes.leaf = true;
+                         templateNodes.icon = "Content/img/folder.png";
                     }
+                    
                     nodes.Add(templateNodes);
                 }
             }
-
+            
             return nodes;
         }
 
@@ -407,7 +444,6 @@ namespace iRINGTools.Web.Controllers
         private JsonTreeNode GetTemplates(string classId, JsonTreeNode tempsNode)
         {
             
-
             if (!string.IsNullOrEmpty(classId))
             {
                 Entities dataEntities = _refdataRepository.GetClassTemplates(classId);
@@ -525,17 +561,26 @@ namespace iRINGTools.Web.Controllers
                     {
                         foreach (var role in entity.roleQualification)
                         {
+                            string roleId=string.Empty;
+                            if (role.range != null)
+                            {
+                                roleId = role.range.Split('#')[1];
+                            }
                             JsonTreeNode entityNode = new JsonTreeNode
                             {
                                 id = ("Roles" + role.name[0].value).GetHashCode().ToString(),
                                 type = "RoleNode",
                                 text = role.name[0].value,
                                 icon = "Content/img/role.png",
-                                children = null,
+                                children = GetTemplateRoleClasses(roleId),
                                 leaf = false,
                                 identifier = role.identifier,
                                 record = role
                             };
+                            if (entityNode.children.Count() == 0)
+                            {
+                                entityNode.leaf = true;
+                            }
                             nodes.Add(entityNode);
                         }
                     }

@@ -1,7 +1,7 @@
 ﻿Ext.ns('AdapterManager');
 /**
-* @class FederationManager.SearchPanel
-* @author by Aswini Nayak
+* @class AdapterManager.SearchPanel
+* @author by Neha Bhardwaj
 */
 AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     title: 'Reference Data Search',
@@ -168,14 +168,12 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
 
             tree.on('beforeload', function (node) {
                 Ext.getCmp('content-pane').getEl().mask('Loading...');
+                
             });
             tree.on('load', function (node) {
                 Ext.getCmp('content-pane').getEl().unmask();
 
-                if (node.attributes.text == "Subclasses" || node.attributes.text == "Templates") {
-                    //|| node.attributes.text == "Superclasses" || node.attributes.text == "Classifications"
-                    //  node.setText(node.attributes.text + ' (' + node.childNodes.length + ')');
-                }
+             
                 // update the detail's panel with All properties
                 try {
                     this.propertyPanel.setSource(node.attributes.record);
@@ -200,7 +198,6 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
             }
         } catch (e) { }
         node.expand();
-
     }
 
 });
