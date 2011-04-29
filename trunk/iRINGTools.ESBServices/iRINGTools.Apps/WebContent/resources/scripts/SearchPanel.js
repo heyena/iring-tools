@@ -12,9 +12,13 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
     split: true,
     searchUrl: null,
     limit: 100,
+    mainPanel:null,
     refClassTabPanel:null,
     propertyPanel:null,
     searchStore:null,
+    contextClassMenu: null,
+    contextTempMenu:null,
+    
     /**
     * initComponent
     * @protected
@@ -31,7 +35,14 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
             selectionchange : true
           });
     	
-    	this.tbar = this.buildToolbar();
+    	//this.tbar = this.buildToolbar();
+    	
+        this.contextClassMenu = new Ext.menu.Menu();
+    	this.contextClassMenu.add(this.buildClassContextMenu());
+    	
+        this.contextTempMenu = new Ext.menu.Menu();
+    	this.contextTempMenu.add(this.buildTemplateContextMenu());
+    	
         this.propertyPanel = new Ext.grid.PropertyGrid( {
             id : 'class-property-panel',
             title : 'Details',
@@ -58,15 +69,24 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
 
         this.refClassTabPanel = new Ext.TabPanel({
             id: 'content-pane',
-            region: 'center',
+            //region: 'center',
             deferredRender: false,
             enableTabScroll: true,
-            border: true,
+            //border: true,
             activeItem: 0
           });
         
         
-        this.items =[this.refClassTabPanel,this.propertyPanel];
+    	this.mainPanel = new Ext.Panel({
+    		tbar : this.buildToolbar(),
+    		region: 'center',
+    		autoScroll:true,
+    		layout: 'fit',
+    		items :[this.refClassTabPanel]
+    		
+    	});
+    	
+        this.items =[this.mainPanel,this.propertyPanel];
 
         // super
         FederationManager.SearchPanel.superclass.initComponent.call(this);
@@ -76,12 +96,11 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         return [ 
                  {
         			xtype: 'textfield',
-        			allowBlank:false,
-        			blankText :'This field can not be blank',
+        			width: 200,
         			name: 'referencesearch',
         			id:'referencesearch',
         			style: {
-        	            marginLeft: '15px'
+        	            marginLeft: '10px'
         	        },
         	        scope:this,
         	       listeners: {
@@ -94,7 +113,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
             	 },
             	 {
  				    xtype : "button",
- 				    //text : 'Search',
+ 				    text : 'Search',
  				    icon: 'resources/images/16x16/document-properties.png',
                      handler: this.onSearch,
                      scope : this,
@@ -104,15 +123,21 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
  	
  				},{
                  		xtype: 'checkbox',
-                	  	boxLabel:'Reset',
+                	  	//boxLabel:'Reset',
                 	  	name: 'reset',
                 	  	style: {
-            	            marginRight: '5px',
             	            marginLeft: '3px',
             	            marginBottom: '6px'
             	        }
                 },
-                
+                {
+            	  	xtype: 'label',
+            	  	text: 'Reset',
+            	  	style: {
+            	  	marginRight: '5px'
+            	  	}
+        	        
+                },
 				{
                      xtype : "tbbutton",
                      text : 'Promote',
@@ -121,42 +146,50 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
                      disabled : false,
                      handler: this.onPromote,
                      scope : this
-                   },
-                   {
-                     xtype : "tbbutton",
-                     text : 'Add Class',
-                     tooltip : 'Add Class',
-                     disabled : false,
-                     handler: this.onClassAdd,
-                     scope : this
-                   },
-                   {
-                     xtype : "tbbutton",
-                     text : 'Edit Class',
-                     tooltip : 'Edit Class',
-                     id : 'class-edit',
-                     disabled : true,
-                     handler: this.onClassEdit,
-                     scope : this
-                   },
-                   {
-                     xtype : "tbbutton",
-                     text : 'Add Template',
-                     tooltip : 'Add Template',
-                     disabled : false,
-                     handler: this.onTemplateAdd,
-                     scope : this
-                   },
-                   {
-                     xtype : "tbbutton",
-                     text : 'Edit Template',
-                     tooltip : 'Edit Template',
-                     id : 'temp-edit',
-                     disabled : true,
-                     handler: this.onTemplateEdit,
-                     scope : this
                    }];
       },
+      
+      buildClassContextMenu: function () {
+  	    return [
+  	      {
+  	        text: 'Add',
+  	        handler: this.onClassAdd,
+  	        icon : 'resources/images/16x16/document-new.png',
+  	        scope: this
+  	      },
+  	      {
+  	        text: 'Edit',
+  	        handler: this.onClassEdit,
+  	        icon : 'resources/images/16x16/edit-file.png',
+  	        scope: this
+  	      }];
+  	  },
+  	 buildTemplateContextMenu: function () {
+  		return [
+  	  	      {
+  	  	        text: 'Add',
+  	  	        handler: this.onTemplateAdd,
+  	  	        icon : 'resources/images/16x16/document-new.png',
+  	  	        scope: this
+  	  	      },
+  	  	      {
+  	  	        text: 'Edit',
+  	  	        handler: this.onTemplateEdit,
+  	  	        icon : 'resources/images/16x16/edit-file.png',
+  	  	        scope: this
+  	  	      }];
+   	  },
+  	 showContextMenu: function (node, event) {
+ 	    if (node.isSelected()) {
+  	      var x = event.browserEvent.clientX;
+  	      var y = event.browserEvent.clientY;
+	  	    if(node.attributes.type=="ClassNode")
+	  	    	this.contextClassMenu.showAt([x, y]);
+	  		else if(node.attributes.type=="TemplateNode")
+	  			this.contextTempMenu.showAt([x, y]);
+      	  
+  	      }
+  	  },
       onSearch: function () {
   	    var searchText = Ext.get('referencesearch').getValue();
   	    treeLoader = new Ext.tree.TreeLoader({
@@ -208,37 +241,28 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	      Ext.getCmp('content-pane').getEl().mask('Loading...');
   	    });
   	    tree.on('load', function (node) {
-  	      Ext.getCmp('content-pane').getEl().unmask();
+    	      Ext.getCmp('content-pane').getEl().unmask();
 
-  	    // during loading count the total children and update the Node Label As we are getting the counts for Superclasses and Classifications from JSON we don't require to cpunt manually 
- 	    if(node.attributes.text=="Subclasses"||node.attributes.text=="Templates"){
-  	    	node.setText(node.attributes.text+' ('+node.childNodes.length+')');
-  	    }
- 	    // update the detail's panel with All properties
- 	      if(node.attributes.type=="ClassNode"){
- 	    	try{
-  	  	  	    this.propertyPanel.setSource(node.childNodes[0].attributes.record);
-  		  	    }catch(e){}
-  	  	    }
-  	    },this);
+    	  	    try{
+    	  	    	for(var i=1;i<node.childNodes.length;i++){
+    	  	    	if(node.childNodes[i].attributes.children.length==0){
+    	  	     		node.childNodes[i].leaf=true;
+    	  	    		
+    	  	    	}  	    	
+    	  	    }}catch(e){}
+    	 	      if(node.attributes.type=="ClassNode"){
+    	 	    	try{
+    	  	  	  	    this.propertyPanel.setSource(node.childNodes[0].attributes.record);
+    	  		  	    }catch(e){}
+    	  	  	    }
+    	  	    },this);
   	    tree.getRootNode().expand();
 	    tree.on('click', this.onClick,this);
+	    tree.on('contextmenu', this.showContextMenu, this);
   	    this.refClassTabPanel.add(tree).show();
   	  },
   	onClick: function (node) {
   		localNode = node;
-  		if(node.attributes.type=="ClassNode"){
-  			Ext.getCmp('class-edit').enable();
-  			Ext.getCmp('temp-edit').disable();
-  		}else if(node.attributes.type=="TemplateNode"){
-  			Ext.getCmp('class-edit').disable();
-  			Ext.getCmp('temp-edit').enable();
-  		}else{
-  			Ext.getCmp('class-edit').disable();
-  			Ext.getCmp('temp-edit').disable();
-  		}
-  			
-
   		try {
 	  			if(node.attributes.type=="ClassNode" && node.childNodes[0]!=undefined){
 	  				this.propertyPanel.setSource(node.childNodes[0].attributes.record);
@@ -281,17 +305,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
           
         },
         
-        createStore : function(obj){
-      	  var storeData = new Array();
-            for ( var i = 0; i < obj.length; i++) {
-              var nodeId = obj[i].identifier;
-              var data = [nodeId, obj[i].text];
-              storeData.push(data);              
-            }
-            alert("storeData.length:"+storeData.length);
-            return storeData;
-
-        },      
+     
         openAddTemplateTab : function(parentNode){
           var listItems = new Array();
           var label = 'Add Template';

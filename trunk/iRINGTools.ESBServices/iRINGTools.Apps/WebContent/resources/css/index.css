@@ -19,6 +19,11 @@ p {
 	background-image: url(../images/16x16/folder.png);
 }
 
+.x-tree-node-leaf .x-tree-node-icon{
+	background-image:url(../images/16x16/folder.png);
+}
+
+
 .x-tree-node-expanded .folder {
 	background-image: url(../images/16x16/folder-open.png);
 }
@@ -112,3 +117,7 @@ p {
 .x-tree-node .role{
 	background-image: url(../images/16x16/role-badge.png);
 }
+.x-grid3-cell-inner, .x-grid3-hd-inner {
+	white-space:normal !important;
+}
+
