@@ -26,6 +26,7 @@ namespace iRINGTools.Web.Helpers
     public JsonTreeNode()
     {
       hidden = false;
+      iconCls = string.Empty;
     }
 
     public string id { get; set; }
@@ -41,5 +42,8 @@ namespace iRINGTools.Web.Helpers
     public object @checked { get; set; }
     public object record { get; set; }
     public Dictionary<string, string> properties { get; set; }
+    public string iconCls { get; set; }
+
+      
   }  
 }
