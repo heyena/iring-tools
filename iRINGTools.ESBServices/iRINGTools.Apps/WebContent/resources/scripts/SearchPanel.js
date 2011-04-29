@@ -137,16 +137,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
             	  	marginRight: '5px'
             	  	}
         	        
-                },
-				{
-                     xtype : "tbbutton",
-                     text : 'Promote',
-                     //icon : 'resources/images/16x16/view-refresh.png',
-                     tooltip : 'Promote',
-                     disabled : false,
-                     handler: this.onPromote,
-                     scope : this
-                   }];
+                }];
       },
       
       buildClassContextMenu: function () {
@@ -162,7 +153,16 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	        handler: this.onClassEdit,
   	        icon : 'resources/images/16x16/edit-file.png',
   	        scope: this
-  	      }];
+  	      },
+  	      {
+    	        xtype: 'menuseparator'
+    	  },
+    	  {
+    	    text: 'Promote',
+    	    handler: this.onPromote,
+    	    icon : 'resources/images/16x16/promote-icon.png',
+    	    scope: this
+    	   }];
   	  },
   	 buildTemplateContextMenu: function () {
   		return [
