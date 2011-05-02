@@ -286,15 +286,15 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         onTemplateEdit : function(btn, ev){
         	this.openAddTemplateTab(localNode);
         },
-         openAddClassTab : function(parentNode){
+        openAddClassTab : function(parentNode){
             var listItems = new Array();
-            var label = 'Add Class';
+            var label = 'New: {}';
             var tabId = 'addClass';
             var node = null;
             if(parentNode!=null){
   	          node = parentNode.childNodes[0];
   	          label = 'Edit {'+node.attributes.record.Name+'}';
-  	          tabId = node.attributes.record["Identifier"];
+  	          tabId = node.attributes.identifier;
             }
             listItems.push({
               xtype: 'hidden',
@@ -309,11 +309,11 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
      
         openAddTemplateTab : function(parentNode){
           var listItems = new Array();
-          var label = 'Add Template';
+          var label = 'New: {}';
           var tabId = 'addTemplate';
           if(parentNode!=null){
   	          label = 'Edit {'+parentNode.attributes.record.label+'}';
-  	          tabId = label;//node.attributes.record["Identifier"];
+  	          tabId = parentNode.attributes.identifier;
             }
           listItems.push({
             xtype: 'hidden',
