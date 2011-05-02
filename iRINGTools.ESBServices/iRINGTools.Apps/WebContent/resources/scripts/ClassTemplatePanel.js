@@ -5,11 +5,12 @@ Ext.ns('FederationManager');
 * @author Rashmi Shukla
 */
 FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
-	title: 'ClassTemplatePanel',	
+	//title: 'ClassTemplatePanel',	
+	title:null,
 	data_form: null,
     configData:null,
 	url: null,
-    nId:null,
+    nId:null,label:null,
     parentNode:null, node:null,name:null,desc:null,
     statusAuth:null,statusClass:null,statusFrom:null, statusTo:null,
     entityType:null, 
@@ -32,10 +33,11 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
       tabChange:true
     });
   	if(this.parentNode==null){
-  		
+  		this.label='New';
   	}else{
+  		this.label='Edit';
   		if(this.configData == 'class'){
-	  		this.node = this.parentNode.childNodes[0];
+  			this.node=this.parentNode.childNodes[0];
 	  		this.name=this.node.attributes.record.Name;
 	  		this.desc=this.node.attributes.record.Description;
 	  	    this.statusAuth=this.node.attributes.record["Status Authority"];
@@ -43,7 +45,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	  		this.statusFrom=this.node.attributes.record["Status From"];
 	  		this.statusTo=this.node.attributes.record["Status To"];
 	  	    this.entityType=this.node.attributes.record["Entity Type"];
-	  	    this.specStore = this.createStore(this.parentNode.childNodes[2].attributes.children);
+	  	    this.specStore=this.createStore(this.parentNode.childNodes[2].attributes.children);
 	  	    this.classStore=this.createStore(this.parentNode.childNodes[1].attributes.children);
   		}else{
   			this.name=this.parentNode.attributes.record.label;
@@ -51,10 +53,20 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
   		}
   	}
   	if(this.configData == 'class'){
+  		var that = this;
   		this.configData= [{xtype: 'fieldset', layout:'column', border:false,
 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
  					items:[
- 				          {fieldLabel:'Name',name:'name', xtype:'textfield', width:200, value:this.name},
+ 				          {fieldLabel:'Name',name:'name', xtype:'textfield',enableKeyEvents:true,
+ 				        	 listeners: {
+ 				        		change : function(f,newval,old){
+ 				        			Ext.getCmp(that.id).setTitle(that.label+': {'+newval+'}');
+ 				        			},
+ 				          		keyup:function(f,evt){
+ 				          			Ext.getCmp(that.id).setTitle(that.label+': {'+f.getValue()+'}');
+ 				          		}
+ 				        		}
+ 				          ,width:200, value:this.name},
  				          {xtype: 'fieldset',title:'Description',
 	 				    	  items: [
 	 				    	          {name:'description', xtype:'textarea', width:200, height:205, value:this.desc}
@@ -107,12 +119,21 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
         	 								       ]
         	 						}];
   	}else{
+  		var that = this;
   		this.configData = [{xtype: 'radiogroup',fieldLabel: 'Template Type',
             items: [
                     {boxLabel: 'Base Template', name: 'tempType', checked: true},
                     {boxLabel: 'Specialized Template', name: 'tempType'}]},
 
-                {fieldLabel:'Name',name:'name', xtype:'textfield', width:400, value:this.name},
+                {fieldLabel:'Name',name:'name', xtype:'textfield', width:400, value:this.name,enableKeyEvents:true,
+			        	 listeners: {
+				        		change : function(f,newval,old){
+				        			Ext.getCmp(that.id).setTitle(that.label+': {'+newval+'}');
+				        			},
+				          		keyup:function(f,evt){
+				          			Ext.getCmp(that.id).setTitle(that.label+': {'+f.getValue()+'}');
+				          		}
+				        		}},
 				 {fieldLabel:'Parent Template',name:'parentTemplate', xtype:'textfield', width:400},
 				 {xtype: 'fieldset', layout:'column', border:false,
    	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
@@ -196,6 +217,10 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 
   onReset: function(){
     this.data_form.getForm().reset();
+  },
+  
+  onTextChange : function(value){
+	  this.title = value;
   },
 
   onSave:function(){

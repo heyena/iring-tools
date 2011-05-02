@@ -727,7 +727,7 @@ FederationManager.FederationPanel = Ext
           
           openAddClassTab : function(){
               var listItems = new Array();
-              var label = 'Add Class';
+              var label = 'New: {}';
               var tabId = 'addClass';
               
               listItems.push({
@@ -741,7 +741,7 @@ FederationManager.FederationPanel = Ext
           
           onTemplateAdd : function(){
               var listItems = new Array();
-              var label = 'Add Template';
+              var label = 'New: {}';
               var tabId = 'addTemplate';
               
               listItems.push({
