@@ -100,6 +100,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
         			name: 'referencesearch',
         			id:'referencesearch',
         			style: {
+        				fontSize:'12px',
         	            marginLeft: '10px'
         	        },
         	        scope:this,
@@ -222,7 +223,7 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
   	      //useArrows: true,
   	      animate: true,
   	      lines: true,
-  	      id: 'tab_' + searchText,
+  	      id: 'tab_' + searchText.toLowerCase(),
   	      autoScroll: true,
   	      style: 'padding-left:5px;',
   	      border: false,
