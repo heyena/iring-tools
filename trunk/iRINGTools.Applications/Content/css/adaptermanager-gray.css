@@ -155,25 +155,3 @@ a.breadcrumb {
   color: Black;
 }
 
-.bold-label 
-{
-   font-weight:bold;  
-}
-
-
-.white-label 
-{  
-  color:White;  
-  float: right;
-}
-
-.right
-{
-  position:absolute;
-  right:3px;
-}
-
-.fieldset
-{
-  border: 1px solid #000000;
-}
