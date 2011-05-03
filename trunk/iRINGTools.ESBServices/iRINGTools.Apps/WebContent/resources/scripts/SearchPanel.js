@@ -59,11 +59,16 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
             border : true,
             frame : true,
             source : {},
+            clicksToEdit:2,
             listeners : {
+            	beforepropertychange : function(source, recordid, v, oldValue){
+      			return false;
+      			
+      		}/*,{
               // to disable editable option of the property grid
               beforeedit : function(e) {
                 e.cancel = true;
-              }
+              }*/
             }
           });
 
