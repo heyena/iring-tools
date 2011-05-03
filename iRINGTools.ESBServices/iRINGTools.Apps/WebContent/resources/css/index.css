@@ -117,7 +117,8 @@ p {
 .x-tree-node .role{
 	background-image: url(../images/16x16/role-badge.png);
 }
-.x-grid3-cell-inner, .x-grid3-hd-inner {
+/*.x-grid3-cell-inner, .x-grid3-hd-inner {
 	white-space:normal !important;
 }
 
+*/
