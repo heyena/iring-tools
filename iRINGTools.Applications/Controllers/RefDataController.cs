@@ -72,11 +72,11 @@ namespace iRINGTools.Web.Controllers
             string range = form["range"];
             Int32.TryParse(form["limit"], out limit);
             Int32.TryParse(form["start"], out start);
-
+           
             List<JsonTreeNode> nodes = null;
             if (!string.IsNullOrEmpty(range))
             {
-                roleClassId = range.Substring(range.LastIndexOf("#") + 1);
+              roleClassId = range.Substring(range.LastIndexOf("#") + 1);
             }
 
             if (!string.IsNullOrEmpty(query))
@@ -93,17 +93,17 @@ namespace iRINGTools.Web.Controllers
                         nodes = GetSuperClasses(id);
                         break;
                     case "SubclassesNode":
-                        // nodes = GetSubClasses(id);
+                       // nodes = GetSubClasses(id);
                         break;
                     case "ClassTemplatesNode":
-                        // nodes = GetTemplates(id);
+                       // nodes = GetTemplates(id);
                         break;
                     case "TemplateNode":
                         nodes = GetRoles(id);
                         break;
                     case "RoleNode":
-                        if (string.IsNullOrEmpty(roleClassId)) break;
-                        nodes = GetRoleClass(roleClassId);
+                       if (string.IsNullOrEmpty(roleClassId)) break;
+                       nodes = GetRoleClass(roleClassId);
                         break;
                     case "ClassNode":
                         nodes = GetClasses(id);
@@ -175,7 +175,6 @@ namespace iRINGTools.Web.Controllers
             {
                 string label = entity.Label + '[' + entity.Repository + ']';
                 string prefix = _nsMap.GetPrefix(new Uri(entity.Uri.Substring(0, entity.Uri.LastIndexOf("#") + 1)));
-
                 JsonTreeNode node = new JsonTreeNode
                 {
                     nodeType = "async",
@@ -187,7 +186,7 @@ namespace iRINGTools.Web.Controllers
                     expanded = false,
                     leaf = false,
                     //  children = (prefix.Equals("rdl")) ? GetDefaultChildren(label) : null,
-                    record = null
+                    record = entity
                 };
 
                 nodes.Add(node);
@@ -237,20 +236,18 @@ namespace iRINGTools.Web.Controllers
                 foreach (var entity in dataEntities.classDefinitions)
                 {
                     var label = entity.name[0].value;
-
-                    #region Default Nodes------------------
                     JsonTreeNode clasifNode = new JsonTreeNode
-                                {
-                                    id = ("Classifications" + label).GetHashCode().ToString(),
-                                    children = new List<JsonTreeNode>(),
-                                    iconCls = "folder",
-                                    leaf = false,
-                                    text = "Classifications",
-                                    type = "ClassificationsNode",
-                                    identifier = null,
-                                    expanded = false
-                                };
-                    
+                    {
+                        id = ("Classifications" + label).GetHashCode().ToString(),
+                        children = new List<JsonTreeNode>(),
+                        iconCls = "folder",
+                        leaf = false,
+                        text = "Classifications",
+                        type = "ClassificationsNode",
+                        identifier = null,
+                        expanded = false
+                    };
+                    nodes.Add(clasifNode);
                     JsonTreeNode supersNode = new JsonTreeNode
                     {
                         id = ("Superclasses" + label).GetHashCode().ToString(),
@@ -261,7 +258,7 @@ namespace iRINGTools.Web.Controllers
                         type = "SuperclassesNode",
                         expanded = false
                     };
-                    
+                    nodes.Add(supersNode);
                     JsonTreeNode subsNode = new JsonTreeNode
                     {
                         id = ("Subclasses" + label).GetHashCode().ToString(),
@@ -277,65 +274,37 @@ namespace iRINGTools.Web.Controllers
                     {
                         id = ("Templates" + label).GetHashCode().ToString(),
                         children = new List<JsonTreeNode>(),
-                        iconCls = "folder",
+                      iconCls="folder",
                         leaf = false,
                         text = "Templates",
                         type = "ClassTemplatesNode",
                         expanded = false
                     };
-                    #endregion
-
-                    #region Add Hidden node for Properties------------
-                    Dictionary<string, string> properties = new Dictionary<string, string>()
-                          {
-                            {"Description", entity.description[0].value.ToString()},
-                            {"Entity Type", entity.entityType.reference.ToString()},
-                            {"Identifiers", entity.identifier.ToString()},
-                            {"Name", entity.name[0].value.ToString()},
-                            {"Repository", entity.repositoryName.ToString()},
-                            {"Status Authority", entity.status[0].authority.ToString()},
-                            {"Status Class", entity.status[0].Class.ToString()},
-                            {"Status From", entity.status[0].from.ToString()},
-                          };
-                    JsonTreeNode hiddenNode = new JsonTreeNode
-                    {
-                        hidden = true,
-                        record = properties
-                    };
-                    nodes.Add(hiddenNode); 
-                    #endregion
-
-                    nodes.Add(clasifNode); // Add Classification node.
-                    nodes.Add(supersNode); // Add SuperClassNode.
-
-                    #region Fill Data in Classification node--------
+                   
                     foreach (var classification in entity.classification)
                     {
-
-                        JsonTreeNode leafNode = new JsonTreeNode
-                        {
-                            type = "ClassNode",
-                            icon = "Content/img/class.png",
-                            leaf = false,
-                            identifier = classification.reference.Split('#')[1],
-                            id = (classification.label),
-                            text = classification.label,
-                            expanded = false,
-                            children = null,
-                            record = null
-                        };
-
+                        
+                            JsonTreeNode leafNode = new JsonTreeNode
+                            {
+                                type = "ClassNode",
+                                icon = "Content/img/class.png",
+                                leaf = false,
+                                identifier = classification.reference.Split('#')[1],
+                                id = (classification.label),
+                                text = classification.label,
+                                expanded = false,
+                                children = null,
+                                record = classification
+                            };
+                            
                         clasifNode.children.Add(leafNode);
                     }
-                    clasifNode.text = clasifNode.text + "(" + clasifNode.children.Count() + ")";
+                    clasifNode.text = clasifNode.text + "(" + clasifNode.children.Count()+ ")";
                     if (clasifNode.children.Count() == 0)
                     {
                         clasifNode.leaf = true;
                         clasifNode.icon = "Content/img/folder.png";
-                    } 
-                    #endregion
-
-                    #region Fill Data in SuperClass node--------
+                    }
                     foreach (var specialization in entity.specialization)
                     {
 
@@ -349,9 +318,9 @@ namespace iRINGTools.Web.Controllers
                             text = specialization.label,
                             expanded = false,
                             children = null,
-                            record = null
+                            record = specialization
                         };
-
+                        
                         supersNode.children.Add(leafNode);
                     }
                     supersNode.text = supersNode.text + "(" + supersNode.children.Count() + ")";
@@ -359,12 +328,10 @@ namespace iRINGTools.Web.Controllers
                     {
                         supersNode.leaf = true;
                         supersNode.icon = "Content/img/folder.png";
-                    } 
-                    #endregion
-
+                    }
                     //Get Sub Classes
-                    JsonTreeNode subClassNodes = GetSubClasses(classId, subsNode);
-
+                    JsonTreeNode subClassNodes = GetSubClasses(classId,subsNode);
+                    
                     if (subClassNodes.children.Count() == 0)
                     {
                         subClassNodes.leaf = true;
@@ -373,17 +340,17 @@ namespace iRINGTools.Web.Controllers
                     nodes.Add(subClassNodes);
 
                     //Get Templates
-                    JsonTreeNode templateNodes = GetTemplates(classId, tempsNode);
+                    JsonTreeNode templateNodes = GetTemplates(classId,tempsNode);
                     if (templateNodes.children.Count() == 0)
                     {
                         templateNodes.leaf = true;
-                        templateNodes.icon = "Content/img/folder.png";
+                         templateNodes.icon = "Content/img/folder.png";
                     }
-
+                    
                     nodes.Add(templateNodes);
                 }
             }
-
+            
             return nodes;
         }
 
@@ -404,13 +371,13 @@ namespace iRINGTools.Web.Controllers
                         text = entity.Label,
                         expanded = false,
                         leaf = false,
-                        children = null,
+                       children =null,
                         record = entity
                     };
 
                     subsNode.children.Add(node);
                 }
-                subsNode.text = subsNode.text + "(" + subsNode.children.Count() + ")";
+                 subsNode.text = subsNode.text + "(" + subsNode.children.Count() + ")";
             }
 
             return subsNode;
@@ -476,7 +443,7 @@ namespace iRINGTools.Web.Controllers
 
         private JsonTreeNode GetTemplates(string classId, JsonTreeNode tempsNode)
         {
-
+            
             if (!string.IsNullOrEmpty(classId))
             {
                 Entities dataEntities = _refdataRepository.GetClassTemplates(classId);
@@ -594,7 +561,7 @@ namespace iRINGTools.Web.Controllers
                     {
                         foreach (var role in entity.roleQualification)
                         {
-                            string roleId = string.Empty;
+                            string roleId=string.Empty;
                             if (role.range != null)
                             {
                                 roleId = role.range.Split('#')[1];
