@@ -1452,7 +1452,7 @@ function addPropertyMapping(scopeName, appName) {
 				if (mydata[i].data.property == selectProperty && mydata[i].data.relatedProperty == mapProperty)
 					return;
 				else {
-					myArray.push([mydata[i].data.property, mydata[i].data.relatedProperty, mydata[i].data.deleteButton]);
+					myArray.push([mydata[i].data.property, mydata[i].data.relatedProperty]);
 				}
 		}
 	};
@@ -1519,7 +1519,7 @@ function addRelationship(scopeName, appName) {
 					return;
 				}
 				else {
-					myArray.push([mydata[i].data.relationName, mydata[i].data.deleteButton]);
+					myArray.push([mydata[i].data.relationName, mydata[i].data.nodeId]);
 				}
 			}
 		}
