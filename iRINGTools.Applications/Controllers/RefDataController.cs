@@ -70,13 +70,15 @@ namespace iRINGTools.Web.Controllers
             string searchtype = form["type"];
             string query = form["query"];
             string range = form["range"];
+            string isreset = form["reset"];
+
             Int32.TryParse(form["limit"], out limit);
             Int32.TryParse(form["start"], out start);
-           
+
             List<JsonTreeNode> nodes = null;
             if (!string.IsNullOrEmpty(range))
             {
-              roleClassId = range.Substring(range.LastIndexOf("#") + 1);
+                roleClassId = range.Substring(range.LastIndexOf("#") + 1);
             }
 
             if (!string.IsNullOrEmpty(query))
@@ -84,7 +86,7 @@ namespace iRINGTools.Web.Controllers
                 switch (searchtype)
                 {
                     case "SearchNode":
-                        nodes = GetClasses(query, start, limit);
+                        nodes = GetClasses(query, start, limit, Convert.ToBoolean(isreset));
                         break;
                     case "ClassificationsNode":
                         nodes = GetClasses(id);
@@ -93,17 +95,17 @@ namespace iRINGTools.Web.Controllers
                         nodes = GetSuperClasses(id);
                         break;
                     case "SubclassesNode":
-                       // nodes = GetSubClasses(id);
+                        // nodes = GetSubClasses(id);
                         break;
                     case "ClassTemplatesNode":
-                       // nodes = GetTemplates(id);
+                        // nodes = GetTemplates(id);
                         break;
                     case "TemplateNode":
                         nodes = GetRoles(id);
                         break;
                     case "RoleNode":
-                       if (string.IsNullOrEmpty(roleClassId)) break;
-                       nodes = GetRoleClass(roleClassId);
+                        if (string.IsNullOrEmpty(roleClassId)) break;
+                        nodes = GetRoleClass(roleClassId);
                         break;
                     case "ClassNode":
                         nodes = GetClasses(id);
@@ -165,11 +167,19 @@ namespace iRINGTools.Web.Controllers
             return nodes;
         }
 
-        private List<JsonTreeNode> GetClasses(string query, int start, int limit)
+        private List<JsonTreeNode> GetClasses(string query, int start, int limit, bool isReset)
         {
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-            RefDataEntities dataEntities = _refdataRepository.Search(query, start, limit);
+            RefDataEntities dataEntities = new RefDataEntities();
+            if (isReset)
+            {
+                dataEntities = _refdataRepository.SearchReset(query);
+            }
+            else
+            {
+                dataEntities = _refdataRepository.Search(query, start, limit);
+            }
 
             foreach (Entity entity in dataEntities.Entities.Values.ToList<Entity>())
             {
@@ -185,11 +195,11 @@ namespace iRINGTools.Web.Controllers
                     text = label,
                     expanded = false,
                     leaf = false,
-                   // children = new List<JsonTreeNode>(),
+                    // children = new List<JsonTreeNode>(),
                     record = entity
                 };
 
-               nodes.Add(node);
+                nodes.Add(node);
             }
 
             return nodes;
@@ -248,7 +258,7 @@ namespace iRINGTools.Web.Controllers
                         identifier = null,
                         expanded = false
                     };
-                
+
                     JsonTreeNode supersNode = new JsonTreeNode
                     {
                         id = ("Superclasses" + label).GetHashCode().ToString(),
@@ -259,7 +269,7 @@ namespace iRINGTools.Web.Controllers
                         type = "SuperclassesNode",
                         expanded = false
                     };
-                   
+
                     JsonTreeNode subsNode = new JsonTreeNode
                     {
                         id = ("Subclasses" + label).GetHashCode().ToString(),
@@ -275,19 +285,23 @@ namespace iRINGTools.Web.Controllers
                     {
                         id = ("Templates" + label).GetHashCode().ToString(),
                         children = new List<JsonTreeNode>(),
-                      iconCls="folder",
+                        iconCls = "folder",
                         leaf = false,
                         text = "Templates",
                         type = "ClassTemplatesNode",
                         expanded = false
                     };
-#endregion
+                    #endregion
 
                     #region Add Hidden node for Properties------------
+                    string reference = string.Empty;
+                    if (entity.entityType!= null){
+                        reference=Convert.ToString(entity.entityType.reference);
+                    }
                     Dictionary<string, string> properties = new Dictionary<string, string>()
                           {
                             {"Description", Convert.ToString(entity.description[0].value)},
-                            {"Entity Type", Convert.ToString(entity.entityType.reference)},
+                            {"Entity Type", reference},
                             {"Identifiers", Convert.ToString(entity.identifier)},
                             {"Name", Convert.ToString(entity.name[0].value)},
                             {"Repository", Convert.ToString(entity.repositoryName)},
@@ -309,23 +323,23 @@ namespace iRINGTools.Web.Controllers
                     #region Fill Data in Classification node--------
                     foreach (var classification in entity.classification)
                     {
-                        
-                            JsonTreeNode leafNode = new JsonTreeNode
-                            {
-                                type = "ClassNode",
-                                icon = "Content/img/class.png",
-                                leaf = false,
-                                identifier = classification.reference.Split('#')[1],
-                                id = (classification.label),
-                                text = classification.label,
-                                expanded = false,
-                                children = null,
-                                record = classification
-                            };
-                            
+
+                        JsonTreeNode leafNode = new JsonTreeNode
+                        {
+                            type = "ClassNode",
+                            icon = "Content/img/class.png",
+                            leaf = false,
+                            identifier = classification.reference.Split('#')[1],
+                            id = (classification.label),
+                            text = classification.label,
+                            expanded = false,
+                            children = null,
+                            record = classification
+                        };
+
                         clasifNode.children.Add(leafNode);
                     }
-                    clasifNode.text = clasifNode.text + "(" + clasifNode.children.Count()+ ")";
+                    clasifNode.text = clasifNode.text + "(" + clasifNode.children.Count() + ")";
                     if (clasifNode.children.Count() == 0)
                     {
                         clasifNode.leaf = true;
@@ -349,7 +363,7 @@ namespace iRINGTools.Web.Controllers
                             children = null,
                             record = specialization
                         };
-                        
+
                         supersNode.children.Add(leafNode);
                     }
                     supersNode.text = supersNode.text + "(" + supersNode.children.Count() + ")";
@@ -361,8 +375,8 @@ namespace iRINGTools.Web.Controllers
                     #endregion
 
                     //Get Sub Classes
-                    JsonTreeNode subClassNodes = GetSubClasses(classId,subsNode);
-                    
+                    JsonTreeNode subClassNodes = GetSubClasses(classId, subsNode);
+
                     if (subClassNodes.children.Count() == 0)
                     {
                         subClassNodes.leaf = true;
@@ -371,17 +385,17 @@ namespace iRINGTools.Web.Controllers
                     nodes.Add(subClassNodes);
 
                     //Get Templates
-                    JsonTreeNode templateNodes = GetTemplates(classId,tempsNode);
+                    JsonTreeNode templateNodes = GetTemplates(classId, tempsNode);
                     if (templateNodes.children.Count() == 0)
                     {
                         templateNodes.leaf = true;
-                         templateNodes.icon = "Content/img/folder.png";
+                        templateNodes.icon = "Content/img/folder.png";
                     }
-                    
+
                     nodes.Add(templateNodes);
                 }
             }
-            
+
             return nodes;
         }
 
@@ -402,13 +416,13 @@ namespace iRINGTools.Web.Controllers
                         text = entity.Label,
                         expanded = false,
                         leaf = false,
-                       children =null,
+                        children = null,
                         record = entity
                     };
 
                     subsNode.children.Add(node);
                 }
-                 subsNode.text = subsNode.text + "(" + subsNode.children.Count() + ")";
+                subsNode.text = subsNode.text + "(" + subsNode.children.Count() + ")";
             }
 
             return subsNode;
@@ -474,7 +488,7 @@ namespace iRINGTools.Web.Controllers
 
         private JsonTreeNode GetTemplates(string classId, JsonTreeNode tempsNode)
         {
-            
+
             if (!string.IsNullOrEmpty(classId))
             {
                 Entities dataEntities = _refdataRepository.GetClassTemplates(classId);
@@ -592,7 +606,7 @@ namespace iRINGTools.Web.Controllers
                     {
                         foreach (var role in entity.roleQualification)
                         {
-                            string roleId=string.Empty;
+                            string roleId = string.Empty;
                             if (role.range != null)
                             {
                                 roleId = role.range.Split('#')[1];

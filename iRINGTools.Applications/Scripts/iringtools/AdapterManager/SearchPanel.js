@@ -13,12 +13,16 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     refClassTabPanel: null,
     propertyPanel: null,
     searchStore: null,
+    contextClassMenu: null,
     /**
     * initComponent
     * @protected
     */
     initComponent: function () {
-        this.tbar = this.buildToolbar();
+
+        this.contextClassMenu = new Ext.menu.Menu();
+        this.contextClassMenu.add(this.buildClassContextMenu());
+
         this.propertyPanel = new Ext.grid.PropertyGrid({
             title: 'Details',
             region: 'east',
@@ -26,7 +30,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
             stripeRows: true,
             collapsible: true,
             autoScroll: true,
-            width: 450,
+            width: 350,
             split: true,
             bodyBorder: true,
             collapsed: false,
@@ -34,9 +38,10 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
             selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
             frame: true,
             source: {},
+            clicksToEdit: 2,
             listeners: {
-                beforeedit: function (e) {
-                    e.cancel = true;
+                beforepropertychange: function (source, recordid, v, oldValue) {
+                    return false;
                 },
                 // to copy but not edit content of property grid				
                 afteredit: function (e) {
@@ -50,16 +55,22 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
 
         this.refClassTabPanel = new Ext.TabPanel({
             id: 'content-pane',
-            region: 'center',
             deferredRender: false,
             enableTabScroll: true,
-            border: true,
             activeItem: 0,
             iconCls: 'tabsClass'
         });
 
+        this.mainPanel = new Ext.Panel({
+            tbar: this.buildToolbar(),
+            region: 'center',
+            autoScroll: true,
+            layout: 'fit',
+            items: [this.refClassTabPanel]
 
-        this.items = [this.refClassTabPanel, this.propertyPanel];
+        });
+
+        this.items = [this.mainPanel, this.propertyPanel];
 
         // super
         AdapterManager.SearchPanel.superclass.initComponent.call(this);
@@ -67,44 +78,59 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     buildToolbar: function () {
         var that = this;
         return [
-      {
-          xtype: 'textfield',
-          blankText: 'This field can not be blank',
-          name: 'referencesearch',
-          id: 'referencesearch',
-          style: {
-              marginLeft: '15px'
-          },
-          scope: this,
-          listeners: {
-              specialkey: function (f, e) {
-                  if (e.getKey() == e.ENTER) {
-                      that.onSearch();
-                  }
-              }
-          }
-      },
-      {
-          xtype: 'button',
-          icon: 'Content/img/16x16/document-properties.png',
-          handler: this.onSearch,
-          scope: this,
-          style: {
-              marginRight: '5px',
-              marginLeft: '3px'
-          }
-      },
-      {
-          xtype: 'checkbox',
-          boxLabel: 'Reset',
-          name: 'reset',
-          scope: this,
-          style: {
-              marginRight: '5px'
-          }
-      }
-    ];
+                 {
+                     xtype: 'textfield',
+                     width: 300,
+                     name: 'referencesearch',
+                     id: 'referencesearch',
+                     scope: this,
+                     listeners: {
+                         specialkey: function (f, e) {
+                             if (e.getKey() == e.ENTER) {
+                                 that.onSearch();
+                             }
+                         }
+                     }
+                 },
+            	 {
+            	     xtype: "button",
+            	     text: 'Search',
+            	     icon: 'Content/img/16x16/document-properties.png',
+            	     handler: this.onSearch,
+            	     scope: this,
+            	     style: {
+            	         marginLeft: '5px'
+            	     }
+
+            	 }, {
+            	     xtype: 'checkbox',
+            	     //boxLabel:'Reset',
+            	     name: 'reset',
+            	     id: 'reset',
+            	     style: {
+            	         marginLeft: '3px',
+            	         marginBottom: '6px'
+            	     }
+            	 },
+                {
+                    xtype: 'label',
+                    text: 'Reset',
+                    style: {
+                        marginRight: '5px'
+                    }
+
+                }];
     },
+
+    buildClassContextMenu: function () {
+        return [{
+            text: 'Promote',
+            handler: this.onPromote,
+            icon: 'Content/img/16x16/promote-icon.png',
+            scope: this
+        }];
+    },
+
 
     getActiveTab: function () {
         return this.refClassTabPanel.getActiveTab();
@@ -116,8 +142,18 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
             return activeTab.getSelectionModel().getSelectedNode();
     },
 
+    showContextMenu: function (node, event) {
+        if (node.isSelected()) {
+            var x = event.browserEvent.clientX;
+            var y = event.browserEvent.clientY;
+            if (node.attributes.type == "ClassNode")
+                this.contextClassMenu.showAt([x, y]);
+        }
+    },
+
     onSearch: function () {
         var searchText = Ext.get('referencesearch').getValue();
+        var isreset = reset.checked;
         if (searchText != '') {
             var treeLoader = new Ext.tree.TreeLoader({
                 requestMethod: 'POST',
@@ -126,6 +162,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
                     id: null,
                     type: null,
                     query: searchText,
+                    reset: isreset,
                     limit: this.limit,
                     start: 0
                 }
@@ -134,6 +171,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
             treeLoader.on("beforeload", function (treeLoader, node) {
                 treeLoader.baseParams.type = node.attributes.type;
                 treeLoader.baseParams.query = searchText;
+                treeLoader.baseParams.reset = isreset;
                 treeLoader.baseParams.limit = this.limit;
                 treeLoader.baseParams.start = 0;
                 if (node.parentNode && node.attributes.identifier == null) {
@@ -168,7 +206,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
 
             tree.on('beforeload', function (node) {
                 Ext.getCmp('content-pane').getEl().mask('Loading...');
-                
+
             });
             tree.on('load', function (node) {
                 Ext.getCmp('content-pane').getEl().unmask();
@@ -183,6 +221,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
             tree.getRootNode().expand();
             tree.on('click', this.onClick, this);
             this.refClassTabPanel.add(tree).show();
+            tree.on('contextmenu', this.showContextMenu, this);
         }
     },
     onClick: function (node) {
