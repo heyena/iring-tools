@@ -40,7 +40,7 @@ namespace iRINGTools.Web.Models
 
     public RefDataEntities SearchReset(string query)
     {
-      relativeUri = string.Format("search/{0}/reset", query);
+      relativeUri = string.Format("/search/{0}/reset", query);
       return  _client.Get<RefDataEntities>(relativeUri);
        
     }
