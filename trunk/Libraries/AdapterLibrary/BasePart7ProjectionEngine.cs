@@ -470,22 +470,14 @@ namespace org.iringtools.adapter.projection
 
     protected List<string> GetClassIdentifiers(ClassMap classMap, int dataObjectIndex, out bool hasRelatedProperty)
     {
-      List<string> classIdentifiers = new List<string>();
+      string[] classIdentifiers = null;
       hasRelatedProperty = false;
+      bool initialized = false;
 
       foreach (string identifier in classMap.identifiers)
       {
-        if (classIdentifiers.Count > 0)
-        {
-          classIdentifiers.Add(classMap.identifierDelimiter);
-        }
-
-        // identifier is a fixed value
-        if (identifier.StartsWith("#") && identifier.EndsWith("#"))
-        {
-          classIdentifiers.Add(identifier.Substring(1, identifier.Length - 2));
-        }
-        else  // identifier is a property map
+        // identifier is a property map
+        if (!(identifier.StartsWith("#") && identifier.EndsWith("#")))
         {
           string[] identifierParts = identifier.Split('.');
           string propertyName = identifierParts[identifierParts.Length - 1];
@@ -494,21 +486,77 @@ namespace org.iringtools.adapter.projection
           {
             List<IDataObject> valueObjects = GetValueObjects(identifier, dataObjectIndex);
 
-            foreach (IDataObject valueObject in valueObjects)
+            if (!initialized)
             {
-              classIdentifiers.Add(Convert.ToString(valueObject.GetPropertyValue(propertyName)));
+              if (classIdentifiers == null)
+              {
+                classIdentifiers = new string[valueObjects.Count];                
+              }
+              else
+              {
+                string value = classIdentifiers[0];
+                classIdentifiers = new string[valueObjects.Count];
+
+                for (int i = 0; i < classIdentifiers.Length; i++)
+                {
+                  classIdentifiers[i] = value;
+                }
+              }
+
+              initialized = true;
+            }
+
+            for (int i = 0; i < valueObjects.Count; i++)
+            {
+              string value = Convert.ToString(valueObjects[i].GetPropertyValue(propertyName));
+
+              if (classIdentifiers[i] == null)
+              {
+                classIdentifiers[i] = value;
+              }
+              else
+              {
+                classIdentifiers[i] += classMap.identifierDelimiter + value;
+              }
             }
 
             hasRelatedProperty = true;
           }
           else  // direct property
           {
-            classIdentifiers.Add(Convert.ToString(_dataObjects[dataObjectIndex].GetPropertyValue(propertyName)));
+            string value = Convert.ToString(_dataObjects[dataObjectIndex].GetPropertyValue(propertyName));
+            
+            if (classIdentifiers == null)
+            {
+              classIdentifiers = new string[1];
+              classIdentifiers[0] = value;
+            }
+            else
+            {
+              classIdentifiers[0] += classMap.identifierDelimiter + value;
+            }
+          }
+        }
+        else  // identifier is a fixed value
+        {
+          string value = identifier.Substring(1, identifier.Length - 2);
+
+          if (classIdentifiers == null)
+          {
+            classIdentifiers = new string[1];
+            classIdentifiers[0] = value;
+          }
+          else
+          {
+            for (int i = 0; i < classIdentifiers.Length; i++)
+            {
+              classIdentifiers[i] += classMap.identifierDelimiter + value;
+            }
           }
         }
       }
 
-      return classIdentifiers;
+      return classIdentifiers.ToList<string>();
     }
 
     private void SetInboundSparqlClassIdentifiers()
