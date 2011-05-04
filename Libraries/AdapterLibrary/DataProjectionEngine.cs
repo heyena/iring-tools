@@ -16,10 +16,10 @@ namespace org.iringtools.adapter.projection
     private XNamespace _appNamespace = null;
 
     [Inject]
-    public DataProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, DataDictionary dictionary)
+    public DataProjectionEngine(AdapterSettings settings, DataDictionary dictionary)
     {
       _settings = settings;
-      _dataLayer = dataLayer;
+      _dictionary = dictionary;
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
