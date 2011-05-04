@@ -185,11 +185,11 @@ namespace iRINGTools.Web.Controllers
                     text = label,
                     expanded = false,
                     leaf = false,
-                    //  children = (prefix.Equals("rdl")) ? GetDefaultChildren(label) : null,
+                   // children = new List<JsonTreeNode>(),
                     record = entity
                 };
 
-                nodes.Add(node);
+               nodes.Add(node);
             }
 
             return nodes;
@@ -235,6 +235,7 @@ namespace iRINGTools.Web.Controllers
                 QMXF dataEntities = _refdataRepository.GetClasses(classId);
                 foreach (var entity in dataEntities.classDefinitions)
                 {
+                    #region Default Nodes------------------
                     var label = entity.name[0].value;
                     JsonTreeNode clasifNode = new JsonTreeNode
                     {
@@ -247,7 +248,7 @@ namespace iRINGTools.Web.Controllers
                         identifier = null,
                         expanded = false
                     };
-                    nodes.Add(clasifNode);
+                
                     JsonTreeNode supersNode = new JsonTreeNode
                     {
                         id = ("Superclasses" + label).GetHashCode().ToString(),
@@ -258,7 +259,7 @@ namespace iRINGTools.Web.Controllers
                         type = "SuperclassesNode",
                         expanded = false
                     };
-                    nodes.Add(supersNode);
+                   
                     JsonTreeNode subsNode = new JsonTreeNode
                     {
                         id = ("Subclasses" + label).GetHashCode().ToString(),
@@ -280,7 +281,32 @@ namespace iRINGTools.Web.Controllers
                         type = "ClassTemplatesNode",
                         expanded = false
                     };
-                   
+#endregion
+
+                    #region Add Hidden node for Properties------------
+                    Dictionary<string, string> properties = new Dictionary<string, string>()
+                          {
+                            {"Description", Convert.ToString(entity.description[0].value)},
+                            {"Entity Type", Convert.ToString(entity.entityType.reference)},
+                            {"Identifiers", Convert.ToString(entity.identifier)},
+                            {"Name", Convert.ToString(entity.name[0].value)},
+                            {"Repository", Convert.ToString(entity.repositoryName)},
+                            {"Status Authority", Convert.ToString(entity.status[0].authority)},
+                            {"Status Class", Convert.ToString(entity.status[0].Class)},
+                            {"Status From", Convert.ToString(entity.status[0].from)},
+                          };
+                    JsonTreeNode hiddenNode = new JsonTreeNode
+                    {
+                        hidden = true,
+                        record = properties
+                    };
+                    nodes.Add(hiddenNode);
+                    #endregion
+
+                    nodes.Add(clasifNode); // Add Classification node.
+                    nodes.Add(supersNode); // Add SuperClassNode.
+
+                    #region Fill Data in Classification node--------
                     foreach (var classification in entity.classification)
                     {
                         
@@ -305,6 +331,9 @@ namespace iRINGTools.Web.Controllers
                         clasifNode.leaf = true;
                         clasifNode.icon = "Content/img/folder.png";
                     }
+                    #endregion
+
+                    #region Fill Data in SuperClass node--------
                     foreach (var specialization in entity.specialization)
                     {
 
@@ -329,6 +358,8 @@ namespace iRINGTools.Web.Controllers
                         supersNode.leaf = true;
                         supersNode.icon = "Content/img/folder.png";
                     }
+                    #endregion
+
                     //Get Sub Classes
                     JsonTreeNode subClassNodes = GetSubClasses(classId,subsNode);
                     
@@ -364,7 +395,7 @@ namespace iRINGTools.Web.Controllers
                     JsonTreeNode node = new JsonTreeNode
                     {
                         nodeType = "async",
-                        type = "SubclassNode",
+                        type = "ClassNode",
                         icon = "Content/img/class.png",
                         identifier = entity.Uri.Split('#')[1],
                         id = (entity.Label + entity.Repository).GetHashCode().ToString(),
