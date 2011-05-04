@@ -153,7 +153,9 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
 
     onSearch: function () {
         var searchText = Ext.get('referencesearch').getValue();
-        var isreset = reset.checked;
+        var isreset = document.getElementById('reset').checked;
+        alert(isreset);
+
         if (searchText != '') {
             var treeLoader = new Ext.tree.TreeLoader({
                 requestMethod: 'POST',
