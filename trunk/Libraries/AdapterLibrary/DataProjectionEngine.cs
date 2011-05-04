@@ -35,7 +35,7 @@ namespace org.iringtools.adapter.projection
            HttpUtility.UrlEncode(graphName)
          );
 
-        _dictionary = _dataLayer.GetDictionary();
+        //_dictionary = _dataLayer.GetDictionary();
         _dataObjects = dataObjects;
 
         if (_dataObjects != null && (_dataObjects.Count == 1 || FullIndex))
