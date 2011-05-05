@@ -41,6 +41,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.Data.SqlClient;
+using System.Runtime.Serialization.Json;
 
 namespace org.iringtools.utility
 {
@@ -807,6 +808,23 @@ namespace org.iringtools.utility
       {
         writer.Close();
       }
+    }
+
+    public static string ToJson<T>(T obj)
+    {
+      DataContractJsonSerializer serializer = new DataContractJsonSerializer(obj.GetType());
+      MemoryStream ms = new MemoryStream();
+      serializer.WriteObject(ms, obj);
+      return Encoding.Default.GetString(ms.ToArray());
+    }
+
+    public static T FromJson<T>(string json)
+    {
+      MemoryStream ms = new MemoryStream(Encoding.Unicode.GetBytes(json));
+      DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+      T obj = (T)serializer.ReadObject(ms);
+      ms.Close();
+      return obj;
     }
 
     public static void WriteException(Exception exception, string path)
