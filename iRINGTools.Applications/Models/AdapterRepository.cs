@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Json;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
 using System.Xml.Linq;
 using System.Web;
 using Ninject;
-
+using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
@@ -20,6 +21,7 @@ namespace iRINGTools.Web.Models
         private NameValueCollection _settings = null;
         private WebHttpClient _client = null;
         private string _refDataServiceURI = string.Empty;
+				private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));      
 
         [Inject]
         public AdapterRepository()
@@ -276,11 +278,30 @@ namespace iRINGTools.Web.Models
           return client.Get<DataProviders>("/providers");
         }
 
+				public String SaveDBDictionary(string scope, string application, string tree)
+				{
+					WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+					DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
+					string postResult = null;
+          try
+          {
+						postResult = client.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
+          }
+          catch (Exception ex)
+          {
+						_logger.Error("Error posting DatabaseDictionary." + ex);
+          }
+					return postResult;
+				}
+
         public DatabaseDictionary GetDBDictionary(string scope, string application)
         {
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          return client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
-        }
+          DatabaseDictionary db = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+					System.Web.Script.Serialization.JavaScriptSerializer oSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+					string s = oSerializer.Serialize(db);					
+					return db;
+				}
 
         public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,
           string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)

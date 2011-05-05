@@ -32,7 +32,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				else {
 					form.findField('showOnIndex').setValue(false);
 				}
-
 				form.findField('numberOfDecimals').setValue(properties.numberOfDecimals);
 			}
 		};
@@ -128,13 +127,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										// populate available tables  
 										var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');
 										var availItems = new Array();
-
 										for (var i = 0; i < tableNames.items.length; i++) {
 											var tableName = tableNames.items[i];
-
 											if (tableName) {
 												var selected = false;
-
 												for (var j = 0; j < tableSelector.multiselects[1].store.length; j++) {
 													if (tableName == tableSelector.multiselects[1].store[j][1]) {
 														selected = true;
@@ -147,9 +143,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												}
 											}
 										}
-
 										tableSelector.multiselects[0].store = availItems;
-
 										var tab = Ext.getCmp('content-panel');
 										var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
 										var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
@@ -187,7 +181,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 		var setRelations = function (editPane, node) {
 			if (editPane && node) {
-
 				if (editPane.items.map['create-relation-panel']) {
 					var crePane = editPane.items.map['create-relation-panel'];
 					var relationConfigPane = crePane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + node.id];
@@ -253,18 +246,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						}]
 					}]
 				});
-
 				editPane.add(relationCreateFormPanel);
 				var panelIndex = editPane.items.indexOf(relationCreateFormPanel);
 				editPane.getLayout().setActiveItem(panelIndex);
-
 				var deleteDataRelationPane = relationCreateFormPanel.items.items[0].items.items[0].items.items[1];
 				var relations = new Array();
 				var configLabel = scopeName + '.' + appName + '.-nh-config-wizard';
 				var gridLabel = scopeName + '.' + appName + '.' + node.id;
 				var i = 0;
-
-
 				if (deleteDataRelationPane.items) {
 					var gridPane = deleteDataRelationPane.items.map[gridLabel];
 					if (gridPane) {
@@ -275,14 +264,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 				for (i = 0; i < node.childNodes.length; i++) {
 					var nodeId = node.childNodes[i].id;
-					//var deleteButtonData = "<input type=\"image\" src=\"Content/img/16x16/edit-delete.png\" " + "onClick='javascript:deleteNodeRow(\"" + scopeName + "\",\"" + appName + "\",\"" + gridLabel + "\",\"" + nodeId + "\",\"" + i + "\")'>";
 					relations.push([node.childNodes[i].text, nodeId]);
 				}
 				var colModel = new Ext.grid.ColumnModel([
   					{ id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' },
 						{ dataIndex: 'nodeId', hidden: true }
   				]);
-
 				var dataStore = new Ext.data.Store({
 					autoDestroy: true,
 					proxy: new Ext.data.MemoryProxy(relations),
@@ -291,12 +278,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							{ name: 'nodeId' }
   					])
 				});
-
 				var callId = 0;
 				createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName, appName, callId);
 			}
 		};
-
 
 		var setRelationFields = function (editPane, node) {
 			if (editPane && node) {
@@ -307,7 +292,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						var panelIndex = editPane.items.indexOf(relPane);
 						editPane.getLayout().setActiveItem(panelIndex);
 						relationConfigPane.show();
-						//editPane.getLayout().setActiveItem(editPane.items.length - 1);
 						return;
 					}
 				}
@@ -333,11 +317,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var relatedObjectName = nodeAttribute.relatedObjectName.toUpperCase();
 				if (relatedObjectName != '') {
 					var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
-					propertiesNode = relatedDataObjectNode.attributes.children[1];
-
-					for (var i = 0; i < propertiesNode.children.length; i++)
-						if (!propertiesNode.children[i].hidden)
-							mappingProperties.push([i.toString(), propertiesNode.children[i].text]);
+					if (relatedDataObjectNode) {
+						propertiesNode = relatedDataObjectNode.attributes.children[1];
+						for (var i = 0; i < propertiesNode.children.length; i++)
+							if (!propertiesNode.children[i].hidden)
+								mappingProperties.push([i.toString(), propertiesNode.children[i].text]);
+					}
 				}
 				else {
 					mappingProperties.push(['0', '']);
@@ -400,16 +385,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										node.attributes.relatedObjectName = relatedObjectName;
 									propertiesNode = relatedDataObjectNode.attributes.children[1];
 									var mappingProperties = new Array();
-									// debug purpose
-									propertiesNode.children[0].hidden = true;
-									propertiesNode.children[1].hidden = true;
 									var ii = 0;
 									for (var i = 0; i < propertiesNode.children.length; i++)
 										if (propertiesNode.children[i].hidden) {
 											mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
 											ii++;
 										}
-
 									var mapCombo = relationConfigPanel.getForm().findField('mapPropertyName');
 									if (mapCombo.store.data) {
 										mapCombo.reset();
@@ -503,11 +484,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						}]
 					}]
 				});
-
 				editPane.add(relationConfigPanel);
 				var panelIndex = editPane.items.indexOf(relationConfigPanel);
 				editPane.getLayout().setActiveItem(panelIndex);
-
 				var relationConfigForm = relationConfigPanel.getForm();
 				var dataRelationPane = relationConfigPanel.items.items[0].items.items[0].items.items[5];
 				relationConfigForm.findField('relatedObjectName').setValue(relatedObjectName);
@@ -531,20 +510,15 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						return;
 					}
 				}
-
 				var myArray = new Array();
 				var i = 0;
-
 				for (i = 0; i < propertyMaps.length; i++) {
-					//var deleteButtonData = "<input type=\"image\" src=\"Content/img/16x16/edit-delete.png\" " + "onClick='javascript:deleteRow(\"" + scopeName + "\",\"" + appName + "\",\"" + gridLabel + "\",\"" + i + "\")'>";
 					myArray.push([propertyMaps[i].dataPropertyName.toUpperCase(), propertyMaps[i].relatedPropertyName.toUpperCase()]);
 				}
-
 				var colModel = new Ext.grid.ColumnModel([
   					{ id: 'property', header: 'Property', width: 230, dataIndex: 'property' },
   					{ header: 'Related Property', width: 230, dataIndex: 'relatedProperty' }
   				]);
-
 				var dataStore = new Ext.data.Store({
 					autoDestroy: true,
 					proxy: new Ext.data.MemoryProxy(myArray),
@@ -553,13 +527,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
   						{ name: 'relatedProperty' }
   					])
 				});
-
 				var callId = 1;
 				createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName, appName, callId);
 			}
 		};
-
-
 
 		var tablesSelectorPane = new Ext.FormPanel({
 			frame: false,
@@ -596,41 +567,34 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							valueField: 'tableValue'
 						}]
 					}],
-					buttons: [/*{
-						text: 'Prev',
+					buttons: [{
+						text: 'OK',
+						formBind: true,
 						handler: function () {
 							var form = wizard.getLayout().activeItem;
 							var formIndex = wizard.items.indexOf(form);
-							wizard.getLayout().setActiveItem(formIndex - 1);
-						}
-					},*/{
-					text: 'OK',
-					formBind: true,
-					handler: function () {
-						var form = wizard.getLayout().activeItem;
-						var formIndex = wizard.items.indexOf(form);
-						var dsConfigForm = dsConfigPane.getForm();
-						var tablesSelForm = tablesSelectorPane.getForm();
-						var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-						var treeLoader = dbObjectsTree.getLoader();
+							var dsConfigForm = dsConfigPane.getForm();
+							var tablesSelForm = tablesSelectorPane.getForm();
+							var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+							var treeLoader = dbObjectsTree.getLoader();
 
-						treeLoader.dataUrl = 'AdapterManager/DBObjects';
-						treeLoader.baseParams = {
-							scope: scopeName,
-							app: appName,
-							dbProvider: dsConfigForm.findField('dbProvider').getValue(),
-							dbServer: dsConfigForm.findField('dbServer').getValue(),
-							dbInstance: dsConfigForm.findField('dbInstance').getValue(),
-							dbName: dsConfigForm.findField('dbName').getValue(),
-							dbSchema: dsConfigForm.findField('dbSchema').getValue(),
-							dbUserName: dsConfigForm.findField('dbUserName').getValue(),
-							dbPassword: dsConfigForm.findField('dbPassword').getValue(),
-							tableNames: tablesSelForm.findField('tableSelector').getValue()
-						};
+							treeLoader.dataUrl = 'AdapterManager/DBObjects';
+							treeLoader.baseParams = {
+								scope: scopeName,
+								app: appName,
+								dbProvider: dsConfigForm.findField('dbProvider').getValue(),
+								dbServer: dsConfigForm.findField('dbServer').getValue(),
+								dbInstance: dsConfigForm.findField('dbInstance').getValue(),
+								dbName: dsConfigForm.findField('dbName').getValue(),
+								dbSchema: dsConfigForm.findField('dbSchema').getValue(),
+								dbUserName: dsConfigForm.findField('dbUserName').getValue(),
+								dbPassword: dsConfigForm.findField('dbPassword').getValue(),
+								tableNames: tablesSelForm.findField('tableSelector').getValue()
+							};
 
-						dataObjectsPane.items.items[1].items.map[scopeName + '.' + appName + '.tablesSelectorPane'].hide();
-						var rootNode = dbObjectsTree.getRootNode();
-						rootNode.reload(
+							dataObjectsPane.items.items[1].items.map[scopeName + '.' + appName + '.tablesSelectorPane'].hide();
+							var rootNode = dbObjectsTree.getRootNode();
+							rootNode.reload(
 								function (rootNode) {
 									var relationTypeStr = ['OneToOne', 'OneToMany'];
 
@@ -679,7 +643,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 														mapArray.push(mapItem);
 													}
 													newNode.attributes.propertyMap = mapArray;
-													//selectNode.parentNode.appendChild(newNode);
 													relationshipsNode.expanded = true;
 													relationshipsNode.children.push(newNode);
 													relationshipsNode.children[j].hidden = false;
@@ -689,710 +652,728 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									}
 								}
 							);
-						//wizard.getLayout().setActiveItem(formIndex + 1);
-					}
-				}, {
-					text: 'Cancel',
-					handler: function () {
-						dataObjectsPane.items.items[1].items.map[scopeName + '.' + appName + '.tablesSelectorPane'].hide();
-					}
-				}]
-			}]
-		}]
-	});
-
-	var dataPropFields = [{
-		name: 'columnName',
-		fieldLabel: 'Column Name',
-		disabled: true
-	}, {
-		name: 'propertyName',
-		fieldLabel: 'Property Name'
-	}, {
-		name: 'dataType',
-		fieldLabel: 'Data Type'
-	}, {
-		xtype: 'numberfield',
-		name: 'dataLength',
-		fieldLabel: 'Data Length'
-	}, {
-		xtype: 'checkbox',
-		name: 'nullable',
-		fieldLabel: 'Nullable'
-	}, {
-		xtype: 'checkbox',
-		name: 'showOnIndex',
-		fieldLabel: 'Show on Index'
-	}, {
-		xtype: 'numberfield',
-		name: 'numberOfDecimals',
-		fieldLabel: 'Number of Decimals'
-	}];
-
-	var dataObjectsPane = new Ext.Panel({
-		layout: 'border',
-		id: scopeName + '.' + appName + '.dataObjectsPane',
-		frame: true,
-		items: [{
-			xtype: 'panel',
-			name: 'data-objects-pane',
-			region: 'west',
-			minWidth: 240,
-			width: 300,
-			split: true,
-			autoScroll: true,
-			bodyStyle: 'background:#fff',
-			items: [{
-				xtype: 'treepanel',
-				border: false,
-				autoScroll: true,
-				animate: true,
-				lines: true,
-				enableDD: false,
-				containerScroll: true,
-				rootVisible: true,
-				root: {
-					text: 'Data Objects'
-				},
-				loader: new Ext.tree.TreeLoader(),
-				tbar: new Ext.Toolbar({
-					items: [{
-						xtype: 'tbspacer',
-						width: 4
-					}, {
-						xtype: 'button',
-						icon: 'Content/img/16x16/document-properties.png',
-						text: 'Configure',
-						tooltip: 'Configure Data Source',
-						handler: function () {
-							var tab = Ext.getCmp('content-panel');
-							var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
-							var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-							var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-							if (!editPane)
-								editPane = dataObjectsPane.items.items[1];
-
-							editPane.add(dsConfigPane);
-							editPane.getLayout().setActiveItem(editPane.items.length - 1);
 						}
 					}, {
-						xtype: 'tbspacer',
-						width: 4
-					}, {
-						xtype: 'button',
-						icon: 'Content/img/16x16/document-properties.png',
-						text: 'Edit',
-						tooltip: 'Edit Tables',
+						text: 'Cancel',
 						handler: function () {
-							var tab = Ext.getCmp('content-panel');
-							var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
-							var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-							var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-							if (!editPane)
-								editPane = dataObjectsPane.items.items[1];
-
-							editPane.add(tablesSelectorPane);
-							editPane.getLayout().setActiveItem(editPane.items.length - 1);
-						}
-					}, {
-						xtype: 'tbspacer',
-						width: 4
-					}, {
-						xtype: 'button',
-						icon: 'Content/img/16x16/document-properties.png',
-						text: 'Save',
-						tooltip: 'Save',
-						formBind: true,
-						handler: function () {
-							//					var form = wizard.getLayout().activeItem;
-							//					var formIndex = wizard.items.indexOf(form);
-							//					wizard.getLayout().setActiveItem(formIndex + 1);
-							var tab = Ext.getCmp('content-panel');
-							var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
-							var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-							var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-							if (!editPane)
-								editPane = dataObjectsPane.items.items[1];
-							var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-							var rootNode = dbObjectsTree.getRootNode();
-							var treeProperty = new Array();
-							for (var i = 0; i < rootNode.childNodes.length; i++) {
-								var folderNode = rootNode.childNodes[i];
-								var folder = {};
-								folder.name = folderNode.text;
-								folder.property = new Array();
-								for (var j = 0; j < folderNode.children.length; j++) {
-									var subFolderNode = folderNode.children[j];
-									var subFolder = {};
-									subFolder.name = subFolderNode.text;
-									subFolder.property = new Array();
-									for (var k = 0; k < subFolderNode.children.length; k++) {
-										var leafNode = subFolderNode.children[k];
-										var leaf = {};
-										leaf.name = leafNode.text;
-										leaf.property = leafNode.property;
-										subFolder.property.push(leaf);
-									}
-									folder.push(subFolder);
-								}
-								treeProperty.push(folder);
-							}
-
-							Ext.Ajax.request({
-								url: 'AdapterManager/Trees',
-								method: 'POST',
-								params: {
-									scope: scopeName,
-									app: appName,
-									tree: JSON.stringify(treeProperty)
-								},
-								success: function (response, request) {
-
-								},
-								failure: function (response, request) {
-									//TODO: use message box
-									Ext.Msg.alert('Error ' + response.text);
-								}
-							});
+							dataObjectsPane.items.items[1].items.map[scopeName + '.' + appName + '.tablesSelectorPane'].hide();
 						}
 					}]
-				}),
-				listeners: {
-					click: function (node, e) {
-						if (!node || (node.childNodes.length == 0 && node.isRoot))
-							return;
-						var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-						if (!editPane)
-							editPane = dataObjectsPane.items.items[1];
+				}]
+			}]
+		});
 
-						var nodeType = node.attributes.type;
+		var dataPropFields = [{
+			name: 'columnName',
+			fieldLabel: 'Column Name',
+			disabled: true
+		}, {
+			name: 'propertyName',
+			fieldLabel: 'Property Name'
+		}, {
+			name: 'dataType',
+			fieldLabel: 'Data Type'
+		}, {
+			xtype: 'numberfield',
+			name: 'dataLength',
+			fieldLabel: 'Data Length'
+		}, {
+			xtype: 'checkbox',
+			name: 'nullable',
+			fieldLabel: 'Nullable'
+		}, {
+			xtype: 'checkbox',
+			name: 'showOnIndex',
+			fieldLabel: 'Show on Index'
+		}, {
+			xtype: 'numberfield',
+			name: 'numberOfDecimals',
+			fieldLabel: 'Number of Decimals'
+		}];
 
-						if (!nodeType && node.attributes.attributes)
-							nodeType = node.attributes.attributes.type;
+		var dataObjectsPane = new Ext.Panel({
+			layout: 'border',
+			id: scopeName + '.' + appName + '.dataObjectsPane',
+			frame: true,
+			items: [{
+				xtype: 'panel',
+				name: 'data-objects-pane',
+				region: 'west',
+				minWidth: 240,
+				width: 300,
+				split: true,
+				autoScroll: true,
+				bodyStyle: 'background:#fff',
+				items: [{
+					xtype: 'treepanel',
+					border: false,
+					autoScroll: true,
+					animate: true,
+					lines: true,
+					enableDD: false,
+					containerScroll: true,
+					rootVisible: true,
+					root: {
+						text: 'Data Objects'
+					},
+					loader: new Ext.tree.TreeLoader(),
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'button',
+							icon: 'Content/img/16x16/document-properties.png',
+							text: 'Configure',
+							tooltip: 'Configure Data Source',
+							handler: function () {
+								editPane = dataObjectsPane.items.items[1];
+								if (!editPane) {
+									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+								}
+								editPane.add(dsConfigPane);
+								editPane.getLayout().setActiveItem(editPane.items.length - 1);
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'button',
+							icon: 'Content/img/16x16/document-properties.png',
+							text: 'Edit',
+							tooltip: 'Edit Tables',
+							handler: function () {
+								editPane = dataObjectsPane.items.items[1];
+								if (!editPane) {
+									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+								}
+								editPane.add(tablesSelectorPane);
+								editPane.getLayout().setActiveItem(editPane.items.length - 1);
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'button',
+							icon: 'Content/img/16x16/document-properties.png',
+							text: 'Save',
+							tooltip: 'Save',
+							formBind: true,
+							handler: function (button) {
+								editPane = dataObjectsPane.items.items[1];
+								if (!editPane) {
+									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+								}
 
-						if (nodeType) {
-							editPane.show();
-							var editPaneLayout = editPane.getLayout();
+								var treeProperty = {};
+								treeProperty.dataObjects = new Array();
+								var dsConfigForm = dsConfigPane.getForm();
+								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+								var rootNode = dbObjectsTree.getRootNode();
 
-							switch (nodeType.toUpperCase()) {
-								case 'DATAOBJECT':
-									var form = editPane.items.items[0].getForm();
-									form.findField('tableName').setValue(node.text);
+								treeProperty.provider = dsConfigForm.findField('dbProvider').getValue();
+								var dbServer = dsConfigForm.findField('dbServer').getValue();
+								dbServer = (dbServer == 'localhost' ? '.' : dbServer);
+								treeProperty.connectionString = 'Data Source=' + dbServer + '\\' + dsConfigForm.findField('dbInstance').getValue()
+								                            + ';Initial Catalog=' + dsConfigForm.findField('dbName').getValue()
+																						+ ';User ID=' + dsConfigForm.findField('dbUserName').getValue()
+																						+ ';Password=' + dsConfigForm.findField('dbPassword').getValue();
+								treeProperty.schemaName = dsConfigForm.findField('dbSchema').getValue();
+								treeProperty.IdentityConfiguration = null;
+								var keyName;
+								for (var i = 0; i < rootNode.childNodes.length; i++) {
+									var folderNode = rootNode.childNodes[i];
+									var folderNodeProp = folderNode.attributes.properties;
+									var folder = {};
+									folder.tableName = folderNodeProp.objectName;
+									folder.objectNamespace = folderNode.text;
+									folder.objectName = folderNodeProp.objectName;
+									if (!folderNodeProp.keyDelimeter)
+										folder.keyDelimeter = 'null';
+									else
+										folder.keyDelimeter = folderNodeProp.keyDelimeter;
+									folder.keyProperties = new Array();
+									folder.dataProperties = new Array();
+									folder.dataRelationships = new Array();
+									for (var j = 0; j < folderNode.attributes.children.length; j++) {
+										var subFolderNode = folderNode.attributes.children[j];
+										var subFolderNodeText = subFolderNode.text;
+										switch (subFolderNodeText) {
+											case 'Keys':
+												for (var k = 0; k < subFolderNode.children.length; k++) {
+													var keyNode = subFolderNode.children[k];
+													var keyProps = {};
+													keyProps.keyPropertyName = keyNode.text;
+													keyName = keyNode.text;
+													folder.keyProperties.push(keyProps);
 
-									if (node.attributes.properties) {
-										form.findField('objectName').setValue(node.attributes.properties.objectName);
-										form.findField('keyDelimiter').setValue(node.attributes.properties.keyDelimiter);
+													var tagProps = {};
+													tagProps.columnName = keyNode.text;
+													tagProps.propertyName = keyNode.text;
+													tagProps.dataType = 10;
+													tagProps.dataLength = 100;
+													tagProps.isNullable = 'false';
+													tagProps.keyType = 1;
+													tagProps.showOnIndex = 'false';
+													tagProps.numberOfDecimals = 0;
+													folder.dataProperties.push(tagProps);
+												}
+												break;
+											case 'Properties':
+												for (var k = 0; k < subFolderNode.children.length; k++) {
+													var propertyNode = subFolderNode.children[k];
+													var propertyNodeProf = propertyNode.properties;
+													var props = {};
+													props.columnName = propertyNodeProf.columnName;
+													props.propertyName = propertyNodeProf.propertyName;
+													props.dataType = 10;
+													props.dataLength = propertyNodeProf.dataLength;
+													props.isNullable = propertyNodeProf.nullable.toLowerCase();
+													if (props.columnName == keyName)
+														props.keyType = 1;
+													else
+														props.keyType = 0;
+													props.showOnIndex = propertyNodeProf.showOnIndex.toLowerCase();
+													props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
+													folder.dataProperties.push(props);
+												}
+												break;
+											case 'Relationships':
+												for (var k = 0; k < subFolderNode.children.length; k++) {
+													var relationNode = subFolderNode.children[k];
+													var relationNodeAttr = relationNode.attributes;
+													var relation = {};
+													relation.propertyMaps = new Array();
+													for (var m = 0; m < relationNodeAttr.propertyMap.length; m++) {
+														var propertyPairNode = relationNodeAttr.propertyMap[m];
+														var propertyPair = {};
+
+														propertyPair.dataPropertyName = propertyPairNode.dataPropertyName.toUpperCase();
+														propertyPair.relatedPropertyName = propertyPairNode.relatedPropertyName.toUpperCase();
+														relation.propertyMaps.push(propertyPair);
+													}
+													relation.relatedObjectName = relationNodeAttr.relatedObjectName.toUpperCase();
+													relation.relationshipName = relationNodeAttr.text.toUpperCase();
+													relation.relationshipType = relationNodeAttr.relationshipTypeIndex;
+													folder.dataRelationships.push(relation);
+												}
+												break;
+										}
 									}
+									treeProperty.dataObjects.push(folder);
+								}
 
-									form.treeNode = node;
-									editPaneLayout.setActiveItem(0);
-									break;
+								Ext.Ajax.request({
+									url: 'AdapterManager/Trees',
+									method: 'POST',
+									params: {
+										scope: scopeName,
+										app: appName,
+										tree: JSON.stringify(treeProperty)
+									},
+									success: function (response, request) {
+										//TODO: use message box
+										Ext.Msg.alert('Success ' + response.text);
+									},
+									failure: function (response, request) {
+										//TODO: use message box
+										Ext.Msg.alert('Error ' + response.text);
+									}
+								});
+							}
+						}]
+					}),
+					listeners: {
+						click: function (node, e) {
+							if (!node || (node.childNodes.length == 0 && node.isRoot))
+								return;
+							var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+							if (!editPane)
+								editPane = dataObjectsPane.items.items[1];
 
-								case 'KEYS':
-									var form = editPane.items.items[1].getForm();
-									var itemSelector = form.findField('keySelector');
-									var availItems = new Array();
-									var selectedItems = new Array();
+							var nodeType = node.attributes.type;
 
-									var propertiesNode = node.parentNode.childNodes[1];
+							if (!nodeType && node.attributes.attributes)
+								nodeType = node.attributes.attributes.type;
 
-									for (var i = 0; i < propertiesNode.childNodes.length; i++) {
-										var itemName = propertiesNode.childNodes[i].text;
+							if (nodeType) {
+								editPane.show();
+								var editPaneLayout = editPane.getLayout();
+
+								switch (nodeType.toUpperCase()) {
+									case 'DATAOBJECT':
+										var form = editPane.items.items[0].getForm();
+										form.findField('tableName').setValue(node.text);
+
+										if (node.attributes.properties) {
+											form.findField('objectName').setValue(node.attributes.properties.objectName);
+											form.findField('keyDelimiter').setValue(node.attributes.properties.keyDelimiter);
+										}
+
+										form.treeNode = node;
+										editPaneLayout.setActiveItem(0);
+										break;
+
+									case 'KEYS':
+										var form = editPane.items.items[1].getForm();
+										var itemSelector = form.findField('keySelector');
+										var availItems = new Array();
+										var selectedItems = new Array();
+
+										var propertiesNode = node.parentNode.childNodes[1];
+
+										for (var i = 0; i < propertiesNode.childNodes.length; i++) {
+											var itemName = propertiesNode.childNodes[i].text;
+											var found = false;
+
+											for (var j = 0; j < node.childNodes.length; j++) {
+												if (node.childNodes[j].text == itemName) {
+													found = true;
+													break;
+												}
+											}
+
+											if (!found) {
+												availItems.push([itemName, itemName]);
+											}
+										}
+
+										for (var i = 0; i < node.childNodes.length; i++) {
+											var keyName = node.childNodes[i].text;
+											selectedItems.push([keyName, keyName]);
+										}
+
+										itemSelector.multiselects[0].store = availItems;
+										itemSelector.multiselects[1].store = selectedItems;
+										itemSelector.treeNode = node;
+
+										editPaneLayout.setActiveItem(1);
+										break;
+
+									case 'KEYPROPERTY':
+										var form = editPane.items.items[2].getForm();
+										setDataPropertyFields(form, node.attributes.properties);
+										form.findField('keyType').setValue(node.attributes.properties.keyType.toLowerCase());
+										form.findField('nullable').disable();
+										form.treeNode = node;
+										editPaneLayout.setActiveItem(2);
+										break;
+
+									case 'PROPERTIES':
+										var form = editPane.items.items[3].getForm();
+										var itemSelector = form.findField('propertySelector');
+										var availItems = new Array();
+										var selectedItems = new Array();
+
+										for (var i = 0; i < node.childNodes.length; i++) {
+											var itemName = node.childNodes[i].text;
+
+											if (node.childNodes[i].hidden == false)
+												selectedItems.push([itemName, itemName]);
+											else
+												availItems.push([itemName, itemName]);
+										}
+
+										itemSelector.multiselects[0].store = availItems;
+										itemSelector.multiselects[1].store = selectedItems;
+										itemSelector.treeNode = node;
+										itemSelector.doLayout();
+
+										editPaneLayout.setActiveItem(3);
+										break;
+
+									case 'DATAPROPERTY':
+										var form = editPane.items.items[4].getForm();
+										setDataPropertyFields(form, node.attributes.properties);
+										form.treeNode = node;
+										editPaneLayout.setActiveItem(4);
+										break;
+
+									case 'RELATIONSHIPS':
+										setRelations(editPane, node);
+										break;
+
+									case 'RELATIONSHIP':
+										setRelationFields(editPane, node);
+										break;
+								}
+							}
+							else {
+								editPane.hide();
+							}
+						}
+					}
+				}]
+			}, {
+				xtype: 'panel',
+				name: 'editor-panel',
+				id: scopeName + '.' + appName + '.editor-panel',
+				region: 'center',
+				layout: 'card',
+				bodyStyle: 'background:#eee;padding:15px 15px 40px 15px',
+				items: [{
+					xtype: 'form', //0
+					name: 'dataObject',
+					monitorValid: true,
+					labelWidth: 160,
+					defaults: { xtype: 'textfield', allowBlank: false, width: 300 },
+					items: [{
+						name: 'tableName',
+						fieldLabel: 'Table Name',
+						disabled: true
+					}, {
+						name: 'objectName',
+						fieldLabel: 'Object Name'
+					}, {
+						name: 'keyDelimiter',
+						fieldLabel: 'Key Delimiter',
+						value: ',',
+						allowBlank: true
+					}],
+					treeNode: null,
+					buttonAlign: 'center',
+					buttons: [{
+						text: 'Apply',
+						handler: function (f) {
+							var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
+
+							if (form.treeNode) {
+								var treeNodeProps = form.treeNode.attributes.properties;
+
+								treeNodeProps['objectName'] = form.findField('objectName').getValue();
+								treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();
+							}
+						}
+					}, {
+						text: 'Reset',
+						handler: function (f) {
+							var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
+							form.reset();
+						}
+					}]
+				}, {
+					xtype: 'form', //1
+					items: [{
+						xtype: 'itemselector',
+						name: 'keySelector',
+						fieldLabel: 'Select Keys',
+						imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+						multiselects: [{
+							width: 250,
+							height: 300,
+							store: [[]],
+							displayField: 'keyName',
+							valueField: 'keyValue'
+						}, {
+							width: 250,
+							height: 300,
+							store: [[]],
+							displayField: 'keyName',
+							valueField: 'keyValue'
+						}],
+						treeNode: null,
+						listeners: {
+							change: function (itemSelector, selectedValuesStr) {
+								var selectedValues = selectedValuesStr.split(',');
+								var keysNode = itemSelector.treeNode;
+								var propertiesNode = keysNode.parentNode.childNodes[1];
+
+								// a key has been added, move it to keys node and remove it from properties node
+								if (selectedValues.length > keysNode.childNodes.length) {
+									// determine the new key
+									for (var i = 0; i < selectedValues.length; i++) {
 										var found = false;
 
-										for (var j = 0; j < node.childNodes.length; j++) {
-											if (node.childNodes[j].text == itemName) {
+										for (var j = 0; j < keysNode.childNodes.length; j++) {
+											if (keysNode.childNodes[j].text == selectedValues[i]) {
 												found = true;
 												break;
 											}
 										}
 
+										// find the node in the properties node and move it to keys node
 										if (!found) {
-											availItems.push([itemName, itemName]);
+											var newKeyNode;
+
+											for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
+												if (propertiesNode.childNodes[jj].text == selectedValues[i]) {
+													var properties = propertiesNode.childNodes[jj].attributes.properties;
+													properties.keyType = 'assigned';
+													properties.nullable = false;
+
+													newKeyNode = new Ext.tree.TreeNode({
+														text: selectedValues[i],
+														type: "keyProperty",
+														leaf: true,
+														hidden: false,
+														properties: properties
+													});
+
+													propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
+													break;
+												}
+											}
+
+											if (newKeyNode) {
+												keysNode.appendChild(newKeyNode);
+											}
 										}
 									}
+								}
+								else {  // a key has been deleted, remove it from keys node and add it back to properties node
+									// determine the deleted key
+									for (var i = 0; i < keysNode.childNodes.length; i++) {
+										var found = false;
 
-									for (var i = 0; i < node.childNodes.length; i++) {
-										var keyName = node.childNodes[i].text;
-										selectedItems.push([keyName, keyName]);
-									}
-
-									itemSelector.multiselects[0].store = availItems;
-									itemSelector.multiselects[1].store = selectedItems;
-									itemSelector.treeNode = node;
-
-									editPaneLayout.setActiveItem(1);
-									break;
-
-								case 'KEYPROPERTY':
-									var form = editPane.items.items[2].getForm();
-									setDataPropertyFields(form, node.attributes.properties);
-									form.findField('keyType').setValue(node.attributes.properties.keyType.toLowerCase());
-									form.findField('nullable').disable();
-									form.treeNode = node;
-									editPaneLayout.setActiveItem(2);
-									break;
-
-								case 'PROPERTIES':
-									var form = editPane.items.items[3].getForm();
-									var itemSelector = form.findField('propertySelector');
-									var availItems = new Array();
-									var selectedItems = new Array();
-
-									for (var i = 0; i < node.childNodes.length; i++) {
-										var itemName = node.childNodes[i].text;
-
-										if (node.childNodes[i].hidden == false)
-											selectedItems.push([itemName, itemName]);
-										else
-											availItems.push([itemName, itemName]);
-									}
-
-									itemSelector.multiselects[0].store = availItems;
-									itemSelector.multiselects[1].store = selectedItems;
-									itemSelector.treeNode = node;
-									itemSelector.doLayout();
-
-									editPaneLayout.setActiveItem(3);
-									break;
-
-								case 'DATAPROPERTY':
-									var form = editPane.items.items[4].getForm();
-									setDataPropertyFields(form, node.attributes.properties);
-									form.treeNode = node;
-									editPaneLayout.setActiveItem(4);
-									break;
-
-								case 'RELATIONSHIPS':
-									setRelations(editPane, node);
-									break;
-
-								case 'RELATIONSHIP':
-									setRelationFields(editPane, node);
-									break;
-							}
-						}
-						else {
-							editPane.hide();
-						}
-					}
-				}
-			}]
-		}, {
-			xtype: 'panel',
-			name: 'editor-panel',
-			id: scopeName + '.' + appName + '.editor-panel',
-			region: 'center',
-			layout: 'card',
-			bodyStyle: 'background:#eee;padding:15px 15px 40px 15px',
-			items: [{
-				xtype: 'form', //0
-				name: 'dataObject',
-				monitorValid: true,
-				labelWidth: 160,
-				defaults: { xtype: 'textfield', allowBlank: false, width: 300 },
-				items: [{
-					name: 'tableName',
-					fieldLabel: 'Table Name',
-					disabled: true
-				}, {
-					name: 'objectName',
-					fieldLabel: 'Object Name'
-				}, {
-					name: 'keyDelimiter',
-					fieldLabel: 'Key Delimiter',
-					value: ',',
-					allowBlank: true
-				}],
-				treeNode: null,
-				buttonAlign: 'center',
-				buttons: [{
-					text: 'Apply',
-					handler: function (f) {
-						var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
-
-						if (form.treeNode) {
-							var treeNodeProps = form.treeNode.attributes.properties;
-
-							treeNodeProps['objectName'] = form.findField('objectName').getValue();
-							treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();
-						}
-					}
-				}, {
-					text: 'Reset',
-					handler: function (f) {
-						var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
-						form.reset();
-					}
-				}]
-			}, {
-				xtype: 'form', //1
-				items: [{
-					xtype: 'itemselector',
-					name: 'keySelector',
-					fieldLabel: 'Select Keys',
-					imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
-					multiselects: [{
-						width: 250,
-						height: 300,
-						store: [[]],
-						displayField: 'keyName',
-						valueField: 'keyValue'
-					}, {
-						width: 250,
-						height: 300,
-						store: [[]],
-						displayField: 'keyName',
-						valueField: 'keyValue'
-					}],
-					treeNode: null,
-					listeners: {
-						change: function (itemSelector, selectedValuesStr) {
-							var selectedValues = selectedValuesStr.split(',');
-							var keysNode = itemSelector.treeNode;
-							var propertiesNode = keysNode.parentNode.childNodes[1];
-
-							// a key has been added, move it to keys node and remove it from properties node
-							if (selectedValues.length > keysNode.childNodes.length) {
-								// determine the new key
-								for (var i = 0; i < selectedValues.length; i++) {
-									var found = false;
-
-									for (var j = 0; j < keysNode.childNodes.length; j++) {
-										if (keysNode.childNodes[j].text == selectedValues[i]) {
-											found = true;
-											break;
-										}
-									}
-
-									// find the node in the properties node and move it to keys node
-									if (!found) {
-										var newKeyNode;
-
-										for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
-											if (propertiesNode.childNodes[jj].text == selectedValues[i]) {
-												var properties = propertiesNode.childNodes[jj].attributes.properties;
-												properties.keyType = 'assigned';
-												properties.nullable = false;
-
-												newKeyNode = new Ext.tree.TreeNode({
-													text: selectedValues[i],
-													type: "keyProperty",
-													leaf: true,
-													hidden: false,
-													properties: properties
-												});
-
-												propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
+										for (var j = 0; j < selectedValues.length; j++) {
+											if (selectedValues[j] == keysNode.childNodes[i].text) {
+												found = true;
 												break;
 											}
 										}
 
-										if (newKeyNode) {
-											keysNode.appendChild(newKeyNode);
+										// find the node in the keys node and move it to properties node
+										if (!found) {
+											var properties = keysNode.childNodes[i].attributes.properties;
+											properties['nullable'] = true;
+											delete properties.keyType;
+
+											var propertyNode = new Ext.tree.TreeNode({
+												text: keysNode.childNodes[i].text,
+												type: "dataProperty",
+												leaf: true,
+												properties: properties
+											});
+
+											propertiesNode.appendChild(propertyNode);
+											keysNode.removeChild(keysNode.childNodes[i], true);
 										}
 									}
 								}
+
+								return true;
 							}
-							else {  // a key has been deleted, remove it from keys node and add it back to properties node
-								// determine the deleted key
-								for (var i = 0; i < keysNode.childNodes.length; i++) {
+						}
+					}]
+				}, {
+					xtype: 'form', //2
+					name: 'keyProperty',
+					monitorValid: true,
+					labelWidth: 160,
+					defaults: { xtype: 'textfield', allowBlank: false, width: 300 },
+					items: [dataPropFields, {
+						xtype: 'combo',
+						hiddenName: 'keyType',
+						fieldLabel: 'Key Type',
+						store: new Ext.data.SimpleStore({
+							fields: ['value', 'name'],
+							data: [['assigned', 'assigned'], ['unassigned', 'unassigned']]
+						}),
+						mode: 'local',
+						editable: false,
+						triggerAction: 'all',
+						displayField: 'name',
+						valueField: 'value'
+					}],
+					treeNode: null,
+					buttonAlign: 'center',
+					buttons: [{
+						text: 'Apply',
+						handler: function (f) {
+							var treeNodeProps = form.treeNode.attributes.properties;
+							var nullableField = form.findField('nullable');
+							nullableField.enable();
+
+							treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
+							treeNodeProps['dataType'] = form.findField('dataType').getValue();
+							treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
+							treeNodeProps['nullable'] = false;
+							treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
+							treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
+							treeNodeProps['keyType'] = form.findField('keyType').getValue();
+						}
+					}, {
+						text: 'Reset',
+						handler: function (f) {
+							var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
+							form.reset();
+						}
+					}]
+				}, {
+					xtype: 'form', //3
+					items: [{
+						xtype: 'itemselector',
+						name: 'propertySelector',
+						fieldLabel: 'Select Properties',
+						imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+						multiselects: [{
+							width: 250,
+							height: 300,
+							store: [[]],
+							displayField: 'propertyName',
+							valueField: 'propertyValue'
+						}, {
+							width: 250,
+							height: 300,
+							store: [[]],
+							displayField: 'propertyName',
+							valueField: 'propertyValue'
+						}],
+						treeNode: null,
+						listeners: {
+							change: function (itemSelector, selectedValuesStr) {
+								var selectedValues = selectedValuesStr.split(',');
+								var treeNode = itemSelector.treeNode;
+
+								for (var i = 0; i < treeNode.childNodes.length; i++) {
 									var found = false;
 
 									for (var j = 0; j < selectedValues.length; j++) {
-										if (selectedValues[j] == keysNode.childNodes[i].text) {
+										if (selectedValues[j].toLowerCase() == treeNode.childNodes[i].text.toLowerCase()) {
 											found = true;
 											break;
 										}
 									}
 
-									// find the node in the keys node and move it to properties node
-									if (!found) {
-										var properties = keysNode.childNodes[i].attributes.properties;
-										properties['nullable'] = true;
-										delete properties.keyType;
-
-										var propertyNode = new Ext.tree.TreeNode({
-											text: keysNode.childNodes[i].text,
-											type: "dataProperty",
-											leaf: true,
-											properties: properties
-										});
-
-										propertiesNode.appendChild(propertyNode);
-										keysNode.removeChild(keysNode.childNodes[i], true);
-									}
+									if (!found)
+										treeNode.childNodes[i].getUI().hide();
+									else
+										treeNode.childNodes[i].getUI().show();
 								}
 							}
-
-							return true;
 						}
-					}
-				}]
-			}, {
-				xtype: 'form', //2
-				name: 'keyProperty',
-				monitorValid: true,
-				labelWidth: 160,
-				defaults: { xtype: 'textfield', allowBlank: false, width: 300 },
-				items: [dataPropFields, {
-					xtype: 'combo',
-					hiddenName: 'keyType',
-					fieldLabel: 'Key Type',
-					store: new Ext.data.SimpleStore({
-						fields: ['value', 'name'],
-						data: [['assigned', 'assigned'], ['unassigned', 'unassigned']]
-					}),
-					mode: 'local',
-					editable: false,
-					triggerAction: 'all',
-					displayField: 'name',
-					valueField: 'value'
-				}],
-				treeNode: null,
-				buttonAlign: 'center',
-				buttons: [{
-					text: 'Apply',
-					handler: function (f) {
-						var treeNodeProps = form.treeNode.attributes.properties;
-						var nullableField = form.findField('nullable');
-						nullableField.enable();
-
-						treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
-						treeNodeProps['dataType'] = form.findField('dataType').getValue();
-						treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
-						treeNodeProps['nullable'] = false;
-						treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
-						treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
-						treeNodeProps['keyType'] = form.findField('keyType').getValue();
-					}
+					}]
 				}, {
-					text: 'Reset',
-					handler: function (f) {
-						var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
-						form.reset();
-					}
-				}]
-			}, {
-				xtype: 'form', //3
-				items: [{
-					xtype: 'itemselector',
-					name: 'propertySelector',
-					fieldLabel: 'Select Properties',
-					imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
-					multiselects: [{
-						width: 250,
-						height: 300,
-						store: [[]],
-						displayField: 'propertyName',
-						valueField: 'propertyValue'
-					}, {
-						width: 250,
-						height: 300,
-						store: [[]],
-						displayField: 'propertyName',
-						valueField: 'propertyValue'
-					}],
+					xtype: 'form', //4
+					name: 'dataProperty',
+					monitorValid: true,
+					labelWidth: 160,
+					defaults: { xtype: 'textfield', allowBlank: false, width: 300 },
+					items: [dataPropFields],
 					treeNode: null,
-					listeners: {
-						change: function (itemSelector, selectedValuesStr) {
-							var selectedValues = selectedValuesStr.split(',');
-							var treeNode = itemSelector.treeNode;
+					buttonAlign: 'center',
+					buttons: [{
+						text: 'Apply',
+						handler: function (f) {
+							var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
 
-							for (var i = 0; i < treeNode.childNodes.length; i++) {
-								var found = false;
+							if (form.treeNode) {
+								var treeNodeProps = form.treeNode.attributes.properties;
 
-								for (var j = 0; j < selectedValues.length; j++) {
-									if (selectedValues[j].toLowerCase() == treeNode.childNodes[i].text.toLowerCase()) {
-										found = true;
-										break;
-									}
-								}
-
-								if (!found)
-									treeNode.childNodes[i].getUI().hide();
-								else
-									treeNode.childNodes[i].getUI().show();
+								treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
+								treeNodeProps['dataType'] = form.findField('dataType').getValue();
+								treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
+								treeNodeProps['nullable'] = form.findField('nullable').getValue();
+								treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
+								treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
 							}
 						}
-					}
-				}]
-			}, {
-				xtype: 'form', //4
-				name: 'dataProperty',
-				monitorValid: true,
-				labelWidth: 160,
-				defaults: { xtype: 'textfield', allowBlank: false, width: 300 },
-				items: [dataPropFields],
-				treeNode: null,
-				buttonAlign: 'center',
-				buttons: [{
-					text: 'Apply',
-					handler: function (f) {
-						var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
-
-						if (form.treeNode) {
-							var treeNodeProps = form.treeNode.attributes.properties;
-
-							treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
-							treeNodeProps['dataType'] = form.findField('dataType').getValue();
-							treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
-							treeNodeProps['nullable'] = form.findField('nullable').getValue();
-							treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
-							treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
+					}, {
+						text: 'Reset',
+						handler: function (f) {
+							var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
+							form.reset();
 						}
-					}
-				}, {
-					text: 'Reset',
-					handler: function (f) {
-						var form = dataObjectsPane.items.items[1].getLayout().activeItem.getForm();
-						form.reset();
-					}
+					}]
 				}]
 			}]
-		}]/*,
-			buttons: [{
-				text: 'Prev',
-				handler: function () {
-					var form = wizard.getLayout().activeItem;
-					var formIndex = wizard.items.indexOf(form);
-					dataObjectsPane.items.items[1].hide();
-					wizard.getLayout().setActiveItem(formIndex - 1);
-				}
-			}, {
-				text: 'Save',
-				formBind: true,
-				handler: function () {
-					//					var form = wizard.getLayout().activeItem;
-					//					var formIndex = wizard.items.indexOf(form);
-					//					wizard.getLayout().setActiveItem(formIndex + 1);
-					Ext.Ajax.request({
-						url: 'AdapterManager/DBDictionary',
-						method: 'POST',
-						params: {
-							scope: scopeName,
-							app: appName
-						},
-						success: function (response, request) {
+		});
 
-						},
-						failure: function (response, request) {
-							//TODO: use message box
-							Ext.Msg.alert('Error ' + response.text);
+		Ext.apply(this, {
+			id: scopeName + '.' + appName + '.-nh-config-wizard',
+			title: 'NHibernate Config Wizard - ' + scopeName + '.' + appName,
+			closable: true,
+			layout: 'fit',
+			//activeItem: 2,
+			items: [dataObjectsPane]
+		});
+
+		Ext.Ajax.request({
+			url: 'AdapterManager/DBDictionary',
+			method: 'POST',
+			params: {
+				scope: scopeName,
+				app: appName
+			},
+			success: function (response, request) {
+				dbDict = Ext.util.JSON.decode(response.responseText);
+
+				if (dbDict) {
+					// populate data source form
+					var dsConfigForm = dsConfigPane.getForm();
+					var connStr = dbDict.ConnectionString;
+					var connStrParts = connStr.split(';');
+
+					for (var i = 0; i < connStrParts.length; i++) {
+						var pair = connStrParts[i].split('=');
+
+						switch (pair[0].toUpperCase()) {
+							case 'DATA SOURCE':
+								var dsValue = pair[1].split('\\');
+								var dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
+								dsConfigForm.findField('dbServer').setValue(dbServer);
+								dsConfigForm.findField('dbInstance').setValue(dsValue[1]);
+								break;
+							case 'INITIAL CATALOG':
+								dsConfigForm.findField('dbName').setValue(pair[1]);
+								break;
+							case 'USER ID':
+								dsConfigForm.findField('dbUserName').setValue(pair[1]);
+								break;
+							case 'PASSWORD':
+								dsConfigForm.findField('dbPassword').setValue(pair[1]);
+								break;
 						}
-					});
-
-
-
-
-				}
-			}, {
-				text: 'Cancel',
-				handler: function () {
-					wizard.destroy();
-				}
-			}]*/
-	});
-
-	Ext.apply(this, {
-		id: scopeName + '.' + appName + '.-nh-config-wizard',
-		title: 'NHibernate Config Wizard - ' + scopeName + '.' + appName,
-		closable: true,
-		layout: 'fit',
-		//activeItem: 2,
-		items: [dataObjectsPane]
-	});
-
-	Ext.Ajax.request({
-		url: 'AdapterManager/DBDictionary',
-		method: 'POST',
-		params: {
-			scope: scopeName,
-			app: appName
-		},
-		success: function (response, request) {
-			dbDict = Ext.util.JSON.decode(response.responseText);
-
-			if (dbDict) {
-				// populate data source form
-				var dsConfigForm = dsConfigPane.getForm();
-				var connStr = dbDict.ConnectionString;
-				var connStrParts = connStr.split(';');
-
-				for (var i = 0; i < connStrParts.length; i++) {
-					var pair = connStrParts[i].split('=');
-
-					switch (pair[0].toUpperCase()) {
-						case 'DATA SOURCE':
-							var dsValue = pair[1].split('\\');
-							var dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
-							dsConfigForm.findField('dbServer').setValue(dbServer);
-							dsConfigForm.findField('dbInstance').setValue(dsValue[1]);
-							break;
-						case 'INITIAL CATALOG':
-							dsConfigForm.findField('dbName').setValue(pair[1]);
-							break;
-						case 'USER ID':
-							dsConfigForm.findField('dbUserName').setValue(pair[1]);
-							break;
-						case 'PASSWORD':
-							dsConfigForm.findField('dbPassword').setValue(pair[1]);
-							break;
 					}
-				}
 
-				dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
-				dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
+					dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
+					dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
 
-				// populate selected tables
-				var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');
-				var selectedItems = new Array();
-				var selectTableNames = new Array();
+					// populate selected tables
+					var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');
+					var selectedItems = new Array();
+					var selectTableNames = new Array();
 
-				if (dbDict.dataObjects.length == 0) {
+					if (dbDict.dataObjects.length == 0) {
+						editPane = dataObjectsPane.items.items[1];
+						if (!editPane) {
+							var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+						}
+						editPane.add(tablesSelectorPane);
+						editPane.getLayout().setActiveItem(editPane.items.length - 1);
+					}
+					else {
+						for (var i = 0; i < dbDict.dataObjects.length; i++) {
+							var dataObject = dbDict.dataObjects[i];
+							selectedItems.push([dataObject.tableName, dataObject.tableName]);
+							selectTableNames.push(dataObject.tableName);
+						}
+						tableSelector.multiselects[1].store = selectedItems;
+					}
+
 					var tab = Ext.getCmp('content-panel');
 					var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
 					var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-					var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-					if (!editPane)
-						editPane = dataObjectsPane.items.items[1];
+					var tablesSelForm = tablesSelectorPane.getForm();
+					var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+					var treeLoader = dbObjectsTree.getLoader();
 
-					editPane.add(tablesSelectorPane);
-					editPane.getLayout().setActiveItem(editPane.items.length - 1);
-				}
+					treeLoader.dataUrl = 'AdapterManager/DBObjects';
+					treeLoader.baseParams = {
+						scope: scopeName,
+						app: appName,
+						dbProvider: dsConfigForm.findField('dbProvider').getValue(),
+						dbServer: dsConfigForm.findField('dbServer').getValue(),
+						dbInstance: dsConfigForm.findField('dbInstance').getValue(),
+						dbName: dsConfigForm.findField('dbName').getValue(),
+						dbSchema: dsConfigForm.findField('dbSchema').getValue(),
+						dbUserName: dsConfigForm.findField('dbUserName').getValue(),
+						dbPassword: dsConfigForm.findField('dbPassword').getValue(),
+						tableNames: selectTableNames
+					};
 
-				for (var i = 0; i < dbDict.dataObjects.length; i++) {
-					var dataObject = dbDict.dataObjects[i];
-					selectedItems.push([dataObject.tableName, dataObject.tableName]);
-					selectTableNames.push(dataObject.tableName);
-				}
-
-				tableSelector.multiselects[1].store = selectedItems;
-
-				var tab = Ext.getCmp('content-panel');
-				var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
-				var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-				var tablesSelForm = tablesSelectorPane.getForm();
-				var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-				var treeLoader = dbObjectsTree.getLoader();
-
-				treeLoader.dataUrl = 'AdapterManager/DBObjects';
-				treeLoader.baseParams = {
-					scope: scopeName,
-					app: appName,
-					dbProvider: dsConfigForm.findField('dbProvider').getValue(),
-					dbServer: dsConfigForm.findField('dbServer').getValue(),
-					dbInstance: dsConfigForm.findField('dbInstance').getValue(),
-					dbName: dsConfigForm.findField('dbName').getValue(),
-					dbSchema: dsConfigForm.findField('dbSchema').getValue(),
-					dbUserName: dsConfigForm.findField('dbUserName').getValue(),
-					dbPassword: dsConfigForm.findField('dbPassword').getValue(),
-					tableNames: selectTableNames
-				};
-
-				//dataObjectsPane.items.items[1].items.map[scopeName + '.' + appName + '.tablesSelectorPane'].hide();
-				var rootNode = dbObjectsTree.getRootNode();
-				rootNode.reload(
+					var rootNode = dbObjectsTree.getRootNode();
+					rootNode.reload(
 					function (rootNode) {
 						var relationTypeStr = ['OneToOne', 'OneToMany'];
 
@@ -1414,7 +1395,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									for (var j = 0; j < propertiesNode.children.length; j++) {
 										for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
 											if (propertiesNode.children[j].text.toLowerCase() ==
-									dataObject.dataProperties[jj].propertyName.toLowerCase()) {
+												dataObject.dataProperties[jj].propertyName.toLowerCase()) {
 												propertiesNode.children[j].hidden = false;
 											}
 										}
@@ -1432,7 +1413,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											relationshipTypeIndex: dataObject.dataRelationships[j].relationshipType,
 											propertyMap: []
 										});
-
 										var mapArray = new Array();
 										for (var jj = 0; jj < dataObject.dataRelationships[j].propertyMaps.length; jj++) {
 											var mapItem = new Array();
@@ -1441,7 +1421,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											mapArray.push(mapItem);
 										}
 										newNode.attributes.propertyMap = mapArray;
-										//selectNode.parentNode.appendChild(newNode);
 										relationshipsNode.expanded = true;
 										relationshipsNode.children.push(newNode);
 										relationshipsNode.children[j].hidden = false;
@@ -1450,25 +1429,22 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							}
 						}
 					});
-			}
-		},
-		failure: function (response, request) {
-			//TODO: use message box
-			//Ext.Msg.alert('Error ' + response.text);
-			var tab = Ext.getCmp('content-panel');
-			var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
-			var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-			var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-			if (!editPane)
+				}
+			},
+			failure: function (response, request) {
+				//TODO: use message box
+				//Ext.Msg.alert('Error ' + response.text);
 				editPane = dataObjectsPane.items.items[1];
+				if (!editPane) {
+					var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+				}
+				editPane.add(dsConfigPane);
+				editPane.getLayout().setActiveItem(editPane.items.length - 1);
+			}
+		});
 
-			editPane.add(dsConfigPane);
-			editPane.getLayout().setActiveItem(editPane.items.length - 1);
-		}
-	});
-
-	AdapterManager.NHibernateConfigWizard.superclass.constructor.apply(this, arguments);
-}
+		AdapterManager.NHibernateConfigWizard.superclass.constructor.apply(this, arguments);
+	}
 });
 
 function createRelationGrid(label, dataGridPanel, colModel, dataStore, scopeName, appName, callId) {
@@ -1508,7 +1484,6 @@ function createRelationGrid(label, dataGridPanel, colModel, dataStore, scopeName
 
 							var selectIndex = selectModel.getSelectedIndex();
 							dataStore.removeAt(selectIndex);
-
 							var tab = Ext.getCmp('content-panel');
 							var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
 							var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
@@ -1542,18 +1517,15 @@ function createRelationGrid(label, dataGridPanel, colModel, dataStore, scopeName
 				}]
 			})
 		});
-
 		dataGridPanel.add(dataRelationGridPane);
 		dataGridPanel.doLayout();
 	});
-
 	dataStore.load();
 }
 
 
 function showDialog(width, height, title, message, buttons, callback) {
 	var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
-
 	Ext.Msg.show({
 		title: title,
 		msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
@@ -1569,7 +1541,6 @@ function addPropertyMapping(scopeName, appName) {
 	var editorPane = dataObjectsPane.items.items[1];
 	var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 	var selectNode = dbObjectsTree.getSelectionModel().getSelectedNode();
-
 	var relationConfigPanel = editorPane.items.map[scopeName + '.' + appName + '.relationFieldsForm.' + selectNode.id];
 	var dataRelationPane = relationConfigPanel.items.items[0].items.items[0].items.items[5]; 
 	var relationConfigForm = relationConfigPanel.getForm();
@@ -1577,6 +1548,7 @@ function addPropertyMapping(scopeName, appName) {
 	var mapPropComboBox = relationConfigForm.findField("mapPropertyName");
 	if (!selectPropComboBox.getValue() || !mapPropComboBox.getValue())
 		return;
+
 	var selectProperty = selectPropComboBox.store.getAt(selectPropComboBox.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
 	var mapProperty = mapPropComboBox.store.getAt(mapPropComboBox.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
 	if (selectProperty == "" || mapProperty == "")
@@ -1604,10 +1576,7 @@ function addPropertyMapping(scopeName, appName) {
 	var arrayData = new Array();
 	arrayData.push(selectProperty);
 	arrayData.push(mapProperty);
-
-	//var deleteButtonData = "<input type=\"image\" src=\"Content/img/16x16/edit-delete.png\" " + "onClick='javascript:deleteRow(\"" + scopeName + "\",\"" + appName + "\",\"" + gridLabel + "\",\"" + i + "\")'>";
 	myArray.push(arrayData);
-
 	var mapItem = new Array();
 	mapItem['dataPropertyName'] = selectProperty;
 	mapItem['relatedPropertyName'] = mapProperty;
@@ -1620,7 +1589,6 @@ function addPropertyMapping(scopeName, appName) {
 					{ id: 'property', header: 'Property', dataIndex: 'property' },
 					{ header: 'Related Property', dataIndex: 'relatedProperty' }
 				]);
-
 	var dataStore = new Ext.data.Store({
 		autoDestroy: true,
 		proxy: new Ext.data.MemoryProxy(myArray),
@@ -1629,7 +1597,6 @@ function addPropertyMapping(scopeName, appName) {
 						{ name: 'relatedProperty' }
 					])
 	});
-
 	var callId = 1;
 	createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName, appName, callId);
 }
@@ -1641,7 +1608,6 @@ function addRelationship(scopeName, appName) {
 	var editorPane = dataObjectsPane.items.items[1];
 	var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 	var selectNode = dbObjectsTree.getSelectionModel().getSelectedNode();
-
 	var relationCreateFormPanel = editorPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + selectNode.id];
 	var deleteDataRelationPane = relationCreateFormPanel.items.items[0].items.items[0].items.items[1];
 	var relationName = relationCreateFormPanel.getForm().findField("relationName").getValue().replace(/^\s*/, "").replace(/\s*$/, "");
@@ -1654,7 +1620,6 @@ function addRelationship(scopeName, appName) {
 		var gridPane = deleteDataRelationPane.items.map[gridLabel];
 		var myArray = new Array();
 		var i = 0;
-
 		if (gridPane) {
 			var mydata = gridPane.store.data.items;
 
@@ -1681,16 +1646,12 @@ function addRelationship(scopeName, appName) {
 	});
 
 	selectNode.appendChild(newNode);
-	var nodeId = newNode.id;	
-
-	//var deleteButtonData = "<input type=\"image\" src=\"Content/img/16x16/edit-delete.png\" " + "onClick='javascript:deleteNodeRow(\"" + scopeName + "\",\"" + appName + "\",\"" + gridLabel + "\",\"" + nodeId + "\",\"" + i + "\")'>";
+	var nodeId = newNode.id;
 	myArray.push([relationName, nodeId]);
-
 	var colModel = new Ext.grid.ColumnModel([
   								{ id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' },
 									{ dataIndex: 'nodeId', hidden: true }
   							]);
-
 	var dataStore = new Ext.data.Store({
 		autoDestroy: true,
 		proxy: new Ext.data.MemoryProxy(myArray),
@@ -1699,7 +1660,6 @@ function addRelationship(scopeName, appName) {
 										{ name: 'nodeId' }
   								])
 	});
-
 	var callId = 0;
 	createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName, appName, callId);
 }
