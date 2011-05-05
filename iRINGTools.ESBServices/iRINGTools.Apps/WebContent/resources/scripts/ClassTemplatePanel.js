@@ -79,45 +79,37 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
  				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'textfield', disabled:true,width:200, value:this.statusFrom},
  				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'textfield', disabled:true,width:200,value:this.statusTo}
  				        	         ]
- 				          }]},
+ 				          },
+ 				         {xtype:'combo',store: ['iRING Sandbox (Read Only)', 'My Private Sandbox', 'ReferenceData (Read Only)', 'Proto and Initial (Read Only)'],
+	 							fieldLabel:'Target Repo', width:200}]},
  				          {columnWidth:.5,layout: 'form',
         	 				items:[
         	 				      {fieldLabel:'Entity Type',name:'entityType', xtype:'textfield', width:200, value:this.entityType},
         	 				     {xtype: 'fieldset',title:'Specialization',
         	 				    	  items: [
-        	 				    	          {name:'specialization', xtype:'multiselect', width:200,store:this.specStore},
+        	 				    	          {name:'specialization', xtype:'multiselect', width:200,store:this.specStore, id:'spec'+that.id},
         	 				    	          {xtype: 'fieldset', border:false, layout:'column', 
-        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
-        	 				    	        		  	{columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
+        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: function(){this.onStoreDtlsAdd(this.specStore,'spec'+that.id);}, scope: this},
+        	 				    	        		  	{columnWidth:.5,xtype:"button",text:'Remove',handler: function(){this.onStoreDtlsRemove(this.specStore,'spec'+that.id);}, scope: this}
         	 				    	        	  ]}
         	 				    	          ]
                                   },
                                   {xtype: 'fieldset',title:'Classification',
         	 				    	  items: [
-        	 				    	          {name:'classification', xtype:'multiselect', width:200, store:this.classStore},
+        	 				    	          {name:'classification', xtype:'multiselect', width:200, store:this.classStore, id:'class'+that.id},
         	 				    	         {xtype: 'fieldset', border:false, layout:'column', 
-        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: this.onSave, scope: this},
-        	 				    	        	         {columnWidth:.5,xtype:"button",text:'Remove',handler: this.onSave, scope: this}
+        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: function(){this.onStoreDtlsAdd(this.classStore,'class'+that.id);}, scope: this},
+        	 				    	        	         {columnWidth:.5,xtype:"button",text:'Remove',handler:  function(){this.onStoreDtlsRemove(this.classStore,'class'+that.id);}, scope: this}
         	 				    	        	  ]}
         	 				    	          ]
-                                  }]
- 				        }]},
- 				       {xtype: 'fieldset', layout:'column', border:false,
-        	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-        	 					items:[{xtype:'combo',store: ['iRING Sandbox (Read Only)', 'My Private Sandbox', 'ReferenceData (Read Only)', 'Proto and Initial (Read Only)'],
-        	 							fieldLabel:'Target Repo', width:200}]},
-        	 						{columnWidht:.1, layout:'form', 
-        	 								items:[
-        	 								       { xtype : "tbbutton",text : 'Ok',tooltip : 'Ok', width:120}]},
-        	 						{columnWidht:.2, layout:'form', 
-        	        	 					items:[		       
-        	 								       { xtype : "tbbutton",text : 'Cancel',tooltip : 'Cancel', width:120}]},
-        	 						{columnWidht:.2, layout:'form', 
-        	        	 					items:[
-        	 								       { xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:120}]}
-        	 								       
-        	 								       ]
-        	 						}];
+                                  },
+                                  {xtype: 'fieldset', border:false, layout:'column', 
+ 				    	        	  items:[{columnWidth:.33,xtype : "tbbutton",text : 'Ok',tooltip : 'Ok'},
+ 				    	        	         {columnWidth:.33,xtype : "tbbutton",text : 'Cancel',tooltip : 'Cancel'},
+ 				    	        	         {columnWidth:.33,xtype : "tbbutton",text : 'Apply',tooltip : 'Apply'}
+ 				    	        	  ]}
+                                  ]
+ 				        }]}];
   	}else{
   		var that = this;
   		this.configData = [{xtype: 'radiogroup',fieldLabel: 'Template Type',
@@ -174,7 +166,8 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
       autoScroll: true,
       border : false, // removing the border of the form
       frame : true,
-      layout:'fit',
+      //layout:'fit',
+      width: 1000,
       closable : true,
       defaults : {
         msgTarget: 'under'
@@ -214,6 +207,35 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
     }
   
   },
+  
+  onStoreDtlsAdd : function(store, id){
+	  var selectedNode = Ext.getCmp('search-panel').getSelectedNode();
+	  var nId = selectedNode.attributes.identifier;
+	  var isPresent = 0;
+	  for(var i=0; i<store.length;i++){
+		  if(store[i][0]== nId){
+			  isPresent = 1;
+			  break;
+		  }
+	  }
+	  if(isPresent == 0){
+		  var data = [nId,selectedNode.text];
+		  store.push(data);
+	  }
+	  Ext.getCmp(id).store.loadData(store);;
+  },
+  
+  onStoreDtlsRemove : function(store,id){
+	  var localStore = store;
+	  alert(Ext.getCmp(id).getValue());
+	  for ( var i = 0; i < localStore.length; i++) {
+		  if(Ext.getCmp(id).getValue().indexOf(localStore[i][0])!= -1){
+			  store.remove(localStore[i]);
+		  }
+	  }
+	  Ext.getCmp(id).store.loadData(store);
+  },
+
 
   onReset: function(){
     this.data_form.getForm().reset();
@@ -221,31 +243,5 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
   
   onTextChange : function(value){
 	  this.title = value;
-  },
-
-  onSave:function(){
-		var that = this;    // consists the main/previous class object
-	  this.data_form.getForm().submit({
-	    waitMsg: 'Saving Data...',
-	    success: function(f,a){
-	      if(that.getActiveTab()){
-	        var node = federationPanel.getNodeBySelectedTab(that.getActiveTab());
-	        Ext.Msg.alert('Success', 'Changes saved successfully!');
-	        var formType = that.data_form.getForm().findField('formType').getValue();
-	        if(formType=='newForm'){ // in case of newForm close the newTab
-	          Ext.getCmp('contentPanel').remove(that.getActiveTab(), true);
-	        }
-	
-	        federationPanel.onRefresh(node);
-	        //federationPanel.expandNode(node) // pending
-	        //federationPanel.selectNode(node) // pending
-	      }
-	            
-	    },
-	    failure: function(f,a){
-	      Ext.Msg.alert('Warning', 'Error saving changes!');
-	    }
-	  });
-
   }
 });

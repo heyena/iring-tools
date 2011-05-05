@@ -328,6 +328,10 @@ FederationManager.SearchPanel = Ext.extend(Ext.Panel, {
 
          this.fireEvent('openAddTab', this,tabId, label, 'template', parentNode);
         
+      },
+      
+      getSelectedNode : function(){
+    	  return localNode;
       }
 
 });
