@@ -52,7 +52,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 DataObject dataObject = new DataObject
                 {
                     objectName = name,
-                    keyDelimeter = "_",
+                    keyDelimeter = "_"
                 };
 
                 List<KeyProperty> keyProperties = new List<KeyProperty>();
@@ -60,26 +60,58 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
                 foreach (XElement attribute in commodity.Element("attributes").Elements("attribute"))
                 {
+                    // Name
+                    string attributeName = attribute.Attribute("name").Value;
+
+                    // is key
                     bool isKey = false;
                     if (attribute.Attribute("isKey") != null)
                     {
                         Boolean.TryParse(attribute.Attribute("isKey").Value, out isKey);
                     }
 
-                    string attributeName = attribute.Attribute("name").Value;
+                    // Data type: String, Integer, Real, DateTime, Picklist, Boolean
+                    string dataTypeName = attribute.Attribute("dataType").Value;
 
                     DataType dataType = DataType.String;
-                    Enum.TryParse<DataType>(attribute.Attribute("dataType").Value, out dataType);
+                    //Enum.TryParse<DataType>(attribute.Attribute("dataType").Value, out dataType);
+                    switch (dataTypeName)
+                    {
+                        case "String":
+                            dataType = DataType.String;
+                            break;
+                        case "Integer":
+                            dataType = DataType.Int32;
+                            break;
+                        case "Real":
+                            dataType = DataType.Double;
+                            break;
+                        case "DateTime":
+                            dataType = DataType.DateTime;
+                            break;
+                        case "Picklist":
+                            dataType = DataType.String;
+                            break;
+                        case "Boolean":
+                            dataType = DataType.Boolean;
+                            break;
+                        default:
+                            dataType = DataType.String;
+                            break;
+                    }
 
+                    // Data length
                     int dataLength = 0;
-                    if (DataDictionary.IsNumeric(dataType))
+                    if (attribute.Attribute("length") != null)
                     {
-                        dataLength = 16;
+                        Int32.TryParse(attribute.Attribute("length").Value, out dataLength);
                     }
-                    else
+
+                    if (dataLength == 0 && dataTypeName == "Picklist")
                     {
-                        dataLength = 255;
+                         Int32.TryParse(_settings["PicklistDataLength"], out dataLength);
                     }
+
 
                     DataProperty dataProperty = new DataProperty
                     {
