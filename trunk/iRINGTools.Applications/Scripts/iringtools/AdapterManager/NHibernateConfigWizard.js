@@ -386,6 +386,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									propertiesNode = relatedDataObjectNode.attributes.children[1];
 									var mappingProperties = new Array();
 									var ii = 0;
+									// debug purpose
+									propertiesNode.children[0].hidden = true;
+									propertiesNode.children[1].hidden = true;
 									for (var i = 0; i < propertiesNode.children.length; i++)
 										if (propertiesNode.children[i].hidden) {
 											mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
@@ -797,6 +800,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									folder.dataRelationships = new Array();
 									for (var j = 0; j < folderNode.attributes.children.length; j++) {
 										var subFolderNode = folderNode.attributes.children[j];
+										if (folderNode.childNodes[2])
+											var relationFolderNode = folderNode.childNodes[2];
 										var subFolderNodeText = subFolderNode.text;
 										switch (subFolderNodeText) {
 											case 'Keys':
@@ -839,9 +844,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												}
 												break;
 											case 'Relationships':
-												for (var k = 0; k < subFolderNode.children.length; k++) {
-													var relationNode = subFolderNode.children[k];
-													var relationNodeAttr = relationNode.attributes;
+												if (!relationFolderNode)
+													break;
+												for (var k = 0; k < relationFolderNode.childNodes.length; k++) {
+													var relationNode = relationFolderNode.childNodes[k];
+													var relationNodeAttr = relationNode.attributes.attributes;
+													if (!relationNodeAttr)
+														var relationNodeAttr = relationNode.attributes;
 													var relation = {};
 													relation.propertyMaps = new Array();
 													for (var m = 0; m < relationNodeAttr.propertyMap.length; m++) {
