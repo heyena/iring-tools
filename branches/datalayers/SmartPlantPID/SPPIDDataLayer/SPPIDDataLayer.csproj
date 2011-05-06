@@ -115,24 +115,6 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\SPPIDDataLayer.NUnit\12345_000\BindingConfiguration.12345_000.SPPID.xml">
-      <Link>BindingConfiguration.12345_000.SPPID.xml</Link>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="..\SPPIDDataLayer.NUnit\12345_000\Configuration.SPPID.xml">
-      <Link>Configuration.SPPID.xml</Link>
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="..\SPPIDDataLayer.NUnit\12345_000\DataDictionary.SPPID.xml">
-      <Link>DataDictionary.SPPID.xml</Link>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\SPPIDDataLayer.NUnit\12345_000\12345_000.SPPID.config">
-      <Link>12345_000.SPPID.config</Link>
-    </None>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
