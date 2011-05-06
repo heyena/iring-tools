@@ -154,7 +154,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     onSearch: function () {
         var searchText = Ext.get('referencesearch').getValue();
         var isreset = document.getElementById('reset').checked;
-       // alert(isreset);
+        // alert(isreset);
 
         if (searchText != '') {
             var treeLoader = new Ext.tree.TreeLoader({
@@ -216,7 +216,9 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
                 // update the detail's panel with All properties
                 if (node.attributes.type == "ClassNode") {
                     try {
-                        this.propertyPanel.setSource(node.childNodes[0].attributes.record);
+                        if (node.childNodes.length > 0) {
+                            this.propertyPanel.setSource(node.childNodes[0].attributes.record);
+                        }
                     } catch (e) { }
                 }
             }, this);
@@ -228,7 +230,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     },
     onClick: function (node) {
         try {
-            if (node.attributes.type == "ClassNode" && node.childNodes[0] != undefined) {
+            if (node.attributes.type == "ClassNode" && node.childNodes.length>0) {
                 this.propertyPanel.setSource(node.childNodes[0].attributes.record);
             } else {
                 this.propertyPanel.setSource(node.attributes.record);
