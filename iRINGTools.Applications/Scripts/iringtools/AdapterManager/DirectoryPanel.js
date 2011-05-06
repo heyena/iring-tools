@@ -159,14 +159,14 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
             },
             applyState: function (state) {
                 var that = this;
-                this.getLoader().on('load', function () {
-                    var nodes = state.expandedNodes;
-                    for (var i = 0; i < nodes.length; i++) {
-                        if (typeof nodes[i] != 'undefined') {
-                            that.expandPath(nodes[i]);
-                        }
+                //this.getLoader().on('load', function () {
+                var nodes = state.expandedNodes;
+                for (var i = 0; i < nodes.length; i++) {
+                    if (typeof nodes[i] != 'undefined') {
+                        that.expandPath(nodes[i]);
                     }
-                });
+                }
+                //});
             }
         });
 
@@ -205,21 +205,21 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			{
 			    xtype: 'button',
 			    text: 'Reload Tree',
-			    // handler: this.onReload,
-			    handler: function (event, toolEl) {
-			       var panel= this.directoryPanel;
-			        var thisTreePanel = Ext.getCmp('Directory-Panel');
-			       
+			    handler: this.onReload,
+			    //			    handler: function (event, toolEl) {
+			    //			        var panel = this.directoryPanel;
+			    //			        var thisTreePanel = Ext.getCmp('Directory-Panel');
 
-			        //get state from tree
-			        var state = thisTreePanel.getState();
-			        panel.body.mask('Loading', 'x-mask-loading');
 
-			        thisTreePanel.getLoader().load(thisTreePanel.getRootNode(), function () {
-			            panel.body.unmask();
-			            thisTreePanel.applyState(state);
-			        });
-			    },
+			    //			        //get state from tree
+			    //			        var state = thisTreePanel.getState();
+			    //			        panel.body.mask('Loading', 'x-mask-loading');
+
+			    //			        thisTreePanel.getLoader().load(thisTreePanel.getRootNode(), function () {
+			    //			            panel.body.unmask();
+			    //			            thisTreePanel.applyState(state);
+			    //			        });
+			    //			    },
 			    icon: 'Content/img/16x16/view-refresh.png',
 			    scope: this
 			}
@@ -836,7 +836,19 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     onReload: function (node) {
         //Ext.state.Manager.clear('AdapterManager');
-        this.directoryPanel.root.reload();
+        //this.directoryPanel.root.reload();
+
+        var panel = this.directoryPanel;
+        var thisTreePanel = Ext.getCmp('Directory-Panel');
+
+        //get state from tree
+        var state = thisTreePanel.getState();
+        panel.body.mask('Loading', 'x-mask-loading');
+
+        thisTreePanel.getLoader().load(thisTreePanel.getRootNode(), function () {
+            panel.body.unmask();
+            thisTreePanel.applyState(state);
+        });
     },
 
     onReloadNode: function (node) {
