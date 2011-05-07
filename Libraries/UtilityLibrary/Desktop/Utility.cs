@@ -827,6 +827,18 @@ namespace org.iringtools.utility
       return obj;
     }
 
+    public static T CloneDataContractObject<T>(T obj)
+    {
+      string xml = SerializeDataContract<T>(obj);
+      return DeserializeDataContract<T>(xml);
+    }
+
+    public static T CloneSerializableObject<T>(T obj)
+    {
+      string xml = Serialize<T>(obj, false);
+      return Deserialize<T>(xml, false);
+    }
+
     public static void WriteException(Exception exception, string path)
     {
       string typeName = String.Empty;

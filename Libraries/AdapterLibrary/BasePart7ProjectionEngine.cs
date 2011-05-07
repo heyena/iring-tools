@@ -216,6 +216,11 @@ namespace org.iringtools.adapter.projection
           }
           else
           {
+            if (relatedRecords.Count <= classInstanceIndex)
+            {
+              relatedRecords.Add(new Dictionary<string, string>());
+            }
+
             relatedRecords[classInstanceIndex][property] = relatedValues.First();
           }
         }
