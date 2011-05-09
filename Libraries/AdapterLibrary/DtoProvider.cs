@@ -277,6 +277,8 @@ namespace org.iringtools.adapter
         BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
           ? (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
 
+        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
+
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
@@ -770,6 +772,7 @@ namespace org.iringtools.adapter
       Graph manifestGraph = manifest.FindGraph(graph);
 
       _graphMap = new GraphMap();
+      _graphMap.name = mappingGraph.name;
       _graphMap.dataObjectName = mappingGraph.dataObjectName;
 
       ClassTemplates manifestClassTemplatesMap = manifestGraph.classTemplatesList.First();
