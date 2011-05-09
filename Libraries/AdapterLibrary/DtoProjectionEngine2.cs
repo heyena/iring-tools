@@ -469,31 +469,6 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    private void ProcessInboundClassIdentifiers(int dataObjectIndex, ClassMap classMap, int classObjectIndex, string identifierValue)
-    {
-      string[] identifierValueParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
-          ? identifierValue.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
-          : new string[] { identifierValue };
-
-      for (int identifierPartIndex = 0; identifierPartIndex < identifierValueParts.Length; identifierPartIndex++)
-      {
-        string identifierPartValue = identifierValueParts[identifierPartIndex];
-        string identifierPartName = classMap.identifiers[identifierPartIndex];
-
-        if (identifierPartName.StartsWith("#") && identifierPartName.EndsWith("#"))
-          continue;
-
-        if (identifierPartName.Split('.').Length > 2)  // related property
-        {
-          SetRelatedRecords(dataObjectIndex, classObjectIndex, identifierPartName, new List<string> { identifierPartValue });
-        }
-        else  // direct property
-        {
-          _dataRecords[dataObjectIndex][identifierPartName.Substring(identifierPartName.LastIndexOf('.') + 1)] = identifierPartValue;
-        }
-      }
-    }
-
     private void ProcessInboundTemplates(int dataObjectIndex, ClassObject classObject, int classObjectIndex, List<TemplateMap> templateMaps)
     {
       foreach (TemplateMap templateMap in templateMaps)
