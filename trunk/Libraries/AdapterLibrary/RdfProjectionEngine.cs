@@ -653,38 +653,8 @@ namespace org.iringtools.adapter.projection
       for (int classInstanceIndex = 0; classInstanceIndex < classInstances.Count; classInstanceIndex++)
       {
         string classInstance = classInstances[classInstanceIndex];
-        string identifier = classInstance.Substring(classInstance.LastIndexOf("/") + 1);
-
-        string[] identifierParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
-          ? identifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
-          : new string[] { identifier };
-
-        for (int i = 0; i < identifierParts.Length; i++)
-        {
-          string identifierPart = identifierParts[i];
-
-          // remove fixed values from identifier
-          foreach (string classIdentifier in classMap.identifiers)
-          {
-            if (classIdentifier.StartsWith("#") && classIdentifier.EndsWith("#"))
-            {
-              identifierPart = identifierPart.Replace(classIdentifier.Substring(1, classIdentifier.Length - 2), "");
-            }
-          }
-
-          // set identifier value to mapped property
-          foreach (string classIdentifier in classMap.identifiers)
-          {
-            if (classIdentifier.Split('.').Length > 2)  // related property
-            {
-              SetRelatedRecords(dataObjectIndex, classInstanceIndex, classIdentifier, new List<string> { identifierPart });
-            }
-            else  // direct property
-            {
-              _dataRecords[dataObjectIndex][classIdentifier.Substring(classIdentifier.LastIndexOf('.') + 1)] = identifierPart;
-            }
-          }
-        }
+        string identifierValue = classInstance.Substring(classInstance.LastIndexOf("/") + 1);
+        ProcessInboundClassIdentifiers(dataObjectIndex, classMap, classInstanceIndex, identifierValue);
       }
 
       ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(classMap.id);

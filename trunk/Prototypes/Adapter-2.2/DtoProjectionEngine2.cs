@@ -1,23 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using org.iringtools.library;
 using System.Xml.Linq;
-using Ninject;
 using log4net;
-using System.Text.RegularExpressions;
-using VDS.RDF;
-using VDS.RDF.Storage;
-using org.iringtools.utility;
-using System.Xml;
-using System.IO;
-using VDS.RDF.Parsing;
-using VDS.RDF.Query;
-using System.Web;
-using org.iringtools.mapping;
 using Microsoft.ServiceModel.Web;
+using Ninject;
+using org.iringtools.library;
+using org.iringtools.mapping;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter.projection
 {
@@ -469,42 +459,37 @@ namespace org.iringtools.adapter.projection
       for (int classObjectIndex = 0; classObjectIndex < classObjects.Count; classObjectIndex++)
       {
         ClassObject classObject = classObjects[classObjectIndex];
-        string identifier = classObject.identifier;
-
-        string[] identifierParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
-          ? identifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
-          : new string[] { identifier };
-
-        for (int identifierPartIndex = 0; identifierPartIndex < identifierParts.Length; identifierPartIndex++)
-        {
-          string identifierPart = identifierParts[identifierPartIndex];
-
-          // remove fixed values from identifier
-          foreach (string classIdentifier in classMap.identifiers)
-          {
-            if (classIdentifier.StartsWith("#") && classIdentifier.EndsWith("#"))
-            {
-              identifierPart = identifierPart.Replace(classIdentifier.Substring(1, classIdentifier.Length - 2), "");
-            }
-          }
-
-          // set identifier value to mapped property
-          foreach (string classIdentifier in classMap.identifiers)
-          {
-            if (classIdentifier.Split('.').Length > 2)  // related property
-            {
-              SetRelatedRecords(dataObjectIndex, classObjectIndex, classIdentifier, new List<string> { identifierPart });
-            }
-            else  // direct property
-            {
-              _dataRecords[dataObjectIndex][classIdentifier.Substring(classIdentifier.LastIndexOf('.') + 1)] = identifierPart;
-            }
-          }
-        }
+        string identifierValue = classObject.identifier;
+        ProcessInboundClassIdentifiers(dataObjectIndex, classMap, classObjectIndex, identifierValue);
 
         if (templateMaps != null && templateMaps.Count > 0)
         {
           ProcessInboundTemplates(dataObjectIndex, classObject, classObjectIndex, templateMaps);
+        }
+      }
+    }
+
+    private void ProcessInboundClassIdentifiers(int dataObjectIndex, ClassMap classMap, int classObjectIndex, string identifierValue)
+    {
+      string[] identifierValueParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
+          ? identifierValue.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
+          : new string[] { identifierValue };
+
+      for (int identifierPartIndex = 0; identifierPartIndex < identifierValueParts.Length; identifierPartIndex++)
+      {
+        string identifierPartValue = identifierValueParts[identifierPartIndex];
+        string identifierPartName = classMap.identifiers[identifierPartIndex];
+
+        if (identifierPartName.StartsWith("#") && identifierPartName.EndsWith("#"))
+          continue;
+
+        if (identifierPartName.Split('.').Length > 2)  // related property
+        {
+          SetRelatedRecords(dataObjectIndex, classObjectIndex, identifierPartName, new List<string> { identifierPartValue });
+        }
+        else  // direct property
+        {
+          _dataRecords[dataObjectIndex][identifierPartName.Substring(identifierPartName.LastIndexOf('.') + 1)] = identifierPartValue;
         }
       }
     }
@@ -528,10 +513,17 @@ namespace org.iringtools.adapter.projection
                 {
                   ProcessInboundClass(dataObjectIndex, classTemplateMap);
                 }
-                else  // reference class not found, treat this reference role as property role
+                else  // reference class not found, process it as property role
                 {
-                  roleMap.propertyName = roleMap.classMap.identifiers.First();
-                  ProcessInboundPropertyRole(dataObjectIndex, classObjectIndex, roleMap, templateObject);
+                  foreach (RoleObject roleObject in templateObject.roleObjects)
+                  {
+                    if (roleObject.roleId == roleMap.id && roleObject.relatedClassId != null && roleObject.relatedClassId == roleMap.classMap.id)
+                    {
+                      string identifier = roleObject.value;
+                      ProcessInboundClassIdentifiers(dataObjectIndex, roleMap.classMap, classObjectIndex, identifier);
+                      break;
+                    }
+                  }
                 }
               }
               break;
