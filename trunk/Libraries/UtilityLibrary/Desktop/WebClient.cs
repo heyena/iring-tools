@@ -59,7 +59,7 @@ namespace org.iringtools.utility
         private IWebProxy _proxy = null;
 
         private const string NEW_LINE = "\r\n";
-        private const int TIMEOUT = 300000;
+        private const int TIMEOUT = 600000;
         private Encoding encoding = Encoding.UTF8;
 
         public WebHttpClient(string baseUri)
