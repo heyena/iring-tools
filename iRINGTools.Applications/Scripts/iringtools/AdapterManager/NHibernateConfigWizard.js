@@ -232,7 +232,48 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									buttons: [{
 										text: 'Add',
 										handler: function (button) {
-											addRelationship(scopeName, appName);
+											var deleteDataRelationPane = relationCreateFormPanel.items.items[0].items.items[0].items.items[1];
+											var relationName = relationCreateFormPanel.getForm().findField("relationName").getValue().replace(/^\s*/, "").replace(/\s*$/, "");
+											if (relationName == "")
+												return;
+
+											var gridLabel = scopeName + '.' + appName + '.' + node.id;
+											if (deleteDataRelationPane.items) {
+												var gridPane = deleteDataRelationPane.items.map[gridLabel];
+												var myArray = new Array();
+												var i = 0;
+												if (gridPane) {
+													var mydata = gridPane.store.data.items;
+
+													for (i = 0; i < mydata.length; i++) {
+														if (mydata[i].data.relationName == relationName) {
+															return;
+														}
+														else {
+															myArray.push([mydata[i].data.relationName]);
+														}
+													}
+												}
+											}
+
+											myArray.push([relationName]);
+											var colModel = new Ext.grid.ColumnModel([
+  											{ id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' }
+  										]);
+											var dataStore = new Ext.data.Store({
+												autoDestroy: true,
+												proxy: new Ext.data.MemoryProxy(myArray),
+												reader: new Ext.data.ArrayReader({}, [
+  												{ name: 'relationName' }
+  											])
+											});
+											var callId = 0;
+											createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName, appName, callId);
+										}
+									}, {
+										text: 'Reset',
+										handler: function (button) {
+											relationCreateFormPanel.getForm().reset();
 										}
 									}]
 								}]
@@ -242,6 +283,81 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								region: 'center',
 								layout: 'fit',
 								border: true
+							}],
+							buttons: [{
+								text: 'Apply',
+								handler: function () {
+									var deleteDataRelationPane = relationCreateFormPanel.items.items[0].items.items[0].items.items[1];
+									var gridLabel = scopeName + '.' + appName + '.' + node.id;
+									var gridPane = deleteDataRelationPane.items.map[gridLabel];
+									if (gridPane) {
+										var mydata = gridPane.store.data.items;
+										var nodeChildren = new Array();
+										for (var j = 0; j < node.childNodes.length; j++)
+											nodeChildren.push(node.childNodes[j].text);
+										for (var i = 0; i < mydata.length; i++) {
+											var exitNode = false;
+											var newNodeText = mydata[i].data.relationName.toLowerCase();
+											for (var j = 0; j < nodeChildren.length; j++) {
+												if (nodeChildren[j] == newNodeText) {
+													exitNode = true;
+													break;
+												}
+											}
+											if (exitNode == false) {
+												var newNode = new Ext.tree.TreeNode({
+													text: newNodeText,
+													type: 'relationship',
+													leaf: true,
+													objectName: node.parentNode.text,
+													relatedObjectName: '',
+													relationshipType: 'OneToOne',
+													relationshipTypeIndex: '1',
+													propertyMap: []
+												});
+												node.appendChild(newNode);
+											}
+										}
+										for (var j = 0; j < node.childNodes.length; j++) {
+											exitNode = false;
+											for (var i = 0; i < mydata.length; i++) {
+												newNodeText = mydata[i].data.relationName.toLowerCase();
+												if (node.childNodes[j].text == newNodeText) {
+													exitNode = true;
+													break;
+												}
+											}
+											if (exitNode == false) {
+												var deleteNode = node.childNodes[j];
+												node.childNodes.splice(j, 1);
+												j--;
+												node.removeChild(deleteNode);
+											}
+										}
+									}
+								}
+							}, {
+								text: 'Reset',
+								handler: function () {
+									var relations = new Array();
+									relationCreateFormPanel.getForm().reset();
+									relationCreateFormPanel.items.items[0].items.items[0].items.items[1].items.map[scopeName + '.' + appName + '.' + node.id].show();
+									for (i = 0; i < node.childNodes.length; i++) {
+										relations.push([node.childNodes[i].text]);
+									}
+									var colModel = new Ext.grid.ColumnModel([
+  									{ id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' }
+  								]);
+									var dataStore = new Ext.data.Store({
+										autoDestroy: true,
+										proxy: new Ext.data.MemoryProxy(relations),
+										reader: new Ext.data.ArrayReader({}, [
+  										{ name: 'relationName' }
+  									])
+									});
+									var callId = 0;
+									createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName, appName, callId);
+								}
 							}]
 						}]
 					}]
@@ -249,9 +365,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				editPane.add(relationCreateFormPanel);
 				var panelIndex = editPane.items.indexOf(relationCreateFormPanel);
 				editPane.getLayout().setActiveItem(panelIndex);
+
 				var deleteDataRelationPane = relationCreateFormPanel.items.items[0].items.items[0].items.items[1];
 				var relations = new Array();
-				var configLabel = scopeName + '.' + appName + '.-nh-config-wizard';
 				var gridLabel = scopeName + '.' + appName + '.' + node.id;
 				var i = 0;
 				if (deleteDataRelationPane.items) {
@@ -263,19 +379,16 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				}
 
 				for (i = 0; i < node.childNodes.length; i++) {
-					var nodeId = node.childNodes[i].id;
-					relations.push([node.childNodes[i].text, nodeId]);
+					relations.push([node.childNodes[i].text]);
 				}
 				var colModel = new Ext.grid.ColumnModel([
-  					{ id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' },
-						{ dataIndex: 'nodeId', hidden: true }
+  					{ id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' }
   				]);
 				var dataStore = new Ext.data.Store({
 					autoDestroy: true,
 					proxy: new Ext.data.MemoryProxy(relations),
 					reader: new Ext.data.ArrayReader({}, [
-  						{ name: 'relationName' },
-							{ name: 'nodeId' }
+  						{ name: 'relationName' }
   					])
 				});
 				var callId = 0;
@@ -304,9 +417,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				for (var i = 0; i < rootNode.childNodes.length; i++)
 					relatedObjects.push([i.toString(), rootNode.childNodes[i].text]);
 				var selectedProperties = new Array();
+				var ii = 0;
 				for (var i = 0; i < propertiesNode.children.length; i++)
-					if (!propertiesNode.children[i].hidden)
-						selectedProperties.push([i.toString(), propertiesNode.children[i].text]);
+					if (!propertiesNode.children[i].hidden) {
+						selectedProperties.push([ii.toString(), propertiesNode.children[i].text]);
+						ii++;
+					}
 
 				if (node.attributes.attributes)
 					var nodeAttribute = node.attributes.attributes;
@@ -319,9 +435,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
 					if (relatedDataObjectNode) {
 						propertiesNode = relatedDataObjectNode.attributes.children[1];
+						ii = 0;
 						for (var i = 0; i < propertiesNode.children.length; i++)
-							if (!propertiesNode.children[i].hidden)
-								mappingProperties.push([i.toString(), propertiesNode.children[i].text]);
+							if (!propertiesNode.children[i].hidden) {
+								mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
+								ii++;
+							}
 					}
 				}
 				else {
@@ -471,7 +590,64 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										buttons: [{
 											text: 'Add',
 											handler: function (button) {
-												addPropertyMapping(scopeName, appName);
+												var dataRelationPane = relationConfigPanel.items.items[0].items.items[0].items.items[5];
+												var relationConfigForm = relationConfigPanel.getForm();
+												var selectPropComboBox = relationConfigForm.findField("propertyName");
+												var mapPropComboBox = relationConfigForm.findField("mapPropertyName");
+												if (!selectPropComboBox.getValue() || !mapPropComboBox.getValue())
+													return;
+
+												var selectProperty = selectPropComboBox.store.getAt(selectPropComboBox.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
+												var mapProperty = mapPropComboBox.store.getAt(mapPropComboBox.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
+												if (selectProperty == "" || mapProperty == "")
+													return;
+
+												var configLabel = scopeName + '.' + appName + '.-nh-config-wizard';
+												var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+												var gridLabel = scopeName + '.' + appName + '.' + dbObjectsTree.getSelectionModel().getSelectedNode().id;
+												if (dataRelationPane.items) {
+													var gridPane = dataRelationPane.items.map[gridLabel];
+													var myArray = new Array();
+													var i = 0;
+
+													if (gridPane) {
+														var mydata = gridPane.store.data.items;
+														for (i = 0; i < mydata.length; i++)
+															if (mydata[i].data.property == selectProperty && mydata[i].data.relatedProperty == mapProperty)
+																return;
+															else
+																myArray.push([mydata[i].data.property, mydata[i].data.relatedProperty]);
+													}
+												}
+
+												var arrayData = new Array();
+												arrayData.push(selectProperty);
+												arrayData.push(mapProperty);
+												myArray.push(arrayData);
+												var colModel = new Ext.grid.ColumnModel([
+												{ id: 'property', header: 'Property', dataIndex: 'property' },
+												{ header: 'Related Property', dataIndex: 'relatedProperty' }
+											]);
+												var dataStore = new Ext.data.Store({
+													autoDestroy: true,
+													proxy: new Ext.data.MemoryProxy(myArray),
+													reader: new Ext.data.ArrayReader({}, [
+													{ name: 'property' },
+													{ name: 'relatedProperty' }
+												])
+												});
+												var callId = 1;
+												createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName, appName, callId);
+											}
+										}, {
+											text: 'Reset',
+											handler: function (button) {
+												var propertyNameCombo = relationConfigPanel.getForm().findField('propertyName');
+												propertyNameCombo.setValue('');
+												propertyNameCombo.clearInvalid();
+												var mapPropertyNameCombo = relationConfigPanel.getForm().findField('mapPropertyName');
+												mapPropertyNameCombo.setValue('');
+												mapPropertyNameCombo.clearInvalid();
 											}
 										}]
 									}]
@@ -483,6 +659,97 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								region: 'center',
 								layout: 'fit',
 								border: true
+							}],
+							buttons: [{
+								text: 'Apply',
+								handler: function () {
+									if (node.attributes.attributes)
+										var attribute = node.attributes.attributes;
+									else
+										var attribute = node.attributes;
+
+									var dataRelationPane = relationConfigPanel.items.items[0].items.items[0].items.items[5];
+									var gridLabel = scopeName + '.' + appName + '.' + node.id;
+									var gridPane = dataRelationPane.items.map[gridLabel];
+									if (gridPane) {
+										var mydata = gridPane.store.data.items;
+										var propertyMap = new Array();
+										if (attribute) {
+											for (i = 0; i < attribute.propertyMap.length; i++)
+												propertyMap.push([attribute.propertyMap[i].dataPropertyName, attribute.propertyMap[i].relatedPropertyName]);
+
+											for (var i = 0; i < mydata.length; i++) {
+												var exitPropertyMap = false;
+												var dataPropertyName = mydata[i].data.property.toLowerCase();
+												var relatedPropertyName = mydata[i].data.relatedProperty.toLowerCase();
+												for (var j = 0; j < propertyMap.length; j++) {
+													if (propertyMap[j][0] == dataPropertyName && propertyMap[j][1] == relatedPropertyName) {
+														exitPropertyMap = true;
+														break;
+													}
+												}
+												if (exitPropertyMap == false) {
+													var mapItem = new Array();
+													mapItem['dataPropertyName'] = dataPropertyName;
+													mapItem['relatedPropertyName'] = relatedPropertyName;
+													attribute.propertyMap.push(mapItem);
+												}
+											}
+											for (var j = 0; j < attribute.propertyMap.length; j++) {
+												exitPropertyMap = false;
+												for (var i = 0; i < mydata.length; i++) {
+													dataPropertyName = mydata[i].data.property.toLowerCase();
+													relatedPropertyName = mydata[i].data.relatedProperty.toLowerCase();
+													if (attribute.propertyMap[j].dataPropertyName == dataPropertyName && attribute.propertyMap[j].relatedPropertyName == relatedPropertyName) {
+														exitPropertyMap = true;
+														break;
+													}
+												}
+												if (exitPropertyMap == false) {
+													attribute.propertyMap.splice(j, 1);
+													j--;
+												}
+											}
+										}
+									}
+								}
+							}, {
+								text: 'Reset',
+								handler: function () {
+									var propertyNameCombo = relationConfigPanel.getForm().findField('propertyName');
+									propertyNameCombo.setValue('');
+									propertyNameCombo.clearInvalid();
+									var mapPropertyNameCombo = relationConfigPanel.getForm().findField('mapPropertyName');
+									mapPropertyNameCombo.setValue('');
+									mapPropertyNameCombo.clearInvalid();
+
+									var properMap = new Array();
+									var dataRelationPane = relationConfigPanel.items.items[0].items.items[0].items.items[5];
+									dataRelationPane.items.map[scopeName + '.' + appName + '.' + node.id].show();
+									if (node.attributes.attributes)
+										var attribute = node.attributes.attributes;
+									else
+										var attribute = node.attritbutes;
+									if (attribute) {
+										for (i = 0; i < attribute.propertyMap.length; i++)
+											properMap.push([attribute.propertyMap.dataPropertyName, attribute.propertyMap.relatedPropertyName]);
+
+										var colModel = new Ext.grid.ColumnModel([
+  									{ id: 'property', header: 'Property', dataIndex: 'property' },
+  									{ header: 'Related Property', dataIndex: 'relatedProperty' }
+  								]);
+										var dataStore = new Ext.data.Store({
+											autoDestroy: true,
+											proxy: new Ext.data.MemoryProxy(myArray),
+											reader: new Ext.data.ArrayReader({}, [
+  										{ name: 'property' },
+  										{ name: 'relatedProperty' }
+  									])
+										});
+										var callId = 0;
+										createRelationGrid(scopeName + '.' + appName + '.' + node.id, dataRelationPane, colModel, dataStore, scopeName, appName, callId);
+									}
+								}
 							}]
 						}]
 					}]
@@ -1487,41 +1754,13 @@ function createRelationGrid(label, dataGridPanel, colModel, dataStore, scopeName
 					text: 'Delete',
 					handler: function (button) {
 						var selectModel = dataRelationGridPane.getSelectionModel();
-						if (selectModel.hasSelection()) {
-							if (callId == 0)
-								var nodeId = selectModel.getSelected().get('nodeId');
-
+						if (selectModel.hasSelection()) {							
 							var selectIndex = selectModel.getSelectedIndex();
-							dataStore.removeAt(selectIndex);
-							var tab = Ext.getCmp('content-panel');
-							var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
-							var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-							var editorPane = dataObjectsPane.items.items[1];
-							var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-
-							if (callId == 1) {
-								var selectNode = dbObjectsTree.getSelectionModel().getSelectedNode();
-								if (selectNode.attributes.attributes)
-									selectNode.attributes.attributes.propertyMap.splice(selectIndex, 1);
-								else
-									selectNode.attributes.propertyMap.splice(selectIndex, 1);
-							}
-							else {
-								var deleteNode = dbObjectsTree.getNodeById(nodeId);
-								var parent = deleteNode.parentNode;
-								var children = deleteNode.parentNode.childNodes;
-								for (var ii = 0; ii < children.length; ii++) {
-									if (children[ii].id == nodeId) {
-										children.splice(ii, 1);
-									}
-								};
-								parent.removeChild(deleteNode);
-							}
+							dataStore.removeAt(selectIndex);							
 						}
 						else {
 							alert('Please select a row first');
 						}
-
 					}
 				}]
 			})
@@ -1544,70 +1783,6 @@ function showDialog(width, height, title, message, buttons, callback) {
 }
 
 function addPropertyMapping(scopeName, appName) {
-	var tab = Ext.getCmp('content-panel');
-	var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
-	var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-	var editorPane = dataObjectsPane.items.items[1];
-	var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-	var selectNode = dbObjectsTree.getSelectionModel().getSelectedNode();
-	var relationConfigPanel = editorPane.items.map[scopeName + '.' + appName + '.relationFieldsForm.' + selectNode.id];
-	var dataRelationPane = relationConfigPanel.items.items[0].items.items[0].items.items[5]; 
-	var relationConfigForm = relationConfigPanel.getForm();
-	var selectPropComboBox = relationConfigForm.findField("propertyName");
-	var mapPropComboBox = relationConfigForm.findField("mapPropertyName");
-	if (!selectPropComboBox.getValue() || !mapPropComboBox.getValue())
-		return;
-
-	var selectProperty = selectPropComboBox.store.getAt(selectPropComboBox.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
-	var mapProperty = mapPropComboBox.store.getAt(mapPropComboBox.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
-	if (selectProperty == "" || mapProperty == "")
-		return;
-
-	var configLabel = scopeName + '.' + appName + '.-nh-config-wizard';
-	var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-	var gridLabel = scopeName + '.' + appName + '.' + dbObjectsTree.getSelectionModel().getSelectedNode().id;
-	if (dataRelationPane.items) {
-		var gridPane = dataRelationPane.items.map[gridLabel];
-		var myArray = new Array();
-		var i = 0;
-
-		if (gridPane) {
-			var mydata = gridPane.store.data.items;
-			for (i = 0; i < mydata.length; i++)
-				if (mydata[i].data.property == selectProperty && mydata[i].data.relatedProperty == mapProperty)
-					return;
-				else {
-					myArray.push([mydata[i].data.property, mydata[i].data.relatedProperty]);
-				}
-		}
-	};
-
-	var arrayData = new Array();
-	arrayData.push(selectProperty);
-	arrayData.push(mapProperty);
-	myArray.push(arrayData);
-	var mapItem = new Array();
-	mapItem['dataPropertyName'] = selectProperty;
-	mapItem['relatedPropertyName'] = mapProperty;
-	if (selectNode.attributes.attributes)
-		selectNode.attributes.attributes.propertyMap.push(mapItem);
-	else
-		selectNode.attributes.propertyMap.push(mapItem);
-
-	var colModel = new Ext.grid.ColumnModel([
-					{ id: 'property', header: 'Property', dataIndex: 'property' },
-					{ header: 'Related Property', dataIndex: 'relatedProperty' }
-				]);
-	var dataStore = new Ext.data.Store({
-		autoDestroy: true,
-		proxy: new Ext.data.MemoryProxy(myArray),
-		reader: new Ext.data.ArrayReader({}, [
-						{ name: 'property' },
-						{ name: 'relatedProperty' }
-					])
-	});
-	var callId = 1;
-	createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName, appName, callId);
 }
 
 function addRelationship(scopeName, appName) {
@@ -1617,60 +1792,7 @@ function addRelationship(scopeName, appName) {
 	var editorPane = dataObjectsPane.items.items[1];
 	var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 	var selectNode = dbObjectsTree.getSelectionModel().getSelectedNode();
-	var relationCreateFormPanel = editorPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + selectNode.id];
-	var deleteDataRelationPane = relationCreateFormPanel.items.items[0].items.items[0].items.items[1];
-	var relationName = relationCreateFormPanel.getForm().findField("relationName").getValue().replace(/^\s*/, "").replace(/\s*$/, "");
-	if (relationName == "")
-		return;
 
-	var configLabel = scopeName + '.' + appName + '.-nh-config-wizard';
-	var gridLabel = scopeName + '.' + appName + '.' + selectNode.id;
-	if (deleteDataRelationPane.items) {
-		var gridPane = deleteDataRelationPane.items.map[gridLabel];
-		var myArray = new Array();
-		var i = 0;
-		if (gridPane) {
-			var mydata = gridPane.store.data.items;
-
-			for (i = 0; i < mydata.length; i++) {
-				if (mydata[i].data.relationName == relationName) {
-					return;
-				}
-				else {
-					myArray.push([mydata[i].data.relationName, mydata[i].data.nodeId]);
-				}
-			}
-		}
-	}
-
-	var newNode = new Ext.tree.TreeNode({
-		text: relationName.toLowerCase(),
-		type: 'relationship',
-		leaf: true,
-		objectName: selectNode.parentNode.text,
-		relatedObjectName: '',
-		relationshipType: 'OneToOne',
-		relationshipTypeIndex: '1',
-		propertyMap: []
-	});
-
-	selectNode.appendChild(newNode);
-	var nodeId = newNode.id;
-	myArray.push([relationName, nodeId]);
-	var colModel = new Ext.grid.ColumnModel([
-  								{ id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' },
-									{ dataIndex: 'nodeId', hidden: true }
-  							]);
-	var dataStore = new Ext.data.Store({
-		autoDestroy: true,
-		proxy: new Ext.data.MemoryProxy(myArray),
-		reader: new Ext.data.ArrayReader({}, [
-  									{ name: 'relationName' },
-										{ name: 'nodeId' }
-  								])
-	});
-	var callId = 0;
-	createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName, appName, callId);
 }
 
 Ext.grid.RowSelectionModel.override({
