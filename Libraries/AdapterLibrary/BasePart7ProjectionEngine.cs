@@ -349,6 +349,31 @@ namespace org.iringtools.adapter.projection
       _dataObjects.Add(relatedObject);
     }
 
+    protected void ProcessInboundClassIdentifiers(int dataObjectIndex, ClassMap classMap, int classObjectIndex, string identifierValue)
+    {
+      string[] identifierValueParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
+          ? identifierValue.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
+          : new string[] { identifierValue };
+
+      for (int identifierPartIndex = 0; identifierPartIndex < identifierValueParts.Length; identifierPartIndex++)
+      {
+        string identifierPartName = classMap.identifiers[identifierPartIndex];
+        string identifierPartValue = identifierValueParts[identifierPartIndex];
+
+        if (identifierPartName.StartsWith("#") && identifierPartName.EndsWith("#"))
+          continue;
+
+        if (identifierPartName.Split('.').Length > 2)  // related property
+        {
+          SetRelatedRecords(dataObjectIndex, classObjectIndex, identifierPartName, new List<string> { identifierPartValue });
+        }
+        else  // direct property
+        {
+          _dataRecords[dataObjectIndex][identifierPartName.Substring(identifierPartName.LastIndexOf('.') + 1)] = identifierPartValue;
+        }
+      }
+    }
+
     protected List<KeyProperty> GetKeyProperties(string objectType)
     {
       DataObject dataObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
