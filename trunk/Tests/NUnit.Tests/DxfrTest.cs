@@ -304,8 +304,7 @@ namespace NUnit.Tests
             _settings["GraphName"], "MD5", manifest);
 
         dtiPage.DataTransferIndexList = dtiList.DataTransferIndexList.GetRange(0, page);
-
-
+        
         dtos = _dxfrProvider.GetDataTransferObjects(_settings["ProjectName"], _settings["ApplicationName"],
             _settings["GraphName"], dtiPage);
 
