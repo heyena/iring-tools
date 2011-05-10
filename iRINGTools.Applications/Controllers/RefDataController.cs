@@ -375,13 +375,13 @@ namespace iRINGTools.Web.Controllers
                     #endregion
 
                     //Get Sub Classes
-                    //JsonTreeNode subClassNodes = GetSubClasses(classId, subsNode);
+                    JsonTreeNode subClassNodes = GetSubClasses(classId, subsNode);
 
-                    //if (subClassNodes.children.Count() == 0)
-                    //{
-                    //    subClassNodes.leaf = true;
-                    //    subClassNodes.icon = "Content/img/folder.png";
-                    //}
+                    if (subClassNodes.children.Count() == 0)
+                    {
+                        subClassNodes.leaf = true;
+                        subClassNodes.icon = "Content/img/folder.png";
+                    }
                     //nodes.Add(subClassNodes);
 
                     ////Get Templates
