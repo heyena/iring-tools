@@ -247,15 +247,26 @@ public class RefDataModel
 }
   
   public Tree getRole(String templateId){
-	  //System.out.println("Inside getRoles & the TemplateId: "+templateId);
 	  Qmxf qmxf = null;
 	  Tree tree = new Tree();
 	  List<Node> treeNodes = tree.getNodes();
 	  
 	  try{
 		  qmxf = httpClient.get(Qmxf.class, "/templates/"+templateId);
-			  //R85736598359
-		  HashMap<String, String> hsMap;// = new HashMap<String, String>();
+		  HashMap<String, String> hsMap=new HashMap<String, String>();
+		  
+		  //First hidden property node
+	      LeafNode baseNode = new LeafNode();
+	      hsMap.put("Parent Template", qmxf.getTemplateQualifications().get(0).getQualifies());
+	      hsMap.put("Authority", qmxf.getTemplateQualifications().get(0).getStatuses().get(0).getAuthority());
+	      hsMap.put("Class", qmxf.getTemplateQualifications().get(0).getStatuses().get(0).getClazz());
+	      
+	      baseNode.setRecord(hsMap);		      
+	      baseNode.setIconCls("template");
+	      baseNode.setType(Type.TEMPLATENODE.value());
+	      baseNode.setHidden(true);
+  		  treeNodes.add(baseNode);
+		  
 		  
 		  for(RoleQualification roleQualifications:qmxf.getTemplateQualifications().get(0).getRoleQualifications()){
 			  hsMap = new HashMap<String, String>();
@@ -320,5 +331,33 @@ public class RefDataModel
 		  
 	  }
 	  return node;
+  }
+  
+  public boolean postClass(HttpServletRequest httpRequest)
+  {
+    try
+    {
+    	return true;
+    }
+    catch (Exception e)
+    {
+      System.out.println("Error Occured");
+      e.printStackTrace();
+      return false;
+    }
+  }
+  
+  public boolean postTemplate(HttpServletRequest httpRequest)
+  {
+    try
+    {
+    	return true;
+    }
+    catch (Exception e)
+    {
+      System.out.println("Error Occured");
+      e.printStackTrace();
+      return false;
+    }
   }
 }

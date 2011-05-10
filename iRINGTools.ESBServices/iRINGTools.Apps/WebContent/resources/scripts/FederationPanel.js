@@ -54,6 +54,7 @@ FederationManager.FederationPanel = Ext
             this.federationPanel = new Ext.tree.TreePanel( {
               region : 'center',
               border : false,
+              id : 'federation-tree',
               split : true,
               expandAll : true,
               rootVisible : false,

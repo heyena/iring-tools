@@ -94,5 +94,14 @@ public class RefDataController implements ServletRequestAware{
 		qmxf = refdata.getRole(id);
 		return Action.SUCCESS;
 	}*/
-	
+	public String postClass() {		
+		System.out.println("Reaching post Class");
+		boolean successStatus = refdata.postClass(httpRequest);
+        return Action.SUCCESS;
+	}
+	public String postTemplate() {		
+		System.out.println("Reaching post Class");
+		boolean successStatus = refdata.postTemplate(httpRequest);
+        return Action.SUCCESS;
+	}	
 }
