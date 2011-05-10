@@ -60,7 +60,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -169,6 +168,7 @@
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Content\img\list-add.png" />
     <Content Include="Content\img\list-remove.png" />
+    <Resource Include="Content\img\relation.png" />
     <Content Include="Content\img\system-file-manager.png" />
     <Content Include="Content\img\template.png" />
     <Content Include="favicon.ico" />
@@ -4677,7 +4677,6 @@
     <Content Include="Scripts\iringtools\AdapterManager\ExcelLibrary.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DictionaryPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DirectoryPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ExcelLibrary_original.js" />
     <Content Include="Scripts\iringtools\AdapterManager\MappingPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigWizard.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />

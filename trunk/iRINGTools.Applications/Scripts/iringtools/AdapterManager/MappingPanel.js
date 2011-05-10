@@ -44,8 +44,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     this.tbar = this.buildToolbar();
 
-    this.graphmapMenu = new Ext.menu.Menu();
-    this.graphmapMenu.add(this.buildGraphmapMenu());
+//    this.graphmapMenu = new Ext.menu.Menu();
+//    this.graphmapMenu.add(this.buildGraphmapMenu());
 
     this.templatemapMenu = new Ext.menu.Menu();
     this.templatemapMenu.add(this.buildTemplateMapMenu());
@@ -168,17 +168,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     ]
   },
 
-  buildGraphmapMenu: function () {
-    return [
-  
-      {
-        text: 'Delete GraphMap',
-        handler: this.onDeleteGraphMap,
-        icon: 'Content/img/16x16/edit-delete.png',
-        scope: this
-      }
-    ]
-  },
+ 
 
   buildTemplateMapMenu: function () {
     return [
@@ -413,25 +403,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         win.close();
         that.contentPanel.removeAll(true);
         that.directoryPanel.reload();
-      },
-      failure: function (result, request) { }
-    })
-  },
-
-  onDeleteGraphMap: function () {
-    var that = this;
-    var node = this.getSelectedNode();
-    Ext.Ajax.request({
-      url: 'mapping/deleteGraphMap',
-      method: 'POST',
-      params: {
-        Scope: this.scope.Name,
-        Application: this.application.Name,
-        mappingNode: node.id
-      },
-      success: function (result, request) {
-        that.onReload();
-        Ext.Msg.show({ title: 'Success', msg: 'Graph [' + node.id.split('/')[2] + '] removed from mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
       },
       failure: function (result, request) { }
     })
@@ -749,19 +720,19 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         var propertydd = new Ext.dd.DropTarget(propertyTarget, {
           ddGroup: 'propertyGroup',
           notifyEnter: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode')
+            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyOver: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode')
+            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyDrop: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode') {
+            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode') {
               return false;
             }
             else {
@@ -777,13 +748,13 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         var classdd = new Ext.dd.DropTarget(classTarget, {
           ddGroup: 'refdataGroup',
           notifyEnter: function (dd, e, data) {
-            if (data.node.attributes.record.type != 'DataPropertyNode')
+            if (data.node.attributes.record.type != 'ClassNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyOver: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode')
+            if (data.node.attributes.type != 'ClassNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
@@ -854,8 +825,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     if (obj.type == "MappingNode") {
       this.mappingMenu.showAt([x, y]);
-    } else if (obj.type == "GraphMapNode") {
-      this.graphmapMenu.showAt([x, y]);
     } else if (obj.type == "TemplateMapNode") {
       this.templatemapMenu.showAt([x, y]);
     } else if (obj.type == "RoleMapNode") {

@@ -526,7 +526,7 @@ namespace iRINGTools.Web.Controllers
         string scope = form["scope"];
         string application = form["application"];
         Mapping mapping = GetMapping(scope, application);
-        string graphName = form["mappingNode"].Split('/')[2];
+        string graphName = form["mappingNode"].Split('/')[4];
         GraphMap graphMap = mapping.FindGraphMap(graphName);
         if (graphMap != null)
           mapping.graphMaps.Remove(graphMap);

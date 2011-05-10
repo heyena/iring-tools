@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
