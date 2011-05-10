@@ -10,6 +10,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using org.ids_adi.qmxf;
+using Ninject;
 
 namespace iRINGTools.Web.Models
 {
@@ -20,6 +21,7 @@ namespace iRINGTools.Web.Models
     private string _refDataServiceURI = string.Empty;
     private string relativeUri = string.Empty;
 
+    [Inject]
     public RefDataRepository()
     {
       _settings = ConfigurationManager.AppSettings;

@@ -206,20 +206,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			    xtype: 'button',
 			    text: 'Reload Tree',
 			    handler: this.onReload,
-			    //			    handler: function (event, toolEl) {
-			    //			        var panel = this.directoryPanel;
-			    //			        var thisTreePanel = Ext.getCmp('Directory-Panel');
-
-
-			    //			        //get state from tree
-			    //			        var state = thisTreePanel.getState();
-			    //			        panel.body.mask('Loading', 'x-mask-loading');
-
-			    //			        thisTreePanel.getLoader().load(thisTreePanel.getRootNode(), function () {
-			    //			            panel.body.unmask();
-			    //			            thisTreePanel.applyState(state);
-			    //			        });
-			    //			    },
 			    icon: 'Content/img/16x16/view-refresh.png',
 			    scope: this
 			}
@@ -837,18 +823,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     onReload: function (node) {
         //Ext.state.Manager.clear('AdapterManager');
         //this.directoryPanel.root.reload();
-
-        var panel = this.directoryPanel;
-        var thisTreePanel = Ext.getCmp('Directory-Panel');
-
-        //get state from tree
-        var state = thisTreePanel.getState();
-        panel.body.mask('Loading', 'x-mask-loading');
-
-        thisTreePanel.getLoader().load(thisTreePanel.getRootNode(), function () {
-            panel.body.unmask();
-            thisTreePanel.applyState(state);
-        });
     },
 
     onReloadNode: function (node) {

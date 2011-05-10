@@ -118,6 +118,7 @@ namespace iRINGTools.Web.Controllers
                             children = null
                         };
 
+
                         JsonTreeNode graphsNode = new JsonTreeNode
                         {
                             nodeType = "async",
@@ -179,6 +180,7 @@ namespace iRINGTools.Web.Controllers
                     }
                 case "ValueListNode":
                     {
+                      string valueMapLabel = string.Empty;
                       string context = form["node"];
                       string scopeName = context.Split('/')[0];
                       string applicationName = context.Split('/')[1];
@@ -188,13 +190,14 @@ namespace iRINGTools.Web.Controllers
                       ValueListMap valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
                       foreach (var valueMap in valueListMap.valueMaps)
                       {
+                        
                         JsonTreeNode node = new JsonTreeNode
                         {
                           nodeType = "async",
                           type = "ListMapNode",
                           icon = "Content/img/value.png",
                           id = context + "/ValueMap/" + valueMap.internalValue,
-                          text = valueMap.internalValue,
+                          text =  valueMap.internalValue,
                           expanded = false,
                           leaf = true,
                           children = null,
@@ -211,32 +214,32 @@ namespace iRINGTools.Web.Controllers
                         string context = form["node"];
                         string scopeName = context.Split('/')[0];
                         string applicationName = context.Split('/')[1];
-
                         DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
 
                         List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
                         foreach (DataObject dataObject in dictionary.dataObjects)
                         {
-                            JsonTreeNode node = new JsonTreeNode
+
+                          JsonTreeNode node = new JsonTreeNode
+                          {
+                            nodeType = "async",
+                            type = "DataObjectNode",
+                            icon = "Content/img/object.png",
+                            id = context + "/DataObject/" + dataObject.objectName,
+                            text = dataObject.objectName,
+                            expanded = false,
+                            leaf = false,
+                            children = null,
+                            record = new
                             {
-                                nodeType = "async",
-                                type = "DataObjectNode",
-                                icon = "Content/img/object.png",
-                                id = context + "/DataObject/" + dataObject.objectName,
-                                text = dataObject.objectName,
-                                expanded = false,
-                                leaf = false,
-                                children = null,
-                                record = new
-                                {
-                                    Name = dataObject.objectName
-                                }
-                            };
+                              Name = dataObject.objectName
+                            }
+                          };
 
-                            nodes.Add(node);
+                          nodes.Add(node);
+
                         }
-
                         return Json(nodes, JsonRequestBehavior.AllowGet);
 
                     }
@@ -274,10 +277,69 @@ namespace iRINGTools.Web.Controllers
 
                             nodes.Add(node);
                         }
-
+                        if (dataObject.dataRelationships.Count > 0)
+                        {
+                          foreach (DataRelationship relation in dataObject.dataRelationships)
+                          {
+                            JsonTreeNode node = new JsonTreeNode
+                            {
+                              nodeType = "async",
+                              type = "RelationshipNode",
+                              icon = "/Content/img/relation.png",
+                              id = context + "/" + dataObject.objectName + "/" + relation.relationshipName,
+                              text = relation.relationshipName,
+                              expanded = false,
+                              leaf = false,
+                              children = null,
+                              record = new
+                              {
+                                Name =relation.relationshipName,
+                                Type = relation.relationshipType,
+                                Related = relation.relatedObjectName
+                              }
+                            };
+                            nodes.Add(node);
+                          }
+                          
+                        }
                         return Json(nodes, JsonRequestBehavior.AllowGet);
 
                     }
+
+                case "RelationshipNode":
+                    {
+                      string context = form["node"];
+                      string related = form["related"];
+                      string scopeName = context.Split('/')[0];
+                      string applicationName = context.Split('/')[1];
+                      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                      DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+                      DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
+                      foreach (DataProperty property in dataObject.dataProperties)
+                      {
+                        JsonTreeNode node = new JsonTreeNode
+                        {
+                          nodeType = "async",
+                          type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
+                          icon = (dataObject.isKeyProperty(property.propertyName)) ? "Content/img/key.png" : "Content/img/property.png",
+                          id = context + "/" + property.propertyName,
+                          text = property.propertyName,
+                          expanded = true,
+                          leaf = true,
+                          children = new List<JsonTreeNode>(),
+                          record = new
+                          {
+                            Name = property.propertyName,
+                            Keytype = getKeytype(property.propertyName, dataObject.dataProperties),
+                            Datatype = getDatatype(property.propertyName, dataObject.dataProperties)
+                          }
+                        };
+
+                        nodes.Add(node);
+                      }
+                      return Json(nodes, JsonRequestBehavior.AllowGet);
+                    }
+                    
                 case "GraphsNode":
                     {
 
