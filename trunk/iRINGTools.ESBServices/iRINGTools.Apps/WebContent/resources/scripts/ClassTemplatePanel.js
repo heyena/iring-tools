@@ -12,9 +12,10 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	url: null,
     nId:null,label:null,
     parentNode:null, node:null,name:null,desc:null,
+    parentTemplate:null,
     statusAuth:null,statusClass:null,statusFrom:null, statusTo:null,
     entityType:null, 
-    specStore:[], 
+    specStore:[], repoStore:[],
     classStore:[],
     roleStore:[],
     
@@ -45,11 +46,19 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	  		this.statusFrom=this.node.attributes.record["Status From"];
 	  		this.statusTo=this.node.attributes.record["Status To"];
 	  	    this.entityType=this.node.attributes.record["Entity Type"];
-	  	    this.specStore=this.createStore(this.parentNode.childNodes[2].attributes.children);
-	  	    this.classStore=this.createStore(this.parentNode.childNodes[1].attributes.children);
+	  	    this.specStore=this.createStore(this.parentNode.childNodes[2].attributes.children,0);
+	  	    this.classStore=this.createStore(this.parentNode.childNodes[1].attributes.children,0);
+	  	    this.repoStore=this.createRepoStore(Ext.getCmp('federation-tree').getRootNode().childNodes[2].childNodes);
   		}else{
   			this.name=this.parentNode.attributes.record.label;
-  			this.roleStore=this.createStore(this.parentNode.childNodes);
+  			this.node=this.parentNode.childNodes[0];
+  			this.parentNode.childNodes.splice(0,1); 
+  			this.roleStore=this.createStore(this.parentNode.childNodes,1);
+  			this.parentNode.childNodes.splice(0,0,this.node);
+  			this.parentTemplate=this.node.attributes.record["Parent Template"];
+	  	    this.statusAuth=this.node.attributes.record["Authority"];
+	  		this.statusClass=this.node.attributes.record["Class"];
+  			
   		}
   	}
   	if(this.configData == 'class'){
@@ -80,8 +89,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
  				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'textfield', disabled:true,width:200,value:this.statusTo}
  				        	         ]
  				          },
- 				         {xtype:'combo',store: ['iRING Sandbox (Read Only)', 'My Private Sandbox', 'ReferenceData (Read Only)', 'Proto and Initial (Read Only)'],
-	 							fieldLabel:'Target Repo', width:200}]},
+ 				         {xtype:'combo',store: this.repoStore,fieldLabel:'Target Repo', width:200}]},
  				          {columnWidth:.5,layout: 'form',
         	 				items:[
         	 				      {fieldLabel:'Entity Type',name:'entityType', xtype:'textfield', width:200, value:this.entityType},
@@ -89,7 +97,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
         	 				    	  items: [
         	 				    	          {name:'specialization', xtype:'multiselect', width:200,store:this.specStore, id:'spec'+that.id},
         	 				    	          {xtype: 'fieldset', border:false, layout:'column', 
-        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: function(){this.onStoreDtlsAdd(this.specStore,'spec'+that.id);}, scope: this},
+        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: function(){this.onStoreDtlsAdd(this.specStore,'spec'+that.id, 'ClassNode');}, scope: this},
         	 				    	        		  	{columnWidth:.5,xtype:"button",text:'Remove',handler: function(){this.onStoreDtlsRemove(this.specStore,'spec'+that.id);}, scope: this}
         	 				    	        	  ]}
         	 				    	          ]
@@ -98,7 +106,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
         	 				    	  items: [
         	 				    	          {name:'classification', xtype:'multiselect', width:200, store:this.classStore, id:'class'+that.id},
         	 				    	         {xtype: 'fieldset', border:false, layout:'column', 
-        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: function(){this.onStoreDtlsAdd(this.classStore,'class'+that.id);}, scope: this},
+        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: function(){this.onStoreDtlsAdd(this.classStore,'class'+that.id, 'ClassNode');}, scope: this},
         	 				    	        	         {columnWidth:.5,xtype:"button",text:'Remove',handler:  function(){this.onStoreDtlsRemove(this.classStore,'class'+that.id);}, scope: this}
         	 				    	        	  ]}
         	 				    	          ]
@@ -126,22 +134,22 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 				          			Ext.getCmp(that.id).setTitle(that.label+': {'+f.getValue()+'}');
 				          		}
 				        		}},
-				 {fieldLabel:'Parent Template',name:'parentTemplate', xtype:'textfield', width:400},
+				 {fieldLabel:'Parent Template',name:'parentTemplate', xtype:'textfield', width:400, value:this.parentTemplate},
 				 {xtype: 'fieldset', layout:'column', border:false,
    	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
    	 						items:[{xtype:'fieldset',title:'Description',
    	 							items:[{name:'description', xtype:'textarea', width:200}]},
    	 							{xtype: 'fieldset',title:'Status',
      	 				        	  items:[
-     	 				        	         {fieldLabel:'Authority',name:'authority', xtype:'textfield', width:200},
-     	 				        	         {fieldLabel:'Recorded',name:'recorded', xtype:'textfield', width:200},
-     	 				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'datefield', width:200},
-     	 				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'datefield', width:200}
+     	 				        	         {fieldLabel:'Authority',name:'authority', xtype:'textfield', width:200, disabled:true, value:this.statusAuth},
+     	 				        	         {fieldLabel:'Recorded',name:'recorded', xtype:'textfield', width:200, disabled:true, value:this.statusClass},
+     	 				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'datefield', disabled:true, width:200},
+     	 				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'datefield',disabled:true, width:200}
      	 				        	         ]
      	 				          }]},
    	 						{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
    	        	 					items:[{xtype:'fieldset',title:'Role Definition',
-	        	 							items:[{name:'roleDefinition', xtype:'multiselect', width:200, store:this.roleStore},
+	        	 							items:[{name:'roleDefinition', xtype:'multiselect', width:200, store:this.roleStore, id:'role'+that.id},
 	        	 							       {fieldLabel:'Id',name:'id', xtype:'textfield', width:200},
 	          	 				        	       {fieldLabel:'Name',name:'name', xtype:'textfield', width:200},
 	          	 				        	       {fieldLabel:'Description',name:'description', xtype:'textfield', width:200},
@@ -149,9 +157,9 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	          	        	        	 				items:[{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
 	          	        	        	 					items:[{ xtype : "tbbutton",text : 'Edit..',tooltip : 'Edit', width:70}]},
 	          	        	        	 					   {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-   	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Add',tooltip : 'Add', width:70}]},
+   	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Add', handler: function(){that.onStoreDtlsAdd(that.roleStore,'role'+that.id, 'RoleNode');},tooltip : 'Add', width:70}]},
    	          	        	        	 				    {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-   	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Remove',tooltip : 'Remove', width:70}]},
+   	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Remove',handler: function(){that.onStoreDtlsRemove(that.roleStore,'role'+that.id);},tooltip : 'Remove', width:70}]},
    	          	        	        	 					{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
 	    	          	        	        	 			items:[{ xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:70}]}
 	          	        	        	 					       ]}]
@@ -190,11 +198,33 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
     FederationManager.ClassTemplatePanel.superclass.initComponent.call(this);
   },
 
-  createStore : function(obj){
+  createStore : function(obj, roleStore){
 	  var storeData = new Array();
       for ( var i = 0; i < obj.length; i++) {
-        var nodeId = obj[i].identifier;
+        var nodeId = (roleStore==1)?obj[i].attributes.identifier:obj[i].identifier;
         var data = [nodeId, obj[i].text];
+        storeData.push(data);              
+      }
+      return storeData;
+
+  },
+  createRepoStore: function(obj){
+	  var storeData = new Array();
+      for ( var i = 0; i < obj.length; i++) {
+        var properties = obj[i].attributes.properties;
+        var repoId = properties.Id;
+        var repoText = properties.Name;
+        var readOnly = 0;
+        for (var j in properties) {
+			  if(j == 'Read Only' && properties[j]== 'true'){
+				  readOnly=1;
+				  break;
+			  }
+		  }
+        if(readOnly == 1){
+        	repoText = repoText+' [Read Only]';
+        }
+        var data = [repoId, repoText, readOnly];
         storeData.push(data);              
       }
       return storeData;
@@ -208,32 +238,37 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
   
   },
   
-  onStoreDtlsAdd : function(store, id){
+  onStoreDtlsAdd : function(store, id, type){
 	  var selectedNode = Ext.getCmp('search-panel').getSelectedNode();
-	  var nId = selectedNode.attributes.identifier;
-	  var isPresent = 0;
-	  for(var i=0; i<store.length;i++){
-		  if(store[i][0]== nId){
-			  isPresent = 1;
-			  break;
+	  if(selectedNode.attributes.type == type){
+		  var nId = selectedNode.attributes.identifier;
+		  var isPresent = 0;
+		  for(var i=0; i<store.length;i++){
+			  if(store[i][0]== nId){
+				  isPresent = 1;
+				  break;
+			  }
 		  }
+		  if(isPresent == 0){
+			  var data = [nId,selectedNode.text];
+			  store.push(data);
+		  }
+		  Ext.getCmp(id).store.loadData(store);
 	  }
-	  if(isPresent == 0){
-		  var data = [nId,selectedNode.text];
-		  store.push(data);
-	  }
-	  Ext.getCmp(id).store.loadData(store);;
   },
   
   onStoreDtlsRemove : function(store,id){
 	  var localStore = store;
-	  alert(Ext.getCmp(id).getValue());
-	  for ( var i = 0; i < localStore.length; i++) {
-		  if(Ext.getCmp(id).getValue().indexOf(localStore[i][0])!= -1){
-			  store.remove(localStore[i]);
+	  if(Ext.getCmp(id).getValue()!=""){
+		  for ( var i = 0; i < localStore.length; i++) {
+			  if(Ext.getCmp(id).getValue().indexOf(localStore[i][0])!= -1){
+				  store.remove(localStore[i]);
+			  }
 		  }
+		  Ext.getCmp(id).store.loadData(store);
+	  }else{
+		  alert("Please select a value to be removed");
 	  }
-	  Ext.getCmp(id).store.loadData(store);
   },
 
 
