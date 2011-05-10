@@ -384,15 +384,15 @@ namespace iRINGTools.Web.Controllers
                     }
                     nodes.Add(subClassNodes);
 
-                    ////Get Templates
-                    //JsonTreeNode templateNodes = GetTemplates(classId, tempsNode);
-                    //if (templateNodes.children.Count() == 0)
-                    //{
-                    //    templateNodes.leaf = true;
-                    //    templateNodes.icon = "Content/img/folder.png";
-                    //}
+                    //Get Templates
+                    JsonTreeNode templateNodes = GetTemplates(classId, tempsNode);
+                    if (templateNodes.children.Count() == 0)
+                    {
+                        templateNodes.leaf = true;
+                        templateNodes.icon = "Content/img/folder.png";
+                    }
 
-                    //nodes.Add(templateNodes);
+                    nodes.Add(templateNodes);
                 }
             }
 
@@ -408,7 +408,6 @@ namespace iRINGTools.Web.Controllers
                 {
                     JsonTreeNode node = new JsonTreeNode
                     {
-                        nodeType = "async",
                         type = "ClassNode",
                         icon = "Content/img/class.png",
                         identifier = entity.Uri.Split('#')[1],
@@ -496,7 +495,6 @@ namespace iRINGTools.Web.Controllers
                 {
                     JsonTreeNode node = new JsonTreeNode
                     {
-                        nodeType = "async",
                         type = "TemplateNode",
                         icon = "Content/img/template.png",
                         id = (entity.Label + entity.Repository).GetHashCode().ToString(),
