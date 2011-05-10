@@ -285,7 +285,7 @@ namespace iRINGTools.Web.Controllers
                             {
                               nodeType = "async",
                               type = "RelationshipNode",
-                              icon = "/Content/img/relation.png",
+                              icon = "Content/img/relation.png",
                               id = context + "/" + dataObject.objectName + "/" + relation.relationshipName,
                               text = relation.relationshipName,
                               expanded = false,
