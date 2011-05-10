@@ -382,7 +382,7 @@ namespace iRINGTools.Web.Controllers
                         subClassNodes.leaf = true;
                         subClassNodes.icon = "Content/img/folder.png";
                     }
-                    //nodes.Add(subClassNodes);
+                    nodes.Add(subClassNodes);
 
                     ////Get Templates
                     //JsonTreeNode templateNodes = GetTemplates(classId, tempsNode);
