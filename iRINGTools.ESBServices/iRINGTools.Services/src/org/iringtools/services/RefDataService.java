@@ -375,4 +375,37 @@ public class RefDataService extends AbstractService {
 	// }
 	// return label;
 	// }
+	
+	@POST
+	@Path("/class")
+	public Response postClass(Qmxf qmxf) {
+		Response response = null;
+
+		try {
+			initService();
+			RefDataProvider refDataProvider = new RefDataProvider(settings);
+			response = refDataProvider.postClass(qmxf);
+		} catch (Exception ex) {
+			logger.error("Error while saving class: " + ex);
+		}
+
+		return response;
+	}
+
+	@POST
+	@Path("/template")
+	public Response postTemplate(Qmxf qmxf) {
+		Response response = null;
+
+		try {
+			initService();
+			RefDataProvider refDataProvider = new RefDataProvider(settings);
+			response = refDataProvider.postTemplate(qmxf);
+		} catch (Exception ex) {
+			logger.error("Error while saving template: " + ex);
+		}
+
+		return response;
+	}
+
 }
