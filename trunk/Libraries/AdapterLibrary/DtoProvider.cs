@@ -275,7 +275,7 @@ namespace org.iringtools.adapter
         _graphMap = _mapping.FindGraphMap(graph);
 
         BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
+          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
 
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
 
@@ -328,7 +328,7 @@ namespace org.iringtools.adapter
         BuildCrossGraphMap(request.Manifest, graph);
 
         BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
+          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
 
         DataFilter filter = request.DataFilter;
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
@@ -393,8 +393,8 @@ namespace org.iringtools.adapter
         }
 
         BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
-        
+          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
+
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
 
@@ -434,7 +434,7 @@ namespace org.iringtools.adapter
         }
 
         BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
+          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
 
         string xml = Utility.SerializeDataContract<DataTransferObjects>(dataTransferObjects);
         XElement xElement = XElement.Parse(xml);
@@ -484,7 +484,7 @@ namespace org.iringtools.adapter
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
 
         BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
+          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
 
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
         dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
@@ -550,7 +550,7 @@ namespace org.iringtools.adapter
         }
 
         BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
+          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
 
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
