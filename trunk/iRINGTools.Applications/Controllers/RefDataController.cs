@@ -92,6 +92,7 @@ namespace iRINGTools.Web.Controllers
                         nodes = GetClasses(id);
                         break;
                   case "MembersNode":
+                       // nodes = GetClassMembers(id);
                         break;
                     case "SuperclassesNode":
                         nodes = GetSuperClasses(id);
@@ -119,6 +120,32 @@ namespace iRINGTools.Web.Controllers
             }
 
             return Json(nodes, JsonRequestBehavior.AllowGet);
+        }
+
+        private List<JsonTreeNode> GetClassMembers(string id)
+        {
+          List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+          if (!string.IsNullOrEmpty(id))
+          {
+            Entities dataEntities = _refdataRepository.GetClassMembers(id);
+            foreach (Entity entity in dataEntities)
+            {
+              JsonTreeNode node = new JsonTreeNode
+              {
+                type = "MemberNode",
+                icon = "Content/img/class.png",
+                identifier = entity.Uri.Split('#')[1],
+                id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+                text = entity.Label,
+                expanded = false,
+                leaf = false,
+                children = GetDefaultChildren(entity.Label),
+                record = entity
+              };
+              node.children.Add(node);
+            }
+          }
+            return nodes;
         }
 
         private List<JsonTreeNode> GetDefaultChildren(string label)
@@ -353,7 +380,7 @@ namespace iRINGTools.Web.Controllers
 
                         clasifNode.children.Add(leafNode);
                     }
-                    clasifNode.text = clasifNode.text + "(" + clasifNode.children.Count() + ")";
+                    clasifNode.text = clasifNode.text + " (" + clasifNode.children.Count() + ")";
                     if (clasifNode.children.Count() == 0)
                     {
                         clasifNode.leaf = true;
@@ -384,7 +411,7 @@ namespace iRINGTools.Web.Controllers
 
                         supersNode.children.Add(leafNode);
                     }
-                    supersNode.text = supersNode.text + "(" + supersNode.children.Count() + ")";
+                    supersNode.text = supersNode.text + " (" + supersNode.children.Count() + ")";
                     if (supersNode.children.Count() == 0)
                     {
                         supersNode.leaf = true;
@@ -439,7 +466,7 @@ namespace iRINGTools.Web.Controllers
 
                     subsNode.children.Add(node);
                 }
-                subsNode.text = subsNode.text + "(" + subsNode.children.Count() + ")";
+                subsNode.text = subsNode.text + " (" + subsNode.children.Count() + ")";
             }
 
             return subsNode;
@@ -512,19 +539,19 @@ namespace iRINGTools.Web.Controllers
             {
               JsonTreeNode node = new JsonTreeNode
               {
-                type = "MemberNode",
+                type = "ClassNode",
                 icon = "Content/img/class.png",
                 identifier = entity.Uri.Split('#')[1],
                 id = (entity.Label + entity.Repository).GetHashCode().ToString(),
                 text = entity.Label,
                 expanded = false,
                 leaf = false,
-                children = GetDefaultChildren(entity.Label),
+                children = null,
                 record = entity
               };
               tempsNode.children.Add(node);
             }
-            tempsNode.text = tempsNode.text + "(" + tempsNode.children.Count() + ")";
+            tempsNode.text = tempsNode.text + " (" + tempsNode.children.Count() + ")";
           }
           return tempsNode;
         }
@@ -552,7 +579,7 @@ namespace iRINGTools.Web.Controllers
 
                     tempsNode.children.Add(node);
                 }
-                tempsNode.text = tempsNode.text + "(" + tempsNode.children.Count() + ")";
+                tempsNode.text = tempsNode.text + " (" + tempsNode.children.Count() + ")";
             }
 
             return tempsNode;
