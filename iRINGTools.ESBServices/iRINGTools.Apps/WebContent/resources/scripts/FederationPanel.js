@@ -464,10 +464,11 @@ FederationManager.FederationPanel = Ext
 	                break;	              
 	                
 	              case 'Namespace List':
-	                var selNamespaces = new Array();
+	            	var selNamespaces;
 	                var selNamespaceIds = new Array();
 	                
 	                if (properties[i] != null && properties[i] != '') {
+	                	selNamespaces = new Array();
 	                  var selNamespaceList = Ext.util.JSON.decode(properties[i]);
 	                  
 	                  for (var namespaceId in selNamespaceList) {
@@ -475,6 +476,8 @@ FederationManager.FederationPanel = Ext
 	                    selNamespaces.push(selNameSpaceItem);
 	                    selNamespaceIds.push(namespaceId);
 	                  }
+	                }else{
+	                	selNamespaces = [[]];
 	                }
 	
 	                var rootNode = this.federationPanel.getRootNode();
