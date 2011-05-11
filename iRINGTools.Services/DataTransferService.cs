@@ -153,8 +153,5 @@ namespace org.iringtools.services
 
       return _dxfrProvider.DeleteDataTransferObject(scope, app, graph, id);
     }
-
-
-
   }
 }

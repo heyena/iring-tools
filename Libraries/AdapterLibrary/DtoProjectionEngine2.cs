@@ -108,6 +108,8 @@ namespace org.iringtools.adapter.projection
 
         if (rootClassTemplateMap != null && rootClassTemplateMap.classMap != null)
         {
+          IDataObject dataObject = null;
+
           _dataObjects = new List<IDataObject>();
           _dataRecords = new Dictionary<string, string>[objectCount];
           _relatedRecordsMaps = new Dictionary<string, List<Dictionary<string, string>>>[objectCount];
@@ -122,12 +124,12 @@ namespace org.iringtools.adapter.projection
 
             //TBD: handle primary classification or composite graphs?
 
-            IDataObject dataObject = CreateDataObject(_graphMap.dataObjectName, dataObjectIndex);
+            dataObject = CreateDataObject(_graphMap.dataObjectName, dataObjectIndex);
             _dataObjects.Add(dataObject);
           }
 
           // fill related data objects and append them to top level data objects
-          if (_relatedObjectPaths != null && _relatedObjectPaths.Count > 0)
+          if (dataObject != null && _relatedObjectPaths != null && _relatedObjectPaths.Count > 0)
           {
             ProcessRelatedItems();
             CreateRelatedObjects();

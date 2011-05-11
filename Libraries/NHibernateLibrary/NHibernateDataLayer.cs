@@ -357,23 +357,31 @@ namespace org.iringtools.adapter.datalayer
           {
             foreach (IDataObject dataObject in dataObjects)
             {
-              string identifier = dataObject.GetPropertyValue("Id").ToString();
-
               Status status = new Status();
               status.Messages = new Messages();
-              status.Identifier = identifier;
-
-              try
+              
+              if (dataObject != null)
               {
-                session.SaveOrUpdate(dataObject);
-                session.Flush();
-                status.Messages.Add(string.Format("Record [{0}] have been saved successfully.", identifier));
+                string identifier = dataObject.GetPropertyValue("Id").ToString();
+                status.Identifier = identifier;
+
+                try
+                {
+                  session.SaveOrUpdate(dataObject);
+                  session.Flush();
+                  status.Messages.Add(string.Format("Record [{0}] have been saved successfully.", identifier));
+                }
+                catch (Exception ex)
+                {
+                  status.Level = StatusLevel.Error;
+                  status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
+                  status.Results.Add("ResultTag", identifier);
+                }
               }
-              catch (Exception ex)
+              else
               {
                 status.Level = StatusLevel.Error;
-                status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
-                status.Results.Add("ResultTag", identifier);
+                status.Messages.Add("Data object is null or duplicate.");
               }
 
               response.Append(status);

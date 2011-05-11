@@ -396,17 +396,80 @@ namespace org.iringtools.adapter.projection
 
       foreach (KeyProperty keyProperty in keyProperties)
       {
-        identifier += dataRecord[keyProperty.keyPropertyName];
+        if (dataRecord.ContainsKey(keyProperty.keyPropertyName))
+        {
+          identifier += dataRecord[keyProperty.keyPropertyName];
+        }
       }
 
-      IDataObject dataObject = _dataLayer.Create(objectType, new List<string>{identifier}).First<IDataObject>();
-
-      foreach (var pair in dataRecord)
+      // key property not mapped, create filter to get data object
+      if (identifier == String.Empty)
       {
-        dataObject.SetPropertyValue(pair.Key, pair.Value);
-      }
+        DataFilter filter = new DataFilter()
+        {
+          Expressions = new List<Expression>()
+        };
 
-      return dataObject;
+        foreach (var pair in dataRecord)
+        {
+          Expression expression = new Expression()
+          {
+            Values = new Values()
+          };
+
+          if (filter.Expressions.Count > 0)
+          {
+            expression.LogicalOperator = LogicalOperator.And;
+          }
+
+          expression.PropertyName = pair.Key;
+          expression.Values.Add(pair.Value);
+          filter.Expressions.Add(expression);
+        }
+
+        IList<IDataObject> dataObjects = _dataLayer.Get(objectType, filter, 0, 0);
+
+        if (dataObjects == null || dataObjects.Count == 0)
+        {
+          Type type = Type.GetType("org.iringtools.adapter.datalayer.proj_" + _settings["Scope"] + "." + objectType + ", " + _settings["ExecutingAssemblyName"]);
+          IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
+
+          foreach (var pair in dataRecord)
+          {
+            dataObject.SetPropertyValue(pair.Key, pair.Value);
+          }
+
+          return dataObject;
+        }
+        else if (dataObjects.Count == 1)
+        {
+          IDataObject dataObject = dataObjects[0];
+
+          foreach (var pair in dataRecord)
+          {
+            dataObject.SetPropertyValue(pair.Key, pair.Value);
+          }
+
+          return dataObject;
+        }
+        else
+        {
+          _logger.Error("Duplicate objects found.");
+          return null;  // return null here and let data layer create proper error status later
+        }
+      }
+      else  // key property is mapped, expect only one data object created/retrieved from data layer
+      {
+        IList<IDataObject> dataObjects = _dataLayer.Create(objectType, new List<string> { identifier });
+        IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
+
+        foreach (var pair in dataRecord)
+        {
+          dataObject.SetPropertyValue(pair.Key, pair.Value);
+        }
+
+        return dataObject;
+      }
     }
 
     protected void SetClassIdentifiers(DataDirection direction)
