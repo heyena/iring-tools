@@ -24,6 +24,8 @@ namespace iRINGTools.Web.Models
 
     Entities GetClassTemplates(string classId);
 
+    Entities GetClassMembers(string classId);
+
     QMXF GetClasses(string classId);
 
     QMXF GetTemplate(string id);
