@@ -557,7 +557,11 @@ public class DataModel
               if (roleObject.isHasValueMap() != null && roleObject.isHasValueMap())
               {
                 String roleObjectValue = roleObject.getValue();
-                roleObject.setValue(getValueMap(refServiceUri, roleObjectValue));
+                String newValue = getValueMap(refServiceUri, roleObjectValue);
+                roleObject.setValue(newValue);
+                logger.debug("roleObjectValue: " + roleObjectValue);
+                logger.debug("refServiceUri: " + refServiceUri);
+                logger.debug("newValue: " + newValue);
                 
                 if (dataType == DataType.EXCHANGE) 
                 {
