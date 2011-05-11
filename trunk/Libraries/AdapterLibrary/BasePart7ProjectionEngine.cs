@@ -18,6 +18,7 @@ namespace org.iringtools.adapter.projection
   public abstract class BasePart7ProjectionEngine : IProjectionLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BasePart7ProjectionEngine));
+
     protected static readonly XNamespace RDF_NS = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
     protected static readonly XNamespace OWL_NS = "http://www.w3.org/2002/07/owl#";
     protected static readonly XNamespace XSD_NS = "http://www.w3.org/2001/XMLSchema#";
@@ -85,6 +86,7 @@ namespace org.iringtools.adapter.projection
     protected Dictionary<string, string>[] _dataRecords = null;
     protected Dictionary<string, List<string>> _classIdentifiers = null;
     protected List<string> _relatedObjectPaths = null;
+    protected string _fixedIdentifierBoundary = String.Empty;
 
     // key is related object type at a data object index and value is list of related objects 
     protected Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
@@ -111,6 +113,11 @@ namespace org.iringtools.adapter.projection
       _dataLayer = dataLayer;
       _mapping = mapping;
       _dictionary = _dataLayer.GetDictionary();
+
+      if (_settings["fixedIdentifierBoundary"] == null)
+        _fixedIdentifierBoundary = "#";
+      else
+        _fixedIdentifierBoundary = _settings["fixedIdentifierBoundary"];
 
       // get classification settings
       _primaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
@@ -360,7 +367,7 @@ namespace org.iringtools.adapter.projection
         string identifierPartName = classMap.identifiers[identifierPartIndex];
         string identifierPartValue = identifierValueParts[identifierPartIndex];
 
-        if (identifierPartName.StartsWith("#") && identifierPartName.EndsWith("#"))
+        if (identifierPartName.StartsWith(_fixedIdentifierBoundary) && identifierPartName.EndsWith(_fixedIdentifierBoundary))
           continue;
 
         if (identifierPartName.Split('.').Length > 2)  // related property
@@ -432,7 +439,7 @@ namespace org.iringtools.adapter.projection
         foreach (string identifier in classMap.identifiers)
         {
           // identifier is a fixed value
-          if (identifier.StartsWith("#") && identifier.EndsWith("#"))
+          if (identifier.StartsWith(_fixedIdentifierBoundary) && identifier.EndsWith(_fixedIdentifierBoundary))
           {
             string value = identifier.Substring(1, identifier.Length - 2);
 
@@ -507,7 +514,7 @@ namespace org.iringtools.adapter.projection
       foreach (string identifier in classMap.identifiers)
       {
         // identifier is a property map
-        if (!(identifier.StartsWith("#") && identifier.EndsWith("#")))
+        if (!(identifier.StartsWith(_fixedIdentifierBoundary) && identifier.EndsWith(_fixedIdentifierBoundary)))
         {
           string[] identifierParts = identifier.Split('.');
           string propertyName = identifierParts[identifierParts.Length - 1];
@@ -641,7 +648,7 @@ namespace org.iringtools.adapter.projection
         foreach (string identifier in classMap.identifiers)
         {
           // identifier is a fixed value
-          if (identifier.StartsWith("#") && identifier.EndsWith("#"))
+          if (identifier.StartsWith(_fixedIdentifierBoundary) && identifier.EndsWith(_fixedIdentifierBoundary))
           {
             string value = identifier.Substring(1, identifier.Length - 2);
 
