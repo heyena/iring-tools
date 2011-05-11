@@ -46,6 +46,7 @@ namespace org.iringtools.modulelibrary.layerdal
         private WebClient _findClient;
         private WebClient _classClient;
         private WebClient _templateClient;
+        private WebClient _classMemebersClient;
         private WebClient _part8TemplateClient;
         private WebClient _subClassClient;
         private WebClient _classTemplatesClient;
@@ -72,6 +73,7 @@ namespace org.iringtools.modulelibrary.layerdal
               _findClient = new WebClient();
               _classClient = new WebClient();
               _templateClient = new WebClient();
+              _classMemebersClient = new WebClient();
               _part8TemplateClient = new WebClient();
               _subClassClient = new WebClient();
               _classTemplatesClient = new WebClient();
@@ -86,6 +88,7 @@ namespace org.iringtools.modulelibrary.layerdal
               _findClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _classClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _templateClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
+              _classMemebersClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _part8TemplateClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _subClassClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               _classTemplatesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
@@ -436,6 +439,44 @@ namespace org.iringtools.modulelibrary.layerdal
               }            
           }
             #endregion
+
+          ////:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+          #region // Class members data arrived event handler
+          if (sender == _classMemebersClient)
+          {
+            try
+            {
+              string result = ((DownloadStringCompletedEventArgs)e).Result;
+
+              List<Entity> entities = result.DeserializeDataContract<List<Entity>>();
+
+              // If the cast failed then return
+              if (entities == null)
+                return;
+
+              args = new CompletedEventArgs
+              {
+                UserState = ((DownloadStringCompletedEventArgs)e).UserState,
+                CompletedType = CompletedEventType.GetClassMembers,
+                Data = entities
+              };
+            }
+            catch (Exception ex)
+            {
+              string s = "Reference Data Service returned an error while performing GetClassTemplates.";
+              // filling args to stop spinner
+              args = new CompletedEventArgs
+              {
+                CompletedType = CompletedEventType.GetClassMembers,
+                Error = ex,
+                FriendlyErrorMessage =
+                   IsServiceUnavailable(ex) ?
+                   s + "\nPlease verify if the Reference Data Service is available." :
+                   s + "\nPlease review the log on the server.",
+              };
+            }
+          }
+          #endregion
 
             ////:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
             #region // Post Class data arrived event handler
@@ -840,5 +881,12 @@ namespace org.iringtools.modulelibrary.layerdal
         public string GetReferenceDataServiceUri { get { return _referenceDataServiceUri; } }
         
         #endregion
+
+
+        public List<Entity> GetClassMembers(string id, object userState)
+        {
+          _classMemebersClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/classes/" + id + "/members"), userState);
+          return null;
+        }
     }
 }

@@ -52,6 +52,22 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetMembers</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetMembers.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetSubClasses</key>
     <query>
       <bindings>

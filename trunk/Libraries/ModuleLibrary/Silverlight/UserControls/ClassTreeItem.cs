@@ -35,6 +35,7 @@ namespace org.iringtools.informationmodel.usercontrols
     CustomTreeItem superclasses = null;
     CustomTreeItem subclasses = null;
     CustomTreeItem templates = null;
+    CustomTreeItem members = null;
     CustomTreeItem classifications = null;
 
     public ClassDefinition ClassDefinition { get; set; }
@@ -304,6 +305,23 @@ namespace org.iringtools.informationmodel.usercontrols
           templates.IsExpanded = false;
           templates.isProcessed = true;
         }
+        else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassMembers))
+        {
+          if (CompletedEventArgs.Error != null)
+          {
+            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get ClassMembers Error", MessageBoxButton.OK);
+            return;
+          }
+
+          List<Entity> entities = (List<Entity>)CompletedEventArgs.Data;
+
+          foreach (Entity entity in entities)
+            members.Items.Add(AddTreeItem(entity.Label, entity));
+
+          members.itemTextBlock.Text = "[ClassMembers] (" + entities.Count + ")";
+          members.IsExpanded = false;
+          members.isProcessed = true;
+        }
         else if (CompletedEventArgs.CheckForType(CompletedEventType.GetClassLabel))
         {
           if (CompletedEventArgs.Error != null)
@@ -359,6 +377,14 @@ namespace org.iringtools.informationmodel.usercontrols
         classifications.SetTooltipText("Classification Collection...");
         classifications.itemTextBlock.Text = "[Classifications]";
         // classifications.Header = "Classifications";
+
+        members = Container.Resolve<CustomTreeItem>();
+        members.SetImageSource("folder.png");
+        members.SetTooltipText("Class Members Collection...");
+        members.itemTextBlock.Text = "[ClassMembers]";
+        members.Selected += members_selected;
+        this.Items.Add(members);
+
         classifications.Selected += classifications_selected;
         this.Items.Add(classifications);
         superclasses = Container.Resolve<CustomTreeItem>();
@@ -390,6 +416,24 @@ namespace org.iringtools.informationmodel.usercontrols
         this.Items.Add(templates);
 
         isProcessed = true;
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+    }
+
+    public void members_selected(object sender, System.Windows.RoutedEventArgs e)
+    {
+      try
+      {
+        if (members.isProcessed)
+          return;
+
+        Logger.Log(string.Format("members_selected in {0}", GetType().FullName),
+            Category.Debug, Priority.None);
+
+        ReferenceDataService.GetClassMembers(id, this);
       }
       catch (Exception ex)
       {

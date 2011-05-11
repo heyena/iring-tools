@@ -41,5 +41,7 @@ namespace org.iringtools.modulelibrary.layerdal
 
         string GetReferenceDataServiceUri { get; }
 
+
+        List<Entity> GetClassMembers(string id, object userState);
     }
 }

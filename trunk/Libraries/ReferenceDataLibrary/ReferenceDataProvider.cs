@@ -813,6 +813,55 @@ namespace org.iringtools.refdata
             return list;
         }
 
+        public Entities GetClassMembers(string Id)
+        {
+          Entities membersResult = new Entities();
+          try
+          {
+            string sparql = string.Empty;
+            string language = string.Empty;
+            List<string> names = new List<string>();
+
+            Query getMembers = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembers").Query;
+            QueryBindings memberBindings = getMembers.Bindings;
+            sparql = ReadSPARQL(getMembers.FileName);
+            sparql = sparql.Replace("param1", Id);
+
+            foreach (Repository repository in _repositories)
+            {
+              SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+              List<Dictionary<string, string>> results = BindQueryResults(memberBindings, sparqlResults);
+
+              foreach (Dictionary<string, string> result in results)
+              {
+                names = result["label"].Split('@').ToList();
+                if (names.Count == 1)
+                  language = defaultLanguage;
+                else
+                  language = names[names.Count - 1];
+                Entity resultEntity = new Entity
+                {
+                  Uri = result["uri"],
+                  Label = names[0],
+                  Lang = language,
+                  Repository = repository.Name
+                };
+
+                Utility.SearchAndInsert(membersResult, resultEntity, Entity.sortAscending());
+                //queryResult.Add(resultEntity);
+              }
+            }
+
+          }
+          catch (Exception ex)
+          {
+            _logger.Error("Error in Getmembers: " + ex);
+            throw new Exception("Error while Finding " + Id + ".\n" + ex.ToString(), ex);
+          }
+          return membersResult;
+        }
+
         public Entities GetSubClasses(string id)
         {
             Entities queryResult = new Entities();

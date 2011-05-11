@@ -424,5 +424,12 @@ namespace org.iringtools.modulelibrary.layerbll
     }
     
     #endregion
+
+
+    public List<Entity> GetClassMembers(string id, object userState)
+    {
+      StartService("GetMembers");
+      return dal.GetClassMembers(id, userState);
+    }
   }
 }

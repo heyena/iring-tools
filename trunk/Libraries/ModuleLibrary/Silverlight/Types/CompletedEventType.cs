@@ -9,6 +9,7 @@ namespace org.iringtools.modulelibrary.types
     GetTemplate,
     GetScopes,
     GetSubClasses,
+    GetClassMembers,
     GetUnitTestString,
     GetDataDictionary,
     GetRepositories,
