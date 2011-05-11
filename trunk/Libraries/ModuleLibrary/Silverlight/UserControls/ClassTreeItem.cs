@@ -136,7 +136,11 @@ namespace org.iringtools.informationmodel.usercontrols
 
         Logger.Log(string.Format("superclasses_selected in {0}", GetType().FullName),
             Category.Debug, Priority.None);
-
+        if (ClassDefinition == null)
+        {
+          superclasses.itemTextBlock.Text = "[Super Classes] (0)";
+          return;
+        }
         List<Specialization> specializations = ClassDefinition.specialization;
 
         foreach (Specialization specialization in specializations)
@@ -181,6 +185,11 @@ namespace org.iringtools.informationmodel.usercontrols
         Logger.Log(string.Format("classifications_selected in {0}", GetType().FullName),
             Category.Debug, Priority.None);
 
+        if (ClassDefinition == null)
+        {
+          classifications.itemTextBlock.Text = "[Member Of] (0)";
+          return;
+        }
         List<Classification> classification = ClassDefinition.classification;
 
         foreach (Classification classificationDetails in classification)
@@ -201,7 +210,7 @@ namespace org.iringtools.informationmodel.usercontrols
           classifications.Items.Add(AddTreeItem(names[0], entity));
         }
 
-        classifications.itemTextBlock.Text = "[Classifications] (" + classification.Count + ")";
+        classifications.itemTextBlock.Text = "[Member Of] (" + classification.Count + ")";
         classifications.IsExpanded = false;
         classifications.isProcessed = true;
       }
@@ -309,7 +318,7 @@ namespace org.iringtools.informationmodel.usercontrols
         {
           if (CompletedEventArgs.Error != null)
           {
-            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get ClassMembers Error", MessageBoxButton.OK);
+            MessageBox.Show(CompletedEventArgs.FriendlyErrorMessage, "Get Members Error", MessageBoxButton.OK);
             return;
           }
 
@@ -318,7 +327,7 @@ namespace org.iringtools.informationmodel.usercontrols
           foreach (Entity entity in entities)
             members.Items.Add(AddTreeItem(entity.Label, entity));
 
-          members.itemTextBlock.Text = "[ClassMembers] (" + entities.Count + ")";
+          members.itemTextBlock.Text = "[Members] (" + entities.Count + ")";
           members.IsExpanded = false;
           members.isProcessed = true;
         }
@@ -375,13 +384,13 @@ namespace org.iringtools.informationmodel.usercontrols
 
         classifications.SetImageSource("folder.png");
         classifications.SetTooltipText("Classification Collection...");
-        classifications.itemTextBlock.Text = "[Classifications]";
+        classifications.itemTextBlock.Text = "[Member Of]";
         // classifications.Header = "Classifications";
 
         members = Container.Resolve<CustomTreeItem>();
         members.SetImageSource("folder.png");
         members.SetTooltipText("Class Members Collection...");
-        members.itemTextBlock.Text = "[ClassMembers]";
+        members.itemTextBlock.Text = "[Members]";
         members.Selected += members_selected;
         this.Items.Add(members);
 

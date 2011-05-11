@@ -159,11 +159,11 @@ namespace org.iringtools.informationmodel.usercontrols
       try
       {
         if (IsExpanded.Equals(false) &
-          itemTextBlock.Text.Contains("[Classifications]") ||
+          itemTextBlock.Text.Contains("[Member Of]") ||
           itemTextBlock.Text.Contains("[Super Classes]") ||
           itemTextBlock.Text.Contains("[Sub Classes]") ||
           itemTextBlock.Text.Contains("[Templates]") ||
-          itemTextBlock.Text.Contains("[ClassMembers]"))
+          itemTextBlock.Text.Contains("[Members]"))
         {
           SetImageSource("folder.png");
         }
@@ -178,11 +178,11 @@ namespace org.iringtools.informationmodel.usercontrols
     {
       try
       {
-        if (itemTextBlock.Text.Contains("[Classifications]") ||
+        if (itemTextBlock.Text.Contains("[Member Of]") ||
           itemTextBlock.Text.Contains("[Super Classes]") ||
           itemTextBlock.Text.Contains("[Sub Classes]") ||
           itemTextBlock.Text.Contains("[Templates]") ||
-          itemTextBlock.Text.Contains("[ClassMembers]"))
+          itemTextBlock.Text.Contains("[Members]"))
         {
           SetImageSource("folder-open.png");
         }
