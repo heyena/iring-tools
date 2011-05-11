@@ -91,6 +91,8 @@ namespace iRINGTools.Web.Controllers
                     case "ClassificationsNode":
                         nodes = GetClasses(id);
                         break;
+                  case "MembersNode":
+                        break;
                     case "SuperclassesNode":
                         nodes = GetSuperClasses(id);
                         break;
@@ -128,7 +130,7 @@ namespace iRINGTools.Web.Controllers
                 id = ("Classifications" + label).GetHashCode().ToString(),
                 children = null,
                 leaf = false,
-                text = "Classifications",
+                text = "Member Of",
                 type = "ClassificationsNode",
                 expanded = false
             };
@@ -247,13 +249,26 @@ namespace iRINGTools.Web.Controllers
                 {
                     #region Default Nodes------------------
                     var label = entity.name[0].value;
+
+                    JsonTreeNode memberNode = new JsonTreeNode
+                    {
+                      id = ("Members" + label).GetHashCode().ToString(),
+                      children = new List<JsonTreeNode>(),
+                      iconCls = "folder",
+                      leaf = false,
+                      text = "Members",
+                      type = "MembersNode",
+                      identifier = null,
+                      expanded = false
+                    };
+
                     JsonTreeNode clasifNode = new JsonTreeNode
                     {
                         id = ("Classifications" + label).GetHashCode().ToString(),
                         children = new List<JsonTreeNode>(),
                         iconCls = "folder",
                         leaf = false,
-                        text = "Classifications",
+                        text = "Member Of",
                         type = "ClassificationsNode",
                         identifier = null,
                         expanded = false
@@ -316,9 +331,8 @@ namespace iRINGTools.Web.Controllers
                     };
                     nodes.Add(hiddenNode);
                     #endregion
-
-                    nodes.Add(clasifNode); // Add Classification node.
-                    nodes.Add(supersNode); // Add SuperClassNode.
+                   // nodes.Add(memberNode);
+                  
 
                     #region Fill Data in Classification node--------
                     foreach (var classification in entity.classification)
@@ -347,6 +361,10 @@ namespace iRINGTools.Web.Controllers
                     }
                     #endregion
 
+                    JsonTreeNode membersNodes = GetClassMembers(classId, memberNode);
+                    nodes.Add(membersNodes);
+                    nodes.Add(clasifNode); // Add Classification node.
+                    nodes.Add(supersNode); // Add SuperClassNode.
                     #region Fill Data in SuperClass node--------
                     foreach (var specialization in entity.specialization)
                     {
@@ -485,6 +503,32 @@ namespace iRINGTools.Web.Controllers
             return nodes;
         }
 
+        private JsonTreeNode GetClassMembers(string classId, JsonTreeNode tempsNode)
+        {
+          if (!string.IsNullOrEmpty(classId))
+          {
+            Entities dataEntities = _refdataRepository.GetClassMembers(classId);
+            foreach(Entity entity in dataEntities)
+            {
+              JsonTreeNode node = new JsonTreeNode
+              {
+                type = "MemberNode",
+                icon = "Content/img/class.png",
+                identifier = entity.Uri.Split('#')[1],
+                id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+                text = entity.Label,
+                expanded = false,
+                leaf = false,
+                children = GetDefaultChildren(entity.Label),
+                record = entity
+              };
+              tempsNode.children.Add(node);
+            }
+            tempsNode.text = tempsNode.text + "(" + tempsNode.children.Count() + ")";
+          }
+          return tempsNode;
+        }
+       
         private JsonTreeNode GetTemplates(string classId, JsonTreeNode tempsNode)
         {
 

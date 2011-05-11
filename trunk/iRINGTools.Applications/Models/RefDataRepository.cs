@@ -82,5 +82,11 @@ namespace iRINGTools.Web.Models
       return _client.Get<QMXF>(relativeUri);
     }
 
+    public Entities GetClassMembers(string classId)
+    {
+      relativeUri = string.Format("/classes/{0}/members", classId);
+      return _client.Get<Entities>(relativeUri);
+    }
+
   }
 }
