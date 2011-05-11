@@ -162,7 +162,8 @@ namespace org.iringtools.informationmodel.usercontrols
           itemTextBlock.Text.Contains("[Classifications]") ||
           itemTextBlock.Text.Contains("[Super Classes]") ||
           itemTextBlock.Text.Contains("[Sub Classes]") ||
-          itemTextBlock.Text.Contains("[Templates]"))
+          itemTextBlock.Text.Contains("[Templates]") ||
+          itemTextBlock.Text.Contains("[ClassMembers]"))
         {
           SetImageSource("folder.png");
         }
@@ -180,7 +181,8 @@ namespace org.iringtools.informationmodel.usercontrols
         if (itemTextBlock.Text.Contains("[Classifications]") ||
           itemTextBlock.Text.Contains("[Super Classes]") ||
           itemTextBlock.Text.Contains("[Sub Classes]") ||
-          itemTextBlock.Text.Contains("[Templates]"))
+          itemTextBlock.Text.Contains("[Templates]") ||
+          itemTextBlock.Text.Contains("[ClassMembers]"))
         {
           SetImageSource("folder-open.png");
         }

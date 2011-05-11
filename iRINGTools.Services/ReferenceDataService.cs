@@ -218,5 +218,15 @@ namespace org.iringtools.services
     {
       return _referenceDataProvider.PostClass(qmxf);
     }
+
+    /// <summary>
+    /// members on a class
+    /// </summary>
+    [Description("members on a class")]
+    [WebGet(UriTemplate = "/classes/{id}/members")]
+    public Entities GetClassMembers(string id)
+    {
+      return _referenceDataProvider.GetClassMembers(id);
+    }
   }
 }
