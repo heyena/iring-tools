@@ -34,8 +34,8 @@ namespace org.iringtools.mapping
 {
   public static class MappingExtensions
   {
-    private static readonly string RDL_NS = "http://rdl.rdlfacade.org/data#";
-    private static readonly string RDF_NIL = "rdf:nil";
+    public static readonly string RDL_NS = "http://rdl.rdlfacade.org/data#";
+    public static readonly string RDF_NIL = "rdf:nil";
 
     public static Graph FindGraph(this Manifest manifest, string graphName)
     {
