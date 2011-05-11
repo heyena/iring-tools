@@ -741,6 +741,9 @@ namespace org.iringtools.adapter
     {
       DataFilter filter = new DataFilter();
 
+      string fixedIdentifierBoundary = (_settings["fixedIdentifierBoundary"] == null) 
+        ? "#" : _settings["fixedIdentifierBoundary"];
+
       #region parse identifier to build data filter
       ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMapByName(className);
       
@@ -748,26 +751,17 @@ namespace org.iringtools.adapter
       {
         ClassMap classMap = classTemplateMap.classMap;
         
-        string[] identifierParts = !String.IsNullOrEmpty(classMap.identifierDelimiter)
+        string[] identifierValues = !String.IsNullOrEmpty(classMap.identifierDelimiter)
           ? classIdentifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
           : new string[] { classIdentifier };
 
-        for (int i = 0; i < identifierParts.Length; i++)
+        for (int i = 0; i < classMap.identifiers.Count; i++)
         {
-          string identifierPart = identifierParts[i];
-
-          // remove fixed values from identifier
-          foreach (string clsIdentifier in classMap.identifiers)
+          if (!(classMap.identifiers[i].StartsWith(fixedIdentifierBoundary) && classMap.identifiers[i].EndsWith(fixedIdentifierBoundary)))
           {
-            if (clsIdentifier.StartsWith("#") && clsIdentifier.EndsWith("#"))
-            {
-              identifierPart = identifierPart.Replace(clsIdentifier.Substring(1, clsIdentifier.Length - 2), "");
-            }
-          }
+            string clsIdentifier = classMap.identifiers[i];
+            string identifierValue = identifierValues[i];
 
-          // set identifier value to mapped property
-          foreach (string clsIdentifier in classMap.identifiers)
-          {
             if (clsIdentifier.Split('.').Length > 2)  // related property
             {
               string[] clsIdentifierParts = clsIdentifier.Split('.');
@@ -779,7 +773,7 @@ namespace org.iringtools.adapter
               Expression relatedExpression = new Expression
               {
                 PropertyName = clsIdentifierParts.Last(),
-                Values = new Values { identifierPart }
+                Values = new Values { identifierValue }
               };
 
               relatedObjectFilter.Expressions.Add(relatedExpression);
@@ -811,7 +805,7 @@ namespace org.iringtools.adapter
                 expression.LogicalOperator = LogicalOperator.And;
 
               expression.PropertyName = clsIdentifier.Substring(clsIdentifier.LastIndexOf('.') + 1);
-              expression.Values = new Values { identifierPart };
+              expression.Values = new Values { identifierValue };
               filter.Expressions.Add(expression);
             }
           }
@@ -820,12 +814,16 @@ namespace org.iringtools.adapter
       #endregion
 
       IList<string> identifiers = _dataLayer.GetIdentifiers(dataObject.objectName, filter);
-      IList<IDataObject> dataObjects = _dataLayer.Get(dataObject.objectName, identifiers);
+      if (identifiers == null || identifiers.Count == 0)
+      {
+        throw new Exception("Identifier [" + classIdentifier + "] of class [" + className + "] is not found.");
+      }
 
+      IList<IDataObject> dataObjects = _dataLayer.Get(dataObject.objectName, identifiers);
       if (dataObjects != null && dataObjects.Count > 0)
       {
         return dataObjects.First<IDataObject>();
-      }
+      }     
 
       return null;
     }

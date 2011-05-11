@@ -8,6 +8,7 @@ using Ninject;
 using org.iringtools.library;
 using org.iringtools.mapping;
 using org.iringtools.utility;
+using System.Text;
 
 namespace org.iringtools.adapter.projection
 {
@@ -99,14 +100,14 @@ namespace org.iringtools.adapter.projection
       _graphMap = graphMap;
       _dataTransferObjects = dataTransferObjects;
       _dataObjects = new List<IDataObject>();
-      
+
       if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 && _dataTransferObjects != null)
       {
         ClassTemplateMap rootClassTemplateMap = _graphMap.classTemplateMaps.First();
         int objectCount = _dataTransferObjects.DataTransferObjectList.Count;
-          
+
         if (rootClassTemplateMap != null && rootClassTemplateMap.classMap != null)
-        {          
+        {
           _dataObjects = new List<IDataObject>();
           _dataRecords = new Dictionary<string, string>[objectCount];
           _relatedRecordsMaps = new Dictionary<string, List<Dictionary<string, string>>>[objectCount];
@@ -136,6 +137,189 @@ namespace org.iringtools.adapter.projection
 
       return _dataObjects;
     }
+
+    public DataTransferIndices GetDataTransferIndices(GraphMap graphMap, IList<IDataObject> dataObjects, string sortIndex)
+    {
+      _graphMap = graphMap;
+      _dataObjects = dataObjects;
+
+      DataTransferIndices dtis = new DataTransferIndices();
+
+      if (_graphMap != null && _graphMap.classTemplateMaps != null && _graphMap.classTemplateMaps.Count > 0 &&
+        dataObjects != null && dataObjects.Count > 0)
+      {
+        ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
+        string keyDelimiter = classTemplateMap.classMap.identifierDelimiter;
+        List<KeyProperty> keyProperties = GetKeyProperties(_graphMap.dataObjectName);
+        List<string> keyPropertyNames = new List<string>();
+
+        foreach (KeyProperty keyProperty in keyProperties)
+        {
+          keyPropertyNames.Add(_graphMap.dataObjectName + '.' + keyProperty.keyPropertyName);
+        }
+
+        for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
+        {
+          DataTransferIndex dti = new DataTransferIndex();
+          Dictionary<string, string> keyValues = new Dictionary<string, string>();
+          StringBuilder internalIdentifier = new StringBuilder();
+          StringBuilder propertyValues = new StringBuilder();
+
+          BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyDelimiter, keyPropertyNames, keyValues, 
+            propertyValues, sortIndex);
+
+          foreach (string identifierValue in keyValues.Values)
+          {
+            if (internalIdentifier.Length > 0)
+            {
+              internalIdentifier.Append(keyDelimiter);
+            }
+
+            internalIdentifier.Append(identifierValue);
+          }
+
+          dti.InternalIdentifier = internalIdentifier.ToString();
+          dti.HashValue = Utility.MD5Hash(propertyValues.ToString());
+
+          dtis.DataTransferIndexList.Add(dti);
+        }
+      }
+
+      return dtis;
+    }
+
+    #region data transfer indices helper methods
+    private void BuildDataTransferIndex(DataTransferIndex dti, int dataObjectIndex, ClassTemplateMap classTemplateMap, string keyDelimiter,
+      List<string> keyPropertyNames, Dictionary<string, string> keyValues, StringBuilder propertyValues, string sortIndex)
+    {
+      if (classTemplateMap != null && classTemplateMap.classMap != null)
+      {
+        IDataObject dataObject = _dataObjects[dataObjectIndex];
+        bool hasRelatedProperty;
+        List<string> classIdentifiers = GetClassIdentifiers(classTemplateMap.classMap, dataObjectIndex, out hasRelatedProperty);
+
+        for (int classIdentifierIndex = 0; classIdentifierIndex < classIdentifiers.Count; classIdentifierIndex++)
+        {
+          string classIdentifier = classIdentifiers[classIdentifierIndex];
+
+          if (!String.IsNullOrEmpty(classIdentifier))
+          {
+            // dti identifier is root class identifier
+            if (String.IsNullOrEmpty(dti.Identifier))
+            {
+              dti.Identifier = classIdentifier;
+            }
+
+            // if key property(properties) is(are) mapped in classMap identifier(s), append it(them) to keyValues
+            List<string> identifiers = classTemplateMap.classMap.identifiers;
+            string[] identifierValues = classIdentifier.Split(new string[] {keyDelimiter}, StringSplitOptions.None);
+
+            for (int identifierIndex = 0; identifierIndex < identifiers.Count; identifierIndex++)
+            {
+              string identifier = identifiers[identifierIndex];
+
+              if (identifierValues.Length >= identifierIndex && keyPropertyNames.Contains(identifier) && 
+                !keyValues.ContainsKey(identifier))
+              {
+                string identifierValue = identifierValues[identifierIndex];
+                keyValues.Add(identifier, identifierValue);
+              }
+            }
+
+            foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
+            {
+              foreach (RoleMap roleMap in templateMap.roleMaps)
+              {
+                if (roleMap.type == RoleType.Reference)
+                {
+                  if (roleMap.classMap != null)
+                  {
+                    ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(roleMap.classMap.id);
+
+                    if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
+                    {
+                      BuildDataTransferIndex(dti, dataObjectIndex, relatedClassTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
+                        propertyValues, sortIndex);
+                    }
+                    else  // reference class not found (leaf node role map), treat it as "data property" role
+                    {
+                      bool refClassHasRelatedProperty;
+                      List<string> refClassIdentifiers = GetClassIdentifiers(roleMap.classMap, dataObjectIndex, out refClassHasRelatedProperty);
+
+                      if (refClassIdentifiers.Count > 0 && !String.IsNullOrEmpty(refClassIdentifiers.First()))
+                      {
+                        propertyValues.Append(refClassIdentifiers.First());
+                      }
+                    }
+                  }
+                }
+                else if (roleMap.type == RoleType.Property ||
+                    roleMap.type == RoleType.DataProperty ||
+                    roleMap.type == RoleType.ObjectProperty ||
+                    roleMap.type == RoleType.FixedValue)
+                {
+                  string[] propertyParts = roleMap.propertyName.Split('.');
+                  string propertyName = propertyParts[propertyParts.Length - 1];
+
+                  int lastDotPos = roleMap.propertyName.LastIndexOf('.');
+                  string objectPath = roleMap.propertyName.Substring(0, lastDotPos);
+
+                  if (propertyParts.Length == 2)  // direct property
+                  {
+                    string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
+                    propertyValue = ParsePropertyValue(roleMap, propertyValue);
+
+                    if (propertyName == sortIndex)
+                    {
+                      dti.SortIndex = propertyValue;
+                    }
+
+                    if (keyPropertyNames.Contains(roleMap.propertyName))
+                    {
+                      if (!keyValues.ContainsKey(roleMap.propertyName))
+                      {
+                        keyValues.Add(roleMap.propertyName, propertyValue);
+                      }
+                    }
+
+                    propertyValues.Append(propertyValue);
+                  }
+                  else  // related property
+                  {
+                    string key = objectPath + "." + dataObjectIndex;
+                    List<IDataObject> relatedObjects = null;
+
+                    if (!_relatedObjectsCache.TryGetValue(key, out relatedObjects))
+                    {
+                      relatedObjects = GetRelatedObjects(roleMap.propertyName, dataObject);
+                      _relatedObjectsCache.Add(key, relatedObjects);
+                    }
+
+                    if (hasRelatedProperty)  // reference class identifier has related property
+                    {
+                      IDataObject relatedObject = relatedObjects[classIdentifierIndex];
+                      string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
+                      propertyValue = ParsePropertyValue(roleMap, propertyValue);
+                      propertyValues.Append(propertyValue);
+                    }
+                    else  // related property is property map
+                    {
+                      foreach (IDataObject relatedObject in relatedObjects)
+                      {
+                        string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
+                        propertyValue = ParsePropertyValue(roleMap, propertyValue);
+                        propertyValues.Append(propertyValue);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    #endregion
 
     #region outbound helper methods
     private DataTransferObjects BuildDataTransferObjects()
@@ -431,6 +615,11 @@ namespace org.iringtools.adapter.projection
       else  // resolve value list to uri
       {
         value = _mapping.ResolveValueList(propertyRole.valueListName, propertyValue);
+
+        if (value == MappingExtensions.RDF_NIL)
+        {
+          value = String.Empty;
+        }
       }
 
       return value;
@@ -474,7 +663,7 @@ namespace org.iringtools.adapter.projection
       foreach (TemplateMap templateMap in templateMaps)
       {
         TemplateObject templateObject = classObject.GetTemplateObject(templateMap);
-        
+
         foreach (RoleMap roleMap in templateMap.roleMaps)
         {
           switch (roleMap.type)

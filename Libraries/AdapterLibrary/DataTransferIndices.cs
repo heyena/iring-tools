@@ -72,5 +72,8 @@ namespace org.iringtools.adapter
 
     [DataMember(Name = "sortIndex", Order = 3, EmitDefaultValue = false)]
     public string SortIndex { get; set; }
+
+    [DataMember(Name = "internalIdentifier", Order = 4, EmitDefaultValue = false)]
+    public string InternalIdentifier { get; set; }
   }
 }
