@@ -5,6 +5,7 @@ public enum Type {
 	SEARCH("SearchNode"),
     CLASS("ClassNode"),
     CLASSIFICATION("ClassificationsNode"),
+    MEMBERS("MembersNode"),
     SUPERCLASS("SuperclassesNode"),
     SUBCLASS("SubclassesNode"),
     CLASSTEMPLATE("ClassTemplatesNode"),

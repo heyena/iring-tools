@@ -33,30 +33,30 @@ public class NamespaceMapper implements NsMapper {
 
 		if (!empty) {
 			// Add Standard Namespaces
-			this.AddNamespace("rdf", new URI(RDF));
-			this.AddNamespace("rdfs", new URI(RDFS));
-			this.AddNamespace("xsd", new URI(XSD));
-			this.AddNamespace("owl", new URI(OWL));
-			this.AddNamespace("owl2xml", new URI(OWL2XML));
-			this.AddNamespace("rdl", new URI(RDL));
-			this.AddNamespace("tpl", new URI(TPL));
-			this.AddNamespace("eg", new URI(EG));
-			this.AddNamespace("dm", new URI(DM));
-			this.AddNamespace("p8dm", new URI(P8DM));
-			this.AddNamespace("p8", new URI(P8));
-			this.AddNamespace("templates", new URI(TEMPLATES));
+			this.addNamespace("rdf", new URI(RDF));
+			this.addNamespace("rdfs", new URI(RDFS));
+			this.addNamespace("xsd", new URI(XSD));
+			this.addNamespace("owl", new URI(OWL));
+			this.addNamespace("owl2xml", new URI(OWL2XML));
+			this.addNamespace("rdl", new URI(RDL));
+			this.addNamespace("tpl", new URI(TPL));
+			this.addNamespace("eg", new URI(EG));
+			this.addNamespace("dm", new URI(DM));
+			this.addNamespace("p8dm", new URI(P8DM));
+			this.addNamespace("p8", new URI(P8));
+			this.addNamespace("templates", new URI(TEMPLATES));
 		}
 	}
 
 	protected NamespaceMapper(NsMapper nsmapper) throws Exception {
 		this(true);
-		this.Import(nsmapper);
+		this.importMap(nsmapper);
 	}
 
-	public String GetPrefix(URI uri) throws Exception {
+	public String getPrefix(URI uri) throws Exception {
 		int hash;
 
-		hash = GetEnhancedHashCode(uri);
+		hash = getEnhancedHashCode(uri);
 
 		if (this._prefixes.containsKey(hash)) {
 			return this._prefixes.get(hash);
@@ -67,7 +67,7 @@ public class NamespaceMapper implements NsMapper {
 		}
 	}
 
-	public URI GetNamespaceUri(String prefix) {
+	public URI getNamespaceUri(String prefix) {
 		if (this._uris.containsKey(prefix)) {
 			return this._uris.get(prefix);
 		} else {
@@ -77,8 +77,8 @@ public class NamespaceMapper implements NsMapper {
 		}
 	}
 
-	public void AddNamespace(String prefix, URI uri) throws Exception {
-		int hash = GetEnhancedHashCode(uri);
+	public void addNamespace(String prefix, URI uri) throws Exception {
+		int hash = getEnhancedHashCode(uri);
 		if (!this._uris.containsKey(prefix)) {
 			// Add a New Prefix
 			this._uris.put(prefix, uri);
@@ -98,7 +98,7 @@ public class NamespaceMapper implements NsMapper {
 		}
 	}
 
-	public final void RemoveNamespace(String prefix) throws Exception {
+	public final void removeNamespace(String prefix) throws Exception {
 		// Check the Namespace is defined
 		if (this._uris.containsKey(prefix)) {
 			URI u = this._uris.get(prefix);
@@ -107,14 +107,14 @@ public class NamespaceMapper implements NsMapper {
 			this._uris.remove(prefix);
 
 			// Remove the corresponding Uri to Prefix Mapping
-			int hash = GetEnhancedHashCode(u);
+			int hash = getEnhancedHashCode(u);
 			if (this._prefixes.containsKey(hash)) {
 				this._prefixes.remove(hash);
 			}
 		}
 	}
 
-	public static int GetEnhancedHashCode(URI u) throws Exception {
+	public static int getEnhancedHashCode(URI u) throws Exception {
 		if (u == null) {
 			throw new Exception(
 					"Cannot calculate an Enhanced Hash Code for a null URI");
@@ -122,11 +122,11 @@ public class NamespaceMapper implements NsMapper {
 		return u.toString().hashCode();
 	}
 
-	public boolean HasNamespace(String prefix) {
+	public boolean hasNamespace(String prefix) {
 		return this._uris.containsKey(prefix);
 	}
 
-	public void Clear() {
+	public void clear() {
 		this._prefixes.clear();
 		this._uris.clear();
 	}
@@ -135,7 +135,7 @@ public class NamespaceMapper implements NsMapper {
 		return this._uris.keySet();
 	}
 
-	public final boolean ReduceToQName(String uri, ReferenceObject<String> qname)
+	public final boolean reduceToQName(String uri, ReferenceObject<String> qname)
 			throws Exception {
 		for (URI u : this._uris.values()) {
 			String baseuri = u.toString();
@@ -146,7 +146,7 @@ public class NamespaceMapper implements NsMapper {
 				qname.argumentValue = uri.substring(baseuri.length());
 				// Add the Prefix back onto the front plus the colon to give a
 				// QName
-				qname.argumentValue = this._prefixes.get(GetEnhancedHashCode(u))
+				qname.argumentValue = this._prefixes.get(getEnhancedHashCode(u))
 						+ ":" + qname.argumentValue;
 				if (qname.argumentValue.equals(":")) {
 					continue;
@@ -162,31 +162,28 @@ public class NamespaceMapper implements NsMapper {
 		return false;
 	}
 
-	public void Import(NsMapper nsmap) {
+	public void importMap(NsMapper nsmap) {
 		String tempPrefix = "ns0";
 		int tempPrefixID = 0;
 		try {
 
 			for (String prefix : nsmap.getPrefixes()) {
 				if (!this._uris.containsKey(prefix)) {
-					this.AddNamespace(prefix, nsmap.GetNamespaceUri(prefix));
+					this.addNamespace(prefix, nsmap.getNamespaceUri(prefix));
 				} else {
 					if (!this._uris.get(prefix).equals(
-							nsmap.GetNamespaceUri(prefix))) {
+							nsmap.getNamespaceUri(prefix))) {
 						while (this._uris.containsKey(tempPrefix)) {
 							tempPrefixID++;
 							tempPrefix = "ns" + tempPrefixID;
 						}
-
-						this.AddNamespace(tempPrefix,
-								nsmap.GetNamespaceUri(prefix));
-
+						this.addNamespace(tempPrefix,
+								nsmap.getNamespaceUri(prefix));
 					}
 				}
 			}
 		} catch (Exception ex) {
 		}
-
 	}
 
 	public final void dispose() {
@@ -194,15 +191,15 @@ public class NamespaceMapper implements NsMapper {
 		this._uris.clear();
 	}
 
-	public final String ResolveQName(String qname, NamespaceMapper nsmap,
+	public final String resolveQName(String qname, NamespaceMapper nsmap,
 			URI baseUri) {
 		String output;
 
 		if (qname.startsWith(":")) {
 			// QName in Default Namespace
-			if (nsmap.HasNamespace("")) {
+			if (nsmap.hasNamespace("")) {
 				// Default Namespace Defined
-				output = nsmap.GetNamespaceUri("").toString()
+				output = nsmap.getNamespaceUri("").toString()
 						+ qname.substring(1);
 			} else {
 
@@ -222,12 +219,11 @@ public class NamespaceMapper implements NsMapper {
 			// QName in some other Namespace
 			String[] parts = qname.split("[:]", -1);
 			if (parts.length == 1) {
-				output = nsmap.GetNamespaceUri("").toString() + parts[0];
+				output = nsmap.getNamespaceUri("").toString() + parts[0];
 			} else {
-				output = nsmap.GetNamespaceUri(parts[0]).toString() + parts[1];
+				output = nsmap.getNamespaceUri(parts[0]).toString() + parts[1];
 			}
 		}
-
 		return output;
 	}
 
@@ -235,7 +231,7 @@ public class NamespaceMapper implements NsMapper {
 		StringBuilder prefixes = new StringBuilder();
 		for (Entry<Integer, String> pref : this._prefixes.entrySet()) {
 			prefixes.append("PREFIX " + pref.getValue() + ": <"
-					+ this.GetNamespaceUri(pref.getValue()) + ">/n");
+					+ this.getNamespaceUri(pref.getValue()) + ">/n");
 		}
 		return prefixes.toString();
 	}
