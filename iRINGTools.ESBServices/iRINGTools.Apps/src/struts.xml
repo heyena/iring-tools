@@ -76,7 +76,17 @@
         <param name="root">tree.nodes</param>
       </result>
     </action>
-  	<action name="roles" class="org.iringtools.controllers.RefDataController" method="getRoles">
+    <action name="postTemplate" class="org.iringtools.controllers.RefDataController" method="postTemplate">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+    </action>
+    <action name="postClass" class="org.iringtools.controllers.RefDataController" method="postClass">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+    </action>   
+   	<action name="roles" class="org.iringtools.controllers.RefDataController" method="getRoles">
       <result type="json">
         <param name="root">qmxf</param>
       </result>
