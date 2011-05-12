@@ -139,10 +139,18 @@ public class RefDataModel
 	    		  childClassNodes.add(classTreeNode);
 	    		  
 	    	  }
-			childNode.setText("Classifications ("+classDefinition.getClassifications().size()+")");
+			childNode.setText("Member Of ("+classDefinition.getClassifications().size()+")");
 		  	treeNodes.add(childNode);
 		  	
 		  	
+		  	childNode = new TreeNode();
+		  	//*** childNode.setText("Superclasses");
+		  	childNode.setType(Type.MEMBERS.value());
+		  	childNode.setIconCls("folder");
+		  	List<Node> childMemberNodes = childNode.getChildren();
+		  	childMemberNodes.addAll(getMembers(id).getNodes());
+		  	childNode.setText("Members ("+childMemberNodes.size()+")");
+		  	treeNodes.add(childNode);
 		  	
 		  	// Super class Node
 		  	childNode = new TreeNode();
@@ -245,6 +253,28 @@ public class RefDataModel
 	  
 	  
 }
+  
+  public Tree getMembers(String id) {
+	  Tree tree = new Tree();
+	  
+	  try {
+		  response = httpClient.get(Response.class, "/classes/"+id+"/members");
+		  List<Node> treeNodes = tree.getNodes();
+		  LeafNode node;
+		  for( Entity entity : response.getEntities().getItems()) {
+			  node = new LeafNode();
+			  node.setText(entity.getLabel());
+			  node.setIdentifier(entity.getUri().substring(entity.getUri().indexOf("#")+1,entity.getUri().length()));
+		      node.setRecord(entity);
+		      node.setIconCls("class");
+	  		  node.setType(Type.CLASS.value());
+	  		  treeNodes.add(node);
+		  }
+	  }catch (Exception ex) {
+		  
+	  }
+	  return tree;
+  }
   
   public Tree getRole(String templateId){
 	  Qmxf qmxf = null;

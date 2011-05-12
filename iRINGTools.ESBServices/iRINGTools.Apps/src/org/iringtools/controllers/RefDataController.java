@@ -67,6 +67,8 @@ public class RefDataController implements ServletRequestAware{
 		case CLASSIFICATION:
 			tree = refdata.getClass(httpRequest.getParameter("id"));
 			break;
+		case MEMBERS:
+			tree = refdata.getMembers(httpRequest.getParameter("id"));
 		case SUPERCLASS:
 			tree = refdata.getSubSuperClasses(httpRequest.getParameter("id"),"Super");
 			break;

@@ -5,25 +5,24 @@ import java.net.URI;
 
 public interface NsMapper 
 {
-	void AddNamespace(String prefix, URI uri) throws Exception;
+	void addNamespace(String prefix, URI uri) throws Exception;
 
-	void Clear();
+	void clear();
 
-	URI GetNamespaceUri(String prefix);
+	URI getNamespaceUri(String prefix);
 
-	String GetPrefix(URI uri) throws Exception;
+	String getPrefix(URI uri) throws Exception;
 
-	boolean HasNamespace(String prefix);
+	boolean hasNamespace(String prefix);
 
-
-	void  Import(NsMapper nsmap);
+	void  importMap(NsMapper nsmap);
 
 	Iterable<String> getPrefixes();
 
-	boolean ReduceToQName(String uri, ReferenceObject<String> qname) throws Exception;
+	boolean reduceToQName(String uri, ReferenceObject<String> qname) throws Exception;
 
-	void RemoveNamespace(String prefix) throws Exception;
+	void removeNamespace(String prefix) throws Exception;
 
-	String ResolveQName(String qname, NamespaceMapper nsmap, URI baseUri);
+	String resolveQName(String qname, NamespaceMapper nsmap, URI baseUri);
 }
 
