@@ -428,7 +428,7 @@ public class RefDataModel
 
         classDefinitions.add(classDefinition);
         
-        //response = httpClient.post(org.iringtools.common.response.Response.class, "/class", qmxf);
+        response = httpClient.post(org.iringtools.common.response.Response.class, "/class", qmxf);
     	
         if (response != null)
         {
