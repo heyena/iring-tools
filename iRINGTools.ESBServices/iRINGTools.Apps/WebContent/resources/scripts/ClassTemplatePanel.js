@@ -15,7 +15,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
     parentNode:null, node:null,name:null,desc:null,
     parentTemplate:null,
     statusAuth:null,statusClass:null,statusFrom:null, statusTo:null,
-    entityType:null, specVal:null, classVal:null,
+    entityType:null,
     specStore:[], repoStore:[],
     classStore:[],
     roleStore:[],
@@ -48,7 +48,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	  		this.statusFrom=this.node.attributes.record["Status From"];
 	  		this.statusTo=this.node.attributes.record["Status To"];
 	  	    this.entityType=this.node.attributes.record["Entity Type"];
-	  	    this.specStore=this.createStore(this.parentNode.childNodes[2].attributes.children,0);
+	  	    this.specStore=this.createStore(this.parentNode.childNodes[3].attributes.children,0);
 	  	    this.classStore=this.createStore(this.parentNode.childNodes[1].attributes.children,0);
 	  	    this.repoStore=this.createRepoStore(Ext.getCmp('federation-tree').getRootNode().childNodes[2].childNodes);
 	  	    this.url='postClass';
