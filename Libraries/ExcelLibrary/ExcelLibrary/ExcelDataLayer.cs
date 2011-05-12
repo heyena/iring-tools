@@ -17,7 +17,6 @@ namespace org.iringtools.adapter.datalayer
 {
   public class ExcelDataObject : Dictionary<string, object>, IDataObject
   {
-
     public string SheetName { get; set; }
 
     public object GetPropertyValue(string propertyName)
@@ -49,7 +48,8 @@ namespace org.iringtools.adapter.datalayer
   }
 
   public class ExcelDataLayer : BaseConfigurableDataLayer, IDataLayer2
-  {    
+  {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(ExcelDataLayer));
     private ExcelProvider _provider = null;
 
     [Inject]

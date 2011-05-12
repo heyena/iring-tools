@@ -120,7 +120,7 @@ namespace org.iringtools.datalayer.excel
           obj = Utility.DeserializeFromXElement<ExcelConfiguration>(element);
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         
       }

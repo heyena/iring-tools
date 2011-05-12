@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using org.iringtools.adapter;
 using System.Xml.Linq;
 using org.iringtools.library;
 using VDS.RDF.Query;
 using VDS.RDF;
-using System.Text.RegularExpressions;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using log4net;
@@ -387,11 +384,33 @@ namespace org.iringtools.adapter.projection
       return dataObject.keyProperties;
     }
 
+    protected bool ContainsAssignedKey(DataObject dictionaryObject)
+    {
+      foreach (KeyProperty keyProperty in dictionaryObject.keyProperties)
+      {
+        foreach (DataProperty dataProperty in dictionaryObject.dataProperties)
+        {
+          if (dataProperty.propertyName.ToLower() == keyProperty.keyPropertyName.ToLower())
+          {
+            if (dataProperty.keyType == KeyType.assigned)
+            {
+              return true;
+            }
+
+            break;
+          }
+        }
+      }
+
+      return false;
+    }
+
     // turn data record into data object
     protected IDataObject CreateDataObject(string objectType, int objectIndex)
     {
       Dictionary<string, string> dataRecord = _dataRecords[objectIndex];
-      List<KeyProperty> keyProperties = GetKeyProperties(objectType);
+      DataObject dictionaryObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
+      List<KeyProperty> keyProperties = dictionaryObject.keyProperties;
       string identifier = String.Empty;
 
       foreach (KeyProperty keyProperty in keyProperties)
@@ -431,15 +450,23 @@ namespace org.iringtools.adapter.projection
 
         if (dataObjects == null || dataObjects.Count == 0)
         {
-          Type type = Type.GetType("org.iringtools.adapter.datalayer.proj_" + _settings["Scope"] + "." + objectType + ", " + _settings["ExecutingAssemblyName"]);
-          IDataObject dataObject = (IDataObject)Activator.CreateInstance(type);
-
-          foreach (var pair in dataRecord)
+          // only create data object if key property (properties) is (are) unassigned (auto generated)
+          if (!ContainsAssignedKey(dictionaryObject))
           {
-            dataObject.SetPropertyValue(pair.Key, pair.Value);
-          }
+            IDataObject dataObject = _dataLayer.Create(objectType, null).First();
 
-          return dataObject;
+            foreach (var pair in dataRecord)
+            {
+              dataObject.SetPropertyValue(pair.Key, pair.Value);
+            }
+
+            return dataObject;
+          }
+          else
+          {
+            _logger.Error("Data object not found and can not be created because it contains assigned key and the key is not mapped.");
+            return null;  // return null here and let data layer create proper error status later
+          }
         }
         else if (dataObjects.Count == 1)
         {
@@ -454,7 +481,7 @@ namespace org.iringtools.adapter.projection
         }
         else
         {
-          _logger.Error("Duplicate objects found.");
+          _logger.Error("Data object has duplicates.");
           return null;  // return null here and let data layer create proper error status later
         }
       }
