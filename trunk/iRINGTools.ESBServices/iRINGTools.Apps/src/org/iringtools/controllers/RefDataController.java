@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.struts2.interceptor.ServletRequestAware;
 import org.ids_adi.ns.qxf.model.Qmxf;
 import org.iringtools.models.RefDataModel;
+import org.iringtools.models.Result;
 import org.iringtools.refdata.response.Response;
 import org.iringtools.widgets.tree.Tree;
 import org.iringtools.widgets.tree.Type;
@@ -17,7 +18,9 @@ public class RefDataController implements ServletRequestAware{
 	private RefDataModel refdata;
 	private Tree tree;
 	private Response response;
+	private Result result=new Result();
 	private Qmxf qmxf;
+
 	public Qmxf getQmxf() {
 		return qmxf;
 	}
@@ -48,6 +51,14 @@ public class RefDataController implements ServletRequestAware{
 	public Tree getTree() {
 		return tree;
 	}
+	public Result getResult() {
+		return result;
+	}
+
+	public void setResult(Result result) {
+		this.result = result;
+	}
+
 	
 	public void setServletRequest(HttpServletRequest request) {
 		this.httpRequest = request;  
@@ -91,19 +102,16 @@ public class RefDataController implements ServletRequestAware{
 		tree = refdata.getTemplates(id);
 		return Action.SUCCESS;
 	}
-	/*public String getRoles(){
-		String id = httpRequest.getParameter("id");
-		qmxf = refdata.getRole(id);
-		return Action.SUCCESS;
-	}*/
 	public String postClass() {		
 		System.out.println("Reaching post Class");
 		boolean successStatus = refdata.postClass(httpRequest);
+		result.setSuccess(successStatus);
         return Action.SUCCESS;
 	}
 	public String postTemplate() {		
 		System.out.println("Reaching post Class");
 		boolean successStatus = refdata.postTemplate(httpRequest);
+		result.setSuccess(successStatus);
         return Action.SUCCESS;
 	}	
 }

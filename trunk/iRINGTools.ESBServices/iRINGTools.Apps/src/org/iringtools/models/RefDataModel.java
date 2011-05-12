@@ -2,11 +2,15 @@ package org.iringtools.models;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.ids_adi.ns.qxf.model.ClassDefinition;
 import org.ids_adi.ns.qxf.model.Classification;
+import org.ids_adi.ns.qxf.model.Description;
+import org.ids_adi.ns.qxf.model.EntityType;
+import org.ids_adi.ns.qxf.model.Name;
 import org.ids_adi.ns.qxf.model.Qmxf;
 import org.ids_adi.ns.qxf.model.RoleQualification;
 import org.ids_adi.ns.qxf.model.Specialization;
@@ -314,7 +318,14 @@ public class RefDataModel
 
 		  	  		    //service call for class details
 			        	String classId= roleQualifications.getRange().substring(roleQualifications.getRange().indexOf("#")+1,roleQualifications.getRange().length());
-			        	LeafNode roleClassNode = getIndividualClassDtls(classId);
+			        	LeafNode roleClassNode = new LeafNode();
+			        	ClassDefinition classDefinition = getIndividualClassDtls(classId);
+			        	roleClassNode.setText(classDefinition.getNames().get(0).getValue());
+			        	roleClassNode.setIdentifier(classDefinition.getId().
+			        			substring(classDefinition.getId().indexOf("#")+1,classDefinition.getId().length()));
+			        	roleClassNode.setIconCls("class");
+			        	roleClassNode.setType(Type.CLASS.value());
+
 			        	List<Node> childClassNodes = node.getChildren();
 			        	childClassNodes.add(roleClassNode);
 			        	treeNodes.add(node); 
@@ -343,31 +354,99 @@ public class RefDataModel
 	  return tree;
   }
   
-  public LeafNode getIndividualClassDtls(String id){
+  public ClassDefinition getIndividualClassDtls(String id){
 	  Qmxf qmxf = null;
-	  //System.out.println("Inside getClassDtls");
-	  LeafNode node=null;
+	  ClassDefinition classDefinition = null;
 	  try{
 		  qmxf = httpClient.get(Qmxf.class, "/classes/"+id);
-		  ClassDefinition classDefinition = qmxf.getClassDefinitions().get(0);
-	      node = new LeafNode();
-	      node.setText(classDefinition.getNames().get(0).getValue());
-	      node.setIdentifier(classDefinition.getId().
-	    		  substring(classDefinition.getId().indexOf("#")+1,classDefinition.getId().length()));
-		  node.setIconCls("class");
-		  node.setType(Type.CLASS.value());
+		  classDefinition = qmxf.getClassDefinitions().get(0);
 		  
 	  }catch(Exception e){
 		  
 	  }
-	  return node;
+	  return classDefinition;
   }
   
   public boolean postClass(HttpServletRequest httpRequest)
   {
     try
     {
-    	return true;
+    	//Enumeration<String> keys = httpRequest.getParameterNames();
+    	Qmxf qmxf = new Qmxf();
+    	org.iringtools.common.response.Response response = new org.iringtools.common.response.Response();
+    	
+    	List<ClassDefinition> classDefinitions = qmxf.getClassDefinitions();
+    	
+    	ClassDefinition classDefinition = new ClassDefinition();
+    	//Setting Class id
+    	classDefinition.setId(httpRequest.getParameter("classId"));
+    	
+    	//Setting Target Repository
+    	qmxf.setTargetRepository(httpRequest.getParameter("targetRepo").replaceFirst(" [Read Only]", ""));
+    	
+    	//Setting Class name
+    	List<Name> names = classDefinition.getNames();
+    	Name name = new Name();
+    	name.setValue(httpRequest.getParameter("name"));
+    	names.add(name);
+    	
+    	//Setting Entity type
+    	EntityType entity = new EntityType();
+    	entity.setReference(httpRequest.getParameter("entityType"));
+    	classDefinition.setEntityType(entity);
+    	
+    	//Setting Description
+    	List<Description> descriptions = classDefinition.getDescriptions();
+    	Description desc = new Description();
+    	desc.setValue(httpRequest.getParameter("description"));
+    	descriptions.add(desc);
+    	
+    	//Setting Classifications
+    	List<Classification> classifications = classDefinition.getClassifications();
+        StringTokenizer st = new StringTokenizer(httpRequest.getParameter("classification"), ",");
+        while (st.hasMoreTokens())
+        {
+        	Classification classification = new Classification();
+        	ClassDefinition classDtls = getIndividualClassDtls(st.nextToken());
+        	classification.setLabel(classDtls.getNames().get(0).getValue());
+        	classification.setReference(classDtls.getId());
+        	classifications.add(classification);
+        }
+    	
+    	//Setting Specialization
+        
+    	List<Specialization> specializations = classDefinition.getSpecializations();
+        StringTokenizer str = new StringTokenizer(httpRequest.getParameter("specialization"), ",");
+        while (str.hasMoreTokens())
+        {
+        	Specialization specialization = new Specialization();
+        	ClassDefinition classDtls = getIndividualClassDtls(str.nextToken());
+        	specialization.setLabel(classDtls.getNames().get(0).getValue());
+        	specialization.setReference(classDtls.getId());
+        	specializations.add(specialization);
+        }
+
+        classDefinitions.add(classDefinition);
+        
+        //response = httpClient.post(org.iringtools.common.response.Response.class, "/class", qmxf);
+    	
+        if (response != null)
+        {
+          System.out.println("response.getLevel().value() :" + response.getLevel().value());
+          if ("success".equalsIgnoreCase(response.getLevel().value()))
+          {
+            return true;
+          }
+          else
+            return false;
+        }
+        else
+        {
+          System.out.println("response.getLevel().value() : null");
+          return false;
+        }
+        //return true;
+
     }
     catch (Exception e)
     {

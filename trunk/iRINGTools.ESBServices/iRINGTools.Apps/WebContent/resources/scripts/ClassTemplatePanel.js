@@ -9,12 +9,13 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	title:null,
 	data_form: null,
     configData:null,
+    formData : null,
 	url: null,
     nId:null,label:null,
     parentNode:null, node:null,name:null,desc:null,
     parentTemplate:null,
     statusAuth:null,statusClass:null,statusFrom:null, statusTo:null,
-    entityType:null, 
+    entityType:null, specVal:null, classVal:null,
     specStore:[], repoStore:[],
     classStore:[],
     roleStore:[],
@@ -24,6 +25,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
   * initComponent
   * @protected
   */
+    
   initComponent: function () {
 
   	this.addEvents({
@@ -49,6 +51,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	  	    this.specStore=this.createStore(this.parentNode.childNodes[2].attributes.children,0);
 	  	    this.classStore=this.createStore(this.parentNode.childNodes[1].attributes.children,0);
 	  	    this.repoStore=this.createRepoStore(Ext.getCmp('federation-tree').getRootNode().childNodes[2].childNodes);
+	  	    this.url='postClass';
   		}else{
   			this.name=this.parentNode.attributes.record.label;
   			this.node=this.parentNode.childNodes[0];
@@ -58,12 +61,13 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
   			this.parentTemplate=this.node.attributes.record["Parent Template"];
 	  	    this.statusAuth=this.node.attributes.record["Authority"];
 	  		this.statusClass=this.node.attributes.record["Class"];
+	  		this.url='postTemplate';
   			
   		}
   	}
   	if(this.configData == 'class'){
   		var that = this;
-  		this.configData= [{xtype: 'fieldset', layout:'column', border:false,
+  		this.formData= [{xtype: 'fieldset', layout:'column', border:false,
 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
  					items:[
  				          {fieldLabel:'Name',name:'name', xtype:'textfield',enableKeyEvents:true,
@@ -89,7 +93,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
  				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'textfield', disabled:true,width:200,value:this.statusTo}
  				        	         ]
  				          },
- 				         {xtype:'combo',store: this.repoStore,fieldLabel:'Target Repo', width:200}]},
+ 				         {name: 'targetRepo',xtype:'combo',store: this.repoStore,fieldLabel:'Target Repo', width:200}]},
  				          {columnWidth:.5,layout: 'form',
         	 				items:[
         	 				      {fieldLabel:'Entity Type',name:'entityType', xtype:'textfield', width:200, value:this.entityType},
@@ -112,15 +116,21 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
         	 				    	          ]
                                   },
                                   {xtype: 'fieldset', border:false, layout:'column', 
- 				    	        	  items:[{columnWidth:.33,xtype : "tbbutton",text : 'Ok',tooltip : 'Ok'},
+ 				    	        	  items:[{columnWidth:.33,xtype : "tbbutton",text : 'Ok',tooltip : 'Ok', handler:this.onSave, scope: this},
  				    	        	         {columnWidth:.33,xtype : "tbbutton",text : 'Cancel',tooltip : 'Cancel'},
  				    	        	         {columnWidth:.33,xtype : "tbbutton",text : 'Apply',tooltip : 'Apply'}
  				    	        	  ]}
                                   ]
  				        }]}];
+  		this.formData.push({
+            xtype: 'hidden',
+            name: 'classId',
+            value: that.id
+          });
+
   	}else{
   		var that = this;
-  		this.configData = [{xtype: 'radiogroup',fieldLabel: 'Template Type',
+  		this.formData = [{xtype: 'radiogroup',fieldLabel: 'Template Type',
             items: [
                     {boxLabel: 'Base Template', name: 'tempType', checked: true},
                     {boxLabel: 'Specialized Template', name: 'tempType'}]},
@@ -161,9 +171,14 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
    	          	        	        	 				    {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
    	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Remove',handler: function(){that.onStoreDtlsRemove(that.roleStore,'role'+that.id);},tooltip : 'Remove', width:70}]},
    	          	        	        	 					{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-	    	          	        	        	 			items:[{ xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:70}]}
+	    	          	        	        	 			items:[{ xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:70, handler:this.onSave, scope: this}]}
 	          	        	        	 					       ]}]
 	          	 				        	       }	]}]}];
+  		this.formData.push({
+            xtype: 'hidden',
+            name: 'classId',
+            value: that.id
+          });
   	}
     this.data_form = new Ext.FormPanel({
       labelWidth : 100, // label settings here cascade unless
@@ -182,7 +197,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
       },
       defaultType : 'textfield',
 
-      items : this.configData,     // binding with the fields list
+      items : this.formData,     // binding with the fields list
       buttonAlign : 'left', // buttons aligned to the left            
       autoDestroy:false
            
@@ -224,7 +239,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
         if(readOnly == 1){
         	repoText = repoText+' [Read Only]';
         }
-        var data = [repoId, repoText, readOnly];
+        var data = [repoId, repoText];
         storeData.push(data);              
       }
       return storeData;
@@ -254,6 +269,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 			  store.push(data);
 		  }
 		  Ext.getCmp(id).store.loadData(store);
+
 	  }
   },
   
@@ -269,6 +285,9 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	  }else{
 		  alert("Please select a value to be removed");
 	  }
+ 
+
+
   },
 
 
@@ -278,5 +297,27 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
   
   onTextChange : function(value){
 	  this.title = value;
-  }
+  },
+  onSave:function(){
+		if(this.configData == 'class'){
+			this.data_form.getForm().findField('specialization').selectAll();
+			this.data_form.getForm().findField('classification').selectAll();
+	    }
+	  this.data_form.getForm().submit({
+	    waitMsg: 'Saving Data...',
+	    success: function(f,a){
+	        Ext.Msg.alert('Success', 'Changes saved successfully!');
+	      },
+	    failure: function(f,a){
+	      Ext.Msg.alert('Warning', 'Error saving changes!');
+	    }
+	  });
+
+}
+});
+Ext.override(Ext.ux.form.MultiSelect, {
+    selectAll : function() {	
+        var ids = this.store.collect(this.valueField);
+        this.setValue(ids);
+    }
 });
