@@ -362,6 +362,7 @@ namespace iRINGTools.Web.Models
               },
               properties = new Dictionary<string, string>
               {
+                {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + scope + "." + application},
                 {"objectName", dataObject.objectName},
                 {"keyDelimiter", dataObject.keyDelimeter}
               }
