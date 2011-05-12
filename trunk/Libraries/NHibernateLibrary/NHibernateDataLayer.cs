@@ -27,7 +27,6 @@ namespace org.iringtools.adapter.datalayer
     private string _databaseDictionaryPath = string.Empty;
     private DataDictionary _dataDictionary;
     private DatabaseDictionary _databaseDictionary;
-    private AdapterSettings _settings = null;
     private IDictionary _keyRing = null;
     private ISessionFactory _sessionFactory;
     private string _hibernateConfigPath = string.Empty;
@@ -88,16 +87,16 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        Type type = Type.GetType("org.iringtools.adapter.datalayer.proj_" + _settings["Scope"] + "." + objectType + ", " + _settings["ExecutingAssemblyName"]);
-
+        DataObject dictionaryObject = _dataDictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
+        Type type = Type.GetType(dictionaryObject.objectNamespace + "." + objectType + ", " + _settings["ExecutingAssemblyName"]);
+        IDataObject dataObject = null;
+                    
         if (identifiers != null)
         {
           ISession session = OpenSession();
 
           foreach (string identifier in identifiers)
           {
-            IDataObject dataObject = null;
-
             if (!String.IsNullOrEmpty(identifier))
             {
               IQuery query = session.CreateQuery("from " + objectType + " where Id = ?");
@@ -117,6 +116,11 @@ namespace org.iringtools.adapter.datalayer
 
             dataObjects.Add(dataObject);
           }
+        }
+        else
+        {
+          dataObject = (IDataObject)Activator.CreateInstance(type);
+          dataObjects.Add(dataObject);
         }
 
         return dataObjects;
@@ -362,7 +366,15 @@ namespace org.iringtools.adapter.datalayer
               
               if (dataObject != null)
               {
-                string identifier = dataObject.GetPropertyValue("Id").ToString();
+                string identifier = String.Empty;
+
+                try
+                {
+                  // NOTE: Id property is not available if it's not mapped and will cause exception
+                  identifier = dataObject.GetPropertyValue("Id").ToString();
+                }
+                catch (Exception) { }  // no need to handle exception because identifier is only used for statusing
+
                 status.Identifier = identifier;
 
                 try
