@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="hashValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="transferType" type="{http://www.iringtools.org/dxfr/dti}TransferType"/>
  *         &lt;element name="sortIndex" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="internalIdentifier" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,7 +35,8 @@ import javax.xml.bind.annotation.XmlType;
     "identifier",
     "hashValue",
     "transferType",
-    "sortIndex"
+    "sortIndex",
+    "internalIdentifier"
 })
 public class DataTransferIndex {
 
@@ -46,6 +48,7 @@ public class DataTransferIndex {
     protected TransferType transferType;
     @XmlElement(required = true)
     protected String sortIndex;
+    protected String internalIdentifier;
 
     /**
      * Gets the value of the identifier property.
@@ -141,6 +144,30 @@ public class DataTransferIndex {
      */
     public void setSortIndex(String value) {
         this.sortIndex = value;
+    }
+
+    /**
+     * Gets the value of the internalIdentifier property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getInternalIdentifier() {
+        return internalIdentifier;
+    }
+
+    /**
+     * Sets the value of the internalIdentifier property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setInternalIdentifier(String value) {
+        this.internalIdentifier = value;
     }
 
 }

@@ -48,8 +48,8 @@ import org.iringtools.refdata.response.Entity;
 import org.iringtools.utility.EntityComparator;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
-import org.iringtools.utility.IOUtil;
-import org.iringtools.utility.JaxbUtil;
+import org.iringtools.utility.IOUtils;
+import org.iringtools.utility.JaxbUtils;
 import org.iringtools.utility.NamespaceMapper;
 import org.iringtools.utility.NetworkCredentials;
 import org.iringtools.utility.ReferenceObject;
@@ -93,13 +93,13 @@ public class RefDataProvider
   public Queries getQueries() throws JAXBException, IOException, FileNotFoundException
   {
     String path = _settings.get("baseDirectory") + "/WEB-INF/data/Queries.xml";
-    return JaxbUtil.read(Queries.class, path);
+    return JaxbUtils.read(Queries.class, path);
   }
 
   public Federation getFederation() throws JAXBException, IOException
   {
     String path = _settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
-    return JaxbUtil.read(Federation.class, path);
+    return JaxbUtils.read(Federation.class, path);
   }
 
   public Response saveFederation(Federation federation) throws Exception
@@ -108,7 +108,7 @@ public class RefDataProvider
     try
     {
       String path = _settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
-      JaxbUtil.write(federation, path, true);
+      JaxbUtils.write(federation, path, true);
       response.setLevel(Level.SUCCESS);
     }
     catch (Exception ex)
@@ -170,7 +170,7 @@ public class RefDataProvider
       }
 
       String path = _settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
-      JaxbUtil.write(federation, path, true);
+      JaxbUtils.write(federation, path, true);
 
       msgs.add("Namespace saved.");
       response.setLevel(Level.SUCCESS);
@@ -243,7 +243,7 @@ public class RefDataProvider
       }
 
       String path = _settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
-      JaxbUtil.write(federation, path, true);
+      JaxbUtils.write(federation, path, true);
 
       msgs.add("ID Generator saved.");
       response.setLevel(Level.SUCCESS);
@@ -300,7 +300,7 @@ public class RefDataProvider
         federation.getRepositories().getItems().add(repository);
       }
       String path = _settings.get("baseDirectory") + "/WEB-INF/data/federation.xml";
-      JaxbUtil.write(federation, path, true);
+      JaxbUtils.write(federation, path, true);
 
       msgs.add("Repository saved.");
       response.setLevel(Level.SUCCESS);
@@ -326,7 +326,7 @@ public class RefDataProvider
     {
       String path = _settings.get("baseDirectory") + "/WEB-INF/data/Sparqls/";
 
-      String query = IOUtil.readString(path + queryName);
+      String query = IOUtils.readString(path + queryName);
 
       return query;
     }

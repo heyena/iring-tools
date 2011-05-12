@@ -10,8 +10,8 @@ import javax.xml.bind.JAXBException;
 
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
-import org.iringtools.utility.IOUtil;
-import org.iringtools.utility.JaxbUtil;
+import org.iringtools.utility.IOUtils;
+import org.iringtools.utility.JaxbUtils;
 
 public class HistoryProvider
 {
@@ -29,13 +29,13 @@ public class HistoryProvider
     history.setResponses(responses);
     
     String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
-    List<String> filesInFolder = IOUtil.getFiles(path);
+    List<String> filesInFolder = IOUtils.getFiles(path);
     Collections.sort(filesInFolder);
 
     // show most recent first
     for (int i = filesInFolder.size() - 1; i >= 0 ; i--)
     {
-      ExchangeResponse response = JaxbUtil.read(ExchangeResponse.class, path + "/" + filesInFolder.get(i));
+      ExchangeResponse response = JaxbUtils.read(ExchangeResponse.class, path + "/" + filesInFolder.get(i));
       response.setStatusList(null);  // only interest in summary status
       responses.add(response);
     }
@@ -48,6 +48,6 @@ public class HistoryProvider
     String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
     String exchangeFile = path + "/" + timestamp.replace(":", ".") + ".xml";
     
-    return JaxbUtil.read(ExchangeResponse.class, exchangeFile);
+    return JaxbUtils.read(ExchangeResponse.class, exchangeFile);
   }
 }

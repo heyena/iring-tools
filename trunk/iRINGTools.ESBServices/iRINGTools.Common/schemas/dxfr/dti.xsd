@@ -41,6 +41,7 @@
       <xs:element name="hashValue" type="xs:string" />
       <xs:element name="transferType" type="TransferType" />
       <xs:element name="sortIndex" type="xs:string" />
+      <xs:element name="internalIdentifier" type="xs:string" minOccurs="0" />
     </xs:sequence>
   </xs:complexType>
 

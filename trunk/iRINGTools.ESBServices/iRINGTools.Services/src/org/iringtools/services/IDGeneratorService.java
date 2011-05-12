@@ -20,9 +20,7 @@ import org.iringtools.services.core.IdGenProvider;
 @Produces("application/xml")
 public class IDGeneratorService extends AbstractService{ 
 	
-	public IDGeneratorService(){
-		System.out.println("Constructor IDGeneratorService");
-		
+	public IDGeneratorService(){		
 	}
 
 	 @GET
