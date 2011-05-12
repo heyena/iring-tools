@@ -29,11 +29,11 @@ import javax.xml.stream.XMLStreamWriter;
 import org.apache.axiom.om.OMElement;
 import org.apache.axiom.om.impl.builder.StAXOMBuilder;
 
-public class IOUtil
+public final class IOUtils
 {
   private static final int DEFAULT_BUFFER_SIZE = 1024;
 
-  public static byte[] toByteArray(InputStream stream) throws IOException 
+  public static synchronized byte[] toByteArray(InputStream stream) throws IOException 
   {
     ByteArrayOutputStream output = new ByteArrayOutputStream();
 
@@ -47,7 +47,7 @@ public class IOUtil
     return output.toByteArray();
   }
   
-  public static String toString(InputStream stream) throws IOException
+  public static synchronized String toString(InputStream stream) throws IOException
   {
     BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
     StringWriter writer = new StringWriter();
@@ -61,20 +61,20 @@ public class IOUtil
     return writer.toString();
   }
 
-  public static String readString(String filePath) throws IOException
+  public static synchronized String readString(String filePath) throws IOException
   {
     BufferedInputStream stream = new BufferedInputStream(new FileInputStream(filePath));
     return toString(stream);
   }
 
-  public static void writeString(String string, String filePath) throws IOException
+  public static synchronized void writeString(String string, String filePath) throws IOException
   {
     BufferedWriter out = new BufferedWriter(new FileWriter(filePath));
     out.write(string);
     out.close();
   }
 
-  public static OMElement readXml(String filePath) throws FileNotFoundException, XMLStreamException,
+  public static synchronized OMElement readXml(String filePath) throws FileNotFoundException, XMLStreamException,
       FactoryConfigurationError
   {
     XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new FileInputStream(filePath));
@@ -82,14 +82,14 @@ public class IOUtil
     return builder.getDocumentElement();
   }
 
-  public static OMElement stringToXml(String text) throws XMLStreamException, FactoryConfigurationError
+  public static synchronized OMElement stringToXml(String text) throws XMLStreamException, FactoryConfigurationError
   {
     XMLStreamReader parser = XMLInputFactory.newInstance().createXMLStreamReader(new StringReader(text));
     StAXOMBuilder builder = new StAXOMBuilder(parser);
     return builder.getDocumentElement();
   }
 
-  public static void writeXml(OMElement xml, String filePath) throws FileNotFoundException, XMLStreamException,
+  public static synchronized void writeXml(OMElement xml, String filePath) throws FileNotFoundException, XMLStreamException,
       FactoryConfigurationError
   {
     XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(new FileOutputStream(filePath));
@@ -97,7 +97,7 @@ public class IOUtil
     writer.flush();
   }
 
-  public static Properties loadProperties(String filePath) throws IOException
+  public static synchronized Properties loadProperties(String filePath) throws IOException
   {
     Properties props = new Properties();
     InputStream fis = new FileInputStream(filePath);
@@ -106,7 +106,7 @@ public class IOUtil
     return props;
   }
 
-  public static List<String> getFiles(String directory) throws IOException
+  public static synchronized List<String> getFiles(String directory) throws IOException
   {
     File[] files = new File(directory).listFiles();
     List<String> fileNames = new ArrayList<String>();
@@ -123,7 +123,7 @@ public class IOUtil
   }
   
   // hello world -> HelloWorld
-  public static String toCamelCase(String value)
+  public static synchronized String toCamelCase(String value)
   {
     if (value == null || value.length() == 0)
       return value;
@@ -142,7 +142,7 @@ public class IOUtil
     return returnValue.toString();
   }
   
-  public static void copyFile(String sourceFile, String destinationFile) throws IOException
+  public static synchronized void copyFile(String sourceFile, String destinationFile) throws IOException
   {    
     File inputFile = new File(sourceFile);
     File outputFile = new File(destinationFile);

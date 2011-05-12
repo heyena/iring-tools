@@ -32,7 +32,7 @@ import org.iringtools.dxfr.dto.TransferType;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
-import org.iringtools.utility.IOUtil;
+import org.iringtools.utility.IOUtils;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 import org.iringtools.widgets.grid.RelatedClass;
@@ -529,7 +529,7 @@ public class DataModel
       {
         ClassObject classObject = dto.getClassObjects().getItems().get(0);
         pageDtoGrid.setIdentifier(classObject.getClassId());
-        pageDtoGrid.setDescription(IOUtil.toCamelCase(classObject.getName()));
+        pageDtoGrid.setDescription(IOUtils.toCamelCase(classObject.getName()));
 
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
         {
@@ -544,7 +544,7 @@ public class DataModel
 
                 Field field = new Field();
                 field.setName(name);
-                field.setDataIndex(IOUtil.toCamelCase(classObject.getName()) + '.' + name);
+                field.setDataIndex(IOUtils.toCamelCase(classObject.getName()) + '.' + name);
 
                 if (dataType == DataType.APP)
                   field.setType(roleObject.getDataType().replace("xsd:", ""));
@@ -587,7 +587,7 @@ public class DataModel
             {
               RelatedClass relatedClass = new RelatedClass();
               relatedClass.setId(roleObject.getRelatedClassId());
-              relatedClass.setName(IOUtil.toCamelCase(roleObject.getRelatedClassName()));
+              relatedClass.setName(IOUtils.toCamelCase(roleObject.getRelatedClassName()));
               relatedClass.setIdentifier(roleObject.getValue().substring(1));
               relatedClasses.add(relatedClass);
             }
@@ -683,7 +683,7 @@ public class DataModel
 
                 Field field = new Field();
                 field.setName(name);
-                field.setDataIndex(IOUtil.toCamelCase(classObject.getName()) + '.' + name);
+                field.setDataIndex(IOUtils.toCamelCase(classObject.getName()) + '.' + name);
 
                 if (dataType == DataType.APP)
                   field.setType(roleObject.getDataType().replace("xsd:", ""));
@@ -709,7 +709,7 @@ public class DataModel
             {
               RelatedClass relatedClass = new RelatedClass();
               relatedClass.setId(roleObject.getRelatedClassId());
-              relatedClass.setName(IOUtil.toCamelCase(roleObject.getRelatedClassName()));
+              relatedClass.setName(IOUtils.toCamelCase(roleObject.getRelatedClassName()));
               relatedClass.setIdentifier(roleObject.getValue().substring(1));
               relatedClasses.add(relatedClass);
             }
@@ -760,7 +760,7 @@ public class DataModel
         int actualLimit = Math.min(start + limit, total);
 
         relatedItemGrid.setIdentifier(classObject.getClassId());
-        relatedItemGrid.setDescription(IOUtil.toCamelCase(classObject.getName()));
+        relatedItemGrid.setDescription(IOUtils.toCamelCase(classObject.getName()));
         relatedItemGrid.setTotal(total);
         relatedItemGrid.setFields(fields);
         relatedItemGrid.setData(gridData.subList(start, actualLimit));

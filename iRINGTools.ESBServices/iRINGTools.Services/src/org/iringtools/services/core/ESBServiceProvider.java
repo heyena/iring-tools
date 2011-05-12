@@ -49,8 +49,8 @@ import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
-import org.iringtools.utility.IOUtil;
-import org.iringtools.utility.JaxbUtil;
+import org.iringtools.utility.IOUtils;
+import org.iringtools.utility.JaxbUtils;
 
 public class ESBServiceProvider
 {
@@ -194,7 +194,7 @@ public class ESBServiceProvider
 
     try
     {
-      logger.debug("getDataTransferObjects(" + scope + "," + id + "," + JaxbUtil.toXml(dtis, true) + ")");
+      logger.debug("getDataTransferObjects(" + scope + "," + id + "," + JaxbUtils.toXml(dtis, true) + ")");
 
       DataTransferObjectList resultDtoList = new DataTransferObjectList();
       resultDtos.setDataTransferObjectList(resultDtoList);
@@ -386,7 +386,7 @@ public class ESBServiceProvider
 
     try
     {
-      logger.debug("submitExchange(" + scope + "," + id + "," + JaxbUtil.toXml(exchangeRequest, true) + ")");
+      logger.debug("submitExchange(" + scope + "," + id + "," + JaxbUtils.toXml(exchangeRequest, true) + ")");
       
       if (exchangeRequest == null)
         return null;
@@ -639,9 +639,9 @@ public class ESBServiceProvider
     }
     
     String file = path + "/" + timestamp.toString().replace(":", ".") + ".xml";
-    JaxbUtil.write(exchangeResponse, file, true);
+    JaxbUtils.write(exchangeResponse, file, true);
     
-    List<String> filesInFolder = IOUtil.getFiles(path);
+    List<String> filesInFolder = IOUtils.getFiles(path);
     Collections.sort(filesInFolder);
     
     // if number of log files exceed the limit, remove the oldest ones

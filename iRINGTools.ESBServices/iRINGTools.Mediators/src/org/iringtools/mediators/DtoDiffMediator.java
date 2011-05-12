@@ -23,7 +23,7 @@ import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
-import org.iringtools.utility.JaxbUtil;
+import org.iringtools.utility.JaxbUtils;
 
 public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycle
 {
@@ -43,11 +43,11 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
       
       OMElement dxiSourceElement = dxi.getFirstChildWithName(new QName("http://www.iringtools.org/dxfr/dti", "source"));
       String sourceDtiXml = dxiSourceElement.getFirstElement().toString();
-      DataTransferIndices sourceDxfrIndices = JaxbUtil.toObject(DataTransferIndices.class, sourceDtiXml);
+      DataTransferIndices sourceDxfrIndices = JaxbUtils.toObject(DataTransferIndices.class, sourceDtiXml);
       
       OMElement dxiTargetElement = dxi.getFirstChildWithName(new QName("http://www.iringtools.org/dxfr/dti", "target"));
       String targetDtiXml = dxiTargetElement.getFirstElement().toString();
-      DataTransferIndices targetDxfrIndices = JaxbUtil.toObject(DataTransferIndices.class, targetDtiXml);
+      DataTransferIndices targetDxfrIndices = JaxbUtils.toObject(DataTransferIndices.class, targetDtiXml);
        
       // get current message payload
       SOAPBody soapBody = mc.getEnvelope().getBody();
@@ -58,8 +58,8 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
       OMElement firstDtoList = (OMElement)dtoLists.next();
       OMElement secondDtoList = (OMElement)dtoLists.next();
       
-      DataTransferObjects firstDtos = JaxbUtil.toObject(DataTransferObjects.class, firstDtoList.toString());
-      DataTransferObjects secondDtos = JaxbUtil.toObject(DataTransferObjects.class, secondDtoList.toString());
+      DataTransferObjects firstDtos = JaxbUtils.toObject(DataTransferObjects.class, firstDtoList.toString());
+      DataTransferObjects secondDtos = JaxbUtils.toObject(DataTransferObjects.class, secondDtoList.toString());
       
       // determine which DTO is source and which DTO is target
       DataTransferObjects sourceDtos = null;
@@ -159,7 +159,7 @@ public class DtoDiffMediator extends AbstractMediator implements ManagedLifecycl
         resultDtoListItems.addAll(dxos.getDataTransferObjectList().getItems());
 
       // set result DTOs to be message payload
-      resultPayload = AXIOMUtil.stringToOM(JaxbUtil.toXml(resultDtos, false));
+      resultPayload = AXIOMUtil.stringToOM(JaxbUtils.toXml(resultDtos, false));
       payload.discard();
       soapBody.addChild(resultPayload);
     }

@@ -15,7 +15,7 @@ import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dti.TransferType;
-import org.iringtools.utility.JaxbUtil;
+import org.iringtools.utility.JaxbUtils;
 
 public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycle
 {
@@ -40,8 +40,8 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
       OMElement firstDtiList = (OMElement)dtiLists.next();
       OMElement secondDtiList = (OMElement)dtiLists.next();
 
-      DataTransferIndices firstDtis = JaxbUtil.toObject(DataTransferIndices.class, firstDtiList.toString());
-      DataTransferIndices secondDtis = JaxbUtil.toObject(DataTransferIndices.class, secondDtiList.toString());
+      DataTransferIndices firstDtis = JaxbUtils.toObject(DataTransferIndices.class, firstDtiList.toString());
+      DataTransferIndices secondDtis = JaxbUtils.toObject(DataTransferIndices.class, secondDtiList.toString());
 
       // determine which DTI is source and which DTI is target
       DataTransferIndices sourceDtis = null;
@@ -70,7 +70,7 @@ public class DtiDiffMediator extends AbstractMediator implements ManagedLifecycl
       dxi.setAppName(sourceAppName + " -> " + targetAppName);
 
       // set DXI to be the result payload
-      resultPayload = AXIOMUtil.stringToOM(JaxbUtil.toXml(dxi, false));
+      resultPayload = AXIOMUtil.stringToOM(JaxbUtils.toXml(dxi, false));
 
       // set new message payload
       payload.discard();

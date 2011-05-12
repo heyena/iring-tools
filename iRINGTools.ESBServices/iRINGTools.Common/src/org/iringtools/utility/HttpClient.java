@@ -54,7 +54,7 @@ public class HttpClient
     {
       URLConnection conn = getConnection(GET, relativeUri);
       InputStream responseStream = conn.getInputStream();
-      return JaxbUtil.toObject(responseClass, responseStream);
+      return JaxbUtils.toObject(responseClass, responseStream);
     }
     catch (Exception ex)
     {
@@ -79,7 +79,7 @@ public class HttpClient
       String content = "";
 
       if (requestEntity != null && !requestEntity.getClass().getName().equals("java.lang.String"))
-        content = JaxbUtil.toXml(requestEntity, false);
+        content = JaxbUtils.toXml(requestEntity, false);
 
       URLConnection conn = getConnection(POST, relativeUri);
       conn.setRequestProperty("Content-Type", "application/xml");
@@ -91,7 +91,7 @@ public class HttpClient
       requestStream.close();
 
       InputStream responseStream = conn.getInputStream();
-      R response = JaxbUtil.toObject(responseClass, responseStream);
+      R response = JaxbUtils.toObject(responseClass, responseStream);
 
       return response;
     }
@@ -134,7 +134,7 @@ public class HttpClient
       requestStream.close();
 
       InputStream responseStream = conn.getInputStream();
-      T response = JaxbUtil.toObject(responseClass, responseStream);
+      T response = JaxbUtils.toObject(responseClass, responseStream);
 
       return response;
     }

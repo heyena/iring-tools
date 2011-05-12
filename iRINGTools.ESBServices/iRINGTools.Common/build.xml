@@ -41,7 +41,7 @@
   </path>
 
 	<target name="generate">
-		<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+		<taskdef name="xjc" classname="com.sun.tools.xjc.XJC2Task">
       <classpath refid="jaxb-ri-20100511.userclasspath" />
 		</taskdef>
 		<xjc destdir="src" extension="true">

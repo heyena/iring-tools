@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import javax.xml.bind.JAXBException;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.utility.JaxbUtil;
+import org.iringtools.utility.JaxbUtils;
 
 public class DirectoryProvider
 {
@@ -19,12 +19,12 @@ public class DirectoryProvider
   public Directory getExchanges() throws JAXBException, IOException 
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/data/directory.xml";
-    return JaxbUtil.read(Directory.class, path);    
+    return JaxbUtils.read(Directory.class, path);    
   }
 
   public ExchangeDefinition getExchangeDefinition(String scope, String id) throws JAXBException, IOException
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/data/exchange-" + scope + "-" + id + ".xml";
-    return JaxbUtil.read(ExchangeDefinition.class, path);
+    return JaxbUtils.read(ExchangeDefinition.class, path);
   }
 }
