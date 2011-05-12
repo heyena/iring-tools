@@ -344,7 +344,7 @@ public class RefDataProvider
 
   public String getClassLabel(String id) throws Exception
   {
-    return getLabel(_nsmap.GetNamespaceUri("rdl").toString() + id);
+    return getLabel(_nsmap.getNamespaceUri("rdl").toString() + id);
   }
 
   public Qmxf getClass(String id, Repository repository) throws Exception
@@ -380,7 +380,7 @@ public class RefDataProvider
       sparql = readSparql(queryContainsSearch.getFileName());
 
       if (namespaceUrl == null || namespaceUrl.isEmpty())
-        namespaceUrl = _nsmap.GetNamespaceUri("rdl").toString();
+        namespaceUrl = _nsmap.getNamespaceUri("rdl").toString();
 
       String uri = namespaceUrl + id;
 
@@ -413,7 +413,7 @@ public class RefDataProvider
           if (result.containsKey("type"))
           {
             URI typeName = new URI(result.get("type").substring(0, result.get("type").indexOf("#") + 1));
-            if (_nsmap.GetPrefix(typeName).equals("dm"))
+            if (_nsmap.getPrefix(typeName).equals("dm"))
             {
               EntityType et = new EntityType();
               et.setReference(result.get("type"));
@@ -728,7 +728,7 @@ public class RefDataProvider
 
       if (result.containsKey("uri"))
       {
-        String pref = _nsmap.GetPrefix(new URI(result.get("uri").substring(0, result.get("uri").indexOf("#") + 1)));
+        String pref = _nsmap.getPrefix(new URI(result.get("uri").substring(0, result.get("uri").indexOf("#") + 1)));
         String uriString = result.get("uri");
         if (pref.equals("owl") || pref.equals("dm"))
         {
@@ -791,6 +791,59 @@ public class RefDataProvider
     return qmxf;
   }
 
+  public final org.iringtools.refdata.response.Response getClassMembers(String Id)
+  {
+	  org.iringtools.refdata.response.Response membersResult = new org.iringtools.refdata.response.Response();
+	    Entities entities = new Entities();
+	    membersResult.setEntities(entities);
+	    List<Entity> entityList = new ArrayList<Entity>();
+	    entities.setItems(entityList);
+    try
+    {
+      String sparql = "";
+      String language = "";
+      String[] names = null;
+
+      Query getMembers =  getQuery("GetMembers");
+      QueryBindings memberBindings = getMembers.getBindings();
+      sparql = readSparql(getMembers.getFileName());
+      sparql = sparql.replace("param1", Id);
+
+      for (Repository repository : _repositories)
+      {
+        Results sparqlResults = queryFromRepository(repository, sparql);
+
+        List<Hashtable<String, String>> results = bindQueryResults(memberBindings, sparqlResults);
+
+        for (Hashtable<String, String> result : results)
+        {
+          names = result.get("label").split("@");
+          if (names.length == 1) {
+            language = defaultLanguage;
+          }
+          else {
+            language = names[names.length - 1];
+          }
+          Entity resultEntity = new Entity();
+            resultEntity.setUri(result.get("uri"));
+            resultEntity.setLabel(names[0]);
+            resultEntity.setLang(language);
+            resultEntity.setRepository(repository.getName());
+          
+          entityList.add(resultEntity);
+         // Utility.SearchAndInsert(membersResult, resultEntity, Entity.sortAscending());
+        } //queryResult.Add(resultEntity);
+        membersResult.setTotal(entityList.size());
+      }
+    }
+    catch (Exception ex)
+    {
+      logger.error("Error in Getmembers: " + ex);
+    }
+    return membersResult;
+  }
+
+  
   public final Qmxf getTemplate(String id, String templateType, Repository rep) throws HttpClientException, Exception
   {
     Qmxf qmxf = new Qmxf();
@@ -1612,7 +1665,8 @@ public class RefDataProvider
 
                     if (role.getRange() != null)
                     {
-                      qn = _nsmap.ReduceToQName(role.getRange(), qName);
+                      qn = _nsmap.reduceToQName(role.getRange(), qName);
+                      if(qn)
                       sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
                     }
 
@@ -1717,7 +1771,8 @@ public class RefDataProvider
 
                 if (role.getRange() != null)
                 {
-                  qn = _nsmap.ReduceToQName(role.getRange(), qName);
+                  qn = _nsmap.reduceToQName(role.getRange(), qName);
+                  if(qn)
                   sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
                 }
               }
@@ -1986,7 +2041,8 @@ public class RefDataProvider
 
                     if (role.getRange() != null)
                     {
-                      qn = _nsmap.ReduceToQName(role.getRange(), qName);
+                      qn = _nsmap.reduceToQName(role.getRange(), qName);
+                      if(qn)
                       sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
                     }
 
@@ -2101,7 +2157,8 @@ public class RefDataProvider
 
                 if (role.getRange() != null)
                 {
-                  qn = _nsmap.ReduceToQName(role.getRange(), qName);
+                  qn = _nsmap.reduceToQName(role.getRange(), qName);
+                  if(qn)
                   sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
                 }
               }
@@ -2116,7 +2173,6 @@ public class RefDataProvider
 
             String sparql = sparqlBuilder.toString();
             Response postResponse = postToRepository(repository, sparql);
-            // TODO
             // response.append(postResponse);
           }
         }
@@ -2171,20 +2227,26 @@ public class RefDataProvider
     Response response = new Response();
     Status status = null;
 
-    /*
-     * try { String encryptedCredentials = repository.encryptedCredentials; string uri =
-     * string.IsNullOrEmpty(repository.updateUri) ? repository.uri : repository.updateUri;
-     * 
-     * WebCredentials credentials = new WebCredentials(encryptedCredentials); if (credentials.isEncrypted)
-     * credentials.Decrypt();
-     * 
-     * SPARQLClient.PostQueryAsMultipartMessage(uri, sparql, credentials, _proxyCredentials);
-     * 
-     * status = new Status { Level = StatusLevel.Success, Messages = { "Successfully updated Repository" }, }; } catch
-     * (Exception ex) { status = new Status { Level = StatusLevel.Error, Messages = { ex.ToString() }, }; }
-     * 
-     * response.DateTimeStamp = DateTime.Now; response.Append(status);
-     */
+      try { 
+
+    	  String uri = repository.getUpdateUri().toString();
+    	  NetworkCredentials credentials = new NetworkCredentials();
+          if (repository.isIsReadOnly() == false) {
+        	  HttpClient sparqlClient = new HttpClient(uri);
+        	  sparqlClient.setNetworkCredentials(credentials);
+        	  sparqlClient.postSparql(String.class, "", sparql, "");
+        	  status = new Status();
+        	  
+        	  
+          }else{
+        	  
+          }
+      }
+      catch(Exception ex){
+    	  logger.error(ex);
+    	  return response;
+      }
+     
     return response;
   }
 
@@ -2299,9 +2361,9 @@ public class RefDataProvider
                                       if (!existingSpec.getReference().equalsIgnoreCase(spec.getReference()))
                                       {
                                           hasDeletes = true;
-                                          qn = _nsmap.ReduceToQName(existingSpec.getReference(), qName);
+                                          qn = _nsmap.reduceToQName(existingSpec.getReference(), qName);
                                           sparqlStmts.append(String.format("  ?a dm:hasSubclass {0} . ", qName));
-                                          qn = _nsmap.ReduceToQName(spec.getReference(), qName);
+                                          qn = _nsmap.reduceToQName(spec.getReference(), qName);
                                           if (qn)
                                               sparqlAdd.append(String.format(" ?a rdfs:subClassOf {0} .", qName));
                                       }
@@ -2324,13 +2386,13 @@ public class RefDataProvider
                                       if (!existingClasif.getReference().equalsIgnoreCase(clsif.getReference()))
                                       {
                                           hasDeletes = true;
-                                          qn = _nsmap.ReduceToQName(existingClasif.getReference(), qName);
+                                          qn = _nsmap.reduceToQName(existingClasif.getReference(), qName);
                                           if (qn)
                                           {
                                               sparqlStmts.append(String.format(" ?a dm:hasClassified {0} .", qName));
                                               sparqlStmts.append(String.format(" ?a dm:hasClassifier {0} .", qName));
                                           }
-                                          qn = _nsmap.ReduceToQName(clsif.getReference(), qName);
+                                          qn = _nsmap.reduceToQName(clsif.getReference(), qName);
                                           if (qn)
                                           {
                                               sparqlAdd.append(String.format(" ?a dm:hasClassified {0} .", qName));
@@ -2380,7 +2442,7 @@ public class RefDataProvider
                           // append entity type
                           if (clsDef.getEntityType()!= null && clsDef.getEntityType().getReference()!=null)
                           {
-                              qn = _nsmap.ReduceToQName(clsDef.getEntityType().getReference(), qName);
+                              qn = _nsmap.reduceToQName(clsDef.getEntityType().getReference(), qName);
 
                               if (qn)
                                   sparqlAdd.append(String.format(" rdl:{0} rdf:type {1} .", clsId, qName));
@@ -2406,7 +2468,7 @@ public class RefDataProvider
                           {
                               if (spec.getReference()!=null)
                               {
-                                  qn = _nsmap.ReduceToQName(spec.getReference(), qName);
+                                  qn = _nsmap.reduceToQName(spec.getReference(), qName);
                                   if (qn)
                                       sparqlAdd.append(String.format(" rdl:{0} rdfs:subClassOf {1} .", clsId, qName));
                               }
@@ -2419,7 +2481,7 @@ public class RefDataProvider
                           {
                               if (clsif.getReference()!=null)
                               {
-                                  qn = _nsmap.ReduceToQName(clsif.getReference(), qName);
+                                  qn = _nsmap.reduceToQName(clsif.getReference(), qName);
                                   if(qn){
 	                                    if (repository.getRepositoryType()== RepositoryType.PART_8)
 	                                    {
@@ -2693,7 +2755,6 @@ public class RefDataProvider
   private org.iringtools.refdata.response.Response getRequestedPage(org.iringtools.refdata.response.Response entities,
       int startIdx, int pageSize)
   {
-
     org.iringtools.refdata.response.Response page = new org.iringtools.refdata.response.Response();
     try
     {

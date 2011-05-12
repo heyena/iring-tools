@@ -278,6 +278,19 @@ public class RefDataService extends AbstractService {
 	}
 
 	@GET
+	@Path("/classes/{id}/members")
+	public org.iringtools.refdata.response.Response getClassMembers(@PathParam("id") String id) {
+		org.iringtools.refdata.response.Response entityList = null;
+		try {
+			initService();
+			RefDataProvider refdataProvider = new RefDataProvider(settings);
+			entityList = refdataProvider.getClassMembers(id);
+		} catch (Exception ex) {
+			logger.error("Error getting class members information: " + ex);
+		}
+		return entityList;
+	}
+	@GET
 	@Path("/search/{query}/{start}/{limit}")
 	public org.iringtools.refdata.response.Response searchPage(@PathParam("query") String query,
 			@PathParam("start") String start, @PathParam("limit") String limit) throws Exception {
