@@ -402,9 +402,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										nodeChildren.push(node.childNodes[j].text);
 									for (var i = 0; i < mydata.length; i++) {
 										var exitNode = false;
-										var newNodeText = mydata[i].data.relationName.toLowerCase();
+										var newNodeText = mydata[i].data.relationName;
 										for (var j = 0; j < nodeChildren.length; j++) {
-											if (nodeChildren[j] == newNodeText) {
+											if (nodeChildren[j].toLowerCase() == newNodeText.toLowerCase()) {
 												exitNode = true;
 												break;
 											}
@@ -426,8 +426,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									for (var j = 0; j < node.childNodes.length; j++) {
 										exitNode = false;
 										for (var i = 0; i < mydata.length; i++) {
-											newNodeText = mydata[i].data.relationName.toLowerCase();
-											if (node.childNodes[j].text == newNodeText) {
+											newNodeText = mydata[i].data.relationName;
+											if (node.childNodes[j].text.toLowerCase() == newNodeText.toLowerCase()) {
 												exitNode = true;
 												break;
 											}
@@ -505,8 +505,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var addRelationship = function (relationCreateFormPanel, node) {
 			var deleteDataRelationPane = relationCreateFormPanel.items.items[2];
 			var relationName = relationCreateFormPanel.getForm().findField("relationName").getValue().replace(/^\s*/, "").replace(/\s*$/, "");
-			if (relationName == "")
+			if (relationName == "") {
+				var message = 'Relationship name cannot be blank.';
+				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 				return;
+			}
 
 			var gridLabel = scopeName + '.' + appName + '.' + node.id;
 			if (deleteDataRelationPane.items) {
@@ -518,8 +521,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					var mydata = dataStore.data.items;
 
 					for (var i = 0; i < mydata.length; i++)
-						if (mydata[i].data.relationName == relationName)
+						if (mydata[i].data.relationName.toLowerCase() == relationName.toLowerCase()) {
+							var message = relationName + 'already exits.';
+							showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 							return;
+						}
 
 					var relationRecord = Ext.data.Record.create([
 						{ name: "relationName" }
@@ -565,17 +571,27 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					var nodeAttribute = node.attributes;
 
 				var mappingProperties = new Array();
+				ii = 0;
 				var relatedObjectName = nodeAttribute.relatedObjectName.toUpperCase();
 				if (relatedObjectName != '') {
 					var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
 					if (relatedDataObjectNode) {
-						propertiesNode = relatedDataObjectNode.attributes.children[1];
-						ii = 0;
-						for (var i = 0; i < propertiesNode.children.length; i++)
-							if (!propertiesNode.children[i].hidden) {
-								mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
-								ii++;
-							}
+						if (relatedDataObjectNode.childNodes[1]) {
+							propertiesNode = relatedDataObjectNode.childNodes[1];
+							for (var i = 0; i < propertiesNode.childNodes.length; i++)
+								if (!propertiesNode.childNodes[i].hidden) {
+									mappingProperties.push([ii.toString(), propertiesNode.childNodes[i].text]);
+									ii++;
+								}
+						}
+						else {
+							propertiesNode = relatedDataObjectNode.attributes.children[1];
+							for (var i = 0; i < propertiesNode.children.length; i++)
+								if (!propertiesNode.children[i].hidden) {
+									mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
+									ii++;
+								}61
+						}
 					}
 				}
 				else {
@@ -636,23 +652,33 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								node.attributes.attributes.relatedObjectName = relatedObjectName;
 							else
 								node.attributes.relatedObjectName = relatedObjectName;
-							propertiesNode = relatedDataObjectNode.attributes.children[1];
+
 							var mappingProperties = new Array();
 							var ii = 0;
-							// debug purpose
-							propertiesNode.children[0].hidden = true;
-							propertiesNode.children[1].hidden = true;
-							for (var i = 0; i < propertiesNode.children.length; i++)
-								if (propertiesNode.children[i].hidden) {
-									mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
-									ii++;
-								}
+							if (relatedDataObjectNode.childNodes[1]) {
+								propertiesNode = relatedDataObjectNode.childNodes[1];
+								for (var i = 0; i < propertiesNode.childNodes.length; i++)
+									if (!propertiesNode.childNodes[i].hidden) {
+										mappingProperties.push([ii.toString(), propertiesNode.childNodes[i].text]);
+										ii++;
+									}
+							}
+							else {
+								propertiesNode = relatedDataObjectNode.attributes.children[1];
+								for (var i = 0; i < propertiesNode.children.length; i++)
+									if (!propertiesNode.children[i].hidden) {
+										mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
+										ii++;
+									}
+							}
+
 							var mapCombo = relationConfigPanel.getForm().findField('mapPropertyName');
 							if (mapCombo.store.data) {
 								mapCombo.reset();
 								mapCombo.store.removeAll();
 							}
 							mapCombo.store.loadData(mappingProperties);
+							mapCombo.store.commitChanges();
 						}
 						}
 					}, {
@@ -694,11 +720,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							data: mappingProperties
 						}),
 						mode: 'local',
+						editable: false,
 						triggerAction: 'all',
 						displayField: 'text',
 						valueField: 'value',
 						selectOnFocus: true,
-						forceSelection: true,
 						listeners: { 'select': function (combo, record, index) {
 							var mapproperty = record.data.field2;
 						}
@@ -868,13 +894,19 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			var relationConfigForm = relationConfigPanel.getForm();
 			var selectPropComboBox = relationConfigForm.findField("propertyName");
 			var mapPropComboBox = relationConfigForm.findField("mapPropertyName");
-			if (!selectPropComboBox.getValue() || !mapPropComboBox.getValue())
+			if (!selectPropComboBox.getValue() || !mapPropComboBox.getValue()) {
+				var message = 'Please select a property name and a mapping property.';
+				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 				return;
+			}
 
 			var propertyName = selectPropComboBox.store.getAt(selectPropComboBox.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
 			var mapPropertyName = mapPropComboBox.store.getAt(mapPropComboBox.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
-			if (propertyName == "" || mapPropertyName == "")
+			if (propertyName == "" || mapPropertyName == "") {
+				var message = 'Property Name or Mapping Property cannot be blank.';
+				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 				return;
+			}
 
 			var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 			var gridLabel = scopeName + '.' + appName + '.' + dbObjectsTree.getSelectionModel().getSelectedNode().id;
@@ -885,8 +917,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					var myPropMap = dataStore.data.items;
 
 					for (var i = 0; i < myPropMap.length; i++)
-						if (myPropMap[i].data.property == propertyName && myPropMap[i].data.relatedProperty == mapPropertyName)
+						if (myPropMap[i].data.property == propertyName && myPropMap[i].data.relatedProperty == mapPropertyName) {
+							var message = 'The pair of ' + propertyName + ' and ' + mapPropertyName + ' already exits.';
+							showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 							return;
+						}
 
 					var propertyMapRecord = Ext.data.Record.create([
 								{ name: "property" },
@@ -976,6 +1011,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								for (var i = 0; i < rootNode.childNodes.length; i++) {
 									var dataObjectNode = rootNode.childNodes[i];
 
+									// sync data object
+									dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
+
 									for (var ii = 0; ii < dbDict.dataObjects.length; ii++) {
 										var dataObject = dbDict.dataObjects[ii];
 
@@ -984,7 +1022,15 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											var propertiesNode = dataObjectNode.attributes.children[1];
 											var relationshipsNode = dataObjectNode.attributes.children[2];
 
-											//TODO: sync key properties
+											// sync key properties
+											for (var j = 0; j < keysNode.children.length; j++) {
+												for (var jj = 0; jj < dataObject.keyProperties.length; jj++) {
+													if (keysNode.children[j].text.toLowerCase() ==
+												dataObject.keyProperties[jj].keyPropertyName.toLowerCase()) {
+														keysNode.children[j].hidden = false;
+													}
+												}
+											}
 
 											// sync data properties
 											for (var j = 0; j < propertiesNode.children.length; j++) {
@@ -999,11 +1045,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											//TODO: sync relationships
 											for (var j = 0; j < dataObject.dataRelationships.length; j++) {
 												var newNode = new Ext.tree.TreeNode({
-													text: dataObject.dataRelationships[j].relationshipName.toLowerCase(),
+													text: dataObject.dataRelationships[j].relationshipName,
 													type: 'relationship',
 													leaf: true,
 													objectName: dataObjectNode.text,
-													relatedObjectName: dataObject.dataRelationships[j].relatedObjectName.toLowerCase(),
+													relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
 													relationshipType: relationTypeStr[dataObject.dataRelationships[j].relationshipType],
 													relationshipTypeIndex: dataObject.dataRelationships[j].relationshipType,
 													propertyMap: []
@@ -1012,8 +1058,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												var mapArray = new Array();
 												for (var jj = 0; jj < dataObject.dataRelationships[j].propertyMaps.length; jj++) {
 													var mapItem = new Array();
-													mapItem['dataPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].dataPropertyName.toLowerCase();
-													mapItem['relatedPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].relatedPropertyName.toLowerCase();
+													mapItem['dataPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].dataPropertyName;
+													mapItem['relatedPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].relatedPropertyName;
 													mapArray.push(mapItem);
 												}
 												newNode.attributes.propertyMap = mapArray;
@@ -1079,25 +1125,29 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					}
 				}
 
-				var objectnameFormPanel = new Ext.FormPanel({
+				var dataObjectFormPanel = new Ext.FormPanel({
 					name: 'dataObject',
 					id: scopeName + '.' + appName + '.objectNameForm.' + node.id,
 					border: false,
 					monitorValid: true,
-					labelWidth: 80,
+					labelWidth: 160,
 					bodyStyle: 'background:#eee;padding:15px 15px 40px 15px',
 					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
-					items: [{					
+					items: [{
 						xtype: 'label',
 						fieldLabel: 'Data Object',
 						labelSeparator: '',
 						itemCls: 'form-title',
-						anchor: '100% -100'				
+						anchor: '100% -100'
 					}, {
 						name: 'tableName',
 						fieldLabel: 'Table Name',
 						value: node.text,
 						disabled: true
+					}, {
+						name: 'objectNamespace',
+						fieldLabel: 'Object Namespace',
+						value: node.attributes.properties.objectNamespace
 					}, {
 						name: 'objectName',
 						fieldLabel: 'Object Name',
@@ -1145,8 +1195,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						}]
 					})
 				});
-				editPane.add(objectnameFormPanel);
-				var panelIndex = editPane.items.indexOf(objectnameFormPanel);
+				editPane.add(dataObjectFormPanel);
+				var panelIndex = editPane.items.indexOf(dataObjectFormPanel);
 				editPane.getLayout().setActiveItem(panelIndex);
 			}
 		};
@@ -1485,7 +1535,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var folderNodeProp = folderNode.attributes.properties;
 									var folder = {};
 									folder.tableName = folderNodeProp.objectName;
-									folder.objectNamespace = folderNode.text;
+									folder.objectNamespace = folderNodeProp.objectNamespace;
 									folder.objectName = folderNodeProp.objectName;
 									if (!folderNodeProp.keyDelimeter)
 										folder.keyDelimeter = 'null';
@@ -1529,7 +1579,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 													props.propertyName = propertyNodeProf.propertyName;
 													props.dataType = 10;
 													props.dataLength = propertyNodeProf.dataLength;
-													props.isNullable = propertyNodeProf.nullable.toLowerCase();
+													if (propertyNodeProf.nullable)
+														props.isNullable = propertyNodeProf.nullable.toLowerCase();
 													if (props.columnName == keyName)
 														props.keyType = 1;
 													else
@@ -1553,12 +1604,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 														var propertyPairNode = relationNodeAttr.propertyMap[m];
 														var propertyPair = {};
 
-														propertyPair.dataPropertyName = propertyPairNode.dataPropertyName.toUpperCase();
-														propertyPair.relatedPropertyName = propertyPairNode.relatedPropertyName.toUpperCase();
+														propertyPair.dataPropertyName = propertyPairNode.dataPropertyName;
+														propertyPair.relatedPropertyName = propertyPairNode.relatedPropertyName;
 														relation.propertyMaps.push(propertyPair);
 													}
-													relation.relatedObjectName = relationNodeAttr.relatedObjectName.toUpperCase();
-													relation.relationshipName = relationNodeAttr.text.toUpperCase();
+													relation.relatedObjectName = relationNodeAttr.relatedObjectName;
+													relation.relationshipName = relationNodeAttr.text;
 													relation.relationshipType = relationNodeAttr.relationshipTypeIndex;
 													folder.dataRelationships.push(relation);
 												}
@@ -1577,12 +1628,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										tree: JSON.stringify(treeProperty)
 									},
 									success: function (response, request) {
-										//TODO: use message box
-										Ext.Msg.alert('Success ' + response.text);
+										showDialog(400, 100, 'Tree saving result', 'The tree is saved successfully.', Ext.Msg.OK, null);
 									},
 									failure: function (response, request) {
-										//TODO: use message box
-										Ext.Msg.alert('Error ' + response.text);
+										showDialog(660, 300, 'Tree saving result',
+										'Error happed when saving the tree', Ext.Msg.OK, null);
 									}
 								});
 							}
@@ -1758,13 +1808,23 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 							for (var ii = 0; ii < dbDict.dataObjects.length; ii++) {
 								var dataObject = dbDict.dataObjects[ii];
+								// sync data object
+								dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
 
 								if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
 									var keysNode = dataObjectNode.attributes.children[0];
 									var propertiesNode = dataObjectNode.attributes.children[1];
 									var relationshipsNode = dataObjectNode.attributes.children[2];
 
-									//TODO: sync key properties
+									// sync key properties
+									for (var j = 0; j < keysNode.children.length; j++) {
+										for (var jj = 0; jj < dataObject.keyProperties.length; jj++) {
+											if (keysNode.children[j].text.toLowerCase() ==
+												dataObject.keyProperties[jj].keyPropertyName.toLowerCase()) {
+												keysNode.children[j].hidden = false;
+											}
+										}
+									}
 
 									// sync data properties
 									for (var j = 0; j < propertiesNode.children.length; j++) {
@@ -1776,14 +1836,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										}
 									}
 
-									//TODO: sync relationships
+									// sync relationships
 									for (var j = 0; j < dataObject.dataRelationships.length; j++) {
 										var newNode = new Ext.tree.TreeNode({
-											text: dataObject.dataRelationships[j].relationshipName.toLowerCase(),
+											text: dataObject.dataRelationships[j].relationshipName,
 											type: 'relationship',
 											leaf: true,
 											objectName: dataObjectNode.text,
-											relatedObjectName: dataObject.dataRelationships[j].relatedObjectName.toLowerCase(),
+											relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
 											relationshipType: relationTypeStr[dataObject.dataRelationships[j].relationshipType],
 											relationshipTypeIndex: dataObject.dataRelationships[j].relationshipType,
 											propertyMap: []
@@ -1791,8 +1851,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										var mapArray = new Array();
 										for (var jj = 0; jj < dataObject.dataRelationships[j].propertyMaps.length; jj++) {
 											var mapItem = new Array();
-											mapItem['dataPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].dataPropertyName.toLowerCase();
-											mapItem['relatedPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].relatedPropertyName.toLowerCase();
+											mapItem['dataPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].dataPropertyName;
+											mapItem['relatedPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].relatedPropertyName;
 											mapArray.push(mapItem);
 										}
 										newNode.attributes.propertyMap = mapArray;
@@ -1807,8 +1867,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				}
 			},
 			failure: function (response, request) {
-				//TODO: use message box
-				//Ext.Msg.alert('Error ' + response.text);
+				showDialog(400, 100, 'Warning', 'Please connect to a Database first.', Ext.Msg.OK, null);
 				editPane = dataObjectsPane.items.items[1];
 				if (!editPane) {
 					var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
@@ -1834,7 +1893,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 		var dataRelationGridPane = new Ext.grid.GridPanel({
 			id: gridlabel,
 			store: dataStore,
-			stripeRows: true,			
+			stripeRows: true,
 			minHeight: 200,
 			minWidth: 300,
 			maxHeight: 600,
@@ -1861,7 +1920,10 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 							dataStore.removeAt(selectIndex);
 						}
 						else {
-							alert('Please select a row first');
+							if (dataStore.data.items.length < 1)
+								showDialog(400, 100, 'Warning', 'No records exits in the table', Ext.Msg.OK, null);
+							else
+								showDialog(400, 100, 'Warning', 'Please select a row first.', Ext.Msg.OK, null);
 						}
 					}
 				}, {
@@ -1877,15 +1939,20 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 						var rp = tab.items.map[configLabel];
 						var dataObjectsPane = rp.items.map[dbObjLabel];
 						var editPane = dataObjectsPane.items.items[1];
-						var form = editPane.items.map[formLabel].getForm();						
+						var form = editPane.items.map[formLabel].getForm();
 						var mydata = dataStore.data.items;
 						var relationName = form.findField('relationName').getValue().replace(/^\s*/, "").replace(/\s*$/, "");
-						if (relationName == '')
+						if (relationName == '') {
+							var message = 'Relationship name cannot be added when the field is blank.';
+							showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 							return;
-
+						}
 						for (var i = 0; i < mydata.length; i++)
-							if (mydata[i].data.relationName == relationName)
+							if (mydata[i].data.relationName.toLowerCase() == relationName.toLowerCase()) {
+								var message = relationName + 'already exits.';
+								showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 								return;
+							}
 						var relationRecord = Ext.data.Record.create([
 							{ name: "relationName" }
 						]);
@@ -1895,7 +1962,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 						});
 
 						dataStore.add(newRelationRecord);
-						dataStore.commitChanges();									
+						dataStore.commitChanges();
 					}
 				}]
 			})
@@ -1939,15 +2006,18 @@ function createPropertyMapGrid(gridlabel, dataGridPanel, colModel, dataStore, co
 					icon: 'Content/img/16x16/edit-delete.png',
 					text: 'Delete',
 					tooltip: 'Delete',
-					handler: function () {
-						var selectModel = dataRelationGridPane.getSelectionModel();
+					handler: function () {						
+						var selectModel = propertyMapGridPane.getSelectionModel();
 						if (selectModel.hasSelection()) {
 							var selectIndex = selectModel.getSelectedIndex();
 							dataStore.removeAt(selectIndex);
 						}
 						else {
-							alert('Please select a row first');
-						}
+							if (dataStore.data.items.length < 1)
+								showDialog(400, 100, 'Warning', 'Deletion cannot be performed because no records exits in the table', Ext.Msg.OK, null);
+							else
+								showDialog(400, 100, 'Warning', 'Please select a row before deletion.', Ext.Msg.OK, null);
+						}				
 					}
 				}, {
 					xtype: 'tbspacer',
@@ -1962,7 +2032,7 @@ function createPropertyMapGrid(gridlabel, dataGridPanel, colModel, dataStore, co
 						var rp = tab.items.map[configLabel];
 						var dataObjectsPane = rp.items.map[dbObjLabel];
 						var editPane = dataObjectsPane.items.items[1];
-						var form = editPane.items.map[formLabel].getForm();						
+						var form = editPane.items.map[formLabel].getForm();
 						var myPropMap = dataStore.data.items;
 						var propertyNameCombo = form.findField('propertyName');
 						var mapPropertyNameCombo = form.findField('mapPropertyName');
@@ -1971,12 +2041,18 @@ function createPropertyMapGrid(gridlabel, dataGridPanel, colModel, dataStore, co
 
 						var propertyName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
 						var mapPropertyName = mapPropertyNameCombo.store.getAt(mapPropertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
-						if (propertyName == "" || mapPropertyName == "")
+						if (propertyName == "" || mapPropertyName == "") {
+							var message = 'The pair of property name and mapping property cannot added when either value is blank.';
+							showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 							return;
+						}
 
 						for (var i = 0; i < myPropMap.length; i++)
-							if (myPropMap[i].data.property == propertyName && myPropMap[i].data.relatedProperty == mapPropertyName)
+							if (myPropMap[i].data.property == propertyName && myPropMap[i].data.relatedProperty == mapPropertyName) {
+								var message = 'The pair of ' + propertyName + ' and ' + mapPropertyName + ' cannot be added because the pair already exits.';
+								showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 								return;
+							}
 
 						var propertyMapRecord = Ext.data.Record.create([
 							{ name: "property" },
@@ -1989,7 +2065,7 @@ function createPropertyMapGrid(gridlabel, dataGridPanel, colModel, dataStore, co
 						});
 
 						dataStore.add(newpropertyMapRecord);
-						dataStore.commitChanges();						
+						dataStore.commitChanges();
 					}
 				}]
 			})
