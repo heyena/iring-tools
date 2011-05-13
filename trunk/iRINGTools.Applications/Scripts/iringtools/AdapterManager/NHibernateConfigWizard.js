@@ -21,6 +21,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					}
 				}
 
+				if (node.attributes.properties) 
+					var properties = node.attributes.properties;					
+				else
+					var properties = node.attributes.attributes.properties;
+
 				var keyPropertyFormPanel = new Ext.FormPanel({
 					name: 'keyProperty',
 					id: scopeName + '.' + appName + '.keyPropertyForm.' + node.id,
@@ -48,7 +53,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						triggerAction: 'all',
 						displayField: 'name',
 						valueField: 'value',
-						value: node.attributes.properties.keyType.toLowerCase()
+						value: properties.keyType
 					}],
 					treeNode: node,
 					tbar: new Ext.Toolbar({
@@ -80,7 +85,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							tooltip: 'Reset',
 							handler: function (f) {
 								var form = keyPropertyFormPanel.getForm();
-								setDataPropertyFields(form, node.attributes.properties);
+								setDataPropertyFields(form, properties);
 								form.findField('nullable').disable();
 							}
 						}]
@@ -88,7 +93,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				});
 
 				var form = keyPropertyFormPanel.getForm();
-				setDataPropertyFields(form, node.attributes.properties);
+				setDataPropertyFields(form, properties);
 				editPane.add(keyPropertyFormPanel);
 				var panelIndex = editPane.items.indexOf(keyPropertyFormPanel);
 				editPane.getLayout().setActiveItem(panelIndex);
@@ -590,7 +595,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								if (!propertiesNode.children[i].hidden) {
 									mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
 									ii++;
-								}61
+								} 61
 						}
 					}
 				}
@@ -1316,19 +1321,25 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 									// find the node in the keys node and move it to properties node
 									if (!found) {
-										var properties = keysNode.childNodes[i].attributes.properties;
-										properties['nullable'] = true;
-										delete properties.keyType;
+										if (keysNode.childNodes[i].attributes.properties)
+											var properties = keysNode.childNodes[i].attributes.properties;
+										else if (keysNode.childNodes[i].attributes.attributes.properties)
+											var properties = keysNode.childNodes[i].attributes.attributes.properties;
 
-										var propertyNode = new Ext.tree.TreeNode({
-											text: keysNode.childNodes[i].text,
-											type: "dataProperty",
-											leaf: true,
-											properties: properties
-										});
+										if (properties) {
+											properties['nullable'] = true;
+											delete properties.keyType;
 
-										propertiesNode.appendChild(propertyNode);
-										keysNode.removeChild(keysNode.childNodes[i], true);
+											var propertyNode = new Ext.tree.TreeNode({
+												text: keysNode.childNodes[i].text,
+												type: "dataProperty",
+												leaf: true,
+												properties: properties
+											});
+
+											propertiesNode.appendChild(propertyNode);
+											keysNode.removeChild(keysNode.childNodes[i], true);
+										}
 									}
 								}
 							}
@@ -1544,75 +1555,136 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									folder.keyProperties = new Array();
 									folder.dataProperties = new Array();
 									folder.dataRelationships = new Array();
+
 									for (var j = 0; j < folderNode.attributes.children.length; j++) {
-										var subFolderNode = folderNode.attributes.children[j];
+										if (folderNode.childNodes[1])
+											var propertyFolderNode = folderNode.childNodes[1];
+										else
+											var propertyFolderNode = folderNode.attributes.children[1];
+
+										if (folderNode.childNodes[0])
+											var keyFolderNode = folderNode.childNodes[0];
+										else
+											var keyFolderNode = folderNode.attributes.children[0];
+
 										if (folderNode.childNodes[2])
 											var relationFolderNode = folderNode.childNodes[2];
-										var subFolderNodeText = subFolderNode.text;
+										else
+											var relationFolderNode = folderNode.attributes.children[2];
+
+										if (folderNode.childNodes[j])
+											subFolderNodeText = folderNode.childNodes[j].text;
+										else
+											subFolderNodeText = folderNode.attributes.children[j].text;
+
 										switch (subFolderNodeText) {
 											case 'Keys':
-												for (var k = 0; k < subFolderNode.children.length; k++) {
-													var keyNode = subFolderNode.children[k];
-													var keyProps = {};
-													keyProps.keyPropertyName = keyNode.text;
-													keyName = keyNode.text;
-													folder.keyProperties.push(keyProps);
+												if (folderNode.childNodes[1])
+													var keyChildenNodes = keyFolderNode.childNodes;
+												else
+													var keyChildenNodes = keyFolderNode.children;
 
-													var tagProps = {};
-													tagProps.columnName = keyNode.text;
-													tagProps.propertyName = keyNode.text;
-													tagProps.dataType = 10;
-													tagProps.dataLength = 100;
-													tagProps.isNullable = 'false';
-													tagProps.keyType = 1;
-													tagProps.showOnIndex = 'false';
-													tagProps.numberOfDecimals = 0;
-													folder.dataProperties.push(tagProps);
+												for (var k = 0; k < keyChildenNodes.length; k++) {
+													var keyNode = keyChildenNodes[k];
+
+													if (!keyNode.hidden) {
+														var keyProps = {};
+														keyProps.keyPropertyName = keyNode.text;
+														keyName = keyNode.text;
+														folder.keyProperties.push(keyProps);
+
+														var tagProps = {};
+														tagProps.columnName = keyNode.text;
+														tagProps.propertyName = keyNode.text;
+														tagProps.dataType = 10;
+														tagProps.dataLength = 100;
+														tagProps.isNullable = 'false';
+														tagProps.keyType = 1;
+														tagProps.showOnIndex = 'false';
+														tagProps.numberOfDecimals = 0;
+														folder.dataProperties.push(tagProps);
+													}
 												}
 												break;
 											case 'Properties':
-												for (var k = 0; k < subFolderNode.children.length; k++) {
-													var propertyNode = subFolderNode.children[k];
-													var propertyNodeProf = propertyNode.properties;
-													var props = {};
-													props.columnName = propertyNodeProf.columnName;
-													props.propertyName = propertyNodeProf.propertyName;
-													props.dataType = 10;
-													props.dataLength = propertyNodeProf.dataLength;
-													if (propertyNodeProf.nullable)
-														props.isNullable = propertyNodeProf.nullable.toLowerCase();
-													if (props.columnName == keyName)
-														props.keyType = 1;
-													else
-														props.keyType = 0;
-													props.showOnIndex = propertyNodeProf.showOnIndex.toLowerCase();
-													props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
-													folder.dataProperties.push(props);
+												if (folderNode.childNodes[1])
+													var propChildenNodes = propertyFolderNode.childNodes;
+												else
+													var propChildenNodes = propertyFolderNode.children;
+												for (var k = 0; k < propChildenNodes.length; k++) {
+													var propertyNode = propChildenNodes[k];
+
+													if (!propertyNode.hidden) {
+														if (propertyNode.properties)
+															var propertyNodeProf = propertyNode.properties;
+														else if (propertyNode.attributes)
+															var propertyNodeProf = propertyNode.attributes.properties;
+
+														var props = {};
+														props.columnName = propertyNodeProf.columnName;
+														props.propertyName = propertyNodeProf.propertyName;
+
+														props.dataType = 10;
+														props.dataLength = propertyNodeProf.dataLength;
+														if (propertyNodeProf.nullable == 'True')
+															props.isNullable = 'true';
+														else
+															props.isNullable = 'false';
+
+														if (props.columnName == keyName)
+															props.keyType = 1;
+														else
+															props.keyType = 0;
+
+														if (propertyNodeProf.showOnIndex == 'True')
+															props.showOnIndex = 'true';
+														else
+															props.showOnIndex = 'false';
+
+														props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
+														folder.dataProperties.push(props);
+													}
 												}
 												break;
 											case 'Relationships':
 												if (!relationFolderNode)
 													break;
-												for (var k = 0; k < relationFolderNode.childNodes.length; k++) {
-													var relationNode = relationFolderNode.childNodes[k];
-													var relationNodeAttr = relationNode.attributes.attributes;
-													if (!relationNodeAttr)
-														var relationNodeAttr = relationNode.attributes;
-													var relation = {};
-													relation.propertyMaps = new Array();
-													for (var m = 0; m < relationNodeAttr.propertyMap.length; m++) {
-														var propertyPairNode = relationNodeAttr.propertyMap[m];
-														var propertyPair = {};
 
-														propertyPair.dataPropertyName = propertyPairNode.dataPropertyName;
-														propertyPair.relatedPropertyName = propertyPairNode.relatedPropertyName;
-														relation.propertyMaps.push(propertyPair);
+												if (folderNode.childNodes[2])
+													var relChildenNodes = relationFolderNode.childNodes;
+												else
+													var relChildenNodes = relationFolderNode.children;
+
+												if (relChildenNodes)
+													for (var k = 0; k < relChildenNodes.length; k++) {
+														var relationNode = relChildenNodes[k];
+														if (relationNode.attributes) {
+															if (relationNode.attributes.attributes) {
+																var relationNodeAttr = relationNode.attributes.attributes;
+															}
+															else {
+																var relationNodeAttr = relationNode.attributes;
+															}
+														}
+														else {
+															relationNodeAttr = relationNode;
+														}
+
+														var relation = {};
+														relation.propertyMaps = new Array();
+														for (var m = 0; m < relationNodeAttr.propertyMap.length; m++) {
+															var propertyPairNode = relationNodeAttr.propertyMap[m];
+															var propertyPair = {};
+
+															propertyPair.dataPropertyName = propertyPairNode.dataPropertyName;
+															propertyPair.relatedPropertyName = propertyPairNode.relatedPropertyName;
+															relation.propertyMaps.push(propertyPair);
+														}
+														relation.relatedObjectName = relationNodeAttr.relatedObjectName;
+														relation.relationshipName = relationNodeAttr.text;
+														relation.relationshipType = relationNodeAttr.relationshipTypeIndex;
+														folder.dataRelationships.push(relation);
 													}
-													relation.relatedObjectName = relationNodeAttr.relatedObjectName;
-													relation.relationshipName = relationNodeAttr.text;
-													relation.relationshipType = relationNodeAttr.relationshipTypeIndex;
-													folder.dataRelationships.push(relation);
-												}
 												break;
 										}
 									}
@@ -1816,22 +1888,48 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var propertiesNode = dataObjectNode.attributes.children[1];
 									var relationshipsNode = dataObjectNode.attributes.children[2];
 
-									// sync key properties
-									for (var j = 0; j < keysNode.children.length; j++) {
-										for (var jj = 0; jj < dataObject.keyProperties.length; jj++) {
-											if (keysNode.children[j].text.toLowerCase() ==
-												dataObject.keyProperties[jj].keyPropertyName.toLowerCase()) {
-												keysNode.children[j].hidden = false;
-											}
-										}
-									}
-
 									// sync data properties
 									for (var j = 0; j < propertiesNode.children.length; j++) {
 										for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
 											if (propertiesNode.children[j].text.toLowerCase() ==
 												dataObject.dataProperties[jj].propertyName.toLowerCase()) {
 												propertiesNode.children[j].hidden = false;
+											}
+										}
+									}
+
+									// sync key properties
+									for (var j = 0; j < dataObject.keyProperties.length; j++) {
+										for (var k = 0; k < keysNode.children.length; k++) {
+											if (keysNode.children[k].text.toLowerCase() == dataObject.keyProperties[j].keyPropertyName.toLowerCase()) {
+												j++;
+												break;
+											}
+										}
+										if (j < dataObject.keyProperties.length) {
+											for (var jj = 0; jj < propertiesNode.children.length; jj++) {
+												var nodeText = dataObject.keyProperties[j].keyPropertyName;
+												if (propertiesNode.children[jj].text.toLowerCase() == nodeText.toLowerCase()) {
+													var properties = propertiesNode.children[jj].properties;
+													properties.keyType = 'assigned';
+													properties.nullable = false;
+
+													newKeyNode = new Ext.tree.TreeNode({
+														text: nodeText,
+														type: "keyProperty",
+														leaf: true,
+														hidden: false,
+														properties: properties
+													});
+
+													propertiesNode.children.splice(jj, 1);
+													jj--;
+
+													if (newKeyNode)
+														keysNode.children.push(newKeyNode);
+
+													break;
+												}
 											}
 										}
 									}
