@@ -59,6 +59,14 @@ namespace iRINGTools.Web.Models
       return _client.Get<Entities>(relativeUri);
     }
 
+    public Entities GetSubClassesCount(string classId)
+    {
+        relativeUri = string.Format("/classes/{0}/subclasses/count", classId);
+        return _client.Get<Entities>(relativeUri);
+    }
+
+  
+
     public Entities GetSuperClasses(string classId)
     {
       relativeUri = string.Format("/classes/{0}/superclasses", classId);
@@ -70,6 +78,13 @@ namespace iRINGTools.Web.Models
       relativeUri = string.Format("/classes/{0}/templates", classId);
       return _client.Get<Entities>(relativeUri);
     }
+
+    public Entities GetClassTemplatesCount(string classId)
+    {
+        relativeUri = string.Format("/classes/{0}/templates/count", classId);
+        return _client.Get<Entities>(relativeUri);
+    }
+
     public QMXF GetClasses(string classId)
     {
       relativeUri = string.Format("/classes/{0}", classId);

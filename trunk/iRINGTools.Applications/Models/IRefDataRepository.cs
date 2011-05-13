@@ -22,6 +22,10 @@ namespace iRINGTools.Web.Models
 
     Entities GetSubClasses(string classId);
 
+    Entities GetSubClassesCount(string classId);
+
+    Entities GetClassTemplatesCount(string classId);
+
     Entities GetClassTemplates(string classId);
 
     Entities GetClassMembers(string classId);

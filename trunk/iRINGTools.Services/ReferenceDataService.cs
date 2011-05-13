@@ -177,6 +177,16 @@ namespace org.iringtools.services
     }
 
     /// <summary>
+    /// return immediate subclasses count of specified class
+    /// </summary>
+    [Description("return immediate subclasses of specified class")]
+    [WebGet(UriTemplate = "/classes/{id}/subclasses/count")]
+    public Entities GetSubClassesCount(string id)
+    {
+        return _referenceDataProvider.GetSubClassesCount(id);
+    }
+
+    /// <summary>
     /// templates on a class
     /// </summary>
     [Description("templates on a class")]
@@ -184,6 +194,16 @@ namespace org.iringtools.services
     public Entities GetClassTemplates(string id)
     {
       return _referenceDataProvider.GetClassTemplates(id);
+    }
+
+    /// <summary>
+    /// Count templates on a class
+    /// </summary>
+    [Description("Count templates on a class")]
+    [WebGet(UriTemplate = "/classes/{id}/templates/count")]
+    public Entities GetClassTemplatesCount(string id)
+    {
+        return _referenceDataProvider.GetClassTemplatesCount(id);
     }
 
     ///<summary>

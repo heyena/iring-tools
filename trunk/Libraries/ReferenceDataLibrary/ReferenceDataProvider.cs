@@ -947,6 +947,76 @@ namespace org.iringtools.refdata
             return queryResult;
         }
 
+        public Entities GetSubClassesCount(string id)
+        {
+            Entities queryResult = new Entities();
+
+            try
+            {
+                string sparql = String.Empty;
+                string sparqlPart8 = String.Empty;
+                string relativeUri = String.Empty;
+                string language = string.Empty;
+                List<string> names = new List<string>();
+
+                Query queryGetSubClasses = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassesCount").Query;
+                QueryBindings queryBindings = queryGetSubClasses.Bindings;
+
+                sparql = ReadSPARQL(queryGetSubClasses.FileName);
+                sparql = sparql.Replace("param1", id);
+
+                Query queryGetSubClassOfInverse = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassOfInverseCount").Query;
+                QueryBindings queryBindingsPart8 = queryGetSubClassOfInverse.Bindings;
+
+                sparqlPart8 = ReadSPARQL(queryGetSubClassOfInverse.FileName);
+                sparqlPart8 = sparqlPart8.Replace("param1", id);
+
+                int count = 0;
+                foreach (Repository repository in _repositories)
+                {
+                    if (repository.RepositoryType == RepositoryType.Part8)
+                    {
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparqlPart8);
+
+                        List<Dictionary<string, string>> results = BindQueryResults(queryBindingsPart8, sparqlResults);
+
+                       
+                        foreach (Dictionary<string, string> result in results)
+                        {
+                            count = count + Convert.ToInt32(result["label"]);
+                            
+                            //queryResult.Add(resultEntity);
+                        }
+                    }
+                    else
+                    {
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparql);
+
+                        List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
+                        
+                        foreach (Dictionary<string, string> result in results)
+                        {
+                            count = count + Convert.ToInt32(result["label"]);
+                        }
+                    }
+                }
+                Entity resultEntity = new Entity
+                {
+                    Uri = string.Empty,
+                    Label = Convert.ToString(count),
+                    Lang = string.Empty,
+                };
+
+                Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error in GetSubClasses: " + e);
+                throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
+            }
+            return queryResult;
+        }
+
         public Entities GetClassTemplates(string id)
         {
             Entities queryResult = new Entities();
@@ -1027,6 +1097,74 @@ namespace org.iringtools.refdata
                         }
                     }
                 }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error in GetClassTemplates: " + e);
+                throw new Exception("Error while Finding " + id + ".\n" + e.ToString(), e);
+            }
+            return queryResult;
+        }
+
+        public Entities GetClassTemplatesCount(string id)
+        {
+            Entities queryResult = new Entities();
+            List<string> names = new List<string>();
+            string language = string.Empty;
+            try
+            {
+                string sparqlGetClassTemplates = String.Empty;
+                string sparqlGetRelatedTemplates = String.Empty;
+                string relativeUri = String.Empty;
+
+                Query queryGetClassTemplates = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassTemplatesCount").Query;
+                QueryBindings queryBindingsGetClassTemplates = queryGetClassTemplates.Bindings;
+
+                sparqlGetClassTemplates = ReadSPARQL(queryGetClassTemplates.FileName);
+                sparqlGetClassTemplates = sparqlGetClassTemplates.Replace("param1", id);
+
+                Query queryGetRelatedTemplates = (Query)_queries.FirstOrDefault(c => c.Key == "GetRelatedTemplatesCount").Query;
+                QueryBindings queryBindingsGetRelatedTemplates = queryGetRelatedTemplates.Bindings;
+
+                sparqlGetRelatedTemplates = ReadSPARQL(queryGetRelatedTemplates.FileName);
+                sparqlGetRelatedTemplates = sparqlGetRelatedTemplates.Replace("param1", id);
+
+                int count = 0;
+                foreach (Repository repository in _repositories)
+                {
+                    if (repository.RepositoryType == RepositoryType.Part8)
+                    {
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparqlGetRelatedTemplates);
+
+                        List<Dictionary<string, string>> results = BindQueryResults(queryBindingsGetRelatedTemplates, sparqlResults);
+
+                        foreach (Dictionary<string, string> result in results)
+                        {
+                            count = count + Convert.ToInt32(result["label"]);
+
+                            //queryResult.Add(resultEntity);
+                        }
+                    }
+                    else
+                    {
+                        SPARQLResults sparqlResults = QueryFromRepository(repository, sparqlGetClassTemplates);
+
+                        List<Dictionary<string, string>> results = BindQueryResults(queryBindingsGetClassTemplates, sparqlResults);
+
+                        foreach (Dictionary<string, string> result in results)
+                        {
+                            count = count + Convert.ToInt32(result["label"]);
+                        }
+                    }
+                }
+                Entity resultEntity = new Entity
+                {
+                    Uri = string.Empty,
+                    Label = Convert.ToString(count),
+                    Lang = string.Empty,
+                };
+
+                Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
             }
             catch (Exception e)
             {
