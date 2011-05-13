@@ -595,7 +595,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								if (!propertiesNode.children[i].hidden) {
 									mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
 									ii++;
-								} 61
+								} 
 						}
 					}
 				}
