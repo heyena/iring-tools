@@ -20,6 +20,7 @@ import org.iringtools.refdata.federation.Namespace;
 import org.iringtools.refdata.federation.Repository;
 import org.iringtools.refdata.queries.Queries;
 import org.iringtools.services.core.RefDataProvider;
+import org.iringtools.refdata.response.Entity;
 
 @Path("/")
 @Consumes("application/xml")
@@ -165,9 +166,9 @@ public class RefDataService extends AbstractService {
 	 */
 	@GET
 	@Path("/classes/{id}/label")
-	@Produces("text/html")
-	public String getClassLabel(@PathParam("id") String id) {
-		String classLabel = "";
+	@Produces("text/xml")
+	public Entity getClassLabel(@PathParam("id") String id) {
+		Entity classLabel=new Entity();
 		try {
 			initService();
 			RefDataProvider refDataProvider = new RefDataProvider(settings);
