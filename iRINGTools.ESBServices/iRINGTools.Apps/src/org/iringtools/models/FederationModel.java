@@ -36,7 +36,7 @@ public class FederationModel
   {
     try
     {
-      String uri = ActionContext.getContext().getApplication().get("FederationServiceUri").toString();
+      String uri = ActionContext.getContext().getApplication().get("RefDataServiceUri").toString();
       httpClient = new HttpClient(uri);
     }
     catch (Exception e)
