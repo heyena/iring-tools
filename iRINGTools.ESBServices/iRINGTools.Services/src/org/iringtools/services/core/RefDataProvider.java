@@ -342,7 +342,7 @@ public class RefDataProvider
     return new Version();
   }
 
-  public String getClassLabel(String id) throws Exception
+  public Entity getClassLabel(String id) throws Exception
   {
     return getLabel(_nsmap.getNamespaceUri("rdl").toString() + id);
   }
@@ -587,7 +587,7 @@ public class RefDataProvider
             }
             else
             {
-              names = getLabel(uri).split("@", -1);
+              names = getLabel(uri).getLabel().split("@",-1);
               label = names[0];
               if (names.length == 1)
               {
@@ -637,7 +637,7 @@ public class RefDataProvider
             }
             else
             {
-              label = getLabel(uri);
+            	label = getLabel(uri).getLabel();
             }
 
             specialization.setLabel(label);
@@ -749,7 +749,7 @@ public class RefDataProvider
       }
       else
       {
-        names = getLabel(uri).split("@");
+    	names = getLabel(uri).getLabel().split("@");
         label = names[0];
         if (names.length == 1)
           lang = defaultLanguage;
@@ -1261,7 +1261,7 @@ public class RefDataProvider
 
               if (nameValue == null)
               {
-                nameValue = getLabel(uri);
+            	  nameValue = getLabel(uri).getLabel();
               }
               names = nameValue.split("@", -1);
 
@@ -1281,7 +1281,7 @@ public class RefDataProvider
             }
             else
             {
-              String nameValue = getLabel(uri);
+            	String nameValue = getLabel(uri).getLabel();
 
               if (nameValue.equals(""))
               {
@@ -2808,7 +2808,7 @@ public class RefDataProvider
 
         if (label == null)
         {
-          names = getLabel(uri).split("@");
+          names = getLabel(uri).getLabel().split("@");
           label = names[0];
         }
         if (names.length == 1)
@@ -2962,7 +2962,7 @@ public class RefDataProvider
 
         if (label == null)
         {
-          names = getLabel(uri).split("[@]", -1);
+          names = getLabel(uri).getLabel().split("[@]",-1);
           label = names[0];
           if (names.length == 1)
           {
@@ -3061,37 +3061,49 @@ public class RefDataProvider
     return idsAdiId;
   }
 
-  public String getLabel(String uri) throws Exception
+  public Entity getLabel(String uri) throws Exception
   {
-    String label = "";
-    Query query = new Query();
-    String sparql = "";
-    List<QueryItem> items = _queries.getItems();
-    for (QueryItem qry : items)
-    {
-      if (qry.getKey().contains("GetLabel"))
-      {
-        query = qry.getQuery();
-        break;
-      }
-    }
-    QueryBindings queryBindings = query.getBindings();
-    sparql = readSparql(query.getFileName());
-    sparql = sparql.replace("param1", uri);
-    for (Repository repository : _repositories)
-    {
-      Results sparqlResults = queryFromRepository(repository, sparql);
+      Entity labelEntity = new Entity();
 
-      List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
-      for (Hashtable<String, String> result : results)
+      try
       {
-        if (result.containsKey("label"))
-        {
-          label = result.get("label");
-        }
+          String sparql = "";
+          String[] names;
+          Query queryContainsSearch = getQuery("GetLabel");
+          QueryBindings queryBindings = queryContainsSearch.getBindings();
+          sparql = readSparql(queryContainsSearch.getFileName());
+          sparql = sparql.replace("param1", uri);
+
+          for (Repository repository : _repositories)
+          {
+              
+              Results sparqlResults = queryFromRepository(repository, sparql);
+              List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
+              for (Hashtable<String, String> result : results)
+              {
+                  if (result.containsKey("label"))
+                  {
+                      names = result.get("label").split("@");
+                      if (names.length == 1)
+                          labelEntity.setLang(defaultLanguage);
+                      else
+                          labelEntity.setLang(names[names.length - 1]);
+
+                      labelEntity.setLabel(names[0]);
+                      labelEntity.setRepository(repository.getName());
+                      labelEntity.setUri(repository.getUri());
+                      break;
+                  }
+              }
+          }
+
+          return labelEntity;
       }
-    }
-    return label;
+      catch (Exception e)
+      {
+    	  logger.error("Error in GetClass: " + e);
+    	  return labelEntity;
+      }
   }
 
   private List<RoleDefinition> getRoleDefinition(String id) throws Exception, HttpClientException
