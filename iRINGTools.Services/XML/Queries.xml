@@ -84,6 +84,18 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetSubClassesCount</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetSubClassCount.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetClassification</key>
     <query>
       <bindings>
@@ -384,6 +396,18 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetClassTemplatesCount</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetClassTemplatesCount.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>ClassProperties</key>
     <query>
       <bindings>
@@ -553,6 +577,18 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetSubClassOfInverseCount</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>count</name>
+          <type>Uri</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetSubClassOfInverseCount.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetRelatedTemplates</key>
     <query>
       <bindings>
@@ -566,6 +602,18 @@
         </queryBinding>
       </bindings>
       <fileName>GetRelatedTemplates.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetRelatedTemplatesCount</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetRelatedTemplatesCount.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
