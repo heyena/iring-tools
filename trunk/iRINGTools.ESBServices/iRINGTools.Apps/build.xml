@@ -35,12 +35,6 @@
 		</fileset>
 	</path>
 
-	<path id="gson-1.4.userclasspath">
-		<fileset dir="../libraries/google-gson-1.4">
-			<include name="**/*.jar" />
-		</fileset>
-	</path>
-
 	<path id="log4j-1.2.16.userclasspath">
 		<fileset dir="../libraries/apache-log4j-1.2.16">
 			<include name="**/*.jar" />
@@ -113,7 +107,6 @@
 			<path refid="commons-codec-1.4.userclasspath" />
 			<path refid="log4j-1.2.16.userclasspath" />
 			<path refid="jaxb-ri-20100511.userclasspath" />
-			<path refid="gson-1.4.userclasspath" />
 		</copy>
 		<jar destfile="dist/iringtools-apps.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
 		<!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->
