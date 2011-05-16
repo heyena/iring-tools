@@ -418,11 +418,23 @@ FederationManager.FederationPanel = Ext
             	if (i != 'Alias')
             		continue;
               var listItem = {};
+              if(i=='Alias'){
+              	  listItem.enableKeyEvents=true;
+              	  listItem.listeners= {
+  		        		keyup:function(f,evt){
+  		        			if (formType == 'editForm') {
+  		        			Ext.getCmp('tab-' +node.id).setTitle(node.parentNode.text + ' : ' +f.getValue());
+  		        			}else{
+  		        				Ext.getCmp('tab-' +node.id).setTitle(obj['text'] +': '+f.getValue());
+  		        			}
+  		          		}
+  		        		};
+                }
               var fname = i;
               var value = '';	 
               listItem.xtype = 'textfield';
               listItem.width = 230;
-              
+            	  
               if (formType == 'editForm') {
                 value = properties[i];
                 label = node.parentNode.text + ' : ' + obj['text'];
@@ -445,9 +457,23 @@ FederationManager.FederationPanel = Ext
               var listItem = {};
               var fname = i;
               var value = '';	              
+
+              if(i=='Name'){
+              	  listItem.enableKeyEvents=true;
+              	  listItem.listeners= {
+  		        		keyup:function(f,evt){
+  		        			if (formType == 'editForm') {
+  		        			Ext.getCmp('tab-' +node.id).setTitle(node.parentNode.text + ' : ' +f.getValue());
+  		        			}else{
+  		        				Ext.getCmp('tab-' +node.id).setTitle(obj['text'] +': '+f.getValue());
+  		        			}
+  		          		}
+  		        		};
+                }
+              
               
               switch (fname) {
-	              case "Description": 
+              	  case "Description": 
 	                listItem.xtype = 'textarea';
 	                listItem.width = 230;
 	                break;	                    
@@ -512,11 +538,11 @@ FederationManager.FederationPanel = Ext
                 label = node.parentNode.text + ' : ' + obj['text'];
               } 
               else {
-                label = obj['text'] + ':(New)';	                
-              
+                label = obj['text'] + ':(New)';
               }
               
               listItem.fieldLabel = i;
+
               listItem.name = i;
               listItem.allowBlank = false;
               listItem.blankText = 'This Field is required';
@@ -675,7 +701,7 @@ FederationManager.FederationPanel = Ext
               listItems.push(listItem);
 	            
             }
-            
+
             this.fireEvent('opentab', this, node, label, listItems);
           },
 
