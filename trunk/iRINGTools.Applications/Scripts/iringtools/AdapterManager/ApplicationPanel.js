@@ -149,7 +149,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 		return [{
 			xtype: "tbbutton",
 			text: 'Configure',
-			//icon: 'Content/img/16x16/document-save.png',
+			icon: 'Content/img/16x16/document-properties.png',
 			tooltip: 'Configure',
 			disabled: showconfigure,
 			handler: this.onConfigure,
