@@ -157,7 +157,7 @@
         <attribute name="IsBulkItem" displayName="Is Bulk Item" nativeName="IsBulkItem" datatype="Picklist"/>
         <attribute name="IsUnchecked" displayName="Is Unchecked" nativeName="IsUnchecked" datatype="Picklist" readonly="True" />
         <attribute name="ItemStatus" displayName="Item Status" nativeName="ItemStatus" datatype="Picklist" readonly="True" />
-        <attribute name="ItemTag" displayName="Item Tag" nativeName="ItemTag" datatype="String" length="80" readonly="True" isKey="True" receiveScope="None" />
+        <attribute name="ItemTag" displayName="Item Tag" nativeName="ItemTag" datatype="String" length="80" readonly="True" receiveScope="None" />
         <attribute name="ItemTypeName" displayName="Item Type Name" nativeName="ItemTypeName" datatype="String" length="40" readonly="True" />
         <attribute name="MaterialOfConstClass" displayName="Material Of Construction Class" nativeName="MaterialOfConstClass" datatype="Picklist"/>
         <attribute name="ModelItemType" displayName="Model Item Type" nativeName="ModelItemType" datatype="Picklist" readonly="True" />
@@ -167,7 +167,7 @@
         <attribute name="PlantItemType" displayName="Plant Item Type" nativeName="PlantItemType" datatype="Picklist" readonly="True" />
         <attribute name="RequisitionBy" displayName="Requisition By" nativeName="RequisitionBy" datatype="Picklist"/>
         <attribute name="RequisitionNo" displayName="Requisition No" nativeName="RequisitionNo" datatype="String" length="80" />
-        <attribute name="SP_ID" displayName="ID" nativeName="SP_ID" datatype="String" length="32" readonly="True" />
+        <attribute name="SP_ID" displayName="ID" nativeName="SP_ID" datatype="String" length="32" isKey="True" readonly="True" />
         <attribute name="Slope" displayName="Slope" nativeName="Slope" datatype="String" length="40" />
         <attribute name="SlopeRise" displayName="Slope Rise" nativeName="SlopeRise" datatype="String" length="40" />
         <attribute name="SlopeRun" displayName="Slope Run" nativeName="SlopeRun" datatype="String" length="40" />
@@ -341,7 +341,7 @@
         <attribute name="IsReducing" displayName="Is Reducing" nativeName="IsReducing" datatype="Picklist" readonly="True" />
         <attribute name="IsUnchecked" displayName="Is Unchecked" nativeName="IsUnchecked" datatype="Picklist" readonly="True" />
         <attribute name="ItemStatus" displayName="Item Status" nativeName="ItemStatus" datatype="Picklist" readonly="True" />
-        <attribute name="ItemTag" displayName="Item Tag" nativeName="ItemTag" datatype="String" length="80" readonly="True" isKey="True" receiveScope="None" />
+        <attribute name="ItemTag" displayName="Item Tag" nativeName="ItemTag" datatype="String" length="80" readonly="True" receiveScope="None" />
         <attribute name="ItemTypeName" displayName="Item Type Name" nativeName="ItemTypeName" datatype="String" length="40" readonly="True" />
         <attribute name="Location" displayName="Location" nativeName="Location" datatype="Picklist"/>
         <attribute name="LoopTagSuffix" displayName="Loop Tag Suffix" nativeName="LoopTagSuffix" datatype="String" length="40" />
@@ -370,7 +370,7 @@
         <attribute name="Revision_StatusValue" displayName="Status Value" nativeName="Revision.StatusValue" datatype="Picklist"/>
         <attribute name="Revision_Text" displayName="Text" nativeName="Revision.Text" datatype="String" length="240" />
         <attribute name="Revision_UpdateCount" displayName="Update Count" nativeName="Revision.UpdateCount" datatype="Integer" length="10" />
-        <attribute name="SP_ID" displayName="ID" nativeName="SP_ID" datatype="String" length="32" readonly="True" />
+        <attribute name="SP_ID" displayName="ID" nativeName="SP_ID" datatype="String" length="32" isKey="True" readonly="True" />
         <attribute name="SafetyClassification" displayName="Safety Classification" nativeName="SafetyClassification" datatype="Picklist"/>
         <attribute name="ScheduleOrThickness" displayName="Schedule Or Thickness" nativeName="ScheduleOrThickness" datatype="String" length="40" />
         <attribute name="SupplyBy" displayName="Supply By" nativeName="SupplyBy" datatype="Picklist"/>
@@ -436,7 +436,7 @@
         <attribute name="IsBulkItem" displayName="Is Bulk Item" nativeName="IsBulkItem" datatype="Picklist"/>
         <attribute name="IsUnchecked" displayName="Is Unchecked" nativeName="IsUnchecked" datatype="Picklist" readonly="True" />
         <attribute name="ItemStatus" displayName="Item Status" nativeName="ItemStatus" datatype="Picklist" readonly="True" />
-        <attribute name="ItemTag" displayName="Item Tag" nativeName="ItemTag" datatype="String" length="80" readonly="True" isKey="True" receiveScope="None" />
+        <attribute name="ItemTag" displayName="Item Tag" nativeName="ItemTag" datatype="String" length="80" readonly="True" receiveScope="None" />
         <attribute name="ItemTypeName" displayName="Item Type Name" nativeName="ItemTypeName" datatype="String" length="40" readonly="True" />
         <attribute name="MaterialOfConstClass" displayName="Material Of Construction Class" nativeName="MaterialOfConstClass" datatype="Picklist"/>
         <attribute name="ModelItemType" displayName="Model Item Type" nativeName="ModelItemType" datatype="Picklist" readonly="True" />
@@ -460,7 +460,7 @@
         <attribute name="Revision_StatusValue" displayName="Status Value" nativeName="Revision.StatusValue" datatype="Picklist"/>
         <attribute name="Revision_Text" displayName="Text" nativeName="Revision.Text" datatype="String" length="240" />
         <attribute name="Revision_UpdateCount" displayName="Update Count" nativeName="Revision.UpdateCount" datatype="Integer" length="10" />
-        <attribute name="SP_ID" displayName="ID" nativeName="SP_ID" datatype="String" length="32" readonly="True" />
+        <attribute name="SP_ID" displayName="ID" nativeName="SP_ID" datatype="String" length="32" isKey="True" readonly="True" />
         <attribute name="SafetyClassification" displayName="Safety Classification" nativeName="SafetyClassification" datatype="Picklist"/>
         <attribute name="ScheduleOrThickness" displayName="Schedule Or Thickness" nativeName="ScheduleOrThickness" datatype="String" length="40" />
         <attribute name="Slope" displayName="Slope" nativeName="Slope" datatype="String" length="40" />
@@ -600,7 +600,7 @@
         <attribute name="IsReducing" displayName="Is Reducing" nativeName="IsReducing" datatype="Picklist" readonly="True" />
         <attribute name="IsUnchecked" displayName="Is Unchecked" nativeName="IsUnchecked" datatype="Picklist" readonly="True" />
         <attribute name="ItemStatus" displayName="Item Status" nativeName="ItemStatus" datatype="Picklist" readonly="True" />
-        <attribute name="ItemTag" displayName="Item Tag" nativeName="ItemTag" datatype="String" length="80" isKey="True" receiveScope="None" />
+        <attribute name="ItemTag" displayName="Item Tag" nativeName="ItemTag" datatype="String" length="80" receiveScope="None" />
         <attribute name="ItemTypeName" displayName="Item Type Name" nativeName="ItemTypeName" datatype="String" length="40" readonly="True" />
         <attribute name="MaterialOfConstClass" displayName="Material Of Construction Class" nativeName="MaterialOfConstClass" datatype="Picklist"/>
         <attribute name="ModelCode" displayName="Model Code" nativeName="ModelCode" datatype="String" length="40" readonly="True" />
@@ -629,7 +629,7 @@
         <attribute name="Revision_StatusValue" displayName="Status Value" nativeName="Revision.StatusValue" datatype="Picklist"/>
         <attribute name="Revision_Text" displayName="Text" nativeName="Revision.Text" datatype="String" length="240" />
         <attribute name="Revision_UpdateCount" displayName="Update Count" nativeName="Revision.UpdateCount" datatype="Integer" length="10" />
-        <attribute name="SP_ID" displayName="ID" nativeName="SP_ID" datatype="String" length="32" readonly="True" />
+        <attribute name="SP_ID" displayName="ID" nativeName="SP_ID" datatype="String" length="32" isKey="True" readonly="True" />
         <attribute name="ScheduleOrThickness" displayName="Schedule Or Thickness" nativeName="ScheduleOrThickness" datatype="String" length="40" />
         <attribute name="StressReliefReqmt" displayName="Pwht Reqmt" nativeName="StressReliefReqmt" datatype="Picklist"/>
         <attribute name="SupplyBy" displayName="Supply By" nativeName="SupplyBy" datatype="Picklist"/>
