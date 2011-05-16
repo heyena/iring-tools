@@ -155,7 +155,7 @@ namespace iRINGTools.Web.Models
             new XAttribute("name", string.Format("{0}.{1}", scope, application)),
               new XElement("bind",
                 new XAttribute("name", "DataLayer"),
-                new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
+                new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
                 new XAttribute("to", dataLayer)
               )
             );

@@ -14,7 +14,7 @@
     <!-- ExtJS library: all widgets -->
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ux-all.js") %>" type="text/javascript"></script>
-            
+    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ComboListAutoSizer.js") %>" type="text/javascript"></script>
     <!-- extensions -->    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/App.js") %>" type="text/javascript"></script>    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ActionPanel.js") %>" type="text/javascript"></script>
