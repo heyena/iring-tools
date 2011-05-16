@@ -20,12 +20,24 @@ a:active {color: black}
   background-image: url(../img/cabinet.png);
 }
 
+.x-tree-node .object {
+  background-image: url(../img/object.png);
+}
+
+.x-tree-node .property {
+  background-image: url(../img/property.png);
+}
+
+.x-tree-node .relation {
+  background-image: url(../img/relation.png);
+}
+
 .x-tree-node-collapsed .folder {
-  background-image: url(../img/folder-close.png);
+  background-image: url(../img/foldere.png);
 }
 
 .x-tree-node-expanded .folder {
-  background-image: url(../img/folder-open.png);
+  background-image: url(../img/folder.png);
 }
 
 .x-tree-node .exchange {

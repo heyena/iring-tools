@@ -21,8 +21,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					}
 				}
 
-				if (node.attributes.properties) 
-					var properties = node.attributes.properties;					
+				if (node.attributes.properties)
+					var properties = node.attributes.properties;
 				else
 					var properties = node.attributes.attributes.properties;
 
@@ -78,6 +78,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
 								treeNodeProps['keyType'] = form.findField('keyType').getValue();
 							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
 						}, {
 							xtype: 'tbbutton',
 							icon: 'Content/img/16x16/document-properties.png',
@@ -418,6 +421,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											var newNode = new Ext.tree.TreeNode({
 												text: newNodeText,
 												type: 'relationship',
+												iconCls: 'relation',
 												leaf: true,
 												objectName: node.parentNode.text,
 												relatedObjectName: '',
@@ -594,7 +598,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								if (!keysNode.childNodes[i].hidden) {
 									mappingProperties.push([ii.toString(), keysNode.childNodes[i].text]);
 									ii++;
-								}						
+								}
 							for (var i = 0; i < propertiesNode.childNodes.length; i++)
 								if (!propertiesNode.childNodes[i].hidden) {
 									mappingProperties.push([ii.toString(), propertiesNode.childNodes[i].text]);
@@ -608,12 +612,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								if (!keysNode.children[i].hidden) {
 									mappingProperties.push([ii.toString(), keysNode.children[i].text]);
 									ii++;
-								} 
+								}
 							for (var i = 0; i < propertiesNode.children.length; i++)
 								if (!propertiesNode.children[i].hidden) {
 									mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
 									ii++;
-								} 
+								}
 						}
 					}
 				}
@@ -1082,6 +1086,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												var newNode = new Ext.tree.TreeNode({
 													text: dataObject.dataRelationships[j].relationshipName,
 													type: 'relationship',
+													iconCls: 'relation',
 													leaf: true,
 													objectName: dataObjectNode.text,
 													relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
@@ -1236,6 +1241,39 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			}
 		};
 
+		var setItemSelectorAvailValues = function (node) {
+			var availItems = new Array();
+			var propertiesNode = node.parentNode.childNodes[1];
+
+			for (var i = 0; i < propertiesNode.childNodes.length; i++) {
+				var itemName = propertiesNode.childNodes[i].text;
+				var found = false;
+
+				for (var j = 0; j < node.childNodes.length; j++) {
+					if (node.childNodes[j].text == itemName) {
+						found = true;
+						break;
+					}
+				}
+
+				if (!found) {
+					availItems.push([itemName, itemName]);
+				}
+			}
+			return availItems;
+		}
+
+		var setItemSelectorselectedValues = function (node) {
+			var selectedItems = new Array();
+			var propertiesNode = node.parentNode.childNodes[1];
+
+			for (var i = 0; i < node.childNodes.length; i++) {
+				var keyName = node.childNodes[i].text;
+				selectedItems.push([keyName, keyName]);
+			}
+			return selectedItems;
+		}
+
 		var setKeysFolder = function (editPane, node) {
 			if (editPane && node) {
 				if (editPane.items.map[scopeName + '.' + appName + '.keysSelector.' + node.id]) {
@@ -1245,31 +1283,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					}
 				}
 
-				var availItems = new Array();
-				var selectedItems = new Array();
-
-				var propertiesNode = node.parentNode.childNodes[1];
-
-				for (var i = 0; i < propertiesNode.childNodes.length; i++) {
-					var itemName = propertiesNode.childNodes[i].text;
-					var found = false;
-
-					for (var j = 0; j < node.childNodes.length; j++) {
-						if (node.childNodes[j].text == itemName) {
-							found = true;
-							break;
-						}
-					}
-
-					if (!found) {
-						availItems.push([itemName, itemName]);
-					}
-				}
-
-				for (var i = 0; i < node.childNodes.length; i++) {
-					var keyName = node.childNodes[i].text;
-					selectedItems.push([keyName, keyName]);
-				}
+				var availItems = setItemSelectorAvailValues(node);
+				var selectedItems = setItemSelectorselectedValues(node);
 
 				var keysItemSelector = new Ext.ux.ItemSelector({
 					name: 'keySelector',
@@ -1288,93 +1303,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						displayField: 'keyName',
 						valueField: 'keyValue'
 					}],
-					treeNode: node,
-					listeners: {
-						change: function (itemSelector, selectedValuesStr) {
-							var selectedValues = selectedValuesStr.split(',');
-							var keysNode = itemSelector.treeNode;
-							var propertiesNode = keysNode.parentNode.childNodes[1];
-
-							// a key has been added, move it to keys node and remove it from properties node
-							if (selectedValues.length > keysNode.childNodes.length) {
-								// determine the new key
-								for (var i = 0; i < selectedValues.length; i++) {
-									var found = false;
-
-									for (var j = 0; j < keysNode.childNodes.length; j++) {
-										if (keysNode.childNodes[j].text == selectedValues[i]) {
-											found = true;
-											break;
-										}
-									}
-
-									// find the node in the properties node and move it to keys node
-									if (!found) {
-										var newKeyNode;
-
-										for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
-											if (propertiesNode.childNodes[jj].text == selectedValues[i]) {
-												var properties = propertiesNode.childNodes[jj].attributes.properties;
-												properties.keyType = 'assigned';
-												properties.nullable = false;
-
-												newKeyNode = new Ext.tree.TreeNode({
-													text: selectedValues[i],
-													type: "keyProperty",
-													leaf: true,
-													hidden: false,
-													properties: properties
-												});
-
-												propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
-												break;
-											}
-										}
-
-										if (newKeyNode) {
-											keysNode.appendChild(newKeyNode);
-										}
-									}
-								}
-							}
-							else {  // a key has been deleted, remove it from keys node and add it back to properties node
-								// determine the deleted key
-								for (var i = 0; i < keysNode.childNodes.length; i++) {
-									var found = false;
-
-									for (var j = 0; j < selectedValues.length; j++) {
-										if (selectedValues[j] == keysNode.childNodes[i].text) {
-											found = true;
-											break;
-										}
-									}
-
-									// find the node in the keys node and move it to properties node
-									if (!found) {
-										if (keysNode.childNodes[i].attributes.properties)
-											var properties = keysNode.childNodes[i].attributes.properties;
-										else if (keysNode.childNodes[i].attributes.attributes.properties)
-											var properties = keysNode.childNodes[i].attributes.attributes.properties;
-
-										if (properties) {
-											properties['nullable'] = true;
-											delete properties.keyType;
-
-											var propertyNode = new Ext.tree.TreeNode({
-												text: keysNode.childNodes[i].text,
-												type: "dataProperty",
-												leaf: true,
-												properties: properties
-											});
-
-											propertiesNode.appendChild(propertyNode);
-											keysNode.removeChild(keysNode.childNodes[i], true);
-										}
-									}
-								}
-							}
-						}
-					}
+					treeNode: node
 				});
 
 				var keysSelectorPanel = new Ext.FormPanel({
@@ -1389,7 +1318,132 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						itemCls: 'form-title',
 						labelSeparator: '',
 						anchor: '100% -100'
-					}, keysItemSelector]
+					}, keysItemSelector],
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/document-properties.png',
+							text: 'Apply',
+							tooltip: 'Apply',
+							handler: function (f) {
+								//var selectedValues = selectedValuesStr.split(',');
+								var selectedValues = keysItemSelector.toMultiselect.store.data.items;
+								var keysNode = keysItemSelector.treeNode;
+								var propertiesNode = keysNode.parentNode.childNodes[1];
+
+								// a key has been added, move it to keys node and remove it from properties node
+								if (selectedValues.length > keysNode.childNodes.length) {
+									// determine the new key
+									for (var i = 0; i < selectedValues.length; i++) {
+										var found = false;
+
+										for (var j = 0; j < keysNode.childNodes.length; j++) {
+											if (keysNode.childNodes[j].text == selectedValues[i].data.text) {
+												found = true;
+												break;
+											}
+										}
+
+										// find the node in the properties node and move it to keys node
+										if (!found) {
+											var newKeyNode;
+
+											for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
+												if (propertiesNode.childNodes[jj].text == selectedValues[i].data.text) {
+													var properties = propertiesNode.childNodes[jj].attributes.properties;
+													properties.keyType = 'assigned';
+													properties.nullable = false;
+
+													newKeyNode = new Ext.tree.TreeNode({
+														text: selectedValues[i].data.text,
+														type: "keyProperty",
+														iconCls: 'property',
+														leaf: true,
+														hidden: false,
+														properties: properties
+													});
+
+													propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
+													break;
+												}
+											}
+
+											if (newKeyNode) {
+												keysNode.appendChild(newKeyNode);
+											}
+										}
+									}
+								}
+								else {  // a key has been deleted, remove it from keys node and add it back to properties node
+									// determine the deleted key
+									for (var i = 0; i < keysNode.childNodes.length; i++) {
+										var found = false;
+
+										for (var j = 0; j < selectedValues.length; j++) {
+											if (selectedValues[j].data.text == keysNode.childNodes[i].text) {
+												found = true;
+												break;
+											}
+										}
+
+										// find the node in the keys node and move it to properties node
+										if (!found) {
+											if (keysNode.childNodes[i].attributes.properties)
+												var properties = keysNode.childNodes[i].attributes.properties;
+											else if (keysNode.childNodes[i].attributes.attributes.properties)
+												var properties = keysNode.childNodes[i].attributes.attributes.properties;
+
+											if (properties) {
+												properties['nullable'] = true;
+												delete properties.keyType;
+
+												var propertyNode = new Ext.tree.TreeNode({
+													text: keysNode.childNodes[i].text,
+													type: "dataProperty",
+													iconCls: 'property',
+													leaf: true,
+													properties: properties
+												});
+
+												propertiesNode.appendChild(propertyNode);
+												keysNode.removeChild(keysNode.childNodes[i], true);
+											}
+										}
+									}
+								}
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/document-properties.png',
+							text: 'Reset',
+							tooltip: 'Reset',
+							handler: function (f) {
+								var availItems = setItemSelectorAvailValues(node);
+								var selectedItems = setItemSelectorselectedValues(node);
+								if (keysItemSelector.fromMultiselect.store.data) {
+									keysItemSelector.fromMultiselect.reset();
+									keysItemSelector.fromMultiselect.store.removeAll();
+								}
+
+								keysItemSelector.fromMultiselect.store.loadData(availItems);
+								keysItemSelector.fromMultiselect.store.commitChanges();
+
+								if (keysItemSelector.toMultiselect.store.data) {
+									keysItemSelector.toMultiselect.reset();
+									keysItemSelector.toMultiselect.store.removeAll();
+								}
+
+								keysItemSelector.toMultiselect.store.loadData(selectedItems);
+								keysItemSelector.toMultiselect.store.commitChanges();
+							}
+						}]
+					})
 				});
 
 				//, keysItemSelector
@@ -1435,29 +1489,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						displayField: 'propertyName',
 						valueField: 'propertyValue'
 					}],
-					treeNode: node,
-					listeners: {
-						change: function (itemSelector, selectedValuesStr) {
-							var selectedValues = selectedValuesStr.split(',');
-							var treeNode = itemSelector.treeNode;
-
-							for (var i = 0; i < treeNode.childNodes.length; i++) {
-								var found = false;
-
-								for (var j = 0; j < selectedValues.length; j++) {
-									if (selectedValues[j].toLowerCase() == treeNode.childNodes[i].text.toLowerCase()) {
-										found = true;
-										break;
-									}
-								}
-
-								if (!found)
-									treeNode.childNodes[i].getUI().hide();
-								else
-									treeNode.childNodes[i].getUI().show();
-							}
-						}
-					}
+					treeNode: node
 				});
 
 				var propertiesSelectorPanel = new Ext.FormPanel({
@@ -1472,9 +1504,75 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						itemCls: 'form-title',
 						labelSeparator: '',
 						anchor: '100% -100'
-					}, propertiesItemSelector]
+					}, propertiesItemSelector],
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/document-properties.png',
+							text: 'Apply',
+							tooltip: 'Apply',
+							handler: function (f) {
+								var selectedValues = propertiesItemSelector.toMultiselect.store.data.items;
+								var treeNode = propertiesItemSelector.treeNode;
+
+								for (var i = 0; i < treeNode.childNodes.length; i++) {
+									var found = false;
+
+									for (var j = 0; j < selectedValues.length; j++) {
+										if (selectedValues[j].data.text.toLowerCase() == treeNode.childNodes[i].text.toLowerCase()) {
+											found = true;
+											break;
+										}
+									}
+
+									if (!found)
+										treeNode.childNodes[i].getUI().hide();
+									else
+										treeNode.childNodes[i].getUI().show();
+								}
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/document-properties.png',
+							text: 'Reset',
+							tooltip: 'Reset',
+							handler: function (f) {
+								var availItems = new Array();
+								var selectedItems = new Array();
+								for (var i = 0; i < node.childNodes.length; i++) {
+									var itemName = node.childNodes[i].text;
+									if (node.childNodes[i].hidden == false)
+										selectedItems.push([itemName, itemName]);
+									else
+										availItems.push([itemName, itemName]);
+								}
+
+								if (propertiesItemSelector.fromMultiselect.store.data) {
+									propertiesItemSelector.fromMultiselect.reset();
+									propertiesItemSelector.fromMultiselect.store.removeAll();
+								}
+
+								propertiesItemSelector.fromMultiselect.store.loadData(availItems);
+								propertiesItemSelector.fromMultiselect.store.commitChanges();
+
+								if (propertiesItemSelector.toMultiselect.store.data) {
+									propertiesItemSelector.toMultiselect.reset();
+									propertiesItemSelector.toMultiselect.store.removeAll();
+								}
+
+								propertiesItemSelector.toMultiselect.store.loadData(selectedItems);
+								propertiesItemSelector.toMultiselect.store.commitChanges();
+							}
+						}]
+					})
 				});
-				//, propertiesItemSelector
+
 				editPane.add(propertiesSelectorPanel);
 				var panelIndex = editPane.items.indexOf(propertiesSelectorPanel);
 				editPane.getLayout().setActiveItem(panelIndex);
@@ -1947,6 +2045,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 													newKeyNode = new Ext.tree.TreeNode({
 														text: nodeText,
 														type: "keyProperty",
+														iconCls: 'property',
 														leaf: true,
 														hidden: false,
 														properties: properties
@@ -1969,6 +2068,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										var newNode = new Ext.tree.TreeNode({
 											text: dataObject.dataRelationships[j].relationshipName,
 											type: 'relationship',
+											iconCls: 'relation',
 											leaf: true,
 											objectName: dataObjectNode.text,
 											relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
@@ -1983,6 +2083,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											mapItem['relatedPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].relatedPropertyName;
 											mapArray.push(mapItem);
 										}
+										newNode.iconCls = 'relation';
 										newNode.attributes.propertyMap = mapArray;
 										relationshipsNode.expanded = true;
 										relationshipsNode.children.push(newNode);

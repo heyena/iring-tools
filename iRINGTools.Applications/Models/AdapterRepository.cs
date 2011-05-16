@@ -328,7 +328,8 @@ namespace iRINGTools.Web.Models
               text = "Keys",
               type = "keys",
               expanded = true,
-              leaf = false,
+							iconCls = "folder",
+              leaf = false,							
               children = new List<JsonTreeNode>()
             };
 
@@ -337,6 +338,7 @@ namespace iRINGTools.Web.Models
               text = "Properties",
               type = "properties",
               expanded = true,
+							iconCls = "folder",
               leaf = false,
               children = new List<JsonTreeNode>()
             };
@@ -346,6 +348,7 @@ namespace iRINGTools.Web.Models
               text = "Relationships",
               type = "relationships",
               expanded = true,
+							iconCls = "folder",
               leaf = false,
               children = new List<JsonTreeNode>()
             };
@@ -355,6 +358,7 @@ namespace iRINGTools.Web.Models
             {
               text = dataObject.tableName,
               type = "dataObject",
+							iconCls = "object",
               leaf = false,
               children = new List<JsonTreeNode>()
               {
@@ -391,6 +395,7 @@ namespace iRINGTools.Web.Models
                   text = dataProperty.columnName,
                   type = "keyProperty",
                   properties = properties,
+									iconCls = "property",
                   leaf = true
                 };
 
@@ -402,6 +407,7 @@ namespace iRINGTools.Web.Models
                 {
                   text = dataProperty.columnName,
                   type = "dataProperty",
+									iconCls = "property",
                   leaf = true,
                   hidden = true,
                   properties = properties
@@ -418,6 +424,7 @@ namespace iRINGTools.Web.Models
               {
                 text = relationship.relationshipName,
                 type = "relationship",
+								iconCls = "relation",
                 leaf = true
               };
 
