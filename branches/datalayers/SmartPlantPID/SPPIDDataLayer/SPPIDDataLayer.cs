@@ -19,6 +19,8 @@ namespace iRINGTools.SDK.SPPIDDataLayer
         private List<IDataObject> _dataObjects = null;
         //private ILMADataSource _projDatasource = null;        // SPPID DataSource
         private Llama.LMADataSource _projDatasource = null;        // SPPID DataSource
+        private Llama.LMAFilter _lmFilters = null;
+        private Llama.LMACriterion _lmCriterion = null;
 
         //NOTE: This is required to deliver settings to constructor.
         //NOTE: Other objects could be requested on an as needed basis.
@@ -36,6 +38,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
             _projDatasource = new Llama.LMADataSource();
             _projDatasource.ProjectNumber = projectStr;
             _projDatasource.set_SiteNode(siteNode);
+            
         }
 
         public override DataDictionary GetDictionary()
@@ -45,9 +48,11 @@ namespace iRINGTools.SDK.SPPIDDataLayer
             LoadConfiguration();
 
             List<DataObject> dataObjects = new List<DataObject>();
-            foreach (XElement commodity in _configuration.Elements("commodity"))
+            foreach (XElement commodity in _configuration.Elements("commodities").Elements("commodity")) //commodity
             {
-                string name = commodity.Element("name").Value;
+
+                string name = commodity.FirstAttribute.Value;
+                // string name = commodity.Element("name").Value;
 
                 DataObject dataObject = new DataObject
                 {
@@ -71,7 +76,8 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                     }
 
                     // Data type: String, Integer, Real, DateTime, Picklist, Boolean
-                    string dataTypeName = attribute.Attribute("dataType").Value;
+                     string dataTypeName = attribute.Attribute("datatype").Value;
+                    // string dataTypeName = attribute.Attribute("dataType").Value;
 
                     DataType dataType = DataType.String;
                     //Enum.TryParse<DataType>(attribute.Attribute("dataType").Value, out dataType);
@@ -153,6 +159,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
         {
             try
             {
+
                 LoadDataDictionary(objectType);
 
                 IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
@@ -364,7 +371,8 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 LoadConfiguration();
             }
 
-            XElement commodityConfig = _configuration.Elements("commodity").Where(o => o.Element("name").Value == objectType).First();
+            XElement commodityConfig = _configuration.Elements("commodities").Elements("commodity").Where(o => o.FirstAttribute.Value == objectType).First();
+           // XElement commodityConfig = _configuration.Elements("commodities").Where(o => o.Element("name").Value == objectType).First();
 
             return commodityConfig;
         }
@@ -376,10 +384,15 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 IList<IDataObject> dataObjects = new List<IDataObject>();
 
                 //Get Path from Scope.config ({project}.{app}.config)
+                //string path = String.Format(
+                //    "{0}\\{1}.csv",
+                //    _settings["SPPIDFolderPath"],
+                //    objectType);
                 string path = String.Format(
-                    "{0}\\{1}.csv",
-                    _settings["SPPIDFolderPath"],
-                    objectType);
+                  "{0}\\{1}.csv",
+                   _settings["XMLPath"],
+                  objectType);
+               
 
                 IDataObject dataObject = null;
                 TextReader reader = new StreamReader(path);
@@ -419,40 +432,42 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                     IEnumerable<XElement> attributeElements = commodityElement.Element("attributes").Elements("attribute");
 
                     string[] csvValues = csvRow.Split(',');
-
                     int index = 0;
                     foreach (var attributeElement in attributeElements)
                     {
-                        string name = attributeElement.Attribute("name").Value;
-                        string dataType = attributeElement.Attribute("dataType").Value.ToLower();
-                        string value = csvValues[index++].Trim();
+                        
+                            string name = attributeElement.Attribute("name").Value;
+                            string dataType = attributeElement.Attribute("datatype").Value.ToLower();
+                            //string dataType = attributeElement.Attribute("dataType").Value.ToLower();
+                            
+                            string value = csvValues[index++].Trim();
 
-                        // if data type is not nullable, make sure it has a value
-                        if (!(dataType.EndsWith("?") && value == String.Empty))
-                        {
-                            if (dataType.Contains("bool"))
+                            // if data type is not nullable, make sure it has a value
+                            if (!(dataType.EndsWith("?") && value == String.Empty))
                             {
-                                if (value.ToUpper() == "TRUE" || value.ToUpper() == "YES")
+                                if (dataType.Contains("bool"))
                                 {
-                                    value = "1";
+                                    if (value.ToUpper() == "TRUE" || value.ToUpper() == "YES")
+                                    {
+                                        value = "1";
+                                    }
+                                    else
+                                    {
+                                        value = "0";
+                                    }
                                 }
-                                else
+                                else if (value == String.Empty && (
+                                         dataType.StartsWith("int") ||
+                                         dataType == "double" ||
+                                         dataType == "single" ||
+                                         dataType == "float" ||
+                                         dataType == "decimal"))
                                 {
                                     value = "0";
                                 }
                             }
-                            else if (value == String.Empty && (
-                                     dataType.StartsWith("int") ||
-                                     dataType == "double" ||
-                                     dataType == "single" ||
-                                     dataType == "float" ||
-                                     dataType == "decimal"))
-                            {
-                                value = "0";
-                            }
-                        }
 
-                        dataObject.SetPropertyValue(name, value);
+                            dataObject.SetPropertyValue(name, value);
                     }
                 }
 
@@ -475,11 +490,12 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 Response response = new Response();
 
                 // Create data object directory in case it does not exist
-                Directory.CreateDirectory(_settings["SPPIDFolderPath"]);
+                Directory.CreateDirectory(_settings["XMLPath"]);
+                //Directory.CreateDirectory(_settings["SPPIDFolderPath"]);
 
                 string path = String.Format(
                   "{0}\\{1}.csv",
-                  _settings["SPPIDFolderPath"],
+                  _settings["XMLPath"],
                   objectType);
 
                 //TODO: Need to update file, not replace it!
@@ -534,11 +550,11 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 XElement commodityElement = GetCommodityConfig(objectType);
 
                 IEnumerable<XElement> attributeElements = commodityElement.Element("attributes").Elements("attribute");
-
+                string value = string.Empty;
                 foreach (var attributeElement in attributeElements)
                 {
                     string name = attributeElement.Attribute("name").Value;
-                    string value = Convert.ToString(dataObject.GetPropertyValue(name));
+                    value = Convert.ToString(dataObject.GetPropertyValue(name));
                     csvRow.Add(value);
                 }
 
