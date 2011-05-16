@@ -89,10 +89,8 @@ Ext.onReady(function () {
         collapseMode: 'mini',
         collapsible: true,
         collapsed: false,
-
         navigationUrl: 'directory/getnode'
     });
-
     directoryPanel.on('newscope', function (npanel, node) {
 
         if (node.attributes.type == "ScopeNode") {
