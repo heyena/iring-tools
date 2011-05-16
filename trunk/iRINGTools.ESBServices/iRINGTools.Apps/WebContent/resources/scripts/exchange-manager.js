@@ -309,9 +309,9 @@ function loadPageDto(type, action, context, label){
   }
 }
 
-function loadRelatedItem(type, context, individual, classId, className, classIdentifier){
+function loadRelatedItem(type, context, individual, classId, className){
   Ext.getBody().mask("Loading...", "x-mask-loading");
-  var url = context + '&individual=' + individual + '&classId=' + classId + '&classIdentifier=' + classIdentifier;
+  var url = context + '&individual=' + individual + '&classId=' + classId;
   
   if (type == 'app'){
     url = 'radata' + url;
@@ -418,13 +418,12 @@ function showIndividualInfo(individual, relatedClasses){
     var dtoIdentifier = individual;
     var relatedClassId = relatedClasses[i].id;
     var relatedClassName = relatedClasses[i].name;
-    var relatedClassIdentifier = relatedClasses[i].identifier;
     
     relatedItemPane.add({
       xtype: 'box',
       autoEl: {tag: 'div', html: '<a class="breadcrumb" href="#" onclick="loadRelatedItem(\'' + 
         dtoTabType + '\',\'' + dtoTabContext + '\',\'' + dtoIdentifier + '\',\'' + relatedClassId + 
-        '\',\'' + relatedClassName + '\',\'' + relatedClassIdentifier + '\')">' + relatedClassName + '</a>'}
+        '\',\'' + relatedClassName + '\')">' + relatedClassName + '</a>'}
     });
   }
   

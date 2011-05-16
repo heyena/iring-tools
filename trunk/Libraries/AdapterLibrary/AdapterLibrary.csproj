@@ -120,7 +120,6 @@
     <Compile Include="AdapterModule.cs" />
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BasePart7ProjectionEngine.cs" />
-    <Compile Include="DtoProjectionEngine2.cs" />
     <Compile Include="DxiRequest.cs" />
     <Compile Include="DxoRequest.cs" />
     <Compile Include="DataProjectionEngine.cs" />

@@ -136,9 +136,14 @@ public final class IOUtils
       returnValue.append(word.substring(0, 1).toUpperCase());
 
       if (word.length() > 1)
-        returnValue.append(word.substring(1).toLowerCase());
+      {
+        if (words.length == 1)
+          returnValue.append(word.substring(1));
+        else
+          returnValue.append(word.substring(1).toLowerCase());
+      }        
     }
-
+    
     return returnValue.toString();
   }
   

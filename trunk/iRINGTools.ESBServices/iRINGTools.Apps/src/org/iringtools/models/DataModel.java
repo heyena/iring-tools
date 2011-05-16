@@ -528,8 +528,10 @@ public class DataModel
       if (dto.getClassObjects().getItems().size() > 0)
       {
         ClassObject classObject = dto.getClassObjects().getItems().get(0);
+        String className = IOUtils.toCamelCase(classObject.getName());
+        
         pageDtoGrid.setIdentifier(classObject.getClassId());
-        pageDtoGrid.setDescription(IOUtils.toCamelCase(classObject.getName()));
+        pageDtoGrid.setDescription(className);
 
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
         {
@@ -540,11 +542,11 @@ public class DataModel
             {
               if (firstDto)
               {
-                String name = templateObject.getName() + "." + roleObject.getName();
+                String fieldName = templateObject.getName() + "." + roleObject.getName();
 
                 Field field = new Field();
-                field.setName(name);
-                field.setDataIndex(IOUtils.toCamelCase(classObject.getName()) + '.' + name);
+                field.setName(fieldName);
+                field.setDataIndex(className + '.' + fieldName);
 
                 if (dataType == DataType.APP)
                   field.setType(roleObject.getDataType().replace("xsd:", ""));
@@ -554,7 +556,7 @@ public class DataModel
                 fields.add(field);
               }
 
-              if (roleObject.isHasValueMap() != null && roleObject.isHasValueMap())
+              if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
               {
                 String roleObjectValue = roleObject.getValue();
                 String newValue = getValueMap(refServiceUri, roleObjectValue);
@@ -581,14 +583,11 @@ public class DataModel
                     + "</span>");
               }
             }
-
-            else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0
-                && roleObject.getValue() != null && roleObject.getValue().length() > 0)
+            else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0)
             {
               RelatedClass relatedClass = new RelatedClass();
               relatedClass.setId(roleObject.getRelatedClassId());
               relatedClass.setName(IOUtils.toCamelCase(roleObject.getRelatedClassName()));
-              relatedClass.setIdentifier(roleObject.getValue().substring(1));
               relatedClasses.add(relatedClass);
             }
           }
@@ -640,22 +639,30 @@ public class DataModel
   }
 
   // paging is based on number of templates of the related class
-  public Grid getRelatedItemGrid(DataType dataType, DataTransferObject dto, String classId, String classIdentifier,
-      int start, int limit)
+  public Grid getRelatedItemGrid(DataType dataType, DataTransferObject dto, String classId, int start, int limit)
   {
     Grid relatedItemGrid = new Grid();
+    
+    List<Field> fields = new ArrayList<Field>();
+    List<List<String>> gridData = new ArrayList<List<String>>();    
+    int relatedClassCount = 0;
 
     for (ClassObject classObject : dto.getClassObjects().getItems())
     {
-      if (classObject.getClassId().equals(classId) && classObject.getIdentifier().equals(classIdentifier))
+      if (classObject.getClassId().equals(classId))
       {
-        List<Field> fields = new ArrayList<Field>();
-        List<List<String>> gridData = new ArrayList<List<String>>();
-        boolean firstTemplateObject = true;
-
+        List<String> row = new ArrayList<String>();
+        String className = IOUtils.toCamelCase(classObject.getName());
+        relatedClassCount++;
+        
+        if (relatedClassCount == 1)
+        {
+          relatedItemGrid.setIdentifier(classObject.getClassId());
+          relatedItemGrid.setDescription(className);
+        }
+        
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
         {
-          List<String> row = new ArrayList<String>();
           List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
 
           if (dataType == DataType.EXCHANGE)
@@ -674,19 +681,22 @@ public class DataModel
 
           for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
           {
-            if (roleObject.getType() == RoleType.PROPERTY || roleObject.getType() == RoleType.DATA_PROPERTY
-                || roleObject.getType() == RoleType.OBJECT_PROPERTY)
-            {
-              if (firstTemplateObject)
+            String roleValue = roleObject.getValue();
+            
+            if (roleValue != null && !roleValue.startsWith("rdl:"))
+            {              
+              if (relatedClassCount == 1)
               {
-                String name = templateObject.getName() + "." + roleObject.getName();
+                String fieldName = templateObject.getName() + "." + roleObject.getName();
 
                 Field field = new Field();
-                field.setName(name);
-                field.setDataIndex(IOUtils.toCamelCase(classObject.getName()) + '.' + name);
+                field.setName(fieldName);
+                field.setDataIndex(className + '.' + fieldName);
 
-                if (dataType == DataType.APP)
-                  field.setType(roleObject.getDataType().replace("xsd:", ""));
+                String fieldType = roleObject.getDataType();
+                
+                if (dataType == DataType.APP && fieldType != null && fieldType.startsWith("xsd:"))
+                  field.setType(fieldType.replace("xsd:", ""));
                 else
                   field.setType("string");
 
@@ -694,23 +704,20 @@ public class DataModel
               }
 
               if (dataType == DataType.APP || roleObject.getOldValue() == null
-                  || roleObject.getOldValue().equals(roleObject.getValue()))
+                  || roleObject.getOldValue().equals(roleValue))
               {
-                row.add(roleObject.getValue());
+                row.add(roleValue);
               }
               else
               {
-                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue()
-                    + "</span>");
+                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleValue + "</span>");
               }
             }
-            else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0
-                && roleObject.getValue() != null && roleObject.getValue().length() > 0)
-            {
+            else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0)
+            {              
               RelatedClass relatedClass = new RelatedClass();
               relatedClass.setId(roleObject.getRelatedClassId());
               relatedClass.setName(IOUtils.toCamelCase(roleObject.getRelatedClassName()));
-              relatedClass.setIdentifier(roleObject.getValue().substring(1));
               relatedClasses.add(relatedClass);
             }
           }
@@ -730,9 +737,7 @@ public class DataModel
               + "onClick='javascript:showIndividualInfo(\"" + classObject.getIdentifier() + "\"," + relatedClassesJson
               + ")'>");
 
-          gridData.add(row);
-
-          if (firstTemplateObject)
+          if (relatedClassCount == 1)
           {
             if (dataType == DataType.EXCHANGE)
             {
@@ -751,23 +756,18 @@ public class DataModel
             infoField.setFixed(true);
             infoField.setFilterable(false);
             fields.add(0, infoField);
-
-            firstTemplateObject = false;
           }
         }
-
-        int total = classObject.getTemplateObjects().getItems().size();
-        int actualLimit = Math.min(start + limit, total);
-
-        relatedItemGrid.setIdentifier(classObject.getClassId());
-        relatedItemGrid.setDescription(IOUtils.toCamelCase(classObject.getName()));
-        relatedItemGrid.setTotal(total);
-        relatedItemGrid.setFields(fields);
-        relatedItemGrid.setData(gridData.subList(start, actualLimit));
-
-        return relatedItemGrid;
+        
+        gridData.add(row);
       }
     }
+    
+    int actualLimit = Math.min(start + limit, relatedClassCount);
+
+    relatedItemGrid.setTotal(relatedClassCount);
+    relatedItemGrid.setFields(fields);    
+    relatedItemGrid.setData(gridData.subList(start, actualLimit));
 
     return relatedItemGrid;
   }
