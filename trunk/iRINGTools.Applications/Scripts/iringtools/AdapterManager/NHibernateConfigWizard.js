@@ -558,12 +558,18 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 				var dataObjectNode = node.parentNode.parentNode;
 				var propertiesNode = dataObjectNode.attributes.children[1];
+				var keysNode = dataObjectNode.attributes.children[0];
 				var relatedObjects = new Array();
 				var rootNode = dbObjectsTree.getRootNode();
 				for (var i = 0; i < rootNode.childNodes.length; i++)
 					relatedObjects.push([i.toString(), rootNode.childNodes[i].text]);
 				var selectedProperties = new Array();
 				var ii = 0;
+				for (var i = 0; i < keysNode.children.length; i++)
+					if (!keysNode.children[i].hidden) {
+						selectedProperties.push([ii.toString(), keysNode.children[i].text]);
+						ii++;
+					}
 				for (var i = 0; i < propertiesNode.children.length; i++)
 					if (!propertiesNode.children[i].hidden) {
 						selectedProperties.push([ii.toString(), propertiesNode.children[i].text]);
@@ -583,6 +589,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					if (relatedDataObjectNode) {
 						if (relatedDataObjectNode.childNodes[1]) {
 							propertiesNode = relatedDataObjectNode.childNodes[1];
+							keysNode = relatedDataObjectNode.childNodes[0];
+							for (var i = 0; i < keysNode.childNodes.length; i++)
+								if (!keysNode.childNodes[i].hidden) {
+									mappingProperties.push([ii.toString(), keysNode.childNodes[i].text]);
+									ii++;
+								}						
 							for (var i = 0; i < propertiesNode.childNodes.length; i++)
 								if (!propertiesNode.childNodes[i].hidden) {
 									mappingProperties.push([ii.toString(), propertiesNode.childNodes[i].text]);
@@ -590,7 +602,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								}
 						}
 						else {
+							keysNode = relatedDataObjectNode.attributes.children[0];
 							propertiesNode = relatedDataObjectNode.attributes.children[1];
+							for (var i = 0; i < keysNode.children.length; i++)
+								if (!keysNode.children[i].hidden) {
+									mappingProperties.push([ii.toString(), keysNode.children[i].text]);
+									ii++;
+								} 
 							for (var i = 0; i < propertiesNode.children.length; i++)
 								if (!propertiesNode.children[i].hidden) {
 									mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
@@ -661,7 +679,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							var mappingProperties = new Array();
 							var ii = 0;
 							if (relatedDataObjectNode.childNodes[1]) {
+								keysNode = relatedDataObjectNode.childNodes[0];
 								propertiesNode = relatedDataObjectNode.childNodes[1];
+								for (var i = 0; i < keysNode.childNodes.length; i++)
+									if (!keysNode.childNodes[i].hidden) {
+										mappingProperties.push([ii.toString(), keysNode.childNodes[i].text]);
+										ii++;
+									}
 								for (var i = 0; i < propertiesNode.childNodes.length; i++)
 									if (!propertiesNode.childNodes[i].hidden) {
 										mappingProperties.push([ii.toString(), propertiesNode.childNodes[i].text]);
@@ -669,7 +693,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									}
 							}
 							else {
+								keysNode = relatedDataObjectNode.attributes.children[0];
 								propertiesNode = relatedDataObjectNode.attributes.children[1];
+								for (var i = 0; i < keysNode.children.length; i++)
+									if (!keysNode.children[i].hidden) {
+										mappingProperties.push([ii.toString(), keysNode.children[i].text]);
+										ii++;
+									}
 								for (var i = 0; i < propertiesNode.children.length; i++)
 									if (!propertiesNode.children[i].hidden) {
 										mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
