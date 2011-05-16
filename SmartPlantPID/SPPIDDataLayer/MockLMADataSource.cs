@@ -12,7 +12,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
     public MockLMADataSource()
     {
     }
-
+   
     public string ProjectNumber { get; set; }
 
     public void set_SiteNode(string siteNode)

@@ -57,7 +57,7 @@
       <HintPath>..\lib\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
     <Reference Include="InteropLlama">
-      <HintPath>..\..\..\..\..\Program Files\SmartPlant\P&amp;ID Workstation\Program\InteropLlama.dll</HintPath>
+      <HintPath>..\..\..\..\Intergraph\SmartPlant\P&amp;ID Workstation\Program\InteropLlama.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="iRINGLibrary, Version=2.0.1.2544, Culture=neutral, processorArchitecture=MSIL">
