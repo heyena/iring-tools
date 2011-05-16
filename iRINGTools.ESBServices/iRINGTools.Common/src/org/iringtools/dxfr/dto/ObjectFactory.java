@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObject }
+     * Create an instance of {@link RoleObject }
      * 
      */
-    public DataTransferObject createDataTransferObject() {
-        return new DataTransferObject();
+    public RoleObject createRoleObject() {
+        return new RoleObject();
     }
 
     /**
@@ -46,27 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObjectList }
+     * Create an instance of {@link DataTransferObject }
      * 
      */
-    public DataTransferObjectList createDataTransferObjectList() {
-        return new DataTransferObjectList();
-    }
-
-    /**
-     * Create an instance of {@link RoleObject }
-     * 
-     */
-    public RoleObject createRoleObject() {
-        return new RoleObject();
-    }
-
-    /**
-     * Create an instance of {@link DataTransferObjects }
-     * 
-     */
-    public DataTransferObjects createDataTransferObjects() {
-        return new DataTransferObjects();
+    public DataTransferObject createDataTransferObject() {
+        return new DataTransferObject();
     }
 
     /**
@@ -78,6 +62,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ClassObjects }
+     * 
+     */
+    public ClassObjects createClassObjects() {
+        return new ClassObjects();
+    }
+
+    /**
+     * Create an instance of {@link DataTransferObjectList }
+     * 
+     */
+    public DataTransferObjectList createDataTransferObjectList() {
+        return new DataTransferObjectList();
+    }
+
+    /**
      * Create an instance of {@link TemplateObject }
      * 
      */
@@ -86,11 +86,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassObjects }
+     * Create an instance of {@link DataTransferObjects }
      * 
      */
-    public ClassObjects createClassObjects() {
-        return new ClassObjects();
+    public DataTransferObjects createDataTransferObjects() {
+        return new DataTransferObjects();
     }
 
     /**

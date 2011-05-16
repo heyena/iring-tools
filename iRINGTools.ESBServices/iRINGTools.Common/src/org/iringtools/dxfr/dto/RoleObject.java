@@ -254,13 +254,14 @@ public class RoleObject {
 
     /**
      * Gets the value of the hasValueMap property.
+     * This getter has been renamed from isHasValueMap() to getHasValueMap() by cxf-xjc-boolean plugin.
      * 
      * @return
      *     possible object is
      *     {@link Boolean }
      *     
      */
-    public Boolean isHasValueMap() {
+    public Boolean getHasValueMap() {
         return hasValueMap;
     }
 

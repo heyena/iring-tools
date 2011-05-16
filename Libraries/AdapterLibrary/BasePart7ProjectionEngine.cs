@@ -111,10 +111,14 @@ namespace org.iringtools.adapter.projection
       _mapping = mapping;
       _dictionary = _dataLayer.GetDictionary();
 
-      if (_settings["fixedIdentifierBoundary"] == null)
+      if (String.IsNullOrEmpty(_settings["fixedIdentifierBoundary"]))
+      {
         _fixedIdentifierBoundary = "#";
+      }
       else
+      {
         _fixedIdentifierBoundary = _settings["fixedIdentifierBoundary"];
+      }
 
       // get classification settings
       _primaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
@@ -384,6 +388,11 @@ namespace org.iringtools.adapter.projection
       return dataObject.keyProperties;
     }
 
+    protected bool IsFixedIdentifier(string identifier)
+    {
+      return identifier.StartsWith(_fixedIdentifierBoundary) && identifier.EndsWith(_fixedIdentifierBoundary);
+    }
+
     protected bool ContainsAssignedKey(DataObject dictionaryObject)
     {
       foreach (KeyProperty keyProperty in dictionaryObject.keyProperties)
@@ -528,8 +537,7 @@ namespace org.iringtools.adapter.projection
 
         foreach (string identifier in classMap.identifiers)
         {
-          // identifier is a fixed value
-          if (identifier.StartsWith(_fixedIdentifierBoundary) && identifier.EndsWith(_fixedIdentifierBoundary))
+          if (IsFixedIdentifier(identifier))
           {
             string value = identifier.Substring(1, identifier.Length - 2);
 
@@ -604,7 +612,7 @@ namespace org.iringtools.adapter.projection
       foreach (string identifier in classMap.identifiers)
       {
         // identifier is a property map
-        if (!(identifier.StartsWith(_fixedIdentifierBoundary) && identifier.EndsWith(_fixedIdentifierBoundary)))
+        if (!IsFixedIdentifier(identifier))
         {
           string[] identifierParts = identifier.Split('.');
           string propertyName = identifierParts[identifierParts.Length - 1];
@@ -737,8 +745,7 @@ namespace org.iringtools.adapter.projection
 
         foreach (string identifier in classMap.identifiers)
         {
-          // identifier is a fixed value
-          if (identifier.StartsWith(_fixedIdentifierBoundary) && identifier.EndsWith(_fixedIdentifierBoundary))
+          if (IsFixedIdentifier(identifier))
           {
             string value = identifier.Substring(1, identifier.Length - 2);
 
@@ -801,7 +808,7 @@ namespace org.iringtools.adapter.projection
               string[] propertyNameParts = expression.PropertyName.Split('.');
               Values values = expression.Values;
               string dataPropertyName = ProjectProperty(propertyNameParts, ref values);
-              expression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+              expression.PropertyName = dataPropertyName.Substring(dataPropertyName.LastIndexOf('.') + 1);
             }
           }
 
@@ -811,7 +818,7 @@ namespace org.iringtools.adapter.projection
             {
               string[] propertyNameParts = orderExpression.PropertyName.Split('.');
               string dataPropertyName = ProjectProperty(propertyNameParts);
-              orderExpression.PropertyName = RemoveDataPropertyAlias(dataPropertyName);
+              orderExpression.PropertyName = dataPropertyName.Substring(dataPropertyName.LastIndexOf('.') + 1);
             }
           }
         }
@@ -820,17 +827,6 @@ namespace org.iringtools.adapter.projection
       {
         throw new Exception("Error while projecting a DataFilter for use with DataLayer.", ex);
       }
-    }
-
-    public string RemoveDataPropertyAlias(string dataPropertyName)
-    {
-      char[] dot = { '.' };
-      string[] dataPropertyNameParts = dataPropertyName.Split(dot, 2);
-
-      if (dataPropertyNameParts.Count() > 1)
-        return dataPropertyNameParts[1];
-      else
-        return dataPropertyNameParts[0];
     }
 
     //THIS ASSUMES CLASS IS ONLY USED ONCE

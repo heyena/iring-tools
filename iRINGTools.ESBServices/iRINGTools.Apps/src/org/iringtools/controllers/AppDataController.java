@@ -23,7 +23,6 @@ public class AppDataController extends ActionSupport implements SessionAware
   private String graph;
   private String individual;
   private String classId;
-  private String classIdentifier;
   private String filter;
   private String sort; // sort by
   private String dir;  // sort direction
@@ -63,7 +62,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   public String getPageRelatedItems() 
   {
     pageRelatedItemGrid = appDataModel.getRelatedItemGrid(baseUri, scope, app, graph, 
-        individual, classId, classIdentifier, filter, sort, dir, start, limit);
+        individual, classId, filter, sort, dir, start, limit);
     return SUCCESS;
   }
 
@@ -133,16 +132,6 @@ public class AppDataController extends ActionSupport implements SessionAware
   public String getClassId()
   {
     return classId;
-  }
-  
-  public void setClassIdentifier(String classIdentifier)
-  {
-    this.classIdentifier = classIdentifier;
-  }
-
-  public String getClassIdentifier()
-  {
-    return classIdentifier;
   }
 
   public void setFilter(String filter)

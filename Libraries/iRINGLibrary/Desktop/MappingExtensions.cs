@@ -230,20 +230,20 @@ namespace org.iringtools.mapping
 
       public static ClassMap Clone(this ClassMap classMap)
       {
-        ClassMap clone = new ClassMap
+        ClassMap newClassMap = new ClassMap
         {
           id = classMap.id,
           name = classMap.name,
-          identifierDelimiter = String.Empty,
+          identifierDelimiter = classMap.identifierDelimiter,
           identifiers = new Identifiers(),
         };
 
         foreach (string identifier in classMap.identifiers)
         {
-          clone.identifiers.Add(identifier);
+          newClassMap.identifiers.Add(identifier);
         }
 
-        return clone;
+        return newClassMap;
       }
 
       public static TemplateMap Clone(this TemplateMap templateMap)

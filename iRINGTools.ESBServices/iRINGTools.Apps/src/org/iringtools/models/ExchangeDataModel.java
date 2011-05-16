@@ -44,13 +44,13 @@ public class ExchangeDataModel extends DataModel
   }
 
   public Grid getRelatedItemGrid(String serviceUri, String scope, String xid, String dtoIdentifier,
-      String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
+      String classId, String filter, String sortBy, String sortOrder, int start, int limit)
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
     DataTransferObject dto = getDto(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter, sortBy,
         sortOrder, start, limit);
-    return getRelatedItemGrid(DataType.EXCHANGE, dto, classId, classIdentifier, start, limit);
+    return getRelatedItemGrid(DataType.EXCHANGE, dto, classId, start, limit);
   }
 
   public ExchangeResponse submitExchange(String serviceUri, String scope, String xid, boolean reviewed)

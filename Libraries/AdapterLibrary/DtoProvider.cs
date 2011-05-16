@@ -251,9 +251,9 @@ namespace org.iringtools.adapter
         _graphMap = _mapping.FindGraphMap(graph);
 
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
-        Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
 
-        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm, String.Empty);
+        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
       }
       catch (Exception ex)
       {
@@ -274,15 +274,11 @@ namespace org.iringtools.adapter
 
         _graphMap = _mapping.FindGraphMap(graph);
 
-        BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
-
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
 
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, 0, 0);
-        Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
-
-        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm, String.Empty);
+        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
       }
       catch (Exception ex)
       {
@@ -304,9 +300,8 @@ namespace org.iringtools.adapter
         BuildCrossGraphMap(manifest, graph);
 
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null, 0, 0);
-        Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
-
-        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm, String.Empty);
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
       }
       catch (Exception ex)
       {
@@ -327,42 +322,20 @@ namespace org.iringtools.adapter
 
         BuildCrossGraphMap(request.Manifest, graph);
 
-        BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
-
         DataFilter filter = request.DataFilter;
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
 
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, 0, 0);
-        Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
-
+        
         // get sort index
-        string sortIndex = String.Empty; 
-       
+        string sortIndex = String.Empty;        
         if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
         {
           sortIndex = filter.OrderExpressions.First().PropertyName;
         }
-        
-        dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm, sortIndex);
 
-        // set sort order and type 
-        if (dataTransferIndices != null && filter != null && filter.OrderExpressions != null && 
-          filter.OrderExpressions.Count > 0)
-        {
-          dataTransferIndices.SortOrder = filter.OrderExpressions.First().SortOrder.ToString();
-          
-          // find data type of the sort index
-          DataObject dataObject = _dataDictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectName);
-          foreach (DataProperty dataProperty in dataObject.dataProperties)
-          {
-            if (dataProperty.propertyName.ToUpper() == sortIndex.ToUpper())
-            {
-              dataTransferIndices.SortType = dataProperty.dataType.ToString();
-              break;
-            }
-          }
-        }
+        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, sortIndex);
       }
       catch (Exception ex)
       {
@@ -389,13 +362,11 @@ namespace org.iringtools.adapter
         IList<string> identifiers = new List<string>();
         foreach (DataTransferIndex dti in dataTrasferIndexList)
         {
-          identifiers.Add(dti.Identifier);
+          identifiers.Add(dti.InternalIdentifier);
         }
 
-        BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
-
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
 
         dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
@@ -433,12 +404,11 @@ namespace org.iringtools.adapter
           }
         }
 
-        BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
-
         string xml = Utility.SerializeDataContract<DataTransferObjects>(dataTransferObjects);
         XElement xElement = XElement.Parse(xml);
         XDocument dtoDoc = new XDocument(xElement);
+
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap.name, ref dtoDoc);
 
         if (dataObjects != null && dataObjects.Count > 0)
@@ -483,10 +453,9 @@ namespace org.iringtools.adapter
         IList<string> identifiers = new List<string> { id };
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
 
-        BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
-
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
+
         dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
       }
       catch (Exception ex)
@@ -546,14 +515,13 @@ namespace org.iringtools.adapter
         IList<string> identifiers = new List<string>();
         foreach (DataTransferIndex dti in dataTrasferIndexList)
         {
-          identifiers.Add(dti.Identifier);
+          identifiers.Add(dti.InternalIdentifier);
         }
 
-        BasePart7ProjectionEngine dtoProjectionEngine = (_settings["dtoProjectionEngine"] == null || _settings["dtoProjectionEngine"] == "dto")
-          ? (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto") : (BasePart7ProjectionEngine)_kernel.Get<IProjectionLayer>("dto2");
-
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");        
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
+
         dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
       }
       catch (Exception ex)
@@ -705,65 +673,6 @@ namespace org.iringtools.adapter
         throw new Exception(string.Format("Error initializing identity: {0})", ex));
       }
     }
-    private Dictionary<string, List<string>> GetClassIdentifiers(ref IList<IDataObject> dataObjects)
-    {
-      Dictionary<string, List<string>> classIdentifiers = new Dictionary<string, List<string>>();
-
-      foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
-      {
-        ClassMap classMap = classTemplateMap.classMap;
-
-        List<string> identifiers = new List<string>();
-
-        foreach (string identifier in classMap.identifiers)
-        {
-          // identifier is a fixed value
-          if (identifier.StartsWith("#") && identifier.EndsWith("#"))
-          {
-            string value = identifier.Substring(1, identifier.Length - 2);
-
-            for (int i = 0; i < dataObjects.Count; i++)
-            {
-              if (identifiers.Count == i)
-              {
-                identifiers.Add(value);
-              }
-              else
-              {
-                identifiers[i] += classMap.identifierDelimiter + value;
-              }
-            }
-          }
-          else  // identifier comes from a property
-          {
-            string[] property = identifier.Split('.');
-            string objectName = property[0].Trim();
-            string propertyName = property[1].Trim();
-
-            if (dataObjects != null)
-            {
-              for (int i = 0; i < dataObjects.Count; i++)
-              {
-                string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
-
-                if (identifiers.Count == i)
-                {
-                  identifiers.Add(value);
-                }
-                else
-                {
-                  identifiers[i] += classMap.identifierDelimiter + value;
-                }
-              }
-            }
-          }
-        }
-
-        classIdentifiers[classMap.id] = identifiers;
-      }
-
-      return classIdentifiers;
-    }
 
     // build cross graph map from manifest graph and mapping graph and save it in _graphMap
     private void BuildCrossGraphMap(Manifest manifest, string graph)
@@ -884,68 +793,6 @@ namespace org.iringtools.adapter
           }
         }
       }
-    }
-
-    //NOTE: only MD5 hash algorithm is supported at current
-    private DataTransferIndices BuildDataTransferIndices(ref IList<IDataObject> dataObjects, ref Dictionary<string, List<string>> classIdentifiers, 
-      string hashAlgorithm, string sortIndex)
-    {
-      DataTransferIndices dataTransferIndices = new DataTransferIndices();
-
-      for (int i = 0; i < dataObjects.Count; i++)
-      {
-        DataTransferIndex dti = new DataTransferIndex();
-        dataTransferIndices.DataTransferIndexList.Add(dti);
-
-        bool firstClassMap = true;
-        StringBuilder propertyValues = new StringBuilder();
-
-        foreach (var pair in _graphMap.classTemplateMaps)
-        {
-          ClassMap classMap = pair.classMap;
-          List<TemplateMap> templateMaps = pair.templateMaps;
-
-          if (firstClassMap)
-          {
-            dti.Identifier = classIdentifiers[classMap.id][i];
-            firstClassMap = false;
-          }
-
-          foreach (TemplateMap templateMap in templateMaps)
-          {
-            foreach (RoleMap roleMap in templateMap.roleMaps)
-            {
-              if (roleMap.type == RoleType.Property ||
-                  roleMap.type == RoleType.DataProperty ||
-                  roleMap.type == RoleType.ObjectProperty)
-              {
-                string propertyName = roleMap.propertyName.Substring(_graphMap.dataObjectName.Length + 1);
-                string value = Convert.ToString(dataObjects[i].GetPropertyValue(propertyName));
-
-                if (!String.IsNullOrEmpty(roleMap.valueListName))
-                {
-                  value = _mapping.ResolveValueList(roleMap.valueListName, value);
-
-                  if (value == "rdf:nil")
-                    value = String.Empty;
-                }
-
-                if (propertyName == sortIndex)
-                {
-                  dti.SortIndex = value;
-                }
-
-                propertyValues.Append(value);
-              }
-            }
-          }
-        }
-
-        if (String.IsNullOrEmpty(hashAlgorithm) || hashAlgorithm.ToUpper() == "MD5")
-          dti.HashValue = Utility.MD5Hash(propertyValues.ToString());
-      }
-
-      return dataTransferIndices;
     }
   }
 }
