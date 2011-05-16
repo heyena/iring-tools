@@ -382,7 +382,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						autoScroll: true,
 						region: 'center',
 						layout: 'fit',
-						anchor: '100% -100',
+						anchor: '100%',
 						border: true
 					}],
 					keys: [{
@@ -474,7 +474,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
   											{ name: 'relationName' }
   										])
 								});
-								createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id);
+								createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0);
 							}
 						}]
 					})
@@ -507,7 +507,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
   						{ name: 'relationName' }
   					])
 				});
-				createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id);
+				createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0);
 			}
 		};
 
@@ -855,11 +855,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 								var properMap = new Array();
 								var dataRelationPane = relationConfigPanel.items.items[7];
-
-								if (node.attributes.attributes)
-									var attribute = node.attributes.attributes;
-								else
-									var attribute = node.attributes;
+								
+								var attribute = node.attributes;
 								if (attribute) {
 									for (i = 0; i < attribute.propertyMap.length; i++)
 										properMap.push([attribute.propertyMap.dataPropertyName, attribute.propertyMap.relatedPropertyName]);
@@ -876,7 +873,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										{ name: 'relatedProperty' }
 									])
 									});
-									createPropertyMapGrid(scopeName + '.' + appName + '.' + node.id, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id);
+									createRelationGrid(scopeName + '.' + appName + '.' + node.id, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1);
 								}
 							}
 						}]
@@ -924,7 +921,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
   						{ name: 'relatedProperty' }
   					])
 				});
-				createPropertyMapGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id);
+				createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1);
 			}
 		};
 
@@ -2110,7 +2107,16 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 	}
 });
 
-function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, configLabel, dbObjLabel, formLabel) {
+function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, configLabel, dbObjLabel, formLabel, callId) {
+	if (callId == 0) {
+		var hei = 660;
+		var msg = 'Relationship name cannot be added when the field is blank.';
+	}
+	else {
+		var hei = 530;
+		var msg = 'The pair of property name and mapping property cannot added when either value is blank.'
+	}
+
 	dataStore.on('load', function () {
 		if (dataGridPanel.items) {
 			var gridtab = dataGridPanel.items.map[gridlabel];
@@ -2123,6 +2129,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 			id: gridlabel,
 			store: dataStore,
 			stripeRows: true,
+			height: hei,
 			minHeight: 200,
 			minWidth: 300,
 			maxHeight: 600,
@@ -2170,26 +2177,56 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 						var editPane = dataObjectsPane.items.items[1];
 						var form = editPane.items.map[formLabel].getForm();
 						var mydata = dataStore.data.items;
-						var relationName = form.findField('relationName').getValue().replace(/^\s*/, "").replace(/\s*$/, "");
-						if (relationName == '') {
-							var message = 'Relationship name cannot be added when the field is blank.';
-							showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-							return;
-						}
-						for (var i = 0; i < mydata.length; i++)
-							if (mydata[i].data.relationName.toLowerCase() == relationName.toLowerCase()) {
-								var message = relationName + 'already exits.';
-								showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+						if (callId == 0) {
+							var relationName = form.findField('relationName').getValue().replace(/^\s*/, "").replace(/\s*$/, "");
+							if (relationName == '') {
+								showDialog(400, 100, 'Warning', msg, Ext.Msg.OK, null);
 								return;
 							}
-						var relationRecord = Ext.data.Record.create([
+							for (var i = 0; i < mydata.length; i++)
+								if (mydata[i].data.relationName.toLowerCase() == relationName.toLowerCase()) {
+									var message = relationName + 'already exits.';
+									showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+									return;
+								}
+							var relationRecord = Ext.data.Record.create([
 							{ name: "relationName" }
 						]);
 
-						var newRelationRecord = new relationRecord({
-							relationName: relationName
-						});
+							var newRelationRecord = new relationRecord({
+								relationName: relationName
+							});
+						}
+						else {
+							var propertyNameCombo = form.findField('propertyName');
+							var mapPropertyNameCombo = form.findField('mapPropertyName');
+							if (!propertyNameCombo.getValue() || !mapPropertyNameCombo.getValue())
+								return;
 
+							var propertyName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
+							var mapPropertyName = mapPropertyNameCombo.store.getAt(mapPropertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
+							if (propertyName == "" || mapPropertyName == "") {
+								showDialog(400, 100, 'Warning', msg, Ext.Msg.OK, null);
+								return;
+							}
+
+							for (var i = 0; i < mydata.length; i++)
+								if (mydata[i].data.property == propertyName && mydata[i].data.relatedProperty == mapPropertyName) {
+									var message = 'The pair of ' + propertyName + ' and ' + mapPropertyName + ' cannot be added because the pair already exits.';
+									showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+									return;
+								}
+
+							var propertyMapRecord = Ext.data.Record.create([
+								{ name: "property" },
+								{ name: "relatedProperty" },
+							]);
+
+							var newRelationRecord = new propertyMapRecord({
+								property: propertyName,
+								relatedProperty: mapPropertyName
+							});
+						}
 						dataStore.add(newRelationRecord);
 						dataStore.commitChanges();
 					}
@@ -2218,7 +2255,7 @@ function createPropertyMapGrid(gridlabel, dataGridPanel, colModel, dataStore, co
 			maxheight: 400,
 			minHeight: 100,
 			minWidth: 300,
-			height: 350,
+			height: 400,
 			frame: true,
 			autoScroll: true,
 			border: true,
