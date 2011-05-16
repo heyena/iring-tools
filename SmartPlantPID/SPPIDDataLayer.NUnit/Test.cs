@@ -282,35 +282,35 @@ namespace iRINGTools.SDK.SPPIDDataLayer
             Assert.IsTrue(actual.Level == StatusLevel.Success);
         }
 
-        //[Test]
-        //public void Read()
-        //{
-        //    IList<string> identifiers = new List<string>() 
-        //    { 
-        //        "Equip-001", 
-        //        "Equip-002", 
-        //        "Equip-003", 
-        //        "Equip-004" 
-        //    };
+        [Test]
+        public void Read()
+        {
+            IList<string> identifiers = new List<string>() 
+            { 
+                "PT-3", 
+                "PT-1", 
+                "Equip-003", 
+                "Equip-004" 
+            };
 
-        //    IList<IDataObject> dataObjects = _sppidDataLayer.Get("Equipment", identifiers);
+            IList<IDataObject> dataObjects = _sppidDataLayer.Get("Equipment", identifiers);
 
-        //    if (!(dataObjects.Count() > 0))
-        //    {
-        //        throw new AssertionException("No Rows returned.");
-        //    }
+            if (!(dataObjects.Count() > 0))
+            {
+                throw new AssertionException("No Rows returned.");
+            }
 
-        //    foreach (IDataObject dataObject in dataObjects)
-        //    {
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("PumpType"));
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("PumpDriverType"));
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("DesignTemp"));
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("DesignPressure"));
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("Capacity"));
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("SpecificGravity"));
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("DifferentialPressure"));
-        //    }
-        //}
+            foreach (IDataObject dataObject in dataObjects)
+            {
+                Assert.IsNotNull(dataObject.GetPropertyValue("PumpType"));
+                Assert.IsNotNull(dataObject.GetPropertyValue("PumpDriverType"));
+                Assert.IsNotNull(dataObject.GetPropertyValue("DesignTemp"));
+                Assert.IsNotNull(dataObject.GetPropertyValue("DesignPressure"));
+                Assert.IsNotNull(dataObject.GetPropertyValue("Capacity"));
+                Assert.IsNotNull(dataObject.GetPropertyValue("SpecificGravity"));
+                Assert.IsNotNull(dataObject.GetPropertyValue("DifferentialPressure"));
+            }
+        }
 
         //[Test]
         //public void ReadWithFilter()
@@ -352,18 +352,18 @@ namespace iRINGTools.SDK.SPPIDDataLayer
         //    }
         //}
 
-        //[Test]
-        //public void GetDictionary()
-        //{
-        //    DataDictionary dictionary = _sppidDataLayer.GetDictionary();
+        [Test]
+        public void GetDictionary()
+        {
+            DataDictionary dictionary = _sppidDataLayer.GetDictionary();
 
-        //    Assert.IsNotNull(dictionary);
+            Assert.IsNotNull(dictionary);
 
-        //    string dictionaryPath = String.Format("{0}DataDictionary.xml",
-        //          _adapterSettings["XmlPath"]
-        //        );
+            string dictionaryPath = String.Format("{0}DataDictionary.xml",
+                  _adapterSettings["XmlPath"]
+                );
 
-        //    Utility.Write<DataDictionary>(dictionary, dictionaryPath, true);
-        //}
+            Utility.Write<DataDictionary>(dictionary, dictionaryPath, true);
+        }
     }
 }
