@@ -163,6 +163,9 @@
     <Content Include="Content\img\document-save.png" />
     <Content Include="Content\img\fade.png" />
     <Content Include="Content\img\file-mapping.png" />
+    <Content Include="Content\img\folder-close.png" />
+    <Content Include="Content\img\folder-open.png" />
+    <Content Include="Content\img\folder.png" />
     <Content Include="Content\img\internet-web-browser.png" />
     <Content Include="Content\img\iring-tools-logo.png" />
     <Content Include="Content\img\iRINGTools_logo.png" />

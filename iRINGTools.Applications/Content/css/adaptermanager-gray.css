@@ -33,11 +33,11 @@ a:active {color: black}
 }
 
 .x-tree-node-collapsed .folder {
-  background-image: url(../img/foldere.png);
+  background-image: url(../img/folder-close.png);
 }
 
 .x-tree-node-expanded .folder {
-  background-image: url(../img/folder.png);
+  background-image: url(../img/folder-open.png);
 }
 
 .x-tree-node .exchange {
