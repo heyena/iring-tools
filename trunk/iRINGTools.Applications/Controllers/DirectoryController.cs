@@ -187,17 +187,19 @@ namespace iRINGTools.Web.Controllers
                       string valueList = context.Split('/')[4];
                       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
                       Mapping mapping = GetMapping(scopeName, applicationName);
+                      
                       ValueListMap valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
+                      
                       foreach (var valueMap in valueListMap.valueMaps)
                       {
-                        
+                          string classLabel = GetClassLabel(valueMap.uri.Split(':')[1]);
                         JsonTreeNode node = new JsonTreeNode
                         {
                           nodeType = "async",
                           type = "ListMapNode",
                           icon = "Content/img/value.png",
                           id = context + "/ValueMap/" + valueMap.internalValue,
-                          text =  valueMap.internalValue,
+                          text =  classLabel + " ["+valueMap.internalValue+"]",
                           expanded = false,
                           leaf = true,
                           children = null,
@@ -447,6 +449,13 @@ namespace iRINGTools.Web.Controllers
           }
 
           return (Mapping)Session[key];
+        }
+
+        private string GetClassLabel(string classId)
+        {
+           Entity dataEntity= _repository.GetClassLabel(classId);
+
+           return Convert.ToString(dataEntity.Label);
         }
 
         private string getKeytype(string name, List<DataProperty> properties)

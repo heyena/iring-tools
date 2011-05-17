@@ -76,6 +76,20 @@ namespace iRINGTools.Web.Models
             return obj;
         }
 
+        public Entity GetClassLabel(string classId)
+        {
+            Entity entity = new Entity();
+            try
+            {
+                WebHttpClient _tempClient = new WebHttpClient(_settings["ReferenceDataServiceUri"]);
+                entity = _tempClient.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
+            }
+            catch (Exception ex)
+            {
+            }
+            return entity;
+        }
+
         public ScopeProject GetScope(string scopeName)
         {
             ScopeProjects scopes = GetScopes();

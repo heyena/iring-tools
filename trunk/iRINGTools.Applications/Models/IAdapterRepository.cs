@@ -25,6 +25,8 @@ namespace iRINGTools.Web.Models
 
     DataDictionary GetDictionary(string scope, string application);
 
+    Entity GetClassLabel(string classId);
+
     string UpdateScope(string scope, string name, string description);
 
     string DeleteScope(string scope);
