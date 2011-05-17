@@ -327,14 +327,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				}, {
 					xtype: 'tbbutton',
 					icon: 'Content/img/16x16/document-properties.png',
-					text: 'Cancel',
+					text: 'Reset',
+					tooltip: 'Reset',
 					handler: function (f) {
-						var tab = Ext.getCmp('content-panel');
-						var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
-						var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-						var editPane = dataObjectsPane.items.map[scopeName + '.' + appName + '.editor-panel'];
-						var dsconfigPanel = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
-						dsconfigPanel.hide();
+						setDsConfigPane();
 					}
 				}]
 			})
@@ -417,7 +413,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											var newNode = new Ext.tree.TreeNode({
 												text: newNodeText,
 												type: 'relationship',
-												iconCls: 'relation',
 												leaf: true,
 												objectName: node.parentNode.text,
 												relatedObjectName: '',
@@ -425,6 +420,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												relationshipTypeIndex: '1',
 												propertyMap: []
 											});
+											newNode.iconCls = 'relation';
 											node.appendChild(newNode);
 										}
 									}
@@ -986,6 +982,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						var keysNode = dataObjectNode.attributes.children[0];
 						var propertiesNode = dataObjectNode.attributes.children[1];
 						var relationshipsNode = dataObjectNode.attributes.children[2];
+						relationshipsNode.iconCls = 'folder';
 
 						// sync data properties
 						for (var j = 0; j < propertiesNode.children.length; j++) {
@@ -1016,12 +1013,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										newKeyNode = new Ext.tree.TreeNode({
 											text: nodeText,
 											type: "keyProperty",
-											iconCls: 'property',
 											leaf: true,
 											hidden: false,
 											properties: properties
 										});
-
+										newKeyNode.iconCls = 'property';
 										propertiesNode.children.splice(jj, 1);
 										jj--;
 
@@ -1039,7 +1035,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							var newNode = new Ext.tree.TreeNode({
 								text: dataObject.dataRelationships[j].relationshipName,
 								type: 'relationship',
-								iconCls: 'relation',
 								leaf: true,
 								objectName: dataObjectNode.text,
 								relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
@@ -1126,7 +1121,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							tableNames: tablesSelForm.findField('tableSelector').getValue()
 						};
 
-						dataObjectsPane.items.items[1].items.map[scopeName + '.' + appName + '.tablesSelectorPane'].hide();
 						var rootNode = dbObjectsTree.getRootNode();
 						rootNode.reload(
 							function (rootNode) {
@@ -1139,10 +1133,50 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				}, {
 					xtype: 'tbbutton',
 					icon: 'Content/img/16x16/document-properties.png',
-					text: 'Cancel',
-					tooltip: 'Cancel',
+					text: 'Reset',
+					tooltip: 'Reset',
 					handler: function () {
-						dataObjectsPane.items.items[1].items.map[scopeName + '.' + appName + '.tablesSelectorPane'].hide();
+						var rootNode = dataObjectsPane.items.items[0].items.items[0].getRootNode();
+						var selectTableNames = new Array();
+						var availTableName = new Array();
+						var found = false;
+
+						for (var i = 0; i < dbDict.dataObjects.length; i++) {
+							var tableName = dbDict.dataObjects[i].tableName;
+							availTableName.push([tableName, tableName]);
+						}
+
+						for (var j = 0; j < availTableName.length; j++)
+							for (var i = 0; i < rootNode.childNodes.length; i++) {
+								if (rootNode.childNodes[i].text == availTableName[j][0]) {
+									found = true;
+									availTableName.splice(j, 1);
+									j--;
+									break;
+								}
+							}
+
+						for (var i = 0; i < rootNode.childNodes.length; i++) {
+							var nodeText = rootNode.childNodes[i].text;
+							selectTableNames.push([nodeText, nodeText]);
+						}
+
+						var tablesSelector = tablesSelectorPane.items.items[1];
+						if (tablesSelector.toMultiselect.store.data) {
+							tablesSelector.toMultiselect.reset();
+							tablesSelector.toMultiselect.store.removeAll();
+						}
+
+						tablesSelector.toMultiselect.store.loadData(selectTableNames);
+						tablesSelector.toMultiselect.store.commitChanges();
+
+						if (tablesSelector.fromMultiselect.store.data) {
+							tablesSelector.fromMultiselect.reset();
+							tablesSelector.fromMultiselect.store.removeAll();
+						}
+
+						tablesSelector.fromMultiselect.store.loadData(availTableName);
+						tablesSelector.fromMultiselect.store.commitChanges();
 					}
 				}]
 			})
@@ -1378,12 +1412,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 													newKeyNode = new Ext.tree.TreeNode({
 														text: selectedValues[i].data.text,
 														type: "keyProperty",
-														iconCls: 'property',
 														leaf: true,
 														hidden: false,
 														properties: properties
 													});
-
+													newKeyNode.iconCls = 'property';
 													propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
 													break;
 												}
@@ -1421,11 +1454,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												var propertyNode = new Ext.tree.TreeNode({
 													text: keysNode.childNodes[i].text,
 													type: "dataProperty",
-													iconCls: 'property',
 													leaf: true,
 													properties: properties
 												});
 
+												propertyNode.iconCls = 'property';
 												propertiesNode.appendChild(propertyNode);
 												keysNode.removeChild(keysNode.childNodes[i], true);
 											}
@@ -1915,12 +1948,67 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			}]
 		});
 
+		var setDsConfigPane = function () {
+			var dsConfigForm = dsConfigPane.getForm();
+			var connStr = dbDict.ConnectionString;
+			var connStrParts = connStr.split(';');
+
+			for (var i = 0; i < connStrParts.length; i++) {
+				var pair = connStrParts[i].split('=');
+
+				switch (pair[0].toUpperCase()) {
+					case 'DATA SOURCE':
+						var dsValue = pair[1].split('\\');
+						var dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
+						dsConfigForm.findField('dbServer').setValue(dbServer);
+						dsConfigForm.findField('dbInstance').setValue(dsValue[1]);
+						break;
+					case 'INITIAL CATALOG':
+						dsConfigForm.findField('dbName').setValue(pair[1]);
+						break;
+					case 'USER ID':
+						dsConfigForm.findField('dbUserName').setValue(pair[1]);
+						break;
+					case 'PASSWORD':
+						dsConfigForm.findField('dbPassword').setValue(pair[1]);
+						break;
+				}
+			}
+
+			dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
+			dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
+		};
+
+		var setTablesSelectorPane = function () {
+			// populate selected tables
+			var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');
+			var selectedItems = new Array();
+			var selectTableNames = new Array();
+
+			if (dbDict.dataObjects.length == 0) {
+				editPane = dataObjectsPane.items.items[1];
+				if (!editPane) {
+					var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+				}
+				editPane.add(tablesSelectorPane);
+				editPane.getLayout().setActiveItem(editPane.items.length - 1);
+			}
+			else {
+				for (var i = 0; i < dbDict.dataObjects.length; i++) {
+					var dataObject = dbDict.dataObjects[i];
+					selectedItems.push([dataObject.tableName, dataObject.tableName]);
+					selectTableNames.push(dataObject.tableName);
+				}
+				tableSelector.multiselects[1].store = selectedItems;
+			}
+			return selectTableNames;
+		};
+
 		Ext.apply(this, {
 			id: scopeName + '.' + appName + '.-nh-config-wizard',
 			title: 'NHibernate Config Wizard - ' + scopeName + '.' + appName,
 			closable: true,
 			layout: 'fit',
-			//activeItem: 2,
 			items: [dataObjectsPane]
 		});
 
@@ -1938,56 +2026,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 				if (dbDict) {
 					// populate data source form
-					var dsConfigForm = dsConfigPane.getForm();
-					var connStr = dbDict.ConnectionString;
-					var connStrParts = connStr.split(';');
-
-					for (var i = 0; i < connStrParts.length; i++) {
-						var pair = connStrParts[i].split('=');
-
-						switch (pair[0].toUpperCase()) {
-							case 'DATA SOURCE':
-								var dsValue = pair[1].split('\\');
-								var dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
-								dsConfigForm.findField('dbServer').setValue(dbServer);
-								dsConfigForm.findField('dbInstance').setValue(dsValue[1]);
-								break;
-							case 'INITIAL CATALOG':
-								dsConfigForm.findField('dbName').setValue(pair[1]);
-								break;
-							case 'USER ID':
-								dsConfigForm.findField('dbUserName').setValue(pair[1]);
-								break;
-							case 'PASSWORD':
-								dsConfigForm.findField('dbPassword').setValue(pair[1]);
-								break;
-						}
-					}
-
-					dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
-					dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
-
-					// populate selected tables
-					var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');
-					var selectedItems = new Array();
-					var selectTableNames = new Array();
-
-					if (dbDict.dataObjects.length == 0) {
-						editPane = dataObjectsPane.items.items[1];
-						if (!editPane) {
-							var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-						}
-						editPane.add(tablesSelectorPane);
-						editPane.getLayout().setActiveItem(editPane.items.length - 1);
-					}
-					else {
-						for (var i = 0; i < dbDict.dataObjects.length; i++) {
-							var dataObject = dbDict.dataObjects[i];
-							selectedItems.push([dataObject.tableName, dataObject.tableName]);
-							selectTableNames.push(dataObject.tableName);
-						}
-						tableSelector.multiselects[1].store = selectedItems;
-					}
+					setDsConfigPane();
+					var selectTableNames = setTablesSelectorPane();
 
 					var tab = Ext.getCmp('content-panel');
 					var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
@@ -1995,6 +2035,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					var tablesSelForm = tablesSelectorPane.getForm();
 					var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 					var treeLoader = dbObjectsTree.getLoader();
+					var dsConfigForm = dsConfigPane.getForm();
 
 					treeLoader.dataUrl = 'AdapterManager/DBObjects';
 					treeLoader.baseParams = {
