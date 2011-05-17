@@ -2,7 +2,7 @@
   <dataObjects>
     <dataObject>
       <tableName>EQUIPMENT</tableName>
-      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.ABC</objectNamespace>
+      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.XYZ</objectNamespace>
       <objectName>EQUIPMENT</objectName>
       <keyProperties>
         <keyProperty>
@@ -159,7 +159,7 @@
     </dataObject>
     <dataObject>
       <tableName>INSTRUMENTS</tableName>
-      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.ABC</objectNamespace>
+      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.XYZ</objectNamespace>
       <objectName>INSTRUMENTS</objectName>
       <keyProperties>
         <keyProperty>
@@ -348,7 +348,7 @@
     </dataObject>
     <dataObject>
       <tableName>LINES</tableName>
-      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.ABC</objectNamespace>
+      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.XYZ</objectNamespace>
       <objectName>LINES</objectName>
       <keyProperties>
         <keyProperty>
@@ -415,7 +415,7 @@
         <dataProperty>
           <columnName>NOMDIAMETER</columnName>
           <propertyName>NOMDIAMETER</propertyName>
-          <dataType>Single</dataType>
+          <dataType>Double</dataType>
           <dataLength>8</dataLength>
           <isNullable>true</isNullable>
           <keyType>unassigned</keyType>
@@ -609,7 +609,7 @@
     </dataObject>
     <dataObject>
       <tableName>VALVES</tableName>
-      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.ABC</objectNamespace>
+      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.XYZ</objectNamespace>
       <objectName>VALVES</objectName>
       <keyProperties>
         <keyProperty>
