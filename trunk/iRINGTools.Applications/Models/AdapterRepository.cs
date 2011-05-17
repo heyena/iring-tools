@@ -432,6 +432,18 @@ namespace iRINGTools.Web.Models
             }
 
             // add relationship nodes
+						if (dataObject.dataRelationships.Count == 0)
+						{
+						  JsonTreeNode relationshipNode = new JsonTreeNode()
+						  {
+						    text = "",
+						    type = "relationship",
+						    leaf = true,
+						    hidden = true
+						  };
+						  relationshipsNode.children.Add(relationshipNode);
+						}
+
             foreach (DataRelationship relationship in dataObject.dataRelationships)
             {
               JsonTreeNode relationshipNode = new JsonTreeNode()
@@ -442,7 +454,7 @@ namespace iRINGTools.Web.Models
                 leaf = true
               };
 
-              dataPropertiesNode.children.Add(relationshipNode);
+							relationshipsNode.children.Add(relationshipNode);
             }
 
             dbObjectNodes.Add(dataObjectNode);
