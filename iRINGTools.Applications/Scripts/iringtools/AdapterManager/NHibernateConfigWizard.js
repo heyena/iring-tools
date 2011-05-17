@@ -970,6 +970,101 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			}
 		}
 
+		var loadTree = function (rootNode) {
+			var relationTypeStr = ['OneToOne', 'OneToMany'];
+
+			// sync data object tree with data dictionary
+			for (var i = 0; i < rootNode.childNodes.length; i++) {
+				var dataObjectNode = rootNode.childNodes[i];
+
+				for (var ii = 0; ii < dbDict.dataObjects.length; ii++) {
+					var dataObject = dbDict.dataObjects[ii];
+					// sync data object
+					dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
+
+					if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
+						var keysNode = dataObjectNode.attributes.children[0];
+						var propertiesNode = dataObjectNode.attributes.children[1];
+						var relationshipsNode = dataObjectNode.attributes.children[2];
+
+						// sync data properties
+						for (var j = 0; j < propertiesNode.children.length; j++) {
+							for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
+								if (propertiesNode.children[j].text.toLowerCase() ==
+									dataObject.dataProperties[jj].propertyName.toLowerCase()) {
+									propertiesNode.children[j].hidden = false;
+								}
+							}
+						}
+
+						// sync key properties
+						for (var j = 0; j < dataObject.keyProperties.length; j++) {
+							for (var k = 0; k < keysNode.children.length; k++) {
+								if (keysNode.children[k].text.toLowerCase() == dataObject.keyProperties[j].keyPropertyName.toLowerCase()) {
+									j++;
+									break;
+								}
+							}
+							if (j < dataObject.keyProperties.length) {
+								for (var jj = 0; jj < propertiesNode.children.length; jj++) {
+									var nodeText = dataObject.keyProperties[j].keyPropertyName;
+									if (propertiesNode.children[jj].text.toLowerCase() == nodeText.toLowerCase()) {
+										var properties = propertiesNode.children[jj].properties;
+										properties.keyType = 'assigned';
+										properties.nullable = false;
+
+										newKeyNode = new Ext.tree.TreeNode({
+											text: nodeText,
+											type: "keyProperty",
+											iconCls: 'property',
+											leaf: true,
+											hidden: false,
+											properties: properties
+										});
+
+										propertiesNode.children.splice(jj, 1);
+										jj--;
+
+										if (newKeyNode)
+											keysNode.children.push(newKeyNode);
+
+										break;
+									}
+								}
+							}
+						}
+
+						// sync relationships
+						for (var j = 0; j < dataObject.dataRelationships.length; j++) {
+							var newNode = new Ext.tree.TreeNode({
+								text: dataObject.dataRelationships[j].relationshipName,
+								type: 'relationship',
+								iconCls: 'relation',
+								leaf: true,
+								objectName: dataObjectNode.text,
+								relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
+								relationshipType: relationTypeStr[dataObject.dataRelationships[j].relationshipType],
+								relationshipTypeIndex: dataObject.dataRelationships[j].relationshipType,
+								propertyMap: []
+							});
+							var mapArray = new Array();
+							for (var jj = 0; jj < dataObject.dataRelationships[j].propertyMaps.length; jj++) {
+								var mapItem = new Array();
+								mapItem['dataPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].dataPropertyName;
+								mapItem['relatedPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].relatedPropertyName;
+								mapArray.push(mapItem);
+							}
+							newNode.iconCls = 'relation';
+							newNode.attributes.propertyMap = mapArray;
+							relationshipsNode.expanded = true;
+							relationshipsNode.children.push(newNode);
+							relationshipsNode.children[j].hidden = false;
+						}
+					}
+				}
+			}
+		};
+
 		var tablesSelectorPane = new Ext.FormPanel({
 			frame: false,
 			id: scopeName + '.' + appName + '.tablesSelectorPane',
@@ -1035,74 +1130,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						var rootNode = dbObjectsTree.getRootNode();
 						rootNode.reload(
 							function (rootNode) {
-								var relationTypeStr = ['OneToOne', 'OneToMany'];
-
-								// sync data object tree with data dictionary
-								for (var i = 0; i < rootNode.childNodes.length; i++) {
-									var dataObjectNode = rootNode.childNodes[i];
-
-									// sync data object
-									dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
-
-									for (var ii = 0; ii < dbDict.dataObjects.length; ii++) {
-										var dataObject = dbDict.dataObjects[ii];
-
-										if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
-											var keysNode = dataObjectNode.attributes.children[0];
-											var propertiesNode = dataObjectNode.attributes.children[1];
-											var relationshipsNode = dataObjectNode.attributes.children[2];
-
-											// sync key properties
-											for (var j = 0; j < keysNode.children.length; j++) {
-												for (var jj = 0; jj < dataObject.keyProperties.length; jj++) {
-													if (keysNode.children[j].text.toLowerCase() ==
-												dataObject.keyProperties[jj].keyPropertyName.toLowerCase()) {
-														keysNode.children[j].hidden = false;
-													}
-												}
-											}
-
-											// sync data properties
-											for (var j = 0; j < propertiesNode.children.length; j++) {
-												for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
-													if (propertiesNode.children[j].text.toLowerCase() ==
-														dataObject.dataProperties[jj].propertyName.toLowerCase()) {
-														propertiesNode.children[j].hidden = false;
-													}
-												}
-											}
-
-											//TODO: sync relationships
-											for (var j = 0; j < dataObject.dataRelationships.length; j++) {
-												var newNode = new Ext.tree.TreeNode({
-													text: dataObject.dataRelationships[j].relationshipName,
-													type: 'relationship',
-													iconCls: 'relation',
-													leaf: true,
-													objectName: dataObjectNode.text,
-													relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
-													relationshipType: relationTypeStr[dataObject.dataRelationships[j].relationshipType],
-													relationshipTypeIndex: dataObject.dataRelationships[j].relationshipType,
-													propertyMap: []
-												});
-
-												var mapArray = new Array();
-												for (var jj = 0; jj < dataObject.dataRelationships[j].propertyMaps.length; jj++) {
-													var mapItem = new Array();
-													mapItem['dataPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].dataPropertyName;
-													mapItem['relatedPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].relatedPropertyName;
-													mapArray.push(mapItem);
-												}
-												newNode.attributes.propertyMap = mapArray;
-												relationshipsNode.expanded = true;
-												relationshipsNode.children.push(newNode);
-												relationshipsNode.children[j].hidden = false;
-											}
-										}
-									}
-								}
-							}
-						);
+								loadTree(rootNode);
+							});
 					}
 				}, {
 					xtype: 'tbspacer',
@@ -1434,7 +1463,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						}]
 					})
 				});
-				
+
 				editPane.add(keysSelectorPanel);
 				var panelIndex = editPane.items.indexOf(keysSelectorPanel);
 				editPane.getLayout().setActiveItem(panelIndex);
@@ -1984,98 +2013,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					var rootNode = dbObjectsTree.getRootNode();
 					rootNode.reload(
 					function (rootNode) {
-						var relationTypeStr = ['OneToOne', 'OneToMany'];
-
-						// sync data object tree with data dictionary
-						for (var i = 0; i < rootNode.childNodes.length; i++) {
-							var dataObjectNode = rootNode.childNodes[i];
-
-							for (var ii = 0; ii < dbDict.dataObjects.length; ii++) {
-								var dataObject = dbDict.dataObjects[ii];
-								// sync data object
-								dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
-
-								if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
-									var keysNode = dataObjectNode.attributes.children[0];
-									var propertiesNode = dataObjectNode.attributes.children[1];
-									var relationshipsNode = dataObjectNode.attributes.children[2];
-
-									// sync data properties
-									for (var j = 0; j < propertiesNode.children.length; j++) {
-										for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
-											if (propertiesNode.children[j].text.toLowerCase() ==
-												dataObject.dataProperties[jj].propertyName.toLowerCase()) {
-												propertiesNode.children[j].hidden = false;
-											}
-										}
-									}
-
-									// sync key properties
-									for (var j = 0; j < dataObject.keyProperties.length; j++) {
-										for (var k = 0; k < keysNode.children.length; k++) {
-											if (keysNode.children[k].text.toLowerCase() == dataObject.keyProperties[j].keyPropertyName.toLowerCase()) {
-												j++;
-												break;
-											}
-										}
-										if (j < dataObject.keyProperties.length) {
-											for (var jj = 0; jj < propertiesNode.children.length; jj++) {
-												var nodeText = dataObject.keyProperties[j].keyPropertyName;
-												if (propertiesNode.children[jj].text.toLowerCase() == nodeText.toLowerCase()) {
-													var properties = propertiesNode.children[jj].properties;
-													properties.keyType = 'assigned';
-													properties.nullable = false;
-
-													newKeyNode = new Ext.tree.TreeNode({
-														text: nodeText,
-														type: "keyProperty",
-														iconCls: 'property',
-														leaf: true,
-														hidden: false,
-														properties: properties
-													});
-
-													propertiesNode.children.splice(jj, 1);
-													jj--;
-
-													if (newKeyNode)
-														keysNode.children.push(newKeyNode);
-
-													break;
-												}
-											}
-										}
-									}
-
-									// sync relationships
-									for (var j = 0; j < dataObject.dataRelationships.length; j++) {
-										var newNode = new Ext.tree.TreeNode({
-											text: dataObject.dataRelationships[j].relationshipName,
-											type: 'relationship',
-											iconCls: 'relation',
-											leaf: true,
-											objectName: dataObjectNode.text,
-											relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
-											relationshipType: relationTypeStr[dataObject.dataRelationships[j].relationshipType],
-											relationshipTypeIndex: dataObject.dataRelationships[j].relationshipType,
-											propertyMap: []
-										});
-										var mapArray = new Array();
-										for (var jj = 0; jj < dataObject.dataRelationships[j].propertyMaps.length; jj++) {
-											var mapItem = new Array();
-											mapItem['dataPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].dataPropertyName;
-											mapItem['relatedPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].relatedPropertyName;
-											mapArray.push(mapItem);
-										}
-										newNode.iconCls = 'relation';
-										newNode.attributes.propertyMap = mapArray;
-										relationshipsNode.expanded = true;
-										relationshipsNode.children.push(newNode);
-										relationshipsNode.children[j].hidden = false;
-									}
-								}
-							}
-						}
+						loadTree(rootNode);
 					});
 				}
 			},
