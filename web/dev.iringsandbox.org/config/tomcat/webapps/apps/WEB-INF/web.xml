@@ -12,10 +12,6 @@
     <param-value>http://tomcat.dev.iringsandbox.org:8081/services/history</param-value>
   </context-param>   
   <context-param>
-    <param-name>FederationServiceUri</param-name>
-    <param-value>http://tomcat.dev.iringsandbox.org:8081/services/refdata</param-value>
-  </context-param>
-  <context-param>
     <param-name>RefDataServiceUri</param-name>
     <param-value>http://dev.iringsandbox.org/services/refdata</param-value>
   </context-param>
