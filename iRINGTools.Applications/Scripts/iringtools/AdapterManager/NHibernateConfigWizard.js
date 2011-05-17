@@ -414,6 +414,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												text: newNodeText,
 												type: 'relationship',
 												leaf: true,
+												iconCls: 'relation',
 												objectName: node.parentNode.text,
 												relatedObjectName: '',
 												relationshipType: 'OneToOne',
@@ -487,7 +488,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				}
 
 				for (i = 0; i < node.childNodes.length; i++) {
-					relations.push([node.childNodes[i].text]);
+					if (node.childNodes[i].text != '')
+						relations.push([node.childNodes[i].text]);
 				}
 				var colModel = new Ext.grid.ColumnModel([
   					{ id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' }
@@ -981,8 +983,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
 						var keysNode = dataObjectNode.attributes.children[0];
 						var propertiesNode = dataObjectNode.attributes.children[1];
-						var relationshipsNode = dataObjectNode.attributes.children[2];
-						relationshipsNode.iconCls = 'folder';
+						var relationshipsNode = dataObjectNode.attributes.children[2];						
 
 						// sync data properties
 						for (var j = 0; j < propertiesNode.children.length; j++) {
@@ -1014,6 +1015,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											text: nodeText,
 											type: "keyProperty",
 											leaf: true,
+											iconCls: 'property',
 											hidden: false,
 											properties: properties
 										});
@@ -1036,6 +1038,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								text: dataObject.dataRelationships[j].relationshipName,
 								type: 'relationship',
 								leaf: true,
+								iconCls: 'relation',
 								objectName: dataObjectNode.text,
 								relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
 								relationshipType: relationTypeStr[dataObject.dataRelationships[j].relationshipType],
@@ -1053,7 +1056,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							newNode.attributes.propertyMap = mapArray;
 							relationshipsNode.expanded = true;
 							relationshipsNode.children.push(newNode);
-							relationshipsNode.children[j].hidden = false;
 						}
 					}
 				}
@@ -1455,6 +1457,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 													text: keysNode.childNodes[i].text,
 													type: "dataProperty",
 													leaf: true,
+													iconCls: 'property',
 													properties: properties
 												});
 
