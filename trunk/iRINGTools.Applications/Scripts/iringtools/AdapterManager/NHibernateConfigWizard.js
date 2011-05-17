@@ -1364,7 +1364,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var keysSelectorPanel = new Ext.FormPanel({
 					id: scopeName + '.' + appName + '.keysSelector.' + node.id,
 					border: false,
-					bodyStyle: 'background:#eee;padding:25px 25px 0px 25px',
+					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
 					labelWidth: 160,
 					defaults: { anchor: '100%' },
 					items: [{
@@ -1546,7 +1546,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				});
 
 				var propertiesSelectorPanel = new Ext.FormPanel({
-					bodyStyle: 'background:#eee;padding:25px 25px 0px 25px',
+					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
 					id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
 					border: false,
 					defaults: { anchor: '100%' },
