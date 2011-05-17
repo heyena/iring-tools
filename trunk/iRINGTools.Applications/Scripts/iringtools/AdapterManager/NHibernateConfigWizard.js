@@ -32,14 +32,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					border: false,
 					monitorValid: true,
 					labelWidth: 130,
-					bodyStyle: 'background:#eee;padding:15px 15px 40px 15px',
+					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
 					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
 					items: [{
 						xtype: 'label',
 						fieldLabel: 'Key Properties',
 						labelSeparator: '',
-						itemCls: 'form-title',
-						anchor: '100% -100'
+						itemCls: 'form-title'
 					}, dataPropFields, {
 						xtype: 'combo',
 						hiddenName: 'keyType',
@@ -118,14 +117,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					border: false,
 					monitorValid: true,
 					labelWidth: 130,
-					bodyStyle: 'background:#eee;padding:15px 15px 40px 15px',
+					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
 					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
 					items: [{
 						xtype: 'label',
 						fieldLabel: 'Data Properties',
 						labelSeparator: '',
-						itemCls: 'form-title',
-						anchor: '100% -100'
+						itemCls: 'form-title'
 					}, dataPropFields],
 					treeNode: node,
 					tbar: new Ext.Toolbar({
@@ -218,8 +216,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				xtype: 'label',
 				fieldLabel: 'Configure Data Source',
 				labelSeparator: '',
-				itemCls: 'form-title',
-				anchor: '100% -100'
+				itemCls: 'form-title'
 			}, {
 				xtype: 'combo',
 				fieldLabel: 'Database Provider',
@@ -368,8 +365,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						xtype: 'label',
 						fieldLabel: 'Add/Delete relationship',
 						labelSeparator: '',
-						itemCls: 'form-title',
-						anchor: '100% -100'
+						itemCls: 'form-title'
 					}, {
 						xtype: 'textfield',
 						name: 'relationName',
@@ -641,8 +637,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						xtype: 'label',
 						fieldLabel: 'Configure Relationship',
 						labelSeparator: '',
-						itemCls: 'form-title',
-						anchor: '100% -100'
+						itemCls: 'form-title'
 					}, {
 						xtype: 'textfield',
 						name: 'relationshipName',
@@ -855,7 +850,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 								var properMap = new Array();
 								var dataRelationPane = relationConfigPanel.items.items[7];
-								
+
 								var attribute = node.attributes;
 								if (attribute) {
 									for (i = 0; i < attribute.propertyMap.length; i++)
@@ -978,15 +973,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var tablesSelectorPane = new Ext.FormPanel({
 			frame: false,
 			id: scopeName + '.' + appName + '.tablesSelectorPane',
-			bodyStyle: 'background:#eee;padding:15px 15px 40px 15px',
+			bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
 			labelWidth: 140,
 			monitorValid: true,
 			items: [{
 				xtype: 'label',
 				fieldLabel: 'Select Tables',
 				labelSeparator: '',
-				itemCls: 'form-title',
-				anchor: '100% -100'
+				itemCls: 'form-title'
 			}, {
 				xtype: 'itemselector',
 				hideLabel: true,
@@ -1168,14 +1162,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					border: false,
 					monitorValid: true,
 					labelWidth: 160,
-					bodyStyle: 'background:#eee;padding:15px 15px 40px 15px',
+					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
 					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
 					items: [{
 						xtype: 'label',
 						fieldLabel: 'Data Object',
 						labelSeparator: '',
-						itemCls: 'form-title',
-						anchor: '100% -100'
+						itemCls: 'form-title'
 					}, {
 						name: 'tableName',
 						fieldLabel: 'Table Name',
@@ -1306,15 +1299,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var keysSelectorPanel = new Ext.FormPanel({
 					id: scopeName + '.' + appName + '.keysSelector.' + node.id,
 					border: false,
-					bodyStyle: 'background:#eee;padding:25px 25px 50px 25px',
+					bodyStyle: 'background:#eee;padding:25px 25px 0px 25px',
 					labelWidth: 160,
 					defaults: { anchor: '100%' },
 					items: [{
 						xtype: 'label',
 						fieldLabel: 'Select Keys',
 						itemCls: 'form-title',
-						labelSeparator: '',
-						anchor: '100% -100'
+						labelSeparator: ''
 					}, keysItemSelector],
 					tbar: new Ext.Toolbar({
 						items: [{
@@ -1442,8 +1434,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						}]
 					})
 				});
-
-				//, keysItemSelector
+				
 				editPane.add(keysSelectorPanel);
 				var panelIndex = editPane.items.indexOf(keysSelectorPanel);
 				editPane.getLayout().setActiveItem(panelIndex);
@@ -1490,7 +1481,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				});
 
 				var propertiesSelectorPanel = new Ext.FormPanel({
-					bodyStyle: 'background:#eee;padding:25px 25px 50px 25px',
+					bodyStyle: 'background:#eee;padding:25px 25px 0px 25px',
 					id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
 					border: false,
 					defaults: { anchor: '100%' },
@@ -1499,8 +1490,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						xtype: 'label',
 						fieldLabel: 'Select Properties',
 						itemCls: 'form-title',
-						labelSeparator: '',
-						anchor: '100% -100'
+						labelSeparator: ''
 					}, propertiesItemSelector],
 					tbar: new Ext.Toolbar({
 						items: [{
@@ -1599,7 +1589,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					containerScroll: true,
 					rootVisible: true,
 					root: {
-						text: 'Data Objects'
+						text: 'Data Objects',
+						nodeType: 'async',
+						iconCls: 'folder'
 					},
 					loader: new Ext.tree.TreeLoader(),
 					tbar: new Ext.Toolbar({
@@ -1617,22 +1609,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 								}
 								editPane.add(dsConfigPane);
-								editPane.getLayout().setActiveItem(editPane.items.length - 1);
-							}
-						}, {
-							xtype: 'tbspacer',
-							width: 4
-						}, {
-							xtype: 'button',
-							icon: 'Content/img/16x16/document-properties.png',
-							text: 'Edit',
-							tooltip: 'Edit Tables',
-							handler: function () {
-								editPane = dataObjectsPane.items.items[1];
-								if (!editPane) {
-									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-								}
-								editPane.add(tablesSelectorPane);
 								editPane.getLayout().setActiveItem(editPane.items.length - 1);
 							}
 						}, {
@@ -1837,8 +1813,19 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					}),
 					listeners: {
 						click: function (node, e) {
-							if (!node || (node.childNodes.length == 0 && node.isRoot))
+							if (node.isRoot) {
+								editPane = dataObjectsPane.items.items[1];
+								if (!editPane) {
+									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+								}
+								editPane.add(tablesSelectorPane);
+								var panelIndex = editPane.items.indexOf(tablesSelectorPane);
+								editPane.getLayout().setActiveItem(panelIndex);
 								return;
+							}
+							else if (!node)
+								return;
+
 							var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 							if (!editPane)
 								editPane = dataObjectsPane.items.items[1];
@@ -1895,7 +1882,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				region: 'center',
 				layout: 'card',
 				layoutConfig: { align: 'left' },
-				bodyStyle: 'background:#eee;padding:0px 0px 1px 0px'
+				bodyStyle: 'background:#eee;padding:0px 0px 0px 0px'
 			}]
 		});
 
@@ -2109,11 +2096,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, configLabel, dbObjLabel, formLabel, callId) {
 	if (callId == 0) {
-		var hei = 660;
+		var hei = 670;
 		var msg = 'Relationship name cannot be added when the field is blank.';
 	}
 	else {
-		var hei = 530;
+		var hei = 545;
 		var msg = 'The pair of property name and mapping property cannot added when either value is blank.'
 	}
 
@@ -2234,109 +2221,6 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 			})
 		});
 		dataGridPanel.add(dataRelationGridPane);
-		dataGridPanel.doLayout();
-	});
-	dataStore.load();
-}
-
-function createPropertyMapGrid(gridlabel, dataGridPanel, colModel, dataStore, configLabel, dbObjLabel, formLabel) {
-	dataStore.on('load', function () {
-		if (dataGridPanel.items) {
-			var gridtab = dataGridPanel.items.map[gridlabel];
-			if (gridtab) {
-				gridtab.destroy();
-			}
-		}
-
-		var propertyMapGridPane = new Ext.grid.GridPanel({
-			id: gridlabel,
-			store: dataStore,
-			stripeRows: true,
-			maxheight: 400,
-			minHeight: 100,
-			minWidth: 300,
-			height: 400,
-			frame: true,
-			autoScroll: true,
-			border: true,
-			cm: colModel,
-			selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-			enableColLock: true,
-			viewConfig: { forceFit: true },
-			tbar: new Ext.Toolbar({
-				items: [{
-					xtype: 'tbspacer',
-					width: 4
-				}, {
-					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/edit-delete.png',
-					text: 'Delete',
-					tooltip: 'Delete',
-					handler: function () {						
-						var selectModel = propertyMapGridPane.getSelectionModel();
-						if (selectModel.hasSelection()) {
-							var selectIndex = selectModel.getSelectedIndex();
-							dataStore.removeAt(selectIndex);
-						}
-						else {
-							if (dataStore.data.items.length < 1)
-								showDialog(400, 100, 'Warning', 'Deletion cannot be performed because no records exits in the table', Ext.Msg.OK, null);
-							else
-								showDialog(400, 100, 'Warning', 'Please select a row before deletion.', Ext.Msg.OK, null);
-						}				
-					}
-				}, {
-					xtype: 'tbspacer',
-					width: 4
-				}, {
-					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/edit-delete.png',
-					text: 'Add',
-					tooltip: 'Add',
-					handler: function () {
-						var tab = Ext.getCmp('content-panel');
-						var rp = tab.items.map[configLabel];
-						var dataObjectsPane = rp.items.map[dbObjLabel];
-						var editPane = dataObjectsPane.items.items[1];
-						var form = editPane.items.map[formLabel].getForm();
-						var myPropMap = dataStore.data.items;
-						var propertyNameCombo = form.findField('propertyName');
-						var mapPropertyNameCombo = form.findField('mapPropertyName');
-						if (!propertyNameCombo.getValue() || !mapPropertyNameCombo.getValue())
-							return;
-
-						var propertyName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
-						var mapPropertyName = mapPropertyNameCombo.store.getAt(mapPropertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
-						if (propertyName == "" || mapPropertyName == "") {
-							var message = 'The pair of property name and mapping property cannot added when either value is blank.';
-							showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-							return;
-						}
-
-						for (var i = 0; i < myPropMap.length; i++)
-							if (myPropMap[i].data.property == propertyName && myPropMap[i].data.relatedProperty == mapPropertyName) {
-								var message = 'The pair of ' + propertyName + ' and ' + mapPropertyName + ' cannot be added because the pair already exits.';
-								showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-								return;
-							}
-
-						var propertyMapRecord = Ext.data.Record.create([
-							{ name: "property" },
-							{ name: "relatedProperty" },
-						]);
-
-						var newpropertyMapRecord = new propertyMapRecord({
-							property: propertyName,
-							relatedProperty: mapPropertyName
-						});
-
-						dataStore.add(newpropertyMapRecord);
-						dataStore.commitChanges();
-					}
-				}]
-			})
-		});
-		dataGridPanel.add(propertyMapGridPane);
 		dataGridPanel.doLayout();
 	});
 	dataStore.load();
