@@ -443,7 +443,7 @@ namespace NUnit.Tests
 						_settings["GraphName"], postDtos);
 
 				path = String.Format(
-						"{0}DxfrRespones.xml",
+						"{0}DxfrResponse.xml",
 						_settings["XmlPath"]
 					);
 
