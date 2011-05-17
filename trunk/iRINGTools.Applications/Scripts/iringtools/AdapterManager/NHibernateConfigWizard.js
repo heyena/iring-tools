@@ -61,9 +61,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
-							text: 'Apply',
-							tooltip: 'Apply',
+							icon: 'Content/img/16x16/document-save.png',
+							text: 'Save',
+							tooltip: 'Save',
 							handler: function (f) {
 								var form = keyPropertyFormPanel.getForm();
 								var treeNodeProps = form.treeNode.attributes.properties;
@@ -82,7 +82,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
+							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
 							tooltip: 'Reset',
 							handler: function (f) {
@@ -132,9 +132,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
-							text: 'Apply',
-							tooltip: 'Apply',
+							icon: 'Content/img/16x16/document-save.png',
+							text: 'Save',
+							tooltip: 'Save',
 							handler: function (f) {
 								var form = dataPropertyFormPanel.getForm();
 								if (form.treeNode) {
@@ -152,7 +152,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
+							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
 							tooltip: 'Reset',
 							handler: function (f) {
@@ -326,7 +326,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					width: 4
 				}, {
 					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/document-properties.png',
+					icon: 'Content/img/16x16/edit-clear.png',
 					text: 'Reset',
 					tooltip: 'Reset',
 					handler: function (f) {
@@ -388,9 +388,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
-							text: 'Apply',
-							tooltip: 'Apply',
+							icon: 'Content/img/16x16/document-save.png',
+							text: 'Save',
+							tooltip: 'Save',
 							handler: function () {
 								var deleteDataRelationPane = relationCreateFormPanel.items.items[2];
 								var gridLabel = scopeName + '.' + appName + '.' + node.id;
@@ -448,7 +448,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
+							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
 							tooltip: 'Reset',
 							handler: function () {
@@ -776,9 +776,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
-							text: 'Apply',
-							tooltip: 'Apply',
+							icon: 'Content/img/16x16/document-save.png',
+							text: 'Save',
+							tooltip: 'Save',
 							handler: function () {
 								if (node.attributes.attributes)
 									var attribute = node.attributes.attributes;
@@ -835,7 +835,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
+							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
 							tooltip: 'Reset',
 							handler: function () {
@@ -1098,9 +1098,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					width: 4
 				}, {
 					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/document-properties.png',
-					text: 'Apply',
-					tooltip: 'Apply',
+					icon: 'Content/img/16x16/document-save.png',
+					text: 'Save',
+					tooltip: 'Save',
 					handler: function () {
 						var form = wizard.getLayout().activeItem;
 						var formIndex = wizard.items.indexOf(form);
@@ -1134,7 +1134,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					width: 4
 				}, {
 					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/document-properties.png',
+					icon: 'Content/img/16x16/edit-clear.png',
 					text: 'Reset',
 					tooltip: 'Reset',
 					handler: function () {
@@ -1260,9 +1260,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
-							text: 'Apply',
-							tooltip: 'Apply',
+							icon: 'Content/img/16x16/document-save.png',
+							text: 'Save',
+							tooltip: 'Save',
 							handler: function (f) {
 								var form = objectnameFormPanel.getForm();
 								if (form.treeNode) {
@@ -1276,7 +1276,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
+							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
 							tooltip: 'Reset',
 							handler: function (f) {
@@ -1379,9 +1379,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
-							text: 'Apply',
-							tooltip: 'Apply',
+							icon: 'Content/img/16x16/document-save.png',
+							text: 'Save',
+							tooltip: 'Save',
 							handler: function (f) {
 								//var selectedValues = selectedValuesStr.split(',');
 								var selectedValues = keysItemSelector.toMultiselect.store.data.items;
@@ -1474,7 +1474,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
+							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
 							tooltip: 'Reset',
 							handler: function (f) {
@@ -1563,9 +1563,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
-							text: 'Apply',
-							tooltip: 'Apply',
+							icon: 'Content/img/16x16/document-save.png',
+							text: 'Save',
+							tooltip: 'Save',
 							handler: function (f) {
 								var selectedValues = propertiesItemSelector.toMultiselect.store.data.items;
 								var treeNode = propertiesItemSelector.treeNode;
@@ -1591,7 +1591,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-properties.png',
+							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
 							tooltip: 'Reset',
 							handler: function (f) {
@@ -1681,7 +1681,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'button',
-							icon: 'Content/img/16x16/document-properties.png',
+							icon: 'Content/img/16x16/document-save.png',
 							text: 'Save',
 							tooltip: 'Save',
 							formBind: true,
@@ -2115,28 +2115,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 					width: 4
 				}, {
 					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/edit-delete.png',
-					text: 'Delete',
-					tooltip: 'Delete',
-					handler: function () {
-						var selectModel = dataRelationGridPane.getSelectionModel();
-						if (selectModel.hasSelection()) {
-							var selectIndex = selectModel.getSelectedIndex();
-							dataStore.removeAt(selectIndex);
-						}
-						else {
-							if (dataStore.data.items.length < 1)
-								showDialog(400, 100, 'Warning', 'No records exits in the table', Ext.Msg.OK, null);
-							else
-								showDialog(400, 100, 'Warning', 'Please select a row first.', Ext.Msg.OK, null);
-						}
-					}
-				}, {
-					xtype: 'tbspacer',
-					width: 4
-				}, {
-					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/edit-delete.png',
+					icon: 'Content/img/list-add.png',
 					text: 'Add',
 					tooltip: 'Add',
 					handler: function () {
@@ -2198,6 +2177,27 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 						}
 						dataStore.add(newRelationRecord);
 						dataStore.commitChanges();
+					}
+				}, {
+					xtype: 'tbspacer',
+					width: 4
+				}, {
+					xtype: 'tbbutton',
+					icon: 'Content/img/16x16/edit-delete.png',
+					text: 'Delete',
+					tooltip: 'Delete',
+					handler: function () {
+						var selectModel = dataRelationGridPane.getSelectionModel();
+						if (selectModel.hasSelection()) {
+							var selectIndex = selectModel.getSelectedIndex();
+							dataStore.removeAt(selectIndex);
+						}
+						else {
+							if (dataStore.data.items.length < 1)
+								showDialog(400, 100, 'Warning', 'No records exits in the table', Ext.Msg.OK, null);
+							else
+								showDialog(400, 100, 'Warning', 'Please select a row first.', Ext.Msg.OK, null);
+						}
 					}
 				}]
 			})
