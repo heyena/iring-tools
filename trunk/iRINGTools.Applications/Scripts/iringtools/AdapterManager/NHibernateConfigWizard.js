@@ -346,7 +346,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				}
 
 				var relationCreateFormPanel = new Ext.FormPanel({
-					labelWidth: 147,
+					labelWidth: 150,
 					id: scopeName + '.' + appName + '.relationCreateForm.' + node.id,
 					border: false,
 					minWidth: 300,
