@@ -12,6 +12,10 @@
         <name>DEF</name>
         <description>Test Application</description>
       </application>
+	  <application>
+        <name>XYZ</name>
+        <description>Test Application</description>
+      </application>
     </applications>
   </scope>
 </scopes>
