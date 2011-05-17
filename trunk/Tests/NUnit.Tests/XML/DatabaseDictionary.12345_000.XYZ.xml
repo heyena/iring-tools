@@ -2,7 +2,7 @@
   <dataObjects>
     <dataObject>
       <tableName>EQUIPMENT</tableName>
-      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.ABC</objectNamespace>
+      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.XYZ</objectNamespace>
       <objectName>EQUIPMENT</objectName>
       <keyDelimeter>null</keyDelimeter>
       <keyProperties>
@@ -160,7 +160,7 @@
     </dataObject>
     <dataObject>
       <tableName>INSTRUMENTS</tableName>
-      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.ABC</objectNamespace>
+      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.XYZ</objectNamespace>
       <objectName>INSTRUMENTS</objectName>
       <keyDelimeter>null</keyDelimeter>
       <keyProperties>
@@ -362,7 +362,7 @@
     </dataObject>
     <dataObject>
       <tableName>LINES</tableName>
-      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.ABC</objectNamespace>
+      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.XYZ</objectNamespace>
       <objectName>LINES</objectName>
       <keyDelimeter>null</keyDelimeter>
       <keyProperties>
@@ -392,7 +392,7 @@
     </dataObject>
     <dataObject>
       <tableName>VALVES</tableName>
-      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.ABC</objectNamespace>
+      <objectNamespace>org.iringtools.adapter.datalayer.proj_12345_000.XYZ</objectNamespace>
       <objectName>VALVES</objectName>
       <keyDelimeter>null</keyDelimeter>
       <keyProperties>
