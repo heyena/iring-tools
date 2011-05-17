@@ -7,6 +7,7 @@ var App = new Ext.App({});
 
 Ext.onReady(function () {
     Ext.QuickTips.init();
+    Ext.Ajax.timeout = 120000; //increase request time
 
     Ext.get('about-link').on('click', function () {
         var win = new Ext.Window({
