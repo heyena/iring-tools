@@ -194,47 +194,62 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
 
                 _lmFilters = new Llama.LMAFilter();
-                _lmCriterion = new Llama.LMACriterion();
+                //_lmCriterion = new Llama.LMACriterion();
 
-                _lmCriterion.SourceAttributeName = "TagSuffix";
-                _lmCriterion.set_ValueAttribute("P");
-                _lmCriterion.Operator = "=";
-                _lmFilters.ItemType = "PipeRun";
-                // _lmFilters.set_Criteria(_lmCriterion);  //TO DO Error when trying to add criteria. 
+                //_lmCriterion.SourceAttributeName = "TagSuffix";
+                //_lmCriterion.set_ValueAttribute("P");
+                //_lmCriterion.Operator = "=";
+                _lmFilters.ItemType = "Drawing";
+                string criteriaName = "Test";
+                _lmFilters.get_Criteria().AddNew(criteriaName);
+                _lmFilters.get_Criteria().get_Item(criteriaName).SourceAttributeName = "DrawingNumber";
+                _lmFilters.get_Criteria().get_Item(criteriaName).set_ValueAttribute("d");
+                _lmFilters.get_Criteria().get_Item(criteriaName).Operator = "!=";
 
-                Llama.LMPipeRun piperun = new Llama.LMPipeRun(); // Error Retrieving the COM class factory for 
-                                                                //component with CLSID  failed due to the following error: 80040154 
-                                                               //Class not registered (Exception from HRESULT: 0x80040154 (REGDB_E_CLASSNOTREG)).
+                //_lmFilters.set_Criteria(_lmCriterion);  //TO DO Error when trying to add criteria. 
 
-                Llama.LMPipeRuns piperuns = new Llama.LMPipeRuns();
+                // Error Retrieving the COM class factory for 
+               //component with CLSID  failed due to the following error: 80040154 
+               //Class not registered (Exception from HRESULT: 0x80040154 (REGDB_E_CLASSNOTREG)).
 
-                piperuns.Collect(_projDatasource, null, null, _lmFilters);
+                Llama.LMDrawings drawings = new Llama.LMDrawings();
 
-                Debug.WriteLine("Number of Piperuns retrieved = " + piperuns.Count);
+                drawings.Collect(_projDatasource, null, null, _lmFilters);
 
+                Debug.WriteLine("Number of Piperuns retrieved = " + drawings.Count);
 
-                // Apply filter
-                if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
-                {
-                    var predicate = filter.ToPredicate(_dataObjectDefinition);
+                Llama.LMAAttribute attr = new Llama.LMAAttribute();
 
-                    if (predicate != null)
-                    {
-                        _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList();
-                    }
-                }
+               
 
-                if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
-                {
-                    throw new NotImplementedException("OrderExpressions are not supported by the SPPID DataLayer.");
-                }
+                #region Commented code
 
-                //Page and Sort The Data
-                if (pageSize > _dataObjects.Count())
-                    pageSize = _dataObjects.Count();
-                _dataObjects = _dataObjects.GetRange(startIndex, pageSize);
+                //// Apply filter
+                //if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
+                //{
+                //    var predicate = filter.ToPredicate(_dataObjectDefinition);
 
-                return _dataObjects;
+                //    if (predicate != null)
+                //    {
+                //        _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList();
+                //    }
+                //}
+
+                //if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
+                //{
+                //    throw new NotImplementedException("OrderExpressions are not supported by the SPPID DataLayer.");
+                //}
+
+                ////Page and Sort The Data
+                //if (pageSize > _dataObjects.Count())
+                //    pageSize = _dataObjects.Count();
+                //_dataObjects = _dataObjects.GetRange(startIndex, pageSize);
+
+             //   return _dataObjects;
+                #endregion       
+       
+                return new List<IDataObject>();
+                
             }
             catch (Exception ex)
             {

@@ -112,15 +112,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="IDisplaySetinf">
-      <Guid>{74723318-7872-4996-96B6-3CB6F98E45AF}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
     <COMReference Include="igrClientDa412">
       <Guid>{3C1F3AF0-6F51-405E-99E0-0041D076D0CF}</Guid>
       <VersionMajor>1</VersionMajor>
@@ -143,15 +134,6 @@
       <Guid>{80732DE8-28FE-4034-989F-9597E3E715DA}</Guid>
       <VersionMajor>1</VersionMajor>
       <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="igrSaveAsInf412">
-      <Guid>{A3914236-C8ED-11D7-A94B-000000000000}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>1</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
@@ -193,15 +175,6 @@
       <Isolated>False</Isolated>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
-    <COMReference Include="PIDAutomation">
-      <Guid>{322BB4FE-C6BD-402A-83B0-81290AF1BAFE}</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>1</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
     <COMReference Include="PIDCacheAccessInfLib">
       <Guid>{CB6C022D-D17C-4E18-9B36-3A0D8B3282A2}</Guid>
       <VersionMajor>1</VersionMajor>
@@ -215,15 +188,6 @@
       <Guid>{534174BA-6991-4F8B-8DD0-FE2E46B6A67C}</Guid>
       <VersionMajor>2</VersionMajor>
       <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
-    <COMReference Include="Plaice">
-      <Guid>{0CD9BF08-A064-44F4-8A5E-9A39006613FE}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>2</VersionMinor>
       <Lcid>0</Lcid>
       <WrapperTool>tlbimp</WrapperTool>
       <Isolated>False</Isolated>
