@@ -30,6 +30,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					name: 'keyProperty',
 					id: scopeName + '.' + appName + '.keyPropertyForm.' + node.id,
 					border: false,
+					autoScroll: true,
 					monitorValid: true,
 					labelWidth: 130,
 					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
@@ -115,6 +116,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					name: 'dataProperty',
 					id: scopeName + '.' + appName + '.dataPropertyForm.' + node.id,
 					border: false,
+					autoScroll: true,
 					monitorValid: true,
 					labelWidth: 130,
 					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
@@ -209,7 +211,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			labelWidth: 140,
 			id: scopeName + '.' + appName + '.dsconfigPane',
 			frame: false,
-			bodyStyle: 'padding:15px',
+			border: false,
+			autoScroll: true,
+			bodyStyle: 'padding:10px 10px 0px 10px',
 			monitorValid: true,
 			defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
 			items: [{
@@ -348,7 +352,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var relationCreateFormPanel = new Ext.FormPanel({
 					labelWidth: 155,
 					id: scopeName + '.' + appName + '.relationCreateForm.' + node.id,
-					border: false,		
+					border: false,
+					autoScroll: true,
 					region: 'north',
 					monitorResize: true,
 					monitorValid: true,
@@ -371,7 +376,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						autoScroll: true,
 						region: 'center',
 						layout: 'fit',
-						anchor: '100% -35',
+						anchor: '100% -30',
 						border: true
 					}],
 					keys: [{
@@ -617,13 +622,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				}
 
 				var relationConfigPanel = new Ext.FormPanel({
-					id: scopeName + '.' + appName + '.relationFieldsForm.' + node.id,
 					labelWidth: 143,
-					border: false,									
-					monitorResize: true,
+					id: scopeName + '.' + appName + '.relationFieldsForm.' + node.id,
+					border: false,
+					autoScroll: true,
 					region: 'north',
-					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-					monitorValid: true,
+					monitorResize: true,
+					monitorValid: true,			
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',					
 					defaults: { anchor: '100%', allowBlank: false },
 					items: [{
 						xtype: 'label',
@@ -761,8 +767,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						autoScroll: true,
 						region: 'center',
 						layout: 'fit',
-						border: true,
-						anchor: '100% -100'
+						anchor: '100% -1',
+						border: false
+						
 					}],
 					tbar: new Ext.Toolbar({
 						items: [{
@@ -977,7 +984,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
 						var keysNode = dataObjectNode.attributes.children[0];
 						var propertiesNode = dataObjectNode.attributes.children[1];
-						var relationshipsNode = dataObjectNode.attributes.children[2];						
+						var relationshipsNode = dataObjectNode.attributes.children[2];
 
 						// sync data properties
 						for (var j = 0; j < propertiesNode.children.length; j++) {
@@ -1058,6 +1065,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 		var tablesSelectorPane = new Ext.FormPanel({
 			frame: false,
+			border: false,
+			autoScroll: true,
 			id: scopeName + '.' + appName + '.tablesSelectorPane',
 			bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 			labelWidth: 140,
@@ -1219,6 +1228,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					name: 'dataObject',
 					id: scopeName + '.' + appName + '.objectNameForm.' + node.id,
 					border: false,
+					autoScroll: true,
 					monitorValid: true,
 					labelWidth: 160,
 					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
@@ -1358,6 +1368,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var keysSelectorPanel = new Ext.FormPanel({
 					id: scopeName + '.' + appName + '.keysSelector.' + node.id,
 					border: false,
+					autoScroll: true,
 					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					labelWidth: 160,
 					defaults: { anchor: '100%' },
@@ -1543,6 +1554,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
 					border: false,
+					autoScroll: true,
 					defaults: { anchor: '100%' },
 					labelWidth: 160,
 					items: [{
@@ -1627,7 +1639,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 		var dataObjectsPane = new Ext.Panel({
 			layout: 'border',
-			id: scopeName + '.' + appName + '.dataObjectsPane',			
+			id: scopeName + '.' + appName + '.dataObjectsPane',
 			frame: true,
 			items: [{
 				xtype: 'panel',
@@ -1832,18 +1844,21 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 														var relation = {};
 														relation.propertyMaps = new Array();
-														for (var m = 0; m < relationNodeAttr.propertyMap.length; m++) {
-															var propertyPairNode = relationNodeAttr.propertyMap[m];
-															var propertyPair = {};
+														if (relationNode.text != '') {
+															for (var m = 0; m < relationNodeAttr.propertyMap.length; m++) {
+																var propertyPairNode = relationNodeAttr.propertyMap[m];
+																var propertyPair = {};
 
-															propertyPair.dataPropertyName = propertyPairNode.dataPropertyName;
-															propertyPair.relatedPropertyName = propertyPairNode.relatedPropertyName;
-															relation.propertyMaps.push(propertyPair);
+																propertyPair.dataPropertyName = propertyPairNode.dataPropertyName;
+																propertyPair.relatedPropertyName = propertyPairNode.relatedPropertyName;
+																relation.propertyMaps.push(propertyPair);
+															}
+
+															relation.relatedObjectName = relationNodeAttr.relatedObjectName;
+															relation.relationshipName = relationNodeAttr.text;
+															relation.relationshipType = relationNodeAttr.relationshipTypeIndex;
+															folder.dataRelationships.push(relation);
 														}
-														relation.relatedObjectName = relationNodeAttr.relatedObjectName;
-														relation.relationshipName = relationNodeAttr.text;
-														relation.relationshipType = relationNodeAttr.relationshipTypeIndex;
-														folder.dataRelationships.push(relation);
 													}
 												break;
 										}
@@ -1941,7 +1956,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				region: 'center',
 				minWidth: 300,
 				split: true,
-				autoScroll: true,				
+				autoScroll: true,
 				layout: 'card',
 				bodyStyle: 'background:#eee'
 			}]
