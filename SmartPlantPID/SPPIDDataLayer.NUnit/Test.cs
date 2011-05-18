@@ -253,7 +253,7 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 dataObject.SetPropertyValue("PlantItemType", "PT-" + random.Next(2, 10));
                 dataObject.SetPropertyValue("RequisitionBy", "PT-" + random.Next(2, 10));
                 dataObject.SetPropertyValue("RequisitionNo", "PT-" + random.Next(2, 10));
-                dataObject.SetPropertyValue("SP_ID", "PT-" + random.Next(2, 10));
+                dataObject.SetPropertyValue("SP_ID", "dfdf");
                 dataObject.SetPropertyValue("Slope", "PT-" + random.Next(2, 10));
                 dataObject.SetPropertyValue("SlopeRise", "PT-" + random.Next(2, 10));
                 dataObject.SetPropertyValue("SlopeRun", "PT-" + random.Next(2, 10));
@@ -282,36 +282,41 @@ namespace iRINGTools.SDK.SPPIDDataLayer
             Assert.IsTrue(actual.Level == StatusLevel.Success);
         }
 
+        //[Test]
+        //public void Read()
+        //{
+        //    IList<string> identifiers = new List<string>() 
+        //    { 
+        //        "PT-3", 
+        //        "PT-1", 
+        //        "Equip-003", 
+        //        "Equip-004" 
+        //    };
+
+        //    IList<IDataObject> dataObjects = _sppidDataLayer.Get("Equipment", identifiers);
+
+        //    if (!(dataObjects.Count() > 0))
+        //    {
+        //        throw new AssertionException("No Rows returned.");
+        //    }
+
+        //    foreach (IDataObject dataObject in dataObjects)
+        //    {
+        //        Assert.IsNotNull(dataObject.GetPropertyValue("PumpType"));
+        //        Assert.IsNotNull(dataObject.GetPropertyValue("PumpDriverType"));
+        //        Assert.IsNotNull(dataObject.GetPropertyValue("DesignTemp"));
+        //        Assert.IsNotNull(dataObject.GetPropertyValue("DesignPressure"));
+        //        Assert.IsNotNull(dataObject.GetPropertyValue("Capacity"));
+        //        Assert.IsNotNull(dataObject.GetPropertyValue("SpecificGravity"));
+        //        Assert.IsNotNull(dataObject.GetPropertyValue("DifferentialPressure"));
+        //    }
+        //}
+
         [Test]
-        public void Read()
+        public void GetFilters()
         {
-            IList<string> identifiers = new List<string>() 
-            { 
-                "PT-3", 
-                "PT-1", 
-                "Equip-003", 
-                "Equip-004" 
-            };
-
-            IList<IDataObject> dataObjects = _sppidDataLayer.Get("Equipment", identifiers);
-
-            if (!(dataObjects.Count() > 0))
-            {
-                throw new AssertionException("No Rows returned.");
-            }
-
-            foreach (IDataObject dataObject in dataObjects)
-            {
-                Assert.IsNotNull(dataObject.GetPropertyValue("PumpType"));
-                Assert.IsNotNull(dataObject.GetPropertyValue("PumpDriverType"));
-                Assert.IsNotNull(dataObject.GetPropertyValue("DesignTemp"));
-                Assert.IsNotNull(dataObject.GetPropertyValue("DesignPressure"));
-                Assert.IsNotNull(dataObject.GetPropertyValue("Capacity"));
-                Assert.IsNotNull(dataObject.GetPropertyValue("SpecificGravity"));
-                Assert.IsNotNull(dataObject.GetPropertyValue("DifferentialPressure"));
-            }
+            IList<IDataObject> dataObjects = _sppidDataLayer.Get("Equipment", new DataFilter(), 2, 0);
         }
-
         //[Test]
         //public void ReadWithFilter()
         //{
