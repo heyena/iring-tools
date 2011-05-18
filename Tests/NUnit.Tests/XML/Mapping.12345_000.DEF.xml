@@ -123,7 +123,7 @@
                   <type>Property</type>
                   <roleId>tpl:R90688063648</roleId>
                   <name>valValue</name>
-                  <dataType>xsd:double</dataType>
+                  <dataType>xsd:single</dataType>
                   <propertyName>LINES.NOMDIAMETER</propertyName>
                 </RoleMap>
               </roleMaps>

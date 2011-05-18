@@ -8,7 +8,7 @@
     <Spec dataType="String">AAB3</Spec>
     <System dataType="String">O</System>
     <Lineno dataType="String">006</Lineno>
-    <Nomdiameter dataType="Double">250</Nomdiameter>
+    <Nomdiameter dataType="Single">250</Nomdiameter>
     <Insulationtype dataType="String">IP</Insulationtype>
     <Htraced dataType="String"></Htraced>
     <Consttype dataType="String">NEW</Consttype>

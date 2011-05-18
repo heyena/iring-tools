@@ -110,7 +110,7 @@
                 <role>
                   <id>tpl:R90688063648</id>
                   <name>valValue</name>
-                  <dataType>xsd:double</dataType>
+                  <dataType>xsd:single</dataType>
                 </role>
               </roles>
             </template>
