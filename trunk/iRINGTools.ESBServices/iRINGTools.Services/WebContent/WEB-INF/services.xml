@@ -12,9 +12,9 @@
 	<import resource="classpath:META-INF/cxf/cxf-extension-jaxrs-binding.xml" />
 	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-  <jaxrs:server id="ESBService" address="/esb" >
+  <jaxrs:server id="ExchangeService" address="/exchange" >
     <jaxrs:serviceBeans>
-      <bean class="org.iringtools.services.ESBService" />
+      <bean class="org.iringtools.services.ExchangeService" />
     </jaxrs:serviceBeans>
   </jaxrs:server>
   

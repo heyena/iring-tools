@@ -28,12 +28,12 @@ public class AppDataModel extends DataModel
   }
   
   public Grid getRelatedItemGrid(String serviceUri, String scope, String app, String graph, String dtoIdentifier, 
-      String classId, String filter, String sortBy, String sortOrder, int start, int limit)
+      String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
   {
     String dtiRelativePath = "/" + scope + "/" + app + "/" + graph + "/filter";
     String dtoRelativePath = "/" + scope + "/" + app + "/" + graph + "/page";
     DataTransferObject dto = getDto(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter,
         sortBy, sortOrder, start, limit);  
-    return getRelatedItemGrid(DataType.APP, dto, classId, start, limit);
+    return getRelatedItemGrid(DataType.APP, dto, classId, classIdentifier, start, limit);
   }
 }

@@ -81,7 +81,7 @@ namespace org.iringtools.adapter.projection
     protected GraphMap _graphMap = null;
     protected IList<IDataObject> _dataObjects = null;
     protected Dictionary<string, string>[] _dataRecords = null;
-    protected Dictionary<string, List<string>> _classIdentifiers = null;
+    //protected Dictionary<string, List<string>> _classIdentifiers = null;
     protected List<string> _relatedObjectPaths = null;
     protected string _fixedIdentifierBoundary = String.Empty;
 
@@ -103,7 +103,7 @@ namespace org.iringtools.adapter.projection
     public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
     {
       _dataObjects = new List<IDataObject>();
-      _classIdentifiers = new Dictionary<string, List<string>>();
+      //_classIdentifiers = new Dictionary<string, List<string>>();
       _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
 
       _settings = settings;
@@ -508,75 +508,6 @@ namespace org.iringtools.adapter.projection
       }
     }
 
-    protected void SetClassIdentifiers(DataDirection direction)
-    {
-      switch (direction)
-      {
-        case DataDirection.Outbound:
-          SetOutboundClassIdentifiers();
-          break;
-
-        case DataDirection.InboundSparql:
-          SetInboundSparqlClassIdentifiers();
-          break;
-
-        case DataDirection.InboundDto:
-          SetInboundDtoClassIdentifiers();
-          break;
-      }
-    }
-
-    private void SetOutboundClassIdentifiers()
-    {
-      _classIdentifiers.Clear();
-
-      foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
-      {
-        ClassMap classMap = classTemplateMap.classMap;
-        List<string> identifiers = new List<string>();
-
-        foreach (string identifier in classMap.identifiers)
-        {
-          if (IsFixedIdentifier(identifier))
-          {
-            string value = identifier.Substring(1, identifier.Length - 2);
-
-            for (int i = 0; i < _dataObjects.Count; i++)
-            {
-              if (identifiers.Count == i)
-              {
-                identifiers.Add(value);
-              }
-              else
-              {
-                identifiers[i] += classMap.identifierDelimiter + value;
-              }
-            }
-          }
-          else if (_dataObjects != null)  // identifier comes from a property
-          {
-            for (int i = 0; i < _dataObjects.Count; i++)
-            {
-              IDataObject valueObject = GetValueObjects(identifier, i).First();
-              string propertyName = identifier.Substring(identifier.LastIndexOf('.') + 1);
-              string value = Convert.ToString(valueObject.GetPropertyValue(propertyName));
-
-              if (identifiers.Count == i)
-              {
-                identifiers.Add(value);
-              }
-              else
-              {
-                identifiers[i] += classMap.identifierDelimiter + value;
-              }
-            }
-          }
-        }
-
-        _classIdentifiers[classMap.id] = identifiers;
-      }
-    }
-
     protected List<IDataObject> GetValueObjects(string propertyMap, int dataObjectIndex)
     {
       List<IDataObject> valueObjects = null;
@@ -694,103 +625,6 @@ namespace org.iringtools.adapter.projection
       return classIdentifiers.ToList<string>();
     }
 
-    private void SetInboundSparqlClassIdentifiers()
-    {
-      _classIdentifiers.Clear();
-
-      if (_memoryStore != null)
-      {
-        ClassTemplateMap classTemplateMap = _graphMap.classTemplateMaps.First();
-        string classId = classTemplateMap.classMap.id;
-        string query = String.Format(CLASS_INSTANCE_QUERY_TEMPLATE, classId);
-        _logger.Debug(query);
-        object results = _memoryStore.ExecuteQuery(query);
-
-        if (results != null)
-        {
-          SparqlResultSet resultSet = (SparqlResultSet)results;
-
-          foreach (SparqlResult result in resultSet)
-          {
-            string classInstance = result.Value("class").ToString();
-
-            if (!String.IsNullOrEmpty(classInstance))
-            {
-              if (!_classIdentifiers.ContainsKey(classId))
-              {
-                _classIdentifiers[classId] = new List<string> { classInstance };
-              }
-              else if (!_classIdentifiers[classId].Contains(classInstance))
-              {
-                _classIdentifiers[classId].Add(classInstance);
-              }
-            }
-            else
-            {
-              throw new Exception("Class identifier of [" + classId + "] is null");
-            }
-          }
-        }
-      }
-    }
-
-    protected void SetInboundDtoClassIdentifiers()
-    {
-      _classIdentifiers.Clear();
-
-      foreach (ClassTemplateMap classTemplateMap in _graphMap.classTemplateMaps)
-      {
-        ClassMap classMap = classTemplateMap.classMap;
-        List<string> classIdentifiers = new List<string>();
-
-        foreach (string identifier in classMap.identifiers)
-        {
-          if (IsFixedIdentifier(identifier))
-          {
-            string value = identifier.Substring(1, identifier.Length - 2);
-
-            for (int i = 0; i < _dataObjects.Count; i++)
-            {
-              if (classIdentifiers.Count == i)
-              {
-                classIdentifiers.Add(value);
-              }
-              else
-              {
-                classIdentifiers[i] += classMap.identifierDelimiter + value;
-              }
-            }
-          }
-          else  // identifier comes from a property
-          {
-            string[] property = identifier.Split('.');
-            string objectName = property[0].Trim();
-            string propertyName = property[1].Trim();
-
-            if (_dataObjects != null)
-            {
-              for (int i = 0; i < _dataObjects.Count; i++)
-              {
-                string value = Convert.ToString(_dataObjects[i].GetPropertyValue(propertyName));
-
-                if (classIdentifiers.Count == i)
-                {
-                  classIdentifiers.Add(value);
-                }
-                else
-                {
-                  classIdentifiers[i] += classMap.identifierDelimiter + value;
-                }
-              }
-            }
-          }
-        }
-
-        _classIdentifiers[classMap.id] = classIdentifiers;
-      }
-    }
-
-    // resolve the dataFilter into data object terms
     public void ProjectDataFilter(DataDictionary dictionary, ref DataFilter filter, string graph)
     {
       try
@@ -909,12 +743,5 @@ namespace org.iringtools.adapter.projection
       Values values = new Values();
       return ProjectProperty(propertyNameParts, ref values);
     }
-  }
-
-  public enum DataDirection
-  {
-    InboundSparql,
-    InboundDto,
-    Outbound,
   }
 }

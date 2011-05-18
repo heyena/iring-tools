@@ -52,9 +52,9 @@ import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.IOUtils;
 import org.iringtools.utility.JaxbUtils;
 
-public class ESBServiceProvider
+public class ExchangeProvider
 {
-  private static final Logger logger = Logger.getLogger(ESBServiceProvider.class);
+  private static final Logger logger = Logger.getLogger(ExchangeProvider.class);
   private Hashtable<String, String> settings;
   private static DatatypeFactory datatypeFactory = null;   
   private HttpClient httpClient = null; 
@@ -69,7 +69,7 @@ public class ESBServiceProvider
   private String targetGraphName = null;
   private String hashAlgorithm = null;
   
-  public ESBServiceProvider(Hashtable<String, String> settings) throws DatatypeConfigurationException
+  public ExchangeProvider(Hashtable<String, String> settings) throws DatatypeConfigurationException
   {
     this.settings = settings;
     datatypeFactory = DatatypeFactory.newInstance();

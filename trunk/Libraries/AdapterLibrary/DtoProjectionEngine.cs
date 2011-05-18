@@ -391,7 +391,7 @@ namespace org.iringtools.adapter.projection
       {
         string classIdentifier = classIdentifiers[classIdentifierIndex];
 
-        if (!String.IsNullOrEmpty(classIdentifier))
+        if (String.IsNullOrEmpty(startClassIdentifier) || className != startClassName || classIdentifier == startClassIdentifier)
         {
           ClassObject classObject = new ClassObject()
           {
@@ -437,6 +437,7 @@ namespace org.iringtools.adapter.projection
       IDataObject dataObject = _dataObjects[dataObjectIndex];
       List<RoleMap> propertyRoles = new List<RoleMap>();
       List<RoleMap> classRoles = new List<RoleMap>();
+      Dictionary<RoleMap, RoleObject> roleObjectMaps = new Dictionary<RoleMap, RoleObject>();
 
       TemplateObject baseTemplateObject = new TemplateObject
       {
@@ -471,6 +472,7 @@ namespace org.iringtools.adapter.projection
               roleObject.relatedClassId = roleMap.classMap.id;
               roleObject.relatedClassName = roleMap.classMap.name;
               classRoles.Add(roleMap);
+              roleObjectMaps.Add(roleMap, roleObject);
             }
             else
             {
@@ -594,6 +596,17 @@ namespace org.iringtools.adapter.projection
         {
           bool refClassHasRelatedProperty;
           List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, out refClassHasRelatedProperty);
+
+          // update role object values
+          RoleObject roleObjectMap = roleObjectMaps[classRole];
+
+          if (roleObjectMap.values == null)
+            roleObjectMap.values = new RoleValues();
+
+          foreach (string identifier in refClassIdentifiers)
+          {
+            roleObjectMap.values.Add(identifier);
+          }
 
           if (refClassIdentifiers.Count > 0 && !String.IsNullOrEmpty(refClassIdentifiers.First()))
           {

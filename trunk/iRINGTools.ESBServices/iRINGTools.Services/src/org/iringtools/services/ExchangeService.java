@@ -18,13 +18,13 @@ import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
-import org.iringtools.services.core.ESBServiceProvider;
+import org.iringtools.services.core.ExchangeProvider;
 
 @Path("/")
 @Produces("application/xml")
-public class ESBService extends AbstractService
+public class ExchangeService extends AbstractService
 {
-  private static final Logger logger = Logger.getLogger(ESBService.class);
+  private static final Logger logger = Logger.getLogger(ExchangeService.class);
 
   @GET
   @Path("/directory")
@@ -35,8 +35,8 @@ public class ESBService extends AbstractService
     try
     {
       initService();
-      ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
-      directory = serviceProvider.getDirectory();
+      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+      directory = exchangeProvider.getDirectory();
     }
     catch (Exception ex)
     {
@@ -58,8 +58,8 @@ public class ESBService extends AbstractService
     try
     {
       initService();
-      ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
-      dataTransferIndices = serviceProvider.getDataTransferIndices(scope, id);
+      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+      dataTransferIndices = exchangeProvider.getDataTransferIndices(scope, id);
     }
     catch (Exception ex)
     {
@@ -83,8 +83,8 @@ public class ESBService extends AbstractService
     try
     {
       initService();
-      ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
-      dataTransferIndices = serviceProvider.getDataTransferIndices(scope, id, destination, dataFilter);
+      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+      dataTransferIndices = exchangeProvider.getDataTransferIndices(scope, id, destination, dataFilter);
     }
     catch (Exception ex)
     {
@@ -105,8 +105,8 @@ public class ESBService extends AbstractService
     try
     {
       initService();
-      ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
-      dataTransferObjects = serviceProvider.getDataTransferObjects(scope, id, dataTransferIndices);
+      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+      dataTransferObjects = exchangeProvider.getDataTransferObjects(scope, id, dataTransferIndices);
     }
     catch (Exception ex)
     {
@@ -127,8 +127,8 @@ public class ESBService extends AbstractService
     try
     {
       initService();
-      ESBServiceProvider serviceProvider = new ESBServiceProvider(settings);
-      exchangeResponse = serviceProvider.submitExchange(scope, id, exchangeRequest);
+      ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
+      exchangeResponse = exchangeProvider.submitExchange(scope, id, exchangeRequest);
     }
     catch (Exception ex)
     {

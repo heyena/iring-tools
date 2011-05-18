@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="scopeName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="appName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="dataTransferObjectList" type="{http://www.iringtools.org/dxfr/dto}DataTransferObjectList" minOccurs="0"/>
+ *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "DataTransferObjects", propOrder = {
     "scopeName",
     "appName",
-    "dataTransferObjectList"
+    "dataTransferObjectList",
+    "version"
 })
 @XmlRootElement(name = "dataTransferObjects")
 public class DataTransferObjects {
@@ -40,6 +42,7 @@ public class DataTransferObjects {
     protected String scopeName;
     protected String appName;
     protected DataTransferObjectList dataTransferObjectList;
+    protected String version;
 
     /**
      * Gets the value of the scopeName property.
@@ -111,6 +114,30 @@ public class DataTransferObjects {
      */
     public void setDataTransferObjectList(DataTransferObjectList value) {
         this.dataTransferObjectList = value;
+    }
+
+    /**
+     * Gets the value of the version property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * Sets the value of the version property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setVersion(String value) {
+        this.version = value;
     }
 
 }

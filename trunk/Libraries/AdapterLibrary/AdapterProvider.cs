@@ -792,7 +792,9 @@ namespace org.iringtools.adapter
                     expression.LogicalOperator = LogicalOperator.And;
 
                   expression.PropertyName = propertyMap.dataPropertyName;
-                  expression.Values = new Values { relatedObject.GetPropertyValue(propertyMap.relatedPropertyName).ToString() };
+                  expression.Values = new Values { 
+                    relatedObject.GetPropertyValue(propertyMap.relatedPropertyName).ToString() 
+                  };
                   filter.Expressions.Add(expression);
                 }
               }

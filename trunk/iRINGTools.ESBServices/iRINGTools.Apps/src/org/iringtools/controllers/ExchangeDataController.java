@@ -16,9 +16,9 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   private static final long serialVersionUID = 1L;
   private ExchangeDataModel exchangeDataModel;
   
-  private String esbServiceUri;
-  private String xLogsServiceUri;
-  private String refServiceUri;
+  private String exchangeServiceUri;
+  private String historyServiceUri;
+  private String refDataServiceUri;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
   
@@ -44,9 +44,9 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   {    
     Map<String, Object> appContext = ActionContext.getContext().getApplication();
     
-    esbServiceUri = appContext.get("ESBServiceUri").toString();
-    xLogsServiceUri = appContext.get("HistoryServiceUri").toString();
-    refServiceUri = appContext.get("RefDataServiceUri").toString();
+    exchangeServiceUri = appContext.get("ExchangeServiceUri").toString();
+    historyServiceUri = appContext.get("HistoryServiceUri").toString();
+    refDataServiceUri = appContext.get("RefDataServiceUri").toString();
     exchangeDataModel = new ExchangeDataModel();
   }
   
@@ -61,7 +61,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = exchangeDataModel.getDtoGrid(esbServiceUri, refServiceUri, scope, xid, filter, sort, dir, start, limit);    
+    pageDtoGrid = exchangeDataModel.getDtoGrid(exchangeServiceUri, refDataServiceUri, scope, xid, filter, sort, dir, start, limit);    
     return SUCCESS;
   }
   
@@ -75,8 +75,8 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ----------------------------
   public String getPageRelatedItems() 
   {
-    pageRelatedItemGrid = exchangeDataModel.getRelatedItemGrid(esbServiceUri, scope, xid, 
-        individual, classId, filter, sort, dir, start, limit);
+    pageRelatedItemGrid = exchangeDataModel.getRelatedItemGrid(exchangeServiceUri, scope, xid, 
+        individual, classId, classIdentifier, filter, sort, dir, start, limit);
     return SUCCESS;
   }
 
@@ -90,7 +90,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // -------------------
   public String submitExchange() 
   {
-    ExchangeResponse response = exchangeDataModel.submitExchange(esbServiceUri, scope, xid, reviewed);  
+    ExchangeResponse response = exchangeDataModel.submitExchange(exchangeServiceUri, scope, xid, reviewed);  
     xResultsGrid = StringUtils.join(response.getMessages().getItems(), "\r");    
     return SUCCESS;
   }
@@ -105,7 +105,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ---------------------------
   public String getXLogs()
   {
-    xLogsGrid = exchangeDataModel.getXlogsGrid(xLogsServiceUri, scope, xid, xlabel);    
+    xLogsGrid = exchangeDataModel.getXlogsGrid(historyServiceUri, scope, xid, xlabel);    
     return SUCCESS;
   }
   
@@ -119,7 +119,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ---------------------------------
   public String getPageXLogs()
   {
-    pageXLogsGrid = exchangeDataModel.getPageXlogsGrid(xLogsServiceUri, scope, xid, xlabel, xtime, start, limit);    
+    pageXLogsGrid = exchangeDataModel.getPageXlogsGrid(historyServiceUri, scope, xid, xlabel, xtime, start, limit);    
     return SUCCESS;
   }
   

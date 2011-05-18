@@ -30,11 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RoleObject }
+     * Create an instance of {@link DataTransferObjectList }
      * 
      */
-    public RoleObject createRoleObject() {
-        return new RoleObject();
+    public DataTransferObjectList createDataTransferObjectList() {
+        return new DataTransferObjectList();
+    }
+
+    /**
+     * Create an instance of {@link DataTransferObjects }
+     * 
+     */
+    public DataTransferObjects createDataTransferObjects() {
+        return new DataTransferObjects();
     }
 
     /**
@@ -43,14 +51,6 @@ public class ObjectFactory {
      */
     public RoleObjects createRoleObjects() {
         return new RoleObjects();
-    }
-
-    /**
-     * Create an instance of {@link DataTransferObject }
-     * 
-     */
-    public DataTransferObject createDataTransferObject() {
-        return new DataTransferObject();
     }
 
     /**
@@ -70,11 +70,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObjectList }
+     * Create an instance of {@link ClassObject }
      * 
      */
-    public DataTransferObjectList createDataTransferObjectList() {
-        return new DataTransferObjectList();
+    public ClassObject createClassObject() {
+        return new ClassObject();
+    }
+
+    /**
+     * Create an instance of {@link DataTransferObject }
+     * 
+     */
+    public DataTransferObject createDataTransferObject() {
+        return new DataTransferObject();
     }
 
     /**
@@ -86,19 +94,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObjects }
+     * Create an instance of {@link Values }
      * 
      */
-    public DataTransferObjects createDataTransferObjects() {
-        return new DataTransferObjects();
+    public Values createValues() {
+        return new Values();
     }
 
     /**
-     * Create an instance of {@link ClassObject }
+     * Create an instance of {@link RoleObject }
      * 
      */
-    public ClassObject createClassObject() {
-        return new ClassObject();
+    public RoleObject createRoleObject() {
+        return new RoleObject();
     }
 
 }
