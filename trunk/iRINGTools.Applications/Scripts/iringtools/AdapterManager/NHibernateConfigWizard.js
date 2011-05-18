@@ -377,7 +377,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						region: 'center',
 						layout: 'fit',
 						anchor: '100% -30',
-						border: true
+						border: false,
+						frame: false
 					}],
 					keys: [{
 						key: [Ext.EventObject.ENTER], handler: function () {
@@ -767,9 +768,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						autoScroll: true,
 						region: 'center',
 						layout: 'fit',
-						anchor: '100% -1',
-						border: false
-						
+						anchor: '100% -30',
+						border: false,
+						frame: false						
 					}],
 					tbar: new Ext.Toolbar({
 						items: [{
@@ -2088,12 +2089,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 });
 
 function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, configLabel, dbObjLabel, formLabel, callId) {
-	if (callId == 0) {
-		var hei = 670;
+	if (callId == 0) {		
 		var msg = 'Relationship name cannot be added when the field is blank.';
 	}
-	else {
-		var hei = 545;
+	else {		
 		var msg = 'The pair of property name and mapping property cannot added when either value is blank.'
 	}
 
