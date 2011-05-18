@@ -415,7 +415,7 @@
         <dataProperty>
           <columnName>NOMDIAMETER</columnName>
           <propertyName>NOMDIAMETER</propertyName>
-          <dataType>Single</dataType>
+          <dataType>Double</dataType>
           <dataLength>8</dataLength>
           <isNullable>true</isNullable>
           <keyType>unassigned</keyType>
