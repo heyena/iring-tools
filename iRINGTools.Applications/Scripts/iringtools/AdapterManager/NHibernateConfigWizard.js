@@ -32,7 +32,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					border: false,
 					monitorValid: true,
 					labelWidth: 130,
-					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
 					items: [{
 						xtype: 'label',
@@ -117,7 +117,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					border: false,
 					monitorValid: true,
 					labelWidth: 130,
-					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
 					items: [{
 						xtype: 'label',
@@ -346,16 +346,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				}
 
 				var relationCreateFormPanel = new Ext.FormPanel({
-					labelWidth: 150,
+					labelWidth: 155,
 					id: scopeName + '.' + appName + '.relationCreateForm.' + node.id,
-					border: false,
-					minWidth: 300,
-					minHeight: 300,
-					autoScroll: true,
+					border: false,		
 					region: 'north',
 					monitorResize: true,
 					monitorValid: true,
-					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					defaults: { anchor: '100%', allowBlank: false },
 					items: [{
 						xtype: 'label',
@@ -374,7 +371,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						autoScroll: true,
 						region: 'center',
 						layout: 'fit',
-						anchor: '100%',
+						anchor: '100% -35',
 						border: true
 					}],
 					keys: [{
@@ -622,13 +619,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var relationConfigPanel = new Ext.FormPanel({
 					id: scopeName + '.' + appName + '.relationFieldsForm.' + node.id,
 					labelWidth: 143,
-					border: false,
-					minWidth: 300,
-					minHeight: 300,
-					autoScroll: true,
+					border: false,									
 					monitorResize: true,
 					region: 'north',
-					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					monitorValid: true,
 					defaults: { anchor: '100%', allowBlank: false },
 					items: [{
@@ -768,7 +762,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						region: 'center',
 						layout: 'fit',
 						border: true,
-						anchor: '100%'
+						anchor: '100% -100'
 					}],
 					tbar: new Ext.Toolbar({
 						items: [{
@@ -1065,7 +1059,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var tablesSelectorPane = new Ext.FormPanel({
 			frame: false,
 			id: scopeName + '.' + appName + '.tablesSelectorPane',
-			bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
+			bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 			labelWidth: 140,
 			monitorValid: true,
 			items: [{
@@ -1227,7 +1221,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					border: false,
 					monitorValid: true,
 					labelWidth: 160,
-					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
 					items: [{
 						xtype: 'label',
@@ -1364,7 +1358,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var keysSelectorPanel = new Ext.FormPanel({
 					id: scopeName + '.' + appName + '.keysSelector.' + node.id,
 					border: false,
-					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					labelWidth: 160,
 					defaults: { anchor: '100%' },
 					items: [{
@@ -1546,7 +1540,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				});
 
 				var propertiesSelectorPanel = new Ext.FormPanel({
-					bodyStyle: 'background:#eee;padding:15px 15px 0px 15px',
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
 					border: false,
 					defaults: { anchor: '100%' },
@@ -1633,7 +1627,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 		var dataObjectsPane = new Ext.Panel({
 			layout: 'border',
-			id: scopeName + '.' + appName + '.dataObjectsPane',
+			id: scopeName + '.' + appName + '.dataObjectsPane',			
 			frame: true,
 			items: [{
 				xtype: 'panel',
@@ -1945,9 +1939,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				name: 'editor-panel',
 				id: scopeName + '.' + appName + '.editor-panel',
 				region: 'center',
+				minWidth: 300,
+				split: true,
+				autoScroll: true,				
 				layout: 'card',
-				layoutConfig: { align: 'left' },
-				bodyStyle: 'background:#eee;padding:0px 0px 0px 0px'
+				bodyStyle: 'background:#eee'
 			}]
 		});
 
@@ -2097,14 +2093,10 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 		var dataRelationGridPane = new Ext.grid.GridPanel({
 			id: gridlabel,
 			store: dataStore,
-			stripeRows: true,
-			height: hei,
-			minHeight: 200,
-			minWidth: 300,
-			maxHeight: 600,
-			frame: true,
-			autoScroll: true,
-			border: true,
+			stripeRows: true,		
+			autoScroll: true,	
+			frame: false,
+			border: false,
 			cm: colModel,
 			selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
 			enableColLock: true,
