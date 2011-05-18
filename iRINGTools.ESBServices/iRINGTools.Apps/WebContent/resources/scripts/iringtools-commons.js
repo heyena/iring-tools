@@ -1,4 +1,4 @@
-Ext.ns('iringtools.org.commons');
+Ext.ns('org.iringtools.apps.commons');
 
 Ext.MyPagingToolbar = Ext.extend(Ext.PagingToolbar, {
   constructor: function(config) {

@@ -5,7 +5,7 @@
   <display-name>iRINGTools Apps</display-name>
   <context-param>
     <param-name>ESBServiceUri</param-name>
-    <param-value>http://localhost:8080/services/esb</param-value>
+    <param-value>http://localhost:8080/services/exchange</param-value>
   </context-param>
   <context-param>
     <param-name>HistoryServiceUri</param-name>

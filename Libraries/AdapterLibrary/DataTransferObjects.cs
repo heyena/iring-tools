@@ -52,6 +52,9 @@ namespace org.iringtools.adapter
 
     [DataMember(Name = "dataTransferObjectList", Order = 2)]
     public List<DataTransferObject> DataTransferObjectList { get; set; }
+
+    [DataMember(Name = "version", Order = 3, EmitDefaultValue = false)]
+    public string Version { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/dxfr/dto", Name = "dataTransferObject")]
@@ -197,6 +200,9 @@ namespace org.iringtools.adapter
 
     [DataMember(Order = 8, EmitDefaultValue = false)]
     public bool hasValueMap { get; set; }
+    
+    [DataMember(Order = 9, EmitDefaultValue = false)]
+    public RoleValues values { get; set; }
   }
 
   [DataContract]
@@ -211,4 +217,7 @@ namespace org.iringtools.adapter
     [EnumMember]
     Delete,
   }
+
+  [CollectionDataContract(Name = "values", Namespace = "http://www.iringtools.org/dxfr/dto", ItemName = "value")]
+  public class RoleValues : List<string> {}
 }

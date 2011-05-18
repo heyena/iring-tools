@@ -1,4 +1,4 @@
-Ext.ns('iringtools.org.xmgr');
+Ext.ns('org.iringtools.apps.xmgr');
 
 function storeSort(field, dir){
   var limit = this.lastOptions.params.limit;

@@ -18,7 +18,7 @@ public class DirectoryController extends ActionSupport implements SessionAware
 
   private Map<String, Object> session;
   private DirectoryModel directoryModel;
-  private String esbServiceUri;;
+  private String exchangeServiceUri;;
   private Tree directoryTree;
   
   @Override
@@ -30,7 +30,7 @@ public class DirectoryController extends ActionSupport implements SessionAware
   public DirectoryController()
   {
     directoryModel = new DirectoryModel();
-    esbServiceUri = ActionContext.getContext().getApplication().get("ESBServiceUri").toString();
+    exchangeServiceUri = ActionContext.getContext().getApplication().get("ExchangeServiceUri").toString();
   }
 
   public String getDirectory()
@@ -38,7 +38,7 @@ public class DirectoryController extends ActionSupport implements SessionAware
     try
     {
       session.clear();
-      directoryTree = directoryModel.getDirectoryTree(esbServiceUri + "/directory");  
+      directoryTree = directoryModel.getDirectoryTree(exchangeServiceUri + "/directory");  
     }
     catch (HttpClientException ex)
     {

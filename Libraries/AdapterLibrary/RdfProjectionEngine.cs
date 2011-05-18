@@ -473,7 +473,7 @@ namespace org.iringtools.adapter.projection
           }
         }
       }
-      else if (classRoles.Count > 0)  // reference template with known class role
+      else if (classRoles.Count > 0)  // relationship template with known class role
       {
         bool isTemplateValid = false;  // at least one class role identifier is not null or empty
         Dictionary<RoleMap, List<string>> relatedClassRoles = new Dictionary<RoleMap, List<string>>();
@@ -481,8 +481,7 @@ namespace org.iringtools.adapter.projection
         foreach (RoleMap classRole in classRoles)
         {
           bool refClassHasRelatedProperty;
-          List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex,
-            out refClassHasRelatedProperty);
+          List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, out refClassHasRelatedProperty);
 
           if (refClassHasRelatedProperty)
           {
@@ -517,6 +516,7 @@ namespace org.iringtools.adapter.projection
         if (relatedClassRoles.Count > 0)
         {
           string refClassBaseValues = baseValues.ToString();
+
           // enforce dotNetRDF to store/retrieve templates in order as expressed in RDF
           string hashPrefixFormat = Regex.Replace(relatedClassRoles.Count.ToString(), "\\d", "0") + "0";
 
@@ -563,7 +563,7 @@ namespace org.iringtools.adapter.projection
           _rdfXml.Add(baseTemplateElement);
         }
       }
-      else  // reference template with no class role (e.g. primary classification template)
+      else  // relationship template with no class role (e.g. primary classification template)
       {
         string hashCode = Utility.MD5Hash(baseValues.ToString());
         baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));

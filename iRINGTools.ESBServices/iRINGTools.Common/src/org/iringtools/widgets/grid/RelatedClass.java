@@ -4,7 +4,6 @@ public class RelatedClass
 {
   protected String id;  // R ID
   protected String name;
-  protected String identifier;
   
   public void setId(String id)
   {
@@ -24,15 +23,5 @@ public class RelatedClass
   public String getName()
   {
     return name;
-  }
-
-  public void setIdentifier(String identifier)
-  {
-    this.identifier = identifier;
-  }
-
-  public String getIdentifier()
-  {
-    return identifier;
   }
 }

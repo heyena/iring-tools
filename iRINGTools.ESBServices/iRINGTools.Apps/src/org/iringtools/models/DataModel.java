@@ -513,7 +513,8 @@ public class DataModel
 
     List<Field> fields = new ArrayList<Field>();
     boolean firstDto = true;
-
+    ClassObject classObject = null;
+    
     for (DataTransferObject dto : dtoList)
     {
       List<String> row = new ArrayList<String>();
@@ -527,7 +528,7 @@ public class DataModel
 
       if (dto.getClassObjects().getItems().size() > 0)
       {
-        ClassObject classObject = dto.getClassObjects().getItems().get(0);
+        classObject = dto.getClassObjects().getItems().get(0);
         String className = IOUtils.toCamelCase(classObject.getName());
         
         pageDtoGrid.setIdentifier(classObject.getClassId());
@@ -579,8 +580,7 @@ public class DataModel
               }
               else
               {
-                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue()
-                    + "</span>");
+                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
               }
             }
             else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0)
@@ -606,7 +606,8 @@ public class DataModel
       }
 
       row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
-          + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\"," + relatedClassesJson + ")'>");
+          + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\"," + 
+          relatedClassesJson + ")'>");
 
       gridData.add(row);
 
@@ -639,10 +640,10 @@ public class DataModel
   }
 
   // paging is based on number of templates of the related class
-  public Grid getRelatedItemGrid(DataType dataType, DataTransferObject dto, String classId, int start, int limit)
+  public Grid getRelatedItemGrid(DataType dataType, DataTransferObject dto, String classId, String classIdentifier,
+      int start, int limit)
   {
-    Grid relatedItemGrid = new Grid();
-    
+    Grid relatedItemGrid = new Grid();    
     List<Field> fields = new ArrayList<Field>();
     List<List<String>> gridData = new ArrayList<List<String>>();    
     int relatedClassCount = 0;
@@ -653,6 +654,8 @@ public class DataModel
       {
         List<String> row = new ArrayList<String>();
         String className = IOUtils.toCamelCase(classObject.getName());
+        List<RelatedClass> nextRelatedClasses = new ArrayList<RelatedClass>();
+
         relatedClassCount++;
         
         if (relatedClassCount == 1)
@@ -663,8 +666,6 @@ public class DataModel
         
         for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
         {
-          List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
-
           if (dataType == DataType.EXCHANGE)
           {
             if (dto.getTransferType() == TransferType.CHANGE)
@@ -715,49 +716,49 @@ public class DataModel
             }
             else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0)
             {              
-              RelatedClass relatedClass = new RelatedClass();
-              relatedClass.setId(roleObject.getRelatedClassId());
-              relatedClass.setName(IOUtils.toCamelCase(roleObject.getRelatedClassName()));
-              relatedClasses.add(relatedClass);
+              RelatedClass nextRelatedClass = new RelatedClass();
+              nextRelatedClass.setId(roleObject.getRelatedClassId());
+              nextRelatedClass.setName(IOUtils.toCamelCase(roleObject.getRelatedClassName()));
+              nextRelatedClasses.add(nextRelatedClass);
             }
-          }
-
-          String relatedClassesJson;
-
-          try
-          {
-            relatedClassesJson = JSONUtil.serialize(relatedClasses);
-          }
-          catch (JSONException ex)
-          {
-            relatedClassesJson = "[]";
-          }
-
-          row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
-              + "onClick='javascript:showIndividualInfo(\"" + classObject.getIdentifier() + "\"," + relatedClassesJson
-              + ")'>");
-
-          if (relatedClassCount == 1)
-          {
-            if (dataType == DataType.EXCHANGE)
-            {
-              Field transferTypeField = new Field();
-              transferTypeField.setName("Transfer Type");
-              transferTypeField.setDataIndex("Transfer Type");
-              transferTypeField.setType("string");
-              fields.add(0, transferTypeField);
-            }
-
-            Field infoField = new Field();
-            infoField.setName("&nbsp;");
-            infoField.setDataIndex("&nbsp;");
-            infoField.setType("string");
-            infoField.setWidth(28);
-            infoField.setFixed(true);
-            infoField.setFilterable(false);
-            fields.add(0, infoField);
           }
         }
+        
+        if (relatedClassCount == 1)
+        {
+          if (dataType == DataType.EXCHANGE)
+          {
+            Field transferTypeField = new Field();
+            transferTypeField.setName("Transfer Type");
+            transferTypeField.setDataIndex("Transfer Type");
+            transferTypeField.setType("string");
+            fields.add(0, transferTypeField);
+          }
+
+          Field infoField = new Field();
+          infoField.setName("&nbsp;");
+          infoField.setDataIndex("&nbsp;");
+          infoField.setType("string");
+          infoField.setWidth(28);
+          infoField.setFixed(true);
+          infoField.setFilterable(false);
+          fields.add(0, infoField);
+        }
+        
+        String relatedClassesJson;
+
+        try
+        {
+          relatedClassesJson = JSONUtil.serialize(nextRelatedClasses);
+        }
+        catch (JSONException ex)
+        {
+          relatedClassesJson = "[]";
+        }
+
+        row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
+            + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\"," +
+            relatedClassesJson + ")'>");
         
         gridData.add(row);
       }
