@@ -11,6 +11,7 @@ using Ninject;
 using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
+using System.Diagnostics;
 
 namespace iRINGTools.SDK.SPPIDDataLayer
 {
@@ -21,6 +22,8 @@ namespace iRINGTools.SDK.SPPIDDataLayer
         private Llama.LMADataSource _projDatasource = null;        // SPPID DataSource
         private Llama.LMAFilter _lmFilters = null;
         private Llama.LMACriterion _lmCriterion = null;
+
+        private const String CONST_SPID_Vessel = "C76EF274525A4345A6ACE1D179362899";
 
         //NOTE: This is required to deliver settings to constructor.
         //NOTE: Other objects could be requested on an as needed basis.
@@ -36,8 +39,10 @@ namespace iRINGTools.SDK.SPPIDDataLayer
 
             //_projDatasource = kernel.Get<ILMADataSource>();
             _projDatasource = new Llama.LMADataSource();
+            
             _projDatasource.ProjectNumber = projectStr;
             _projDatasource.set_SiteNode(siteNode);
+            
             
         }
 
@@ -187,6 +192,26 @@ namespace iRINGTools.SDK.SPPIDDataLayer
                 LoadDataDictionary(objectType);
 
                 IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
+
+                _lmFilters = new Llama.LMAFilter();
+                _lmCriterion = new Llama.LMACriterion();
+
+                _lmCriterion.SourceAttributeName = "TagSuffix";
+                _lmCriterion.set_ValueAttribute("P");
+                _lmCriterion.Operator = "=";
+                _lmFilters.ItemType = "PipeRun";
+                // _lmFilters.set_Criteria(_lmCriterion);  //TO DO Error when trying to add criteria. 
+
+                Llama.LMPipeRun piperun = new Llama.LMPipeRun(); // Error Retrieving the COM class factory for 
+                                                                //component with CLSID  failed due to the following error: 80040154 
+                                                               //Class not registered (Exception from HRESULT: 0x80040154 (REGDB_E_CLASSNOTREG)).
+
+                Llama.LMPipeRuns piperuns = new Llama.LMPipeRuns();
+
+                piperuns.Collect(_projDatasource, null, null, _lmFilters);
+
+                Debug.WriteLine("Number of Piperuns retrieved = " + piperuns.Count);
+
 
                 // Apply filter
                 if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
