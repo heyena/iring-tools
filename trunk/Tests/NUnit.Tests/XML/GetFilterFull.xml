@@ -8,7 +8,7 @@
     <Spec dataType="String">AAA3</Spec>
     <System dataType="String">SC</System>
     <Lineno dataType="String">003</Lineno>
-    <Nomdiameter dataType="Double">80</Nomdiameter>
+    <Nomdiameter dataType="Single">80</Nomdiameter>
     <Insulationtype dataType="String">N</Insulationtype>
     <Htraced dataType="String"></Htraced>
     <Consttype dataType="String">NEW</Consttype>
@@ -41,7 +41,7 @@
     <Spec dataType="String">AAA3</Spec>
     <System dataType="String">SC</System>
     <Lineno dataType="String">004</Lineno>
-    <Nomdiameter dataType="Double">40</Nomdiameter>
+    <Nomdiameter dataType="Single">40</Nomdiameter>
     <Insulationtype dataType="String">IH</Insulationtype>
     <Htraced dataType="String"></Htraced>
     <Consttype dataType="String">NEW</Consttype>
