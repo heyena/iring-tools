@@ -714,7 +714,8 @@ namespace org.iringtools.refdata
         public Entities GetSuperClasses(string id)
         {
             Entities queryResult = new Entities();
-
+            string language = string.Empty;
+            List<string> names = new List<string>();
             try
             {
                 List<Specialization> specializations = GetSpecializations(id, null);
@@ -722,15 +723,24 @@ namespace org.iringtools.refdata
                 foreach (Specialization specialization in specializations)
                 {
                     string uri = specialization.reference;
+                     
                     string label = specialization.label;
 
                     if (label == null)
                         label = GetLabel(uri).Label;
+                    names = label.Split('@').ToList();
 
+                    if (names.Count == 1)
+                      language = defaultLanguage;
+                    else
+                      language = names[names.Count - 1];
+
+                    
                     Entity resultEntity = new Entity
                     {
                         Uri = uri,
-                        Label = label
+                        Label = names[0],
+                        Lang = language
                     };
                     Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
                     //queryResult.Add(resultEntity);
@@ -865,7 +875,7 @@ namespace org.iringtools.refdata
         public Entities GetSubClasses(string id)
         {
             Entities queryResult = new Entities();
-
+           
             try
             {
                 string sparql = String.Empty;
@@ -907,6 +917,7 @@ namespace org.iringtools.refdata
                                 Uri = result["uri"],
                                 Label = names[0],
                                 Lang = language,
+                                Repository = repository.Name
                             };
 
                             Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
@@ -931,6 +942,7 @@ namespace org.iringtools.refdata
                                 Uri = result["uri"],
                                 Label = names[0],
                                 Lang = language,
+                                Repository = repository.Name
                             };
 
                             Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
@@ -983,6 +995,7 @@ namespace org.iringtools.refdata
                        
                         foreach (Dictionary<string, string> result in results)
                         {
+                          if(result.Count > 0)
                             count = count + Convert.ToInt32(result["label"]);
                             
                             //queryResult.Add(resultEntity);
@@ -996,6 +1009,7 @@ namespace org.iringtools.refdata
                         
                         foreach (Dictionary<string, string> result in results)
                         {
+                          if (result.Count > 0)
                             count = count + Convert.ToInt32(result["label"]);
                         }
                     }
