@@ -364,7 +364,7 @@ function removeHTMLTag(htmlText){
   return htmlText.replace(/<\/?[^>]+(>|$)/g, '');
 }
 
-function showIndividualInfo(individual, relatedClasses){
+function showIndividualInfo(individual, classIdentifier, relatedClasses){
   var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
   var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
@@ -377,7 +377,8 @@ function showIndividualInfo(individual, relatedClasses){
     height: 46,
     cls: 'class-badge',
     html: '<div style="width:60px;float:left"><img style="margin:2px 15px 2px 5px" src="resources/images/class-badge-large.png"/></div>' +
-          '<div style="width:100%;height:100%;padding-top:8px">' + individual + '<br/>' + dtoGrid.description + '</div>'
+      '<div style="width:100%;height:100%;padding-top:8px"><table><tr><td>Class</td><td>: ' + dtoGrid.description + 
+      '</td></tr><tr><td>Identifier</td><td>: ' + classIdentifier + '</td></tr></table></div>'
   });
   
   var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;
@@ -443,7 +444,7 @@ function showIndividualInfo(individual, relatedClasses){
   },{
     xtype: 'box',
     autoEl: {tag: 'span', html: '<a class="breadcrumb" href="#" onclick="navigate(' + 
-      bcItemIndex + ')">' + individual + '</a>'}
+      bcItemIndex + ')">' + classIdentifier + '</a>'}
   });
   dtoBcPane.doLayout();
 

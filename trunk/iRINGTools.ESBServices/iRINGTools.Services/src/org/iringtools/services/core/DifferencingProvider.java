@@ -305,7 +305,8 @@ public class DifferencingProvider
         
                     if (targetRoleType == RoleType.PROPERTY ||
                         targetRoleType == RoleType.DATA_PROPERTY ||
-                        targetRoleType == RoleType.OBJECT_PROPERTY)
+                        targetRoleType == RoleType.OBJECT_PROPERTY ||
+                        targetRoleType == RoleType.FIXED_VALUE)
                     {
                       RoleObject sourceRoleObject = getRoleObject(sourceRoleObjectList, targetRoleObject.getRoleId());
         

@@ -184,7 +184,6 @@ namespace org.iringtools.adapter.projection
 
           dti.InternalIdentifier = internalIdentifier.ToString();
           dti.HashValue = Utility.MD5Hash(propertyValues.ToString());
-
           dtis.DataTransferIndexList.Add(dti);
         }
 
@@ -249,16 +248,6 @@ namespace org.iringtools.adapter.projection
                     {
                       BuildDataTransferIndex(dti, dataObjectIndex, relatedClassTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
                         propertyValues, sortIndex, ref sortType);
-                    }
-                    else  // reference class not found (leaf node role map), treat it as "data property" role
-                    {
-                      bool refClassHasRelatedProperty;
-                      List<string> refClassIdentifiers = GetClassIdentifiers(roleMap.classMap, dataObjectIndex, out refClassHasRelatedProperty);
-
-                      if (refClassIdentifiers.Count > 0 && !String.IsNullOrEmpty(refClassIdentifiers.First()))
-                      {
-                        propertyValues.Append(refClassIdentifiers.First());
-                      }
                     }
                   }
                 }
@@ -731,6 +720,7 @@ namespace org.iringtools.adapter.projection
             case RoleType.Property:
             case RoleType.DataProperty:
             case RoleType.ObjectProperty:
+            case RoleType.FixedValue:
               ProcessInboundPropertyRole(dataObjectIndex, classObjectIndex, roleMap, templateObject);
               break;
           }
