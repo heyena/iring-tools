@@ -520,6 +520,9 @@ namespace org.iringtools.adapter.projection
               value = propertyValue
             };
 
+            if (!String.IsNullOrEmpty(propertyRole.valueListName))
+              roleObject.hasValueMap = true;
+
             roleObjects.Add(roleObject);
           }
           else  // related property
@@ -565,6 +568,9 @@ namespace org.iringtools.adapter.projection
                   dataType = propertyRole.dataType,
                   value = propertyValue
                 };
+
+                if (!String.IsNullOrEmpty(propertyRole.valueListName))
+                  roleObject.hasValueMap = true;
 
                 roleObjects.Add(roleObject);
               }
