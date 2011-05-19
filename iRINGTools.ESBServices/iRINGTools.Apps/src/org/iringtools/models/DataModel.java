@@ -606,8 +606,8 @@ public class DataModel
       }
 
       row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
-          + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\"," + 
-          relatedClassesJson + ")'>");
+          + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\",\"" + 
+          dto.getIdentifier() + "\"," + relatedClassesJson + ")'>");
 
       gridData.add(row);
 
@@ -757,8 +757,8 @@ public class DataModel
         }
 
         row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
-            + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\"," +
-            relatedClassesJson + ")'>");
+            + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\",\"" +
+            classObject.getIdentifier() + "\"," + relatedClassesJson + ")'>");
         
         gridData.add(row);
       }
