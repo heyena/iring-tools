@@ -21,7 +21,7 @@
         </namespace>
         <namespace>
             <id>3</id>
-            <uri>http://tpl.rldfacade.org/data#</uri>
+            <uri>http://tpl.rdlfacade.org/data#</uri>
             <alias>tpl</alias>
             <isWritable>true</isWritable>
             <description>Templates</description>
@@ -44,7 +44,7 @@
             <isReadOnly>true</isReadOnly>
             <name>RDS/WIP</name>
             <repositoryType>Camelot</repositoryType>
-            <uri>http://rdl.rdlfacade.org/data</uri>
+            <uri>http://rdl.rdlfacade.org/data#</uri>
             <namespaces>
                 <namespaceId>2</namespaceId>
             </namespaces>
@@ -56,7 +56,7 @@
             <name>iRINGSandbox</name>
             <repositoryType>Camelot</repositoryType>
             <uri>http://iringsandbox.org/repositories/sandbox/query</uri>
-            <updateUri>       http://iringsandbox.org/repositories/sandbox/update</updateUri>
+            <updateUri>http://iringsandbox.org/repositories/sandbox/update</updateUri>
             <namespaces>
                 <namespaceId>2</namespaceId>
                 <namespaceId>3</namespaceId>
