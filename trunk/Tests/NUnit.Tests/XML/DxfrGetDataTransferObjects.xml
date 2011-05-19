@@ -107,6 +107,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -259,6 +260,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -442,6 +444,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -594,6 +597,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -777,6 +781,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -929,6 +934,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -1112,6 +1118,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -1295,6 +1302,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -1478,6 +1486,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -1661,6 +1670,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -1844,6 +1854,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -1996,6 +2007,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -2148,6 +2160,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -2331,6 +2344,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -2483,6 +2497,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -2666,6 +2681,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -2849,6 +2865,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -3032,6 +3049,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -3215,6 +3233,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -3398,6 +3417,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -3550,6 +3570,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -3733,6 +3754,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -3916,6 +3938,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -4068,6 +4091,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
@@ -4251,6 +4275,7 @@
                 <name>hasScale</name>
                 <dataType>xsd:string</dataType>
                 <value>rdl:R52054275374</value>
+                <hasValueMap>true</hasValueMap>
               </roleObject>
               <roleObject>
                 <type>Property</type>
