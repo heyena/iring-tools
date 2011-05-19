@@ -688,6 +688,7 @@ public class ExchangeProvider
     return status;
   }
 
+  //TODO: calculate related item values
   private String md5Hash(DataTransferObject dataTransferObject)
   {
     StringBuilder values = new StringBuilder();

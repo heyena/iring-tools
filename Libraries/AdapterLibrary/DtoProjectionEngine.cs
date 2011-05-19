@@ -585,30 +585,31 @@ namespace org.iringtools.adapter.projection
       }
       else if (classRoles.Count > 0)  // relationship template
       {
-        classObject.templateObjects.Add(baseTemplateObject);
-
+        bool templateValid = false;  // template is valid when exist at least one class referernce identifier that is not null
+        
         foreach (RoleMap classRole in classRoles)
         {
           bool refClassHasRelatedProperty;
           List<string> refClassIdentifiers = GetClassIdentifiers(classRole.classMap, dataObjectIndex, out refClassHasRelatedProperty);
 
-          // update role object values
-          RoleObject roleObjectMap = roleObjectMaps[classRole];
-
-          if (roleObjectMap.values == null)
-            roleObjectMap.values = new RoleValues();
-
-          foreach (string identifier in refClassIdentifiers)
-          {
-            roleObjectMap.values.Add(identifier);
-          }
-
           if (refClassIdentifiers.Count > 0 && !String.IsNullOrEmpty(refClassIdentifiers.First()))
           {
+            templateValid = true;
             ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
 
             if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
             {
+              // update class reference role object values
+              RoleObject roleObjectMap = roleObjectMaps[classRole];
+
+              if (roleObjectMap.values == null)
+                roleObjectMap.values = new RoleValues();
+
+              foreach (string identifier in refClassIdentifiers)
+              {
+                roleObjectMap.values.Add(identifier);
+              }
+
               ProcessOutboundClass(dto, dataObjectIndex, startClassName, startClassIdentifier, false, refClassIdentifiers,
                 refClassHasRelatedProperty, relatedClassTemplateMap.classMap, relatedClassTemplateMap.templateMaps);
             }
@@ -624,6 +625,11 @@ namespace org.iringtools.adapter.projection
               }
             }
           }
+        }
+
+        if (templateValid)
+        {
+          classObject.templateObjects.Add(baseTemplateObject);
         }
       }
     }

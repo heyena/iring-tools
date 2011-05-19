@@ -60,33 +60,6 @@
             </roleObjects>
           </templateObject>
           <templateObject>
-            <templateId>tpl:R11327281485</templateId>
-            <name>PAndIDRepresentation</name>
-            <roleObjects>
-              <roleObject>
-                <type>Possessor</type>
-                <roleId>tpl:R22715013877</roleId>
-                <name>object</name>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R35290929175</roleId>
-                <name>representationType</name>
-                <value>rdl:R99486931975</value>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R74328815710</roleId>
-                <name>representation</name>
-                <relatedClassId>rdl:R99486931975</relatedClassId>
-                <relatedClassName>P AND I DIAGRAM</relatedClassName>
-                <values>
-                  <value></value>
-                </values>
-              </roleObject>
-            </roleObjects>
-          </templateObject>
-          <templateObject>
             <templateId>tpl:R77443358818</templateId>
             <name>NominalDiameter</name>
             <roleObjects>
@@ -397,33 +370,6 @@
             </roleObjects>
           </templateObject>
           <templateObject>
-            <templateId>tpl:R11327281485</templateId>
-            <name>PAndIDRepresentation</name>
-            <roleObjects>
-              <roleObject>
-                <type>Possessor</type>
-                <roleId>tpl:R22715013877</roleId>
-                <name>object</name>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R35290929175</roleId>
-                <name>representationType</name>
-                <value>rdl:R99486931975</value>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R74328815710</roleId>
-                <name>representation</name>
-                <relatedClassId>rdl:R99486931975</relatedClassId>
-                <relatedClassName>P AND I DIAGRAM</relatedClassName>
-                <values>
-                  <value></value>
-                </values>
-              </roleObject>
-            </roleObjects>
-          </templateObject>
-          <templateObject>
             <templateId>tpl:R77443358818</templateId>
             <name>NominalDiameter</name>
             <roleObjects>
@@ -729,33 +675,6 @@
                 <relatedClassName>PLANT AREA</relatedClassName>
                 <values>
                   <value>90</value>
-                </values>
-              </roleObject>
-            </roleObjects>
-          </templateObject>
-          <templateObject>
-            <templateId>tpl:R11327281485</templateId>
-            <name>PAndIDRepresentation</name>
-            <roleObjects>
-              <roleObject>
-                <type>Possessor</type>
-                <roleId>tpl:R22715013877</roleId>
-                <name>object</name>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R35290929175</roleId>
-                <name>representationType</name>
-                <value>rdl:R99486931975</value>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R74328815710</roleId>
-                <name>representation</name>
-                <relatedClassId>rdl:R99486931975</relatedClassId>
-                <relatedClassName>P AND I DIAGRAM</relatedClassName>
-                <values>
-                  <value></value>
                 </values>
               </roleObject>
             </roleObjects>
@@ -1807,33 +1726,6 @@
             </roleObjects>
           </templateObject>
           <templateObject>
-            <templateId>tpl:R11327281485</templateId>
-            <name>PAndIDRepresentation</name>
-            <roleObjects>
-              <roleObject>
-                <type>Possessor</type>
-                <roleId>tpl:R22715013877</roleId>
-                <name>object</name>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R35290929175</roleId>
-                <name>representationType</name>
-                <value>rdl:R99486931975</value>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R74328815710</roleId>
-                <name>representation</name>
-                <relatedClassId>rdl:R99486931975</relatedClassId>
-                <relatedClassName>P AND I DIAGRAM</relatedClassName>
-                <values>
-                  <value></value>
-                </values>
-              </roleObject>
-            </roleObjects>
-          </templateObject>
-          <templateObject>
             <templateId>tpl:R77443358818</templateId>
             <name>NominalDiameter</name>
             <roleObjects>
@@ -1955,33 +1847,6 @@
                 <relatedClassName>PLANT AREA</relatedClassName>
                 <values>
                   <value>90</value>
-                </values>
-              </roleObject>
-            </roleObjects>
-          </templateObject>
-          <templateObject>
-            <templateId>tpl:R11327281485</templateId>
-            <name>PAndIDRepresentation</name>
-            <roleObjects>
-              <roleObject>
-                <type>Possessor</type>
-                <roleId>tpl:R22715013877</roleId>
-                <name>object</name>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R35290929175</roleId>
-                <name>representationType</name>
-                <value>rdl:R99486931975</value>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R74328815710</roleId>
-                <name>representation</name>
-                <relatedClassId>rdl:R99486931975</relatedClassId>
-                <relatedClassName>P AND I DIAGRAM</relatedClassName>
-                <values>
-                  <value></value>
                 </values>
               </roleObject>
             </roleObjects>
@@ -2292,33 +2157,6 @@
                 <relatedClassName>PLANT AREA</relatedClassName>
                 <values>
                   <value>90</value>
-                </values>
-              </roleObject>
-            </roleObjects>
-          </templateObject>
-          <templateObject>
-            <templateId>tpl:R11327281485</templateId>
-            <name>PAndIDRepresentation</name>
-            <roleObjects>
-              <roleObject>
-                <type>Possessor</type>
-                <roleId>tpl:R22715013877</roleId>
-                <name>object</name>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R35290929175</roleId>
-                <name>representationType</name>
-                <value>rdl:R99486931975</value>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R74328815710</roleId>
-                <name>representation</name>
-                <relatedClassId>rdl:R99486931975</relatedClassId>
-                <relatedClassName>P AND I DIAGRAM</relatedClassName>
-                <values>
-                  <value></value>
                 </values>
               </roleObject>
             </roleObjects>
@@ -3370,33 +3208,6 @@
             </roleObjects>
           </templateObject>
           <templateObject>
-            <templateId>tpl:R11327281485</templateId>
-            <name>PAndIDRepresentation</name>
-            <roleObjects>
-              <roleObject>
-                <type>Possessor</type>
-                <roleId>tpl:R22715013877</roleId>
-                <name>object</name>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R35290929175</roleId>
-                <name>representationType</name>
-                <value>rdl:R99486931975</value>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R74328815710</roleId>
-                <name>representation</name>
-                <relatedClassId>rdl:R99486931975</relatedClassId>
-                <relatedClassName>P AND I DIAGRAM</relatedClassName>
-                <values>
-                  <value></value>
-                </values>
-              </roleObject>
-            </roleObjects>
-          </templateObject>
-          <templateObject>
             <templateId>tpl:R77443358818</templateId>
             <name>NominalDiameter</name>
             <roleObjects>
@@ -3886,33 +3697,6 @@
                 <relatedClassName>PLANT AREA</relatedClassName>
                 <values>
                   <value>90</value>
-                </values>
-              </roleObject>
-            </roleObjects>
-          </templateObject>
-          <templateObject>
-            <templateId>tpl:R11327281485</templateId>
-            <name>PAndIDRepresentation</name>
-            <roleObjects>
-              <roleObject>
-                <type>Possessor</type>
-                <roleId>tpl:R22715013877</roleId>
-                <name>object</name>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R35290929175</roleId>
-                <name>representationType</name>
-                <value>rdl:R99486931975</value>
-              </roleObject>
-              <roleObject>
-                <type>Reference</type>
-                <roleId>tpl:R74328815710</roleId>
-                <name>representation</name>
-                <relatedClassId>rdl:R99486931975</relatedClassId>
-                <relatedClassName>P AND I DIAGRAM</relatedClassName>
-                <values>
-                  <value></value>
                 </values>
               </roleObject>
             </roleObjects>

@@ -26,7 +26,6 @@ import org.iringtools.dxfr.dto.ClassObject;
 import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
-import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
 import org.iringtools.dxfr.dto.TransferType;
 import org.iringtools.refdata.response.Entity;
@@ -538,8 +537,11 @@ public class DataModel
         {
           for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
           {
-            if (roleObject.getType() == RoleType.PROPERTY || roleObject.getType() == RoleType.DATA_PROPERTY
-                || roleObject.getType() == RoleType.OBJECT_PROPERTY)
+            String roleValue = roleObject.getValue();
+            String roleDataType = roleObject.getDataType();
+            
+            if (roleValue != null && ((roleDataType != null && roleDataType.startsWith("xsd:")) ||
+                (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0)))
             {
               if (firstDto)
               {
@@ -549,7 +551,7 @@ public class DataModel
                 field.setName(fieldName);
                 field.setDataIndex(className + '.' + fieldName);
 
-                if (dataType == DataType.APP)
+                if (dataType == DataType.APP && roleDataType != null && roleDataType.startsWith("xsd:"))
                   field.setType(roleObject.getDataType().replace("xsd:", ""));
                 else
                   field.setType("string");
@@ -576,7 +578,7 @@ public class DataModel
               if (dataType == DataType.APP || roleObject.getOldValue() == null
                   || roleObject.getOldValue().equals(roleObject.getValue()))
               {
-                row.add(roleObject.getValue());
+                row.add(roleValue);
               }
               else
               {
@@ -683,8 +685,10 @@ public class DataModel
           for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
           {
             String roleValue = roleObject.getValue();
+            String roleDataType = roleObject.getDataType();
             
-            if (roleValue != null && !roleValue.startsWith("rdl:"))
+            if (roleValue != null && ((roleDataType != null && roleDataType.startsWith("xsd:")) ||
+                (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0)))
             {              
               if (relatedClassCount == 1)
               {
@@ -694,10 +698,8 @@ public class DataModel
                 field.setName(fieldName);
                 field.setDataIndex(className + '.' + fieldName);
 
-                String fieldType = roleObject.getDataType();
-                
-                if (dataType == DataType.APP && fieldType != null && fieldType.startsWith("xsd:"))
-                  field.setType(fieldType.replace("xsd:", ""));
+                if (dataType == DataType.APP && roleDataType != null && roleDataType.startsWith("xsd:"))
+                  field.setType(roleDataType.replace("xsd:", ""));
                 else
                   field.setType("string");
 

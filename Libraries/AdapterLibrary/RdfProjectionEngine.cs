@@ -475,7 +475,7 @@ namespace org.iringtools.adapter.projection
       }
       else if (classRoles.Count > 0)  // relationship template with known class role
       {
-        bool isTemplateValid = false;  // at least one class role identifier is not null or empty
+        bool templateValid = false;  // template is valid when there is at least one class referernce identifier that is not null
         Dictionary<RoleMap, List<string>> relatedClassRoles = new Dictionary<RoleMap, List<string>>();
 
         foreach (RoleMap classRole in classRoles)
@@ -493,7 +493,7 @@ namespace org.iringtools.adapter.projection
 
             if (!String.IsNullOrEmpty(refClassIdentifier))
             {
-              isTemplateValid = true;
+              templateValid = true;
               baseValues.Append(refClassIdentifier);
 
               string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
@@ -556,7 +556,7 @@ namespace org.iringtools.adapter.projection
             }
           }
         }
-        else if (isTemplateValid)
+        else if (templateValid)
         {
           string hashCode = Utility.MD5Hash(baseValues.ToString());
           baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
