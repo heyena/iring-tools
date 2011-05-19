@@ -353,7 +353,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					labelWidth: 155,
 					id: scopeName + '.' + appName + '.relationCreateForm.' + node.id,
 					border: false,
-					autoScroll: true,					
+					autoScroll: false,					
 					monitorValid: true,
 					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					defaults: { anchor: '100%', allowBlank: false },
@@ -365,16 +365,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					}, {
 						xtype: 'textfield',
 						name: 'relationName',
-						fieldLabel: 'Relationship Name',
-						anchor: '100%',
+						fieldLabel: 'Relationship Name',						
 						allowBlank: false
 					}, {
 						xtype: 'panel',
 						id: scopeName + '.' + appName + '.dataRelationDeletePane.' + node.id,
-						autoScroll: true,				
-						height: 630,		
+						autoScroll: true,
 						layout: 'fit',
-						anchor: '100%',
+						anchor: '100% -50',
 						border: false,
 						frame: false
 					}],
@@ -625,7 +623,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					id: scopeName + '.' + appName + '.relationFieldsForm.' + node.id,
 					border: false,
 					autoScroll: true,
-					monitorResize: true,
 					monitorValid: true,			
 					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',					
 					defaults: { anchor: '100%', allowBlank: false },
@@ -759,16 +756,15 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							var mapproperty = record.data.field2;
 						}
 						}
-					}, {
-						xtype: 'panel',
-						id: scopeName + '.' + appName + '.dataRelationPane.' + node.id,
-						autoScroll: true,						
-						layout: 'fit',
-						height: 500,		
-						anchor: '100%',
-						border: false,
-						frame: false						
-					}],
+				}, {
+					xtype: 'panel',
+					id: scopeName + '.' + appName + '.dataRelationPane.' + node.id,
+					autoScroll: true,
+					layout: 'fit',
+					anchor: '100% -181',
+					border: false,
+					frame: false
+				}],
 					tbar: new Ext.Toolbar({
 						items: [{
 							xtype: 'tbspacer',
@@ -1951,11 +1947,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				xtype: 'panel',
 				name: 'editor-panel',
 				id: scopeName + '.' + appName + '.editor-panel',
+				autoScroll: false,
 				region: 'center',
-				split: true,
-				autoScroll: true,
-				layout: 'card',
-				bodyStyle: 'background:#eee'
+				layout: 'card'
 			}]
 		});
 
