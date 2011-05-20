@@ -701,10 +701,12 @@ public class ExchangeProvider
         List<RoleObject> roleObjects = templateObject.getRoleObjects().getItems();
         for (RoleObject roleObject : roleObjects)
         {
-          if (roleObject.getType() == RoleType.PROPERTY || 
-              roleObject.getType() == RoleType.OBJECT_PROPERTY || 
-              roleObject.getType() == RoleType.DATA_PROPERTY|| 
-              roleObject.getType() == RoleType.FIXED_VALUE)
+          RoleType roleType = roleObject.getType();
+          
+          if (roleType == RoleType.PROPERTY || 
+              roleType == RoleType.OBJECT_PROPERTY || 
+              roleType == RoleType.DATA_PROPERTY|| 
+              roleType == RoleType.FIXED_VALUE)
           {
             String value = roleObject.getValue();
             

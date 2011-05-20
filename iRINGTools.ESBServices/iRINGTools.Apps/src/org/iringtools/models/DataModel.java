@@ -589,6 +589,7 @@ public class DataModel
                 String roleObjectValue = roleObject.getValue();
                 String newValue = getValueMap(refServiceUri, roleObjectValue);
                 roleObject.setValue(newValue);
+                
                 logger.debug("roleObjectValue: " + roleObjectValue);
                 logger.debug("refServiceUri: " + refServiceUri);
                 logger.debug("newValue: " + newValue);
@@ -603,7 +604,7 @@ public class DataModel
               if (dataType == DataType.APP || roleObject.getOldValue() == null
                   || roleObject.getOldValue().equals(roleObject.getValue()))
               {
-                row.add(roleValue);
+                row.add(roleObject.getValue());
               }
               else
               {
