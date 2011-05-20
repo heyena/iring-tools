@@ -48,7 +48,7 @@ namespace org.iringtools.adapter.projection
       return dtoDoc;
     }
 
-    public override XDocument ToXml(string graphName, string className, string classIdentifier, ref IDataObject dataObject)
+    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
     {
       XDocument dtoDoc = null;
 
@@ -56,9 +56,9 @@ namespace org.iringtools.adapter.projection
       {
         _graphMap = _mapping.FindGraphMap(graphName);
 
-        if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 && dataObject != null)
+        if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 && dataObjects != null)
         {
-          _dataObjects = new List<IDataObject> { dataObject };
+          _dataObjects = dataObjects;
           DataTransferObject dto = BuildDataTransferObject(className, classIdentifier);
           string xml = Utility.SerializeDataContract<DataTransferObject>(dto);
           XElement xElement = XElement.Parse(xml);
