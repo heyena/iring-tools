@@ -51,6 +51,7 @@ Ext.onReady(function () {
         title: 'Reference Data Search',
         region: 'south',
         height: 300,
+				maxHeight: 470,
         collapseMode: 'mini',
         collapsible: true,
         collapsed: false,
@@ -61,7 +62,6 @@ Ext.onReady(function () {
     var contentPanel = new Ext.TabPanel({
         id: 'content-panel',
         region: 'center',
-
         collapsible: false,
         closable: true,
         enableTabScroll: true,
