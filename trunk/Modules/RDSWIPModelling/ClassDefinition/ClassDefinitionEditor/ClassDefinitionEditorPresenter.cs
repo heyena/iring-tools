@@ -209,11 +209,17 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
             MessageBox.Show(args.FriendlyErrorMessage, "Post Class Error", MessageBoxButton.OK);
             return;
           }
-                    showResponse("Post Class Response", (Response)args.Data);
+            Response response= (Response)args.Data;
+            Status status = new Status();
+            IRegion region = regionManager.Regions["ClassEditorRegion"];
+            UserControl textboxControl = (UserControl)region.Views.FirstOrDefault();
+            status.Messages.Add("Class [" + (textboxControl as ClassDefinitionEditorView).className.Text + "] is posted sucessfully.");
+            response.StatusList.Add(status);
+
+            showResponse("Post Class Response", response);
 
           if (_clickedButton == "btnOK1")
           {
-            IRegion region = regionManager.Regions["ClassEditorRegion"];
             foreach (UserControl userControl in region.Views)
             {
               userControl.Visibility = Visibility.Collapsed;
@@ -358,7 +364,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                     ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
                     Repository repository = cbi.Tag as Repository;
                     _classBLL.QMXF.targetRepository = repository.Name;
-          referenceDataService.PostClass(@qmxf);
+          referenceDataService.PostClass(@qmxf, this);
         }
         else if (_clickedButton == "btnCancel1")
         {
@@ -374,7 +380,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
         {
           //ClassDefinition clss = _classBLL.
           QMXF @qmxf = _classBLL.QMXF;
-          referenceDataService.PostClass(@qmxf);
+          referenceDataService.PostClass(@qmxf, this);
         }
       }
       catch (Exception ex)
