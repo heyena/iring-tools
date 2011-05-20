@@ -51,10 +51,10 @@ namespace org.iringtools.adapter
     [DataMember(Name = "dataTransferIndexList", Order = 2)]
     public List<DataTransferIndex> DataTransferIndexList { get; set; }
 
-    [DataMember(Name = "sortType", Order = 3)]
+    [DataMember(Name = "sortType", Order = 3, EmitDefaultValue = false)]
     public string SortType { get; set; }
 
-    [DataMember(Name = "sortOrder", Order = 4)]
+    [DataMember(Name = "sortOrder", Order = 4, EmitDefaultValue = false)]
     public string SortOrder { get; set; }
   }
 
@@ -70,7 +70,7 @@ namespace org.iringtools.adapter
     [DataMember(Name = "transferType", Order = 2)]
     public TransferType TransferType { get; set; }
 
-    [DataMember(Name = "sortIndex", Order = 3)]
+    [DataMember(Name = "sortIndex", Order = 3, EmitDefaultValue = false)]
     public string SortIndex { get; set; }
   }
 }
