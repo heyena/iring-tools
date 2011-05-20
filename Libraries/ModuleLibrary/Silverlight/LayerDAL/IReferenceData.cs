@@ -35,7 +35,7 @@ namespace org.iringtools.modulelibrary.layerdal
 
         Response PostPart8Template(QMXF template);
 
-        Response PostClass(QMXF @class);
+        Response PostClass(QMXF @class, object useState);
 
         Repositories GetRepositories();
 

@@ -412,10 +412,10 @@ namespace org.iringtools.modulelibrary.layerbll
     /// </summary>
     /// <param name="class">The @class.</param>
     /// <returns></returns>
-    public Response PostClass(QMXF @class)
+    public Response PostClass(QMXF @class, object userState)
     {
       StartService("PostClass");
-      return dal.PostClass(@class);
+      return dal.PostClass(@class, userState);
     }
 
     public string GetReferenceDataServiceUri 

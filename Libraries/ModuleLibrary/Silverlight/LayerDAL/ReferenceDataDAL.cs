@@ -861,7 +861,7 @@ namespace org.iringtools.modulelibrary.layerdal
             return null;
         }
 
-        public org.iringtools.library.Response PostClass(QMXF @class)
+        public org.iringtools.library.Response PostClass(QMXF @class, object userState)
         {
             try
             {
@@ -869,7 +869,7 @@ namespace org.iringtools.modulelibrary.layerdal
 
                 _postClassClient.Headers["Content-type"] = "application/xml";
                 _postClassClient.Encoding = Encoding.UTF8;
-                _postClassClient.UploadStringAsync(new Uri(_referenceDataServiceUri + "/classes"), "POST", message);
+                _postClassClient.UploadStringAsync(new Uri(_referenceDataServiceUri + "/classes"), "POST", message, userState);
             }
             catch (Exception ex)
             {

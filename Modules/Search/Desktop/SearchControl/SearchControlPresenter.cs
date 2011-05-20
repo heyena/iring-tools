@@ -348,6 +348,7 @@ namespace org.iringtools.modules.search.searchregion
                 { }
                 else
                 {
+
                     ICommand command = args.GetUserState<ICommand>();
                     if (command.CanExecute(args))
                     {
