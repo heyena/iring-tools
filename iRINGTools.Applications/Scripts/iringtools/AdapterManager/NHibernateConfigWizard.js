@@ -761,7 +761,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					id: scopeName + '.' + appName + '.dataRelationPane.' + node.id,
 					autoScroll: true,
 					layout: 'fit',
-					anchor: '100% -181',
+					anchor: '100% -196',
 					border: false,
 					frame: false
 				}],
