@@ -51,7 +51,7 @@ Ext.onReady(function () {
         title: 'Reference Data Search',
         region: 'south',
         height: 300,
-				maxHeight: 470,
+				maxHeight: 420,
         collapseMode: 'mini',
         collapsible: true,
         collapsed: false,
