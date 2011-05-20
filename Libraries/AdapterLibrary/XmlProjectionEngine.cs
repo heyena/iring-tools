@@ -99,7 +99,7 @@ namespace org.iringtools.adapter.projection
       return new XDocument(rootElement);
     }
 
-    public override XDocument ToXml(string graphName, string className, string classIdentifier, ref IDataObject dataObject)
+    public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
     {
       XElement rootElement = null;
 
@@ -107,7 +107,7 @@ namespace org.iringtools.adapter.projection
       {
         _graphMap = _mapping.FindGraphMap(graphName);
 
-        if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 && dataObject != null)
+        if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 && dataObjects != null)
         {
           rootElement = new XElement(_appNamespace + Utility.TitleCase(graphName),
             new XAttribute(XNamespace.Xmlns + "i", XSI_NS),
@@ -115,7 +115,7 @@ namespace org.iringtools.adapter.projection
             new XAttribute(XNamespace.Xmlns + "tpl", TPL_NS),
             new XAttribute(XNamespace.Xmlns + "rdf", RDF_NS));
          
-          _dataObjects = new List<IDataObject>{ dataObject };
+          _dataObjects = dataObjects;
           BuildXml(rootElement, className, classIdentifier);
         }
       }
