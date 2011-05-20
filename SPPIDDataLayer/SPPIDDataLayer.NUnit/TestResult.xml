@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!--This file represents the results of running a test suite-->
+<test-results name="D:\Project\Datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\SPPIDDataLayer.NUnit.csproj" total="1" errors="0" failures="1" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2011-05-16" time="18:57:03">
+  <environment nunit-version="2.5.8.10295" clr-version="4.0.30319.225" os-version="Microsoft Windows NT 5.1.2600 Service Pack 3" platform="Win32NT" cwd="D:\Project\Datalayers\SPPIDDataLayer\lib\nunit\NUnit.Runner\bin\Debug" machine-name="NDHD06670" user="nbhardwa" user-domain="IEAMS" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="Project" name="D:\Project\Datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\SPPIDDataLayer.NUnit.csproj" executed="True" result="Failure" success="False" time="1.625" asserts="0">
+    <results>
+      <test-suite type="Assembly" name="D:\Project\Datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" executed="True" result="Failure" success="False" time="1.625" asserts="0">
+        <results>
+          <test-suite type="Namespace" name="iRINGTools" executed="True" result="Failure" success="False" time="1.625" asserts="0">
+            <results>
+              <test-suite type="Namespace" name="SDK" executed="True" result="Failure" success="False" time="1.625" asserts="0">
+                <results>
+                  <test-suite type="Namespace" name="SPPIDDataLayer" executed="True" result="Failure" success="False" time="1.625" asserts="0">
+                    <results>
+                      <test-suite type="TestFixture" name="SPPIDDataLayerTest" executed="True" result="Error" success="False" time="1.594" asserts="0">
+                        <failure>
+                          <message><![CDATA[SetUp : System.Runtime.InteropServices.COMException : Creating an instance of the COM component with CLSID {452789E2-F42B-4BBE-898D-AE86952D5E2C} from the IClassFactory failed due to the following error: 800a01ae.]]></message>
+                          <stack-trace><![CDATA[at System.RuntimeTypeHandle.CreateInstance(RuntimeType type, Boolean publicOnly, Boolean noCheck, Boolean& canBeCached, RuntimeMethodHandleInternal& ctor, Boolean& bNeedSecurityCheck)
+at System.RuntimeType.CreateInstanceSlow(Boolean publicOnly, Boolean skipCheckThis, Boolean fillCache)
+at System.RuntimeType.CreateInstanceDefaultCtor(Boolean publicOnly, Boolean skipVisibilityChecks, Boolean skipCheckThis, Boolean fillCache)
+at System.Activator.CreateInstance(Type type, Boolean nonPublic)
+at System.Activator.CreateInstance(Type type)
+at iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer..ctor(AdapterSettings settings, IKernel kernel) in D:\Project\Datalayers\SmartPlantPID\SPPIDDataLayer\SPPIDDataLayer.cs:line 38
+at DynamicInjector953dee777ad74247a3e1524128278ed8(Object[] )
+at Ninject.Activation.Providers.StandardProvider.Create(IContext context)
+at Ninject.Activation.Context.Resolve()
+at Ninject.KernelBase.<Resolve>b__3(IContext context)
+at System.Linq.Enumerable.<>c__DisplayClass12`3.<CombineSelectors>b__11(TSource x)
+at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
+at System.Linq.Enumerable.<CastIterator>d__b1`1.MoveNext()
+at System.Linq.Enumerable.FirstOrDefault[TSource](IEnumerable`1 source)
+at Ninject.ResolutionExtensions.Get[T](IResolutionRoot root, IParameter[] parameters)
+at iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayerTest..ctor() in D:\Project\Datalayers\SmartPlantPID\SPPIDDataLayer.NUnit\Test.cs:line 73
+]]></stack-trace>
+                        </failure>
+                        <results>
+                          <test-case name="iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayerTest.Create" executed="True" result="Failure" success="False" time="0.000" asserts="0">
+                            <failure>
+                              <message><![CDATA[TestFixtureSetUp failed in SPPIDDataLayerTest]]></message>
+                              <stack-trace />
+                            </failure>
+                          </test-case>
+                        </results>
+                      </test-suite>
+                    </results>
+                  </test-suite>
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
