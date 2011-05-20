@@ -624,7 +624,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					border: false,
 					autoScroll: true,
 					monitorValid: true,			
-					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',					
+					bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',					
 					defaults: { anchor: '100%', allowBlank: false },
 					items: [{
 						xtype: 'label',
@@ -761,7 +761,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					id: scopeName + '.' + appName + '.dataRelationPane.' + node.id,
 					autoScroll: true,
 					layout: 'fit',
-					anchor: '100% -196',
+					anchor: '100% -190',
 					border: false,
 					frame: false
 				}],
@@ -1947,7 +1947,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				xtype: 'panel',
 				name: 'editor-panel',
 				id: scopeName + '.' + appName + '.editor-panel',
-				autoScroll: false,
 				region: 'center',
 				layout: 'card'
 			}]
