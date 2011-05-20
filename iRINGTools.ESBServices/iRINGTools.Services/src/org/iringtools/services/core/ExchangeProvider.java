@@ -598,7 +598,7 @@ public class ExchangeProvider
         if (exchangeResponse.getLevel() == Level.WARNING)
         {
           Messages messages = new Messages();
-          messages.getItems().add("Exchange completed with some warnings!");
+          messages.getItems().add("Exchange completed with warning(s)!");
           exchangeResponse.setMessages(messages);
         }
         else
@@ -630,7 +630,7 @@ public class ExchangeProvider
     exchangeResponse.setEndTimeStamp(timestamp);
     
     // save exchange response to file system
-    String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
+    String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
     File dirPath = new File(path);
     
     if (!dirPath.exists())
@@ -688,7 +688,6 @@ public class ExchangeProvider
     return status;
   }
 
-  //TODO: calculate related item values
   private String md5Hash(DataTransferObject dataTransferObject)
   {
     StringBuilder values = new StringBuilder();

@@ -212,6 +212,8 @@ namespace org.iringtools.adapter.projection
 
           if (!String.IsNullOrEmpty(classIdentifier))
           {
+            List<RoleMap> classRoles = new List<RoleMap>();
+
             // dti identifier is root class identifier
             if (String.IsNullOrEmpty(dti.Identifier))
             {
@@ -234,24 +236,12 @@ namespace org.iringtools.adapter.projection
               }
             }
 
+            // NOTES: perform BFS for java exchange service to reliably recalculate the hash values
             foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
             {
               foreach (RoleMap roleMap in templateMap.roleMaps)
               {
-                if (roleMap.type == RoleType.Reference)
-                {
-                  if (roleMap.classMap != null)
-                  {
-                    ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(roleMap.classMap.id);
-
-                    if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
-                    {
-                      BuildDataTransferIndex(dti, dataObjectIndex, relatedClassTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
-                        propertyValues, sortIndex, ref sortType);
-                    }
-                  }
-                }
-                else if (roleMap.type == RoleType.Property ||
+                if (roleMap.type == RoleType.Property ||
                     roleMap.type == RoleType.DataProperty ||
                     roleMap.type == RoleType.ObjectProperty ||
                     roleMap.type == RoleType.FixedValue)
@@ -316,6 +306,21 @@ namespace org.iringtools.adapter.projection
                     }
                   }
                 }
+                else if (roleMap.type == RoleType.Reference && roleMap.classMap != null)
+                {
+                  classRoles.Add(roleMap);
+                }
+              }              
+            }
+
+            foreach (RoleMap classRole in classRoles)
+            {
+              ClassTemplateMap relatedClassTemplateMap = _graphMap.GetClassTemplateMap(classRole.classMap.id);
+
+              if (relatedClassTemplateMap != null && relatedClassTemplateMap.classMap != null)
+              {
+                BuildDataTransferIndex(dti, dataObjectIndex, relatedClassTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
+                  propertyValues, sortIndex, ref sortType);
               }
             }
           }

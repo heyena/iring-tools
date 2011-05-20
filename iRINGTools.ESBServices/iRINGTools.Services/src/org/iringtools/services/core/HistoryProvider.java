@@ -28,7 +28,7 @@ public class HistoryProvider
     List<ExchangeResponse> responses = new ArrayList<ExchangeResponse>();
     history.setResponses(responses);
     
-    String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
+    String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
     List<String> filesInFolder = IOUtils.getFiles(path);
     Collections.sort(filesInFolder);
 
@@ -45,7 +45,7 @@ public class HistoryProvider
   
   public ExchangeResponse getExchangeResponse(String scope, String id, String timestamp) throws JAXBException, IOException 
   {
-    String path = settings.get("baseDirectory") + "/WEB-INF/logs/exchanges/" + scope + "/" + id;
+    String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
     String exchangeFile = path + "/" + timestamp.replace(":", ".") + ".xml";
     
     return JaxbUtils.read(ExchangeResponse.class, exchangeFile);
