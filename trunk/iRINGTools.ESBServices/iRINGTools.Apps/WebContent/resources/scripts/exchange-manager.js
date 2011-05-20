@@ -110,7 +110,7 @@ function createXlogsPane(context, xlogsContainer, xlabel){
           width: 4
         },{
           xtype: 'label',
-          html: '<span style="font-weight:bold;color:#006">Exchange Results</span>'
+          html: '<span style="font-weight:bold">Exchange Results</span>'
         },{
           xtype: 'tbspacer', 
           width: 4

@@ -42,6 +42,20 @@ public class DataModel
     APP, EXCHANGE
   };
 
+  public static List<String> gridFilterTypes;
+  static
+  {
+    gridFilterTypes = new ArrayList<String>();
+    gridFilterTypes.add("short");
+    gridFilterTypes.add("int");
+    gridFilterTypes.add("long");
+    gridFilterTypes.add("double");
+    gridFilterTypes.add("float");
+    gridFilterTypes.add("boolean");
+    gridFilterTypes.add("date");
+    gridFilterTypes.add("string");
+  }
+  
   public static Map<String, RelationalOperator> relationalOperatorMap;
   static
   {
@@ -552,9 +566,20 @@ public class DataModel
                 field.setDataIndex(className + '.' + fieldName);
 
                 if (dataType == DataType.APP && roleDataType != null && roleDataType.startsWith("xsd:"))
-                  field.setType(roleObject.getDataType().replace("xsd:", ""));
+                {
+                  roleDataType = roleDataType.replace("xsd:", "").toLowerCase();
+                  
+                  if (!gridFilterTypes.contains(roleDataType))
+                  {
+                    roleDataType = "auto";
+                  }
+ 
+                  field.setType(roleDataType);
+                }
                 else
+                {
                   field.setType("string");
+                }
 
                 fields.add(field);
               }
@@ -699,9 +724,20 @@ public class DataModel
                 field.setDataIndex(className + '.' + fieldName);
 
                 if (dataType == DataType.APP && roleDataType != null && roleDataType.startsWith("xsd:"))
-                  field.setType(roleDataType.replace("xsd:", ""));
+                {
+                  roleDataType = roleDataType.replace("xsd:", "").toLowerCase();
+                  
+                  if (!gridFilterTypes.contains(roleDataType))
+                  {
+                    roleDataType = "auto";
+                  }
+ 
+                  field.setType(roleDataType);
+                }
                 else
+                {
                   field.setType("string");
+                }
 
                 fields.add(field);
               }
