@@ -44,7 +44,7 @@ function createGridStore(url){
   return store;
 }
 
-function createGridPane(store, pageSize){
+function createGridPane(store, pageSize, viewConfig){
   var filters = new Ext.ux.grid.GridFilters({
     remotesort: true,
     local: false,
@@ -72,16 +72,16 @@ function createGridPane(store, pageSize){
     identifier: store.reader.identifier,
     description: store.reader.description,
     layout: 'fit',
-    minColumnWidth: 60,
+    minColumnWidth: 80,
     loadMask: true,
     store: store,
     stripeRows: true,
+    viewConfig: viewConfig,
     cm: colModel,
     selModel: selModel,
     enableColLock: false,
-    viewConfig: { forceFit: true },
     plugins: [filters],
-    bbar: pagingToolbar
+    bbar: pagingToolbar    
   });
   
   return gridPane;
@@ -154,13 +154,15 @@ function createPageXlogs(scope, xid, xlabel, startTime, xtime){
     var pageSize = 25;    
     
     store.on('load', function(){
-  	  var xlogsPagePane = new Ext.Panel({  
+      var gridPane = createGridPane(store, pageSize, {forceFit: true});
+      
+      var xlogsPagePane = new Ext.Panel({  
     		id: paneTitle,
     		layout: 'fit',
     		title: paneTitle,     
     		border: false,
         closable: true,
-    		items: [createGridPane(store, pageSize)]
+    		items: [gridPane]
   	  });	
   	  
   	  Ext.getCmp('content-pane').add(xlogsPagePane).show();
@@ -264,7 +266,7 @@ function loadPageDto(type, action, context, label){
           layout: 'card',
           border: false,
           activeItem: 0,
-          items: [createGridPane(store, pageSize)],
+          items: [createGridPane(store, pageSize, {forceFit: false})],
           listeners: {
             afterlayout: function(pane){
               Ext.getBody().unmask();
@@ -348,7 +350,7 @@ function loadRelatedItem(type, context, individual, classId, className){
     });    
     dtoBcPane.doLayout();
     
-    dtoContentPane.add(createGridPane(store, pageSize));
+    dtoContentPane.add(createGridPane(store, pageSize, {forceFit: false}));
     dtoContentPane.getLayout().setActiveItem(dtoContentPane.items.length-1);
   });
   
