@@ -47,16 +47,25 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ciloci.Flee">
-      <HintPath>..\lib\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
+      <HintPath>..\library\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
     <Reference Include="iRINGLibrary">
-      <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
+      <HintPath>..\library\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\lib\log4net\log4net.dll</HintPath>
+      <HintPath>..\library\log4net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>..\lib\ninject2\Ninject.dll</HintPath>
+      <HintPath>..\library\ninject2\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Xml">
+      <HintPath>..\library\ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\library\nunit\framework\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="StaticDust.Configuration">
+      <HintPath>..\library\configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -65,7 +74,7 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="UtilityLibrary">
-      <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
+      <HintPath>..\library\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
