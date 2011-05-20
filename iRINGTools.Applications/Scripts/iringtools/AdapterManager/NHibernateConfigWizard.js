@@ -1640,6 +1640,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				name: 'data-objects-pane',
 				region: 'west',
 				minWidth: 240,
+				minHeight: 240,
 				width: 300,
 				split: true,
 				autoScroll: true,
@@ -2012,6 +2013,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		Ext.apply(this, {
 			id: scopeName + '.' + appName + '.-nh-config-wizard',
 			title: 'NHibernate Config Wizard - ' + scopeName + '.' + appName,
+			minHeight: 240,
 			closable: true,
 			layout: 'fit',
 			items: [dataObjectsPane]
