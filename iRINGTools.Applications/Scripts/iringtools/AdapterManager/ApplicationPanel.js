@@ -61,9 +61,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 		}
 		else {
 			showconfigure = true;
-		}
-
-		this.tbar = this.buildToolbar(showconfigure);
+		}		
 
 		var dataLayersStore = new Ext.data.JsonStore({
 			// store configs            
@@ -136,6 +134,8 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
   	    ];
 
 		this.on('close', this.onCloseTab, this);
+
+		this.tbar = this.buildToolbar(showconfigure);
 
 		// super
 		AdapterManager.ApplicationPanel.superclass.initComponent.call(this);
