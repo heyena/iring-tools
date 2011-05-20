@@ -236,7 +236,7 @@ namespace org.iringtools.adapter
 
         _graphMap = _mapping.FindGraphMap(graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null, 0, 0);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, new DataFilter(), 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlogrithm, String.Empty);
@@ -288,7 +288,7 @@ namespace org.iringtools.adapter
 
         BuildCrossGraphMap(manifest, graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, null, 0, 0);
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectMap, new DataFilter(), 0, 0);
         Dictionary<string, List<string>> classIdentifiers = GetClassIdentifiers(ref dataObjects);
 
         dataTransferIndices = BuildDataTransferIndices(ref dataObjects, ref classIdentifiers, hashAlgorithm, String.Empty);
@@ -659,11 +659,8 @@ namespace org.iringtools.adapter
 
         if (_keyRing.Count > 0)
         {
-          if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
-          {
-            string userName = _keyRing["Name"].ToString();
-            _settings["UserName"] = userName;
-          }
+          string userName = _keyRing["Name"].ToString();
+          _settings["UserName"] = userName;
         }
       }
       catch (Exception ex)

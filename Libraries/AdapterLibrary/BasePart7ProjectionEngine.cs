@@ -611,13 +611,21 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
-        if (filter != null && (filter.Expressions != null || filter.OrderExpressions != null))
+        if (filter == null)
+        {
+          filter = new DataFilter();
+        }
+        else
         {
           _graphMap = _mapping.FindGraphMap(graph);
 
           DataObject _dataObject = dictionary.dataObjects.Find(o => o.objectName == _graphMap.dataObjectMap);
 
-          if (filter.Expressions != null)
+          if (filter.Expressions == null)
+          {
+            filter.Expressions = new List<Expression>();
+          }
+          else
           {
             foreach (Expression expression in filter.Expressions)
             {
@@ -628,7 +636,11 @@ namespace org.iringtools.adapter.projection
             }
           }
 
-          if (filter.OrderExpressions != null)
+          if (filter.OrderExpressions == null)
+          {
+            filter.OrderExpressions = new List<OrderExpression>();
+          }
+          else
           {
             foreach (OrderExpression orderExpression in filter.OrderExpressions)
             {
