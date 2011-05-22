@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="relatedClassId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="relatedClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="hasValueMap" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="values" type="{http://www.iringtools.org/dxfr/dto}Values" minOccurs="0"/>
+ *         &lt;element name="values" type="{http://www.iringtools.org/dxfr/dto}RoleValues" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -61,7 +61,7 @@ public class RoleObject {
     protected String relatedClassId;
     protected String relatedClassName;
     protected Boolean hasValueMap;
-    protected Values values;
+    protected RoleValues values;
 
     /**
      * Gets the value of the type property.
@@ -285,10 +285,10 @@ public class RoleObject {
      * 
      * @return
      *     possible object is
-     *     {@link Values }
+     *     {@link RoleValues }
      *     
      */
-    public Values getValues() {
+    public RoleValues getValues() {
         return values;
     }
 
@@ -297,10 +297,10 @@ public class RoleObject {
      * 
      * @param value
      *     allowed object is
-     *     {@link Values }
+     *     {@link RoleValues }
      *     
      */
-    public void setValues(Values value) {
+    public void setValues(RoleValues value) {
         this.values = value;
     }
 

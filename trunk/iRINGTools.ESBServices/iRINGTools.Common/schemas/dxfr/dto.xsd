@@ -109,11 +109,11 @@
       <xs:element name="relatedClassId" type="xs:string" minOccurs="0" maxOccurs="1" />
       <xs:element name="relatedClassName" type="xs:string" minOccurs="0" maxOccurs="1" />
       <xs:element name="hasValueMap" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="values" type="Values" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="values" type="RoleValues" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
   
-  <xs:complexType name="Values">
+  <xs:complexType name="RoleValues">
     <xs:sequence>
       <xs:element name="value" type="xs:string" maxOccurs="unbounded">
         <xs:annotation>

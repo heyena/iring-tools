@@ -26,6 +26,8 @@ import org.iringtools.dxfr.dto.ClassObject;
 import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
+import org.iringtools.dxfr.dto.RoleType;
+import org.iringtools.dxfr.dto.RoleValues;
 import org.iringtools.dxfr.dto.TemplateObject;
 import org.iringtools.dxfr.dto.TransferType;
 import org.iringtools.refdata.response.Entity;
@@ -552,10 +554,33 @@ public class DataModel
           for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
           {
             String roleValue = roleObject.getValue();
+            RoleValues roleValues = roleObject.getValues();
+            RoleType roleType = roleObject.getType();
             String roleDataType = roleObject.getDataType();
+            boolean hasRelatedValues = false;
             
-            if (roleValue != null && ((roleDataType != null && roleDataType.startsWith("xsd:")) ||
-                (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0)))
+            // values take priority over value as value will be deprecated/removed later
+            if ((roleType == RoleType.PROPERTY ||
+                 roleType == RoleType.DATA_PROPERTY ||
+                 roleType == RoleType.OBJECT_PROPERTY) && 
+                roleValues != null && roleValues.getItems().size() > 0)
+            {
+              StringBuilder tempRoleValue = new StringBuilder();
+              
+              for (String value : roleValues.getItems())
+              {
+                if (tempRoleValue.length() > 0)
+                  tempRoleValue.append(",");
+                
+                tempRoleValue.append(value);
+              }
+              
+              roleValue = tempRoleValue.toString();
+              hasRelatedValues = true;
+            }
+            
+            if (hasRelatedValues || (roleValue != null && ((roleDataType != null && roleDataType.startsWith("xsd:")) ||
+                (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0))))
             {
               if (firstDto)
               {
@@ -588,7 +613,7 @@ public class DataModel
               {
                 String roleObjectValue = roleObject.getValue();
                 String newValue = getValueMap(refServiceUri, roleObjectValue);
-                roleObject.setValue(newValue);
+                roleValue = newValue;
                 
                 logger.debug("roleObjectValue: " + roleObjectValue);
                 logger.debug("refServiceUri: " + refServiceUri);
@@ -604,11 +629,11 @@ public class DataModel
               if (dataType == DataType.APP || roleObject.getOldValue() == null
                   || roleObject.getOldValue().equals(roleObject.getValue()))
               {
-                row.add(roleObject.getValue());
+                row.add(roleValue);
               }
               else
               {
-                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleObject.getValue() + "</span>");
+                row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleValue + "</span>");
               }
             }
             else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0)
@@ -709,13 +734,36 @@ public class DataModel
           }
 
           for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
-          {
+          {            
             String roleValue = roleObject.getValue();
+            RoleValues roleValues = roleObject.getValues();
+            RoleType roleType = roleObject.getType();
             String roleDataType = roleObject.getDataType();
+            boolean hasRelatedValues = false;
             
-            if (roleValue != null && ((roleDataType != null && roleDataType.startsWith("xsd:")) ||
-                (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0)))
-            {              
+            // values take priority over value as value will be deprecated/removed later
+            if ((roleType == RoleType.PROPERTY ||
+                 roleType == RoleType.DATA_PROPERTY ||
+                 roleType == RoleType.OBJECT_PROPERTY) && 
+                roleValues != null && roleValues.getItems().size() > 0)
+            {
+              StringBuilder tempRoleValue = new StringBuilder();
+              
+              for (String value : roleValues.getItems())
+              {
+                if (tempRoleValue.length() > 0)
+                  tempRoleValue.append(",");
+                
+                tempRoleValue.append(value);
+              }
+              
+              roleValue = tempRoleValue.toString();
+              hasRelatedValues = true;
+            }
+            
+            if (hasRelatedValues || (roleValue != null && ((roleDataType != null && roleDataType.startsWith("xsd:")) ||
+                (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0))))
+            {           
               if (relatedClassCount == 1)
               {
                 String fieldName = templateObject.getName() + "." + roleObject.getName();

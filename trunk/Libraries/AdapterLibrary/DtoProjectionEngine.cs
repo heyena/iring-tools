@@ -530,45 +530,39 @@ namespace org.iringtools.adapter.projection
               _relatedObjectsCache.Add(key, relatedObjects);
             }
 
-            if (classIdentifierHasRelatedProperty)  // reference class identifier has related property
+            RoleObject roleObject = new RoleObject()
+            {
+              type = propertyRole.type,
+              roleId = propertyRole.id,
+              name = propertyRole.name,
+              dataType = propertyRole.dataType
+            };
+
+            // reference class identifier has related property, process related object at classIdentifierIndex only
+            if (classIdentifierHasRelatedProperty)  
             {
               IDataObject relatedObject = relatedObjects[classIdentifierIndex];
               string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
               propertyValue = ParsePropertyValue(propertyRole, propertyValue);
-
-              RoleObject roleObject = new RoleObject()
-              {
-                type = propertyRole.type,
-                roleId = propertyRole.id,
-                name = propertyRole.name,
-                dataType = propertyRole.dataType,
-                value = propertyValue
-              };
-
-              roleObjects.Add(roleObject);
+              roleObject.value = propertyValue;
             }
             else  // related property is property map
             {
+              roleObject.values = new RoleValues();
+
               foreach (IDataObject relatedObject in relatedObjects)
               {
                 string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
                 propertyValue = ParsePropertyValue(propertyRole, propertyValue);
 
-                RoleObject roleObject = new RoleObject()
-                {
-                  type = propertyRole.type,
-                  roleId = propertyRole.id,
-                  name = propertyRole.name,
-                  dataType = propertyRole.dataType,
-                  value = propertyValue
-                };
-
                 if (!String.IsNullOrEmpty(propertyRole.valueListName))
                   roleObject.hasValueMap = true;
 
-                roleObjects.Add(roleObject);
+                roleObject.values.Add(propertyValue);
               }
             }
+
+            roleObjects.Add(roleObject);
           }
         }
 
@@ -749,19 +743,22 @@ namespace org.iringtools.adapter.projection
       {
         if (roleObject.roleId == roleMap.id)
         {
-          string value = roleObject.value;
-
-          if (!String.IsNullOrEmpty(roleMap.valueListName))
-          {
-            value = _mapping.ResolveValueMap(roleMap.valueListName, value);
-          }
-
           if (propertyPath.Length > 2)  // related property
           {
-            values.Add(value);
+            foreach (string value in roleObject.values)
+            {
+              values.Add(value);
+            }
           }
           else  // direct property
           {
+            string value = roleObject.value;
+
+            if (!String.IsNullOrEmpty(roleMap.valueListName))
+            {
+              value = _mapping.ResolveValueMap(roleMap.valueListName, value);
+            }
+
             _dataRecords[dataObjectIndex][propertyName] = value;
           }
 
