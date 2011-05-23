@@ -61,7 +61,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 		}
 		else {
 			showconfigure = true;
-		}		
+		}
 
 		var dataLayersStore = new Ext.data.JsonStore({
 			// store configs            
@@ -195,14 +195,15 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
 	onConfigure: function () {
 		var that = this;
+		var dataLayerValue = this.form.getForm().findField('Assembly').lastSelectionText;
+		if (!dataLayerValue)
+			dataLayerValue = 'NHibernateLibrary';
 		this.form.getForm().submit({
 			//  waitMsg: 'Saving Data...',
 			success: function (f, a) {
 				var record = f.getFieldValues();
-				//var datalayer = that.record.DataLayer; 
-				var datalayer = f.findField('Assembly').lastSelectionText;
 				that.record = record;
-				that.fireEvent('configure', that, that.scope, that.record, datalayer);
+				that.fireEvent('configure', that, that.scope, that.record, dataLayerValue);
 			},
 			failure: function (f, a) {
 				alert('Warning', 'Error saving changes!')
