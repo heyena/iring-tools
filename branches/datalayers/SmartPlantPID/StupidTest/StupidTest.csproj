@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="InteropLlama">
-      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\P&amp;ID Workstation\Program\InteropLlama.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\SmartPlant\P&amp;ID Workstation\Program\InteropLlama.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
