@@ -359,7 +359,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									},
 									failure: function (f, a) {
 										if (a.response)
-											showDialog(400, 100, 'Error', a.response.responseText, Ext.Msg.OK, null);
+											showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
 										//											Ext.Msg.show({
 										//												title: 'Error',
 										//												msg: a.response.responseText,
@@ -828,8 +828,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									ii++;
 								}
 						}
-						else {							
-							propertiesNode = relatedDataObjectNode.attributes.children[1];							
+						else {
+							propertiesNode = relatedDataObjectNode.attributes.children[1];
 							for (var i = 0; i < propertiesNode.children.length; i++)
 								if (!propertiesNode.children[i].hidden) {
 									mappingProperties.push([ii.toString(), propertiesNode.children[i].text]);
@@ -2079,8 +2079,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 		var showTree = function (dbObjectsTree) {
 			var selectTableNames = setTablesSelectorPane();
-			var treeLoader = dbObjectsTree.getLoader();
-
 			var connStr = dbDict.ConnectionString;
 			var connStrParts = connStr.split(';');
 
@@ -2104,6 +2102,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						break;
 				}
 			}
+
+			var treeLoader = dbObjectsTree.getLoader();
+			var rootNode = dbObjectsTree.getRootNode();
 
 			treeLoader.dataUrl = 'AdapterManager/DBObjects';
 			treeLoader.baseParams = {
