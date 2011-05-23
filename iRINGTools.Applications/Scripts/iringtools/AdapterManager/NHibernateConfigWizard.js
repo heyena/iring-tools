@@ -11,6 +11,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var scopeName = config.scope.Name;
 		var appName = config.app.Name;
 		var dbDict;
+		var dbInfo = {};
 
 		var setKeyProperty = function (editPane, node) {
 			if (editPane && node) {
@@ -197,34 +198,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		};
 
 
-		var setDsConfigFields = function (dsConfigForm) {
-			var connStr = dbDict.ConnectionString;
-			if (!connStr)
-				return;
-			var connStrParts = connStr.split(';');
-
-			for (var i = 0; i < connStrParts.length; i++) {
-				var pair = connStrParts[i].split('=');
-
-				switch (pair[0].toUpperCase()) {
-					case 'DATA SOURCE':
-						var dsValue = pair[1].split('\\');
-						var dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
-						dsConfigForm.findField('dbServer').setValue(dbServer);
-						dsConfigForm.findField('dbInstance').setValue(dsValue[1]);
-						break;
-					case 'INITIAL CATALOG':
-						dsConfigForm.findField('dbName').setValue(pair[1]);
-						break;
-					case 'USER ID':
-						dsConfigForm.findField('dbUserName').setValue(pair[1]);
-						break;
-					case 'PASSWORD':
-						dsConfigForm.findField('dbPassword').setValue(pair[1]);
-						break;
-				}
-			}
-
+		var setDsConfigFields = function (dsConfigForm) {			
+			dsConfigForm.findField('dbServer').setValue(dbInfo.dbServer);
+			dsConfigForm.findField('dbInstance').setValue(dbInfo.dbInstance);				
+			dsConfigForm.findField('dbName').setValue(dbInfo.dbName);					
+			dsConfigForm.findField('dbUserName').setValue(dbInfo.dbUserName);						
+			dsConfigForm.findField('dbPassword').setValue(dbInfo.dbPassword);	
 			dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
 			dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
 		};
@@ -1793,19 +1772,32 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 								var treeProperty = {};
 								treeProperty.dataObjects = new Array();
-								var dsConfigForm = dsConfigPane.getForm();
+								var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
 								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 								var rootNode = dbObjectsTree.getRootNode();
-
-								treeProperty.provider = dsConfigForm.findField('dbProvider').getValue();
-								var dbServer = dsConfigForm.findField('dbServer').getValue();
-								dbServer = (dbServer == 'localhost' ? '.' : dbServer);
-								treeProperty.connectionString = 'Data Source=' + dbServer + '\\' + dsConfigForm.findField('dbInstance').getValue()
+								treeProperty.IdentityConfiguration = null;
+								if (dsConfigPane) {
+									var dsConfigForm = dsConfigPane.getForm();
+									treeProperty.provider = dsConfigForm.findField('dbProvider').getValue();
+									var dbServer = dsConfigForm.findField('dbServer').getValue();
+									dbServer = (dbServer == 'localhost' ? '.' : dbServer);
+									treeProperty.connectionString = 'Data Source=' + dbServer + '\\' + dsConfigForm.findField('dbInstance').getValue()
 								                            + ';Initial Catalog=' + dsConfigForm.findField('dbName').getValue()
 																						+ ';User ID=' + dsConfigForm.findField('dbUserName').getValue()
 																						+ ';Password=' + dsConfigForm.findField('dbPassword').getValue();
-								treeProperty.schemaName = dsConfigForm.findField('dbSchema').getValue();
-								treeProperty.IdentityConfiguration = null;
+									treeProperty.schemaName = dsConfigForm.findField('dbSchema').getValue();
+								}
+								else {									
+									treeProperty.provider = dbDict.Provider;
+									var dbServer = dbInfo.dbServer;
+									dbServer = (dbServer == 'localhost' ? '.' : dbServer);
+									treeProperty.connectionString = 'Data Source=' + dbServer + '\\' + dbInfo.dbInstance
+								                            + ';Initial Catalog=' + dbInfo.dbName
+																						+ ';User ID=' + dbInfo.dbUserName
+																						+ ';Password=' + dbInfo.dbPassword;
+									treeProperty.schemaName = dbDict.SchemaName;
+								}
+
 								var keyName;
 								for (var i = 0; i < rootNode.childNodes.length; i++) {
 									var folderNode = rootNode.childNodes[i];
@@ -2088,17 +2080,17 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				switch (pair[0].toUpperCase()) {
 					case 'DATA SOURCE':
 						var dsValue = pair[1].split('\\');
-						var dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
-						var dbInstance = dsValue[1];
+						dbInfo.dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
+						dbInfo.dbInstance = dsValue[1];
 						break;
 					case 'INITIAL CATALOG':
-						var dbName = pair[1];
+						dbInfo.dbName = pair[1];
 						break;
 					case 'USER ID':
-						var dbUserName = pair[1];
+						dbInfo.dbUserName = pair[1];
 						break;
 					case 'PASSWORD':
-						var dbPassword = pair[1];
+						dbInfo.dbPassword = pair[1];
 						break;
 				}
 			}
@@ -2111,12 +2103,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				scope: scopeName,
 				app: appName,
 				dbProvider: dbDict.Provider,
-				dbServer: dbServer,
-				dbInstance: dbInstance,
-				dbName: dbName,
+				dbServer: dbInfo.dbServer,
+				dbInstance: dbInfo.dbInstance,
+				dbName: dbInfo.dbName,
 				dbSchema: dbDict.SchemaName,
-				dbUserName: dbUserName,
-				dbPassword: dbPassword,
+				dbUserName: dbInfo.dbUserName,
+				dbPassword: dbInfo.dbPassword,
 				tableNames: selectTableNames
 			};
 
