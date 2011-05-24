@@ -224,8 +224,8 @@ function loadPageDto(type, action, context, label){
                 var xidIndex = context.indexOf('&xid=');
                 var scope = context.substring(7, xidIndex);
                 var xid = context.substring(xidIndex + 5);
-                var msg = 'Are you sure you want to do data exchange [' + label + ']?';
-                var processUserResponse = submitExchange.createDelegate([label, scope, xid, true]);          
+                var msg = 'Are you sure you want to exchange [' + label + ']?';
+                var processUserResponse = submitExchange.createDelegate([label, scope, xid, true]);        
                 showDialog(400, 60, 'Submit Exchange?', msg, Ext.Msg.OKCANCEL, processUserResponse);
               }
             },{
@@ -366,6 +366,25 @@ function removeHTMLTag(htmlText){
   return htmlText.replace(/<\/?[^>]+(>|$)/g, '');
 }
 
+function navigate(bcItemIndex){
+  var dtoTab = Ext.getCmp('content-pane').getActiveTab();
+  var label = dtoTab.id.substring(4);
+  var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
+  var dtoContentPane = dtoTab.items.map['dto-' + label];  
+  
+  // remove items on the right from nav pane
+  while (bcItemIndex < dtoBcPane.items.items.length - 1){
+    dtoBcPane.items.items[bcItemIndex + 1].destroy();
+  }
+  
+  // remove items on the right from dto content pane
+  var contentItemIndex = bcItemIndex / 2;
+  while (contentItemIndex < dtoContentPane.items.items.length - 1){
+    dtoContentPane.items.items[contentItemIndex + 1].destroy();
+  }
+  dtoContentPane.getLayout().setActiveItem(contentItemIndex);
+}
+
 function showIndividualInfo(individual, classIdentifier, relatedClasses){
   var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
@@ -454,23 +473,24 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses){
   dtoContentPane.getLayout().setActiveItem(dtoContentPane.items.length-1);
 }
 
-function navigate(bcItemIndex){
+function getFilters() {
   var dtoTab = Ext.getCmp('content-pane').getActiveTab();
   var label = dtoTab.id.substring(4);
-  var dtoBcPane = dtoTab.items.map['nav-' + label].items.map['bc-' + label];
-  var dtoContentPane = dtoTab.items.map['dto-' + label];  
+  var dtoContentPane = dtoTab.items.map['dto-' + label];
   
-  // remove items on the right from nav pane
-  while (bcItemIndex < dtoBcPane.items.items.length - 1){
-    dtoBcPane.items.items[bcItemIndex + 1].destroy();
+  var gridFilters = new Array();
+  
+  for (var i = 0; i < dtoContentPane.items.length; i = i + 2) {
+    var gridFilter = dtoContentPane.items.items[i].plugins[0];
+    var filterData = gridFilter.getFilterData();
+    
+    if (filterData.length > 0) {
+      var filterQuery = gridFilter.buildQuery(filterData);
+      gridFilters.push(filterQuery.filter);
+    }
   }
   
-  // remove items on the right from dto content pane
-  var contentItemIndex = bcItemIndex / 2;
-  while (contentItemIndex < dtoContentPane.items.items.length - 1){
-    dtoContentPane.items.items[contentItemIndex + 1].destroy();
-  }
-  dtoContentPane.getLayout().setActiveItem(contentItemIndex);
+  return gridFilters;
 }
 
 function submitExchange(userResponse) {
@@ -480,18 +500,28 @@ function submitExchange(userResponse) {
   var reviewed = this[3];
   
   if (userResponse == 'ok'){
+    //var filter = getFilters();
+    
     Ext.Ajax.request({
       url: 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed=' + reviewed,
+      //method: 'POST',
+      //params: { filter: filter },
       timeout: 600000,  // in milliseconds default 3000 
       success: function(response, request) {
-        var responseText = Ext.util.JSON.decode(response.responseText);
+        var responseText = Ext.decode(response.responseText);
         var message = 'Data exchange [' + exchange + '] result: \r' + responseText;
         showDialog(400, 100, 'Exchange Result', message, Ext.Msg.OK, null);
       },
       failure: function(response, request) {
-        var responseText = Ext.util.JSON.decode(response.responseText);
-        showDialog(660, 300, 'Exchange Error (' + response.status + ')', 
-          'Error while exchanging [' + exchange + ']. ' + responseText, Ext.Msg.OK, null);
+        var title = 'Exchange Error (' + response.status + ')';
+        var message = 'Error while exchanging [' + exchange + '].';
+        
+        var responseText = Ext.decode(response.responseText);
+        
+        if (responseText)
+          message += responseText;
+        
+        showDialog(660, 300, title, message, Ext.Msg.OK, null);
       }
     });
   }
