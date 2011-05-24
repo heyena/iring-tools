@@ -11,9 +11,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var scopeName = config.scope.Name;
 		var appName = config.app.Name;
 		var dbDict;
-		var dbInfo = {};
+		var dbInfo;
 		var dbTableNames;
-		var userTableNames = new Array();
+		var userTableNames;
 
 		var setKeyProperty = function (editPane, node) {
 			if (editPane && node) {
@@ -341,7 +341,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					})
 				});
 
-				if (dbDict)
+				if (dbInfo)
 					setDsConfigFields(dsConfigPane.getForm());
 				editPane.add(dsConfigPane);
 				var panelIndex = editPane.items.indexOf(dsConfigPane);
@@ -357,12 +357,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					var tableName = dbTableNames.items[i];
 					if (tableName) {
 						var selected = false;
-						for (var j = 0; j < userTableNames.length; j++) {
-							if (tableName == userTableNames[j][0]) {
-								selected = true;
-								break;
+						if (userTableNames)
+							for (var j = 0; j < userTableNames.length; j++) {
+								if (tableName == userTableNames[j][0]) {
+									selected = true;
+									break;
+								}
 							}
-						}
 
 						if (!selected) {
 							availTableName.push(tableName);
@@ -394,8 +395,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			var selectTableNames = new Array();
 
 			if (dbObjectsTree.disabled) {
-				for (var i = 0; i < userTableNames.length; i++)
-					selectTableNames.push(userTableNames[i]);
+				if (userTableNames)
+					for (var i = 0; i < userTableNames.length; i++)
+						selectTableNames.push(userTableNames[i]);
 			}
 			else {
 				var rootNode = dbObjectsTree.getRootNode();
@@ -2159,6 +2161,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var setTableNames = function () {
 			// populate selected tables			
 			var selectTableNames = new Array();
+			userTableNames = new Array();
 
 			for (var i = 0; i < dbDict.dataObjects.length; i++) {
 				var dataObject = dbDict.dataObjects[i];
@@ -2173,6 +2176,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			var selectTableNames = setTableNames();
 			var connStr = dbDict.ConnectionString;
 			var connStrParts = connStr.split(';');
+			dbInfo = {};
 
 			for (var i = 0; i < connStrParts.length; i++) {
 				var pair = connStrParts[i].split('=');
