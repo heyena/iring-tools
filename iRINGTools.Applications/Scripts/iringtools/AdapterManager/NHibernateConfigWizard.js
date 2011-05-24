@@ -12,6 +12,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var appName = config.app.Name;
 		var dbDict;
 		var dbInfo = {};
+		var dbTableNames;
 
 		var setKeyProperty = function (editPane, node) {
 			if (editPane && node) {
@@ -306,36 +307,47 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										app: appName
 									},
 									success: function (f, a) {
-										var tableNames = Ext.util.JSON.decode(a.response.responseText);
+										dbTableNames = Ext.util.JSON.decode(a.response.responseText);
 
-										if (tableNames.items.length > 0) {
+										if (dbTableNames.items.length > 0) {
 											// populate available tables  
 											var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');
 											var availItems = new Array();
-											for (var i = 0; i < tableNames.items.length; i++) {
-												var tableName = tableNames.items[i];
-												if (tableName) {
-													var selected = false;
-													for (var j = 0; j < tableSelector.multiselects[1].store.length; j++) {
-														if (tableName == tableSelector.multiselects[1].store[j][1]) {
-															selected = true;
-															break;
+											if (tableSelector.toMultiselect) {
+												var selectTableNames = tableSelector.toMultiselect.store.data.items;
+												for (var i = 0; i < dbTableNames.items.length; i++) {
+													var tableName = dbTableNames.items[i];
+													if (tableName) {
+														var selected = false;
+														for (var j = 0; j < selectTableNames.length; j++) {
+															if (tableName == selectTableNames[j].data.text) {
+																selected = true;
+																break;
+															}
 														}
-													}
 
-													if (!selected) {
-														availItems.push([tableName, tableName]);
+														if (!selected) {
+															availItems.push(tableName);
+														}
 													}
 												}
 											}
-
-											if (tableSelector.fromMultiselect.store.data) {
-												tableSelector.fromMultiselect.reset();
-												tableSelector.fromMultiselect.store.removeAll();
+											else {
+												availItems = dbTableNames.items;
 											}
 
-											tableSelector.fromMultiselect.store.loadData(availItems);
-											tableSelector.fromMultiselect.store.commitChanges();
+											if (tableSelector.fromMultiselect) {
+												if (tableSelector.fromMultiselect.store.data) {
+													tableSelector.fromMultiselect.reset();
+													tableSelector.fromMultiselect.store.removeAll();
+												}
+
+												tableSelector.fromMultiselect.store.loadData(availItems);
+												tableSelector.fromMultiselect.store.commitChanges();
+											}
+											else {
+												tableSelector.multiselects[0].store = availItems;
+											}
 
 											var tab = Ext.getCmp('content-panel');
 											var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
@@ -371,7 +383,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					})
 				});
 
-				setDsConfigFields(dsConfigPane.getForm());
+				if (dbDict)
+					setDsConfigFields(dsConfigPane.getForm());
 				editPane.add(dsConfigPane);
 				var panelIndex = editPane.items.indexOf(dsConfigPane);
 				editPane.getLayout().setActiveItem(panelIndex);
@@ -443,6 +456,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						}
 
 						var treeLoader = dbObjectsTree.getLoader();
+						if (tablesSelForm.findField('tableSelector').getValue().indexOf('') == -1)
+							var selectTableNames = tablesSelForm.findField('tableSelector').getValue();
+						else {
+							var tableNames = tablesSelForm.findField('tableSelector').toMultiselect.store.data.items;
+							var selectTableNames = new Array();
+							for (var i = 0; i < tableNames.length; i++)
+								selectTableNames.push(tableNames[i].data.text);
+						}
 
 						treeLoader.dataUrl = 'AdapterManager/DBObjects';
 						if (dsConfigPane) {
@@ -457,7 +478,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								dbSchema: dsConfigForm.findField('dbSchema').getValue(),
 								dbUserName: dsConfigForm.findField('dbUserName').getValue(),
 								dbPassword: dsConfigForm.findField('dbPassword').getValue(),
-								tableNames: tablesSelForm.findField('tableSelector').getValue()
+								tableNames: selectTableNames
 							};
 						}
 						else {
@@ -471,7 +492,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								dbSchema: dbDict.SchemaName,
 								dbUserName: dbInfo.dbUserName,
 								dbPassword: dbInfo.dbPassword,
-								tableNames: tablesSelForm.findField('tableSelector').getValue()
+								tableNames: selectTableNames
 							};
 						}
 
@@ -495,14 +516,17 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						var availTableName = new Array();
 						var found = false;
 
-						for (var i = 0; i < dbDict.dataObjects.length; i++) {
-							var tableName = dbDict.dataObjects[i].tableName;
-							availTableName.push([tableName, tableName]);
-						}
+						if (dbDict.dataObjects.length > 0)
+							for (var i = 0; i < dbDict.dataObjects.length; i++) {
+								var tableName = dbDict.dataObjects[i].tableName;
+								availTableName.push(tableName);
+							}
+						else 
+							availTableName = dbTableNames.items;						
 
 						for (var j = 0; j < availTableName.length; j++)
 							for (var i = 0; i < rootNode.childNodes.length; i++) {
-								if (rootNode.childNodes[i].text == availTableName[j][0]) {
+								if (rootNode.childNodes[i].text == availTableName[j]) {
 									found = true;
 									availTableName.splice(j, 1);
 									j--;
@@ -2089,7 +2113,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					selectTableNames.push(dataObject.tableName);
 				}
 				tableSelector.multiselects[1].store = selectedItems;
-			}			
+			}
 			return selectTableNames;
 		};
 
@@ -2139,7 +2163,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			rootNode.reload(
 					function (rootNode) {
 						loadTree(rootNode);
-			});
+					});
 
 			Ext.Ajax.request({
 				url: 'AdapterManager/TableNames',
@@ -2156,14 +2180,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					dbPassword: dbInfo.dbPassword
 				},
 				success: function (response, request) {
-					var tableNames = Ext.util.JSON.decode(response.responseText);
+					dbTableNames = Ext.util.JSON.decode(response.responseText);
 
-					if (tableNames.items.length > 0) {
+					if (dbTableNames.items.length > 0) {
 						// populate available tables  
 						var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');
 						var availItems = new Array();
-						for (var i = 0; i < tableNames.items.length; i++) {
-							var tableName = tableNames.items[i];
+						for (var i = 0; i < dbTableNames.items.length; i++) {
+							var tableName = dbTableNames.items[i];
 							if (tableName) {
 								var selected = false;
 								for (var j = 0; j < tableSelector.multiselects[1].store.length; j++) {
@@ -2178,7 +2202,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								}
 							}
 						}
-						tableSelector.multiselects[0].store = availItems;				
+						tableSelector.multiselects[0].store = availItems;
 					}
 				},
 				failure: function (f, a) {
@@ -2189,7 +2213,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						showDialog(400, 100, 'Warning', 'Please connect to database first', Ext.Msg.OK, null);
 					}
 				}
-			});		
+			});
 		}
 
 		Ext.apply(this, {
