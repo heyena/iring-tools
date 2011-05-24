@@ -28,6 +28,10 @@ a:active {color: black}
   background-image: url(../img/property.png);
 }
 
+.x-tree-node .key {
+  background-image: url(../img/key.png);
+}
+
 .x-tree-node .relation {
   background-image: url(../img/relation.png);
 }

@@ -517,16 +517,17 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						var found = false;
 
 						if (dbDict.dataObjects.length > 0)
-							for (var i = 0; i < dbDict.dataObjects.length; i++) {
-								var tableName = dbDict.dataObjects[i].tableName;
-								availTableName.push(tableName);
+							for (var i = 0; i < dbTableNames.items.length; i++) {
+								availTableName.push([dbTableNames.items[i], dbTableNames.items[i]]);
 							}
-						else 
-							availTableName = dbTableNames.items;						
+						else
+							for (var i = 0; i < dbTableNames.items.length; i++) {
+								availTableName.push(dbTableNames.items[i]);
+							}
 
 						for (var j = 0; j < availTableName.length; j++)
 							for (var i = 0; i < rootNode.childNodes.length; i++) {
-								if (rootNode.childNodes[i].text == availTableName[j]) {
+								if (rootNode.childNodes[i].text == availTableName[j][0]) {
 									found = true;
 									availTableName.splice(j, 1);
 									j--;
@@ -539,7 +540,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							selectTableNames.push([nodeText, nodeText]);
 						}
 
-						var tablesSelector = tablesSelectorPane.items.items[1];
+						var tablesSelector = tablesSelectorPane.getForm().findField('tableSelector');
 						if (tablesSelector.toMultiselect.store.data) {
 							tablesSelector.toMultiselect.reset();
 							tablesSelector.toMultiselect.store.removeAll();
@@ -1593,7 +1594,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												keysNode.removeChild(keysNode.childNodes[i], true);
 												i--;
 											}
-										}										
+										}
 									}
 								}
 							}
@@ -1724,14 +1725,15 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							text: 'Reset',
 							tooltip: 'Reset',
 							handler: function (f) {
-								var availItems = new Array();
-								var selectedItems = new Array();
+								var availProps = new Array();
+								var selectedProps = new Array();
 								for (var i = 0; i < node.childNodes.length; i++) {
 									var itemName = node.childNodes[i].text;
-									if (node.childNodes[i].hidden == false)
-										selectedItems.push([itemName, itemName]);
+									if (node.childNodes[i].hidden == false) {										
+											selectedProps.push(itemName);										
+									}	
 									else
-										availItems.push([itemName, itemName]);
+										availProps.push([itemName, itemName]);
 								}
 
 								if (propertiesItemSelector.fromMultiselect.store.data) {
@@ -1739,7 +1741,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									propertiesItemSelector.fromMultiselect.store.removeAll();
 								}
 
-								propertiesItemSelector.fromMultiselect.store.loadData(availItems);
+								propertiesItemSelector.fromMultiselect.store.loadData(availProps);
 								propertiesItemSelector.fromMultiselect.store.commitChanges();
 
 								if (propertiesItemSelector.toMultiselect.store.data) {
@@ -1747,7 +1749,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									propertiesItemSelector.toMultiselect.store.removeAll();
 								}
 
-								propertiesItemSelector.toMultiselect.store.loadData(selectedItems);
+								propertiesItemSelector.toMultiselect.store.loadData(selectedProps);
 								propertiesItemSelector.toMultiselect.store.commitChanges();
 							}
 						}]

@@ -409,7 +409,7 @@ namespace iRINGTools.Web.Models
                   text = dataProperty.columnName,
                   type = "keyProperty",
                   properties = properties,
-									iconCls = "property",
+									iconCls = "key",
                   leaf = true
                 };
 
