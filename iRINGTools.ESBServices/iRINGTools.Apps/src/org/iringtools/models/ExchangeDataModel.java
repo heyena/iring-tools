@@ -11,7 +11,6 @@ import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Status;
 import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
@@ -48,14 +47,15 @@ public class ExchangeDataModel extends DataModel
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
-    DataTransferObject dto = getDto(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter, sortBy,
+    DataTransferObjects dtos = getRelatedDtos(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter, sortBy,
         sortOrder, start, limit);
-    return getRelatedItemGrid(DataType.EXCHANGE, dto, classId, classIdentifier, start, limit);
+    return getRelatedItemGrid(DataType.EXCHANGE, dtos, classId, classIdentifier);
   }
 
   public ExchangeResponse submitExchange(String serviceUri, String scope, String xid, boolean reviewed)
   {
     String exchangeRelativePath = "/" + scope + "/exchanges/" + xid;
+    //DataTransferIndices dtis = getDtis(DataType.EXCHANGE, serviceUri, exchangeRelativePath, filter, null, null);
     DataTransferIndices dtis = getCachedDtis(exchangeRelativePath);
 
     ExchangeResponse response;

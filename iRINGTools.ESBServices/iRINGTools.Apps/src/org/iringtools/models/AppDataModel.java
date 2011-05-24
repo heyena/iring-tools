@@ -2,10 +2,9 @@ package org.iringtools.models;
 
 import java.util.Map;
 
-import org.iringtools.widgets.grid.Grid;
 import org.iringtools.dxfr.dti.DataTransferIndices;
-import org.iringtools.dxfr.dto.DataTransferObject;
 import org.iringtools.dxfr.dto.DataTransferObjects;
+import org.iringtools.widgets.grid.Grid;
 
 public class AppDataModel extends DataModel
 {  
@@ -32,8 +31,8 @@ public class AppDataModel extends DataModel
   {
     String dtiRelativePath = "/" + scope + "/" + app + "/" + graph + "/filter";
     String dtoRelativePath = "/" + scope + "/" + app + "/" + graph + "/page";
-    DataTransferObject dto = getDto(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter,
-        sortBy, sortOrder, start, limit);  
-    return getRelatedItemGrid(DataType.APP, dto, classId, classIdentifier, start, limit);
+    DataTransferObjects dtos = getRelatedDtos(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter,
+        sortBy, sortOrder, start, limit);
+    return getRelatedItemGrid(DataType.APP, dtos, classId, classIdentifier);
   }
 }

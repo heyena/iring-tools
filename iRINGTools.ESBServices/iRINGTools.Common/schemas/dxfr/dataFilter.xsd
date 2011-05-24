@@ -58,7 +58,13 @@
 
   <xs:complexType name="Values">
     <xs:sequence>
-      <xs:element name="value" type="xs:string" maxOccurs="unbounded"/>
+      <xs:element name="value" type="xs:string" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   

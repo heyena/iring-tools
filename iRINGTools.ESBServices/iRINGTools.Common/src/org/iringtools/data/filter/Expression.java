@@ -186,9 +186,10 @@ public class Expression {
 
     /**
      * Gets the value of the isCaseSensitive property.
+     * This getter has been renamed from isIsCaseSensitive() to getIsCaseSensitive() by cxf-xjc-boolean plugin.
      * 
      */
-    public boolean isIsCaseSensitive() {
+    public boolean getIsCaseSensitive() {
         return isCaseSensitive;
     }
 
