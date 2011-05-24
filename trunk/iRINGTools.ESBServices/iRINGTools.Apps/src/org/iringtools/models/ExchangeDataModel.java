@@ -56,7 +56,7 @@ public class ExchangeDataModel extends DataModel
   public ExchangeResponse submitExchange(String serviceUri, String scope, String xid, boolean reviewed)
   {
     String exchangeRelativePath = "/" + scope + "/exchanges/" + xid;
-    DataTransferIndices dtis = getDtis(DataType.EXCHANGE, serviceUri, exchangeRelativePath, null, null, null);
+    DataTransferIndices dtis = getCachedDtis(exchangeRelativePath);
 
     ExchangeResponse response;
     ExchangeRequest request = new ExchangeRequest();
