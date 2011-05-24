@@ -378,34 +378,104 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
         if (_clickedButton == "btnOK1")
         {
-          QMXF @qmxf = _classBLL.QMXF;
-                    ComboBox cb = cmbRepositories;
-                    ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
-                    Repository repository = cbi.Tag as Repository;
-                    _classBLL.QMXF.targetRepository = repository.Name;
-          referenceDataService.PostClass(@qmxf, this);
+            string errorMsg = string.Empty;
+            bool isRaiseEx = false;
+
+            #region Validate Requried Fields
+
+            if (TextCtrl("className").Text.Trim() == string.Empty)
+            {
+                errorMsg = errorMsg + "Parameter[ClassName] cannot be null\r\n";
+                isRaiseEx = true;
+            }
+            if (TextCtrl("entityType").Text.Trim() == string.Empty)
+            {
+                errorMsg = errorMsg + "Parameter[EntityType] cannot be null\r\n";
+                isRaiseEx = true;
+            }
+
+            #endregion
+
+            if (isRaiseEx == true)
+            {
+                throw new System.ArgumentException(errorMsg);
+            }
+            else
+            {
+                QMXF @qmxf = _classBLL.QMXF;
+                ComboBox cb = cmbRepositories;
+                ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
+                Repository repository = cbi.Tag as Repository;
+                _classBLL.QMXF.targetRepository = repository.Name;
+                referenceDataService.PostClass(@qmxf, this);
+            }
         }
         else if (_clickedButton == "btnCancel1")
         {
-          _classBLL = null;
+            _classBLL = null;
 
-          IRegion region = regionManager.Regions["ClassEditorRegion"];
-          foreach (UserControl userControl in region.Views)
-          {
-            userControl.Visibility = Visibility.Collapsed;
-          }
+            IRegion region = regionManager.Regions["ClassEditorRegion"];
+            foreach (UserControl userControl in region.Views)
+            {
+                userControl.Visibility = Visibility.Collapsed;
+            }
         }
         else if (_clickedButton == "btnApply1")
         {
-          //ClassDefinition clss = _classBLL.
-          QMXF @qmxf = _classBLL.QMXF;
-          referenceDataService.PostClass(@qmxf, this);
+            //ClassDefinition clss = _classBLL.
+          
+            string errorMsg = string.Empty;
+            bool isRaiseEx = false;
+
+            #region Validate Requried Fields
+            
+            if (TextCtrl("className").Text.Trim() == string.Empty)
+            {
+                errorMsg = errorMsg + "Parameter[ClassName] cannot be null\r\n";
+                isRaiseEx = true;
+            }
+            if (TextCtrl("entityType").Text.Trim() == string.Empty)
+            {
+                errorMsg = errorMsg + "Parameter[EntityType] cannot be null\r\n";
+                isRaiseEx = true;
+            }
+            
+            #endregion
+            
+            if (isRaiseEx == true)
+             {
+                 throw new System.ArgumentException(errorMsg);
+             }
+             else
+             {
+                 QMXF @qmxf = _classBLL.QMXF;
+                 referenceDataService.PostClass(@qmxf, this);
+             }
         }
       }
       catch (Exception ex)
       {
-        Error.SetError(ex, "Error occurred while trying to post the class. \r\n" + ex.Message + ex.StackTrace,
-            Category.Exception, Priority.High);
+
+          if (ex.GetType() == typeof(System.ArgumentException))
+          {
+              Error.SetError(ex, "Error occurred while trying to post the class. \r\n" + ex.Message,
+              Category.Exception, Priority.High);
+              if (ex.Message.Contains("ClassName"))
+              {
+                  TextCtrl("className").Focus();
+
+              }
+              else
+              {
+                  TextCtrl("entityType").Focus();                  
+              }
+
+          }
+          else
+          {
+              Error.SetError(ex, "Error occurred while trying to post the class. \r\n" + ex.Message + ex.StackTrace,
+              Category.Exception, Priority.High);
+          }
       }
     }
 
