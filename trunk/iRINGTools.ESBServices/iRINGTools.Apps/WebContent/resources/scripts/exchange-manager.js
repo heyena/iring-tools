@@ -347,9 +347,9 @@ function loadRelatedItem(type, context, individual, classId, className){
       xtype: 'box',
       autoEl: {tag: 'span', html: '<a class="breadcrumb" href="#" onclick="navigate(' + 
         bcItemIndex + ')">' + className + '</a>'}
-    });    
-    dtoBcPane.doLayout();
+    });  
     
+    dtoBcPane.doLayout();    
     dtoContentPane.add(createGridPane(store, pageSize, {forceFit: false}));
     dtoContentPane.getLayout().setActiveItem(dtoContentPane.items.length-1);
   });
@@ -410,9 +410,8 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses){
     parsedRowData[colData] = removeHTMLTag(rowData[colData]);
   
   var propertyGrid = new Ext.grid.PropertyGrid({
-    region: 'west',
+    region: 'center',
     title: 'Properties',
-    width: 500,
     split: true,
     stripeRows: true,
     autoScroll: true,
@@ -426,9 +425,10 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses){
   
   var relatedItemPane = new Ext.Panel({
     title: 'Related Items',
-    region: 'center',
+    region: 'east',
     layout: 'vbox',
     boxMinWidth: 100,
+    width: 300,
     padding: '4',
     split: true,
     autoScroll: true

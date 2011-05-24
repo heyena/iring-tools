@@ -265,6 +265,7 @@ namespace org.iringtools.adapter.datalayer
             filter = FilterByIdentity(objectType, filter, identityProperties);
           }
         }
+
         StringBuilder queryString = new StringBuilder();
         queryString.Append("from " + objectType);
 
@@ -308,6 +309,7 @@ namespace org.iringtools.adapter.datalayer
         throw new Exception(string.Format("Error while getting a list of data objects of type [{0}]. {1}", objectType, ex));
       }
     }
+
     private DataFilter FilterByIdentity(string objectType, DataFilter filter, IdentityProperties identityProperties)
     {
       DataObject dataObject = _databaseDictionary.dataObjects.Find(d => d.objectName == objectType);
