@@ -1541,11 +1541,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 														text: selectedValues[i].data.text,
 														type: "keyProperty",
 														leaf: true,
-														iconCls: 'property',
+														iconCls: 'key',
 														hidden: false,
 														properties: properties
 													});
-													newKeyNode.iconCls = 'property';
+													newKeyNode.iconCls = 'key';
 													propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
 													break;
 												}
@@ -1591,8 +1591,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												propertyNode.iconCls = 'property';
 												propertiesNode.appendChild(propertyNode);
 												keysNode.removeChild(keysNode.childNodes[i], true);
+												i--;
 											}
-										}
+										}										
 									}
 								}
 							}
