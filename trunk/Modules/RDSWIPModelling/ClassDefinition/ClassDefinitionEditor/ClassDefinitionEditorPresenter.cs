@@ -290,21 +290,40 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
       try
       {
         _editorMode = editorMode;
-        if (model.SelectedTreeItem.Tag is ClassDefinition)
+        if (_editorMode != EditorMode.Add)
         {
-          _classBLL = new ClassDefinitionBLL((ClassDefinition)model.SelectedTreeItem.Tag);
+            if (model.SelectedTreeItem.Tag is ClassDefinition)
+            {
+                _classBLL = new ClassDefinitionBLL((ClassDefinition)model.SelectedTreeItem.Tag);
 
-          TextCtrl("className").DataContext = _classBLL;
-          TextCtrl("entityType").DataContext = _classBLL;
-          TextCtrl("description").DataContext = _classBLL;
+                TextCtrl("className").DataContext = _classBLL;
+                TextCtrl("entityType").DataContext = _classBLL;
+                TextCtrl("description").DataContext = _classBLL;
 
-          TextCtrl("authority").DataContext = _classBLL;
-          TextCtrl("recorded").DataContext = _classBLL;
-          TextCtrl("dateFrom").DataContext = _classBLL;
-          TextCtrl("dateTo").DataContext = _classBLL;
+                TextCtrl("authority").DataContext = _classBLL;
+                TextCtrl("recorded").DataContext = _classBLL;
+                TextCtrl("dateFrom").DataContext = _classBLL;
+                TextCtrl("dateTo").DataContext = _classBLL;
 
-          ListBoxCtrl("specialization").DataContext = _classBLL;
-          ListBoxCtrl("classification").DataContext = _classBLL;
+                ListBoxCtrl("specialization").DataContext = _classBLL;
+                ListBoxCtrl("classification").DataContext = _classBLL;
+            }
+        }
+        else
+        {
+            _classBLL = new ClassDefinitionBLL(new ClassDefinition());
+
+            TextCtrl("className").DataContext = _classBLL;
+            TextCtrl("entityType").DataContext = _classBLL;
+            TextCtrl("description").DataContext = _classBLL;
+
+            TextCtrl("authority").DataContext = _classBLL;
+            TextCtrl("recorded").DataContext = _classBLL;
+            TextCtrl("dateFrom").DataContext = _classBLL;
+            TextCtrl("dateTo").DataContext = _classBLL;
+
+            ListBoxCtrl("specialization").DataContext = _classBLL;
+            ListBoxCtrl("classification").DataContext = _classBLL;
         }
       }
       catch (Exception ex)
