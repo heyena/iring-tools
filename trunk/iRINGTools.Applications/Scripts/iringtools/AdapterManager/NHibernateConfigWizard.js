@@ -13,6 +13,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var dbDict;
 		var dbInfo = {};
 		var dbTableNames;
+		var userTableNames = new Array();
 
 		var setKeyProperty = function (editPane, node) {
 			if (editPane && node) {
@@ -308,54 +309,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									},
 									success: function (f, a) {
 										dbTableNames = Ext.util.JSON.decode(a.response.responseText);
-
-										if (dbTableNames.items.length > 0) {
-											// populate available tables  
-											var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');
-											var availItems = new Array();
-											if (tableSelector.toMultiselect) {
-												var selectTableNames = tableSelector.toMultiselect.store.data.items;
-												for (var i = 0; i < dbTableNames.items.length; i++) {
-													var tableName = dbTableNames.items[i];
-													if (tableName) {
-														var selected = false;
-														for (var j = 0; j < selectTableNames.length; j++) {
-															if (tableName == selectTableNames[j].data.text) {
-																selected = true;
-																break;
-															}
-														}
-
-														if (!selected) {
-															availItems.push(tableName);
-														}
-													}
-												}
-											}
-											else {
-												availItems = dbTableNames.items;
-											}
-
-											if (tableSelector.fromMultiselect) {
-												if (tableSelector.fromMultiselect.store.data) {
-													tableSelector.fromMultiselect.reset();
-													tableSelector.fromMultiselect.store.removeAll();
-												}
-
-												tableSelector.fromMultiselect.store.loadData(availItems);
-												tableSelector.fromMultiselect.store.commitChanges();
-											}
-											else {
-												tableSelector.multiselects[0].store = availItems;
-											}
-
-											var tab = Ext.getCmp('content-panel');
-											var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
-											var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-											var editPane = dataObjectsPane.items.map[scopeName + '.' + appName + '.editor-panel'];
-											editPane.add(tablesSelectorPane);
-											editPane.getLayout().setActiveItem(editPane.items.length - 1);
-										}
+										var tab = Ext.getCmp('content-panel');
+										var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
+										var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
+										var editPane = dataObjectsPane.items.map[scopeName + '.' + appName + '.editor-panel'];
+										setTablesSelectorPane(editPane);
 									},
 									failure: function (f, a) {
 										if (a.response)
@@ -391,175 +349,279 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			}
 		};
 
-		var tablesSelectorPane = new Ext.FormPanel({
-			frame: false,
-			border: false,
-			autoScroll: true,
-			id: scopeName + '.' + appName + '.tablesSelectorPane',
-			bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-			labelWidth: 140,
-			monitorValid: true,
-			items: [{
-				xtype: 'label',
-				fieldLabel: 'Select Tables',
-				labelSeparator: '',
-				itemCls: 'form-title'
-			}, {
-				xtype: 'itemselector',
-				hideLabel: true,
-				name: 'tableSelector',
-				imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
-				multiselects: [{
-					width: 250,
-					height: 300,
-					store: [[]],
-					displayField: 'tableName',
-					valueField: 'tableValue'
-				}, {
-					width: 250,
-					height: 300,
-					store: [[]],
-					displayField: 'tableName',
-					valueField: 'tableValue'
-				}],
-				listeners: {
-					change: function (itemSelector, selectedValuesStr) {
-						var selectTables = itemSelector.toMultiselect.store.data.items;
-						for (var i = 0; i < selectTables.length; i++)
-							if (selectTables[i].data.text == '')
-								itemSelector.toMultiselect.store.removeAt(i);
-						var availTables = itemSelector.fromMultiselect.store.data.items;
-						for (var i = 0; i < availTables.length; i++)
-							if (availTables[i].data.text == '')
-								itemSelector.fromMultiselect.store.removeAt(i);
+		var setAvailTables = function (dbObjectsTree) {
+			var availTableName = new Array();
+
+			if (dbObjectsTree.disabled) {
+				for (var i = 0; i < dbTableNames.items.length; i++) {
+					var tableName = dbTableNames.items[i];
+					if (tableName) {
+						var selected = false;
+						for (var j = 0; j < userTableNames.length; j++) {
+							if (tableName == userTableNames[j][0]) {
+								selected = true;
+								break;
+							}
+						}
+
+						if (!selected) {
+							availTableName.push(tableName);
+						}
 					}
 				}
-			}],
-			tbar: new Ext.Toolbar({
-				items: [{
-					xtype: 'tbspacer',
-					width: 4
-				}, {
-					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/document-save.png',
-					text: 'Save',
-					tooltip: 'Save',
-					handler: function () {
-						var editPane = dataObjectsPane.items.items[1];
-						var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
+			}
+			else {
+				var rootNode = dbObjectsTree.getRootNode();
+				for (var i = 0; i < dbTableNames.items.length; i++) {
+					availTableName.push(dbTableNames.items[i]);
+				}
 
-						var tablesSelForm = tablesSelectorPane.getForm();
-						var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-
-						if (dbObjectsTree.disabled) {
-							dbObjectsTree.enable();
+				for (var j = 0; j < availTableName.length; j++)
+					for (var i = 0; i < rootNode.childNodes.length; i++) {
+						if (rootNode.childNodes[i].text == availTableName[j]) {
+							found = true;
+							availTableName.splice(j, 1);
+							j--;
+							break;
 						}
-
-						var treeLoader = dbObjectsTree.getLoader();
-						if (tablesSelForm.findField('tableSelector').getValue().indexOf('') == -1)
-							var selectTableNames = tablesSelForm.findField('tableSelector').getValue();
-						else {
-							var tableNames = tablesSelForm.findField('tableSelector').toMultiselect.store.data.items;
-							var selectTableNames = new Array();
-							for (var i = 0; i < tableNames.length; i++)
-								selectTableNames.push(tableNames[i].data.text);
-						}
-
-						treeLoader.dataUrl = 'AdapterManager/DBObjects';
-						if (dsConfigPane) {
-							var dsConfigForm = dsConfigPane.getForm();
-							treeLoader.baseParams = {
-								scope: scopeName,
-								app: appName,
-								dbProvider: dsConfigForm.findField('dbProvider').getValue(),
-								dbServer: dsConfigForm.findField('dbServer').getValue(),
-								dbInstance: dsConfigForm.findField('dbInstance').getValue(),
-								dbName: dsConfigForm.findField('dbName').getValue(),
-								dbSchema: dsConfigForm.findField('dbSchema').getValue(),
-								dbUserName: dsConfigForm.findField('dbUserName').getValue(),
-								dbPassword: dsConfigForm.findField('dbPassword').getValue(),
-								tableNames: selectTableNames
-							};
-						}
-						else {
-							treeLoader.baseParams = {
-								scope: scopeName,
-								app: appName,
-								dbProvider: dbDict.Provider,
-								dbServer: dbInfo.dbServer,
-								dbInstance: dbInfo.dbInstance,
-								dbName: dbInfo.dbName,
-								dbSchema: dbDict.SchemaName,
-								dbUserName: dbInfo.dbUserName,
-								dbPassword: dbInfo.dbPassword,
-								tableNames: selectTableNames
-							};
-						}
-
-						var rootNode = dbObjectsTree.getRootNode();
-						rootNode.reload(
-							function (rootNode) {
-								loadTree(rootNode);
-							});
 					}
-				}, {
-					xtype: 'tbspacer',
-					width: 4
-				}, {
-					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/edit-clear.png',
-					text: 'Reset',
-					tooltip: 'Reset',
-					handler: function () {
-						var rootNode = dataObjectsPane.items.items[0].items.items[0].getRootNode();
-						var selectTableNames = new Array();
-						var availTableName = new Array();
-						var found = false;
+			}
 
-						if (dbDict.dataObjects.length > 0)
-							for (var i = 0; i < dbTableNames.items.length; i++) {
-								availTableName.push([dbTableNames.items[i], dbTableNames.items[i]]);
-							}
-						else
-							for (var i = 0; i < dbTableNames.items.length; i++) {
-								availTableName.push(dbTableNames.items[i]);
-							}
+			return availTableName;
+		}
 
-						for (var j = 0; j < availTableName.length; j++)
-							for (var i = 0; i < rootNode.childNodes.length; i++) {
-								if (rootNode.childNodes[i].text == availTableName[j][0]) {
-									found = true;
-									availTableName.splice(j, 1);
-									j--;
-									break;
+		var setSelectTables = function (dbObjectsTree) {
+			var selectTableNames = new Array();
+
+			if (dbObjectsTree.disabled) {
+				for (var i = 0; i < userTableNames.length; i++)
+					selectTableNames.push(userTableNames[i]);
+			}
+			else {
+				var rootNode = dbObjectsTree.getRootNode();
+				for (var i = 0; i < rootNode.childNodes.length; i++) {
+					var nodeText = rootNode.childNodes[i].text;
+					selectTableNames.push([nodeText, nodeText]);
+				}
+			}
+
+			return selectTableNames;
+		}
+
+		var setTablesSelectorPane = function (editPane) {
+			if (editPane) {
+				if (editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane']) {
+					var tableSelectorPanel = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
+					if (tableSelectorPanel)
+						tableSelectorPanel.destroy();
+				}
+
+				var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+				var availItems = setAvailTables(dbObjectsTree);
+				var selectItems = setSelectTables(dbObjectsTree);
+
+				var tablesSelectorPane = new Ext.FormPanel({
+					frame: false,
+					border: false,
+					autoScroll: true,
+					id: scopeName + '.' + appName + '.tablesSelectorPane',
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+					labelWidth: 140,
+					monitorValid: true,
+					items: [{
+						xtype: 'label',
+						fieldLabel: 'Select Tables',
+						labelSeparator: '',
+						itemCls: 'form-title'
+					}, {
+						xtype: 'itemselector',
+						hideLabel: true,
+						name: 'tableSelector',
+						imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+						multiselects: [{
+							width: 250,
+							height: 300,
+							store: availItems,
+							displayField: 'tableName',
+							valueField: 'tableValue'
+						}, {
+							width: 250,
+							height: 300,
+							store: selectItems,
+							displayField: 'tableName',
+							valueField: 'tableValue'
+						}],
+						listeners: {
+							change: function (itemSelector, selectedValuesStr) {
+								var selectTables = itemSelector.toMultiselect.store.data.items;
+								for (var i = 0; i < selectTables.length; i++) {
+									var selectTableName = selectTables[i].data.text;
+									if (selectTableName == '')
+										itemSelector.toMultiselect.store.removeAt(i);
+								}
+
+								var availTables = itemSelector.fromMultiselect.store.data.items;
+								for (var i = 0; i < availTables.length; i++) {
+									var availTableName = availTables[i].data.text
+									if (availTables[i].data.text == '')
+										itemSelector.fromMultiselect.store.removeAt(i);
 								}
 							}
-
-						for (var i = 0; i < rootNode.childNodes.length; i++) {
-							var nodeText = rootNode.childNodes[i].text;
-							selectTableNames.push([nodeText, nodeText]);
 						}
+					}],
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/document-save.png',
+							text: 'Save',
+							tooltip: 'Save',
+							handler: function () {
+								var editPane = dataObjectsPane.items.items[1];
+								var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
+								var tablesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
+								var tablesSelForm = tablesSelectorPane.getForm();
+								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 
-						var tablesSelector = tablesSelectorPane.getForm().findField('tableSelector');
-						if (tablesSelector.toMultiselect.store.data) {
-							tablesSelector.toMultiselect.reset();
-							tablesSelector.toMultiselect.store.removeAll();
-						}
+								if (dbObjectsTree.disabled) {
+									dbObjectsTree.enable();
+								}
 
-						tablesSelector.toMultiselect.store.loadData(selectTableNames);
-						tablesSelector.toMultiselect.store.commitChanges();
+								var treeLoader = dbObjectsTree.getLoader();
+								if (tablesSelForm.findField('tableSelector').getValue().indexOf('') == -1)
+									var selectTableNames = tablesSelForm.findField('tableSelector').getValue();
+								else {
+									var tableNames = tablesSelForm.findField('tableSelector').toMultiselect.store.data.items;
+									var selectTableNames = new Array();
+									for (var i = 0; i < tableNames.length; i++)
+										selectTableNames.push(tableNames[i].data.text);
+								}
 
-						if (tablesSelector.fromMultiselect.store.data) {
-							tablesSelector.fromMultiselect.reset();
-							tablesSelector.fromMultiselect.store.removeAll();
-						}
+								if (selectTableNames.length < 1) {
+									var rootNode = dbObjectsTree.getRootNode();
+									while (rootNode.firstChild) {
+										rootNode.removeChild(rootNode.firstChild);
+									}
+									return;
+								}
 
-						tablesSelector.fromMultiselect.store.loadData(availTableName);
-						tablesSelector.fromMultiselect.store.commitChanges();
-					}
-				}]
-			})
-		});
+								treeLoader.dataUrl = 'AdapterManager/DBObjects';
+								if (dsConfigPane) {
+									var dsConfigForm = dsConfigPane.getForm();
+									treeLoader.baseParams = {
+										scope: scopeName,
+										app: appName,
+										dbProvider: dsConfigForm.findField('dbProvider').getValue(),
+										dbServer: dsConfigForm.findField('dbServer').getValue(),
+										dbInstance: dsConfigForm.findField('dbInstance').getValue(),
+										dbName: dsConfigForm.findField('dbName').getValue(),
+										dbSchema: dsConfigForm.findField('dbSchema').getValue(),
+										dbUserName: dsConfigForm.findField('dbUserName').getValue(),
+										dbPassword: dsConfigForm.findField('dbPassword').getValue(),
+										tableNames: selectTableNames
+									};
+								}
+								else {
+									treeLoader.baseParams = {
+										scope: scopeName,
+										app: appName,
+										dbProvider: dbDict.Provider,
+										dbServer: dbInfo.dbServer,
+										dbInstance: dbInfo.dbInstance,
+										dbName: dbInfo.dbName,
+										dbSchema: dbDict.SchemaName,
+										dbUserName: dbInfo.dbUserName,
+										dbPassword: dbInfo.dbPassword,
+										tableNames: selectTableNames
+									};
+								}
+
+								var rootNode = dbObjectsTree.getRootNode();
+								rootNode.reload(
+								function (rootNode) {
+									loadTree(rootNode);
+								});
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/edit-clear.png',
+							text: 'Reset',
+							tooltip: 'Reset',
+							handler: function () {
+								var rootNode = dataObjectsPane.items.items[0].items.items[0].getRootNode();
+								var selectTableNames = new Array();
+								var selectTableNamesSingle = new Array();
+								var availTableName = new Array();
+								var found = false;
+
+								for (var i = 0; i < dbTableNames.items.length; i++) {
+									availTableName.push(dbTableNames.items[i]);
+								}
+
+								for (var j = 0; j < availTableName.length; j++)
+									for (var i = 0; i < rootNode.childNodes.length; i++) {
+										if (rootNode.childNodes[i].text == availTableName[j]) {
+											found = true;
+											availTableName.splice(j, 1);
+											j--;
+											break;
+										}
+									}
+
+								for (var i = 0; i < rootNode.childNodes.length; i++) {
+									var nodeText = rootNode.childNodes[i].text;
+									selectTableNames.push([nodeText, nodeText]);
+									selectTableNamesSingle.push(nodeText);
+								}
+
+								var tablesSelector = tablesSelectorPane.items.items[1];
+								if (tablesSelector.toMultiselect.store.data) {
+									tablesSelector.toMultiselect.reset();
+									tablesSelector.toMultiselect.store.removeAll();
+								}
+
+								tablesSelector.toMultiselect.store.loadData(selectTableNames);
+								tablesSelector.toMultiselect.store.commitChanges();
+
+								var selectTables = tablesSelector.toMultiselect.store.data.items;
+								var loadSingle = false;
+								for (var i = 0; i < selectTables.length; i++) {
+									var selectTableName = selectTables[i].data.text;
+									if (selectTableName[1].length > 1) {
+										var loadSingle = true;
+										break;
+									}
+								}
+
+								if (loadSingle) {
+									tablesSelector.toMultiselect.reset();
+									tablesSelector.toMultiselect.store.removeAll();
+									tablesSelector.toMultiselect.store.loadData(selectTableNamesSingle);
+									tablesSelector.toMultiselect.store.commitChanges();
+								}
+
+								if (tablesSelector.fromMultiselect.store.data) {
+									tablesSelector.fromMultiselect.reset();
+									tablesSelector.fromMultiselect.store.removeAll();
+								}
+
+								tablesSelector.fromMultiselect.store.loadData(availTableName);
+								tablesSelector.fromMultiselect.store.commitChanges();
+							}
+						}]
+					})
+				});
+				editPane.add(tablesSelectorPane);
+				var panelIndex = editPane.items.indexOf(tablesSelectorPane);
+				editPane.getLayout().setActiveItem(panelIndex);
+
+			}
+		};
 
 		var setRelations = function (editPane, node) {
 			if (editPane && node) {
@@ -1729,9 +1791,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								var selectedProps = new Array();
 								for (var i = 0; i < node.childNodes.length; i++) {
 									var itemName = node.childNodes[i].text;
-									if (node.childNodes[i].hidden == false) {										
-											selectedProps.push(itemName);										
-									}	
+									if (node.childNodes[i].hidden == false) {
+										selectedProps.push(itemName);
+									}
 									else
 										availProps.push([itemName, itemName]);
 								}
@@ -2029,9 +2091,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								if (!editPane) {
 									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 								}
-								editPane.add(tablesSelectorPane);
-								var panelIndex = editPane.items.indexOf(tablesSelectorPane);
-								editPane.getLayout().setActiveItem(panelIndex);
+
+								setTablesSelectorPane(editPane);
 								return;
 							}
 							else if (!node)
@@ -2095,33 +2156,21 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			}]
 		});
 
-		var setTablesSelectorPane = function () {
-			// populate selected tables
-			var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');
-			var selectedItems = new Array();
+		var setTableNames = function () {
+			// populate selected tables			
 			var selectTableNames = new Array();
 
-			if (dbDict.dataObjects.length == 0) {
-				editPane = dataObjectsPane.items.items[1];
-				if (!editPane) {
-					var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-				}
-				editPane.add(tablesSelectorPane);
-				editPane.getLayout().setActiveItem(editPane.items.length - 1);
+			for (var i = 0; i < dbDict.dataObjects.length; i++) {
+				var dataObject = dbDict.dataObjects[i];
+				userTableNames.push([dataObject.tableName, dataObject.tableName]);
+				selectTableNames.push(dataObject.tableName);
 			}
-			else {
-				for (var i = 0; i < dbDict.dataObjects.length; i++) {
-					var dataObject = dbDict.dataObjects[i];
-					selectedItems.push([dataObject.tableName, dataObject.tableName]);
-					selectTableNames.push(dataObject.tableName);
-				}
-				tableSelector.multiselects[1].store = selectedItems;
-			}
+
 			return selectTableNames;
 		};
 
 		var showTree = function (dbObjectsTree) {
-			var selectTableNames = setTablesSelectorPane();
+			var selectTableNames = setTableNames();
 			var connStr = dbDict.ConnectionString;
 			var connStrParts = connStr.split(';');
 
@@ -2184,29 +2233,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				},
 				success: function (response, request) {
 					dbTableNames = Ext.util.JSON.decode(response.responseText);
-
-					if (dbTableNames.items.length > 0) {
-						// populate available tables  
-						var tableSelector = tablesSelectorPane.getForm().findField('tableSelector');
-						var availItems = new Array();
-						for (var i = 0; i < dbTableNames.items.length; i++) {
-							var tableName = dbTableNames.items[i];
-							if (tableName) {
-								var selected = false;
-								for (var j = 0; j < tableSelector.multiselects[1].store.length; j++) {
-									if (tableName == tableSelector.multiselects[1].store[j][1]) {
-										selected = true;
-										break;
-									}
-								}
-
-								if (!selected) {
-									availItems.push([tableName, tableName]);
-								}
-							}
-						}
-						tableSelector.multiselects[0].store = availItems;
-					}
 				},
 				failure: function (f, a) {
 					if (a.response)
