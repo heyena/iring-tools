@@ -373,6 +373,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			}
 			else {
 				var rootNode = dbObjectsTree.getRootNode();
+
 				for (var i = 0; i < dbTableNames.items.length; i++) {
 					availTableName.push(dbTableNames.items[i]);
 				}
