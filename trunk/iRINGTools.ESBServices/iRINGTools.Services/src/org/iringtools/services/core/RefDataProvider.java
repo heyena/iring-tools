@@ -2700,37 +2700,38 @@ public class RefDataProvider
       for (Repository repository : _repositories)
       {
         Results sparqlResults = queryFromRepository(repository, sparql);
-
-        List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
-        for (Hashtable<String, String> result : results)
-        {
-          names = result.get("label").split("@", -1);
-          if (names.length == 1)
-          {
-            language = defaultLanguage;
-          }
-          else
-          {
-            language = names[names.length - 1];
-          }
-
-          Entity tempVar = new Entity();
-          tempVar.setUri(result.get("uri"));
-          tempVar.setLabel(names[0]);
-          tempVar.setLang(language);
-          tempVar.setRepository(repository.getName());
-          resultEntity = tempVar;
-
-          key = resultEntity.getLabel();
-
-          if (resultEntities.containsKey(key))
-          {
-            key += ++counter;
-          }
-
-          resultEntities.put(key, resultEntity);
-        }
-        results.clear();
+	        if(sparqlResults!=null){
+	        	List<Hashtable<String, String>> results = bindQueryResults(queryBindings, sparqlResults);
+	        	for (Hashtable<String, String> result : results)
+		        {
+		          names = result.get("label").split("@", -1);
+		          if (names.length == 1)
+		          {
+		            language = defaultLanguage;
+		          }
+		          else
+		          {
+		            language = names[names.length - 1];
+		          }
+		
+		          Entity tempVar = new Entity();
+		          tempVar.setUri(result.get("uri"));
+		          tempVar.setLabel(names[0]);
+		          tempVar.setLang(language);
+		          tempVar.setRepository(repository.getName());
+		          resultEntity = tempVar;
+		
+		          key = resultEntity.getLabel();
+		
+		          if (resultEntities.containsKey(key))
+		          {
+		            key += ++counter;
+		          }
+		
+		          resultEntities.put(key, resultEntity);
+		        	}
+	        results.clear();
+	        }
       }
 
       _searchHistory.put(key, resultEntity);
@@ -3285,7 +3286,7 @@ public class RefDataProvider
   private Results queryFromRepository(Repository repository, String sparql) throws HttpClientException,
       UnsupportedEncodingException, JAXBException
   {
-    Results results = new Results();
+    Results results = null;
 
     try
     {
