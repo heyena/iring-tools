@@ -1,24 +1,21 @@
-﻿Imports System.Collections.Generic
-Imports System.Collections.Specialized
-Imports System.IO
-Imports System.Linq
-Imports NUnit.Framework
-Imports org.iringtools.adapter
-Imports org.iringtools.library
-Imports org.iringtools.utility
-Imports StaticDust.Configuration
+﻿Imports org.iringtools.adapter
 Imports Ninject
+Imports System.Collections.Specialized
+Imports org.iringtools.library
 Imports Ninject.Extensions.Xml
+Imports System.IO
+Imports System.Configuration
 
-<TestFixture()>
-Public Class Test
-    Private _baseDirectory As String = String.Empty
-    Private _kernel As IKernel = Nothing
-    Private _settings As NameValueCollection
-    Private _adapterSettings As AdapterSettings
+Module Module1
+  Private _baseDirectory As String = String.Empty
+  Private _kernel As IKernel = Nothing
+  Private _settings As NameValueCollection
+  Private _adapterSettings As AdapterSettings
   Private _sppidDataLayer As IDataLayer2
-  Public Sub New()
-    ' N inject magic
+
+  Sub Main()
+
+    'Dim dataLayer As iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(New AdapterSettings(), Nothing)
 
     Dim ninjectSettings = New NinjectSettings() With {.LoadExtensions = False}
     _kernel = New StandardKernel(ninjectSettings)
@@ -46,8 +43,8 @@ Public Class Test
     Dim appSettingsPath As String = [String].Format("{0}12345_000.SPPID.config", _adapterSettings("XmlPath"))
 
     If File.Exists(appSettingsPath) Then
-      Dim appSettings As New AppSettingsReader(appSettingsPath)
-      _adapterSettings.AppendSettings(appSettings)
+      'Dim appSettings As New AppSettingsReader(appSettingsPath)
+      '_adapterSettings.AppendSettings(appSettings)
     End If
 
     ' and run the thing
@@ -58,27 +55,8 @@ Public Class Test
 
     _kernel.Load(bindingConfigurationPath)
 
-    Dim dataLayer As IDataLayer2 = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings, Nothing)
     _sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
+
   End Sub
-    <Test()>
-    Public Sub Create()
-        Dim identifiers As IList(Of String) = New List(Of String)() From { _
-     "Equip-003", _
-     "Equip-004" _
-    }
 
-        Dim random As New Random()
-        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Create("Equipment", identifiers)
-
-        Dim actual As Response = _sppidDataLayer.Post(dataObjects)
-
-        If actual.Level <> StatusLevel.Success Then
-            Throw New AssertionException(Utility.SerializeDataContract(Of Response)(actual))
-        End If
-
-        Assert.IsTrue(actual.Level = StatusLevel.Success)
-
-    End Sub
-
-End Class
+End Module

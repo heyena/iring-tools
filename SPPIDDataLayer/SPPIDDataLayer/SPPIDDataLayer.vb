@@ -144,35 +144,35 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
     End Function
 
     Public Overloads Overrides Function Delete(objectType As String, filter As org.iringtools.library.DataFilter) As org.iringtools.library.Response
-
+    Return New Response
     End Function
 
     Public Overloads Overrides Function Delete(objectType As String, identifiers As System.Collections.Generic.IList(Of String)) As org.iringtools.library.Response
-
+    Return New Response
     End Function
 
     Public Overloads Overrides Function [Get](objectType As String, filter As org.iringtools.library.DataFilter, pageSize As Integer, startIndex As Integer) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
-
+    Return New System.Collections.Generic.List(Of org.iringtools.library.IDataObject)
     End Function
 
     Public Overloads Overrides Function [Get](objectType As String, identifiers As System.Collections.Generic.IList(Of String)) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
-
+    Return New System.Collections.Generic.List(Of org.iringtools.library.IDataObject)
     End Function
 
     Public Overrides Function GetCount(objectType As String, filter As org.iringtools.library.DataFilter) As Long
-
+    Return 0
     End Function
 
     Public Overrides Function GetIdentifiers(objectType As String, filter As org.iringtools.library.DataFilter) As System.Collections.Generic.IList(Of String)
-
+    Return New System.Collections.Generic.List(Of String)
     End Function
 
     Public Overrides Function GetRelatedObjects(dataObject As org.iringtools.library.IDataObject, relatedObjectType As String) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
-
+    Return New System.Collections.Generic.List(Of org.iringtools.library.IDataObject)
     End Function
 
     Public Overrides Function Post(dataObjects As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)) As org.iringtools.library.Response
-
+    Return New Response
     End Function
 End Class
 
