@@ -8,17 +8,25 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	//title: 'ClassTemplatePanel',	
 	title:null,
 	data_form: null,
-    configData:null,
-    formData : null,
-	url: null,
-    nId:null,label:null,
-    parentNode:null, node:null,name:null,desc:null,
-    parentTemplate:null,
-    statusAuth:null,statusClass:null,statusFrom:null, statusTo:null,
-    entityType:null,
-    specStore:[], repoStore:[],
-    classStore:[],
-    roleStore:[],
+  configData:null,
+  formData : null,
+  url: null,  
+  nId:null,
+  label:null,
+  parentNode:null, 
+  node:null,
+  name:null,
+  desc:null,
+  parentTemplate:null,
+  statusAuth:null,
+  statusClass:null,
+  statusFrom:null, 
+  statusTo:null,
+  entityType:null,
+  specStore:[], 
+  repoStore:[],
+  classStore:[],
+  roleStore:[],
     
 
   /**
@@ -48,8 +56,10 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	  		this.statusFrom=this.node.attributes.record["Status From"];
 	  		this.statusTo=this.node.attributes.record["Status To"];
 	  	    this.entityType=this.node.attributes.record["Entity Type"];
-	  	    this.specStore=this.createStore(this.parentNode.childNodes[3].attributes.children,0);
-	  	    this.classStore=this.createStore(this.parentNode.childNodes[1].attributes.children,0);
+	  	    //this.specStore=this.createStore(this.parentNode.childNodes[3].attributes.children,0);
+	  	    this.specStore = new Array();
+	  	    this.classStore = new Array();
+	  	    //this.classStore=this.createStore(this.parentNode.childNodes[1].attributes.children,0);
 	  	    this.repoStore=this.createRepoStore(Ext.getCmp('federation-tree').getRootNode().childNodes[2].childNodes);
 	  	    this.url='postClass';
   		}else{
@@ -69,60 +79,177 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
   		var that = this;
   		this.formData= [{xtype: 'fieldset', layout:'column', border:false,
 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
- 					items:[
- 				          {fieldLabel:'Name',name:'name', xtype:'textfield',enableKeyEvents:true,
- 				        	 listeners: {
- 				        		change : function(f,newval,old){
- 				        			Ext.getCmp(that.id).setTitle(that.label+': {'+newval+'}');
- 				        			},
- 				          		keyup:function(f,evt){
- 				          			Ext.getCmp(that.id).setTitle(that.label+': {'+f.getValue()+'}');
- 				          		}
- 				        		}
- 				          ,width:200, value:this.name},
- 				          {xtype: 'fieldset',title:'Description',
-	 				    	  items: [
-	 				    	          {name:'description', xtype:'textarea', width:200, height:205, value:this.desc}
-	 				    	          ]
-                          },
- 				          {xtype: 'fieldset',title:'Status',
- 				        	  items:[
- 				        	         {fieldLabel:'Authority',name:'authority', xtype:'textfield', disabled:true, width:200, value:this.statusAuth},
- 				        	         {fieldLabel:'Recorded',name:'recorded', xtype:'textfield', disabled:true,width:200, value:this.statusClass},
- 				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'textfield', disabled:true,width:200, value:this.statusFrom},
- 				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'textfield', disabled:true,width:200,value:this.statusTo}
- 				        	         ]
- 				          },
- 				         {name: 'targetRepo',xtype:'combo',store: this.repoStore,fieldLabel:'Target Repo', width:200}]},
- 				          {columnWidth:.5,layout: 'form',
-        	 				items:[
-        	 				      {fieldLabel:'Entity Type',name:'entityType', xtype:'textfield', width:200, value:this.entityType},
-        	 				     {xtype: 'fieldset',title:'Specialization',
-        	 				    	  items: [
-        	 				    	          {name:'specialization', xtype:'multiselect', width:200,store:this.specStore, id:'spec'+that.id},
-        	 				    	          {xtype: 'fieldset', border:false, layout:'column', 
-        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: function(){this.onStoreDtlsAdd(this.specStore,'spec'+that.id, 'ClassNode');}, scope: this},
-        	 				    	        		  	{columnWidth:.5,xtype:"button",text:'Remove',handler: function(){this.onStoreDtlsRemove(this.specStore,'spec'+that.id);}, scope: this}
-        	 				    	        	  ]}
-        	 				    	          ]
-                                  },
-                                  {xtype: 'fieldset',title:'Classification',
-        	 				    	  items: [
-        	 				    	          {name:'classification', xtype:'multiselect', width:200, store:this.classStore, id:'class'+that.id},
-        	 				    	         {xtype: 'fieldset', border:false, layout:'column', 
-        	 				    	        	  items:[{columnWidth:.5,xtype:"button",text:'Add',handler: function(){this.onStoreDtlsAdd(this.classStore,'class'+that.id, 'ClassNode');}, scope: this},
-        	 				    	        	         {columnWidth:.5,xtype:"button",text:'Remove',handler:  function(){this.onStoreDtlsRemove(this.classStore,'class'+that.id);}, scope: this}
-        	 				    	        	  ]}
-        	 				    	          ]
-                                  },
-                                  {xtype: 'fieldset', border:false, layout:'column', 
- 				    	        	  items:[{columnWidth:.33,xtype : "tbbutton",text : 'Ok',tooltip : 'Ok', handler:this.onSave, scope: this},
- 				    	        	         {columnWidth:.33,xtype : "tbbutton",text : 'Cancel',tooltip : 'Cancel'},
- 				    	        	         {columnWidth:.33,xtype : "tbbutton",text : 'Apply',tooltip : 'Apply'}
- 				    	        	  ]}
-                                  ]
- 				        }]}];
-  		this.formData.push({
+ 					items:[{
+ 						fieldLabel:'Name',
+ 						name:'name', 
+ 						xtype:'textfield',
+ 						enableKeyEvents:true,
+        	  listeners: {
+        	  	change : function(f,newval,old){
+        	  		Ext.getCmp(that.id).setTitle(that.label+': {'+newval+'}');
+        	  	},
+        	  	keyup:function(f,evt){
+        	  		Ext.getCmp(that.id).setTitle(that.label+': {'+f.getValue()+'}');
+        	  	}
+        		},
+        		width:200, 
+        		value:this.name
+        	}, {
+        		xtype: 'fieldset',
+        		title:'Description',
+		    	  items: [{
+		    	  	name:'description', 
+		    	  	xtype:'textarea', 
+		    	  	width:200, 
+		    	  	height:205, 
+		    	  	value:this.desc
+		    	  }]
+           }, {
+          	 xtype: 'fieldset',
+          	 title:'Status',
+        	   items:[{
+        	  	 fieldLabel:'Authority',
+        	  	 name:'authority', 
+        	  	 xtype:'textfield', 
+        	  	 disabled:true, 
+        	  	 width:200, 
+        	  	 value:this.statusAuth
+        	  }, {
+        	  	fieldLabel:'Recorded',
+        	  	name:'recorded', 
+        	  	xtype:'textfield', 
+        	  	disabled:true,
+        	  	width:200, 
+        	  	value:this.statusClass
+        	  }, {
+        	  	fieldLabel:'Date From',
+        	  	name:'dateFrom', 
+        	  	xtype:'textfield', 
+        	  	disabled:true,
+        	  	width:200, 
+        	  	value:this.statusFrom
+        	  }, {
+        	  	fieldLabel:'Date To',
+        	  	name:'dateTo', 
+        	  	xtype:'textfield', 
+        	  	disabled:true,
+        	  	width:200,
+        	  	value:this.statusTo
+        	  }]
+          }, {
+          	name: 'targetRepo',
+          	xtype:'combo',
+          	store: this.repoStore,
+          	fieldLabel:'Target Repo', 
+          	width:200
+          }]
+				}, {
+					columnWidth:.5,
+					layout: 'form',
+	 				items:[{
+	 					fieldLabel:'Entity Type',
+	 					name:'entityType', 
+	 					xtype:'textfield', 
+	 					width:200, 
+	 					value:this.entityType
+	 				}, {
+	 					xtype: 'fieldset',
+	 					title:'Specialization',
+		    	  items: [{
+		    	  	name:'specialization', 
+		    	  	xtype:'multiselect', 
+		    	  	width:200,
+		    	  	store:new Ext.data.SimpleStore({
+								fields: ['rid', 'value'],
+								data: this.specStore
+							}),
+							displayField: 'value',
+							valueField: 'rid',
+		    	  	id:'spec'+that.id
+		    	  }, {
+		    	  	xtype: 'fieldset', 
+		    	  	border:false, 
+		    	  	layout:'column', 
+	        	  items:[{
+	        	  	columnWidth:.5,
+	        	  	xtype:"button",
+	        	  	text:'Add',
+	        	  	handler: function(){
+	        	  		this.onStoreDtlsAdd(this.specStore,'spec'+that.id, 'ClassNode');
+	        	  	}, 
+	        	  	scope: this
+	        	 }, {
+	        		 columnWidth:.5,
+	        		 xtype:"button",
+	        		 text:'Remove',
+	        		 handler: function(){
+	        			 this.onStoreDtlsRemove(this.specStore,'spec'+that.id);
+	        		 }, 
+	        		 scope: this
+	        	 }]
+		    	  }]
+           }, {
+          	 xtype: 'fieldset',
+          	 title:'Classification',
+			    	 items:[{
+			    		 name:'classification', 
+			    		 xtype:'multiselect', 
+			    		 width:200, 
+			    		 store:new Ext.data.SimpleStore({
+									fields: ['rid', 'value'],
+									data: this.classStore
+							 }),
+							 displayField: 'value',
+							 valueField: 'rid',
+			    		 id:'class'+that.id
+			    		}, {
+			    			xtype: 'fieldset', 
+			    			border:false, 
+			    			layout:'column', 
+  	        	  items:[{
+  	        	  	columnWidth:.5,
+  	        	  	xtype:"button",
+  	        	  	text:'Add',
+  	        	  	handler: function(){
+  	        	  		this.onStoreDtlsAdd(this.classStore,'class'+that.id, 'ClassNode');
+  	        	  	}, 
+  	        	  	scope: this
+  	        	 }, {
+  	        		 columnWidth:.5,
+  	        		 xtype:"button",
+  	        		 text:'Remove',
+  	        		 handler:  function(){
+  	        			 this.onStoreDtlsRemove(this.classStore,'class'+that.id);
+  	        		 }, 
+  	        		 scope: this
+  	        	 }]
+			    		}]
+             }, {
+            	 xtype: 'fieldset', 
+            	 border:false, 
+            	 layout:'column', 
+		        	 items:[{
+		        		 columnWidth:.33,
+		        		 xtype : "tbbutton",
+		        		 text : 'Ok',
+		        		 tooltip : 'Ok', 
+		        		 handler:this.onSave, 
+		        		 scope: this
+		        	 }, {
+		        		 columnWidth:.33,
+		        		 xtype : "tbbutton",
+		        		 text : 'Cancel',
+		        		 tooltip : 'Cancel'
+		        	 }, {
+		        		 columnWidth:.33,
+		        		 xtype : "tbbutton",
+		        		 text : 'Apply',
+		        		 tooltip : 'Apply'
+		        	 }]
+             }]
+        		}]
+  				}];
+		  		this.formData.push({
             xtype: 'hidden',
             name: 'classId',
             value: that.id
@@ -130,55 +257,175 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 
   	}else{
   		var that = this;
-  		this.formData = [{xtype: 'radiogroup',fieldLabel: 'Template Type',
-            items: [
-                    {boxLabel: 'Base Template', name: 'tempType', checked: true},
-                    {boxLabel: 'Specialized Template', name: 'tempType'}]},
-
-                {fieldLabel:'Name',name:'name', xtype:'textfield', width:400, value:this.name,enableKeyEvents:true,
-			        	 listeners: {
-				        		change : function(f,newval,old){
-				        			Ext.getCmp(that.id).setTitle(that.label+': {'+newval+'}');
-				        			},
-				          		keyup:function(f,evt){
-				          			Ext.getCmp(that.id).setTitle(that.label+': {'+f.getValue()+'}');
-				          		}
-				        		}},
-				 {fieldLabel:'Parent Template',name:'parentTemplate', xtype:'textfield', width:400, value:this.parentTemplate},
-				 {xtype: 'fieldset', layout:'column', border:false,
-   	 				items:[{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-   	 						items:[{xtype:'fieldset',title:'Description',
-   	 							items:[{name:'description', xtype:'textarea', width:200}]},
-   	 							{xtype: 'fieldset',title:'Status',
-     	 				        	  items:[
-     	 				        	         {fieldLabel:'Authority',name:'authority', xtype:'textfield', width:200, disabled:true, value:this.statusAuth},
-     	 				        	         {fieldLabel:'Recorded',name:'recorded', xtype:'textfield', width:200, disabled:true, value:this.statusClass},
-     	 				        	         {fieldLabel:'Date From',name:'dateFrom', xtype:'datefield', disabled:true, width:200},
-     	 				        	         {fieldLabel:'Date To',name:'dateTo', xtype:'datefield',disabled:true, width:200}
-     	 				        	         ]
-     	 				          }]},
-   	 						{columnWidth:.5,layout: 'form',bodyStyle:'padding-right:15px',
-   	        	 					items:[{xtype:'fieldset',title:'Role Definition',
-	        	 							items:[{name:'roleDefinition', xtype:'multiselect', width:200, store:this.roleStore, id:'role'+that.id},
-	        	 							       {fieldLabel:'Id',name:'id', xtype:'textfield', width:200},
-	          	 				        	       {fieldLabel:'Name',name:'name', xtype:'textfield', width:200},
-	          	 				        	       {fieldLabel:'Description',name:'description', xtype:'textfield', width:200},
-	          	 				        	       {xtype: 'fieldset', layout:'column', border:false,
-	          	        	        	 				items:[{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-	          	        	        	 					items:[{ xtype : "tbbutton",text : 'Edit..',tooltip : 'Edit', width:70}]},
-	          	        	        	 					   {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-   	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Add', handler: function(){that.onStoreDtlsAdd(that.roleStore,'role'+that.id, 'RoleNode');},tooltip : 'Add', width:70}]},
-   	          	        	        	 				    {columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-   	          	        	        	 				items:[{ xtype : "tbbutton",text : 'Remove',handler: function(){that.onStoreDtlsRemove(that.roleStore,'role'+that.id);},tooltip : 'Remove', width:70}]},
-   	          	        	        	 					{columnWidth:.25,layout: 'form',bodyStyle:'padding-right:15px',
-	    	          	        	        	 			items:[{ xtype : "tbbutton",text : 'Apply',tooltip : 'Apply', width:70, handler:this.onSave, scope: this}]}
-	          	        	        	 					       ]}]
-	          	 				        	       }	]}]}];
+  		this.formData = [{
+				xtype: 'radiogroup',
+				fieldLabel: 'Template Type',
+					items: [{
+						boxLabel: 'Base Template', 
+						name: 'tempType', 
+						checked: true
+					}, {
+						boxLabel: 'Specialized Template', 
+						name: 'tempType'
+					}]
+  		}, {
+  			fieldLabel:'Name',
+  			name:'name', 
+  			xtype:'textfield', 
+  			width:400, 
+  			value:this.name,
+  			enableKeyEvents:true,
+	    	listeners: {
+      		change : function(f,newval,old){
+      			Ext.getCmp(that.id).setTitle(that.label+': {'+newval+'}');
+      		},
+      		keyup:function(f,evt){
+      			Ext.getCmp(that.id).setTitle(that.label+': {'+f.getValue()+'}');
+      		}
+      	}
+  		}, {
+  			fieldLabel:'Parent Template',
+  			name:'parentTemplate', 
+  			xtype:'textfield', 
+  			width:400, 
+  			value:this.parentTemplate
+  		}, {
+  			xtype: 'fieldset', 
+  			layout:'column', 
+  			border:false,
+   	 		items:[{
+   	 			columnWidth:.5,
+   	 			layout: 'form',
+   	 			bodyStyle:'padding-right:15px',
+					items:[{
+						xtype:'fieldset',
+						title:'Description',
+						items:[{
+							name:'description', 
+							xtype:'textarea', 
+							width:200
+						}]
+					}, {
+						xtype: 'fieldset',
+						title:'Status',
+        	  items:[{
+        	  	fieldLabel:'Authority',
+        	  	name:'authority', 
+        	  	xtype:'textfield', 
+        	  	width:200, 
+        	  	disabled:true, 
+        	  	value:this.statusAuth
+        	  }, {
+        	  	fieldLabel:'Recorded',
+        	  	name:'recorded', 
+        	  	xtype:'textfield', 
+        	  	width:200, 
+        	  	disabled:true, 
+        	  	value:this.statusClass
+        	  }, {
+        	  	fieldLabel:'Date From',
+        	  	name:'dateFrom', 
+        	  	xtype:'datefield', 
+        	  	disabled:true, 
+        	  	width:200
+        	  }, {
+        	  	fieldLabel:'Date To',
+        	  	name:'dateTo', 
+        	  	xtype:'datefield',
+        	  	disabled:true, 
+        	  	width:200
+        	  }]
+          }]
+   	 		}, {
+   	 			columnWidth:.5,
+   	 			layout: 'form',
+   	 			bodyStyle:'padding-right:15px',
+   	      items:[{
+   	      	xtype:'fieldset',
+   	      	title:'Role Definition',
+	        	items:[{
+	        		name:'roleDefinition', 
+	        		xtype:'multiselect', 
+	        		width:200, 
+	        		store:this.roleStore, 
+	        		id:'role'+that.id
+	        	}, {
+	        		fieldLabel:'Id',
+	        		name:'id', 
+	        		xtype:'textfield', 
+	        		width:200
+	        	}, {
+	        		fieldLabel:'Name',
+	        		name:'name', 
+	        		xtype:'textfield', 
+	        		width:200
+	        	}, {
+	        		fieldLabel:'Description',
+	        		name:'description', 
+	        		xtype:'textfield', 
+	        		width:200
+	        	}, {
+	        		xtype: 'fieldset', 
+	        		layout:'column', 
+	        		border:false,
+	          	items:[{
+	          		columnWidth:.25,
+	          		layout: 'form',
+	          		bodyStyle:'padding-right:15px',
+	          	  items:[{ 
+	          	  	xtype : "tbbutton",
+	          	  	text : 'Edit..',
+	          	  	tooltip : 'Edit', 
+	          	  	width:70
+	          	  }]
+	          	}, {
+	          		columnWidth:.25,
+	          		layout: 'form',
+	          		bodyStyle:'padding-right:15px',
+   	          	items:[{ 
+   	          		xtype : "tbbutton",
+   	          		text : 'Add', 
+   	          		handler: function(){
+   	          			that.onStoreDtlsAdd(that.roleStore,'role'+that.id, 'RoleNode');
+   	          		},
+   	          		tooltip : 'Add', 
+   	          		width:70
+   	          	}]
+	          	}, {
+	          		columnWidth:.25,
+	          		layout: 'form',
+	          		bodyStyle:'padding-right:15px',
+      	 				items:[{ 
+      	 					xtype : "tbbutton",
+      	 					text : 'Remove',
+      	 					handler: function(){
+      	 						that.onStoreDtlsRemove(that.roleStore,'role'+that.id);
+      	 					},
+      	 					tooltip : 'Remove', 
+      	 					width:70
+      	 				}]
+	          	}, {
+	          		columnWidth:.25,
+	          		layout: 'form',
+	          		bodyStyle:'padding-right:15px',
+        	 			items:[{ 
+        	 				xtype : "tbbutton",
+        	 				text : 'Apply',
+        	 				tooltip : 'Apply', 
+        	 				width:70, 
+        	 				handler:this.onSave, 
+        	 				scope: this
+        	 			}]
+	          	}]
+	        	}]
+   	      }]
+   	 		}]
+  		}];
   		this.formData.push({
-            xtype: 'hidden',
-            name: 'classId',
-            value: that.id
-          });
+        xtype: 'hidden',
+        name: 'classId',
+        value: that.id
+      });
   	}
     this.data_form = new Ext.FormPanel({
       labelWidth : 100, // label settings here cascade unless
@@ -268,8 +515,14 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 			  var data = [nId,selectedNode.text];
 			  store.push(data);
 		  }
-		  Ext.getCmp(id).store.loadData(store);
-
+		  
+		  var multiselect = Ext.getCmp(id);
+		  if (multiselect.store.data) {
+		  	multiselect.reset();
+		  	multiselect.store.removeAll();
+			}
+		  multiselect.store.loadData(store);
+		  multiselect.store.commitChanges();
 	  }
   },
   
@@ -285,9 +538,6 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	  }else{
 		  alert("Please select a value to be removed");
 	  }
- 
-
-
   },
 
 
@@ -302,7 +552,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 		if(this.configData == 'class'){
 			this.data_form.getForm().findField('specialization').selectAll();
 			this.data_form.getForm().findField('classification').selectAll();
-	    }
+	  }
 	  this.data_form.getForm().submit({
 	    waitMsg: 'Saving Data...',
 	    success: function(f,a){
@@ -313,7 +563,7 @@ FederationManager.ClassTemplatePanel = Ext.extend(Ext.Panel, {
 	    }
 	  });
 
-}
+	}
 });
 Ext.override(Ext.ux.form.MultiSelect, {
     selectAll : function() {	
