@@ -1,0 +1,19 @@
+#summary Date: 2011/4/12
+#labels Featured
+=iRINGTools-2.00.08.3550=
+
+A patch release of iRINGTools 2.0 that includes bug fixes.  
+
+The download is available [http://iring-tools.googlecode.com/files/iRINGTools-2.0.8.zip here].  
+The SDK can be downloaded from [http://iring-tools.googlecode.com/files/iRINGTools-SDK-2.0.6.zip here]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v2.0.1.pdf Installation Guide]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_Users_Guide_v2.0.3.pdf Users Guide]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_SDK_Guide_v2.0.2.pdf SDK Guide]
+
+== Bugs Fixed ==
+ * Includes forward compatibility fixes related to the new ExchangeManager.
+
+Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
