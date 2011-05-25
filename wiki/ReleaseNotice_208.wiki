@@ -1,5 +1,4 @@
 #summary Date: 2011/4/12
-#labels Featured
 =iRINGTools-2.00.08.3550=
 
 A patch release of iRINGTools 2.0 that includes bug fixes.  
