@@ -23,24 +23,4 @@
       </ScopeApplication>
     </Applications>
   </ScopeProject>
-  <ScopeProject>
-    <Name>25027</Name>
-    <Description>Construction Oracle Test</Description>
-    <Applications>
-      <ScopeApplication>
-        <Name>CM</Name>
-        <Description>Completions Module</Description>
-      </ScopeApplication>
-    </Applications>
-  </ScopeProject>
-  <ScopeProject>
-    <Name>44444</Name>
-    <Description>Construction SQLServer Test</Description>
-    <Applications>
-      <ScopeApplication>
-        <Name>CM</Name>
-        <Description>Completions Module</Description>
-      </ScopeApplication>
-    </Applications>
-  </ScopeProject>
 </ArrayOfScopeProject>

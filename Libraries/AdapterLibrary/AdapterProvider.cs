@@ -631,6 +631,7 @@ namespace org.iringtools.adapter
           List<string> identifiers = new List<string> { classIdentifier };
           _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
         }
+        _projectionEngine.Count = _dataObjects.Count;
 
         if (_dataObjects != null && _dataObjects.Count > 0)
         {
