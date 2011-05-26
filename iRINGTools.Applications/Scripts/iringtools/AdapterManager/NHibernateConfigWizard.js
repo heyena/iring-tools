@@ -755,7 +755,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								var relations = new Array();
 								relationCreateFormPanel.getForm().reset();
 								for (i = 0; i < node.childNodes.length; i++) {
-									relations.push([node.childNodes[i].text]);
+									if (node.childNodes[i].text != '')
+										relations.push([node.childNodes[i].text]);
 								}
 								var colModel = new Ext.grid.ColumnModel([
   										{ id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' }
@@ -764,8 +765,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									autoDestroy: true,
 									proxy: new Ext.data.MemoryProxy(relations),
 									reader: new Ext.data.ArrayReader({}, [
-  											{ name: 'relationName' }
-  										])
+  									{ name: 'relationName' }
+  								])
 								});
 								createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0);
 							}
@@ -1478,7 +1479,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							text: 'Apply',
 							tooltip: 'Apply the current changes to the data objects tree',
 							handler: function (f) {
-								var form = objectnameFormPanel.getForm();
+								var form = dataObjectFormPanel.getForm();
 								if (form.treeNode) {
 									var treeNodeProps = form.treeNode.attributes.properties;
 									treeNodeProps['objectName'] = form.findField('objectName').getValue();
@@ -1494,7 +1495,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							text: 'Reset',
 							tooltip: 'Reset to the latest applied changes',
 							handler: function (f) {
-								var form = objectnameFormPanel.getForm();
+								var form = dataObjectFormPanel.getForm();
 								form.findField('tableName').setValue(node.text);
 								if (node.attributes.properties) {
 									form.findField('objectName').setValue(node.attributes.properties.objectName);
@@ -1821,13 +1822,16 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							handler: function (f) {
 								var availProps = new Array();
 								var selectedProps = new Array();
+								var availPropsSingle = new Array();
 								for (var i = 0; i < node.childNodes.length; i++) {
 									var itemName = node.childNodes[i].text;
 									if (node.childNodes[i].hidden == false) {
 										selectedProps.push([itemName, itemName]);
 									}
-									else
+									else {
 										availProps.push([itemName, itemName]);
+										availPropsSingle.push(itemName);
+									}
 								}
 
 								if (propertiesItemSelector.fromMultiselect.store.data) {
@@ -1837,6 +1841,23 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 								propertiesItemSelector.fromMultiselect.store.loadData(availProps);
 								propertiesItemSelector.fromMultiselect.store.commitChanges();
+								var availProps = propertiesItemSelector.fromMultiselect.store.data.items;
+								var loadSingle = false;
+
+								for (var i = 0; i < availProps.length; i++) {
+									var availPropName = availProps[i].data.text;
+									if (availPropName[1].length > 1) {
+										var loadSingle = true;
+										break;
+									}
+								}
+
+								if (loadSingle) {
+									propertiesItemSelector.fromMultiselect.reset();
+									propertiesItemSelector.fromMultiselect.store.removeAll();
+									propertiesItemSelector.fromMultiselect.store.loadData(availPropsSingle);
+									propertiesItemSelector.fromMultiselect.store.commitChanges();
+								}
 
 								if (propertiesItemSelector.toMultiselect.store.data) {
 									propertiesItemSelector.toMultiselect.reset();
@@ -1886,6 +1907,18 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					loader: new Ext.tree.TreeLoader(),
 					tbar: new Ext.Toolbar({
 						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'button',
+							icon: 'Content/img/16x16/view-refresh.png',
+							text: 'Reload',
+							tooltip: 'Reload Data Objects',
+							handler: function () {
+								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+								showTree(dbObjectsTree);
+							}
+						}, {
 							xtype: 'tbspacer',
 							width: 4
 						}, {
@@ -2208,10 +2241,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			var connStrParts = connStr.split(';');
 			dbInfo = {};
 
-			for (var i = 0; i < connStrParts.length; i++) {
-				var pair = connStrParts[i].split('=');
-
-				switch (pair[0].toUpperCase()) {
+			if (!dbInfo.dbUserName)
+				for (var i = 0; i < connStrParts.length; i++) {
+					var pair = connStrParts[i].split('=');				
+					switch (pair[0].toUpperCase()) {
 					case 'DATA SOURCE':
 						var dsValue = pair[1].split('\\');
 						dbInfo.dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
@@ -2226,8 +2259,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					case 'PASSWORD':
 						dbInfo.dbPassword = pair[1];
 						break;
+					}
 				}
-			}
 
 			var treeLoader = dbObjectsTree.getLoader();
 			var rootNode = dbObjectsTree.getRootNode();
