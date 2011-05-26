@@ -13,7 +13,7 @@ namespace org.iringtools.library
   {
     protected AdapterSettings _settings = null;
     protected DataObject _dataObjectDefinition = null;
-    //protected XElement _configuration = null;
+    protected XElement _configuration = null;
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(IDataLayer));
         

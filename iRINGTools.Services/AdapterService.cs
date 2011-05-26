@@ -195,6 +195,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/datalayers")]
     public DataLayers GetDatalayers()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.GetDataLayers();
     }
 

@@ -597,6 +597,7 @@ namespace org.iringtools.adapter
           List<string> identifiers = new List<string> { classIdentifier };
           _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
         }
+        _projectionEngine.Count = _dataObjects.Count;
 
         if (_dataObjects != null && _dataObjects.Count > 0)
         {
@@ -1444,6 +1445,13 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in GetDataLayers: {0}", ex), ex);
+
+        DataLayer dataLayer = new DataLayer { 
+          Assembly = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", 
+          Name = "NHibernateLibrary", 
+          Configurable = true
+        };
+        dataLayerAssemblies.Add(dataLayer);
       }
 
       return dataLayerAssemblies;
