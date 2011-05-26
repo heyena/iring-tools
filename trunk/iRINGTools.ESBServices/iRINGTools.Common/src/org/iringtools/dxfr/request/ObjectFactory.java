@@ -30,11 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DfoRequest }
+     * Create an instance of {@link DfiRequest }
      * 
      */
-    public DfoRequest createDfoRequest() {
-        return new DfoRequest();
+    public DfiRequest createDfiRequest() {
+        return new DfiRequest();
     }
 
     /**
@@ -62,11 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DfiRequest }
+     * Create an instance of {@link DfoRequest }
      * 
      */
-    public DfiRequest createDfiRequest() {
-        return new DfiRequest();
+    public DfoRequest createDfoRequest() {
+        return new DfoRequest();
     }
 
 }

@@ -1,6 +1,8 @@
 Ext.ns('org.iringtools.apps.xmgr');
 
 function storeSort(field, dir){
+  if (field == '&nbsp;') return;
+  
   var limit = this.lastOptions.params.limit;
   
   this.lastOptions.params = {
@@ -395,11 +397,11 @@ function showIndividualInfo(individual, classIdentifier, relatedClasses){
   var classItemPane = new Ext.Container({
     region: 'north',
     layout: 'fit',
-    height: 46,
+    height: 44,
     cls: 'class-badge',
-    html: '<div style="width:60px;float:left"><img style="margin:2px 15px 2px 5px" src="resources/images/class-badge-large.png"/></div>' +
-      '<div style="width:100%;height:100%;padding-top:8px"><table><tr><td>Class</td><td>: ' + dtoGrid.description + 
-      '</td></tr><tr><td>Identifier</td><td>: ' + classIdentifier + '</td></tr></table></div>'
+    html: '<div style="width:50px;float:left"><img style="margin:2px 5px 2px 5px" src="resources/images/class-badge-large.png"/></div>' +
+      '<div style="width:100%;height:100%"><table style="height:100%"><tr><td>' + dtoGrid.description + 
+      ' (' + classIdentifier + ')</td></tr></table></div>'   
   });
   
   var rowData = dtoGrid.selModel.selections.map[dtoGrid.selModel.last].data;

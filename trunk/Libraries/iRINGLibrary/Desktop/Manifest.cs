@@ -283,7 +283,9 @@ namespace org.iringtools.dxfr.manifest
 
     private org.iringtools.dxfr.manifest.Class classField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
+    private Cardinality cardinalityField;
+
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 0)]
     public org.iringtools.mapping.RoleType type
     {
       get
@@ -360,6 +362,19 @@ namespace org.iringtools.dxfr.manifest
         this.classField = value;
       }
     }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 6)]
+    public Cardinality cardinality
+    {
+      get
+      {
+        return this.cardinalityField;
+      }
+      set
+      {
+        this.cardinalityField = value;
+      }
+    }
   }
 
   [System.Runtime.Serialization.DataContractAttribute(Name = "transferOption", Namespace = "http://www.iringtools.org/dxfr/manifest")]
@@ -367,12 +382,30 @@ namespace org.iringtools.dxfr.manifest
   {
 
     [System.Runtime.Serialization.EnumMemberAttribute()]
+    Unknown,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
     Desired,
 
     [System.Runtime.Serialization.EnumMemberAttribute()]
     Required,
   }
+
+  [System.Runtime.Serialization.DataContractAttribute(Name = "cardinality", Namespace = "http://www.iringtools.org/dxfr/manifest")]
+  public enum Cardinality
+  {
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    Unknown,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    OneToOne,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
+    OneToMany,
+  }
 }
+
 namespace org.iringtools.mapping
 {
   using System.Runtime.Serialization;
@@ -761,7 +794,7 @@ namespace org.iringtools.mapping
 
     private org.iringtools.mapping.ClassMap classMapField;
 
-    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
+    [System.Runtime.Serialization.DataMemberAttribute(Order = 0)]
     public org.iringtools.mapping.RoleType type
     {
       get

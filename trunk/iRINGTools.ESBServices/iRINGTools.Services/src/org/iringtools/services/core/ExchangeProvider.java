@@ -92,9 +92,27 @@ public class ExchangeProvider
 
     return directory;
   }
+  
+  public Manifest getManifest(String scope, String id)
+  {
+    logger.debug("getManifest(" + scope + "," + id + ")");
+    Manifest manifest = null;
+
+    try
+    {
+      initExchangeDefinition(scope, id);
+      manifest = createCrossedManifest();
+    }
+    catch (Exception ex)
+    {
+      logger.error(ex);
+    }
+    
+    return manifest;
+  }
 
   // get dxi without filter
-  public DataTransferIndices getDataTransferIndices(String scope, String id)
+  public DataTransferIndices getDataTransferIndices(String scope, String id, Manifest manifest)
   {
     DataTransferIndices dxis = null;
 
@@ -105,11 +123,9 @@ public class ExchangeProvider
       // init exchange definition
       initExchangeDefinition(scope, id);
       
-      Manifest crossedManifest = getCrossedManifest();
-      
       // get source dti
       String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
-      DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, crossedManifest);
+      DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, manifest);
       
       if (sourceDtis != null)
       {
@@ -119,7 +135,7 @@ public class ExchangeProvider
 
       // get target dti
       String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
-      DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, crossedManifest);
+      DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, manifest);
       
       if (targetDtis != null)
       {
@@ -149,33 +165,32 @@ public class ExchangeProvider
   }
 
   // get dxi with filter
-  public DataTransferIndices getDataTransferIndices(String scope, String id, String destination, DataFilter dataFilter)
+  public DataTransferIndices getDataTransferIndices(String scope, String id, String destination, DxiRequest dxiRequest)
   {
     DataTransferIndices dxis = null;
 
     try 
     {
       logger.debug("getDataTransferIndices(" + scope + "," + id + ")");
-
-      // init exchange definition
+      Manifest manifest = dxiRequest.getManifest();
+      DataFilter dataFilter = dxiRequest.getDataFilter();
+      
       initExchangeDefinition(scope, id);
 
-      Manifest crossedManifest = getCrossedManifest();
-
-      DxiRequest dxiRequest = new DxiRequest();
-      dxiRequest.setDataFilter(dataFilter);
-      dxiRequest.setManifest(crossedManifest);
+      DxiRequest adapterDxiRequest = new DxiRequest();
+      adapterDxiRequest.setDataFilter(dataFilter);
+      adapterDxiRequest.setManifest(manifest);
       
       if (destination.equalsIgnoreCase("source"))
       {
         // get source dti
         String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
-        dxis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, dxiRequest);        
+        dxis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, adapterDxiRequest);        
       }
       else 
       {
         String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
-        dxis = httpClient.post(DataTransferIndices.class, targetDtiUrl, dxiRequest);
+        dxis = httpClient.post(DataTransferIndices.class, targetDtiUrl, adapterDxiRequest);
       }
     }
     catch (Exception ex)
@@ -186,7 +201,7 @@ public class ExchangeProvider
     return dxis;
   }
   
-  public DataTransferObjects getDataTransferObjects(String scope, String id, DataTransferIndices dtis)
+  public DataTransferObjects getDataTransferObjects(String scope, String id, DxoRequest dxoRequest)
   {
     DataTransferObjects resultDtos = new DataTransferObjects();
     DataTransferObjects sourceDtos = null;
@@ -194,16 +209,17 @@ public class ExchangeProvider
 
     try
     {
-      logger.debug("getDataTransferObjects(" + scope + "," + id + "," + JaxbUtils.toXml(dtis, true) + ")");
+      logger.debug("getDataTransferObjects(" + scope + "," + id + "," + JaxbUtils.toXml(dxoRequest, true) + ")");
+      
+      Manifest manifest = dxoRequest.getManifest();
+      DataTransferIndices dtis = dxoRequest.getDataTransferIndices();
 
       DataTransferObjectList resultDtoList = new DataTransferObjectList();
       resultDtos.setDataTransferObjectList(resultDtoList);
       List<DataTransferObject> resultDtoListItems = resultDtoList.getItems();
 
-      // init exchange definition
       initExchangeDefinition(scope, id);
       
-      Manifest crossedManifest = getCrossedManifest();      
       List<DataTransferIndex> sourceDtiListItems = new ArrayList<DataTransferIndex>();
       List<DataTransferIndex> targetDtiListItems = new ArrayList<DataTransferIndex>();
 
@@ -231,7 +247,7 @@ public class ExchangeProvider
       if (sourceDtiListItems.size() > 0)
       {
         DxoRequest sourceDxoRequest = new DxoRequest();
-        sourceDxoRequest.setManifest(crossedManifest);
+        sourceDxoRequest.setManifest(manifest);
         DataTransferIndices sourceDtis = new DataTransferIndices();
         DataTransferIndexList sourceDtiList = new DataTransferIndexList();        
         sourceDtiList.setItems(sourceDtiListItems);
@@ -286,7 +302,7 @@ public class ExchangeProvider
       if (targetDtiListItems.size() > 0)
       {
         DxoRequest targetDxoRequest = new DxoRequest();
-        targetDxoRequest.setManifest(crossedManifest);
+        targetDxoRequest.setManifest(manifest);
         DataTransferIndices targetDtis = new DataTransferIndices();
         DataTransferIndexList targetDtiList = new DataTransferIndexList();
         targetDtiList.setItems(targetDtiListItems);
@@ -391,7 +407,8 @@ public class ExchangeProvider
       if (exchangeRequest == null)
         return null;
 
-      DataTransferIndices dtis = exchangeRequest.getDataTransferIndices();
+      Manifest manifest = exchangeRequest.getManifest();
+      DataTransferIndices dtis = exchangeRequest.getDataTransferIndices();      
       
       if (dtis == null)
         return null;
@@ -401,7 +418,6 @@ public class ExchangeProvider
       if (dtiList.size() == 0)
         return null;
 
-      // init exchange definition
       initExchangeDefinition(scope, id);
       
       // add exchange definition info to exchange response
@@ -419,8 +435,6 @@ public class ExchangeProvider
       String targetGraphUrl = targetAppUrl + "/" + targetGraphName;
       String sourceGraphUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName;
 
-      Manifest crossedManifest = getCrossedManifest();
-      
       // create a pool (page) DTOs to send to target endpoint
       int dtiSize = dtiList.size();
       int webXmlPoolSize = Integer.parseInt(settings.get("poolSize"));
@@ -453,7 +467,7 @@ public class ExchangeProvider
         }
 
         // only include SYNC DTIs if the DTOs have been reviewed         
-        if (exchangeRequest.isReviewed())
+        if (exchangeRequest.getReviewed())
           sourcePoolDtiList.addAll(syncDtiList);
 
         DataTransferObjects sourceDtos = null;
@@ -462,7 +476,7 @@ public class ExchangeProvider
         {
           // request source DTOs
           DxoRequest poolDxoRequest = new DxoRequest();
-          poolDxoRequest.setManifest(crossedManifest);
+          poolDxoRequest.setManifest(manifest);
           DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
           poolDxoRequest.setDataTransferIndices(poolDataTransferIndices);
           DataTransferIndexList poolDtiList = new DataTransferIndexList();
@@ -486,7 +500,7 @@ public class ExchangeProvider
               {
                 if (dti.getIdentifier().equals(identifier))
                 {
-                  if (exchangeRequest.isReviewed())
+                  if (exchangeRequest.getReviewed())
                   {
                     sourcePoolDtiList.remove(dti);
                     String hashValue = md5Hash(sourceDto);
@@ -525,7 +539,7 @@ public class ExchangeProvider
         }
         
         // report DTOs that were deleted during review and acceptance
-        if (exchangeRequest.isReviewed() && sourcePoolDtiList.size() > 0)
+        if (exchangeRequest.getReviewed() && sourcePoolDtiList.size() > 0)
         {
           for (DataTransferIndex sourceDti : sourcePoolDtiList)
           {
@@ -720,7 +734,7 @@ public class ExchangeProvider
     return DigestUtils.md5Hex(values.toString());
   }
   
-  private Manifest getCrossedManifest() throws Exception
+  private Manifest createCrossedManifest() throws Exception
   {
     // get source manifest
     String sourceManifestUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/manifest";

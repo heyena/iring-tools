@@ -5,14 +5,6 @@
   elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
   jaxb:version="2.1" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
 
-  <xs:annotation>
-    <xs:appinfo>
-      <jaxb:globalBindings>
-        <xjc:simple />
-      </jaxb:globalBindings>
-    </xs:appinfo>
-  </xs:annotation>
-
   <xs:import namespace="http://www.iringtools.org/mapping" schemaLocation="../mapping/mapping.xsd" />
 
   <xs:element name="manifest" type="Manifest" />
@@ -110,6 +102,7 @@
       <xs:element name="dataType" type="xs:string" />
       <xs:element name="value" type="xs:string" />
       <xs:element name="class" type="Class" />
+      <xs:element name="cardinality" type="Cardinality" minOccurs="0"/>
     </xs:sequence>
   </xs:complexType>
   
@@ -117,6 +110,13 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="Desired" />
       <xs:enumeration value="Required" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="Cardinality">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="OneToOne" />
+      <xs:enumeration value="OneToMany" />
     </xs:restriction>
   </xs:simpleType>
 </xs:schema>

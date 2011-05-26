@@ -99,6 +99,7 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
     
       columns[i] = {
         header: field.name,
+        width: field.width,
         dataIndex: field.dataIndex,
         sortable: field.sortable,
         renderer: renderer,
@@ -107,7 +108,6 @@ Ext.grid.DynamicColumnModel = Ext.extend(Ext.grid.ColumnModel, {
       
       if (field.fixed) {
         columns[i].fixed = true;
-        columns[i].width = field.width;
         columns[i].menuDisabled = true;
       }
     }

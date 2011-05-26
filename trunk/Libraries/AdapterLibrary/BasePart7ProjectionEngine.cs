@@ -83,7 +83,7 @@ namespace org.iringtools.adapter.projection
     protected Dictionary<string, string>[] _dataRecords = null;
     //protected Dictionary<string, List<string>> _classIdentifiers = null;
     protected List<string> _relatedObjectPaths = null;
-    protected string _fixedIdentifierBoundary = String.Empty;
+    protected string _fixedIdentifierBoundary = "#";
 
     // key is related object type at a data object index and value is list of related objects 
     protected Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
@@ -111,11 +111,7 @@ namespace org.iringtools.adapter.projection
       _mapping = mapping;
       _dictionary = _dataLayer.GetDictionary();
 
-      if (String.IsNullOrEmpty(_settings["fixedIdentifierBoundary"]))
-      {
-        _fixedIdentifierBoundary = "#";
-      }
-      else
+      if (!String.IsNullOrEmpty(_settings["fixedIdentifierBoundary"]))
       {
         _fixedIdentifierBoundary = _settings["fixedIdentifierBoundary"];
       }
