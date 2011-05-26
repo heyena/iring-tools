@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="relatedClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="hasValueMap" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="values" type="{http://www.iringtools.org/dxfr/dto}RoleValues" minOccurs="0"/>
+ *         &lt;element name="oldValues" type="{http://www.iringtools.org/dxfr/dto}RoleValues" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -46,7 +47,8 @@ import javax.xml.bind.annotation.XmlType;
     "relatedClassId",
     "relatedClassName",
     "hasValueMap",
-    "values"
+    "values",
+    "oldValues"
 })
 public class RoleObject {
 
@@ -62,6 +64,7 @@ public class RoleObject {
     protected String relatedClassName;
     protected Boolean hasValueMap;
     protected RoleValues values;
+    protected RoleValues oldValues;
 
     /**
      * Gets the value of the type property.
@@ -302,6 +305,30 @@ public class RoleObject {
      */
     public void setValues(RoleValues value) {
         this.values = value;
+    }
+
+    /**
+     * Gets the value of the oldValues property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link RoleValues }
+     *     
+     */
+    public RoleValues getOldValues() {
+        return oldValues;
+    }
+
+    /**
+     * Sets the value of the oldValues property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link RoleValues }
+     *     
+     */
+    public void setOldValues(RoleValues value) {
+        this.oldValues = value;
     }
 
 }

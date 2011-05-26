@@ -12,10 +12,12 @@ import javax.ws.rs.QueryParam;
 import javax.xml.bind.JAXBException;
 
 import org.apache.log4j.Logger;
-import org.iringtools.data.filter.DataFilter;
 import org.iringtools.directory.Directory;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
+import org.iringtools.dxfr.manifest.Manifest;
+import org.iringtools.dxfr.request.DxiRequest;
+import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.services.core.ExchangeProvider;
@@ -45,28 +47,28 @@ public class ExchangeService extends AbstractService
     
     return directory;
   }
-
+  
   @GET
-  @Path("/{scope}/exchanges/{id}")
+  @Path("/{scope}/exchanges/{id}/manifest")
   @Consumes("application/xml")
-  public DataTransferIndices getDataTransferIndices(
-		  @PathParam("scope") String scope, 
-		  @PathParam("id") String id)
+  public Manifest getManifest(
+      @PathParam("scope") String scope, 
+      @PathParam("id") String id)
   {
-    DataTransferIndices dataTransferIndices = null;
+    Manifest manifest = null;
     
     try
     {
       initService();
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
-      dataTransferIndices = exchangeProvider.getDataTransferIndices(scope, id);
+      manifest = exchangeProvider.getManifest(scope, id);
     }
     catch (Exception ex)
     {
-      logger.error("Error in getDataTransferIndices(): " + ex);
+      logger.error("Error in getManifest(): " + ex);
     }
     
-    return dataTransferIndices;
+    return manifest;
   }
   
   @POST
@@ -76,7 +78,7 @@ public class ExchangeService extends AbstractService
       @PathParam("scope") String scope, 
       @PathParam("id") String id,
       @QueryParam("destination") String destination,
-      DataFilter dataFilter) 
+      DxiRequest dxiRequest) 
   {
     DataTransferIndices dataTransferIndices = null;
     
@@ -84,7 +86,15 @@ public class ExchangeService extends AbstractService
     {
       initService();
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
-      dataTransferIndices = exchangeProvider.getDataTransferIndices(scope, id, destination, dataFilter);
+      
+      if (destination == null || destination.length() == 0)
+      {
+        dataTransferIndices = exchangeProvider.getDataTransferIndices(scope, id, dxiRequest.getManifest());
+      }
+      else
+      {
+        dataTransferIndices = exchangeProvider.getDataTransferIndices(scope, id, destination, dxiRequest);
+      }
     }
     catch (Exception ex)
     {
@@ -98,7 +108,7 @@ public class ExchangeService extends AbstractService
   @Path("/{scope}/exchanges/{id}/page")
   @Consumes("application/xml")
   public DataTransferObjects getDataTransferObjects(@PathParam("scope") String scope, @PathParam("id") String id,
-      DataTransferIndices dataTransferIndices)
+      DxoRequest dxoRequest)
   {
     DataTransferObjects dataTransferObjects = null;
     
@@ -106,7 +116,7 @@ public class ExchangeService extends AbstractService
     {
       initService();
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
-      dataTransferObjects = exchangeProvider.getDataTransferObjects(scope, id, dataTransferIndices);
+      dataTransferObjects = exchangeProvider.getDataTransferObjects(scope, id, dxoRequest);
     }
     catch (Exception ex)
     {

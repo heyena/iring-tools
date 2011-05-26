@@ -309,20 +309,50 @@ public class DifferencingProvider
                         targetRoleType == RoleType.FIXED_VALUE)
                     {
                       RoleObject sourceRoleObject = getRoleObject(sourceRoleObjectList, targetRoleObject.getRoleId());
-        
+
                       if (sourceRoleObject != null)
                       {
-                        String targetRoleValue = targetRoleObject.getValue();
-                        String sourceRoleValue = sourceRoleObject.getValue();
-          
-                        if (targetRoleValue == null)
-                          targetRoleValue = "";
-                        if (sourceRoleValue == null)
-                          sourceRoleValue = "";
-          
-                        sourceRoleObject.setOldValue(targetRoleValue);
-          
-                        if (!targetRoleValue.equals(sourceRoleValue))
+                        boolean changed = false;
+                        
+                        if (sourceRoleObject.getValues() != null)
+                        {
+                          List<String> sourceValues = sourceRoleObject.getValues().getItems();
+                          
+                          if (targetRoleObject.getValues() != null)
+                          {
+                            List<String> targetValues = targetRoleObject.getValues().getItems();
+                            
+                            if (!(sourceValues.size() == targetValues.size() && sourceValues.containsAll(targetValues)))
+                            {
+                              changed = true;
+                            }
+                          }
+                          else
+                          {
+                            changed = true;
+                          }
+                          
+                          sourceRoleObject.getOldValues().setItems(targetRoleObject.getValues().getItems());
+                        }
+                        else
+                        {
+                          String targetRoleValue = targetRoleObject.getValue();
+                          String sourceRoleValue = sourceRoleObject.getValue();
+            
+                          if (targetRoleValue == null)
+                            targetRoleValue = "";
+                          if (sourceRoleValue == null)
+                            sourceRoleValue = "";
+            
+                          sourceRoleObject.setOldValue(targetRoleValue);
+            
+                          if (!targetRoleValue.equals(sourceRoleValue))
+                          {
+                            changed = true;
+                          }
+                        }
+                        
+                        if (changed)
                         {
                           sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
                           sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);

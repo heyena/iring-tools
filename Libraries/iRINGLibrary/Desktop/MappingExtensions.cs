@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Linq;
 using org.iringtools.dxfr.manifest;
 using org.iringtools.utility;
+using org.iringtools.library;
 
 namespace org.iringtools.mapping
 {
@@ -124,9 +125,9 @@ namespace org.iringtools.mapping
       {
         foreach (ClassTemplateMap classTemplateMap in graphMap.classTemplateMaps)
         {
-          if (classTemplateMap.classMap != null && 
-					  Utility.TitleCase(classTemplateMap.classMap.name).ToLower() == 
-						  Utility.TitleCase(className).ToLower())
+          if (classTemplateMap.classMap != null &&
+            Utility.TitleCase(classTemplateMap.classMap.name).ToLower() ==
+              Utility.TitleCase(className).ToLower())
             return classTemplateMap;
         }
       }
@@ -181,118 +182,147 @@ namespace org.iringtools.mapping
     public static bool IsMapped(this RoleMap roleMap)
     {
       return roleMap.classMap != null ||
-        !String.IsNullOrEmpty(roleMap.propertyName) || 
-        !String.IsNullOrEmpty(roleMap.value) || roleMap.type == RoleType.Possessor;     
+        !String.IsNullOrEmpty(roleMap.propertyName) ||
+        !String.IsNullOrEmpty(roleMap.value) || roleMap.type == RoleType.Possessor;
     }
 
-      public static string ResolveValueMap(this Mapping mapping, string valueListName, string qualifiedUri)
-      {
-        string uri = qualifiedUri.Replace(RDL_NS, "rdl:");
+    public static string ResolveValueMap(this Mapping mapping, string valueListName, string qualifiedUri)
+    {
+      string uri = qualifiedUri.Replace(RDL_NS, "rdl:");
 
+      foreach (ValueListMap valueListMap in mapping.valueListMaps)
+      {
+        if (valueListMap.name == valueListName)
+        {
+          foreach (ValueMap valueMap in valueListMap.valueMaps)
+          {
+            if (valueMap.uri == uri)
+            {
+              return valueMap.internalValue;
+            }
+          }
+        }
+      }
+
+      return String.Empty;
+    }
+
+    public static string ResolveValueList(this Mapping mapping, string valueListName, string value)
+    {
+      if (mapping.valueListMaps != null)
+      {
         foreach (ValueListMap valueListMap in mapping.valueListMaps)
         {
           if (valueListMap.name == valueListName)
           {
             foreach (ValueMap valueMap in valueListMap.valueMaps)
             {
-              if (valueMap.uri == uri)
+              if (valueMap.internalValue == value)
               {
-                return valueMap.internalValue;
+                return valueMap.uri;  // uri with prefix
               }
             }
           }
         }
-
-        return String.Empty;
       }
 
-      public static string ResolveValueList(this Mapping mapping, string valueListName, string value)
-      {
-          if (mapping.valueListMaps != null)
-          {
-              foreach (ValueListMap valueListMap in mapping.valueListMaps)
-              {
-                  if (valueListMap.name == valueListName)
-                  {
-                      foreach (ValueMap valueMap in valueListMap.valueMaps)
-                      {
-                          if (valueMap.internalValue == value)
-                          {
-                              return valueMap.uri;  // uri with prefix
-                          }
-                      }
-                  }
-              }
-          }
-
-        return RDF_NIL;
-      }
-
-      public static ClassMap Clone(this ClassMap classMap)
-      {
-        ClassMap newClassMap = new ClassMap
-        {
-          id = classMap.id,
-          name = classMap.name,
-          identifierDelimiter = classMap.identifierDelimiter,
-          identifiers = new Identifiers(),
-        };
-
-        foreach (string identifier in classMap.identifiers)
-        {
-          newClassMap.identifiers.Add(identifier);
-        }
-
-        return newClassMap;
-      }
-
-      public static TemplateMap Clone(this TemplateMap templateMap)
-      {
-        TemplateMap clone = new TemplateMap
-        {
-          id = templateMap.id,
-          name = templateMap.name,
-          roleMaps = new RoleMaps(),
-        };
-        
-        foreach (RoleMap roleMap in templateMap.roleMaps)
-        {
-          clone.roleMaps.Add(roleMap.Clone());
-        }
-
-        return clone;
-      }
-
-      public static RoleMap Clone(this RoleMap roleMap)
-      {
-        RoleMap clone = new RoleMap
-        {
-          type = roleMap.type,
-          id = roleMap.id,
-          name = roleMap.name,
-          dataType = roleMap.dataType,
-          propertyName = roleMap.propertyName,
-          value = roleMap.value,
-          valueListName = roleMap.valueListName,
-          classMap = roleMap.classMap,
-        };
-
-        return clone;
-      }
+      return RDF_NIL;
     }
 
-    //  public void DeleteRoleMap(TemplateMap templateMap, string roleId)
-    //  {
-    //    RoleMap roleMap = templateMap.RoleMaps.Where(c => c.RoleId == roleId).FirstOrDefault();
-    //    if (roleMap != null)
-    //    {
-    //      if (roleMap.classMap != null)
-    //      {
-    //        DeleteClassMap(roleMap.classMap.classId);
-    //        roleMap.classMap = null;
-    //      }
-    //    }
-    //  }
+    public static ClassMap Clone(this ClassMap classMap)
+    {
+      ClassMap newClassMap = new ClassMap
+      {
+        id = classMap.id,
+        name = classMap.name,
+        identifierDelimiter = classMap.identifierDelimiter,
+        identifiers = new Identifiers(),
+      };
+
+      foreach (string identifier in classMap.identifiers)
+      {
+        newClassMap.identifiers.Add(identifier);
+      }
+
+      return newClassMap;
+    }
+
+    public static TemplateMap Clone(this TemplateMap templateMap)
+    {
+      TemplateMap clone = new TemplateMap
+      {
+        id = templateMap.id,
+        name = templateMap.name,
+        roleMaps = new RoleMaps(),
+      };
+
+      foreach (RoleMap roleMap in templateMap.roleMaps)
+      {
+        clone.roleMaps.Add(roleMap.Clone());
+      }
+
+      return clone;
+    }
+
+    public static RoleMap Clone(this RoleMap roleMap)
+    {
+      RoleMap clone = new RoleMap
+      {
+        type = roleMap.type,
+        id = roleMap.id,
+        name = roleMap.name,
+        dataType = roleMap.dataType,
+        propertyName = roleMap.propertyName,
+        value = roleMap.value,
+        valueListName = roleMap.valueListName,
+        classMap = roleMap.classMap,
+      };
+
+      return clone;
+    }
+
+    public static Cardinality GetCardinality(this RoleMap mappingRole, DataDictionary dataDictionary, string fixedIdentifierBoundary)
+    {
+      Cardinality cardinality = Cardinality.OneToOne;
+
+      // determine cardinality to related class
+      foreach (string identifier in mappingRole.classMap.identifiers)
+      {
+        if (!(identifier.StartsWith(fixedIdentifierBoundary) && identifier.EndsWith(fixedIdentifierBoundary)))
+        {
+          string[] propertyParts = identifier.Split('.');
+
+          if (propertyParts.Length > 2)
+          {
+            DataObject dataObject = dataDictionary.dataObjects.First(c => c.objectName == propertyParts[0]);
+            DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName == propertyParts[1]);
+
+            if (dataRelationship.relationshipType == RelationshipType.OneToMany)
+            {
+              cardinality = Cardinality.OneToMany;
+            }
+
+            break;
+          }
+        }
+      }
+
+      return cardinality;
+    }
+  }
+
+  //  public void DeleteRoleMap(TemplateMap templateMap, string roleId)
+  //  {
+  //    RoleMap roleMap = templateMap.RoleMaps.Where(c => c.RoleId == roleId).FirstOrDefault();
+  //    if (roleMap != null)
+  //    {
+  //      if (roleMap.classMap != null)
+  //      {
+  //        DeleteClassMap(roleMap.classMap.classId);
+  //        roleMap.classMap = null;
+  //      }
+  //    }
+  //  }
 
   //[DataContract(Namespace = "http://www.iringtools.org/common/mapping", Name = "mapping")]
   //public class Mapping : RootBase

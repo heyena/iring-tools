@@ -63,6 +63,7 @@
 
   <xs:complexType name="ExchangeRequest">
     <xs:sequence>
+      <xs:element name="manifest" type="mnf:Manifest" />
       <xs:element name="dataTransferIndices" type="dti:DataTransferIndices" />
       <xs:element name="reviewed" type="xs:boolean" />
     </xs:sequence>

@@ -75,7 +75,7 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ----------------------------
   public String getPageRelatedItems() 
   {
-    pageRelatedItemGrid = exchangeDataModel.getRelatedItemGrid(exchangeServiceUri, scope, xid, 
+    pageRelatedItemGrid = exchangeDataModel.getRelatedDtoGrid(exchangeServiceUri, scope, xid, 
         individual, classId, classIdentifier, filter, sort, dir, start, limit);
     return SUCCESS;
   }

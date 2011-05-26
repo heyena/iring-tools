@@ -12,6 +12,8 @@ import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Status;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
+import org.iringtools.dxfr.manifest.Graph;
+import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
@@ -34,32 +36,54 @@ public class ExchangeDataModel extends DataModel
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
-    DataTransferObjects pageDtos = getPageDtos(DataType.EXCHANGE, serviceUri, dtiRelativePath, dtoRelativePath, filter, sortBy, 
-        sortOrder, start, limit);
-    Grid pageDtoGrid = getDtoGrid(DataType.EXCHANGE, pageDtos, refServiceUri);
-    DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
-    pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());
+    String manifestRelativePath = dtiRelativePath + "/manifest";
+    
+    Grid pageDtoGrid = null;
+    Manifest manifest = getManifest(serviceUri, manifestRelativePath);
+    
+    if (manifest != null && manifest.getGraphs() != null)
+    {
+      Graph graph = manifest.getGraphs().getItems().get(0);
+      
+      if (graph != null)
+      {
+        DataTransferObjects pageDtos = getPageDtos(Mode.EXCHANGE, serviceUri, manifestRelativePath, dtiRelativePath, 
+            dtoRelativePath, filter, sortBy, sortOrder, start, limit);
+        
+        pageDtoGrid = getDtoGrid(Mode.EXCHANGE, graph, pageDtos, refServiceUri);
+        DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
+        pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());
+      }      
+    }
+    
     return pageDtoGrid;
   }
 
-  public Grid getRelatedItemGrid(String serviceUri, String scope, String xid, String dtoIdentifier,
+  public Grid getRelatedDtoGrid(String serviceUri, String scope, String xid, String dtoIdentifier,
       String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
-    DataTransferObjects dtos = getRelatedDtos(serviceUri, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter, sortBy,
-        sortOrder, start, limit);
-    return getRelatedItemGrid(DataType.EXCHANGE, dtos, classId, classIdentifier);
+    String manifestRelativePath = dtiRelativePath + "/manifest";
+    
+    DataTransferObjects dtos = getRelatedDtos(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, 
+        dtoIdentifier, filter, sortBy, sortOrder, start, limit);
+    
+    return getRelatedDtoGrid(Mode.EXCHANGE, dtos, classId, classIdentifier);
   }
 
   public ExchangeResponse submitExchange(String serviceUri, String scope, String xid, boolean reviewed)
   {
     String exchangeRelativePath = "/" + scope + "/exchanges/" + xid;
-    //DataTransferIndices dtis = getDtis(DataType.EXCHANGE, serviceUri, exchangeRelativePath, filter, null, null);
-    DataTransferIndices dtis = getCachedDtis(exchangeRelativePath);
+    String manifestRelativePath = exchangeRelativePath + "/manifest";
+    
+    Manifest manifest = getManifest(serviceUri, manifestRelativePath);
+    //DataTransferIndices dtis = getDtis(Mode.EXCHANGE, serviceUri, exchangeRelativePath, filter, null, null);
+    DataTransferIndices dtis = getCachedDtis(exchangeRelativePath);    
 
     ExchangeResponse response;
     ExchangeRequest request = new ExchangeRequest();
+    request.setManifest(manifest);
     request.setDataTransferIndices(dtis);
     request.setReviewed(reviewed);
 
@@ -68,14 +92,17 @@ public class ExchangeDataModel extends DataModel
       HttpClient httpClient = new HttpClient(serviceUri + exchangeRelativePath);
       response = httpClient.post(ExchangeResponse.class, "/submit", request);
 
-      // remove cache data related to this exchange including the app data
-      String appRelativePath = response.getReceiverScopeName() + "/" + response.getReceiverAppName() + "/"
-        + response.getReceiverGraphName();
-      
-      for (String key : session.keySet())
+      if (response.getLevel() != Level.ERROR)
       {
-        if (key.contains(exchangeRelativePath) || key.contains(appRelativePath))
-          removeSessionData(key);
+        // remove cache data related to this exchange including the app data
+        String appRelativePath = response.getReceiverScopeName() + "/" + response.getReceiverAppName() + "/"
+          + response.getReceiverGraphName();
+        
+        for (String key : session.keySet())
+        {
+          if (key.contains(exchangeRelativePath) || key.contains(appRelativePath))
+            removeSessionData(key);
+        }
       }
     }
     catch (HttpClientException ex)

@@ -62,7 +62,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ----------------------------
   public String getPageRelatedItems() 
   {
-    pageRelatedItemGrid = appDataModel.getRelatedItemGrid(baseUri, scope, app, graph, individual, classId, classIdentifier,
+    pageRelatedItemGrid = appDataModel.getRelatedDtoGrid(baseUri, scope, app, graph, individual, classId, classIdentifier,
         filter, sort, dir, start, limit);
     return SUCCESS;
   }

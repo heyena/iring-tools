@@ -66,6 +66,7 @@ namespace org.iringtools.adapter
     private GraphMap _graphMap = null;
     private bool _isScopeInitialized = false;
     private bool _isDataLayerInitialized = false;
+    protected string _fixedIdentifierBoundary = "#";
 
     [Inject]
     public DataTranferProvider(NameValueCollection settings)
@@ -78,6 +79,11 @@ namespace org.iringtools.adapter
       _settings.AppendSettings(settings);
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+      if (!String.IsNullOrEmpty(_settings["fixedIdentifierBoundary"]))
+      {
+        _fixedIdentifierBoundary = _settings["fixedIdentifierBoundary"];
+      }
 
       if (ServiceSecurityContext.Current != null)
       {
@@ -110,7 +116,6 @@ namespace org.iringtools.adapter
       _kernel.Load(bindingConfigurationPath);
       InitializeIdentity();
     }
-
 
     public VersionInfo GetVersion()
     {
@@ -219,6 +224,9 @@ namespace org.iringtools.adapter
 
                   if (roleMap.classMap != null)
                   {
+                    Cardinality cardinality = roleMap.GetCardinality(_dataDictionary, _fixedIdentifierBoundary);
+                    manifestRole.cardinality = cardinality;
+
                     manifestRole.@class = new Class
                     {
                       id = roleMap.classMap.id,
@@ -783,6 +791,18 @@ namespace org.iringtools.adapter
                     {
                       if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id)
                       {
+                        Cardinality cardinality = mappingRole.GetCardinality(_dataDictionary, _fixedIdentifierBoundary);
+
+                        // get crossed role map and set its cardinality
+                        foreach (RoleMap crossedRoleMap in crossedTemplateMap.roleMaps)
+                        {
+                          if (crossedRoleMap.id == mappingRole.id)
+                          {
+                            manifestRole.cardinality = cardinality;
+                            break;
+                          }
+                        }
+
                         RecurBuildCrossGraphMap(ref manifestGraph, manifestRole.@class, mappingGraph, mappingRole.classMap);
                       }
                     }
