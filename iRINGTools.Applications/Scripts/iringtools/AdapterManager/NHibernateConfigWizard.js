@@ -20,7 +20,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (editPane.items.map[scopeName + '.' + appName + '.keyPropertyForm.' + node.id]) {
 					var keyPropertyFormPane = editPane.items.map[scopeName + '.' + appName + '.keyPropertyForm.' + node.id];
 					if (keyPropertyFormPane) {
-						keyPropertyFormPane.destroy();
+						//keyPropertyFormPane.destroy();
+						var panelIndex = editPane.items.indexOf(keyPropertyFormPane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
 					}
 				}
 
@@ -65,9 +68,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-save.png',
-							text: 'Save',
-							tooltip: 'Save',
+							//icon: 'Content/img/16x16/document-save.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
 							handler: function (f) {
 								var form = keyPropertyFormPanel.getForm();
 								var treeNodeProps = form.treeNode.attributes.properties;
@@ -88,7 +91,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'tbbutton',
 							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
-							tooltip: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
 							handler: function (f) {
 								var form = keyPropertyFormPanel.getForm();
 								setDataPropertyFields(form, properties);
@@ -111,7 +114,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (editPane.items.map[scopeName + '.' + appName + '.dataPropertyForm.' + node.id]) {
 					var dataPropertyFormPane = editPane.items.map[scopeName + '.' + appName + '.dataPropertyForm.' + node.id];
 					if (dataPropertyFormPane) {
-						dataPropertyFormPane.destroy();
+						//dataPropertyFormPane.destroy();
+						var panelIndex = editPane.items.indexOf(dataPropertyFormPane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
 					}
 				}
 
@@ -137,9 +143,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-save.png',
-							text: 'Save',
-							tooltip: 'Save',
+							//icon: 'Content/img/16x16/document-save.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
 							handler: function (f) {
 								var form = dataPropertyFormPanel.getForm();
 								if (form.treeNode) {
@@ -159,7 +165,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'tbbutton',
 							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
-							tooltip: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
 							handler: function (f) {
 								var form = dataPropertyFormPanel.getForm();
 								setDataPropertyFields(form, node.attributes.properties);
@@ -215,9 +221,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (editPane.items.map[scopeName + '.' + appName + '.dsconfigPane']) {
 					var dsConfigPanel = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
 					if (dsConfigPanel) {
+						//						var panelIndex = editPane.items.indexOf(dsConfigPanel);
+						//						editPane.getLayout().setActiveItem(panelIndex);
+						//						dsConfigPanel.show();
 						var panelIndex = editPane.items.indexOf(dsConfigPanel);
 						editPane.getLayout().setActiveItem(panelIndex);
-						dsConfigPanel.show();
 						return;
 					}
 				}
@@ -333,7 +341,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'tbbutton',
 							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
-							tooltip: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
 							handler: function (f) {
 								setDsConfigPane();
 							}
@@ -415,8 +423,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			if (editPane) {
 				if (editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane']) {
 					var tableSelectorPanel = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
-					if (tableSelectorPanel)
-						tableSelectorPanel.destroy();
+					if (tableSelectorPanel) {
+						//tableSelectorPanel.destroy();
+						var panelIndex = editPane.items.indexOf(tableSelectorPanel);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
+					}
 				}
 
 				var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
@@ -478,9 +490,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-save.png',
-							text: 'Save',
-							tooltip: 'Save',
+							//icon: 'Content/img/16x16/document-save.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
 							handler: function () {
 								var editPane = dataObjectsPane.items.items[1];
 								var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
@@ -554,7 +566,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'tbbutton',
 							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
-							tooltip: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
 							handler: function () {
 								var rootNode = dataObjectsPane.items.items[0].items.items[0].getRootNode();
 								var selectTableNames = new Array();
@@ -629,9 +641,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var setRelations = function (editPane, node) {
 			if (editPane && node) {
 				if (editPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + node.id]) {
-					var relationConfigPane = editPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + node.id];
-					if (relationConfigPane) {
-						relationConfigPane.destroy();
+					var relationCreatePane = editPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + node.id];
+					if (relationCreatePane) {
+						//relationConfigPane.destroy();
+						var panelIndex = editPane.items.indexOf(relationCreatePane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
 					}
 				}
 
@@ -673,9 +688,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-save.png',
-							text: 'Save',
-							tooltip: 'Save',
+							//icon: 'Content/img/16x16/document-save.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
 							handler: function () {
 								var deleteDataRelationPane = relationCreateFormPanel.items.items[2];
 								var gridLabel = scopeName + '.' + appName + '.' + node.id;
@@ -735,7 +750,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'tbbutton',
 							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
-							tooltip: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
 							handler: function () {
 								var relations = new Array();
 								relationCreateFormPanel.getForm().reset();
@@ -834,7 +849,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (editPane.items.map[scopeName + '.' + appName + '.relationFieldsForm.' + node.id]) {
 					var relationConfigPane = editPane.items.map[scopeName + '.' + appName + '.relationFieldsForm.' + node.id];
 					if (relationConfigPane) {
-						relationConfigPane.destroy();
+						//relationConfigPane.destroy();
+						var panelIndex = editPane.items.indexOf(relationConfigPane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
 					}
 				}
 
@@ -1088,9 +1106,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-save.png',
-							text: 'Save',
-							tooltip: 'Save',
+							//icon: 'Content/img/16x16/document-save.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
 							handler: function () {
 								if (node.attributes.attributes)
 									var attribute = node.attributes.attributes;
@@ -1149,7 +1167,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'tbbutton',
 							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
-							tooltip: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
 							handler: function () {
 								var propertyNameCombo = relationConfigPanel.getForm().findField('propertyName');
 								propertyNameCombo.setValue('');
@@ -1407,10 +1425,15 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (editPane.items.map[scopeName + '.' + appName + '.objectNameForm.' + node.id]) {
 					var objectNameFormPane = editPane.items.map[scopeName + '.' + appName + '.objectNameForm.' + node.id];
 					if (objectNameFormPane) {
-						objectNameFormPane.destroy();
+						//objectNameFormPane.destroy();
+						var panelIndex = editPane.items.indexOf(objectNameFormPane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
 					}
 				}
 
+				if (!node.attributes.properties.objectNamespace)
+					node.attributes.properties.objectNamespace = "org.iringtools.adapter.datalayer.proj_" + scopeName + "." + appName;
 				var dataObjectFormPanel = new Ext.FormPanel({
 					name: 'dataObject',
 					id: scopeName + '.' + appName + '.objectNameForm.' + node.id,
@@ -1451,9 +1474,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-save.png',
-							text: 'Save',
-							tooltip: 'Save',
+							//icon: 'Content/img/16x16/document-save.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
 							handler: function (f) {
 								var form = objectnameFormPanel.getForm();
 								if (form.treeNode) {
@@ -1469,7 +1492,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'tbbutton',
 							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
-							tooltip: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
 							handler: function (f) {
 								var form = objectnameFormPanel.getForm();
 								form.findField('tableName').setValue(node.text);
@@ -1525,7 +1548,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (editPane.items.map[scopeName + '.' + appName + '.keysSelector.' + node.id]) {
 					var keysSelectorPane = editPane.items.map[scopeName + '.' + appName + '.keysSelector.' + node.id];
 					if (keysSelectorPane) {
-						keysSelectorPane.destroy();
+						//keysSelectorPane.destroy();
+						var panelIndex = editPane.items.indexOf(keysSelectorPane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
 					}
 				}
 
@@ -1571,9 +1597,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-save.png',
-							text: 'Save',
-							tooltip: 'Save',
+							//icon: 'Content/img/16x16/document-save.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
 							handler: function (f) {
 								//var selectedValues = selectedValuesStr.split(',');
 								var selectedValues = keysItemSelector.toMultiselect.store.data.items;
@@ -1670,7 +1696,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'tbbutton',
 							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
-							tooltip: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
 							handler: function (f) {
 								var availItems = setItemSelectorAvailValues(node);
 								var selectedItems = setItemSelectorselectedValues(node);
@@ -1705,7 +1731,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (editPane.items.map[scopeName + '.' + appName + '.propertiesSelector.' + node.id]) {
 					var propertiesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.propertiesSelector.' + node.id];
 					if (propertiesSelectorPane) {
-						propertiesSelectorPane.destroy();
+						//propertiesSelectorPane.destroy();
+						var panelIndex = editPane.items.indexOf(propertiesSelectorPane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
 					}
 				}
 
@@ -1758,9 +1787,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							width: 4
 						}, {
 							xtype: 'tbbutton',
-							icon: 'Content/img/16x16/document-save.png',
-							text: 'Save',
-							tooltip: 'Save',
+							//icon: 'Content/img/16x16/document-save.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
 							handler: function (f) {
 								var selectedValues = propertiesItemSelector.toMultiselect.store.data.items;
 								var treeNode = propertiesItemSelector.treeNode;
@@ -1788,14 +1817,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'tbbutton',
 							icon: 'Content/img/16x16/edit-clear.png',
 							text: 'Reset',
-							tooltip: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
 							handler: function (f) {
 								var availProps = new Array();
 								var selectedProps = new Array();
 								for (var i = 0; i < node.childNodes.length; i++) {
 									var itemName = node.childNodes[i].text;
 									if (node.childNodes[i].hidden == false) {
-										selectedProps.push(itemName);
+										selectedProps.push([itemName, itemName]);
 									}
 									else
 										availProps.push([itemName, itemName]);
@@ -1862,8 +1891,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						}, {
 							xtype: 'button',
 							icon: 'Content/img/16x16/document-properties.png',
-							text: 'Configure',
-							tooltip: 'Configure Data Source',
+							text: 'Edit Connection',
+							tooltip: 'Edit database connection',
 							handler: function () {
 								editPane = dataObjectsPane.items.items[1];
 								if (!editPane) {
@@ -1878,7 +1907,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'button',
 							icon: 'Content/img/16x16/document-save.png',
 							text: 'Save',
-							tooltip: 'Save',
+							tooltip: 'Save the data objects tree to the back-end server',
 							formBind: true,
 							handler: function (button) {
 								editPane = dataObjectsPane.items.items[1];
