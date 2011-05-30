@@ -3,6 +3,7 @@
   <commodities>
     <commodity name="Equipment">
       <attributes>
+        <attribute name="SP_ID" displayName="ID" nativeName="SP_ID" datatype="String" length="32" isKey="True" readonly="True" />
         <attribute name="Adapter_ParentTag" displayName="Parent Tag" appSource="Adapter" nativeName="ParentTag" datatype="String" length="80" readonly="True" />
         <attribute name="Drawing_DateCreated" displayName="Date Created" appSource="Drawing" nativeName="DateCreated" datatype="DateTime" readonly="True" />
         <attribute name="Drawing_Description" displayName="Description" appSource="Drawing" nativeName="Description" datatype="String" length="240" readonly="True" />
@@ -167,7 +168,6 @@
         <attribute name="PlantItemType" displayName="Plant Item Type" nativeName="PlantItemType" datatype="Picklist" readonly="True" />
         <attribute name="RequisitionBy" displayName="Requisition By" nativeName="RequisitionBy" datatype="Picklist"/>
         <attribute name="RequisitionNo" displayName="Requisition No" nativeName="RequisitionNo" datatype="String" length="80" />
-        <attribute name="SP_ID" displayName="ID" nativeName="SP_ID" datatype="String" length="32" isKey="True" readonly="True" />
         <attribute name="Slope" displayName="Slope" nativeName="Slope" datatype="String" length="40" />
         <attribute name="SlopeRise" displayName="Slope Rise" nativeName="SlopeRise" datatype="String" length="40" />
         <attribute name="SlopeRun" displayName="Slope Run" nativeName="SlopeRun" datatype="String" length="40" />
