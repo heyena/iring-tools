@@ -50,24 +50,27 @@
       <HintPath>..\library\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
     <Reference Include="InteropigrVB6Helper">
-      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\P&amp;ID Workstation\Program\InteropigrVB6Helper.dll</HintPath>
+      <HintPath>..\..\..\..\Intergraph\SmartPlant\P&amp;ID Workstation\Program\InteropigrVB6Helper.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="InteropISPClientData3V2">
-      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\P&amp;ID Workstation\Program\InteropISPClientData3V2.dll</HintPath>
+      <HintPath>..\..\..\..\Intergraph\SmartPlant\P&amp;ID Workstation\Program\InteropISPClientData3V2.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="InteropLlama">
-      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\P&amp;ID Workstation\Program\InteropLlama.dll</HintPath>
+      <HintPath>..\..\..\..\Intergraph\SmartPlant\P&amp;ID Workstation\Program\InteropLlama.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="InteropLMForeignCalc">
-      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\P&amp;ID Workstation\Program\InteropLMForeignCalc.dll</HintPath>
+      <HintPath>..\..\..\..\Intergraph\SmartPlant\P&amp;ID Workstation\Program\InteropLMForeignCalc.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="InteropVBA">
-      <HintPath>..\..\..\..\..\Program Files (x86)\SmartPlant\P&amp;ID Workstation\Program\InteropVBA.dll</HintPath>
+      <HintPath>..\..\..\..\Intergraph\SmartPlant\P&amp;ID Workstation\Program\InteropVBA.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="iRINGLibrary">
+      <HintPath>..\library\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\library\log4net\log4net.dll</HintPath>
@@ -140,12 +143,6 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\trunk\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
-      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary.Desktop</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

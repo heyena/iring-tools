@@ -51,6 +51,9 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="iRINGLibrary">
+      <HintPath>..\library\iring-tools\iRINGLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="Ninject">
       <HintPath>..\lib\ninject2\Ninject.dll</HintPath>
     </Reference>
@@ -64,6 +67,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="UtilityLibrary">
+      <HintPath>..\library\iring-tools\UtilityLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -116,10 +122,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\trunk\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
-      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary.Desktop</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SPPIDDataLayer\SPPIDDataLayer.vbproj">
       <Project>{5541C20E-0ADA-44E3-B626-7CD54E05C412}</Project>
       <Name>SPPIDDataLayer</Name>

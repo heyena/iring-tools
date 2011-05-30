@@ -64,12 +64,16 @@ Public Class Test
     <Test()>
     Public Sub Create()
         Dim identifiers As IList(Of String) = New List(Of String)() From { _
-     "Equip-003", _
-     "Equip-004" _
+     "7C73D75A0F4C4A3F8FD99D962C733BCC"
     }
 
         Dim random As New Random()
-        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Create("Equipment", identifiers)
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Create("Equipment", identifiers) ' Returning 28 items in a object
+
+        For Each dataObject As IDataObject In dataObjects
+            dataObject.SetPropertyValue("Adapter_ParentTag", "PT-" & random.[Next](2, 10))
+            dataObject.SetPropertyValue("Drawing_DateCreated", DateTime.Today)
+        Next
 
         Dim actual As Response = _sppidDataLayer.Post(dataObjects)
 
@@ -80,5 +84,29 @@ Public Class Test
         Assert.IsTrue(actual.Level = StatusLevel.Success)
 
     End Sub
+    <Test()>
+    Public Sub GetCountWithFilters()
 
+        Dim dataFilter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
+              New Expression() With { _
+                .PropertyName = "Drawing_DocumentType", _
+                .RelationalOperator = RelationalOperator.EqualTo, _
+                .Values = New Values() From { _
+                "PDT-8" _
+   }
+  }
+ }
+}
+
+
+        Dim dataObjects As Long = _sppidDataLayer.GetCount("Equipment", dataFilter)
+
+        If dataObjects = -1 Then
+            Assert.IsNotNull(dataObjects)
+        End If
+
+        Assert.IsTrue(True, dataObjects.ToString())
+
+    End Sub
 End Class
+
