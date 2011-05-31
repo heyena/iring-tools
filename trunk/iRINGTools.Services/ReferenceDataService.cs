@@ -60,6 +60,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/version")]
     public VersionInfo GetVersion()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetVersion();
     }
     #endregion
@@ -71,6 +74,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/repositories")]
     public Repositories GetRepositories()
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetRepositories();
     }
 
@@ -82,6 +88,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/search/{query}")]
     public RefDataEntities Search(string query)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.Search(query);
     }
 
@@ -97,6 +106,9 @@ namespace org.iringtools.services
       int.TryParse(start, out startIdx);
       int.TryParse(limit, out pageLimit);
 
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.SearchPage(query, startIdx, pageLimit);
     }
 
@@ -107,6 +119,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/search/{query}/reset")]
     public RefDataEntities SearchReset(string query)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.SearchReset(query);
     }
 
@@ -122,6 +137,9 @@ namespace org.iringtools.services
       int.TryParse(start, out startIdx);
       int.TryParse(limit, out pageLimit);
 
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.SearchPageReset(query, startIdx, pageLimit);
     }
 
@@ -132,6 +150,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/label")]
     public Entity GetClassLabel(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetClassLabel(id);
     }
 
@@ -143,6 +164,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}?namespace={namespace}")]
     public QMXF GetClass(string id, string @namespace)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetClass(id, @namespace, null);
     }
 
@@ -153,6 +177,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/superclasses")]
     public Entities GetSuperClasses(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetSuperClasses(id);
     }
 
@@ -163,7 +190,10 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/allsuperclasses")]
     public Entities GetAllSuperClasses(string id)
     {
-        return _referenceDataProvider.GetAllSuperClasses(id);
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.GetAllSuperClasses(id);
     }
 
     /// <summary>
@@ -173,6 +203,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/subclasses")]
     public Entities GetSubClasses(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetSubClasses(id);
     }
 
@@ -183,7 +216,10 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/subclasses/count")]
     public Entities GetSubClassesCount(string id)
     {
-        return _referenceDataProvider.GetSubClassesCount(id);
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.GetSubClassesCount(id);
     }
 
     /// <summary>
@@ -203,7 +239,10 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/templates/count")]
     public Entities GetClassTemplatesCount(string id)
     {
-        return _referenceDataProvider.GetClassTemplatesCount(id);
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.GetClassTemplatesCount(id);
     }
 
     ///<summary>
@@ -214,6 +253,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/templates/{id}")]
     public QMXF GetTemplate(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetTemplate(id);
     }
 
@@ -225,7 +267,10 @@ namespace org.iringtools.services
     [WebInvoke(UriTemplate = "/templates")]
     public Response PostTemplate(QMXF qmxf)
     {
-        return _referenceDataProvider.PostTemplate(qmxf);
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.PostTemplate(qmxf);
     }
 
     ///<summary>
@@ -236,6 +281,9 @@ namespace org.iringtools.services
     [WebInvoke(UriTemplate = "/classes")]
     public Response PostClass(QMXF qmxf)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.PostClass(qmxf);
     }
 
@@ -246,6 +294,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/classes/{id}/members")]
     public Entities GetClassMembers(string id)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _referenceDataProvider.GetClassMembers(id);
     }
   }
