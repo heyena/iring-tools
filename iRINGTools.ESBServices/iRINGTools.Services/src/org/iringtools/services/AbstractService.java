@@ -35,15 +35,9 @@ public abstract class AbstractService
     	idGenServiceUri = "http://localhost:8080/services/idgen";
     settings.put("idGenServiceUri", idGenServiceUri);
 
-    String dbConnectionString = servletContext.getInitParameter("dbConnectionString");
-    if (dbConnectionString == null || dbConnectionString.equals(""))
-    	dbConnectionString = "jdbc:sqlserver://127.0.0.1:1046;Database=ABC;User=abc; Password=abc";
-    settings.put("dbConnectionString", dbConnectionString);
-    	
-    
     String poolSize = servletContext.getInitParameter("poolSize");
     if (poolSize == null || poolSize.equals(""))
-      poolSize = "50";
+      poolSize = "100";
     settings.put("poolSize", poolSize);
     
     String numOfExchangeLogFiles = servletContext.getInitParameter("numOfExchangeLogFiles");

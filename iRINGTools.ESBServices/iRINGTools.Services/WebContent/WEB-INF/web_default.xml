@@ -13,10 +13,6 @@
     <param-name>IDGenServiceUri</param-name>
     <param-value>http://localhost:8080/services/idgen</param-value>
    </context-param>
-  <context-param> 
-    <param-name>dbConnectionString</param-name>
-    <param-value>jdbc:sqlserver://127.0.0.1:1046;Database=ABC;User=abc; Password=abc</param-value>
-   </context-param>
   <context-param>
     <param-name>poolSize</param-name>
     <param-value>100</param-value>

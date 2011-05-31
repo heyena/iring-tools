@@ -18,6 +18,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;enumeration value="Reference"/>
  *     &lt;enumeration value="FixedValue"/>
  *     &lt;enumeration value="Property"/>
+ *     &lt;enumeration value="DataProperty"/>
+ *     &lt;enumeration value="ObjectProperty"/>
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
@@ -34,7 +36,11 @@ public enum RoleType {
     @XmlEnumValue("FixedValue")
     FIXED_VALUE("FixedValue"),
     @XmlEnumValue("Property")
-    PROPERTY("Property");
+    PROPERTY("Property"),
+    @XmlEnumValue("DataProperty")
+    DATA_PROPERTY("DataProperty"),
+    @XmlEnumValue("ObjectProperty")
+    OBJECT_PROPERTY("ObjectProperty");
     private final String value;
 
     RoleType(String v) {
