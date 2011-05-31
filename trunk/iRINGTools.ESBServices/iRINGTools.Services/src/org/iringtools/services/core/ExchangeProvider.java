@@ -435,11 +435,10 @@ public class ExchangeProvider
       String targetGraphUrl = targetAppUrl + "/" + targetGraphName;
       String sourceGraphUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName;
 
-      // create a pool (page) DTOs to send to target endpoint
+      // create a pool DTOs to send to target endpoint
       int dtiSize = dtiList.size();
-      int webXmlPoolSize = Integer.parseInt(settings.get("poolSize"));
-      
-      int poolSize = Math.min(webXmlPoolSize, dtiSize-1);
+      int presetPoolSize = Integer.parseInt(settings.get("poolSize"));      
+      int poolSize = Math.min(presetPoolSize, dtiSize);
 
       for (int i = 0; i < dtiSize; i += poolSize)
       {

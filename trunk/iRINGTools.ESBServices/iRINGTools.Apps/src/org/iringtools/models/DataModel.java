@@ -85,6 +85,7 @@ public class DataModel
   protected final String FILTER_KEY_PREFIX = DTI_PREFIX + "filter-key";
   protected final int PIXELS_PER_CHAR = 8;
   protected final int MIN_COLUMN_WIDTH = 50;
+  protected final int MAX_COLUMN_WIDTH = 300;
 
   protected Map<String, Object> session;
 
@@ -724,7 +725,10 @@ public class DataModel
       {
         for (Role role : template.getRoles().getItems())
         {
-          if (role.getType() == org.iringtools.mapping.RoleType.PROPERTY)
+          if (role.getType() == org.iringtools.mapping.RoleType.PROPERTY ||
+              role.getType() == org.iringtools.mapping.RoleType.DATA_PROPERTY ||
+              role.getType() == org.iringtools.mapping.RoleType.OBJECT_PROPERTY ||
+              role.getType() == org.iringtools.mapping.RoleType.FIXED_VALUE)
           {
             String dataType = role.getDataType();            
             String fieldName = className + '.' + template.getName() + "." + role.getName();
@@ -838,12 +842,12 @@ public class DataModel
             rowData.add("<span class=\"change\">" + roleValue + "</span>");
           }
           
-          // adjust field width
+          // adjust field width based on value
           Field field = fields.get(rowData.size() - 1);
           int fieldWidth = field.getWidth();
           int newWidth = roleValue.length() * PIXELS_PER_CHAR;
           
-          if (newWidth > MIN_COLUMN_WIDTH && newWidth > fieldWidth)
+          if (newWidth > MIN_COLUMN_WIDTH && newWidth > fieldWidth && newWidth < MAX_COLUMN_WIDTH)
           {
             field.setWidth(newWidth);
           }
@@ -1063,7 +1067,7 @@ public class DataModel
     
     //TODO: pass count value into the function
     relatedItemGrid.setTotal(relatedClassCount);
-    relatedItemGrid.setFields(fields);  
+    relatedItemGrid.setFields(fields);
     relatedItemGrid.setData(gridData);
 
     return relatedItemGrid;

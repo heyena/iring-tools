@@ -159,6 +159,8 @@
       <xs:enumeration value="Reference" />
       <xs:enumeration value="FixedValue" />
       <xs:enumeration value="Property" />
+      <xs:enumeration value="DataProperty" />
+      <xs:enumeration value="ObjectProperty" />
     </xs:restriction>
   </xs:simpleType>
   
