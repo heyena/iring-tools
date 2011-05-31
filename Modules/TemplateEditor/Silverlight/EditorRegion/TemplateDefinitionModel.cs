@@ -28,7 +28,10 @@ namespace org.iringtools.modules.templateeditor.editorregion
             {
                 _qmxf = qmxf;
 
-                _templateDefinition = qmxf.templateDefinitions.FirstOrDefault<TemplateDefinition>();
+                if (!string.IsNullOrEmpty(qmxf.sourceRepository))
+                  _templateDefinition = qmxf.templateDefinitions.FirstOrDefault<TemplateDefinition>(c=>c.repositoryName == qmxf.sourceRepository);
+                else
+                  _templateDefinition = qmxf.templateDefinitions.FirstOrDefault<TemplateDefinition>();
 
                 foreach (RoleDefinition s in _templateDefinition.roleDefinition)
                 {
