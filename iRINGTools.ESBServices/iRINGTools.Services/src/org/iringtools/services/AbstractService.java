@@ -35,6 +35,32 @@ public abstract class AbstractService
     	idGenServiceUri = "http://localhost:8080/services/idgen";
     settings.put("idGenServiceUri", idGenServiceUri);
 
+    String dbConnectionString = servletContext.getInitParameter("dbConnectionString");
+    if (dbConnectionString == null || dbConnectionString.equals(""))
+    	dbConnectionString = "jdbc:sqlserver://127.0.0.1:1046;Database=ABC;User=abc; Password=abc";
+    settings.put("dbConnectionString", dbConnectionString);
+    	
+    String exampleRegistryBase = servletContext.getInitParameter("ExampleRegistryBase");
+    if (exampleRegistryBase == null || exampleRegistryBase.equals(""))
+    	exampleRegistryBase = "http://example.org/data#";
+    settings.put("ExampleRegistryBase", exampleRegistryBase);
+
+    String templateRegistryBase = servletContext.getInitParameter("TemplateRegistryBase");
+    if (templateRegistryBase == null || templateRegistryBase.equals(""))
+    	templateRegistryBase = "http://tpl.rdlfacade.org/data#";
+    settings.put("TemplateRegistryBase", templateRegistryBase);
+
+    String classRegistryBase = servletContext.getInitParameter("ClassRegistryBase");
+    if (classRegistryBase == null || classRegistryBase.equals(""))
+    	classRegistryBase = "http://rdl.rdlfacade.org/data#";
+    settings.put("ClassRegistryBase", classRegistryBase);
+
+    String useExampleRegistryBase = servletContext.getInitParameter("UseExampleRegistryBase");
+    if (useExampleRegistryBase == null || useExampleRegistryBase.equals(""))
+    	useExampleRegistryBase = "false";
+    settings.put("UseExampleRegistryBase", useExampleRegistryBase);
+    
+    
     String poolSize = servletContext.getInitParameter("poolSize");
     if (poolSize == null || poolSize.equals(""))
       poolSize = "100";
