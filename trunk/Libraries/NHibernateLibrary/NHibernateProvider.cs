@@ -239,7 +239,7 @@ namespace org.iringtools.nhibernate
         {
           metadataQuery =
             "select t1.object_name, t2.column_name, t2.data_type, t2.data_length, 0 as is_sequence, t2.nullable, t4.constraint_type " +
-            "from user_objects t1 " +
+            "from all_objects t1 " +
             "inner join all_tab_cols t2 on t2.table_name = t1.object_name " +
             "left join all_cons_columns t3 on t3.table_name = t2.table_name and t3.column_name = t2.column_name " +
             "left join all_constraints t4 on t4.constraint_name = t3.constraint_name and (t4.constraint_type = 'P' or t4.constraint_type = 'R') " +
@@ -771,8 +771,8 @@ namespace org.iringtools.nhibernate
         tableQuery = string.Format(@"
           select distinct * from (SELECT t2.column_name, t2.data_type, t2.data_length,
           0 AS is_sequence, t2.nullable, t4.constraint_type
-          FROM dba_objects t1 INNER JOIN all_tab_cols t2
-          ON t2.table_name = t1.object_name AND t2.owner = t2.owner 
+          FROM all_objects t1 INNER JOIN all_tab_cols t2
+          ON t2.table_name = t1.object_name AND t2.owner = t1.owner 
           LEFT JOIN all_cons_columns t3 ON t3.table_name = t2.table_name
           AND t3.column_name = t2.column_name AND t3.owner = t2.owner
           AND SUBSTR(t3.constraint_name, 0, 3) != 'SYS' LEFT JOIN all_constraints t4
