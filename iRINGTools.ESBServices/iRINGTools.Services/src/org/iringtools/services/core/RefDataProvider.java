@@ -2545,15 +2545,15 @@ public class RefDataProvider
 
   private Repository getRepository(String name)
   {
-    Repository repository = null;
+    //Repository repository = null;
     for (Repository tempRepo : _repositories)
     {
       if (tempRepo.getName().equalsIgnoreCase(name))
       {
-        return repository;
+        return tempRepo;
       }
     }
-    return repository;
+    return null;
   }
 
   public org.iringtools.refdata.response.Response getClassTemplates(String id) throws Exception
