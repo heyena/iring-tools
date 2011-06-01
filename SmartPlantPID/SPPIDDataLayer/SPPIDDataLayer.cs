@@ -428,6 +428,11 @@ namespace iRINGTools.SDK.SPPIDDataLayer
             {
                 IList<IDataObject> dataObjects = new List<IDataObject>();
 
+                //NOTE: This will use the VB project to load the objects. Hopefully it will work.
+                //var comConfig = GetCommodityConfig(objectType);
+                //var lamaFactory = new LamaFactory();
+                //dataObjects = lamaFactory.LoadDataObjects(objectType, comConfig, _projDatasource);
+
                 //Get Path from Scope.config ({project}.{app}.config)
                 //string path = String.Format(
                 //    "{0}\\{1}.csv",
