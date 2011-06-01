@@ -209,7 +209,17 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var setDsConfigFields = function (dsConfigForm) {
 			dsConfigForm.findField('dbServer').setValue(dbInfo.dbServer);
 			dsConfigForm.findField('dbInstance').setValue(dbInfo.dbInstance);
-			dsConfigForm.findField('dbName').setValue(dbInfo.dbName);
+			var initialCatalog = dsConfigForm.findField('dbName');
+			if (dbDict.Provider.indexOf('MSSQL') > -1) {
+				if (initialCatalog.hidden == true)
+					initialCatalog.show();
+				initialCatalog.setValue(dbInfo.dbName);
+			}
+			else {
+				if (initialCatalog.hidden == false)
+					initialCatalog.hide();
+				initialCatalog.setValue('a');
+			}
 			dsConfigForm.findField('dbUserName').setValue(dbInfo.dbUserName);
 			dsConfigForm.findField('dbPassword').setValue(dbInfo.dbPassword);
 			dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
@@ -268,15 +278,15 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						valueField: 'Provider',
 						listeners: { 'select': function (combo, record, index) {
 							var dbProvider = record.data.Provider.toUpperCase();
+							var initialCatalog = dsConfigPane.getForm().findField('dbName')
 							if (dbProvider.indexOf('MSSQL') == -1) {
-								var initialCatalog = dsConfigPane.getForm().findField('dbName').hide();
-								initialCatalog.hideField();
+								if (initialCatalog.hidden == false)
+									initialCatalog.hide();
+								initialCatalog.setValue('a');
 							}
 							else {
-								var initialCatalog = dsConfigPane.getForm().findField('dbName');
 								if (initialCatalog.hidden == true) {
 									initialCatalog.show();
-									initialCatalog.showField();
 								}
 							}
 						}
@@ -342,9 +352,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										if (a.response)
 											showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
 
-										else {
-											showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
-										}
+//										else {
+//											showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
+//										}
 									},
 									waitMsg: 'Loading ...'
 								});
