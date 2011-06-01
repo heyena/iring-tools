@@ -13,6 +13,8 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using System.Diagnostics;
 
+using SPPIDDataLayerVB;
+
 namespace iRINGTools.SDK.SPPIDDataLayer
 {
     public class SPPIDDataLayer : BaseDataLayer, IDataLayer2
@@ -42,8 +44,11 @@ namespace iRINGTools.SDK.SPPIDDataLayer
             
             _projDatasource.ProjectNumber = projectStr;
             _projDatasource.set_SiteNode(siteNode);
-            
-            
+
+            //Example of Llama code extraction to VB project
+            var datasource = LamaFactory.CreateDataSource(siteNode, projectStr);
+
+
         }
 
         public override DataDictionary GetDictionary()
