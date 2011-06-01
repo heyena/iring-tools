@@ -119,6 +119,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SPPIDDataLayerVB\SPPIDDataLayerVB.vbproj">
+      <Project>{EF132492-4A0F-4729-9338-A15B83D5A6A6}</Project>
+      <Name>SPPIDDataLayerVB</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
