@@ -352,9 +352,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										if (a.response)
 											showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
 
-//										else {
-//											showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
-//										}
+										else {
+											showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
+										}
 									},
 									waitMsg: 'Loading ...'
 								});
