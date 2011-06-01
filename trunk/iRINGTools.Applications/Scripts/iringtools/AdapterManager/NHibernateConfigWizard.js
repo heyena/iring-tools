@@ -265,7 +265,22 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						editable: false,
 						triggerAction: 'all',
 						displayField: 'Provider',
-						valueField: 'Provider'
+						valueField: 'Provider',
+						listeners: { 'select': function (combo, record, index) {
+							var dbProvider = record.data.Provider.toUpperCase();
+							if (dbProvider.indexOf('MSSQL') == -1) {
+								var initialCatalog = dsConfigPane.getForm().findField('dbName').hide();
+								initialCatalog.hideField();
+							}
+							else {
+								var initialCatalog = dsConfigPane.getForm().findField('dbName');
+								if (initialCatalog.hidden == true) {
+									initialCatalog.show();
+									initialCatalog.showField();
+								}
+							}
+						}
+						}
 					}, {
 						xtype: 'textfield',
 						name: 'dbServer',
@@ -571,6 +586,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								var rootNode = dataObjectsPane.items.items[0].items.items[0].getRootNode();
 								var selectTableNames = new Array();
 								var selectTableNamesSingle = new Array();
+								var firstSelectTableNames = new Array();
 								var availTableName = new Array();
 								var found = false;
 
@@ -594,29 +610,34 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									selectTableNamesSingle.push(nodeText);
 								}
 
-								var tablesSelector = tablesSelectorPane.items.items[1];
-								if (tablesSelector.toMultiselect.store.data) {
-									tablesSelector.toMultiselect.reset();
-									tablesSelector.toMultiselect.store.removeAll();
-								}
+								if (selectTableNames[0]) {
+									firstSelectTableNames.push(selectTableNames[0]);
+									var tablesSelector = tablesSelectorPane.items.items[1];
 
-								tablesSelector.toMultiselect.store.loadData(selectTableNames);
-								tablesSelector.toMultiselect.store.commitChanges();
+									if (tablesSelector.toMultiselect.store.data) {
+										tablesSelector.toMultiselect.reset();
+										tablesSelector.toMultiselect.store.removeAll();
+									}
 
-								var selectTables = tablesSelector.toMultiselect.store.data.items;
-								var loadSingle = false;
-								for (var i = 0; i < selectTables.length; i++) {
-									var selectTableName = selectTables[i].data.text;
+									tablesSelector.toMultiselect.store.loadData(firstSelectTableNames);
+									tablesSelector.toMultiselect.store.commitChanges();
+
+									var firstSelectTables = tablesSelector.toMultiselect.store.data.items;
+									var loadSingle = false;
+									var selectTableName = firstSelectTables[0].data.text;
+
 									if (selectTableName[1].length > 1) {
 										var loadSingle = true;
-										break;
 									}
-								}
 
-								if (loadSingle) {
 									tablesSelector.toMultiselect.reset();
 									tablesSelector.toMultiselect.store.removeAll();
-									tablesSelector.toMultiselect.store.loadData(selectTableNamesSingle);
+
+									if (!loadSingle)
+										tablesSelector.toMultiselect.store.loadData(selectTableNames);
+									else
+										tablesSelector.toMultiselect.store.loadData(selectTableNamesSingle);
+
 									tablesSelector.toMultiselect.store.commitChanges();
 								}
 
@@ -1823,6 +1844,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								var availProps = new Array();
 								var selectedProps = new Array();
 								var availPropsSingle = new Array();
+								var firstAvailProps = new Array();
 								for (var i = 0; i < node.childNodes.length; i++) {
 									var itemName = node.childNodes[i].text;
 									if (node.childNodes[i].hidden == false) {
@@ -1834,36 +1856,43 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									}
 								}
 
-								if (propertiesItemSelector.fromMultiselect.store.data) {
-									propertiesItemSelector.fromMultiselect.reset();
-									propertiesItemSelector.fromMultiselect.store.removeAll();
-								}
+								if (availProps[0]) {
+									firstAvailProps.push(availProps[0]);
 
-								propertiesItemSelector.fromMultiselect.store.loadData(availProps);
-								propertiesItemSelector.fromMultiselect.store.commitChanges();
-								var availProps = propertiesItemSelector.fromMultiselect.store.data.items;
-								var loadSingle = false;
+									if (propertiesItemSelector.fromMultiselect.store.data) {
+										propertiesItemSelector.fromMultiselect.reset();
+										propertiesItemSelector.fromMultiselect.store.removeAll();
+									}
 
-								for (var i = 0; i < availProps.length; i++) {
-									var availPropName = availProps[i].data.text;
+									propertiesItemSelector.fromMultiselect.store.loadData(firstAvailProps);
+									propertiesItemSelector.fromMultiselect.store.commitChanges();
+
+									var firstAvailProps = propertiesItemSelector.fromMultiselect.store.data.items;
+									var loadSingle = false;
+
+									var availPropName = firstAvailProps[0].data.text;
 									if (availPropName[1].length > 1) {
 										var loadSingle = true;
-										break;
 									}
-								}
 
-								if (loadSingle) {
-									propertiesItemSelector.fromMultiselect.reset();
-									propertiesItemSelector.fromMultiselect.store.removeAll();
-									propertiesItemSelector.fromMultiselect.store.loadData(availPropsSingle);
-									propertiesItemSelector.fromMultiselect.store.commitChanges();
+									if (!loadSingle) {
+										propertiesItemSelector.fromMultiselect.reset();
+										propertiesItemSelector.fromMultiselect.store.removeAll();
+										propertiesItemSelector.fromMultiselect.store.loadData(availProps);
+										propertiesItemSelector.fromMultiselect.store.commitChanges();
+									}
+									else {
+										propertiesItemSelector.fromMultiselect.reset();
+										propertiesItemSelector.fromMultiselect.store.removeAll();
+										propertiesItemSelector.fromMultiselect.store.loadData(availPropsSingle);
+										propertiesItemSelector.fromMultiselect.store.commitChanges();
+									}
 								}
 
 								if (propertiesItemSelector.toMultiselect.store.data) {
 									propertiesItemSelector.toMultiselect.reset();
 									propertiesItemSelector.toMultiselect.store.removeAll();
 								}
-
 								propertiesItemSelector.toMultiselect.store.loadData(selectedProps);
 								propertiesItemSelector.toMultiselect.store.commitChanges();
 							}
@@ -2243,22 +2272,22 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 			if (!dbInfo.dbUserName)
 				for (var i = 0; i < connStrParts.length; i++) {
-					var pair = connStrParts[i].split('=');				
+					var pair = connStrParts[i].split('=');
 					switch (pair[0].toUpperCase()) {
-					case 'DATA SOURCE':
-						var dsValue = pair[1].split('\\');
-						dbInfo.dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
-						dbInfo.dbInstance = dsValue[1];
-						break;
-					case 'INITIAL CATALOG':
-						dbInfo.dbName = pair[1];
-						break;
-					case 'USER ID':
-						dbInfo.dbUserName = pair[1];
-						break;
-					case 'PASSWORD':
-						dbInfo.dbPassword = pair[1];
-						break;
+						case 'DATA SOURCE':
+							var dsValue = pair[1].split('\\');
+							dbInfo.dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
+							dbInfo.dbInstance = dsValue[1];
+							break;
+						case 'INITIAL CATALOG':
+							dbInfo.dbName = pair[1];
+							break;
+						case 'USER ID':
+							dbInfo.dbUserName = pair[1];
+							break;
+						case 'PASSWORD':
+							dbInfo.dbPassword = pair[1];
+							break;
 					}
 				}
 

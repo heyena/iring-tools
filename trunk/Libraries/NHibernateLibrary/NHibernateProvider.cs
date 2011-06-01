@@ -719,8 +719,15 @@ namespace org.iringtools.nhibernate
     private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema, 
       string dbUserName, string dbPassword)
     {
-      string connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}", 
-        dbServer, dbInstance, dbName, dbUserName, dbPassword);
+			string connStr;
+
+			if (dbProvider.ToUpper().Contains("MSSQL"))
+				connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}", 
+					dbServer, dbInstance, dbName, dbUserName, dbPassword);
+			else
+				connStr = String.Format("Data Source={0}\\{1};User ID={3};Password={4}",
+					dbServer, dbInstance, dbName, dbUserName, dbPassword);
+
       Dictionary<string, string> properties = new Dictionary<string, string>();
 
       properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
