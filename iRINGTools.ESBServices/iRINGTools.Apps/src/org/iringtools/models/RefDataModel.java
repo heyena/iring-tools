@@ -1,5 +1,6 @@
 package org.iringtools.models;
 
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -12,8 +13,10 @@ import org.ids_adi.ns.qxf.model.Description;
 import org.ids_adi.ns.qxf.model.EntityType;
 import org.ids_adi.ns.qxf.model.Name;
 import org.ids_adi.ns.qxf.model.Qmxf;
+import org.ids_adi.ns.qxf.model.RoleDefinition;
 import org.ids_adi.ns.qxf.model.RoleQualification;
 import org.ids_adi.ns.qxf.model.Specialization;
+import org.ids_adi.ns.qxf.model.TemplateDefinition;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.refdata.response.Response;
 import org.iringtools.utility.HttpClient;
@@ -30,6 +33,7 @@ public class RefDataModel
   private Response response = null;
   
   private HttpClient httpClient = null;
+  private HttpClient idGenHttpClient = null;
 
   public RefDataModel()
   {
@@ -37,6 +41,8 @@ public class RefDataModel
     {
       String uri = ActionContext.getContext().getApplication().get("RefDataServiceUri").toString();
       httpClient = new HttpClient(uri);
+      uri = ActionContext.getContext().getApplication().get("IDGenServiceUri").toString();
+      idGenHttpClient = new HttpClient(uri);
     }
     catch (Exception e)
     {
@@ -116,6 +122,7 @@ public class RefDataModel
 	      hsMap.put("Status From", classDefinition.getStatuses().get(0).getFrom());
 	      hsMap.put("Status To", classDefinition.getStatuses().get(0).getTo());
 	      hsMap.put("Description", classDefinition.getDescriptions().get(0).getValue());
+	      hsMap.put("Lang", classDefinition.getNames().get(0).getLang());
 	      
 	      
 	      node.setRecord(hsMap);
@@ -367,6 +374,10 @@ public class RefDataModel
 	  return classDefinition;
   }
   
+  public void getRoleDetails(String roleId){
+	  
+  }
+  
   public boolean postClass(HttpServletRequest httpRequest)
   {
     try
@@ -378,18 +389,26 @@ public class RefDataModel
     	List<ClassDefinition> classDefinitions = qmxf.getClassDefinitions();
     	
     	ClassDefinition classDefinition = new ClassDefinition();
-    	//Setting Class id
-    	classDefinition.setId(httpRequest.getParameter("classId"));
-    	
-    	//Setting Target Repository
-    	qmxf.setTargetRepository(httpRequest.getParameter("targetRepo").replaceFirst(" [Read Only]", ""));
     	
     	//Setting Class name
     	List<Name> names = classDefinition.getNames();
     	Name name = new Name();
     	name.setValue(httpRequest.getParameter("name"));
     	names.add(name);
+
+    	//Setting Class id
+    	String id = httpRequest.getParameter("classId");
+    	if("addClass".equalsIgnoreCase(id)){
+    		response = idGenHttpClient.get(org.iringtools.common.response.Response.class, "/acquireId/params?uri="+httpRequest.getParameter("name")+"&comment=newClass");
+    		classDefinition.setId(response.getMessages().getItems().get(0));
+    		System.out.println("Generated Id :"+response.getMessages().getItems().get(0));
+    	}else
+    		classDefinition.setId(httpRequest.getParameter("classId"));
     	
+    	
+    	//Setting Target Repository
+    	qmxf.setTargetRepository(httpRequest.getParameter("targetRepo"));
+    	 	
     	//Setting Entity type
     	EntityType entity = new EntityType();
     	entity.setReference(httpRequest.getParameter("entityType"));
@@ -445,7 +464,14 @@ public class RefDataModel
           System.out.println("response.getLevel().value() : null");
           return false;
         }
-        //return true;
+        /*while( keys.hasMoreElements() ) {
+    	    String key = keys.nextElement();
+
+    	    for( String value : httpRequest.getParameterValues( key ) ) {
+    	      System.out.println( "KEY: " + key + " VALUE: " + value.toString() );
+    	    }
+    	  }
+        return true;*/
 
     }
     catch (Exception e)
@@ -457,10 +483,54 @@ public class RefDataModel
   }
   
   public boolean postTemplate(HttpServletRequest httpRequest)
-  {
-    try
-    {
-    	return true;
+  {    	
+	  Qmxf qmxf = new Qmxf();
+	  org.iringtools.common.response.Response response = new org.iringtools.common.response.Response();
+
+	  try
+	    {
+	    	/*Enumeration<String> keys = httpRequest.getParameterNames();
+	    	while( keys.hasMoreElements() ) {
+	    	    String key = keys.nextElement();
+
+	    	    for( String value : httpRequest.getParameterValues( key ) ) {
+	    	      System.out.println( "KEY: " + key + " VALUE: " + value.toString() );
+	    	    }
+	    	  }*/
+	    	List<TemplateDefinition> templateDefinitions = qmxf.getTemplateDefinitions();
+	    	
+	    	TemplateDefinition templateDefinition = new TemplateDefinition();
+	    	//Setting Template Id
+	    	templateDefinition.setId(httpRequest.getParameter("tempId"));
+	    	
+	    	//Setting Target Repository
+	    	qmxf.setTargetRepository(httpRequest.getParameter("targetRepo").replaceFirst(" [Read Only]", ""));
+
+	    	//Setting Description
+	    	List<Description> descriptions = templateDefinition.getDescriptions();
+	    	Description desc = new Description();
+	    	desc.setValue(httpRequest.getParameter("description"));
+	    	descriptions.add(desc);
+	    	
+	    	//Setting Role Definition
+	        
+	    	List<RoleDefinition> roleDefinitions = templateDefinition.getRoleDefinitions();
+	        StringTokenizer str = new StringTokenizer(httpRequest.getParameter("roleDefinition"), ",");
+	        while (str.hasMoreTokens())
+	        {
+	        	RoleDefinition roleDefinition = new RoleDefinition();
+	        	ClassDefinition classDtls = getIndividualClassDtls(str.nextToken());
+	        	//specialization.setLabel(classDtls.getNames().get(0).getValue());
+	        	//specialization.setReference(classDtls.getId());
+	        	//specializations.add(specialization);
+	        }
+
+	    	
+	    	templateDefinitions.add(templateDefinition);
+
+	    	
+	        return true;
+
     }
     catch (Exception e)
     {
