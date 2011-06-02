@@ -23,6 +23,8 @@ using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.modules.templateeditor.rolespopup;
 using Microsoft.Practices.Unity;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace org.iringtools.modules.templateeditor.editorregion
 {
@@ -360,6 +362,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
       try
       {
         CompletedEventArgs args = (CompletedEventArgs)e;
+
         if (args.CheckForType(CompletedEventType.GetRepositories))
         {
           if (args.Error != null)
@@ -386,19 +389,29 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
             cmbRepositories.Items.Add(item);
           }
-
-
         }
-
-        if (args.CheckForType(CompletedEventType.PostTemplate))
+        else if (args.CheckForType(CompletedEventType.PostTemplate))
         {
-          if (args.Error != null)
+          Response response = (Response)args.Data;
+
+          if (response.Level == StatusLevel.Success)
           {
-            MessageBox.Show(args.FriendlyErrorMessage, "Post Templates Error", MessageBoxButton.OK);
-            return;
+            MessageBox.Show("Template posted successfully.", "Post Template Response", MessageBoxButton.OK);
           }
-          MessageBox.Show("Template posted successfully", "Post Template", MessageBoxButton.OK);
-          return;
+          else
+          {
+            StringBuilder messageBuilder = new StringBuilder();
+
+            foreach (Status status in response.StatusList)
+            {
+              foreach (string message in status.Messages)
+              {
+                messageBuilder.AppendLine(message);
+              }
+            }
+
+            MessageBox.Show(messageBuilder.ToString(), "Post Template Error", MessageBoxButton.OK);
+          }          
         }
       }
       catch (Exception ex)
@@ -479,8 +492,13 @@ namespace org.iringtools.modules.templateeditor.editorregion
       {
         if (e.Name.ToString() == "btnOK1")
         {
-          QMXF @qmxf = _templateModel.QMXF;
-          referenceDataService.PostTemplate(@qmxf);
+          string targetRepository = ((ComboBoxItem)cmbRepositories.SelectedValue).Content.ToString();
+
+          QMXF qmxf = _templateModel.QMXF;
+          // remove stuff in parenthesis (such as read/write only comment)
+          qmxf.targetRepository = Regex.Replace(targetRepository, " *\\(.*\\) *", "");
+
+          referenceDataService.PostTemplate(qmxf);
 
           IRegion region = regionManager.Regions["TemplateEditorRegion"];
           foreach (UserControl userControl in region.Views)
@@ -637,8 +655,18 @@ namespace org.iringtools.modules.templateeditor.editorregion
             userControl.Visibility = Visibility.Visible;
           }
         }
-        if (cmbRepositories.Items.Count > 1)
-          cmbRepositories.SelectedIndex = 0;
+
+        // set repos combox to qmxf source repository
+        for (int i = 0; i < cmbRepositories.Items.Count; i++)
+        {
+          ComboBoxItem cmbItem = (ComboBoxItem)cmbRepositories.Items[i];
+
+          if (cmbItem.Content.ToString().ToLower().Contains(_templateModel.QMXF.sourceRepository.ToLower()))
+          {
+            cmbRepositories.SelectedIndex = i;
+            break;
+          }
+        }
       }
       catch (Exception ex)
       {
