@@ -32,8 +32,8 @@ public class AppDataModel extends DataModel
       
       if (graph != null)
       {
-        DataTransferObjects pageDtos = getPageDtos(Mode.APP, serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, 
-            filter, sortBy, sortOrder, start, limit);
+        DataTransferObjects pageDtos = getPageDtos(Mode.APP, serviceUri, manifestRelativePath, dtiRelativePath, 
+            dtoRelativePath, filter, sortBy, sortOrder, start, limit);
         
         pageDtoGrid = getDtoGrid(Mode.APP, graph, pageDtos, refServiceUri);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
@@ -44,16 +44,25 @@ public class AppDataModel extends DataModel
     return pageDtoGrid;
   }
   
-  public Grid getRelatedDtoGrid(String serviceUri, String scope, String app, String graph, String dtoIdentifier, 
-      String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
+  public Grid getRelatedDtoGrid(String serviceUri, String refServiceUri, String scopeName, String appName, String graphName, 
+      String dtoIdentifier, String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
   {
-    String dtiRelativePath = "/" + scope + "/" + app + "/" + graph + "/dxi/filter";
-    String dtoRelativePath = "/" + scope + "/" + app + "/" + graph + "/dxo";
-    String manifestRelativePath = "/" + scope + "/" + app + "/manifest";
+    String dtiRelativePath = "/" + scopeName + "/" + appName + "/" + graphName + "/dxi/filter";
+    String dtoRelativePath = "/" + scopeName + "/" + appName + "/" + graphName + "/dxo";
+    String manifestRelativePath = "/" + scopeName + "/" + appName + "/manifest";
     
-    DataTransferObjects dtos = getRelatedDtos(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, dtoIdentifier, filter,
-        sortBy, sortOrder, start, limit);
+    Grid pageDtoGrid = null;
+    Manifest manifest = getManifest(serviceUri, manifestRelativePath);    
+    Graph graph = getGraph(manifest, graphName);
     
-    return getRelatedDtoGrid(Mode.APP, dtos, classId, classIdentifier);
+    if (graph != null)
+    {
+      DataTransferObjects dtos = getRelatedItems(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, 
+          dtoIdentifier, filter, sortBy, sortOrder, start, limit);
+      
+      pageDtoGrid = getRelatedItemGrid(Mode.APP, graph, dtos, classId, classIdentifier, refServiceUri);
+    }
+    
+    return pageDtoGrid;
   }
 }
