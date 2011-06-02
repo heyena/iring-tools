@@ -205,14 +205,42 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			}
 		};
 
+		var setDsConfigFieldsBlank = function (dsConfigForm) {
+			dsConfigForm.findField('dbServer').setValue('');
+			dsConfigForm.findField('dbServer').clearInvalid();
+			dsConfigForm.findField('dbInstance').setValue('');
+			dsConfigForm.findField('dbInstance').clearInvalid();
+			var initialCatalog = dsConfigForm.findField('dbName');
+			
+			if (initialCatalog.hidden == true) {
+				initialCatalog.setValue('');
+				initialCatalog.clearInvalid();
+				initialCatalog.show();
+			}			
+			else {				
+				initialCatalog.setValue('');
+			}
+
+			dsConfigForm.findField('dbUserName').setValue('');
+			dsConfigForm.findField('dbUserName').clearInvalid();
+			dsConfigForm.findField('dbPassword').setValue('');
+			dsConfigForm.findField('dbPassword').clearInvalid();
+			dsConfigForm.findField('dbProvider').setValue('');
+			dsConfigForm.findField('dbProvider').clearInvalid();
+			dsConfigForm.findField('dbSchema').setValue('');
+			dsConfigForm.findField('dbSchema').clearInvalid();
+		};
 
 		var setDsConfigFields = function (dsConfigForm) {
 			dsConfigForm.findField('dbServer').setValue(dbInfo.dbServer);
 			dsConfigForm.findField('dbInstance').setValue(dbInfo.dbInstance);
 			var initialCatalog = dsConfigForm.findField('dbName');
 			if (dbDict.Provider.indexOf('MSSQL') > -1) {
-				if (initialCatalog.hidden == true)
+				if (initialCatalog.hidden == true) {
+					initialCatalog.setValue('');
+					initialCatalog.clearInvalid();
 					initialCatalog.show();
+				}
 				initialCatalog.setValue(dbInfo.dbName);
 			}
 			else {
@@ -286,6 +314,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							}
 							else {
 								if (initialCatalog.hidden == true) {
+									initialCatalog.setValue('');
+									initialCatalog.clearInvalid();
 									initialCatalog.show();
 								}
 							}
@@ -349,9 +379,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										setTablesSelectorPane(editPane);
 									},
 									failure: function (f, a) {
-										if (a.response)
-											showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
-
+										if (a.response) {
+											if (a.response.responseText)
+												showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
+											else if (a.response.statusText)
+												showDialog(500, 400, 'Error', a.response.statusText, Ext.Msg.OK, null);
+										}
 										else {
 											showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
 										}
@@ -368,7 +401,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							text: 'Reset',
 							tooltip: 'Reset to the latest applied changes',
 							handler: function (f) {
-								setDsConfigPane();
+								setDsConfigFieldsBlank(dsConfigPane.getForm());
 							}
 						}]
 					})
