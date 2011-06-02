@@ -59,17 +59,26 @@ public class ExchangeDataModel extends DataModel
     return pageDtoGrid;
   }
 
-  public Grid getRelatedDtoGrid(String serviceUri, String scope, String xid, String dtoIdentifier,
+  public Grid getRelatedDtoGrid(String serviceUri, String refServiceUri, String scope, String xid, String dtoIdentifier,
       String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
     String manifestRelativePath = dtiRelativePath + "/manifest";
     
-    DataTransferObjects dtos = getRelatedDtos(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, 
-        dtoIdentifier, filter, sortBy, sortOrder, start, limit);
+    Grid pageDtoGrid = null;
+    Manifest manifest = getManifest(serviceUri, manifestRelativePath);    
+    Graph graph = manifest.getGraphs().getItems().get(0);
     
-    return getRelatedDtoGrid(Mode.EXCHANGE, dtos, classId, classIdentifier);
+    if (graph != null)
+    {
+      DataTransferObjects dtos = getRelatedItems(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, 
+            dtoIdentifier, filter, sortBy, sortOrder, start, limit);
+        
+      pageDtoGrid = getRelatedItemGrid(Mode.EXCHANGE, graph, dtos, classId, classIdentifier, refServiceUri);
+    }
+    
+    return pageDtoGrid;
   }
 
   public ExchangeResponse submitExchange(String serviceUri, String scope, String xid, boolean reviewed)
@@ -78,7 +87,6 @@ public class ExchangeDataModel extends DataModel
     String manifestRelativePath = exchangeRelativePath + "/manifest";
     
     Manifest manifest = getManifest(serviceUri, manifestRelativePath);
-    //DataTransferIndices dtis = getDtis(Mode.EXCHANGE, serviceUri, exchangeRelativePath, filter, null, null);
     DataTransferIndices dtis = getCachedDtis(exchangeRelativePath);    
 
     ExchangeResponse response;

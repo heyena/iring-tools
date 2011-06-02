@@ -29,7 +29,6 @@ import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.RoleValues;
 import org.iringtools.dxfr.dto.TemplateObject;
-import org.iringtools.dxfr.dto.TransferType;
 import org.iringtools.dxfr.manifest.Cardinality;
 import org.iringtools.dxfr.manifest.ClassTemplates;
 import org.iringtools.dxfr.manifest.Graph;
@@ -48,11 +47,13 @@ import org.iringtools.widgets.grid.RelatedClass;
 
 public class DataModel
 {
-  public static enum Mode {
+  private static final Logger logger = Logger.getLogger(DataModel.class);
+
+  protected static enum Mode {
     APP, EXCHANGE
   };
 
-  public static List<String> gridFilterTypes;
+  protected static List<String> gridFilterTypes;
   static
   {
     gridFilterTypes = new ArrayList<String>();
@@ -66,7 +67,7 @@ public class DataModel
     gridFilterTypes.add("string");
   }
   
-  public static Map<String, RelationalOperator> relationalOperatorMap;
+  protected static Map<String, RelationalOperator> relationalOperatorMap;
   static
   {
     relationalOperatorMap = new HashMap<String, RelationalOperator>();
@@ -74,8 +75,6 @@ public class DataModel
     relationalOperatorMap.put("lt", RelationalOperator.LESSER_THAN);
     relationalOperatorMap.put("gt", RelationalOperator.GREATER_THAN);
   }
-
-  private static final Logger logger = Logger.getLogger(DataModel.class);
 
   protected final String MANIFEST_PREFIX = "manifest-";
   protected final String DTI_PREFIX = "dti-";
@@ -89,13 +88,105 @@ public class DataModel
 
   protected Map<String, Object> session;
 
-  protected void removeSessionData(String key)
+  //only cache full dti and one filtered dti
+  protected DataTransferIndices getDtis(Mode mode, String serviceUri, String manifestRelativePath, String dtiRelativePath, String filter,
+      String sortBy, String sortOrder)
   {
-    if (session != null && session.keySet().contains(key))
-      session.remove(key);
+    DataTransferIndices dtis = new DataTransferIndices();
+    String fullDtiKey = FULL_DTI_KEY_PREFIX + dtiRelativePath;
+    String partDtiKey = PART_DTI_KEY_PREFIX + dtiRelativePath;
+    String lastFilterKey = FILTER_KEY_PREFIX + dtiRelativePath;
+    String currFilter = filter + "/" + sortBy + "/" + sortOrder;
+
+    try
+    {      
+      DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);
+
+      if (dataFilter == null)
+      {
+        DxiRequest dxiRequest = new DxiRequest();
+        dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
+        dxiRequest.setDataFilter(new DataFilter());
+        
+        HttpClient httpClient = new HttpClient(serviceUri);
+        dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
+        session.put(fullDtiKey, dtis);
+
+        if (session.containsKey(partDtiKey))
+        {
+          session.remove(partDtiKey);
+        }
+
+        if (session.containsKey(lastFilterKey))
+        {
+          session.remove(lastFilterKey);
+        }
+      }
+      else if (session.containsKey(lastFilterKey))
+      {
+        String lastFilter = (String) session.get(lastFilterKey);
+
+        // filter has not changed
+        if (lastFilter.equals(currFilter))
+        {
+          dtis = (DataTransferIndices) session.get(partDtiKey);
+        }
+        else  // filter does not exist or has changed
+        {
+          if (mode == Mode.EXCHANGE) // exchange data
+          {
+            dtis = getFilteredDtis(dataFilter, manifestRelativePath, dtiRelativePath, serviceUri, fullDtiKey);
+          }
+          else
+          {
+            DxiRequest dxiRequest = new DxiRequest();
+            dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
+            dxiRequest.setDataFilter(dataFilter);
+            
+            HttpClient httpClient = new HttpClient(serviceUri);
+            dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
+          }
+          if (dtis != null && dtis.getDataTransferIndexList() != null
+              && dtis.getDataTransferIndexList().getItems().size() > 0)
+          {
+            session.put(partDtiKey, dtis);
+            session.put(lastFilterKey, currFilter);
+          }
+        }
+      }
+      else
+      {
+        if (mode == Mode.EXCHANGE) // exchange data
+        {
+          dtis = getFilteredDtis(dataFilter, manifestRelativePath, dtiRelativePath, serviceUri, fullDtiKey);
+        }
+        else // app data
+        {
+          DxiRequest dxiRequest = new DxiRequest();
+          dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
+          dxiRequest.setDataFilter(dataFilter);
+          
+          HttpClient httpClient = new HttpClient(serviceUri);
+          dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
+        }
+
+        if (dtis != null && dtis.getDataTransferIndexList() != null
+            && dtis.getDataTransferIndexList().getItems().size() > 0)
+        {
+          session.put(partDtiKey, dtis);
+          session.put(lastFilterKey, currFilter);
+        }
+      }
+    }
+    catch (Exception ex)
+    {
+      logger.error(ex);
+    }
+
+    return dtis;
   }
 
-  private DataTransferIndices getFilteredDtis(DataFilter dataFilter, String manifestRelativePath, String dtiRelativePath, String serviceUri,
+  protected DataTransferIndices getFilteredDtis(DataFilter dataFilter, String manifestRelativePath, String dtiRelativePath, String serviceUri,
       String fullDtiKey)
   {
     DataTransferIndices resultDtis = new DataTransferIndices();
@@ -306,136 +397,6 @@ public class DataModel
     return resultDtis;
   }
 
-  private boolean parsePartialDtis(List<DataTransferIndex> partialDtiList, List<DataTransferIndex> fullDtiList)
-  {
-    int count = 0;
-
-    for (int i = 0; i < partialDtiList.size(); i++)
-    {
-      boolean exists = false;
-      
-      for (int j = 0; j < fullDtiList.size(); j++)
-      {
-        if (partialDtiList.get(i).getIdentifier().equalsIgnoreCase(fullDtiList.get(j).getIdentifier()))
-        {
-          partialDtiList.get(i).setTransferType(fullDtiList.get(j).getTransferType());
-
-          if (!partialDtiList.get(i).getHashValue().equalsIgnoreCase(fullDtiList.get(j).getHashValue()))
-            fullDtiList.get(j).setHashValue(partialDtiList.get(i).getHashValue());
-
-          exists = true;
-          count++;
-          break;
-        }
-      }
-      
-      if (!exists)
-      {
-        partialDtiList.remove(i--);
-      }
-    }
-    
-    return count == fullDtiList.size();
-  }
-
-  // only cache full dti and one filtered dti
-  protected DataTransferIndices getDtis(Mode mode, String serviceUri, String manifestRelativePath, String dtiRelativePath, String filter,
-      String sortBy, String sortOrder)
-  {
-    DataTransferIndices dtis = new DataTransferIndices();
-    String fullDtiKey = FULL_DTI_KEY_PREFIX + dtiRelativePath;
-    String partDtiKey = PART_DTI_KEY_PREFIX + dtiRelativePath;
-    String lastFilterKey = FILTER_KEY_PREFIX + dtiRelativePath;
-    String currFilter = filter + "/" + sortBy + "/" + sortOrder;
-
-    try
-    {      
-      DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);
-
-      if (dataFilter == null)
-      {
-        DxiRequest dxiRequest = new DxiRequest();
-        dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
-        dxiRequest.setDataFilter(new DataFilter());
-        
-        HttpClient httpClient = new HttpClient(serviceUri);
-        dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
-        session.put(fullDtiKey, dtis);
-
-        if (session.containsKey(partDtiKey))
-        {
-          session.remove(partDtiKey);
-        }
-
-        if (session.containsKey(lastFilterKey))
-        {
-          session.remove(lastFilterKey);
-        }
-      }
-      else if (session.containsKey(lastFilterKey))
-      {
-        String lastFilter = (String) session.get(lastFilterKey);
-
-        // filter has not changed
-        if (lastFilter.equals(currFilter))
-        {
-          dtis = (DataTransferIndices) session.get(partDtiKey);
-        }
-        else  // filter does not exist or has changed
-        {
-          if (mode == Mode.EXCHANGE) // exchange data
-          {
-            dtis = getFilteredDtis(dataFilter, manifestRelativePath, dtiRelativePath, serviceUri, fullDtiKey);
-          }
-          else
-          {
-            DxiRequest dxiRequest = new DxiRequest();
-            dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
-            dxiRequest.setDataFilter(dataFilter);
-            
-            HttpClient httpClient = new HttpClient(serviceUri);
-            dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
-          }
-          if (dtis != null && dtis.getDataTransferIndexList() != null
-              && dtis.getDataTransferIndexList().getItems().size() > 0)
-          {
-            session.put(partDtiKey, dtis);
-            session.put(lastFilterKey, currFilter);
-          }
-        }
-      }
-      else
-      {
-        if (mode == Mode.EXCHANGE) // exchange data
-        {
-          dtis = getFilteredDtis(dataFilter, manifestRelativePath, dtiRelativePath, serviceUri, fullDtiKey);
-        }
-        else // app data
-        {
-          DxiRequest dxiRequest = new DxiRequest();
-          dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
-          dxiRequest.setDataFilter(dataFilter);
-          
-          HttpClient httpClient = new HttpClient(serviceUri);
-          dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
-        }
-
-        if (dtis != null && dtis.getDataTransferIndexList() != null
-            && dtis.getDataTransferIndexList().getItems().size() > 0)
-        {
-          session.put(partDtiKey, dtis);
-          session.put(lastFilterKey, currFilter);
-        }
-      }
-    }
-    catch (Exception ex)
-    {
-      logger.error(ex);
-    }
-
-    return dtis;
-  }
-
   protected DataTransferIndices getCachedDtis(String relativePath)
   {
     String dtiKey = PART_DTI_KEY_PREFIX + relativePath;
@@ -484,145 +445,11 @@ public class DataModel
     return getDtos(serviceUri, manifestRelativePath, dtoRelativePath, pageDtis);
   }
 
-  protected DataTransferObjects getRelatedDtos(String serviceUri, String manifestRelativePath, String dtiRelativePath, 
-      String dtoRelativePath, String dtoIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
-  {
-    DataTransferObjects relatedDtos = null;
-    DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
-    List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
-
-    for (DataTransferIndex dti : dtiList)
-    {
-      if (dti.getIdentifier().equals(dtoIdentifier))
-      {
-        DataTransferIndices requestDtis = new DataTransferIndices();
-        DataTransferIndexList dtiRequestList = new DataTransferIndexList();
-        requestDtis.setDataTransferIndexList(dtiRequestList);
-        dtiRequestList.getItems().add(dti);
-
-        DxoRequest dxoRequest = new DxoRequest();
-        dxoRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
-        dxoRequest.setDataTransferIndices(requestDtis);
-        
-        try
-        {
-          HttpClient httpClient = new HttpClient(serviceUri);
-          relatedDtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
-
-          // apply filter          
-          if (relatedDtos != null)
-          {
-            List<DataTransferObject> dtoList = relatedDtos.getDataTransferObjectList().getItems();
-          
-            if (dtoList.size() > 0 && filter != null && filter.length() > 0)
-            {
-              DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);              
-              List<Expression> expressions = dataFilter.getExpressions().getItems();
-              
-              for (Expression expression : expressions)
-              {
-                for (DataTransferObject dto : dtoList)
-                {
-                  List<ClassObject> classObjects = dto.getClassObjects().getItems();                  
-                  dto.getClassObjects().setItems(getFilteredClasses(expression, classObjects));                  
-                }
-              }
-            }
-          }
-        }
-        catch (HttpClientException ex)
-        {
-          logger.error("Error in getDto: " + ex);
-        }
-
-        break;
-      }
-    }
-    
-    if (relatedDtos != null)
-    {
-      List<DataTransferObject> dtos = relatedDtos.getDataTransferObjectList().getItems();
-      int actualLimit = Math.min(start + limit, dtos.size());
-      List<DataTransferObject> pageRelatedDtos = dtos.subList(start, actualLimit);
-      relatedDtos.getDataTransferObjectList().setItems(pageRelatedDtos);
-    }
-
-    return relatedDtos;
-  }
-  
-  private List<ClassObject> getFilteredClasses(Expression expression, List<ClassObject> classObjects)
-  {
-    List<ClassObject> filteredClassObjects = new ArrayList<ClassObject>();
-    String[] propertyParts = expression.getPropertyName().split("\\.");    
-    
-    for (ClassObject classObject : classObjects)
-    {
-      if (classObject.getName().equalsIgnoreCase(propertyParts[0]))
-      {
-        List<TemplateObject> templateObjects = classObject.getTemplateObjects().getItems();
-        
-        for (TemplateObject templateObject : templateObjects)
-        {
-          if (templateObject.getName().equalsIgnoreCase(propertyParts[1]))
-          {
-            List<RoleObject> roleObjects = templateObject.getRoleObjects().getItems();
-            
-            for (RoleObject roleObject : roleObjects)
-            {
-              if ((roleObject.getType() == RoleType.PROPERTY ||
-                  roleObject.getType() == RoleType.DATA_PROPERTY ||
-                  roleObject.getType() == RoleType.OBJECT_PROPERTY ||
-                  roleObject.getType() == RoleType.FIXED_VALUE) &&
-                  roleObject.getName().equalsIgnoreCase(propertyParts[2]))
-              {
-                int compareValue = roleObject.getValue().compareToIgnoreCase(expression.getValues().getItems().get(0));
-                RelationalOperator relationalOperator = expression.getRelationalOperator();
-                
-                if ((relationalOperator == RelationalOperator.EQUAL_TO && compareValue == 0) ||
-                    (relationalOperator == RelationalOperator.GREATER_THAN && compareValue > 0) ||
-                    (relationalOperator == RelationalOperator.LESSER_THAN && compareValue < 0))                    
-                {
-                  filteredClassObjects.add(classObject);
-                }
-                  
-                break;
-              }
-            }                          
-          }                        
-        }
-      }
-    }
-    
-    return filteredClassObjects;
-  }
-
-  private String resolveValueMap(String refServiceUri, String id)
-  {
-    String label = id;
-
-    try
-    {
-      HttpClient httpClient = new HttpClient(refServiceUri);
-      Entity value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");
-      
-      if (value != null)
-      {
-        label = value.getLabel();
-      }
-    }
-    catch (Exception e)
-    {
-      logger.error("Error in resolveValueMap:" + e);
-    }
-
-    return label;
-  }
-  
   protected Grid getDtoGrid(Mode mode, Graph graph, DataTransferObjects dtos, String refServiceUri)
   {
     Grid dtoGrid = new Grid();
     
-    List<Field> fields = createFields(mode, graph);
+    List<Field> fields = createFields(mode, graph, null);
     dtoGrid.setFields(fields);
     
     List<List<String>> gridData = new ArrayList<List<String>>();
@@ -653,7 +480,7 @@ public class DataModel
         dtoGrid.setIdentifier(classObject.getClassId());
         dtoGrid.setDescription(className);
         
-        processClassObject(dto, dtoIndex, fields, mode, classObject, dtoGrid, rowData, relatedClasses, refServiceUri);
+        processClassObject(graph, dto, dtoIndex, fields, mode, classObject, dtoGrid, rowData, relatedClasses, refServiceUri);
       }
 
       String relatedClassesJson;
@@ -678,401 +505,177 @@ public class DataModel
     return dtoGrid;
   }
   
-  // fields are column headers
-  private List<Field> createFields(Mode mode, Graph graph)
+  //TODO: apply start and limit
+  protected DataTransferObjects getRelatedItems(String serviceUri, String manifestRelativePath, String dtiRelativePath, 
+      String dtoRelativePath, String dtoIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
   {
-    List<Field> fields = new ArrayList<Field>();
-    List<ClassTemplates> classTemplatesItems = graph.getClassTemplatesList().getItems();
-    
-    // transfer-type field
-    if (mode == Mode.EXCHANGE)
-    {
-      Field field = new Field();
-      field.setName("Status");
-      field.setDataIndex("Transfer Type");
-      field.setType("string");
-      field.setWidth(60);
-      field.setFixed(true);
-      fields.add(0, field);
-    }
+    DataTransferObjects relatedDtos = new DataTransferObjects();
+    DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
+    List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
 
-    // info field
-    Field field = new Field();
-    field.setName("&nbsp;");
-    field.setDataIndex("&nbsp;");
-    field.setType("string");
-    field.setWidth(28);
-    field.setFixed(true);
-    field.setFilterable(false);
-    fields.add(0, field);
-    
-    if (classTemplatesItems.size() > 0)
+    for (DataTransferIndex dti : dtiList)
     {
-      ClassTemplates classTemplates = classTemplatesItems.get(0);
-      createFields(mode, fields, graph, classTemplates);      
-    }
-    
-    return fields;
-  }
-  
-  private void createFields(Mode mode, List<Field> fields, Graph graph, ClassTemplates classTemplates)
-  {
-    if (classTemplates != null && classTemplates.getTemplates() != null)
-    {
-      String className = IOUtils.toCamelCase(classTemplates.getClazz().getName());
-      
-      for (Template template : classTemplates.getTemplates().getItems())
+      if (dti.getIdentifier().equals(dtoIdentifier))
       {
-        for (Role role : template.getRoles().getItems())
+        DataTransferIndices requestDtis = new DataTransferIndices();
+        DataTransferIndexList dtiRequestList = new DataTransferIndexList();
+        requestDtis.setDataTransferIndexList(dtiRequestList);
+        dtiRequestList.getItems().add(dti);
+
+        DxoRequest dxoRequest = new DxoRequest();
+        dxoRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
+        dxoRequest.setDataTransferIndices(requestDtis);
+        
+        try
         {
-          if (role.getType() == org.iringtools.mapping.RoleType.PROPERTY ||
-              role.getType() == org.iringtools.mapping.RoleType.DATA_PROPERTY ||
-              role.getType() == org.iringtools.mapping.RoleType.OBJECT_PROPERTY ||
-              role.getType() == org.iringtools.mapping.RoleType.FIXED_VALUE)
+          HttpClient httpClient = new HttpClient(serviceUri);
+          relatedDtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
+                    
+          // apply filter          
+          if (relatedDtos != null)
           {
-            String dataType = role.getDataType();            
-            String fieldName = className + '.' + template.getName() + "." + role.getName();
-            Field field = new Field();
-            
-            field.setWidth(MIN_COLUMN_WIDTH);
-            field.setName(fieldName);
-            field.setDataIndex(fieldName);
-
-            if (mode == Mode.APP && dataType != null && dataType.startsWith("xsd:"))
+            List<DataTransferObject> dtoList = relatedDtos.getDataTransferObjectList().getItems();
+          
+            if (dtoList.size() > 0 && filter != null && filter.length() > 0)
             {
-              dataType = dataType.replace("xsd:", "").toLowerCase();
+              DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);              
+              List<Expression> expressions = dataFilter.getExpressions().getItems();
               
-              if (!gridFilterTypes.contains(dataType))
+              for (Expression expression : expressions)
               {
-                dataType = "auto";
+                for (DataTransferObject dto : dtoList)
+                {
+                  List<ClassObject> classObjects = dto.getClassObjects().getItems();                  
+                  dto.getClassObjects().setItems(getFilteredClasses(expression, classObjects));                  
+                }
               }
-
-              field.setType(dataType);
             }
-            else
-            {
-              field.setType("string");
-            }
-
-            fields.add(field);
           }
-          else if (role.getClazz() != null && (role.getCardinality() == null || 
-              role.getCardinality() == Cardinality.ONE_TO_ONE))
+        }
+        catch (HttpClientException ex)
+        {
+          logger.error("Error in getDto: " + ex);
+        }
+      }
+    }
+
+    return relatedDtos;
+  }
+   
+  protected Grid getRelatedItemGrid(Mode mode, Graph graph, DataTransferObjects dtos, String classId, String classIdentifier,
+      String refServiceUri)
+  { 
+    Grid dtoGrid = new Grid();
+    
+    List<Field> fields = createFields(mode, graph, classId);
+    dtoGrid.setFields(fields);
+    
+    List<List<String>> gridData = new ArrayList<List<String>>();
+    dtoGrid.setData(gridData);
+
+    List<DataTransferObject> dtoList = dtos.getDataTransferObjectList().getItems();
+
+    for (int dtoIndex = 0; dtoIndex < dtoList.size(); dtoIndex ++)
+    {
+      DataTransferObject dto = dtoList.get(dtoIndex);
+      List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();    
+      
+      if (dto.getClassObjects().getItems().size() > 0)
+      {
+        for (ClassObject classObject : dto.getClassObjects().getItems())
+        {
+          if (classObject.getClassId().equalsIgnoreCase(classId)) // && classObject.getIdentifier().equalsIgnoreCase(classIdentifier))
           {
-            String classId = role.getClazz().getId();              
-            ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId);
-            createFields(mode, fields, graph, relatedClassTemplates);
+            dtoGrid.setIdentifier(classObject.getClassId());
+            dtoGrid.setDescription(classObject.getName());
+            
+            List<String> rowData = new ArrayList<String>();
+            
+            // create a place holder for info field
+            rowData.add("");
+
+            if (mode == Mode.EXCHANGE)
+            {
+              String transferType = dto.getTransferType().toString();
+              rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
+            }
+            
+            processClassObject(graph, dto, dtoIndex, fields, mode, classObject, dtoGrid, rowData, relatedClasses, refServiceUri);
+            
+            String relatedClassesJson;
+            
+            try
+            {
+              relatedClassesJson = JSONUtil.serialize(relatedClasses);
+            }
+            catch (JSONException ex)
+            {
+              relatedClassesJson = "[]";
+            }
+      
+            // update info field
+            rowData.set(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
+                + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\",\"" + 
+                classObject.getIdentifier() + "\"," + relatedClassesJson + ")'>");
+      
+            gridData.add(rowData);
           }
         }
       }
     }
+
+    return dtoGrid;
+  }
+
+  protected String resolveValueMap(String refServiceUri, String id)
+  {
+    String label = id;
+
+    try
+    {
+      HttpClient httpClient = new HttpClient(refServiceUri);
+      Entity value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");
+      
+      if (value != null)
+      {
+        label = value.getLabel();
+      }
+    }
+    catch (Exception e)
+    {
+      logger.error("Error in resolveValueMap:" + e);
+    }
+
+    return label;
   }
   
-  private ClassTemplates getClassTemplates(Graph graph, String classId)
+  protected Cardinality getCardinality(Graph graph, String className, String templateName, String roleName, String relatedClassName)
   {
     for (ClassTemplates classTemplates : graph.getClassTemplatesList().getItems())
     {
-      if (classTemplates.getClazz().getId().equals(classId))
-        return classTemplates;
+      String clsName = IOUtils.toCamelCase(classTemplates.getClazz().getName());
+      
+      if (clsName.equalsIgnoreCase(className))
+      {
+        for (Template template : classTemplates.getTemplates().getItems())
+        {
+          if (template.getName().equalsIgnoreCase(templateName))
+          {
+            for (Role role : template.getRoles().getItems())
+            {
+              if (role.getName().equalsIgnoreCase(roleName))
+              {
+                return role.getCardinality();
+              }
+            }
+          }
+        }
+      }
     }
     
     return null;
   }
   
-  private void processClassObject(DataTransferObject dto, int dtoIndex, List<Field> fields, Mode mode, 
-      ClassObject classObject, Grid dtoGrid, List<String> rowData, List<RelatedClass> relatedClasses, String refServiceUri)
-  {
-    String className = IOUtils.toCamelCase(classObject.getName());
-
-    for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
-    {
-      for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
-      {
-        RoleValues roleValues = roleObject.getValues();
-        RoleValues roleOldValues = roleObject.getOldValues();
-        String roleValue = roleObject.getValue();
-        String roleOldValue = roleObject.getOldValue();
-        RoleType roleType = roleObject.getType();
-                
-        if (roleType == RoleType.PROPERTY ||
-            roleType == RoleType.DATA_PROPERTY ||
-            roleType == RoleType.OBJECT_PROPERTY ||
-            roleType == RoleType.FIXED_VALUE)
-        {
-          // compute role value
-          if (roleValues != null && roleValues.getItems().size() > 0)
-          {
-            roleValue = getMultiRoleValues(roleObject, roleValues.getItems(), refServiceUri);
-            roleOldValue = getMultiRoleValues(roleObject, roleOldValues.getItems(), refServiceUri);
-          }
-          else if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
-          {
-            roleValue = getValueMap(refServiceUri, roleValue);
-            
-            if (mode == Mode.EXCHANGE) 
-            {
-              roleOldValue = getValueMap(refServiceUri, roleOldValue);
-            }
-          }
-          
-          // find the right column to insert value, fill in blank for any gap 
-          // (because class/template do not exist, e.g. due to null class identifier)         
-          String dataIndex = className + '.' + templateObject.getName() + '.' + roleObject.getName();
-          
-          while (rowData.size() < fields.size())
-          {
-            if (!fields.get(rowData.size()).getDataIndex().equalsIgnoreCase(dataIndex))
-            {
-              rowData.add("");
-            }
-            else
-            {
-              break;
-            }
-          }
-          
-          // add row value to row data
-          if (mode == Mode.APP || roleOldValue == null || roleOldValue.equals(roleValue))
-          { 
-            rowData.add(roleValue);
-          }
-          else
-          {
-            roleValue = roleOldValue + " -> " + roleValue;
-            rowData.add("<span class=\"change\">" + roleValue + "</span>");
-          }
-          
-          // adjust field width based on value
-          Field field = fields.get(rowData.size() - 1);
-          int fieldWidth = field.getWidth();
-          int newWidth = roleValue.length() * PIXELS_PER_CHAR;
-          
-          if (newWidth > MIN_COLUMN_WIDTH && newWidth > fieldWidth && newWidth < MAX_COLUMN_WIDTH)
-          {
-            field.setWidth(newWidth);
-          }
-        }
-        else if (roleObject.getRelatedClassId() != null)
-        {
-          if (roleObject.getValues().getItems().size() > 1)
-          {
-            RelatedClass relatedClass = new RelatedClass();
-            relatedClass.setId(roleObject.getRelatedClassId());
-            relatedClass.setName(IOUtils.toCamelCase(roleObject.getRelatedClassName()));
-            relatedClasses.add(relatedClass);
-          }
-          else if (roleObject.getValues().getItems().size() == 1)
-          {
-            String relatedClassIdentifier = roleObject.getValues().getItems().get(0);
-            
-            // find related class and recur
-            for (ClassObject relatedClassObject : dto.getClassObjects().getItems())
-            {
-              if (relatedClassObject.getClassId().equals(roleObject.getRelatedClassId()) && 
-                  relatedClassObject.getIdentifier().equals(relatedClassIdentifier))
-              {
-                processClassObject(dto, dtoIndex, fields, mode, relatedClassObject, dtoGrid, rowData, 
-                    relatedClasses, refServiceUri);
-                
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-  
-  private String getMultiRoleValues(RoleObject roleObject, List<String> roleValues, String refServiceUri)
-  {
-    StringBuilder roleValueBuilder = new StringBuilder();
-    
-    for (String value : roleValues)
-    {
-      if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
-      {
-        value = getValueMap(refServiceUri, value);
-      }
-      
-      if (roleValueBuilder.length() > 0)
-      {
-        roleValueBuilder.append(",");
-      }
-      
-      roleValueBuilder.append(value);
-    }
-    
-    return roleValueBuilder.toString();
-  }
-  
-  protected Grid getRelatedDtoGrid(Mode mode, DataTransferObjects dtos, String classId, String classIdentifier)
-  {
-    Grid relatedItemGrid = new Grid();    
-    List<Field> fields = new ArrayList<Field>();
-    List<List<String>> gridData = new ArrayList<List<String>>();    
-    int relatedClassCount = 0;
-
-    for (DataTransferObject dto : dtos.getDataTransferObjectList().getItems())
-    {
-      for (ClassObject classObject : dto.getClassObjects().getItems())
-      {
-        if (classObject.getClassId().equals(classId))
-        {
-          List<String> row = new ArrayList<String>();
-          String className = IOUtils.toCamelCase(classObject.getName());
-          List<RelatedClass> nextRelatedClasses = new ArrayList<RelatedClass>();
-  
-          relatedClassCount++;
-          
-          if (relatedClassCount == 1)
-          {
-            relatedItemGrid.setIdentifier(classObject.getClassId());
-            relatedItemGrid.setDescription(className);
-          }
-          
-          for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
-          {
-            if (mode == Mode.EXCHANGE)
-            {
-              if (dto.getTransferType() == TransferType.CHANGE)
-              {
-                String transferType = templateObject.getTransferType().toString();
-                row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
-              }
-              else
-              {
-                String transferType = dto.getTransferType().toString();
-                row.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
-              }
-            }
-  
-            for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
-            {            
-              String roleValue = roleObject.getValue();
-              RoleValues roleValues = roleObject.getValues();
-              RoleType roleType = roleObject.getType();
-              String dataType = roleObject.getDataType();
-              boolean hasRelatedValues = false;
-              
-              // values take priority over value as value will be deprecated/removed later
-              if ((roleType == RoleType.PROPERTY ||
-                   roleType == RoleType.DATA_PROPERTY ||
-                   roleType == RoleType.OBJECT_PROPERTY) && 
-                  roleValues != null && roleValues.getItems().size() > 0)
-              {
-                StringBuilder tempRoleValue = new StringBuilder();
-                
-                for (String value : roleValues.getItems())
-                {
-                  if (tempRoleValue.length() > 0)
-                    tempRoleValue.append(",");
-                  
-                  tempRoleValue.append(value);
-                }
-                
-                roleValue = tempRoleValue.toString();
-                hasRelatedValues = true;
-              }
-              
-              if (hasRelatedValues || (roleValue != null && ((dataType != null && dataType.startsWith("xsd:")) ||
-                  (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0))))
-              {           
-                if (relatedClassCount == 1)
-                {
-                  String fieldName = templateObject.getName() + "." + roleObject.getName();
-  
-                  Field field = new Field();
-                  field.setName(fieldName);
-                  field.setDataIndex(className + '.' + fieldName);
-  
-                  if (mode == Mode.APP && dataType != null && dataType.startsWith("xsd:"))
-                  {
-                    dataType = dataType.replace("xsd:", "").toLowerCase();
-                    
-                    if (!gridFilterTypes.contains(dataType))
-                    {
-                      dataType = "auto";
-                    }
-   
-                    field.setType(dataType);
-                  }
-                  else
-                  {
-                    field.setType("string");
-                  }
-  
-                  fields.add(field);
-                }
-  
-                if (mode == Mode.APP || roleObject.getOldValue() == null
-                    || roleObject.getOldValue().equals(roleValue))
-                {
-                  row.add(roleValue);
-                }
-                else
-                {
-                  row.add("<span class=\"change\">" + roleObject.getOldValue() + " -> " + roleValue + "</span>");
-                }
-              }
-              else if (roleObject.getRelatedClassName() != null && roleObject.getRelatedClassName().length() > 0)
-              {              
-                RelatedClass nextRelatedClass = new RelatedClass();
-                nextRelatedClass.setId(roleObject.getRelatedClassId());
-                nextRelatedClass.setName(IOUtils.toCamelCase(roleObject.getRelatedClassName()));
-                nextRelatedClasses.add(nextRelatedClass);
-              }
-            }
-          }
-          
-          if (relatedClassCount == 1)
-          {
-            if (mode == Mode.EXCHANGE)
-            {
-              Field transferTypeField = new Field();
-              transferTypeField.setName("Transfer Type");
-              transferTypeField.setDataIndex("Transfer Type");
-              transferTypeField.setType("string");
-              fields.add(0, transferTypeField);
-            }
-  
-            Field infoField = new Field();
-            infoField.setName("&nbsp;");
-            infoField.setDataIndex("&nbsp;");
-            infoField.setType("string");
-            infoField.setWidth(28);
-            infoField.setFixed(true);
-            infoField.setFilterable(false);
-            fields.add(0, infoField);
-          }
-          
-          String relatedClassesJson;
-  
-          try
-          {
-            relatedClassesJson = JSONUtil.serialize(nextRelatedClasses);
-          }
-          catch (JSONException ex)
-          {
-            relatedClassesJson = "[]";
-          }
-  
-          row.add(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
-              + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\",\"" +
-              classObject.getIdentifier() + "\"," + relatedClassesJson + ")'>");
-          
-          gridData.add(row);
-        }
-      }
-    }
-    
-    //TODO: pass count value into the function
-    relatedItemGrid.setTotal(relatedClassCount);
-    relatedItemGrid.setFields(fields);
-    relatedItemGrid.setData(gridData);
-
-    return relatedItemGrid;
-  }
-
   protected String getValueMapKey(String value, HashMap<String, String> valueMaps)
   {
     for (String key : valueMaps.keySet())
@@ -1083,7 +686,7 @@ public class DataModel
   }
 
   @SuppressWarnings("unchecked")
-  private String getValueMap(String refServiceUri, String value)
+  protected String getValueMap(String refServiceUri, String value)
   {
     Map<String, String> valueMaps;
     String valueMap = value;
@@ -1235,8 +838,7 @@ public class DataModel
     
     return manifest;
   }
-  
-  
+    
   protected Graph getGraph(Manifest manifest, String graphName)
   {
     if (manifest.getGraphs() != null)
@@ -1251,5 +853,336 @@ public class DataModel
     }
     
     return null;
+  }
+  
+  protected void removeSessionData(String key)
+  {
+    if (session != null && session.keySet().contains(key))
+      session.remove(key);
+  }
+
+  private boolean parsePartialDtis(List<DataTransferIndex> partialDtiList, List<DataTransferIndex> fullDtiList)
+  {
+    int count = 0;
+
+    for (int i = 0; i < partialDtiList.size(); i++)
+    {
+      boolean exists = false;
+      
+      for (int j = 0; j < fullDtiList.size(); j++)
+      {
+        if (partialDtiList.get(i).getIdentifier().equalsIgnoreCase(fullDtiList.get(j).getIdentifier()))
+        {
+          partialDtiList.get(i).setTransferType(fullDtiList.get(j).getTransferType());
+
+          if (!partialDtiList.get(i).getHashValue().equalsIgnoreCase(fullDtiList.get(j).getHashValue()))
+            fullDtiList.get(j).setHashValue(partialDtiList.get(i).getHashValue());
+
+          exists = true;
+          count++;
+          break;
+        }
+      }
+      
+      if (!exists)
+      {
+        partialDtiList.remove(i--);
+      }
+    }
+    
+    return count == fullDtiList.size();
+  }
+
+  private List<ClassObject> getFilteredClasses(Expression expression, List<ClassObject> classObjects)
+  {
+    List<ClassObject> filteredClassObjects = new ArrayList<ClassObject>();
+    String[] propertyParts = expression.getPropertyName().split("\\.");    
+    
+    for (ClassObject classObject : classObjects)
+    {
+      if (classObject.getName().equalsIgnoreCase(propertyParts[0]))
+      {
+        List<TemplateObject> templateObjects = classObject.getTemplateObjects().getItems();
+        
+        for (TemplateObject templateObject : templateObjects)
+        {
+          if (templateObject.getName().equalsIgnoreCase(propertyParts[1]))
+          {
+            List<RoleObject> roleObjects = templateObject.getRoleObjects().getItems();
+            
+            for (RoleObject roleObject : roleObjects)
+            {
+              if ((roleObject.getType() == RoleType.PROPERTY ||
+                  roleObject.getType() == RoleType.DATA_PROPERTY ||
+                  roleObject.getType() == RoleType.OBJECT_PROPERTY ||
+                  roleObject.getType() == RoleType.FIXED_VALUE) &&
+                  roleObject.getName().equalsIgnoreCase(propertyParts[2]))
+              {
+                int compareValue = roleObject.getValue().compareToIgnoreCase(expression.getValues().getItems().get(0));
+                RelationalOperator relationalOperator = expression.getRelationalOperator();
+               
+                //TODO: handle numeric, date, time comparison
+                if ((relationalOperator == RelationalOperator.EQUAL_TO && compareValue == 0) ||
+                    (relationalOperator == RelationalOperator.GREATER_THAN && compareValue > 0) ||
+                    (relationalOperator == RelationalOperator.LESSER_THAN && compareValue < 0))                    
+                {
+                  filteredClassObjects.add(classObject);
+                }
+                  
+                break;
+              }
+            }                          
+          }                        
+        }
+      }
+    }
+    
+    return filteredClassObjects;
+  }
+
+  private List<Field> createFields(Mode mode, Graph graph, String startClassId)
+  {
+    List<Field> fields = new ArrayList<Field>();
+    
+    // transfer-type field
+    if (mode == Mode.EXCHANGE)
+    {
+      Field field = new Field();
+      field.setName("Status");
+      field.setDataIndex("Transfer Type");
+      field.setType("string");
+      field.setWidth(60);
+      field.setFixed(true);
+      fields.add(0, field);
+    }
+
+    // info field
+    Field field = new Field();
+    field.setName("&nbsp;");
+    field.setDataIndex("&nbsp;");
+    field.setType("string");
+    field.setWidth(28);
+    field.setFixed(true);
+    field.setFilterable(false);
+    fields.add(0, field);
+    
+    List<ClassTemplates> classTemplatesItems = graph.getClassTemplatesList().getItems();
+    
+    if (classTemplatesItems.size() > 0)
+    {
+      if (startClassId == null || startClassId.length() == 0)
+      {
+        ClassTemplates classTemplates = classTemplatesItems.get(0);
+        createFields(mode, fields, graph, classTemplates);   
+      }
+      else
+      {
+        for (ClassTemplates classTempates : classTemplatesItems)
+        {
+          if (classTempates.getClazz().getId().equalsIgnoreCase(startClassId))
+          {
+            createFields(mode, fields, graph, classTempates);
+            break;
+          }
+        }
+      }
+    }
+    
+    return fields;
+  }
+  
+  private void createFields(Mode mode, List<Field> fields, Graph graph, ClassTemplates classTemplates)
+  {
+    if (classTemplates != null && classTemplates.getTemplates() != null)
+    {
+      String className = IOUtils.toCamelCase(classTemplates.getClazz().getName());
+      
+      for (Template template : classTemplates.getTemplates().getItems())
+      {
+        for (Role role : template.getRoles().getItems())
+        {
+          if (role.getType() == org.iringtools.mapping.RoleType.PROPERTY ||
+              role.getType() == org.iringtools.mapping.RoleType.DATA_PROPERTY ||
+              role.getType() == org.iringtools.mapping.RoleType.OBJECT_PROPERTY ||
+              role.getType() == org.iringtools.mapping.RoleType.FIXED_VALUE)
+          {
+            String dataType = role.getDataType();            
+            String fieldName = className + '.' + template.getName() + "." + role.getName();
+            Field field = new Field();
+            
+            field.setWidth(MIN_COLUMN_WIDTH);
+            field.setName(fieldName);
+            field.setDataIndex(fieldName);
+
+            if (mode == Mode.APP && dataType != null && dataType.startsWith("xsd:"))
+            {
+              dataType = dataType.replace("xsd:", "").toLowerCase();
+              
+              if (!gridFilterTypes.contains(dataType))
+              {
+                dataType = "auto";
+              }
+
+              field.setType(dataType);
+            }
+            else
+            {
+              field.setType("string");
+            }
+
+            fields.add(field);
+          }
+          else if (role.getClazz() != null && (role.getCardinality() == null || 
+              role.getCardinality() == Cardinality.ONE_TO_ONE))
+          {
+            String classId = role.getClazz().getId();              
+            ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId);
+            createFields(mode, fields, graph, relatedClassTemplates);
+          }
+        }
+      }
+    }
+  }
+  
+  private ClassTemplates getClassTemplates(Graph graph, String classId)
+  {
+    for (ClassTemplates classTemplates : graph.getClassTemplatesList().getItems())
+    {
+      if (classTemplates.getClazz().getId().equals(classId))
+        return classTemplates;
+    }
+    
+    return null;
+  }
+  
+  private void processClassObject(Graph graph, DataTransferObject dto, int dtoIndex, List<Field> fields, Mode mode, 
+      ClassObject classObject, Grid dtoGrid, List<String> rowData, List<RelatedClass> relatedClasses, String refServiceUri)
+  {
+    String className = IOUtils.toCamelCase(classObject.getName());
+
+    for (TemplateObject templateObject : classObject.getTemplateObjects().getItems())
+    {
+      for (RoleObject roleObject : templateObject.getRoleObjects().getItems())
+      {
+        RoleValues roleValues = roleObject.getValues();
+        RoleValues roleOldValues = roleObject.getOldValues();
+        String roleValue = roleObject.getValue();
+        String roleOldValue = roleObject.getOldValue();
+        RoleType roleType = roleObject.getType();
+                
+        if (roleType == RoleType.PROPERTY ||
+            roleType == RoleType.DATA_PROPERTY ||
+            roleType == RoleType.OBJECT_PROPERTY ||
+            roleType == RoleType.FIXED_VALUE)
+        {
+          // compute role value
+          if (roleValues != null && roleValues.getItems().size() > 0)
+          {
+            roleValue = getMultiRoleValues(roleObject, roleValues.getItems(), refServiceUri);
+            
+            if (roleOldValues != null && roleOldValues.getItems().size() > 0)
+              roleOldValue = getMultiRoleValues(roleObject, roleOldValues.getItems(), refServiceUri);
+          }
+          else if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
+          {
+            roleValue = getValueMap(refServiceUri, roleValue);
+            
+            if (mode == Mode.EXCHANGE) 
+            {
+              roleOldValue = getValueMap(refServiceUri, roleOldValue);
+            }
+          }
+          
+          // find the right column to insert value, fill in blank for any gap 
+          // (because class/template do not exist, e.g. due to null class identifier)         
+          String dataIndex = className + '.' + templateObject.getName() + '.' + roleObject.getName();
+          
+          while (rowData.size() < fields.size())
+          {
+            if (!fields.get(rowData.size()).getDataIndex().equalsIgnoreCase(dataIndex))
+            {
+              rowData.add("");
+            }
+            else
+            {
+              break;
+            }
+          }
+          
+          // add row value to row data
+          if (mode == Mode.APP || roleOldValue == null || roleOldValue.equals(roleValue))
+          { 
+            rowData.add(roleValue);
+          }
+          else
+          {
+            roleValue = roleOldValue + " -> " + roleValue;
+            rowData.add("<span class=\"change\">" + roleValue + "</span>");
+          }
+          
+          // adjust field width based on value
+          Field field = fields.get(rowData.size() - 1);
+          int fieldWidth = field.getWidth();
+          int newWidth = roleValue.length() * PIXELS_PER_CHAR;
+          
+          if (newWidth > MIN_COLUMN_WIDTH && newWidth > fieldWidth && newWidth < MAX_COLUMN_WIDTH)
+          {
+            field.setWidth(newWidth);
+          }
+        }
+        else if (roleObject.getRelatedClassId() != null && roleObject.getValues() != null)
+        {
+          Cardinality cardinality = getCardinality(graph, className, templateObject.getName(), roleObject.getName(), 
+              roleObject.getRelatedClassName());
+          
+          if (cardinality == null || cardinality == Cardinality.ONE_TO_ONE)
+          {
+            String relatedClassIdentifier = roleObject.getValues().getItems().get(0);
+            
+            // find related class and recur
+            for (ClassObject relatedClassObject : dto.getClassObjects().getItems())
+            {
+              if (relatedClassObject.getClassId().equals(roleObject.getRelatedClassId()) && 
+                  relatedClassObject.getIdentifier().equals(relatedClassIdentifier))
+              {
+                processClassObject(graph, dto, dtoIndex, fields, mode, relatedClassObject, dtoGrid, rowData, 
+                    relatedClasses, refServiceUri);
+                
+                break;
+              }
+            }
+          }
+          else 
+          {
+            RelatedClass relatedClass = new RelatedClass();
+            relatedClass.setId(roleObject.getRelatedClassId());
+            relatedClass.setName(IOUtils.toCamelCase(roleObject.getRelatedClassName()));
+            relatedClasses.add(relatedClass);
+          }
+        }
+      }
+    }
+  }
+  
+  private String getMultiRoleValues(RoleObject roleObject, List<String> roleValues, String refServiceUri)
+  {
+    StringBuilder roleValueBuilder = new StringBuilder();
+    
+    for (String value : roleValues)
+    {
+      if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
+      {
+        value = getValueMap(refServiceUri, value);
+      }
+      
+      if (roleValueBuilder.length() > 0)
+      {
+        roleValueBuilder.append(",");
+      }
+      
+      roleValueBuilder.append(value);
+    }
+    
+    return roleValueBuilder.toString();
   }
 }
