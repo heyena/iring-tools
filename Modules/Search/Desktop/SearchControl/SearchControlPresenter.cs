@@ -350,7 +350,7 @@ namespace org.iringtools.modules.search.searchregion
                 {
 
                     ICommand command = args.GetUserState<ICommand>();
-                    if (command.CanExecute(args))
+                    if (command != null && command.CanExecute(args))
                     {
                         command.Execute(args);
                     }

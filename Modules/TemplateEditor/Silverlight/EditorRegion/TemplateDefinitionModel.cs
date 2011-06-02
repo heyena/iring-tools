@@ -310,14 +310,10 @@ namespace org.iringtools.modules.templateeditor.editorregion
         {
             get
             {
-                try
-                {
-                    return selectedRole.name.FirstOrDefault().value;
-                }
-                catch
-                {
-                    return "";
-                }
+                if (selectedRole != null && selectedRole.name != null)
+                  return selectedRole.name.FirstOrDefault().value;
+
+                return String.Empty;
             }
             set
             {
@@ -341,14 +337,10 @@ namespace org.iringtools.modules.templateeditor.editorregion
         {
             get
             {
-                try
-                {
-                    return selectedRole.description.value;
-                }
-                catch
-                {
-                    return "";
-                }
+              if (selectedRole != null && selectedRole.description != null)
+                return selectedRole.description.value;
+              
+              return String.Empty;
             }
             set
             {

@@ -2325,7 +2325,7 @@ namespace org.iringtools.refdata
                                                         sparqlStmts.AppendLine(string.Format("tpl:{0}  rdfs:label \'{1}\'{2} .", existingRole.identifier, existingName.value, name.lang));
                                                     }
                                                     //index
-                                                    if (existingRole.designation.value != index.ToString())
+                                                    if (existingRole.designation != null && existingRole.designation.value != index.ToString())
                                                     {
                                                         sparqlStmts.AppendLine(string.Format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .", existingRole.identifier, existingRole.designation.value));
                                                     }
@@ -2812,7 +2812,8 @@ namespace org.iringtools.refdata
 
                 _logger.Error(errMsg);
             }
-            return _response;
+
+            return response;
         }
 
         public QMXF GetPart8Class(string id)

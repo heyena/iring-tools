@@ -240,7 +240,6 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
       }
     }
 
-
     private void repositorySelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       try
