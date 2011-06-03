@@ -86,8 +86,14 @@ public class DataModel
   protected final String FULL_DTI_KEY_PREFIX = DTI_PREFIX + "full";
   protected final String PART_DTI_KEY_PREFIX = DTI_PREFIX + "part";
   protected final String FILTER_KEY_PREFIX = DTI_PREFIX + "filter-key";
+  
   protected final int MIN_FIELD_WIDTH = 50;
   protected final int MAX_FIELD_WIDTH = 300;
+  protected final int INFO_FIELD_WIDTH = 28;
+  protected final int STATUS_FIELD_WIDTH = 60;
+  protected final int FIELD_PADDING = 2;
+  protected final int HEADER_PX_PER_CHAR = 6;
+  protected final int VALUE_PX_PER_CHAR = 10;
 
   protected Map<String, Object> session;
   
@@ -964,7 +970,7 @@ public class DataModel
       field.setName("Status");
       field.setDataIndex("Transfer Type");
       field.setType("string");
-      field.setWidth(60);
+      field.setWidth(STATUS_FIELD_WIDTH);
       field.setFixed(true);
       fields.add(0, field);
     }
@@ -974,7 +980,7 @@ public class DataModel
     field.setName("&nbsp;");
     field.setDataIndex("&nbsp;");
     field.setType("string");
-    field.setWidth(28);
+    field.setWidth(INFO_FIELD_WIDTH);
     field.setFixed(true);
     field.setFilterable(false);
     fields.add(0, field);
@@ -1030,11 +1036,11 @@ public class DataModel
             // adjust field width 
             if (fieldFit == FieldFit.HEADER)
             {
-              int fieldWidth = fieldName.length() * 6;
+              int fieldWidth = fieldName.length() * HEADER_PX_PER_CHAR;
               
               if (fieldWidth > MIN_FIELD_WIDTH)
               {
-                field.setWidth(fieldWidth);
+                field.setWidth(fieldWidth + FIELD_PADDING);
               }
             }
 
@@ -1149,7 +1155,7 @@ public class DataModel
           {
             Field field = fields.get(rowData.size() - 1);
             int fieldWidth = field.getWidth();
-            int newWidth = roleValue.length() * 8;
+            int newWidth = roleValue.length() * VALUE_PX_PER_CHAR;
             
             if (newWidth > MIN_FIELD_WIDTH && newWidth > fieldWidth && newWidth < MAX_FIELD_WIDTH)
             {
