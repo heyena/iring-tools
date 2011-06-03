@@ -1558,6 +1558,11 @@ namespace org.iringtools.refdata
       {
         string sparql = String.Empty;
         string relativeUri = String.Empty;
+        List<string> names = new List<string>();
+
+        Description description = new Description();
+        QMXFStatus status = new QMXFStatus();
+
         RefDataEntities resultEntities = new RefDataEntities();
 
         Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "GetTemplate").Query;
@@ -1579,13 +1584,9 @@ namespace org.iringtools.refdata
           foreach (Dictionary<string, string> result in results)
           {
             if (result.Count == 0) continue;
-            
-            QMXFName name = new QMXFName();
-            List<string> names = new List<string>();
-            Description description = new Description();
-            QMXFStatus status = new QMXFStatus();
-
             templateDefinition = new TemplateDefinition();
+            QMXFName name = new QMXFName();
+
             templateDefinition.repositoryName = repository.Name;
 
             if (result.ContainsKey("label"))
@@ -2343,6 +2344,7 @@ namespace org.iringtools.refdata
                             else
                             {
                               sparqlStmts.AppendLine(string.Format("tpl:{0} rdf:type tpl:R74478971040 .", existingRole.identifier));
+                              sparqlStmts.AppendLine(string.Format("tpl:{0} rdfs:domain tpl:{1} . ", existingRole.identifier, identifier));
                             }
                           }
                           //index
@@ -2354,7 +2356,7 @@ namespace org.iringtools.refdata
                             }
                             else
                             {
-
+                              sparqlStmts.AppendLine(string.Format("tpl:{0} tpl:R97483568938 {1} .", existingRole.identifier, existingRole.designation.value));
                             }
                           }
                           
@@ -2420,7 +2422,10 @@ namespace org.iringtools.refdata
                         sparqlAdd.AppendLine(string.Format("tpl:{0} p8:valRoleIndex {1} .", roleID, index));
                         sparqlAdd.AppendLine(string.Format("tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
                       }
-
+                      else
+                      {
+                        sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:domain tpl:{1} .", roleID, identifier));
+                      }
                       if (!string.IsNullOrEmpty(role.range))
                       {
                         qn = nsMap.ReduceToQName(role.range, out qName);
@@ -2560,7 +2565,7 @@ namespace org.iringtools.refdata
                   }
                   else
                   {
-
+                    sparqlAdd.AppendLine(string.Format("  tpl:{0} tpl:R97483568938 {1} .",roleID, ++roleCount));
                   }
                   if (!string.IsNullOrEmpty(role.range))
                   {
@@ -2572,6 +2577,7 @@ namespace org.iringtools.refdata
                     else
                     {
                       sparqlAdd.AppendLine(string.Format("tpl:{0}  rdf:type tpl:R74478971040 .", roleID));
+                      sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:domain tpl:{1} . ", roleID, identifier));
                       if (qName.StartsWith("rdfs") || qName.StartsWith("rdf"))
                       {
                         sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:type owl:DataTypeProperty .", roleID));
