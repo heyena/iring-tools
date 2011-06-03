@@ -2181,11 +2181,13 @@ namespace org.iringtools.refdata
         {
             Response response = new Response();
             response.Level = StatusLevel.Success;
+            Repository repository = null;
             bool qn = false;
-            try
+            BaseQueryProvider q = null ;
+            q.PostToRepository(repository, "");
+          try
             {
-                Repository repository = GetRepository(qmxf.targetRepository);
-
+                repository = GetRepository(qmxf.targetRepository);
                 if (repository == null || repository.IsReadOnly)
                 {
                     Status status = new Status();
@@ -2259,10 +2261,19 @@ namespace org.iringtools.refdata
                                             if (String.Compare(existingName.value, name.value, true) != 0)
                                             {
                                                 hasDeletes = true;
-                                                sparqlStmts.AppendLine(string.Format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
                                                 sparqlStmts.AppendLine(string.Format("tpl:{0} rdfs:label \'{1}\'{2} .", identifier, existingName.value, language));
-                                                sparqlAdd.AppendLine(string.Format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
                                                 sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:label \'{1}\'{2} .", identifier, name.value, language));
+                                                if (repository.RepositoryType == RepositoryType.Part8)
+                                                {
+                                                  sparqlStmts.AppendLine(string.Format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));                    
+                                                  sparqlAdd.AppendLine(string.Format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
+                                                }
+                                                else
+                                                {
+                                                   sparqlStmts.AppendLine("tpl:R35529169909 \"" + existingTemplate.roleDefinition.Count + " .");
+                                                   sparqlAdd.AppendLine("tpl:R35529169909 \"" + newTemplateDefinition.roleDefinition.Count + "\"^^xsd:int .");
+                                                }
+
                                             }
                                         }
                                     }
@@ -2281,8 +2292,8 @@ namespace org.iringtools.refdata
                                             if (String.Compare(existingDescription.value, description.value, true) != 0)
                                             {
                                                 hasDeletes = true;
-                                                sparqlStmts.AppendLine(string.Format("rdl:{0} rdfs:comment \'{1}\'{2} .", identifier, existingDescription.value, language));
-                                                sparqlAdd.AppendLine(string.Format("rdl:{0} rdfs:comment \'{1}\'{2} .", identifier, description.value, language));
+                                                sparqlStmts.AppendLine(string.Format("tpl:{0} rdfs:comment \'{1}\'{2} .", identifier, existingDescription.value, language));
+                                                sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:comment \'{1}\'{2} .", identifier, description.value, language));
                                             }
                                         }
                                     }
@@ -2291,8 +2302,11 @@ namespace org.iringtools.refdata
                                     if (existingTemplate.roleDefinition.Count != newTemplateDefinition.roleDefinition.Count)
                                     {
                                         hasDeletes = true;
-                                        sparqlStmts.AppendLine(string.Format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, existingTemplate.roleDefinition.Count));
-                                        sparqlAdd.AppendLine(string.Format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, newTemplateDefinition.roleDefinition.Count));
+                                        if (repository.RepositoryType == RepositoryType.Part8)
+                                        {
+                                          sparqlStmts.AppendLine(string.Format("tpl:{0} p8:valNumberOfRoles {1} .", identifier, existingTemplate.roleDefinition.Count));
+                                          sparqlAdd.AppendLine(string.Format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier, newTemplateDefinition.roleDefinition.Count));
+                                        }
                                     }
 
                                     index = 1;
@@ -2321,8 +2335,15 @@ namespace org.iringtools.refdata
                                                     if (String.Compare(existingName.value, name.value, true) != 0)
                                                     {
                                                         hasDeletes = true;
-                                                        sparqlStmts.AppendLine(string.Format("tpl:{0} rdf:type owl:Class .", existingRole.identifier));
                                                         sparqlStmts.AppendLine(string.Format("tpl:{0}  rdfs:label \'{1}\'{2} .", existingRole.identifier, existingName.value, name.lang));
+                                                        if (repository.RepositoryType == RepositoryType.Part8)
+                                                        {
+                                                          sparqlStmts.AppendLine(string.Format("tpl:{0} rdf:type owl:Class .", existingRole.identifier));
+                                                        }
+                                                        else
+                                                        {
+
+                                                        }
                                                     }
                                                     //index
                                                     if (existingRole.designation != null && existingRole.designation.value != index.ToString())
