@@ -10,13 +10,18 @@ import org.iringtools.widgets.grid.Grid;
 
 public class AppDataModel extends DataModel
 {  
+  public AppDataModel(String refDataServiceUri, FieldFit fieldFit)
+  {
+    super(DataMode.APP, refDataServiceUri, fieldFit);    
+  }
+  
   public void setSession(Map<String, Object> session)
   {
     this.session = session;
   }
   
-  public Grid getDtoGrid(String serviceUri, String refServiceUri, String scopeName, String appName, 
-      String graphName, String filter, String sortBy, String sortOrder, int start, int limit)
+  public Grid getDtoGrid(String serviceUri, String scopeName, String appName, String graphName, String filter, 
+      String sortBy, String sortOrder, int start, int limit)
   {
     String appRelativePath = "/" + scopeName + "/" + appName;
     String dtiRelativePath = appRelativePath + "/" + graphName + "/dxi/filter";
@@ -32,10 +37,10 @@ public class AppDataModel extends DataModel
       
       if (graph != null)
       {
-        DataTransferObjects pageDtos = getPageDtos(Mode.APP, serviceUri, manifestRelativePath, dtiRelativePath, 
+        DataTransferObjects pageDtos = getPageDtos(serviceUri, manifestRelativePath, dtiRelativePath, 
             dtoRelativePath, filter, sortBy, sortOrder, start, limit);
         
-        pageDtoGrid = getDtoGrid(Mode.APP, graph, pageDtos, refServiceUri);
+        pageDtoGrid = getDtoGrid(graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
         pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());  
       }
@@ -44,8 +49,8 @@ public class AppDataModel extends DataModel
     return pageDtoGrid;
   }
   
-  public Grid getRelatedDtoGrid(String serviceUri, String refServiceUri, String scopeName, String appName, String graphName, 
-      String dtoIdentifier, String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
+  public Grid getRelatedDtoGrid(String serviceUri, String scopeName, String appName, String graphName, String dtoIdentifier, 
+      String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
   {
     String dtiRelativePath = "/" + scopeName + "/" + appName + "/" + graphName + "/dxi/filter";
     String dtoRelativePath = "/" + scopeName + "/" + appName + "/" + graphName + "/dxo";
@@ -60,7 +65,7 @@ public class AppDataModel extends DataModel
       DataTransferObjects dtos = getRelatedItems(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, 
           dtoIdentifier, filter, sortBy, sortOrder, start, limit);
       
-      pageDtoGrid = getRelatedItemGrid(Mode.APP, graph, dtos, classId, classIdentifier, refServiceUri);
+      pageDtoGrid = getRelatedItemGrid(graph, dtos, classId, classIdentifier);
     }
     
     return pageDtoGrid;

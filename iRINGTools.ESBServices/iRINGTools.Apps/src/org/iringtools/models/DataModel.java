@@ -49,8 +49,12 @@ public class DataModel
 {
   private static final Logger logger = Logger.getLogger(DataModel.class);
 
-  protected static enum Mode {
+  public static enum DataMode {
     APP, EXCHANGE
+  };
+
+  public static enum FieldFit {
+    HEADER, VALUE
   };
 
   protected static List<String> gridFilterTypes;
@@ -82,14 +86,24 @@ public class DataModel
   protected final String FULL_DTI_KEY_PREFIX = DTI_PREFIX + "full";
   protected final String PART_DTI_KEY_PREFIX = DTI_PREFIX + "part";
   protected final String FILTER_KEY_PREFIX = DTI_PREFIX + "filter-key";
-  protected final int PIXELS_PER_CHAR = 8;
-  protected final int MIN_COLUMN_WIDTH = 50;
-  protected final int MAX_COLUMN_WIDTH = 300;
+  protected final int MIN_FIELD_WIDTH = 50;
+  protected final int MAX_FIELD_WIDTH = 300;
 
   protected Map<String, Object> session;
+  
+  protected DataMode dataMode;
+  protected String refDataServiceUri;
+  protected FieldFit fieldFit;
+    
+  public DataModel(DataMode dataMode, String refDataServiceUri, FieldFit fieldFit)
+  {
+    this.dataMode = dataMode;
+    this.refDataServiceUri = refDataServiceUri;
+    this.fieldFit = fieldFit;
+  }
 
-  //only cache full dti and one filtered dti
-  protected DataTransferIndices getDtis(Mode mode, String serviceUri, String manifestRelativePath, String dtiRelativePath, String filter,
+  // only cache full dti and one filtered dti
+  protected DataTransferIndices getDtis(String serviceUri, String manifestRelativePath, String dtiRelativePath, String filter,
       String sortBy, String sortOrder)
   {
     DataTransferIndices dtis = new DataTransferIndices();
@@ -133,7 +147,7 @@ public class DataModel
         }
         else  // filter does not exist or has changed
         {
-          if (mode == Mode.EXCHANGE) // exchange data
+          if (dataMode == DataMode.EXCHANGE) // exchange data
           {
             dtis = getFilteredDtis(dataFilter, manifestRelativePath, dtiRelativePath, serviceUri, fullDtiKey);
           }
@@ -156,7 +170,7 @@ public class DataModel
       }
       else
       {
-        if (mode == Mode.EXCHANGE) // exchange data
+        if (dataMode == DataMode.EXCHANGE) // exchange data
         {
           dtis = getFilteredDtis(dataFilter, manifestRelativePath, dtiRelativePath, serviceUri, fullDtiKey);
         }
@@ -435,21 +449,21 @@ public class DataModel
     return dtos;
   }
 
-  protected DataTransferObjects getPageDtos(Mode mode, String serviceUri, String manifestRelativePath, String dtiRelativePath,
+  protected DataTransferObjects getPageDtos(String serviceUri, String manifestRelativePath, String dtiRelativePath,
       String dtoRelativePath, String filter, String sortBy, String sortOrder, int start, int limit)
   {
-    DataTransferIndices dtis = getDtis(mode, serviceUri, manifestRelativePath, dtiRelativePath, filter, sortBy, sortOrder);
+    DataTransferIndices dtis = getDtis(serviceUri, manifestRelativePath, dtiRelativePath, filter, sortBy, sortOrder);
     List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
     int actualLimit = Math.min(start + limit, dtiList.size());
     List<DataTransferIndex> pageDtis = dtiList.subList(start, actualLimit);
     return getDtos(serviceUri, manifestRelativePath, dtoRelativePath, pageDtis);
   }
 
-  protected Grid getDtoGrid(Mode mode, Graph graph, DataTransferObjects dtos, String refServiceUri)
+  protected Grid getDtoGrid(Graph graph, DataTransferObjects dtos)
   {
     Grid dtoGrid = new Grid();
     
-    List<Field> fields = createFields(mode, graph, null);
+    List<Field> fields = createFields(graph, null);
     dtoGrid.setFields(fields);
     
     List<List<String>> gridData = new ArrayList<List<String>>();
@@ -466,7 +480,7 @@ public class DataModel
       // create a place holder for info field
       rowData.add("");
 
-      if (mode == Mode.EXCHANGE)
+      if (dataMode == DataMode.EXCHANGE)
       {
         String transferType = dto.getTransferType().toString();
         rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
@@ -480,7 +494,7 @@ public class DataModel
         dtoGrid.setIdentifier(classObject.getClassId());
         dtoGrid.setDescription(className);
         
-        processClassObject(graph, dto, dtoIndex, fields, mode, classObject, dtoGrid, rowData, relatedClasses, refServiceUri);
+        processClassObject(graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
       }
 
       String relatedClassesJson;
@@ -562,12 +576,11 @@ public class DataModel
     return relatedDtos;
   }
    
-  protected Grid getRelatedItemGrid(Mode mode, Graph graph, DataTransferObjects dtos, String classId, String classIdentifier,
-      String refServiceUri)
+  protected Grid getRelatedItemGrid(Graph graph, DataTransferObjects dtos, String classId, String classIdentifier)
   { 
     Grid dtoGrid = new Grid();
     
-    List<Field> fields = createFields(mode, graph, classId);
+    List<Field> fields = createFields(graph, classId);
     dtoGrid.setFields(fields);
     
     List<List<String>> gridData = new ArrayList<List<String>>();
@@ -594,13 +607,13 @@ public class DataModel
             // create a place holder for info field
             rowData.add("");
 
-            if (mode == Mode.EXCHANGE)
+            if (dataMode == DataMode.EXCHANGE)
             {
               String transferType = dto.getTransferType().toString();
               rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
             }
             
-            processClassObject(graph, dto, dtoIndex, fields, mode, classObject, dtoGrid, rowData, relatedClasses, refServiceUri);
+            processClassObject(graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
             
             String relatedClassesJson;
             
@@ -627,13 +640,13 @@ public class DataModel
     return dtoGrid;
   }
 
-  protected String resolveValueMap(String refServiceUri, String id)
+  protected String resolveValueMap(String id)
   {
     String label = id;
 
     try
     {
-      HttpClient httpClient = new HttpClient(refServiceUri);
+      HttpClient httpClient = new HttpClient(refDataServiceUri);
       Entity value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");
       
       if (value != null)
@@ -686,7 +699,7 @@ public class DataModel
   }
 
   @SuppressWarnings("unchecked")
-  protected String getValueMap(String refServiceUri, String value)
+  protected String getValueMap(String value)
   {
     Map<String, String> valueMaps;
     String valueMap = value;
@@ -705,7 +718,7 @@ public class DataModel
     {
       if (!valueMaps.containsKey(value))
       {
-        valueMap = resolveValueMap(refServiceUri, value);
+        valueMap = resolveValueMap(value);
         valueMaps.put(value, valueMap);
       }
       else
@@ -940,12 +953,12 @@ public class DataModel
     return filteredClassObjects;
   }
 
-  private List<Field> createFields(Mode mode, Graph graph, String startClassId)
+  private List<Field> createFields(Graph graph, String startClassId)
   {
     List<Field> fields = new ArrayList<Field>();
     
     // transfer-type field
-    if (mode == Mode.EXCHANGE)
+    if (dataMode == DataMode.EXCHANGE)
     {
       Field field = new Field();
       field.setName("Status");
@@ -973,7 +986,7 @@ public class DataModel
       if (startClassId == null || startClassId.length() == 0)
       {
         ClassTemplates classTemplates = classTemplatesItems.get(0);
-        createFields(mode, fields, graph, classTemplates);   
+        createFields(fields, graph, classTemplates);   
       }
       else
       {
@@ -981,7 +994,7 @@ public class DataModel
         {
           if (classTempates.getClazz().getId().equalsIgnoreCase(startClassId))
           {
-            createFields(mode, fields, graph, classTempates);
+            createFields(fields, graph, classTempates);
             break;
           }
         }
@@ -991,7 +1004,7 @@ public class DataModel
     return fields;
   }
   
-  private void createFields(Mode mode, List<Field> fields, Graph graph, ClassTemplates classTemplates)
+  private void createFields(List<Field> fields, Graph graph, ClassTemplates classTemplates)
   {
     if (classTemplates != null && classTemplates.getTemplates() != null)
     {
@@ -1010,11 +1023,22 @@ public class DataModel
             String fieldName = className + '.' + template.getName() + "." + role.getName();
             Field field = new Field();
             
-            field.setWidth(MIN_COLUMN_WIDTH);
             field.setName(fieldName);
             field.setDataIndex(fieldName);
+            field.setWidth(MIN_FIELD_WIDTH);
+                        
+            // adjust field width 
+            if (fieldFit == FieldFit.HEADER)
+            {
+              int fieldWidth = fieldName.length() * 6;
+              
+              if (fieldWidth > MIN_FIELD_WIDTH)
+              {
+                field.setWidth(fieldWidth);
+              }
+            }
 
-            if (mode == Mode.APP && dataType != null && dataType.startsWith("xsd:"))
+            if (dataMode == DataMode.APP && dataType != null && dataType.startsWith("xsd:"))
             {
               dataType = dataType.replace("xsd:", "").toLowerCase();
               
@@ -1037,7 +1061,7 @@ public class DataModel
           {
             String classId = role.getClazz().getId();              
             ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId);
-            createFields(mode, fields, graph, relatedClassTemplates);
+            createFields(fields, graph, relatedClassTemplates);
           }
         }
       }
@@ -1055,8 +1079,8 @@ public class DataModel
     return null;
   }
   
-  private void processClassObject(Graph graph, DataTransferObject dto, int dtoIndex, List<Field> fields, Mode mode, 
-      ClassObject classObject, Grid dtoGrid, List<String> rowData, List<RelatedClass> relatedClasses, String refServiceUri)
+  private void processClassObject(Graph graph, DataTransferObject dto, int dtoIndex, List<Field> fields, 
+      ClassObject classObject, Grid dtoGrid, List<String> rowData, List<RelatedClass> relatedClasses)
   {
     String className = IOUtils.toCamelCase(classObject.getName());
 
@@ -1078,18 +1102,18 @@ public class DataModel
           // compute role value
           if (roleValues != null && roleValues.getItems().size() > 0)
           {
-            roleValue = getMultiRoleValues(roleObject, roleValues.getItems(), refServiceUri);
+            roleValue = getMultiRoleValues(roleObject, roleValues.getItems());
             
             if (roleOldValues != null && roleOldValues.getItems().size() > 0)
-              roleOldValue = getMultiRoleValues(roleObject, roleOldValues.getItems(), refServiceUri);
+              roleOldValue = getMultiRoleValues(roleObject, roleOldValues.getItems());
           }
           else if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
           {
-            roleValue = getValueMap(refServiceUri, roleValue);
+            roleValue = getValueMap(roleValue);
             
-            if (mode == Mode.EXCHANGE) 
+            if (dataMode == DataMode.EXCHANGE) 
             {
-              roleOldValue = getValueMap(refServiceUri, roleOldValue);
+              roleOldValue = getValueMap(roleOldValue);
             }
           }
           
@@ -1110,7 +1134,7 @@ public class DataModel
           }
           
           // add row value to row data
-          if (mode == Mode.APP || roleOldValue == null || roleOldValue.equals(roleValue))
+          if (dataMode == DataMode.APP || roleOldValue == null || roleOldValue.equals(roleValue))
           { 
             rowData.add(roleValue);
           }
@@ -1121,13 +1145,16 @@ public class DataModel
           }
           
           // adjust field width based on value
-          Field field = fields.get(rowData.size() - 1);
-          int fieldWidth = field.getWidth();
-          int newWidth = roleValue.length() * PIXELS_PER_CHAR;
-          
-          if (newWidth > MIN_COLUMN_WIDTH && newWidth > fieldWidth && newWidth < MAX_COLUMN_WIDTH)
+          if (fieldFit == FieldFit.VALUE)
           {
-            field.setWidth(newWidth);
+            Field field = fields.get(rowData.size() - 1);
+            int fieldWidth = field.getWidth();
+            int newWidth = roleValue.length() * 8;
+            
+            if (newWidth > MIN_FIELD_WIDTH && newWidth > fieldWidth && newWidth < MAX_FIELD_WIDTH)
+            {
+              field.setWidth(newWidth);
+            }
           }
         }
         else if (roleObject.getRelatedClassId() != null && roleObject.getValues() != null)
@@ -1145,8 +1172,7 @@ public class DataModel
               if (relatedClassObject.getClassId().equals(roleObject.getRelatedClassId()) && 
                   relatedClassObject.getIdentifier().equals(relatedClassIdentifier))
               {
-                processClassObject(graph, dto, dtoIndex, fields, mode, relatedClassObject, dtoGrid, rowData, 
-                    relatedClasses, refServiceUri);
+                processClassObject(graph, dto, dtoIndex, fields, relatedClassObject, dtoGrid, rowData, relatedClasses);
                 
                 break;
               }
@@ -1154,17 +1180,33 @@ public class DataModel
           }
           else 
           {
-            RelatedClass relatedClass = new RelatedClass();
-            relatedClass.setId(roleObject.getRelatedClassId());
-            relatedClass.setName(IOUtils.toCamelCase(roleObject.getRelatedClassName()));
-            relatedClasses.add(relatedClass);
+            String relatedClassName = IOUtils.toCamelCase(roleObject.getRelatedClassName());
+            
+            if (!relatedClassExists(relatedClasses, relatedClassName))
+            {
+              RelatedClass relatedClass = new RelatedClass();
+              relatedClass.setId(roleObject.getRelatedClassId());
+              relatedClass.setName(relatedClassName);
+              relatedClasses.add(relatedClass);
+            }
           }
         }
       }
     }
   }
   
-  private String getMultiRoleValues(RoleObject roleObject, List<String> roleValues, String refServiceUri)
+  private boolean relatedClassExists(List<RelatedClass> relatedClasses, String relatedClassName)
+  {
+    for (RelatedClass relatedClass : relatedClasses)
+    {
+      if (relatedClass.getName().equalsIgnoreCase(relatedClassName))
+        return true;
+    }
+    
+    return false;
+  }
+  
+  private String getMultiRoleValues(RoleObject roleObject, List<String> roleValues)
   {
     StringBuilder roleValueBuilder = new StringBuilder();
     
@@ -1172,7 +1214,7 @@ public class DataModel
     {
       if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
       {
-        value = getValueMap(refServiceUri, value);
+        value = getValueMap(value);
       }
       
       if (roleValueBuilder.length() > 0)

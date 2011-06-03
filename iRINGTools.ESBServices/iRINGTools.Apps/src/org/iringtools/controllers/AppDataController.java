@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.models.AppDataModel;
+import org.iringtools.models.DataModel.FieldFit;
 import org.iringtools.widgets.grid.Grid;
 
 import com.opensymphony.xwork2.ActionContext;
@@ -13,7 +14,6 @@ public class AppDataController extends ActionSupport implements SessionAware
 {
   private static final long serialVersionUID = 1L;
   private AppDataModel appDataModel;
-  private String refServiceUri;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
 
@@ -33,8 +33,14 @@ public class AppDataController extends ActionSupport implements SessionAware
   public AppDataController() 
   {
 	  Map<String, Object> appContext = ActionContext.getContext().getApplication();
-    refServiceUri = appContext.get("RefDataServiceUri").toString();
-    appDataModel = new AppDataModel();
+	  String refDataServiceUri = appContext.get("RefDataServiceUri").toString();
+	  
+	  String fieldFit = appContext.get("FieldFit").toString();
+	  
+	  FieldFit ff = (fieldFit == null || fieldFit.length() == 0) ? FieldFit.VALUE : 
+	    FieldFit.valueOf(appContext.get("FieldFit").toString().toUpperCase());
+	  
+    appDataModel = new AppDataModel(refDataServiceUri, ff);
   }
   
   @Override
@@ -48,7 +54,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = appDataModel.getDtoGrid(baseUri, refServiceUri, scope, app, graph, filter, sort, dir, start, limit);    
+    pageDtoGrid = appDataModel.getDtoGrid(baseUri, scope, app, graph, filter, sort, dir, start, limit);    
     return SUCCESS;
   }
   
@@ -62,7 +68,7 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ----------------------------
   public String getPageRelatedItems() 
   {
-    pageRelatedItemGrid = appDataModel.getRelatedDtoGrid(baseUri, refServiceUri, scope, app, graph, individual, classId, 
+    pageRelatedItemGrid = appDataModel.getRelatedDtoGrid(baseUri, scope, app, graph, individual, classId, 
         classIdentifier, filter, sort, dir, start, limit);
     return SUCCESS;
   }
