@@ -2305,8 +2305,8 @@ namespace org.iringtools.refdata
                     else
                     {
 
-                      sparqlStmts.AppendLine("tpl:R35529169909 \"" + existingTemplate.roleDefinition.Count + " .");
-                      sparqlAdd.AppendLine("tpl:R35529169909 \"" + newTemplateDefinition.roleDefinition.Count + "\"^^xsd:int .");
+                      sparqlStmts.AppendLine(string.Format("tpl:{0} tpl:R35529169909 {1} .", identifier, existingTemplate.roleDefinition.Count));
+                      sparqlAdd.AppendLine(string.Format("tpl:{0} tpl:R35529169909 {1} .", identifier,newTemplateDefinition.roleDefinition.Count ));
                     }
                   }
 
@@ -2343,7 +2343,7 @@ namespace org.iringtools.refdata
                             }
                             else
                             {
-                              sparqlStmts.AppendLine(string.Format("{0} rdf:type tpl:R74478971040 .", existingRole.identifier));
+                              sparqlStmts.AppendLine(string.Format("tpl:{0} rdf:type tpl:R74478971040 .", existingRole.identifier));
                             }
                           }
                           //index
@@ -2372,8 +2372,8 @@ namespace org.iringtools.refdata
                           }
                           else
                           {
-                            if (role.range.StartsWith("http://www.w3.org/2000/01/rdf-schema#")
-                                || role.range.StartsWith("http://www.w3.org/2001/XMLSchema"))
+                            qn = nsMap.ReduceToQName(existingRole.range, out qName); 
+                            if (qName.StartsWith("rdfs") || qName.StartsWith("rdf"))
                             {
                               sparqlStmts.AppendLine(string.Format("{0} rdf:type owl:DataTypeProperty .",existingRole.identifier)) ;
                             }
@@ -2440,6 +2440,7 @@ namespace org.iringtools.refdata
                           {
                             sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:type owl:ObjectProperty .", roleID));
                             sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:type owl:FunctionalProperty .", roleID));
+                            sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:range {1} .", roleID, qName));
                           }
                         }
                       }
@@ -2448,7 +2449,14 @@ namespace org.iringtools.refdata
                       {
 
                       }
-                      sparqlAdd.AppendLine(string.Format("tpl:{0} p8:hasRole rdl:{1} .", identifier, roleID));
+                      if (repository.RepositoryType == RepositoryType.Part8)
+                      {
+                        sparqlAdd.AppendLine(string.Format("tpl:{0} p8:hasRole rdl:{1} .", identifier, roleID));
+                      }
+                      else
+                      {
+                        sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:domain rdl:{1} .", roleID, identifier));
+                      }
                       #endregion
                     }
 
@@ -2456,8 +2464,8 @@ namespace org.iringtools.refdata
                   }
                 }
 
-                sparqlDelete.Append(prefix);
-                sparqlDelete.AppendLine(deleteWhere);
+               // sparqlDelete.Append(prefix);
+                sparqlDelete.AppendLine(deleteData);
                 sparqlDelete.Append(sparqlStmts);
                 sparqlDelete.AppendLine(" }; ");
               }
@@ -2485,8 +2493,12 @@ namespace org.iringtools.refdata
 
                 //sparqlAdd.AppendLine(string.Format("  tpl:{0} rdf:type owl:Class .", identifier));
                 sparqlAdd.AppendLine(string.Format("  tpl:{0} rdfs:label \'{1}\'{2} .", identifier, label, language));
-                sparqlAdd.AppendLine(string.Format("  tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
-                sparqlAdd.AppendLine(string.Format("  tpl:{0} rdf:type p8:Template .", identifier));
+
+                if (repository.RepositoryType == RepositoryType.Part8)
+                {
+                  sparqlAdd.AppendLine(string.Format("  tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
+                  sparqlAdd.AppendLine(string.Format("  tpl:{0} rdf:type p8:Template .", identifier));
+                }
 
                 //add descriptions to sparql
                 foreach (Description descr in newTemplateDefinition.description)
@@ -2503,7 +2515,14 @@ namespace org.iringtools.refdata
                     sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:comment \'{1}\'{2} .", identifier, descr.value.Split('@')[0], language));
                   }
                 }
-                sparqlAdd.AppendLine(string.Format(" tpl:{0} p8:valNumberOfRoles {1} .", identifier, newTemplateDefinition.roleDefinition.Count));
+                if (repository.RepositoryType == RepositoryType.Part8)
+                {
+                  sparqlAdd.AppendLine(string.Format(" tpl:{0} p8:valNumberOfRoles {1} .", identifier, newTemplateDefinition.roleDefinition.Count));
+                }
+                else
+                {
+                  sparqlAdd.AppendLine(string.Format("tpl:{0} tpl:R35529169909 {1} .", identifier, newTemplateDefinition.roleDefinition.Count ));
+                }
                 foreach (RoleDefinition role in newTemplateDefinition.roleDefinition)
                 {
                   string roleLabel = role.name.FirstOrDefault().value.Split('@')[0];
@@ -2531,16 +2550,40 @@ namespace org.iringtools.refdata
                   {
                     roleID = Utility.GetIdFromURI(role.identifier);
                   }
-                  //sparqlAdd.AppendLine(string.Format("  tpl:{0} rdf:type owl:Class .", roleID));
+                  
                   sparqlAdd.AppendLine(string.Format("  tpl:{0} rdfs:label \'{1}\'{2} .", roleID, roleLabel, language));
-                  sparqlAdd.AppendLine(string.Format("  tpl:{0} p8:valRoleIndex {1} .", roleID, ++roleCount));
-                  sparqlAdd.AppendLine(string.Format("  tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
-                  sparqlAdd.AppendLine(string.Format("  tpl:{0} p8:hasRole tpl:{1} .", identifier, roleID));
 
+                  if (repository.RepositoryType == RepositoryType.Part8)
+                  {
+                    sparqlAdd.AppendLine(string.Format("  tpl:{0} p8:valRoleIndex {1} .", roleID, ++roleCount));
+                    sparqlAdd.AppendLine(string.Format("  tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
+                    sparqlAdd.AppendLine(string.Format("  tpl:{0} p8:hasRole tpl:{1} .", identifier, roleID));
+                  }
+                  else
+                  {
+
+                  }
                   if (!string.IsNullOrEmpty(role.range))
                   {
                     qn = nsMap.ReduceToQName(role.range, out qName);
-                    sparqlAdd.AppendLine(string.Format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
+                    if (repository.RepositoryType == RepositoryType.Part8)
+                    {
+                      sparqlAdd.AppendLine(string.Format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
+                    }
+                    else
+                    {
+                      sparqlAdd.AppendLine(string.Format("tpl:{0}  rdf:type tpl:R74478971040 .", roleID));
+                      if (qName.StartsWith("rdfs") || qName.StartsWith("rdf"))
+                      {
+                        sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:type owl:DataTypeProperty .", roleID));
+                      }
+                      else
+                      {
+                        sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:type owl:ObjectProperty .", roleID));
+                        sparqlAdd.AppendLine(string.Format("tpl:{0} rdf:type owl:FunctionalProperty .", roleID));
+                        sparqlAdd.AppendLine(string.Format("tpl:{0} rdfs:range {1} .", roleID, qName));
+                      }
+                    }
                   }
                 }
                 sparqlAdd.AppendLine("}");
