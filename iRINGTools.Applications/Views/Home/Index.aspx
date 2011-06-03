@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="cache-control" content="no-cache"/>
-    <link rel="stylesheet" type="text/css" href="../../Content/css/iring-tools.css"/>
+    <link rel="stylesheet" type="text/css" href="<%=ResolveUrl("~/content/css/iring-tools.css") %>"/>
     <title>iRINGTools Version 2.01.00</title>
   </head>
   <body>
@@ -21,10 +21,11 @@
       	 these functions via the following services:</p><br>
       <h2>iRINGTools Applications</h2>
       <ul>
+      <li><a href="services/sandbox/sparql/query">Sandbox SPARQL Query</a></li>
       <li><a href="<%=ResolveUrl("~/RefDataEditor") %>">Reference Data Editor</a></li>
-      <li><a href="<%=ResolveUrl("~/AppEditor") %>">Application Editor</a></li>
       <li><a href="<%=ResolveUrl("~/MappingEditor") %>">Mapping Editor</a></li>
       <li><a href="<%=ResolveUrl("~/AdapterManager") %>">Adapter Manager</a></li>
+      <li><a href="services/facade/sparql/query">Facade SPARQL Query</a></li>
 	    </ul>
     </div>
   </body>
