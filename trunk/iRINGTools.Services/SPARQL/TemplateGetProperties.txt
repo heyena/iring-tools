@@ -4,7 +4,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX rds: <http://rds.posccaesar.org/2008/06/OWL/RDL#> 
 SELECT DISTINCT ?definition ?label ?creationDate
 WHERE { 
-OPTIONAL { tpl:param1 rdfs:comment ?definition } 
 tpl:param1 rdfs:label ?label .
+OPTIONAL { tpl:param1 rdfs:comment ?definition } 
 OPTIONAL { tpl:param1 rdf:type  ?typeID } 
 OPTIONAL { tpl:param1 tpl:R42656850346 ?creationDate }  }
