@@ -7,7 +7,7 @@
 	dnr:stylesheet "../../css/sparql-query.css" ;		
         dnr:introText "~/App_Data/FacadeIntro.txt" ;
         dnr:type "VDS.RDF.Web.SparqlServer" ;
-        dnr:defaultQueryFile "~/App_Data/Query.txt" .						
+        dnr:defaultQueryFile "~/App_Data/AllQuery.txt" .						
 _:qProc a dnr:SparqlQueryProcessor ;
         dnr:type "VDS.RDF.Query.LeviathanQueryProcessor" ;
         dnr:usingStore _:sqlStore .
@@ -34,7 +34,7 @@ _:sqlServer a dnr:SqlIOManager ;
 	dnr:stylesheet "../../css/sparql-query.css" ;		
         dnr:introText "~/App_Data/SandboxIntro.txt" ;
         dnr:type "VDS.RDF.Web.SparqlServer" ;
-        dnr:defaultQueryFile "~/App_Data/Query.txt" .
+        dnr:defaultQueryFile "~/App_Data/LabelQuery.txt" .
 _:qProcS a dnr:SparqlQueryProcessor ;
         dnr:type "VDS.RDF.Query.LeviathanQueryProcessor" ;
         dnr:usingStore _:sqlStoreS .
