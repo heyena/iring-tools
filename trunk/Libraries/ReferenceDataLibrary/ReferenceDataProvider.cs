@@ -1558,11 +1558,6 @@ namespace org.iringtools.refdata
       {
         string sparql = String.Empty;
         string relativeUri = String.Empty;
-        List<string> names = new List<string>();
-
-        Description description = new Description();
-        QMXFStatus status = new QMXFStatus();
-
         RefDataEntities resultEntities = new RefDataEntities();
 
         Query queryContainsSearch = (Query)_queries.FirstOrDefault(c => c.Key == "GetTemplate").Query;
@@ -1584,9 +1579,13 @@ namespace org.iringtools.refdata
           foreach (Dictionary<string, string> result in results)
           {
             if (result.Count == 0) continue;
-            templateDefinition = new TemplateDefinition();
+            
             QMXFName name = new QMXFName();
+            List<string> names = new List<string>();
+            Description description = new Description();
+            QMXFStatus status = new QMXFStatus();
 
+            templateDefinition = new TemplateDefinition();
             templateDefinition.repositoryName = repository.Name;
 
             if (result.ContainsKey("label"))
