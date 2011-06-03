@@ -52,13 +52,13 @@ a:active {color: black}
 	cursor: default;
 }
 
-/* change default property grid */
-.x-grid3-row td {
+/* change default tree node */
+.x-tree-node {
   font-family: tahoma;
 }
 
-/* change default tree node */
-.x-tree-node {
+/* change default grid font */
+.x-grid3-hd-row td, .x-grid3-row td, .x-grid3-summary-row td {
   font-family: tahoma;
 }
 
@@ -99,9 +99,9 @@ a.breadcrumb {
 
 /*a.breadcrumb:hover {
 	text-decoration: underline;
-}
+}*/
 
-*/.breadcrumb-img {
+.breadcrumb-img {
 	vertical-align: middle;
 	padding-bottom: 2px;
 }
