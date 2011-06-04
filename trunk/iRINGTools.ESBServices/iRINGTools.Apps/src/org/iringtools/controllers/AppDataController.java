@@ -33,12 +33,11 @@ public class AppDataController extends ActionSupport implements SessionAware
   public AppDataController() 
   {
 	  Map<String, Object> appContext = ActionContext.getContext().getApplication();
-	  String refDataServiceUri = appContext.get("RefDataServiceUri").toString();
+	  String refDataServiceUri = (String)appContext.get("RefDataServiceUri");
 	  
-	  String fieldFit = appContext.get("FieldFit").toString();
-	  
-	  FieldFit ff = (fieldFit == null || fieldFit.length() == 0) ? FieldFit.VALUE : 
-	    FieldFit.valueOf(appContext.get("FieldFit").toString().toUpperCase());
+	  String fieldFit = (String)appContext.get("FieldFit");	  
+	  FieldFit ff = (fieldFit == null || fieldFit.length() == 0) 
+	    ? FieldFit.VALUE : FieldFit.valueOf(fieldFit.toUpperCase());
 	  
     appDataModel = new AppDataModel(refDataServiceUri, ff);
   }
