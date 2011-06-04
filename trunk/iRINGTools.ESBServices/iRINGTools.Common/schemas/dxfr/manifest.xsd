@@ -115,6 +115,7 @@
   
   <xs:simpleType name="Cardinality">
     <xs:restriction base="xs:string">
+      <xs:enumeration value="Self" />
       <xs:enumeration value="OneToOne" />
       <xs:enumeration value="OneToMany" />
     </xs:restriction>

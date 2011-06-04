@@ -281,12 +281,14 @@ namespace org.iringtools.mapping
       return clone;
     }
 
-    public static Cardinality GetCardinality(this RoleMap mappingRole, DataDictionary dataDictionary, string fixedIdentifierBoundary)
+    public static Cardinality GetCardinality(this GraphMap graphMap, RoleMap roleMap, DataDictionary dataDictionary, string fixedIdentifierBoundary)
     {
-      Cardinality cardinality = Cardinality.OneToOne;
+      ClassTemplateMap ctm = graphMap.GetClassTemplateMap(roleMap.classMap.id);
+      if (ctm == null || ctm.classMap == null)
+        return Cardinality.Self;
 
       // determine cardinality to related class
-      foreach (string identifier in mappingRole.classMap.identifiers)
+      foreach (string identifier in roleMap.classMap.identifiers)
       {
         if (!(identifier.StartsWith(fixedIdentifierBoundary) && identifier.EndsWith(fixedIdentifierBoundary)))
         {
@@ -299,15 +301,13 @@ namespace org.iringtools.mapping
 
             if (dataRelationship.relationshipType == RelationshipType.OneToMany)
             {
-              cardinality = Cardinality.OneToMany;
+              return Cardinality.OneToMany;
             }
-
-            break;
           }
         }
       }
 
-      return cardinality;
+      return Cardinality.OneToOne;
     }
   }
 

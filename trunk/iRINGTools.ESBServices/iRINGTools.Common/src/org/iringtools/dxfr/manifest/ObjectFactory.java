@@ -30,19 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassTemplates }
+     * Create an instance of {@link Graphs }
      * 
      */
-    public ClassTemplates createClassTemplates() {
-        return new ClassTemplates();
-    }
-
-    /**
-     * Create an instance of {@link Role }
-     * 
-     */
-    public Role createRole() {
-        return new Role();
+    public Graphs createGraphs() {
+        return new Graphs();
     }
 
     /**
@@ -54,19 +46,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Roles }
+     * Create an instance of {@link Role }
      * 
      */
-    public Roles createRoles() {
-        return new Roles();
+    public Role createRole() {
+        return new Role();
     }
 
     /**
-     * Create an instance of {@link Manifest }
+     * Create an instance of {@link ClassTemplates }
      * 
      */
-    public Manifest createManifest() {
-        return new Manifest();
+    public ClassTemplates createClassTemplates() {
+        return new ClassTemplates();
+    }
+
+    /**
+     * Create an instance of {@link Templates }
+     * 
+     */
+    public Templates createTemplates() {
+        return new Templates();
     }
 
     /**
@@ -78,22 +78,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Class }
-     * 
-     */
-    public Class createClass() {
-        return new Class();
-    }
-
-    /**
-     * Create an instance of {@link Graphs }
-     * 
-     */
-    public Graphs createGraphs() {
-        return new Graphs();
-    }
-
-    /**
      * Create an instance of {@link Template }
      * 
      */
@@ -102,11 +86,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Templates }
+     * Create an instance of {@link Roles }
      * 
      */
-    public Templates createTemplates() {
-        return new Templates();
+    public Roles createRoles() {
+        return new Roles();
+    }
+
+    /**
+     * Create an instance of {@link Class }
+     * 
+     */
+    public Class createClass() {
+        return new Class();
+    }
+
+    /**
+     * Create an instance of {@link Manifest }
+     * 
+     */
+    public Manifest createManifest() {
+        return new Manifest();
     }
 
 }

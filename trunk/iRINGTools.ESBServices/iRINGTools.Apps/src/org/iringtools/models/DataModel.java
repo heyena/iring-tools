@@ -1020,10 +1020,14 @@ public class DataModel
       {
         for (Role role : template.getRoles().getItems())
         {
-          if (role.getType() == org.iringtools.mapping.RoleType.PROPERTY ||
-              role.getType() == org.iringtools.mapping.RoleType.DATA_PROPERTY ||
-              role.getType() == org.iringtools.mapping.RoleType.OBJECT_PROPERTY ||
-              role.getType() == org.iringtools.mapping.RoleType.FIXED_VALUE)
+          org.iringtools.mapping.RoleType roleType = role.getType();
+          Cardinality cardinality = role.getCardinality();
+          
+          if (roleType == org.iringtools.mapping.RoleType.PROPERTY ||
+              roleType == org.iringtools.mapping.RoleType.DATA_PROPERTY ||
+              roleType == org.iringtools.mapping.RoleType.OBJECT_PROPERTY ||
+              roleType == org.iringtools.mapping.RoleType.FIXED_VALUE ||
+              (cardinality != null && cardinality == Cardinality.SELF))
           {
             String dataType = role.getDataType();            
             String fieldName = className + '.' + template.getName() + "." + role.getName();
@@ -1062,8 +1066,8 @@ public class DataModel
 
             fields.add(field);
           }
-          else if (role.getClazz() != null && (role.getCardinality() == null || 
-              role.getCardinality() == Cardinality.ONE_TO_ONE))
+          else if (role.getClazz() != null && (cardinality == null || 
+              cardinality == Cardinality.ONE_TO_ONE))
           {
             String classId = role.getClazz().getId();              
             ClassTemplates relatedClassTemplates = getClassTemplates(graph, classId);
@@ -1099,11 +1103,14 @@ public class DataModel
         String roleValue = roleObject.getValue();
         String roleOldValue = roleObject.getOldValue();
         RoleType roleType = roleObject.getType();
-                
+        Cardinality cardinality = getCardinality(graph, className, templateObject.getName(), roleObject.getName(), 
+            roleObject.getRelatedClassName());
+                     
         if (roleType == RoleType.PROPERTY ||
             roleType == RoleType.DATA_PROPERTY ||
             roleType == RoleType.OBJECT_PROPERTY ||
-            roleType == RoleType.FIXED_VALUE)
+            roleType == RoleType.FIXED_VALUE ||
+            (cardinality != null && cardinality == Cardinality.SELF))
         {
           // compute role value
           if (roleValues != null && roleValues.getItems().size() > 0)
@@ -1165,9 +1172,6 @@ public class DataModel
         }
         else if (roleObject.getRelatedClassId() != null && roleObject.getValues() != null)
         {
-          Cardinality cardinality = getCardinality(graph, className, templateObject.getName(), roleObject.getName(), 
-              roleObject.getRelatedClassName());
-          
           if (cardinality == null || cardinality == Cardinality.ONE_TO_ONE)
           {
             String relatedClassIdentifier = roleObject.getValues().getItems().get(0);

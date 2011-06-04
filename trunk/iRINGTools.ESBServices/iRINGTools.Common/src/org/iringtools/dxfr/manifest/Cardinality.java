@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;simpleType name="Cardinality">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *     &lt;enumeration value="Self"/>
  *     &lt;enumeration value="OneToOne"/>
  *     &lt;enumeration value="OneToMany"/>
  *   &lt;/restriction>
@@ -25,6 +26,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum Cardinality {
 
+    @XmlEnumValue("Self")
+    SELF("Self"),
     @XmlEnumValue("OneToOne")
     ONE_TO_ONE("OneToOne"),
     @XmlEnumValue("OneToMany")
