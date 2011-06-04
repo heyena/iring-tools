@@ -19,6 +19,10 @@
     <param-name>IDGenServiceUri</param-name>
     <param-value>http://tomcat.dev.iringsandbox.org:8081/services/idgen</param-value>
   </context-param>
+  <context-param>
+    <param-name>FieldFit</param-name>
+    <param-value>header</param-value>
+  </context-param>
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
