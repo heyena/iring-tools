@@ -399,6 +399,9 @@ namespace org.iringtools.dxfr.manifest
     Unknown,
 
     [System.Runtime.Serialization.EnumMemberAttribute()]
+    Self,
+
+    [System.Runtime.Serialization.EnumMemberAttribute()]
     OneToOne,
 
     [System.Runtime.Serialization.EnumMemberAttribute()]

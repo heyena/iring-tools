@@ -223,8 +223,8 @@ namespace org.iringtools.adapter
                   }
 
                   if (roleMap.classMap != null)
-                  {
-                    Cardinality cardinality = roleMap.GetCardinality(_dataDictionary, _fixedIdentifierBoundary);
+                  {                    
+                    Cardinality cardinality = graphMap.GetCardinality(roleMap, _dataDictionary, _fixedIdentifierBoundary);
                     manifestRole.cardinality = cardinality;
 
                     manifestRole.@class = new Class
@@ -791,7 +791,7 @@ namespace org.iringtools.adapter
                     {
                       if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id)
                       {
-                        Cardinality cardinality = mappingRole.GetCardinality(_dataDictionary, _fixedIdentifierBoundary);
+                        Cardinality cardinality = mappingGraph.GetCardinality(mappingRole, _dataDictionary, _fixedIdentifierBoundary);
 
                         // get crossed role map and set its cardinality
                         foreach (RoleMap crossedRoleMap in crossedTemplateMap.roleMaps)
