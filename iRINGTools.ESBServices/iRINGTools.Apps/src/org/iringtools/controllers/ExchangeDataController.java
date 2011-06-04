@@ -42,17 +42,16 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   
   public ExchangeDataController() 
   {    
-    Map<String, Object> appContext = ActionContext.getContext().getApplication();
+    Map<String, Object> appContext = ActionContext.getContext().getApplication();    
+    String refDataServiceUri = (String)appContext.get("RefDataServiceUri");   
     
-    String refDataServiceUri = appContext.get("RefDataServiceUri").toString();    
-    String fieldFit = appContext.get("FieldFit").toString();
-    
-    FieldFit ff = (fieldFit == null || fieldFit.length() == 0) ? FieldFit.VALUE : 
-      FieldFit.valueOf(appContext.get("FieldFit").toString().toUpperCase());
+    String fieldFit = (String)appContext.get("FieldFit");    
+    FieldFit ff = (fieldFit == null || fieldFit.length() == 0) 
+      ? FieldFit.VALUE : FieldFit.valueOf(fieldFit.toUpperCase());
     
     exchangeDataModel = new ExchangeDataModel(refDataServiceUri, ff);
-    exchangeServiceUri = appContext.get("ExchangeServiceUri").toString();
-    historyServiceUri = appContext.get("HistoryServiceUri").toString();    
+    exchangeServiceUri = (String)appContext.get("ExchangeServiceUri");
+    historyServiceUri = (String)appContext.get("HistoryServiceUri");    
   }
   
   @Override
