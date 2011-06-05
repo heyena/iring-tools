@@ -365,7 +365,10 @@ function loadRelatedItem(type, context, individual, classId, className){
 }
 
 function removeHTMLTag(htmlText){
-  return htmlText.replace(/<\/?[^>]+(>|$)/g, '');
+  if (htmlText)
+    return htmlText.replace(/<\/?[^>]+(>|$)/g, '');
+  
+  return '';
 }
 
 function navigate(bcItemIndex){
