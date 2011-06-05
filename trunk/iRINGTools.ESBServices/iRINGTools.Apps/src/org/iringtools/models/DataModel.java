@@ -931,10 +931,13 @@ public class DataModel
             
             for (RoleObject roleObject : roleObjects)
             {
-              if ((roleObject.getType() == RoleType.PROPERTY ||
-                  roleObject.getType() == RoleType.DATA_PROPERTY ||
-                  roleObject.getType() == RoleType.OBJECT_PROPERTY ||
-                  roleObject.getType() == RoleType.FIXED_VALUE) &&
+              RoleType roleType = roleObject.getType();
+              
+              if ((roleType == null ||  // bug in v2.0 of c# service
+                   roleType == RoleType.PROPERTY ||
+                   roleType == RoleType.DATA_PROPERTY ||
+                   roleType == RoleType.OBJECT_PROPERTY ||
+                   roleType == RoleType.FIXED_VALUE) &&
                   roleObject.getName().equalsIgnoreCase(propertyParts[2]))
               {
                 int compareValue = roleObject.getValue().compareToIgnoreCase(expression.getValues().getItems().get(0));
@@ -1023,7 +1026,8 @@ public class DataModel
           org.iringtools.mapping.RoleType roleType = role.getType();
           Cardinality cardinality = role.getCardinality();
           
-          if (roleType == org.iringtools.mapping.RoleType.PROPERTY ||
+          if (roleType == null ||  // bug in v2.0 of c# service
+              roleType == org.iringtools.mapping.RoleType.PROPERTY ||
               roleType == org.iringtools.mapping.RoleType.DATA_PROPERTY ||
               roleType == org.iringtools.mapping.RoleType.OBJECT_PROPERTY ||
               roleType == org.iringtools.mapping.RoleType.FIXED_VALUE ||
@@ -1106,7 +1110,8 @@ public class DataModel
         Cardinality cardinality = getCardinality(graph, className, templateObject.getName(), roleObject.getName(), 
             roleObject.getRelatedClassName());
                      
-        if (roleType == RoleType.PROPERTY ||
+        if (roleType == null ||  // bug in v2.0 of c# service
+            roleType == RoleType.PROPERTY ||
             roleType == RoleType.DATA_PROPERTY ||
             roleType == RoleType.OBJECT_PROPERTY ||
             roleType == RoleType.FIXED_VALUE ||
@@ -1147,14 +1152,17 @@ public class DataModel
           }
           
           // add row value to row data
-          if (dataMode == DataMode.APP || roleOldValue == null || roleOldValue.equals(roleValue))
-          { 
-            rowData.add(roleValue);
-          }
-          else
+          if (rowData.size() < fields.size())
           {
-            roleValue = roleOldValue + " -> " + roleValue;
-            rowData.add("<span class=\"change\">" + roleValue + "</span>");
+            if (dataMode == DataMode.APP || roleOldValue == null || roleOldValue.equals(roleValue))
+            { 
+              rowData.add(roleValue);
+            }
+            else
+            {
+              roleValue = roleOldValue + " -> " + roleValue;
+              rowData.add("<span class=\"change\">" + roleValue + "</span>");
+            }
           }
           
           // adjust field width based on value
@@ -1170,11 +1178,23 @@ public class DataModel
             }
           }
         }
-        else if (roleObject.getRelatedClassId() != null && roleObject.getValues() != null)
+        else if (roleObject.getRelatedClassId() != null && 
+            (roleObject.getValue() != null && roleObject.getValue().startsWith("#")) ||  // v2.0
+             roleObject.getValues() != null)  // v2.1
         {
-          if (cardinality == null || cardinality == Cardinality.ONE_TO_ONE)
+          if ((roleObject.getValue() != null && roleObject.getValue().startsWith("#")) ||  // v2.0
+              (cardinality == null || cardinality == Cardinality.ONE_TO_ONE))  // v2.1
           {
-            String relatedClassIdentifier = roleObject.getValues().getItems().get(0);
+            String relatedClassIdentifier;
+            
+            if (roleObject.getValue() != null && roleObject.getValue().startsWith("#"))  // v2.0
+            {
+              relatedClassIdentifier = roleObject.getValue().substring(1);
+            }
+            else  // v2.1
+            {
+              relatedClassIdentifier = roleObject.getValues().getItems().get(0);
+            }
             
             // find related class and recur
             for (ClassObject relatedClassObject : dto.getClassObjects().getItems())
