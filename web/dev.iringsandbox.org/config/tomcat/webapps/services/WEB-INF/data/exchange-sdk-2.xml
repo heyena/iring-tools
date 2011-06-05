@@ -8,7 +8,7 @@
   <sourceGraphName>LINES</sourceGraphName>
   <targetUri>http://sdk.iringsandbox.org/services/dxfr</targetUri>
   <targetScopeName>SDK</targetScopeName>
-  <targetAppName>AB</targetAppName>
+  <targetAppName>ABC</targetAppName>
   <targetGraphName>LINES</targetGraphName>
   <hashAlgorithm>MD5</hashAlgorithm>
 </exchangeDefinition>
