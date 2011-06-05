@@ -716,10 +716,13 @@ public class ExchangeProvider
         {
           RoleType roleType = roleObject.getType();
           
-          if (roleType == RoleType.PROPERTY || 
+          if (roleType == null ||  // bug in v2.0 of c# service
+              roleType == RoleType.PROPERTY || 
               roleType == RoleType.OBJECT_PROPERTY || 
               roleType == RoleType.DATA_PROPERTY|| 
-              roleType == RoleType.FIXED_VALUE)
+              roleType == RoleType.FIXED_VALUE ||
+              (roleType == RoleType.REFERENCE && roleObject.getRelatedClassId() != null &&  // self-join
+               roleObject.getValue() != null && !roleObject.getValue().startsWith("#")))
           {
             String value = roleObject.getValue();
             
