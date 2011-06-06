@@ -647,16 +647,18 @@ namespace org.iringtools.adapter
     {
       DataFilter filter = new DataFilter();
 
+      IList<string> identifiers = new List<string>{ classIdentifier };
+
       string fixedIdentifierBoundary = (_settings["fixedIdentifierBoundary"] == null) 
         ? "#" : _settings["fixedIdentifierBoundary"];
 
       #region parse identifier to build data filter
       ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMapByName(className);
-      
+
       if (classTemplateMap != null && classTemplateMap.classMap != null)
       {
         ClassMap classMap = classTemplateMap.classMap;
-        
+
         string[] identifierValues = !String.IsNullOrEmpty(classMap.identifierDelimiter)
           ? classIdentifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
           : new string[] { classIdentifier };
@@ -718,14 +720,14 @@ namespace org.iringtools.adapter
             }
           }
         }
+
+        identifiers = _dataLayer.GetIdentifiers(_dataObjDef.objectName, filter);
+        if (identifiers == null || identifiers.Count == 0)
+        {
+          throw new Exception("Identifier [" + classIdentifier + "] of class [" + className + "] is not found.");
+        }
       }
       #endregion
-
-      IList<string> identifiers = _dataLayer.GetIdentifiers(_dataObjDef.objectName, filter);
-      if (identifiers == null || identifiers.Count == 0)
-      {
-        throw new Exception("Identifier [" + classIdentifier + "] of class [" + className + "] is not found.");
-      }
 
       IList<IDataObject> dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
       if (dataObjects != null && dataObjects.Count > 0)
