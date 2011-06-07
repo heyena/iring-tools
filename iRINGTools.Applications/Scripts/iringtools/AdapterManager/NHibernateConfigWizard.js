@@ -2218,7 +2218,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									},
 									success: function (response, request) {
 										showDialog(400, 100, 'Tree saving result', 'The tree is saved successfully.', Ext.Msg.OK, null);
-									
+										var navpanel = Ext.getCmp('nav-panel');
+										navpanel.onReload();
 									},
 									failure: function (response, request) {
 										showDialog(660, 300, 'Tree saving result',
