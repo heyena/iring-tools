@@ -2218,6 +2218,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									},
 									success: function (response, request) {
 										showDialog(400, 100, 'Tree saving result', 'The tree is saved successfully.', Ext.Msg.OK, null);
+									
 									},
 									failure: function (response, request) {
 										showDialog(660, 300, 'Tree saving result',
@@ -2383,10 +2384,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				failure: function (f, a) {
 					if (a.response)
 						showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
-
-					else {
-						showDialog(400, 100, 'Warning', 'Please connect to database first', Ext.Msg.OK, null);
-					}
 				}
 			});
 		}
@@ -2430,7 +2427,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				}
 			},
 			failure: function (response, request) {
-				showDialog(400, 100, 'Warning', 'Please connect to a Database first.', Ext.Msg.OK, null);
 				editPane = dataObjectsPane.items.items[1];
 				if (!editPane) {
 					var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
