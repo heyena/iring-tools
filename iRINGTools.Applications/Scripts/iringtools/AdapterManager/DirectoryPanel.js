@@ -158,13 +158,15 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
                     expandedNodes: nodes
                 }
             },
-            applyState: function (state) {
+            applyState: function (state, isOnClick) {
                 var that = this;
                 //this.getLoader().on('load', function () {
-                var nodes = state.expandedNodes;
-                for (var i = 0; i < nodes.length; i++) {
-                    if (typeof nodes[i] != 'undefined') {
-                        that.expandPath(nodes[i]);
+                if (isOnClick = true) {
+                    var nodes = state.expandedNodes;
+                    for (var i = 0; i < nodes.length; i++) {
+                        if (typeof nodes[i] != 'undefined') {
+                            that.expandPath(nodes[i]);
+                        }
                     }
                 }
                 //});
@@ -549,7 +551,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         var that = this;
         var node = this.getSelectedNode();
         Ext.Ajax.request({
-             url: 'mapping/deletegraphmap',
+            url: 'mapping/deletegraphmap',
             method: 'POST',
             params: {
                 scope: node.id.split('/')[0],
@@ -861,7 +863,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
         thisTreePanel.getLoader().load(thisTreePanel.getRootNode(), function () {
             panel.body.unmask();
-            thisTreePanel.applyState(state);
+            thisTreePanel.applyState(state, true);
         });
     },
 
