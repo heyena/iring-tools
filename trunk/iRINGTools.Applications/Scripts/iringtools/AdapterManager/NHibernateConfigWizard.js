@@ -1746,10 +1746,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (editPane.items.map[scopeName + '.' + appName + '.propertiesSelector.' + node.id]) {
 					var propertiesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.propertiesSelector.' + node.id];
 					if (propertiesSelectorPane) {
-						//propertiesSelectorPane.destroy();
-						var panelIndex = editPane.items.indexOf(propertiesSelectorPane);
-						editPane.getLayout().setActiveItem(panelIndex);
-						return;
+						propertiesSelectorPane.destroy();
+						//var panelIndex = editPane.items.indexOf(propertiesSelectorPane);
+						//editPane.getLayout().setActiveItem(panelIndex);
+						//return;
 					}
 				}
 
