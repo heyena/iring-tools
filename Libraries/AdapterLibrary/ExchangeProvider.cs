@@ -226,7 +226,7 @@ namespace org.iringtools.exchange
         }
 
         String query = "CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}";
-        VDS.RDF.Graph graph = endpoint.QueryWithResultGraph(query);
+        VDS.RDF.IGraph graph = endpoint.QueryWithResultGraph(query);
 
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
         TextWriter textWriter = new StringWriter(sb);
