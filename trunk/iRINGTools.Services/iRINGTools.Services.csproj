@@ -126,9 +126,10 @@
     <Content Include="SPARQL\GetSubClassSandbox.txt" />
     <Content Include="SPARQL\GetSuperClass.txt" />
     <Content Include="SPARQL\GetSuperClassSandbox.txt" />
-    <Content Include="SPARQL\getTemplate.txt" />
+    <Content Include="SPARQL\GetBaseTemplatePart8.txt" />
     <Content Include="SPARQL\getTemplateClassification.txt" />
     <Content Include="SPARQL\GetTemplateQualification.txt" />
+    <Content Include="SPARQL\GetTemplateQualificationPart8.txt" />
     <Content Include="SPARQL\getTemplateRoleRestriction.txt" />
     <Content Include="SPARQL\getTemplateRoles.txt" />
     <Content Include="SPARQL\getTemplateSpecialization.txt" />
@@ -150,7 +151,6 @@
     </Content>
     <Content Include="XML\Repositories_Default.xml" />
     <None Include="App_Data\config.ttl" />
-    <None Include="App_Data\default.rq" />
     <None Include="Web.config">
       <SubType>Designer</SubType>
     </None>

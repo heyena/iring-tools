@@ -216,6 +216,26 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetBaseTemplatePart8</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>definition</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>creationDate</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetBaseTemplatePart8.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetTemplateQualification</key>
     <query>
       <bindings>
@@ -241,6 +261,26 @@
         </queryBinding>
       </bindings>
       <fileName>GetTemplateQualification.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetTemplateQualificationPart8</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>qualifies</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>name</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>description</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetTemplateQualificationPart8.txt</fileName>
     </query>
   </queryItem>
   <queryItem>

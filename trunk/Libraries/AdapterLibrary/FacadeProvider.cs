@@ -328,7 +328,7 @@ namespace org.iringtools.facade
           endpoint.SetProxyCredentials(proxyCrendentials.userName, proxyCrendentials.password);
         }
 
-        VDS.RDF.Graph resultGraph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
+        VDS.RDF.IGraph resultGraph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
         #endregion
 
         // call RdfProjectionEngine to fill data objects from a given graph
