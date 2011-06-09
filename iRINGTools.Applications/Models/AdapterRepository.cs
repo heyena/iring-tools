@@ -318,22 +318,22 @@ namespace iRINGTools.Web.Models
 				}
 
         public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,
-          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
+          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string portNumber)
         {
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          return client.Get<List<string>>(String.Format("/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/tables", 
-            scope, application, dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword));
+          return client.Get<List<string>>(String.Format("/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/tables", 
+            scope, application, dbProvider, dbServer, portNumber, dbInstance, dbName, dbSchema, dbUserName, dbPassword));
         }
 
-        //TODO: use appropriate icons especially node with children
+        // use appropriate icons especially node with children
         public List<JsonTreeNode> GetDBObjects(string scope, string application, string dbProvider, string dbServer,
-          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames)
+          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber)
         {
           List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
 
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          List<DataObject> dataObjects = client.Get<List<DataObject>>(String.Format("/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/objects",
-            scope, application, dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword, tableNames));
+          List<DataObject> dataObjects = client.Get<List<DataObject>>(String.Format("/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/{10}/objects",
+            scope, application, dbProvider, dbServer, portNumber, dbInstance, dbName, dbSchema, dbUserName, dbPassword, tableNames));
 
           foreach (DataObject dataObject in dataObjects)
           {
