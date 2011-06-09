@@ -690,7 +690,7 @@ namespace org.iringtools.adapter.datalayer
 			_response.Append(status);
 			return _response;
 		}
-		public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName)
+		public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName, string schemaName)
 		{
 			DatabaseDictionary dbDictionary = new DatabaseDictionary();
 			try
@@ -756,13 +756,14 @@ namespace org.iringtools.adapter.datalayer
 				}
 				else if (dbProvider.Contains("ORACLE"))
 				{
-					metadataQuery =
+					metadataQuery = string.Format(
 						"select t1.object_name, t2.column_name, t2.data_type, t2.data_length, 0 as is_sequence, t2.nullable, t4.constraint_type " +
-						"from user_objects t1 " +
+						"from all_objects t1 " +
 						"inner join all_tab_cols t2 on t2.table_name = t1.object_name " +
 						"left join all_cons_columns t3 on t3.table_name = t2.table_name and t3.column_name = t2.column_name " +
 						"left join all_constraints t4 on t4.constraint_name = t3.constraint_name and (t4.constraint_type = 'P' or t4.constraint_type = 'R') " +
-						"where t1.object_type = 'TABLE' order by t1.object_name, t4.constraint_type, t2.column_name";
+						"where t1.object_type = 'TABLE' and (t1.owner = '{0}') order by t1.object_name, t4.constraint_type, t2.column_name", schemaName);
+
 					properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
 
 					switch (dbProvider)
@@ -1146,7 +1147,7 @@ namespace org.iringtools.adapter.datalayer
 
 				tableQuery = string.Format(" SELECT t2.column_name, t2.data_type, t2.data_length," +
 					" 0 AS is_sequence, t2.nullable, t4.constraint_type" +
-					" FROM dba_objects t1 INNER JOIN all_tab_cols t2" +
+					" FROM all_objects t1 INNER JOIN all_tab_cols t2" +
 					" ON t2.table_name = t1.object_name AND t2.owner = t1.owner" +
 					" LEFT JOIN all_cons_columns t3 ON t3.table_name   = t2.table_name" +
 					" AND t3.column_name = t2.column_name AND t3.owner = t2.owner" +
@@ -1176,7 +1177,7 @@ namespace org.iringtools.adapter.datalayer
 			}
 			else if (dbProvider.ToUpper().Contains("ORACLE"))
 			{
-				metaQuery = String.Format("select object_name from dba_objects where object_type in ('TABLE', 'VIEW', 'SYNONYM') and UPPER(owner) = '{0}' order by object_name", schemaName.ToUpper());
+				metaQuery = String.Format("select object_name from all_objects where object_type in ('TABLE', 'VIEW', 'SYNONYM') and UPPER(owner) = '{0}' order by object_name", schemaName.ToUpper());
 			}
 			else
 				throw new Exception(string.Format("Database provider {0} not supported.", dbProvider));

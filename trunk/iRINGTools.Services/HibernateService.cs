@@ -105,25 +105,25 @@ namespace org.iringtools.services
     }
 
     ///TODO: create request object and do post or encrypt password
-    [WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/tables")]
-    public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,
+    [WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{portNumber}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/tables")]
+		public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer, string portNumber,
       string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _NHibernateProvider.GetTableNames(scope, application, dbProvider, dbServer, dbInstance,
+			return _NHibernateProvider.GetTableNames(scope, application, dbProvider, dbServer, portNumber, dbInstance,
         dbName, dbSchema, dbUserName, dbPassword);
     }
 
-    [WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/{tableNames}/objects")]
-    public List<DataObject> GetDBObjects(string scope, string application, string dbProvider, string dbServer,
+    [WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{portNumber}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/{tableNames}/objects")]
+		public List<DataObject> GetDBObjects(string scope, string application, string dbProvider, string dbServer, string portNumber,
       string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _NHibernateProvider.GetDBObjects(scope, application, dbProvider, dbServer, dbInstance,
+			return _NHibernateProvider.GetDBObjects(scope, application, dbProvider, dbServer, portNumber, dbInstance,
         dbName, dbSchema, dbUserName, dbPassword, tableNames);
     }
 

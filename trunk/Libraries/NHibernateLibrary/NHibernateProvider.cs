@@ -171,7 +171,7 @@ namespace org.iringtools.nhibernate
 			return _response;
 		}
 
-		public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName)
+		public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName, string schemaName)
 		{
 			DatabaseDictionary dbDictionary = new DatabaseDictionary();
 			try
@@ -237,13 +237,14 @@ namespace org.iringtools.nhibernate
 				}
 				else if (dbProvider.Contains("ORACLE"))
 				{
-					metadataQuery =
+					metadataQuery = string.Format(
 						"select t1.object_name, t2.column_name, t2.data_type, t2.data_length, 0 as is_sequence, t2.nullable, t4.constraint_type " +
-						"from user_objects t1 " +
+						"from all_objects t1 " +
 						"inner join all_tab_cols t2 on t2.table_name = t1.object_name " +
 						"left join all_cons_columns t3 on t3.table_name = t2.table_name and t3.column_name = t2.column_name " +
 						"left join all_constraints t4 on t4.constraint_name = t3.constraint_name and (t4.constraint_type = 'P' or t4.constraint_type = 'R') " +
-						"where t1.object_type = 'TABLE' order by t1.object_name, t4.constraint_type, t2.column_name";
+						"where t1.object_type = 'TABLE' and (t1.owner = '{0}') order by t1.object_name, t4.constraint_type, t2.column_name", schemaName);
+					
 					properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
 
 					switch (dbProvider)
@@ -610,7 +611,7 @@ namespace org.iringtools.nhibernate
 		}
 
 		public List<string> GetTableNames(string projectName, string applicationName, string dbProvider,
-			string dbServer, string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
+			string dbServer, string portNumber, string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
 		{
 			List<string> tableNames = new List<string>();
 
@@ -619,7 +620,7 @@ namespace org.iringtools.nhibernate
 				InitializeScope(projectName, applicationName);
 
 				List<DataObject> dataObjects = new List<DataObject>();
-				ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword);
+				ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword, portNumber);
 				string sql = GetDatabaseMetaquery(dbProvider, dbName, dbSchema);
 				ISQLQuery query = session.CreateSQLQuery(sql);
 
@@ -638,11 +639,11 @@ namespace org.iringtools.nhibernate
 			return tableNames;
 		}
 
-		public List<DataObject> GetDBObjects(string projectName, string applicationName, string dbProvider, string dbServer,
+		public List<DataObject> GetDBObjects(string projectName, string applicationName, string dbProvider, string dbServer, string portNumber,
 			string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames)
 		{
 			List<DataObject> dataObjects = new List<DataObject>();
-			ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword);
+			ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword, portNumber);
 
 			foreach (string tableName in tableNames.Split(','))
 			{
@@ -717,10 +718,25 @@ namespace org.iringtools.nhibernate
 
 		#region private methods
 		private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema,
-			string dbUserName, string dbPassword)
+			string dbUserName, string dbPassword, string portNumber)
 		{
-			string connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
-				dbServer, dbInstance, dbName, dbUserName, dbPassword);
+			string connStr;
+
+			if (portNumber == "")
+			{
+				if (dbProvider.ToUpper().Contains("ORACLE"))
+					portNumber = "1521";
+				else if (dbProvider.ToUpper().Contains("MYSQL"))
+					portNumber = "3306";
+			}
+
+			if (dbProvider.ToUpper().Contains("MSSQL"))
+				connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
+					dbServer, dbInstance, dbName, dbUserName, dbPassword);
+			else
+				connStr = String.Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME={2})));User ID={3};Password={4}",
+					dbServer, portNumber, dbInstance, dbUserName, dbPassword);
+
 			Dictionary<string, string> properties = new Dictionary<string, string>();
 
 			properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
@@ -771,7 +787,7 @@ namespace org.iringtools.nhibernate
 				tableQuery = string.Format(@"
           select distinct * from (SELECT t2.column_name, t2.data_type, t2.data_length,
           0 AS is_sequence, t2.nullable, t4.constraint_type
-          FROM dba_objects t1 INNER JOIN all_tab_cols t2
+          FROM all_objects t1 INNER JOIN all_tab_cols t2
           ON t2.table_name = t1.object_name AND t2.owner = t1.owner 
           LEFT JOIN all_cons_columns t3 ON t3.table_name = t2.table_name
           AND t3.column_name = t2.column_name AND t3.owner = t2.owner
@@ -799,7 +815,7 @@ namespace org.iringtools.nhibernate
 			}
 			else if (dbProvider.ToUpper().Contains("ORACLE"))
 			{
-				metaQuery = String.Format("select object_name from dba_objects where object_type in ('TABLE', 'VIEW', 'SYNONYM') and UPPER(owner) = '{0}' order by object_name", schemaName.ToUpper());
+				metaQuery = String.Format("select object_name from all_objects where object_type in ('TABLE', 'VIEW', 'SYNONYM') and UPPER(owner) = '{0}' order by object_name", schemaName.ToUpper());
 			}
 			else
 				throw new Exception(string.Format("Database provider {0} not supported.", dbProvider));

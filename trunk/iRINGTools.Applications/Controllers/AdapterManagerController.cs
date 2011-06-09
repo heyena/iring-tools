@@ -51,7 +51,7 @@ namespace iRINGTools.Web.Controllers
 		{
 			List<string> dataObjects = _repository.GetTableNames(
 				form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
-				form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"]);
+				form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"]);
 
 			JsonContainer<List<string>> container = new JsonContainer<List<string>>();
 			container.items = dataObjects;
@@ -65,7 +65,7 @@ namespace iRINGTools.Web.Controllers
 		{
 			List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
 				form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
-				form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"]);
+				form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"]);
 
 			return Json(dbObjects, JsonRequestBehavior.AllowGet);
 		}
