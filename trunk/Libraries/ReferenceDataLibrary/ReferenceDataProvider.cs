@@ -2430,14 +2430,14 @@ namespace org.iringtools.refdata
                       {
                         if (string.Compare(existingRole.range, role.range, true) != 0)
                         {
+                          qn = nsMap.ReduceToQName(existingRole.range, out qName);
                           hasDeletes = true;
                           if (repository.RepositoryType == RepositoryType.Part8)
                           {
-                            sparqlStmts.AppendLine(string.Format("tpl:{0} p8:hasRoleFillerType {1} .", existingRole.identifier, existingRole.range));
+                            sparqlStmts.AppendLine(string.Format("tpl:{0} p8:hasRoleFillerType {1} .", existingRole.identifier, qName));
                           }
                           else
                           {
-                            qn = nsMap.ReduceToQName(existingRole.range, out qName);
                             if (qName.StartsWith("rdfs") || qName.StartsWith("rdf"))
                             {
                               sparqlStmts.AppendLine(string.Format("{0} rdf:type owl:DataTypeProperty .", existingRole.identifier));
@@ -2831,16 +2831,17 @@ namespace org.iringtools.refdata
                       }
                       if (existingRole.range != null)
                       {
+                        qn = nsMap.ReduceToQName(existingRole.range, out qName);
                         if (string.Compare(existingRole.range, role.range, true) != 0)
                         {
                           hasDeletes = true;
                           if (repository.RepositoryType == RepositoryType.Part8)
                           {
-                            sparqlStmts.AppendLine(string.Format("tpl:{0} p8:hasRoleFillerType {1} .", existingRole.identifier, existingRole.range));
+                            sparqlStmts.AppendLine(string.Format("tpl:{0} p8:hasRoleFillerType {1} .", existingRole.identifier, qName));
                           }
                           else
                           {
-                            sparqlStmts.AppendLine(string.Format("tpl:{0} rdfs:range {1} .", existingRole.identifier, existingRole.range));
+                            sparqlStmts.AppendLine(string.Format("tpl:{0} rdfs:range {1} .", existingRole.identifier, qName));
                           }
                         }
                       }
