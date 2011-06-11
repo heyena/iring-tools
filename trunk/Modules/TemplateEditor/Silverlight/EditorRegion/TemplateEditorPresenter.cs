@@ -660,11 +660,13 @@ namespace org.iringtools.modules.templateeditor.editorregion
         for (int i = 0; i < cmbRepositories.Items.Count; i++)
         {
           ComboBoxItem cmbItem = (ComboBoxItem)cmbRepositories.Items[i];
-
-          if (cmbItem.Content.ToString().ToLower().Contains(_templateModel.QMXF.sourceRepository.ToLower()))
+          if (_templateModel != null)
           {
-            cmbRepositories.SelectedIndex = i;
-            break;
+              if (cmbItem.Content.ToString().ToLower().Contains(_templateModel.QMXF.sourceRepository.ToLower()))
+              {
+                  cmbRepositories.SelectedIndex = i;
+                  break;
+              }
           }
         }
       }
