@@ -117,7 +117,6 @@
     <Compile Include="Loggers\ILog.cs" />
     <Compile Include="Loggers\ILogger.cs" />
     <Compile Include="Loggers\LoggerHelper.cs" />
-    <Compile Include="NamespaceMapper.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Types\Category.cs" />
     <Compile Include="Types\Priority.cs" />
