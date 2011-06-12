@@ -37,6 +37,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.w3.sparql_results;
 using System.Text;
+using VDS.RDF;
 using VDS.RDF.Query;
 using VDS.RDF.Update;
 
@@ -52,7 +53,7 @@ namespace org.iringtools.refdata
     private const string REPOSITORIES_FILE_NAME = "Repositories.xml";
     private const string QUERIES_FILE_NAME = "Queries.xml";
 
-    private NamespaceMapper nsMap = new NamespaceMapper();
+    private VDS.RDF.NamespaceMapper nsMap = new VDS.RDF.NamespaceMapper();
     private bool qn = false;
     private string qName = string.Empty;
     private const string insertData = "INSERT DATA {";
@@ -103,8 +104,15 @@ namespace org.iringtools.refdata
         _repositories = Utility.Read<Repositories>(repositoriesPath);
         _response = new Response();
         _kernel.Bind<Response>().ToConstant(_response);
-
-        prefix.AppendLine(nsMap.PrefixString());
+        nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
+        nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+        nsMap.AddNamespace("tpL", new Uri("http://tpl.rdlfacade.org/data#"));
+        nsMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
+        nsMap.AddNamespace("p8dm", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/data-model#"));
+        nsMap.AddNamespace("owl2xml", new Uri("http://www.w3.org/2006/12/owl2-xml#"));
+        nsMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+        nsMap.AddNamespace("templates", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/templates#"));
+        prefix.AppendLine(nsMap.Prefixes.ToString());
       }
       catch (Exception ex)
       {
@@ -268,8 +276,7 @@ namespace org.iringtools.refdata
         string label = String.Empty;
         string sparql = String.Empty;
         string relativeUri = String.Empty;
-        List<string> names = new List<string>();
-        string resultValue = string.Empty;
+
         Query query = (Query)_queries.FirstOrDefault(c => c.Key == "GetLabel").Query;
 
         sparql = ReadSPARQL(query.FileName);
@@ -281,29 +288,18 @@ namespace org.iringtools.refdata
 
           foreach (SparqlResult result in sparqlResults)
           {
-            if (result.HasValue("label"))
+            foreach(var v in result.Variables)
             {
-              resultValue = result["label"].ToString();
-              if (resultValue.Contains("^^"))
+              if ((INode)result[v] is LiteralNode && v.Equals("label"))
               {
-                resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                names = resultValue.Split('@').ToList();
+                labelEntity.Label = ((LiteralNode)result[v]).Value;
+                labelEntity.Lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(labelEntity.Lang))
+                  labelEntity.Lang = defaultLanguage;
               }
-              else
-              {
-                names = result["label"].ToString().Split('@').ToList();
-              }
-              if (names.Count == 1)
-                labelEntity.Lang = defaultLanguage;
-              else
-                labelEntity.Lang = names[names.Count - 1];
-
-              labelEntity.Label = names[0];
-              labelEntity.Repository = repository.Name;
-              labelEntity.Uri = repository.Uri;
-
-              break;
             }
+            labelEntity.Repository = repository.Name;
+            labelEntity.Uri = repository.Uri;
           }
         }
 
@@ -338,7 +334,7 @@ namespace org.iringtools.refdata
           {
             case RepositoryType.Camelot:
             case RepositoryType.RDSWIP:
-              getClassification = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassification").Query;             
+              getClassification = (Query)_queries.FirstOrDefault(c => c.Key == "GetClassification").Query;
 
               sparql = ReadSPARQL(getClassification.FileName);
               sparql = sparql.Replace("param1", id);
@@ -429,8 +425,6 @@ namespace org.iringtools.refdata
         string sparql = String.Empty;
         string sparqlPart8 = String.Empty;
         string relativeUri = String.Empty;
-        List<string> names = new List<string>();
-        string resultValue = string.Empty;
 
         List<Specialization> specializations = new List<Specialization>();
 
@@ -456,45 +450,26 @@ namespace org.iringtools.refdata
             foreach (SparqlResult result in sparqlResults)
             {
               Specialization specialization = new Specialization();
+              string uri = string.Empty;
 
-              string uri = String.Empty;
-              string label = String.Empty;
-              string lang = string.Empty;
-
-              if (result.HasValue("uri"))
+              foreach (var v in result.Variables)
               {
-                uri = result["uri"].ToString();
-                specialization.reference = uri;
-              }
-              if (result.HasValue("label"))
-              {
-                resultValue = result["label"].ToString();
-                if (resultValue.Contains("^^"))
+                if ((INode)result[v] is LiteralNode && v.Equals("label"))
                 {
-                  resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                  names = resultValue.Split('@').ToList();
+                  specialization.label = ((LiteralNode)result[v]).Value;
+                  specialization.lang = ((LiteralNode)result[v]).Language;
                 }
-                else
+                else if ((INode)result[v] is UriNode && v.Equals("uri"))
                 {
-                  names = resultValue.Split('@').ToList();
+                  specialization.reference = ((UriNode)result[v]).Uri.ToString();
+                  uri = specialization.reference;
                 }
-                label = names[0];
-                if (names.Count == 1)
-                  lang = defaultLanguage;
-                else
-                  lang = names[names.Count - 1];
               }
-              else
+              if (string.IsNullOrEmpty(specialization.label))
               {
-                names = GetLabel(uri).Label.Split('@').ToList();
-                label = names[0];
-                if (names.Count == 1)
-                  lang = defaultLanguage;
-                else
-                  lang = names[names.Count - 1];
+                specialization.label = GetLabel(uri).Label;
+                specialization.lang = GetLabel(uri).Lang;
               }
-              specialization.label = label;
-              specialization.lang = lang;
               Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
             }
           }
@@ -504,41 +479,26 @@ namespace org.iringtools.refdata
             foreach (SparqlResult result in sparqlResults)
             {
               Specialization specialization = new Specialization();
+              string uri = string.Empty;
 
-              string uri = String.Empty;
-              string label = String.Empty;
-              string lang = string.Empty;
-
-              if (result.HasValue("uri"))
+              foreach (var v in result.Variables)
               {
-                uri = result["uri"].ToString();
-                specialization.reference = uri;
-              }
-              if (result.HasValue("label"))
-              {
-                resultValue = result["label"].ToString();
-                if (resultValue.Contains("^^"))
+                if ((INode)result[v] is LiteralNode && v.Equals("label"))
                 {
-                  resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                  names = resultValue.Split('@').ToList();
+                  specialization.label = ((LiteralNode)result[v]).Value;
+                  specialization.lang = ((LiteralNode)result[v]).Language;
                 }
-                else
+                else if ((INode)result[v] is UriNode && v.Equals("uri"))
                 {
-                  names = resultValue.Split('@').ToList();
+                  specialization.reference = ((UriNode)result[v]).Uri.ToString();
+                  uri = specialization.reference;
                 }
-                label = names[0];
-                if (names.Count == 1)
-                  lang = defaultLanguage;
-                else
-                  lang = names[names.Count - 1];
               }
-              else
+              if (string.IsNullOrEmpty(specialization.label))
               {
-                label = GetLabel(uri).Label;
+                specialization.label = GetLabel(uri).Label;
+                specialization.lang = GetLabel(uri).Lang;
               }
-
-              specialization.label = label;
-              specialization.lang = lang;
               Utility.SearchAndInsert(specializations, specialization, Specialization.sortAscending());
             }
           }
@@ -846,9 +806,7 @@ namespace org.iringtools.refdata
       try
       {
         string sparql = string.Empty;
-        string language = string.Empty;
-        List<string> names = new List<string>();
-        string resultValue = string.Empty;
+        Entity resultEntity = null;
 
         Query getMembers = (Query)_queries.FirstOrDefault(c => c.Key == "GetMembers").Query;
         sparql = ReadSPARQL(getMembers.FileName);
@@ -860,29 +818,26 @@ namespace org.iringtools.refdata
 
           foreach (SparqlResult result in sparqlResults)
           {
-            if (result.Value("label").ToString().Contains("^^"))
+            resultEntity = new Entity();
+            foreach (var v in result.Variables)
             {
-              resultValue = result.Value("label").ToString();
-              resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-              names = resultValue.Split('@').ToList();
+              if ((INode)result[v] is LiteralNode)
+              {
+                resultEntity.Label = ((LiteralNode)result[v]).Value;
+                if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
+                {
+                  resultEntity.Lang = defaultLanguage;
+                }
+                else
+                {
+                  resultEntity.Lang = ((LiteralNode)result[v]).Language;
+                }
+              }
+              else if ((INode)result[v] is UriNode)
+              {
+                resultEntity.Uri = ((UriNode)result[v]).Uri.ToString();
+              }
             }
-            else
-            {
-              names = result["label"].ToString().Split('@').ToList();
-            }
-            
-            if (names.Count == 1)
-              language = defaultLanguage;
-            else
-              language = names[names.Count - 1];
-            Entity resultEntity = new Entity
-            {
-              Uri = result["uri"].ToString(),
-              Label = names[0],
-              Lang = language,
-              Repository = repository.Name
-            };
-
             Utility.SearchAndInsert(membersResult, resultEntity, Entity.sortAscending());
             //queryResult.Add(resultEntity);
           }
@@ -906,9 +861,7 @@ namespace org.iringtools.refdata
         string sparql = String.Empty;
         string sparqlPart8 = String.Empty;
         string relativeUri = String.Empty;
-        string language = string.Empty;
-        List<string> names = new List<string>();
-        string resultValue = string.Empty;
+        Entity resultEntity = null;
 
         Query queryGetSubClasses = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClasses").Query;
 
@@ -928,29 +881,27 @@ namespace org.iringtools.refdata
 
             foreach (SparqlResult result in sparqlResults)
             {
-              if (result.Value("label").ToString().Contains("^^"))
+              resultEntity = new Entity();
+              foreach (var v in result.Variables)
               {
-                resultValue = result.Value("label").ToString();
-                resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                names = resultValue.Split('@').ToList();
+                if ((INode)result[v] is LiteralNode)
+                {
+                  resultEntity.Label = ((LiteralNode)result[v]).Value;
+                  if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
+                  {
+                    resultEntity.Lang = defaultLanguage;
+                  }
+                  else
+                  {
+                    resultEntity.Lang = ((LiteralNode)result[v]).Language;
+                  }
+                }
+                else if ((INode)result[v] is UriNode)
+                {
+                  resultEntity.Uri = ((UriNode)result[v]).Uri.ToString();
+                }
               }
-              else
-              {
-                names = result["label"].ToString().Split('@').ToList();
-              }
-
-              if (names.Count == 1)
-                language = defaultLanguage;
-              else
-                language = names[names.Count - 1];
-              Entity resultEntity = new Entity
-              {
-                Uri = result["uri"].ToString(),
-                Label = names[0],
-                Lang = language,
-                Repository = repository.Name
-              };
-
+              resultEntity.Repository = repository.Name;
               Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
               //queryResult.Add(resultEntity);
             }
@@ -961,27 +912,27 @@ namespace org.iringtools.refdata
 
             foreach (SparqlResult result in sparqlResults)
             {
-              if (result.Value("label").ToString().Contains("^^"))
+              resultEntity = new Entity();
+              foreach (var v in result.Variables)
               {
-                resultValue = result.Value("label").ToString();
-                resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                names = resultValue.Split('@').ToList();
+                if ((INode)result[v] is LiteralNode)
+                {
+                  resultEntity.Label = ((LiteralNode)result[v]).Value;
+                  if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
+                  {
+                    resultEntity.Lang = defaultLanguage;
+                  }
+                  else
+                  {
+                    resultEntity.Lang = ((LiteralNode)result[v]).Language;
+                  }
+                }
+                else if ((INode)result[v] is UriNode)
+                {
+                  resultEntity.Uri = ((UriNode)result[v]).Uri.ToString();
+                }
               }
-              else
-              {
-                names = result["label"].ToString().Split('@').ToList();
-              }
-              if (names.Count == 1)
-                language = defaultLanguage;
-              else
-                language = names[names.Count - 1];
-              Entity resultEntity = new Entity
-              {
-                Uri = result["uri"].ToString(),
-                Label = names[0],
-                Lang = language,
-                Repository = repository.Name
-              };
+              resultEntity.Repository = repository.Name;
 
               Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
               //queryResult.Add(resultEntity);
@@ -1006,8 +957,6 @@ namespace org.iringtools.refdata
         string sparql = String.Empty;
         string sparqlPart8 = String.Empty;
         string relativeUri = String.Empty;
-        string language = string.Empty;
-        List<string> names = new List<string>();
 
         Query queryGetSubClasses = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassesCount").Query;
 
@@ -1028,8 +977,10 @@ namespace org.iringtools.refdata
 
             foreach (SparqlResult result in sparqlResults)
             {
-              if (result.Count > 0)
-                count = count + Convert.ToInt32(result["label"]);
+              foreach (var v in result.Variables)
+              {
+                count += Convert.ToInt32(((LiteralNode)result[v]).Value);
+              }
             }
           }
           else
@@ -1038,8 +989,10 @@ namespace org.iringtools.refdata
 
             foreach (SparqlResult result in sparqlResults)
             {
-              if (result.Count > 0)
-                count = count + Convert.ToInt32(result["label"]);
+              foreach (var v in result.Variables)
+              {
+                count += Convert.ToInt32(((LiteralNode)result[v]).Value);
+              }
             }
           }
         }
@@ -1063,9 +1016,7 @@ namespace org.iringtools.refdata
     public Entities GetClassTemplates(string id)
     {
       Entities queryResult = new Entities();
-      List<string> names = new List<string>();
-      string language = string.Empty;
-      string resultValue = string.Empty;
+      Entity resultEntity = null;
 
       try
       {
@@ -1091,35 +1042,29 @@ namespace org.iringtools.refdata
 
             foreach (SparqlResult result in sparqlResults.Results)
             {
-              if (result.HasValue("label"))
+              resultEntity = new Entity();
+              foreach (var v in result.Variables)
               {
-                if (result.Value("label").ToString().Contains("^^"))
+                if ((INode)result[v] is LiteralNode && v.Equals("label"))
                 {
-                  resultValue = result.Value("label").ToString().Split('^')[0];
-                  names = resultValue.Split('@').ToList();
+                  resultEntity.Label = ((LiteralNode)result[v]).Value;
+                  if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
+                  {
+                    resultEntity.Lang = defaultLanguage;
+                  }
+                  else
+                  {
+                    resultEntity.Lang = ((LiteralNode)result[v]).Language;
+                  }
                 }
-                else
+                else if ((INode)result[v] is UriNode)
                 {
-                  names = result["label"].ToString().Split('@').ToList();
+                  resultEntity.Uri = ((UriNode)result[v]).Uri.ToString();
                 }
-
-                if (names.Count == 1)
-                  language = defaultLanguage;
-                else
-                  language = names[names.Count - 1];
-
-                Entity resultEntity = new Entity
-                {
-                  Uri = result["uri"].ToString(),
-                  Label = names[0],
-                  Lang = language,
-                  Repository = repository.Name
-                };
-
-                Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
-                //queryResult.Add(resultEntity);                        
               }
-            }
+              resultEntity.Repository = repository.Name;
+              Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
+            }     
           }
           else
           {
@@ -1127,35 +1072,28 @@ namespace org.iringtools.refdata
 
             foreach (SparqlResult result in sparqlResults)
             {
-              if (result.HasValue("label"))
+              resultEntity = new Entity();
+              foreach (var v in result.Variables)
               {
-                if (result.Value("label").ToString().Contains("^^"))
+                if ((INode)result[v] is LiteralNode && v.Equals("label"))
                 {
-                  resultValue = result.Value("label").ToString().Split('^')[0];
-                  names = resultValue.Split('@').ToList();
+                  resultEntity.Label = ((LiteralNode)result[v]).Value;
+                  if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
+                  {
+                    resultEntity.Lang = defaultLanguage;
+                  }
+                  else
+                  {
+                    resultEntity.Lang = ((LiteralNode)result[v]).Language;
+                  }
                 }
-                else
+                else if ((INode)result[v] is UriNode)
                 {
-                  names = result["label"].ToString().Split('@').ToList();
+                  resultEntity.Uri = ((UriNode)result[v]).Uri.ToString();
                 }
               }
-
-              if (names.Count == 1)
-                language = defaultLanguage;
-              else
-                language = names[names.Count - 1];
-
-              Entity resultEntity = new Entity
-              {
-                Uri = result["uri"].ToString(),
-                Label = names[0],
-                Lang = language,
-                Repository = repository.Name
-              };
-
-
+              resultEntity.Repository = repository.Name;
               Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
-              //queryResult.Add(resultEntity);
             }
           }
         }
@@ -1171,8 +1109,7 @@ namespace org.iringtools.refdata
     public Entities GetClassTemplatesCount(string id)
     {
       Entities queryResult = new Entities();
-      List<string> names = new List<string>();
-      string language = string.Empty;
+
       try
       {
         string sparqlGetClassTemplates = String.Empty;
@@ -1198,9 +1135,10 @@ namespace org.iringtools.refdata
 
             foreach (SparqlResult result in sparqlResults)
             {
-              count = count + Convert.ToInt32(result["label"]);
-
-              //queryResult.Add(resultEntity);
+              foreach (var v in result.Variables)
+              {
+                count += Convert.ToInt32(((LiteralNode)result[v]).Value);
+              }
             }
           }
           else
@@ -1209,7 +1147,10 @@ namespace org.iringtools.refdata
 
             foreach (SparqlResult result in sparqlResults)
             {
-              count = count + Convert.ToInt32(result["label"]);
+              foreach (var v in result.Variables)
+              {
+                count += Convert.ToInt32(((LiteralNode)result[v]).Value);
+              }
             }
           }
         }
@@ -1237,8 +1178,6 @@ namespace org.iringtools.refdata
         string sparql = String.Empty;
         string relativeUri = String.Empty;
         string sparqlQuery = string.Empty;
-        List<string> names = new List<string>();
-        string resultValue = string.Empty;
 
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
@@ -1267,66 +1206,47 @@ namespace org.iringtools.refdata
 
         foreach (SparqlResult result in sparqlResults)
         {
-
           RoleDefinition roleDefinition = new RoleDefinition();
           QMXFName name = new QMXFName();
-
-          if (result.HasValue("label"))
+          foreach (var v in result.Variables)
           {
-            if (result.Value("label").ToString().Contains("^^"))
+            if ((INode)result[v] is LiteralNode && v.Equals("label"))
             {
-              resultValue = result.Value("label").ToString().Split('^')[0];
-              names = resultValue.Split('@').ToList();
+              name.value = ((LiteralNode)result[v]).Value;
+              name.lang = ((LiteralNode)result[v]).Language;
+              if (string.IsNullOrEmpty(name.lang))
+                name.lang = defaultLanguage;
             }
-            else
+            else if ((INode)result[v] is LiteralNode && v.Equals("comment"))
             {
-              names = result["label"].ToString().Split('@').ToList();
+              roleDefinition.description.value = ((LiteralNode)result[v]).Value;
+              roleDefinition.description.lang = ((LiteralNode)result[v]).Language;
+              if (string.IsNullOrEmpty(roleDefinition.description.lang))
+                roleDefinition.description.lang = defaultLanguage;
             }
-            name.value = names[0];
-            if (names.Count == 1)
-              name.lang = defaultLanguage;
-            else
-              name.lang = names[names.Count - 1];
-          }
-          if (result.HasValue("role"))
-          {
-            roleDefinition.identifier = result["role"].ToString();
-          }
-          if (result.HasValue("comment"))
-          {
-            if (result.Value("comment").ToString().Contains("^^"))
+            else if ((INode)result[v] is LiteralNode && v.Equals("index"))
             {
-              resultValue = resultValue.Substring(0, resultValue.IndexOf('^'));
-              names = resultValue.Split('@').ToList();
+              if (string.IsNullOrEmpty(roleDefinition.description.value))
+              {
+                roleDefinition.description.value = ((LiteralNode)result[v]).Value;
+                roleDefinition.description.lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(roleDefinition.description.lang))
+                  roleDefinition.description.lang = defaultLanguage;
+              }
             }
-            else
+            else if ((INode)result[v] is UriNode && v.Equals("uri"))
             {
-              names = result["comment"].ToString().Split('@').ToList();
+              roleDefinition.identifier = ((UriNode)result[v]).Uri.ToString();
             }
-            roleDefinition.description.value = names[0];
-            if (names.Count == 1)
-              roleDefinition.description.lang = defaultLanguage;
-            else
-              roleDefinition.description.lang = names[names.Count - 1];
-          }
-          if (result.HasValue("index"))
-          {
-            resultValue = result["index"].ToString();
-            if (resultValue.Contains("^^"))
+            else if ((INode)result[v] is UriNode && v.Equals("type"))
             {
-              resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
+              roleDefinition.range = ((UriNode)result[v]).Uri.ToString();
             }
-            names = resultValue.Split('@').ToList();
-            roleDefinition.description.value = names[0];
-          }
-          if (result.HasValue("type"))
-          {
-            roleDefinition.range = result["type"].ToString();
-          }
+          }          
           roleDefinition.name.Add(name);
+          
           Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
         }
-
         return roleDefinitions;
       }
       catch (Exception e)
@@ -1343,8 +1263,6 @@ namespace org.iringtools.refdata
         string sparql = String.Empty;
         string relativeUri = String.Empty;
         string sparqlQuery = string.Empty;
-        List<string> names = new List<string>();
-        string resultValue = string.Empty;
 
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
@@ -1373,56 +1291,45 @@ namespace org.iringtools.refdata
 
           foreach (SparqlResult result in sparqlResults)
           {
-
             RoleDefinition roleDefinition = new RoleDefinition();
             QMXFName name = new QMXFName();
 
-            if (result.HasValue("label"))
+            foreach (var v in result.Variables)
             {
-              if (result.Value("label").ToString().Contains("^^"))
+              if ((INode)result[v] is LiteralNode && v.Equals("label"))
               {
-                resultValue = result.Value("label").ToString().Split('^')[0];
-                names = resultValue.Split('@').ToList();
+                name.value = ((LiteralNode)result[v]).Value;
+                name.lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(name.lang))
+                  name.lang = defaultLanguage;
               }
-              else
+              else if ((INode)result[v] is LiteralNode && v.Equals("comment"))
               {
-                names = result["label"].ToString().Split('@').ToList();
+                description.value = ((LiteralNode)result[v]).Value;
+                description.lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(description.lang))
+                  description.lang = defaultLanguage;
               }
-              name.value = names[0];
-              if (names.Count == 1)
-                name.lang = defaultLanguage;
-              else
-                name.lang = names[names.Count - 1];
-            }
-            if (result.HasValue("role"))
-            {
-              roleDefinition.identifier = result["role"].ToString();
-            }
-            if (result.HasValue("comment"))
-            {
-              if (result.Value("comment").ToString().Contains("^^"))
+              else if ((INode)result[v] is LiteralNode && v.Equals("index"))
               {
-                resultValue = resultValue.Substring(0, resultValue.IndexOf('^'));
-                names = resultValue.Split('@').ToList();
+                if (string.IsNullOrEmpty(description.value))
+                {
+                  description.value = ((LiteralNode)result[v]).Value;
+                  description.lang = ((LiteralNode)result[v]).Language;
+                  if (string.IsNullOrEmpty(description.lang))
+                    description.lang = defaultLanguage;
+                }
               }
-              else
+              else if ((INode)result[v] is UriNode && v.Equals("role"))
               {
-                names = result["comment"].ToString().Split('@').ToList();
+                roleDefinition.identifier = ((UriNode)result[v]).Uri.ToString();
               }
-              roleDefinition.description.value = names[0];
-              if (names.Count == 1)
-                roleDefinition.description.lang = defaultLanguage;
-              else
-                roleDefinition.description.lang = names[names.Count - 1];
+              else if ((INode)result[v] is UriNode && v.Equals("type"))
+              {
+                roleDefinition.range = ((UriNode)result[v]).Uri.ToString();
+              }
             }
-            if (result.HasValue("index"))
-            {
-              roleDefinition.description.value = result["index"].ToString();
-            }
-            if (result.HasValue("type"))
-            {
-              roleDefinition.range = result["type"].ToString();
-            }
+            roleDefinition.description = description;
             roleDefinition.name.Add(name);
             Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
             //roleDefinitions.Add(roleDefinition);
@@ -1446,8 +1353,6 @@ namespace org.iringtools.refdata
         string rangeSparql = String.Empty;
         string relativeUri = String.Empty;
 
-        List<string> names = new List<string>();
-
         string referenceSparql = String.Empty;
         string relativeUri1 = String.Empty;
 
@@ -1456,6 +1361,8 @@ namespace org.iringtools.refdata
 
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
+        string uri = String.Empty;
+        string nameValue = string.Empty;
 
         List<RoleQualification> roleQualifications = new List<RoleQualification>();
 
@@ -1497,80 +1404,52 @@ namespace org.iringtools.refdata
 
               foreach (SparqlResult result in combinedResults)
               {
-
                 RoleQualification roleQualification = new RoleQualification();
-                string uri = String.Empty;
-                if (result.HasValue("qualifies"))
+                QMXFName name = new QMXFName();
+                QMXFValue refvalue = new QMXFValue();
+                QMXFValue valvalue = new QMXFValue();
+                foreach (var v in result.Variables)
                 {
-                  uri = result["qualifies"].ToString();
-                  roleQualification.qualifies = uri;
-                  roleQualification.identifier = Utility.GetIdFromURI(uri);
-                }
-                if (result.HasValue("name"))
-                {
-                  string nameValue = result["name"].ToString();
-                  if (nameValue.Contains("^^"))
+                  if ((INode)result[v] is UriNode && v.Equals("qualifies"))
                   {
-                    nameValue = nameValue.Substring(0, nameValue.IndexOf("^"));
+                    uri = ((UriNode)result[v]).Uri.ToString();
+                    roleQualification.qualifies = uri;
+                    roleQualification.identifier = Utility.GetIdFromURI(uri);
                   }
-                  if (nameValue == null)
+                  else if ((INode)result[v] is LiteralNode && v.Equals("name"))
                   {
-                    nameValue = GetLabel(uri).Label;
+                    nameValue = ((LiteralNode)result[v]).Value;
+                    if (string.IsNullOrEmpty(nameValue))
+                    {
+                      nameValue = GetLabel(uri).Label;
+                    }
+                    name.value = nameValue;
+                    if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
+                    {
+                      name.lang = defaultLanguage;
+                    }
+                    else
+                    {
+                      name.lang = ((LiteralNode)result[v]).Language;
+                    }
+                  } 
+                  else if ((INode)result[v] is UriNode && v.Equals("range"))
+                  {
+                    roleQualification.range = ((UriNode)result[v]).Uri.ToString();
                   }
-                  names = nameValue.Split('@').ToList();
-
-                  QMXFName name = new QMXFName();
-                  if (names.Count > 1)
-                    name.lang = names[names.Count - 1];
-                  else
-                    name.lang = defaultLanguage;
-
-                  name.value = names[0];
-
-                  roleQualification.name.Add(name);
-                }
-                else
-                {
-                  string nameValue = GetLabel(uri).Label;
-
-                  if (nameValue == String.Empty)
-                    nameValue = "tpl:" + Utility.GetIdFromURI(uri);
-
-                  QMXFName name = new QMXFName();
-                  names = nameValue.Split('@').ToList();
-
-                  if (names.Count > 1)
-                    name.lang = names[names.Count - 1];
-                  else
-                    name.lang = defaultLanguage;
-
-                  name.value = names[0];
-
-                  roleQualification.name.Add(name);
-                }
-                if (result.HasValue("range"))
-                {
-                  roleQualification.range = result["range"].ToString();
-                }
-                if (result.HasValue("reference"))
-                {
-                  QMXFValue value = new QMXFValue
+                  else if ((INode)result[v] is UriNode && v.Equals("reference"))
                   {
-                    reference = result["reference"].ToString()
-                  };
-
-                  roleQualification.value = value;
-                }
-                if (result.HasValue("value"))
-                {
-                  QMXFValue value = new QMXFValue
+                    refvalue.reference = ((UriNode)result[v]).Uri.ToString();
+                    roleQualification.value = refvalue;
+                  }
+                  else if ((INode)result[v] is LiteralNode && v.Equals("value"))
                   {
-                    text = result["value"].ToString(),
-                    As = result["value_dataType"].ToString()
-                  };
-
-                  roleQualification.value = value;
+                    valvalue.text = ((LiteralNode)result[v]).Value;
+                    valvalue.As = ((UriNode)result["value_dataType"]).Uri.ToString();
+                    roleQualification.value = valvalue;
+                  }
                 }
+                roleQualification.name.Add(name);
                 Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
               }
               break;
@@ -1585,91 +1464,58 @@ namespace org.iringtools.refdata
               foreach (SparqlResult result in part8RolesResults)
               {
                 RoleQualification roleQualification = new RoleQualification();
-                string uri = String.Empty;
-                string nameValue = string.Empty;
+                QMXFName name = new QMXFName();
+                QMXFValue refvalue = new QMXFValue();
+                QMXFValue valvalue = new QMXFValue();
+                Description descr = new Description();
 
-                if (result.HasValue("role"))
+                foreach (var v in result.Variables)
                 {
-                  uri = result["role"].ToString();
-                  roleQualification.qualifies = uri;
-                  roleQualification.identifier = Utility.GetIdFromURI(uri);
-                }
-
-                if (result.HasValue("comment"))
-                {
-                  nameValue = result["comment"].ToString();
-                  if (nameValue.Contains("^^"))
+                  if ((INode)result[v] is UriNode && v.Equals("role"))
                   {
-                    nameValue = nameValue.Substring(0, nameValue.IndexOf("^"));
-                    names = nameValue.Split('@').ToList();
+                    uri = ((UriNode)result[v]).Uri.ToString();
+                    roleQualification.qualifies = uri;
+                    roleQualification.identifier = Utility.GetIdFromURI(uri);
                   }
-                  else
+                  else if ((INode)result[v] is LiteralNode && v.Equals("comment"))
                   {
-                    names = nameValue.Split('@').ToList();
+                    descr.value = ((LiteralNode)result[v]).Value;
+                    if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
+                    {
+                      descr.lang = defaultLanguage;
+                    }
+                    else
+                    {
+                      descr.lang = ((LiteralNode)result[v]).Language;
+                    }
                   }
-                  Description descr = new Description();
-                  if (names.Count > 1)
-                    descr.lang = names[names.Count - 1];
-                  else
-                    descr.lang = defaultLanguage;
-
-                  descr.value = names[0];
-                }
-
-                if (result.HasValue("type"))
-                {
-                  roleQualification.range = result["type"].ToString();
-                }
-
-                if (result.HasValue("label"))
-                {
-                  nameValue = result["label"].ToString();
-                  if (nameValue.Contains("^^"))
+                  else if ((INode)result[v] is UriNode && v.Equals("type"))
                   {
-                    nameValue = nameValue.Substring(0, nameValue.IndexOf("^"));
-                    names = nameValue.Split('@').ToList();
+                    roleQualification.range = ((UriNode)result[v]).Uri.ToString();
                   }
-                  else
+                  else if ((INode)result[v] is LiteralNode && v.Equals("label"))
                   {
-                    names = nameValue.Split('@').ToList();
+                    if (string.IsNullOrEmpty(((LiteralNode)result[v]).Value))
+                    {
+                      name.value = GetLabel(uri).Label;
+                      name.lang = GetLabel(uri).Lang;
+                      if (string.IsNullOrEmpty(name.lang))
+                        name.lang = defaultLanguage;
+                    }
+                    else
+                    {
+                      name.value = ((LiteralNode)result[v]).Value;
+                      name.lang = ((LiteralNode)result[v]).Language;
+                      if (string.IsNullOrEmpty(name.lang))
+                        name.lang = defaultLanguage;
+                    }
                   }
-
-                  if (nameValue == null)
+                  else if ((INode)result[v] is LiteralNode && v.Equals("index"))
                   {
-                    nameValue = GetLabel(uri).Label;
+                    ///TODO
                   }
-                  QMXFName name = new QMXFName();
-                  if (names.Count > 1)
-                    name.lang = names[names.Count - 1];
-                  else
-                    name.lang = defaultLanguage;
-
-                  name.value = names[0];
-
                   roleQualification.name.Add(name);
                 }
-                else
-                {
-                  nameValue = GetLabel(uri).Label;
-
-                  if (nameValue == String.Empty)
-                    nameValue = "tpl:" + Utility.GetIdFromURI(uri);
-
-                  QMXFName name = new QMXFName();
-                  names = nameValue.Split('@').ToList();
-
-                  if (names.Count > 1)
-                    name.lang = names[names.Count - 1];
-                  else
-                    name.lang = defaultLanguage;
-
-                  name.value = names[0];
-
-                  roleQualification.name.Add(name);
-                }
-
-                if (result.ToString().Contains("index"))
-                { }
 
 
                 Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
@@ -1697,15 +1543,10 @@ namespace org.iringtools.refdata
       {
         string sparql = String.Empty;
         string relativeUri = String.Empty;
-        List<string> names = new List<string>();
-        string resultValue = string.Empty;
 
         Query queryContainsSearch = null;
-
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
-
-        RefDataEntities resultEntities = new RefDataEntities();
 
         foreach (Repository repository in _repositories)
         {
@@ -1728,54 +1569,32 @@ namespace org.iringtools.refdata
 
           foreach (SparqlResult result in sparqlResults)
           {
-
             templateDefinition = new TemplateDefinition();
             QMXFName name = new QMXFName();
-
             templateDefinition.repositoryName = repository.Name;
 
-            if (result.HasValue("label"))
+            foreach (var v in result.Variables)
             {
-              resultValue = result["label"].ToString();
-              if (resultValue.Contains("^^"))
+              if ((INode)result[v] is LiteralNode && v.Equals("label"))
               {
-                resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                names = resultValue.Split('@').ToList();
+                name.value = ((LiteralNode)result[v]).Value;
+                name.lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(name.lang))
+                  name.lang = defaultLanguage;
               }
-              else
+              else if ((INode)result[v] is LiteralNode && v.Equals("definition"))
               {
-                names = resultValue.Split('@').ToList();
+                description.value = ((LiteralNode)result[v]).Value;
+                description.lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(description.lang))
+                  description.lang = defaultLanguage;
               }
-              name.value = names[0];
-              if (names.Count == 1)
-                name.lang = defaultLanguage;
-              else
-                name.lang = names[names.Count - 1];
+              else if ((INode)result[v] is LiteralNode && v.Equals("creationDate"))
+              {
+                status.from = ((LiteralNode)result[v]).Value;
+              }
             }
 
-            if (result.HasValue("definition"))
-            {
-              resultValue = result["definition"].ToString();
-              if (resultValue.Contains("^^"))
-              {
-                resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                names = resultValue.Split('@').ToList();
-              }
-              else
-              {
-                names = resultValue.Split('@').ToList();
-              }
-              if (names.Count == 1)
-                description.lang = defaultLanguage;
-              else
-                description.lang = names[names.Count - 1];
-              description.value = names[0];
-            }
-
-            if (result.HasValue("creationDate"))
-            {
-              status.from = result["creationDate"].ToString();
-            }
             templateDefinition.identifier = "tpl:" + id;
             templateDefinition.name.Add(name);
             templateDefinition.description.Add(description);
@@ -1859,7 +1678,6 @@ namespace org.iringtools.refdata
     {
       TemplateQualification templateQualification = null;
       List<TemplateQualification> templateQualificationList = new List<TemplateQualification>();
-      List<string> names = new List<string>();
 
       try
       {
@@ -1868,10 +1686,7 @@ namespace org.iringtools.refdata
         string sparqlQuery = string.Empty;
         string dataType = string.Empty;
 
-        RefDataEntities resultEntities = new RefDataEntities();
-
         Query getTemplateQualification = null;
-        QueryBindings queryBindings = null;
 
         {
           foreach (Repository repository in _repositories)
@@ -1903,59 +1718,38 @@ namespace org.iringtools.refdata
               Description description = new Description();
               QMXFStatus status = new QMXFStatus();
               QMXFName name = new QMXFName();
-              string resultValue = string.Empty;
+
               templateQualification.repositoryName = repository.Name;
 
-              if (result.HasValue("name"))
+              foreach (var v in result.Variables)
               {
-                if (result.Value("name").ToString().Contains("^^"))
+                if ((INode)result[v] is LiteralNode && v.Equals("name"))
                 {
-                  resultValue = result.Value("name").ToString();
-                  resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                  names = resultValue.Split('@').ToList();
+                  name.value = ((LiteralNode)result[v]).Value;
+                  name.lang = ((LiteralNode)result[v]).Language;
+                  if (string.IsNullOrEmpty(name.lang))
+                    name.lang = defaultLanguage;
                 }
-                else
+                else if ((INode)result[v] is LiteralNode && v.Equals("description"))
                 {
-                  names = result["name"].ToString().Split('@').ToList();
+                  description.value = ((LiteralNode)result[v]).Value;
+                  description.lang = ((LiteralNode)result[v]).Language;
+                  if (string.IsNullOrEmpty(description.lang))
+                    description.lang = defaultLanguage;
                 }
-                name.value = names[0];
-                if (names.Count == 1)
-                  name.lang = defaultLanguage;
-                else
-                  name.lang = names[names.Count - 1];
-              }
-              if (result.HasValue("description"))
-              {
-                if (result.Value("description").ToString().Contains("^^"))
+                else if ((INode)result[v] is UriNode && v.Equals("statusClass"))
                 {
-                  resultValue = result.Value("description").ToString();
-                  resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                  names = resultValue.Split('#').ToList();
+                  status.Class = ((UriNode)result[v]).Uri.ToString();
                 }
-                else
+                else if ((INode)result[v] is UriNode && v.Equals("statusAuthority"))
                 {
-                  names = result["description"].ToString().Split('@').ToList();
+                  status.authority = ((UriNode)result[v]).Uri.ToString();
                 }
-                description.value = names[0];
-                if (names.Count == 1)
-                  description.lang = defaultLanguage;
-                else
-                  description.lang = names[names.Count - 1];
-
+                else if ((INode)result[v] is UriNode && v.Equals("qualifies"))
+                {
+                  templateQualification.qualifies = ((UriNode)result[v]).Uri.ToString();
+                }
               }
-              if (result.HasValue("statusClass"))
-              {
-                status.Class = result["statusClass"].ToString();
-              }
-              if (result.HasValue("statusAuthority"))
-              {
-                status.authority = result["statusAuthority"].ToString();
-              }
-              if (result.HasValue("qualifies"))
-              {
-                templateQualification.qualifies = result["qualifies"].ToString();
-              }
-
 
               templateQualification.identifier = id;
               templateQualification.name.Add(name);
