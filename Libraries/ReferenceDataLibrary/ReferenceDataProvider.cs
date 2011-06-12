@@ -105,6 +105,7 @@ namespace org.iringtools.refdata
         _response = new Response();
         _kernel.Bind<Response>().ToConstant(_response);
         nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
+        nsMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
         nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
         nsMap.AddNamespace("tpL", new Uri("http://tpl.rdlfacade.org/data#"));
         nsMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
@@ -112,7 +113,11 @@ namespace org.iringtools.refdata
         nsMap.AddNamespace("owl2xml", new Uri("http://www.w3.org/2006/12/owl2-xml#"));
         nsMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
         nsMap.AddNamespace("templates", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/templates#"));
-        prefix.AppendLine(nsMap.Prefixes.ToString());
+        foreach (string pref in nsMap.Prefixes)
+        {
+          prefix.AppendLine(String.Format("PREFIX {0}: <{1}>", pref, nsMap.GetNamespaceUri(pref).ToString()));
+        }
+        
       }
       catch (Exception ex)
       {
@@ -324,7 +329,6 @@ namespace org.iringtools.refdata
 
         List<Classification> classifications = new List<Classification>();
         Query getClassification;
-        QueryBindings queryBindings;
 
         foreach (Repository repository in _repositories)
         {
@@ -371,48 +375,29 @@ namespace org.iringtools.refdata
       {
         Classification classification = new Classification();
         string uri = String.Empty;
-        string label = String.Empty;
-        string lang = string.Empty;
-
-        if (result.HasValue("uri"))
+        if(result.HasValue("uri"))
         {
-          string pref = nsMap
-              .GetPrefix(new Uri(result["uri"].ToString()
-              .Substring(0, result["uri"].ToString().IndexOf("#") + 1)));
+         string pref = nsMap.GetPrefix(new Uri(result["uri"].ToString().Substring(0, result["uri"].ToString().IndexOf("#") + 1)));
           if (pref.Equals("owl") || pref.Equals("dm")) continue;
           uri = result["uri"].ToString();
           classification.reference = uri;
         }
-
-        if (result.HasValue("label"))
+        foreach (var v in result.Variables)
         {
-          resultValue = result["label"].ToString();
-          if (resultValue.Contains("^^"))
+          if ((INode)result[v] is LiteralNode && v.Equals("label"))
           {
-            resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-            names = resultValue.Split('@').ToList();
+            classification.label = ((LiteralNode)result[v]).Value;
+            classification.lang = ((LiteralNode)result[v]).Language;
+            if(string.IsNullOrEmpty(classification.label))
+            {
+              classification.label =  GetLabel(uri).Label;
+              classification.lang = GetLabel(uri).Lang;
+            }
+            if (string.IsNullOrEmpty(classification.lang))
+              classification.lang = defaultLanguage;
           }
-          else
-          {
-            names = resultValue.Split('@').ToList();
-          }
-          label = names[0];
-          if (names.Count == 1)
-            lang = defaultLanguage;
-          else
-            lang = names[names.Count - 1];
         }
-        else
-        {
-          names = GetLabel(uri).Label.Split('@').ToList();
-          label = names[0];
-          if (names.Count == 1)
-            lang = defaultLanguage;
-          else
-            lang = names[names.Count - 1];
-        }
-        classification.label = label;
-        classification.lang = lang;
+        
         Utility.SearchAndInsert(classifications, classification, Classification.sortAscending());
       }
 
@@ -538,7 +523,6 @@ namespace org.iringtools.refdata
         QMXFName name;
         Description description;
         QMXFStatus status;
-        List<string> names = new List<string>();
 
         List<Classification> classifications = new List<Classification>();
         List<Specialization> specializations = new List<Specialization>();
@@ -558,8 +542,8 @@ namespace org.iringtools.refdata
           namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
 
         string uri = namespaceUrl + id;
-
         sparql = sparql.Replace("param1", uri);
+
         foreach (Repository repository in _repositories)
         {
           ClassDefinition classDefinition = null;
@@ -580,91 +564,61 @@ namespace org.iringtools.refdata
             name = new QMXFName();
             description = new Description();
             status = new QMXFStatus();
-
-            if (result.HasValue("type"))
+            foreach (var v in result.Variables)
             {
-              string typeName = result.Value("type").ToString();
-              string pref = nsMap.GetPrefix(new Uri(typeName.Substring(0, typeName.IndexOf("#") + 1)));
-              if (pref == "dm")
-                classDefinition.entityType = new EntityType { reference = typeName };
+              if ((INode)result[v] is LiteralNode && v.Equals("label"))
+              {
+                name.value = ((LiteralNode)result[v]).Value;
+                name.lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(name.lang))
+                  name.lang = defaultLanguage;
+              }
+              else if ((INode)result[v] is LiteralNode && v.Equals("definition"))
+              {
+                description.value = ((LiteralNode)result[v]).Value;
+                description.lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(description.lang))
+                  description.lang = defaultLanguage;
+              }
+              else if ((INode)result[v] is LiteralNode && v.Equals("creator"))
+              {
+                status.authority = ((LiteralNode)result[v]).Value;
+              }
+              else if ((INode)result[v] is LiteralNode && v.Equals("creationDate"))
+              {
+                status.from = ((LiteralNode)result[v]).Value;
+              }
+              else if ((INode)result[v] is LiteralNode && v.Equals("class"))
+              {
+                status.Class = ((LiteralNode)result[v]).Value;
+              }
+              else if ((INode)result[v] is LiteralNode && v.Equals("comment"))
+              {
+                description.value = ((LiteralNode)result[v]).Value;
+                description.lang = ((LiteralNode)result[v]).Language;
+                if (string.IsNullOrEmpty(description.lang))
+                  description.lang = defaultLanguage;
+              }
+              else if ((INode)result[v] is UriNode && v.Equals("type"))
+              {
+                string typeName = ((UriNode)result[v]).Uri.ToString();
+                string pref = nsMap.GetPrefix(new Uri(typeName.Substring(0, typeName.IndexOf("#") + 1)));
+                if (pref == "dm")
+                  classDefinition.entityType = new EntityType { reference = typeName };
+              }
+              else if ((INode)result[v] is UriNode && v.Equals("authority"))
+              {
+                status.authority = ((UriNode)result[v]).Uri.ToString();
+              }
+              else if ((INode)result[v] is UriNode && v.Equals("recorded"))
+              {
+                status.Class = ((UriNode)result[v]).Uri.ToString();
+              }
+              else if ((INode)result[v] is LiteralNode && v.Equals("from"))
+              {
+                status.from = ((LiteralNode)result[v]).Value;
+              }
             }
-            if (result.HasValue("label"))
-            {
-              if (result["label"].ToString().Contains("^^"))
-              {
-                resultValue = result["label"].ToString();
-                resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                names = resultValue.Split('@').ToList();
-              }
-              else
-              {
-                names = result.Value("label").ToString().Split('@').ToList();
-              }
-              name.value = names[0];
-              if (names.Count == 1)
-                name.lang = defaultLanguage;
-              else
-                name.lang = names[names.Count - 1];
-            }
-
-            //legacy properties
-            if (result.HasValue("definition"))
-            {
-              if (result["definition"].ToString().Contains("^^"))
-              {
-                resultValue = result["definition"].ToString();
-                resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                names = resultValue.Split('@').ToList();
-              }
-              else
-              {
-                names = result.Value("definition").ToString().Split('@').ToList();
-              }
-              description.value = names[0];
-              if (names.Count == 1)
-                description.lang = defaultLanguage;
-              else
-                description.lang = names[names.Count - 1];
-            }
-            // description.value = result["definition"];
-
-            if (result.HasValue("creator"))
-              status.authority = result.Value("creator").ToString();
-
-            if (result.HasValue("creationDate"))
-              status.from = result["creationDate"].ToString();
-
-            if (result.HasValue("class"))
-              status.Class = result["class"].ToString();
-
-            //camelot properties
-            if (result.HasValue("comment"))
-            {
-              if (result["comment"].ToString().Contains("^^"))
-              {
-                resultValue = result["comment"].ToString();
-                resultValue = resultValue.Substring(0, resultValue.IndexOf("^"));
-                names = resultValue.Split('@').ToList();
-              }
-              else
-              {
-                names = result.Value("comment").ToString().Split('@').ToList();
-              }
-              description.value = names[0];
-              if (names.Count == 1)
-                description.lang = defaultLanguage;
-              else
-                description.lang = names[names.Count - 1];
-            }
-            if (result.HasValue("authority"))
-              status.authority = result.Value("authority").ToString();
-
-            if (result.HasValue("recorded"))
-              status.Class = result.Value("recorded").ToString();
-
-            if (result.HasValue("from"))
-              status.from = result.Value("from").ToString();
-
             classDefinition.name.Add(name);
 
             classDefinition.description.Add(description);
@@ -2950,6 +2904,7 @@ namespace org.iringtools.refdata
                     if (String.Compare(existingName.value, clsName.value, true) != 0)
                     {
                       hasDeletes = true;
+
                       sparqlStmts.AppendLine(string.Format(" rdl:{0} rdfs:label \'{1}\'{2} . ", clsId, existingName.value, clsName.lang));
                       sparqlAdd.AppendLine(string.Format(" rdl:{0}  rdfs:label \'{1}\'{2} .", clsId, clsName.value, clsName.lang));
                     }
@@ -2982,10 +2937,11 @@ namespace org.iringtools.refdata
                       {
                         hasDeletes = true;
                         qn = nsMap.ReduceToQName(existingSpec.reference, out qName);
-                        sparqlStmts.AppendLine(string.Format("  ?a dm:hasSubclass {0} . ", qName));
+                        if (qn)
+                        sparqlStmts.AppendLine(string.Format("  rdl:{0} dm:hasSubclass {1} . ", clsId, qName));
                         qn = nsMap.ReduceToQName(spec.reference, out qName);
                         if (qn)
-                          sparqlAdd.AppendLine(string.Format(" ?a rdfs:subClassOf {0} .", qName));
+                          sparqlAdd.AppendLine(string.Format(" rdl:{0} rdfs:subClassOf {1} .", clsId, qName));
                       }
                     }
                   }
@@ -3002,14 +2958,14 @@ namespace org.iringtools.refdata
                         qn = nsMap.ReduceToQName(existingClasif.reference, out qName);
                         if (qn)
                         {
-                          sparqlStmts.AppendLine(string.Format(" ?a dm:hasClassified {0} .", qName));
-                          sparqlStmts.AppendLine(string.Format(" ?a dm:hasClassifier {0} .", qName));
+                          sparqlStmts.AppendLine(string.Format(" rdl:{0} dm:hasClassified {1} .",clsId, qName));
+                          sparqlStmts.AppendLine(string.Format(" rdl:{0} dm:hasClassifier {1} .", clsId, qName));
                         }
                         qn = nsMap.ReduceToQName(clsif.reference, out qName);
                         if (qn)
                         {
-                          sparqlAdd.AppendLine(string.Format(" ?a dm:hasClassified {0} .", qName));
-                          sparqlAdd.AppendLine(string.Format(" ?a dm:hasClassifier {0} .", qName));
+                          sparqlAdd.AppendLine(string.Format(" rdl:{0} dm:hasClassified {1} .",clsId, qName));
+                          sparqlAdd.AppendLine(string.Format(" rdl:{0} dm:hasClassifier {1} .",clsId, qName));
                         }
 
                       }
@@ -3062,6 +3018,7 @@ namespace org.iringtools.refdata
 
                 }
 
+            
                 // append description
                 foreach (Description desc in clsDef.description)
                 {
@@ -3111,7 +3068,7 @@ namespace org.iringtools.refdata
 
                 sparqlAdd.AppendLine("}");
               }
-            sparqlBuilder.Append(prefix);
+            sparqlBuilder.Append(prefix.ToString());
             sparqlBuilder.Append(sparqlDelete);
             sparqlBuilder.Append(sparqlAdd);
 
