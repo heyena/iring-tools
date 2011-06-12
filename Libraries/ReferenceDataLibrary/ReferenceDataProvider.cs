@@ -300,6 +300,7 @@ namespace org.iringtools.refdata
             }
             labelEntity.Repository = repository.Name;
             labelEntity.Uri = repository.Uri;
+            break;
           }
         }
 
