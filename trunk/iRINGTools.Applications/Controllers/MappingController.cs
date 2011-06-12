@@ -18,6 +18,7 @@ using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
 using iRINGTools.Web.Models;
 using org.ids_adi.qmxf;
+using VDS.RDF;
 
 namespace iRINGTools.Web.Controllers
 {
@@ -41,6 +42,14 @@ namespace iRINGTools.Web.Controllers
       _settings = ConfigurationManager.AppSettings;
       _repository = repository;
       _refdata = new RefDataRepository();
+      _nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
+      _nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+      _nsMap.AddNamespace("tpL", new Uri("http://tpl.rdlfacade.org/data#"));
+      _nsMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
+      _nsMap.AddNamespace("p8dm", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/data-model#"));
+      _nsMap.AddNamespace("owl2xml", new Uri("http://www.w3.org/2006/12/owl2-xml#"));
+      _nsMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+      _nsMap.AddNamespace("templates", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/templates#"));
     }
 
     //
