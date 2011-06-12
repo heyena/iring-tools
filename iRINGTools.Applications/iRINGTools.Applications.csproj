@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="dotNetRDF, Version=0.4.2.11625, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
+    </Reference>
     <Reference Include="Ext.Net">
       <HintPath>..\ExternalBinaries\ext.net.community.1.0rc1\Ext.Net.dll</HintPath>
     </Reference>
