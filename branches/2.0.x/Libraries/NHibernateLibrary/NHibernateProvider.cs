@@ -173,7 +173,7 @@ namespace org.iringtools.nhibernate
       return _response;
     }
 
-    public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName)
+		public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName, string schemaName)
     {
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
       try
@@ -239,13 +239,14 @@ namespace org.iringtools.nhibernate
         }
         else if (dbProvider.Contains("ORACLE"))
         {
-          metadataQuery =
+					metadataQuery = string.Format(
             "select t1.object_name, t2.column_name, t2.data_type, t2.data_length, 0 as is_sequence, t2.nullable, t4.constraint_type " +
-            "from user_objects t1 " +
+            "from all_objects t1 " +
             "inner join all_tab_cols t2 on t2.table_name = t1.object_name " +
             "left join all_cons_columns t3 on t3.table_name = t2.table_name and t3.column_name = t2.column_name " +
             "left join all_constraints t4 on t4.constraint_name = t3.constraint_name and (t4.constraint_type = 'P' or t4.constraint_type = 'R') " +
-            "where t1.object_type = 'TABLE' order by t1.object_name, t4.constraint_type, t2.column_name";
+						"where t1.object_type = 'TABLE' and (t1.owner = '{0}') order by t1.object_name, t4.constraint_type, t2.column_name", schemaName);
+
           properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
 
           switch (dbProvider)
@@ -610,8 +611,8 @@ namespace org.iringtools.nhibernate
       {
         tableQuery = string.Format(" SELECT t2.column_name, t2.data_type, t2.data_length," +
           " 0 AS is_sequence, t2.nullable, t4.constraint_type" +
-          " FROM dba_objects t1 INNER JOIN all_tab_cols t2" +
-          " ON t2.table_name = t1.object_name AND t2.owner = t2.owner" + 
+          " FROM all_objects t1 INNER JOIN all_tab_cols t2" +
+          " ON t2.table_name = t1.object_name AND t2.owner = t1.owner" + 
           " LEFT JOIN all_cons_columns t3 ON t3.table_name   = t2.table_name" +
           " AND t3.column_name = t2.column_name AND t3.owner = t2.owner" +
           " AND SUBSTR(t3.constraint_name, 0, 3) != 'SYS' LEFT JOIN all_constraints t4" +
@@ -640,7 +641,7 @@ namespace org.iringtools.nhibernate
       }
       else if (dbProvider.ToUpper().Contains("ORACLE"))
       {
-        metaQuery = String.Format("select object_name from dba_objects where object_type in ('TABLE', 'VIEW', 'SYNONYM') and UPPER(owner) = '{0}' order by object_name", schemaName.ToUpper());
+				metaQuery = String.Format("select object_name from all_objects where object_type in ('TABLE', 'VIEW', 'SYNONYM') and UPPER(owner) = '{0}' order by object_name", schemaName.ToUpper());
       }
       else
         throw new Exception(string.Format("Database provider {0} not supported.", dbProvider));
@@ -842,33 +843,38 @@ namespace org.iringtools.nhibernate
         string parsedConnStr = String.Empty;
         char[] ch = { ';' };
         string[] connStrKeyValuePairs = connStr.Split(ch, StringSplitOptions.RemoveEmptyEntries);
+				string connStrValue;
+				string dbProviderUpper = dbProvider.ToUpper();
 
-        foreach (string connStrKeyValuePair in connStrKeyValuePairs)
-        {
-          string[] connStrKeyValuePairTemp = connStrKeyValuePair.Split('=');
-          string connStrKey = connStrKeyValuePairTemp[0].Trim();
-          string connStrValue = connStrKeyValuePairTemp[1].Trim();
+				foreach (string connStrKeyValuePair in connStrKeyValuePairs)
+				{
+					string[] connStrKeyValuePairTemp = connStrKeyValuePair.Split('=');
+					string connStrKey = connStrKeyValuePairTemp[0].Trim().ToUpper();
 
-          if (connStrKey.ToUpper() == "DATA SOURCE" ||
-              connStrKey.ToUpper() == "USER ID" ||
-              connStrKey.ToUpper() == "PASSWORD")
-          {
-            parsedConnStr += connStrKey + "=" + connStrValue + ";";
-          }
-
-          if (dbProvider.ToUpper().Contains("MSSQL"))
-          {
-            if (connStrKey.ToUpper() == "INITIAL CATALOG" ||
-                connStrKey.ToUpper() == "INTEGRATED SECURITY")
-            {
-              parsedConnStr += connStrKey + "=" + connStrValue + ";";
-            }
-          }
-          else if (dbProvider.ToUpper().Contains("MYSQL"))
-          {
-            parsedConnStr += connStrKey + "=" + connStrValue + ";";
-          }
-        }
+					switch (connStrKey)
+					{
+						case "DATA SOURCE":
+							if (dbProviderUpper.Contains("ORACLE"))
+								connStrValue = connStrKeyValuePair.Substring(12, connStrKeyValuePair.Length-12);
+							else
+								connStrValue = connStrKeyValuePairTemp[1].Trim();
+							parsedConnStr += connStrKey + "=" + connStrValue + ";";
+							break;
+						case "USER ID":
+						case "PASSWORD":
+							connStrValue = connStrKeyValuePairTemp[1].Trim();
+							parsedConnStr += connStrKey + "=" + connStrValue + ";";
+							break;
+						case "INITIAL CATALOG":
+						case "INTEGRATED SECURITY":
+							if (dbProviderUpper.Contains("MSSQL"))
+							{
+								connStrValue = connStrKeyValuePairTemp[1].Trim();
+								parsedConnStr += connStrKey + "=" + connStrValue + ";";
+							}
+							break;
+					}
+				}
 
         return parsedConnStr;
       }
