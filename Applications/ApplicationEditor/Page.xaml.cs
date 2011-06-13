@@ -764,7 +764,7 @@ namespace ApplicationEditor
           switch (token[0].ToUpper())
           {
             case "DATA SOURCE":
-              tbNewDataSource.Text = token[1];
+							tbNewDataSource.Text = part.Substring(12, part.Length - 12);
               break;
             case "INITIAL CATALOG":
               tbNewDatabase.Text = token[1];
