@@ -40,6 +40,7 @@ using System.Text;
 using VDS.RDF;
 using VDS.RDF.Query;
 using VDS.RDF.Update;
+using VDS.RDF.Writing.Formatting;
 
 
 namespace org.iringtools.refdata
@@ -192,7 +193,6 @@ namespace org.iringtools.refdata
           {
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
 
-            //List<Dictionary<string, string>> results = BindQueryResults(queryBindings, sparqlResults);
             foreach (SparqlResult result in sparqlResults)
             {
               resultEntity = new Entity();
@@ -2845,6 +2845,23 @@ namespace org.iringtools.refdata
     public Response PostClass(QMXF qmxf)
     {
 
+      Graph delete = new Graph();
+      Graph insert = new Graph();
+      //add namespaces to graphs 
+      delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+      insert.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+      delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
+      insert.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
+      delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
+      insert.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
+      delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
+      insert.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));     
+      delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+      insert.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+      NTriplesFormatter formatter = new NTriplesFormatter();
+      
+      Triple triple = null;
+
       Response response = new Response();
       response.Level = StatusLevel.Success;
 
@@ -2874,7 +2891,7 @@ namespace org.iringtools.refdata
             string language = string.Empty;
             List<string> names = new List<string>();
             StringBuilder sparqlAdd = new StringBuilder();
-            sparqlAdd.AppendLine(insertData);
+            //sparqlAdd.AppendLine(insertData);
             bool hasDeletes = false;
             int classCount = 0;
             string clsId = Utility.GetIdFromURI(clsDef.identifier);
@@ -2884,7 +2901,6 @@ namespace org.iringtools.refdata
             {
               existingQmxf = GetClass(clsId, repository);
             }
-
             // delete class
             if (existingQmxf.classDefinitions.Count > 0)
             {
@@ -2900,9 +2916,16 @@ namespace org.iringtools.refdata
                     if (String.Compare(existingName.value, clsName.value, true) != 0)
                     {
                       hasDeletes = true;
-
-                      sparqlStmts.AppendLine(string.Format(" rdl:{0} rdfs:label \'{1}\'{2} . ", clsId, existingName.value, clsName.lang));
-                      sparqlAdd.AppendLine(string.Format(" rdl:{0}  rdfs:label \'{1}\'{2} .", clsId, clsName.value, clsName.lang));
+                      IUriNode dsubj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
+                      IUriNode dpred = delete.CreateUriNode("rdfs:label");
+                      ILiteralNode dobj = delete.CreateLiteralNode(existingName.value, existingName.lang);
+                      triple = new Triple(dsubj, dpred, dobj);
+                      delete.Assert(triple);
+                      IUriNode isub = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
+                      IUriNode ipred = insert.CreateUriNode("rdfs:label");
+                      ILiteralNode iobj = insert.CreateLiteralNode(clsName.value, clsName.lang);
+                      triple = new Triple(isub, ipred, iobj);
+                      insert.Assert(triple);
                     }
                   }
 
@@ -2914,17 +2937,23 @@ namespace org.iringtools.refdata
                     {
                       if (String.Compare(existingDescription.value, description.value, true) != 0)
                       {
+                        IUriNode dsubj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
+                        IUriNode dpred = delete.CreateUriNode("rdfs:comment");
+                        ILiteralNode dobj = delete.CreateLiteralNode(existingDescription.value, existingDescription.lang);
+                        triple = new Triple(dsubj, dpred, dobj);
+                        delete.Assert(triple);
                         hasDeletes = true;
-                        sparqlStmts.AppendLine(string.Format(" rdl:{0} rdfs:comment \'{1}\'{2} . ", clsId, existingDescription.value, description.lang));
-                        sparqlAdd.AppendLine(string.Format(" rdl:{0} rdfs:comment \'{1}\'{2} .", clsId, description.value, description.lang));
+                        IUriNode isubj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
+                        IUriNode ipred = insert.CreateUriNode("rdfs:comment");
+                        ILiteralNode iobj = insert.CreateLiteralNode(description.value, description.lang);
+                        triple = new Triple(isubj, ipred, iobj);
+                        insert.Assert(triple);
                       }
                     }
                   }
-
                   // delete specialization
                   foreach (Specialization spec in clsDef.specialization)
                   {
-
                     Specialization existingSpec = existingClsDef.specialization.Find(s => s.reference == spec.reference);
 
                     if (existingSpec != null && existingSpec.reference != null)
@@ -2934,14 +2963,25 @@ namespace org.iringtools.refdata
                         hasDeletes = true;
                         qn = nsMap.ReduceToQName(existingSpec.reference, out qName);
                         if (qn)
-                        sparqlStmts.AppendLine(string.Format("  rdl:{0} dm:hasSubclass {1} . ", clsId, qName));
+                        {
+                          IUriNode dsubj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
+                          IUriNode dpred = delete.CreateUriNode("dm:hasSubclass");
+                          IUriNode dobj = delete.CreateUriNode(qName);
+                          triple = new Triple(dsubj, dpred, dobj);
+                          delete.Assert(triple);
+                        }
                         qn = nsMap.ReduceToQName(spec.reference, out qName);
                         if (qn)
-                          sparqlAdd.AppendLine(string.Format(" rdl:{0} rdfs:subClassOf {1} .", clsId, qName));
+                        {
+                          IUriNode isubj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
+                          IUriNode ipred = insert.CreateUriNode("rdfs:subClassOf");
+                          IUriNode iobj = insert.CreateUriNode(qName);
+                          triple = new Triple(isubj, ipred, iobj);
+                          insert.Assert(triple);
+                        }
                       }
                     }
                   }
-
                   // delete classification
                   foreach (Classification clsif in clsDef.classification)
                   {
@@ -2954,14 +2994,26 @@ namespace org.iringtools.refdata
                         qn = nsMap.ReduceToQName(existingClasif.reference, out qName);
                         if (qn)
                         {
-                          sparqlStmts.AppendLine(string.Format(" rdl:{0} dm:hasClassified {1} .",clsId, qName));
-                          sparqlStmts.AppendLine(string.Format(" rdl:{0} dm:hasClassifier {1} .", clsId, qName));
+                          IUriNode dsubj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
+                          IUriNode dpred = delete.CreateUriNode("dm:hasClassified");
+                          IUriNode dobj = delete.CreateUriNode(qName);
+                          triple = new Triple(dsubj, dpred, dobj);
+                          delete.Assert(triple);
+                          dpred = delete.CreateUriNode("dm:hasClassifier");
+                          triple = new Triple(dsubj, dpred, dobj);
+                          delete.Assert(triple);
                         }
                         qn = nsMap.ReduceToQName(clsif.reference, out qName);
                         if (qn)
                         {
-                          sparqlAdd.AppendLine(string.Format(" rdl:{0} dm:hasClassified {1} .",clsId, qName));
-                          sparqlAdd.AppendLine(string.Format(" rdl:{0} dm:hasClassifier {1} .",clsId, qName));
+                          IUriNode isubj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
+                          IUriNode ipred = insert.CreateUriNode("dm:hasClassified");
+                          IUriNode iobj = insert.CreateUriNode(qName);
+                          triple = new Triple(isubj, ipred, iobj);
+                          insert.Assert(triple);
+                          ipred = insert.CreateUriNode("dm:hasClassifier");
+                          triple = new Triple(isubj, ipred, iobj);
+                          insert.Assert(triple);
                         }
 
                       }
@@ -2969,11 +3021,28 @@ namespace org.iringtools.refdata
                   }
                 }
               }
-              if (sparqlStmts.Length > 0)
+
+              if (!delete.IsEmpty)
               {
-                sparqlDelete.AppendLine(deleteWhere);
-                sparqlDelete.Append(sparqlStmts);
+                sparqlDelete.AppendLine(deleteData);
+                foreach (Triple t in delete.Triples)
+                {
+                  sparqlDelete.AppendLine(t.ToString(formatter));
+                }
                 sparqlDelete.AppendLine(" }; ");
+
+                sparqlAdd.AppendLine(insertData);
+                foreach (Triple t in insert.Triples)
+                {
+                  sparqlAdd.AppendLine(t.ToString(formatter));
+                }
+              }
+              else
+              {
+                response.Level = StatusLevel.Warning;
+                response.Messages = new Messages();
+                response.Messages.Add("No changes to be done");
+                continue;//All done
               }
             }
 
@@ -2983,15 +3052,14 @@ namespace org.iringtools.refdata
               sparqlAdd.AppendLine("}");
             }
             else
+              
               foreach (QMXFName clsName in clsDef.name)
               {
                 string clsLabel = clsName.value.Split('@')[0];
-
                 if (string.IsNullOrEmpty(clsName.lang))
                   language = "@" + defaultLanguage;
                 else
                   language = "@" + clsName.lang;
-
                 if (string.IsNullOrEmpty(clsId))
                 {
                   string newClsName = "Class definition " + clsLabel;
@@ -2999,33 +3067,42 @@ namespace org.iringtools.refdata
                   clsId = CreateIdsAdiId(registry, newClsName);
                   clsId = Utility.GetIdFromURI(clsId);
                 }
-
                 // append label
-                sparqlAdd.AppendLine(string.Format(" rdl:{0} rdf:type owl:Class .", clsId));
-                sparqlAdd.AppendLine(string.Format(" rdl:{0} rdfs:label \'{1}\'{2} .", clsId, clsLabel, language));
-
+                IUriNode isubj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
+                IUriNode ipred = insert.CreateUriNode("rdf:type");
+                IUriNode iobj = insert.CreateUriNode("owl:Class");
+                triple = new Triple(isubj, ipred, iobj);
+                insert.Assert(triple);
+                ipred = insert.CreateUriNode("rdfs:label");
+                ILiteralNode liobj = insert.CreateLiteralNode(clsLabel, language);
+                triple = new Triple(isubj, ipred, liobj);
+                insert.Assert(triple);
                 // append entity type
                 if (clsDef.entityType != null && !String.IsNullOrEmpty(clsDef.entityType.reference))
                 {
                   qn = nsMap.ReduceToQName(clsDef.entityType.reference, out qName);
 
                   if (qn)
-                    sparqlAdd.AppendLine(string.Format(" rdl:{0} rdf:type {1} .", clsId, qName));
-
+                  {
+                    iobj = insert.CreateUriNode(qName);
+                    triple = new Triple(isubj, ipred, iobj);
+                    insert.Assert(triple);
+                  }
                 }
-
-            
                 // append description
                 foreach (Description desc in clsDef.description)
                 {
                   if (!String.IsNullOrEmpty(desc.value))
                   {
                     if (string.IsNullOrEmpty(desc.lang))
-                      language = "@" + defaultLanguage;
+                      language =  defaultLanguage;
                     else
-                      language = "@" + desc.lang;
+                      language = desc.lang;
                     string description = desc.value.Split('@')[0];
-                    sparqlAdd.AppendLine(string.Format(" rdl:{0} rdfs:comment \'{1}\'{2} . ", clsId, description, language));
+                    ipred = insert.CreateUriNode("rdfs:comment");
+                    liobj = insert.CreateLiteralNode(desc.value, language);
+                    triple = new Triple(isubj, ipred, liobj);
+                    insert.Assert(triple);
                   }
                 }
 
@@ -3036,7 +3113,12 @@ namespace org.iringtools.refdata
                   {
                     qn = nsMap.ReduceToQName(spec.reference, out qName);
                     if (qn)
-                      sparqlAdd.AppendLine(string.Format(" rdl:{0} rdfs:subClassOf {1} .", clsId, qName));
+                    {
+                      ipred = insert.CreateUriNode("rdfs:subClassOf");
+                      iobj = insert.CreateUriNode(qName);
+                      triple = new Triple(isubj, ipred, iobj);
+                      insert.Assert(triple);
+                    }
                   }
                 }
 
@@ -3051,22 +3133,35 @@ namespace org.iringtools.refdata
 
                     if (repository.RepositoryType == RepositoryType.Part8 && qn)
                     {
-                      sparqlAdd.AppendLine(string.Format("rdl:{0} rdf:type {1} .", clsId, qName));
-
+                      ipred = insert.CreateUriNode("tdf:type");
+                      iobj = insert.CreateUriNode(qName);
+                      triple = new Triple(isubj, ipred, iobj);
+                      insert.Assert(triple);
                     }
                     else if (repository.RepositoryType != RepositoryType.Part8 && qn)
                     {
-                      sparqlAdd.AppendLine(string.Format("rdl:{0} dm:hasClassifier {1} .", clsId, qName));
-                      sparqlAdd.AppendLine(string.Format("{0} dm:hasClassified rdl:{1} .", qName, clsId));
+                      ipred = insert.CreateUriNode("dm:hasClassifier");
+                      triple = new Triple(isubj, ipred, iobj);
+                      insert.Assert(triple);
+                      isubj = insert.CreateUriNode(qName);
+                      ipred = insert.CreateUriNode("dm:hasClassified");
+                      iobj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
+                      triple = new Triple(isubj, ipred, iobj);
+                      insert.Assert(triple);
                     }
                   }
                 }
-
-                sparqlAdd.AppendLine("}");
               }
-            sparqlBuilder.Append(prefix.ToString());
             sparqlBuilder.Append(sparqlDelete);
             sparqlBuilder.Append(sparqlAdd);
+            if (delete.IsEmpty)
+            {
+              foreach (Triple t in insert.Triples)
+              {
+                sparqlBuilder.AppendLine(t.ToString(formatter));
+              }
+              sparqlBuilder.AppendLine("}");
+            }
 
             string sparql = sparqlBuilder.ToString();
             Response postResponse = PostToRepository(repository, sparql);
