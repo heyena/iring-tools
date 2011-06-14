@@ -348,6 +348,20 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								}
 								portNumber.setValue('1433');
 							}
+							else if (dbProvider.indexOf('MYSQL') > -1) {
+								if (dbServer.hidden == true) {
+									dbServer.setValue('');
+									dbServer.clearInvalid();
+									dbServer.show();
+								}
+
+								if (host.hidden == false) {
+									portNumber.hide();
+									host.hide();
+									serviceName.hide();
+								}
+								portNumber.setValue('3306');
+							}
 						}
 						}
 					}, {
@@ -427,6 +441,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								else if (dbProvider.indexOf('MSSQL') > -1) {
 									host.setValue(dbServer.getValue());
 									serviceName.setValue(dbInstance.getValue());
+								}
+								else if (dbProvider.indexOf('MYSQL') > -1) {
+									dbName.setValue(dbSchema.getValue());
+									dbInstance.setValue(dbSchema.getValue());
 								}
 
 								dsConfigPane.getForm().submit({
@@ -734,10 +752,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var loadSingle = false;
 									var selectTableName = firstSelectTables[0].data.text;
 
-									if (selectTableName[1].length > 1) {
-										var loadSingle = true;
-									}
-
+									if (selectTableName[1])
+										if (selectTableName[1].length > 1) 
+											var loadSingle = true;
+									
 									tablesSelector.toMultiselect.reset();
 									tablesSelector.toMultiselect.store.removeAll();
 
@@ -1994,10 +2012,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var loadSingle = false;
 
 									var availPropName = firstAvailPropsItems[0].data.text;
-									if (availPropName[1].length > 1) {
-										var loadSingle = true;
-									}
-
+									if (availPropName[1])
+										if (availPropName[1].length > 1) 
+											var loadSingle = true;
+										
 									if (!loadSingle) {
 										propertiesItemSelector.fromMultiselect.reset();
 										propertiesItemSelector.fromMultiselect.store.removeAll();
@@ -2032,9 +2050,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var loadSingle = false;
 
 									var toPropName = firstToPropsItems[0].data.text;
-									if (toPropName[1].length > 1) {
-										var loadSingle = true;
-									}
+									if (toPropName[1])
+										if (toPropName[1].length > 1) 
+											var loadSingle = true;									
 
 									if (!loadSingle) {
 										propertiesItemSelector.toMultiselect.reset();
@@ -2154,6 +2172,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 																+ ';Initial Catalog=' + dsConfigForm.findField('dbName').getValue();
 									else if (upProvider.indexOf('ORACLE') > -1)
 										var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dsConfigForm.findField('portNumber').getValue() + ')))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=' + dsConfigForm.findField('serviceName').getValue() + ')))';
+									else if (upProvider.indexOf('MYSQL') > -1)
+										var dataSrc = 'Data Source=' + dbServer;
 
 									treeProperty.connectionString = dataSrc
 																						+ ';User ID=' + dsConfigForm.findField('dbUserName').getValue()
@@ -2171,6 +2191,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 																+ ';Initial Catalog=' + dbInfo.dbName;
 									else if (upProvider.indexOf('ORACLE') > -1)
 										var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dbInfo.portNumber + ')))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=' + dbInfo.dbInstance + ')))';
+									else if (upProvider.indexOf('MYSQL') > -1)
+										var dataSrc = 'Data Source=' + dbServer;
 
 									treeProperty.connectionString = dataSrc
 																						+ ';User ID=' + dbInfo.dbUserName
@@ -2458,6 +2480,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			var connStr = dbDict.ConnectionString;
 			var connStrParts = connStr.split(';');
 			dbInfo = {};
+			var provider = dbDict.Provider.toUpperCase();
 
 			dbInfo.dbName = dbDict.SchemaName;
 			if (!dbInfo.dbUserName)
@@ -2465,13 +2488,17 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					var pair = connStrParts[i].split('=');
 					switch (pair[0].toUpperCase()) {
 						case 'DATA SOURCE':
-							if (dbDict.Provider.toUpperCase().indexOf('MSSQL') > -1) {
+							if (provider.indexOf('MSSQL') > -1) {
 								var dsValue = pair[1].split('\\');
 								dbInfo.dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
 								dbInfo.dbInstance = dsValue[1];
 								dbInfo.portNumber = 1433;
 							}
-							else {
+							else if (provider.indexOf('MYSQL') > -1) {
+								dbInfo.dbServer = (pair[1] == '.' ? 'localhost' : pair[1]);
+								dbInfo.portNumber = 3306;
+							}
+							else if (provider.indexOf('ORACLE') > -1) {
 								var dsStr = connStrParts[i].substring(12, connStrParts[i].length);
 								var dsValue = dsStr.split('=');
 								for (var j = 0; j < dsValue.length; j++) {
