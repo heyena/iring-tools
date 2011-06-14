@@ -123,7 +123,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             applyState: function (state, isOnClick) {
                 var that = this;
                 //this.getLoader().on('load', function () {
-                if (isOnClick = true) {
+                if (isOnClick == true) {
                     var nodes = state.expandedNodes;
                     for (var i = 0; i < nodes.length; i++) {
                         if (typeof nodes[i] != 'undefined') {

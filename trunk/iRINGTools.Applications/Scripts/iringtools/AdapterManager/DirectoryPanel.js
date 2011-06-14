@@ -1,4 +1,5 @@
 ﻿Ext.ns('AdapterManager');
+
 /**
 * @class AdapterManager.directoryPanel
 * @extends Panel
@@ -161,7 +162,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
             applyState: function (state, isOnClick) {
                 var that = this;
                 //this.getLoader().on('load', function () {
-                if (isOnClick = true) {
+                if (isOnClick == true) {
                     var nodes = state.expandedNodes;
                     for (var i = 0; i < nodes.length; i++) {
                         if (typeof nodes[i] != 'undefined') {
@@ -529,7 +530,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         ],
             items: [
               { xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true }
-             ]
+            ]
         });
 
         var win = new Ext.Window({
@@ -571,6 +572,10 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         var form = btn.findParentByType('form');
         var win = btn.findParentByType('window');
         var graphname = Ext.get('graphName').dom.value;
+        if (graphname.trim() == "") {
+            Ext.Msg.show({ title: 'Error', msg: 'Graph Name cannot be blank.', icon: Ext.MessageBox.ERROR, buttons: Ext.MessageBox.OK });
+            return false;
+        }
         var node = this.getSelectedNode();
         Ext.Ajax.request({
             url: 'mapping/editGraphName',
@@ -710,6 +715,10 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         var classlabel = Ext.get('classLabel').dom.value;
         var classuri = Ext.get('classUrl').dom.value;
         var graphname = Ext.get('graphName').dom.value;
+        if (graphname.trim() == "") {
+            Ext.Msg.show({ title: 'Error', msg: 'Graph Name cannot be blank.', icon: Ext.MessageBox.ERROR, buttons: Ext.MessageBox.OK });
+            return false;
+        }
         var that = this;
         if (form.getForm().isValid())
             Ext.Ajax.request({
