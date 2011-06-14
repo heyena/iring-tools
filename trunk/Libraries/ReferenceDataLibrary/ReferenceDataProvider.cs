@@ -3210,6 +3210,7 @@ namespace org.iringtools.refdata
             string language = string.Empty;
             List<string> names = new List<string>();
             StringBuilder sparqlAdd = new StringBuilder();
+            sparqlAdd.AppendLine(insertData);
             int classCount = 0;
             string clsId = Utility.GetIdFromURI(clsDef.identifier);
             QMXF existingQmxf = new QMXF();
@@ -3356,11 +3357,11 @@ namespace org.iringtools.refdata
             else             
               foreach (QMXFName clsName in clsDef.name)
               {
-                string clsLabel = clsName.value.Split('@')[0];
+                string clsLabel = clsName.value;
                 if (string.IsNullOrEmpty(clsName.lang))
-                  language = "@" + defaultLanguage;
+                  language = defaultLanguage;
                 else
-                  language = "@" + clsName.lang;
+                  language = clsName.lang;
                 if (string.IsNullOrEmpty(clsId))
                 {
                   string newClsName = "Class definition " + clsLabel;
@@ -3382,6 +3383,7 @@ namespace org.iringtools.refdata
                   qn = nsMap.ReduceToQName(clsDef.entityType.reference, out qName);
                   if (qn)
                   {
+                    ipred = insert.CreateUriNode("rdf:type");
                     iobj = insert.CreateUriNode(qName);
                     insert.Assert(new Triple(isubj, ipred, iobj));
                   }
