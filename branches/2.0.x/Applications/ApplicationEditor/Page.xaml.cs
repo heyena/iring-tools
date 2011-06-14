@@ -758,17 +758,33 @@ namespace ApplicationEditor
 
         string[] tokens = dict.connectionString.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
         string[] token = null;
+				int index;
+				string dsStr, sername;
+
         foreach (string part in tokens)
         {
           token = part.Split('=');
           switch (token[0].ToUpper())
           {
             case "DATA SOURCE":
-							tbNewDataSource.Text = part.Substring(12, part.Length - 12);
+							dsStr = part.Substring(12, part.Length - 12);
+							tbNewDataSource.Text = dsStr;
+							tbNewDatabase.Text = dsStr;
+							string[] dsValue = dsStr.Split('=');
+
+							for (var j = 0; j < dsValue.Length; j++) {
+								index = dsValue[j].IndexOf('(') + 1;
+								dsValue[j] = dsValue[j].Substring(index, dsValue[j].Length - index);
+								if (String.Compare(dsValue[j].ToUpper(), "SERVICE_NAME") > 0 ) {
+										sername = dsValue[j + 1];
+										index = sername.IndexOf(')');
+										tbNewDatabase.Text = sername.Substring(0, index).TrimStart();
+								}
+							}
               break;
             case "INITIAL CATALOG":
               tbNewDatabase.Text = token[1];
-              break;
+							break;
             case "USER ID":
               tbUserID.Text = token[1];
               break;
