@@ -753,9 +753,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var selectTableName = firstSelectTables[0].data.text;
 
 									if (selectTableName[1])
-										if (selectTableName[1].length > 1) 
+										if (selectTableName[1].length > 1)
 											var loadSingle = true;
-									
+
 									tablesSelector.toMultiselect.reset();
 									tablesSelector.toMultiselect.store.removeAll();
 
@@ -767,9 +767,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									tablesSelector.toMultiselect.store.commitChanges();
 								}
 								else {
-									tablesSelector.toMultiselect.reset();
-									tablesSelector.toMultiselect.store.removeAll();
-									tablesSelector.toMultiselect.store.commitChanges();
+									if (tablesSelector.toMultiselect) {
+										tablesSelector.toMultiselect.reset();
+										tablesSelector.toMultiselect.store.removeAll();
+										tablesSelector.toMultiselect.store.commitChanges();
+									}
 								}
 
 								if (tablesSelector.fromMultiselect.store.data) {
@@ -2013,9 +2015,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 									var availPropName = firstAvailPropsItems[0].data.text;
 									if (availPropName[1])
-										if (availPropName[1].length > 1) 
+										if (availPropName[1].length > 1)
 											var loadSingle = true;
-										
+
 									if (!loadSingle) {
 										propertiesItemSelector.fromMultiselect.reset();
 										propertiesItemSelector.fromMultiselect.store.removeAll();
@@ -2051,8 +2053,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 									var toPropName = firstToPropsItems[0].data.text;
 									if (toPropName[1])
-										if (toPropName[1].length > 1) 
-											var loadSingle = true;									
+										if (toPropName[1].length > 1)
+											var loadSingle = true;
 
 									if (!loadSingle) {
 										propertiesItemSelector.toMultiselect.reset();
