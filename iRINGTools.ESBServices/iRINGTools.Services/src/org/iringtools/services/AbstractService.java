@@ -82,5 +82,11 @@ public abstract class AbstractService
     String proxyCredentialsToken = servletContext.getInitParameter("proxyCredentialsToken");
     if (proxyCredentialsToken != null && proxyCredentialsToken.length() > 0)
       settings.put("proxyCredentialsToken", proxyCredentialsToken);
+    
+    String ldapPropertiesPath = servletContext.getInitParameter("ldapPropertiesPath");
+    if (ldapPropertiesPath != null && ldapPropertiesPath.length() > 0)
+      settings.put("ldapPropertiesPath", ldapPropertiesPath);
+    else
+      settings.put("ldapPropertiesPath", "WEB-INF/ldap.properties");
   }
 }
