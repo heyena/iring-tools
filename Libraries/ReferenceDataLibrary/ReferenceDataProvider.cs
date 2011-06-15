@@ -151,7 +151,6 @@ namespace org.iringtools.refdata
       return _repositories.Find(c => c.Name == name);
     }
 
-    #region Prototype Part8
 
     public RefDataEntities Search(string query)
     {
@@ -1356,22 +1355,23 @@ namespace org.iringtools.refdata
                     roleQualification.qualifies = uri;
                     roleQualification.identifier = Utility.GetIdFromURI(uri);
                   }
-                  else if ((INode)result[v] is LiteralNode && v.Equals("name"))
+                  else if (v.Equals("name"))
                   {
-                    nameValue = ((LiteralNode)result[v]).Value;
-                    if (string.IsNullOrEmpty(nameValue))
+                    if (result[v] == null)
                     {
-                      nameValue = GetLabel(uri).Label;
-                    }
-                    name.value = nameValue;
-                    if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
-                    {
-                      name.lang = defaultLanguage;
+                      name.value = GetLabel(uri).Label;
+                      name.lang = GetLabel(uri).Lang;
                     }
                     else
                     {
+                      name.value = ((LiteralNode)result[v]).Value;
                       name.lang = ((LiteralNode)result[v]).Language;
                     }
+                    if (string.IsNullOrEmpty(name.lang))
+                    {
+                      name.lang = defaultLanguage;
+                    }
+                   
                   }
                   else if ((INode)result[v] is UriNode && v.Equals("range"))
                   {
@@ -1814,7 +1814,7 @@ namespace org.iringtools.refdata
         ///TODO need to implement proxy credentials
         endpoint.Credentials = credentials.GetNetworkCredential();
         SparqlResultSet resultSet = endpoint.QueryWithResultSet(sparql);
-        resultSet.Trim();
+        
         return resultSet;
       }
       catch (Exception ex)
@@ -1930,8 +1930,6 @@ namespace org.iringtools.refdata
       }
     }
 
-    #endregion Protoype Part8
-
     public Response PostTemplate(QMXF qmxf)
     {
       Graph delete = new Graph();
@@ -2015,11 +2013,11 @@ namespace org.iringtools.refdata
                       {
                         dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTDId));
                         dpred = delete.CreateUriNode("rdfs:label");
-                        dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? oldName.lang : defaultLanguage);
+                        dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? defaultLanguage : oldName.lang);
                         delete.Assert(new Triple(dsubj, dpred, dobj));
                         isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
                         ipred = insert.CreateUriNode("rdfs:label");
-                        iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? newName.lang : defaultLanguage);
+                        iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                         insert.Assert(new Triple(isubj, ipred, iobj));
                       }
                     }
@@ -2049,11 +2047,11 @@ namespace org.iringtools.refdata
                       {
                         dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTDId));
                         dpred = delete.CreateUriNode("rdfs:comment");
-                        dobj = delete.CreateLiteralNode(oldDescr.value, string.IsNullOrEmpty(oldDescr.lang) ? oldDescr.lang : defaultLanguage);
+                        dobj = delete.CreateLiteralNode(oldDescr.value, string.IsNullOrEmpty(oldDescr.lang) ? defaultLanguage : oldDescr.lang);
                         delete.Assert(new Triple(dsubj, dpred, dobj));
                         isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
                         ipred = insert.CreateUriNode("rdfs:comment");
-                        iobj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? newDescr.lang : defaultLanguage);
+                        iobj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? defaultLanguage : newDescr.lang);
                         insert.Assert(new Triple(isubj, ipred, iobj));
                       }
                     }
@@ -2104,7 +2102,7 @@ namespace org.iringtools.refdata
                           {
                             dsubj = delete.CreateUriNode(string.Format("tpl:{0}", oldRole.identifier));
                             dpred = delete.CreateUriNode("rdfs:label");
-                            dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? oldName.lang : defaultLanguage);
+                            dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? defaultLanguage : oldName.lang);
                             delete.Assert(new Triple(dsubj, dpred, dobj));
                             if (repository.RepositoryType == RepositoryType.Part8)
                             {
@@ -2201,7 +2199,7 @@ namespace org.iringtools.refdata
                       }
                       isubj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
                       ipred = insert.CreateUriNode("rdfs:label");
-                      iobj = insert.CreateLiteralNode(newRole.name[0].value, string.IsNullOrEmpty(newRole.name[0].lang) ? newRole.name[0].lang : defaultLanguage);
+                      iobj = insert.CreateLiteralNode(newRole.name[0].value, string.IsNullOrEmpty(newRole.name[0].lang) ? defaultLanguage : newRole.name[0].lang);
                       insert.Assert(new Triple(isubj, ipred, iobj));
                       if (repository.RepositoryType == RepositoryType.Part8)
                       {
@@ -2283,7 +2281,7 @@ namespace org.iringtools.refdata
                 {
                   isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
                   ipred = insert.CreateUriNode("rdfs:label");
-                  iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? newName.lang : defaultLanguage);
+                  iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                   insert.Assert(new Triple(isubj, ipred, iobj));
                 }
                 if (repository.RepositoryType == RepositoryType.Part8)
@@ -2304,7 +2302,7 @@ namespace org.iringtools.refdata
                   {
                     isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
                     ipred = insert.CreateUriNode("rdfs:comment");
-                    iobj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? newDescr.lang :  defaultLanguage);
+                    iobj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? defaultLanguage : newDescr.lang);
                     insert.Assert(new Triple(isubj, ipred, iobj));
                   }
                 }
@@ -2347,7 +2345,7 @@ namespace org.iringtools.refdata
                   {
                     isubj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
                     ipred = insert.CreateUriNode("rdfs:label");
-                    iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? newName.lang :  defaultLanguage);
+                    iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                     insert.Assert(new Triple(isubj, ipred, iobj));
                   }
                   if (repository.RepositoryType == RepositoryType.Part8)
@@ -2487,11 +2485,11 @@ namespace org.iringtools.refdata
                       {
                         dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTQId));
                         dpred = delete.CreateUriNode("rdfs:label");
-                        dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? oldName.lang : defaultLanguage);
+                        dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? defaultLanguage : oldName.lang);
                         delete.Assert(new Triple(dsubj, dpred, dobj));
                         isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
                         ipred = insert.CreateUriNode("rdfs:label");
-                        iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? newName.lang : defaultLanguage);
+                        iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                         insert.Assert(new Triple(isubj, ipred, iobj));
                       }
                     }
@@ -2622,11 +2620,11 @@ namespace org.iringtools.refdata
                           {
                             dsubj = delete.CreateUriNode(string.Format("tpl:{0}", oldRole.identifier));
                             dpred = delete.CreateUriNode("rdfs:label");
-                            dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? oldName.lang : defaultLanguage);
+                            dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? defaultLanguage : oldName.lang);
                             delete.Assert(new Triple(dsubj, dpred, dobj));
                             isubj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.identifier));
                             ipred = insert.CreateUriNode("rdfs:label");
-                            iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? newName.lang : defaultLanguage);
+                            iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                             insert.Assert(new Triple(isubj, ipred, iobj));
                           }
                         }
@@ -2689,7 +2687,7 @@ namespace org.iringtools.refdata
                         {
                           isubj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
                           ipred = insert.CreateUriNode("rdfs:label");
-                          iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? newName.lang : defaultLanguage);
+                          iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                           insert.Assert(new Triple(isubj, ipred, iobj));
                         }
                         isubj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
@@ -2779,7 +2777,7 @@ namespace org.iringtools.refdata
                             iobj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.qualifies.Split('#')[1]));
                             insert.Assert(new Triple(isubj, ipred, iobj));
                             ipred = insert.CreateUriNode("tpl:R29577887690");
-                            iobj = insert.CreateLiteralNode(newRole.value.text, string.IsNullOrEmpty(newRole.value.lang) ? newRole.value.lang : defaultLanguage);
+                            iobj = insert.CreateLiteralNode(newRole.value.text, string.IsNullOrEmpty(newRole.value.lang) ? defaultLanguage : newRole.value.lang);
                             insert.Assert(new Triple(isubj, ipred, iobj));
                           }
                         }
@@ -2814,7 +2812,7 @@ namespace org.iringtools.refdata
                 {
                   isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
                   ipred = insert.CreateUriNode("rdfs:label");
-                  iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? newName.lang : defaultLanguage);
+                  iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                   insert.Assert(new Triple(isubj, ipred, iobj));
                 }
                 foreach (Description newDescr in newTQ.description)
@@ -2822,7 +2820,7 @@ namespace org.iringtools.refdata
                   if (string.IsNullOrEmpty(newDescr.value)) continue;
                   isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
                   ipred = insert.CreateUriNode("rdfs:comment");
-                  iobj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? newDescr.lang : defaultLanguage);
+                  iobj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? defaultLanguage : newDescr.lang);
                   insert.Assert(new Triple(isubj, ipred, iobj));
                 }
 
@@ -2914,7 +2912,7 @@ namespace org.iringtools.refdata
                     foreach (QMXFName newName in newRole.name)
                     {
                       ipred = insert.CreateUriNode("rdfs:label");
-                      iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? newName.lang : defaultLanguage);
+                      iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage :newName.lang);
                       insert.Assert(new Triple(isubj, ipred, iobj));
                     }
                     ipred = insert.CreateUriNode("p8:valRoleIndex");
@@ -3072,7 +3070,6 @@ namespace org.iringtools.refdata
               #endregion
     public Response PostClass(QMXF qmxf)
     {
-
       Graph delete = new Graph();
       Graph insert = new Graph();
       //add namespaces to graphs 
@@ -3089,7 +3086,6 @@ namespace org.iringtools.refdata
 
       Response response = new Response();
       response.Level = StatusLevel.Success;
-
       try
       {
         Repository repository = GetRepository(qmxf.targetRepository);
@@ -3134,11 +3130,11 @@ namespace org.iringtools.refdata
                     {
                       dsubj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
                       dpred = delete.CreateUriNode("rdfs:label");
-                      dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? oldName.lang : defaultLanguage);
+                      dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? defaultLanguage : oldName.lang);
                       delete.Assert(new Triple(dsubj, dpred, dobj));
                       isubj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
                       ipred = insert.CreateUriNode("rdfs:label");
-                      iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? newName.lang : defaultLanguage);
+                      iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                       insert.Assert(new Triple(isubj, ipred, iobj));
                     }
                   }
@@ -3151,11 +3147,11 @@ namespace org.iringtools.refdata
                       {
                         dsubj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
                         dpred = delete.CreateUriNode("rdfs:comment");
-                        dobj = delete.CreateLiteralNode(oldDescr.value, string.IsNullOrEmpty(oldDescr.lang) ? oldDescr.lang : defaultLanguage);
+                        dobj = delete.CreateLiteralNode(oldDescr.value, string.IsNullOrEmpty(oldDescr.lang) ? defaultLanguage : oldDescr.lang);
                         delete.Assert(new Triple(dsubj, dpred, dobj));
                         isubj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
                         ipred = insert.CreateUriNode("rdfs:comment");
-                        iobj = insert.CreateLiteralNode(newDdescr.value, string.IsNullOrEmpty(newDdescr.lang) ? newDdescr.lang : defaultLanguage);
+                        iobj = insert.CreateLiteralNode(newDdescr.value, string.IsNullOrEmpty(newDdescr.lang) ? defaultLanguage : newDdescr.lang);
                         insert.Assert(new Triple(isubj, ipred, iobj));
                       }
                     }
@@ -3215,13 +3211,11 @@ namespace org.iringtools.refdata
                           ipred = insert.CreateUriNode("dm:hasClassifier");
                           insert.Assert(new Triple(isubj, ipred, iobj));
                         }
-
                       }
                     }
                   }
                 }
               }
-
               if (delete.IsEmpty && insert.IsEmpty)
               {
                 string errMsg = "NO CHANGES MADE";
@@ -3251,7 +3245,7 @@ namespace org.iringtools.refdata
                 iobj = insert.CreateUriNode("owl:Class");
                 insert.Assert(new Triple(isubj, ipred, iobj));
                 ipred = insert.CreateUriNode("rdfs:label");
-                iobj = insert.CreateLiteralNode(clsLabel, string.IsNullOrEmpty(newName.lang) ? newName.lang : defaultLanguage);
+                iobj = insert.CreateLiteralNode(clsLabel, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                 insert.Assert(new Triple(isubj, ipred, iobj));
                 // append entity type
                 if (newClsDef.entityType != null && !String.IsNullOrEmpty(newClsDef.entityType.reference))
@@ -3268,7 +3262,7 @@ namespace org.iringtools.refdata
                   {
                     string description = newDesc.value;
                     ipred = insert.CreateUriNode("rdfs:comment");
-                    iobj = insert.CreateLiteralNode(newDesc.value, string.IsNullOrEmpty(newDesc.lang) ? newDesc.lang : defaultLanguage);
+                    iobj = insert.CreateLiteralNode(newDesc.value, string.IsNullOrEmpty(newDesc.lang) ?defaultLanguage : newDesc.lang);
                     insert.Assert(new Triple(isubj, ipred, iobj));
                   }
                 }
@@ -3351,9 +3345,7 @@ namespace org.iringtools.refdata
 
       return response;
     }
-    
-
-          #endregion Part8
+          #endregion
 
     public VersionInfo GetVersion()
     {
