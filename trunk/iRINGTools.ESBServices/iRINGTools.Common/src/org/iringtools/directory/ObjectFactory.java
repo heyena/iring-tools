@@ -30,91 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataExchanges }
+     * Create an instance of {@link User }
      * 
      */
-    public DataExchanges createDataExchanges() {
-        return new DataExchanges();
+    public User createUser() {
+        return new User();
     }
 
     /**
-     * Create an instance of {@link Commodity }
+     * Create an instance of {@link Groups }
      * 
      */
-    public Commodity createCommodity() {
-        return new Commodity();
-    }
-
-    /**
-     * Create an instance of {@link Graphs }
-     * 
-     */
-    public Graphs createGraphs() {
-        return new Graphs();
-    }
-
-    /**
-     * Create an instance of {@link Exchange }
-     * 
-     */
-    public Exchange createExchange() {
-        return new Exchange();
-    }
-
-    /**
-     * Create an instance of {@link ExchangeDefinition }
-     * 
-     */
-    public ExchangeDefinition createExchangeDefinition() {
-        return new ExchangeDefinition();
-    }
-
-    /**
-     * Create an instance of {@link Scope }
-     * 
-     */
-    public Scope createScope() {
-        return new Scope();
-    }
-
-    /**
-     * Create an instance of {@link Graph }
-     * 
-     */
-    public Graph createGraph() {
-        return new Graph();
-    }
-
-    /**
-     * Create an instance of {@link Directory }
-     * 
-     */
-    public Directory createDirectory() {
-        return new Directory();
-    }
-
-    /**
-     * Create an instance of {@link Application }
-     * 
-     */
-    public Application createApplication() {
-        return new Application();
-    }
-
-    /**
-     * Create an instance of {@link ApplicationData }
-     * 
-     */
-    public ApplicationData createApplicationData() {
-        return new ApplicationData();
-    }
-
-    /**
-     * Create an instance of {@link Exchanges }
-     * 
-     */
-    public Exchanges createExchanges() {
-        return new Exchanges();
+    public Groups createGroups() {
+        return new Groups();
     }
 
 }
