@@ -203,18 +203,53 @@ namespace org.iringtools.library
       }
     }
 
-    public void DeleteTemplateMap(string classId, string templateId)
+    public void DeleteTemplateMap(string classId, TemplateMap templateMap)
     {
       KeyValuePair<ClassMap, List<TemplateMap>> classTemplateListMap = GetClassTemplateListMap(classId);
+
       if (classTemplateListMap.Key != null)
       {
         List<TemplateMap> templateMaps = classTemplateListMap.Value;
-        TemplateMap templateMap = classTemplateListMap.Value.Where(c => c.templateId == templateId).FirstOrDefault();
-        RoleMap classRole = templateMap.roleMaps.Where(c => c.classMap != null).FirstOrDefault();
-        if (classRole != null)
-          DeleteClassMap(classRole.classMap.classId);
 
-        templateMaps.Remove(templateMap);
+        foreach (org.iringtools.library.TemplateMap tplMap in templateMaps)
+        {
+          if (tplMap.templateId == templateMap.templateId)
+          {
+            bool templateMatched = true;
+
+            // a template is matched when its id and all the roles are matched
+            foreach (RoleMap roleMap in templateMap.roleMaps)
+            {
+              foreach (RoleMap rlMap in tplMap.roleMaps)
+              {
+                if (rlMap.roleId == roleMap.roleId && rlMap.value != rlMap.value)
+                {
+                  templateMatched = false;
+                  break;
+                }
+              }
+
+              if (!templateMatched)
+                break;
+            }
+
+            if (templateMatched)
+            {
+              List<RoleMap> classRoles = templateMap.roleMaps.Where(c => c.classMap != null).ToList<RoleMap>();
+
+              if (classRoles != null)
+              {
+                foreach (RoleMap classRole in classRoles)
+                {
+                  DeleteClassMap(classRole.classMap.classId);
+                }
+              }
+
+              templateMaps.Remove(templateMap);
+              break;
+            }
+          }
+        }
       }
     }
 

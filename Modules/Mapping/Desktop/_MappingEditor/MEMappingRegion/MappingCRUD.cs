@@ -912,7 +912,7 @@ namespace org.iringtools.modules.memappingregion
                             MappingItem parent = (MappingItem)mappingItem.Parent;
                             TemplateMap templateMap = (TemplateMap)mappingItem.Tag;
 
-                            model.SelectedGraphMap.DeleteTemplateMap(parent.ClassMap.classId, templateMap.templateId);
+                            model.SelectedGraphMap.DeleteTemplateMap(parent.ClassMap.classId, templateMap);
 
                             parent.Items.Remove(mappingItem);
 
