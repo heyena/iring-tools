@@ -621,7 +621,6 @@ namespace iRINGTools.Web.Controllers
 
     public JsonResult DeleteTemplateMap(FormCollection form)
     {
-
       try
       {
         string scope = form["scope"];
@@ -631,7 +630,9 @@ namespace iRINGTools.Web.Controllers
         string templateId = form["identifier"];
         string parentClassId = form["parentIdentifier"];
         GraphMap graphMap = mapping.FindGraphMap(parentNode);
-        graphMap.DeleteTemplateMap(parentClassId, templateId);
+        //TODO: get template map instead of just template id to prevent from
+        // deleting wrong template when existing multiple templates with same template ID
+        //graphMap.DeleteTemplateMap(parentClassId, templateId);
       }
       catch (Exception ex)
       {
