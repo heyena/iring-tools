@@ -14,19 +14,20 @@
 	</xs:annotation>
 
 	<xs:element name="directory" type="Directory" />
-	<xs:element name="exchangeDefinition" type="ExchangeDefinition" />
-
-	<xs:complexType name="Directory">
-		<xs:sequence>
-			<xs:element name="scope" type="Scope" maxOccurs="unbounded">
+	<xs:element name="exchangeDefinition" type="ExchangeDefinition" />	
+  <xs:element name="acl" type="Acl" />
+  
+  <xs:complexType name="Directory">
+    <xs:sequence>
+      <xs:element name="scope" type="Scope" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
-		</xs:sequence>
-	</xs:complexType>
+    </xs:sequence>
+  </xs:complexType>
 
 	<xs:complexType name="Scope">
 		<xs:sequence>
@@ -132,4 +133,35 @@
 			<xs:element name="hashAlgorithm" type="xs:string" />
 		</xs:sequence>
 	</xs:complexType>
+
+  <xs:complexType name="Acl">
+    <xs:sequence>
+      <xs:element name="aci" type="Aci" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Aci">
+    <xs:sequence>
+      <xs:element name="item" type="xs:string" />
+      <xs:element name="members" type="Members"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="Members">
+    <xs:sequence>
+      <xs:element name="member" type="xs:string" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
 </xs:schema>
