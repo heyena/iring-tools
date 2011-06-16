@@ -164,18 +164,51 @@ namespace org.iringtools.mapping
         classTemplateMap.templateMaps.Add(templateMap);
     }
 
-    public static void DeleteTemplateMap(this GraphMap graphMap, string classId, string templateId)
+    public static void DeleteTemplateMap(this GraphMap graphMap, string classId, TemplateMap templateMap)
     {
       ClassTemplateMap classTemplateMap = graphMap.GetClassTemplateMap(classId);
-      if (classTemplateMap.classMap != null)
+      
+      if (classTemplateMap != null && classTemplateMap.templateMaps != null)
       {
-        List<TemplateMap> templateMaps = classTemplateMap.templateMaps;
-        TemplateMap templateMap = classTemplateMap.templateMaps.Where(c => c.id == templateId).FirstOrDefault();
-        RoleMap classRole = templateMap.roleMaps.Where(c => c.classMap != null).FirstOrDefault();
-        if (classRole != null)
-          graphMap.DeleteClassMap(classRole.classMap.id);
+        foreach (TemplateMap tplMap in classTemplateMap.templateMaps)
+        {
+          if (tplMap.id == templateMap.id)
+          {
+            bool templateMatched = true;
 
-        templateMaps.Remove(templateMap);
+            // a template is matched when its id and all the roles are matched
+            foreach (RoleMap roleMap in templateMap.roleMaps)
+            {
+              foreach (RoleMap rlMap in tplMap.roleMaps)
+              {
+                if (rlMap.id == roleMap.id && rlMap.value != rlMap.value)
+                {
+                  templateMatched = false;
+                  break;
+                }
+              }
+
+              if (!templateMatched)
+                break;
+            }
+
+            if (templateMatched)
+            {
+              List<RoleMap> classRoles = templateMap.roleMaps.Where(c => c.classMap != null).ToList<RoleMap>();
+
+              if (classRoles != null)
+              {
+                foreach (RoleMap classRole in classRoles)
+                {
+                  graphMap.DeleteClassMap(classRole.classMap.id);
+                }
+              }
+
+              classTemplateMap.templateMaps.Remove(templateMap);
+              break;
+            }
+          }
+        }
       }
     }
 
