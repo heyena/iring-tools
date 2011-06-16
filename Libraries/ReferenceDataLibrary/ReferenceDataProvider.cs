@@ -1289,15 +1289,6 @@ namespace org.iringtools.refdata
       try
       {
 
-        string rangeSparql = String.Empty;
-        string relativeUri = String.Empty;
-
-        string referenceSparql = String.Empty;
-        string relativeUri1 = String.Empty;
-
-        string valueSparql = String.Empty;
-        string relativeUri2 = String.Empty;
-
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
         string uri = String.Empty;
@@ -1313,6 +1304,13 @@ namespace org.iringtools.refdata
           {
             case RepositoryType.Camelot:
             case RepositoryType.RDSWIP:
+
+              string rangeSparql = String.Empty;
+              string relativeUri = String.Empty;
+              string referenceSparql = String.Empty;
+              string relativeUri1 = String.Empty;
+              string valueSparql = String.Empty;
+              string relativeUri2 = String.Empty;
 
               RefDataEntities rangeResultEntities = new RefDataEntities();
               RefDataEntities referenceResultEntities = new RefDataEntities();
@@ -1349,7 +1347,7 @@ namespace org.iringtools.refdata
                 QMXFValue valvalue = new QMXFValue();
                 foreach (var v in result.Variables)
                 {
-                  if ((INode)result[v] is UriNode && v.Equals("qualifies"))
+                  if (v.Equals("qualifies") && result.HasValue(v))
                   {
                     uri = ((UriNode)result[v]).Uri.ToString();
                     roleQualification.qualifies = uri;
@@ -1359,8 +1357,9 @@ namespace org.iringtools.refdata
                   {
                     if (result[v] == null)
                     {
-                      name.value = GetLabel(uri).Label;
-                      name.lang = GetLabel(uri).Lang;
+                      Entity entity = GetLabel(uri);
+                      name.value = entity.Label;
+                      name.lang = entity.Lang;
                     }
                     else
                     {
@@ -1371,18 +1370,18 @@ namespace org.iringtools.refdata
                     {
                       name.lang = defaultLanguage;
                     }
-                   
+
                   }
-                  else if ((INode)result[v] is UriNode && v.Equals("range"))
+                  else if (v.Equals("range") && result.HasValue(v))
                   {
                     roleQualification.range = ((UriNode)result[v]).Uri.ToString();
                   }
-                  else if ((INode)result[v] is UriNode && v.Equals("reference"))
+                  else if (v.Equals("reference") && result.HasValue(v))
                   {
                     refvalue.reference = ((UriNode)result[v]).Uri.ToString();
                     roleQualification.value = refvalue;
                   }
-                  else if ((INode)result[v] is LiteralNode && v.Equals("value"))
+                  else if (v.Equals("value") && result.HasValue(v))
                   {
                     valvalue.text = ((LiteralNode)result[v]).Value;
                     valvalue.As = ((UriNode)result["value_dataType"]).Uri.ToString();
@@ -1411,13 +1410,13 @@ namespace org.iringtools.refdata
 
                 foreach (var v in result.Variables)
                 {
-                  if ((INode)result[v] is UriNode && v.Equals("role"))
+                  if (v.Equals("role") && result.HasValue(v))
                   {
                     uri = ((UriNode)result[v]).Uri.ToString();
                     roleQualification.qualifies = uri;
                     roleQualification.identifier = Utility.GetIdFromURI(uri);
                   }
-                  else if ((INode)result[v] is LiteralNode && v.Equals("comment"))
+                  else if (v.Equals("comment") && result[v] != null)
                   {
                     descr.value = ((LiteralNode)result[v]).Value;
                     if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
@@ -1429,41 +1428,36 @@ namespace org.iringtools.refdata
                       descr.lang = ((LiteralNode)result[v]).Language;
                     }
                   }
-                  else if ((INode)result[v] is UriNode && v.Equals("type"))
+                  else if (v.Equals("type") && result.HasValue(v))
                   {
                     roleQualification.range = ((UriNode)result[v]).Uri.ToString();
                   }
-                  else if ((INode)result[v] is LiteralNode && v.Equals("label"))
+                  else if (v.Equals("label"))
                   {
-                    if (string.IsNullOrEmpty(((LiteralNode)result[v]).Value))
+                    if (result[v] == null)
                     {
-                      name.value = GetLabel(uri).Label;
-                      name.lang = GetLabel(uri).Lang;
-                      if (string.IsNullOrEmpty(name.lang))
-                        name.lang = defaultLanguage;
+                      Entity entity = GetLabel(uri);
+                      name.value = entity.Label;
+                      name.lang = entity.Lang;
                     }
                     else
                     {
                       name.value = ((LiteralNode)result[v]).Value;
                       name.lang = ((LiteralNode)result[v]).Language;
-                      if (string.IsNullOrEmpty(name.lang))
-                        name.lang = defaultLanguage;
                     }
+                    if (string.IsNullOrEmpty(name.lang))
+                      name.lang = defaultLanguage;
                   }
-                  else if ((INode)result[v] is LiteralNode && v.Equals("index"))
+                  else if (v.Equals("index") && result.HasValue(v))
                   {
                     ///TODO
                   }
-                  roleQualification.name.Add(name);
                 }
-
-
+                roleQualification.name.Add(name);
                 Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
               }
               break;
-
           }
-
         }
         return roleQualifications;
       }
@@ -1814,7 +1808,7 @@ namespace org.iringtools.refdata
         ///TODO need to implement proxy credentials
         endpoint.Credentials = credentials.GetNetworkCredential();
         SparqlResultSet resultSet = endpoint.QueryWithResultSet(sparql);
-        
+
         return resultSet;
       }
       catch (Exception ex)
@@ -1975,19 +1969,19 @@ namespace org.iringtools.refdata
               string language = string.Empty;
               int roleCount = 0;
               string templateName = string.Empty;
-              string newTDId = string.Empty;
+              string templateId = string.Empty;
               string generatedId = string.Empty;
               string roleDefinition = string.Empty;
               int index = 1;
               if (!string.IsNullOrEmpty(newTDef.identifier))
-                newTDId = Utility.GetIdFromURI(newTDef.identifier);
+                templateId = Utility.GetIdFromURI(newTDef.identifier);
 
               templateName = newTDef.name[0].value;
               //check for exisitng template
               QMXF oldQmxf = new QMXF();
-              if (!String.IsNullOrEmpty(newTDId))
+              if (!String.IsNullOrEmpty(templateId))
               {
-                oldQmxf = GetTemplate(newTDId, QMXFType.Definition, repository);
+                oldQmxf = GetTemplate(templateId, QMXFType.Definition, repository);
               }
               else
               {
@@ -1995,7 +1989,7 @@ namespace org.iringtools.refdata
                   generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
                 else
                   generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
-                newTDId = Utility.GetIdFromURI(generatedId);
+                templateId = Utility.GetIdFromURI(generatedId);
               }
               #region Form Delete/Insert
               if (oldQmxf.templateDefinitions.Count > 0)
@@ -2011,11 +2005,11 @@ namespace org.iringtools.refdata
                     {
                       if (String.Compare(oldName.value, newName.value, true) != 0)
                       {
-                        dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                        dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateId));
                         dpred = delete.CreateUriNode("rdfs:label");
                         dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? defaultLanguage : oldName.lang);
                         delete.Assert(new Triple(dsubj, dpred, dobj));
-                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                         ipred = insert.CreateUriNode("rdfs:label");
                         iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                         insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2023,11 +2017,11 @@ namespace org.iringtools.refdata
                     }
                     if (repository.RepositoryType == RepositoryType.Part8)
                     {
-                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateId));
                       dpred = delete.CreateUriNode("rdf:type");
                       dobj = delete.CreateUriNode("p8:TemplateDescription");
                       delete.Assert(new Triple(dsubj, dpred, dobj));
-                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                       ipred = insert.CreateUriNode("rdf:type");
                       iobj = insert.CreateUriNode("p8:TemplateDescription");
                       insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2045,11 +2039,11 @@ namespace org.iringtools.refdata
                     {
                       if (String.Compare(oldDescr.value, newDescr.value, true) != 0)
                       {
-                        dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                        dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateId));
                         dpred = delete.CreateUriNode("rdfs:comment");
                         dobj = delete.CreateLiteralNode(oldDescr.value, string.IsNullOrEmpty(oldDescr.lang) ? defaultLanguage : oldDescr.lang);
                         delete.Assert(new Triple(dsubj, dpred, dobj));
-                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                         ipred = insert.CreateUriNode("rdfs:comment");
                         iobj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? defaultLanguage : newDescr.lang);
                         insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2061,22 +2055,22 @@ namespace org.iringtools.refdata
                   {
                     if (repository.RepositoryType == RepositoryType.Part8)
                     {
-                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateId));
                       dpred = delete.CreateUriNode("p8:valNumberOfRoles");
                       dobj = delete.CreateLiteralNode(Convert.ToString(oldTDef.roleDefinition.Count), new Uri("xsd:integer"));
                       delete.Assert(new Triple(dsubj, dpred, dobj));
-                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                       ipred = insert.CreateUriNode("p8:valNumberOfRoles");
                       iobj = insert.CreateLiteralNode(Convert.ToString(newTDef.roleDefinition.Count), new Uri("xsd:integer"));
                       insert.Assert(new Triple(isubj, ipred, iobj));
                     }
                     else
                     {
-                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateId));
                       dpred = delete.CreateUriNode("tpl:R35529169909");
                       dobj = delete.CreateLiteralNode(Convert.ToString(oldTDef.roleDefinition.Count), new Uri("xsd:integer"));
                       delete.Assert(new Triple(dsubj, dpred, dobj));
-                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                       ipred = insert.CreateUriNode("tpl:R35529169909");
                       iobj = insert.CreateLiteralNode(Convert.ToString(newTDef.roleDefinition.Count), new Uri("xsd:integer"));
                       insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2115,7 +2109,7 @@ namespace org.iringtools.refdata
                               dobj = delete.CreateUriNode("tpl:R74478971040");
                               delete.Assert(new Triple(dsubj, dpred, dobj));
                               dpred = delete.CreateUriNode("rdfs:domain");
-                              dobj = delete.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                              dobj = delete.CreateUriNode(string.Format("tpl:{0}", templateId));
                               delete.Assert(new Triple(dsubj, dpred, dobj));
                             }
                           }
@@ -2172,7 +2166,7 @@ namespace org.iringtools.refdata
                           }
                         }
                       }
-                      #endregion Process Changing Role
+                    #endregion Process Changing Role
                     }
                     else
                     {
@@ -2208,13 +2202,13 @@ namespace org.iringtools.refdata
                         iobj = insert.CreateLiteralNode(Convert.ToString(index), new Uri("xsd:integer"));
                         insert.Assert(new Triple(isubj, ipred, iobj));
                         ipred = insert.CreateUriNode("p8:hasTemplate");
-                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                         insert.Assert(new Triple(isubj, ipred, iobj));
                       }
                       else
                       {
                         ipred = insert.CreateUriNode("rdfs:domain");
-                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                         insert.Assert(new Triple(isubj, ipred, iobj));
                       }
                       if (!string.IsNullOrEmpty(newRole.range))
@@ -2253,7 +2247,7 @@ namespace org.iringtools.refdata
                       }
                       if (repository.RepositoryType == RepositoryType.Part8)
                       {
-                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                         ipred = insert.CreateUriNode("p8:hasRole");
                         iobj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
                         insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2262,7 +2256,7 @@ namespace org.iringtools.refdata
                       {
                         isubj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
                         ipred = insert.CreateUriNode("rdfs:domain");
-                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                         insert.Assert(new Triple(isubj, ipred, iobj));
                       }
                       #endregion Insert New Role
@@ -2275,18 +2269,18 @@ namespace org.iringtools.refdata
 
               #region Form Insert SPARQL
               if (insert.IsEmpty)
-              {       
+              {
                 //form labels
                 foreach (QMXFName newName in newTDef.name)
                 {
-                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                   ipred = insert.CreateUriNode("rdfs:label");
                   iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                   insert.Assert(new Triple(isubj, ipred, iobj));
                 }
                 if (repository.RepositoryType == RepositoryType.Part8)
                 {
-                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                   ipred = insert.CreateUriNode("rdf:type");
                   iobj = insert.CreateUriNode("p8:TemplateDescription");
                   insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2300,7 +2294,7 @@ namespace org.iringtools.refdata
                     continue;
                   else
                   {
-                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                     ipred = insert.CreateUriNode("rdfs:comment");
                     iobj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? defaultLanguage : newDescr.lang);
                     insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2308,14 +2302,14 @@ namespace org.iringtools.refdata
                 }
                 if (repository.RepositoryType == RepositoryType.Part8)
                 {
-                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                   ipred = insert.CreateUriNode("p8:valNumberOfRoles");
                   iobj = insert.CreateLiteralNode(Convert.ToString(newTDef.roleDefinition.Count), new Uri("xsd:integer"));
                   insert.Assert(new Triple(isubj, ipred, iobj));
                 }
                 else
                 {
-                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                   ipred = insert.CreateUriNode("tpl:R35529169909");
                   iobj = insert.CreateLiteralNode(Convert.ToString(newTDef.roleDefinition.Count), new Uri("xsd:integer"));
                   insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2355,9 +2349,9 @@ namespace org.iringtools.refdata
                     iobj = insert.CreateLiteralNode(Convert.ToString(++roleCount), new Uri("xsd:integer"));
                     insert.Assert(new Triple(isubj, ipred, iobj));
                     ipred = insert.CreateUriNode("p8:hasTemplate");
-                    iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                    iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                     insert.Assert(new Triple(isubj, ipred, iobj));
-                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                     ipred = insert.CreateUriNode("p8:hasRole");
                     iobj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
                     insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2386,7 +2380,7 @@ namespace org.iringtools.refdata
                       iobj = insert.CreateUriNode("tpl:R74478971040");
                       insert.Assert(new Triple(isubj, ipred, iobj));
                       ipred = insert.CreateUriNode("rdfs:domain");
-                      iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTDId));
+                      iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
                       insert.Assert(new Triple(isubj, ipred, iobj));
                       if (qName.StartsWith("rdfs") || qName.StartsWith("rdf"))
                       {
@@ -2415,11 +2409,11 @@ namespace org.iringtools.refdata
               if (!delete.IsEmpty)
               {
                 sparqlBuilder.AppendLine(deleteData);
-                foreach (Triple t in insert.Triples)
+                foreach (Triple t in delete.Triples)
                 {
                   sparqlBuilder.AppendLine(t.ToString(formatter));
                 }
-                if(insert.IsEmpty)
+                if (insert.IsEmpty)
                   sparqlBuilder.AppendLine("}");
                 else
                   sparqlBuilder.AppendLine("};");
@@ -2447,18 +2441,18 @@ namespace org.iringtools.refdata
             {
               int roleCount = 0;
               string templateName = string.Empty;
-              string newTQId = string.Empty;
+              string templateID = string.Empty;
               string generatedId = string.Empty;
               string roleQualification = string.Empty;
               int index = 1;
               if (!string.IsNullOrEmpty(newTQ.identifier))
-                newTQId = Utility.GetIdFromURI(newTQ.identifier);
+                templateID = Utility.GetIdFromURI(newTQ.identifier);
 
               templateName = newTQ.name[0].value;
               QMXF oldQmxf = new QMXF();
-              if (!String.IsNullOrEmpty(newTQId))
+              if (!String.IsNullOrEmpty(templateID))
               {
-                oldQmxf = GetTemplate(newTQId, QMXFType.Qualification, repository);
+                oldQmxf = GetTemplate(templateID, QMXFType.Qualification, repository);
               }
               else
               {
@@ -2467,7 +2461,7 @@ namespace org.iringtools.refdata
                 else
                   generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
 
-                newTQId = Utility.GetIdFromURI(generatedId);
+                templateID = Utility.GetIdFromURI(generatedId);
               }
               #region Form Delete/Insert SPARQL
               if (oldQmxf.templateQualifications.Count > 0)
@@ -2483,11 +2477,11 @@ namespace org.iringtools.refdata
                     {
                       if (String.Compare(oldName.value, newName.value, true) != 0)
                       {
-                        dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                        dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
                         dpred = delete.CreateUriNode("rdfs:label");
                         dobj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? defaultLanguage : oldName.lang);
                         delete.Assert(new Triple(dsubj, dpred, dobj));
-                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                         ipred = insert.CreateUriNode("rdfs:label");
                         iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                         insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2495,7 +2489,7 @@ namespace org.iringtools.refdata
                     }
                     if (repository.RepositoryType == RepositoryType.Part8)
                     {
-                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
                       dpred = delete.CreateUriNode("rdf:type");
                       dobj = delete.CreateUriNode("p8:TemplateDescription");
                       delete.Assert(new Triple(dsubj, dpred, dobj));
@@ -2506,39 +2500,39 @@ namespace org.iringtools.refdata
                       delete.Assert(new Triple(dsubj, dpred, dobj));
                       dsubj = delete.CreateUriNode(qName);
                       dpred = delete.CreateUriNode("p8:hasSubTemplate");
-                      dobj = delete.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      dobj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
                       delete.Assert(new Triple(dsubj, dpred, dobj));
-                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                       ipred = insert.CreateUriNode("p8:hasSuperTemplate");
                       iobj = insert.CreateUriNode(qName);
                       insert.Assert(new Triple(isubj, ipred, iobj));
                       isubj = insert.CreateUriNode(qName);
                       ipred = insert.CreateUriNode("p8:hasSubTemplate");
-                      iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                       insert.Assert(new Triple(isubj, ipred, iobj));
-                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                       ipred = insert.CreateUriNode("rdf:type");
                       iobj = insert.CreateUriNode("p8:TemplateDescription");
                       insert.Assert(new Triple(isubj, ipred, iobj));
-                      isubj = insert.CreateUriNode("p8:TemplateDescription");
-                      iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      isubj = insert.CreateUriNode("p8:CoreTemplate");
+                      iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                       insert.Assert(new Triple(isubj, ipred, iobj));
                     }
                     else
                     {
                       dsubj = delete.CreateUriNode(qName);
                       dpred = delete.CreateUriNode("dm:hasSubclass");
-                      dobj = delete.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      dobj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
                       delete.Assert(new Triple(dsubj, dpred, dobj));
-                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
                       dpred = delete.CreateUriNode("dm:hasSuperclass");
                       dobj = delete.CreateUriNode(qName);
                       delete.Assert(new Triple(dsubj, dpred, dobj));
                       isubj = insert.CreateUriNode(qName);
                       ipred = insert.CreateUriNode("dm:hasSubclass");
-                      iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                       insert.Assert(new Triple(isubj, ipred, iobj));
-                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                       ipred = insert.CreateUriNode("dm:hasSuperclass");
                       iobj = insert.CreateUriNode(qName);
                       insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2549,22 +2543,22 @@ namespace org.iringtools.refdata
                   {
                     if (repository.RepositoryType == RepositoryType.Part8)
                     {
-                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
                       dpred = delete.CreateUriNode("p8:valNumberOfRoles");
                       dobj = delete.CreateLiteralNode(Convert.ToString(oldTQ.roleQualification.Count), new Uri("xsd:integer"));
                       delete.Assert(new Triple(dsubj, dpred, dobj));
-                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                       ipred = insert.CreateUriNode("p8:valNumberOfRoles");
                       iobj = insert.CreateLiteralNode(Convert.ToString(newTQ.roleQualification.Count), new Uri("xsd:integer"));
                       insert.Assert(new Triple(isubj, ipred, iobj));
                     }
                     else
                     {
-                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
                       dpred = delete.CreateUriNode("tpl:R35529169909");
                       dobj = delete.CreateLiteralNode(Convert.ToString(oldTQ.roleQualification.Count), new Uri("xsd:integer"));
                       delete.Assert(new Triple(dsubj, dpred, dobj));
-                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                       ipred = insert.CreateUriNode("tpl:R35529169909");
                       iobj = insert.CreateLiteralNode(Convert.ToString(newTQ.roleQualification.Count), new Uri("xsd:integer"));
                       insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2590,11 +2584,11 @@ namespace org.iringtools.refdata
                       }
                       else
                       {
-                        dsubj = delete.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                        dsubj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
                         dpred = delete.CreateUriNode("rdf:type");
                         dobj = delete.CreateUriNode("dm:Specialization");
                         delete.Assert(new Triple(dsubj, dpred, dobj));
-                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                         ipred = insert.CreateUriNode("rdf:type");
                         iobj = insert.CreateUriNode("dm:Specialization");
                         insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2695,11 +2689,12 @@ namespace org.iringtools.refdata
                         iobj = insert.CreateLiteralNode(Convert.ToString(index), new Uri("xsd:integer"));
                         insert.Assert(new Triple(isubj, ipred, iobj));
                         ipred = insert.CreateUriNode("p8:hasTemplate");
-                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                         insert.Assert(new Triple(isubj, ipred, iobj));
                         if (!string.IsNullOrEmpty(newRole.range))
                         {
                           qn = nsMap.ReduceToQName(newRole.range, out qName);
+                          isubj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
                           ipred = insert.CreateUriNode("p8:hasRoleFillerType");
                           iobj = insert.CreateUriNode(qName);
                           insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2709,6 +2704,7 @@ namespace org.iringtools.refdata
                           if (newRole.value.reference != null)
                           {
                             qn = nsMap.ReduceToQName(newRole.value.reference, out qName);
+                            isubj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
                             ipred = insert.CreateUriNode("p8:hasRoleFillerType");
                             iobj = insert.CreateUriNode(qName);
                             insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2718,7 +2714,7 @@ namespace org.iringtools.refdata
                             ///TODO need to determine how to do this one
                           }
                         }
-                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                        isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                         ipred = insert.CreateUriNode("p8:hasRole");
                         iobj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
                         insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2736,7 +2732,7 @@ namespace org.iringtools.refdata
                           iobj = insert.CreateUriNode("tpl:R76288246068");
                           insert.Assert(new Triple(isubj, ipred, iobj));
                           ipred = insert.CreateUriNode("tpl:R99672026745");
-                          iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                          iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                           insert.Assert(new Triple(isubj, ipred, iobj));
                           ipred = insert.CreateUriNode("tpl:R91125890543");
                           iobj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.qualifies.Split('#')[1]));
@@ -2755,7 +2751,7 @@ namespace org.iringtools.refdata
                             iobj = insert.CreateUriNode("tpl:R40103148466");
                             insert.Assert(new Triple(isubj, ipred, iobj));
                             ipred = insert.CreateUriNode("tpl:R49267603385");
-                            iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                            iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                             insert.Assert(new Triple(isubj, ipred, iobj));
                             ipred = insert.CreateUriNode("tpl:R30741601855");
                             iobj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.qualifies.Split('#')[1]));
@@ -2771,7 +2767,7 @@ namespace org.iringtools.refdata
                             iobj = insert.CreateUriNode("tpl:R67036823327");
                             insert.Assert(new Triple(isubj, ipred, iobj));
                             ipred = insert.CreateUriNode("tpl:R56456315674");
-                            iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                            iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                             insert.Assert(new Triple(isubj, ipred, iobj));
                             ipred = insert.CreateUriNode("tpl:R89867215482");
                             iobj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.qualifies.Split('#')[1]));
@@ -2788,7 +2784,7 @@ namespace org.iringtools.refdata
                           iobj = insert.CreateUriNode("tpl:R74478971040");
                           insert.Assert(new Triple(isubj, ipred, iobj));
                           ipred = insert.CreateUriNode("rdfs:domain");
-                          iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                          iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                           insert.Assert(new Triple(isubj, ipred, iobj));
                           ipred = insert.CreateUriNode("tpl:R97483568938");
                           iobj = insert.CreateLiteralNode(Convert.ToString(++roleCount), new Uri("xsd:integer"));
@@ -2810,7 +2806,7 @@ namespace org.iringtools.refdata
                 //form labels
                 foreach (QMXFName newName in newTQ.name)
                 {
-                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                   ipred = insert.CreateUriNode("rdfs:label");
                   iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                   insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2818,7 +2814,7 @@ namespace org.iringtools.refdata
                 foreach (Description newDescr in newTQ.description)
                 {
                   if (string.IsNullOrEmpty(newDescr.value)) continue;
-                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                   ipred = insert.CreateUriNode("rdfs:comment");
                   iobj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? defaultLanguage : newDescr.lang);
                   insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2830,16 +2826,16 @@ namespace org.iringtools.refdata
                   if (!string.IsNullOrEmpty(newTQ.qualifies))
                   {
                     qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
-                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                     ipred = insert.CreateUriNode("p8:hasSuperTemplate");
                     iobj = insert.CreateUriNode(qName);
                     insert.Assert(new Triple(isubj, ipred, iobj));
                     isubj = insert.CreateUriNode(qName);
                     ipred = insert.CreateUriNode("p8:hasSubTemplate");
-                    iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                    iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                     insert.Assert(new Triple(isubj, ipred, iobj));
                   }
-                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                  isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                   ipred = insert.CreateUriNode("rdf:type");
                   iobj = insert.CreateUriNode("p8:TemplateDescription");
                   insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2853,9 +2849,9 @@ namespace org.iringtools.refdata
                     qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
                     isubj = insert.CreateUriNode(qName);
                     ipred = insert.CreateUriNode("dm:hasSubclasse");
-                    iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                    iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                     insert.Assert(new Triple(isubj, ipred, iobj));
-                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                     ipred = insert.CreateUriNode("dm:hasSuperclass");
                     iobj = insert.CreateUriNode(qName);
                     insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2873,7 +2869,7 @@ namespace org.iringtools.refdata
                   }
                   else
                   {
-                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                     ipred = insert.CreateUriNode("rdf:type");
                     iobj = insert.CreateUriNode("dm:Specialization");
                     insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2912,16 +2908,16 @@ namespace org.iringtools.refdata
                     foreach (QMXFName newName in newRole.name)
                     {
                       ipred = insert.CreateUriNode("rdfs:label");
-                      iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage :newName.lang);
+                      iobj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
                       insert.Assert(new Triple(isubj, ipred, iobj));
                     }
                     ipred = insert.CreateUriNode("p8:valRoleIndex");
                     iobj = insert.CreateLiteralNode(Convert.ToString(++roleCount), new Uri("xsd:integer"));
                     insert.Assert(new Triple(isubj, ipred, iobj));
                     ipred = insert.CreateUriNode("p8:hasTemplate");
-                    iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                    iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                     insert.Assert(new Triple(isubj, ipred, iobj));
-                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                    isubj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                     ipred = insert.CreateUriNode("p8:hasRole");
                     iobj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
                     insert.Assert(new Triple(isubj, ipred, iobj));
@@ -2962,7 +2958,7 @@ namespace org.iringtools.refdata
                       iobj = insert.CreateUriNode("tpl:R76288246068");
                       insert.Assert(new Triple(isubj, ipred, iobj));
                       ipred = insert.CreateUriNode("tpl:R99672026745");
-                      iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                      iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                       insert.Assert(new Triple(isubj, ipred, iobj));
                       ipred = insert.CreateUriNode("tpl:R91125890543");
                       iobj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.qualifies.Split('#')[1]));
@@ -2981,7 +2977,7 @@ namespace org.iringtools.refdata
                         iobj = insert.CreateUriNode("tpl:R40103148466");
                         insert.Assert(new Triple(isubj, ipred, iobj));
                         ipred = insert.CreateUriNode("tpl:R49267603385");
-                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                         insert.Assert(new Triple(isubj, ipred, iobj));
                         ipred = insert.CreateUriNode("tpl:R30741601855");
                         iobj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.qualifies.Split('#')[1]));
@@ -2997,7 +2993,7 @@ namespace org.iringtools.refdata
                         iobj = insert.CreateUriNode("tpl:R67036823327");
                         insert.Assert(new Triple(isubj, ipred, iobj));
                         ipred = insert.CreateUriNode("tpl:R56456315674");
-                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                        iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                         insert.Assert(new Triple(isubj, ipred, iobj));
                         ipred = insert.CreateUriNode("tpl:R89867215482");
                         iobj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.qualifies.Split('#')[1]));
@@ -3012,7 +3008,7 @@ namespace org.iringtools.refdata
                     iobj = insert.CreateUriNode("tpl:R74478971040");
                     insert.Assert(new Triple(isubj, ipred, iobj));
                     ipred = insert.CreateUriNode("rdfs:domain");
-                    iobj = insert.CreateUriNode(string.Format("tpl:{0}", newTQId));
+                    iobj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                     insert.Assert(new Triple(isubj, ipred, iobj));
                     ipred = insert.CreateUriNode("tpl:R97483568938");
                     iobj = insert.CreateLiteralNode(Convert.ToString(++roleCount), new Uri("xsd:integer"));
@@ -3034,7 +3030,7 @@ namespace org.iringtools.refdata
                 else
                   sparqlBuilder.AppendLine("};");
               }
-              if(!insert.IsEmpty)
+              if (!insert.IsEmpty)
               {
                 sparqlBuilder.AppendLine(insertData);
                 foreach (Triple t in insert.Triples)
@@ -3142,7 +3138,7 @@ namespace org.iringtools.refdata
                   {
                     Description oldDescr = oldClsDef.description.Find(d => d.lang == newDdescr.lang);
                     if (oldDescr != null)
-                    {                    
+                    {
                       if (String.Compare(oldDescr.value, newDdescr.value, true) != 0)
                       {
                         dsubj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
@@ -3262,7 +3258,7 @@ namespace org.iringtools.refdata
                   {
                     string description = newDesc.value;
                     ipred = insert.CreateUriNode("rdfs:comment");
-                    iobj = insert.CreateLiteralNode(newDesc.value, string.IsNullOrEmpty(newDesc.lang) ?defaultLanguage : newDesc.lang);
+                    iobj = insert.CreateLiteralNode(newDesc.value, string.IsNullOrEmpty(newDesc.lang) ? defaultLanguage : newDesc.lang);
                     insert.Assert(new Triple(isubj, ipred, iobj));
                   }
                 }
@@ -3310,12 +3306,12 @@ namespace org.iringtools.refdata
               {
                 sparqlBuilder.AppendLine(t.ToString(formatter));
               }
-              if(insert.IsEmpty)
+              if (insert.IsEmpty)
                 sparqlBuilder.AppendLine("}");
               else
                 sparqlBuilder.AppendLine("};");
             }
-            if(!insert.IsEmpty)
+            if (!insert.IsEmpty)
             {
               sparqlBuilder.AppendLine(insertData);
               foreach (Triple t in insert.Triples)
@@ -3330,7 +3326,7 @@ namespace org.iringtools.refdata
             response.Append(postResponse);
           }
         }
-        }
+      }
       catch (Exception ex)
       {
         string errMsg = "Error in PostClass: " + ex;
