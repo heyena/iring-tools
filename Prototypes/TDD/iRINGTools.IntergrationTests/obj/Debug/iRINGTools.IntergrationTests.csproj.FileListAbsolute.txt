@@ -1,9 +1,0 @@
-C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.IntergrationTests\bin\Debug\iRINGTools.IntergrationTests.dll
-C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.IntergrationTests\bin\Debug\iRINGTools.IntergrationTests.pdb
-C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.IntergrationTests\bin\Debug\iRINGTools.Data.dll
-C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.IntergrationTests\bin\Debug\iRINGTools.Services.dll
-C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.IntergrationTests\bin\Debug\iRINGTools.Data.pdb
-C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.IntergrationTests\bin\Debug\iRINGTools.Services.pdb
-C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.IntergrationTests\obj\Debug\ResolveAssemblyReference.cache
-C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.IntergrationTests\obj\Debug\iRINGTools.IntergrationTests.dll
-C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.IntergrationTests\obj\Debug\iRINGTools.IntergrationTests.pdb
