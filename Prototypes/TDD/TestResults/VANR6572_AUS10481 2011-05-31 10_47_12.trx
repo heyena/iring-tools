@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="86e1ee6a-b683-4001-a612-7a22b0e798ad" name="VANR6572@AUS10481 2011-05-31 10:47:12" runUser="HATCHGLOBAL\VANR6572" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Local" id="db2218b0-d6c1-4a95-a540-fcde77fa22f8">
+    <Description>These are default test settings for a local test run.</Description>
+    <Deployment enabled="false" runDeploymentRoot="VANR6572_AUS10481 2011-05-31 10_47_12">
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Services\bin\Debug\iRINGTools.Services.dll" />
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Data\bin\Debug\iRINGTools.Data.dll" />
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2011-05-31T10:47:12.3928375+10:00" queuing="2011-05-31T10:47:12.6448375+10:00" start="2011-05-31T10:47:12.7168375+10:00" finish="2011-05-31T10:47:14.3408375+10:00" />
+  <ResultSummary outcome="Completed">
+    <Counters total="11" executed="11" passed="11" error="0" failed="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="Scope_ShouldHave_Name_Description_Fields" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="9a3921c6-62a2-7333-d816-3168c7d34ea5">
+      <Execution id="ebfc85d6-586d-4e97-a894-85dd3b0290b6" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.GeneralTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="Scope_ShouldHave_Name_Description_Fields" />
+    </UnitTest>
+    <UnitTest name="AdapterService_Can_Get_Scopes_From_Service" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="1e8d0d9e-014f-181f-6089-ad7cd9257811">
+      <Execution id="62baf1be-57bb-4d80-adc6-bb0c70139468" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.GeneralTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="AdapterService_Can_Get_Scopes_From_Service" />
+    </UnitTest>
+    <UnitTest name="Repository_Returns_Single_Application_When_Filtered_By_Name_Application1" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="030facb6-6892-78a5-8476-4f0ad5297b20">
+      <Execution id="c61c0cd2-4618-4ca3-80b6-2f6e4dd37fdd" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.GeneralTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="Repository_Returns_Single_Application_When_Filtered_By_Name_Application1" />
+    </UnitTest>
+    <UnitTest name="AdapterService_Has_25_Applications_From_Service" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="04849548-ec1d-1029-f21a-76e5300f7754">
+      <Execution id="4ce6503f-04aa-4829-aa1b-3f1d9ebad26c" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.GeneralTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="AdapterService_Has_25_Applications_From_Service" />
+    </UnitTest>
+    <UnitTest name="AdapterService_Has_5_Scopes_From_Service" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="d85d53f8-0eaf-cada-afbe-0453396b4d95">
+      <Execution id="d28eec92-b8c3-4a1d-b221-9b4b79e90582" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.GeneralTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="AdapterService_Has_5_Scopes_From_Service" />
+    </UnitTest>
+    <UnitTest name="AdapterRepository_Repository_Scopes_IsNotNull" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="b15d91b5-816b-211e-2a77-f200bd908121">
+      <Execution id="7ebca064-49c4-4334-bd84-62bb2678739e" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.GeneralTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="AdapterRepository_Repository_Scopes_IsNotNull" />
+    </UnitTest>
+    <UnitTest name="DataLayerRepository_Has_5_DataLayerTypes_From_Service" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="df908f13-fe48-07ef-5404-de2dfa1a42b9">
+      <Execution id="29b082bf-dc0d-4e64-9013-d1e7ab12fbc0" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.GeneralTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="DataLayerRepository_Has_5_DataLayerTypes_From_Service" />
+    </UnitTest>
+    <UnitTest name="Application_ShouldHave_Name_Description_Fields" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="a94076f1-aed3-07d7-bef6-2077b63bd438">
+      <Execution id="b60361a4-62ec-4085-8b7c-973018f320e4" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.GeneralTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="Application_ShouldHave_Name_Description_Fields" />
+    </UnitTest>
+    <UnitTest name="AdapterService_GetApplication" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="c9ba8cfd-3813-ea7c-0965-8c45d412203b">
+      <Execution id="ae8b4678-4b07-4c6d-88a6-4c8fd2a53146" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.NinjectTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="AdapterService_GetApplication" />
+    </UnitTest>
+    <UnitTest name="DataService_ToXML" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="c9c2fff7-c1dd-2998-4883-fecb764c0f94">
+      <Execution id="91f32d3b-3e2e-4e56-9101-40d2ffa72a30" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.NinjectTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="DataService_ToXML" />
+    </UnitTest>
+    <UnitTest name="Repository_Returns_Single_Scope_When_Filtered_By_Name_Scope1" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="7d3f3e1b-387b-200f-da84-8ecefb8cd361">
+      <Execution id="0586812b-6c25-4a0e-8b60-841c02c1be87" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.GeneralTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="Repository_Returns_Single_Scope_When_Filtered_By_Name_Scope1" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="030facb6-6892-78a5-8476-4f0ad5297b20" executionId="c61c0cd2-4618-4ca3-80b6-2f6e4dd37fdd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="04849548-ec1d-1029-f21a-76e5300f7754" executionId="4ce6503f-04aa-4829-aa1b-3f1d9ebad26c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1e8d0d9e-014f-181f-6089-ad7cd9257811" executionId="62baf1be-57bb-4d80-adc6-bb0c70139468" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7d3f3e1b-387b-200f-da84-8ecefb8cd361" executionId="0586812b-6c25-4a0e-8b60-841c02c1be87" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a3921c6-62a2-7333-d816-3168c7d34ea5" executionId="ebfc85d6-586d-4e97-a894-85dd3b0290b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a94076f1-aed3-07d7-bef6-2077b63bd438" executionId="b60361a4-62ec-4085-8b7c-973018f320e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b15d91b5-816b-211e-2a77-f200bd908121" executionId="7ebca064-49c4-4334-bd84-62bb2678739e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9ba8cfd-3813-ea7c-0965-8c45d412203b" executionId="ae8b4678-4b07-4c6d-88a6-4c8fd2a53146" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9c2fff7-c1dd-2998-4883-fecb764c0f94" executionId="91f32d3b-3e2e-4e56-9101-40d2ffa72a30" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d85d53f8-0eaf-cada-afbe-0453396b4d95" executionId="d28eec92-b8c3-4a1d-b221-9b4b79e90582" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="df908f13-fe48-07ef-5404-de2dfa1a42b9" executionId="29b082bf-dc0d-4e64-9013-d1e7ab12fbc0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="c61c0cd2-4618-4ca3-80b6-2f6e4dd37fdd" testId="030facb6-6892-78a5-8476-4f0ad5297b20" testName="Repository_Returns_Single_Application_When_Filtered_By_Name_Application1" computerName="AUS10481" duration="00:00:00.2520849" startTime="2011-05-31T10:47:12.7438375+10:00" endTime="2011-05-31T10:47:13.3088375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c61c0cd2-4618-4ca3-80b6-2f6e4dd37fdd">
+    </UnitTestResult>
+    <UnitTestResult executionId="4ce6503f-04aa-4829-aa1b-3f1d9ebad26c" testId="04849548-ec1d-1029-f21a-76e5300f7754" testName="AdapterService_Has_25_Applications_From_Service" computerName="AUS10481" duration="00:00:00.2316756" startTime="2011-05-31T10:47:13.3148375+10:00" endTime="2011-05-31T10:47:13.5598375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4ce6503f-04aa-4829-aa1b-3f1d9ebad26c">
+    </UnitTestResult>
+    <UnitTestResult executionId="62baf1be-57bb-4d80-adc6-bb0c70139468" testId="1e8d0d9e-014f-181f-6089-ad7cd9257811" testName="AdapterService_Can_Get_Scopes_From_Service" computerName="AUS10481" duration="00:00:00.0007970" startTime="2011-05-31T10:47:13.5638375+10:00" endTime="2011-05-31T10:47:13.5748375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="62baf1be-57bb-4d80-adc6-bb0c70139468">
+    </UnitTestResult>
+    <UnitTestResult executionId="0586812b-6c25-4a0e-8b60-841c02c1be87" testId="7d3f3e1b-387b-200f-da84-8ecefb8cd361" testName="Repository_Returns_Single_Scope_When_Filtered_By_Name_Scope1" computerName="AUS10481" duration="00:00:00.0038300" startTime="2011-05-31T10:47:13.5798375+10:00" endTime="2011-05-31T10:47:13.5908375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0586812b-6c25-4a0e-8b60-841c02c1be87">
+    </UnitTestResult>
+    <UnitTestResult executionId="ebfc85d6-586d-4e97-a894-85dd3b0290b6" testId="9a3921c6-62a2-7333-d816-3168c7d34ea5" testName="Scope_ShouldHave_Name_Description_Fields" computerName="AUS10481" duration="00:00:00.0006641" startTime="2011-05-31T10:47:13.5958375+10:00" endTime="2011-05-31T10:47:13.6018375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ebfc85d6-586d-4e97-a894-85dd3b0290b6">
+    </UnitTestResult>
+    <UnitTestResult executionId="b60361a4-62ec-4085-8b7c-973018f320e4" testId="a94076f1-aed3-07d7-bef6-2077b63bd438" testName="Application_ShouldHave_Name_Description_Fields" computerName="AUS10481" duration="00:00:00.0005527" startTime="2011-05-31T10:47:13.6088375+10:00" endTime="2011-05-31T10:47:13.6158375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b60361a4-62ec-4085-8b7c-973018f320e4">
+    </UnitTestResult>
+    <UnitTestResult executionId="7ebca064-49c4-4334-bd84-62bb2678739e" testId="b15d91b5-816b-211e-2a77-f200bd908121" testName="AdapterRepository_Repository_Scopes_IsNotNull" computerName="AUS10481" duration="00:00:00.0004408" startTime="2011-05-31T10:47:13.6188375+10:00" endTime="2011-05-31T10:47:13.6288375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7ebca064-49c4-4334-bd84-62bb2678739e">
+    </UnitTestResult>
+    <UnitTestResult executionId="ae8b4678-4b07-4c6d-88a6-4c8fd2a53146" testId="c9ba8cfd-3813-ea7c-0965-8c45d412203b" testName="AdapterService_GetApplication" computerName="AUS10481" duration="00:00:00.3501905" startTime="2011-05-31T10:47:13.6338375+10:00" endTime="2011-05-31T10:47:13.9908375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ae8b4678-4b07-4c6d-88a6-4c8fd2a53146">
+    </UnitTestResult>
+    <UnitTestResult executionId="91f32d3b-3e2e-4e56-9101-40d2ffa72a30" testId="c9c2fff7-c1dd-2998-4883-fecb764c0f94" testName="DataService_ToXML" computerName="AUS10481" duration="00:00:00.2357314" startTime="2011-05-31T10:47:14.0038375+10:00" endTime="2011-05-31T10:47:14.2458375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="91f32d3b-3e2e-4e56-9101-40d2ffa72a30">
+    </UnitTestResult>
+    <UnitTestResult executionId="d28eec92-b8c3-4a1d-b221-9b4b79e90582" testId="d85d53f8-0eaf-cada-afbe-0453396b4d95" testName="AdapterService_Has_5_Scopes_From_Service" computerName="AUS10481" duration="00:00:00.0004433" startTime="2011-05-31T10:47:14.2488375+10:00" endTime="2011-05-31T10:47:14.2688375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d28eec92-b8c3-4a1d-b221-9b4b79e90582">
+    </UnitTestResult>
+    <UnitTestResult executionId="29b082bf-dc0d-4e64-9013-d1e7ab12fbc0" testId="df908f13-fe48-07ef-5404-de2dfa1a42b9" testName="DataLayerRepository_Has_5_DataLayerTypes_From_Service" computerName="AUS10481" duration="00:00:00.0005733" startTime="2011-05-31T10:47:14.2888375+10:00" endTime="2011-05-31T10:47:14.2988375+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="29b082bf-dc0d-4e64-9013-d1e7ab12fbc0">
+    </UnitTestResult>
+  </Results>
+</TestRun>
