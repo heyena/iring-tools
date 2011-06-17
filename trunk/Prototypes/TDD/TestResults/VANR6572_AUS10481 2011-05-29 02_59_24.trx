@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="9166ba0d-e027-4c7c-94fc-b0893c0d7e13" name="VANR6572@AUS10481 2011-05-29 02:59:24" runUser="HATCHGLOBAL\VANR6572" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Local" id="db2218b0-d6c1-4a95-a540-fcde77fa22f8">
+    <Description>These are default test settings for a local test run.</Description>
+    <Deployment enabled="false" runDeploymentRoot="VANR6572_AUS10481 2011-05-29 02_59_24">
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Services\bin\Debug\iRINGTools.Services.dll" />
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Data\bin\Debug\iRINGTools.Data.dll" />
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2011-05-29T02:59:24.9895144+10:00" queuing="2011-05-29T02:59:28.2196991+10:00" start="2011-05-29T02:59:28.4307112+10:00" finish="2011-05-29T03:02:09.5099244+10:00" />
+  <ResultSummary outcome="Error">
+    <Counters total="2" executed="1" error="0" failed="0" timeout="0" aborted="1" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="1" disconnected="0" warning="0" passed="0" completed="0" inProgress="0" pending="0" />
+    <RunInfos>
+      <RunInfo computerName="AUS10481" outcome="Error" timestamp="2011-05-29T03:02:09.5069242+10:00">
+        <Text>Test host process exited unexpectedly.</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="DataService_ToXML" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="c9c2fff7-c1dd-2998-4883-fecb764c0f94">
+      <Execution id="7f062757-ab54-404b-97ce-05d6122b75fa" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.NinjectTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="DataService_ToXML" />
+    </UnitTest>
+    <UnitTest name="AdapterService_GetApplication" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="c9ba8cfd-3813-ea7c-0965-8c45d412203b">
+      <Execution id="972e4227-fe69-41bd-9b03-c07b94bfb0ab" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.NinjectTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="AdapterService_GetApplication" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="c9ba8cfd-3813-ea7c-0965-8c45d412203b" executionId="972e4227-fe69-41bd-9b03-c07b94bfb0ab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c9c2fff7-c1dd-2998-4883-fecb764c0f94" executionId="7f062757-ab54-404b-97ce-05d6122b75fa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="972e4227-fe69-41bd-9b03-c07b94bfb0ab" testId="c9ba8cfd-3813-ea7c-0965-8c45d412203b" testName="AdapterService_GetApplication" computerName="AUS10481" duration="00:02:40.8942026" startTime="2011-05-29T02:59:28.6157218+10:00" endTime="2011-05-29T03:02:09.5099244+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Aborted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="972e4227-fe69-41bd-9b03-c07b94bfb0ab">
+    </UnitTestResult>
+    <UnitTestResult executionId="7f062757-ab54-404b-97ce-05d6122b75fa" testId="c9c2fff7-c1dd-2998-4883-fecb764c0f94" testName="DataService_ToXML" computerName="AUS10481" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="NotExecuted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f062757-ab54-404b-97ce-05d6122b75fa">
+    </UnitTestResult>
+  </Results>
+</TestRun>

@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="28923d83-f732-4480-be0e-319d613f6cb9" name="VANR6572@AUS10481 2011-05-26 16:13:59" runUser="HATCHGLOBAL\VANR6572" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Local" id="db2218b0-d6c1-4a95-a540-fcde77fa22f8">
+    <Description>These are default test settings for a local test run.</Description>
+    <Deployment enabled="false" runDeploymentRoot="VANR6572_AUS10481 2011-05-26 16_13_59">
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Services\bin\Debug\iRINGTools.Services.dll" />
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Data\bin\Debug\iRINGTools.Data.dll" />
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2011-05-26T16:13:59.2162095+10:00" queuing="2011-05-26T16:14:01.0863965+10:00" start="2011-05-26T16:14:01.2564135+10:00" finish="2011-05-26T16:14:56.3819255+10:00" />
+  <ResultSummary outcome="Error">
+    <Counters total="1" executed="1" error="0" failed="0" timeout="0" aborted="1" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" passed="0" completed="0" inProgress="0" pending="0" />
+    <RunInfos>
+      <RunInfo computerName="AUS10481" outcome="Error" timestamp="2011-05-26T16:14:56.3809254+10:00">
+        <Text>Test host process exited unexpectedly.</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="AdapterService_XMLMappingRepository_IsNotNull" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.intergrationtests\bin\debug\iringtools.intergrationtests.dll" id="04abccae-c913-ed20-0221-1bb25e2b2a98">
+      <Execution id="485aa0ce-b1f3-44d4-83e3-f80ac5132783" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.IntergrationTests/bin/Debug/iRINGTools.IntergrationTests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.IntergrationTests.IntergrationTests, iRINGTools.IntergrationTests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="AdapterService_XMLMappingRepository_IsNotNull" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="04abccae-c913-ed20-0221-1bb25e2b2a98" executionId="485aa0ce-b1f3-44d4-83e3-f80ac5132783" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="485aa0ce-b1f3-44d4-83e3-f80ac5132783" testId="04abccae-c913-ed20-0221-1bb25e2b2a98" testName="AdapterService_XMLMappingRepository_IsNotNull" computerName="AUS10481" duration="00:00:54.7634758" startTime="2011-05-26T16:14:01.6184497+10:00" endTime="2011-05-26T16:14:56.3819255+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Aborted" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="485aa0ce-b1f3-44d4-83e3-f80ac5132783">
+    </UnitTestResult>
+  </Results>
+</TestRun>

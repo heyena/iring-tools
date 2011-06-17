@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="67b9b779-9f34-4996-aa5a-34a5c63749b0" name="VANR6572@AUS10481 2011-05-30 11:53:37" runUser="HATCHGLOBAL\VANR6572" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Local" id="db2218b0-d6c1-4a95-a540-fcde77fa22f8">
+    <Description>These are default test settings for a local test run.</Description>
+    <Deployment enabled="false" runDeploymentRoot="VANR6572_AUS10481 2011-05-30 11_53_37">
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Services\bin\Debug\iRINGTools.Services.dll" />
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Data\bin\Debug\iRINGTools.Data.dll" />
+      <DeploymentItem filename="C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\packages\Ninject.2.2.1.4\lib\net40-Full\Ninject.dll" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2011-05-30T11:53:37.4914738+10:00" queuing="2011-05-30T11:53:39.4804738+10:00" start="2011-05-30T11:53:39.7054738+10:00" finish="2011-05-30T11:54:01.9234738+10:00" />
+  <ResultSummary outcome="Failed">
+    <Counters total="1" executed="1" error="0" failed="1" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" passed="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="AdapterService_GetApplication" storage="c:\users\vanr6572\projects\iringtools tdd\iringtools.mvc\iringtools.tests\bin\debug\iringtools.tests.dll" id="c9ba8cfd-3813-ea7c-0965-8c45d412203b">
+      <Execution id="e1284f42-083c-4a98-9156-913a4147d75d" />
+      <TestMethod codeBase="C:/Users/vanr6572/Projects/iRINGTools TDD/iRINGTools.MVC/iRINGTools.Tests/bin/Debug/iRINGTools.Tests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="iRINGTools.Tests.NinjectTests, iRINGTools.Tests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" name="AdapterService_GetApplication" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="c9ba8cfd-3813-ea7c-0965-8c45d412203b" executionId="e1284f42-083c-4a98-9156-913a4147d75d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="e1284f42-083c-4a98-9156-913a4147d75d" testId="c9ba8cfd-3813-ea7c-0965-8c45d412203b" testName="AdapterService_GetApplication" computerName="AUS10481" duration="00:00:19.5849923" startTime="2011-05-30T11:53:39.9314738+10:00" endTime="2011-05-30T11:54:01.6994738+10:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1284f42-083c-4a98-9156-913a4147d75d">
+      <Output>
+        <ErrorInfo>
+          <Message>Test method iRINGTools.Tests.NinjectTests.AdapterService_GetApplication threw exception: 
+System.Exception: Error while serializing Mapping. ---&gt; System.InvalidOperationException: There was an error generating the XML document. ---&gt; System.InvalidOperationException: The type iRINGTools.Data.GraphMap was not expected. Use the XmlInclude or SoapInclude attribute to specify types that are not known statically.</Message>
+          <StackTrace>    at System.Xml.Serialization.XmlSerializationWriter.WriteTypedPrimitive(String name, String ns, Object o, Boolean xsiType)
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationWriterMapping.Write1_Object(String n, String ns, Object o, Boolean isNullable, Boolean needType)
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationWriterMapping.Write2_Mapping(String n, String ns, Mapping o, Boolean isNullable, Boolean needType)
+   at Microsoft.Xml.Serialization.GeneratedAssembly.XmlSerializationWriterMapping.Write3_Mapping(Object o)
+ --- End of inner exception stack trace ---
+    at System.Xml.Serialization.XmlSerializer.Serialize(XmlWriter xmlWriter, Object o, XmlSerializerNamespaces namespaces, String encodingStyle, String id)
+   at System.Xml.Serialization.XmlSerializer.Serialize(XmlWriter xmlWriter, Object o)
+   at iRINGTools.Data.Utility.Serialize[T](T graph, Encoding encoding, Boolean useDataContractSerializer) in C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Data\Utility\Utility.cs:line 634
+ --- End of inner exception stack trace ---
+    at iRINGTools.Data.Utility.Serialize[T](T graph, Encoding encoding, Boolean useDataContractSerializer) in C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Data\Utility\Utility.cs:line 644
+   at iRINGTools.Data.Utility.Serialize[T](T graph, Boolean useDataContractSerializer) in C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Data\Utility\Utility.cs:line 614
+   at iRINGTools.Tests.NinjectTests.AdapterService_GetApplication() in C:\Users\vanr6572\Projects\iRINGTools TDD\iRINGTools.MVC\iRINGTools.Tests\NinjectTests.cs:line 41
+</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+</TestRun>
