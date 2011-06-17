@@ -15,14 +15,14 @@ namespace iRINGTools.IntergrationTests
   [TestClass]
   public class IntergrationTests
   {
-    [TestMethod]
-    public void AdapterService_XMLMappingRepository_IsNotNull() 
-    {
-      string searchPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\XML\");
+    //[TestMethod]
+    //public void AdapterService_XMLMappingRepository_IsNotNull() 
+    //{
+    //  string searchPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\XML\");
 
-      IMappingRepository repository = new XMLMappingRepository(searchPath, "Mapping.*", ".xml");
-      Assert.IsNotNull(repository.GetMappings());
-    }
+    //  IMappingRepository repository = new XMLMappingRepository(searchPath, "Mapping.*", ".xml");
+    //  Assert.IsNotNull(repository.GetMappings());
+    //}
 
     //[TestMethod]
     //public void AdapterService_XMLApplicationRepository_Save_To_New_File_Then_Read_Existing_File()
