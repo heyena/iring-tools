@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Members complex type.
+ * <p>Java class for AciRights complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Members">
+ * &lt;complexType name="AciRights">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="member" type="{http://www.iringtools.org/directory}Member" maxOccurs="unbounded"/>
+ *         &lt;element name="aciRight" type="{http://www.iringtools.org/directory}AciRight" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Members", propOrder = {
+@XmlType(name = "AciRights", propOrder = {
     "items"
 })
-public class Members {
+public class AciRights {
 
-    @XmlElement(name = "member", required = true)
-    protected List<Member> items;
+    @XmlElement(name = "aciRight", required = true)
+    protected List<AciRight> items;
 
     /**
      * Gets the value of the items property.
@@ -55,13 +55,13 @@ public class Members {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Member }
+     * {@link AciRight }
      * 
      * 
      */
-    public List<Member> getItems() {
+    public List<AciRight> getItems() {
         if (items == null) {
-            items = new ArrayList<Member>();
+            items = new ArrayList<AciRight>();
         }
         return this.items;
     }
@@ -71,10 +71,10 @@ public class Members {
      * 
      * @param items
      *     allowed object is
-     *     {@link Member }
+     *     {@link AciRight }
      *     
      */
-    public void setItems(List<Member> items) {
+    public void setItems(List<AciRight> items) {
         this.items = items;
     }
 

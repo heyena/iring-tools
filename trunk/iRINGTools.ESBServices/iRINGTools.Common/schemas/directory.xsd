@@ -155,7 +155,7 @@
   
   <xs:complexType name="Members">
     <xs:sequence>
-      <xs:element name="member" type="xs:string" maxOccurs="unbounded">
+      <xs:element name="member" type="Member" maxOccurs="unbounded">
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
@@ -164,4 +164,36 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+  
+  <xs:complexType name="Member">
+    <xs:sequence>
+      <xs:element name="userId" type="xs:string" />
+      <xs:element name="aciRights" type="AciRights"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="AciRights">
+    <xs:sequence>
+      <xs:element name="aciRight" type="AciRight" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="AciRight">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Read" />
+      <xs:enumeration value="Write" />
+      <xs:enumeration value="Add" />
+      <xs:enumeration value="Delete" />
+      <xs:enumeration value="Compare" />
+      <xs:enumeration value="Import" />
+      <xs:enumeration value="Export" />
+      <xs:enumeration value="All" />
+    </xs:restriction>
+  </xs:simpleType>
 </xs:schema>
