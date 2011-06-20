@@ -30,91 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Commodity }
-     * 
-     */
-    public Commodity createCommodity() {
-        return new Commodity();
-    }
-
-    /**
-     * Create an instance of {@link Members }
-     * 
-     */
-    public Members createMembers() {
-        return new Members();
-    }
-
-    /**
-     * Create an instance of {@link Scope }
-     * 
-     */
-    public Scope createScope() {
-        return new Scope();
-    }
-
-    /**
      * Create an instance of {@link Graph }
      * 
      */
     public Graph createGraph() {
         return new Graph();
-    }
-
-    /**
-     * Create an instance of {@link DataExchanges }
-     * 
-     */
-    public DataExchanges createDataExchanges() {
-        return new DataExchanges();
-    }
-
-    /**
-     * Create an instance of {@link Graphs }
-     * 
-     */
-    public Graphs createGraphs() {
-        return new Graphs();
-    }
-
-    /**
-     * Create an instance of {@link ApplicationData }
-     * 
-     */
-    public ApplicationData createApplicationData() {
-        return new ApplicationData();
-    }
-
-    /**
-     * Create an instance of {@link Exchanges }
-     * 
-     */
-    public Exchanges createExchanges() {
-        return new Exchanges();
-    }
-
-    /**
-     * Create an instance of {@link Application }
-     * 
-     */
-    public Application createApplication() {
-        return new Application();
-    }
-
-    /**
-     * Create an instance of {@link Aci }
-     * 
-     */
-    public Aci createAci() {
-        return new Aci();
-    }
-
-    /**
-     * Create an instance of {@link ExchangeDefinition }
-     * 
-     */
-    public ExchangeDefinition createExchangeDefinition() {
-        return new ExchangeDefinition();
     }
 
     /**
@@ -126,6 +46,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DataExchanges }
+     * 
+     */
+    public DataExchanges createDataExchanges() {
+        return new DataExchanges();
+    }
+
+    /**
      * Create an instance of {@link Directory }
      * 
      */
@@ -134,11 +62,99 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Aci }
+     * 
+     */
+    public Aci createAci() {
+        return new Aci();
+    }
+
+    /**
+     * Create an instance of {@link Member }
+     * 
+     */
+    public Member createMember() {
+        return new Member();
+    }
+
+    /**
+     * Create an instance of {@link Commodity }
+     * 
+     */
+    public Commodity createCommodity() {
+        return new Commodity();
+    }
+
+    /**
+     * Create an instance of {@link Graphs }
+     * 
+     */
+    public Graphs createGraphs() {
+        return new Graphs();
+    }
+
+    /**
+     * Create an instance of {@link ExchangeDefinition }
+     * 
+     */
+    public ExchangeDefinition createExchangeDefinition() {
+        return new ExchangeDefinition();
+    }
+
+    /**
+     * Create an instance of {@link ApplicationData }
+     * 
+     */
+    public ApplicationData createApplicationData() {
+        return new ApplicationData();
+    }
+
+    /**
+     * Create an instance of {@link Members }
+     * 
+     */
+    public Members createMembers() {
+        return new Members();
+    }
+
+    /**
+     * Create an instance of {@link Exchanges }
+     * 
+     */
+    public Exchanges createExchanges() {
+        return new Exchanges();
+    }
+
+    /**
+     * Create an instance of {@link AciRights }
+     * 
+     */
+    public AciRights createAciRights() {
+        return new AciRights();
+    }
+
+    /**
+     * Create an instance of {@link Scope }
+     * 
+     */
+    public Scope createScope() {
+        return new Scope();
+    }
+
+    /**
      * Create an instance of {@link Acl }
      * 
      */
     public Acl createAcl() {
         return new Acl();
+    }
+
+    /**
+     * Create an instance of {@link Application }
+     * 
+     */
+    public Application createApplication() {
+        return new Application();
     }
 
 }

@@ -1,5 +1,5 @@
 
-package org.iringtools.directory;
+package com.apigee.api.wadl._2010._07;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for Members complex type.
+ * <p>Java class for tagsType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Members">
+ * &lt;complexType name="tagsType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="member" type="{http://www.iringtools.org/directory}Member" maxOccurs="unbounded"/>
+ *         &lt;element name="tag" type="{http://api.apigee.com/wadl/2010/07/}tagType" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,53 +29,53 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Members", propOrder = {
-    "items"
+@XmlType(name = "tagsType", propOrder = {
+    "tag"
 })
-public class Members {
+public class TagsType {
 
-    @XmlElement(name = "member", required = true)
-    protected List<Member> items;
+    @XmlElement(required = true)
+    protected List<TagType> tag;
 
     /**
-     * Gets the value of the items property.
+     * Gets the value of the tag property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the items property.
+     * This is why there is not a <CODE>set</CODE> method for the tag property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getItems().add(newItem);
+     *    getTag().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Member }
+     * {@link TagType }
      * 
      * 
      */
-    public List<Member> getItems() {
-        if (items == null) {
-            items = new ArrayList<Member>();
+    public List<TagType> getTag() {
+        if (tag == null) {
+            tag = new ArrayList<TagType>();
         }
-        return this.items;
+        return this.tag;
     }
 
     /**
-     * Sets the value of the items property.
+     * Sets the value of the tag property.
      * 
-     * @param items
+     * @param tag
      *     allowed object is
-     *     {@link Member }
+     *     {@link TagType }
      *     
      */
-    public void setItems(List<Member> items) {
-        this.items = items;
+    public void setTag(List<TagType> tag) {
+        this.tag = tag;
     }
 
 }
