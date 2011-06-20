@@ -232,11 +232,12 @@ namespace org.iringtools.adapter.datalayer
 						{
 							foreach (IDataObject dataObject in dataObjects)
 							{
-								if (dataObject.GetPropertyValue("Id").ToString().ToLower() == identifier.ToLower())
-								{
-									orderedDataObjects.Add(dataObject);
-									break;
-								}
+								if (identifier != null)
+									if (dataObject.GetPropertyValue("Id").ToString().ToLower() == identifier.ToLower())
+									{
+										orderedDataObjects.Add(dataObject);
+										break;
+									}
 							}
 						}
 
@@ -1125,7 +1126,7 @@ namespace org.iringtools.adapter.datalayer
 					"t3.object_id = t2.object_id LEFT OUTER JOIN  INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS t4 ON t4.TABLE_SCHEMA = t1.TABLE_SCHEMA AND " +
 					"t4.TABLE_NAME = t1.TABLE_NAME AND t4.COLUMN_NAME = t1.COLUMN_NAME LEFT OUTER JOIN  INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS t5 ON " +
 					"t5.CONSTRAINT_NAME = t4.CONSTRAINT_NAME AND t5.CONSTRAINT_SCHEMA = t4.TABLE_SCHEMA WHERE (t1.DATA_TYPE NOT IN ('image')) AND " +
-					"(t1.TABLE_CATALOG = '{0}') AND (t1.TABLE_SCHEMA = '{1}') AND (t1.TABLE_NAME = '{2}')",
+					"(t1.TABLE_CATALOG = '{0}') AND (t1.TABLE_SCHEMA = '{1}') AND (t1.TABLE_NAME = '{2}')  ORDER BY t1.COLUMN_NAME",
 					databaseName,
 					schemaName,
 					objectName
@@ -1137,7 +1138,7 @@ namespace org.iringtools.adapter.datalayer
 					"select t1.COLUMN_NAME, t1.DATA_TYPE, t1.CHARACTER_MAXIMUM_LENGTH, t1.COLUMN_KEY, t1.IS_NULLABLE, c1.CONSTRAINT_TYPE " +
 					" from INFORMATION_SCHEMA.COLUMNS t1 join KEY_COLUMN_USAGE u1 on u1.TABLE_NAME = t1.TABLE_NAME and u1.TABLE_SCHEMA = t1.TABLE_SCHEMA and " +
 					" t1.COLUMN_NAME = u1.COLUMN_NAME join INFORMATION_SCHEMA.TABLE_CONSTRAINTS c1 on u1.CONSTRAINT_NAME = c1.CONSTRAINT_NAME and u1.TABLE_NAME = c1.TABLE_NAME " +
-					" where t1.TABLE_SCHEMA = '{0}' and t1.TABLE_NAME = '{1}'",
+					" where t1.TABLE_SCHEMA = '{0}' and t1.TABLE_NAME = '{1}' ORDER BY t1.COLUMN_NAME",
 					schemaName,
 					objectName
 				);
@@ -1155,7 +1156,7 @@ namespace org.iringtools.adapter.datalayer
 					" ON t4.constraint_name = t3.constraint_name AND t4.owner = t3.owner" +
 					" AND (t4.constraint_type = 'P' OR t4.constraint_type = 'R')" +
 					" WHERE UPPER(t1.owner) = '{0}' AND UPPER(t1.object_name) = '{1}' ORDER BY" +
-					" t1.object_name, t4.constraint_type, t2.column_name",
+					" t1.object_name, t4.constraint_type, t2.column_name ORDER BY t2.column_name",
 					schemaName.ToUpper(),
 					objectName.ToUpper()
 					);
