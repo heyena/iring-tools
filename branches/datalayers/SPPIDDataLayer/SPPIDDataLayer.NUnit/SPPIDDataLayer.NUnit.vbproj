@@ -114,7 +114,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="12345_000\12345_000.SPPID.config" />
+    <None Include="12345_000\12345_000.SPPID.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="12345_000\Equipment.csv" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>

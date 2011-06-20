@@ -13,6 +13,7 @@ Imports org.iringtools.utility
 Imports System.Diagnostics
 Imports VBA
 Imports Llama
+Imports ISPClientData3
 
 
 
@@ -23,6 +24,8 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
     Private _projDatasource As Llama.LMADataSource = Nothing ' SPPID DataSource
     Private _lmFilters As Llama.LMAFilter = Nothing
     Private _lmCriterion As Llama.LMACriterion = Nothing
+    Private m_skipInternalAttributes As Boolean  ' ignore internal attributes
+    Private m_skipNoDisplayAttributes As Boolean  ' ignore non-displayed attributes
 
     <Inject()>
     Public Sub New(settings As AdapterSettings, kernel As IKernel)
@@ -274,9 +277,6 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
     Private Function LoadDataObjects(objectType As String) As IList(Of IDataObject)
         Try
 
-            Dim dataObject As IDataObject = New GenericDataObject() With { _
-  .ObjectType = objectType _
-}
             Dim dataObjects As New List(Of IDataObject)()
 
             LoadConfiguration()
@@ -291,63 +291,32 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
             Dim name As String
             Dim value As String
 
-            _lmFilters = New LMAFilter
             _lmCriterion = New LMACriterion
-
+            _lmFilters = New LMAFilter
 
             Dim criteriaName As String = "getEquipments"
-            _lmFilters.ItemType = "Drawing"
+
             _lmFilters.Criteria.AddNew(criteriaName)
-            _lmFilters.Criteria.Item(criteriaName).SourceAttributeName = "Name"
-            _lmFilters.Criteria.Item(criteriaName).ValueAttribute = "Test303" ' selected drawing
-            _lmFilters.Criteria.Item(criteriaName).Operator = "="
+            _lmCriterion = New LMACriterion
+            _lmFilters = New LMAFilter
 
-            Dim drawings As New LMDrawings
-            drawings.Collect(_projDatasource, Filter:=_lmFilters)
-            Debug.WriteLine("Number of drawings filtered = " & drawings.Count)
+            _lmFilters.ItemType = "Equipment"
 
-            Dim drawing As LMDrawing
-            For Each drawing In drawings
+            ' _lmFilters.Criteria.Add(_lmCriterion)
 
-                strDrawing = drawing.Attributes("Name").Value
-                _lmCriterion = New LMACriterion
+            objEquipments = New LMEquipments
+            objEquipments.Collect(_projDatasource, Filter:=_lmFilters)
 
-                _lmFilters = New LMAFilter
-
-                _lmCriterion.SourceAttributeName = "Representation.Drawing.Name"
-
-                _lmCriterion.ValueAttribute = strDrawing
-
-                _lmCriterion.Operator = "="
-
-                _lmFilters.ItemType = "Equipment"
-
-                _lmFilters.Criteria.Add(_lmCriterion)
-
-                objEquipments = New LMEquipments
-
-                objEquipments.Collect(_projDatasource, Filter:=_lmFilters)
-
-                intCount = 1
-                If Not objEquipments Is Nothing Then
-
-                    For Each objEquipment In objEquipments
-
-                        _projDatasource.BeginTransaction()
-                        For Each attr In drawing.Attributes
-                            name = attr.name
-                            If Not IsDBNull(attr.Value) Then
-                                value = attr.Value
-                            Else
-                                value = "Null"
-                            End If
-                            dataObject.SetPropertyValue(name, value)
-                        Next attr
-                    Next
-                End If
-            Next drawing
-            If Not IsDBNull(dataObjects) Then
-                dataObjects.Add(dataObject)
+            If Not objEquipments Is Nothing Then
+                For Each objEquipment In objEquipments
+                    Dim dataObject As IDataObject = New GenericDataObject() With { _
+.ObjectType = objectType _
+}
+                    fetchEquipment(objEquipment, dataObject)
+                    If Not IsDBNull(dataObjects) Then
+                        dataObjects.Add(dataObject)
+                    End If
+                Next
             End If
 
             Return dataObjects
@@ -356,113 +325,88 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
             Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
         End Try
     End Function
-    Private Function FormDataObject(objectType As String, csvRow As String) As IDataObject
-        Try
-            Dim dataObject As IDataObject = New GenericDataObject() With { _
-             .ObjectType = objectType _
-            }
 
-            Dim commodityElement As XElement = GetCommodityConfig(objectType)
-
-            If Not [String].IsNullOrEmpty(csvRow) Then
-                Dim attributeElements As IEnumerable(Of XElement) = commodityElement.Element("attributes").Elements("attribute")
-
-                Dim csvValues As String() = csvRow.Split(","c)
-                Dim index As Integer = 0
-                For Each attributeElement In attributeElements
-
-                    Dim name As String = attributeElement.Attribute("name").Value
-                    Dim dataType As String = attributeElement.Attribute("datatype").Value.ToLower()
-                    'string dataType = attributeElement.Attribute("dataType").Value.ToLower();
-
-                    Dim value As String = csvValues(System.Math.Max(System.Threading.Interlocked.Increment(index), index - 1)).Trim()
-
-                    ' if data type is not nullable, make sure it has a value
-                    If Not (dataType.EndsWith("?") AndAlso value = [String].Empty) Then
-                        If dataType.Contains("bool") Then
-                            If value.ToUpper() = "TRUE" OrElse value.ToUpper() = "YES" Then
-                                value = "1"
-                            Else
-                                value = "0"
-                            End If
-                        ElseIf value = [String].Empty AndAlso (dataType.StartsWith("int") OrElse dataType = "double" OrElse dataType = "single" OrElse dataType = "float" OrElse dataType = "decimal") Then
-                            value = "0"
-                        End If
-                    End If
-
-                    dataObject.SetPropertyValue(name, value)
-                Next
-            End If
-
-            Return dataObject
-        Catch ex As Exception
-            _logger.[Error]("Error in FormDataObject: " & ex.ToString())
-
-            Throw New Exception("Error while forming a dataObject of type [" & objectType & "] from SPPID.", ex)
-        End Try
-    End Function
     Private Function SaveDataObjects(objectType As String, dataObjects As IList(Of IDataObject)) As Response
         Try
             Dim response As New Response()
+            Dim equips As LMEquipments
+            Dim equip As LMEquipment
+            Dim equipExchanger As LMExchanger
+            Dim equipMechanical As LMMechanical
+            Dim equipVessel As LMVessel
+            Dim equipOther As LMEquipmentOther
+            Dim equipType As String
+            Dim attSubclass As String
+            Dim compUpdated As Boolean
+            Dim rep As LMRepresentation
+            Dim attr As LMAAttribute
+            Dim newValue As String
+            Dim attrUpdated As Boolean
+            Dim i As Long
+            Dim attrName As String
+            Dim onlyIfNull As Boolean
+            Dim skip As Boolean
+            Dim numAttsUpdated As Long
+            Dim spId As String
+            Dim commodity As String
+            Dim m_updateIfDwgOpen As Boolean
 
-            ' Create data object directory in case it does not exist
-            Directory.CreateDirectory(_settings("XMLPath"))
-            'Directory.CreateDirectory(_settings["SPPIDFolderPath"]);
+            'To-Do I don't know how to get Opened drawing, so setting default value as false.
+            m_updateIfDwgOpen = False
 
-            Dim path As String = [String].Format("{0}\{1}.csv", _settings("XMLPath"), objectType)
 
-            'TODO: Need to update file, not replace it!
-            Dim writer As TextWriter = New StreamWriter(path)
+            For Each dataobject In dataObjects
+                equipType = dataobject.GetPropertyValue("ItemTypeName")
+                spId = dataobject.GetPropertyValue("SP_ID")
 
-            For Each dataObject As IDataObject In dataObjects
-                Dim status As New Status()
+                Select Case equipType
+                    Case "Exchanger"
+                        commodity = equipType
+                        equipExchanger = _projDatasource.GetExchanger(spId)
 
-                Try
-                    Dim identifier As String = GetIdentifier(dataObject)
-                    status.Identifier = identifier
+                        ' Check for an open drawing.
+                        If Not m_updateIfDwgOpen And equipExchanger.Representations.Count > 0 Then
+                            rep = equipExchanger.Representations.Nth(1)
+                            '  skip = skipDwg(rep, errMsgs)
+                        End If
 
-                    Dim csvRow As List(Of String) = FormCSVRow(objectType, dataObject)
+                        'If Not skip Then
+                        '    ' Update each attribute from the XML if changed.
+                        '    For i = 0 To updates.length - 1
+                        '        getRecvAttr(updates, i, attrName, newValue, attSubclass, onlyIfNull)
+                        '        writeLog(2, "Recvd attr " & CStr(i) & ": subclass '" & attSubclass & "', " & attrName & " = '" & newValue & "'")
 
-                    writer.WriteLine([String].Join(", ", csvRow.ToArray()))
-                    status.Messages.Add("Record [" & identifier & "] has been saved successfully.")
-                Catch ex As Exception
-                    status.Level = StatusLevel.[Error]
+                        '        ' See if attribute is applicable
+                        '        If attSubclass = "" Or attSubclass = commodity Then
+                        '            attr = equipExchanger.Attributes(attrName)
 
-                    Dim message As String = [String].Format("Error while posting dataObject [{0}]. {1}", dataObject.GetPropertyValue("Tag"), ex.ToString())
+                        '            If attr Is Nothing Then
+                        '                errMsgs.add("Specified " & commodity & " attribute """ & attrName & """ not found")
+                        '            Else
+                        '                attrUpdated = updateAttribute(attr, newValue, onlyIfNull, m_projDatasource, errMsgs)
+                        '                If attrUpdated Then
+                        '                    compUpdated = True
+                        '                    numAttsUpdated = numAttsUpdated + 1
+                        '                End If
+                        '            End If
+                        '        End If
+                        '    Next i
+                        'End If
 
-                    status.Messages.Add(message)
-                End Try
+                        'If compUpdated Then
+                        '    equipExchanger.Commit()
+                        'End If
+                        'equipExchanger = Nothing
 
-                response.Append(status)
+                End Select
             Next
 
-            writer.Close()
+
 
             Return response
         Catch ex As Exception
             _logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
             Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
-        End Try
-    End Function
-    Private Function FormCSVRow(objectType As String, dataObject As IDataObject) As List(Of String)
-        Try
-            Dim csvRow As New List(Of String)()
-
-            Dim commodityElement As XElement = GetCommodityConfig(objectType)
-
-            Dim attributeElements As IEnumerable(Of XElement) = commodityElement.Element("attributes").Elements("attribute")
-            Dim value As String = String.Empty
-            For Each attributeElement In attributeElements
-                Dim name As String = attributeElement.Attribute("name").Value
-                value = Convert.ToString(dataObject.GetPropertyValue(name))
-                csvRow.Add(value)
-            Next
-
-            Return csvRow
-        Catch ex As Exception
-            _logger.[Error]("Error in FormSPPIDRow: " & ex.ToString())
-
-            Throw New Exception("Error while forming a CSV row of type [" & objectType & "] from a DataObject.", ex)
         End Try
     End Function
 
@@ -474,6 +418,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
             _configuration = configDocument.Element("configuration")
         End If
     End Sub
+
     Private Function GetCommodityConfig(objectType As String) As XElement
         If _configuration Is Nothing Then
             LoadConfiguration()
@@ -484,6 +429,256 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
         Return commodityConfig
     End Function
 
+    Private Function fetchEquipment(objEquipment As LMEquipment, DataObject As IDataObject) As Boolean
+
+        Dim fetchEquioment As Boolean
+        Dim rep As LMRepresentation
+        Dim drawing As LMDrawing
+        Dim attr As LMAAttribute
+        Dim inStockpile As Boolean
+        Dim dwgId As String
+        Dim spId As String
+        Dim CantPossiblyBeARealName As String = "toastandjam"
+
+        fetchEquioment = True
+
+        ' Skip if no Representation
+        If objEquipment.Representations.Count = 0 Then
+            fetchEquipment = False
+            Exit Function
+        End If
+
+        rep = objEquipment.Representations.Nth(1)
+        drawing = rep.DrawingObject
+
+        ' See if it's in the project or drawing stockpile.
+        attr = rep.Attributes("InStockpile")
+        inStockpile = attr.Value = "True"
+
+        If inStockpile Then
+            If Not drawing Is Nothing Then
+                'If Not m_exposeDwgStockpile("Equipment") Then
+                '    fetchEquipment = False
+                '    Exit Function
+                'End If
+            End If
+        End If
+
+        ' Drawing attributes
+        dwgId = rep.DrawingID
+
+        ' Skip this component if querying by dwg and it's not on the first dwg.
+        Dim m_queriedDrawingId = getDrawingID(dwgId)
+        Dim _attr = objEquipment.Attributes("toastandjam")
+        'If m_queriedByDrawing And dwgId <> m_queriedDrawingId Then
+        '    fetchEquipment = False
+        '    Exit Function
+        'End If
+
+
+
+        ' Representation
+        For Each attr In rep.Attributes
+            addAttrSP(DataObject, attr, , "Representation")
+        Next attr
+
+        ' Commodity-specific attributes
+        ' First find the subclass of this equipment
+        Dim equipType As String
+        equipType = objEquipment.Attributes("ItemTypeName").Value
+
+        spId = objEquipment.Id
+        ' Don't think you can expand the case attributes for just the base equipment
+        Select Case equipType
+            Case "Exchanger"
+                Dim equipExchanger As LMExchanger
+                equipExchanger = _projDatasource.GetExchanger(spId)
+
+                ' Expand Attributes collection to include all Case properties
+                attr = equipExchanger.Attributes("toastandjam")
+
+                For Each attr In equipExchanger.Attributes
+                    addAttrSP(DataObject, attr, equipType)
+                Next attr
+
+                equipExchanger = Nothing
+            Case "Mechanical"
+                Dim equipMechanical As LMMechanical
+                equipMechanical = _projDatasource.GetMechanical(spId)
+
+                ' Expand Attributes collection to include all Case properties
+                attr = equipMechanical.Attributes(CantPossiblyBeARealName)
+
+                For Each attr In equipMechanical.Attributes
+                    addAttrSP(DataObject, attr, equipType)
+                Next attr
+
+                equipMechanical = Nothing
+            Case "Vessel"
+                Dim equipVessel As LMVessel
+                equipVessel = _projDatasource.GetVessel(spId)
+
+                ' Expand Attributes collection to include all Case properties
+                attr = equipVessel.Attributes(CantPossiblyBeARealName)
+
+                For Each attr In equipVessel.Attributes
+                    addAttrSP(DataObject, attr, equipType)
+                Next attr
+
+                equipVessel = Nothing
+            Case "EquipmentOther"
+                Dim equipOther As LMEquipmentOther
+                equipOther = _projDatasource.GetEquipmentOther(spId)
+
+                ' Expand Attributes collection to include all Case properties
+                attr = equipOther.Attributes(CantPossiblyBeARealName)
+
+                For Each attr In equipOther.Attributes
+                    addAttrSP(DataObject, attr, equipType)
+                Next attr
+
+                equipOther = Nothing
+            Case "EquipComponent"
+                'If m_skipEquipComponents Then
+                '    fetchEquipment = False
+                '    Exit Function
+                'Else
+                ' Expand Attributes collection to include all Case properties
+
+                attr = objEquipment.Attributes(CantPossiblyBeARealName)
+
+                For Each attr In objEquipment.Attributes
+                    addAttrSP(DataObject, attr, equipType)
+                Next attr
+                'End If
+            Case Else   ' shouldn't be anything else
+                fetchEquipment = False
+                Exit Function
+        End Select
+
+        ' Get the drawing attributes. If no drawing it's in the project stockpile.
+        If drawing Is Nothing Then
+            ' Fake the drawing number
+            'addAttr(xmlDoc, DrawingNumberTag, StockpileTag, , TagDrawing)
+            'addAttr(xmlDoc, NameTag, StockpileTag, , TagDrawing)
+            'addAttr(xmlDoc, DescriptionTag, StockpileTag, , TagDrawing)
+            'addAttr(xmlDoc, TitleTag, StockpileTag, , TagDrawing)
+        Else
+            For Each attr In drawing.Attributes
+                addAttrSP(DataObject, attr, , "Drawing", True)
+            Next attr
+        End If
+
+        ' Symbol
+        Dim symbol = _projDatasource.GetSymbol(rep.Id)
+        For Each attr In symbol.Attributes
+            addAttrSP(DataObject, attr, , "Symbol", True)
+        Next attr
+        symbol = Nothing
+
+        rep = Nothing
+
+        ' Nozzle
+        If objEquipment.Nozzles.Count > 0 Then
+            Dim nozzle As LMNozzle
+            nozzle = objEquipment.Nozzles.Nth(1)
+            For Each attr In nozzle.Attributes
+                addAttrSP(DataObject, attr, , "Nozzle")
+            Next attr
+            nozzle = Nothing
+        End If
+
+        ' Parent Tag
+        Dim parentTag As String
+        If Not objEquipment.PartOfPlantItemObject Is Nothing Then
+            If Not IsDBNull(objEquipment.PartOfPlantItemObject.Attributes("ItemTag").Value) Then
+                parentTag = objEquipment.PartOfPlantItemObject.Attributes("ItemTag").Value
+                ' addAttrSP(DataObject, "Parent", parentTag, , "Adapter")
+                addAttrSP(DataObject, attr, , "Adapter")
+            End If
+        End If
+
+
+        Return fetchEquioment
+    End Function
+
+    Sub addAttrSP(ByRef dataObject As IDataObject, ByRef attr As LMAAttribute, Optional ByRef subclass As String = "", Optional ByRef src As String = "", _
+        Optional ByVal displayedOnly As Boolean = False)
+
+
+        Dim useAltValue As Boolean
+        Dim enumAttrs As ISPEnumeratedAttributes
+        Dim attrValue As Object
+
+        attrValue = attr.Value
+
+        'If Not IsDBNull(attrValue) Then
+        '    dataObject.SetPropertyValue(attr.Name, attrValue)
+        'End If
+
+
+
+        ' Skip hidden attributes
+        If Not skipAttribute(attr, displayedOnly) Then
+            '  If isAttrRequested(attr.Name, subclass, src, useAltValue) Then
+            If useAltValue Then
+                ' See if attribute has a select list.
+                enumAttrs = attr.ISPAttribute.Attribution.ISPEnumAtts
+                If Not enumAttrs Is Nothing Then
+                    ' .Name is long value, .Description is short value
+                    attrValue = enumAttrs.Item(CStr(attr.Index)).Description    ' Bin Lin 11/10/2008
+                End If
+            End If
+
+            If Not IsDBNull(attrValue) Then
+                dataObject.SetPropertyValue(attr.Name, attrValue)
+            End If
+            'End If
+            End If
+
+    End Sub
+    Private Function skipAttribute( _
+        ByRef attr As LMAAttribute, _
+        Optional ByVal displayedOnly As Boolean = False) As Boolean
+
+        skipAttribute = False
+
+        Select Case attr.ISPAttribute.Attribution.Displayable.ToString()
+            Case "spInternalAtt"
+                skipAttribute = displayedOnly Or m_skipInternalAttributes
+            Case "spNoDisplayAtt"
+                skipAttribute = displayedOnly Or m_skipNoDisplayAttributes
+        End Select
+    End Function
+
+    Private Function getDrawingID( _
+        ByVal dwgNo As String)
+
+        Const funcName As String = "getDrawingID"
+
+        Dim dwgFilter As New LMAFilter
+        Dim criteriaName As String
+
+        dwgFilter.ItemType = "Drawing"
+
+        criteriaName = "dwg"
+        dwgFilter.Criteria.AddNew(criteriaName)
+        dwgFilter.Criteria.Item(criteriaName).SourceAttributeName = "SP_ID"
+        dwgFilter.Criteria.Item(criteriaName).ValueAttribute = dwgNo
+        dwgFilter.Criteria.Item(criteriaName).Operator = "="
+        dwgFilter.Criteria.Item(criteriaName).Conjunctive = True
+
+        Dim drawings As New LMDrawings
+        drawings.Collect(_projDatasource, Filter:=dwgFilter)
+        If drawings.Count <> 1 Then
+            Err.Raise(vbObjectError + 1, funcName, "Drawing " & dwgNo & " not found")
+        End If
+
+        getDrawingID = drawings.Nth(1).Id
+
+        dwgFilter = Nothing
+        drawings = Nothing
+    End Function
 
 
 End Class

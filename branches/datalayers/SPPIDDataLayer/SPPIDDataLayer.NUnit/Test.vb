@@ -64,14 +64,14 @@ Public Class Test
     <Test()>
     Public Sub Create()
         Dim identifiers As IList(Of String) = New List(Of String)() From { _
-     "7C73D75A0F4C4A3F8FD99D962C733BCC"
+     "4EEFF5094F5A4BB5BF62A1DC6E674F0F"
     }
 
         Dim random As New Random()
-        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Create("Equipment", identifiers) ' Returning 28 items in a object
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Create("Equipment", identifiers)
 
         For Each dataObject As IDataObject In dataObjects
-            dataObject.SetPropertyValue("Adapter_ParentTag", "PT-" & random.[Next](2, 10))
+            dataObject.SetPropertyValue("Name", "PT-" & random.[Next](2, 10))
             dataObject.SetPropertyValue("Drawing_DateCreated", DateTime.Today)
         Next
 
@@ -89,10 +89,10 @@ Public Class Test
 
         Dim dataFilter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
               New Expression() With { _
-                .PropertyName = "Drawing_DocumentType", _
+                .PropertyName = "DocumentCategory", _
                 .RelationalOperator = RelationalOperator.EqualTo, _
                 .Values = New Values() From { _
-                "PDT-8" _
+                "Pipping Documents" _
    }
   }
  }
