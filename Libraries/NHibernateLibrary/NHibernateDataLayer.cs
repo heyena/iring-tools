@@ -91,6 +91,9 @@ namespace org.iringtools.adapter.datalayer
     #region public methods
     public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
+      if (!isAuthorized())
+        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
@@ -141,6 +144,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override long GetCount(string objectType, DataFilter filter)
     {
+      if (!isAuthorized())
+        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+
       try
       {
         if (_databaseDictionary.IdentityConfiguration != null)
@@ -181,6 +187,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
+      if (!isAuthorized())
+        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+
       try
       {
         if (_databaseDictionary.IdentityConfiguration != null)
@@ -215,6 +224,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
+      if (!isAuthorized())
+        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+
       try
       {
         StringBuilder queryString = new StringBuilder();
@@ -263,6 +275,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
+      if (!isAuthorized())
+        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+
       try
       {
         if (_databaseDictionary.IdentityConfiguration != null)
@@ -361,6 +376,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Post(IList<IDataObject> dataObjects)
     {
+      if (!isAuthorized())
+        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+
       Response response = new Response();
 
       try
@@ -425,6 +443,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Delete(string objectType, IList<string> identifiers)
     {
+      if (!isAuthorized())
+        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+
       Response response = new Response();
 
       try
@@ -464,6 +485,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Delete(string objectType, DataFilter filter)
     {
+      if (!isAuthorized())
+        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+
       Response response = new Response();
       response.StatusList = new List<Status>();
       Status status = new Status();
@@ -523,6 +547,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
     {
+      if (!isAuthorized())
+        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+
       IList<IDataObject> relatedObjects = null;
       DataDictionary dictionary = GetDictionary();
       DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);
@@ -651,6 +678,7 @@ namespace org.iringtools.adapter.datalayer
       _response.Append(status);
       return _response;
     }
+
     public DatabaseDictionary GetDictionary(string projectName, string applicationName)
     {
       DatabaseDictionary databaseDictionary = new DatabaseDictionary();
@@ -676,6 +704,7 @@ namespace org.iringtools.adapter.datalayer
       }
       return databaseDictionary;
     }
+
     public Response PostDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
     {
       Status status = new Status();
@@ -698,6 +727,7 @@ namespace org.iringtools.adapter.datalayer
       _response.Append(status);
       return _response;
     }
+
     public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName, string schemaName)
     {
       DatabaseDictionary dbDictionary = new DatabaseDictionary();
@@ -909,6 +939,7 @@ namespace org.iringtools.adapter.datalayer
         return dbDictionary;
       }
     }
+
     public DataRelationships GetRelationships()
     {
       try
@@ -921,6 +952,7 @@ namespace org.iringtools.adapter.datalayer
         return null;
       }
     }
+
     public DataProviders GetProviders()
     {
       try
@@ -933,6 +965,7 @@ namespace org.iringtools.adapter.datalayer
         return null;
       }
     }
+
     public DataObjects GetSchemaObjects(string projectName, string applicationName)
     {
       DataObjects tableNames = new DataObjects();
@@ -994,6 +1027,7 @@ namespace org.iringtools.adapter.datalayer
         return tableNames;
       }
     }
+
     public DataObject GetSchemaObjectSchema(string projectName, string applicationName, string schemaObjectName)
     {
       List<string> tableNames = new List<string>();
@@ -1093,6 +1127,7 @@ namespace org.iringtools.adapter.datalayer
         return dataObject;
       }
     }
+
     public VersionInfo GetVersion()
     {
       Version version = this.GetType().Assembly.GetName().Version;
@@ -1109,9 +1144,6 @@ namespace org.iringtools.adapter.datalayer
     #region private methods
     private ISession OpenSession()
     {
-      if (!isAuthorized())
-        throw new Exception("User not authorized to access data layer");
-
       try
       {
         return _sessionFactory.OpenSession();

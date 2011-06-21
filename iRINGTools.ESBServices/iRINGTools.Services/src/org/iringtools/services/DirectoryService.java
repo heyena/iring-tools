@@ -4,15 +4,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+import org.iringtools.directory.Authorized;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
-import org.iringtools.directory.User;
 import org.iringtools.services.core.DirectoryProvider;
 
 @Path("/")
-@Produces("application/xml")
+@Produces(MediaType.APPLICATION_XML)
 public class DirectoryService extends AbstractService
 {
   private static final Logger logger = Logger.getLogger(DirectoryService.class);
@@ -56,24 +57,25 @@ public class DirectoryService extends AbstractService
 
     return xdef;
   }
-
+  
   @GET
-  @Path("/users/{userId}")
-  public User getUser(@PathParam("userId") String userId)
-  {
-    User user = null;
-
+  @Path("/auth/{scope}/{app}/{userId}/")
+  public Authorized isAuthorized(@PathParam("scope") String scope,
+                                 @PathParam("app") String app, 
+                                 @PathParam("userId") String userId) {
+    Authorized authorized = null;
+    
     try
     {
       initService();
       DirectoryProvider directoryProvider = new DirectoryProvider(settings);
-      user = directoryProvider.getUser(userId);
+      authorized = directoryProvider.isAuthorized(scope, app, userId);
     }
     catch (Exception ex)
     {
-      logger.error("Error getting user [" + userId + "]: " + ex);
+      logger.error("Error getting user authorization: " + ex);
     }
     
-    return user;
+    return authorized;
   }
 }
