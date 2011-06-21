@@ -116,18 +116,8 @@ namespace org.iringtools.services
       }
       catch (Exception ex)
       {
-        if (ex is FileNotFoundException)
-        {
-          context.ContentType = "text/xml";
-          context.StatusCode = HttpStatusCode.NotFound;
-          return null;
-        }
-        else
-        {
-          context.ContentType = "text/xml";
-          context.StatusCode = HttpStatusCode.InternalServerError;
-          throw ex;
-        }
+        HandleException(context, ex);
+        return null;
       }
     }
 
@@ -157,18 +147,8 @@ namespace org.iringtools.services
       }
       catch (Exception ex)
       {
-        if (ex is FileNotFoundException)
-        {
-          context.ContentType = "text/xml";
-          context.StatusCode = HttpStatusCode.NotFound;
-          return null;
-        }
-        else
-        {
-          context.ContentType = "text/xml";
-          context.StatusCode = HttpStatusCode.InternalServerError;
-          throw ex;
-        }
+        HandleException(context, ex);
+        return null;
       }
     }
     #endregion
@@ -202,18 +182,8 @@ namespace org.iringtools.services
       }
       catch (Exception ex)
       {
-        if (ex is FileNotFoundException)
-        {
-          context.ContentType = "text/xml";
-          context.StatusCode = HttpStatusCode.NotFound;
-          return null;
-        }
-        else
-        {
-          context.ContentType = "text/xml";
-          context.StatusCode = HttpStatusCode.InternalServerError;
-          throw ex;
-        }
+        HandleException(context, ex);
+        return null;
       }
     }
     #endregion
@@ -247,18 +217,8 @@ namespace org.iringtools.services
       }
       catch (Exception ex)
       {
-        if (ex is FileNotFoundException)
-        {
-          context.ContentType = "text/xml";
-          context.StatusCode = HttpStatusCode.NotFound;
-          return null;
-        }
-        else
-        {
-          context.ContentType = "text/xml";
-          context.StatusCode = HttpStatusCode.InternalServerError;
-          throw ex;
-        }
+        HandleException(context, ex);
+        return null;
       }
     }
     #endregion
@@ -304,5 +264,24 @@ namespace org.iringtools.services
     }
     #endregion
     #endregion
+
+    private void HandleException(OutgoingWebResponseContext context, Exception ex)
+    {
+      if (ex is FileNotFoundException)
+      {
+        context.ContentType = "text/xml";
+        context.StatusCode = HttpStatusCode.NotFound;
+      }
+      else if (ex is UnauthorizedAccessException)
+      {
+        context.ContentType = "text/xml";
+        context.StatusCode = HttpStatusCode.Unauthorized;
+      }
+      else
+      {
+        context.ContentType = "text/xml";
+        context.StatusCode = HttpStatusCode.InternalServerError;
+      }
+    }
   }
 }

@@ -14,8 +14,8 @@
 	</xs:annotation>
 
 	<xs:element name="directory" type="Directory" />
-	<xs:element name="exchangeDefinition" type="ExchangeDefinition" />	
-  <xs:element name="acl" type="Acl" />
+	<xs:element name="exchangeDefinition" type="ExchangeDefinition" />
+  <xs:element name="authorized" type="Authorized"/>
   
   <xs:complexType name="Directory">
     <xs:sequence>
@@ -132,68 +132,11 @@
 			<xs:element name="targetGraphName" type="xs:string" />
 			<xs:element name="hashAlgorithm" type="xs:string" />
 		</xs:sequence>
-	</xs:complexType>
-
-  <xs:complexType name="Acl">
-    <xs:sequence>
-      <xs:element name="aci" type="Aci" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="items" />
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
+	</xs:complexType>  
   
-  <xs:complexType name="Aci">
-    <xs:sequence>
-      <xs:element name="item" type="xs:string" />
-      <xs:element name="members" type="Members"/>
-    </xs:sequence>
+  <xs:complexType name="Authorized">
+    <xs:simpleContent>
+      <xs:extension base="xs:boolean" />
+    </xs:simpleContent>      
   </xs:complexType>
-  
-  <xs:complexType name="Members">
-    <xs:sequence>
-      <xs:element name="member" type="Member" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="items" />
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  
-  <xs:complexType name="Member">
-    <xs:sequence>
-      <xs:element name="userId" type="xs:string" />
-      <xs:element name="aciRights" type="AciRights"/>
-    </xs:sequence>
-  </xs:complexType>
-  
-  <xs:complexType name="AciRights">
-    <xs:sequence>
-      <xs:element name="aciRight" type="AciRight" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="items" />
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-  
-  <xs:simpleType name="AciRight">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="Read" />
-      <xs:enumeration value="Write" />
-      <xs:enumeration value="Add" />
-      <xs:enumeration value="Delete" />
-      <xs:enumeration value="Compare" />
-      <xs:enumeration value="Import" />
-      <xs:enumeration value="Export" />
-      <xs:enumeration value="All" />
-    </xs:restriction>
-  </xs:simpleType>
 </xs:schema>

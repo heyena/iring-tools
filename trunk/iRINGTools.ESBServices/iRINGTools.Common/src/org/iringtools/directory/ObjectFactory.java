@@ -30,19 +30,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graph }
+     * Create an instance of {@link Exchanges }
      * 
      */
-    public Graph createGraph() {
-        return new Graph();
-    }
-
-    /**
-     * Create an instance of {@link Exchange }
-     * 
-     */
-    public Exchange createExchange() {
-        return new Exchange();
+    public Exchanges createExchanges() {
+        return new Exchanges();
     }
 
     /**
@@ -54,51 +46,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Directory }
+     * Create an instance of {@link Graph }
      * 
      */
-    public Directory createDirectory() {
-        return new Directory();
-    }
-
-    /**
-     * Create an instance of {@link Aci }
-     * 
-     */
-    public Aci createAci() {
-        return new Aci();
-    }
-
-    /**
-     * Create an instance of {@link Member }
-     * 
-     */
-    public Member createMember() {
-        return new Member();
-    }
-
-    /**
-     * Create an instance of {@link Commodity }
-     * 
-     */
-    public Commodity createCommodity() {
-        return new Commodity();
-    }
-
-    /**
-     * Create an instance of {@link Graphs }
-     * 
-     */
-    public Graphs createGraphs() {
-        return new Graphs();
-    }
-
-    /**
-     * Create an instance of {@link ExchangeDefinition }
-     * 
-     */
-    public ExchangeDefinition createExchangeDefinition() {
-        return new ExchangeDefinition();
+    public Graph createGraph() {
+        return new Graph();
     }
 
     /**
@@ -110,27 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Members }
+     * Create an instance of {@link ExchangeDefinition }
      * 
      */
-    public Members createMembers() {
-        return new Members();
-    }
-
-    /**
-     * Create an instance of {@link Exchanges }
-     * 
-     */
-    public Exchanges createExchanges() {
-        return new Exchanges();
-    }
-
-    /**
-     * Create an instance of {@link AciRights }
-     * 
-     */
-    public AciRights createAciRights() {
-        return new AciRights();
+    public ExchangeDefinition createExchangeDefinition() {
+        return new ExchangeDefinition();
     }
 
     /**
@@ -142,11 +78,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Acl }
+     * Create an instance of {@link Directory }
      * 
      */
-    public Acl createAcl() {
-        return new Acl();
+    public Directory createDirectory() {
+        return new Directory();
+    }
+
+    /**
+     * Create an instance of {@link Graphs }
+     * 
+     */
+    public Graphs createGraphs() {
+        return new Graphs();
     }
 
     /**
@@ -155,6 +99,30 @@ public class ObjectFactory {
      */
     public Application createApplication() {
         return new Application();
+    }
+
+    /**
+     * Create an instance of {@link Authorized }
+     * 
+     */
+    public Authorized createAuthorized() {
+        return new Authorized();
+    }
+
+    /**
+     * Create an instance of {@link Exchange }
+     * 
+     */
+    public Exchange createExchange() {
+        return new Exchange();
+    }
+
+    /**
+     * Create an instance of {@link Commodity }
+     * 
+     */
+    public Commodity createCommodity() {
+        return new Commodity();
     }
 
 }
