@@ -64,7 +64,7 @@ Public Class Test
     <Test()>
     Public Sub Create()
         Dim identifiers As IList(Of String) = New List(Of String)() From { _
-     "4EEFF5094F5A4BB5BF62A1DC6E674F0F"
+     "E5E3A74C7A0F431AB5069EA1BCD0407D"
     }
 
         Dim random As New Random()
@@ -107,6 +107,19 @@ Public Class Test
 
         Assert.IsTrue(True, dataObjects.ToString())
 
+    End Sub
+
+    <Test()>
+    Public Sub GetDictionary()
+        Dim benchmark As DataDictionary = Nothing
+
+        Dim dictionary As DataDictionary = _sppidDataLayer.GetDictionary()
+
+        Assert.IsNotNull(dictionary)
+
+        Dim path As String = [String].Format("{0}DataDictionary.{1}.xml", _adapterSettings("XmlPath"), _adapterSettings("ApplicationName"))
+
+        Utility.Write(Of DataDictionary)(dictionary, path, True)
     End Sub
 End Class
 
