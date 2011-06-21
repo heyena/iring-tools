@@ -283,13 +283,10 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
 
             Dim commodityElement As XElement = GetCommodityConfig(objectType)
             Dim attributeElements As IEnumerable(Of XElement) = commodityElement.Element("attributes").Elements("attribute")
+
             Dim appSource As String = String.Empty
-            Dim strDrawing As String
             Dim objEquipments As LMEquipments
             Dim objEquipment As LMEquipment
-            Dim intCount As Long
-            Dim name As String
-            Dim value As String
 
             _lmCriterion = New LMACriterion
             _lmFilters = New LMAFilter
@@ -302,8 +299,6 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
 
             _lmFilters.ItemType = "Equipment"
 
-            ' _lmFilters.Criteria.Add(_lmCriterion)
-
             objEquipments = New LMEquipments
             objEquipments.Collect(_projDatasource, Filter:=_lmFilters)
 
@@ -312,10 +307,24 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                     Dim dataObject As IDataObject = New GenericDataObject() With { _
 .ObjectType = objectType _
 }
-                    fetchEquipment(objEquipment, dataObject)
-                    If Not IsDBNull(dataObjects) Then
+                    fetchEquipment(objEquipment, dataObject, objectType)
+                    If Not IsDBNull(dataObject) Then
                         dataObjects.Add(dataObject)
                     End If
+                Next
+            End If
+
+            If Not IsDBNull(dataObjects) Then
+                For Each obj In dataObjects
+                    For Each attr In attributeElements
+                        Dim s = obj.GetType()
+                        Dim n As String = attr.Attribute("name").Value
+                        Try
+                            Dim name = obj.GetPropertyValue(n).GetType()
+                        Catch ex As Exception
+                            obj.SetPropertyValue(attr.Attribute("name").Value, "Null")
+                        End Try
+                    Next
                 Next
             End If
 
@@ -364,11 +373,11 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                         commodity = equipType
                         equipExchanger = _projDatasource.GetExchanger(spId)
 
-                        ' Check for an open drawing.
-                        If Not m_updateIfDwgOpen And equipExchanger.Representations.Count > 0 Then
-                            rep = equipExchanger.Representations.Nth(1)
-                            '  skip = skipDwg(rep, errMsgs)
-                        End If
+                        '' Check for an open drawing.
+                        'If Not m_updateIfDwgOpen And equipExchanger.Representations.Count > 0 Then
+                        '    rep = equipExchanger.Representations.Nth(1)
+                        '    skip = skipDwg(rep, errMsgs)
+                        'End If
 
                         'If Not skip Then
                         '    ' Update each attribute from the XML if changed.
@@ -398,6 +407,155 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                         'End If
                         'equipExchanger = Nothing
 
+                    Case "Mechanical"
+                        commodity = equipType
+                        equipMechanical = _projDatasource.GetMechanical(spId)
+
+                        ' Check for an open drawing.
+                        If Not m_updateIfDwgOpen And equipMechanical.Representations.Count > 0 Then
+                            rep = equipMechanical.Representations.Nth(1)
+                            '  skip = skipDwg(rep, errMsgs)
+                        End If
+
+                        'If Not skip Then
+                        '    ' Update each attribute from the XML if changed.
+                        '    For i = 0 To updates.length - 1
+                        '        getRecvAttr(updates, i, attrName, newValue, attSubclass, onlyIfNull)
+                        '        writeLog(2, "Recvd attr " & CStr(i) & ": subclass '" & attSubclass & "', " & attrName & " = '" & newValue & "'")
+
+                        '        ' See if attribute is applicable
+                        '        If attSubclass = "" Or attSubclass = commodity Then
+                        '            attr = equipMechanical.Attributes(attrName)
+
+                        '            If attr Is Nothing Then
+                        '                errMsgs.add("Specified " & commodity & " attribute """ & attrName & """ not found")
+                        '            Else
+                        '                attrUpdated = updateAttribute(attr, newValue, onlyIfNull, m_projDatasource, errMsgs)
+                        '                If attrUpdated Then
+                        '                    compUpdated = True
+                        '                    numAttsUpdated = numAttsUpdated + 1
+                        '                End If
+                        '            End If
+                        '        End If
+                        '    Next i
+                        'End If
+
+                        'If compUpdated Then
+                        '    equipMechanical.Commit()
+                        'End If
+                        'equipMechanical = Nothing
+
+                    Case "Vessel"
+                        commodity = equipType
+                        equipVessel = _projDatasource.GetVessel(spId)
+
+                        ' Check for an open drawing.
+                        If Not m_updateIfDwgOpen And equipVessel.Representations.Count > 0 Then
+                            rep = equipVessel.Representations.Nth(1)
+                            ' skip = skipDwg(rep, errMsgs)
+                        End If
+
+                        'If Not skip Then
+                        '    ' Update each attribute from the XML if changed.
+                        '    For i = 0 To updates.length - 1
+                        '        getRecvAttr(updates, i, attrName, newValue, attSubclass, onlyIfNull)
+                        '        writeLog(2, "Recvd attr " & CStr(i) & ": subclass '" & attSubclass & "', " & attrName & " = '" & newValue & "'")
+
+                        '        ' See if attribute is applicable
+                        '        If attSubclass = "" Or attSubclass = commodity Then
+                        '            attr = equipVessel.Attributes(attrName)
+
+                        '            If attr Is Nothing Then
+                        '                errMsgs.add("Specified " & commodity & " attribute """ & attrName & """ not found")
+                        '            Else
+                        '                attrUpdated = updateAttribute(attr, newValue, onlyIfNull, m_projDatasource, errMsgs)
+                        '                If attrUpdated Then
+                        '                    compUpdated = True
+                        '                    numAttsUpdated = numAttsUpdated + 1
+                        '                End If
+                        '            End If
+                        '        End If
+                        '    Next i
+                        'End If
+
+                        'If compUpdated Then
+                        '    equipVessel.Commit()
+                        'End If
+                        'equipVessel = Nothing
+
+                    Case "EquipmentOther"
+                        commodity = equipType
+                        equipOther = _projDatasource.GetEquipmentOther(spId)
+
+                        ' Check for an open drawing.
+                        If Not m_updateIfDwgOpen And equipOther.Representations.Count > 0 Then
+                            rep = equipOther.Representations.Nth(1)
+                            ' skip = skipDwg(rep, errMsgs)
+                        End If
+
+                        'If Not skip Then
+                        '    ' Update each attribute from the XML if changed.
+                        '    For i = 0 To updates.length - 1
+                        '        getRecvAttr(updates, i, attrName, newValue, attSubclass, onlyIfNull)
+                        '        writeLog(2, "Recvd attr " & CStr(i) & ": subclass '" & attSubclass & "', " & attrName & " = '" & newValue & "'")
+
+                        '        ' See if attribute is applicable
+                        '        If attSubclass = "" Or attSubclass = commodity Then
+                        '            attr = equipOther.Attributes(attrName)
+
+                        '            If attr Is Nothing Then
+                        '                errMsgs.add("Specified " & commodity & " attribute """ & attrName & """ not found")
+                        '            Else
+                        '                attrUpdated = updateAttribute(attr, newValue, onlyIfNull, m_projDatasource, errMsgs)
+                        '                If attrUpdated Then
+                        '                    compUpdated = True
+                        '                    numAttsUpdated = numAttsUpdated + 1
+                        '                End If
+                        '            End If
+                        '        End If
+                        '    Next i
+                        'End If
+
+                        'If compUpdated Then
+                        '    equipOther.Commit()
+                        'End If
+                        'equipOther = Nothing
+
+                    Case Else   ' shouldn't be anything else
+                        ' Check for an open drawing.
+                        equip = _projDatasource.GetNozzle(spId)
+                        If Not m_updateIfDwgOpen And equip.Representations.Count > 0 Then
+                            rep = equip.Representations.Nth(1)
+                            skip = skipDwg(rep, "sd")
+                        End If
+
+                        If Not skip Then
+                            ' Update each attribute from the XML if changed.
+                            'For i = 0 To dataobject.length - 1
+                            '    getRecvAttr(updates, i, attrName, newValue, attSubclass, onlyIfNull)
+                            '    writeLog(2, "Recvd attr " & CStr(i) & ": subclass '" & attSubclass & "', " & attrName & " = '" & newValue & "'")
+
+                            '    ' See if attribute is applicable
+                            '    If attSubclass = "" Or attSubclass = commodity Then
+                            '        attr = equip.Attributes(attrName)
+
+                            '        If attr Is Nothing Then
+                            '            errMsgs.add("Specified " & commodity & " attribute """ & attrName & """ not found")
+                            '        Else
+                            '            attrUpdated = updateAttribute(attr, newValue, onlyIfNull, m_projDatasource, errMsgs)
+                            '            If attrUpdated Then
+                            '                compUpdated = True
+                            '                numAttsUpdated = numAttsUpdated + 1
+                            '            End If
+                            '        End If
+                            '    End If
+                            'Next i
+                        End If
+
+                        If compUpdated Then
+                            equip.Commit()
+                        End If
+
                 End Select
             Next
 
@@ -409,6 +567,33 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
             Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
         End Try
     End Function
+
+
+    Private Function skipDwg( _
+          ByRef rep As LMRepresentation, _
+          ByRef errMsgs As String) As Boolean
+
+        Dim dwg As LMDrawing
+        Dim dwgNo As String
+        Dim filespec As String
+        Dim m_plantPath As String = getPlantPath()
+
+        skipDwg = False
+
+        ' Get the drawing filename. If no drawing it's in the project stockpile.
+        dwg = rep.DrawingObject
+        If Not dwg Is Nothing Then
+            filespec = m_plantPath & dwg.Attributes("Path").Name
+
+            ' See if file is open
+            If isFileLocked(filespec) Then
+                dwgNo = dwg.Attributes("DrawingNumber").Value
+                'errMsgs.add("Drawing " & dwgNo & " is open")
+                skipDwg = True
+            End If
+        End If
+    End Function
+
 
     Private Sub LoadConfiguration()
         If _configuration Is Nothing Then
@@ -429,7 +614,9 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
         Return commodityConfig
     End Function
 
-    Private Function fetchEquipment(objEquipment As LMEquipment, DataObject As IDataObject) As Boolean
+    Private Function fetchEquipment(objEquipment As LMEquipment, DataObject As IDataObject, objectType As String) As Boolean
+
+    
 
         Dim fetchEquioment As Boolean
         Dim rep As LMRepresentation
@@ -475,11 +662,9 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
         '    Exit Function
         'End If
 
-
-
         ' Representation
         For Each attr In rep.Attributes
-            addAttrSP(DataObject, attr, , "Representation")
+            addAttrSP(DataObject, attr, , "Representation", , objectType)
         Next attr
 
         ' Commodity-specific attributes
@@ -498,7 +683,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                 attr = equipExchanger.Attributes("toastandjam")
 
                 For Each attr In equipExchanger.Attributes
-                    addAttrSP(DataObject, attr, equipType)
+                    addAttrSP(DataObject, attr, , equipType, , objectType)
                 Next attr
 
                 equipExchanger = Nothing
@@ -510,7 +695,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                 attr = equipMechanical.Attributes(CantPossiblyBeARealName)
 
                 For Each attr In equipMechanical.Attributes
-                    addAttrSP(DataObject, attr, equipType)
+                    addAttrSP(DataObject, attr, , equipType, , objectType)
                 Next attr
 
                 equipMechanical = Nothing
@@ -522,7 +707,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                 attr = equipVessel.Attributes(CantPossiblyBeARealName)
 
                 For Each attr In equipVessel.Attributes
-                    addAttrSP(DataObject, attr, equipType)
+                    addAttrSP(DataObject, attr, , equipType, , objectType)
                 Next attr
 
                 equipVessel = Nothing
@@ -534,7 +719,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                 attr = equipOther.Attributes(CantPossiblyBeARealName)
 
                 For Each attr In equipOther.Attributes
-                    addAttrSP(DataObject, attr, equipType)
+                    addAttrSP(DataObject, attr, , equipType, , objectType)
                 Next attr
 
                 equipOther = Nothing
@@ -548,7 +733,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                 attr = objEquipment.Attributes(CantPossiblyBeARealName)
 
                 For Each attr In objEquipment.Attributes
-                    addAttrSP(DataObject, attr, equipType)
+                    addAttrSP(DataObject, attr, , equipType, , objectType)
                 Next attr
                 'End If
             Case Else   ' shouldn't be anything else
@@ -565,14 +750,14 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
             'addAttr(xmlDoc, TitleTag, StockpileTag, , TagDrawing)
         Else
             For Each attr In drawing.Attributes
-                addAttrSP(DataObject, attr, , "Drawing", True)
+                addAttrSP(DataObject, attr, , "Drawing", True, objectType)
             Next attr
         End If
 
         ' Symbol
         Dim symbol = _projDatasource.GetSymbol(rep.Id)
         For Each attr In symbol.Attributes
-            addAttrSP(DataObject, attr, , "Symbol", True)
+            addAttrSP(DataObject, attr, , "Symbol", True, objectType)
         Next attr
         symbol = Nothing
 
@@ -583,7 +768,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
             Dim nozzle As LMNozzle
             nozzle = objEquipment.Nozzles.Nth(1)
             For Each attr In nozzle.Attributes
-                addAttrSP(DataObject, attr, , "Nozzle")
+                addAttrSP(DataObject, attr, , "Nozzle", , objectType)
             Next attr
             nozzle = Nothing
         End If
@@ -594,7 +779,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
             If Not IsDBNull(objEquipment.PartOfPlantItemObject.Attributes("ItemTag").Value) Then
                 parentTag = objEquipment.PartOfPlantItemObject.Attributes("ItemTag").Value
                 ' addAttrSP(DataObject, "Parent", parentTag, , "Adapter")
-                addAttrSP(DataObject, attr, , "Adapter")
+                addAttrSP(DataObject, attr, , "Adapter", , objectType)
             End If
         End If
 
@@ -602,22 +787,22 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
         Return fetchEquioment
     End Function
 
-    Sub addAttrSP(ByRef dataObject As IDataObject, ByRef attr As LMAAttribute, Optional ByRef subclass As String = "", Optional ByRef src As String = "", _
-        Optional ByVal displayedOnly As Boolean = False)
+    Sub addAttrSP(dataObject As IDataObject, attr As LMAAttribute, Optional subclass As String = "", Optional src As String = "", _
+        Optional ByVal displayedOnly As Boolean = False, Optional objectType As String = "")
 
 
         Dim useAltValue As Boolean
         Dim enumAttrs As ISPEnumeratedAttributes
         Dim attrValue As Object
+        Dim intCount As Integer
+        Dim value As String
+
+        Dim commodityElement As XElement = GetCommodityConfig(objectType)
+        Dim attributeElements As IEnumerable(Of XElement) = commodityElement.Element("attributes").Elements("attribute")
 
         attrValue = attr.Value
 
-        'If Not IsDBNull(attrValue) Then
-        '    dataObject.SetPropertyValue(attr.Name, attrValue)
-        'End If
-
-
-
+        Debug.WriteLine(src & "--->" & attr.Name)
         ' Skip hidden attributes
         If Not skipAttribute(attr, displayedOnly) Then
             '  If isAttrRequested(attr.Name, subclass, src, useAltValue) Then
@@ -630,13 +815,38 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                 End If
             End If
 
-            If Not IsDBNull(attrValue) Then
-                dataObject.SetPropertyValue(attr.Name, attrValue)
-            End If
+            'If Not IsDBNull(attrValue) Then
+            '    dataObject.SetPropertyValue(attr.Name, attrValue)
             'End If
-            End If
+            'End If
+
+            '---------------
+            '' Get Equipment Attributes------------------
+            For Each attributeElement In attributeElements  'xml
+                intCount = 0
+                If (attributeElement.Attribute("name").Value = attr.Name Or attributeElement.Attribute("nativeName").Value = attr.Name) Then
+                    intCount = 1
+                    If Not IsDBNull(attr.Value) Then
+                        value = attr.Value
+                    Else
+                        value = "Null"
+                    End If
+                    dataObject.SetPropertyValue(attributeElement.Attribute("name").Value, value)
+                    Exit Sub
+                End If
+
+                'If (intCount = 0) Then
+                '    dataObject.SetPropertyValue(attributeElement.Attribute("name").Value, "Null")
+                'End If
+            Next
+        End If
+        'If Not IsDBNull(DataObjects) Then
+        '    DataObjects.Add(DataObjects)
+        'End If
+        '---------------
 
     End Sub
+
     Private Function skipAttribute( _
         ByRef attr As LMAAttribute, _
         Optional ByVal displayedOnly As Boolean = False) As Boolean
@@ -680,6 +890,58 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
         drawings = Nothing
     End Function
 
+    Private Function isFileLocked( _
+        ByRef filespec As String) As Boolean
+
+        ' If the file is already opened by another process and the specified type of access
+        ' is not allowed the Open operation fails and an error occurs.
+        On Error Resume Next
+        isFileLocked = False
+
+        Dim f As Integer
+        f = FreeFile
+
+        '  Open filespec For Binary Access Read Lock Read Write As #f
+
+        ' Check for "Permission Denied"
+        If Err.Number = 70 Then
+            isFileLocked = True
+        End If
+
+        ' Close #f
+    End Function
+
+    Private Function getPlantPath()
+        ' Get "Plant Path" from PlantSettings
+
+
+        Dim pathFilter As New LMAFilter
+        Dim criterion As New LMACriterion
+
+        criterion.SourceAttributeName = "Name"
+        criterion.ValueAttribute = "Plant Path"
+        criterion.Operator = "="
+
+        pathFilter.ItemType = "PlantSetting"
+        pathFilter.Criteria.Add(criterion)
+
+        Dim plantSettings As New LMPlantSettings
+        Dim plantSetting As LMPlantSetting
+        plantSettings.Collect(_projDatasource, Filter:=pathFilter)
+
+        plantSetting = plantSettings.Nth(1)
+
+        getPlantPath = plantSetting.Attributes("Value")
+
+        pathFilter = Nothing
+        criterion = Nothing
+        plantSetting = Nothing
+        plantSettings = Nothing
+
+
+        Exit Function
+
+    End Function
 
 End Class
 
