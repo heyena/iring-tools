@@ -238,7 +238,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
                 template.description = templateQualification.description;
                 template.qualifies = model.SelectedIMUri;
                 template.repositoryName = model.SelectedIMRepository;
-                 
+
                 foreach (RoleQualification roleQualification in templateQualification.roleQualification)
                 {
                   RoleQualification role = new RoleQualification();
@@ -411,7 +411,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
             }
 
             MessageBox.Show(messageBuilder.ToString(), "Post Template Error", MessageBoxButton.OK);
-          }          
+          }
         }
       }
       catch (Exception ex)
@@ -433,7 +433,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
       {
         _editorMode = editorMode;
         _templateModel = null;
-        
+
 
         if (qmxf != null) //edit mode, disable the other template type
         {
@@ -662,11 +662,14 @@ namespace org.iringtools.modules.templateeditor.editorregion
           ComboBoxItem cmbItem = (ComboBoxItem)cmbRepositories.Items[i];
           if (_templateModel != null)
           {
+            if (_templateModel.QMXF.sourceRepository != null)
+            {
               if (cmbItem.Content.ToString().ToLower().Contains(_templateModel.QMXF.sourceRepository.ToLower()))
               {
-                  cmbRepositories.SelectedIndex = i;
-                  break;
+                cmbRepositories.SelectedIndex = i;
+                break;
               }
+            }
           }
         }
       }
