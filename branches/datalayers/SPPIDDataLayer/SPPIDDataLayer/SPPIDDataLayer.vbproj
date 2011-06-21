@@ -89,6 +89,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Serialization, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="UtilityLibrary">
       <HintPath>..\library\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
@@ -104,6 +105,7 @@
     <Import Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SPPIDConfiguration.vb" />
     <Compile Include="SPPIDDataLayer.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
