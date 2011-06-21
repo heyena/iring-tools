@@ -405,7 +405,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while writing " + typeof(T).Name + " to " + path + ".", exception);
+        throw new Exception("Error writing [" + typeof(T).Name + "] to " + path + ".", exception);
       }
       finally
       {
@@ -441,7 +441,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while writing " + typeof(T).Name + " to memory stream.", exception);
+        throw new Exception("Error writing [" + typeof(T).Name + "] to memory stream.", exception);
       }
     }
 
@@ -458,7 +458,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while writing stream to " + path + ".", exception);
+        throw new Exception("Error writing stream to [" + path + "].", exception);
       }
       finally
       {
@@ -497,7 +497,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while reading " + typeof(T).Name + " from " + path + ".", exception);
+        throw new Exception("Error reading [" + typeof(T).Name + "] from [" + path + "].", exception);
       }
       finally
       {
@@ -518,7 +518,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while reading string from " + path + ".", exception);
+        throw new Exception("Error reading string from [" + path + "].", exception);
       }
       finally
       {
@@ -535,7 +535,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while reading Xml from " + path + ".", exception);
+        throw new Exception("Error reading XML from [" + path + "].", exception);
       }
     }
 
@@ -551,7 +551,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while reading stream from " + path + ".", exception);
+        throw new Exception("Error reading stream from [" + path + "].", exception);
       }
       finally
       {
@@ -641,7 +641,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while serializing " + typeof(T).Name + ".", exception);
+        throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
       }
     }
 
@@ -662,7 +662,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while serializing " + typeof(T).Name + ".", exception);
+        throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
       }
     }
 
@@ -676,7 +676,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while serializing stream.", exception);
+        throw new Exception("Error serializing stream.", exception);
       }
     }
 
@@ -705,7 +705,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while serializing " + typeof(T).Name + "to stream.", exception);
+        throw new Exception("Error serializing [" + typeof(T).Name + "] to stream.", exception);
       }
     }
 
@@ -734,7 +734,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while deserializing " + typeof(T).Name + ".", exception);
+        throw new Exception("Error deserializing [" + typeof(T).Name + "].", exception);
       }
     }
 
@@ -748,7 +748,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while deserializing " + typeof(T).Name + ".", exception);
+        throw new Exception("Error deserializing [" + typeof(T).Name + "].", exception);
       }
     }
 
@@ -779,7 +779,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while deserializing stream to " + typeof(T).Name + ".", exception);
+        throw new Exception("Error deserializing stream to [" + typeof(T).Name + "].", exception);
       }
       finally
       {
@@ -802,7 +802,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while deserializing string to stream.", exception);
+        throw new Exception("Error deserializing string to stream.", exception);
       }
       finally
       {
@@ -888,7 +888,7 @@ namespace org.iringtools.utility
       }
       catch (Exception exception)
       {
-        throw new Exception("Error while writing string to " + path + ".", exception);
+        throw new Exception("Error writing string to [" + path + "].", exception);
       }
     }
 
