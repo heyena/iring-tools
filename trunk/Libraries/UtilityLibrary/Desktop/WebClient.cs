@@ -227,7 +227,7 @@ namespace org.iringtools.utility
             {
                 string uri = _baseUri + relativeUri;
 
-                throw new Exception("Error while executing HTTP GET request on" + uri + ".", exception);
+                throw new Exception("Error while executing HTTP GET request [" + uri + "].", exception);
             }
         }
 

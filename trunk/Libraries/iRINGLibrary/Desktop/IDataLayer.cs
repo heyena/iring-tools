@@ -31,6 +31,7 @@ using System.Xml.Linq;
 using System.Text;
 using org.ids_adi.qxf;
 using org.w3.sparql_results;
+using System.Runtime.Serialization;
 
 namespace org.iringtools.library
 {
@@ -70,4 +71,7 @@ namespace org.iringtools.library
 
     XElement GetConfiguration();
   }
+
+  [CollectionDataContract(Name = "authroziedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]
+  public class AuthorizedUsers : List<string> { }
 }
