@@ -1382,12 +1382,25 @@ namespace org.iringtools.adapter.datalayer
         string userName = _keyRing["Name"].ToString();
         userName = userName.Substring(userName.IndexOf('\\') + 1).ToLower();
 
-        AuthorizedUsers authUsers = Utility.Read<AuthorizedUsers>(_authorizationPath, true);
-        foreach (string authUser in authUsers)
+        AuthorizedUsers authUsers = null;
+
+        try
         {
-          if (authUser.ToLower() == userName)
+          authUsers = Utility.Read<AuthorizedUsers>(_authorizationPath, true);
+        }
+        catch (Exception ex)
+        {
+          _logger.Warn("Error loading authorization file: " + ex);
+        }
+
+        if (authUsers != null)
+        {
+          foreach (string authUser in authUsers)
           {
-            return true;
+            if (authUser.ToLower() == userName)
+            {
+              return true;
+            }
           }
         }
       }

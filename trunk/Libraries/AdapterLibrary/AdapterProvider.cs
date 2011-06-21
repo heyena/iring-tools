@@ -1063,12 +1063,10 @@ namespace org.iringtools.adapter
 
         if (_keyRing.Count > 0)
         {
-          string userName = _keyRing["Name"].ToString();
-          _settings["UserName"] = userName;
           //if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
           //{
-          //  string userName = _keyRing["Name"].ToString();
-          //  _settings["UserName"] = userName;
+            string userName = _keyRing["Name"].ToString();
+            _settings["UserName"] = userName;
           //}
         }
       }

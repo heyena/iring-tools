@@ -668,11 +668,11 @@ namespace org.iringtools.adapter
 
         if (_keyRing.Count > 0)
         {
-          if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
-          {
+          //if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
+          //{
             string userName = _keyRing["Name"].ToString();
             _settings["UserName"] = userName;
-          }
+          //}
         }
       }
       catch (Exception ex)
