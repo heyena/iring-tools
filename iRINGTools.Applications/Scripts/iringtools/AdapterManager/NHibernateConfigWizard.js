@@ -460,6 +460,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
 										var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
 										var editPane = dataObjectsPane.items.map[scopeName + '.' + appName + '.editor-panel'];
+										var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+										dbObjectsTree.disable();
 										setTablesSelectorPane(editPane);
 									},
 									failure: function (f, a) {
@@ -502,20 +504,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			if (dbObjectsTree.disabled) {
 				for (var i = 0; i < dbTableNames.items.length; i++) {
 					var tableName = dbTableNames.items[i];
-					if (tableName) {
-						var selected = false;
-						if (userTableNames)
-							for (var j = 0; j < userTableNames.length; j++) {
-								if (tableName == userTableNames[j][0]) {
-									selected = true;
-									break;
-								}
-							}
 
-						if (!selected) {
-							availTableName.push(tableName);
-						}
-					}
+					availTableName.push(tableName);
+
 				}
 			}
 			else {
@@ -525,15 +516,17 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					availTableName.push(dbTableNames.items[i]);
 				}
 
-				for (var j = 0; j < availTableName.length; j++)
-					for (var i = 0; i < rootNode.childNodes.length; i++) {
-						if (rootNode.childNodes[i].text == availTableName[j]) {
-							found = true;
-							availTableName.splice(j, 1);
-							j--;
-							break;
+				if (!dbObjectsTree.disabled) {
+					for (var j = 0; j < availTableName.length; j++)
+						for (var i = 0; i < rootNode.childNodes.length; i++) {
+							if (rootNode.childNodes[i].text == availTableName[j]) {
+								found = true;
+								availTableName.splice(j, 1);
+								j--;
+								break;
+							}
 						}
-					}
+				}
 			}
 
 			return availTableName;
@@ -542,12 +535,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var setSelectTables = function (dbObjectsTree) {
 			var selectTableNames = new Array();
 
-			if (dbObjectsTree.disabled) {
-				if (userTableNames)
-					for (var i = 0; i < userTableNames.length; i++)
-						selectTableNames.push(userTableNames[i]);
-			}
-			else {
+			if (!dbObjectsTree.disabled) {
 				var rootNode = dbObjectsTree.getRootNode();
 				for (var i = 0; i < rootNode.childNodes.length; i++) {
 					var nodeText = rootNode.childNodes[i].text;
@@ -559,18 +547,25 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		}
 
 		var setTablesSelectorPane = function (editPane) {
+			var tab = Ext.getCmp('content-panel');
+			var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
+			var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
+			var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+						
 			if (editPane) {
 				if (editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane']) {
 					var tableSelectorPanel = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
-					if (tableSelectorPanel) {
-						//tableSelectorPanel.destroy();
-						var panelIndex = editPane.items.indexOf(tableSelectorPanel);
-						editPane.getLayout().setActiveItem(panelIndex);
-						return;
+					if (tableSelectorPanel) {						
+						if (dbObjectsTree.disabled)
+							tableSelectorPanel.destroy();
+						else {
+							var panelIndex = editPane.items.indexOf(tableSelectorPanel);
+							editPane.getLayout().setActiveItem(panelIndex);
+							return;
+						}
 					}
 				}
 
-				var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 				var availItems = setAvailTables(dbObjectsTree);
 				var selectItems = setSelectTables(dbObjectsTree);
 
