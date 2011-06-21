@@ -3293,6 +3293,55 @@ namespace org.iringtools.refdata
     }
           #endregion
 
+    public List<Entity> Find(string queryString)
+    {
+      List<Entity> queryResult = new List<Entity>();
+      try
+      {
+        string sparql = String.Empty;
+        string relativeUri = String.Empty;
+
+        Query queryExactSearch = (Query)_queries.FirstOrDefault(c => c.Key == "ExactSearch").Query;
+
+        sparql = ReadSPARQL(queryExactSearch.FileName);
+
+        sparql = sparql.Replace("param1", queryString);
+
+        foreach (Repository repository in _repositories)
+        {
+          SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
+
+          foreach (SparqlResult result in sparqlResults)
+          {
+            Entity resultEntity = new Entity();
+            foreach(var v in result.Variables)
+            {
+              if(v.Equals("uri"))
+              {
+                resultEntity.Uri = result[v].ToString();
+              }
+              else if (v.Equals("label") && result.HasValue("label"))
+              {
+                resultEntity.Label = ((ILiteralNode)result[v]).Value;
+                resultEntity.Lang = ((ILiteralNode)result[v]).Language;
+              }
+            }
+
+            resultEntity.Repository = repository.Name;
+            
+
+            queryResult.Add(resultEntity);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error in Find: " + e);
+        throw new Exception("Error while Finding " + queryString + ".\n" + e.ToString(), e);
+      }
+      return queryResult;
+    }
+
     public VersionInfo GetVersion()
     {
       Version version = this.GetType().Assembly.GetName().Version;

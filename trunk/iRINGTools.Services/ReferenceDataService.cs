@@ -68,6 +68,19 @@ namespace org.iringtools.services
     #endregion
 
     /// <summary>
+    /// Finds a specific item by label and returns a list of Entity objects.
+    /// </summary>
+    [Description("Finds a specific item by label and returns a list of Entity objects.")]
+    [WebGet(UriTemplate = "/find/{query}")]
+    public List<Entity> Find(string query)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.Find(query);
+    }
+
+    /// <summary>
     /// Gets configured repositories.
     /// </summary>
     [Description("Gets configured repositories.")]
