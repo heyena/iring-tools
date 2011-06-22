@@ -43,6 +43,7 @@ using VDS.RDF.Query.Patterns;
 using VDS.RDF.Update;
 using VDS.RDF.Update.Commands;
 using VDS.RDF.Writing.Formatting;
+using System.Net;
 
 
 namespace org.iringtools.refdata
@@ -157,7 +158,6 @@ namespace org.iringtools.refdata
       return _repositories.Find(c => c.Name == name);
     }
 
-
     public RefDataEntities Search(string query)
     {
       try
@@ -261,11 +261,9 @@ namespace org.iringtools.refdata
       return SearchPage(query, start, limit);
     }
 
-
     private Entity GetLabel(string uri)
     {
       Entity labelEntity = new Entity();
-
       try
       {
         string label = String.Empty;
@@ -1819,9 +1817,17 @@ namespace org.iringtools.refdata
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(repository.Uri));
         string encryptedCredentials = repository.EncryptedCredentials;
         WebCredentials credentials = new WebCredentials(encryptedCredentials);
-        if (credentials.isEncrypted) credentials.Decrypt();
-        ///TODO need to implement proxy credentials
+
+        if (!string.IsNullOrEmpty(_settings["ProxyHost"])) /// need to use proxy
+        {
+          endpoint.Proxy = new WebProxy(_settings["ProxyHost"], Convert.ToInt32(_settings["ProxyPort"]));
+          WebProxyCredentials pcred = new WebProxyCredentials(_settings["ProxyCredentialToken"], 
+                                        _settings["ProxyHost"], 
+                                        Convert.ToInt32(_settings["ProxyPort"]));
+          endpoint.ProxyCredentials = pcred.GetNetworkCredential();
+        }
         endpoint.Credentials = credentials.GetNetworkCredential();
+
         SparqlResultSet resultSet = endpoint.QueryWithResultSet(sparql);
 
         return resultSet;
@@ -1860,11 +1866,18 @@ namespace org.iringtools.refdata
         string uri = string.IsNullOrEmpty(repository.UpdateUri) ? repository.Uri : repository.UpdateUri;
 
         WebCredentials credentials = new WebCredentials(encryptedCredentials);
-        if (credentials.isEncrypted) credentials.Decrypt();
+        
         SparqlRemoteUpdateEndpoint endpoint = new SparqlRemoteUpdateEndpoint(repository.UpdateUri);
-        ///TODO setting proxy when required
-        //                if(_proxyCredentials != null)
-        //                    endpoint.ProxyCredentials = _proxyCredentials.GetNetworkCredential();
+
+        if (!string.IsNullOrEmpty(_settings["ProxyHost"])) /// need to use proxy
+        {
+          endpoint.Proxy = new WebProxy(_settings["ProxyHost"], Convert.ToInt32(_settings["ProxyPort"]));
+          WebProxyCredentials pcred = new WebProxyCredentials(_settings["ProxyCredentialToken"],
+                                        _settings["ProxyHost"],
+                                        Convert.ToInt32(_settings["ProxyPort"]));
+          endpoint.ProxyCredentials = pcred.GetNetworkCredential();
+        }
+
         endpoint.Credentials = credentials.GetNetworkCredential();
         endpoint.Update(sparql);
 
