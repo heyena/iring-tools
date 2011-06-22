@@ -26,7 +26,7 @@ namespace NUnit.Tests
       _settings["ApplicationName"] = "ABC";
       _settings["GraphName"] = "Lines";
       _settings["Identifier"] = "66015-O";
-      _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
+			_settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
 
       _baseDirectory = Directory.GetCurrentDirectory();
       _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
