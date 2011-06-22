@@ -19,12 +19,13 @@ public class HttpClient
   private HttpProxy httpProxy = null;
   private NetworkCredentials networkCredentials = null;
 
-  public final static String GET = "GET";
-  public final static String POST = "POST";
+  private final static String GET = "GET";
+  private final static String POST = "POST";
+  
+  private final static String SPARQL_QUERY = "query";
+  private final static String SPARQL_UPDATE = "update";
 
-  public HttpClient()
-  {
-  }
+  public HttpClient() {}
 
   public HttpClient(String baseUri)
   {
@@ -155,15 +156,27 @@ public class HttpClient
   public <T> T postSparql(Class<T> responseClass, String relativeUri, String query, String defaultGraphUri)
       throws HttpClientException
   {
+    return postSparql(responseClass, relativeUri, SPARQL_QUERY, query, defaultGraphUri);
+  }
+  
+  public <T> T postSparqlUpdate(Class<T> responseClass, String relativeUri, String query, String defaultGraphUri)
+      throws HttpClientException
+  {
+    return postSparql(responseClass, relativeUri, SPARQL_UPDATE, query, defaultGraphUri);
+  }
+  
+  private <T> T postSparql(Class<T> responseClass, String relativeUri, String postType, String query, String defaultGraphUri)
+      throws HttpClientException
+  {
     Map<String, String> headers = new HashMap<String, String>();
     headers.put("Content-Type", "application/x-www-form-urlencoded");
     headers.put("Accept", "application/sparql-results+xml");
 
     Map<String, String> formData = new HashMap<String, String>();
-    formData.put("query", query);
+    formData.put(postType, query);
     formData.put("default-graph-uri", (defaultGraphUri != null) ? defaultGraphUri : "");
 
-    return postFormData(responseClass, relativeUri, formData, headers);
+    return postFormData(responseClass, relativeUri, formData, headers);    
   }
 
   public void setBaseUri(String baseUri)
