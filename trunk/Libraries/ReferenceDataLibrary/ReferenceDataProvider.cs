@@ -3102,7 +3102,7 @@ namespace org.iringtools.refdata
                       }
                     }
                   }
-                  else if (newClsDef.classification.Count > oldClsDef.classification.Count)//some is added ... find added 
+                  else if (newClsDef.specialization.Count > oldClsDef.specialization.Count)//some is added ... find added 
                   {
                     foreach (Specialization ns in newClsDef.specialization)
                     {
@@ -3171,7 +3171,7 @@ namespace org.iringtools.refdata
              
             }
             // add class
-            if (delete.IsEmpty)
+            if (delete.IsEmpty && insert.IsEmpty)
             {
               foreach (QMXFName newName in newClsDef.name)
               {
