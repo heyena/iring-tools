@@ -83,7 +83,7 @@ namespace org.iringtools.adapter.datalayer
           .BuildSessionFactory();
 
       _authorizationPath = string.Format("{0}Authorization.{1}.xml",
-        _settings["XmlPath"],
+        _settings["DataPath"],
         _settings["Scope"]
       );
     }
