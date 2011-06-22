@@ -102,7 +102,7 @@
     </StackPanel>
         </Grid>
             </TabItem>
-            <TabItem Header="Registry Configuration Tool" Name="tbRegistery" IsEnabled="{Binding IsEnable}">
+            <TabItem Header="Registry Configuration Tool" Name="tbRegistery" IsEnabled="True">
                 <Grid>
                     <Grid.Background>
                         <SolidColorBrush Color="#FFF0F0F0"/>
@@ -130,7 +130,7 @@
                     <Label Content="Configuration File:" Target="{Binding ElementName=ServicesWebConfig}" Grid.Row="1" Margin="18,6,0,6" TabIndex="10" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
                     <Label Content="Username:" Grid.Row="2" Margin="18,6,0,6"  TabIndex="40" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
                     <Label Content="Password:" Grid.Row="3" Margin="18,6,0,6"  TabIndex="60" HorizontalContentAlignment="Right" FontFamily="Arial" FontSize="12" />
-                    <TextBox Grid.Row="1" Grid.Column="1" Margin="0,6"  TabIndex="20" IsEnabled="{Binding IsEnable}">
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="0,6"  TabIndex="20" IsEnabled="True">
                         <TextBox.Text>
                             <Binding Path="ServicesWebConfig" ValidatesOnDataErrors="True">
                                 <Binding.ValidationRules>
@@ -139,7 +139,7 @@
                             </Binding>
                         </TextBox.Text>
                     </TextBox>
-                    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,6" TabIndex="50" IsEnabled="{Binding IsEnable}">
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="0,6" TabIndex="50" IsEnabled="True">
                         <TextBox.Text>
                             <Binding Path="RegUsername" ValidatesOnDataErrors="False">
                                 <!--<Binding.ValidationRules>
@@ -148,14 +148,14 @@
                             </Binding>
                         </TextBox.Text>
                     </TextBox>
-                    <PasswordBox Grid.Row="3" Grid.Column="1" Margin="0,6" PasswordChar="*" TabIndex="70" IsEnabled="{Binding IsEnable}"
+                    <PasswordBox Grid.Row="3" Grid.Column="1" Margin="0,6" PasswordChar="*" TabIndex="70" IsEnabled="True"
                      xamlxtras:PasswordBoxAssistant.BindPassword="true"
                      xamlxtras:PasswordBoxAssistant.BoundPassword="{Binding Path=RegPassword, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                     </PasswordBox>
-                    <Button Content="..." Command="{Binding GetIRTFolder}"  Grid.Row="1"  Grid.Column="2" Margin="6" TabIndex="30" FontFamily="Arial" FontSize="12" IsEnabled="{Binding IsEnable}" />
+                    <Button Content="..." Command="{Binding GetIRTFolder}"  Grid.Row="1"  Grid.Column="2" Margin="6" TabIndex="30" FontFamily="Arial" FontSize="12" IsEnabled="True" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Row="7" Grid.ColumnSpan="2" Grid.Column="1">
-                        <Button Content="Update" Command="{Binding UpdateRegistryCommand}" Grid.Row="6" Margin="6,6,0,6" Width="100" IsDefault="True"  TabIndex="120" Height="28" FontFamily="Arial" FontSize="12" IsEnabled="{Binding IsEnable}" />
-                        <Button Content="Reset" Command="{Binding ResetRegistryCommand}" Grid.Row="6" Grid.Column="1" Margin="6" Width="100" TabIndex="130" Height="28" FontFamily="Arial" FontSize="12" IsEnabled="{Binding IsEnable}" />
+                        <Button Content="Update" Command="{Binding UpdateRegistryCommand}" Grid.Row="6" Margin="6,6,0,6" Width="100" IsDefault="True"  TabIndex="120" Height="28" FontFamily="Arial" FontSize="12" IsEnabled="True" />
+                        <Button Content="Reset" Command="{Binding ResetRegistryCommand}" Grid.Row="6" Grid.Column="1" Margin="6" Width="100" TabIndex="130" Height="28" FontFamily="Arial" FontSize="12" IsEnabled="True" />
                     </StackPanel>
                 </Grid>
             </TabItem>
