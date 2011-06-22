@@ -13,6 +13,7 @@ namespace org.iringtools.library
     {
       this.Add("BaseDirectoryPath", AppDomain.CurrentDomain.BaseDirectory);
       this.Add("XmlPath", @".\XML\");
+      this.Add("DataPath", @".\App_Data\");
       this.Add("ProxyCredentialToken", String.Empty);
       this.Add("ProxyHost", String.Empty);
       this.Add("ProxyPort", String.Empty);
