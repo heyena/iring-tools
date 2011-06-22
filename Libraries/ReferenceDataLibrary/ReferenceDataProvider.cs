@@ -1818,13 +1818,13 @@ namespace org.iringtools.refdata
         string encryptedCredentials = repository.EncryptedCredentials;
         WebCredentials cred = new WebCredentials(encryptedCredentials);
         if (cred.isEncrypted) cred.Decrypt();
-        if (!string.IsNullOrEmpty(_settings["ProxyHost"]) 
+        if (!string.IsNullOrEmpty(_settings["ProxyHost"])
           && !string.IsNullOrEmpty(_settings["ProxyPort"])
           && !string.IsNullOrEmpty(_settings["ProxyCredentialToken"])) /// need to use proxy
         {
           endpoint.Proxy = new WebProxy(_settings["ProxyHost"], Convert.ToInt32(_settings["ProxyPort"]));
-          WebProxyCredentials pcred = new WebProxyCredentials(_settings["ProxyCredentialToken"], 
-                                        _settings["ProxyHost"], 
+          WebProxyCredentials pcred = new WebProxyCredentials(_settings["ProxyCredentialToken"],
+                                        _settings["ProxyHost"],
                                         Convert.ToInt32(_settings["ProxyPort"]));
           if (pcred.isEncrypted) pcred.Decrypt();
           endpoint.ProxyCredentials = pcred.GetNetworkCredential();
@@ -2047,16 +2047,6 @@ namespace org.iringtools.refdata
                       GenerateName(ref delete, oldName, templateId, oldTDef);
                       GenerateName(ref insert, newName, templateId, newTDef);
                     }
-                    if (repository.RepositoryType == RepositoryType.Part8)
-                    {
-                      GenerateTypesPart8(ref delete, templateId, null, oldTDef);
-                      GenerateTypesPart8(ref insert, templateId, null, newTDef);
-                    }
-                    else
-                    {
-                      GenerateTypes(ref delete, templateId, null, oldTDef);
-                      GenerateTypes(ref insert, templateId, null, newTDef);
-                    }
                   }
                   //append changing descriptions to each block
                   foreach (Description newDescr in newTDef.description)
@@ -2075,7 +2065,6 @@ namespace org.iringtools.refdata
                       GenerateDescription(ref insert, newDescr, templateId);
                     }
                   }
-                  //role count
                   if (oldTDef.roleDefinition.Count != newTDef.roleDefinition.Count)
                   {
                     if (repository.RepositoryType == RepositoryType.Part8)
@@ -2109,17 +2098,6 @@ namespace org.iringtools.refdata
                     if (oldRole != null)
                     {
                       string label = String.Empty;
-
-                      if (repository.RepositoryType == RepositoryType.Part8)
-                      {
-                        GenerateTypesPart8(ref delete, Utility.GetIdFromURI(oldRole.identifier), templateId, oldRole);
-                        GenerateTypesPart8(ref insert, Utility.GetIdFromURI(newRole.identifier), templateId, newRole);
-                      }
-                      else
-                      {
-                        GenerateTypes(ref delete, Utility.GetIdFromURI(oldRole.identifier), templateId, oldRole);
-                        GenerateTypes(ref insert, Utility.GetIdFromURI(newRole.identifier), templateId, newRole);
-                      }
 
                       if (newRole.description != null)
                       {
@@ -2208,10 +2186,12 @@ namespace org.iringtools.refdata
                       GenerateName(ref insert, newRole.name[0], newRoleID, newRole);
                       if (repository.RepositoryType == RepositoryType.Part8)
                       {
+                        GenerateTypesPart8(ref insert, newRoleID, templateId, newRole);
                         GenerateRoleIndexPart8(ref insert, newRoleID, index, newRole);
                       }
                       else
                       {
+                        GenerateTypes(ref insert, newRoleID, templateId, newRole);
                         GenerateRoleIndex(ref insert, newRoleID, index);
                       }
                       if (!string.IsNullOrEmpty(newRole.range))
@@ -2231,11 +2211,20 @@ namespace org.iringtools.refdata
                     index++;
                   }
                 }
+                if (delete.IsEmpty && insert.IsEmpty)
+                {
+                  string errMsg = "NO CHANGES MADE";
+                  Status status = new Status();
+                  response.Level = StatusLevel.Warning;
+                  status.Messages.Add(errMsg);
+                  response.Append(status);
+                  continue;//Nothing to be done
+                }
               }
+              
               #endregion Form Delete/Insert
-
               #region Form Insert SPARQL
-              if (insert.IsEmpty)
+              if (insert.IsEmpty && delete.IsEmpty)
               {
                 if (repository.RepositoryType == RepositoryType.Part8)
                 {
@@ -2244,6 +2233,7 @@ namespace org.iringtools.refdata
                 }
                 else
                 {
+                  GenerateTypes(ref insert, templateId, null, newTDef);
                   GenerateRoleCount(ref insert, newTDef.roleDefinition.Count, templateId, newTDef);
                 }
                 foreach (QMXFName name in newTDef.name)
@@ -2397,16 +2387,6 @@ namespace org.iringtools.refdata
                         GenerateName(ref insert, newName, templateID, newTQ);
                       }
                     }
-                    if (repository.RepositoryType == RepositoryType.Part8)
-                    {
-                      GenerateTypesPart8(ref delete, templateID, qName, oldTQ);
-                      GenerateTypesPart8(ref insert, templateID, qName, newTQ);
-                    }
-                    else
-                    {
-                      GenerateTypes(ref delete, qName, templateID, oldTQ);
-                      GenerateTypes(ref insert, qName, templateID, newTQ);
-                    }
                   }
                   //role count
                   if (oldTQ.roleQualification.Count != newTQ.roleQualification.Count)
@@ -2519,8 +2499,8 @@ namespace org.iringtools.refdata
                       }
                       if (repository.RepositoryType == RepositoryType.Part8)
                       {
-
                         GenerateRoleIndexPart8(ref insert, newRoleID, index, newRole);
+                        GenerateTypesPart8(ref insert, newRoleID, templateID, newRole);
                         GenerateHasTemplate(ref insert, newRoleID, templateID, newRole);
                         if (!string.IsNullOrEmpty(newRole.range))
                         {
@@ -2578,6 +2558,15 @@ namespace org.iringtools.refdata
                     index++;
                   }
                 }
+                if (delete.IsEmpty && insert.IsEmpty)
+                {
+                  string errMsg = "NO CHANGES MADE";
+                  Status status = new Status();
+                  response.Level = StatusLevel.Warning;
+                  status.Messages.Add(errMsg);
+                  response.Append(status);
+                  continue;//Nothing to be done
+                }
               }
               #endregion
               #region Form Insert SPARQL
@@ -2585,7 +2574,7 @@ namespace org.iringtools.refdata
               {
                 string templateLabel = String.Empty;
                 string labelSparql = String.Empty;
-                
+
                 foreach (QMXFName newName in newTQ.name)
                 {
                   GenerateName(ref insert, newName, templateID, newTQ);
@@ -2944,14 +2933,14 @@ namespace org.iringtools.refdata
       if (gobj is TemplateDefinition)
       {
         subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
-        pred = work.CreateUriNode(" rdf:type");
-        obj = work.CreateUriNode(objId);
+        pred = work.CreateUriNode("rdf:type");
+        obj = work.CreateUriNode("tpl:R16376066707");
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is RoleDefinition)
       {
         subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
-        pred = work.CreateUriNode(" rdf:type");
+        pred = work.CreateUriNode("rdf:type");
         obj = work.CreateUriNode("tpl:R74478971040");
         work.Assert(new Triple(subj, pred, obj));
       }
@@ -3024,7 +3013,7 @@ namespace org.iringtools.refdata
       delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
       delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
       insert.NamespaceMap.Import(delete.NamespaceMap);
-      
+
       Response response = new Response();
       response.Level = StatusLevel.Success;
       try
@@ -3133,7 +3122,7 @@ namespace org.iringtools.refdata
                         }
                         else
                         {
-                          if (qn) GenerateDmClassification(ref delete, clsId, qName);   
+                          if (qn) GenerateDmClassification(ref delete, clsId, qName);
                         }
                       }
                     }
@@ -3152,11 +3141,11 @@ namespace org.iringtools.refdata
                         }
                         else
                         {
-                          if (qn) GenerateDmClassification(ref insert, clsId, qName);   
+                          if (qn) GenerateDmClassification(ref insert, clsId, qName);
                         }
                       }
                     }
-                  }                 
+                  }
                 }
               }
               if (delete.IsEmpty && insert.IsEmpty)
@@ -3168,7 +3157,7 @@ namespace org.iringtools.refdata
                 response.Append(status);
                 continue;//Nothing to be done
               }
-             
+
             }
             // add class
             if (delete.IsEmpty && insert.IsEmpty)
@@ -3216,14 +3205,15 @@ namespace org.iringtools.refdata
                   if (!string.IsNullOrEmpty(newClasif.reference))
                   {
                     qn = nsMap.ReduceToQName(newClasif.reference, out qName);
-                    
+
                     if (repository.RepositoryType == RepositoryType.Part8)
                     {
                       if (qn) GenerateSuperClass(ref insert, qName, clsId);
                     }
                     else
                     {
-                      if (qn) GenerateDmClassification(ref insert, clsId, qName);                    }
+                      if (qn) GenerateDmClassification(ref insert, clsId, qName);
+                    }
                   }
                 }
               }
@@ -3291,7 +3281,7 @@ namespace org.iringtools.refdata
     {
       subj = work.CreateUriNode(subjId);
       pred = work.CreateUriNode("rdfs:subClassOf");
-      obj = work.CreateUriNode(string.Format("rdl:{0}",objId));
+      obj = work.CreateUriNode(string.Format("rdl:{0}", objId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
@@ -3335,9 +3325,9 @@ namespace org.iringtools.refdata
           foreach (SparqlResult result in sparqlResults)
           {
             Entity resultEntity = new Entity();
-            foreach(var v in result.Variables)
+            foreach (var v in result.Variables)
             {
-              if(v.Equals("uri"))
+              if (v.Equals("uri"))
               {
                 resultEntity.Uri = result[v].ToString();
               }
@@ -3349,7 +3339,7 @@ namespace org.iringtools.refdata
             }
 
             resultEntity.Repository = repository.Name;
-            
+
 
             queryResult.Add(resultEntity);
           }
