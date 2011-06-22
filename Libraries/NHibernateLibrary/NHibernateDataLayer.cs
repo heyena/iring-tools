@@ -245,11 +245,12 @@ namespace org.iringtools.adapter.datalayer
                       {
                         foreach (IDataObject dataObject in dataObjects)
                         {
-                          if (dataObject.GetPropertyValue("Id").ToString().ToLower() == identifier.ToLower())
-                          {
-                            orderedDataObjects.Add(dataObject);
-                            break;
-                          }
+													if (identifier != null)
+														if (dataObject.GetPropertyValue("Id").ToString().ToLower() == identifier.ToLower())
+														{
+															orderedDataObjects.Add(dataObject);
+															break;
+														}
                         }
                       }
 
