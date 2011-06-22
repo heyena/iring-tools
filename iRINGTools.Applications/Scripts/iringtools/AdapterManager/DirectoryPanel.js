@@ -336,8 +336,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
          scope: this
      },
       {
-          text: 'Delete GraphName',
-          handler: this.onDeleteGraphName,
+          text: 'Delete GraphMap',
+          handler: this.onDeleteGraphMap,
           icon: 'Content/img/16x16/edit-delete.png',
           scope: this
       },
@@ -548,7 +548,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         win.show();
     },
 
-    onDeleteGraphName: function (btn, e) {
+    onDeleteGraphMap: function (btn, e) {
         var that = this;
         var node = this.getSelectedNode();
         Ext.Ajax.request({
