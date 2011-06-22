@@ -401,7 +401,9 @@ namespace org.iringtools.adapter.datalayer
                   // NOTE: Id property is not available if it's not mapped and will cause exception
                   identifier = dataObject.GetPropertyValue("Id").ToString();
                 }
-                catch (Exception) { }  // no need to handle exception because identifier is only used for statusing
+                catch (Exception ex) {
+									_logger.Error(string.Format("Error in Post: {0}", ex));
+  							}  // no need to handle exception because identifier is only used for statusing
 
                 status.Identifier = identifier;
 
@@ -416,6 +418,7 @@ namespace org.iringtools.adapter.datalayer
                   status.Level = StatusLevel.Error;
                   status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
                   status.Results.Add("ResultTag", identifier);
+									_logger.Error("Error in Post saving: " + ex);				
                 }
               }
               else
@@ -626,6 +629,7 @@ namespace org.iringtools.adapter.datalayer
         _response.Messages.Add("Failed to Save datalayer Configuration");
         _response.Messages.Add(ex.Message);
         _response.Level = StatusLevel.Error;
+				_logger.Error("Error in SaveConfiguration: " + ex);
       }
       return _response;
     }
@@ -1022,9 +1026,10 @@ namespace org.iringtools.adapter.datalayer
         tableNames = metadataList;
         return tableNames;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-        return tableNames;
+				_logger.Error("Error in GetSchemaObjects: " + ex);
+				return tableNames;
       }
     }
 
@@ -1122,8 +1127,9 @@ namespace org.iringtools.adapter.datalayer
         }
         return dataObject;
       }
-      catch (Exception)
+      catch (Exception ex)
       {
+				_logger.Error("Error in GetSchemaObjectSchema: " + ex);
         return dataObject;
       }
     }
@@ -1345,7 +1351,8 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception ex)
       {
-        throw new Exception("Invalid connection string: " + ex.Message);
+				_logger.Error("Error in ValidateDatabaseDictionary: " + ex);
+				throw new Exception("Invalid connection string: " + ex.Message);
       }
       finally
       {
@@ -1403,7 +1410,8 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception ex)
       {
-        throw ex;
+				_logger.Error("Error in ParseConnectionString: " + ex);
+				throw ex;
       }
     }
 
