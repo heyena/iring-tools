@@ -592,8 +592,9 @@ namespace org.iringtools.nhibernate
 				}
 				return dataObject;
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				_logger.Error(string.Format("Error in GetSchemaObjectSchema: {0}", ex));				
 				return dataObject;
 			}
 		}
@@ -633,6 +634,7 @@ namespace org.iringtools.nhibernate
 			}
 			catch (Exception ex)
 			{
+				_logger.Error(string.Format("Error in GetTableNames: {0}", ex));				
 				throw ex;
 			}
 
@@ -940,6 +942,7 @@ namespace org.iringtools.nhibernate
 			}
 			catch (Exception ex)
 			{
+				_logger.Error(string.Format("Error in ValidateDatabaseDictionary: {0}", ex));
 				throw new Exception("Invalid connection string: " + ex.Message);
 			}
 			finally
@@ -998,6 +1001,7 @@ namespace org.iringtools.nhibernate
 			}
 			catch (Exception ex)
 			{
+				_logger.Error(string.Format("Error in ParseConnectionString: {0}", ex));
 				throw ex;
 			}
 		}
