@@ -1816,17 +1816,20 @@ namespace org.iringtools.refdata
       {
         SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(repository.Uri));
         string encryptedCredentials = repository.EncryptedCredentials;
-        WebCredentials credentials = new WebCredentials(encryptedCredentials);
-
-        if (!string.IsNullOrEmpty(_settings["ProxyHost"])) /// need to use proxy
+        WebCredentials cred = new WebCredentials(encryptedCredentials);
+        if (cred.isEncrypted) cred.Decrypt();
+        if (!string.IsNullOrEmpty(_settings["ProxyHost"]) 
+          && !string.IsNullOrEmpty(_settings["ProxyPort"])
+          && !string.IsNullOrEmpty(_settings["ProxyCredentialToken"])) /// need to use proxy
         {
           endpoint.Proxy = new WebProxy(_settings["ProxyHost"], Convert.ToInt32(_settings["ProxyPort"]));
           WebProxyCredentials pcred = new WebProxyCredentials(_settings["ProxyCredentialToken"], 
                                         _settings["ProxyHost"], 
                                         Convert.ToInt32(_settings["ProxyPort"]));
+          if (pcred.isEncrypted) pcred.Decrypt();
           endpoint.ProxyCredentials = pcred.GetNetworkCredential();
         }
-        endpoint.Credentials = credentials.GetNetworkCredential();
+        endpoint.Credentials = cred.GetNetworkCredential();
 
         SparqlResultSet resultSet = endpoint.QueryWithResultSet(sparql);
 
@@ -1865,20 +1868,24 @@ namespace org.iringtools.refdata
         string encryptedCredentials = repository.EncryptedCredentials;
         string uri = string.IsNullOrEmpty(repository.UpdateUri) ? repository.Uri : repository.UpdateUri;
 
-        WebCredentials credentials = new WebCredentials(encryptedCredentials);
-        
+        WebCredentials cred = new WebCredentials(encryptedCredentials);
+        if (cred.isEncrypted) cred.Decrypt();
+
         SparqlRemoteUpdateEndpoint endpoint = new SparqlRemoteUpdateEndpoint(repository.UpdateUri);
 
-        if (!string.IsNullOrEmpty(_settings["ProxyHost"])) /// need to use proxy
+        if (!string.IsNullOrEmpty(_settings["ProxyHost"])
+          && !string.IsNullOrEmpty(_settings["ProxyPort"])
+          && !string.IsNullOrEmpty(_settings["ProxyCredentialToken"])) /// need to use proxy
         {
           endpoint.Proxy = new WebProxy(_settings["ProxyHost"], Convert.ToInt32(_settings["ProxyPort"]));
           WebProxyCredentials pcred = new WebProxyCredentials(_settings["ProxyCredentialToken"],
                                         _settings["ProxyHost"],
                                         Convert.ToInt32(_settings["ProxyPort"]));
+          if (pcred.isEncrypted) pcred.Decrypt();
           endpoint.ProxyCredentials = pcred.GetNetworkCredential();
         }
 
-        endpoint.Credentials = credentials.GetNetworkCredential();
+        endpoint.Credentials = cred.GetNetworkCredential();
         endpoint.Update(sparql);
 
         return response;
