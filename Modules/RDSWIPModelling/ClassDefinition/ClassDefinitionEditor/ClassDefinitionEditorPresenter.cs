@@ -353,7 +353,8 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
         else if (e.ButtonClicked.Tag.Equals("EditClass1"))
         {
           InitializeEditor(EditorMode.Edit, model.SelectedQMXF);
-
+          if (cmbRepositories.Items.Count > 0)
+            cmbRepositories.SelectedIndex = 0;
           IRegion region = regionManager.Regions["ClassEditorRegion"];
 
           foreach (UserControl userControl in region.Views)
