@@ -357,6 +357,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
       }
     }
 
+
     void OnDataArrivedHandler(object sender, System.EventArgs e)
     {
       try
@@ -635,6 +636,8 @@ namespace org.iringtools.modules.templateeditor.editorregion
         if (e.ButtonClicked.Tag.Equals("AddTemplate1"))
         {
           InitializeEditorForAdd();
+          if (cmbRepositories.Items.Count > 0)
+            cmbRepositories.SelectedIndex = 0;
 
           IRegion region = regionManager.Regions["TemplateEditorRegion"];
 
