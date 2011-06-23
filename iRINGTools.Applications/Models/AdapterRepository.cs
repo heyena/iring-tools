@@ -292,7 +292,7 @@ namespace iRINGTools.Web.Models
           return client.Get<DataProviders>("/providers");
         }
 
-				public String SaveDBDictionary(string scope, string application, string tree)
+				public string SaveDBDictionary(string scope, string application, string tree)
 				{
 					WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
 					DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
