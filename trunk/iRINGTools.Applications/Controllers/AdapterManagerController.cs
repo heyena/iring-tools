@@ -73,7 +73,17 @@ namespace iRINGTools.Web.Controllers
 
 		public ActionResult Trees(FormCollection form)
 		{
-			_repository.SaveDBDictionary(form["scope"], form["app"], form["tree"]);
+			string response;
+			
+			response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"]);
+
+			if (response.ToUpper().Contains("ERROR"))
+			{
+				int inds = response.ToUpper().IndexOf("<MESSAGE>");
+				int inde = response.ToUpper().IndexOf(";");
+				string msg = response.Substring(inds + 9, inde - inds - 13);
+				return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+			}
 			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
 		}
 

@@ -158,8 +158,14 @@ namespace org.iringtools.nhibernate
 				InitializeScope(projectName, applicationName);
 
 				Utility.Write<DatabaseDictionary>(databaseDictionary, _settings["DBDictionaryPath"]);
-				Generate(projectName, applicationName);
-				status.Messages.Add("Database Dictionary saved successfully");
+				Response response = Generate(projectName, applicationName);
+				if (response.Level.ToString().ToUpper() == "SUCCESS")
+					status.Messages.Add("Database Dictionary saved successfully");
+				else
+				{
+					throw new Exception(response.StatusList[0].Messages[0].ToString());
+				}
+
 			}
 			catch (Exception ex)
 			{
@@ -955,7 +961,7 @@ namespace org.iringtools.nhibernate
 			{
 				if (dataObject.keyProperties == null || dataObject.keyProperties.Count == 0)
 				{
-					throw new Exception(string.Format("Table \"{0}\" has no key.", dataObject.tableName));
+					throw new Exception(string.Format("Table \"{0}\" has no key. Must select keys before saving.", dataObject.tableName));					
 				}
 			}
 

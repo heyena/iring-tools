@@ -551,11 +551,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
 			var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
 			var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-						
+
 			if (editPane) {
 				if (editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane']) {
 					var tableSelectorPanel = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
-					if (tableSelectorPanel) {						
+					if (tableSelectorPanel) {
 						if (dbObjectsTree.disabled)
 							tableSelectorPanel.destroy();
 						else {
@@ -2374,9 +2374,18 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										tree: JSON.stringify(treeProperty)
 									},
 									success: function (response, request) {
-										showDialog(400, 100, 'Tree saving result', 'The tree is saved successfully.', Ext.Msg.OK, null);
-										var navpanel = Ext.getCmp('nav-panel');
-										navpanel.onReload();
+										var rtext = response.responseText;
+										if (rtext.toUpperCase().indexOf('FALSE') == -1) {
+											showDialog(400, 100, 'Tree saving result', 'The tree is saved successfully.', Ext.Msg.OK, null);
+											var navpanel = Ext.getCmp('nav-panel');
+											navpanel.onReload();
+										}
+										else {
+											var ind = rtext.indexOf('}');
+											var len = rtext.length - ind - 1;
+											var msg = rtext.substring(ind + 1, rtext.length-1);
+											showDialog(400, 100, 'Tree saving result', msg, Ext.Msg.OK, null);
+										}
 									},
 									failure: function (response, request) {
 										showDialog(660, 300, 'Tree saving result',

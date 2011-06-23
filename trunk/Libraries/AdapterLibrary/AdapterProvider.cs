@@ -783,6 +783,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
+				_logger.Error("Error in Post: " + ex);
         if (response == null)
         {
           response = new Response();
@@ -821,6 +822,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
+				_logger.Error("Error in DeleteIndividual: " + ex);
         if (response == null)
         {
           response = new Response();
@@ -1328,19 +1330,21 @@ namespace org.iringtools.adapter
 
           string value = String.Empty;
           try { value = roleMap.Attribute("value").Value; }
-          catch (Exception) { }
+          catch (Exception ex) {
+						_logger.Error("Error in ConvertClassMap: " + ex);
+					}
 
           string reference = String.Empty;
           try { reference = roleMap.Attribute("reference").Value; }
-          catch (Exception) { }
+					catch (Exception ex) { _logger.Error("Error in GetSection: " + ex); }
 
           string propertyName = String.Empty;
           try { propertyName = roleMap.Attribute("propertyName").Value; }
-          catch (Exception) { }
+					catch (Exception ex) { _logger.Error("Error in ConvertClassMap: " + ex); }
 
           string valueList = String.Empty;
           try { valueList = roleMap.Attribute("valueList").Value; }
-          catch (Exception) { }
+					catch (Exception ex) { _logger.Error("Error in ConvertClassMap: " + ex); }
 
           RoleMap newRoleMap = new RoleMap();
           newTemplateMap.roleMaps.Add(newRoleMap);

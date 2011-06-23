@@ -6,10 +6,13 @@ using System.Collections.Specialized;
 using System.Configuration;
 using SysConfig = System.Configuration;
 using System.Collections;
+using log4net;
 
 
 public static class ConfigFile
 {
+	private static readonly ILog _logger = LogManager.GetLogger(typeof(ConfigFile));
+    
     public const string AppSettings = "appSettings";
 
 
@@ -55,7 +58,9 @@ public static class ConfigFile
             foreach (System.Xml.XmlNode node in nodeList)
                 retList.Add(node.Attributes[0].Value, node.Attributes[1].Value);
         }
-        catch { }
+        catch (Exception ex) {
+					_logger.Error("Error in GetSection: " + ex);
+				}
 
         // If an append list is provided then add it to the list we are returning
         if (appendList != null && appendList.Count > 0)
@@ -84,7 +89,9 @@ public static class ConfigFile
                 if (node.Attributes[0].Value.ToLower() == key.ToLower())
                     return node.Attributes[1].Value;
         }
-        catch { }
+        catch (Exception ex){
+					_logger.Error("Error in GetSection: " + ex);
+				}
 
         return "";
     }

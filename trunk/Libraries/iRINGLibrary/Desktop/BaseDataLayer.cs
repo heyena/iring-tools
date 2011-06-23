@@ -95,6 +95,7 @@ namespace org.iringtools.library
 
     public virtual XElement GetConfiguration()
     {
+			_logger.Error("NotImplementedException");
       throw new NotImplementedException();
     }
 

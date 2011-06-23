@@ -12,13 +12,15 @@ using System.Diagnostics;
 using System.ComponentModel;
 using System.Collections;
 using System.Web;
+using log4net;
 using org.w3.sparql_results;
 using org.iringtools.utility;
 
 namespace org.iringtools.library
 {
   public class SPARQLClient
-  {    
+  {
+		private static readonly ILog _logger = LogManager.GetLogger(typeof(SPARQLClient));
     public static SPARQLResults PostQuery(string baseUri, string sparql, WebCredentials targetCredentials, WebProxyCredentials proxyCredentials)
     {
       try
@@ -34,6 +36,7 @@ namespace org.iringtools.library
       }
       catch (Exception exception)
       {
+				_logger.Error("Error in PostQuery: " + exception);
         throw exception;
       }
     }
@@ -61,7 +64,8 @@ namespace org.iringtools.library
       }
       catch (Exception exception)
       {
-        throw exception;
+				_logger.Error("Error in PostQueryAsMultipartMessage: " + exception);
+				throw exception;
       }
     }
 
@@ -80,7 +84,8 @@ namespace org.iringtools.library
       }
       catch (Exception exception)
       {
-        throw exception;
+				_logger.Error("Error in Query: " + exception);
+				throw exception;
       }
     }
     public static string Update(string baseUri, string sparql, WebCredentials targetCredentials, WebProxyCredentials proxyCredentials)
@@ -95,7 +100,8 @@ namespace org.iringtools.library
       }
       catch (Exception exception)
       {
-        throw exception;
+				_logger.Error("Error in Update: " + exception);
+				throw exception;
       }
     }
   }
