@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,7 +15,6 @@ using org.iringtools.modulelibrary.events;
 using org.iringtools.modulelibrary.types;
 using org.iringtools.modulelibrary.extensions;
 
-//using org.iringtools.modules.popup;
 using org.iringtools.modulelibrary.layerdal;
 
 using org.iringtools.ontologyservice.presentation.presentationmodels;
@@ -393,26 +393,20 @@ namespace org.iringtools.modules.templateeditor.editorregion
         }
         else if (args.CheckForType(CompletedEventType.PostTemplate))
         {
+          if (args.Error != null)
+          {
+            MessageBox.Show(args.FriendlyErrorMessage, "Post Template Error", MessageBoxButton.OK);
+            return;
+          }
           Response response = (Response)args.Data;
+          Status status = new Status();
+          IRegion region = regionManager.Regions["TemplateEditorRegion"];
+          UserControl textboxControl = (UserControl)region.Views.FirstOrDefault();
+          status.Messages.Add("Template [" + (textboxControl as TemplateEditorView).templateName.Text + "] is posted sucessfully.");
+          response.StatusList.Add(status);
 
-          if (response.Level == StatusLevel.Success)
-          {
-            MessageBox.Show("Template posted successfully.", "Post Template Response", MessageBoxButton.OK);
-          }
-          else
-          {
-            StringBuilder messageBuilder = new StringBuilder();
-
-            foreach (Status status in response.StatusList)
-            {
-              foreach (string message in status.Messages)
-              {
-                messageBuilder.AppendLine(message);
-              }
-            }
-
-            MessageBox.Show(messageBuilder.ToString(), "Post Template Error", MessageBoxButton.OK);
-          }
+          showResponse("Post Template Response", response);
+          
         }
       }
       catch (Exception ex)
@@ -420,6 +414,19 @@ namespace org.iringtools.modules.templateeditor.editorregion
         Error.SetError(ex, "Error occurred... \r\n" + ex.Message + ex.StackTrace,
             Category.Exception, Priority.High);
       }
+    }
+
+    void showResponse(string title, Response response)
+    {
+      StringBuilder message = new StringBuilder();
+      foreach (Status status in response.StatusList)
+      {
+        foreach (string msg in status.Messages)
+        {
+          message.AppendLine(msg);
+        }
+      }
+      MessageBox.Show(message.ToString(), title, MessageBoxButton.OK);
     }
 
     public void InitializeEditorForAdd()
