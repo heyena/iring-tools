@@ -4,8 +4,8 @@
     <isReadOnly>false</isReadOnly>
     <name>My Private Sandbox</name>
     <repositoryType>Camelot</repositoryType>
+	<updateUri>http://localhost/Services/SandboxService/update</updateUri>
     <uri>http://localhost/Services/SandboxService/query</uri>
-    <updateUri>http://localhost/Services/SandboxService/update</updateUri>
   </repository>
   <repository>
     <description>iRING Sandbox</description>
