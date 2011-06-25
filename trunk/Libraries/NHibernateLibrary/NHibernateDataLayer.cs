@@ -31,6 +31,7 @@ namespace org.iringtools.adapter.datalayer
     private ISessionFactory _sessionFactory;
     private string _hibernateConfigPath = string.Empty;
     private string _authorizationPath = string.Empty;
+    private string _authorizationSamplePath = String.Empty;
     private Response _response = null;
     private IKernel _kernel = null;
     private NHibernateSettings _nSettings = null;
@@ -81,6 +82,11 @@ namespace org.iringtools.adapter.datalayer
           .Configure(_hibernateConfigPath)
           .AddFile(hibernateMappingPath)
           .BuildSessionFactory();
+
+      _authorizationSamplePath = string.Format("{0}Authorization.{1}.xml",
+        _settings["DataPath"],
+        "Sample"
+      );
 
       _authorizationPath = string.Format("{0}Authorization.{1}.xml",
         _settings["DataPath"],
@@ -401,9 +407,10 @@ namespace org.iringtools.adapter.datalayer
                   // NOTE: Id property is not available if it's not mapped and will cause exception
                   identifier = dataObject.GetPropertyValue("Id").ToString();
                 }
-                catch (Exception ex) {
-									_logger.Error(string.Format("Error in Post: {0}", ex));
-  							}  // no need to handle exception because identifier is only used for statusing
+                catch (Exception ex)
+                {
+                  _logger.Error(string.Format("Error in Post: {0}", ex));
+                }  // no need to handle exception because identifier is only used for statusing
 
                 status.Identifier = identifier;
 
@@ -418,7 +425,7 @@ namespace org.iringtools.adapter.datalayer
                   status.Level = StatusLevel.Error;
                   status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
                   status.Results.Add("ResultTag", identifier);
-									_logger.Error("Error in Post saving: " + ex);				
+                  _logger.Error("Error in Post saving: " + ex);
                 }
               }
               else
@@ -629,7 +636,7 @@ namespace org.iringtools.adapter.datalayer
         _response.Messages.Add("Failed to Save datalayer Configuration");
         _response.Messages.Add(ex.Message);
         _response.Level = StatusLevel.Error;
-				_logger.Error("Error in SaveConfiguration: " + ex);
+        _logger.Error("Error in SaveConfiguration: " + ex);
       }
       return _response;
     }
@@ -1028,8 +1035,8 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception ex)
       {
-				_logger.Error("Error in GetSchemaObjects: " + ex);
-				return tableNames;
+        _logger.Error("Error in GetSchemaObjects: " + ex);
+        return tableNames;
       }
     }
 
@@ -1129,7 +1136,7 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception ex)
       {
-				_logger.Error("Error in GetSchemaObjectSchema: " + ex);
+        _logger.Error("Error in GetSchemaObjectSchema: " + ex);
         return dataObject;
       }
     }
@@ -1351,8 +1358,8 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception ex)
       {
-				_logger.Error("Error in ValidateDatabaseDictionary: " + ex);
-				throw new Exception("Invalid connection string: " + ex.Message);
+        _logger.Error("Error in ValidateDatabaseDictionary: " + ex);
+        throw new Exception("Invalid connection string: " + ex.Message);
       }
       finally
       {
@@ -1410,8 +1417,8 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception ex)
       {
-				_logger.Error("Error in ParseConnectionString: " + ex);
-				throw ex;
+        _logger.Error("Error in ParseConnectionString: " + ex);
+        throw ex;
       }
     }
 
@@ -1423,6 +1430,21 @@ namespace org.iringtools.adapter.datalayer
         userName = userName.Substring(userName.IndexOf('\\') + 1).ToLower();
 
         AuthorizedUsers authUsers = null;
+
+        if (!File.Exists(_authorizationPath))
+        {
+          if (!File.Exists(_authorizationSamplePath))
+          {
+            AuthorizedUsers sample = new AuthorizedUsers
+            {
+              "user1",
+              "user2"
+            };
+
+            Utility.Write<AuthorizedUsers>(sample, _authorizationSamplePath, true);
+          }
+          return true;
+        }
 
         try
         {
