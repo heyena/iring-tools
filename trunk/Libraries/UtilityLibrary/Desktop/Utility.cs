@@ -381,7 +381,12 @@ namespace org.iringtools.utility
       Write<T>(graph, path, true);
     }
 
-    public static void Write<T>(T graph, string path, bool useDataContractSerializer)
+    public static void Write<T>(T graph, string path, bool useDataContractSerialize)
+    {
+      Write<T>(graph, path, useDataContractSerialize, null);
+    }
+
+    public static void Write<T>(T graph, string path, bool useDataContractSerializer, XmlSerializerNamespaces namespaces)
     {
       FileStream stream = null;
       XmlDictionaryWriter writer = null;
@@ -399,7 +404,7 @@ namespace org.iringtools.utility
         else
         {
           XmlSerializer serializer = new XmlSerializer(typeof(T));
-          serializer.Serialize(writer, graph);
+          serializer.Serialize(writer, graph, namespaces);
         }
 
       }
@@ -596,7 +601,7 @@ namespace org.iringtools.utility
 
     public static string SerializeXml<T>(T graph)
     {
-      return Serialize<T>(graph, Encoding.UTF8, false);
+      return Serialize<T>(graph, Encoding.UTF8, false, null);
     }
 
     public static string SerializeDataContract<T>(T graph)
@@ -606,19 +611,24 @@ namespace org.iringtools.utility
 
     public static string Serialize<T>(T graph, Encoding encoding)
     {
-      return Serialize<T>(graph, encoding, true);
+      return Serialize<T>(graph, encoding, true, null);
     }
 
     public static string Serialize<T>(T graph, bool useDataContractSerializer)
     {
-      return Serialize<T>(graph, Encoding.UTF8, useDataContractSerializer);
+      return Serialize<T>(graph, Encoding.UTF8, useDataContractSerializer, null);
     }
 
     public static string Serialize<T>(T graph, Encoding encoding, bool useDataContractSerializer)
     {
+      return Serialize<T>(graph, Encoding.UTF8, useDataContractSerializer, null);
+    }
+
+    public static string Serialize<T>(T graph, Encoding encoding, bool useDataContractSerializer, XmlSerializerNamespaces namespaces)
+    {
       string xml;
       try
-      {   
+      { 
         StringBuilder builder = new StringBuilder();
         TextWriter encoder = new StringEncoder(builder, encoding);
         XmlWriter writer = XmlWriter.Create(encoder);
@@ -631,7 +641,14 @@ namespace org.iringtools.utility
         else
         {
           XmlSerializer serializer = new XmlSerializer(typeof(T));
-          serializer.Serialize(writer, graph);
+          if (namespaces != null && namespaces.Count > 0)
+          {
+            serializer.Serialize(writer, graph, namespaces);
+          }
+          else
+          {
+            serializer.Serialize(writer, graph);
+          }
         }
         writer.Close();
 
