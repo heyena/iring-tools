@@ -2330,36 +2330,36 @@ namespace org.iringtools.refdata
                 foreach (TemplateQualification oldTQ in oldQmxf.templateQualifications)
                 {
                   qn = nsMap.ReduceToQName(oldTQ.qualifies, out qName);
-                  foreach (QMXFName newName in newTQ.name)
+                  foreach (QMXFName nn in newTQ.name)
                   {
-                    templateName = newName.value;
-                    QMXFName oldName = oldTQ.name.Find(n => n.lang == newName.lang);
-                    if (oldName != null)
+                    templateName = nn.value;
+                    QMXFName on = oldTQ.name.Find(n => n.lang == nn.lang);
+                    if (on != null)
                     {
-                      if (String.Compare(oldName.value, newName.value, true) != 0)
+                      if (String.Compare(on.value, nn.value, true) != 0)
                       {
-                        GenerateName(ref delete, oldName, templateID, oldTQ);
-                        GenerateName(ref insert, newName, templateID, newTQ);
+                        GenerateName(ref delete, on, templateID, oldTQ);
+                        GenerateName(ref insert, nn, templateID, newTQ);
                       }
                     }
                   }
-                  foreach (Description descr in newTQ.description)
+                  foreach (Description nd in newTQ.description)
                   {
-                    if (descr.lang == null) descr.lang = defaultLanguage;
+                    if (nd.lang == null) nd.lang = defaultLanguage;
                     Description od = null;
-                    od = oldTQ.description.Find(d => d.lang == descr.lang);
+                    od = oldTQ.description.Find(d => d.lang == nd.lang);
 
                     if (od != null && od.value != null)
                     {
-                      if (string.Compare(od.value, descr.value, true) != 0)
+                      if (string.Compare(od.value, nd.value, true) != 0)
                       {
                         GenerateDescription(ref delete, od, templateID);
-                        GenerateDescription(ref insert, descr, templateID);
+                        GenerateDescription(ref insert, nd, templateID);
                       }
                     }
-                    else if(od == null && descr.value != null)
+                    else if(od == null && nd.value != null)
                     {
-                      GenerateDescription(ref insert, descr, templateID);
+                      GenerateDescription(ref insert, nd, templateID);
                     }
                   }
                   //role count
@@ -2377,11 +2377,11 @@ namespace org.iringtools.refdata
                     }
                   }
                   //// TODO need to work out howto correctly handle specializations
-                  foreach (Specialization newSpec in newTQ.specialization)
+                  foreach (Specialization ns in newTQ.specialization)
                   {
-                    Specialization oldSpec = oldTQ.specialization.FirstOrDefault();
+                    Specialization os = oldTQ.specialization.FirstOrDefault();
 
-                    if (oldSpec != null && oldSpec.reference != newSpec.reference)
+                    if (os != null && os.reference != ns.reference)
                     {
                       if (repository.RepositoryType == RepositoryType.Part8)
                       {
@@ -2405,11 +2405,12 @@ namespace org.iringtools.refdata
                   /// 6) p8:hasRole = tpl:{roleName} probably don't need to use this -- pointer to self
                   if (oldTQ.roleQualification.Count < newTQ.roleQualification.Count)
                   {
+                    int count = 0;
                     foreach (RoleQualification nrq in newTQ.roleQualification)
                     {
                       string roleName = nrq.name[0].value;
                       string newRoleID = nrq.identifier;
-                      int count = 0;
+                      
                       if (string.IsNullOrEmpty(newRoleID))
                       {
                         if (_useExampleRegistryBase)
@@ -2424,9 +2425,9 @@ namespace org.iringtools.refdata
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
                           GenerateTypesPart8(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
-                          foreach (QMXFName newName in nrq.name)
+                          foreach (QMXFName nn in nrq.name)
                           {
-                            GenerateName(ref insert, newName, Utility.GetIdFromURI(newRoleID), nrq);
+                            GenerateName(ref insert, nn, Utility.GetIdFromURI(newRoleID), nrq);
                           }
                           GenerateRoleIndexPart8(ref insert, Utility.GetIdFromURI(newRoleID), ++count, nrq);
                           GenerateHasTemplate(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
@@ -2453,7 +2454,6 @@ namespace org.iringtools.refdata
                         {
                           if (!string.IsNullOrEmpty(nrq.range)) //range restriction
                           {
-
                             qn = nsMap.ReduceToQName(nrq.range, out qName);
                             if (qn) GenerateRange(ref insert, Utility.GetIdFromURI(newRoleID), qName, nrq);
                             GenerateTypes(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
@@ -2482,11 +2482,78 @@ namespace org.iringtools.refdata
                   }
                   else if (oldTQ.roleQualification.Count > newTQ.roleQualification.Count)
                   {
+                    int count = 0;
                     foreach (RoleQualification orq in oldTQ.roleQualification)
                     {
-                      RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == orq.identifier);
+                      string roleName = orq.name[0].value;
+                      string newRoleID = orq.identifier;
+
+                      if (string.IsNullOrEmpty(newRoleID))
+                      {
+                        if (_useExampleRegistryBase)
+                          generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], roleName);
+                        else
+                          generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], roleName);
+                        newRoleID = generatedId;
+                      }
+                      RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
                       if (nrq == null)
                       {
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateTypesPart8(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                          foreach (QMXFName nn in orq.name)
+                          {
+                            GenerateName(ref delete, nn, Utility.GetIdFromURI(newRoleID), orq);
+                          }
+                          GenerateRoleIndexPart8(ref delete, Utility.GetIdFromURI(newRoleID), ++count, orq);
+                          GenerateHasTemplate(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                          GenerateHasRole(ref delete, templateID, Utility.GetIdFromURI(newRoleID), oldTQ);
+                          if (!string.IsNullOrEmpty(orq.range))
+                          {
+                            qn = nsMap.ReduceToQName(orq.range, out qName);
+                            if (qn) GenerateRoleFillerType(ref delete, Utility.GetIdFromURI(newRoleID), qName);
+                          }
+                          else if (orq.value != null)
+                          {
+                            if (orq.value.reference != null)
+                            {
+                              qn = nsMap.ReduceToQName(orq.value.reference, out qName);
+                              if (qn) GenerateRoleFillerType(ref delete, Utility.GetIdFromURI(newRoleID), qName);
+                            }
+                            else if (nrq.value.text != null)
+                            {
+                              ///TODO
+                            }
+                          }
+                        }
+                        else //Not Part8 repository
+                        {
+                          if (!string.IsNullOrEmpty(orq.range)) //range restriction
+                          {
+                            qn = nsMap.ReduceToQName(orq.range, out qName);
+                            if (qn) GenerateRange(ref delete, Utility.GetIdFromURI(newRoleID), qName, orq);
+                            GenerateTypes(ref delete, Utility.GetIdFromURI(newRoleID), templateID, nrq);
+                            GenerateQualifies(ref delete, Utility.GetIdFromURI(newRoleID), orq.qualifies.Split('#')[1], orq);
+                          }
+                          else if (orq.value != null)
+                          {
+                            if (orq.value.reference != null) //reference restriction
+                            {
+                              GenerateReferenceType(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                              GenerateReferenceQual(ref delete, Utility.GetIdFromURI(newRoleID), orq.qualifies.Split('#')[1], orq);
+                              qn = nsMap.ReduceToQName(orq.value.reference, out qName);
+                              if (qn) GenerateReferenceTpl(ref insert, Utility.GetIdFromURI(newRoleID), qName, orq);
+                            }
+                            else if (orq.value.text != null)// value restriction
+                            {
+                              GenerateValue(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                            }
+                          }
+                          GenerateTypes(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                          GenerateRoleDomain(ref delete, Utility.GetIdFromURI(newRoleID), templateID);
+                          GenerateRoleIndex(ref delete, Utility.GetIdFromURI(newRoleID), ++count);
+                        }
                       }
                     }
                   }
