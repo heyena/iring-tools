@@ -172,6 +172,9 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]
     public Mapping GetMapping(string projectName, string applicationName)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
       return _adapterProvider.GetMapping(projectName, applicationName);
     }
     #endregion
