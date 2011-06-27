@@ -69,6 +69,8 @@ namespace org.iringtools.refdata
     private const string insertData = "INSERT DATA {";
     private const string deleteData = "DELETE DATA {";
     private const string deleteWhere = "DELETE WHERE {";
+    private const string rdfssubClassOf = "rdfs:subClassOf";
+    private const string rdfType = "rdf:type";
     private int _pageSize = 0;
 
     private bool _useExampleRegistryBase = false;
@@ -2764,7 +2766,7 @@ namespace org.iringtools.refdata
     private void GenerateReferenceType(ref Graph work, string subjId, string objId, object gobj)
     {
       subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
-      pred = work.CreateUriNode("rdf:type");
+      pred = work.CreateUriNode(rdfType);
       obj = work.CreateUriNode("tpl:R40103148466");
       work.Assert(new Triple(subj, pred, obj));
       pred = work.CreateUriNode("tpl:R49267603385");
@@ -2881,7 +2883,7 @@ namespace org.iringtools.refdata
       if (gobj is TemplateDefinition)
       {
         subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
-        pred = work.CreateUriNode("rdf:type");
+        pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("p8:TemplateDescription");
         work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("owl:Thing");
@@ -2890,7 +2892,7 @@ namespace org.iringtools.refdata
       else if (gobj is RoleDefinition || gobj is RoleQualification)
       {
         subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
-        pred = work.CreateUriNode("rdf:type");
+        pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("owl:Thing");
         work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("p8:TemplateRoleDescription");
@@ -2902,7 +2904,7 @@ namespace org.iringtools.refdata
       else if (gobj is TemplateQualification)
       {
         subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
-        pred = work.CreateUriNode("rdf:type");
+        pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("p8:TemplateDescription");
         work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("owl:Thing");
@@ -2920,11 +2922,11 @@ namespace org.iringtools.refdata
       else if (gobj is ClassDefinition)
       {
         subj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
-        pred = work.CreateUriNode("rdf:type");
+        pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode(objectId);
         work.Assert(new Triple(subj, pred, obj));
-        //obj = work.CreateUriNode("owl:Class");
-        //work.Assert(new Triple(subj, pred, obj));
+        obj = work.CreateUriNode("owl:Class");
+        work.Assert(new Triple(subj, pred, obj));
       }
     }
 
@@ -2933,14 +2935,14 @@ namespace org.iringtools.refdata
       if (gobj is TemplateDefinition)
       {
         subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
-        pred = work.CreateUriNode("rdf:type");
+        pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("tpl:R16376066707");
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is RoleDefinition)
       {
         subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
-        pred = work.CreateUriNode("rdf:type");
+        pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("tpl:R74478971040");
         work.Assert(new Triple(subj, pred, obj));
       }
@@ -2958,13 +2960,13 @@ namespace org.iringtools.refdata
       else if (gobj is RoleQualification)
       {
         subj = work.CreateUriNode(subjId);
-        pred = work.CreateUriNode("rdf:type");
+        pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("tpl:R76288246068");
         work.Assert(new Triple(isubj, ipred, iobj));
         pred = work.CreateUriNode("tpl:R99672026745");
         obj = work.CreateUriNode(string.Format("tpl:{0}", objId));
         work.Assert(new Triple(subj, pred, obj));
-        pred = work.CreateUriNode("rdf:type");
+        pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("tpl:R67036823327");
         work.Assert(new Triple(subj, pred, obj));
       }
@@ -3051,26 +3053,26 @@ namespace org.iringtools.refdata
             {
               foreach (ClassDefinition oldClsDef in oldQmxf.classDefinitions)
               {
-                foreach (QMXFName newName in newClsDef.name)
+                foreach (QMXFName nn in newClsDef.name)
                 {
-                  QMXFName oldName = oldClsDef.name.Find(n => n.lang == newName.lang);
-                  if (oldName != null)
+                  QMXFName on = oldClsDef.name.Find(n => n.lang == nn.lang);
+                  if (on != null)
                   {
-                    if (String.Compare(oldName.value, newName.value, true) != 0)
+                    if (String.Compare(on.value, nn.value, true) != 0)
                     {
-                      GenerateClassName(ref delete, oldName, clsId, oldClsDef);
-                      GenerateClassName(ref insert, newName, clsId, newClsDef);
+                      GenerateClassName(ref delete, on, clsId, oldClsDef);
+                      GenerateClassName(ref insert, nn, clsId, newClsDef);
                     }
                   }
-                  foreach (Description newDescr in newClsDef.description)
+                  foreach (Description nd in newClsDef.description)
                   {
-                    Description oldDescr = oldClsDef.description.Find(d => d.lang == newDescr.lang);
-                    if (oldDescr != null)
+                    Description od = oldClsDef.description.Find(d => d.lang == nd.lang);
+                    if (od != null)
                     {
-                      if (String.Compare(oldDescr.value, newDescr.value, true) != 0)
+                      if (String.Compare(od.value, nd.value, true) != 0)
                       {
-                        GenerateClassDescription(ref delete, oldDescr, clsId);
-                        GenerateClassDescription(ref insert, newDescr, clsId);
+                        GenerateClassDescription(ref delete, od, clsId);
+                        GenerateClassDescription(ref insert, nd, clsId);
                       }
                     }
                   }
@@ -3157,63 +3159,65 @@ namespace org.iringtools.refdata
                 response.Append(status);
                 continue;//Nothing to be done
               }
-
             }
             // add class
             if (delete.IsEmpty && insert.IsEmpty)
             {
-              foreach (QMXFName newName in newClsDef.name)
+              string clsLabel = newClsDef.name[0].value;
+              if (string.IsNullOrEmpty(clsId))
               {
-                string clsLabel = newName.value;
-                if (string.IsNullOrEmpty(clsId))
+                string newClsName = "Class definition " + clsLabel;
+                clsId = CreateIdsAdiId(registry, newClsName);
+                clsId = Utility.GetIdFromURI(clsId);
+              }
+              // append entity type
+              if (newClsDef.entityType != null && !String.IsNullOrEmpty(newClsDef.entityType.reference))
+              {
+                qn = nsMap.ReduceToQName(newClsDef.entityType.reference, out qName);
+                if (qn) GenerateTypesPart8(ref insert, clsId, qName, newClsDef);
+              }
+              // append specialization
+              foreach (Specialization ns in newClsDef.specialization)
+              {
+                if (!String.IsNullOrEmpty(ns.reference))
                 {
-                  string newClsName = "Class definition " + clsLabel;
-
-                  clsId = CreateIdsAdiId(registry, newClsName);
-                  clsId = Utility.GetIdFromURI(clsId);
-                }
-                // append label
-                GenerateClassName(ref insert, newName, clsId, newClsDef);
-
-                // append entity type
-                if (newClsDef.entityType != null && !String.IsNullOrEmpty(newClsDef.entityType.reference))
-                {
-                  qn = nsMap.ReduceToQName(newClsDef.entityType.reference, out qName);
-                  if (qn) GenerateTypesPart8(ref insert, clsId, qName, newClsDef);
-                }
-                // append description
-                foreach (Description newDesc in newClsDef.description)
-                {
-                  if (!String.IsNullOrEmpty(newDesc.value))
+                  qn = nsMap.ReduceToQName(ns.reference, out qName);
+                  if (repository.RepositoryType == RepositoryType.Part8)
                   {
-                    GenerateClassDescription(ref insert, newDesc, clsId);
-                  }
-                }
-                // append specialization
-                foreach (Specialization newSpec in newClsDef.specialization)
-                {
-                  if (!String.IsNullOrEmpty(newSpec.reference))
-                  {
-                    qn = nsMap.ReduceToQName(newSpec.reference, out qName);
                     if (qn) GenerateRdfSubClass(ref insert, clsId, qName);
                   }
-                }
-                classCount = newClsDef.classification.Count;
-                // append classification
-                foreach (Classification newClasif in newClsDef.classification)
-                {
-                  if (!string.IsNullOrEmpty(newClasif.reference))
+                  else
                   {
-                    qn = nsMap.ReduceToQName(newClasif.reference, out qName);
-
-                    if (repository.RepositoryType == RepositoryType.Part8)
-                    {
-                      if (qn) GenerateSuperClass(ref insert, qName, clsId);
-                    }
-                    else
-                    {
-                      if (qn) GenerateDmClassification(ref insert, clsId, qName);
-                    }
+                    if (qn) GenerateDmSubClass(ref insert, clsId, qName);
+                  }
+                }
+              }
+              // append description
+              foreach (Description nd in newClsDef.description)
+              {
+                if (!String.IsNullOrEmpty(nd.value))
+                {
+                  GenerateClassDescription(ref insert, nd, clsId);
+                }
+              }
+              foreach (QMXFName nn in newClsDef.name)
+              {
+                // append label
+                GenerateClassName(ref insert, nn, clsId, newClsDef);
+              }
+              // append classification
+              foreach (Classification nc in newClsDef.classification)
+              {
+                if (!string.IsNullOrEmpty(nc.reference))
+                {
+                  qn = nsMap.ReduceToQName(nc.reference, out qName);
+                  if (repository.RepositoryType == RepositoryType.Part8)
+                  {
+                    if (qn) GenerateSuperClass(ref insert, qName, clsId);
+                  }
+                  else
+                  {
+                    if (qn) GenerateDmClassification(ref insert, clsId, qName);
                   }
                 }
               }
@@ -3271,17 +3275,17 @@ namespace org.iringtools.refdata
 
     private void GenerateRdfSubClass(ref Graph work, string subjId, string objId)
     {
-      subj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
+      subj = work.CreateUriNode(objId);
       pred = work.CreateUriNode("rdfs:subClassOf");
-      obj = work.CreateUriNode(objId);
+      obj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
       work.Assert(new Triple(subj, pred, obj));
     }
 
     private void GenerateSuperClass(ref Graph work, string subjId, string objId)
     {
-      subj = work.CreateUriNode(subjId);
+      subj = work.CreateUriNode(string.Format("rdl:{0}", objId));
       pred = work.CreateUriNode("rdfs:subClassOf");
-      obj = work.CreateUriNode(string.Format("rdl:{0}", objId));
+      obj = work.CreateUriNode(subjId);
       work.Assert(new Triple(subj, pred, obj));
     }
 
