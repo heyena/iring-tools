@@ -1,8 +1,10 @@
-PREFIX part2: <http://dm.rdlfacade.org/data#> 
+PREFIX dm: <http://dm.rdlfacade.org/data#> 
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> 
 PREFIX rdl: <http://rdl.rdlfacade.org/data#> 
 SELECT ?uri ?label 
-WHERE {?s part2:hasClassifier rdl:param1 . 
-?s part2:hasClassified ?uri . 
-?uri rdfs:label ?label }
+WHERE {
+?s dm:hasClassifier rdl:param1 . 
+?s dm:hasClassified ?uri . 
+?uri rdfs:label ?label 
+}
  ORDER BY ?label
