@@ -756,7 +756,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         ],
             url: 'mapping/addvalueListMap',
             items: [{ xtype: 'textfield', name: 'internalName', id: 'internalName', fieldLabel: 'Internal Name', width: 120, required: true },
-                { xtype: 'hidden', name: 'classUrl' }
+                { xtype: 'hidden', name: 'classUrl', id: 'classUrl' }
              ],
             html: '<div class="class-target' + formid + '" '
           + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
