@@ -219,7 +219,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildScopesMenu: function () {
     return [
 			{
-			  text: 'Add Scope',
+			  text: 'New Scope',
 			  handler: this.onNewScope,
 			  icon: 'Content/img/16x16/document-new.png',
 			  scope: this
@@ -245,7 +245,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  xtype: 'menuseparator'
 			},
 			{
-			  text: 'Add Application',
+			  text: 'New Application',
 			  handler: this.onNewApplication,
 			  icon: 'Content/img/list-add.png',
 			  scope: this
@@ -266,23 +266,23 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			  handler: this.onDeleteApplication,
 			  icon: 'Content/img/16x16/edit-delete.png',
 			  scope: this
-			}//,
-    //{
-    //  xtype: 'menuseparator'
-    //	}//,
-    //			{
-    //			  text: 'Open Mapping',
-    //			  handler: this.onOpenMapping,
-    //			  icon: 'Content/img/16x16/mapping.png',
-    //			  scope: this
-    //			}
+			 },
+			{
+      	xtype: 'menuseparator'
+			},
+			{
+      	text: 'Open Configuration',
+      	handler: this.onConfigure,
+      	icon: 'Content/img/16x16/preferences-system.png',
+      	scope: this
+			}
 		]
   },
 
   buildvalueListsMenu: function () {
     return [
     {
-      text: 'Add Value List',
+      text: 'New Value List',
       handler: this.onNewValueList,
       icon: 'Content/img/list-add.png',
       scope: this
@@ -308,7 +308,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       xtype: 'menuseparator'
     },
 			{
-			  text: 'Add Value Map',
+			  text: 'New Value Map',
 			  handler: this.onAddValueListMap,
 			  icon: 'Content/img/list-add.png',
 			  scope: this
@@ -319,7 +319,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildGraphsMenu: function () {
     return [
     {
-      text: 'Add GraphMap',
+      text: 'New GraphMap',
       handler: this.AddGraphMap,
       icon: 'Content/img/list-add.png',
       scope: this
@@ -352,7 +352,10 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     }]
   },
 
-
+  onConfigure: function () {
+    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+    this.fireEvent('configure', this, node);
+  },
 
   showContextMenu: function (node, event) {
 

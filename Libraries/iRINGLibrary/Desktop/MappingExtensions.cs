@@ -223,19 +223,22 @@ namespace org.iringtools.mapping
     {
       string uri = qualifiedUri.Replace(RDL_NS, "rdl:");
 
-      foreach (ValueListMap valueListMap in mapping.valueListMaps)
-      {
-        if (valueListMap.name == valueListName)
-        {
-          foreach (ValueMap valueMap in valueListMap.valueMaps)
-          {
-            if (valueMap.uri == uri)
-            {
-              return valueMap.internalValue;
-            }
-          }
-        }
-      }
+			if (mapping.valueListMaps != null)
+			{
+				foreach (ValueListMap valueListMap in mapping.valueListMaps)
+				{
+					if (valueListMap.name == valueListName)
+					{
+						foreach (ValueMap valueMap in valueListMap.valueMaps)
+						{
+							if (valueMap.uri == uri)
+							{
+								return valueMap.internalValue;
+							}
+						}
+					}
+				}
+			}
 
       return String.Empty;
     }
