@@ -146,15 +146,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 	},
 
 	buildToolbar: function (showconfigure) {
-		return [/*{
-			xtype: "tbbutton",
-			text: 'Configure',
-			icon: 'Content/img/16x16/document-properties.png',
-			tooltip: 'Configure',
-			disabled: showconfigure,
-			handler: this.onConfigure,
-			scope: this
-		}, */{
+		return [{
 			xtype: "tbbutton",
 			text: 'Save',
 			icon: 'Content/img/16x16/document-save.png',
@@ -192,27 +184,6 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 	onReset: function () {
 		this.form.getForm().reset();
 	},
-
-	/*
-	onConfigure: function () {
-		var that = this;
-		var dataLayerValue = this.form.getForm().findField('Assembly').lastSelectionText;
-		if (!dataLayerValue)
-			dataLayerValue = 'NHibernateLibrary';
-		this.form.getForm().submit({
-			//  waitMsg: 'Saving Data...',
-			success: function (f, a) {
-				var record = f.getFieldValues();
-				that.record = record;
-				that.fireEvent('configure', that, that.scope, that.record, dataLayerValue);
-			},
-			failure: function (f, a) {
-				alert('Warning', 'Error saving changes!')
-			}
-		});
-
-	},*/
-
 
 	onSave: function () {
 		var that = this;    // consists the main/prappNameclass object      
