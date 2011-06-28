@@ -418,8 +418,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmitEditValueList },
-        { text: 'Close', scope: this, handler: this.onClose }
+			  { xtype: 'tbfill' },        
+        { text: 'Ok', scope: this, handler: this.onSubmitEditValueList },
+        { text: 'Cancel', scope: this, handler: this.onClose }
         ],
       items: [
               { xtype: 'textfield', name: 'valueList', id: 'valueList', fieldLabel: 'Value List Name', width: 120, required: true }
@@ -473,8 +474,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmitNewValueList },
-        { text: 'Close', scope: this, handler: this.onClose }
+				{ xtype: 'tbfill' },
+        { text: 'Ok', scope: this, handler: this.onSubmitNewValueList },
+        { text: 'Cancel', scope: this, handler: this.onClose }
         ],
       items: [
               { xtype: 'textfield', name: 'valueList', id: 'valueList', fieldLabel: 'Value List Name', width: 120, required: true }
@@ -528,8 +530,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmitEditGraphName },
-        { text: 'Close', scope: this, handler: this.onClose }
+				{ xtype: 'tbfill' },        
+        { text: 'Ok', scope: this, handler: this.onSubmitEditGraphName },
+        { text: 'Cancel', scope: this, handler: this.onClose }
         ],
       items: [
               { xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true }
@@ -615,8 +618,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmitGraphMap },
-        { text: 'Close', scope: this, handler: this.onClose }
+			  { xtype: 'tbfill' },        
+        { text: 'Ok', scope: this, handler: this.onSubmitGraphMap },
+        { text: 'Cancel', scope: this, handler: this.onClose }
         ],
       url: 'mapping/addgraphmap',
       items: [{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true },
@@ -754,8 +758,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmitValueListMap },
-        { text: 'Close', scope: this, handler: this.onClose }
+				{ xtype: 'tbfill' },        
+        { text: 'Ok', scope: this, handler: this.onSubmitValueListMap },
+        { text: 'Cancel', scope: this, handler: this.onClose }
         ],
       url: 'mapping/addvalueListMap',
       items: [{ xtype: 'textfield', name: 'internalName', id: 'internalName', fieldLabel: 'Internal Name', width: 120, required: true },
