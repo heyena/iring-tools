@@ -4,8 +4,8 @@
     <isReadOnly>false</isReadOnly>
     <name>My Private Sandbox</name>
     <repositoryType>Part8</repositoryType>
+	<updateUri>http://dev.iringsandbox.org/services/sandbox/sparql/update</updateUri>
     <uri>http://dev.iringsandbox.org/services/sandbox/sparql/query</uri>
-    <updateUri>http://dev.iringsandbox.org/services/sandbox/sparql/update</updateUri>
   </repository>
   <repository>
     <description>iRING Sandbox</description>
