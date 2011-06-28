@@ -364,7 +364,9 @@ namespace iRINGTools.Web.Controllers
                                 text = graph.name,
                                 expanded = true,
                                 leaf = true,
-                                children = new List<JsonTreeNode>()
+                                children = new List<JsonTreeNode>(),
+                                record = graph
+
                             };
 
                             nodes.Add(node);

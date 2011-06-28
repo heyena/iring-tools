@@ -36,6 +36,7 @@ namespace iRINGTools.Web.Controllers
         {
             _refdataRepository = repository;
             _nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
+            _nsMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
             _nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
             _nsMap.AddNamespace("tpL", new Uri("http://tpl.rdlfacade.org/data#"));
             _nsMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
