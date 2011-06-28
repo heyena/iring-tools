@@ -146,7 +146,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 	},
 
 	buildToolbar: function (showconfigure) {
-		return [{
+		return [/*{
 			xtype: "tbbutton",
 			text: 'Configure',
 			icon: 'Content/img/16x16/document-properties.png',
@@ -154,7 +154,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 			disabled: showconfigure,
 			handler: this.onConfigure,
 			scope: this
-		}, {
+		}, */{
 			xtype: "tbbutton",
 			text: 'Save',
 			icon: 'Content/img/16x16/document-save.png',
@@ -193,6 +193,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 		this.form.getForm().reset();
 	},
 
+	/*
 	onConfigure: function () {
 		var that = this;
 		var dataLayerValue = this.form.getForm().findField('Assembly').lastSelectionText;
@@ -210,7 +211,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 			}
 		});
 
-	},
+	},*/
 
 
 	onSave: function () {

@@ -122,6 +122,9 @@ a:active {color: black}
 .tabsMapping {
   background-image:url('../img/16x16/mapping.png') !important;
 }
+.tabsNhibernate {
+  background-image:url('../img/16x16/preferences-system.png') !important;
+}
 
 .form-title 
 {
