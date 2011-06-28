@@ -810,7 +810,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					defaults: { anchor: '100%', allowBlank: false },
 					items: [{
 						xtype: 'label',
-						fieldLabel: 'Add/Delete relationship',
+						fieldLabel: 'Add/Remove relationship',
 						labelSeparator: '',
 						itemCls: 'form-title'
 					}, {
