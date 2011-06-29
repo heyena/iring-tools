@@ -18,6 +18,7 @@ public class HttpClient
   private String baseUri;
   private HttpProxy httpProxy = null;
   private NetworkCredentials networkCredentials = null;
+  private Map<String, String> headers = null;
 
   private final static String GET = "GET";
   private final static String POST = "POST";
@@ -25,7 +26,9 @@ public class HttpClient
   private final static String SPARQL_QUERY = "query";
   private final static String SPARQL_UPDATE = "update";
 
-  public HttpClient() {}
+  public HttpClient() {
+    this(null, null, null);
+  }
 
   public HttpClient(String baseUri)
   {
@@ -46,7 +49,8 @@ public class HttpClient
   {
     setBaseUri(baseUri);
     setHttpProxy(httpProxy);
-    setNetworkCredentials(networkCredentials);
+    setNetworkCredentials(networkCredentials);    
+    headers = new HashMap<String, String>();
   }
 
   public <T> T get(Class<T> responseClass, String relativeUri) throws HttpClientException
@@ -208,6 +212,11 @@ public class HttpClient
   {
     return networkCredentials;
   }
+  
+  public void addHeader(String name, String value)
+  {
+    headers.put(name, value);
+  }
 
   private URLConnection getConnection(String method, String relativeUri) throws IOException
   {
@@ -234,6 +243,12 @@ public class HttpClient
       String networkCredsToken = createCredentialsToken(networkCredentials.getUserName(),
           networkCredentials.getPassword(), networkCredentials.getDomain());
       conn.setRequestProperty("Authorization", "Basic " + networkCredsToken);
+    }
+    
+    // add headers
+    for (Entry<String, String> header : headers.entrySet())
+    {
+      conn.setRequestProperty(header.getKey(), header.getValue());
     }
 
     if (method.equalsIgnoreCase(POST))

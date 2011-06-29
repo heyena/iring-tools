@@ -7,7 +7,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
-import org.iringtools.directory.Authorized;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.services.core.DirectoryProvider;
@@ -56,26 +55,5 @@ public class DirectoryService extends AbstractService
     }
 
     return xdef;
-  }
-  
-  @GET
-  @Path("/auth/{scope}/{app}/{userId}/")
-  public Authorized isAuthorized(@PathParam("scope") String scope,
-                                 @PathParam("app") String app, 
-                                 @PathParam("userId") String userId) {
-    Authorized authorized = null;
-    
-    try
-    {
-      initService();
-      DirectoryProvider directoryProvider = new DirectoryProvider(settings);
-      authorized = directoryProvider.isAuthorized(scope, app, userId);
-    }
-    catch (Exception ex)
-    {
-      logger.error("Error getting user authorization: " + ex);
-    }
-    
-    return authorized;
   }
 }

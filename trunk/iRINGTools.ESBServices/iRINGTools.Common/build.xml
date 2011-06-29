@@ -34,6 +34,18 @@
     </fileset>
   </path>
 
+	<path id="tomcat-6.0.userclasspath">
+  	<fileset dir="../libraries/apache-tomcat-6.0">
+  	  <include name="**/*.jar" />
+    </fileset>
+  </path>
+  
+  <path id="json-utils.userclasspath">
+  	<fileset dir="../libraries/json-utils">
+  	  <include name="**/*.jar" />
+    </fileset>
+  </path>
+
 	<target name="generate">
 		<taskdef name="xjc" classname="com.sun.tools.xjc.XJC2Task">
       <classpath refid="jaxb-ri-20100511.userclasspath" />
@@ -71,6 +83,8 @@
 			<classpath refid="commons-codec-1.4.userclasspath" />
 			<classpath refid="log4j-1.2.16.userclasspath" />
 			<classpath refid="jaxb-ri-20100511.userclasspath" />
+			<classpath refid="tomcat-6.0.userclasspath" />    
+			<classpath refid="json-utils.userclasspath" />          
 		</javac>
 	</target>
 
