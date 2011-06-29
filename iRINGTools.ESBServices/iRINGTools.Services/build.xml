@@ -40,6 +40,18 @@
       <include name="**/*.jar"/>
     </fileset>
 	</path>
+    
+  <path id="json-utils.userclasspath">
+  	<fileset dir="../libraries/json-utils">
+  	  <include name="**/*.jar" />
+    </fileset>
+  </path>
+
+	<path id="jrdf-0.5.6.userclasspath">
+    <fileset dir="../libraries/jrdf-0.5.6">
+      <include name="**/*.jar"/>
+    </fileset>
+	</path>
 
 	<path id="iRINGTools.Common.classpath">
 		<pathelement location="${iRINGTools.Common.location}/bin" />
@@ -84,7 +96,9 @@
 			<classpath refid="iRINGTools.Common.classpath" />
 			<classpath refid="cxf-2.3.0.userclasspath" />
 			<classpath refid="log4j-1.2.16.userclasspath" />
-			<classpath refid="commons-codec-1.4.userclasspath" />
+			<classpath refid="commons-codec-1.4.userclasspath" />      
+			<classpath refid="json-utils.userclasspath" />
+			<classpath refid="jrdf-0.5.6.userclasspath" />
 		</javac>
 	</target>
 
@@ -97,7 +111,9 @@
       <fileset dir="${iRINGTools.Common.location}/dist" />
 			<path refid="cxf-2.3.0.userclasspath" />
 			<path refid="commons-codec-1.4.userclasspath" />
-			<path refid="log4j-1.2.16.userclasspath" />
+			<path refid="log4j-1.2.16.userclasspath" />  
+			<path refid="json-utils.userclasspath" />    
+      <path refid="jrdf-0.5.6.userclasspath" />
 		</copy>
 		<jar destfile="dist/iringtools-services.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
     <!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->

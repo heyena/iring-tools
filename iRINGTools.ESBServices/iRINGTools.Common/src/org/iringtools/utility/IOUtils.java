@@ -163,4 +163,9 @@ public final class IOUtils
     in.close();
     out.close();
   }
+  
+  public static synchronized boolean isNullOrEmpty(String str)
+  {
+    return (str == null || str.length() == 0);
+  }
 }
