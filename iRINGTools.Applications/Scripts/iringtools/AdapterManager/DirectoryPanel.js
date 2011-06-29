@@ -247,7 +247,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			{
 			  text: 'New Application',
 			  handler: this.onNewApplication,
-			  icon: 'Content/img/list-add.png',
+			  icon: 'Content/img/16x16/document-new.png',
 			  scope: this
 			}
 		]
@@ -284,7 +284,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     {
       text: 'New Value List',
       handler: this.onNewValueList,
-      icon: 'Content/img/list-add.png',
+      icon: 'Content/img/16x16/document-new.png',
       scope: this
     }
     ]
@@ -310,7 +310,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			{
 			  text: 'New Value Map',
 			  handler: this.onAddValueListMap,
-			  icon: 'Content/img/list-add.png',
+			  icon: 'Content/img/16x16/document-new.png',
 			  scope: this
 			}
     ]
@@ -321,7 +321,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     {
       text: 'New GraphMap',
       handler: this.AddGraphMap,
-      icon: 'Content/img/list-add.png',
+      icon: 'Content/img/16x16/document-new.png',
       scope: this
     }
     ]
@@ -417,6 +417,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       method: 'POST',
       border: false,
       frame: false,
+      iconCls: 'tabsApplication',
       bbar: [
 			  { xtype: 'tbfill' },        
         { text: 'Ok', scope: this, handler: this.onSubmitEditValueList },
