@@ -1,0 +1,12 @@
+<configration xmlns="http://schemas.datacontract.org/2004/07/iRINGTools.SDK.ADONetDataLayer" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <connection>Data Source=MMSTST;User Id=hatch_sys;Password=manager;</connection>
+  <objects>
+    <object>
+      <name>Valves</name>
+      <identifier>IDENT</identifier>      
+      <select>
+        <query>select * from vw_iring_valves where (rownum &lt; 10)</query>        
+      </select>
+    </object>
+  </objects>
+</configration>
