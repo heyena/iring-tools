@@ -6,6 +6,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,20 @@ import org.w3._2005.sparql.results.Result;
 import org.w3._2005.sparql.results.Results;
 import org.w3._2005.sparql.results.Sparql;
 
+import org.jrdf.graph.Graph;
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
+import org.jrdf.graph.SubjectNode;
+import org.jrdf.graph.TripleImpl;
+import org.jrdf.graph.Node;
+import org.jrdf.graph.global.LiteralImpl;
+import org.jrdf.graph.global.URIReferenceImpl;
+import org.jrdf.graph.local.BlankNodeImpl;
+import org.jrdf.parser.ntriples.NTriplesFormatParser;
+import org.jrdf.parser.ntriples.parser.*;
+
+
+
 public class RefDataProvider
 {
   private Hashtable<String, String> _settings;
@@ -73,7 +88,20 @@ public class RefDataProvider
   private StringBuilder prefix = new StringBuilder();
   private StringBuilder sparqlBuilder = new StringBuilder();
   private static final Logger logger = Logger.getLogger(RefDataProvider.class);
+  private String qName=null;
+  private final String rdfssubClassOf = "rdfs:subClassOf";
+  private final String rdfType = "rdf:type";
+  
+  private StringBuilder sparqlStr = new StringBuilder();
 
+
+  //NTriplesFormat formatter = new NTriplesParser();
+  SubjectNode dsubj ,isubj, subj; 
+  PredicateNode dpred, ipred, pred;
+  ObjectNode dobj, iobj, obj;
+
+
+  
   public RefDataProvider(Hashtable<String, String> settings)
   {
     try
@@ -81,7 +109,7 @@ public class RefDataProvider
       _settings = settings;
       _repositories = getRepositories();
       _queries = getQueries();
-      _nsmap = new NamespaceMapper();
+      _nsmap = new NamespaceMapper(false);
     }
     catch (Exception e)
     {
@@ -1409,10 +1437,15 @@ public class RefDataProvider
       throw ex;
     }
   }
+  
 
   public Response postTemplate(Qmxf qmxf)
   {
 
+	//TODO - to be initialized
+    Graph delete=null;
+    Graph insert=null;
+    
     Response response = new Response();
     response.setLevel(Level.SUCCESS);
     boolean qn = false;
@@ -1424,7 +1457,7 @@ public class RefDataProvider
       if (repository == null || repository.isIsReadOnly())
       {
         Status status = new Status();
-        // status.Level = StatusLevel.Error;
+        //status.Level = StatusLevel.Error;
 
         if (repository == null)
           status.getMessages().getItems().add("Repository not found!");
@@ -1438,24 +1471,28 @@ public class RefDataProvider
         String registry = (_useExampleRegistryBase) ? _settings.get("ExampleRegistryBase") : _settings
             .get("ClassRegistryBase");
         StringBuilder sparqlDelete = new StringBuilder();
+        ///////////////////////////////////////////////////////////////////////////////
+        /// Base templates do have the following properties
+        /// 1) Base class of owl:Thing
+        /// 2) rdfs:type = p8:TemplateDescription
+        /// 3) rdfs:label name of template
+        /// 4) optional rdfs:comment
+        /// 5) p8:valNumberOfRoles
+        /// 6) p8:hasTemplate = tpl:{TemplateName} - this probably could be eliminated -- pointer to self 
+        ///////////////////////////////////////////////////////////////////////////////
 
         // region Template Definitions
         if (qmxf.getTemplateDefinitions().size() > 0)
         {
           for (TemplateDefinition newTemplateDefinition : qmxf.getTemplateDefinitions())
           {
-            String language = null;
             int roleCount = 0;
-            StringBuilder sparqlAdd = new StringBuilder();
-
-            sparqlAdd.append(insertData);
-            boolean hasDeletes = false;
             String templateName = null;
             String identifier = null;
             String generatedId = null;
-            String roleDefinition = null;
             int index = 1;
-            if (newTemplateDefinition.getId() != null)
+            
+            if (newTemplateDefinition.getId() != null && newTemplateDefinition.getId() != "")
             {
               identifier = getIdFromURI(newTemplateDefinition.getId());
             }
@@ -1463,10 +1500,8 @@ public class RefDataProvider
             templateName = newTemplateDefinition.getNames().get(0).getValue();
             // check for exisiting template
             Qmxf existingQmxf = new Qmxf();
-            if (identifier != null)
+            if (identifier != null && identifier != "")
             {
-              // existingQmxf = getTemplate(identifier,
-              // QMXFType.Definition, repository);
               existingQmxf = getTemplate(identifier, TemplateType.DEFINITION.toString(), repository);
             }
             else
@@ -1477,19 +1512,15 @@ public class RefDataProvider
                 generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), templateName);
               identifier = getIdFromURI(generatedId);
             }
+            
             // region Form Delete/Insert SPARQL
             if (existingQmxf.getTemplateDefinitions().size() > 0)
             {
-              StringBuilder sparqlStmts = new StringBuilder();
-
               for (TemplateDefinition existingTemplate : existingQmxf.getTemplateDefinitions())
               {
                 for (Name name : newTemplateDefinition.getNames())
                 {
                   templateName = name.getValue();
-                  // Name existingName =
-                  // existingTemplate.name.Find(n => n.lang ==
-                  // name.lang);
                   Name existingName = new Name();
                   for (Name tempName : existingTemplate.getNames())
                   {
@@ -1498,33 +1529,16 @@ public class RefDataProvider
                       existingName = tempName;
                     }
                   }
-                  if (existingName.getLang() == null)
-                    language = "@" + defaultLanguage;
-                  else
-                    language = "@" + existingName.getLang();
-
-                  if (existingName != null)
+                  if(!existingName.getValue().equalsIgnoreCase(existingName.getValue()))
                   {
-                    if (!existingName.getValue().equalsIgnoreCase(name.getValue()))
-                    {
-                      hasDeletes = true;
-                      sparqlStmts.append(String.format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .",
-                          identifier));
-                      sparqlStmts.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier,
-                          existingName.getValue(), language));
-                      sparqlAdd
-                          .append(String.format(" tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
-                      sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier,
-                          name.getValue(), language));
-                    }
+                	  delete = GenerateName(delete, existingName, Long.parseLong(identifier), existingTemplate);
+                	  insert = GenerateName(insert, existingName, Long.parseLong(identifier), existingTemplate);
                   }
-                }
+                  }
+                
                 // append changing descriptions to each block
                 for (Description description : newTemplateDefinition.getDescriptions())
                 {
-                  // Description existingDescription =
-                  // existingTemplate.description.Find(d =>
-                  // d.lang == description.lang);
                   Description existingDescription = new Description();
                   for (Description tempName : existingTemplate.getDescriptions())
                   {
@@ -1533,45 +1547,48 @@ public class RefDataProvider
                       existingDescription = tempName;
                     }
                   }
-                  if (existingDescription.getLang() == null)
-                    language = "@" + defaultLanguage;
-                  else
-                    language = "@" + existingDescription.getLang();
-
-                  if (existingDescription != null)
-                  {
-                    if (!existingDescription.getValue().equalsIgnoreCase(description.getValue()))
-                    {
-                      hasDeletes = true;
-                      sparqlStmts.append(String.format("rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", identifier,
-                          existingDescription.getValue(), language));
-                      sparqlAdd.append(String.format("rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", identifier,
-                          description.getValue(), language));
+                  if(description!=null && existingDescription!=null){
+                	  if (!existingDescription.getValue().equalsIgnoreCase(description.getValue()))
+                      {
+                		  delete = GenerateDescription(delete, existingDescription, Long.parseLong(identifier));
+                		  insert = GenerateDescription(insert, description, Long.parseLong(identifier));
+                      }
                     }
+                  else if (description != null && existingDescription == null)
+                  {
+                	  insert = GenerateDescription(insert, description, Long.parseLong(identifier));
                   }
                 }
 
                 // role count
-                if (existingTemplate.getRoleDefinitions().size() != newTemplateDefinition.getRoleDefinitions().size())
+                index=1;
+                ///  BaseTemplate roles do have the following properties
+                /// 1) baseclass of owl:Thing
+                /// 2) rdf:type = p8:TemplateRoleDescription
+                /// 3) rdfs:label = rolename
+                /// 4) p8:valRoleIndex
+                /// 5) p8:hasRoleFillerType = qualifified class
+                /// 6) p8:hasTemplate = template ID
+                /// 7) p8:hasRole = role ID --- again probably should not use this --- pointer to self
+                if (existingTemplate.getRoleDefinitions().size() < newTemplateDefinition.getRoleDefinitions().size())
                 {
-                  hasDeletes = true;
-                  sparqlStmts.append(String.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier,
-                      existingTemplate.getRoleDefinitions().size()));
-                  sparqlAdd.append(String.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier,
-                      newTemplateDefinition.getRoleDefinitions().size()));
-                }
-
-                index = 1;
                 for (RoleDefinition role : newTemplateDefinition.getRoleDefinitions())
                 {
+                	
+                  String roleName = role.getNames().get(0).getValue();
                   String roleIdentifier = role.getId();
-                  hasDeletes = false;
-
-                  // get existing role if it exists
-                  // RoleDefinition existingRole =
-                  // existingTemplate.roleDefinition.Find(r =>
-                  // r.identifier == role.identifier);
+                  
+                  if (roleIdentifier==null || roleIdentifier=="")
+                  {
+                    if (_useExampleRegistryBase)
+                      generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), roleName);
+                    else
+                      generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), roleName);
+                    roleIdentifier = generatedId;
+                  }
+                  
                   RoleDefinition existingRole = null;
+                  Long tempRoleIdentifier = Long.parseLong(getIdFromURI(roleIdentifier));
                   for (RoleDefinition tempRoleDef : existingTemplate.getRoleDefinitions())
                   {
                     if (role.getId().equalsIgnoreCase(tempRoleDef.getId()))
@@ -1579,250 +1596,240 @@ public class RefDataProvider
                       existingRole = tempRoleDef;
                     }
                   }
-                  // remove existing role from existing
-                  // template, leftovers will be deleted later
-                  existingTemplate.getRoleDefinitions().remove(existingRole);
-
-                  if (existingRole != null)
+                  if (existingRole == null) /// need to add it
                   {
-                    // region Process Changing Role
-                    String label = null;
-
                     for (Name name : role.getNames())
                     {
-                      // QMXFName existingName =
-                      // existingRole.name.Find(n =>
-                      // n.lang == name.lang);
-                      Name existingName = new Name();
-                      for (Name tempName : existingRole.getNames())
-                      {
-                        if (name.getLang().equalsIgnoreCase(tempName.getLang()))
-                        {
-                          existingName = tempName;
-                        }
-                      }
-                      if (existingName != null)
-                      {
-                        if (!existingName.getValue().equalsIgnoreCase(name.getValue()))
-                        {
-                          hasDeletes = true;
-                          sparqlStmts.append(String.format("tpl:{0} rdf:type owl:Class .", existingRole.getId()));
-                          sparqlStmts.append(String.format("tpl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .",
-                              existingRole.getId(), existingName.getValue(), name.getLang()));
-                        }
-                        // index
-                        if (existingRole.getDesignation() != String.valueOf(index))
-                        {
-                          sparqlStmts.append(String.format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .",
-                              existingRole.getId(), existingRole.getDesignation()));
-                        }
-                      }
+                    	insert = GenerateName(insert, name, tempRoleIdentifier, role);
                     }
-                    if (existingRole.getRange() != null)
+                    if (role.getDescriptions()!= null)
                     {
-                      if (!existingRole.getRange().equalsIgnoreCase(role.getRange()))
-                      {
-                        hasDeletes = true;
-                        sparqlStmts.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", existingRole.getId(),
-                            existingRole.getRange()));
-                      }
+                    	insert = GenerateDescription(insert, role.getDescriptions().get(0), tempRoleIdentifier);
                     }
-                    // endregion
+                    if (repository.getRepositoryType() == RepositoryType.PART_8)
+                    {
+                    	insert = GenerateTypesPart8(insert, tempRoleIdentifier, identifier, role);
+                    	insert = GenerateRoleIndexPart8(insert, tempRoleIdentifier, index, role);
+                    }
+                    else
+                    {
+                    	insert = GenerateTypes(insert, tempRoleIdentifier, identifier, role);
+                        insert = GenerateRoleIndex(insert, tempRoleIdentifier, index);
+                    }
                   }
-                  else
+                  if (role.getRange() != null)
                   {
-                    // region Insert New Role
-
-                    String roleLabel = role.getNames().get(0).getValue().split("@")[0];
-                    String roleID = null;
-                    generatedId = null;
-                    String genName = null;
-
-                    if (role.getNames().get(0).getLang() == null)
-                      language = "@" + defaultLanguage;
-                    else
-                      language = "@" + role.getNames().get(0).getLang();
-
-                    genName = "Role definition " + roleLabel;
-                    if (role.getId() == null)
+                    qn = _nsmap.reduceToQName(role.getRange(), qName);
+                    if (repository.getRepositoryType() == RepositoryType.PART_8)
                     {
-                      if (_useExampleRegistryBase)
-                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), genName);
-                      else
-                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), genName);
-                      roleID = getIdFromURI(generatedId);
+                    	insert = GenerateRoleFillerType(insert, tempRoleIdentifier, qName.toString());
                     }
                     else
                     {
-                      roleID = getIdFromURI(role.getId());
+                    	insert = GenerateRoleDomain(insert, tempRoleIdentifier, identifier);
                     }
-                    // sparqlAdd.append(String.format("tpl:{0} rdf:type owl:Class .",
-                    // roleID));
-                    sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", roleID, roleLabel,
-                        language));
-                    sparqlAdd.append(String.format("tpl:{0} p8:valRoleIndex {1} .", roleID, index));
-                    sparqlAdd.append(String.format("tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
-
-                    if (role.getRange() != null)
-                    {
-                      qn = _nsmap.reduceToQName(role.getRange(), qName);
-                      if(qn)
-                      sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
-                    }
-
-                    /*
-                     * for (Restriction restriction : role.getRestrictions()) {
-                     * 
-                     * }
-                     */
-                    sparqlAdd.append(String.format("tpl:{0} p8:hasRole rdl:{1} .", identifier, roleID));
-                    // endregion
                   }
-
-                  index++;
+                }
+                }else if (existingTemplate.getRoleDefinitions().size() > newTemplateDefinition.getRoleDefinitions().size()) ///Role(s) removed
+                  {
+                    for (RoleDefinition role : existingTemplate.getRoleDefinitions())
+                    {
+                      Long tempRoleID = Long.parseLong(getIdFromURI(role.getId()));
+                      //RoleDefinition nrd = newTDef.roleDefinition.Find(r => r.identifier == ord.identifier);
+                      RoleDefinition existingRole = null;
+                      for (RoleDefinition tempRoleDef : existingTemplate.getRoleDefinitions())
+                      {
+                        if (role.getId().equalsIgnoreCase(tempRoleDef.getId()))
+                        {
+                          existingRole = tempRoleDef;
+                        }
+                      }
+                      if (existingRole == null) /// need to add it
+                      {
+                        for (Name name : role.getNames())
+                        {
+                        	delete = GenerateName(delete, name, tempRoleID, role);
+                        }
+                        if (role.getDescriptions()!= null)
+                        {
+                        	delete = GenerateDescription(delete, role.getDescriptions().get(0), tempRoleID);
+                        }
+                        if (repository.getRepositoryType() == RepositoryType.PART_8)
+                        {
+                        	delete = GenerateTypesPart8(delete, tempRoleID, identifier, role);
+                        	delete = GenerateRoleIndexPart8(delete, tempRoleID, index, role);
+                        }
+                        else
+                        {
+                        	delete = GenerateTypes(delete, tempRoleID, identifier, role);
+                        	delete = GenerateRoleIndex(delete, tempRoleID, index);
+                        }
+                      }
+                      if (role.getRange() != null)
+                      {
+                        qn = _nsmap.reduceToQName(role.getRange(), qName);
+                        if (repository.getRepositoryType() == RepositoryType.PART_8)
+                        {
+                        	delete = GenerateRoleFillerType(delete, tempRoleID, qName.toString());
+                        }
+                        else
+                        {
+                        	delete = GenerateRoleDomain(delete, tempRoleID, identifier);
+                        }
+                      }
+                    }
+                  }
+              }
+              if (delete.isEmpty() && insert.isEmpty())
+                {
+                  String errMsg = "No changes made to template [" + templateName + "]";
+                  Status status = new Status();
+                  response.setLevel(Level.WARNING);
+                  status.getMessages().getItems().add(errMsg);
+                  //response.Append(status);
                 }
               }
-
-              sparqlDelete.append(prefix);
-              sparqlDelete.append(deleteWhere);
-              sparqlDelete.append(sparqlStmts);
-              sparqlDelete.append(" }; ");
-            }
-            // endregion
-
-            // region Form Insert SPARQL
-            if (hasDeletes)
+            //endregion Form Delete/Insert
+            //region Form Insert SPARQL
+            if (insert.isEmpty() && delete.isEmpty())
             {
-              sparqlAdd.append("}");
-            }
-            else
-            {
-              String label = null;
-              String labelSparql = null;
-              // form labels
+              if (repository.getRepositoryType() == RepositoryType.PART_8)
+              {
+            	  insert = GenerateTypesPart8(insert, Long.parseLong(identifier), null, newTemplateDefinition);
+            	  insert = GenerateRoleCountPart8(insert, newTemplateDefinition.getRoleDefinitions().size(), Long.parseLong(identifier), newTemplateDefinition);
+              }
+              else
+              {
+            	  insert = GenerateTypes(insert, Long.parseLong(identifier), null, newTemplateDefinition);
+            	  insert = GenerateRoleCount(insert, newTemplateDefinition.getRoleDefinitions().size(), Long.parseLong(identifier), newTemplateDefinition);
+              }
               for (Name name : newTemplateDefinition.getNames())
               {
-                label = name.getValue().split("@")[0];
-
-                if (name.getLang() == null)
-                  language = "@" + defaultLanguage;
-                else
-                  language = "@" + name.getLang();
+            	  insert = GenerateName(insert, name, Long.parseLong(identifier), newTemplateDefinition);
               }
 
-              // sparqlAdd.append(String.format("  tpl:{0} rdf:type owl:Class .",
-              // identifier));
-              sparqlAdd.append(String.format("  tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, label,
-                  language));
-              sparqlAdd.append(String.format("  tpl:{0} rdfs:subClassOf p8:BaseTemplateStatement .", identifier));
-              sparqlAdd.append(String.format("  tpl:{0} rdf:type p8:Template .", identifier));
-
-              // add descriptions to sparql
               for (Description descr : newTemplateDefinition.getDescriptions())
               {
-                if (descr.getValue() == null)
-                  continue;
-                else
-                {
-                  if (descr.getLang() == null)
-                    language = "@" + defaultLanguage;
-                  else
-                    language = "@" + descr.getLang();
-
-                  sparqlAdd.append(String.format("tpl:{0} rdfs:comment \"{0}{1}\"^^xsd:string .", identifier, descr
-                      .getValue().split("@")[0], language));
-                }
+            	  insert = GenerateDescription(insert, descr, Long.parseLong(identifier));
               }
-              sparqlAdd.append(String.format(" tpl:{0} p8:valNumberOfRoles {1} .", identifier, newTemplateDefinition
-                  .getRoleDefinitions().size()));
+              //form labels
               for (RoleDefinition role : newTemplateDefinition.getRoleDefinitions())
               {
-                String roleLabel = role.getNames().get(0).getValue().split("@")[0];
-                String roleID = null;
+
+                String roleLabel = role.getNames().get(0).getValue();
+                Long roleID = 0L;
                 generatedId = null;
                 String genName = null;
                 String range = role.getRange();
 
-                if (role.getNames().get(0).getLang() == null)
-                  language = "@" + defaultLanguage;
-                else
-                  language = role.getNames().get(0).getLang();
-
                 genName = "Role definition " + roleLabel;
-                if (role.getId() == null)
+                if(role.getId()==null || role.getId()=="")
                 {
                   if (_useExampleRegistryBase)
                     generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), genName);
                   else
                     generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), genName);
-                  roleID = getIdFromURI(generatedId);
+                  roleID = Long.parseLong(getIdFromURI(generatedId));
                 }
                 else
                 {
-                  roleID = getIdFromURI(role.getId());
+                	roleID = Long.parseLong(getIdFromURI(role.getId()));
                 }
-                // sparqlAdd.append(String.format("  tpl:{0} rdf:type owl:Class .",
-                // roleID));
-                sparqlAdd.append(String.format("  tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", roleID, roleLabel,
-                    language));
-                sparqlAdd.append(String.format("  tpl:{0} p8:valRoleIndex {1} .", roleID, ++roleCount));
-                sparqlAdd.append(String.format("  tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
-                sparqlAdd.append(String.format("  tpl:{0} p8:hasRole tpl:{1} .", identifier, roleID));
+                for (Name newName : role.getNames())
+                {
+                	insert = GenerateName(insert, newName, roleID, role);
+                }
 
-                if (role.getRange() != null)
+                if (role.getDescriptions() != null)
+                {
+                	insert = GenerateDescription(insert, role.getDescriptions().get(0), roleID);
+                }
+
+                if (repository.getRepositoryType() == RepositoryType.PART_8)
+                {
+                	insert = GenerateRoleIndexPart8(insert, roleID, ++roleCount, role);
+                	insert = GenerateHasTemplate(insert, roleID, identifier, role);
+                	insert = GenerateHasRole(insert, Long.parseLong(identifier), roleID.toString(), role);
+                }
+                else
+                {
+                	insert = GenerateRoleIndex(insert, roleID, ++roleCount);
+                }
+                if (role.getRange()!=null && role.getRange()!="")
                 {
                   qn = _nsmap.reduceToQName(role.getRange(), qName);
-                  if(qn)
-                  sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
+                  if (repository.getRepositoryType() == RepositoryType.PART_8)
+                  {
+                	  insert = GenerateRoleFillerType(insert, roleID, qName.toString());
+                  }
+                  else
+                  {
+                	  insert = GenerateRoleDomain(insert, roleID, identifier);
+                	  insert = GenerateTypes(insert, roleID, null, role);
+                  }
                 }
               }
-              sparqlAdd.append("}");
+            }    
+            //endregion
+            //region Generate Query and post Template Definition
+            //TODO - formatter not working
+            /*
+            if (!delete.isEmpty())
+            {
+              sparqlBuilder.append(deleteData);
+              for (TripleImpl t : delete.Triples)
+              {
+                sparqlBuilder.append(t.ToString(formatter));
+              }
+              if (insert.isEmpty())
+                sparqlBuilder.append("}");
+              else
+                sparqlBuilder.append("};");
             }
-            // endregion
-
-            // add prefix first
-            sparqlBuilder.append(prefix);
-            sparqlBuilder.append(sparqlDelete);
-            sparqlBuilder.append(sparqlAdd);
-
+            if (!insert.isEmpty())
+            {
+              sparqlBuilder.append(insertData);
+              for (TripleImpl t : insert.Triples)
+              {
+                sparqlBuilder.AppendLine(t.ToString(formatter));
+              }
+              sparqlBuilder.append("}");
+            }*/
             String sparql = sparqlBuilder.toString();
             Response postResponse = postToRepository(repository, sparql);
-            // response.append(postResponse);
+            //response.Append(postResponse);
           }
         }
-
-        // endregion Template Definitions
-
-        // region Template Qualification
-
+            //endregion Generate Query and post Template Definition
+       //endregion Template Definitions      
+         
+        //region Template Qualification
+        /// Specialized templates do have the following properties
+        /// 1) Base class = owl:Thing
+        /// 2) rdf:type = p8:TemplateSpecialization
+        /// 3) p8:hasSuperTemplate = Super Template ID
+        /// 4) p8:hasSubTemplate = Sub Template ID
+        /// 5) rdfs:label = template name
+        /// 
         if (qmxf.getTemplateQualifications().size() > 0)
         {
-          for (TemplateQualification newTemplateQualification : qmxf.getTemplateQualifications())
+          for (TemplateQualification newTQ : qmxf.getTemplateQualifications())
           {
-            String language = null;
             int roleCount = 0;
-            StringBuilder sparqlAdd = new StringBuilder();
-
-            sparqlAdd.append(insertData);
-            boolean hasDeletes = false;
             String templateName = null;
-            String identifier = null;
+            Long templateID = 0L;
             String generatedId = null;
             String roleQualification = null;
             int index = 1;
-            if (newTemplateQualification.getId() != null)
-            {
-              identifier = getIdFromURI(newTemplateQualification.getId());
-            }
+            if (newTQ.getId()!=null && newTQ.getId()!="")
+              templateID = Long.parseLong(getIdFromURI(newTQ.getId()));
 
-            templateName = newTemplateQualification.getNames().get(0).getValue();
-            // check for exisitng template
-            Qmxf existingQmxf = new Qmxf();
-            if (identifier != null)
+            templateName = newTQ.getNames().get(0).getValue();
+            Qmxf oldQmxf = new Qmxf();
+            //if (templateID!=null && templateID!="")
+            if (templateID!=0L)
             {
-              // existingQmxf = GetTemplate(identifier,
-              // QMXFType.Qualification, repository);
-              existingQmxf = getTemplate(identifier, TemplateType.QUALIFICATION.toString(), repository);
+              oldQmxf = getTemplate(templateID.toString(), TemplateType.QUALIFICATION.toString(), repository);
             }
             else
             {
@@ -1831,364 +1838,479 @@ public class RefDataProvider
               else
                 generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), templateName);
 
-              identifier = getIdFromURI(generatedId);
+              templateID = Long.parseLong(getIdFromURI(generatedId));
             }
-            // region Form Delete/Insert SPARQL
-            if (existingQmxf.getTemplateQualifications().size() > 0)
+            //region Form Delete/Insert SPARQL
+            if (oldQmxf.getTemplateQualifications().size() > 0)
             {
-              StringBuilder sparqlStmts = new StringBuilder();
-
-              for (TemplateQualification existingTemplate : existingQmxf.getTemplateQualifications())
+              for (TemplateQualification oldTQ : oldQmxf.getTemplateQualifications())
               {
-                for (Name name : newTemplateQualification.getNames())
+                qn = _nsmap.reduceToQName(oldTQ.getQualifies(), qName);
+                for (Name nn : newTQ.getNames())
                 {
-                  templateName = name.getValue();
-                  // Name existingName =
-                  // existingTemplate.name.Find(n => n.lang ==
-                  // name.lang);
-                  Name existingName = new Name();
-                  for (Name tempName : existingTemplate.getNames())
+                  templateName = nn.getValue();
+                  //Name on = oldTQ.name.Find(n => n.lang == nn.lang);
+                  Name on = new Name();
+                  for (Name tempName : oldTQ.getNames())
                   {
-                    if (name.getLang().equalsIgnoreCase(tempName.getLang()))
+                    if (nn.getLang().equalsIgnoreCase(tempName.getLang()))
                     {
-                      existingName = tempName;
+                      on = tempName;
                     }
                   }
-                  if (existingName.getLang() == null)
-                    language = "@" + defaultLanguage;
-                  else
-                    language = "@" + existingName.getLang();
-
-                  if (existingName != null)
+                  
+                  if (on != null)
                   {
-                    if (!existingName.getValue().equalsIgnoreCase(name.getValue()))
+                    if (!on.getValue().equalsIgnoreCase(nn.getValue()))
                     {
-                      hasDeletes = true;
-                      sparqlStmts.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier,
-                          existingName.getValue(), language));
-                      sparqlStmts.append(String.format("tpl:{0} rdf:type p8:TemplateDescription .", identifier));
-                      sparqlStmts.append(String.format(
-                          "tpl:{0} rdf:hasTemplate p8:{1} .",
-                          identifier,
-                          existingName.getValue().replaceFirst(
-                              existingName.getValue().substring(0, existingName.getValue().lastIndexOf("_") + 1), "")));
-
-                      sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier,
-                          name.getValue(), language));
-                      sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateDescription .", identifier));
-                      sparqlAdd.append(String.format("tpl:{0} rdf:hasTemplate p8:{1} .", identifier, name.getValue()
-                          .replaceFirst(name.getValue().substring(0, name.getValue().lastIndexOf("_") + 1), "")));
+                    	delete = GenerateName(delete, on, templateID, oldTQ);
+                    	delete = GenerateName(insert, nn, templateID, newTQ);
                     }
                   }
                 }
-
-                // role count
-                if (existingTemplate.getRoleQualifications().size() != newTemplateQualification.getRoleQualifications()
-                    .size())
+                for (Description nd : newTQ.getDescriptions())
                 {
-                  hasDeletes = true;
-                  sparqlStmts.append(String.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier,
-                      existingTemplate.getRoleQualifications().size()));
-                  sparqlAdd.append(String.format("tpl:{0} p8:valNumberOfRoles {1}^^xsd:int .", identifier,
-                      newTemplateQualification.getRoleQualifications().size()));
-                }
-
-                for (Specialization spec : newTemplateQualification.getSpecializations())
-                {
-                  // Specialization existingSpecialization =
-                  // existingTemplate.specialization.Find(n =>
-                  // n.reference == spec.reference);
-                  Specialization existingSpecialization = new Specialization();
-                  for (Specialization tempSpecialisation : existingTemplate.getSpecializations())
+                  if (nd.getLang() == null) 
+                	  nd.setLang(defaultLanguage);
+                  //od = oldTQ.description.Find(d => d.lang == nd.lang);
+                  Description od = null;
+                  for (Description tempDesc : oldTQ.getDescriptions())
                   {
-                    if (spec.getReference().equalsIgnoreCase(tempSpecialisation.getReference()))
+                    if (nd.getLang().equalsIgnoreCase(tempDesc.getLang()))
                     {
-                      existingSpecialization = tempSpecialisation;
+                      od = new Description();
+                      od = tempDesc;
                     }
                   }
-                  if (existingSpecialization != null)
+                  
+                  if (od != null && od.getValue() != null)
                   {
-                    String specialization = spec.getReference();
-                    String existingSpec = existingSpecialization.getReference();
-
-                    hasDeletes = true;
-                    sparqlStmts.append(String.format("tpl:{0} rdf:type p8:TemplateSpecialization .", existingSpec));
-                    sparqlStmts.append(String.format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", existingSpec,
-                        existingSpecialization.getLabel().split("@")[0], language));
-                    sparqlStmts
-                        .append(String.format("tpl:{0} p8:hasSuperTemplate tpl:{1} .", existingSpec, identifier));
-                    sparqlStmts.append(String.format("tpl:{0} p8:hasSubTemplate tpl:{1} .", identifier, existingSpec));
-
-                    sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateSpecialization .", specialization));
-                    sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", specialization, spec
-                        .getLabel().split("@")[0], language));
-                    sparqlAdd
-                        .append(String.format("tpl:{0} p8:hasSuperTemplate tpl:{1} .", specialization, identifier));
-                    sparqlAdd.append(String.format("tpl:{0} p8:hasSubTemplate tpl:{1} .", identifier, specialization));
+                    if (!od.getValue().equalsIgnoreCase(nd.getValue()))
+                    {
+                    	delete = GenerateDescription(delete, od, templateID);
+                    	insert = GenerateDescription(insert, nd, templateID);
+                    }
+                  }
+                  else if(od == null && nd.getValue() != null)
+                  {
+                	  insert = GenerateDescription(insert, nd, templateID);
                   }
                 }
-
-                index = 1;
-                for (RoleQualification role : newTemplateQualification.getRoleQualifications())
+                //role count
+                if (oldTQ.getRoleQualifications().size() != newTQ.getRoleQualifications().size())
                 {
-                  String roleIdentifier = role.getId();
-                  hasDeletes = false;
-
-                  // get existing role if it exists
-                  // RoleQualification existingRole =
-                  // existingTemplate.roleQualification.Find(r
-                  // => r.identifier == role.identifier);
-                  RoleQualification existingRole = null;
-                  for (RoleQualification tempExistingRole : existingTemplate.getRoleQualifications())
+                  if (repository.getRepositoryType() == RepositoryType.PART_8)
                   {
-                    if (role.getId().equalsIgnoreCase(tempExistingRole.getId()))
-                    {
-                      existingRole = tempExistingRole;
-                    }
-                  }
-                  // remove existing role from existing
-                  // template, leftovers will be deleted later
-                  existingTemplate.getRoleQualifications().remove(existingRole);
-
-                  if (existingRole != null)
-                  {
-                    // region Process Changing Role
-                    String label = null;
-
-                    for (Name name : role.getNames())
-                    {
-                      // QMXFName existingName =
-                      // existingRole.name.Find(n =>
-                      // n.lang == name.lang);
-                      Name existingName = new Name();
-                      for (Name tempExistingName : existingRole.getNames())
-                      {
-                        if (name.getLang().equalsIgnoreCase(tempExistingName.getLang()))
-                        {
-                          existingName = tempExistingName;
-                        }
-                      }
-                      if (existingName != null)
-                      {
-                        if (!existingName.getValue().equalsIgnoreCase(name.getValue()))
-                        {
-                          // /TODO: Why are we
-                          // removing this? We should
-                          // remove the role from the
-                          // template only and not
-                          // from the repository
-                          hasDeletes = true;
-                          sparqlStmts.append(String.format("tpl:{0} rdf:type owl:Class .", existingRole.getId()));
-                          sparqlStmts.append(String.format("tpl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .",
-                              existingRole.getId(), existingName.getValue(), name.getLang()));
-                        }
-                        // index
-                        // if
-                        // (existingRole.designation.value
-                        // != index.ToString())
-                        // {
-                        // sparqlStmts.append(String.format("tpl:{0} p8:valRoleIndex {1}^^xsd:int .",
-                        // existingRole.identifier,
-                        // existingRole.designation.value));
-                        // }
-                      }
-                    }
-                    if (existingRole.getRange() != null)
-                    {
-                      if (!existingRole.getRange().equalsIgnoreCase(role.getRange()))
-                      {
-                        hasDeletes = true;
-                        sparqlStmts.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", existingRole.getId(),
-                            existingRole.getRange()));
-                      }
-                    }
-                    // endregion
+                	  delete = GenerateRoleCountPart8(delete, oldTQ.getRoleQualifications().size(), templateID, oldTQ);
+                	  insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
                   }
                   else
                   {
-                    // region Insert New Role
+                	  delete = GenerateRoleCount(delete, oldTQ.getRoleQualifications().size(), templateID, oldTQ);
+                	  insert = GenerateRoleCount(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
+                  }
+                }
+                //// TODO need to work out howto correctly handle specializations
+                for (Specialization ns : newTQ.getSpecializations())
+                {
+                  Specialization os = oldTQ.getSpecializations().get(0);
 
-                    String roleLabel = role.getNames().get(0).getValue().split("@")[0];
-                    String roleID = null;
-                    generatedId = null;
-                    String genName = null;
+                  if (os != null && !(os.getReference().equalsIgnoreCase(ns.getReference())))
+                  {
+                    if (repository.getRepositoryType() == RepositoryType.PART_8)
+                    {
 
-                    if (role.getNames().get(0).getLang() == null)
-                      language = "@" + defaultLanguage;
+                    }
                     else
-                      language = "@" + role.getNames().get(0).getLang();
+                    {
 
-                    genName = "Role Qualification " + roleLabel;
-                    if (role.getId() == null)
+                    }
+                  }
+                }
+        
+                index = 1;
+                ///  SpecializedTemplate roles do have the following properties
+                /// 1) baseclass of owl:Thing
+                /// 2) rdf:type = p8:TemplateRoleDescription
+                /// 3) rdfs:label = rolename
+                /// 4) p8:valRoleIndex
+                /// 5) p8:hasRoleFillerType = qualifified class
+                /// 6) p8:hasTemplate = template ID
+                /// 6) p8:hasRole = tpl:{roleName} probably don't need to use this -- pointer to self
+                if (oldTQ.getRoleQualifications().size() < newTQ.getRoleQualifications().size())
+                {
+                  int count = 0;
+                  for (RoleQualification nrq : newTQ.getRoleQualifications())
+                  {
+                    String roleName = nrq.getNames().get(0).getValue();
+                    String newRoleID = nrq.getId();
+                    Long tempNewRoleID = Long.parseLong(getIdFromURI(newRoleID));
+                    
+                    if (newRoleID==null || newRoleID == "")
                     {
                       if (_useExampleRegistryBase)
-                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), genName);
+                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), roleName);
                       else
-                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), genName);
-
-                      roleID = getIdFromURI(generatedId);
+                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), roleName);
+                      newRoleID = generatedId;
                     }
-                    else
+                    //RoleQualification orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
+                    RoleQualification orq = null;
+                    for (RoleQualification temprq : oldTQ.getRoleQualifications())
                     {
-                      roleID = getIdFromURI(role.getId());
+                      if (newRoleID.equalsIgnoreCase(temprq.getId()))
+                      {
+                    	  orq = new RoleQualification();
+                    	  orq = temprq;
+                      }
                     }
-                    // sparqlAdd.append(String.format("tpl:{0} rdf:type owl:Class .",
-                    // roleID));
-                    sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", roleID, roleLabel,
-                        language));
-                    sparqlAdd.append(String.format("tpl:{0} p8:valRoleIndex {1} .", roleID, index));
-                    sparqlAdd.append(String.format("tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
-
-                    if (role.getRange() != null)
+                    
+                    if (orq == null)
                     {
-                      qn = _nsmap.reduceToQName(role.getRange(), qName);
-                      if(qn)
-                      sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
+                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      {
+                    	  insert = GenerateTypesPart8(insert, tempNewRoleID, templateID.toString(), nrq);
+                        for (Name nn : nrq.getNames())
+                        {
+                        	insert = GenerateName(insert, nn, tempNewRoleID, nrq);
+                        }
+                        insert = GenerateRoleIndexPart8(insert, tempNewRoleID, ++count, nrq);
+                        insert = GenerateHasTemplate(insert, tempNewRoleID, templateID.toString(), nrq);
+                        insert = GenerateHasRole(insert, templateID, tempNewRoleID.toString(), newTQ);
+                        if (nrq.getRange()!=null && nrq.getRange()=="")
+                        {
+                          qn = _nsmap.reduceToQName(nrq.getRange(), qName);
+                          if (qn) 
+                        	  insert = GenerateRoleFillerType(insert, tempNewRoleID, qName.toString());
+                        }
+                        else if (nrq.getValue() != null)
+                        {
+                          if (nrq.getValue().getReference() != null)
+                          {
+                            qn = _nsmap.reduceToQName(nrq.getValue().getReference(), qName);
+                            if (qn) 
+                            	insert = GenerateRoleFillerType(insert, tempNewRoleID, qName.toString());
+                          }
+                          else if (nrq.getValue().getText() != null)
+                          {
+                            ///TODO
+                          }
+                        }
+                      }
+                      else //Not Part8 repository
+                      {
+                        if (nrq.getRange()!=null && nrq.getRange()!="") //range restriction
+                        {
+                          qn = _nsmap.reduceToQName(nrq.getRange(),qName);
+                          if (qn) 
+                        	  insert = GenerateRange(insert, tempNewRoleID, qName.toString(), nrq);
+                          insert = GenerateTypes(insert, tempNewRoleID, templateID.toString(), nrq);
+                          insert = GenerateQualifies(insert, tempNewRoleID, nrq.getQualifies().split("#")[1], nrq);
+                        }
+                        else if (nrq.getValue() != null)
+                        {
+                          if (nrq.getValue().getReference() != null) //reference restriction
+                          {
+                        	  insert = GenerateReferenceType(insert, tempNewRoleID, templateID.toString(), nrq);
+                        	  insert = GenerateReferenceQual(insert, tempNewRoleID, nrq.getQualifies().split("#")[1], nrq);
+                            qn = _nsmap.reduceToQName(nrq.getValue().getReference(), qName);
+                            if (qn) 
+                            	insert = GenerateReferenceTpl(insert, tempNewRoleID, qName.toString(), nrq);
+                          }
+                          else if (nrq.getValue().getText() != null)// value restriction
+                          {
+                        	  insert = GenerateValue(insert, tempNewRoleID.toString(), templateID.toString(), nrq);
+                          }
+                        }
+                        insert = GenerateTypes(insert, tempNewRoleID, templateID.toString(), nrq);
+                        insert = GenerateRoleDomain(insert, tempNewRoleID, templateID.toString());
+                        insert = GenerateRoleIndex(insert, tempNewRoleID, ++count);
+                      }
                     }
-
-                    // foreach (PropertyRestriction
-                    // restriction in role.restrictions)
-                    // {
-                    //
-                    // }
-                    sparqlAdd.append(String.format("tpl:{0} p8:hasRole rdl:{1} .", identifier, roleID));
-                    // endregion
                   }
+                }
+                else if (oldTQ.getRoleQualifications().size() > newTQ.getRoleQualifications().size())
+                {
+                  int count = 0;
+                  for (RoleQualification orq : oldTQ.getRoleQualifications())
+                  {
+                    String roleName = orq.getNames().get(0).getValue();
+                    String newRoleID = orq.getId();
+                    Long tempNewRoleID = Long.parseLong(getIdFromURI(newRoleID));
 
-                  index++;
+                    if (newRoleID==null || newRoleID=="")
+                    {
+                      if (_useExampleRegistryBase)
+                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), roleName);
+                      else
+                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), roleName);
+                      newRoleID = generatedId;
+                    }
+                    //RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
+                    RoleQualification nrq = null;
+                    for (RoleQualification tempRq : newTQ.getRoleQualifications())
+                    {
+                      if (newRoleID.equalsIgnoreCase(tempRq.getId()))
+                      {
+                    	  nrq = new RoleQualification();
+                    	  nrq = tempRq;
+                      }
+                    }
+                    if (nrq == null)
+                    {
+                      if (repository.getRepositoryType() == RepositoryType.PART_8)
+                      {
+                    	  delete = GenerateTypesPart8(delete, tempNewRoleID, templateID.toString(), orq);
+                        for (Name nn : orq.getNames())
+                        {
+                        	delete = GenerateName(delete, nn, tempNewRoleID, orq);
+                        }
+                        delete = GenerateRoleIndexPart8(delete, tempNewRoleID, ++count, orq);
+                        delete = GenerateHasTemplate(delete, tempNewRoleID, templateID.toString(), orq);
+                        delete = GenerateHasRole(delete, templateID, tempNewRoleID.toString(), oldTQ);
+                        if (orq.getRange()!=null && orq.getRange()!="")
+                        {
+                          qn = _nsmap.reduceToQName(orq.getRange(), qName);
+                          if (qn) 
+                        	  delete = GenerateRoleFillerType(delete, tempNewRoleID, qName.toString());
+                        }
+                        else if (orq.getValue()!= null)
+                        {
+                          if (orq.getValue().getReference() != null)
+                          {
+                            qn = _nsmap.reduceToQName(orq.getValue().getReference(), qName);
+                            if (qn) 
+                            	delete= GenerateRoleFillerType(delete, tempNewRoleID, qName.toString());
+                          }
+                          else if (nrq.getValue().getText()!= null)
+                          {
+                            ///TODO
+                          }
+                        }
+                      }
+                      else //Not Part8 repository
+                      {
+                        if (orq.getRange()!=null && orq.getRange()!="") //range restriction
+                        {
+                          qn = _nsmap.reduceToQName(orq.getRange(), qName);
+                          if (qn) 
+                        	  delete = GenerateRange(delete, tempNewRoleID, qName.toString(), orq);
+                          delete = GenerateTypes(delete, tempNewRoleID, templateID.toString(), nrq);
+                          delete = GenerateQualifies(delete, tempNewRoleID, orq.getQualifies().split("#")[1], orq);
+                        }
+                        else if (orq.getValue()!= null)
+                        {
+                          if (orq.getValue().getReference() != null) //reference restriction
+                          {
+                        	  delete = GenerateReferenceType(delete, tempNewRoleID, templateID.toString(), orq);
+                        	  delete = GenerateReferenceQual(delete, tempNewRoleID, orq.getQualifies().split("#")[1], orq);
+                            qn = _nsmap.reduceToQName(orq.getValue().getReference(), qName);
+                            if (qn) 
+                            	insert = GenerateReferenceTpl(insert, tempNewRoleID, qName.toString(), orq);
+                          }
+                          else if (orq.getValue().getText() != null)// value restriction
+                          {
+                        	  delete = GenerateValue(delete, tempNewRoleID.toString(), templateID.toString(), orq);
+                          }
+                        }
+                        delete = GenerateTypes(delete, tempNewRoleID, templateID.toString(), orq);
+                        delete = GenerateRoleDomain(delete, tempNewRoleID, templateID.toString());
+                        delete = GenerateRoleIndex(delete, tempNewRoleID, ++count);
+                      }
+                    }
+                  }
+                }
+              }
+              if (delete.isEmpty() && insert.isEmpty())
+              {
+                String errMsg = "No changes made to template ["+ templateName +"]";
+                Status status = new Status();
+                response.setLevel(Level.WARNING);
+                status.getMessages().getItems().add(errMsg);
+                //response.Append(status);
+                //continue;//Nothing to be done
+              }
+            }
+            //endregion
+            //region Form Insert SPARQL
+            if (delete.isEmpty())
+            {
+              String templateLabel = null;
+              String labelSparql = null;
+
+              for (Name newName : newTQ.getNames())
+              {
+            	  insert = GenerateName(insert, newName, templateID, newTQ);
+              }
+              for (Description newDescr : newTQ.getDescriptions())
+              {
+                if (newDescr.getValue()==null || newDescr.getValue()=="") 
+                	continue;
+                insert = GenerateDescription(insert, newDescr, templateID);
+              }
+
+              if (repository.getRepositoryType() == RepositoryType.PART_8)
+              {
+            	  insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
+                qn = _nsmap.reduceToQName(newTQ.getQualifies(), qName);
+                if (qn) 
+                	insert = GenerateTypesPart8(insert, templateID, qName.toString(), newTQ);
+              }
+              else
+              {
+                GenerateRoleCount(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
+                qn = _nsmap.reduceToQName(newTQ.getQualifies(), qName);
+                if (qn) 
+                	insert = GenerateTypes(insert, templateID, qName.toString(), newTQ);
+
+              }
+              for (Specialization spec : newTQ.getSpecializations())
+              {
+                String specialization = spec.getReference();
+                if (repository.getRepositoryType() == RepositoryType.PART_8)
+                {
+                  ///TODO
+                }
+                else
+                {
+                  ///TODO
                 }
               }
 
-              sparqlDelete.append(prefix);
-              sparqlDelete.append(deleteWhere);
-              sparqlDelete.append(sparqlStmts);
-              sparqlDelete.append(" }; ");
-            }
-            // endregion
-
-            // region Form Insert SPARQL
-            if (hasDeletes)
-            {
-              sparqlAdd.append("}");
-            }
-            else
-            {
-              String label = null;
-              String labelSparql = null;
-              // form labels
-              for (Name name : newTemplateQualification.getNames())
+              for (RoleQualification newRole : newTQ.getRoleQualifications())
               {
-                label = name.getValue().split("@")[0];
-
-                if (name.getLang() == null)
-                  language = "@" + defaultLanguage;
-                else
-                  language = "@" + name.getLang();
-              }
-
-              sparqlAdd.append(String
-                  .format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", identifier, label, language));
-              sparqlAdd.append(String.format("tpl:{0} p8:valNumberOfRoles {1} .", identifier, newTemplateQualification
-                  .getRoleQualifications().size()));
-
-              // /TODO: Template Description R# should go here
-              // instead
-              sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateDescription .", identifier));
-
-              // /TODO: BIG QUESTION AROUND THIS
-              sparqlAdd.append(String.format("tpl:{0} rdf:hasTemplate p8:{1} .", identifier,
-                  label.replaceFirst(label.substring(0, label.lastIndexOf("_") + 1), "")));
-
-              for (Specialization spec : newTemplateQualification.getSpecializations())
-              {
-                // sparqlStr = new StringBuilder();
-                String specialization = spec.getReference();
-                sparqlAdd.append(prefix);
-                sparqlAdd.append(insertData);
-
-                // /TODO: Generate an id for template
-                // specialization??
-
-                // sparqlAdd.append(String.format("tpl:{0} rdfs:subClassOf {1} .",
-                // identifier, specialization));
-                sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateSpecialization .", specialization));
-                sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{0}{1}\"^^xds:string .", specialization, spec
-                    .getLabel().split("@")[0], language));
-                sparqlAdd.append(String.format("tpl:{0} p8:hasSuperTemplate tpl:{1} .", specialization, identifier));
-                sparqlAdd.append(String.format("tpl:{0} p8:hasSubTemplate tpl:{1} .", identifier, specialization));
-              }
-
-              for (RoleQualification role : newTemplateQualification.getRoleQualifications())
-              {
-                String roleLabel = role.getNames().get(0).getValue().split("@")[0];
-                String roleID = null;
+                String roleLabel = newRole.getNames().get(0).getValue();
+                Long roleID = 0L;
                 generatedId = null;
                 String genName = null;
-                String range = role.getRange();
-
-                if (role.getNames().get(0).getLang() == null)
-                  language = "@" + defaultLanguage;
-                else
-                  language = "@" + role.getNames().get(0).getLang();
+                String range = newRole.getRange();
 
                 genName = "Role Qualification " + roleLabel;
-                if (role.getId() == null)
+                if (newRole.getId()==null && newRole.getId()=="")
                 {
                   if (_useExampleRegistryBase)
                     generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), genName);
                   else
                     generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), genName);
 
-                  roleID = getIdFromURI(generatedId);
+                  roleID = Long.parseLong(getIdFromURI(generatedId));
                 }
                 else
                 {
-                  roleID = getIdFromURI(role.getId());
+                  roleID = Long.parseLong(getIdFromURI(newRole.getId()));
                 }
-
-                // /TODO: p8:TemplateRoleDecription has to be
-                // replaced with R#
-                sparqlAdd.append(String.format("tpl:{0} rdf:type p8:TemplateRoleDescription .", roleID));
-                sparqlAdd.append(String.format("tpl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", roleID, roleLabel,
-                    language));
-                sparqlAdd.append(String.format("tpl:{0} p8:valRoleIndex {1} .", roleID, ++roleCount));
-                sparqlAdd.append(String.format("tpl:{0} p8:hasTemplate tpl:{1} .", roleID, identifier));
-                sparqlAdd.append(String.format("tpl:{0} p8:hasRole tpl:{1} .", identifier, roleID));
-
-                if (role.getRange() != null)
+                if (repository.getRepositoryType() == RepositoryType.PART_8)
                 {
-                  qn = _nsmap.reduceToQName(role.getRange(), qName);
-                  if(qn)
-                  sparqlAdd.append(String.format("tpl:{0} p8:hasRoleFillerType {1} .", roleID, qName));
+                	insert = GenerateTypesPart8(insert, roleID, templateID.toString(), newRole);
+                  for (Name newName : newRole.getNames())
+                  {
+                	  insert = GenerateName(insert, newName, roleID, newRole);
+                  }
+                  insert = GenerateRoleIndexPart8(insert, roleID, ++roleCount, newRole);
+                  insert = GenerateHasTemplate(insert, roleID, templateID.toString(), newRole);
+                  insert = GenerateHasRole(insert, templateID, roleID.toString(), newTQ);
+                  if (newRole.getRange()!=null && newRole.getRange()!="")
+                  {
+                    qn = _nsmap.reduceToQName(newRole.getRange(), qName);
+                    if (qn) 
+                    	insert = GenerateRoleFillerType(insert, roleID, qName.toString());
+                  }
+                  else if (newRole.getValue()!= null)
+                  {
+                    if (newRole.getValue().getReference() != null)
+                    {
+                      qn = _nsmap.reduceToQName(newRole.getValue().getReference(), qName);
+                      if (qn) 
+                    	  insert = GenerateRoleFillerType(insert, roleID, qName.toString());
+                    }
+                    else if (newRole.getValue().getText() != null)
+                    {
+                      ///TODO
+                    }
+                  }
+                }
+                else //Not Part8 repository
+                {
+                  if (newRole.getRange()!=null && newRole.getRange()!="") //range restriction
+                  {
+
+                    qn = _nsmap.reduceToQName(newRole.getRange(), qName);
+                    if (qn) 
+                    	insert = GenerateRange(insert, roleID, qName.toString(), newRole);
+                    insert = GenerateTypes(insert, roleID, templateID.toString(), newRole);
+                    insert = GenerateQualifies(insert, roleID, newRole.getQualifies().split("#")[1], newRole);
+                  }
+                  else if (newRole.getValue() != null)
+                  {
+                    if (newRole.getValue().getReference() != null) //reference restriction
+                    {
+                    	insert = GenerateReferenceType(insert, roleID, templateID.toString(), newRole);
+                    	insert = GenerateReferenceQual(insert, roleID, newRole.getQualifies().split("#")[1], newRole);
+                      qn = _nsmap.reduceToQName(newRole.getValue().getReference(), qName);
+                      if (qn) 
+                    	  insert = GenerateReferenceTpl(insert, roleID, qName.toString(), newRole);
+                    }
+                    else if (newRole.getValue().getText() != null)// value restriction
+                    {
+                    	insert = GenerateValue(insert, roleID.toString(), templateID.toString(), newRole);
+                    }
+                  }
+                  insert = GenerateTypes(insert, roleID, templateID.toString(), newRole);
+                  insert = GenerateRoleDomain(insert, roleID, templateID.toString());
+                  insert = GenerateRoleIndex(insert, roleID, ++roleCount);
                 }
               }
-              sparqlAdd.append("}");
             }
-            // endregion
 
-            // add prefix first
-            sparqlBuilder.append(prefix);
-            sparqlBuilder.append(sparqlDelete);
-            sparqlBuilder.append(sparqlAdd);
+            //endregion
+            //region Generate Query and Post Qualification Template
+            //TODO
+            /*
+            if (!delete.isEmpty())
+            {
+              sparqlBuilder.append(deleteData);
+              for (Triple t : delete.Triples)
+              {
+                sparqlBuilder.append(t.ToString(formatter));
+              }
+              if (insert.isEmpty())
+                sparqlBuilder.append("}");
+              else
+                sparqlBuilder.append("};");
+            }
+            if (!insert.isEmpty())
+            {
+              sparqlBuilder.append(insertData);
+              for (Triple t : insert.Triples)
+              {
+                sparqlBuilder.append(t.ToString(formatter));
+              }
+              sparqlBuilder.append("}");
+            }
+            */
 
             String sparql = sparqlBuilder.toString();
             Response postResponse = postToRepository(repository, sparql);
-            // response.append(postResponse);
+            //response.Append(postResponse);
           }
         }
-        // endregion
+
       }
     }
+
     catch (Exception ex)
     {
       String errMsg = "Error in PostTemplate: " + ex;
       Status status = new Status();
-      logger.error("Error in PostTemplate: " + ex);
+
       response.setLevel(Level.ERROR);
       status.getMessages().getItems().add(errMsg);
-    }
-    return response;
+      //response.Append(status);
 
+      logger.error(errMsg);
+    }
+
+    return response;
   }
 
   private int getIndexFromName(String name)
@@ -2306,7 +2428,7 @@ public class RefDataProvider
                       {
                           for (Name clsName : clsDef.getNames())
                           {
-                              //QMXFName existingName = existingClsDef.name.Find(n => n.lang == clsName.lang);
+                              //Name existingName = existingClsDef.name.Find(n => n.lang == clsName.lang);
                               Name existingName = new Name();
 								for (Name tempName : existingClsDef.getNames()) {
 									if (clsName.getLang().equalsIgnoreCase(tempName.getLang())) {
@@ -3321,5 +3443,291 @@ public class RefDataProvider
     }
     return query;
   }
+  
+  //updations
+
+  
+  private Graph GenerateValue(Graph work, String subjId, String objId, Object gobj)
+  {
+    RoleQualification role = (RoleQualification)gobj;
+    pred = new URIReferenceImpl("tpl:R56456315674");
+    obj = new LiteralImpl(String.format("tpl:{0}", objId));
+    work.add(new TripleImpl(subj, pred, obj));
+    pred = new URIReferenceImpl("tpl:R89867215482");
+    obj = new LiteralImpl(String.format("tpl:{0}", role.getQualifies().split("#",1)));
+    work.add(new TripleImpl(subj, pred, obj));
+    pred = new URIReferenceImpl("tpl:R29577887690");
+    obj = new LiteralImpl(role.getValue().getText(), (role.getValue().getLang()==null || role.getValue().getLang()=="") ? defaultLanguage : role.getValue().getLang());
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateReferenceQual(Graph work, Long subjId, String objId, Object gobj)
+  {
+    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+    pred = new URIReferenceImpl("tpl:R30741601855");
+    obj = new LiteralImpl(String.format("tpl:{0}", objId));
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateReferenceType(Graph work, Long subjId, String objId, Object gobj)
+  {
+    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+    pred = new URIReferenceImpl(rdfType);
+    obj = new LiteralImpl("tpl:R40103148466");
+    work.add(new TripleImpl(subj, pred, obj));
+    pred = new URIReferenceImpl("tpl:R49267603385");
+    obj = new LiteralImpl(String.format("tpl:{0}", objId));
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateReferenceTpl(Graph work, Long subjId, String objId, Object gobj)
+  {
+    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+    pred = new URIReferenceImpl("tpl:R21129944603");
+    obj = new LiteralImpl(objId);
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateQualifies(Graph work, Long subjId, String objId, Object gobj)
+  {
+    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+    pred = new URIReferenceImpl("tpl:R91125890543");
+    obj = new LiteralImpl(String.format("tpl:{0}", objId));
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateRange(Graph work, Long subjId, String objId, Object gobj)
+  {
+    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+    pred = new URIReferenceImpl("rdfs:range");
+    obj = new LiteralImpl(objId);
+    work.add(new TripleImpl(dsubj, dpred, dobj));
+    pred = new URIReferenceImpl("tpl:R98983340497");
+    obj = new LiteralImpl(qName);
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateHasRole(Graph work, Long subjId, String objId, Object gobj)
+  {
+    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+    pred = new URIReferenceImpl("p8:hasRole");
+    obj = new LiteralImpl(String.format("tpl:{0}", objId));
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateHasTemplate(Graph work, Long subjId, String objId, Object gobj)
+  {
+    if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
+    {
+      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      pred = new URIReferenceImpl("p8:hasTemplate");
+      obj = new LiteralImpl(String.format("tpl:{0}", objId));
+      work.add(new TripleImpl(subj, pred, obj));
+     }
+    return work;
+    
+  }
+
+  private Graph GenerateRoleIndex(Graph work, Long subjId, int index) throws Exception
+  {
+	subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+	pred = new URIReferenceImpl("tpl:R97483568938");
+	obj = new LiteralImpl(String.valueOf(index), new URI("xsd:integer"));
+	work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateRoleIndexPart8(Graph work, Long subjId, int index, Object gobj) throws Exception
+  {
+    if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
+    {
+      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      pred = new URIReferenceImpl("p8:valRoleIndex");
+      obj = new LiteralImpl(String.valueOf(index), new URI("xsd:integer"));
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    return work;
+  }
+
+  private Graph GenerateRoleDomain(Graph work, Long subjId, String objId)
+  {
+    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+    pred = new URIReferenceImpl("rdfs:domain");
+    obj = new LiteralImpl(String.format("tpl:{0}", objId));
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateRoleFillerType(Graph work, Long subjId, String qName)
+  {
+    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+    pred = new URIReferenceImpl("p8:hasRoleFillerType");
+    obj = new LiteralImpl(qName);
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateRoleCount(Graph work, int rolecount, Long subjId, Object gobj) throws Exception
+  {
+    if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
+    {
+      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      pred = new URIReferenceImpl("tpl:R35529169909");
+      obj = new LiteralImpl(String.valueOf(rolecount), new URI("xsd:integer"));
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    return work;
+  }
+
+  private Graph GenerateRoleCountPart8(Graph work, int rolecount, Long subjId, Object gobj) throws Exception
+  {
+    if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
+    {
+      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      pred = new URIReferenceImpl("p8:valNumberOfRoles");
+      obj = new LiteralImpl(String.valueOf(rolecount), new URI("xsd:integer"));
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    return work;
+  }
+
+  private Graph GenerateTypesPart8(Graph work, Long subjId, String objectId, Object gobj)
+  {
+    if (gobj instanceof TemplateDefinition)
+    {
+      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      pred = new URIReferenceImpl(rdfType);
+      obj = new LiteralImpl("p8:TemplateDescription");
+      work.add(new TripleImpl(subj, pred, obj));
+      obj = new LiteralImpl("owl:Thing");
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    else if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
+    {
+      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      pred = new URIReferenceImpl(rdfType);
+      obj = new LiteralImpl("owl:Thing");
+      work.add(new TripleImpl(subj, pred, obj));
+      obj = new LiteralImpl("p8:TemplateRoleDescription");
+      work.add(new TripleImpl(subj, pred, obj));
+      pred = new URIReferenceImpl("p8:hasTemplate");
+      obj = new LiteralImpl(String.format("tpl:{0}", objectId));
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    else if (gobj instanceof TemplateQualification)
+    {
+      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      pred = new URIReferenceImpl(rdfType);
+      obj = new LiteralImpl("p8:TemplateDescription");
+      work.add(new TripleImpl(subj, pred, obj));
+      obj = new LiteralImpl("owl:Thing");
+      work.add(new TripleImpl(subj, pred, obj));
+      obj = new LiteralImpl("p8:CoreTemplate");
+      work.add(new TripleImpl(subj, pred, obj));
+      pred = new URIReferenceImpl("p8:hasSuperTemplate");
+      obj = new LiteralImpl(objectId);
+      work.add(new TripleImpl(subj, pred, obj));
+      subj = new URIReferenceImpl(objectId);
+      pred = new URIReferenceImpl("p8:hasSubTemplate");
+      obj = new LiteralImpl(String.format("tpl:{0}", subjId));
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    else if (gobj instanceof ClassDefinition)
+    {
+      subj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
+      pred = new URIReferenceImpl(rdfType);
+      obj = new LiteralImpl(objectId);
+      work.add(new TripleImpl(subj, pred, obj));
+      obj = new LiteralImpl("owl:Class");
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    return work;
+  }
+
+  private Graph GenerateTypes(Graph work, Long subjId, String objId, Object gobj)
+  {
+    if (gobj instanceof TemplateDefinition)
+    {
+      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      pred = new URIReferenceImpl(rdfType);
+      obj = new LiteralImpl("tpl:R16376066707");
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    else if (gobj instanceof RoleDefinition)
+    {
+      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      pred = new URIReferenceImpl(rdfType);
+      obj = new LiteralImpl("tpl:R74478971040");
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    else if (gobj instanceof TemplateQualification)
+    {
+      subj = new URIReferenceImpl(objId);
+      pred = new URIReferenceImpl("dm:hasSubclass");
+      obj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      work.add(new TripleImpl(subj, pred, obj));
+      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+      pred = new URIReferenceImpl("dm:hasSuperclass");
+      obj = new LiteralImpl(objId);
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    else if (gobj instanceof RoleQualification)
+    {
+      subj = new BlankNodeImpl("",subjId);
+      pred = new URIReferenceImpl(rdfType);
+      obj = new LiteralImpl("tpl:R76288246068");
+      work.add(new TripleImpl(isubj, ipred, iobj));
+      pred = new URIReferenceImpl("tpl:R99672026745");
+      obj = new LiteralImpl(String.format("tpl:{0}", objId));
+      work.add(new TripleImpl(subj, pred, obj));
+      pred = new URIReferenceImpl(rdfType);
+      obj = new LiteralImpl("tpl:R67036823327");
+      work.add(new TripleImpl(subj, pred, obj));
+    }
+    return work;
+  }
+
+  private Graph GenerateName(Graph work, Name name, Long subjId, Object gobj)
+  {
+	subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
+	pred = new URIReferenceImpl("rdfs:label");
+	obj = new LiteralImpl(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
+	work.add(new TripleImpl(subj, pred, obj));
+	return work;
+  }
+
+  private Graph GenerateClassName(Graph work, Name name, Long subjId, Object gobj)
+  {
+    subj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
+    pred = new URIReferenceImpl("rdfs:label");
+    obj = new LiteralImpl(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+  private Graph GenerateDescription(Graph work, Description descr, Long subjectId)
+  {
+    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjectId);
+    pred = new URIReferenceImpl("rdfs:comment");
+    obj = new LiteralImpl(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateClassDescription(Graph work, Description descr, Long subjectId)
+  {
+    subj = new BlankNodeImpl(String.format("rdl:{0}"), subjectId);
+    pred = new URIReferenceImpl("rdfs:comment");
+    obj = new LiteralImpl(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+  
 
 }
