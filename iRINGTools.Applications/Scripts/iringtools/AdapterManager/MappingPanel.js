@@ -445,7 +445,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         success: function (result, request) {
           that.onReload();
           win.close();
-          Ext.Msg.show({ title: 'Success', msg: 'Added ClassMap to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+          // Ext.Msg.show({ title: 'Success', msg: 'Added ClassMap to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
         },
         failure: function (result, request) {
           Ext.Msg.show({ title: 'Failure', msg: 'Failed to Add ClassMap to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
@@ -472,7 +472,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         graphName: graphname
       },
       success: function (result, request) {
-        Ext.Msg.show({ title: 'Success', msg: 'Graph [' + node.id.split('/')[2] + '] renamed to [' + graphname + ']', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        // Ext.Msg.show({ title: 'Success', msg: 'Graph [' + node.id.split('/')[2] + '] renamed to [' + graphname + ']', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
         var oldName = node.id.split('/')[2];
         that.rootNode.removeChild(node);
         //var newid = node.id.replace(oldName, graphname);
@@ -503,7 +503,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       success: function (result, request) {
         that.onReload();
-        Ext.Msg.show({ title: 'Success', msg: 'Template [' + node.id.split('/')[3] + '] removed from mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        // Ext.Msg.show({ title: 'Success', msg: 'Template [' + node.id.split('/')[3] + '] removed from mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
       },
       failure: function (result, request) { }
     })
@@ -523,8 +523,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmitPropertyMap },
-        { text: 'Close', scope: this, handler: this.onClose }
+          { xtype: 'tbfill' },
+        { text: 'Ok', scope: this, handler: this.onSubmitPropertyMap },
+        { text: 'Cancel', scope: this, handler: this.onClose }
         ],
       items: [
               { xtype: 'hidden', name: 'propertyName', id: 'propertyName' }
@@ -573,7 +574,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       layout: 'form',
       title: 'Map Data Property to RoleMAp',
       items: form,
-      height: 120,
+     // height: 120,
       width: 430,
       plain: true,
       scope: this
@@ -601,7 +602,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         success: function (result, request) {
           that.onReload();
           win.close();
-          Ext.Msg.show({ title: 'Success', msg: 'Mapped Property to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+          // Ext.Msg.show({ title: 'Success', msg: 'Mapped Property to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
         },
         failure: function (result, request) {
           Ext.Msg.show({ title: 'Failure', msg: 'Failed to Map Property to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
@@ -617,10 +618,11 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       layout: 'form',
       method: 'POST',
       border: false,
-      frame: false,
+      frame: true,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmitValuelistMap },
-        { text: 'Close', scope: this, handler: this.onClose }
+         { xtype: 'tbfill' },
+        { text: 'Ok', scope: this, handler: this.onSubmitValuelistMap },
+        { text: 'Cancel', scope: this, handler: this.onClose }
         ],
       items: [
               { xtype: 'hidden', name: 'objectNames', id: 'objectNames' },
@@ -709,7 +711,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       layout: 'form',
       title: 'Map Valuelist to RoleMAp',
       items: form,
-      height: 180,
+    //  height: 180,
       width: 430,
       plain: true,
       scope: this
@@ -739,7 +741,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         success: function (result, request) {
           that.onReload();
           win.close();
-          Ext.Msg.show({ title: 'Success', msg: 'Mapped ValueList to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+          //   Ext.Msg.show({ title: 'Success', msg: 'Mapped ValueList to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
         },
         failure: function (result, request) {
           Ext.Msg.show({ title: 'Failure', msg: 'Failed to Map ValueList to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
@@ -760,7 +762,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       success: function (result, request) {
         that.onReload();
-        Ext.Msg.show({ title: 'Success', msg: 'Made [' + node.attributes.id.split('/')[4] + '] possessor role', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        //  Ext.Msg.show({ title: 'Success', msg: 'Made [' + node.attributes.id.split('/')[4] + '] possessor role', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
       },
       failure: function (result, request) { }
     })
@@ -776,8 +778,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-        { text: 'Submit', scope: this, handler: this.onSubmitClassMap },
-        { text: 'Close', scope: this, handler: this.onClose }
+            { xtype: 'tbfill' },
+        { text: 'Ok', scope: this, handler: this.onSubmitClassMap },
+        { text: 'Cancel', scope: this, handler: this.onClose }
         ],
       items: [
       //{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true, value: null },
@@ -869,7 +872,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       layout: 'form',
       title: 'Add new ClassMap to RoleMAp',
       items: form,
-      height: 180,
+    //  height: 180,
       width: 430,
       plain: true,
       scope: this
@@ -889,7 +892,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       success: function (result, request) {
         that.onReload();
-        Ext.Msg.show({ title: 'Success', msg: 'Deleted Class Map from Mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        // Ext.Msg.show({ title: 'Success', msg: 'Deleted Class Map from Mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
       },
       failure: function (result, request) { }
     })
