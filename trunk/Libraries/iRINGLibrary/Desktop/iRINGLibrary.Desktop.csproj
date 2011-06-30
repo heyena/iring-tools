@@ -117,6 +117,7 @@
     <Compile Include="AdapterSettings.cs" />
     <Compile Include="BaseConfigurableDataLayer.cs" />
     <Compile Include="BaseDataLayer.cs" />
+    <Compile Include="BaseSQLDataLayer.cs" />
     <Compile Include="DataLayerConfig.cs" />
     <Compile Include="DataLayers.cs" />
     <Compile Include="GenericDataObject.cs" />
