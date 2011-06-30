@@ -130,12 +130,3 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
 });
 
 
-function showDialog(width, height, title, message, buttons, callback) {
-  var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
-  Ext.Msg.show({
-    title: title,
-    msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
-    buttons: buttons,
-    fn: callback
-  });
-}

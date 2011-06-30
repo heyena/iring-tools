@@ -461,7 +461,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   success: function (f, a) {
                     dbTableNames = Ext.util.JSON.decode(a.response.responseText);
                     var tab = Ext.getCmp('content-panel');
-                    var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
+                    var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
                     var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
                     var editPane = dataObjectsPane.items.map[scopeName + '.' + appName + '.editor-panel'];
                     var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
@@ -552,7 +552,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
     var setTablesSelectorPane = function (editPane) {
       var tab = Ext.getCmp('content-panel');
-      var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
+      var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
       var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
       var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 
@@ -894,7 +894,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                     { name: 'relationName' }
                   ])
                 });
-                createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName);
+                createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName);
               }
             }]
           })
@@ -928,7 +928,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
               { name: 'relationName' }
             ])
         });
-        createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName);
+        createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName);
       }
     };
 
@@ -1236,16 +1236,18 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         var keysItemSelector = new Ext.ux.ItemSelector({
           name: 'keySelector',
           imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
-          hideLabel: true,
+					hideLabel: true,
           multiselects: [{
-            width: 250,
-            height: 300,
+            width: 230,
+            height: 370,
+						border:0,
             store: availItems,
             displayField: 'keyName',
             valueField: 'keyValue'
           }, {
-            width: 250,
-            height: 300,
+          	width: 230,
+          	height: 370,
+						border:0,
             store: selectedItems,
             displayField: 'keyName',
             valueField: 'keyValue'
@@ -1257,6 +1259,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           id: scopeName + '.' + appName + '.keysSelector.' + node.id,
           border: false,
           autoScroll: true,
+					layout: 'fit',
           bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
           labelWidth: 160,
           defaults: { anchor: '100%' },
@@ -1425,14 +1428,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
           hideLabel: true,
           multiselects: [{
-            width: 250,
-            height: 300,
+            width: 230,
+            height: 370,
             store: availItems,
             displayField: 'propertyName',
             valueField: 'propertyValue'
           }, {
-            width: 250,
-            height: 300,
+            width: 230,
+            height: 370,
             store: selectedItems,
             displayField: 'propertyName',
             valueField: 'propertyValue'
@@ -1445,6 +1448,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
           border: false,
           autoScroll: true,
+					layout: 'fit',
           defaults: { anchor: '100%' },
           labelWidth: 160,
           items: [{
@@ -2122,8 +2126,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
     }
 
     Ext.apply(this, {
-      id: scopeName + '.' + appName + '.-nh-config-wizard',
-      title: 'NHibernate Config Wizard - ' + scopeName + '.' + appName,
+      id: scopeName + '.' + appName + '.-nh-config',
+      title: 'NHibernate Configuration - ' + scopeName + '.' + appName,
       closable: true,
       layout: 'fit',
       items: [dataObjectsPane]
@@ -2142,7 +2146,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         dbDict = Ext.util.JSON.decode(response.responseText);
 
         var tab = Ext.getCmp('content-panel');
-        var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
+        var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
         var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
         var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 
@@ -2341,7 +2345,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 function setRelationFields(editPane, node, scopeName, appName) {
   if (editPane && node) {
     var tab = Ext.getCmp('content-panel');
-    var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config-wizard'];
+    var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
     var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
 
     var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
@@ -2710,7 +2714,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
                     { name: 'relatedProperty' }
                   ])
               });
-              createRelationGrid(scopeName + '.' + appName + '.' + node.id, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName);
+              createRelationGrid(scopeName + '.' + appName + '.' + node.id, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName);
             }
           }
         }]
@@ -2733,7 +2737,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
     else
       var propertyMaps = node.attributes.propertyMap;
 
-    var configLabel = scopeName + '.' + appName + '.-nh-config-wizard';
+    var configLabel = scopeName + '.' + appName + '.-nh-config';
     var gridLabel = scopeName + '.' + appName + '.' + node.id;
     if (dataRelationPane.items) {
       var gridPane = dataRelationPane.items.map[gridLabel];
@@ -2758,7 +2762,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
               { name: 'relatedProperty' }
             ])
     });
-    createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config-wizard', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName);
+    createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName);
   }
 };
 
