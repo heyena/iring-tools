@@ -1,0 +1,53 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using org.iringtools.library;
+using org.iringtools.adapter;
+using System.Reflection;
+using org.iringtools.utility;
+
+namespace BaseSQLDataLayerTest
+{
+  public class Program
+  {
+    static IDataLayer2 sampleDL = null;
+
+    static void Main(string[] args)
+    {
+      AdapterSettings settings = new AdapterSettings();
+      settings["ExecutingAssemblyName"] = Assembly.GetExecutingAssembly().GetName().Name;
+      sampleDL = new SampleSQLDataLayer(settings);
+
+      // from iRING projection engine view
+      IList<IDataObject> dataObjects = sampleDL.Get("LINES", null);
+      
+      Console.WriteLine("Object Count: " + dataObjects.Count);
+      foreach (IDataObject dataObject in dataObjects)
+      {
+        DebugDataObject(dataObject, "LINES");
+      }
+
+      foreach (IDataObject dataObject in dataObjects)
+      {
+        dataObject.SetPropertyValue("TRAINNUMBER", DateTime.Now.ToString());
+      }
+
+      // from iRING projection engine view      
+      Response response = sampleDL.Post(dataObjects);
+
+      Console.ReadKey();
+    }
+
+    static void DebugDataObject(IDataObject dataObject, string objectTypeName)
+    {
+      DataObject objDef = ((SampleSQLDataLayer)sampleDL).GetObjectDefinition(objectTypeName);
+
+      foreach (DataProperty prop in objDef.dataProperties)
+      {
+        string propName = prop.propertyName;
+        Console.WriteLine(propName + ": " + Convert.ToString(dataObject.GetPropertyValue(propName)));
+      }
+    }
+  }
+}

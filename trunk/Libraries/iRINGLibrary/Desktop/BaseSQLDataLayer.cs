@@ -13,9 +13,10 @@ namespace org.iringtools.library
   public abstract class BaseSQLDataLayer : IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseSQLDataLayer));
-    private string _execAssemblyName;
+    private const string WHERECLAUSE_ALIAS = "_t";
     private DataDictionary _dataDictionary;
-
+    private string _execAssemblyName;
+    
     #region BaseSQLDataLayer methods
     public BaseSQLDataLayer(AdapterSettings settings)
     {
@@ -35,12 +36,6 @@ namespace org.iringtools.library
     // fetch data rows of given identifiers
     public abstract DataTable GetDataTable(string tableName, IList<string> identifiers);
 
-    // delete data rows with filter
-    public abstract Response DeleteDataTable(string tableName, string whereClause);
-
-    // delete data rows by identifiers
-    public abstract Response DeleteDataTable(string tableName, IList<string> identifiers);
-
     // get a page of data rows with (optional) filter
     public abstract DataTable GetDataTable(string tableName, string whereClause, int start, int limit);
 
@@ -49,68 +44,185 @@ namespace org.iringtools.library
 
     // post data rows and its related items (data rows)
     public abstract Response PostDataTables(IList<DataTable> dataTables);
+    
+    // delete data rows with filter
+    public abstract Response DeleteDataTable(string tableName, string whereClause);
+
+    // delete data rows by identifiers
+    public abstract Response DeleteDataTable(string tableName, IList<string> identifiers);
+
+    public abstract Response RefreshDataTable(string tableName);
     #endregion
 
-    #region IDataLayer implementation methods
+    #region IDataLayer pass-thru/implementation methods
     public abstract DataDictionary GetDictionary();
     public abstract Response Configure(XElement configuration);
     public abstract XElement GetConfiguration();
 
-    public virtual IList<IDataObject> Create(string objectTypeName, IList<string> identifiers)
-    {
-      string tableName = GetTableName(objectTypeName);
-      DataTable dataTable = CreateDataTable(tableName, identifiers);
-      return ToDataObjects(dataTable, objectTypeName);
-    }
-
-    public virtual IList<IDataObject> Get(string objectTypeName, IList<string> identifiers)
-    {
-      string tableName = GetTableName(objectTypeName);
-      DataTable dataTable = GetDataTable(tableName, identifiers);
-      return ToDataObjects(dataTable, objectTypeName);
-    }
-
-    public virtual Response Delete(string objectTypeName, DataFilter filter)
-    {
-      throw new NotImplementedException();
-    }
-
-    public virtual Response Delete(string objectTypeName, IList<string> identifiers)
-    {
-      throw new NotImplementedException();
-    }
-
-    public virtual IList<IDataObject> Get(string objectTypeName, DataFilter filter, int pageSize, int startIndex)
-    {
-      throw new NotImplementedException();
-    }
-
     public virtual long GetCount(string objectTypeName, DataFilter filter)
     {
-      throw new NotImplementedException();
+      string tableName = GetTableName(objectTypeName);
+      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
+
+      try
+      {
+        return GetCount(tableName, whereClause);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data count: " + ex);
+        throw ex;
+      }
     }
 
     public virtual IList<string> GetIdentifiers(string objectTypeName, DataFilter filter)
     {
       string tableName = GetTableName(objectTypeName);
-      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, "_t");
-      return GetIdentifiers(tableName, whereClause);
+      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
+
+      try
+      {
+        return GetIdentifiers(tableName, whereClause);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data table: " + ex);
+        throw ex;
+      }
     }
 
-    public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
+    public virtual IList<IDataObject> Create(string objectTypeName, IList<string> identifiers)
     {
-      throw new NotImplementedException();
+      string tableName = GetTableName(objectTypeName);
+
+      try
+      {
+        DataTable dataTable = CreateDataTable(tableName, identifiers);
+        return ToDataObjects(dataTable, objectTypeName);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error creating data table: " + ex);
+        throw ex;
+      }
     }
 
-    public virtual Response Post(IList<IDataObject> dataObjects)
+    public virtual IList<IDataObject> Get(string objectTypeName, IList<string> identifiers)
     {
-      List<DataTable> dataTables = new List<DataTable>();
-      return PostDataTables(dataTables);
+      string tableName = GetTableName(objectTypeName);
+
+      try
+      {
+        DataTable dataTable = GetDataTable(tableName, identifiers);
+        return ToDataObjects(dataTable, objectTypeName);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data table: " + ex);
+        throw ex;
+      }
+    }
+
+    public virtual IList<IDataObject> Get(string objectTypeName, DataFilter filter, int pageSize, int startIndex)
+    {
+      string tableName = GetTableName(objectTypeName);
+      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
+
+      try
+      {
+        DataTable dataTable = GetDataTable(tableName, whereClause, startIndex, pageSize);
+        return ToDataObjects(dataTable, objectTypeName);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error deleting data table: " + ex);
+        throw ex;
+      }
+    }
+
+    public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectTypeName)
+    {
+      IList<IDataObject> relatedDataObjects = null;
+      DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectTypeName);
+      DataTable dataTable = new DataTable(relatedObjectDefinition.tableName);
+      
+      try
+      {
+        DataRow dataRow = CreateDataRow(dataTable, dataObject, relatedObjectDefinition);
+        DataTable relatedDataTable = GetRelatedDataTable(dataRow, relatedObjectDefinition.tableName);
+        relatedDataObjects = ToDataObjects(relatedDataTable, relatedObjectTypeName);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error deleting data table: " + ex);
+        throw ex;
+      }
+
+      return relatedDataObjects;
+    }
+
+   public virtual Response Post(IList<IDataObject> dataObjects)
+    {
+      try
+      {
+        IList<DataTable> dataTables = ToDataTables(dataObjects);
+        return PostDataTables(dataTables);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error posting data tables: " + ex);
+        throw ex;
+      }
+    }
+
+    public virtual Response Delete(string objectTypeName, DataFilter filter)
+    {
+      string tableName = GetTableName(objectTypeName);
+      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
+
+      try
+      {
+        return DeleteDataTable(tableName, whereClause);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error deleting data table: " + ex);
+        throw ex;
+      }
+    }
+
+    public virtual Response Delete(string objectTypeName, IList<string> identifiers)
+    {
+      string tableName = GetTableName(objectTypeName);
+
+      try
+      {
+        return DeleteDataTable(tableName, identifiers);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error deleting data table: " + ex);
+        throw ex;
+      }
+    }
+
+    public virtual Response Refresh(string objectTypeName)
+    {
+      try
+      {
+        string tableName = GetTableName(objectTypeName);
+        return RefreshDataTable(tableName);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error refreshing object type: [" + objectTypeName + "].");
+        throw ex;
+      }
     }
     #endregion
 
     #region helper methods
-    protected string GetTableName(string objectTypeName)
+    public string GetTableName(string objectTypeName)
     {
       foreach (DataObject dataObject in _dataDictionary.dataObjects)
       {
@@ -123,7 +235,7 @@ namespace org.iringtools.library
       return null;
     }
 
-    protected DataObject GetObjectDefinition(string objectTypeName)
+    public DataObject GetObjectDefinition(string objectTypeName)
     {
       foreach (DataObject dataObject in _dataDictionary.dataObjects)
       {
@@ -141,47 +253,72 @@ namespace org.iringtools.library
       return Type.GetType(objectDefinition.objectNamespace + "." + objectTypeName + ", " + _execAssemblyName);
     }
 
+    protected IDataObject ToDataObject(DataRow dataRow, DataObject objectDefinition)
+    {
+      IDataObject dataObject = null;
+
+      if (dataRow != null)
+      {
+        try
+        {
+          Type objectType = GetObjectType(objectDefinition, objectDefinition.objectName);
+          dataObject = (IDataObject)Activator.CreateInstance(objectType);
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error instantiating data object: " + ex);
+          throw ex;
+        }
+
+        if (dataObject != null && objectDefinition.dataProperties != null)
+        {
+          foreach (DataProperty objectProperty in objectDefinition.dataProperties)
+          {
+            try
+            {
+              String value = Convert.ToString(dataRow[objectProperty.columnName]);
+
+              if (value != null)
+              {
+                dataObject.SetPropertyValue(objectProperty.propertyName, value);
+              }
+            }
+            catch (Exception ex)
+            {
+              _logger.Error("Error getting data row value: " + ex);
+              throw ex;
+            }
+          }
+        }
+      }
+
+      return dataObject;
+    }
+
     protected IList<IDataObject> ToDataObjects(DataTable dataTable, string objectTypeName)
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
       DataObject objectDefinition = GetObjectDefinition(objectTypeName);
-      Type objectType = GetObjectType(objectDefinition, objectTypeName);
-
-      if (objectDefinition != null)
+      
+      if (objectDefinition != null && dataTable.Rows != null)
       {
-        foreach (DataRow row in dataTable.Rows)
+        foreach (DataRow dataRow in dataTable.Rows)
         {
           IDataObject dataObject = null;
 
           try
           {
-            dataObject = (IDataObject)Activator.CreateInstance(objectType);
+            dataObject = ToDataObject(dataRow, objectDefinition);
           }
           catch (Exception ex)
           {
-            _logger.Error("Error instantiating data object: " + ex);
+            _logger.Error("Error converting data row to data object: " + ex);
             throw ex;
           }
 
-          if (dataObject != null)
+          if (dataObjects != null)
           {
-            foreach (DataProperty dataProp in objectDefinition.dataProperties)
-            {
-              try
-              {
-                String value = Convert.ToString(row[dataProp.columnName]);
-
-                if (value != null)
-                {
-                  dataObject.SetPropertyValue(dataProp.propertyName, value);
-                }
-              }
-              catch (Exception ex)
-              {
-                _logger.Error("Error getting data row value: " + ex);
-                throw ex;
-              }
-            }
+            dataObjects.Add(dataObject);
           }
         }
       }
@@ -189,9 +326,85 @@ namespace org.iringtools.library
       return dataObjects;
     }
 
-    protected IList<DataTable> ToDataTables(IList<DataObject> dataObjects)
+    protected DataRow CreateDataRow(DataTable dataTable, IDataObject dataObject, DataObject objectDefinition)
     {
-      throw new NotImplementedException();
+      DataRow dataRow = null;
+
+      if (dataObject != null)
+      {
+        dataRow = dataTable.NewRow();
+
+        foreach (DataProperty objectProperty in objectDefinition.dataProperties)
+        {
+          try
+          {
+            object value = dataObject.GetPropertyValue(objectProperty.propertyName);
+
+            if (value != null)
+            {
+              ///TODO: need to properly cast and truncate according to object property definition
+              dataRow[objectProperty.columnName] = value;
+            }
+          }
+          catch (Exception ex)
+          {
+            _logger.Error("Error getting data row value: " + ex);
+            throw ex;
+          }
+        }
+      }
+
+      return dataRow;
+    }
+
+    protected IList<DataTable> ToDataTables(IList<IDataObject> dataObjects)
+    {
+      Dictionary<string, DataTable> dataTableDictionary = new Dictionary<string, DataTable>();
+
+      if (dataObjects != null)
+      {
+        foreach (IDataObject dataObject in dataObjects)
+        {
+          string objectTypeName = dataObject.GetType().Name;
+          DataObject objectDefinition = GetObjectDefinition(objectTypeName);
+          DataTable dataTable = null;
+
+          if (dataTableDictionary.ContainsKey(objectTypeName))
+          {
+            dataTable = dataTableDictionary[objectTypeName];
+          }
+          else
+          {
+            dataTable = new DataTable(objectDefinition.tableName);
+
+            foreach (DataProperty objectProperty in objectDefinition.dataProperties)
+            {
+              ///TODO: need to add more column attributes according to object property definition
+              DataColumn dataColumn = new DataColumn()
+              {
+                ColumnName = objectProperty.columnName
+              };
+
+              dataTable.Columns.Add(dataColumn);
+            }
+
+            dataTableDictionary[objectTypeName] = dataTable;
+          }
+
+          try
+          {
+            DataRow dataRow = CreateDataRow(dataTable, dataObject, objectDefinition);
+            dataTable.Rows.Add(dataRow);
+          }
+          catch (Exception ex)
+          {
+            _logger.Error("Error populating data row: " + ex);
+            throw ex;
+          }
+        }
+      }
+
+      return dataTableDictionary.Values.ToList();
     }
     #endregion
   }
