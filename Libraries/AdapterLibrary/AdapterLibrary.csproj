@@ -134,6 +134,7 @@
     <Compile Include="IIdentityLayer.cs" />
     <Compile Include="IProjectionLayer.cs" />
     <Compile Include="ISemanticLayer.cs" />
+    <Compile Include="AnonymousProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />
     <Compile Include="RdfProjectionEngine.cs" />
