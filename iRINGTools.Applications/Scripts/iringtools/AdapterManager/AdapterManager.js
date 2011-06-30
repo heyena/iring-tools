@@ -6,315 +6,381 @@
 var App = new Ext.App({});
 
 Ext.onReady(function () {
-    Ext.QuickTips.init();
-    Ext.Ajax.timeout = 120000; //increase request time
+	Ext.QuickTips.init();
+	Ext.Ajax.timeout = 120000; //increase request time
 
-    Ext.get('about-link').on('click', function () {
-        var win = new Ext.Window({
-            title: 'About Adapter Manager',
-            bodyStyle: 'background-color:white;padding:5px',
-            width: 700,
-            height: 500,
-            closable: true,
-            resizable: false,
-            autoScroll: true,
-            buttons: [{
-                text: 'Close',
-                handler: function () {
-                    Ext.getBody().unmask();
-                    win.close();
-                }
-            }],
-            autoLoad: 'about.html',
-            listeners: {
-                close: {
-                    fn: function () {
-                        Ext.getBody().unmask();
-                    }
-                }
-            }
-        });
+	Ext.get('about-link').on('click', function () {
+		var win = new Ext.Window({
+			title: 'About Adapter Manager',
+			bodyStyle: 'background-color:white;padding:5px',
+			width: 700,
+			height: 500,
+			closable: true,
+			resizable: false,
+			autoScroll: true,
+			buttons: [{
+				text: 'Close',
+				handler: function () {
+					Ext.getBody().unmask();
+					win.close();
+				}
+			}],
+			autoLoad: 'about.html',
+			listeners: {
+				close: {
+					fn: function () {
+						Ext.getBody().unmask();
+					}
+				}
+			}
+		});
 
-        Ext.getBody().mask();
-        win.show();
-    });
+		Ext.getBody().mask();
+		win.show();
+	});
 
-    /*
-    * var actionPanel = new AdapterManager.ActionPanel({ id: 'action-panel',
-    * region: 'west', width: 200,
-    * 
-    * collapseMode: 'mini', collapsible: true, collapsed: false });
-    */
+	/*
+	* var actionPanel = new AdapterManager.ActionPanel({ id: 'action-panel',
+	* region: 'west', width: 200,
+	* 
+	* collapseMode: 'mini', collapsible: true, collapsed: false });
+	*/
 
-    var searchPanel = new AdapterManager.SearchPanel({
-        id: 'search-panel',
-        title: 'Reference Data Search',
-        region: 'south',
-        height: 300,
-        collapseMode: 'mini',
-        collapsible: true,
-        collapsed: false,
-        searchUrl: 'refdata/getnode',
-        limit: 100
-    });
+	var searchPanel = new AdapterManager.SearchPanel({
+		id: 'search-panel',
+		title: 'Reference Data Search',
+		region: 'south',
+		height: 300,
+		collapseMode: 'mini',
+		collapsible: true,
+		collapsed: false,
+		searchUrl: 'refdata/getnode',
+		limit: 100
+	});
 
-    var contentPanel = new Ext.TabPanel({
-        id: 'content-panel',
-        region: 'center',
-        collapsible: false,
-        closable: true,
-        enableTabScroll: true,
-        border: true,
-        split: true
-    });
+	var contentPanel = new Ext.TabPanel({
+		id: 'content-panel',
+		region: 'center',
+		collapsible: false,
+		closable: true,
+		enableTabScroll: true,
+		border: true,
+		split: true
+	});
 
-    var centrePanel = new Ext.Panel({
-        id: 'centre-panel',
-        region: 'center',
-        layout: 'border',
-        collapsible: false,
-        closable: true,
-        enableTabScroll: true,
-        border: true,
-        split: true,
-        items: [searchPanel, contentPanel]
-    });
+	var centrePanel = new Ext.Panel({
+		id: 'centre-panel',
+		region: 'center',
+		layout: 'border',
+		collapsible: false,
+		closable: true,
+		enableTabScroll: true,
+		border: true,
+		split: true,
+		items: [searchPanel, contentPanel]
+	});
 
-    var directoryPanel = new AdapterManager.DirectoryPanel({
-        id: 'nav-panel',
-        title: 'Directory',
-        region: 'west',
-        width: 260,
+	var directoryPanel = new AdapterManager.DirectoryPanel({
+		id: 'nav-panel',
+		title: 'Directory',
+		region: 'west',
+		width: 260,
 
-        collapseMode: 'mini',
-        collapsible: true,
-        collapsed: false,
-        navigationUrl: 'directory/getnode'
-    });
-    directoryPanel.on('newscope', function (npanel, node) {
+		collapseMode: 'mini',
+		collapsible: true,
+		collapsed: false,
+		navigationUrl: 'directory/getnode'
+	});
 
-        if (node.attributes.type == "ScopeNode") {
-            node = node.parentNode;
-        }
 
-        var newTab = new AdapterManager.ScopePanel({
-            id: 'tab-' + node.id,
-            title: 'Scope - (New)',
-            record: node.attributes.record,
-            url: 'directory/scope'
-        });
+	directoryPanel.on('newscope', function (npanel, node) {
+		var newTab = new AdapterManager.ScopePanel({
+			id: 'tab-' + node.id,
+			record: node.attributes.record,
+			url: 'directory/scope'
+		});
 
-        newTab.on('save', function (panel) {
-            contentPanel.remove(panel);
-            //directoryPanel.reload();
-            directoryPanel.onReload(node);
-        }, this);
-
-        contentPanel.add(newTab);
-        contentPanel.activate(newTab);
-
-    }, this);
-
-    directoryPanel.on('editscope', function (npanel, node) {
-
-        var newTab = new AdapterManager.ScopePanel({
-            id: 'tab-' + node.id,
-            title: 'Scope - ' + node.text,
-            record: node.attributes.record,
-            url: 'directory/scope'
-        });
-
-        newTab.on('save', function (panel) {
-            contentPanel.removeAll(true);
-            //directoryPanel.reload();
-            directoryPanel.onReload(node);
-
-        }, this);
-
-        contentPanel.add(newTab);
-        contentPanel.activate(newTab);
-
-    }, this);
-
-    directoryPanel.on('deletescope', function (npanel, node) {
-
-        Ext.Ajax.request({
-            url: 'directory/deletescope',
-            method: 'POST',
-            params: {
-                'nodeid': node.attributes.id
-            },
-            success: function (o) {
-                contentPanel.removeAll(true);
-                //directoryPanel.reload();
-                directoryPanel.onReload(node);
-                Ext.Msg.alert('Sucess', 'Scope [' + node.attributes.id + '] has been deleted');
-            },
-            failure: function (f, a) {
-                Ext.Msg.alert('Warning', 'Error!!!');
-            }
-        });
-
-    }, this);
-
-    directoryPanel.on('editgraphname', function (npanel, node) {
-        contentPanel.removeAll(true);
-    }, this);
-
-    directoryPanel.on('configure', function (npanel, node) {
-			var dataLayerValue = 'NHibernateLibrary';
-			var application = node.text;
-			var scope = node.parentNode.text;
-
-			if (dataLayerValue == 'ExcelLibrary') {
-          var newConfig = new AdapterManager.ExcelLibraryPanel({
-              id: 'tab-c.' + scope + '.' + application,
-              title: 'Configure - ' + scope + '.' + application,
-              scope: scope,
-              application: application,
-              url: 'excel/configure',
-              closable: true
-          });
-
-          contentPanel.add(newConfig);
-          contentPanel.activate(newConfig);
-      }
-      else if (dataLayerValue == 'NHibernateLibrary') {
-          var nhConfigId = scope + '.' + application + '-nh-config-wizard';
-          var nhConfigWizard = contentPanel.getItem(nhConfigId);
-
-          if (nhConfigWizard) {
-              nhConfigWizard.show();
-          }
-          else {
-              nhConfigWizard = new AdapterManager.NHibernateConfigWizard({
-                  scope: scope,
-                  app: application
-              });
-              contentPanel.add(nhConfigWizard);
-              contentPanel.activate(nhConfigWizard);
-          }
-      }        
+		newTab.on('save', function (panel) {
+			win.close();
+			directoryPanel.onReload(node);
+			if (node.expanded == false)
+				node.expand();
 		}, this);
 
-    directoryPanel.on('newapplication', function (npanel, node) {
+		newTab.on('Cancel', function (panel) {
+			win.close();
+		}, this);
 
-        if (node.attributes.type == "ApplicationNode") {
-            node = node.parentNode;
-        }
+		var win = new Ext.Window({
+			closable: true,
+			modal: false,
+			layout: 'fit',
+			title: 'Add New Scope',
+			iconCls: 'tabsScope',
+			height: 180,
+			width: 430,
+			plain: true,
+			items: newTab
+		});
 
-        var newTab = new AdapterManager.ApplicationPanel({
-            id: 'tab-' + node.id,
-            title: 'Application - ' + node.parentNode.text + '.(new)',
-            scope: node.attributes.record,
-            record: null,
-            url: 'directory/application',
-            closable: true
-        });
-
-        newTab.on('save', function (panel) {
-            contentPanel.remove(panel);
-            //directoryPanel.reload();
-            directoryPanel.onReload(node);
-        }, this);
-
-        contentPanel.add(newTab);
-        contentPanel.activate(newTab);
-
-    }, this);
-
-    directoryPanel.on('editapplication', function (npanel, node) {
-        if (node == undefined || node == null)
-            return;
-
-        var newTab = new AdapterManager.ApplicationPanel({
-            id: 'tab-' + node.id,
-            title: 'Application - ' + node.parentNode.text + '.' + node.text,
-            scope: node.parentNode.attributes.record,
-            record: node.attributes.record,
-            url: 'directory/application',
-            closable: true
-        });
-
-        newTab.on('save', function (panel) {
-            contentPanel.remove(panel);
-            // directoryPanel.reload();
-            directoryPanel.onReload(node);
-        }, this);        
-
-        contentPanel.add(newTab);
-        contentPanel.activate(newTab);
-
-    }, this);
-
-    directoryPanel.on('deleteapplication', function (npanel, node) {
-        Ext.Ajax.request({
-            url: 'directory/deleteapplication',
-            method: 'POST',
-            params: {
-                'nodeid': node.attributes.id
-            },
-            success: function (o) {
-                contentPanel.removeAll(true);
-                // directoryPanel.reload();
-                directoryPanel.onReload(node);
-                Ext.Msg.alert('Sucess', 'Application [' + node.attributes.id + '] has been deleted');
-            },
-            failure: function (f, a) {
-                Ext.Msg.alert('Warning', 'Error!!!');
-            }
-        });
-    }, this);
-
-    directoryPanel.on('opengraphmap', function (npanel, node) {
-
-        var scope = node.parentNode.parentNode.parentNode;
-        var application = node.parentNode.parentNode;
-
-        var newTab = new AdapterManager.MappingPanel({
-            title: 'GraphMap - ' + scope.text + "." + application.text + '.' + node.text,
-            id: 'GraphMap - ' + scope.text + "-" + application.text + '.' + node.text,
-            scope: scope.attributes.record,
-            record: node.attributes.record,
-            application: application.attributes.record,
-            navigationUrl: 'mapping/getnode',
-            searchPanel: searchPanel,
-            directoryPanel: directoryPanel
-        });
-
-        contentPanel.add(newTab);
-        contentPanel.activate(newTab);
-
-    }, this);
+		win.show();
+	}, this);
 
 
-    // Load Stores
-    // searchPanel.load();
+	directoryPanel.on('editscope', function (npanel, node) {
+		var newTab = new AdapterManager.ScopePanel({
+			id: 'tab-' + node.id,
+			record: node.attributes.record,
+			url: 'directory/scope'
+		});
 
-    // Finally, build the main layout once all the pieces are ready. This is also
-    // a good
-    // example of putting together a full-screen BorderLayout within a Viewport.
-    var viewPort = new Ext.Viewport({
-        layout: 'border',
-        title: 'Scope Editor',
-        border: false,
-        items: [{
-            xtype: 'box',
-            region: 'north',
-            applyTo: 'header',
-            border: false,
-            height: 55
-        }, directoryPanel, centrePanel],
-        listeners: {
-            render: function () {
-                // After the component has been rendered, disable the default browser
-                // context menu
-                Ext.getBody().on("contextmenu", Ext.emptyFn, null, {
-                    preventDefault: true
-                });
-            }
-        },
-        renderTo: Ext.getBody()
-    });
+		var parentNode = node.parentNode;
+
+		newTab.on('save', function (panel) {
+			win.close();
+			directoryPanel.onReload(node);
+			if (parentNode.expanded == false)
+				parentNode.expand();
+		}, this);
+
+		newTab.on('Cancel', function (panel) {
+			win.close();			
+		}, this);
+
+		var win = new Ext.Window({
+			closable: true,
+			modal: false,
+			layout: 'fit',
+			title: 'Edit Scope \"' + node.text + '\"',
+			iconCls: 'tabsScope',
+			height: 180,
+			width: 430,
+			plain: true,
+			items: newTab
+		});
+
+		win.show();
+
+	}, this);
+
+
+	directoryPanel.on('deletescope', function (npanel, node) {
+
+		Ext.Ajax.request({
+			url: 'directory/deletescope',
+			method: 'POST',
+			params: {
+				'nodeid': node.attributes.id
+			},
+			success: function (o) {			
+				directoryPanel.onReload(node);				
+			},
+			failure: function (f, a) {
+				//Ext.Msg.alert('Warning', 'Error!!!');
+				var message = 'Error deleting scope!';
+				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+			}
+		});
+
+	}, this);
+
+	directoryPanel.on('editgraphname', function (npanel, node) {
+		contentPanel.removeAll(true);
+	}, this);
+
+	directoryPanel.on('configure', function (npanel, node) {
+		var dataLayerValue = 'NHibernateLibrary';
+		var application = node.text;
+		var scope = node.parentNode.text;
+
+		if (dataLayerValue == 'ExcelLibrary') {
+			var newConfig = new AdapterManager.ExcelLibraryPanel({
+				id: 'tab-c.' + scope + '.' + application,
+				title: 'Configure - ' + scope + '.' + application,
+				scope: scope,
+				application: application,
+				url: 'excel/configure',
+				closable: true
+			});
+
+			contentPanel.add(newConfig);
+			contentPanel.activate(newConfig);
+		}
+		else if (dataLayerValue == 'NHibernateLibrary') {
+			var nhConfigId = scope + '.' + application + '-nh-config-wizard';
+			var nhConfigWizard = contentPanel.getItem(nhConfigId);
+
+			if (nhConfigWizard) {
+				nhConfigWizard.show();
+			}
+			else {
+				nhConfigWizard = new AdapterManager.NHibernateConfigWizard({
+					scope: scope,
+					app: application
+				});
+				contentPanel.add(nhConfigWizard);
+				contentPanel.activate(nhConfigWizard);
+			}
+		}
+	}, this);
+
+	directoryPanel.on('newapplication', function (npanel, node) {		
+
+		var newTab = new AdapterManager.ApplicationPanel({
+			id: 'tab-' + node.id,
+			scope: node.attributes.record,
+			record: null,
+			url: 'directory/application'			
+		});
+
+		newTab.on('save', function (panel) {
+			win.close();
+			directoryPanel.onReload(node);
+			if (node.expanded == false)
+				node.expand();
+		}, this);
+
+		newTab.on('Cancel', function (panel) {
+			win.close();
+		}, this);
+
+		var win = new Ext.Window({
+			closable: true,
+			modal: false,
+			layout: 'fit',
+			title: 'Add New Application',
+			iconCls: 'tabsApplication',
+			height: 200,
+			width: 430,
+			plain: true,
+			items: newTab
+		});
+
+		win.show();
+
+	}, this);
+
+	directoryPanel.on('editapplication', function (npanel, node) {
+		if (node == undefined || node == null)
+			return;
+
+		var newTab = new AdapterManager.ApplicationPanel({
+			id: 'tab-' + node.id,
+			scope: node.parentNode.attributes.record,
+			record: node.attributes.record,
+			url: 'directory/application'
+		});
+
+		var parentNode = node.parentNode.parentNode;	
+
+		newTab.on('save', function (panel) {
+			win.close();
+			directoryPanel.onReload(node);			
+				if (parentNode.expanded == false)
+					parentNode.expand();
+		}, this);
+
+		newTab.on('Cancel', function (panel) {
+			win.close();
+		}, this);
+
+		var win = new Ext.Window({
+			closable: true,
+			modal: false,
+			layout: 'fit',
+			title: 'Edit Application \"' + node.text + '\"',
+			iconCls: 'tabsApplication',
+			height: 200,
+			width: 430,
+			plain: true,
+			items: newTab
+		});
+
+		win.show();
+
+	}, this);
+
+	directoryPanel.on('deleteapplication', function (npanel, node) {
+		var parentNode = node.parentNode.parentNode;		
+
+		Ext.Ajax.request({
+			url: 'directory/deleteapplication',
+			method: 'POST',
+			params: {
+				'nodeid': node.attributes.id
+			},
+			success: function (o) {				
+				directoryPanel.onReload(node);				
+				if (parentNode.expanded == false)
+					parentNode.expand();
+			},
+			failure: function (f, a) {
+				//Ext.Msg.alert('Warning', 'Error!!!');
+				var message = 'Error deleting application!';
+				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+			}
+		});
+	}, this);
+
+	directoryPanel.on('opengraphmap', function (npanel, node) {
+
+		var scope = node.parentNode.parentNode.parentNode;
+		var application = node.parentNode.parentNode;
+
+		var newTab = new AdapterManager.MappingPanel({
+			title: 'GraphMap - ' + scope.text + "." + application.text + '.' + node.text,
+			id: 'GraphMap - ' + scope.text + "-" + application.text + '.' + node.text,
+			scope: scope.attributes.record,
+			record: node.attributes.record,
+			application: application.attributes.record,
+			navigationUrl: 'mapping/getnode',
+			searchPanel: searchPanel,
+			directoryPanel: directoryPanel
+		});
+
+		contentPanel.add(newTab);
+		contentPanel.activate(newTab);
+
+	}, this);
+
+
+	// Load Stores
+	// searchPanel.load();
+
+	// Finally, build the main layout once all the pieces are ready. This is also
+	// a good
+	// example of putting together a full-screen BorderLayout within a Viewport.
+	var viewPort = new Ext.Viewport({
+		layout: 'border',
+		title: 'Scope Editor',
+		border: false,
+		items: [{
+			xtype: 'box',
+			region: 'north',
+			applyTo: 'header',
+			border: false,
+			height: 55
+		}, directoryPanel, centrePanel],
+		listeners: {
+			render: function () {
+				// After the component has been rendered, disable the default browser
+				// context menu
+				Ext.getBody().on("contextmenu", Ext.emptyFn, null, {
+					preventDefault: true
+				});
+			}
+		},
+		renderTo: Ext.getBody()
+	});
 
 });
+
+function showDialog(width, height, title, message, buttons, callback) {
+	var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
+	Ext.Msg.show({
+		title: title,
+		msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
+		buttons: buttons,
+		fn: callback
+	});
+}

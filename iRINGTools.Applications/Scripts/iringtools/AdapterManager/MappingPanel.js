@@ -283,7 +283,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         Application: this.application.Name
       },
       success: function (result, request) {
-        Ext.Msg.show({ title: 'Success', msg: 'Mapping saved to the server', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+      	//Ext.Msg.show({ title: 'Success', msg: 'Mapping saved to the server', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+      	var message = 'Mapping saved to the server';
+      	showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
       },
       failure: function (result, request) { }
     })
@@ -445,10 +447,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         success: function (result, request) {
           that.onReload();
           win.close();
-          // Ext.Msg.show({ title: 'Success', msg: 'Added ClassMap to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+          //Ext.Msg.show({ title: 'Success', msg: 'Added ClassMap to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
         },
         failure: function (result, request) {
-          Ext.Msg.show({ title: 'Failure', msg: 'Failed to Add ClassMap to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
+        	//Ext.Msg.show({ title: 'Failure', msg: 'Failed to Add ClassMap to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
+        	var message = 'Failed to Add ClassMap to RoleMap';
+        	showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
       })
   },
@@ -472,7 +476,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         graphName: graphname
       },
       success: function (result, request) {
-        // Ext.Msg.show({ title: 'Success', msg: 'Graph [' + node.id.split('/')[2] + '] renamed to [' + graphname + ']', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        //Ext.Msg.show({ title: 'Success', msg: 'Graph [' + node.id.split('/')[2] + '] renamed to [' + graphname + ']', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
         var oldName = node.id.split('/')[2];
         that.rootNode.removeChild(node);
         //var newid = node.id.replace(oldName, graphname);
@@ -503,7 +507,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       success: function (result, request) {
         that.onReload();
-        // Ext.Msg.show({ title: 'Success', msg: 'Template [' + node.id.split('/')[3] + '] removed from mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        //Ext.Msg.show({ title: 'Success', msg: 'Template [' + node.id.split('/')[3] + '] removed from mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
       },
       failure: function (result, request) { }
     })
@@ -523,9 +527,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-          { xtype: 'tbfill' },
-        { text: 'Ok', scope: this, handler: this.onSubmitPropertyMap },
-        { text: 'Cancel', scope: this, handler: this.onClose }
+        { text: 'Submit', scope: this, handler: this.onSubmitPropertyMap },
+        { text: 'Close', scope: this, handler: this.onClose }
         ],
       items: [
               { xtype: 'hidden', name: 'propertyName', id: 'propertyName' }
@@ -574,7 +577,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       layout: 'form',
       title: 'Map Data Property to RoleMAp',
       items: form,
-     // height: 120,
+      height: 120,
       width: 430,
       plain: true,
       scope: this
@@ -602,10 +605,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         success: function (result, request) {
           that.onReload();
           win.close();
-          // Ext.Msg.show({ title: 'Success', msg: 'Mapped Property to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+          //Ext.Msg.show({ title: 'Success', msg: 'Mapped Property to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
         },
         failure: function (result, request) {
-          Ext.Msg.show({ title: 'Failure', msg: 'Failed to Map Property to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
+        	//Ext.Msg.show({ title: 'Failure', msg: 'Failed to Map Property to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
+        	var message = 'Failed to Map Property to RoleMap';
+        	showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
       })
   },
@@ -618,11 +623,10 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       layout: 'form',
       method: 'POST',
       border: false,
-      frame: true,
+      frame: false,
       bbar: [
-         { xtype: 'tbfill' },
-        { text: 'Ok', scope: this, handler: this.onSubmitValuelistMap },
-        { text: 'Cancel', scope: this, handler: this.onClose }
+        { text: 'Submit', scope: this, handler: this.onSubmitValuelistMap },
+        { text: 'Close', scope: this, handler: this.onClose }
         ],
       items: [
               { xtype: 'hidden', name: 'objectNames', id: 'objectNames' },
@@ -685,12 +689,16 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           },
           notifyDrop: function (classdd, e, data) {
             if (data.node.attributes.type != 'ValueListNode') {
-              Ext.Msg.show({
+              /*
+							Ext.Msg.show({
                 title: 'Invalid Selection',
                 msg: 'Please slect a RDL Class...',
                 icon: Ext.MessageBox.ERROR,
                 buttons: Ext.Msg.CANCEL
               });
+							*/
+              var message = 'Please slect a RDL Class...';
+              showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
               return false;
             }
             Ext.get('objectNames').dom.value = data.node.id;
@@ -711,7 +719,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       layout: 'form',
       title: 'Map Valuelist to RoleMAp',
       items: form,
-    //  height: 180,
+      height: 180,
       width: 430,
       plain: true,
       scope: this
@@ -741,10 +749,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         success: function (result, request) {
           that.onReload();
           win.close();
-          //   Ext.Msg.show({ title: 'Success', msg: 'Mapped ValueList to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+          //Ext.Msg.show({ title: 'Success', msg: 'Mapped ValueList to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
         },
         failure: function (result, request) {
-          Ext.Msg.show({ title: 'Failure', msg: 'Failed to Map ValueList to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
+        	//Ext.Msg.show({ title: 'Failure', msg: 'Failed to Map ValueList to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
+        	var message = 'Failed to Map ValueList to RoleMap';
+        	showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
       })
   },
@@ -762,7 +772,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       success: function (result, request) {
         that.onReload();
-        //  Ext.Msg.show({ title: 'Success', msg: 'Made [' + node.attributes.id.split('/')[4] + '] possessor role', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        //Ext.Msg.show({ title: 'Success', msg: 'Made [' + node.attributes.id.split('/')[4] + '] possessor role', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
       },
       failure: function (result, request) { }
     })
@@ -778,9 +788,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       border: false,
       frame: false,
       bbar: [
-            { xtype: 'tbfill' },
-        { text: 'Ok', scope: this, handler: this.onSubmitClassMap },
-        { text: 'Cancel', scope: this, handler: this.onClose }
+        { text: 'Submit', scope: this, handler: this.onSubmitClassMap },
+        { text: 'Close', scope: this, handler: this.onClose }
         ],
       items: [
       //{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true, value: null },
@@ -844,12 +853,16 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           },
           notifyDrop: function (classdd, e, data) {
             if (data.node.attributes.type != 'ClassNode') {
-              Ext.Msg.show({
+              /*
+							Ext.Msg.show({
                 title: 'Invalid Selection',
                 msg: 'Please slect a RDL Class...',
                 icon: Ext.MessageBox.ERROR,
                 buttons: Ext.Msg.CANCEL
               });
+							*/
+              var message = 'Please slect a RDL Class...';
+              showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
               return false;
             }
             Ext.get('classLabel').dom.value = data.node.attributes.record.Label;
@@ -872,7 +885,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       layout: 'form',
       title: 'Add new ClassMap to RoleMAp',
       items: form,
-    //  height: 180,
+      height: 180,
       width: 430,
       plain: true,
       scope: this
@@ -892,7 +905,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       success: function (result, request) {
         that.onReload();
-        // Ext.Msg.show({ title: 'Success', msg: 'Deleted Class Map from Mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+        //Ext.Msg.show({ title: 'Success', msg: 'Deleted Class Map from Mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
       },
       failure: function (result, request) { }
     })
@@ -918,4 +931,14 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     this.mappingPanel.getSelectionModel().select(node);
     this.onClick(node);
   }
-});
+  });
+
+  function showDialog(width, height, title, message, buttons, callback) {
+  	var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
+  	Ext.Msg.show({
+  		title: title,
+  		msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
+  		buttons: buttons,
+  		fn: callback
+  	});
+  }
