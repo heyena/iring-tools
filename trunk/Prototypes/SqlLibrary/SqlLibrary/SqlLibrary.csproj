@@ -32,17 +32,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ciloci.Flee">
-      <HintPath>..\..\ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
     <Reference Include="iRINGLibrary">
-      <HintPath>..\..\Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll</HintPath>
+      <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Data.Schema, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Ninject">
-      <HintPath>..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
+      <HintPath>..\..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="Ninject.Extensions.Xml">
       <HintPath>..\..\..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
@@ -60,7 +60,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UtilityLibrary">
-      <HintPath>..\..\Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll</HintPath>
+      <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

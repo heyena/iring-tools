@@ -31,7 +31,6 @@ namespace org.iringtools.adapter.datalayer
     private ISessionFactory _sessionFactory;
     private string _hibernateConfigPath = string.Empty;
     private string _authorizationPath = string.Empty;
-    private string _authorizationSamplePath = String.Empty;
     private Response _response = null;
     private IKernel _kernel = null;
     private NHibernateSettings _nSettings = null;
@@ -82,11 +81,6 @@ namespace org.iringtools.adapter.datalayer
           .Configure(_hibernateConfigPath)
           .AddFile(hibernateMappingPath)
           .BuildSessionFactory();
-
-      _authorizationSamplePath = string.Format("{0}Authorization.{1}.xml",
-        _settings["DataPath"],
-        "Sample"
-      );
 
       _authorizationPath = string.Format("{0}Authorization.{1}.xml",
         _settings["DataPath"],
@@ -1429,22 +1423,12 @@ namespace org.iringtools.adapter.datalayer
         string userName = _keyRing["Name"].ToString();
         userName = userName.Substring(userName.IndexOf('\\') + 1).ToLower();
 
-        AuthorizedUsers authUsers = null;
-
-        if (!File.Exists(_authorizationPath))
+        if (userName == "anonymous")
         {
-          if (!File.Exists(_authorizationSamplePath))
-          {
-            AuthorizedUsers sample = new AuthorizedUsers
-            {
-              "user1",
-              "user2"
-            };
-
-            Utility.Write<AuthorizedUsers>(sample, _authorizationSamplePath, true);
-          }
           return true;
         }
+
+        AuthorizedUsers authUsers = null;
 
         try
         {
