@@ -296,9 +296,7 @@ FederationManager.FederationPanel = Ext
                                 Ext.Msg.alert('Warning', 'Error!!!');
                               }
                             });
-                      } else if (action == 'no') {
-                        Ext.Msg.alert('Info', 'Not now');
-                      }
+                      } 
                     }
                   });
             }
