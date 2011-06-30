@@ -321,8 +321,19 @@ namespace iRINGTools.Web.Models
           string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string portNumber)
         {
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          return client.Get<List<string>>(String.Format("/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/tables", 
-            scope, application, dbProvider, dbServer, portNumber, dbInstance, dbName, dbSchema, dbUserName, dbPassword));
+          var uri = String.Format("/{0}/{1}/tables", scope, application);
+
+          Request request = new Request();
+          request.Add("dbProvider",dbProvider);
+          request.Add("dbServer",dbServer);
+          request.Add("portNumber",portNumber);
+          request.Add("dbInstance",dbInstance);
+          request.Add("dbName",dbName);
+          request.Add("dbSchema",dbSchema);
+          request.Add("dbUserName",dbUserName);
+          request.Add("dbPassword",dbPassword);
+
+          return client.Post<Request, List<string>>(uri, request, true);
         }
 
         // use appropriate icons especially node with children
@@ -332,8 +343,20 @@ namespace iRINGTools.Web.Models
           List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
 
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          List<DataObject> dataObjects = client.Get<List<DataObject>>(String.Format("/{0}/{1}/{2}/{3}/{4}/{5}/{6}/{7}/{8}/{9}/{10}/objects",
-            scope, application, dbProvider, dbServer, portNumber, dbInstance, dbName, dbSchema, dbUserName, dbPassword, tableNames));
+          var uri = String.Format("/{0}/{1}/objects", scope, application);
+
+          Request request = new Request();
+          request.Add("dbProvider", dbProvider);
+          request.Add("dbServer", dbServer);
+          request.Add("portNumber", portNumber);
+          request.Add("dbInstance", dbInstance);
+          request.Add("dbName", dbName);
+          request.Add("dbSchema", dbSchema);
+          request.Add("dbUserName", dbUserName);
+          request.Add("dbPassword", dbPassword);
+          request.Add("tableNames", tableNames);
+
+          List<DataObject> dataObjects = client.Post<Request, List<DataObject>>(uri, request, true);
 
           foreach (DataObject dataObject in dataObjects)
           {

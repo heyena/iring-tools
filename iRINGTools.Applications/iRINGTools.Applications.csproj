@@ -4688,12 +4688,6 @@
     <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigWizard.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\SearchPanel.js" />
-    <Content Include="Scripts\sencha\android.css" />
-    <Content Include="Scripts\sencha\apple.css" />
-    <Content Include="Scripts\sencha\bb6.css" />
-    <Content Include="Scripts\sencha\sencha-touch-debug.js" />
-    <Content Include="Scripts\sencha\sencha-touch.css" />
-    <Content Include="Scripts\sencha\sencha-touch.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\AppEditor\Index.aspx" />

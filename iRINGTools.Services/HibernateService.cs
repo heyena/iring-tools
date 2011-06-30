@@ -105,26 +105,26 @@ namespace org.iringtools.services
     }
 
     ///TODO: create request object and do post or encrypt password
-    [WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{portNumber}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/tables")]
-		public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer, string portNumber,
-      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
+    //[WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{portNumber}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/tables")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{application}/tables")]
+		public List<string> GetTableNames(string scope, string application, Request request)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-			return _NHibernateProvider.GetTableNames(scope, application, dbProvider, dbServer, portNumber, dbInstance,
-        dbName, dbSchema, dbUserName, dbPassword);
+			return _NHibernateProvider.GetTableNames(scope, application, request["dbProvider"], request["dbServer"], request["portNumber"], request["dbInstance"],
+        request["dbName"], request["dbSchema"], request["dbUserName"], request["dbPassword"]);
     }
 
-    [WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{portNumber}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/{tableNames}/objects")]
-		public List<DataObject> GetDBObjects(string scope, string application, string dbProvider, string dbServer, string portNumber,
-      string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames)
+    //[WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{portNumber}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/{tableNames}/objects")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{application}/objects")]
+    public List<DataObject> GetDBObjects(string scope, string application, Request request)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-			return _NHibernateProvider.GetDBObjects(scope, application, dbProvider, dbServer, portNumber, dbInstance,
-        dbName, dbSchema, dbUserName, dbPassword, tableNames);
+			return _NHibernateProvider.GetDBObjects(scope, application, request["dbProvider"], request["dbServer"], request["portNumber"], request["dbInstance"],
+        request["dbName"], request["dbSchema"], request["dbUserName"], request["dbPassword"], request["tableNames"]);
     }
 
     #endregion
