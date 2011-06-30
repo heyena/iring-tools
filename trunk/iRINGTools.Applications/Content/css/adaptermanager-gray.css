@@ -125,6 +125,13 @@ a:active {color: black}
 .tabsNhibernate {
   background-image:url('../img/16x16/preferences-system.png') !important;
 }
+.tabsValueList{
+  background-image:url('../img/valuelist.png') !important;
+}
+
+.tabsGraph{
+  background-image:url('../img/graph-map.png') !important;
+}
 
 .form-title 
 {

@@ -4,24 +4,16 @@
 * @extends Panel
 * @author by Gert Jansen van Rensburg
 */
-AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
-	title: 'Application',
-	width: 120,
-
-	collapseMode: 'mini',
-	//collapsible: true,
-	//collapsed: false,
-	closable: true,
-
+AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {	
 	layout: 'fit',
-	border: true,
-	split: true,
+	border: false,
+	frame: false,
+	split: false,
 
 	scope: null,
 	record: null,
 	form: null,
 	url: null,
-	iconCls: 'tabsApplication',
 
 	/**
 	* initComponent
@@ -71,10 +63,10 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 			root: 'items',
 			idProperty: 'assembly',
 			fields: [
-                { name: 'assembly', mapping: 'Assembly', allowBlank: false },
-                { name: 'name', mapping: 'Name', allowBlank: false },
-                { name: 'configurable', mapping: 'Configurable', allowBlank: false }
-            ]
+        { name: 'assembly', mapping: 'Assembly', allowBlank: false },
+        { name: 'name', mapping: 'Name', allowBlank: false },
+        { name: 'configurable', mapping: 'Configurable', allowBlank: false }
+      ]
 		});
 
 		var cmbDataLayers = new Ext.form.ComboBox({
@@ -103,39 +95,37 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 		//that = this;
 
 		this.form = new Ext.FormPanel({
-			labelWidth: 150, // label settings here cascade unless
+			labelWidth: 70, // label settings here cascade unless
 			url: this.url,
 			method: 'POST',
 			bodyStyle: 'padding:10px 5px 0',
 
 			border: false, // removing the border of the form
 
-			frame: true,
+			frame: false,
 			closable: true,
 			defaults: {
-				width: 250,
+				width: 310,
 				msgTarget: 'side'
 			},
 			defaultType: 'textfield',
 
 			items: [
-                { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 250, value: scope, allowBlank: false },
-                { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 250, value: name, allowBlank: false },
-                { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 250, value: name, allowBlank: false },
-                { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 250, value: description },
-                cmbDataLayers
-            ],
+          { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 300, value: scope, allowBlank: false },
+          { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 300, value: name, allowBlank: false },
+          { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 300, value: name, allowBlank: false },
+          { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 300, value: description },
+          cmbDataLayers
+      ],
 			buttonAlign: 'left', // buttons aligned to the left            
 			autoDestroy: false
 		});
 
 		this.items = [
   		    this.form
-  	    ];
+  	    ];	
 
-		this.on('close', this.onCloseTab, this);
-
-		this.tbar = this.buildToolbar(showconfigure);
+		this.bbar = this.buildToolbar(showconfigure);
 
 		// super
 		AdapterManager.ApplicationPanel.superclass.initComponent.call(this);
@@ -147,18 +137,20 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
 	buildToolbar: function (showconfigure) {
 		return [{
+			xtype: 'tbfill'
+		}, {
 			xtype: "tbbutton",
-			text: 'Save',
-			icon: 'Content/img/16x16/document-save.png',
-			tooltip: 'Save',
+			text: 'Ok',
+			//icon: 'Content/img/16x16/document-save.png',
+			//tooltip: 'Save',
 			disabled: false,
 			handler: this.onSave,
 			scope: this
 		}, {
 			xtype: "tbbutton",
-			text: 'Clear',
-			icon: 'Content/img/16x16/edit-clear.png',
-			tooltip: 'Clear',
+			text: 'Canel',
+			//icon: 'Content/img/16x16/edit-clear.png',
+			//tooltip: 'Clear',
 			disabled: false,
 			handler: this.onReset,
 			scope: this
@@ -173,16 +165,9 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 		}
 	},
 
-	onCloseTab: function (node) {
-		// check number of tabs in panel to make disabled the centerPanel if its the last tab has been closed.
-		if ((Ext.getCmp('content-panel').items.length) == 1) {
-			Ext.getCmp('content-panel').enable()
-		}
-
-	},
-
 	onReset: function () {
 		this.form.getForm().reset();
+		this.fireEvent('Cancel', this);
 	},
 
 	onSave: function () {
@@ -191,22 +176,29 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 			waitMsg: 'Saving Data...',
 			success: function (f, a) {
 				var record = f.getFieldValues();
-
 				that.record = record;
-
 				//that.record.Name = record.Name;
-				//that.record.Description = record.Description;
-
-				if (that.getActiveTab()) {
-					Ext.Msg.alert('Success', 'Changes saved successfully!');
-					that.fireEvent('Save', that);
-				}
+				//that.record.Description = record.Description;				
+				//Ext.Msg.alert('Success', 'Changes saved successfully!');
+				that.fireEvent('Save', that);			
 			},
 			failure: function (f, a) {
-				Ext.Msg.alert('Warning', 'Error saving changes!')
+				//Ext.Msg.alert('Warning', 'Error saving changes!')
+				var message = 'Error saving changes!';
+				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 			}
 		});
 
 	}
 
 });
+
+function showDialog(width, height, title, message, buttons, callback) {
+	var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
+	Ext.Msg.show({
+		title: title,
+		msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
+		buttons: buttons,
+		fn: callback
+	});
+}
