@@ -11,10 +11,11 @@ namespace org.iringtools.adapter.identity
     public IDictionary GetKeyRing()
     {
       IDictionary keyRing = new Dictionary<string, string>();      
-      if (ServiceSecurityContext.Current == null)
-      {
+      //if (ServiceSecurityContext.Current == null)
+      //{
+        keyRing.Add("Provider", "AnonymousProvider");
         keyRing.Add("Name", "anonymous");
-      }
+      //}
 
       return keyRing;
     }
