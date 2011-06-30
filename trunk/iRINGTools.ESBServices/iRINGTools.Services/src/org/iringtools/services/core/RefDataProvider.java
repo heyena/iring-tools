@@ -2374,6 +2374,10 @@ public class RefDataProvider
 
   public Response postClass(Qmxf qmxf)
   {
+	  //TODO - to be initialised
+      Graph delete=null;
+      Graph insert=null;
+
 	  Response response = new Response();
       response.setLevel(Level.SUCCESS);
       boolean qn = false;
@@ -2399,31 +2403,24 @@ public class RefDataProvider
           else
           {
               String registry = _useExampleRegistryBase ? _settings.get("ExampleRegistryBase") : _settings.get("ClassRegistryBase");
-              StringBuilder sparqlDelete = new StringBuilder();
-
+              
               for (ClassDefinition clsDef : qmxf.getClassDefinitions())
               {
 
                   String language = null;
-                  List<String> names = new ArrayList<String>();
-                  StringBuilder sparqlAdd = new StringBuilder();
-                  sparqlAdd.append(insertData);
-                  boolean hasDeletes = false;
                   int classCount = 0;
-                  String clsId = getIdFromURI(clsDef.getId());
+                  Long clsId = Long.parseLong(getIdFromURI(clsDef.getId()));
                   Qmxf existingQmxf = new Qmxf();
 
                   if (clsId!=null)
                   {
-                      existingQmxf = getClass(clsId, repository);
+                      existingQmxf = getClass(clsId.toString(), repository);
                   }
 
                   // delete class
                   if (existingQmxf.getClassDefinitions().size() > 0)
                   {
-                      StringBuilder sparqlStmts = new StringBuilder();
-
-
+                      
                       for (ClassDefinition existingClsDef : existingQmxf.getClassDefinitions())
                       {
                           for (Name clsName : clsDef.getNames())
@@ -2441,9 +2438,8 @@ public class RefDataProvider
                               {
                                   if (!existingName.getValue().equalsIgnoreCase(clsName.getValue()))
                                   {
-                                      hasDeletes = true;
-                                      sparqlStmts.append(String.format(" rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string . ", clsId, existingName.getValue(), clsName.getLang()));
-                                      sparqlAdd.append(String.format(" rdl:{0}  rdfs:label \"{1}{2}\"^^xsd:string .", clsId, clsName.getValue(), clsName.getLang()));
+                                	  delete = GenerateClassName(delete, existingName, clsId, existingClsDef);
+                                	  insert = GenerateClassName(insert, clsName, clsId, clsDef);
                                   }
                               }
 
@@ -2460,191 +2456,240 @@ public class RefDataProvider
                                   {
                                       if (!existingDescription.getValue().equalsIgnoreCase(description.getValue()))
                                       {
-                                          hasDeletes = true;
-                                          sparqlStmts.append(String.format(" rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string . ", clsId, existingDescription.getValue(), description.getLang()));
-                                          sparqlAdd.append(String.format(" rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string .", clsId, description.getValue(), description.getLang()));
+                                    	  delete = GenerateClassDescription(delete, existingDescription, clsId);
+                                    	  insert = GenerateClassDescription(insert, description, clsId);
                                       }
                                   }
                               }
-
-                              // delete specialization
-                              for (Specialization spec : clsDef.getSpecializations())
+                              if (clsDef.getSpecializations().size() == existingClsDef.getSpecializations().size())
                               {
-
-                                  //Specialization existingSpec = existingClsDef.specialization.Find(s => s.reference == spec.reference);
-                                  Specialization existingSpec = new Specialization();
-  								for (Specialization tempSpec : existingClsDef.getSpecializations()) {
-  									if (spec.getReference().equalsIgnoreCase(tempSpec.getReference())) {
-  										existingSpec = tempSpec;
-  									}
-  								}
-                                  if (existingSpec != null && existingSpec.getReference() != null)
-                                  {
-                                      if (!existingSpec.getReference().equalsIgnoreCase(spec.getReference()))
-                                      {
-                                          hasDeletes = true;
-                                          qn = _nsmap.reduceToQName(existingSpec.getReference(), qName);
-                                          sparqlStmts.append(String.format("  ?a dm:hasSubclass {0} . ", qName));
-                                          qn = _nsmap.reduceToQName(spec.getReference(), qName);
-                                          if (qn)
-                                              sparqlAdd.append(String.format(" ?a rdfs:subClassOf {0} .", qName));
-                                      }
-                                  }
+                                continue; /// no change ... so continue
                               }
-
-                              // delete classification
-                              for (Classification clsif : clsDef.getClassifications())
+                              else if (clsDef.getSpecializations().size() < existingClsDef.getSpecializations().size()) //some is deleted ...focus on old to find deleted
                               {
-                                  //Classification existingClasif = existingClsDef.classification.Find(c => c.reference == clsif.reference);
-                              	Classification existingClasif = new Classification();
-  								for (Classification tempClasif : existingClsDef.getClassifications()) {
-  									if (clsif.getReference().equalsIgnoreCase(tempClasif.getReference())) {
-  										existingClasif = tempClasif;
-  									}
-  								}
-
-                                  if (existingClasif != null && existingClasif.getReference() != null)
+                                for (Specialization os : existingClsDef.getSpecializations())
+                                {
+                                  //Specialization ns = newClsDef.specialization.Find(s => s.reference == os.reference);
+                                  Specialization ns = null;
+    								for (Specialization tempSpec : clsDef.getSpecializations()) {
+    									if (os.getReference().equalsIgnoreCase(tempSpec.getReference())) {
+    										ns = new Specialization();
+    										ns = tempSpec;
+    									}
+    								}
+                                  
+                                  if (ns == null)
                                   {
-                                      if (!existingClasif.getReference().equalsIgnoreCase(clsif.getReference()))
-                                      {
-                                          hasDeletes = true;
-                                          qn = _nsmap.reduceToQName(existingClasif.getReference(), qName);
-                                          if (qn)
-                                          {
-                                              sparqlStmts.append(String.format(" ?a dm:hasClassified {0} .", qName));
-                                              sparqlStmts.append(String.format(" ?a dm:hasClassifier {0} .", qName));
-                                          }
-                                          qn = _nsmap.reduceToQName(clsif.getReference(), qName);
-                                          if (qn)
-                                          {
-                                              sparqlAdd.append(String.format(" ?a dm:hasClassified {0} .", qName));
-                                              sparqlAdd.append(String.format(" ?a dm:hasClassifier {0} .", qName));
-                                          }
-
-                                      }
+                                    qn = _nsmap.reduceToQName(os.getReference(), qName);
+                                    if (qn) 
+                                    	delete = GenerateRdfSubClass(delete, clsId, qName.toString());
                                   }
+                                }
                               }
+                              else if (clsDef.getSpecializations().size() > existingClsDef.getSpecializations().size())//some is added ... find added 
+                              {
+                                for (Specialization ns : clsDef.getSpecializations())
+                                {
+                                  //Specialization os = oldClsDef.specialization.Find(s => s.reference == ns.reference);
+                                  Specialization os = null;
+  								  for (Specialization tempSpec : existingClsDef.getSpecializations()) {
+  									if (ns.getReference().equalsIgnoreCase(tempSpec.getReference())) {
+  										os = new Specialization();
+  										os = tempSpec;
+  									}
+  								  }
+                                  if (os == null)
+                                  {
+                                    qn = _nsmap.reduceToQName(ns.getReference(), qName);
+                                    if (qn) 
+                                    	insert = GenerateRdfSubClass(insert, clsId, qName.toString());
+                                  }
+                                }
+                              }
+                              if (clsDef.getClassifications().size() == existingClsDef.getClassifications().size())
+                              {
+                                continue; //no change...so continue
+                              }
+                              else if (clsDef.getClassifications().size() < existingClsDef.getClassifications().size()) //some is deleted ...focus on old to find deleted
+                              {
+                                for (Classification oc : existingClsDef.getClassifications())
+                                {
+                                  //Classification nc = newClsDef.classification.Find(c => c.reference == oc.reference);
+                                	Classification nc = null;
+    								  for (Classification tempClas : clsDef.getClassifications()) {
+    									if (oc.getReference().equalsIgnoreCase(tempClas.getReference())) {
+    										nc = new Classification();
+    										nc = tempClas;
+    									}
+    								  }
+                                  if (nc == null)
+                                  {
+                                    qn = _nsmap.reduceToQName(oc.getReference(), qName);
+                                    if (repository.getRepositoryType() == RepositoryType.PART_8)
+                                    {
+                                      if (qn) 
+                                    	  delete = GenerateSuperClass(delete, qName.toString(), clsId.toString()); ///delete from old
+                                    }
+                                    else
+                                    {
+                                      if (qn) 
+                                    	  delete = GenerateDmClassification(delete, clsId, qName.toString());
+                                    }
+                                  }
+                                }
+                              }
+                              else if (clsDef.getClassifications().size() > existingClsDef.getClassifications().size())//some is added ... find added classifications
+                              {
+                                for (Classification nc : clsDef.getClassifications())
+                                {
+                                  //Classification oc = oldClsDef.classification.Find(c => c.reference == nc.reference);
+                                  Classification oc = null;
+  								  for (Classification tempClas : existingClsDef.getClassifications()) {
+  									if (nc.getReference().equalsIgnoreCase(tempClas.getReference())) {
+  										oc = new Classification();
+  										oc = tempClas;
+  									}
+  								  }
+                                  if (oc == null)
+                                  {
+                                    qn = _nsmap.reduceToQName(nc.getReference(), qName);
+                                    if (repository.getRepositoryType() == RepositoryType.PART_8)
+                                    {
+                                      if (qn) 
+                                    	  insert = GenerateSuperClass(insert, qName.toString(), clsId.toString()); ///insert from new
+                                    }
+                                    else
+                                    {
+                                      if (qn) 
+                                    	  insert = GenerateDmClassification(insert, clsId, qName.toString());
+                                    }
+                                  }
+                                }
+                              }
+                            }
                           }
-                      }
-                      if (sparqlStmts.length() > 0)
-                      {
-                          sparqlDelete.append(deleteWhere);
-                          sparqlDelete.append(sparqlStmts);
-                          sparqlDelete.append(" }; ");
-                      }
-                  }
+                              
 
-                  // add class
-                  if (hasDeletes)
-                  {
-                      sparqlAdd.append("}");
-                  }
-                  else
-                      for (Name clsName : clsDef.getNames())
+                              
+                      if (delete.isEmpty() && insert.isEmpty())
                       {
-                          String clsLabel = clsName.getValue().split("@")[0];
-
-                          if (clsName.getLang()==null)
-                              language = "@" + defaultLanguage;
+                        String errMsg = "No changes made to class ["+ qmxf.getClassDefinitions().get(0).getNames().get(0).getValue()+"]";
+                        Status status = new Status();
+                        response.setLevel(Level.WARNING);
+                        status.getMessages().getItems().add(errMsg);
+                        //response.Append(status);
+                        continue;//Nothing to be done
+                      }
+                    }
+                    // add class
+                    if (delete.isEmpty() && insert.isEmpty())
+                    {
+                      String clsLabel = clsDef.getNames().get(0).getValue();
+                      if (clsId==null)
+                      {
+                        String newClsName = "Class definition " + clsLabel;
+                        clsId = Long.parseLong(getIdFromURI(createIdsAdiId(registry, newClsName)));
+                      }
+                      // append entity type
+                      if (clsDef.getEntityType()!= null && 
+                    		  (clsDef.getEntityType().getReference()!=null && clsDef.getEntityType().getReference()!=""))
+                      {
+                        qn = _nsmap.reduceToQName(clsDef.getEntityType().getReference(), qName);
+                        if (qn) 
+                        	insert = GenerateTypesPart8(insert, clsId, qName.toString(), clsDef);
+                      }
+                      // append specialization
+                      for (Specialization ns : clsDef.getSpecializations())
+                      {
+                        if (ns.getReference()!=null && ns.getReference()!="")
+                        {
+                          qn = _nsmap.reduceToQName(ns.getReference(), qName);
+                          if (repository.getRepositoryType() == RepositoryType.PART_8)
+                          {
+                            if (qn) 
+                            	insert = GenerateRdfSubClass(insert, clsId, qName.toString());
+                          }
                           else
-                              language = "@" + clsName.getLang();
-
-                          if (clsId==null)
                           {
-                              String newClsName = "Class definition " + clsLabel;
-
-                              clsId = createIdsAdiId(registry, newClsName);
-                              clsId = getIdFromURI(clsId);
+                            if (qn) 
+                            	insert = GenerateDmSubClass(insert, clsId, qName.toString());
                           }
-
-                          // append label
-                          sparqlAdd.append(String.format(" rdl:{0} rdf:type owl:Class .", clsId));
-                          sparqlAdd.append(String.format(" rdl:{0} rdfs:label \"{1}{2}\"^^xsd:string .", clsId, clsLabel, language));
-
-                          // append entity type
-                          if (clsDef.getEntityType()!= null && clsDef.getEntityType().getReference()!=null)
-                          {
-                              qn = _nsmap.reduceToQName(clsDef.getEntityType().getReference(), qName);
-
-                              if (qn)
-                                  sparqlAdd.append(String.format(" rdl:{0} rdf:type {1} .", clsId, qName));
-
-                          }
-
-                          // append description
-                          for (Description desc : clsDef.getDescriptions())
-                          {
-                              if (desc.getValue()!=null)
-                              {
-                                  if (desc.getLang()==null)
-                                      language = "@" + defaultLanguage;
-                                  else
-                                      language = "@" + desc.getLang();
-                                  String description = desc.getValue().split("@")[0];
-                                  sparqlAdd.append(String.format(" rdl:{0} rdfs:comment \"{1}{2}\"^^xsd:string . ", clsId, description, language));
-                              }
-                          }
-
-                          // append specialization
-                          for (Specialization spec : clsDef.getSpecializations())
-                          {
-                              if (spec.getReference()!=null)
-                              {
-                                  qn = _nsmap.reduceToQName(spec.getReference(), qName);
-                                  if (qn)
-                                      sparqlAdd.append(String.format(" rdl:{0} rdfs:subClassOf {1} .", clsId, qName));
-                              }
-                          }
-
-                          classCount = clsDef.getClassifications().size();
-
-                          // append classification
-                          for (Classification clsif : clsDef.getClassifications())
-                          {
-                              if (clsif.getReference()!=null)
-                              {
-                                  qn = _nsmap.reduceToQName(clsif.getReference(), qName);
-                                  if(qn){
-	                                    if (repository.getRepositoryType()== RepositoryType.PART_8)
-	                                    {
-	                                        sparqlAdd.append(String.format("rdl:{0} rdf:type {1} .", clsId, qName));
-	
-	                                    }
-	                                    else {
-	                                        sparqlAdd.append(String.format("rdl:{0} dm:hasClassifier {1} .", clsId, qName));
-	                                        sparqlAdd.append(String.format("{0} dm:hasClassified rdl:{1} .", qName, clsId));
-	                                    }
-                                  }
-                              }
-                          }
-
-                          sparqlAdd.append("}");
+                        }
                       }
-                  sparqlBuilder.append(prefix);
-                  sparqlBuilder.append(sparqlDelete);
-                  sparqlBuilder.append(sparqlAdd);
+                      // append description
+                      for (Description nd : clsDef.getDescriptions())
+                      {
+                        if (nd.getValue()!=null && nd.getValue()!="")
+                        {
+                        	insert = GenerateClassDescription(insert, nd, clsId);
+                        }
+                      }
+                      for (Name nn : clsDef.getNames())
+                      {
+                        // append label
+                    	  insert = GenerateClassName(insert, nn, clsId, clsDef);
+                      }
+                      // append classification
+                      for (Classification nc : clsDef.getClassifications())
+                      {
+                        if (nc.getReference()!=null && nc.getReference()!="")                        {
+                          qn = _nsmap.reduceToQName(nc.getReference(), qName);
+                          if (repository.getRepositoryType() == RepositoryType.PART_8)
+                          {
+                            if (qn) 
+                            	insert = GenerateSuperClass(insert, qName.toString(), clsId.toString());
+                          }
+                          else
+                          {
+                            if (qn) 
+                            	insert = GenerateDmClassification(insert, clsId, qName.toString());
+                          }
+                        }
+                      }
+                    }
+                    if (!delete.isEmpty())
+                    {
+                      sparqlBuilder.append(deleteData);
+                      //TODO
+                      /*for (Triple t in delete.Triples)
+                      {
+                        sparqlBuilder.AppendLine(t.ToString(formatter));
+                      }
+                      if (insert.IsEmpty)
+                        sparqlBuilder.AppendLine("}");
+                      else
+                        sparqlBuilder.AppendLine("};");*/
+                    }
+                    if (!insert.isEmpty())
+                    {
+                      sparqlBuilder.append(insertData);
+                      /*for (Triple t in insert.Triples)
+                      {
+                        sparqlBuilder.AppendLine(t.ToString(formatter));
+                      }*/
+                      sparqlBuilder.append("}");
+                    }
 
-                  String sparql = sparqlBuilder.toString();
-                  Response postResponse = postToRepository(repository, sparql);
-                  //response.append(postResponse);
+                    String sparql = sparqlBuilder.toString();
+                    Response postResponse = postToRepository(repository, sparql);
+                    //response.append(postResponse);
+                  }
+                }
               }
-          }
-      }
-      catch (Exception ex)
-      {
-          String errMsg = "Error in PostClass: " + ex;
-          Status status = new Status();
+              catch (Exception ex)
+              {
+                String errMsg = "Error in PostClass: " + ex;
+                Status status = new Status();
 
-          response.setLevel(Level.ERROR);
-          status.getMessages().getItems().add(errMsg);
-          //response.Append(status);
+                response.setLevel(Level.ERROR);
+                status.getMessages().getItems().add(errMsg);
+                //response.Append(status);
 
-          //_logger.Error(errMsg);
-      }
+                logger.error(errMsg);
+              }
 
-      return response;
-  }
-
+              return response;
+            }
   public List<Repository> getRepositories() throws Exception
   {
     List<Repository> repositoryList = new ArrayList<Repository>();
@@ -3728,6 +3773,52 @@ public class RefDataProvider
     work.add(new TripleImpl(subj, pred, obj));
     return work;
   }
-  
+  private Graph GenerateRdfType(Graph work, Long subjId, String objId)
+  {
+    subj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
+    pred = new URIReferenceImpl("rdf:type");
+    obj = new LiteralImpl(objId);
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateRdfSubClass(Graph work, Long subjId, String objId)
+  {
+    subj = new URIReferenceImpl(objId);
+    pred = new URIReferenceImpl("rdfs:subClassOf");
+    obj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateSuperClass(Graph work, String subjId, String objId)
+  {
+    subj = new BlankNodeImpl(String.format("rdl:{0}"), Long.parseLong(objId));
+    pred = new URIReferenceImpl("rdfs:subClassOf");
+    obj = new LiteralImpl(subjId);
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateDmClassification(Graph work, Long subjId, String objId)
+  {
+    subj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
+    pred = new URIReferenceImpl("dm:hasClassified");
+    obj = new LiteralImpl(objId);
+    work.add(new TripleImpl(subj, pred, obj));
+    pred = new URIReferenceImpl("dm:hasClassifier");
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
+  private Graph GenerateDmSubClass(Graph work, Long subjId, String objId)
+  {
+    subj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
+    pred = new URIReferenceImpl("dm:hasSubclass");
+    obj = new LiteralImpl(objId);
+    work.add(new TripleImpl(subj, pred, obj));
+    return work;
+  }
+
 
 }
