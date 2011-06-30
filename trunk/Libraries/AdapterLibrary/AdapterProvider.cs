@@ -1029,7 +1029,7 @@ namespace org.iringtools.adapter
           }
           catch (Exception ex)
           {
-            _logger.Debug(ex.ToString());
+            //_logger.Debug(ex.ToString());
             _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
           }
 
