@@ -174,12 +174,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 		var that = this;    // consists the main/prappNameclass object      
 		this.form.getForm().submit({
 			waitMsg: 'Saving Data...',
-			success: function (f, a) {
-				var record = f.getFieldValues();
-				that.record = record;
-				//that.record.Name = record.Name;
-				//that.record.Description = record.Description;				
-				//Ext.Msg.alert('Success', 'Changes saved successfully!');
+			success: function (f, a) {	
 				that.fireEvent('Save', that);			
 			},
 			failure: function (f, a) {
@@ -193,12 +188,3 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
 });
 
-function showDialog(width, height, title, message, buttons, callback) {
-	var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
-	Ext.Msg.show({
-		title: title,
-		msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
-		buttons: buttons,
-		fn: callback
-	});
-}

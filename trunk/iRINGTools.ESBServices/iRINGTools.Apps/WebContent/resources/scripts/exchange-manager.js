@@ -624,7 +624,7 @@ Ext.onReady(function(){
       },{
         id: 'exchange-button',
         xtype: 'button',
-        icon: 'resources/images/exchange.png',
+        icon: 'resources/images/16x16/exchange-send.png',
         text: 'Exchange',        
         disabled: true,
         handler: function(){
@@ -641,7 +641,7 @@ Ext.onReady(function(){
         //TODO: TBD
         id: 'xlogs-button',
         xtype: 'button',
-        icon: 'resources/images/exchange-log.png',
+        icon: 'resources/images/16x16/history.png',
         text: 'History',        
         disabled: true,
         hidden: true,

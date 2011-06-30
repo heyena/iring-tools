@@ -129,6 +129,10 @@ a:active {color: black}
   background-image:url('../img/valuelist.png') !important;
 }
 
+.tabsValueListMap{
+  background-image:url('../img/value.png') !important;
+}
+  
 .tabsGraph{
   background-image:url('../img/graph-map.png') !important;
 }

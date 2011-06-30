@@ -99,7 +99,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       autoScroll: true,
       loader: this.treeLoader,
       root: this.rootNode,
-      bbar: new Ext.ux.StatusBar({ defaultText: 'Ready', statusAlign: 'right' }),
+      //bbar: new Ext.ux.StatusBar({ defaultText: 'Ready', statusAlign: 'right' }),
       stateful: true,
       getState: function () {
         var nodes = [];
@@ -145,7 +145,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     this.propertyPanel = new Ext.grid.PropertyGrid({
       title: 'Details',
       region: 'east',
-      width: 200,
+      width: 350,
       split: true,
       collapseMode: 'mini',
       stripeRows: true,
@@ -933,12 +933,4 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   }
   });
 
-  function showDialog(width, height, title, message, buttons, callback) {
-  	var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
-  	Ext.Msg.show({
-  		title: title,
-  		msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
-  		buttons: buttons,
-  		fn: callback
-  	});
-  }
+  

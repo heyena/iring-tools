@@ -9,7 +9,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 	title: 'Directory',
 	width: 220,
 
-	collapseMode: 'mini',
+	//collapseMode: 'mini',
 	collapsible: true,
 	collapsed: false,
 
@@ -124,9 +124,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			forceLayout: true,
 			ddGroup: 'propertyGroup',
 			region: 'center',
-			collapseMode: 'mini',
 			height: 300,
-			//layout: 'fit',
 			border: false,
 			split: true,
 			expandAll: true,
@@ -817,7 +815,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			layout: 'fit',
 			title: 'Add new ValueListMap to valueList',
 			items: form,
-			iconCls: 'tabsValueList',
+			iconCls: 'tabsValueListMap',
 			height: 180,
 			width: 430,
 			plain: true,
@@ -946,12 +944,3 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 });
 
 
-function showDialog(width, height, title, message, buttons, callback) {
-	var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
-	Ext.Msg.show({
-		title: title,
-		msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
-		buttons: buttons,
-		fn: callback
-	});
-}
