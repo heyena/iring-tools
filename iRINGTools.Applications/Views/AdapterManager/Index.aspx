@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="../../Content/css/AdapterManager-gray.css"/> 
     <!-- ExtJS library: base/adapter -->
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/adapter/ext/ext-base.js") %>" type="text/javascript"></script>
-    
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/json2.js") %>" type="text/javascript"></script>
     <!-- ExtJS library: all widgets -->
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ux-all.js") %>" type="text/javascript"></script>
