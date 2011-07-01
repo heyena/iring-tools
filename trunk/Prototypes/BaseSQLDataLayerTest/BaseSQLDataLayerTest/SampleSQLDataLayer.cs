@@ -16,7 +16,7 @@ namespace BaseSQLDataLayerTest
 
     public SampleSQLDataLayer(AdapterSettings settings) : base(settings) 
     {
-      string connStr = "server=.\\SQLEXPRESS;database=ABC;User ID=abc;Password=abc";
+      string connStr = "server=.\\SQLEXPRESS;database=ABC;user id=abc;password=abc";
       _conn = new SqlConnection(connStr);      
     }
 
@@ -67,7 +67,7 @@ namespace BaseSQLDataLayerTest
         new Status()
         {
           Level = StatusLevel.Success,
-          Messages = new Messages() { "success" }
+          Messages = new Messages() { "successful" }
         }
       );
          

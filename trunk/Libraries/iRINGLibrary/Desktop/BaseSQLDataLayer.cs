@@ -342,8 +342,36 @@ namespace org.iringtools.library
 
             if (value != null)
             {
-              ///TODO: need to properly cast and truncate according to object property definition
-              dataRow[objectProperty.columnName] = value;
+              switch (objectProperty.dataType)
+              {
+                case DataType.Boolean:
+                  dataRow[objectProperty.columnName] = Convert.ToBoolean(value);
+                  break;
+                case DataType.Byte:
+                  dataRow[objectProperty.columnName] = Convert.ToByte(value);
+                  break;
+                case DataType.Int16:
+                  dataRow[objectProperty.columnName] = Convert.ToInt16(value);
+                  break;
+                case DataType.Int32:
+                  dataRow[objectProperty.columnName] = Convert.ToInt32(value);
+                  break;
+                case DataType.Int64:
+                  dataRow[objectProperty.columnName] = Convert.ToInt64(value);
+                  break;
+                case DataType.Decimal:
+                  dataRow[objectProperty.columnName] = Convert.ToDecimal(value);
+                  break;
+                case DataType.Single:
+                  dataRow[objectProperty.columnName] = Convert.ToSingle(value);
+                  break;
+                case DataType.Double:
+                  dataRow[objectProperty.columnName] = Convert.ToDouble(value);
+                  break;
+                default:
+                  dataRow[objectProperty.columnName] = value;
+                  break;
+              }
             }
           }
           catch (Exception ex)
@@ -379,11 +407,16 @@ namespace org.iringtools.library
 
             foreach (DataProperty objectProperty in objectDefinition.dataProperties)
             {
-              ///TODO: need to add more column attributes according to object property definition
               DataColumn dataColumn = new DataColumn()
               {
-                ColumnName = objectProperty.columnName
+                ColumnName = objectProperty.columnName,
+                DataType = Type.GetType("System." + objectProperty.dataType.ToString())
               };
+
+              if (objectProperty.dataType == DataType.String)
+              {
+                dataColumn.MaxLength = objectProperty.dataLength;
+              }
 
               dataTable.Columns.Add(dataColumn);
             }
