@@ -866,7 +866,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                       j--;
                       node.removeChild(deleteNode);
                     }
-                  }									
+                  }
                 }
               }
             }, {
@@ -1236,18 +1236,18 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         var keysItemSelector = new Ext.ux.ItemSelector({
           name: 'keySelector',
           imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
-					hideLabel: true,
+          hideLabel: true,
           multiselects: [{
             width: 230,
             height: 370,
-						border:0,
+            border: 0,
             store: availItems,
             displayField: 'keyName',
             valueField: 'keyValue'
           }, {
-          	width: 230,
-          	height: 370,
-						border:0,
+            width: 230,
+            height: 370,
+            border: 0,
             store: selectedItems,
             displayField: 'keyName',
             valueField: 'keyValue'
@@ -1259,7 +1259,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           id: scopeName + '.' + appName + '.keysSelector.' + node.id,
           border: false,
           autoScroll: true,
-					layout: 'fit',
+          layout: 'fit',
           bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
           labelWidth: 160,
           defaults: { anchor: '100%' },
@@ -1448,7 +1448,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
           border: false,
           autoScroll: true,
-					layout: 'fit',
+          layout: 'fit',
           defaults: { anchor: '100%' },
           labelWidth: 160,
           items: [{
@@ -1686,12 +1686,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   dbServer = (dbServer == 'localhost' ? '.' : dbServer);
                   var upProvider = treeProperty.provider.toUpperCase();
 
-                  if (upProvider.indexOf('MSSQL') > -1) 
-                  {
+                  if (upProvider.indexOf('MSSQL') > -1) {
                     var dbInstance = dsConfigForm.findField('dbInstance').getValue();
                     var dbDatabase = dsConfigForm.findField('dbName').getValue();
-                    if (dbInstance.toUpperCase() == "DEFAULT") 
-                    {
+                    if (dbInstance.toUpperCase() == "DEFAULT") {
                       var dataSrc = 'Data Source=' + dbServer + ';Initial Catalog=' + dbDatabase;
                     } else {
                       var dataSrc = 'Data Source=' + dbServer + '\\' + dbInstance + ';Initial Catalog=' + dbDatabase;
@@ -1712,17 +1710,15 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   var dbServer = dbInfo.dbServer;
                   dbServer = (dbServer == 'localhost' ? '.' : dbServer);
                   var upProvider = treeProperty.provider.toUpperCase();
-                    
-                  if (upProvider.indexOf('MSSQL') > -1) 
-                  {
-                    if (dbInstance.toUpperCase() == "DEFAULT") 
-                    {
+                  var dbInstance = dbInfo.dbInstance;
+                  if (upProvider.indexOf('MSSQL') > -1) {
+                    if (dbInstance.toUpperCase() == "DEFAULT") {
                       var dataSrc = 'Data Source=' + dbServer + ';Initial Catalog=' + dbInfo.dbName;
                     } else {
                       var dataSrc = 'Data Source=' + dbServer + '\\' + dbInfo.dbInstance
                                 + ';Initial Catalog=' + dbInfo.dbName;
-                    }			
-                  }										
+                    }
+                  }
                   else if (upProvider.indexOf('ORACLE') > -1)
                     var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dbInfo.portNumber + ')))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=' + dbInfo.dbInstance + ')))';
                   else if (upProvider.indexOf('MYSQL') > -1)
@@ -1920,7 +1916,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                     else {
                       var ind = rtext.indexOf('}');
                       var len = rtext.length - ind - 1;
-                      var msg = rtext.substring(ind + 1, rtext.length-1);
+                      var msg = rtext.substring(ind + 1, rtext.length - 1);
                       showDialog(400, 100, 'Tree saving result', msg, Ext.Msg.OK, null);
                     }
                   },
