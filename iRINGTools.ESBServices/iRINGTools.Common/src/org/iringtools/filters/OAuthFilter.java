@@ -41,9 +41,11 @@ public class OAuthFilter implements Filter
   private static final Logger logger = Logger.getLogger(OAuthFilter.class);
   private static final String AUTH_COOKIE = "Auth";
   private static final int AUTH_COOKIE_EXPIRY = 28800;  // 8 hours
+  private static final String AUTH_USER = "authenticatedUser";
   private static final String USERID_ATTR = "subject";
   private static final String REF_PARAM = "REF";
   private static final String URL_ENCODING = "UTF-8";
+  
   private FilterConfig filterConfig;
 
   @Override
@@ -56,15 +58,15 @@ public class OAuthFilter implements Filter
         
     logHeaders(request);
     
-    if (session.isNew())
+    if (session.getAttribute(AUTH_USER) == null)
     {
       Cookie authCookie = getCookie(request.getCookies(), AUTH_COOKIE);
       
-      if (authCookie == null || isNullOrEmpty(authCookie.getValue()))  // use has not signed on
+      if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))  // use has not signed on
       {
         String ref = request.getParameter(REF_PARAM);
         
-        if (isNullOrEmpty(ref))  // no reference token, attempt to obtain one
+        if (IOUtils.isNullOrEmpty(ref))  // no reference token, attempt to obtain one
         {
           String federationServiceUri = filterConfig.getInitParameter("federationServiceUri");
           String idpId = filterConfig.getInitParameter("idpId");
@@ -118,9 +120,12 @@ public class OAuthFilter implements Filter
               
               if (!isAuthorized(userInfo.get(USERID_ATTR)))
               {
-                session.invalidate();
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                prepareErrorResponse(session, response);
                 return;
+              }
+              else
+              {
+                session.setAttribute(AUTH_USER, USERID_ATTR);
               }
             }
             catch (JSONException e)
@@ -136,9 +141,12 @@ public class OAuthFilter implements Filter
         
         if (!isAuthorized(userInfo.get(USERID_ATTR)))
         {
-          session.invalidate();
-          response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+          prepareErrorResponse(session, response);
           return;
+        }
+        else
+        {
+          session.setAttribute(AUTH_USER, USERID_ATTR);
         }
       }
     }
@@ -154,6 +162,13 @@ public class OAuthFilter implements Filter
   
   @Override
   public void destroy(){}
+  
+  private void prepareErrorResponse(HttpSession session, HttpServletResponse response) throws IOException
+  {
+    session.invalidate();
+    response.setContentType("text/html");
+    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+  }
   
   private boolean isAuthorized(String userId)
   {
@@ -256,7 +271,7 @@ public class OAuthFilter implements Filter
   {
     Map<String, String> attrs = new HashMap<String, String>();
     
-    if (!isNullOrEmpty(cookieValue))
+    if (!IOUtils.isNullOrEmpty(cookieValue))
     {
       String[] pairs = cookieValue.split(" *, *");
       
@@ -270,17 +285,13 @@ public class OAuthFilter implements Filter
     return attrs;
   }
   
-  private boolean isNullOrEmpty(String str)
-  {
-    return (str == null || str.length() == 0);
-  }
-  
   private void logHeaders(HttpServletRequest request)
   {
+    logger.debug("HEADERS:");
     Enumeration<?> headers = request.getHeaderNames();
+    
     while (headers.hasMoreElements())
     {
-      logger.debug("HEADERS:");
       String name = (String)headers.nextElement();
       String value = request.getHeader(name);
       logger.debug(name + ": " + value);

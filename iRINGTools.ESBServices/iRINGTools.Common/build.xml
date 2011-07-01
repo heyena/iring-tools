@@ -41,8 +41,8 @@
   </path>
   
   <path id="json-utils.userclasspath">
-  	<fileset dir="../libraries/json-utils">
-  	  <include name="**/*.jar" />
+    <fileset dir="../libraries/json-utils">
+      <include name="**/*.jar" />
     </fileset>
   </path>
 
@@ -84,7 +84,7 @@
 			<classpath refid="log4j-1.2.16.userclasspath" />
 			<classpath refid="jaxb-ri-20100511.userclasspath" />
 			<classpath refid="tomcat-6.0.userclasspath" />    
-			<classpath refid="json-utils.userclasspath" />          
+      <classpath refid="json-utils.userclasspath" />
 		</javac>
 	</target>
 
