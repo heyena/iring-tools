@@ -9,46 +9,34 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import org.apache.commons.codec.binary.Base64;
 
 public class HttpClient
 {
   private String baseUri;
-  private HttpProxy httpProxy = null;
   private NetworkCredentials networkCredentials = null;
   private Map<String, String> headers = null;
 
-  private final static String GET = "GET";
-  private final static String POST = "POST";
+  private final static String GET_METHOD = "GET";
+  private final static String POST_METHOD = "POST";
   
   private final static String SPARQL_QUERY = "query";
   private final static String SPARQL_UPDATE = "update";
 
-  public HttpClient() {
-    this(null, null, null);
+  public HttpClient() 
+  {
+    this(null, null);
   }
 
   public HttpClient(String baseUri)
   {
-    this(baseUri, null, null);
-  }
-
-  public HttpClient(String baseUri, HttpProxy httpProxy)
-  {
-    this(baseUri, httpProxy, null);
+    this(baseUri, null);
   }
 
   public HttpClient(String baseUri, NetworkCredentials networkCredentials)
   {
-    this(baseUri, null, networkCredentials);
-  }
-
-  public HttpClient(String baseUri, HttpProxy httpProxy, NetworkCredentials networkCredentials)
-  {
     setBaseUri(baseUri);
-    setHttpProxy(httpProxy);
     setNetworkCredentials(networkCredentials);    
     headers = new HashMap<String, String>();
   }
@@ -57,7 +45,7 @@ public class HttpClient
   {
     try
     {
-      URLConnection conn = getConnection(GET, relativeUri);
+      URLConnection conn = getConnection(GET_METHOD, relativeUri);
       InputStream responseStream = conn.getInputStream();
       return JaxbUtils.toObject(responseClass, responseStream);
     }
@@ -86,7 +74,7 @@ public class HttpClient
       if (requestEntity != null && !requestEntity.getClass().getName().equals("java.lang.String"))
         content = JaxbUtils.toXml(requestEntity, false);
 
-      URLConnection conn = getConnection(POST, relativeUri);
+      URLConnection conn = getConnection(POST_METHOD, relativeUri);
       conn.setRequestProperty("Content-Type", "application/xml");
       conn.setRequestProperty("Content-Length", String.valueOf(content.length()));
 
@@ -111,7 +99,7 @@ public class HttpClient
   {
     try
     {
-      URLConnection conn = getConnection(POST, relativeUri);
+      URLConnection conn = getConnection(POST_METHOD, relativeUri);
 
       for (Entry<String, String> pair : headers.entrySet())
       {
@@ -193,16 +181,6 @@ public class HttpClient
     return baseUri;
   }
 
-  public void setHttpProxy(HttpProxy httpProxy)
-  {
-    this.httpProxy = httpProxy;
-  }
-
-  public HttpProxy getHttpProxy()
-  {
-    return httpProxy;
-  }
-
   public void setNetworkCredentials(NetworkCredentials networkCredentials)
   {
     this.networkCredentials = networkCredentials;
@@ -218,23 +196,22 @@ public class HttpClient
     headers.put(name, value);
   }
 
-  private URLConnection getConnection(String method, String relativeUri) throws IOException
+  private URLConnection getConnection(String method, String relativeUri) throws IOException, EncryptionException
   {
     if (baseUri == null)
       baseUri = "";
 
     URL url = new URL(baseUri + relativeUri);
     URLConnection conn = url.openConnection();
-
-    if (httpProxy != null)
+    
+    String proxySet = System.getProperty("proxySet");
+    if (proxySet != null && proxySet.equalsIgnoreCase("true"))
     {
-      Properties properties = System.getProperties();
-      properties.put("proxySet", "true");
-      properties.put("http.proxyHost", httpProxy.getHost());
-      properties.put("http.proxyPort", String.valueOf(httpProxy.getPort()));
-
-      String proxyCredsToken = createCredentialsToken(httpProxy.getUserName(), httpProxy.getPassword(),
-          httpProxy.getDomain());
+      String proxyUserName = System.getProperty("http.proxyUserName");
+      String proxyPassword = EncryptionUtils.decrypt(System.getProperty("http.proxyPassword"));
+      String proxyDomain = System.getProperty("http.proxyDomain");      
+      String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);
+      
       conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
     }
 
@@ -251,7 +228,7 @@ public class HttpClient
       conn.setRequestProperty(header.getKey(), header.getValue());
     }
 
-    if (method.equalsIgnoreCase(POST))
+    if (method.equalsIgnoreCase(POST_METHOD))
     {
       conn.setUseCaches(false);
       conn.setDoOutput(true);

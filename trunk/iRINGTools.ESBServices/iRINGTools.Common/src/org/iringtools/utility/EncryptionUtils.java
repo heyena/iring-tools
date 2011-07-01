@@ -8,31 +8,30 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 public class EncryptionUtils
 {
   private static final Logger logger = Logger.getLogger(EncryptionUtils.class);
-
-  private static String encoding = "utf8";
+  private static final String ENCODING = "utf8";
+  
+  private static Base64 base64 = new Base64();
   private static Cipher cipher = null;
   private static SecretKey key = null;
-
+  
   static
   {
     try
     {
-      String algorithm = "AES";
-      String cipherKey = "k6KCxFRB2h5nWGMDdYFZ/w==";
+      String algorithm = "DES";
+      String cipherKey = "buwHCL/4y+w=";
 
       // javax.crypto.KeyGenerator keyGen = javax.crypto.KeyGenerator.getInstance(algorithm);
       // keyGen.init(128);
       // System.out.println("Key: " + new BASE64Encoder().encode(keyGen.generateKey().getEncoded()));
 
-      byte[] keyBytes = new BASE64Decoder().decodeBuffer(cipherKey);
+      byte[] keyBytes = base64.decode(cipherKey);
       key = new SecretKeySpec(keyBytes, algorithm);
 
       cipher = Cipher.getInstance(algorithm);
@@ -50,8 +49,8 @@ public class EncryptionUtils
       try
       {
         cipher.init(Cipher.ENCRYPT_MODE, key);
-        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(encoding));
-        return new BASE64Encoder().encode(encryptedBytes);
+        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(ENCODING));
+        return base64.encodeToString(encryptedBytes);
       }
       catch (Exception ex)
       {
@@ -69,9 +68,9 @@ public class EncryptionUtils
       try
       {
         cipher.init(Cipher.DECRYPT_MODE, key);
-        byte[] encryptedBytes = new BASE64Decoder().decodeBuffer(cipherText);
+        byte[] encryptedBytes = base64.decode(cipherText);
         byte[] plainText = cipher.doFinal(encryptedBytes);
-        return new String(plainText, encoding);
+        return new String(plainText, ENCODING);
       }
       catch (Exception ex)
       {

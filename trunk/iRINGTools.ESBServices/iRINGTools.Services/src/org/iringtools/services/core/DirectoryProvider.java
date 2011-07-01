@@ -5,7 +5,6 @@ import java.util.Hashtable;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.log4j.Logger;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
 import org.iringtools.utility.JaxbUtils;

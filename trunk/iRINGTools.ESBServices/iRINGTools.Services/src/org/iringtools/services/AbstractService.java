@@ -1,6 +1,8 @@
 package org.iringtools.services;
 
 import java.util.Hashtable;
+import java.util.Properties;
+
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
 //import javax.ws.rs.core.SecurityContext;
@@ -18,6 +20,9 @@ public abstract class AbstractService
   {
     settings = new Hashtable<String, String>();
     
+    /*
+     * COMMON SETTINGS
+     */
     settings.put("baseDirectory", servletContext.getRealPath("/"));
 
     String directoryServiceUri = servletContext.getInitParameter("directoryServiceUri");
@@ -35,11 +40,9 @@ public abstract class AbstractService
     	idGenServiceUri = "http://localhost:8080/services/idgen";
     settings.put("idGenServiceUri", idGenServiceUri);
 
-    String dbConnectionString = servletContext.getInitParameter("dbConnectionString");
-    if (dbConnectionString == null || dbConnectionString.equals(""))
-    	dbConnectionString = "jdbc:sqlserver://127.0.0.1:1046;Database=ABC;User=abc; Password=abc";
-    settings.put("dbConnectionString", dbConnectionString);
-    	
+    /*
+     * REFERENCE DATA SETTINGS
+     */    	
     String exampleRegistryBase = servletContext.getInitParameter("ExampleRegistryBase");
     if (exampleRegistryBase == null || exampleRegistryBase.equals(""))
     	exampleRegistryBase = "http://example.org/data#";
@@ -59,8 +62,10 @@ public abstract class AbstractService
     if (useExampleRegistryBase == null || useExampleRegistryBase.equals(""))
     	useExampleRegistryBase = "false";
     settings.put("UseExampleRegistryBase", useExampleRegistryBase);
-    
-    
+        
+    /*
+     * EXCHANGE SETTINGS
+     */
     String poolSize = servletContext.getInitParameter("poolSize");
     if (poolSize == null || poolSize.equals(""))
       poolSize = "100";
@@ -71,18 +76,47 @@ public abstract class AbstractService
       numOfExchangeLogFiles = "10";
     settings.put("numOfExchangeLogFiles", numOfExchangeLogFiles);
     
+    /* 
+     * PROXY SETTINGS
+     */
+    Properties sysProps = System.getProperties();
+    boolean proxyInfoValid = true;
+    
     String proxyHost = servletContext.getInitParameter("proxyHost");
     if (proxyHost != null && proxyHost.length() > 0)
-      settings.put("proxyHost", proxyHost);
+      sysProps.put("http.proxyHost", proxyHost);
+    else
+      proxyInfoValid = false;
     
     String proxyPort = servletContext.getInitParameter("proxyPort");
     if (proxyPort != null && proxyPort.length() > 0)
-      settings.put("proxyPort", proxyPort);
+      sysProps.put("http.proxyPort", proxyPort);
+    else
+      proxyInfoValid = false;
     
-    String proxyCredentialsToken = servletContext.getInitParameter("proxyCredentialsToken");
-    if (proxyCredentialsToken != null && proxyCredentialsToken.length() > 0)
-      settings.put("proxyCredentialsToken", proxyCredentialsToken);
+    String proxyUserName = servletContext.getInitParameter("proxyUserName");
+    if (proxyUserName != null && proxyUserName.length() > 0)
+      sysProps.put("http.proxyUserName", proxyUserName);
+    else
+      proxyInfoValid = false;
     
+    String proxyPassword = servletContext.getInitParameter("proxyPassword");
+    if (proxyPassword != null && proxyPassword.length() > 0)
+      sysProps.put("http.proxyPassword", proxyPassword);
+    else
+      proxyInfoValid = false;
+    
+    String proxyDomain = servletContext.getInitParameter("proxyDomain");
+    if (proxyDomain == null)
+      proxyDomain = "";
+    sysProps.put("http.proxyDomain", proxyDomain);
+    
+    if (proxyInfoValid)
+      sysProps.put("proxySet", "true");
+    
+    /*
+     * LDAP SETTINGS
+     */    
     String ldapPropertiesPath = servletContext.getInitParameter("ldapPropertiesPath");
     if (ldapPropertiesPath != null && ldapPropertiesPath.length() > 0)
       settings.put("ldapPropertiesPath", ldapPropertiesPath);
