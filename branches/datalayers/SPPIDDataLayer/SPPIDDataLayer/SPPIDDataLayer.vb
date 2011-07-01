@@ -56,7 +56,8 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
 
             Dim dataObject As New DataObject() With { _
               .objectName = name, _
-              .keyDelimeter = "_" _
+              .keyDelimeter = "_", _
+              .tableName = "tbl" + name
             }
 
             Dim keyProperties As New List(Of KeyProperty)()
@@ -66,6 +67,9 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                 ' Name
                 Dim attributeName As String = attribute.Attribute("name").Value
 
+                'Column Name
+                Dim columnName As String = attribute.Attribute("name").Value
+
                 ' is key
                 Dim isKey As Boolean = False
                 If attribute.Attribute("isKey") IsNot Nothing Then
@@ -74,7 +78,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
 
                 ' Data type: String, Integer, Real, DateTime, Picklist, Boolean
                 Dim dataTypeName As String = attribute.Attribute("datatype").Value
-                ' string dataTypeName = attribute.Attribute("dataType").Value;
+
 
                 Dim dataType__1 As DataType = DataType.[String]
                 'Enum.TryParse<DataType>(attribute.Attribute("dataType").Value, out dataType);
@@ -118,7 +122,8 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                   .dataType = dataType__1, _
                   .dataLength = dataLength, _
                   .isNullable = True, _
-                  .showOnIndex = False _
+                  .showOnIndex = False, _
+                  .columnName = columnName
                 }
 
                 If isKey Then
@@ -367,6 +372,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
             For Each dataobject In dataObjects
                 equipType = dataobject.GetPropertyValue("ItemTypeName")
                 spId = dataobject.GetPropertyValue("SP_ID")
+              
 
                 Select Case equipType
                     Case "Exchanger"
@@ -414,7 +420,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                         ' Check for an open drawing.
                         If Not m_updateIfDwgOpen And equipMechanical.Representations.Count > 0 Then
                             rep = equipMechanical.Representations.Nth(1)
-                            '  skip = skipDwg(rep, errMsgs)
+                            skip = skipDwg(rep, "")
                         End If
 
                         'If Not skip Then
@@ -520,40 +526,59 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                         '    equipOther.Commit()
                         'End If
                         'equipOther = Nothing
+                    Case "Nozzle"
+                        Dim temp = _projDatasource.GetNozzle(spId)
 
-                    Case Else   ' shouldn't be anything else
-                        ' Check for an open drawing.
-                        equip = _projDatasource.GetNozzle(spId)
+                        Dim SP_EquipmentID As String = ""
+                        For Each attr In temp.Attributes
+                            If attr.Name = "SP_EquipmentID" Then
+                                SP_EquipmentID = attr.Value
+                            End If
+                        Next
+                        equip = _projDatasource.GetEquipment(SP_EquipmentID)
                         If Not m_updateIfDwgOpen And equip.Representations.Count > 0 Then
                             rep = equip.Representations.Nth(1)
                             skip = skipDwg(rep, "sd")
                         End If
-
                         If Not skip Then
                             ' Update each attribute from the XML if changed.
-                            'For i = 0 To dataobject.length - 1
-                            '    getRecvAttr(updates, i, attrName, newValue, attSubclass, onlyIfNull)
-                            '    writeLog(2, "Recvd attr " & CStr(i) & ": subclass '" & attSubclass & "', " & attrName & " = '" & newValue & "'")
-
-                            '    ' See if attribute is applicable
-                            '    If attSubclass = "" Or attSubclass = commodity Then
-                            '        attr = equip.Attributes(attrName)
-
-                            '        If attr Is Nothing Then
-                            '            errMsgs.add("Specified " & commodity & " attribute """ & attrName & """ not found")
-                            '        Else
-                            '            attrUpdated = updateAttribute(attr, newValue, onlyIfNull, m_projDatasource, errMsgs)
-                            '            If attrUpdated Then
-                            '                compUpdated = True
-                            '                numAttsUpdated = numAttsUpdated + 1
-                            '            End If
-                            '        End If
-                            '    End If
-                            'Next i
+                            For i = 0 To dataObjects.LongCount() - 1
+                                ' getRecvAttr(updates, i, attrName, newValue, attSubclass, onlyIfNull)
+                            Next
                         End If
+                    Case Else   ' shouldn't be anything else
+                        ' Check for an open drawing.
+                       
+                        '  If Not m_updateIfDwgOpen And equip.Representations.Count > 0 Then
+                        '  rep = equip.Representations.Nth(1)
+                        '  skip = skipDwg(rep, "sd")
+                        '  End If
+
+                        ' If Not skip Then
+                        ' Update each attribute from the XML if changed.
+                        'For i = 0 To dataobject.length - 1
+                        '    getRecvAttr(updates, i, attrName, newValue, attSubclass, onlyIfNull)
+                        '    writeLog(2, "Recvd attr " & CStr(i) & ": subclass '" & attSubclass & "', " & attrName & " = '" & newValue & "'")
+
+                        '    ' See if attribute is applicable
+                        '    If attSubclass = "" Or attSubclass = commodity Then
+                        '        attr = equip.Attributes(attrName)
+
+                        '        If attr Is Nothing Then
+                        '            errMsgs.add("Specified " & commodity & " attribute """ & attrName & """ not found")
+                        '        Else
+                        '            attrUpdated = updateAttribute(attr, newValue, onlyIfNull, m_projDatasource, errMsgs)
+                        '            If attrUpdated Then
+                        '                compUpdated = True
+                        '                numAttsUpdated = numAttsUpdated + 1
+                        '            End If
+                        '        End If
+                        '    End If
+                        ' Next i
+                        '  End If
 
                         If compUpdated Then
-                            equip.Commit()
+                            '  equip.Commit()
                         End If
 
                 End Select
