@@ -30,12 +30,22 @@ namespace BaseSQLDataLayerTest
 
       foreach (IDataObject dataObject in dataObjects)
       {
-        dataObject.SetPropertyValue("TRAINNUMBER", DateTime.Now.ToString());
+        // update tag value with timestamp
+        string tag = dataObject.GetPropertyValue("TAG").ToString();
+        string newTag = tag + DateTime.Now.ToString();
+
+        if (newTag.Length > 100)
+          newTag = newTag.Substring(0, 100);
+
+        dataObject.SetPropertyValue("TAG", newTag);
       }
 
       // from iRING projection engine view      
       Response response = sampleDL.Post(dataObjects);
 
+      Console.WriteLine("Post result" + response.ToString());
+
+      Console.WriteLine("\ndone!");
       Console.ReadKey();
     }
 
