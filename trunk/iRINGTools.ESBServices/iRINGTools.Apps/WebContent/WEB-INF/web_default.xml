@@ -23,9 +23,44 @@
     <param-name>FieldFit</param-name>
     <param-value>header</param-value>
   </context-param>
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-  </welcome-file-list>
+  <!--
+  <filter>
+    <filter-name>authorization</filter-name>
+    <filter-class>org.iringtools.filters.OAuthFilter</filter-class>   
+    <init-param>
+      <param-name>federationServiceUri</param-name>
+      <param-value>https://sso.mypsn.com</param-value>
+    </init-param>
+    <init-param>
+      <param-name>idpId</param-name>
+      <param-value>PSN2-SAML2-Entity</param-value>
+    </init-param>
+    <init-param>
+      <param-name>spFederationPath</param-name>
+      <param-value>/sp/startSSO.ping</param-value>
+    </init-param>
+    <init-param>
+      <param-name>refResolverUri</param-name>
+      <param-value>https://sso.mypsn.com/ext/ref/pickup?REF=</param-value>
+    </init-param>
+    <init-param>
+      <param-name>pingUserName</param-name>
+      <param-value>PSN2AgentlessDemoUser</param-value>
+    </init-param>
+    <init-param>
+      <param-name>pingPassword</param-name>
+      <param-value>jlAclUVoA6oAfrlUbOEMo-Troe*</param-value>
+    </init-param>
+    <init-param>
+      <param-name>pingInstanceId</param-name>
+      <param-value>PSN2AgentlessDemo</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>authorization</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  -->
   <filter>
     <filter-name>struts2</filter-name>
     <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
@@ -34,4 +69,11 @@
     <filter-name>struts2</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+  </welcome-file-list>
+  <error-page>
+    <error-code>401</error-code>
+    <location>/errors/401.jsp</location>
+  </error-page>
 </web-app>
