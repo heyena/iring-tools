@@ -8,8 +8,8 @@
     <ProjectGuid>{7DFD3469-50B6-4D22-A201-D5BFC887F4FA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>iRINGTools.SDK.ADONetDataLayer</RootNamespace>
-    <AssemblyName>ADONetDataLayer</AssemblyName>
+    <RootNamespace>org.iringtools.adapter.datalayer</RootNamespace>
+    <AssemblyName>ADONetLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -43,6 +43,9 @@
     <Reference Include="Microsoft.Data.Schema, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="Ninject">
       <HintPath>..\lib\ninject2\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Xml">
+      <HintPath>..\lib\ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
     </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\lib\configuration\StaticDust.Configuration.dll</HintPath>

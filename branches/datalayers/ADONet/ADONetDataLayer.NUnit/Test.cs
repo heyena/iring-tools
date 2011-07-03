@@ -10,7 +10,7 @@ using org.iringtools.utility;
 using StaticDust.Configuration;
 
 
-namespace iRINGTools.SDK.ADONetDataLayer
+namespace org.iringtools.adapter.datalayer
 {
   [TestFixture]
   public class ADONetDataLayerTest
@@ -95,18 +95,16 @@ namespace iRINGTools.SDK.ADONetDataLayer
       Assert.IsTrue(actual.Level == StatusLevel.Success);
     }
 
-    //[Test]
+    [Test]
     public void Read()
     {
       IList<string> identifiers = new List<string>() 
-            { 
-                "Equip-001", 
-                "Equip-002", 
-                "Equip-003", 
-                "Equip-004" 
-            };
+      { 
+        "8976020", 
+        "7236861"
+      };
 
-      IList<IDataObject> dataObjects = _dataLayer.Get("Equipment", identifiers);
+      IList<IDataObject> dataObjects = _dataLayer.Get("Documents", identifiers);
 
       if (!(dataObjects.Count() > 0))
       {
@@ -115,13 +113,8 @@ namespace iRINGTools.SDK.ADONetDataLayer
 
       foreach (IDataObject dataObject in dataObjects)
       {
-        Assert.IsNotNull(dataObject.GetPropertyValue("PumpType"));
-        Assert.IsNotNull(dataObject.GetPropertyValue("PumpDriverType"));
-        Assert.IsNotNull(dataObject.GetPropertyValue("DesignTemp"));
-        Assert.IsNotNull(dataObject.GetPropertyValue("DesignPressure"));
-        Assert.IsNotNull(dataObject.GetPropertyValue("Capacity"));
-        Assert.IsNotNull(dataObject.GetPropertyValue("SpecificGravity"));
-        Assert.IsNotNull(dataObject.GetPropertyValue("DifferentialPressure"));
+        Assert.IsNotNull(dataObject.GetPropertyValue("DataID"));
+        Assert.IsNotNull(dataObject.GetPropertyValue("DocumentName"));
       }
     }
 
@@ -189,6 +182,14 @@ namespace iRINGTools.SDK.ADONetDataLayer
           Utility.SerializeDataContract<DataDictionary>(dictionary)
         );
       }
+    }
+
+    [Test]
+    public void Read1()
+    {
+      long count = _dataLayer.GetCount("Documents", null);
+
+      Assert.Greater(count, 0);
     }
   }
 }

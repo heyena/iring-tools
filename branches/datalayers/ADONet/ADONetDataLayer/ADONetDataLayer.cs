@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using log4net;
 using Ninject;
-//using Ninject.Extensions.Xml;
+using Ninject.Extensions.Xml;
 using Ninject.Planning.Bindings;
 using System.Data.SqlClient;
 using org.iringtools.library;
@@ -16,9 +16,9 @@ using org.iringtools.utility;
 using Ninject.Parameters;
 using Ninject.Modules;
 using Ciloci.Flee;
+using System.Text;
 
-
-namespace iRINGTools.SDK.ADONetDataLayer
+namespace org.iringtools.adapter.datalayer
 {
   public class ADONetModule : NinjectModule
   {
@@ -32,9 +32,12 @@ namespace iRINGTools.SDK.ADONetDataLayer
 
   public class ADONetDataLayer : BaseDataLayer, IDataLayer2
   { 
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(ADONetDataLayer));
     private string _configPath = String.Empty;
     private string _bindingPath = String.Empty;
+    private string _dictionaryPath = String.Empty;
     private ADONetConfiguration _config = null;
+    private DataDictionary _dictionary = null;
     private Dictionary<string, Type> _dynamicTypes = new Dictionary<string, Type>();
     private StandardKernel _kernel = null;
 
@@ -48,6 +51,7 @@ namespace iRINGTools.SDK.ADONetDataLayer
         _configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"], "adonet-configuration." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml");
         _config = Utility.Read<ADONetConfiguration>(_configPath, true);
 
+        _dictionaryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"], "DataDictionary." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml");
         _bindingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"], "adonet-binding." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml");
 
         NinjectSettings nsettings = new NinjectSettings { LoadExtensions = false };
@@ -71,11 +75,13 @@ namespace iRINGTools.SDK.ADONetDataLayer
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-
-        ConfigObject configObject = GetConfigObject(objectType);        
+        ConfigObject configObject = GetConfigObject(objectType);
 
         if (identifiers != null && identifiers.Count > 0)
         {
+          string[] delimiters = { configObject.Identifier.Delimiter };
+          string[] ids = configObject.Identifier.Key.Split(delimiters, StringSplitOptions.None);
+
           foreach (string identifier in identifiers)
           {
             IDataObject dataObject = new GenericDataObject()
@@ -85,8 +91,13 @@ namespace iRINGTools.SDK.ADONetDataLayer
 
             if (!String.IsNullOrEmpty(identifier))
             {
-              dataObject.SetPropertyValue(configObject.Identifier, identifier);              
-            }            
+              string[] vls = identifier.Split(delimiters, StringSplitOptions.None);
+
+              for (int i = 0; i < vls.Length; i++)
+              {
+                dataObject.SetPropertyValue(ids[i], vls[i]);
+              }
+            }
 
             dataObjects.Add(dataObject);
           }
@@ -107,10 +118,19 @@ namespace iRINGTools.SDK.ADONetDataLayer
       {
         IList<string> identifiers = new List<string>();
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
+        ConfigObject configObject = GetConfigObject(objectType);
+
+        string[] delimiters = { configObject.Identifier.Delimiter };
+        string[] ids = configObject.Identifier.Key.Split(delimiters, StringSplitOptions.None);
 
         foreach (IDataObject dataObject in dataObjects)
         {
-          identifiers.Add((string)dataObject.GetPropertyValue("Tag"));
+          List<string> vls = new List<string>();
+          for (int i = 0; i < ids.Length; i++)
+          {
+            vls.Add((string)dataObject.GetPropertyValue(ids[i]));
+          }
+          identifiers.Add(string.Join(delimiters[0], vls));
         }
 
         return Delete(objectType, identifiers);
@@ -137,11 +157,22 @@ namespace iRINGTools.SDK.ADONetDataLayer
             
       try
       {
-        IList<IDataObject> dataObjects = new List<IDataObject>();
+        IList<IDataObject> dataObjects = Get(objectType, identifiers);
 
         ConfigObject configObject = GetConfigObject(objectType);
 
-        IDbCommand deleteCmd = configObject.GetCommand(_kernel, QueryType.DELETE, _config.GetConnection(_kernel));        
+        IDbCommand deleteCmd = configObject.GetCommand(_kernel, QueryType.DELETE, _config.GetConnection(_kernel));
+        
+        foreach (var dataObject in dataObjects)
+        {
+          foreach (var configParam in configObject.Delete.Parameters)
+          {
+            IDbDataParameter param = (IDbDataParameter)deleteCmd.Parameters[configParam.Name];
+            param.Value = dataObject.GetPropertyValue(configParam.Property);
+          }
+
+          var ret = deleteCmd.ExecuteNonQuery();
+        }
 
         return response;
       }
@@ -237,83 +268,87 @@ namespace iRINGTools.SDK.ADONetDataLayer
     }
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
-     {      
+    {
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        
+
+        DataObject dictionaryObject = _dictionary.dataObjects.Where(o => o.objectName.Equals(objectType)).SingleOrDefault();
         ConfigObject configObject = GetConfigObject(objectType);
+        string[] delimiters = { configObject.Identifier.Delimiter };
+        string[] ids = configObject.Identifier.Key.Split(delimiters, StringSplitOptions.None);
 
         IDbCommand selectCmd = configObject.GetCommand(_kernel, QueryType.SELECT, _config.GetConnection(_kernel));
 
-        if (selectCmd != null)
+        if (identifiers != null && identifiers.Count > 0)
         {
+          //select * from table
+          //select * from table where column = value
 
-          if (identifiers != null && identifiers.Count > 0)
-          {            
-            IDbCommand cmd = _kernel.Get<IDbCommand>();
-            cmd.Connection = selectCmd.Connection;
-            cmd.CommandText = selectCmd.CommandText;
-                        
-            if (!cmd.CommandText.Contains("where"))
-              cmd.CommandText += String.Format(" where ({0} = :Identifier)", configObject.Identifier);
-            else
-              cmd.CommandText += String.Format(" and ({0} = :Identifier)", configObject.Identifier);
-            
-            IDataParameter parameter = _kernel.Get<IDataParameter>();
-            parameter.ParameterName = ":Identifier";
-            parameter.DbType = DbType.Int32;
-            cmd.Parameters.Add(parameter);
+          //id1 in (v11, v12, v13)
+          //id2 in (v21, v22, v23)
 
-            if (cmd.Connection.State != ConnectionState.Open)
-              cmd.Connection.Open();
+          Dictionary<string, List<string>> wheres = new Dictionary<string, List<string>>();
+          for (int i = 0; i < ids.Length; i++)
+            wheres.Add(ids[i], new List<string>());
 
-            foreach (string identifier in identifiers)
+          foreach (var identifier in identifiers)
+          {
+            string[] vls = identifier.Split(delimiters, StringSplitOptions.None);
+
+            for (int i = 0; i < ids.Length; i++)
             {
-              parameter.Value = identifier;
-
-              IDataReader reader = cmd.ExecuteReader();
-
-              if (reader.Read())
-              {
-                IDataObject dataObject = new GenericDataObject()
-                {
-                  ObjectType = objectType
-                };
-
-                for (int i = 0; i < reader.FieldCount; i++)
-                {
-                  dataObject.SetPropertyValue(reader.GetName(i), reader.GetValue(i));
-                }
-
-                dataObjects.Add(dataObject);
-              }
+              wheres[ids[i]].Add(vls[i]);
             }
+          }
+
+          string whereSql = "";
+
+          for (int i = 0; i < wheres.Count; i++)
+          {
+            var where = wheres.ElementAt(i);
+            whereSql += where.Key + " in ('" + string.Join("','", where.Value) + "')";
+            if (i < wheres.Count - 1)
+            {
+              whereSql += " and ";
+            }
+          }
+
+          string selectSql = "";
+
+          if (!selectCmd.CommandText.Contains("where"))
+          {
+            selectSql += " where " + whereSql;
           }
           else
           {
-            if (selectCmd.Connection.State != ConnectionState.Open)
-              selectCmd.Connection.Open();
-
-            IDataReader reader = selectCmd.ExecuteReader();
-
-            while (reader.Read())
-            {
-              IDataObject dataObject = new GenericDataObject()
-              {
-                ObjectType = objectType
-              };
-
-              for (int i = 0; i < reader.FieldCount; i++)
-              {
-                dataObject.SetPropertyValue(reader.GetName(i), reader.GetValue(i));
-              }
-
-              dataObjects.Add(dataObject);
-            }
+            selectSql += " and " + whereSql;
           }
 
-        }        
+          selectCmd.CommandText += selectSql;
+
+        }
+
+        if (selectCmd.Connection.State != ConnectionState.Open)
+          selectCmd.Connection.Open();
+
+        using (IDataReader reader = selectCmd.ExecuteReader())
+        {
+          while (reader.Read())
+          {
+            IDataObject dataObject = new GenericDataObject()
+            {
+              ObjectType = objectType
+            };
+
+            for (int i = 0; i < reader.FieldCount; i++)
+            {
+              dataObject.SetPropertyValue(reader.GetName(i), reader.GetValue(i));
+            }
+
+            dataObjects.Add(dataObject);
+          }
+        }
 
         return dataObjects;
       }
@@ -322,47 +357,55 @@ namespace iRINGTools.SDK.ADONetDataLayer
         _logger.Error("Error in GetList: " + ex);
         throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
       }
-    }    
+    }
 
     public override DataDictionary GetDictionary()
     {
       try
       {
-        DataDictionary dataDictionary = new DataDictionary()
+        if (File.Exists(_dictionaryPath))
         {
-          dataObjects = new List<DataObject>()
-        };
-        
-        foreach (ConfigObject configObject in _config.ConfigObjects)
+          _dictionary = Utility.Read<DataDictionary>(_dictionaryPath, true);
+        }
+        else
         {
-          DataObject dataObject = new DataObject()
+          _dictionary = new DataDictionary()
           {
-            objectName = configObject.Name,            
-            dataProperties = new List<DataProperty>()            
+            dataObjects = new List<DataObject>()
           };
 
-          dataDictionary.dataObjects.Add(dataObject);
-
-          IDbCommand selectCmd = configObject.GetCommand(_kernel, QueryType.SELECT, _config.GetConnection(_kernel));
-
-          if (selectCmd.Connection.State != ConnectionState.Open)
-            selectCmd.Connection.Open();
-
-          IDataReader reader = selectCmd.ExecuteReader();          
-          DataTable table = reader.GetSchemaTable();
-          foreach (DataRow row in table.Rows)
+          foreach (ConfigObject configObject in _config.ConfigObjects)
           {
-            string columnName = row["ColumnName"].ToString();
-            DataType columnDataType = ADONetConfiguration.GetDataType((Type)row["DataType"]);
+            DataObject dataObject = new DataObject()
+            {
+              tableName = configObject.Name,
+              objectName = configObject.Name,
+              dataProperties = new List<DataProperty>()
+            };
+
+            _dictionary.dataObjects.Add(dataObject);
+
+            IDbCommand selectCmd = configObject.GetCommand(_kernel, QueryType.SELECT, _config.GetConnection(_kernel));
+
+            if (selectCmd.Connection.State != ConnectionState.Open)
+              selectCmd.Connection.Open();
+
+            IDataReader reader = selectCmd.ExecuteReader();
+            DataTable table = reader.GetSchemaTable();
+            foreach (DataRow row in table.Rows)
+            {
+              string columnName = row["ColumnName"].ToString();
+              DataType columnDataType = ADONetConfiguration.GetDataType((Type)row["DataType"]);
 
               DataProperty dataProperty = new DataProperty()
-              {                
+              {
+                columnName = columnName,
                 propertyName = columnName,
                 dataType = columnDataType,
                 dataLength = Convert.ToInt32(row["ColumnSize"].ToString())
               };
 
-              if (configObject.Identifier == columnName)
+              if (configObject.Identifier.Key.Contains(columnName))
               {
                 dataObject.addKeyProperty(dataProperty);
               }
@@ -370,12 +413,16 @@ namespace iRINGTools.SDK.ADONetDataLayer
               {
                 dataObject.dataProperties.Add(dataProperty);
               }
-            
+
+            }
+            reader.Close();
+            reader.Dispose();
           }
-          
-        }        
+
+          Utility.Write<DataDictionary>(_dictionary, _dictionaryPath, true);
+        }
         
-        return dataDictionary;
+        return _dictionary;
       }
       catch (Exception e)
       {
@@ -389,13 +436,20 @@ namespace iRINGTools.SDK.ADONetDataLayer
       {
         List<string> identifiers = new List<string>();
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
-                
         ConfigObject configObject = GetConfigObject(objectType);
-        
+
+        string[] delimiters = { configObject.Identifier.Delimiter };
+        string[] ids = configObject.Identifier.Key.Split(delimiters, StringSplitOptions.None);
+
         foreach (IDataObject dataObject in dataObjects)
         {
-          identifiers.Add((string)dataObject.GetPropertyValue(configObject.Identifier));
-        }        
+          List<string> vls = new List<string>();
+          for (int i = 0; i < ids.Length; i++)
+          {
+            vls.Add((string)dataObject.GetPropertyValue(ids[i]));
+          }
+          identifiers.Add(string.Join(delimiters[0], vls));
+        }
 
         return identifiers;
       }
@@ -472,7 +526,30 @@ namespace iRINGTools.SDK.ADONetDataLayer
 
     public override long GetCount(string objectType, DataFilter filter)
     {
-      throw new NotImplementedException();
+      try
+      {
+        DataObject dictionaryObject = _dictionary.dataObjects.Where(o => o.objectName.Equals(objectType)).SingleOrDefault();
+        ConfigObject configObject = GetConfigObject(objectType);
+
+        IDbCommand selectCmd = configObject.GetCommand(_kernel, QueryType.SELECT, _config.GetConnection(_kernel));
+
+        string queryText = selectCmd.CommandText;
+        int fromIdx = queryText.IndexOf("from", 1);
+        string fromText = queryText.Substring(fromIdx);
+
+        queryText = "select count(*) as value " + fromText;
+        selectCmd.CommandText = queryText;
+
+        long count = 0;
+        long.TryParse(selectCmd.ExecuteScalar().ToString(), out count);
+
+        return count;
+
+      }
+      catch (Exception e)
+      {
+        return 0;
+      }
     }
   }
 }
