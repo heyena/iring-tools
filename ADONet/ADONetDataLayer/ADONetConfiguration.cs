@@ -13,7 +13,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.adapter;
 
-namespace iRINGTools.SDK.ADONetDataLayer
+namespace org.iringtools.adapter.datalayer
 {
   public enum QueryType 
   {
@@ -26,12 +26,18 @@ namespace iRINGTools.SDK.ADONetDataLayer
   [DataContract(Name = "configration")]
   public class ADONetConfiguration
   {
-    private IDbConnection _connetion = null;
+    private IDbConnection _connection = null;
 
     ~ADONetConfiguration()
     {
-      if (_connetion != null)
-        _connetion.Close();
+      try
+      {
+        if (_connection != null)
+          _connection.Close();
+      }
+      catch (Exception ex)
+      {
+      }
     }
      
     [DataMember(Name = "connection", Order = 0)]
@@ -42,16 +48,16 @@ namespace iRINGTools.SDK.ADONetDataLayer
         
     public IDbConnection GetConnection(StandardKernel kernel)
     {
-      if (_connetion == null)      
+      if (_connection == null)      
       {
         if (this.Connection != null && !this.Connection.Equals(String.Empty))
         {
-          _connetion = kernel.Get<IDbConnection>(this.Connection);        
-          //_connetion.ConnectionString = this.Connection;
+          _connection = kernel.Get<IDbConnection>();
+          _connection.ConnectionString = this.Connection;
         }
       }
 
-      return _connetion;
+      return _connection;
     }
 
     public static DataType GetDataType(Type type)
@@ -144,6 +150,16 @@ namespace iRINGTools.SDK.ADONetDataLayer
 
   }
 
+  [DataContract(Name = "identifier")]
+  public class Identifier
+  {
+    [DataMember(Name = "key", Order = 0, IsRequired = true)]
+    public string Key { get; set; }
+
+    [DataMember(Name = "delimiter", Order = 1)]
+    public string Delimiter { get; set; }
+  }
+
   [DataContract(Name = "object")]
   public class ConfigObject
   {
@@ -158,8 +174,8 @@ namespace iRINGTools.SDK.ADONetDataLayer
     [DataMember(Name = "name", Order = 0)]
     public string Name { get; set; }
 
-    [DataMember(Name = "identifier", Order = 1)]
-    public string Identifier { get; set; }
+    [DataMember(Name = "identifier", Order = 1, IsRequired = true)]
+    public Identifier Identifier { get; set; }
 
     [DataMember(Name = "connection", Order = 2, EmitDefaultValue = false)]
     public string Connection { get; set; }
@@ -182,8 +198,8 @@ namespace iRINGTools.SDK.ADONetDataLayer
       {
         if (this.Connection != null && !this.Connection.Equals(String.Empty))
         {
-          _connetion = kernel.Get<IDbConnection>(this.Connection);
-          //_connetion.ConnectionString = this.Connection;
+          _connetion = kernel.Get<IDbConnection>();
+          _connetion.ConnectionString = this.Connection;
         }
       }
 
@@ -271,7 +287,7 @@ namespace iRINGTools.SDK.ADONetDataLayer
         {           
           _command = kernel.Get<IDbCommand>();
           _command.Connection = connection;
-          _command.CommandText = this.Query;          
+          _command.CommandText = this.Query;
           
           if (this.Parameters != null)
           {
@@ -280,7 +296,7 @@ namespace iRINGTools.SDK.ADONetDataLayer
               IDataParameter dataParameter = kernel.Get<IDataParameter>();
               dataParameter.ParameterName = parameter.Name;
               dataParameter.DbType = ADONetConfiguration.GetDBType(parameter.DataType);
-              _command.Parameters.Add(parameter);                            
+              _command.Parameters.Add(parameter);
             }
           }
         }
@@ -299,6 +315,9 @@ namespace iRINGTools.SDK.ADONetDataLayer
 
     [DataMember(Name = "type", Order = 1)]
     public DataType DataType { get; set; }
+
+    [DataMember(Name = "property", Order = 2)]
+    public string Property { get; set; }
   }
 
 }

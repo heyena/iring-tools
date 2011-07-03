@@ -1,12 +1,82 @@
-<configration xmlns="http://schemas.datacontract.org/2004/07/iRINGTools.SDK.ADONetDataLayer" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-  <connection>Data Source=MMSTST;User Id=hatch_sys;Password=manager;</connection>
+<configration xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.adapter.datalayer" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <connection>Data Source=miswsqa;Initial Catalog=livelink;User Id=projectguest;Password=E5rVo5yE;</connection>
   <objects>
     <object>
-      <name>Valves</name>
-      <identifier>IDENT</identifier>      
+      <name>Documents</name>
+      <identifier>
+        <key>DataID</key>
+      </identifier>
       <select>
-        <query>select * from vw_iring_valves where (rownum &lt; 10)</query>        
+        <query>select ownerid as ProjectID, DataID, VersionNum, name as DocumentName, CreateDate, ModifyDate from dtree where ownerid = 5738941 and subtype = 144</query>
       </select>
     </object>
+<!--
+    <object>
+      <name>Projects</name>
+      <identifier>
+        <key>ProjectID</key>
+      </identifier>
+      <select>
+        <query>select dataid as ProjectID, name as ProjectName, CreateDate, ModifyDate from dtree where dataid = 5738941 and subtype = 202</query>
+      </select>
+    </object>
+    <object>
+      <name>Document_Attributes</name>
+      <identifier>
+        <key>DataID, VersionNum</key>
+        <delimiter>,</delimiter>
+      </identifier>
+      <select>
+        <query>select dt.ownerid as ProjectID, * from ha_attrdocument as ado inner join dtree as dt on ado.dataid = dt.dataid and ado.versionnum = dt.versionnum where ownerid = 5738941 and subtype = 144</query>
+      </select>
+    </object>
+    <object>
+      <name>DocumentControl_Attributes</name>
+      <identifier>
+        <key>DataID, VersionNum</key>
+        <delimiter>,</delimiter>
+      </identifier>
+      <select>
+        <query>select dt.ownerid as ProjectID, * from ha_attrdocumentcontrol as adc inner join dtree as dt on adc.dataid = dt.dataid and adc.versionnum = dt.versionnum where ownerid = 5738941 and subtype = 144</query>
+      </select>
+    </object>
+    <object>
+      <name>Transmittals</name>
+      <identifier>
+        <key>TransmittalID</key>
+      </identifier>
+      <select>
+        <query>select ProjectID, Trid as TransmittalID, TransmittalID as TransmittalName, TransmitDate, IssueReason, PackageType, ContractNo as PackageNumber, RespReqDate, Status, TransmittalType, EndOfReviewDate from aus_transmittals where projectid = 5738941</query>
+      </select>
+    </object>
+    <object>
+      <name>Transmitted_Documents</name>
+      <identifier>
+        <key>TransmittalID, DocID, VersionNum</key>
+        <delimiter>,</delimiter>
+      </identifier>
+      <select>
+        <query>select tm.ProjectID, tm.TRID as TransmittalID, td.DocIDInt as DocumentID, td.VersionNoInt as VersionNum, td.RevisionNum, td.Grade, td.EndOfReviewDate from aus_transmittalsdrawings as td inner join aus_transmittals as tm on tm.trid = td.trid where tm.projectid = 5738941</query>
+      </select>
+    </object>
+    <object>
+      <name>Packages</name>
+      <identifier>
+        <key>DataID</key>
+      </identifier>
+      <select>
+        <query>select ProjectId, Seq as DataId, PackageType, PackageNumber, PackageName, CompanyName, ResponsibleEngineer, PackagePhase, PackageStatus, CreateDate, ModifyDate from ha_catpackage as pk where projectid = 5738941</query>
+      </select>
+    </object>
+    <object>
+      <name>Package_Documents</name>
+      <identifier>
+        <key>DataID</key>
+      </identifier>
+      <select>
+        <query>select pk.ProjectId, pd.DocId as DocumentID, pd.Version as VersionNum, pd.AddedDate, pd.ModifyDate from ha_catpackagedocuments as pd inner join ha_catpackage as pk on pk.dataid = pd.dataid and pk.seq = pd.seq where pk.projectid = 5738941 and pd.docid is not null</query>
+      </select>
+    </object>
+-->
   </objects>
 </configration>
