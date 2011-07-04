@@ -377,15 +377,31 @@ namespace iRINGTools.Web.Controllers
         string application = dataObjectVars[1];
         string graph = dataObjectVars[2];
         string templateName = dataObjectVars[3];
+        string templateId = form["templateId"];
+        string classId = form["classId"];
+        string roleId = form["roleId"];
         string roleName = dataObjectVars[dataObjectVars.Count() - 2];
         string className = dataObjectVars[dataObjectVars.Count() - 1];
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graph);
-
-        var classTemplateMap = graphMap.classTemplateMaps.FirstOrDefault();
-        TemplateMap templateMap = classTemplateMap.templateMaps.Find(ctm => ctm.name == templateName);
-        RoleMap roleMap = templateMap.roleMaps.Find(rm => rm.name == roleName);
-        graphMap.DeleteRoleMap(templateMap, roleMap.id);
+        TemplateMap tMap = null;
+        RoleMap rMap = null;
+        foreach (ClassTemplateMap ctm in graphMap.classTemplateMaps)
+        {
+          TemplateMap t = ctm.templateMaps.Find(tm => tm.id == templateId);
+          if (t != null)
+          {
+            RoleMap r = t.roleMaps.Find(rm => rm.id == roleId);
+            if (r.classMap != null && r.classMap.id == classId)
+            {
+              rMap = r;
+              tMap = t;
+              break;
+            }
+          }
+        }
+        if (tMap != null && rMap != null)
+          graphMap.DeleteRoleMap(tMap, rMap.id);
       }
       catch (Exception ex)
       {
@@ -394,6 +410,36 @@ namespace iRINGTools.Web.Controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult ResetMapping(FormCollection form)
+    {
+      try
+      {
+        string roleId = form["roleId"];
+        string templateId = form["templateId"];
+        string classId = form["parentClassId"];
+        string mappingNode = form["mappingNode"];
+        string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        string scope = dataObjectVars[0];
+        string application = dataObjectVars[1];
+        string graphName = dataObjectVars[2];
+        Mapping mapping = GetMapping(scope, application);
+        GraphMap graphMap = mapping.FindGraphMap(graphName);
+        ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
+        TemplateMap tMap = ctMap.templateMaps.Find(t => t.id.Equals(templateId));
+        RoleMap rm = tMap.roleMaps.Find(r => r.id.Equals(roleId));
+        rm.propertyName = null;
+        rm.value = null;
+        rm.valueListName = null;
+        rm.classMap = null;
+        rm.dataType = null;
+        rm.type = RoleType.Reference;
+      }
+      catch
+      {
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
 
     public JsonResult MakePossessor(FormCollection form)
     {
