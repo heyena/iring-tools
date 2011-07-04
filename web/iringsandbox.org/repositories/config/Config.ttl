@@ -134,3 +134,30 @@ _:sqlServerB a dnr:SqlIOManager ;
         dnr:database "BechtelDb" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
+<dotnetrdf:/repositories/bentley/*> a dnr:HttpHandler ;
+        dnr:cacheDuration "0";
+        dnr:queryProcessor _:qProcBN ;
+        dnr:updateProcessor _:uProcBN ;
+        dnr:protocolProcessor _:pProcBN ;
+		dnr:stylesheet "../css/interface.css" ;		
+        dnr:introText "~/config/BentleyIntro.txt" ;
+        dnr:type "VDS.RDF.Web.SparqlServer" ;
+        dnr:defaultQueryFile "~/config/query.txt" .
+_:qProcBN a dnr:SparqlQueryProcessor ;
+        dnr:type "VDS.RDF.Query.LeviathanQueryProcessor" ;
+        dnr:usingStore _:sqlStoreBN .
+_:uProcBN a dnr:SparqlUpdateProcessor ;
+        dnr:type "VDS.RDF.Update.LeviathanUpdateProcessor" ;
+        dnr:usingStore _:sqlStoreBN .
+_:pProcBN a dnr:SparqlHttpProtocolProcessor ;
+        dnr:type "VDS.RDF.Update.Protocol.LeviathanProtocolProcessor" ;
+        dnr:usingStore _:sqlStoreBN .
+_:sqlStoreBN a dnr:TripleStore ;
+        dnr:type "VDS.RDF.SqlTripleStore" ;
+        dnr:sqlManager _:sqlServerBN .		
+_:sqlServerBN a dnr:SqlIOManager ;
+        dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
+        dnr:server ".\SQLEXPRESS" ;
+        dnr:database "BentleyDb" ;
+        dnr:user "dotNetRDF" ;
+        dnr:password "dotNetRDF" .
