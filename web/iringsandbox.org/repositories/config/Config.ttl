@@ -161,3 +161,57 @@ _:sqlServerBN a dnr:SqlIOManager ;
         dnr:database "BentleyDb" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
+<dotnetrdf:/repositories/emerson/*> a dnr:HttpHandler ;
+        dnr:cacheDuration "0";
+        dnr:queryProcessor _:qProcE ;
+        dnr:updateProcessor _:uProcE ;
+        dnr:protocolProcessor _:pProcE ;
+		dnr:stylesheet "../css/interface.css" ;		
+        dnr:introText "~/config/EmersonIntro.txt" ;
+        dnr:type "VDS.RDF.Web.SparqlServer" ;
+        dnr:defaultQueryFile "~/config/query.txt" .
+_:qProcE a dnr:SparqlQueryProcessor ;
+        dnr:type "VDS.RDF.Query.LeviathanQueryProcessor" ;
+        dnr:usingStore _:sqlStoreE .
+_:uProcE a dnr:SparqlUpdateProcessor ;
+        dnr:type "VDS.RDF.Update.LeviathanUpdateProcessor" ;
+        dnr:usingStore _:sqlStoreE .
+_:pProcE a dnr:SparqlHttpProtocolProcessor ;
+        dnr:type "VDS.RDF.Update.Protocol.LeviathanProtocolProcessor" ;
+        dnr:usingStore _:sqlStoreE .
+_:sqlStoreE a dnr:TripleStore ;
+        dnr:type "VDS.RDF.SqlTripleStore" ;
+        dnr:sqlManager _:sqlServerE .		
+_:sqlServerE a dnr:SqlIOManager ;
+        dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
+        dnr:server ".\SQLEXPRESS" ;
+        dnr:database "EmersonDb" ;
+        dnr:user "dotNetRDF" ;
+        dnr:password "dotNetRDF" .
+<dotnetrdf:/repositories/dupont/*> a dnr:HttpHandler ;
+        dnr:cacheDuration "0";
+        dnr:queryProcessor _:qProcD ;
+        dnr:updateProcessor _:uProcD;
+        dnr:protocolProcessor _:pProcD ;
+		dnr:stylesheet "../css/interface.css" ;		
+        dnr:introText "~/config/DupontIntro.txt" ;
+        dnr:type "VDS.RDF.Web.SparqlServer" ;
+        dnr:defaultQueryFile "~/config/query.txt" .
+_:qProcD a dnr:SparqlQueryProcessor ;
+        dnr:type "VDS.RDF.Query.LeviathanQueryProcessor" ;
+        dnr:usingStore _:sqlStoreD .
+_:uProcD a dnr:SparqlUpdateProcessor ;
+        dnr:type "VDS.RDF.Update.LeviathanUpdateProcessor" ;
+        dnr:usingStore _:sqlStoreD .
+_:pProcD a dnr:SparqlHttpProtocolProcessor ;
+        dnr:type "VDS.RDF.Update.Protocol.LeviathanProtocolProcessor" ;
+        dnr:usingStore _:sqlStoreD .
+_:sqlStoreD a dnr:TripleStore ;
+        dnr:type "VDS.RDF.SqlTripleStore" ;
+        dnr:sqlManager _:sqlServerE .		
+_:sqlServerE a dnr:SqlIOManager ;
+        dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
+        dnr:server ".\SQLEXPRESS" ;
+        dnr:database "DupontDb" ;
+        dnr:user "dotNetRDF" ;
+        dnr:password "dotNetRDF" .
