@@ -427,11 +427,15 @@ namespace iRINGTools.Web.Controllers
         ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
         TemplateMap tMap = ctMap.templateMaps.Find(t => t.id.Equals(templateId));
         RoleMap rm = tMap.roleMaps.Find(r => r.id.Equals(roleId));
+        if (!string.IsNullOrEmpty(rm.propertyName))
+          rm.type = RoleType.DataProperty;
+        else
+          rm.type = RoleType.Reference;
         rm.propertyName = null;
         rm.value = null;
         rm.valueListName = null;
         rm.classMap = null;
-        rm.dataType = null;
+        
         rm.type = RoleType.Reference;
       }
       catch
