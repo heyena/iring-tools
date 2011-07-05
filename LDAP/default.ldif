@@ -1,0 +1,62 @@
+version: 1
+
+dn: dc=iringug,dc=org
+objectClass: domain
+objectClass: top
+dc: iringug
+
+dn: ou=iringtools,dc=iringug,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: iringtools
+description: iRINGTools
+
+dn: cn=users,ou=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: users
+
+dn: cn=groups,ou=iringtools,dc=iringug,dc=org
+objectClass: top
+objectClass: groupOfEntries
+cn: groups
+description: iRINGTools
+
+dn: cn=adapterAdmins,cn=groups,ou=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: adapterAdmins
+description: iRINGTools
+
+dn: cn=exchangeAdmins,cn=groups,ou=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: exchangeAdmins
+description: iRINGTools
+
+dn: cn=refDataAdmins,cn=groups,ou=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: refDataAdmins
+description: iRINGTools
+
+dn: cn=directory,ou=iringtools,dc=iringug,dc=org
+objectClass: top
+objectClass: groupOfEntries
+cn: directory
+
+dn: cn=exchanges,ou=iringtools,dc=iringug,dc=org
+objectClass: top
+objectClass: groupOfEntries
+cn: exchanges
+
+dn: cn=endpoints,ou=iringtools,dc=iringug,dc=org
+objectClass: top
+objectClass: groupOfEntries
+cn: endpoints
+
+dn: cn=federation,ou=iringtools,dc=iringug,dc=org
+objectClass: top
+objectClass: groupOfEntries
+cn: federation
+
