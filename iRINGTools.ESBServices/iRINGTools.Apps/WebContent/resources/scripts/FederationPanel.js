@@ -594,7 +594,7 @@ FederationManager.FederationPanel = Ext
 											textfield.disable();										
 										}
 										else {
-											textfield.setValue('1');	;
+											textfield.setValue('None');
 											textfield.enable();											
 										}
 									}
