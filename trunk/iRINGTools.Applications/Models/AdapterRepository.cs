@@ -38,7 +38,7 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<ScopeProjects>("/scopes");
             }
-            catch (Exception ex)
+            catch  
             {
             }
 
@@ -54,7 +54,7 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Post<ScopeProjects>("/scopes", scopes, true);
             }
-            catch (Exception ex)
+            catch  
             {
             }
 
@@ -69,7 +69,7 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<DataLayers>("/datalayers");
             }
-            catch (Exception ex)
+            catch  
             {
             }
 
@@ -84,7 +84,7 @@ namespace iRINGTools.Web.Models
                 WebHttpClient _tempClient = new WebHttpClient(_settings["ReferenceDataServiceUri"]);
                 entity = _tempClient.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
             }
-            catch (Exception ex)
+            catch  
             {
             }
             return entity;
@@ -107,7 +107,7 @@ namespace iRINGTools.Web.Models
             {
                 obj = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name == applicationName);
             }
-            catch (Exception ex)
+            catch 
             {
             }
 
@@ -122,7 +122,7 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", scopeName, applicationName), true);
             }
-            catch (Exception ex)
+            catch 
             {
             }
 
@@ -137,7 +137,7 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
             }
-            catch (Exception ex)
+            catch  
             {
             }
 
@@ -152,7 +152,7 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
             }
-            catch (Exception ex)
+            catch  
             {
             }
 
@@ -177,7 +177,7 @@ namespace iRINGTools.Web.Models
                 obj = _client.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
 
             }
-            catch (Exception ex)
+            catch  
             {
             }
 

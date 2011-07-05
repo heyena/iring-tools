@@ -394,7 +394,7 @@ namespace org.iringtools.modules.memappingregion
         model.DetailProperties.Add(keyValuePair);
         keyValuePair = new KeyValuePair<string, string>("ValueList Name", roleMap.valueListName);
         model.DetailProperties.Add(keyValuePair);
-
+        
       }
       catch (Exception ex)
       {

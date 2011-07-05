@@ -36,7 +36,7 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
             }
-            catch (Exception ex)
+            catch  
             {
             }
 
@@ -50,7 +50,7 @@ namespace iRINGTools.Web.Models
             {
               _client.Post<XElement>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), mappingXml, true);
             }
-            catch (Exception ex)
+            catch  
             {
             }         
         }

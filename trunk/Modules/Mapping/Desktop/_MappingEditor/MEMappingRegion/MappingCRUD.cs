@@ -932,20 +932,23 @@ namespace org.iringtools.modules.memappingregion
               if (roleMap.classMap != null)
                 mappingItem.GraphMap.DeleteRoleMap(mappingItem.TemplateMap, roleMap.id);
 
+              if(!string.IsNullOrEmpty(roleMap.propertyName))
+                roleMap.type = RoleType.DataProperty;
+              else 
+                roleMap.type = RoleType.ObjectProperty;
+
               roleMap.propertyName = string.Empty;
               roleMap.valueListName = string.Empty;
               roleMap.value = string.Empty;
               mappingItem.Items.Clear();
               mappingItem.IsExpanded = false;
 
-              if (roleMap.type == RoleType.Reference)
-                roleMap.type = RoleType.ObjectProperty;
-
               if (!mappingItem.itemTextBlock.Text.EndsWith(Presenter.unmappedToken) && roleMap.IsMapped() == false)
               {
                 mappingItem.itemTextBlock.Text += Presenter.unmappedToken;
               }
-
+             
+              Presenter.RefreshRoleMap(roleMap);
               break;
             }
           case NodeType.ClassMap:
