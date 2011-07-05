@@ -60,9 +60,9 @@ namespace org.iringtools.refdata
     private NamespaceMapper nsMap = new NamespaceMapper();
 
     NTriplesFormatter formatter = new NTriplesFormatter();
-    INode dsubj, isubj, subj;
-    INode dpred, ipred, pred;
-    INode dobj, iobj, obj;
+    INode subj;
+    INode pred;
+    INode obj;
 
     private bool qn = false;
     private string qName = string.Empty;
@@ -220,7 +220,11 @@ namespace org.iringtools.refdata
               }
               resultEntity.Repository = repository.Name;
               string key = resultEntity.Label;
-
+              if (resultEntity.Label.StartsWith("has") || resultEntity.Label.StartsWith("val"))
+              {
+                resultEntity = null;
+                continue;
+              }
               if (resultEntities.Entities.ContainsKey(key))
               {
                 key += ++counter;
@@ -2291,9 +2295,9 @@ namespace org.iringtools.refdata
               #endregion Generate Query and post Template Definition
           #endregion Template Definitions
           #region Template Qualification
-          /// Specialized templates do have the following properties
+          /// Qualification templates do have the following properties
           /// 1) Base class = owl:Thing
-          /// 2) rdf:type = p8:TemplateSpecialization
+          /// 2) rdf:type = p8:CoreTemplate
           /// 3) p8:hasSuperTemplate = Super Template ID
           /// 4) p8:hasSubTemplate = Sub Template ID
           /// 5) rdfs:label = template name
@@ -2397,7 +2401,7 @@ namespace org.iringtools.refdata
                   }
 
                   index = 1;
-                  ///  SpecializedTemplate roles do have the following properties
+                  ///  Qualification roles do have the following properties
                   /// 1) baseclass of owl:Thing
                   /// 2) rdf:type = p8:TemplateRoleDescription
                   /// 3) rdfs:label = rolename
@@ -2795,7 +2799,7 @@ namespace org.iringtools.refdata
       subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
       pred = work.CreateUriNode("rdfs:range");
       obj = work.CreateUriNode(objId);
-      work.Assert(new Triple(dsubj, dpred, dobj));
+      work.Assert(new Triple(subj, pred, obj));
       pred = work.CreateUriNode("tpl:R98983340497");
       obj = work.CreateUriNode(qName);
       work.Assert(new Triple(subj, pred, obj));
@@ -2962,7 +2966,7 @@ namespace org.iringtools.refdata
         subj = work.CreateUriNode(subjId);
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode("tpl:R76288246068");
-        work.Assert(new Triple(isubj, ipred, iobj));
+        work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode("tpl:R99672026745");
         obj = work.CreateUriNode(string.Format("tpl:{0}", objId));
         work.Assert(new Triple(subj, pred, obj));
