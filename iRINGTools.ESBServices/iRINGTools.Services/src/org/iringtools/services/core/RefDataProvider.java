@@ -418,7 +418,7 @@ public class RefDataProvider
         ClassDefinition classDefinition = null;
 
         if (rep != null)
-          if (rep.getName().equals(repository.getName()))
+          if (rep.getName() != repository.getName())
           {
             continue;
           }
@@ -578,7 +578,7 @@ public class RefDataProvider
       {
         if (rep != null)
         {
-          if (!rep.getName().equals(repository.getName()))
+          if (rep.getName() != repository.getName())
           {
             continue;
           }
@@ -698,7 +698,7 @@ public class RefDataProvider
       {
         if (rep != null)
         {
-          if (rep.getName().equals(repository.getName()))
+          if (rep.getName() != repository.getName())
           {
             continue;
           }
@@ -931,7 +931,7 @@ public class RefDataProvider
       {
         if (rep != null)
         {
-          if (!rep.getName().equals(repository.getName()))
+          if (rep.getName() != repository.getName())
           {
             continue;
           }
@@ -1117,7 +1117,7 @@ public class RefDataProvider
         {
           if (rep != null)
           {
-            if (!rep.getName().equals(repository.getName()))
+            if (rep.getName() != repository.getName())
             {
               continue;
             }
@@ -1227,7 +1227,7 @@ public class RefDataProvider
       {
         if (rep != null)
         {
-          if (!rep.getName().equals(repository.getName()))
+          if (rep.getName() != repository.getName())
           {
             continue;
           }
@@ -2375,7 +2375,7 @@ public class RefDataProvider
   public Response postClass(Qmxf qmxf)
   {
 	  //TODO - to be initialised
-      Graph delete=null;
+      Graph delete = null;
       Graph insert=null;
 
 	  Response response = new Response();
@@ -2880,14 +2880,15 @@ public class RefDataProvider
 		          {
 		            language = names[names.length - 1];
 		          }
-		
+		          if (names[0].startsWith("has") || names[0].startsWith("val"))
+		        	  continue;
 		          Entity tempVar = new Entity();
 		          tempVar.setUri(result.get("uri"));
 		          tempVar.setLabel(names[0]);
 		          tempVar.setLang(language);
 		          tempVar.setRepository(repository.getName());
 		          resultEntity = tempVar;
-		
+		         
 		          key = resultEntity.getLabel();
 		
 		          if (resultEntities.containsKey(key))
