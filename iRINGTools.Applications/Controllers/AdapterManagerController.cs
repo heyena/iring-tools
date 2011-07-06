@@ -75,7 +75,7 @@ namespace iRINGTools.Web.Controllers
 
 		public ActionResult Trees(FormCollection form)
 		{
-			string response;
+			string response = string.Empty;
 			
 			response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"]);
 
