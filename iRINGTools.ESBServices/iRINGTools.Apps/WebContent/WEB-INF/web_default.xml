@@ -25,8 +25,8 @@
   </context-param>
   <!--
   <filter>
-    <filter-name>authorization</filter-name>
-    <filter-class>org.iringtools.filters.OAuthFilter</filter-class>   
+		<filter-name>sso</filter-name>
+		<filter-class>org.iringtools.security.OAuthFilter</filter-class>		
     <init-param>
       <param-name>federationServiceUri</param-name>
       <param-value>https://sso.mypsn.com</param-value>
@@ -63,11 +63,11 @@
       <param-name>applicationKey</param-name>
       <param-value>ede6c15add1696425ee2e48f4f9f8820</param-value>
     </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>authorization</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+	</filter>
+	<filter-mapping>
+		<filter-name>sso</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
   -->
   <filter>
     <filter-name>struts2</filter-name>

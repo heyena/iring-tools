@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="org.iringtools.filters.OAuthFilter" %>
+<%@ page import="org.iringtools.security.OAuthFilter" %>
 <%@ page import="org.iringtools.security.LdapAuthorizationProvider" %>
 <%@ page import="org.iringtools.utility.HttpUtils" %>
 <% 
@@ -59,7 +59,6 @@ if (authorizationCookie == null)
   <script type="text/javascript" src="resources/ext-3.3.0/ux/gridfilters/filter/NumericFilter.js"></script>
   <script type="text/javascript" src="resources/ext-3.3.0/ux/gridfilters/filter/BooleanFilter.js"></script>
   <script type="text/javascript" src="resources/ext-3.3.0/ux/paging-toolbar-resizer.js"></script>
-  
   
   <script type="text/javascript" src="resources/scripts/iringtools-commons.js"></script>
   <script type="text/javascript" src="resources/scripts/exchange-manager.js"></script>

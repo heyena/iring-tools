@@ -1,4 +1,4 @@
-package org.iringtools.filters;
+package org.iringtools.security;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -73,7 +73,9 @@ public class OAuthFilter implements Filter
           String ssoUrl = federationServiceUri + spFederationPath + "?PartnerIdpId=" + 
             idpId + "&TargetResource=" + URLEncoder.encode(returnPath, URL_ENCODING);
           
+          response.setContentType("text/html");
           response.sendRedirect(ssoUrl);
+          return;
         }
         else  // got reference ID, retrieve user info
         {
@@ -209,7 +211,7 @@ public class OAuthFilter implements Filter
       }
       catch (Exception ex)
       {
-        logger.error("Error requesting OAuth token from Apigee: " + ex);
+        logger.error("Error obtaining OAuth token from Apigee: " + ex);
         session.invalidate();
         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
       }

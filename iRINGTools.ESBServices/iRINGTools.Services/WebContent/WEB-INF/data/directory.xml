@@ -7,7 +7,7 @@
         <id>1</id>
         <name>ABC</name>
         <description>Test Application</description>
-        <baseUri>http://localhost:65432/dxfr</baseUri>
+        <baseUri>http://localhost:54321/dxfr</baseUri>
         <graphs>
           <graph>
             <id>1</id>
@@ -21,7 +21,7 @@
         <id>3</id>
         <name>DEF</name>
         <description>Test Application</description>
-        <baseUri>http://localhost:65432/dxfr</baseUri>
+        <baseUri>http://localhost:54321/dxfr</baseUri>
         <graphs>
           <graph>
             <id>2</id>
