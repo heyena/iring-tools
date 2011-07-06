@@ -49,9 +49,6 @@
     <Reference Include="Ciloci.Flee">
       <HintPath>..\library\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
-    <Reference Include="iRINGLibrary">
-      <HintPath>..\library\iring-tools\iRINGLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\library\log4net\log4net.dll</HintPath>
     </Reference>
@@ -129,6 +126,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\iRing- 2.0.C- Trunk\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
+      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
+      <Name>iRINGLibrary.Desktop</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SPPIDDataLayer\SPPIDDataLayer.vbproj">
       <Project>{5541C20E-0ADA-44E3-B626-7CD54E05C412}</Project>
       <Name>SPPIDDataLayer</Name>

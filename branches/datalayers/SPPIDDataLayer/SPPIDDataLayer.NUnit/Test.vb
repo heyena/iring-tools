@@ -58,7 +58,7 @@ Public Class Test
 
     _kernel.Load(bindingConfigurationPath)
 
-    Dim dataLayer As IDataLayer2 = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings, Nothing)
+        Dim dataLayer As IDataLayer2 = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings)
     _sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
   End Sub
     <Test()>
