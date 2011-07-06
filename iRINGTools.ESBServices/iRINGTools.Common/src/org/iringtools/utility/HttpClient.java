@@ -93,6 +93,31 @@ public class HttpClient
       throw new HttpClientException(ex.toString());
     }
   }
+  
+  public <R> R postByteData(Class<R> responseClass, String relativeUri, byte[] data) throws HttpClientException
+  {
+    try
+    {
+      URLConnection conn = getConnection(POST_METHOD, relativeUri);
+      conn.setRequestProperty("Content-type", "application/octet-stream");
+      conn.setRequestProperty("Content-length", String.valueOf(data.length));
+
+      DataOutputStream requestStream = new DataOutputStream(conn.getOutputStream());
+      requestStream.write(data);
+      requestStream.flush();
+      requestStream.close();
+
+      InputStream responseStream = conn.getInputStream();
+      R response = JaxbUtils.toObject(responseClass, responseStream);
+
+      return response;
+      
+    }
+    catch (Exception ex)
+    {
+      throw new HttpClientException(ex.toString());
+    }
+  }
 
   public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData,
       Map<String, String> headers) throws HttpClientException
