@@ -4,12 +4,14 @@ using iRINGTools.Web.Models;
 using org.iringtools.library;
 using iRINGTools.Web.Helpers;
 using System;
+using log4net;
 
 namespace iRINGTools.Web.Controllers
 {
 	public class AdapterManagerController : Controller
 	{
 		private AdapterRepository _repository;
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterManagerController));
 
 		public AdapterManagerController() : this(new AdapterRepository()) { }
 
