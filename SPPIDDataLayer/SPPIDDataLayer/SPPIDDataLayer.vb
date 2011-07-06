@@ -14,10 +14,11 @@ Imports System.Diagnostics
 Imports VBA
 Imports Llama
 Imports ISPClientData3
+Imports System.Data.SqlClient
 
 
 
-Public Class SPPIDDataLayer : Inherits BaseDataLayer
+Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Implements IDataLayer2
 
     Private _dataObjects As List(Of IDataObject) = Nothing
@@ -26,21 +27,86 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
     Private _lmCriterion As Llama.LMACriterion = Nothing
     Private m_skipInternalAttributes As Boolean  ' ignore internal attributes
     Private m_skipNoDisplayAttributes As Boolean  ' ignore non-displayed attributes
+    Protected _configuration As XElement
+    Private _conn As SqlConnection
 
     <Inject()>
-    Public Sub New(settings As AdapterSettings, kernel As IKernel)
-        _settings = settings
+    Public Sub New(settings As AdapterSettings)
 
-        ' Connect to SPPID project
-        Dim siteNode As String = _settings("SPPIDSiteNode")
-        Dim projectStr As String = _settings("SPPIDProjectNumber")
-        projectStr += "!" & projectStr
-        ' per TR-88021 in SPPID 2007 SP4
-        '_projDatasource = kernel.Get<ILMADataSource>();
-        _projDatasource = New Llama.LMADataSource()
-        _projDatasource.ProjectNumber = projectStr
-
+        MyBase.New(settings)
+        ' _settings = settings
+        Dim connStr As String = "server=.\SQLEXPRESS;database=ABC;User ID=abc;Password=abc"
+        _conn = New SqlConnection(connStr)
     End Sub
+
+
+    'Public Overloads Overrides Function Delete(objectType As String, filter As org.iringtools.library.DataFilter) As org.iringtools.library.Response
+    '    Return New Response
+    'End Function
+
+    'Public Overloads Overrides Function Delete(objectType As String, identifiers As System.Collections.Generic.IList(Of String)) As org.iringtools.library.Response
+    '    Return New Response
+    'End Function
+
+    'Public Overloads Overrides Function [Get](objectType As String, filter As org.iringtools.library.DataFilter, pageSize As Integer, startIndex As Integer) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
+
+    '    Try
+    '        LoadDataDictionary(objectType)
+
+    '        Dim allDataObjects As IList(Of IDataObject) = LoadDataObjects(objectType)
+
+    '        ' Apply filter
+    '        If filter IsNot Nothing AndAlso filter.Expressions IsNot Nothing AndAlso filter.Expressions.Count > 0 Then
+    '            Dim predicate = filter.ToPredicate(_dataObjectDefinition)
+
+    '            If predicate IsNot Nothing Then
+    '                _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList()
+    '            End If
+    '        End If
+
+    '        If filter IsNot Nothing AndAlso filter.OrderExpressions IsNot Nothing AndAlso filter.OrderExpressions.Count > 0 Then
+    '            Throw New NotImplementedException("OrderExpressions are not supported by the CSV DataLayer.")
+    '        End If
+
+    '        'Page and Sort The Data
+    '        If pageSize > _dataObjects.Count() Then
+    '            pageSize = _dataObjects.Count()
+    '        End If
+    '        _dataObjects = _dataObjects.GetRange(startIndex, pageSize)
+
+    '        ' Return _dataObjects
+    '    Catch ex As Exception
+    '        ' _logger.[Error]("Error in GetList: " & ex.ToString())
+
+    '        Throw New Exception("Error while getting a list of data objects of type [" & objectType & "].", ex)
+    '    End Try
+
+    '    Return New System.Collections.Generic.List(Of org.iringtools.library.IDataObject)
+    'End Function
+
+    'Public Overloads Overrides Function [Get](objectType As String, identifiers As System.Collections.Generic.IList(Of String)) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
+    '    Try
+
+    '        LoadDataDictionary(objectType)
+
+    '        Dim allDataObjects As IList(Of IDataObject) = LoadDataObjects(objectType)
+
+    '        Dim expressions = FormMultipleKeysPredicate(identifiers)
+
+    '        If expressions IsNot Nothing Then
+    '            _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList()
+    '        End If
+
+    '        Return _dataObjects
+    '    Catch ex As Exception
+    '        '  _logger.[Error]("Error in GetList: " & ex.ToString())
+    '        Throw New Exception("Error while getting a list of data objects of type [" & objectType & "].", ex)
+    '    End Try
+
+    'End Function
+    'Public Overrides Function GetRelatedObjects(dataObject As org.iringtools.library.IDataObject, relatedObjectType As String) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
+    '    Return New System.Collections.Generic.List(Of org.iringtools.library.IDataObject)
+    'End Function
 
     Public Overrides Function GetDictionary() As DataDictionary
         Dim dataDictionary As New DataDictionary()
@@ -151,133 +217,113 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
         Return dataDictionary
     End Function
 
-    Public Overloads Overrides Function Delete(objectType As String, filter As org.iringtools.library.DataFilter) As org.iringtools.library.Response
-        Return New Response
-    End Function
+    Public Overrides Function GetDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
 
-    Public Overloads Overrides Function Delete(objectType As String, identifiers As System.Collections.Generic.IList(Of String)) As org.iringtools.library.Response
-        Return New Response
-    End Function
+        Dim query As String = "SELECT * FROM " & tableName
 
-    Public Overloads Overrides Function [Get](objectType As String, filter As org.iringtools.library.DataFilter, pageSize As Integer, startIndex As Integer) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
+        Dim adapter As New SqlDataAdapter()
+        adapter.SelectCommand = New SqlCommand(query, _conn)
 
-        Try
-            LoadDataDictionary(objectType)
+        Dim command As New SqlCommandBuilder(adapter)
 
-            Dim allDataObjects As IList(Of IDataObject) = LoadDataObjects(objectType)
+        Dim dataSet As New DataSet()
+        adapter.Fill(dataSet, tableName)
 
-            ' Apply filter
-            If filter IsNot Nothing AndAlso filter.Expressions IsNot Nothing AndAlso filter.Expressions.Count > 0 Then
-                Dim predicate = filter.ToPredicate(_dataObjectDefinition)
-
-                If predicate IsNot Nothing Then
-                    _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList()
-                End If
-            End If
-
-            If filter IsNot Nothing AndAlso filter.OrderExpressions IsNot Nothing AndAlso filter.OrderExpressions.Count > 0 Then
-                Throw New NotImplementedException("OrderExpressions are not supported by the CSV DataLayer.")
-            End If
-
-            'Page and Sort The Data
-            If pageSize > _dataObjects.Count() Then
-                pageSize = _dataObjects.Count()
-            End If
-            _dataObjects = _dataObjects.GetRange(startIndex, pageSize)
-
-            ' Return _dataObjects
-        Catch ex As Exception
-            _logger.[Error]("Error in GetList: " & ex.ToString())
-
-            Throw New Exception("Error while getting a list of data objects of type [" & objectType & "].", ex)
-        End Try
-
-        Return New System.Collections.Generic.List(Of org.iringtools.library.IDataObject)
-    End Function
-
-    Public Overloads Overrides Function [Get](objectType As String, identifiers As System.Collections.Generic.IList(Of String)) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
-        Try
-
-            LoadDataDictionary(objectType)
-
-            Dim allDataObjects As IList(Of IDataObject) = LoadDataObjects(objectType)
-
-            Dim expressions = FormMultipleKeysPredicate(identifiers)
-
-            If expressions IsNot Nothing Then
-                _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList()
-            End If
-
-            Return _dataObjects
-        Catch ex As Exception
-            _logger.[Error]("Error in GetList: " & ex.ToString())
-            Throw New Exception("Error while getting a list of data objects of type [" & objectType & "].", ex)
-        End Try
+        Return dataSet.Tables(tableName)
 
     End Function
 
-    Public Overrides Function GetCount(objectType As String, filter As org.iringtools.library.DataFilter) As Long
+    Public Overrides Function GetDataTable(tableName As String, whereClause As String, start As Integer, limit As Integer) As System.Data.DataTable
+        Dim query As String = "SELECT * FROM " & tableName & " " & whereClause
 
-        Dim dataObjects As IList(Of IDataObject) = [Get](objectType, filter, 0, 0)
+        Dim adapter As New SqlDataAdapter()
+        adapter.SelectCommand = New SqlCommand(query, _conn)
 
-        Return dataObjects.Count()
+        Dim command As New SqlCommandBuilder(adapter)
+
+        Dim dataSet As New DataSet()
+        adapter.Fill(dataSet, tableName)
+
+        Return dataSet.Tables(tableName)
     End Function
 
-    Public Overrides Function GetIdentifiers(objectType As String, filter As org.iringtools.library.DataFilter) As System.Collections.Generic.IList(Of String)
-        Return New System.Collections.Generic.List(Of String)
+    Public Overrides Function GetCount(tableName As String, whereClause As String) As Long
+
+        Dim dataObjects As DataTable = GetDataTable(tableName, whereClause, 0, 0)
+
+        Return dataObjects.Rows.Count()
     End Function
 
-    Public Overrides Function GetRelatedObjects(dataObject As org.iringtools.library.IDataObject, relatedObjectType As String) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
-        Return New System.Collections.Generic.List(Of org.iringtools.library.IDataObject)
+    Public Overrides Function GetIdentifiers(tableName As String, whereClause As String) As IList(Of String)
+        Throw New NotImplementedException()
     End Function
 
-    Public Overrides Function Post(dataObjects As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)) As org.iringtools.library.Response
+    Public Overrides Function PostDataTables(dataTables As IList(Of System.Data.DataTable)) As Response
+
+        Dim tableName As String = dataTables.First().TableName
+        Dim query As String = "SELECT * FROM " & tableName
+
+        Dim adapter As New SqlDataAdapter()
+        adapter.SelectCommand = New SqlCommand(query, _conn)
+
+        Dim command As New SqlCommandBuilder(adapter)
+        adapter.UpdateCommand = command.GetUpdateCommand()
+
+        Dim dataSet As New DataSet()
+        For Each dataTable As DataTable In dataTables
+            dataSet.Tables.Add(dataTable)
+        Next
+
+        adapter.Update(dataSet, tableName)
+
         Dim response As New Response()
-        Dim objectType As String = [String].Empty
+        response.StatusList.Add(New Status() With { _
+          .Level = StatusLevel.Success, _
+          .Messages = New Messages() From { _
+          "success" _
+         } _
+        })
 
-        If dataObjects Is Nothing OrElse dataObjects.Count = 0 Then
-            Dim status As New Status()
-            status.Level = StatusLevel.Warning
-            status.Messages.Add("Nothing to update.")
-            response.Append(status)
-            Return response
-        End If
+        Return response
 
+    End Function
+
+    Public Overrides Function GetConfiguration() As System.Xml.Linq.XElement
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function Configure(configuration As System.Xml.Linq.XElement) As Response
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function CreateDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
         Try
-            objectType = DirectCast(dataObjects.FirstOrDefault(), GenericDataObject).ObjectType
+            LoadDataDictionary(tableName)
+            Dim allDataObjects As IList(Of IDataObject) = LoadDataObjects(tableName)
 
-            LoadDataDictionary(objectType)
-
-            Dim existingDataObjects As IList(Of IDataObject) = LoadDataObjects(objectType)
-
-            For Each dataObject As IDataObject In dataObjects
-                Dim existingDataObject As IDataObject = Nothing
-
-                Dim identifier As String = GetIdentifier(dataObject)
-                Dim predicate = FormKeyPredicate(identifier)
-
-                If predicate IsNot Nothing Then
-                    existingDataObject = existingDataObjects.AsQueryable().Where(predicate).FirstOrDefault()
-                End If
-
-                If existingDataObject IsNot Nothing Then
-                    existingDataObjects.Remove(existingDataObject)
-                End If
-
-                'TODO: Should this be per property?  Will it matter?
-                existingDataObjects.Add(dataObject)
-            Next
-
-            response = SaveDataObjects(objectType, existingDataObjects)
-
-            Return response
         Catch ex As Exception
-            _logger.[Error]("Error in Post: " & ex.ToString())
 
-            Throw New Exception("Error while posting dataObjects of type [" & objectType & "].", ex)
         End Try
 
     End Function
+
+    Public Overrides Function DeleteDataTable(tableName As String, identifiers As IList(Of String)) As Response
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function DeleteDataTable(tableName As String, whereClause As String) As Response
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function GetRelatedDataTable(dataRow As System.Data.DataRow, relatedTableName As String) As System.Data.DataTable
+        Throw New NotImplementedException()
+    End Function
+
+    Public Overrides Function RefreshDataTable(tableName As String) As Response
+        Throw New NotImplementedException()
+    End Function
+
+#Region "Private Functions"
 
     Private Function LoadDataObjects(objectType As String) As IList(Of IDataObject)
         Try
@@ -335,7 +381,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
 
             Return dataObjects
         Catch ex As Exception
-            _logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
+            '_logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
             Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
         End Try
     End Function
@@ -372,7 +418,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
             For Each dataobject In dataObjects
                 equipType = dataobject.GetPropertyValue("ItemTypeName")
                 spId = dataobject.GetPropertyValue("SP_ID")
-              
+
 
                 Select Case equipType
                     Case "Exchanger"
@@ -548,7 +594,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
                         End If
                     Case Else   ' shouldn't be anything else
                         ' Check for an open drawing.
-                       
+
                         '  If Not m_updateIfDwgOpen And equip.Representations.Count > 0 Then
                         '  rep = equip.Representations.Nth(1)
                         '  skip = skipDwg(rep, "sd")
@@ -588,7 +634,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
 
             Return response
         Catch ex As Exception
-            _logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
+            '  _logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
             Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
         End Try
     End Function
@@ -622,7 +668,8 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
 
     Private Sub LoadConfiguration()
         If _configuration Is Nothing Then
-            Dim uri As String = [String].Format("{0}Configuration.{1}.xml", _settings("XmlPath"), _settings("ApplicationName"))
+            '  Dim uri As String = [String].Format("{0}Configuration.{1}.xml", _settings("XmlPath"), _settings("ApplicationName"))
+            Dim uri As String = [String].Format("{0}Configuration.{1}.xml", ".\12345_000\", "SPPID")
 
             Dim configDocument As XDocument = XDocument.Load(uri)
             _configuration = configDocument.Element("configuration")
@@ -641,7 +688,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
 
     Private Function fetchEquipment(objEquipment As LMEquipment, DataObject As IDataObject, objectType As String) As Boolean
 
-    
+
 
         Dim fetchEquioment As Boolean
         Dim rep As LMRepresentation
@@ -924,7 +971,7 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
         isFileLocked = False
 
         Dim f As Integer
-        f = FreeFile
+        f = FreeFile()
 
         '  Open filespec For Binary Access Read Lock Read Write As #f
 
@@ -967,6 +1014,8 @@ Public Class SPPIDDataLayer : Inherits BaseDataLayer
         Exit Function
 
     End Function
+
+#End Region
 
 End Class
 
