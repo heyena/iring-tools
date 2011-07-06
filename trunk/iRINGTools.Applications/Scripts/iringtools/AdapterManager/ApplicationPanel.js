@@ -156,14 +156,6 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 			scope: this
 		}]
 	},
-	getActiveTab: function () {
-		if (Ext.getCmp('content-panel').items.length != 0) { // check is there any tab in contentPanel
-			return Ext.getCmp('content-panel').getActiveTab();
-		}
-		else {
-			return false;
-		}
-	},
 
 	onReset: function () {
 		this.form.getForm().reset();

@@ -555,6 +555,94 @@ namespace iRINGTools.Web.Controllers
       return graphNode;
     }
 
+		public ActionResult graphMap(FormCollection form)
+		{
+			List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+			try
+			{
+				string qName = string.Empty;
+				string format = String.Empty;
+				string oldGraphName = "";
+
+				string[] mappingCtx = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+				if (mappingCtx.Length > 3)
+					oldGraphName = mappingCtx[4];
+				string propertyCtx = form["objectName"];
+				if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
+				string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+				string scope = dataObjectVars[0];
+				string application = dataObjectVars[1];
+				Mapping mapping = GetMapping(scope, application);
+				string context = string.Format("{0}/{1}", scope, application);
+				string newGraphName = form["graphName"];
+				string classLabel = form["classLabel"];
+				string keyProperty = dataObjectVars[5];
+				string dataObject = dataObjectVars[4];
+				string classId = form["classUrl"];
+
+				bool qn = false;
+
+				qn = _nsMap.ReduceToQName(classId, out qName);
+
+				if (oldGraphName == "")
+				{
+					if (mapping.graphMaps == null)
+						mapping.graphMaps = new GraphMaps();
+
+					GraphMap graphMap = new GraphMap
+					{
+						name = newGraphName,
+						dataObjectName = dataObject
+					};
+					ClassMap classMap = new ClassMap
+					{
+						name = classLabel,
+						id = qn ? qName : classId
+					};
+
+					classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
+
+					graphMap.AddClassMap(null, classMap);
+
+					mapping.graphMaps.Add(graphMap);
+					nodes.Add(GetGraphNode(graphMap, context));
+				}
+				else
+				{
+					GraphMap graphMap = mapping.FindGraphMap(oldGraphName);
+					if (graphMap == null)
+						graphMap = new GraphMap();
+
+					graphMap.name = newGraphName;
+					graphMap.dataObjectName = dataObject;
+
+					ClassTemplateMaps ct = graphMap.classTemplateMaps;
+					for (int i = 0; i < ct.Count; i++)
+					{
+						ct.RemoveAt(i);
+					}
+
+					ClassMap classMap = new ClassMap
+					{
+						name = classLabel,
+						id = qn ? qName : classId
+					};
+
+					classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
+
+					graphMap.AddClassMap(null, classMap);
+					_repository.UpdateMapping(scope, application, mapping);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				return Json(nodes, JsonRequestBehavior.AllowGet);
+			}
+			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+		}
+
+
     public JsonResult AddGraphMap(FormCollection form)
     {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();

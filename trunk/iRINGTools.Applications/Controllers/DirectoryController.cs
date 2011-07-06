@@ -170,7 +170,8 @@ namespace iRINGTools.Web.Controllers
                                 text = valueList.name,
                                 expanded = false,
                                 leaf = false,
-                                children = null
+                                children = null,
+																record = valueList
                             };
 
                             nodes.Add(node);

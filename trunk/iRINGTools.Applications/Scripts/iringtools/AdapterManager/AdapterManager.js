@@ -51,7 +51,7 @@ Ext.onReady(function () {
 		title: 'Reference Data Search',
 		collapsedTitle: 'Reference Data Search',
 		region: 'south',
-		height: 300,
+		height: 250,
 		//collapseMode: 'mini',
 		collapsible: true,
 		collapsed: false,
@@ -84,9 +84,12 @@ Ext.onReady(function () {
 	var directoryPanel = new AdapterManager.DirectoryPanel({
 		id: 'nav-panel',
 		title: 'Directory',
-		collapsedTitle: 't',
+		layout: 'border',
 		region: 'west',
 		width: 260,
+		minSize: 175,
+		maxSize: 400,
+		border: 1,
 		collapsible: true,
 		collapsed: false,
 		navigationUrl: 'directory/getnode'
@@ -272,7 +275,7 @@ Ext.onReady(function () {
 			url: 'directory/application'
 		});
 
-		var parentNode = node.parentNode.parentNode;
+		var parentNode = node.parentNode;
 
 		newTab.on('save', function (panel) {
 			win.close();
@@ -358,6 +361,183 @@ Ext.onReady(function () {
 
 	}, this);
 
+	
+	directoryPanel.on('newvaluelist', function (npanel, node) {
+		var newTab = new AdapterManager.ValueListPanel({
+			id: 'tab-' + node.id,
+			record: node.attributes.record,
+			nodeId: node.id,
+			url: 'mapping/valueList'
+		});
+
+		newTab.on('save', function (panel) {
+			win.close();
+			directoryPanel.onReload(node);
+			if (node.expanded == false)
+				node.expand();
+		}, this);
+
+		newTab.on('Cancel', function (panel) {
+			win.close();
+		}, this);
+
+		var win = new Ext.Window({
+			closable: true,
+			modal: false,
+			layout: 'fit',
+			title: 'Add Value List Name',
+			iconCls: 'tabsValueList',
+			height: 100,
+			width: 430,
+			plain: true,
+			items: newTab
+		});
+
+		win.show();
+	}, this);
+
+
+	directoryPanel.on('editvaluelist', function (npanel, node) {
+		var newTab = new AdapterManager.ValueListPanel({
+			id: 'tab-' + node.id,
+			record: node.attributes.record,
+			nodeId: node.id,
+			url: 'mapping/valueList'
+		});
+
+		var parentNode = node.parentNode;
+
+		newTab.on('save', function (panel) {
+			win.close();
+			directoryPanel.onReload(node);
+			if (parentNode.expanded == false)
+				parentNode.expand();
+		}, this);
+
+		newTab.on('Cancel', function (panel) {
+			win.close();
+		}, this);
+
+		var win = new Ext.Window({
+			closable: true,
+			modal: false,
+			layout: 'fit',
+			title: 'Edit Value List \"' + node.text + '\"',
+			iconCls: 'tabsValueList',
+			height: 100,
+			width: 430,
+			plain: true,
+			items: newTab
+		});
+
+		win.show();
+
+	}, this);
+
+	
+	directoryPanel.on('deletevaluelist', function (npanel, node) {
+		Ext.Ajax.request({
+			url: 'directory/deletescope',
+			method: 'POST',
+			params: {
+				'nodeid': node.attributes.id
+			},
+			success: function (o) {
+				directoryPanel.onReload(node);
+			},
+			failure: function (f, a) {
+				//Ext.Msg.alert('Warning', 'Error!!!');
+				var message = 'Error deleting scope!';
+				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+			}
+		});
+	}, this);
+
+
+	directoryPanel.on('NewGraphMap', function (npanel, node) {
+		var newTab = new AdapterManager.GraphPanel({
+			id: 'tab-' + node.id,
+			record: node.attributes.record,
+			node: node,
+			url: 'mapping/graphMap'
+		});
+
+		newTab.on('save', function (panel) {
+			win.close();
+			directoryPanel.onReload(node);
+			if (node.expanded == false)
+				node.expand();
+		}, this);
+
+		newTab.on('Cancel', function (panel) {
+			win.close();
+		}, this);
+
+		var win = new Ext.Window({
+			closable: true,
+			modal: false,
+			layout: 'fit',
+			title: 'Add new GraphMap to Mapping',
+			iconCls: 'tabsGraph',
+			height: 190,
+			width: 430,
+			plain: true,
+			items: newTab
+		});
+
+		win.show();
+	}, this);
+	
+	directoryPanel.on('editgraphmap', function (npanel, node) {
+		var newTab = new AdapterManager.GraphPanel({
+			id: 'tab-' + node.id,
+			record: node.attributes.record,
+			node: node,
+			url: 'mapping/graphMap'
+		});
+
+		var parentNode = node.parentNode;
+
+		newTab.on('save', function (panel) {
+			win.close();
+			directoryPanel.onReload(node);
+			if (parentNode.expanded == false)
+				parentNode.expand();
+		}, this);
+
+		newTab.on('Cancel', function (panel) {
+			win.close();
+		}, this);
+
+		var win = new Ext.Window({
+			closable: true,
+			modal: false,
+			layout: 'fit',
+			title: 'Edit Graph Map \"' + node.text + '\"',
+			iconCls: 'tabsGraph',
+			height: 190,
+			width: 430,
+			plain: true,
+			items: newTab
+		});
+
+		win.show();
+
+	}, this);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	// Load Stores
 	// searchPanel.load();
@@ -391,133 +571,3 @@ Ext.onReady(function () {
 });
 
 
-/*
-
-Ext.override(Ext.layout.BorderLayout, {
-	southTitleAdded: false,
-	// private
-	onLayout: function (ct, target) {
-
-		var collapsed;
-		if (!this.rendered) {
-
-			target.position();
-			target.addClass('x-border-layout-ct');
-			var items = ct.items.items;
-			collapsed = [];
-			for (var i = 0, len = items.length; i < len; i++) {
-				var c = items[i];
-				var pos = c.region;
-				if (c.collapsed) {
-					collapsed.push(c);
-				}
-				c.collapsed = false;
-				if (!c.rendered) {
-					c.cls = c.cls ? c.cls + ' x-border-panel' : 'x-border-panel';
-					c.render(target, i);
-				}
-				this[pos] = pos != 'center' && c.split ?
-                        new Ext.layout.BorderLayout.SplitRegion(this, c.initialConfig, pos) :
-                        new Ext.layout.BorderLayout.Region(this, c.initialConfig, pos);
-				this[pos].render(target, c);
-			}
-			this.rendered = true;
-		}
-
-		var size = target.getViewSize();
-		if (size.width < 20 || size.height < 20) { 
-			if (collapsed) {
-				this.restoreCollapsed = collapsed;
-			}
-			return;
-		} else if (this.restoreCollapsed) {
-			collapsed = this.restoreCollapsed;
-			delete this.restoreCollapsed;
-		}
-
-		var w = size.width, h = size.height;
-		var centerW = w, centerH = h, centerY = 0, centerX = 0;
-
-		var n = this.north, s = this.south, west = this.west, e = this.east, c = this.center;
-	
-
-		if (n && n.isVisible()) {
-			var b = n.getSize();
-			var m = n.getMargins();
-			b.width = w - (m.left + m.right);
-			b.x = m.left;
-			b.y = m.top;
-			centerY = b.height + b.y + m.bottom;
-			centerH -= centerY;
-			n.applyLayout(b);
-		}
-		if (s && s.isVisible()) {
-			var b = s.getSize();
-			var m = s.getMargins();
-			b.width = w - (m.left + m.right);
-			b.x = m.left;
-			var totalHeight = (b.height + m.top + m.bottom);
-			b.y = h - totalHeight + m.top;
-			centerH -= totalHeight;
-			s.applyLayout(b);
-			
-			if (typeof s.collapsedEl != 'undefined' && s.collapsedTitle && this.southTitleAdded == false) {
-				this.southTitleAdded = true;
-				var cDiv = s.collapsedEl;
-				var tpl = new Ext.Template('<div style="float: left;">{txt}</div>');
-
-				var insertedHtml = tpl.insertFirst(cDiv, { txt: s.collapsedTitle });
-				if (s.collapsedTitleStyle) {
-					insertedHtml.applyStyles(s.collapsedTitleStyle);
-				}
-
-				if (s.collapsedTitleCls) {
-					Ext.get(insertedHtml).addClass(s.collapsedTitleCls);
-				}
-
-			}
-		}
-		if (west && west.isVisible()) {
-			var b = west.getSize();
-			var m = west.getMargins();
-			b.height = centerH - (m.top + m.bottom);
-			b.x = m.left;
-			b.y = centerY + m.top;
-			var totalWidth = (b.width + m.left + m.right);
-			centerX += totalWidth;
-			centerW -= totalWidth;
-			west.applyLayout(b);
-		}
-		if (e && e.isVisible()) {
-			var b = e.getSize();
-			var m = e.getMargins();
-			b.height = centerH - (m.top + m.bottom);
-			var totalWidth = (b.width + m.left + m.right);
-			b.x = w - totalWidth + m.left;
-			b.y = centerY + m.top;
-			centerW -= totalWidth;
-			e.applyLayout(b);
-		}
-
-		var m = c.getMargins();
-		var centerBox = {
-			x: centerX + m.left,
-			y: centerY + m.top,
-			width: centerW - (m.left + m.right),
-			height: centerH - (m.top + m.bottom)
-		};
-		c.applyLayout(centerBox);
-
-		if (collapsed) {
-			for (var i = 0, len = collapsed.length; i < len; i++) {
-				collapsed[i].collapse(false);
-			}
-		}
-
-		if (Ext.isIE && Ext.isStrict) { // workaround IE strict repainting issue
-			target.repaint();
-		}
-	}
-}); 
-
-*/

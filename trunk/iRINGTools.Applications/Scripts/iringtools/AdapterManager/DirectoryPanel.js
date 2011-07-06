@@ -94,13 +94,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		this.propertyPanel = new Ext.grid.PropertyGrid({
 			title: 'Details',
 			region: 'south',
-			// layout: 'fit',
+			layout: 'fit',
+			height: 250,
 			stripeRows: true,
 			collapsible: true,
 			autoScroll: true,
-			border: false,
+			border: 0,
 			frame: false,
-			height: 150,
 			selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
 			// bodyStyle: 'padding-bottom:15px;background:#eee;',
 			source: {},
@@ -121,14 +121,15 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		this.directoryPanel = new Ext.tree.TreePanel({
 			enableDrag: true,
 			id: 'Directory-Panel',
-			forceLayout: true,
+			//forceLayout: true,
 			ddGroup: 'propertyGroup',
 			region: 'center',
-			height: 300,
-			border: false,
-			split: true,
+			border: false,			
 			expandAll: true,
 			rootVisible: true,
+			animate: true,
+			enableDD: false,
+			containerScroll: true,
 			pathSeparator: '>',
 			lines: true,
 			autoScroll: true,
@@ -175,7 +176,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		this.directoryPanel.on('contextmenu', this.showContextMenu, this);
 		this.directoryPanel.on('click', this.onClick, this);
 		this.directoryPanel.on('dblclick', this.onDoubleClick, this);
-		this.directoryPanel.on('addgraphmap', this.AddGraphmap, this);
+		this.directoryPanel.on('newgraphmap', this.newGraphmap, this);
 
 
 
@@ -318,7 +319,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		return [
     {
     	text: 'New GraphMap',
-    	handler: this.AddGraphMap,
+    	handler: this.onNewGraphMap,
     	icon: 'Content/img/16x16/document-new.png',
     	scope: this
     }
@@ -329,7 +330,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		return [
      {
      	text: 'Edit GraphName',
-     	handler: this.onEditGraphName,
+     	handler: this.onEditGraphMap,
      	icon: 'Content/img/16x16/document-properties.png',
      	scope: this
      },
@@ -386,8 +387,29 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 	onNewScope: function (btn, ev) {
 		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
 		this.fireEvent('NewScope', this, node);
-	},	
+	},
+
 	
+	onNewValueList: function (btn, ev) {
+		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+		this.fireEvent('NewValueList', this, node);
+	},
+
+	onEditValueList: function (btn, ev) {
+		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+		this.fireEvent('EditValueList', this, node);
+	},
+
+	onNewGraphMap: function (btn, ev) {
+		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+		this.fireEvent('NewGraphMap', this, node);
+	},
+
+	onEditGraphMap: function (btn, ev) {
+		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+		this.fireEvent('EditGraphMap', this, node);
+	},
+
 	onDeleteValueList: function (btn, e) {
 		var that = this;
 		var node = this.getSelectedNode();
@@ -404,156 +426,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			},
 			failure: function (result, request) { }
 		})
-	},
-
-	onEditValueList: function () {
-		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-		var formid = 'valuelisttarget-' + node.id;
-		var form = new Ext.form.FormPanel({
-			id: formid,
-			layout: 'form',
-			method: 'POST',
-			border: false,
-			frame: false,
-			bbar: [
-			  { xtype: 'tbfill' },
-        { text: 'Ok', scope: this, handler: this.onSubmitEditValueList },
-        { text: 'Cancel', scope: this, handler: this.onClose }
-        ],
-			items: [
-              { xtype: 'textfield', name: 'valueList', id: 'valueList', fieldLabel: 'Value List Name', width: 120, required: true }
-             ]
-		});
-
-		var win = new Ext.Window({
-			closable: true,
-			modal: false,
-			layout: 'fit',
-			title: 'Edit Value List Name',
-			items: form,
-			iconCls: 'tabsValueList',
-			height: 120,
-			width: 430,
-			plain: true,
-			scope: this
-		});
-
-		win.show();
-	},
-
-	onSubmitEditValueList: function (btn, e) {
-		var that = this;
-		var form = btn.findParentByType('form');
-		var win = btn.findParentByType('window');
-		var valuelist = Ext.get('valueList').dom.value;
-		var node = this.getSelectedNode();
-		Ext.Ajax.request({
-			url: 'mapping/editvaluelist',
-			method: 'POST',
-			params: {
-				mappingNode: node.id,
-				valueList: valuelist
-			},
-			success: function (result, request) {
-				//Ext.Msg.show({ title: 'Success', msg: 'ValueList [' + valuelist + '] name changed', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
-				win.close();
-				that.onReload();
-			},
-			failure: function (result, request) { }
-		})
-	},
-
-	onNewValueList: function () {
-		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-		var formid = 'valuelisttarget-' + node.id;
-		var form = new Ext.form.FormPanel({
-			id: formid,
-			layout: 'form',
-			method: 'POST',
-			border: false,
-			frame: false,
-			bbar: [
-				{ xtype: 'tbfill' },
-        { text: 'Ok', scope: this, handler: this.onSubmitNewValueList },
-        { text: 'Cancel', scope: this, handler: this.onClose }
-        ],
-			items: [
-              { xtype: 'textfield', name: 'valueList', id: 'valueList', fieldLabel: 'Value List Name', width: 120, required: true }
-             ]
-		});
-
-		var win = new Ext.Window({
-			closable: true,
-			modal: false,
-			layout: 'fit',
-			title: 'Add Value List Name',
-			items: form,
-			iconCls: 'tabsValueList',
-			height: 100,
-			width: 430,
-			plain: true,
-			scope: this
-		});
-
-		win.show();
-	},
-
-	onSubmitNewValueList: function (btn, e) {
-		var that = this;
-		var form = btn.findParentByType('form');
-		var win = btn.findParentByType('window');
-		var valuelist = Ext.get('valueList').dom.value;
-		var node = this.getSelectedNode();
-		Ext.Ajax.request({
-			url: 'mapping/addvaluelist',
-			method: 'POST',
-			params: {
-				mappingNode: node.id,
-				valueList: valuelist
-			},
-			success: function (result, request) {
-				//Ext.Msg.show({ title: 'Success', msg: 'ValueList [' + valuelist + '] added to mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
-				win.close();
-				that.onReload();
-			},
-			failure: function (result, request) { }
-		})
-	},
-
-	onEditGraphName: function () {
-		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-		var formid = 'graphtarget-' + node.id;
-		var form = new Ext.form.FormPanel({
-			id: formid,
-			layout: 'form',
-			method: 'POST',
-			border: false,
-			frame: false,
-			bbar: [
-				{ xtype: 'tbfill' },
-        { text: 'Ok', scope: this, handler: this.onSubmitEditGraphName },
-        { text: 'Cancel', scope: this, handler: this.onClose }
-        ],
-			items: [
-              { xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true }
-            ]
-		});
-
-		var win = new Ext.Window({
-			closable: true,
-			modal: false,
-			layout: 'fit',
-			title: 'Edit Graph Name',
-			items: form,
-			height: 120,
-			width: 430,
-			iconCls: 'tabsGraph',
-			plain: true,
-			scope: this
-		});
-
-		win.show();
-	},
+	},	
 
 	onDeleteGraphMap: function (btn, e) {
 		var that = this;
@@ -572,147 +445,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			},
 			failure: function (result, request) { }
 		})
-	},
-
-	onSubmitEditGraphName: function (btn, e) {
-		var that = this;
-		var form = btn.findParentByType('form');
-		var win = btn.findParentByType('window');
-		var graphname = Ext.get('graphName').dom.value;
-		if (graphname.trim() == "") {
-			//Ext.Msg.show({ title: 'Error', msg: 'Graph Name cannot be blank.', icon: Ext.MessageBox.ERROR, buttons: Ext.MessageBox.OK });
-			var msg = 'Graph Name cannot be blank.';
-			showDialog(400, 100, 'Warning', msg, Ext.Msg.OK, null);
-			return false;
-		}
-		var node = this.getSelectedNode();
-		Ext.Ajax.request({
-			url: 'mapping/editGraphName',
-			method: 'POST',
-			params: {
-				//        Scope: this.scope.Name,
-				//        Application: this.application.Name,
-				mappingNode: node.id,
-				graphName: graphname
-			},
-			success: function (result, request) {
-				//Ext.Msg.show({ title: 'Success', msg: 'Graph [' + node.id.split('/')[4] + '] renamed to [' + graphname + ']', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
-				win.close();
-				var oldid = node.id.split('/')[4];
-				var newid = node.id.replace(oldid, graphname);
-				node.id = newid;
-				node.text = graphname;
-				node.attributes.id = newid;
-				that.fireEvent('editgraphname', this, node);
-				that.fireEvent('opengraphmap', this, node);
-				that.onReload();
-			},
-			failure: function (result, request) { }
-		})
-	},
-
-	AddGraphMap: function (node) {
-		var dirnode = this.directoryPanel.getSelectionModel().getSelectedNode();
-		var formid = 'graphtarget-' + dirnode.parentNode.parentNode.text + '-' + dirnode.parentNode.text;
-		var form = new Ext.form.FormPanel({
-			id: formid,
-			layout: 'form',
-			method: 'POST',
-			border: false,
-			frame: false,
-			bbar: [
-			  { xtype: 'tbfill' },
-        { text: 'Ok', scope: this, handler: this.onSubmitGraphMap },
-        { text: 'Cancel', scope: this, handler: this.onClose }
-        ],
-			url: 'mapping/addgraphmap',
-			items: [{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true },
-              { xtype: 'hidden', name: 'objectName', id: 'objectName' },
-              { xtype: 'hidden', name: 'classLabel', id: 'classLabel' },
-              { xtype: 'hidden', name: 'classUrl', id: 'classUrl' },
-              { xtype: 'hidden', name: 'mappingNode', id: 'mappingNode', value: this.rootNode }
-             ],
-			html: '<div class="property-target' + formid + '" '
-          + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
-          + 'Drop a Key Property Node here.</div>'
-          + '<div class="class-target' + formid + '" '
-          + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
-          + 'Drop a Class Node here. </div>',
-
-			afterRender: function (cmp) {
-				Ext.FormPanel.prototype.afterRender.apply(this, arguments);
-
-				var propertyTarget = this.body.child('div.property-target' + formid);
-				var propertydd = new Ext.dd.DropTarget(propertyTarget, {
-					ddGroup: 'propertyGroup',
-					notifyEnter: function (dd, e, data) {
-						if (data.node.attributes.type != 'KeyDataPropertyNode')
-							return this.dropNotAllowed;
-						else
-							return this.dropAllowed;
-					},
-					notifyOver: function (dd, e, data) {
-						if (data.node.attributes.type != 'KeyDataPropertyNode')
-							return this.dropNotAllowed;
-						else
-							return this.dropAllowed;
-					},
-					notifyDrop: function (dd, e, data) {
-						if (data.node.attributes.type != 'KeyDataPropertyNode') {
-							return false;
-						}
-						else {
-							Ext.get('objectName').dom.value = data.node.id;
-							var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.id.split('/')[5] + '</b></td></tr>'
-							msg += '</table>'
-							Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg)
-							return true;
-						}
-					} //eo notifyDrop
-				}); //eo propertydd
-				var classTarget = this.body.child('div.class-target' + formid);
-				var classdd = new Ext.dd.DropTarget(classTarget, {
-					ddGroup: 'refdataGroup',
-					notifyDrop: function (classdd, e, data) {
-						if (data.node.attributes.type != 'ClassNode') {
-							/*Ext.Msg.show({
-								title: 'Invalid Selection',
-								msg: 'Please slect a RDL Class...',
-								icon: Ext.MessageBox.ERROR,
-								buttons: Ext.Msg.CANCEL
-							});*/
-							var message = 'Please slect a RDL Class...';
-							showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-							return false;
-						}
-						Ext.get('classLabel').dom.value = data.node.attributes.record.Label;
-						Ext.get('classUrl').dom.value = data.node.attributes.record.Uri;
-						var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + data.node.attributes.record.Label + '</b></td></tr>'
-						msg += '</table>'
-						Ext.getCmp(formid).body.child('div.class-target' + formid).update(msg)
-						return true;
-
-					} //eo notifyDrop
-				}); //eo propertydd
-			}
-		});
-
-		var win = new Ext.Window({
-			closable: true,
-			modal: false,
-			layout: 'fit',
-			title: 'Add new GraphMap to Mapping',
-			items: form,
-			height: 180,
-			iconCls: 'tabsGraph',
-			width: 430,
-			plain: true,
-			scope: this
-		});
-
-		win.show();
-	},
-
+	},	
+	
 	onClose: function (btn, e) {
 		if (btn != undefined) {
 			var win = btn.findParentByType('window');
@@ -720,44 +454,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 				win.close();
 		}
 	},
-
-	onSubmitGraphMap: function (btn, e) {
-		var form = btn.findParentByType('form');
-		var win = btn.findParentByType('window');
-		var objectname = Ext.get('objectName').dom.value;
-		var classlabel = Ext.get('classLabel').dom.value;
-		var classuri = Ext.get('classUrl').dom.value;
-		var graphname = Ext.get('graphName').dom.value;
-		if (graphname.trim() == "") {
-			//Ext.Msg.show({ title: 'Error', msg: 'Graph Name cannot be blank.', icon: Ext.MessageBox.ERROR, buttons: Ext.MessageBox.OK });
-			var message = 'Graph Name cannot be blank.';
-			showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-			return false;
-		}
-		var that = this;
-		if (form.getForm().isValid())
-			Ext.Ajax.request({
-				url: 'mapping/addgraphmap',
-				method: 'POST',
-				params: {
-					objectName: objectname,
-					classLabel: classlabel,
-					classUrl: classuri,
-					graphName: graphname
-				},
-				success: function (result, request) {
-					that.onReload();
-					win.close();
-					//Ext.Msg.show({ title: 'Success', msg: 'Added GraphMap to mapping', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
-				},
-				failure: function (result, request) {
-					//Ext.Msg.show({ title: 'Failure', msg: 'Failed to Add GraphMap to mapping', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
-					var message = 'Failed to Add GraphMap to mapping';
-					showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-				}
-			})
-	},
-
+	
 	onAddValueListMap: function () {
 		var dirnode = this.directoryPanel.getSelectionModel().getSelectedNode();
 		var formid = 'valuelisttarget-' + dirnode.parentNode.parentNode.text + '-' + dirnode.parentNode.text;
@@ -786,14 +483,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 				var classdd = new Ext.dd.DropTarget(classTarget, {
 					ddGroup: 'refdataGroup',
 					notifyDrop: function (classdd, e, data) {
-						if (data.node.attributes.type != 'ClassNode') {
-							/*
-							Ext.Msg.show({
-								title: 'Invalid Selection',
-								msg: 'Please slect a RDL Class...',
-								icon: Ext.MessageBox.ERROR,
-								buttons: Ext.Msg.CANCEL
-							});*/
+						if (data.node.attributes.type != 'ClassNode') {							
 							var message = 'Please slect a RDL Class...';
 							showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 							return false;
@@ -854,11 +544,12 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			})
 	},
 
+	/*
 	onEditGraphMap: function (btn, e) {
 		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
 		this.fireEvent('opengraphmap', this, node);
 	},
-
+	*/
 	onNewApplication: function (btn, ev) {
 		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
 		this.fireEvent('NewApplication', this, node);

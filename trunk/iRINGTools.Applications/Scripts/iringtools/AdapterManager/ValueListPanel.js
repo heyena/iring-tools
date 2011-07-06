@@ -4,7 +4,7 @@
 * @extends Panel
 * @author by Gert Jansen van Rensburg
 */
-AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
+AdapterManager.ValueListPanel = Ext.extend(Ext.Panel, {
 	layout: 'fit',
 	border: false,
 	frame: false,
@@ -12,6 +12,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
 	from: null,
 	record: null,
 	url: null,
+	nodeId: null,
 
 	/**
 	* initComponent
@@ -31,16 +32,19 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
 
 		this.bbar = this.buildToolbar();
 
-		var name = ""
-		var description = ""
+		var name = "";
+		var nodeId = "";
 
 		if (this.record != null) {
-			name = this.record.Name;
-			description = this.record.Description
+			name = this.record.name;
+		}
+
+		if (this.nodeId != null) {
+			nodeId = this.nodeId;
 		}
 
 		this.form = new Ext.FormPanel({
-			labelWidth: 70, // label settings here cascade unless
+			labelWidth: 100, // label settings here cascade unless
 			url: this.url,
 			method: 'POST',
 			bodyStyle: 'padding:10px 5px 0',
@@ -56,11 +60,10 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
 			defaultType: 'textfield',
 
 			items: [
-        { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 300, value: name, allowBlank: false },
-        { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 300, value: name, allowBlank: false },
-        { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 300, value: description }
+			  { fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 120, value: nodeId, allowBlank: false },
+				{ fieldLabel: 'Value List Name', name: 'valueList', xtype: 'textfield', width: 120, value: name, allowBlank: false }
       ],
-			//buttonAlign: 'left', // buttons aligned to the left            
+
 			autoDestroy: false
 
 		});
@@ -91,7 +94,7 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
 			handler: this.onReset,
 			scope: this
 		}]
-	},	
+	},
 
 	onReset: function () {
 		this.form.getForm().reset();

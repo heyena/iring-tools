@@ -1,2176 +1,2221 @@
 ﻿Ext.ns('AdapterManager');
 
 AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
-  scope: null,
-  app: null,
-  iconCls: 'tabsNhibernate',
+	scope: null,
+	app: null,
+	iconCls: 'tabsNhibernate',
+	border: false,
+	frame: false,
 
-  constructor: function (config) {
-    config = config || {};
+	constructor: function (config) {
+		config = config || {};
 
-    var wizard = this;
-    var scopeName = config.scope;
-    var appName = config.app;
-    var dbDict;
-    var dbInfo;
-    var dbTableNames;
-    var userTableNames;
+		var wizard = this;
+		var scopeName = config.scope;
+		var appName = config.app;
+		var dbDict;
+		var dbInfo;
+		var dbTableNames;
+		var userTableNames;
 
-    var setKeyProperty = function (editPane, node) {
-      if (editPane && node) {
-        if (editPane.items.map[scopeName + '.' + appName + '.keyPropertyForm.' + node.id]) {
-          var keyPropertyFormPane = editPane.items.map[scopeName + '.' + appName + '.keyPropertyForm.' + node.id];
-          if (keyPropertyFormPane) {
-            //keyPropertyFormPane.destroy();
-            var panelIndex = editPane.items.indexOf(keyPropertyFormPane);
-            editPane.getLayout().setActiveItem(panelIndex);
-            return;
-          }
-        }
+		var setKeyProperty = function (editPane, node) {
+			if (editPane && node) {
+				if (editPane.items.map[scopeName + '.' + appName + '.keyPropertyForm.' + node.id]) {
+					var keyPropertyFormPane = editPane.items.map[scopeName + '.' + appName + '.keyPropertyForm.' + node.id];
+					if (keyPropertyFormPane) {
+						//keyPropertyFormPane.destroy();
+						var panelIndex = editPane.items.indexOf(keyPropertyFormPane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
+					}
+				}
 
-        if (node.attributes.properties)
-          var properties = node.attributes.properties;
-        else
-          var properties = node.attributes.properties;
 
-        var keyPropertyFormPanel = new Ext.FormPanel({
-          name: 'keyProperty',
-          id: scopeName + '.' + appName + '.keyPropertyForm.' + node.id,
-          border: false,
-          autoScroll: true,
-          monitorValid: true,
-          labelWidth: 130,
-          bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-          defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
-          items: [{
-            xtype: 'label',
-            fieldLabel: 'Key Properties',
-            labelSeparator: '',
-            itemCls: 'form-title'
-          }, dataPropFields, {
-            xtype: 'combo',
-            hiddenName: 'keyType',
-            fieldLabel: 'Key Type',
-            store: new Ext.data.SimpleStore({
-              fields: ['value', 'name'],
-              data: [['assigned', 'assigned'], ['unassigned', 'unassigned']]
-            }),
-            mode: 'local',
-            editable: false,
-            triggerAction: 'all',
-            displayField: 'name',
-            valueField: 'value',
-            value: properties.keyType
-          }],
-          treeNode: node,
-          tbar: new Ext.Toolbar({
-            items: [{
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/apply.png',
-              text: 'Apply',
-              tooltip: 'Apply the current changes to the data objects tree',
-              handler: function (f) {
-                var form = keyPropertyFormPanel.getForm();
-                var treeNodeProps = form.treeNode.attributes.properties;
-                var nullableField = form.findField('nullable');
-                nullableField.enable();
-                treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
-                treeNodeProps['dataType'] = form.findField('dataType').getValue();
-                treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
-                treeNodeProps['nullable'] = false;
-                treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
-                treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
-                treeNodeProps['keyType'] = form.findField('keyType').getValue();
-              }
-            }, {
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/edit-clear.png',
-              text: 'Reset',
-              tooltip: 'Reset to the latest applied changes',
-              handler: function (f) {
-                var form = keyPropertyFormPanel.getForm();
-                setDataPropertyFields(form, properties);
-                form.findField('nullable').disable();
-              }
-            }]
-          })
-        });
+				if (node.attributes.properties)
+					var properties = node.attributes.properties;
+				else
+					var properties = node.attributes.attributes.properties;
 
-        var form = keyPropertyFormPanel.getForm();
-        setDataPropertyFields(form, properties);
-        editPane.add(keyPropertyFormPanel);
-        var panelIndex = editPane.items.indexOf(keyPropertyFormPanel);
-        editPane.getLayout().setActiveItem(panelIndex);
-      }
-    }
+				var keyPropertyFormPanel = new Ext.FormPanel({
+					name: 'keyProperty',
+					id: scopeName + '.' + appName + '.keyPropertyForm.' + node.id,
+					border: false,
+					autoScroll: true,
+					monitorValid: true,
+					labelWidth: 130,
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
+					items: [{
+						xtype: 'label',
+						fieldLabel: 'Key Properties',
+						labelSeparator: '',
+						itemCls: 'form-title'
+					}, dataPropFields, {
+						xtype: 'combo',
+						hiddenName: 'keyType',
+						fieldLabel: 'Key Type',
+						store: new Ext.data.SimpleStore({
+							fields: ['value', 'name'],
+							data: [['assigned', 'assigned'], ['unassigned', 'unassigned']]
+						}),
+						mode: 'local',
+						editable: false,
+						triggerAction: 'all',
+						displayField: 'name',
+						valueField: 'value',
+						value: properties.keyType
+					}],
+					treeNode: node,
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/apply.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
+							handler: function (f) {
+								var form = keyPropertyFormPanel.getForm();
+								var treeNodeProps = form.treeNode.attributes.properties;
+								var nullableField = form.findField('nullable');
+								nullableField.enable();
+								treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
+								treeNodeProps['dataType'] = form.findField('dataType').getValue();
+								treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
+								treeNodeProps['nullable'] = false;
+								treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
+								treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
+								treeNodeProps['keyType'] = form.findField('keyType').getValue();
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/edit-clear.png',
+							text: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
+							handler: function (f) {
+								var form = keyPropertyFormPanel.getForm();
+								setDataPropertyFields(form, properties);
+								form.findField('nullable').disable();
+							}
+						}]
+					})
+				});
 
-    var setDataProperty = function (editPane, node) {
-      if (editPane && node) {
-        if (editPane.items.map[scopeName + '.' + appName + '.dataPropertyForm.' + node.id]) {
-          var dataPropertyFormPane = editPane.items.map[scopeName + '.' + appName + '.dataPropertyForm.' + node.id];
-          if (dataPropertyFormPane) {
-            //dataPropertyFormPane.destroy();
-            var panelIndex = editPane.items.indexOf(dataPropertyFormPane);
-            editPane.getLayout().setActiveItem(panelIndex);
-            return;
-          }
-        }
+				var form = keyPropertyFormPanel.getForm();
+				setDataPropertyFields(form, properties);
+				editPane.add(keyPropertyFormPanel);
+				var panelIndex = editPane.items.indexOf(keyPropertyFormPanel);
+				editPane.getLayout().setActiveItem(panelIndex);
+			}
+		}
 
-        var dataPropertyFormPanel = new Ext.FormPanel({
-          name: 'dataProperty',
-          id: scopeName + '.' + appName + '.dataPropertyForm.' + node.id,
-          border: false,
-          autoScroll: true,
-          monitorValid: true,
-          labelWidth: 130,
-          bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-          defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
-          items: [{
-            xtype: 'label',
-            fieldLabel: 'Data Properties',
-            labelSeparator: '',
-            itemCls: 'form-title'
-          }, dataPropFields],
-          treeNode: node,
-          tbar: new Ext.Toolbar({
-            items: [{
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/apply.png',
-              text: 'Apply',
-              tooltip: 'Apply the current changes to the data objects tree',
-              handler: function (f) {
-                var form = dataPropertyFormPanel.getForm();
-                if (form.treeNode) {
-                  var treeNodeProps = form.treeNode.attributes.properties;
-                  treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
-                  treeNodeProps['dataType'] = form.findField('dataType').getValue();
-                  treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
-                  treeNodeProps['nullable'] = form.findField('nullable').getValue();
-                  treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
-                  treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
-                }
-              }
-            }, {
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/edit-clear.png',
-              text: 'Reset',
-              tooltip: 'Reset to the latest applied changes',
-              handler: function (f) {
-                var form = dataPropertyFormPanel.getForm();
-                setDataPropertyFields(form, node.attributes.properties);
-              }
-            }]
-          })
-        });
-        var form = dataPropertyFormPanel.getForm();
-        setDataPropertyFields(form, node.attributes.properties);
-        editPane.add(dataPropertyFormPanel);
-        var panelIndex = editPane.items.indexOf(dataPropertyFormPanel);
-        editPane.getLayout().setActiveItem(panelIndex);
-      }
-    }
+		var setDataProperty = function (editPane, node) {
+			if (editPane && node) {
+				if (editPane.items.map[scopeName + '.' + appName + '.dataPropertyForm.' + node.id]) {
+					var dataPropertyFormPane = editPane.items.map[scopeName + '.' + appName + '.dataPropertyForm.' + node.id];
+					if (dataPropertyFormPane) {
+						//dataPropertyFormPane.destroy();
+						var panelIndex = editPane.items.indexOf(dataPropertyFormPane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
+					}
+				}
 
-    var setDataPropertyFields = function (form, properties) {
-      if (form && properties) {
-        form.findField('columnName').setValue(properties.columnName);
-        form.findField('propertyName').setValue(properties.propertyName);
-        form.findField('dataType').setValue(properties.dataType);
-        form.findField('dataLength').setValue(properties.dataLength);
+				var dataPropertyFormPanel = new Ext.FormPanel({
+					name: 'dataProperty',
+					id: scopeName + '.' + appName + '.dataPropertyForm.' + node.id,
+					border: false,
+					autoScroll: true,
+					monitorValid: true,
+					labelWidth: 130,
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
+					items: [{
+						xtype: 'label',
+						fieldLabel: 'Data Properties',
+						labelSeparator: '',
+						itemCls: 'form-title'
+					}, dataPropFields],
+					treeNode: node,
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/apply.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
+							handler: function (f) {
+								var form = dataPropertyFormPanel.getForm();
+								if (form.treeNode) {
+									var treeNodeProps = form.treeNode.attributes.properties;
+									treeNodeProps['propertyName'] = form.findField('propertyName').getValue();
+									treeNodeProps['dataType'] = form.findField('dataType').getValue();
+									treeNodeProps['dataLength'] = form.findField('dataLength').getValue();
+									treeNodeProps['nullable'] = form.findField('nullable').getValue();
+									treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
+									treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
+								}
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/edit-clear.png',
+							text: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
+							handler: function (f) {
+								var form = dataPropertyFormPanel.getForm();
+								setDataPropertyFields(form, node.attributes.properties);
+							}
+						}]
+					})
+				});
+				var form = dataPropertyFormPanel.getForm();
+				setDataPropertyFields(form, node.attributes.properties);
+				editPane.add(dataPropertyFormPanel);
+				var panelIndex = editPane.items.indexOf(dataPropertyFormPanel);
+				editPane.getLayout().setActiveItem(panelIndex);
+			}
+		}
 
-        if (properties.nullable == true || properties.nullable == 'True') {
-          form.findField('nullable').setValue(true);
-        }
-        else {
-          form.findField('nullable').setValue(false);
-        }
+		var setDataPropertyFields = function (form, properties) {
+			if (form && properties) {
+				form.findField('columnName').setValue(properties.columnName);
+				form.findField('propertyName').setValue(properties.propertyName);
+				form.findField('dataType').setValue(properties.dataType);
+				form.findField('dataLength').setValue(properties.dataLength);
 
-        if (properties.showOnIndex == true || properties.showOnIndex == 'True') {
-          form.findField('showOnIndex').setValue(true);
-        }
-        else {
-          form.findField('showOnIndex').setValue(false);
-        }
-        form.findField('numberOfDecimals').setValue(properties.numberOfDecimals);
-      }
-    };
+				if (properties.nullable == true || properties.nullable == 'True') {
+					form.findField('nullable').setValue(true);
+				}
+				else {
+					form.findField('nullable').setValue(false);
+				}
 
-    var setDsConfigFields = function (dsConfigForm) {
-      if (dbInfo) {
-        dsConfigForm.findField('dbServer').setValue(dbInfo.dbServer);
-        dsConfigForm.findField('dbInstance').setValue(dbInfo.dbInstance);
-        dsConfigForm.findField('dbName').setValue(dbInfo.dbName);
-        dsConfigForm.findField('dbUserName').setValue(dbInfo.dbUserName);
-        dsConfigForm.findField('dbPassword').setValue(dbInfo.dbPassword);
-        dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
-        dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
+				if (properties.showOnIndex == true || properties.showOnIndex == 'True') {
+					form.findField('showOnIndex').setValue(true);
+				}
+				else {
+					form.findField('showOnIndex').setValue(false);
+				}
+				form.findField('numberOfDecimals').setValue(properties.numberOfDecimals);
+			}
+		};
 
-        dsConfigForm.findField('host').setValue(dbInfo.dbServer);
-        dsConfigForm.findField('serviceName').setValue(dbInfo.dbInstance);
-        dsConfigForm.findField('portNumber').setValue(dbInfo.portNumber);
-      }
-      else {
-        dsConfigForm.findField('dbServer').setValue('');
-        dsConfigForm.findField('dbInstance').setValue('');
-        dsConfigForm.findField('dbName').setValue('');
-        dsConfigForm.findField('dbUserName').setValue('');
-        dsConfigForm.findField('dbPassword').setValue('');
-        dsConfigForm.findField('dbProvider').setValue('');
-        dsConfigForm.findField('dbSchema').setValue('');
+		var setDsConfigFields = function (dsConfigForm) {
+			if (dbInfo) {
+				dsConfigForm.findField('dbServer').setValue(dbInfo.dbServer);
+				dsConfigForm.findField('dbInstance').setValue(dbInfo.dbInstance);
+				dsConfigForm.findField('dbName').setValue(dbInfo.dbName);
+				dsConfigForm.findField('dbUserName').setValue(dbInfo.dbUserName);
+				dsConfigForm.findField('dbPassword').setValue(dbInfo.dbPassword);
+				dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
+				dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
 
-        dsConfigForm.findField('host').setValue('');
-        dsConfigForm.findField('serviceName').setValue('');
-        dsConfigForm.findField('portNumber').setValue('');
+				dsConfigForm.findField('host').setValue(dbInfo.dbServer);
+				dsConfigForm.findField('serviceName').setValue(dbInfo.dbInstance);
+				dsConfigForm.findField('portNumber').setValue(dbInfo.portNumber);
+			}
+			else {
+				dsConfigForm.findField('dbServer').setValue('');
+				dsConfigForm.findField('dbInstance').setValue('');
+				dsConfigForm.findField('dbName').setValue('');
+				dsConfigForm.findField('dbUserName').setValue('');
+				dsConfigForm.findField('dbPassword').setValue('');
+				dsConfigForm.findField('dbProvider').setValue('');
+				dsConfigForm.findField('dbSchema').setValue('');
 
-        dsConfigForm.findField('dbServer').clearInvalid();
-        dsConfigForm.findField('dbInstance').clearInvalid();
-        dsConfigForm.findField('dbName').clearInvalid();
-        dsConfigForm.findField('dbUserName').clearInvalid();
-        dsConfigForm.findField('dbPassword').clearInvalid();
-        dsConfigForm.findField('dbProvider').clearInvalid();
-        dsConfigForm.findField('dbSchema').clearInvalid();
+				dsConfigForm.findField('host').setValue('');
+				dsConfigForm.findField('serviceName').setValue('');
+				dsConfigForm.findField('portNumber').setValue('');
 
-        dsConfigForm.findField('host').clearInvalid();
-        dsConfigForm.findField('serviceName').clearInvalid();
-        dsConfigForm.findField('portNumber').clearInvalid();
-      }
-    };
+				dsConfigForm.findField('dbServer').clearInvalid();
+				dsConfigForm.findField('dbInstance').clearInvalid();
+				dsConfigForm.findField('dbName').clearInvalid();
+				dsConfigForm.findField('dbUserName').clearInvalid();
+				dsConfigForm.findField('dbPassword').clearInvalid();
+				dsConfigForm.findField('dbProvider').clearInvalid();
+				dsConfigForm.findField('dbSchema').clearInvalid();
 
-    var setDsConfigPane = function (editPane) {
-      if (editPane) {
-        if (editPane.items.map[scopeName + '.' + appName + '.dsconfigPane']) {
-          var dsConfigPanel = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
-          if (dsConfigPanel) {
-            //						var panelIndex = editPane.items.indexOf(dsConfigPanel);
-            //						editPane.getLayout().setActiveItem(panelIndex);
-            //						dsConfigPanel.show();
-            var panelIndex = editPane.items.indexOf(dsConfigPanel);
-            editPane.getLayout().setActiveItem(panelIndex);
-            return;
-          }
-        }
+				dsConfigForm.findField('host').clearInvalid();
+				dsConfigForm.findField('serviceName').clearInvalid();
+				dsConfigForm.findField('portNumber').clearInvalid();
+			}
+		};
 
-        var providersStore = new Ext.data.JsonStore({
-          autoLoad: true,
-          autoDestroy: true,
-          url: 'AdapterManager/DBProviders',
-          root: 'items',
-          idProperty: 'Provider',
-          fields: [{
-            name: 'Provider'
-          }]
-        });
+		var setDsConfigPane = function (editPane) {
+			if (editPane) {
+				if (editPane.items.map[scopeName + '.' + appName + '.dsconfigPane']) {
+					var dsConfigPanel = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
+					if (dsConfigPanel) {
+						//						var panelIndex = editPane.items.indexOf(dsConfigPanel);
+						//						editPane.getLayout().setActiveItem(panelIndex);
+						//						dsConfigPanel.show();
+						var panelIndex = editPane.items.indexOf(dsConfigPanel);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
+					}
+				}
 
-        var dsConfigPane = new Ext.FormPanel({
-          labelWidth: 140,
-          id: scopeName + '.' + appName + '.dsconfigPane',
-          frame: false,
-          border: false,
-          autoScroll: true,
-          bodyStyle: 'padding:10px 10px 0px 10px',
-          monitorValid: true,
-          defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
-          items: [{
-            xtype: 'label',
-            fieldLabel: 'Configure Data Source',
-            labelSeparator: '',
-            itemCls: 'form-title'
-          }, {
-            xtype: 'combo',
-            fieldLabel: 'Database Provider',
-            hiddenName: 'dbProvider',
-            allowBlank: false,
-            store: providersStore,
-            mode: 'local',
-            editable: false,
-            triggerAction: 'all',
-            displayField: 'Provider',
-            valueField: 'Provider',
-            listeners: { 'select': function (combo, record, index) {
-              var dbProvider = record.data.Provider.toUpperCase();
-              var dbName = dsConfigPane.getForm().findField('dbName');
-              var portNumber = dsConfigPane.getForm().findField('portNumber');
-              var host = dsConfigPane.getForm().findField('host');
-              var dbServer = dsConfigPane.getForm().findField('dbServer');
-              var dbInstance = dsConfigPane.getForm().findField('dbInstance');
-              var serviceName = dsConfigPane.getForm().findField('serviceName');
-              var dbSchema = dsConfigPane.getForm().findField('dbSchema');
+				var providersStore = new Ext.data.JsonStore({
+					autoLoad: true,
+					autoDestroy: true,
+					url: 'AdapterManager/DBProviders',
+					root: 'items',
+					idProperty: 'Provider',
+					fields: [{
+						name: 'Provider'
+					}]
+				});
 
-              if (dbProvider.indexOf('ORACLE') > -1) {
-                if (dbName.hidden == false) {
-                  dbName.hide();
-                  dbServer.hide();
-                  dbInstance.hide();
-                }
+				var dsConfigPane = new Ext.FormPanel({
+					labelWidth: 140,
+					id: scopeName + '.' + appName + '.dsconfigPane',
+					frame: false,
+					border: false,
+					autoScroll: true,
+					bodyStyle: 'padding:10px 10px 0px 10px',
+					monitorValid: true,
+					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
+					items: [{
+						xtype: 'label',
+						fieldLabel: 'Configure Data Source',
+						labelSeparator: '',
+						itemCls: 'form-title'
+					}, {
+						xtype: 'combo',
+						fieldLabel: 'Database Provider',
+						hiddenName: 'dbProvider',
+						allowBlank: false,
+						store: providersStore,
+						mode: 'local',
+						editable: false,
+						triggerAction: 'all',
+						displayField: 'Provider',
+						valueField: 'Provider',
+						listeners: { 'select': function (combo, record, index) {
+							var dbProvider = record.data.Provider.toUpperCase();
+							var dbName = dsConfigPane.getForm().findField('dbName');
+							var portNumber = dsConfigPane.getForm().findField('portNumber');
+							var host = dsConfigPane.getForm().findField('host');
+							var dbServer = dsConfigPane.getForm().findField('dbServer');
+							var dbInstance = dsConfigPane.getForm().findField('dbInstance');
+							var serviceName = dsConfigPane.getForm().findField('serviceName');
+							var dbSchema = dsConfigPane.getForm().findField('dbSchema');
 
-                if (host.hidden == true) {
-                  host.setValue('');
-                  host.clearInvalid();
-                  host.show();
+							if (dbProvider.indexOf('ORACLE') > -1) {
+								if (dbName.hidden == false) {
+									dbName.hide();
+									dbServer.hide();
+									dbInstance.hide();
+								}
 
-                  portNumber.setValue('1521');
-                  portNumber.show();
+								if (host.hidden == true) {
+									host.setValue('');
+									host.clearInvalid();
+									host.show();
 
-                  serviceName.setValue('');
-                  serviceName.clearInvalid();
-                  serviceName.show();
-                }
-              }
-              else if (dbProvider.indexOf('MSSQL') > -1) {
-                if (dbName.hidden == true) {
-                  dbName.setValue('');
-                  dbName.clearInvalid();
-                  dbName.show();
+									portNumber.setValue('1521');
+									portNumber.show();
 
-                  dbServer.setValue('');
-                  dbServer.clearInvalid();
-                  dbServer.show();
+									serviceName.setValue('');
+									serviceName.clearInvalid();
+									serviceName.show();
+								}
+							}
+							else if (dbProvider.indexOf('MSSQL') > -1) {
+								if (dbName.hidden == true) {
+									dbName.setValue('');
+									dbName.clearInvalid();
+									dbName.show();
 
-                  dbInstance.setValue('');
-                  dbInstance.clearInvalid();
-                  dbInstance.show();
-                }
+									dbServer.setValue('');
+									dbServer.clearInvalid();
+									dbServer.show();
 
-                if (host.hidden == false) {
-                  portNumber.hide();
-                  host.hide();
-                  serviceName.hide();
-                }
-                portNumber.setValue('1433');
-              }
-              else if (dbProvider.indexOf('MYSQL') > -1) {
-                if (dbServer.hidden == true) {
-                  dbServer.setValue('');
-                  dbServer.clearInvalid();
-                  dbServer.show();
-                }
+									dbInstance.setValue('');
+									dbInstance.clearInvalid();
+									dbInstance.show();
+								}
 
-                if (host.hidden == false) {
-                  portNumber.hide();
-                  host.hide();
-                  serviceName.hide();
-                }
-                portNumber.setValue('3306');
-              }
-            }
-            }
-          }, {
-            xtype: 'textfield',
-            name: 'dbServer',
-            fieldLabel: 'Database Server',
-            allowBlank: false
-          }, {
-            xtype: 'textfield',
-            name: 'host',
-            fieldLabel: 'Host Name',
-            hidden: true,
-            allowBlank: false
-          }, {
-            xtype: 'textfield',
-            name: 'portNumber',
-            fieldLabel: 'Port Number',
-            hidden: true,
-            value: '1521',
-            allowBlank: false
-          }, {
-            xtype: 'textfield',
-            name: 'dbInstance',
-            fieldLabel: 'Database Instance',
-            value: 'Default',
-            allowBlank: false
-          }, {
-            xtype: 'textfield',
-            name: 'serviceName',
-            fieldLabel: 'Service Name',
-            hidden: true,
-            value: 'Default',
-            allowBlank: false
-          }, {
-            xtype: 'textfield',
-            name: 'dbName',
-            fieldLabel: 'Database Name',
-            allowBlank: false
-          }, {
-            xtype: 'textfield',
-            name: 'dbSchema',
-            fieldLabel: 'Schema Name',
-            value: 'dbo',
-            allowBlank: false
-          }, {
-            xtype: 'textfield',
-            name: 'dbUserName',
-            fieldLabel: 'User Name',
-            allowBlank: false
-          }, {
-            xtype: 'textfield',
-            inputType: 'password',
-            name: 'dbPassword',
-            fieldLabel: 'Password',
-            allowBlank: false
-          }],
-          tbar: new Ext.Toolbar({
-            items: [{
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/document-properties.png',
-              text: 'Connect',
-              tooltip: 'Connect',
-              handler: function (f) {
-                var dbProvider = dsConfigPane.getForm().findField('dbProvider').getValue().toUpperCase();
-                var dbName = dsConfigPane.getForm().findField('dbName');
-                var portNumber = dsConfigPane.getForm().findField('portNumber');
-                var host = dsConfigPane.getForm().findField('host');
-                var dbServer = dsConfigPane.getForm().findField('dbServer');
-                var dbInstance = dsConfigPane.getForm().findField('dbInstance');
-                var serviceName = dsConfigPane.getForm().findField('serviceName');
-                var dbSchema = dsConfigPane.getForm().findField('dbSchema');
-                if (dbProvider.indexOf('ORACLE') > -1) {
-                  dbServer.setValue(host.getValue());
-                  dbInstance.setValue(serviceName.getValue());
-                  dbName.setValue(dbSchema.getValue());
-                }
-                else if (dbProvider.indexOf('MSSQL') > -1) {
-                  host.setValue(dbServer.getValue());
-                  serviceName.setValue(dbInstance.getValue());
-                }
-                else if (dbProvider.indexOf('MYSQL') > -1) {
-                  dbName.setValue(dbSchema.getValue());
-                  dbInstance.setValue(dbSchema.getValue());
-                }
+								if (host.hidden == false) {
+									portNumber.hide();
+									host.hide();
+									serviceName.hide();
+								}
+								portNumber.setValue('1433');
+							}
+							else if (dbProvider.indexOf('MYSQL') > -1) {
+								if (dbServer.hidden == true) {
+									dbServer.setValue('');
+									dbServer.clearInvalid();
+									dbServer.show();
+								}
 
-                dsConfigPane.getForm().submit({
-                  url: 'AdapterManager/TableNames',
-                  timeout: 600000,
-                  params: {
-                    scope: scopeName,
-                    app: appName
-                  },
-                  success: function (f, a) {
-                    dbTableNames = Ext.util.JSON.decode(a.response.responseText);
-                    var tab = Ext.getCmp('content-panel');
-                    var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
-                    var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-                    var editPane = dataObjectsPane.items.map[scopeName + '.' + appName + '.editor-panel'];
-                    var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-                    dbObjectsTree.disable();
-                    setTablesSelectorPane(editPane);
-                  },
-                  failure: function (f, a) {
-                    if (a.response)
-                      showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
+								if (host.hidden == false) {
+									portNumber.hide();
+									host.hide();
+									serviceName.hide();
+								}
+								portNumber.setValue('3306');
+							}
+						}
+						}
+					}, {
+						xtype: 'textfield',
+						name: 'dbServer',
+						fieldLabel: 'Database Server',
+						allowBlank: false
+					}, {
+						xtype: 'textfield',
+						name: 'host',
+						fieldLabel: 'Host Name',
+						hidden: true,
+						allowBlank: false
+					}, {
+						xtype: 'textfield',
+						name: 'portNumber',
+						fieldLabel: 'Port Number',
+						hidden: true,
+						value: '1521',
+						allowBlank: false
+					}, {
+						xtype: 'textfield',
+						name: 'dbInstance',
+						fieldLabel: 'Database Instance',
+						value: 'Default',
+						allowBlank: false
+					}, {
+						xtype: 'textfield',
+						name: 'serviceName',
+						fieldLabel: 'Service Name',
+						hidden: true,
+						value: 'Default',
+						allowBlank: false
+					}, {
+						xtype: 'textfield',
+						name: 'dbName',
+						fieldLabel: 'Database Name',
+						allowBlank: false
+					}, {
+						xtype: 'textfield',
+						name: 'dbSchema',
+						fieldLabel: 'Schema Name',
+						value: 'dbo',
+						allowBlank: false
+					}, {
+						xtype: 'textfield',
+						name: 'dbUserName',
+						fieldLabel: 'User Name',
+						allowBlank: false
+					}, {
+						xtype: 'textfield',
+						inputType: 'password',
+						name: 'dbPassword',
+						fieldLabel: 'Password',
+						allowBlank: false
+					}],
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/document-properties.png',
+							text: 'Connect',
+							tooltip: 'Connect',
+							handler: function (f) {
+								var dbProvider = dsConfigPane.getForm().findField('dbProvider').getValue().toUpperCase();
+								var dbName = dsConfigPane.getForm().findField('dbName');
+								var portNumber = dsConfigPane.getForm().findField('portNumber');
+								var host = dsConfigPane.getForm().findField('host');
+								var dbServer = dsConfigPane.getForm().findField('dbServer');
+								var dbInstance = dsConfigPane.getForm().findField('dbInstance');
+								var serviceName = dsConfigPane.getForm().findField('serviceName');
+								var dbSchema = dsConfigPane.getForm().findField('dbSchema');
+								if (dbProvider.indexOf('ORACLE') > -1) {
+									dbServer.setValue(host.getValue());
+									dbInstance.setValue(serviceName.getValue());
+									dbName.setValue(dbSchema.getValue());
+								}
+								else if (dbProvider.indexOf('MSSQL') > -1) {
+									host.setValue(dbServer.getValue());
+									serviceName.setValue(dbInstance.getValue());
+								}
+								else if (dbProvider.indexOf('MYSQL') > -1) {
+									dbName.setValue(dbSchema.getValue());
+									dbInstance.setValue(dbSchema.getValue());
+								}
 
-                    else {
-                      showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
-                    }
-                  },
-                  waitMsg: 'Loading ...'
-                });
-              }
-            }, {
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/edit-clear.png',
-              text: 'Reset',
-              tooltip: 'Reset to the latest applied changes',
-              handler: function (f) {
-                setDsConfigFields(dsConfigPane.getForm());
-              }
-            }]
-          })
-        });
+								dsConfigPane.getForm().submit({
+									url: 'AdapterManager/TableNames',
+									timeout: 600000,
+									params: {
+										scope: scopeName,
+										app: appName
+									},
+									success: function (f, a) {
+										dbTableNames = Ext.util.JSON.decode(a.response.responseText);
+										var tab = Ext.getCmp('content-panel');
+										var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
+										var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
+										var editPane = dataObjectsPane.items.map[scopeName + '.' + appName + '.editor-panel'];
+										var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+										dbObjectsTree.disable();
+										setTablesSelectorPane(editPane);
+									},
+									failure: function (f, a) {
+										if (a.response)
+											showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
 
-        if (dbInfo)
-          setDsConfigFields(dsConfigPane.getForm());
-        editPane.add(dsConfigPane);
-        var panelIndex = editPane.items.indexOf(dsConfigPane);
-        editPane.getLayout().setActiveItem(panelIndex);
-      }
-    };
+										else {
+											showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
+										}
+									},
+									waitMsg: 'Loading ...'
+								});
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/edit-clear.png',
+							text: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
+							handler: function (f) {
+								setDsConfigFields(dsConfigPane.getForm());
+							}
+						}]
+					})
+				});
 
-    var setAvailTables = function (dbObjectsTree) {
-      var availTableName = new Array();
+				if (dbInfo)
+					setDsConfigFields(dsConfigPane.getForm());
+				editPane.add(dsConfigPane);
+				var panelIndex = editPane.items.indexOf(dsConfigPane);
+				editPane.getLayout().setActiveItem(panelIndex);
+			}
+		};
 
-      if (dbObjectsTree.disabled) {
-        for (var i = 0; i < dbTableNames.items.length; i++) {
-          var tableName = dbTableNames.items[i];
+		var setAvailTables = function (dbObjectsTree) {
+			var availTableName = new Array();
 
-          availTableName.push(tableName);
+			if (dbObjectsTree.disabled) {
+				for (var i = 0; i < dbTableNames.items.length; i++) {
+					var tableName = dbTableNames.items[i];
 
-        }
-      }
-      else {
-        var rootNode = dbObjectsTree.getRootNode();
+					availTableName.push(tableName);
 
-        for (var i = 0; i < dbTableNames.items.length; i++) {
-          availTableName.push(dbTableNames.items[i]);
-        }
+				}
+			}
+			else {
+				var rootNode = dbObjectsTree.getRootNode();
+				if (dbTableNames.items) {
+					for (var i = 0; i < dbTableNames.items.length; i++) {
+						availTableName.push(dbTableNames.items[i]);
+					}
+				}
 
-        if (!dbObjectsTree.disabled) {
-          for (var j = 0; j < availTableName.length; j++)
-            for (var i = 0; i < rootNode.childNodes.length; i++) {
-              if (rootNode.childNodes[i].text == availTableName[j]) {
-                found = true;
-                availTableName.splice(j, 1);
-                j--;
-                break;
-              }
-            }
-        }
-      }
+				if (!dbObjectsTree.disabled) {
+					for (var j = 0; j < availTableName.length; j++)
+						for (var i = 0; i < rootNode.childNodes.length; i++) {
+							if (rootNode.childNodes[i].text == availTableName[j]) {
+								found = true;
+								availTableName.splice(j, 1);
+								j--;
+								break;
+							}
+						}
+				}
+			}
 
-      return availTableName;
-    }
+			return availTableName;
+		}
 
-    var setSelectTables = function (dbObjectsTree) {
-      var selectTableNames = new Array();
+		var setSelectTables = function (dbObjectsTree) {
+			var selectTableNames = new Array();
 
-      if (!dbObjectsTree.disabled) {
-        var rootNode = dbObjectsTree.getRootNode();
-        for (var i = 0; i < rootNode.childNodes.length; i++) {
-          var nodeText = rootNode.childNodes[i].text;
-          selectTableNames.push([nodeText, nodeText]);
-        }
-      }
+			if (!dbObjectsTree.disabled) {
+				var rootNode = dbObjectsTree.getRootNode();
+				for (var i = 0; i < rootNode.childNodes.length; i++) {
+					var nodeText = rootNode.childNodes[i].text;
+					selectTableNames.push([nodeText, nodeText]);
+				}
+			}
 
-      return selectTableNames;
-    }
+			return selectTableNames;
+		}
 
-    var setTablesSelectorPane = function (editPane) {
-      var tab = Ext.getCmp('content-panel');
-      var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
-      var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-      var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+		var setTablesSelectorPane = function (editPane) {
+			var tab = Ext.getCmp('content-panel');
+			var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
+			var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
+			var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 
-      if (editPane) {
-        if (editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane']) {
-          var tableSelectorPanel = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
-          if (tableSelectorPanel) {
-            if (dbObjectsTree.disabled)
-              tableSelectorPanel.destroy();
-            else {
-              var panelIndex = editPane.items.indexOf(tableSelectorPanel);
-              editPane.getLayout().setActiveItem(panelIndex);
-              return;
-            }
-          }
-        }
+			if (editPane) {
+				if (editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane']) {
+					var tableSelectorPanel = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
+					if (tableSelectorPanel) {
+						if (dbObjectsTree.disabled)
+							tableSelectorPanel.destroy();
+						else {
+							var panelIndex = editPane.items.indexOf(tableSelectorPanel);
+							editPane.getLayout().setActiveItem(panelIndex);
+							return;
+						}
+					}
+				}
 
-        var availItems = setAvailTables(dbObjectsTree);
-        var selectItems = setSelectTables(dbObjectsTree);
+				var availItems = setAvailTables(dbObjectsTree);
+				var selectItems = setSelectTables(dbObjectsTree);
 
-        var tablesSelectorPane = new Ext.FormPanel({
-          frame: false,
-          border: false,
-          autoScroll: true,
-          id: scopeName + '.' + appName + '.tablesSelectorPane',
-          bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-          labelWidth: 140,
-          monitorValid: true,
-          items: [{
-            xtype: 'label',
-            fieldLabel: 'Select Tables',
-            labelSeparator: '',
-            itemCls: 'form-title'
-          }, {
-            xtype: 'itemselector',
-            hideLabel: true,
-            name: 'tableSelector',
-            imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
-            multiselects: [{
-              width: 250,
-              height: 300,
-              store: availItems,
-              displayField: 'tableName',
-              valueField: 'tableValue'
-            }, {
-              width: 250,
-              height: 300,
-              store: selectItems,
-              displayField: 'tableName',
-              valueField: 'tableValue'
-            }],
-            listeners: {
-              change: function (itemSelector, selectedValuesStr) {
-                var selectTables = itemSelector.toMultiselect.store.data.items;
-                for (var i = 0; i < selectTables.length; i++) {
-                  var selectTableName = selectTables[i].data.text;
-                  if (selectTableName == '')
-                    itemSelector.toMultiselect.store.removeAt(i);
-                }
+				var tablesSelectorPane = new Ext.FormPanel({
+					frame: false,
+					border: false,
+					autoScroll: true,
+					id: scopeName + '.' + appName + '.tablesSelectorPane',
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+					labelWidth: 140,
+					monitorValid: true,
+					items: [{
+						xtype: 'label',
+						fieldLabel: 'Select Tables',
+						labelSeparator: '',
+						itemCls: 'form-title'
+					}, {
+						xtype: 'itemselector',
+						hideLabel: true,
+						bodyStyle: 'background:#eee',
+						frame: true,
+						name: 'tableSelector',
+						imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+						multiselects: [{							
+							width: 240,
+							height: 370,
+							store: availItems,
+							displayField: 'tableName',
+							valueField: 'tableValue',
+							border: 0
+						}, {
+							width: 240,
+							height: 370,
+							store: selectItems,
+							displayField: 'tableName',
+							valueField: 'tableValue',
+							border: 0
+						}],
+						listeners: {
+							change: function (itemSelector, selectedValuesStr) {
+								var selectTables = itemSelector.toMultiselect.store.data.items;
+								for (var i = 0; i < selectTables.length; i++) {
+									var selectTableName = selectTables[i].data.text;
+									if (selectTableName == '')
+										itemSelector.toMultiselect.store.removeAt(i);
+								}
 
-                var availTables = itemSelector.fromMultiselect.store.data.items;
-                for (var i = 0; i < availTables.length; i++) {
-                  var availTableName = availTables[i].data.text
-                  if (availTables[i].data.text == '')
-                    itemSelector.fromMultiselect.store.removeAt(i);
-                }
-              }
-            }
-          }],
-          tbar: new Ext.Toolbar({
-            items: [{
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/apply.png',
-              text: 'Apply',
-              tooltip: 'Apply the current changes to the data objects tree',
-              handler: function () {
-                var editPane = dataObjectsPane.items.items[1];
-                var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
-                var tablesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
-                var tablesSelForm = tablesSelectorPane.getForm();
-                var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+								var availTables = itemSelector.fromMultiselect.store.data.items;
+								for (var i = 0; i < availTables.length; i++) {
+									var availTableName = availTables[i].data.text
+									if (availTables[i].data.text == '')
+										itemSelector.fromMultiselect.store.removeAt(i);
+								}
+							}
+						}
+					}],
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/apply.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
+							handler: function () {
+								var editPane = dataObjectsPane.items.items[1];
+								var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
+								var tablesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
+								var tablesSelForm = tablesSelectorPane.getForm();
+								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 
-                if (dbObjectsTree.disabled) {
-                  dbObjectsTree.enable();
-                }
+								if (dbObjectsTree.disabled) {
+									dbObjectsTree.enable();
+								}
 
-                var treeLoader = dbObjectsTree.getLoader();
-                if (tablesSelForm.findField('tableSelector').getValue().indexOf('') == -1)
-                  var selectTableNames = tablesSelForm.findField('tableSelector').getValue();
-                else {
-                  var tableNames = tablesSelForm.findField('tableSelector').toMultiselect.store.data.items;
-                  var selectTableNames = new Array();
-                  for (var i = 0; i < tableNames.length; i++)
-                    selectTableNames.push(tableNames[i].data.text);
-                }
+								var treeLoader = dbObjectsTree.getLoader();
+								if (tablesSelForm.findField('tableSelector').getValue().indexOf('') == -1)
+									var selectTableNames = tablesSelForm.findField('tableSelector').getValue();
+								else {
+									var tableNames = tablesSelForm.findField('tableSelector').toMultiselect.store.data.items;
+									var selectTableNames = new Array();
+									for (var i = 0; i < tableNames.length; i++)
+										selectTableNames.push(tableNames[i].data.text);
+								}
 
-                if (selectTableNames.length < 1) {
-                  var rootNode = dbObjectsTree.getRootNode();
-                  while (rootNode.firstChild) {
-                    rootNode.removeChild(rootNode.firstChild);
-                  }
-                  return;
-                }
+								if (selectTableNames.length < 1) {
+									var rootNode = dbObjectsTree.getRootNode();
+									while (rootNode.firstChild) {
+										rootNode.removeChild(rootNode.firstChild);
+									}
+									return;
+								}
 
-                treeLoader.dataUrl = 'AdapterManager/DBObjects';
-                if (dsConfigPane) {
-                  var dsConfigForm = dsConfigPane.getForm();
-                  treeLoader.baseParams = {
-                    scope: scopeName,
-                    app: appName,
-                    dbProvider: dsConfigForm.findField('dbProvider').getValue(),
-                    dbServer: dsConfigForm.findField('dbServer').getValue(),
-                    dbInstance: dsConfigForm.findField('dbInstance').getValue(),
-                    dbName: dsConfigForm.findField('dbName').getValue(),
-                    dbSchema: dsConfigForm.findField('dbSchema').getValue(),
-                    dbUserName: dsConfigForm.findField('dbUserName').getValue(),
-                    dbPassword: dsConfigForm.findField('dbPassword').getValue(),
-                    portNumber: dsConfigForm.findField('portNumber').getValue(),
-                    tableNames: selectTableNames
-                  };
-                }
-                else {
-                  treeLoader.baseParams = {
-                    scope: scopeName,
-                    app: appName,
-                    dbProvider: dbDict.Provider,
-                    dbServer: dbInfo.dbServer,
-                    dbInstance: dbInfo.dbInstance,
-                    dbName: dbInfo.dbName,
-                    dbSchema: dbDict.SchemaName,
-                    dbUserName: dbInfo.dbUserName,
-                    dbPassword: dbInfo.dbPassword,
-                    portNumber: dbInfo.portNumber,
-                    tableNames: selectTableNames
-                  };
-                }
+								treeLoader.dataUrl = 'AdapterManager/DBObjects';
+								if (dsConfigPane) {
+									var dsConfigForm = dsConfigPane.getForm();
+									treeLoader.baseParams = {
+										scope: scopeName,
+										app: appName,
+										dbProvider: dsConfigForm.findField('dbProvider').getValue(),
+										dbServer: dsConfigForm.findField('dbServer').getValue(),
+										dbInstance: dsConfigForm.findField('dbInstance').getValue(),
+										dbName: dsConfigForm.findField('dbName').getValue(),
+										dbSchema: dsConfigForm.findField('dbSchema').getValue(),
+										dbUserName: dsConfigForm.findField('dbUserName').getValue(),
+										dbPassword: dsConfigForm.findField('dbPassword').getValue(),
+										portNumber: dsConfigForm.findField('portNumber').getValue(),
+										tableNames: selectTableNames
+									};
+								}
+								else {
+									treeLoader.baseParams = {
+										scope: scopeName,
+										app: appName,
+										dbProvider: dbDict.Provider,
+										dbServer: dbInfo.dbServer,
+										dbInstance: dbInfo.dbInstance,
+										dbName: dbInfo.dbName,
+										dbSchema: dbDict.SchemaName,
+										dbUserName: dbInfo.dbUserName,
+										dbPassword: dbInfo.dbPassword,
+										portNumber: dbInfo.portNumber,
+										tableNames: selectTableNames
+									};
+								}
 
-                var rootNode = dbObjectsTree.getRootNode();
-                rootNode.reload(
+								var rootNode = dbObjectsTree.getRootNode();
+								rootNode.reload(
                 function (rootNode) {
-                  loadTree(rootNode);
+                	loadTree(rootNode);
                 });
-              }
-            }, {
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/edit-clear.png',
-              text: 'Reset',
-              tooltip: 'Reset to the latest applied changes',
-              handler: function () {
-                var rootNode = dataObjectsPane.items.items[0].items.items[0].getRootNode();
-                var selectTableNames = new Array();
-                var selectTableNamesSingle = new Array();
-                var firstSelectTableNames = new Array();
-                var availTableName = new Array();
-                var found = false;
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/edit-clear.png',
+							text: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
+							handler: function () {
+								var rootNode = dataObjectsPane.items.items[0].items.items[0].getRootNode();
+								var selectTableNames = new Array();
+								var selectTableNamesSingle = new Array();
+								var firstSelectTableNames = new Array();
+								var availTableName = new Array();
+								var found = false;
 
-                for (var i = 0; i < dbTableNames.items.length; i++) {
-                  availTableName.push(dbTableNames.items[i]);
-                }
+								for (var i = 0; i < dbTableNames.items.length; i++) {
+									availTableName.push(dbTableNames.items[i]);
+								}
 
-                for (var j = 0; j < availTableName.length; j++)
-                  for (var i = 0; i < rootNode.childNodes.length; i++) {
-                    if (rootNode.childNodes[i].text == availTableName[j]) {
-                      found = true;
-                      availTableName.splice(j, 1);
-                      j--;
-                      break;
-                    }
-                  }
+								for (var j = 0; j < availTableName.length; j++)
+									for (var i = 0; i < rootNode.childNodes.length; i++) {
+										if (rootNode.childNodes[i].text == availTableName[j]) {
+											found = true;
+											availTableName.splice(j, 1);
+											j--;
+											break;
+										}
+									}
 
-                for (var i = 0; i < rootNode.childNodes.length; i++) {
-                  var nodeText = rootNode.childNodes[i].text;
-                  selectTableNames.push([nodeText, nodeText]);
-                  selectTableNamesSingle.push(nodeText);
-                }
+								for (var i = 0; i < rootNode.childNodes.length; i++) {
+									var nodeText = rootNode.childNodes[i].text;
+									selectTableNames.push([nodeText, nodeText]);
+									selectTableNamesSingle.push(nodeText);
+								}
 
-                if (selectTableNames[0]) {
-                  firstSelectTableNames.push(selectTableNames[0]);
-                  var tablesSelector = tablesSelectorPane.items.items[1];
+								if (selectTableNames[0]) {
+									firstSelectTableNames.push(selectTableNames[0]);
+									var tablesSelector = tablesSelectorPane.items.items[1];
 
-                  if (tablesSelector.toMultiselect.store.data) {
-                    tablesSelector.toMultiselect.reset();
-                    tablesSelector.toMultiselect.store.removeAll();
-                  }
+									if (tablesSelector.toMultiselect.store.data) {
+										tablesSelector.toMultiselect.reset();
+										tablesSelector.toMultiselect.store.removeAll();
+									}
 
-                  tablesSelector.toMultiselect.store.loadData(firstSelectTableNames);
-                  tablesSelector.toMultiselect.store.commitChanges();
+									tablesSelector.toMultiselect.store.loadData(firstSelectTableNames);
+									tablesSelector.toMultiselect.store.commitChanges();
 
-                  var firstSelectTables = tablesSelector.toMultiselect.store.data.items;
-                  var loadSingle = false;
-                  var selectTableName = firstSelectTables[0].data.text;
+									var firstSelectTables = tablesSelector.toMultiselect.store.data.items;
+									var loadSingle = false;
+									var selectTableName = firstSelectTables[0].data.text;
 
-                  if (selectTableName[1])
-                    if (selectTableName[1].length > 1)
-                      var loadSingle = true;
+									if (selectTableName[1])
+										if (selectTableName[1].length > 1)
+											var loadSingle = true;
 
-                  tablesSelector.toMultiselect.reset();
-                  tablesSelector.toMultiselect.store.removeAll();
+									tablesSelector.toMultiselect.reset();
+									tablesSelector.toMultiselect.store.removeAll();
 
-                  if (!loadSingle)
-                    tablesSelector.toMultiselect.store.loadData(selectTableNames);
-                  else
-                    tablesSelector.toMultiselect.store.loadData(selectTableNamesSingle);
+									if (!loadSingle)
+										tablesSelector.toMultiselect.store.loadData(selectTableNames);
+									else
+										tablesSelector.toMultiselect.store.loadData(selectTableNamesSingle);
 
-                  tablesSelector.toMultiselect.store.commitChanges();
-                }
-                else {
-                  if (tablesSelector.toMultiselect) {
-                    tablesSelector.toMultiselect.reset();
-                    tablesSelector.toMultiselect.store.removeAll();
-                    tablesSelector.toMultiselect.store.commitChanges();
-                  }
-                }
+									tablesSelector.toMultiselect.store.commitChanges();
+								}
+								else {
+									if (tablesSelector.toMultiselect) {
+										tablesSelector.toMultiselect.reset();
+										tablesSelector.toMultiselect.store.removeAll();
+										tablesSelector.toMultiselect.store.commitChanges();
+									}
+								}
 
-                if (tablesSelector.fromMultiselect.store.data) {
-                  tablesSelector.fromMultiselect.reset();
-                  tablesSelector.fromMultiselect.store.removeAll();
-                }
+								if (tablesSelector.fromMultiselect.store.data) {
+									tablesSelector.fromMultiselect.reset();
+									tablesSelector.fromMultiselect.store.removeAll();
+								}
 
-                tablesSelector.fromMultiselect.store.loadData(availTableName);
-                tablesSelector.fromMultiselect.store.commitChanges();
-              }
-            }]
-          })
-        });
-        editPane.add(tablesSelectorPane);
-        var panelIndex = editPane.items.indexOf(tablesSelectorPane);
-        editPane.getLayout().setActiveItem(panelIndex);
+								tablesSelector.fromMultiselect.store.loadData(availTableName);
+								tablesSelector.fromMultiselect.store.commitChanges();
+							}
+						}]
+					})
+				});
+				editPane.add(tablesSelectorPane);
+				var panelIndex = editPane.items.indexOf(tablesSelectorPane);
+				editPane.getLayout().setActiveItem(panelIndex);
 
-      }
-    };
+			}
+		};
 
-    var setRelations = function (editPane, node) {
-      if (editPane && node) {
-        if (editPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + node.id]) {
-          var relationCreatePane = editPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + node.id];
-          if (relationCreatePane) {
-            //relationConfigPane.destroy();
-            var panelIndex = editPane.items.indexOf(relationCreatePane);
-            editPane.getLayout().setActiveItem(panelIndex);
-            return;
-          }
-        }
+		var setRelations = function (editPane, node) {
+			if (editPane && node) {
+				if (editPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + node.id]) {
+					var relationCreatePane = editPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + node.id];
+					if (relationCreatePane) {
+						//relationConfigPane.destroy();
+						var panelIndex = editPane.items.indexOf(relationCreatePane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
+					}
+				}
 
-        var relationCreateFormPanel = new Ext.FormPanel({
-          labelWidth: 155,
-          id: scopeName + '.' + appName + '.relationCreateForm.' + node.id,
-          border: false,
-          autoScroll: false,
-          monitorValid: true,
-          bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-          defaults: { anchor: '100%', allowBlank: false },
-          items: [{
-            xtype: 'label',
-            fieldLabel: 'Add/Remove relationship',
-            labelSeparator: '',
-            itemCls: 'form-title'
-          }, {
-            xtype: 'textfield',
-            name: 'relationName',
-            fieldLabel: 'Relationship Name',
-            allowBlank: false
-          }, {
-            xtype: 'panel',
-            id: scopeName + '.' + appName + '.dataRelationDeletePane.' + node.id,
-            autoScroll: true,
-            layout: 'fit',
-            anchor: '100% -50',
-            border: false,
-            frame: false
-          }],
-          keys: [{
-            key: [Ext.EventObject.ENTER], handler: function () {
-              addRelationship(relationCreateFormPanel, node);
-            }
-          }],
-          tbar: new Ext.Toolbar({
-            items: [{
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/apply.png',
-              text: 'Apply',
-              tooltip: 'Apply the current changes to the data objects tree',
-              handler: function () {
-                var deleteDataRelationPane = relationCreateFormPanel.items.items[2];
-                var gridLabel = scopeName + '.' + appName + '.' + node.id;
-                var gridPane = deleteDataRelationPane.items.map[gridLabel];
-                if (gridPane) {
-                  var mydata = gridPane.store.data.items;
+				var relationCreateFormPanel = new Ext.FormPanel({
+					labelWidth: 155,
+					id: scopeName + '.' + appName + '.relationCreateForm.' + node.id,
+					border: false,
+					autoScroll: false,
+					monitorValid: true,
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+					defaults: { anchor: '100%', allowBlank: false },
+					items: [{
+						xtype: 'label',
+						fieldLabel: 'Add/Remove relationship',
+						labelSeparator: '',
+						itemCls: 'form-title'
+					}, {
+						xtype: 'textfield',
+						name: 'relationName',
+						fieldLabel: 'Relationship Name',
+						allowBlank: false
+					}, {
+						xtype: 'panel',
+						id: scopeName + '.' + appName + '.dataRelationDeletePane.' + node.id,
+						autoScroll: true,
+						layout: 'fit',
+						anchor: '100% -50',
+						border: false,
+						frame: false
+					}],
+					keys: [{
+						key: [Ext.EventObject.ENTER], handler: function () {
+							addRelationship(relationCreateFormPanel, node);
+						}
+					}],
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/apply.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
+							handler: function () {
+								var deleteDataRelationPane = relationCreateFormPanel.items.items[2];
+								var gridLabel = scopeName + '.' + appName + '.' + node.id;
+								var gridPane = deleteDataRelationPane.items.map[gridLabel];
+								if (gridPane) {
+									var mydata = gridPane.store.data.items;
 
-                  for (var j = 0; j < node.childNodes.length; j++) {
-                    exitNode = false;
-                    for (var i = 0; i < mydata.length; i++) {
-                      newNodeText = mydata[i].data.relationName;
-                      if (node.childNodes[j].text.toLowerCase() == newNodeText.toLowerCase()) {
-                        exitNode = true;
-                        break;
-                      }
-                    }
-                    if (exitNode == false) {
-                      var deleteNode = node.childNodes[j];
-                      node.childNodes.splice(j, 1);
-                      j--;
-                      node.removeChild(deleteNode);
-                    }
-                  }
-                }
-              }
-            }, {
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/edit-clear.png',
-              text: 'Reset',
-              tooltip: 'Reset to the latest applied changes',
-              handler: function () {
-                var relations = new Array();
-                relationCreateFormPanel.getForm().reset();
-                for (i = 0; i < node.childNodes.length; i++) {
-                  if (node.childNodes[i].text != '')
-                    relations.push([node.childNodes[i].text]);
-                }
-                var colModel = new Ext.grid.ColumnModel([
+
+									for (var j = 0; j < node.childNodes.length; j++) {
+										exitNode = false;
+										for (var i = 0; i < mydata.length; i++) {
+											newNodeText = mydata[i].data.relationName;
+											if (node.childNodes[j].text.toLowerCase() == newNodeText.toLowerCase()) {
+												exitNode = true;
+												break;
+											}
+										}
+										if (exitNode == false) {
+											var deleteNode = node.childNodes[j];
+											node.childNodes.splice(j, 1);
+											j--;
+											node.removeChild(deleteNode);
+										}
+									}
+								}
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/edit-clear.png',
+							text: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
+							handler: function () {
+								var relations = new Array();
+								relationCreateFormPanel.getForm().reset();
+								for (i = 0; i < node.childNodes.length; i++) {
+									if (node.childNodes[i].text != '')
+										relations.push([node.childNodes[i].text]);
+								}
+								var colModel = new Ext.grid.ColumnModel([
+
                       { id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' }
                     ]);
-                var dataStore = new Ext.data.Store({
-                  autoDestroy: true,
-                  proxy: new Ext.data.MemoryProxy(relations),
-                  reader: new Ext.data.ArrayReader({}, [
+								var dataStore = new Ext.data.Store({
+									autoDestroy: true,
+									proxy: new Ext.data.MemoryProxy(relations),
+									reader: new Ext.data.ArrayReader({}, [
                     { name: 'relationName' }
                   ])
-                });
-                createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName);
-              }
-            }]
-          })
-        });
-        editPane.add(relationCreateFormPanel);
-        var panelIndex = editPane.items.indexOf(relationCreateFormPanel);
-        editPane.getLayout().setActiveItem(panelIndex);
+								});
+								createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName);
+							}
+						}]
+					})
+				});
+				editPane.add(relationCreateFormPanel);
+				var panelIndex = editPane.items.indexOf(relationCreateFormPanel);
+				editPane.getLayout().setActiveItem(panelIndex);
 
-        var deleteDataRelationPane = relationCreateFormPanel.items.items[2];
-        var relations = new Array();
-        var gridLabel = scopeName + '.' + appName + '.' + node.id;
-        var i = 0;
-        if (deleteDataRelationPane.items) {
-          var gridPane = deleteDataRelationPane.items.map[gridLabel];
-          if (gridPane) {
-            gridPane.destroy();
-          }
-        }
+				var deleteDataRelationPane = relationCreateFormPanel.items.items[2];
+				var relations = new Array();
+				var gridLabel = scopeName + '.' + appName + '.' + node.id;
+				var i = 0;
+				if (deleteDataRelationPane.items) {
+					var gridPane = deleteDataRelationPane.items.map[gridLabel];
+					if (gridPane) {
+						gridPane.destroy();
+					}
+				}
 
-        for (i = 0; i < node.childNodes.length; i++) {
-          if (node.childNodes[i].text != '')
-            relations.push([node.childNodes[i].text]);
-        }
-        var colModel = new Ext.grid.ColumnModel([
+				for (i = 0; i < node.childNodes.length; i++) {
+					if (node.childNodes[i].text != '')
+						relations.push([node.childNodes[i].text]);
+				}
+				var colModel = new Ext.grid.ColumnModel([
             { id: "relationName", header: "Data Relationship Name", dataIndex: 'relationName' }
           ]);
-        var dataStore = new Ext.data.Store({
-          autoDestroy: true,
-          proxy: new Ext.data.MemoryProxy(relations),
-          reader: new Ext.data.ArrayReader({}, [
+				var dataStore = new Ext.data.Store({
+					autoDestroy: true,
+					proxy: new Ext.data.MemoryProxy(relations),
+					reader: new Ext.data.ArrayReader({}, [
               { name: 'relationName' }
             ])
-        });
-        createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName);
-      }
-    };
+				});
+				createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName);
+			}
+		};
 
-    var addRelationship = function (relationCreateFormPanel, node) {
-      var deleteDataRelationPane = relationCreateFormPanel.items.items[2];
-      var relationName = relationCreateFormPanel.getForm().findField("relationName").getValue().replace(/^\s*/, "").replace(/\s*$/, "");
-      if (relationName == "") {
-        var message = 'Relationship name cannot be blank.';
-        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-        return;
-      }
+		var addRelationship = function (relationCreateFormPanel, node) {
+			var deleteDataRelationPane = relationCreateFormPanel.items.items[2];
+			var relationName = relationCreateFormPanel.getForm().findField("relationName").getValue().replace(/^\s*/, "").replace(/\s*$/, "");
+			if (relationName == "") {
+				var message = 'Relationship name cannot be blank.';
+				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+				return;
+			}
 
-      var gridLabel = scopeName + '.' + appName + '.' + node.id;
-      if (deleteDataRelationPane.items) {
-        var gridPane = deleteDataRelationPane.items.map[gridLabel];
-        var myArray = new Array();
-        var i = 0;
-        if (gridPane) {
-          var dataStore = gridPane.store;
-          var mydata = dataStore.data.items;
+			var gridLabel = scopeName + '.' + appName + '.' + node.id;
+			if (deleteDataRelationPane.items) {
+				var gridPane = deleteDataRelationPane.items.map[gridLabel];
+				var myArray = new Array();
+				var i = 0;
+				if (gridPane) {
+					var dataStore = gridPane.store;
+					var mydata = dataStore.data.items;
 
-          for (var i = 0; i < mydata.length; i++)
-            if (mydata[i].data.relationName.toLowerCase() == relationName.toLowerCase()) {
-              var message = relationName + 'already exits.';
-              showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-              return;
-            }
+					for (var i = 0; i < mydata.length; i++)
+						if (mydata[i].data.relationName.toLowerCase() == relationName.toLowerCase()) {
+							var message = relationName + 'already exits.';
+							showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+							return;
+						}
 
-          var relationRecord = Ext.data.Record.create([
+					var relationRecord = Ext.data.Record.create([
             { name: "relationName" }
           ]);
 
-          var newRelationRecord = new relationRecord({
-            relationName: relationName
-          });
+					var newRelationRecord = new relationRecord({
+						relationName: relationName
+					});
 
-          dataStore.add(newRelationRecord);
-          dataStore.commitChanges();
-        }
-      }
-    }
+					dataStore.add(newRelationRecord);
+					dataStore.commitChanges();
+				}
+			}
+		}
 
 
 
-    var loadTree = function (rootNode) {
-      var relationTypeStr = ['OneToOne', 'OneToMany'];
+		var loadTree = function (rootNode) {
+			var relationTypeStr = ['OneToOne', 'OneToMany'];
 
-      // sync data object tree with data dictionary
-      for (var i = 0; i < rootNode.childNodes.length; i++) {
-        var dataObjectNode = rootNode.childNodes[i];
+			// sync data object tree with data dictionary
+			for (var i = 0; i < rootNode.childNodes.length; i++) {
+				var dataObjectNode = rootNode.childNodes[i];
 
-        for (var ii = 0; ii < dbDict.dataObjects.length; ii++) {
-          var dataObject = dbDict.dataObjects[ii];
-          // sync data object
-          dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
+				for (var ii = 0; ii < dbDict.dataObjects.length; ii++) {
+					var dataObject = dbDict.dataObjects[ii];
+					// sync data object
+					dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
 
-          if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
-            var keysNode = dataObjectNode.attributes.children[0];
-            var propertiesNode = dataObjectNode.attributes.children[1];
-            var relationshipsNode = dataObjectNode.attributes.children[2];
+					if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
+						var keysNode = dataObjectNode.attributes.children[0];
+						var propertiesNode = dataObjectNode.attributes.children[1];
+						var relationshipsNode = dataObjectNode.attributes.children[2];
 
-            // sync data properties
-            for (var j = 0; j < propertiesNode.children.length; j++) {
-              for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
-                if (propertiesNode.children[j].text.toLowerCase() ==
+						// sync data properties
+						for (var j = 0; j < propertiesNode.children.length; j++) {
+							for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
+								if (propertiesNode.children[j].text.toLowerCase() ==
                   dataObject.dataProperties[jj].propertyName.toLowerCase()) {
-                  propertiesNode.children[j].hidden = false;
-                }
-              }
-            }
+									propertiesNode.children[j].hidden = false;
+								}
+							}
+						}
 
-            // sync key properties
-            for (var j = 0; j < dataObject.keyProperties.length; j++) {
-              for (var k = 0; k < keysNode.children.length; k++) {
-                if (keysNode.children[k].text.toLowerCase() == dataObject.keyProperties[j].keyPropertyName.toLowerCase()) {
-                  j++;
-                  break;
-                }
-              }
-              if (j < dataObject.keyProperties.length) {
-                for (var jj = 0; jj < propertiesNode.children.length; jj++) {
-                  var nodeText = dataObject.keyProperties[j].keyPropertyName;
-                  if (propertiesNode.children[jj].text.toLowerCase() == nodeText.toLowerCase()) {
-                    var properties = propertiesNode.children[jj].properties;
-                    properties.keyType = 'assigned';
-                    properties.nullable = false;
+						// sync key properties
+						for (var j = 0; j < dataObject.keyProperties.length; j++) {
+							for (var k = 0; k < keysNode.children.length; k++) {
+								if (keysNode.children[k].text.toLowerCase() == dataObject.keyProperties[j].keyPropertyName.toLowerCase()) {
+									j++;
+									break;
+								}
+							}
+							if (j < dataObject.keyProperties.length) {
+								for (var jj = 0; jj < propertiesNode.children.length; jj++) {
+									var nodeText = dataObject.keyProperties[j].keyPropertyName;
+									if (propertiesNode.children[jj].text.toLowerCase() == nodeText.toLowerCase()) {
+										var properties = propertiesNode.children[jj].properties;
+										properties.keyType = 'assigned';
+										properties.nullable = false;
 
-                    newKeyNode = new Ext.tree.TreeNode({
-                      text: nodeText,
-                      type: "keyProperty",
-                      leaf: true,
-                      iconCls: 'property',
-                      hidden: false,
-                      properties: properties
-                    });
-                    newKeyNode.iconCls = 'property';
-                    propertiesNode.children.splice(jj, 1);
-                    jj--;
+										newKeyNode = new Ext.tree.TreeNode({
+											text: nodeText,
+											type: "keyProperty",
+											leaf: true,
+											iconCls: 'property',
+											hidden: false,
+											properties: properties
+										});
+										newKeyNode.iconCls = 'property';
+										propertiesNode.children.splice(jj, 1);
+										jj--;
 
-                    if (newKeyNode)
-                      keysNode.children.push(newKeyNode);
+										if (newKeyNode)
+											keysNode.children.push(newKeyNode);
 
-                    break;
-                  }
-                }
-              }
-            }
+										break;
+									}
+								}
+							}
+						}
 
-            // sync relationships
-            for (var j = 0; j < dataObject.dataRelationships.length; j++) {
-              var newNode = new Ext.tree.TreeNode({
-                text: dataObject.dataRelationships[j].relationshipName,
-                type: 'relationship',
-                leaf: true,
-                iconCls: 'relation',
-                objectName: dataObjectNode.text,
-                relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
-                relationshipType: relationTypeStr[dataObject.dataRelationships[j].relationshipType],
-                relationshipTypeIndex: dataObject.dataRelationships[j].relationshipType,
-                propertyMap: []
-              });
-              var mapArray = new Array();
-              for (var jj = 0; jj < dataObject.dataRelationships[j].propertyMaps.length; jj++) {
-                var mapItem = new Array();
-                mapItem['dataPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].dataPropertyName;
-                mapItem['relatedPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].relatedPropertyName;
-                mapArray.push(mapItem);
-              }
-              newNode.iconCls = 'relation';
-              newNode.attributes.propertyMap = mapArray;
-              relationshipsNode.expanded = true;
-              relationshipsNode.children.push(newNode);
-            }
-          }
-        }
-      }
-    };
+						// sync relationships
+						for (var j = 0; j < dataObject.dataRelationships.length; j++) {
+							var newNode = new Ext.tree.TreeNode({
+								text: dataObject.dataRelationships[j].relationshipName,
+								type: 'relationship',
+								leaf: true,
+								iconCls: 'relation',
+								objectName: dataObjectNode.text,
+								relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
+								relationshipType: relationTypeStr[dataObject.dataRelationships[j].relationshipType],
+								relationshipTypeIndex: dataObject.dataRelationships[j].relationshipType,
+								propertyMap: []
+							});
+							var mapArray = new Array();
+							for (var jj = 0; jj < dataObject.dataRelationships[j].propertyMaps.length; jj++) {
+								var mapItem = new Array();
+								mapItem['dataPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].dataPropertyName;
+								mapItem['relatedPropertyName'] = dataObject.dataRelationships[j].propertyMaps[jj].relatedPropertyName;
+								mapArray.push(mapItem);
+							}
+							newNode.iconCls = 'relation';
+							newNode.attributes.propertyMap = mapArray;
+							relationshipsNode.expanded = true;
+							relationshipsNode.children.push(newNode);
+						}
+					}
+				}
+			}
+		};
 
-    var dataPropFields = [{
-      name: 'columnName',
-      fieldLabel: 'Column Name',
-      disabled: true
-    }, {
-      name: 'propertyName',
-      fieldLabel: 'Property Name'
-    }, {
-      name: 'dataType',
-      fieldLabel: 'Data Type'
-    }, {
-      xtype: 'numberfield',
-      name: 'dataLength',
-      fieldLabel: 'Data Length'
-    }, {
-      xtype: 'checkbox',
-      name: 'nullable',
-      fieldLabel: 'Nullable'
-    }, {
-      xtype: 'checkbox',
-      name: 'showOnIndex',
-      fieldLabel: 'Show on Index'
-    }, {
-      xtype: 'numberfield',
-      name: 'numberOfDecimals',
-      fieldLabel: 'Number of Decimals'
-    }];
+		var dataPropFields = [{
+			name: 'columnName',
+			fieldLabel: 'Column Name',
+			disabled: true
+		}, {
+			name: 'propertyName',
+			fieldLabel: 'Property Name'
+		}, {
+			name: 'dataType',
+			fieldLabel: 'Data Type'
+		}, {
+			xtype: 'numberfield',
+			name: 'dataLength',
+			fieldLabel: 'Data Length'
+		}, {
+			xtype: 'checkbox',
+			name: 'nullable',
+			fieldLabel: 'Nullable'
+		}, {
+			xtype: 'checkbox',
+			name: 'showOnIndex',
+			fieldLabel: 'Show on Index'
+		}, {
+			xtype: 'numberfield',
+			name: 'numberOfDecimals',
+			fieldLabel: 'Number of Decimals'
+		}];
 
-    var setDataObject = function (editPane, node) {
-      if (editPane && node) {
-        if (editPane.items.map[scopeName + '.' + appName + '.objectNameForm.' + node.id]) {
-          var objectNameFormPane = editPane.items.map[scopeName + '.' + appName + '.objectNameForm.' + node.id];
-          if (objectNameFormPane) {
-            //objectNameFormPane.destroy();
-            var panelIndex = editPane.items.indexOf(objectNameFormPane);
-            editPane.getLayout().setActiveItem(panelIndex);
-            return;
-          }
-        }
+		var setDataObject = function (editPane, node) {
+			if (editPane && node) {
+				if (editPane.items.map[scopeName + '.' + appName + '.objectNameForm.' + node.id]) {
+					var objectNameFormPane = editPane.items.map[scopeName + '.' + appName + '.objectNameForm.' + node.id];
+					if (objectNameFormPane) {
+						//objectNameFormPane.destroy();
+						var panelIndex = editPane.items.indexOf(objectNameFormPane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
+					}
+				}
 
-        if (!node.attributes.properties.objectNamespace)
-          node.attributes.properties.objectNamespace = "org.iringtools.adapter.datalayer.proj_" + scopeName + "." + appName;
-        var dataObjectFormPanel = new Ext.FormPanel({
-          name: 'dataObject',
-          id: scopeName + '.' + appName + '.objectNameForm.' + node.id,
-          border: false,
-          autoScroll: true,
-          monitorValid: true,
-          labelWidth: 160,
-          bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-          defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
-          items: [{
-            xtype: 'label',
-            fieldLabel: 'Data Object',
-            labelSeparator: '',
-            itemCls: 'form-title'
-          }, {
-            name: 'tableName',
-            fieldLabel: 'Table Name',
-            value: node.text,
-            disabled: true
-          }, {
-            name: 'objectNamespace',
-            fieldLabel: 'Object Namespace',
-            value: node.attributes.properties.objectNamespace
-          }, {
-            name: 'objectName',
-            fieldLabel: 'Object Name',
-            value: node.attributes.properties.objectName
-          }, {
-            name: 'keyDelimiter',
-            fieldLabel: 'Key Delimiter',
-            value: node.attributes.properties.keyDelimiter,
-            allowBlank: true
-          }],
-          treeNode: node,
-          tbar: new Ext.Toolbar({
-            items: [{
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/apply.png',
-              text: 'Apply',
-              tooltip: 'Apply the current changes to the data objects tree',
-              handler: function (f) {
-                var form = dataObjectFormPanel.getForm();
-                if (form.treeNode) {
-                  var treeNodeProps = form.treeNode.attributes.properties;
-                  treeNodeProps['objectName'] = form.findField('objectName').getValue();
-                  treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();
-                }
-              }
-            }, {
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/edit-clear.png',
-              text: 'Reset',
-              tooltip: 'Reset to the latest applied changes',
-              handler: function (f) {
-                var form = dataObjectFormPanel.getForm();
-                form.findField('tableName').setValue(node.text);
-                if (node.attributes.properties) {
-                  form.findField('objectName').setValue(node.attributes.properties.objectName);
-                  form.findField('keyDelimiter').setValue(node.attributes.properties.keyDelimiter);
-                }
-              }
-            }]
-          })
-        });
-        editPane.add(dataObjectFormPanel);
-        var panelIndex = editPane.items.indexOf(dataObjectFormPanel);
-        editPane.getLayout().setActiveItem(panelIndex);
-      }
-    };
+				if (!node.attributes.properties.objectNamespace)
+					node.attributes.properties.objectNamespace = "org.iringtools.adapter.datalayer.proj_" + scopeName + "." + appName;
+				var dataObjectFormPanel = new Ext.FormPanel({
+					name: 'dataObject',
+					id: scopeName + '.' + appName + '.objectNameForm.' + node.id,
+					border: false,
+					autoScroll: true,
+					monitorValid: true,
+					labelWidth: 160,
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
+					items: [{
+						xtype: 'label',
+						fieldLabel: 'Data Object',
+						labelSeparator: '',
+						itemCls: 'form-title'
+					}, {
+						name: 'tableName',
+						fieldLabel: 'Table Name',
+						value: node.text,
+						disabled: true
+					}, {
+						name: 'objectNamespace',
+						fieldLabel: 'Object Namespace',
+						value: node.attributes.properties.objectNamespace
+					}, {
+						name: 'objectName',
+						fieldLabel: 'Object Name',
+						value: node.attributes.properties.objectName
+					}, {
+						name: 'keyDelimiter',
+						fieldLabel: 'Key Delimiter',
+						value: node.attributes.properties.keyDelimiter,
+						allowBlank: true
+					}],
+					treeNode: node,
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/apply.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
+							handler: function (f) {
+								var form = dataObjectFormPanel.getForm();
+								if (form.treeNode) {
+									var treeNodeProps = form.treeNode.attributes.properties;
+									treeNodeProps['objectName'] = form.findField('objectName').getValue();
+									treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();
+								}
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/edit-clear.png',
+							text: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
+							handler: function (f) {
+								var form = dataObjectFormPanel.getForm();
+								form.findField('tableName').setValue(node.text);
+								if (node.attributes.properties) {
+									form.findField('objectName').setValue(node.attributes.properties.objectName);
+									form.findField('keyDelimiter').setValue(node.attributes.properties.keyDelimiter);
+								}
+							}
+						}]
+					})
+				});
+				editPane.add(dataObjectFormPanel);
+				var panelIndex = editPane.items.indexOf(dataObjectFormPanel);
+				editPane.getLayout().setActiveItem(panelIndex);
+			}
+		};
 
-    var setItemSelectorAvailValues = function (node) {
-      var availItems = new Array();
-      var propertiesNode = node.parentNode.childNodes[1];
+		var setItemSelectorAvailValues = function (node) {
+			var availItems = new Array();
+			var propertiesNode = node.parentNode.childNodes[1];
 
-      for (var i = 0; i < propertiesNode.childNodes.length; i++) {
-        var itemName = propertiesNode.childNodes[i].text;
-        var found = false;
+			for (var i = 0; i < propertiesNode.childNodes.length; i++) {
+				var itemName = propertiesNode.childNodes[i].text;
+				var found = false;
 
-        for (var j = 0; j < node.childNodes.length; j++) {
-          if (node.childNodes[j].text == itemName) {
-            found = true;
-            break;
-          }
-        }
+				for (var j = 0; j < node.childNodes.length; j++) {
+					if (node.childNodes[j].text == itemName) {
+						found = true;
+						break;
+					}
+				}
 
-        if (!found) {
-          availItems.push([itemName, itemName]);
-        }
-      }
-      return availItems;
-    }
+				if (!found) {
+					availItems.push([itemName, itemName]);
+				}
+			}
+			return availItems;
+		}
 
-    var setItemSelectorselectedValues = function (node) {
-      var selectedItems = new Array();
-      var propertiesNode = node.parentNode.childNodes[1];
+		var setItemSelectorselectedValues = function (node) {
+			var selectedItems = new Array();
+			var propertiesNode = node.parentNode.childNodes[1];
 
-      for (var i = 0; i < node.childNodes.length; i++) {
-        var keyName = node.childNodes[i].text;
-        selectedItems.push([keyName, keyName]);
-      }
-      return selectedItems;
-    }
+			for (var i = 0; i < node.childNodes.length; i++) {
+				var keyName = node.childNodes[i].text;
+				selectedItems.push([keyName, keyName]);
+			}
+			return selectedItems;
+		}
 
-    var setKeysFolder = function (editPane, node) {
-      if (editPane && node) {
-        if (editPane.items.map[scopeName + '.' + appName + '.keysSelector.' + node.id]) {
-          var keysSelectorPane = editPane.items.map[scopeName + '.' + appName + '.keysSelector.' + node.id];
-          if (keysSelectorPane) {
-            //keysSelectorPane.destroy();
-            var panelIndex = editPane.items.indexOf(keysSelectorPane);
-            editPane.getLayout().setActiveItem(panelIndex);
-            return;
-          }
-        }
+		var setKeysFolder = function (editPane, node) {
+			if (editPane && node) {
+				if (editPane.items.map[scopeName + '.' + appName + '.keysSelector.' + node.id]) {
+					var keysSelectorPane = editPane.items.map[scopeName + '.' + appName + '.keysSelector.' + node.id];
+					if (keysSelectorPane) {
+						//keysSelectorPane.destroy();
+						var panelIndex = editPane.items.indexOf(keysSelectorPane);
+						editPane.getLayout().setActiveItem(panelIndex);
+						return;
+					}
+				}
 
-        var availItems = setItemSelectorAvailValues(node);
-        var selectedItems = setItemSelectorselectedValues(node);
+				var availItems = setItemSelectorAvailValues(node);
+				var selectedItems = setItemSelectorselectedValues(node);
 
-        var keysItemSelector = new Ext.ux.ItemSelector({
-          name: 'keySelector',
-          imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+				var keysItemSelector = new Ext.ux.ItemSelector({
+					bodyStyle: 'background:#eee',
+					name: 'keySelector',
+					frame: true,
+					imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
           hideLabel: true,
-          multiselects: [{
-            width: 230,
-            height: 370,
-            border: 0,
-            store: availItems,
-            displayField: 'keyName',
-            valueField: 'keyValue'
-          }, {
-            width: 230,
-            height: 370,
-            border: 0,
-            store: selectedItems,
-            displayField: 'keyName',
-            valueField: 'keyValue'
-          }],
-          treeNode: node
-        });
 
-        var keysSelectorPanel = new Ext.FormPanel({
-          id: scopeName + '.' + appName + '.keysSelector.' + node.id,
-          border: false,
-          autoScroll: true,
+					multiselects: [{
+						width: 240,
+						height: 370,
+						border: 0,
+						store: availItems,
+						displayField: 'keyName',
+						valueField: 'keyValue'
+					}, {
+						width: 240,
+						height: 370,
+						border: 0,
+						store: selectedItems,
+						displayField: 'keyName',
+						valueField: 'keyValue'
+					}],
+					treeNode: node
+				});
+
+
+				var keysSelectorPanel = new Ext.FormPanel({
+					id: scopeName + '.' + appName + '.keysSelector.' + node.id,
+					border: false,
+					autoScroll: true,
          // layout: 'fit',
-          bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-          labelWidth: 160,
-         // defaults: { anchor: '100%' },
-          items: [{
-            xtype: 'label',
-            fieldLabel: 'Select Keys',
-            itemCls: 'form-title',
-            labelSeparator: ''
-          }, keysItemSelector],
-          tbar: new Ext.Toolbar({
-            items: [{
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/apply.png',
-              text: 'Apply',
-              tooltip: 'Apply the current changes to the data objects tree',
-              handler: function (f) {
-                //var selectedValues = selectedValuesStr.split(',');
-                var selectedValues = keysItemSelector.toMultiselect.store.data.items;
-                var keysNode = keysItemSelector.treeNode;
-                var propertiesNode = keysNode.parentNode.childNodes[1];
 
-                for (var i = 0; i < keysNode.childNodes.length; i++) {
-                  var found = false;
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+					labelWidth: 160,
+					defaults: { anchor: '100%' },
+					items: [{
+						xtype: 'label',
+						fieldLabel: 'Select Keys',
+						itemCls: 'form-title',
+						labelSeparator: ''
+					}, keysItemSelector],
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/apply.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
+							handler: function (f) {
+								//var selectedValues = selectedValuesStr.split(',');
+								var selectedValues = keysItemSelector.toMultiselect.store.data.items;
+								var keysNode = keysItemSelector.treeNode;
+								var propertiesNode = keysNode.parentNode.childNodes[1];
 
-                  for (var j = 0; j < selectedValues.length; j++) {
-                    if (selectedValues[j].data.text.toLowerCase() == keysNode.childNodes[i].text.toLowerCase()) {
-                      found = true;
-                      break;
-                    }
-                  }
 
-                  if (!found) {
-                    if (keysNode.childNodes[i].attributes.properties)
-                      var properties = keysNode.childNodes[i].attributes.properties;
-                    else if (keysNode.childNodes[i].attributes.properties)
-                      var properties = keysNode.childNodes[i].attributes.properties;
+								for (var i = 0; i < keysNode.childNodes.length; i++) {
+									var found = false;
 
-                    if (properties) {
-                      properties['nullable'] = true;
-                      delete properties.keyType;
+									for (var j = 0; j < selectedValues.length; j++) {
+										if (selectedValues[j].data.text.toLowerCase() == keysNode.childNodes[i].text.toLowerCase()) {
+											found = true;
+											break;
+										}
+									}
 
-                      var propertyNode = new Ext.tree.TreeNode({
-                        text: keysNode.childNodes[i].text,
-                        type: "dataProperty",
-                        leaf: true,
-                        iconCls: 'property',
-                        properties: properties
-                      });
 
-                      propertyNode.iconCls = 'property';
-                      propertiesNode.appendChild(propertyNode);
-                      keysNode.removeChild(keysNode.childNodes[i], true);
-                      i--;
-                    }
-                  }
-                }
+									if (!found) {
+										if (keysNode.childNodes[i].attributes.properties)
+											var properties = keysNode.childNodes[i].attributes.properties;
+										else if (keysNode.childNodes[i].attributes.attributes.properties)
+											var properties = keysNode.childNodes[i].attributes.attributes.properties;
 
-                var nodeChildren = new Array();
-                for (var j = 0; j < keysNode.childNodes.length; j++)
-                  nodeChildren.push(keysNode.childNodes[j].text);
 
-                for (var j = 0; j < selectedValues.length; j++) {
-                  var found = false;
-                  for (var i = 0; i < nodeChildren.length; i++) {
-                    if (selectedValues[j].data.text.toLowerCase() == nodeChildren[i].toLowerCase()) {
-                      found = true;
-                      break;
-                    }
-                  }
+										if (properties) {
+											properties['nullable'] = true;
+											delete properties.keyType;
 
-                  if (!found) {
-                    var newKeyNode;
+											var propertyNode = new Ext.tree.TreeNode({
+												text: keysNode.childNodes[i].text,
+												type: "dataProperty",
+												leaf: true,
+												iconCls: 'property',
+												properties: properties
+											});
 
-                    for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
-                      if (propertiesNode.childNodes[jj].text == selectedValues[j].data.text) {
-                        var properties = propertiesNode.childNodes[jj].attributes.properties;
-                        properties.keyType = 'assigned';
-                        properties.nullable = false;
+											propertyNode.iconCls = 'property';
+											propertiesNode.appendChild(propertyNode);
+											keysNode.removeChild(keysNode.childNodes[i], true);
+											i--;
+										}
+									}
+								}
 
-                        newKeyNode = new Ext.tree.TreeNode({
-                          text: selectedValues[j].data.text,
-                          type: "keyProperty",
-                          leaf: true,
-                          iconCls: 'key',
-                          hidden: false,
-                          properties: properties
-                        });
-                        newKeyNode.iconCls = 'key';
-                        propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
-                        break;
-                      }
-                    }
+								var nodeChildren = new Array();
+								for (var j = 0; j < keysNode.childNodes.length; j++)
+									nodeChildren.push(keysNode.childNodes[j].text);
 
-                    if (newKeyNode) {
-                      keysNode.appendChild(newKeyNode);
-                      if (keysNode.expanded == false)
-                        keysNode.expand();
-                    }
-                  }
-                }
-              }
-            }, {
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/edit-clear.png',
-              text: 'Reset',
-              tooltip: 'Reset to the latest applied changes',
-              handler: function (f) {
-                var availItems = setItemSelectorAvailValues(node);
-                var selectedItems = setItemSelectorselectedValues(node);
-                if (keysItemSelector.fromMultiselect.store.data) {
-                  keysItemSelector.fromMultiselect.reset();
-                  keysItemSelector.fromMultiselect.store.removeAll();
-                }
+								for (var j = 0; j < selectedValues.length; j++) {
+									var found = false;
+									for (var i = 0; i < nodeChildren.length; i++) {
+										if (selectedValues[j].data.text.toLowerCase() == nodeChildren[i].toLowerCase()) {
+											found = true;
+											break;
+										}
+									}
 
-                keysItemSelector.fromMultiselect.store.loadData(availItems);
-                keysItemSelector.fromMultiselect.store.commitChanges();
+									if (!found) {
+										var newKeyNode;
 
-                if (keysItemSelector.toMultiselect.store.data) {
-                  keysItemSelector.toMultiselect.reset();
-                  keysItemSelector.toMultiselect.store.removeAll();
-                }
+										for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
+											if (propertiesNode.childNodes[jj].text == selectedValues[j].data.text) {
+												var properties = propertiesNode.childNodes[jj].attributes.properties;
+												properties.keyType = 'assigned';
+												properties.nullable = false;
 
-                keysItemSelector.toMultiselect.store.loadData(selectedItems);
-                keysItemSelector.toMultiselect.store.commitChanges();
-              }
-            }]
-          })
-        });
+												newKeyNode = new Ext.tree.TreeNode({
+													text: selectedValues[j].data.text,
+													type: "keyProperty",
+													leaf: true,
+													iconCls: 'key',
+													hidden: false,
+													properties: properties
+												});
+												newKeyNode.iconCls = 'key';
+												propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
+												break;
+											}
+										}
 
-        editPane.add(keysSelectorPanel);
-        var panelIndex = editPane.items.indexOf(keysSelectorPanel);
-        editPane.getLayout().setActiveItem(panelIndex);
-      }
-    };
+										if (newKeyNode) {
+											keysNode.appendChild(newKeyNode);
+											if (keysNode.expanded == false)
+												keysNode.expand();
+										}
+									}
+								}
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/edit-clear.png',
+							text: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
+							handler: function (f) {
+								var availItems = setItemSelectorAvailValues(node);
+								var selectedItems = setItemSelectorselectedValues(node);
+								if (keysItemSelector.fromMultiselect.store.data) {
+									keysItemSelector.fromMultiselect.reset();
+									keysItemSelector.fromMultiselect.store.removeAll();
+								}
 
-    var setPropertiesFolder = function (editPane, node) {
-      if (editPane && node) {
-        if (editPane.items.map[scopeName + '.' + appName + '.propertiesSelector.' + node.id]) {
-          var propertiesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.propertiesSelector.' + node.id];
-          if (propertiesSelectorPane) {
-            propertiesSelectorPane.destroy();
-            //var panelIndex = editPane.items.indexOf(propertiesSelectorPane);
-            //editPane.getLayout().setActiveItem(panelIndex);
-            //return;
-          }
-        }
+								keysItemSelector.fromMultiselect.store.loadData(availItems);
+								keysItemSelector.fromMultiselect.store.commitChanges();
 
-        var availItems = new Array();
-        var selectedItems = new Array();
-        for (var i = 0; i < node.childNodes.length; i++) {
-          var itemName = node.childNodes[i].text;
-          if (node.childNodes[i].hidden == false)
-            selectedItems.push([itemName, itemName]);
-          else
-            availItems.push([itemName, itemName]);
-        }
+								if (keysItemSelector.toMultiselect.store.data) {
+									keysItemSelector.toMultiselect.reset();
+									keysItemSelector.toMultiselect.store.removeAll();
+								}
 
-        var propertiesItemSelector = new Ext.ux.ItemSelector({
-          name: 'propertySelector',
-          imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
-          hideLabel: true,
-          multiselects: [{
-            width: 230,
-            height: 370,
-            store: availItems,
-            displayField: 'propertyName',
-            valueField: 'propertyValue'
-          }, {
-            width: 230,
-            height: 370,
-            store: selectedItems,
-            displayField: 'propertyName',
-            valueField: 'propertyValue'
-          }],
-          treeNode: node
-        });
+								keysItemSelector.toMultiselect.store.loadData(selectedItems);
+								keysItemSelector.toMultiselect.store.commitChanges();
+							}
+						}]
+					})
+				});
 
-        var propertiesSelectorPanel = new Ext.FormPanel({
-          bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-          id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
-          border: false,
-          autoScroll: true,
-          //layout: 'border',
-         // defaults: { anchor: '100%' },
-          labelWidth: 160,
-          items: [{
-            xtype: 'label',
-            fieldLabel: 'Select Properties',
-            itemCls: 'form-title',
-            labelSeparator: ''
-          }, propertiesItemSelector],
-          tbar: new Ext.Toolbar({
-            items: [{
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/apply.png',
-              text: 'Apply',
-              tooltip: 'Apply the current changes to the data objects tree',
-              handler: function (f) {
-                var selectedValues = propertiesItemSelector.toMultiselect.store.data.items;
-                var treeNode = propertiesItemSelector.treeNode;
+				editPane.add(keysSelectorPanel);
+				var panelIndex = editPane.items.indexOf(keysSelectorPanel);
+				editPane.getLayout().setActiveItem(panelIndex);
+			}
+		};
 
-                for (var i = 0; i < treeNode.childNodes.length; i++) {
-                  var found = false;
+		var setPropertiesFolder = function (editPane, node) {
+			if (editPane && node) {
+				if (editPane.items.map[scopeName + '.' + appName + '.propertiesSelector.' + node.id]) {
+					var propertiesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.propertiesSelector.' + node.id];
+					if (propertiesSelectorPane) {
+						propertiesSelectorPane.destroy();
+						//var panelIndex = editPane.items.indexOf(propertiesSelectorPane);
+						//editPane.getLayout().setActiveItem(panelIndex);
+						//return;
+					}
+				}
 
-                  for (var j = 0; j < selectedValues.length; j++) {
-                    if (selectedValues[j].data.text.toLowerCase() == treeNode.childNodes[i].text.toLowerCase()) {
-                      found = true;
-                      break;
-                    }
-                  }
+				var availItems = new Array();
+				var selectedItems = new Array();
+				for (var i = 0; i < node.childNodes.length; i++) {
+					var itemName = node.childNodes[i].text;
+					if (node.childNodes[i].hidden == false)
+						selectedItems.push([itemName, itemName]);
+					else
+						availItems.push([itemName, itemName]);
+				}
 
-                  if (!found)
-                    treeNode.childNodes[i].getUI().hide();
-                  else
-                    treeNode.childNodes[i].getUI().show();
+				var propertiesItemSelector = new Ext.ux.ItemSelector({
+					bodyStyle: 'background:#eee',
+					name: 'propertySelector',
+					imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+					frame: true,
+					hideLabel: true,
+					multiselects: [{
+						width: 240,
+						height: 370,
+						store: availItems,
+						displayField: 'propertyName',
+						valueField: 'propertyValue',
+						border: 0
+					}, {
+						width: 240,
+						height: 370,
+						store: selectedItems,
+						displayField: 'propertyName',
+						valueField: 'propertyValue',
+						border: 0
+					}],
+					treeNode: node
+				});
 
-                  if (treeNode.expanded == false)
-                    treeNode.expand();
-                }
-              }
-            }, {
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'tbbutton',
-              icon: 'Content/img/16x16/edit-clear.png',
-              text: 'Reset',
-              tooltip: 'Reset to the latest applied changes',
-              handler: function (f) {
-                var availProps = new Array();
-                var selectedProps = new Array();
-                var availPropsSingle = new Array();
-                var toPropsSingle = new Array();
-                var firstAvailProps = new Array();
-                var firstToProps = new Array();
-                for (var i = 0; i < node.childNodes.length; i++) {
-                  var itemName = node.childNodes[i].text;
-                  if (node.childNodes[i].hidden == false) {
-                    selectedProps.push([itemName, itemName]);
-                    toPropsSingle.push(itemName);
-                  }
-                  else {
-                    availProps.push([itemName, itemName]);
-                    availPropsSingle.push(itemName);
-                  }
-                }
+				var propertiesSelectorPanel = new Ext.FormPanel({
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+					id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
+					border: false,
+					frame: false,
+					autoScroll: true,
 
-                if (availProps[0]) {
-                  firstAvailProps.push(availProps[0]);
+          layout: 'fit',
+					defaults: { anchor: '100%' },
+					labelWidth: 160,
+					items: [{
+						xtype: 'label',
+						fieldLabel: 'Select Properties',
+						itemCls: 'form-title',
+						labelSeparator: ''
+					}, propertiesItemSelector],
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/apply.png',
+							text: 'Apply',
+							tooltip: 'Apply the current changes to the data objects tree',
+							handler: function (f) {
+								var selectedValues = propertiesItemSelector.toMultiselect.store.data.items;
+								var treeNode = propertiesItemSelector.treeNode;
 
-                  if (propertiesItemSelector.fromMultiselect.store.data) {
-                    propertiesItemSelector.fromMultiselect.reset();
-                    propertiesItemSelector.fromMultiselect.store.removeAll();
-                  }
 
-                  propertiesItemSelector.fromMultiselect.store.loadData(firstAvailProps);
-                  propertiesItemSelector.fromMultiselect.store.commitChanges();
+								for (var i = 0; i < treeNode.childNodes.length; i++) {
+									var found = false;
 
-                  var firstAvailPropsItems = propertiesItemSelector.fromMultiselect.store.data.items;
-                  var loadSingle = false;
+									for (var j = 0; j < selectedValues.length; j++) {
+										if (selectedValues[j].data.text.toLowerCase() == treeNode.childNodes[i].text.toLowerCase()) {
+											found = true;
+											break;
+										}
+									}
 
-                  var availPropName = firstAvailPropsItems[0].data.text;
-                  if (availPropName[1])
-                    if (availPropName[1].length > 1)
-                      var loadSingle = true;
+									if (!found)
+										treeNode.childNodes[i].getUI().hide();
+									else
+										treeNode.childNodes[i].getUI().show();
 
-                  if (!loadSingle) {
-                    propertiesItemSelector.fromMultiselect.reset();
-                    propertiesItemSelector.fromMultiselect.store.removeAll();
-                    propertiesItemSelector.fromMultiselect.store.loadData(availProps);
-                    propertiesItemSelector.fromMultiselect.store.commitChanges();
-                  }
-                  else {
-                    propertiesItemSelector.fromMultiselect.reset();
-                    propertiesItemSelector.fromMultiselect.store.removeAll();
-                    propertiesItemSelector.fromMultiselect.store.loadData(availPropsSingle);
-                    propertiesItemSelector.fromMultiselect.store.commitChanges();
-                  }
-                }
-                else {
-                  propertiesItemSelector.fromMultiselect.reset();
-                  propertiesItemSelector.fromMultiselect.store.removeAll();
-                  propertiesItemSelector.fromMultiselect.store.commitChanges();
-                }
+									if (treeNode.expanded == false)
+										treeNode.expand();
+								}
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'tbbutton',
+							icon: 'Content/img/16x16/edit-clear.png',
+							text: 'Reset',
+							tooltip: 'Reset to the latest applied changes',
+							handler: function (f) {
+								var availProps = new Array();
+								var selectedProps = new Array();
+								var availPropsSingle = new Array();
+								var toPropsSingle = new Array();
+								var firstAvailProps = new Array();
+								var firstToProps = new Array();
+								for (var i = 0; i < node.childNodes.length; i++) {
+									var itemName = node.childNodes[i].text;
+									if (node.childNodes[i].hidden == false) {
+										selectedProps.push([itemName, itemName]);
+										toPropsSingle.push(itemName);
+									}
+									else {
+										availProps.push([itemName, itemName]);
+										availPropsSingle.push(itemName);
+									}
+								}
 
-                if (selectedProps[0]) {
-                  firstToProps.push(selectedProps[0]);
+								if (availProps[0]) {
+									firstAvailProps.push(availProps[0]);
 
-                  if (propertiesItemSelector.toMultiselect.store.data) {
-                    propertiesItemSelector.toMultiselect.reset();
-                    propertiesItemSelector.toMultiselect.store.removeAll();
-                  }
+									if (propertiesItemSelector.fromMultiselect.store.data) {
+										propertiesItemSelector.fromMultiselect.reset();
+										propertiesItemSelector.fromMultiselect.store.removeAll();
+									}
 
-                  propertiesItemSelector.toMultiselect.store.loadData(firstToProps);
-                  propertiesItemSelector.toMultiselect.store.commitChanges();
+									propertiesItemSelector.fromMultiselect.store.loadData(firstAvailProps);
+									propertiesItemSelector.fromMultiselect.store.commitChanges();
 
-                  var firstToPropsItems = propertiesItemSelector.toMultiselect.store.data.items;
-                  var loadSingle = false;
+									var firstAvailPropsItems = propertiesItemSelector.fromMultiselect.store.data.items;
+									var loadSingle = false;
 
-                  var toPropName = firstToPropsItems[0].data.text;
-                  if (toPropName[1])
-                    if (toPropName[1].length > 1)
-                      var loadSingle = true;
+									var availPropName = firstAvailPropsItems[0].data.text;
+									if (availPropName[1])
+										if (availPropName[1].length > 1)
+											var loadSingle = true;
 
-                  if (!loadSingle) {
-                    propertiesItemSelector.toMultiselect.reset();
-                    propertiesItemSelector.toMultiselect.store.removeAll();
-                    propertiesItemSelector.toMultiselect.store.loadData(selectedProps);
-                    propertiesItemSelector.toMultiselect.store.commitChanges();
-                  }
-                  else {
-                    propertiesItemSelector.toMultiselect.reset();
-                    propertiesItemSelector.toMultiselect.store.removeAll();
-                    propertiesItemSelector.toMultiselect.store.loadData(toPropsSingle);
-                    propertiesItemSelector.toMultiselect.store.commitChanges();
-                  }
-                }
-                else {
-                  propertiesItemSelector.toMultiselect.reset();
-                  propertiesItemSelector.toMultiselect.store.removeAll();
-                  propertiesItemSelector.toMultiselect.store.commitChanges();
-                }
-              }
-            }]
-          })
-        });
+									if (!loadSingle) {
+										propertiesItemSelector.fromMultiselect.reset();
+										propertiesItemSelector.fromMultiselect.store.removeAll();
+										propertiesItemSelector.fromMultiselect.store.loadData(availProps);
+										propertiesItemSelector.fromMultiselect.store.commitChanges();
+									}
+									else {
+										propertiesItemSelector.fromMultiselect.reset();
+										propertiesItemSelector.fromMultiselect.store.removeAll();
+										propertiesItemSelector.fromMultiselect.store.loadData(availPropsSingle);
+										propertiesItemSelector.fromMultiselect.store.commitChanges();
+									}
+								}
+								else {
+									propertiesItemSelector.fromMultiselect.reset();
+									propertiesItemSelector.fromMultiselect.store.removeAll();
+									propertiesItemSelector.fromMultiselect.store.commitChanges();
+								}
 
-        editPane.add(propertiesSelectorPanel);
-        var panelIndex = editPane.items.indexOf(propertiesSelectorPanel);
-        editPane.getLayout().setActiveItem(panelIndex);
-      }
-    };
+								if (selectedProps[0]) {
+									firstToProps.push(selectedProps[0]);
 
-    var dataObjectsPane = new Ext.Panel({
-      layout: 'border',
-      id: scopeName + '.' + appName + '.dataObjectsPane',
-      frame: true,
-      items: [{
-        xtype: 'panel',
-        name: 'data-objects-pane',
-        region: 'west',
-        minWidth: 240,
-        width: 300,
-        split: true,
-        autoScroll: true,
-        bodyStyle: 'background:#fff',
-        items: [{
-          xtype: 'treepanel',
-          border: false,
-          autoScroll: true,
-          animate: true,
-          lines: true,
-          enableDD: false,
-          containerScroll: true,
-          rootVisible: true,
-          root: {
-            text: 'Data Objects',
-            nodeType: 'async',
-            iconCls: 'folder'
-          },
-          loader: new Ext.tree.TreeLoader(),
-          tbar: new Ext.Toolbar({
-            items: [{
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'button',
-              icon: 'Content/img/16x16/view-refresh.png',
-              text: 'Reload',
-              tooltip: 'Reload Data Objects',
-              handler: function () {
-                var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-                showTree(dbObjectsTree);
-              }
-            }, {
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'button',
-              icon: 'Content/img/16x16/document-properties.png',
-              text: 'Edit Connection',
-              tooltip: 'Edit database connection',
-              handler: function () {
-                editPane = dataObjectsPane.items.items[1];
-                if (!editPane) {
-                  var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-                }
-                setDsConfigPane(editPane);
-              }
-            }, {
-              xtype: 'tbspacer',
-              width: 4
-            }, {
-              xtype: 'button',
-              icon: 'Content/img/16x16/document-save.png',
-              text: 'Save',
-              tooltip: 'Save the data objects tree to the back-end server',
-              formBind: true,
-              handler: function (button) {
-                editPane = dataObjectsPane.items.items[1];
-                if (!editPane) {
-                  var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-                }
+									if (propertiesItemSelector.toMultiselect.store.data) {
+										propertiesItemSelector.toMultiselect.reset();
+										propertiesItemSelector.toMultiselect.store.removeAll();
+									}
 
-                var treeProperty = {};
-                treeProperty.dataObjects = new Array();
-                var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
-                var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-                var rootNode = dbObjectsTree.getRootNode();
-                treeProperty.IdentityConfiguration = null;
-                if (dsConfigPane) {
-                  var dsConfigForm = dsConfigPane.getForm();
-                  treeProperty.provider = dsConfigForm.findField('dbProvider').getValue();
-                  var dbServer = dsConfigForm.findField('dbServer').getValue();
-                  dbServer = (dbServer == 'localhost' ? '.' : dbServer);
-                  var upProvider = treeProperty.provider.toUpperCase();
+									propertiesItemSelector.toMultiselect.store.loadData(firstToProps);
+									propertiesItemSelector.toMultiselect.store.commitChanges();
 
-                  if (upProvider.indexOf('MSSQL') > -1) {
-                    var dbInstance = dsConfigForm.findField('dbInstance').getValue();
-                    var dbDatabase = dsConfigForm.findField('dbName').getValue();
-                    if (dbInstance.toUpperCase() == "DEFAULT") {
-                      var dataSrc = 'Data Source=' + dbServer + ';Initial Catalog=' + dbDatabase;
-                    } else {
-                      var dataSrc = 'Data Source=' + dbServer + '\\' + dbInstance + ';Initial Catalog=' + dbDatabase;
-                    }
-                  }
-                  else if (upProvider.indexOf('ORACLE') > -1)
-                    var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dsConfigForm.findField('portNumber').getValue() + ')))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=' + dsConfigForm.findField('serviceName').getValue() + ')))';
-                  else if (upProvider.indexOf('MYSQL') > -1)
-                    var dataSrc = 'Data Source=' + dbServer;
+									var firstToPropsItems = propertiesItemSelector.toMultiselect.store.data.items;
+									var loadSingle = false;
 
-                  treeProperty.connectionString = dataSrc
+									var toPropName = firstToPropsItems[0].data.text;
+									if (toPropName[1])
+										if (toPropName[1].length > 1)
+											var loadSingle = true;
+
+									if (!loadSingle) {
+										propertiesItemSelector.toMultiselect.reset();
+										propertiesItemSelector.toMultiselect.store.removeAll();
+										propertiesItemSelector.toMultiselect.store.loadData(selectedProps);
+										propertiesItemSelector.toMultiselect.store.commitChanges();
+									}
+									else {
+										propertiesItemSelector.toMultiselect.reset();
+										propertiesItemSelector.toMultiselect.store.removeAll();
+										propertiesItemSelector.toMultiselect.store.loadData(toPropsSingle);
+										propertiesItemSelector.toMultiselect.store.commitChanges();
+									}
+								}
+								else {
+									propertiesItemSelector.toMultiselect.reset();
+									propertiesItemSelector.toMultiselect.store.removeAll();
+									propertiesItemSelector.toMultiselect.store.commitChanges();
+								}
+							}
+						}]
+					})
+				});
+
+				editPane.add(propertiesSelectorPanel);
+				var panelIndex = editPane.items.indexOf(propertiesSelectorPanel);
+				editPane.getLayout().setActiveItem(panelIndex);
+			}
+		};
+
+		var dataObjectsPane = new Ext.Panel({
+			layout: 'border',
+			id: scopeName + '.' + appName + '.dataObjectsPane',
+			frame: false,
+			border: false,
+			items: [{
+				xtype: 'panel',
+				name: 'data-objects-pane',
+				region: 'west',
+				minWidth: 240,
+				width: 300,
+				split: true,
+				autoScroll: true,
+				bodyStyle: 'background:#fff',
+				items: [{
+					xtype: 'treepanel',
+					border: false,
+					autoScroll: true,
+					animate: true,
+					lines: true,
+					frame: false,
+					enableDD: false,
+					containerScroll: true,
+					rootVisible: true,
+					root: {
+						text: 'Data Objects',
+						nodeType: 'async',
+						iconCls: 'folder'
+					},
+					loader: new Ext.tree.TreeLoader(),
+					tbar: new Ext.Toolbar({
+						items: [{
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'button',
+							icon: 'Content/img/16x16/view-refresh.png',
+							text: 'Reload',
+							tooltip: 'Reload Data Objects',
+							handler: function () {
+								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+								showTree(dbObjectsTree);
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'button',
+							icon: 'Content/img/16x16/document-properties.png',
+							text: 'Edit Connection',
+							tooltip: 'Edit database connection',
+							handler: function () {
+								editPane = dataObjectsPane.items.items[1];
+								if (!editPane) {
+									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+								}
+								setDsConfigPane(editPane);
+							}
+						}, {
+							xtype: 'tbspacer',
+							width: 4
+						}, {
+							xtype: 'button',
+							icon: 'Content/img/16x16/document-save.png',
+							text: 'Save',
+							tooltip: 'Save the data objects tree to the back-end server',
+							formBind: true,
+							handler: function (button) {
+								editPane = dataObjectsPane.items.items[1];
+								if (!editPane) {
+									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+								}
+
+								var treeProperty = {};
+								treeProperty.dataObjects = new Array();
+								var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
+								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+								var rootNode = dbObjectsTree.getRootNode();
+								treeProperty.IdentityConfiguration = null;
+								if (dsConfigPane) {
+									var dsConfigForm = dsConfigPane.getForm();
+									treeProperty.provider = dsConfigForm.findField('dbProvider').getValue();
+									var dbServer = dsConfigForm.findField('dbServer').getValue();
+									dbServer = (dbServer == 'localhost' ? '.' : dbServer);
+									var upProvider = treeProperty.provider.toUpperCase();
+
+
+									if (upProvider.indexOf('MSSQL') > -1) {
+										var dbInstance = dsConfigForm.findField('dbInstance').getValue();
+										var dbDatabase = dsConfigForm.findField('dbName').getValue();
+										if (dbInstance.toUpperCase() == "DEFAULT") {
+											var dataSrc = 'Data Source=' + dbServer + ';Initial Catalog=' + dbDatabase;
+										} else {
+											var dataSrc = 'Data Source=' + dbServer + '\\' + dbInstance + ';Initial Catalog=' + dbDatabase;
+										}
+									}
+									else if (upProvider.indexOf('ORACLE') > -1)
+										var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dsConfigForm.findField('portNumber').getValue() + ')))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=' + dsConfigForm.findField('serviceName').getValue() + ')))';
+									else if (upProvider.indexOf('MYSQL') > -1)
+										var dataSrc = 'Data Source=' + dbServer;
+
+
+									treeProperty.connectionString = dataSrc
                                             + ';User ID=' + dsConfigForm.findField('dbUserName').getValue()
                                             + ';Password=' + dsConfigForm.findField('dbPassword').getValue();
-                  treeProperty.schemaName = dsConfigForm.findField('dbSchema').getValue();
-                }
-                else {
-                  treeProperty.provider = dbDict.Provider;
-                  var dbServer = dbInfo.dbServer;
-                  dbServer = (dbServer == 'localhost' ? '.' : dbServer);
-                  var upProvider = treeProperty.provider.toUpperCase();
-                  var dbInstance = dbInfo.dbInstance;
-                  if (upProvider.indexOf('MSSQL') > -1) {
-                    if (dbInstance.toUpperCase() == "DEFAULT") {
-                      var dataSrc = 'Data Source=' + dbServer + ';Initial Catalog=' + dbInfo.dbName;
-                    } else {
-                      var dataSrc = 'Data Source=' + dbServer + '\\' + dbInfo.dbInstance
-                                + ';Initial Catalog=' + dbInfo.dbName;
-                    }
-                  }
-                  else if (upProvider.indexOf('ORACLE') > -1)
-                    var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dbInfo.portNumber + ')))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=' + dbInfo.dbInstance + ')))';
-                  else if (upProvider.indexOf('MYSQL') > -1)
-                    var dataSrc = 'Data Source=' + dbServer;
 
-                  treeProperty.connectionString = dataSrc
+									treeProperty.schemaName = dsConfigForm.findField('dbSchema').getValue();
+								}
+								else {
+									treeProperty.provider = dbDict.Provider;
+									var dbServer = dbInfo.dbServer;									
+									var upProvider = treeProperty.provider.toUpperCase();
+									dbServer = (dbServer == 'localhost' ? '.' : dbServer);
+
+									if (upProvider.indexOf('MSSQL') > -1) {
+										if (dbInfo.dbInstance) {
+											if (dbInfo.dbInstance.toUpperCase() == "DEFAULT") {
+												var dataSrc = 'Data Source=' + dbServer + ';Initial Catalog=' + dbInfo.dbName;
+											} else {
+												var dataSrc = 'Data Source=' + dbServer + '\\' + dbInfo.dbInstance
+
+                                + ';Initial Catalog=' + dbInfo.dbName;
+
+											}
+										}
+									}
+									else if (upProvider.indexOf('ORACLE') > -1)
+										var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dbInfo.portNumber + ')))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=' + dbInfo.dbInstance + ')))';
+									else if (upProvider.indexOf('MYSQL') > -1)
+										var dataSrc = 'Data Source=' + dbServer;
+
+
+									treeProperty.connectionString = dataSrc
                                             + ';User ID=' + dbInfo.dbUserName
                                             + ';Password=' + dbInfo.dbPassword;
-                  treeProperty.schemaName = dbDict.SchemaName;
-                }
+									treeProperty.schemaName = dbDict.SchemaName;
+								}
 
-                var keyName;
-                for (var i = 0; i < rootNode.childNodes.length; i++) {
-                  var folderNode = rootNode.childNodes[i];
-                  var folderNodeProp = folderNode.attributes.properties;
-                  var folder = {};
-                  folder.tableName = folderNodeProp.objectName;
-                  folder.objectNamespace = folderNodeProp.objectNamespace;
-                  folder.objectName = folderNodeProp.objectName;
-                  if (!folderNodeProp.keyDelimeter)
-                    folder.keyDelimeter = 'null';
-                  else
-                    folder.keyDelimeter = folderNodeProp.keyDelimeter;
-                  folder.keyProperties = new Array();
-                  folder.dataProperties = new Array();
-                  folder.dataRelationships = new Array();
+								var keyName;
+								for (var i = 0; i < rootNode.childNodes.length; i++) {
+									var folderNode = rootNode.childNodes[i];
+									var folderNodeProp = folderNode.attributes.properties;
+									var folder = {};
+									folder.tableName = folderNodeProp.objectName;
+									folder.objectNamespace = folderNodeProp.objectNamespace;
+									folder.objectName = folderNodeProp.objectName;
+									if (!folderNodeProp.keyDelimeter)
+										folder.keyDelimeter = 'null';
+									else
+										folder.keyDelimeter = folderNodeProp.keyDelimeter;
+									folder.keyProperties = new Array();
+									folder.dataProperties = new Array();
+									folder.dataRelationships = new Array();
 
-                  for (var j = 0; j < folderNode.attributes.children.length; j++) {
-                    if (folderNode.childNodes[1])
-                      var propertyFolderNode = folderNode.childNodes[1];
-                    else
-                      var propertyFolderNode = folderNode.attributes.children[1];
+									for (var j = 0; j < folderNode.attributes.children.length; j++) {
+										if (folderNode.childNodes[1])
+											var propertyFolderNode = folderNode.childNodes[1];
+										else
+											var propertyFolderNode = folderNode.attributes.children[1];
 
-                    if (folderNode.childNodes[0])
-                      var keyFolderNode = folderNode.childNodes[0];
-                    else
-                      var keyFolderNode = folderNode.attributes.children[0];
+										if (folderNode.childNodes[0])
+											var keyFolderNode = folderNode.childNodes[0];
+										else
+											var keyFolderNode = folderNode.attributes.children[0];
 
-                    if (folderNode.childNodes[2])
-                      var relationFolderNode = folderNode.childNodes[2];
-                    else
-                      var relationFolderNode = folderNode.attributes.children[2];
+										if (folderNode.childNodes[2])
+											var relationFolderNode = folderNode.childNodes[2];
+										else
+											var relationFolderNode = folderNode.attributes.children[2];
 
-                    if (folderNode.childNodes[j])
-                      subFolderNodeText = folderNode.childNodes[j].text;
-                    else
-                      subFolderNodeText = folderNode.attributes.children[j].text;
+										if (folderNode.childNodes[j])
+											subFolderNodeText = folderNode.childNodes[j].text;
+										else
+											subFolderNodeText = folderNode.attributes.children[j].text;
 
-                    switch (subFolderNodeText) {
-                      case 'Keys':
-                        if (folderNode.childNodes[1])
-                          var keyChildenNodes = keyFolderNode.childNodes;
-                        else
-                          var keyChildenNodes = keyFolderNode.children;
+										switch (subFolderNodeText) {
+											case 'Keys':
+												if (folderNode.childNodes[1])
+													var keyChildenNodes = keyFolderNode.childNodes;
+												else
+													var keyChildenNodes = keyFolderNode.children;
 
-                        for (var k = 0; k < keyChildenNodes.length; k++) {
-                          var keyNode = keyChildenNodes[k];
+												for (var k = 0; k < keyChildenNodes.length; k++) {
+													var keyNode = keyChildenNodes[k];
 
-                          if (!keyNode.hidden) {
-                            var keyProps = {};
-                            keyProps.keyPropertyName = keyNode.text;
-                            keyName = keyNode.text;
-                            folder.keyProperties.push(keyProps);
+													if (!keyNode.hidden) {
+														var keyProps = {};
+														keyProps.keyPropertyName = keyNode.text;
+														keyName = keyNode.text;
+														folder.keyProperties.push(keyProps);
 
-                            var tagProps = {};
-                            tagProps.columnName = keyNode.text;
-                            tagProps.propertyName = keyNode.text;
-                            tagProps.dataType = 10;
-                            tagProps.dataLength = 100;
-                            tagProps.isNullable = 'false';
-                            tagProps.keyType = 1;
-                            tagProps.showOnIndex = 'false';
-                            tagProps.numberOfDecimals = 0;
-                            folder.dataProperties.push(tagProps);
-                          }
-                        }
-                        break;
-                      case 'Properties':
-                        if (folderNode.childNodes[1])
-                          var propChildenNodes = propertyFolderNode.childNodes;
-                        else
-                          var propChildenNodes = propertyFolderNode.children;
-                        for (var k = 0; k < propChildenNodes.length; k++) {
-                          var propertyNode = propChildenNodes[k];
+														var tagProps = {};
+														tagProps.columnName = keyNode.text;
+														tagProps.propertyName = keyNode.text;
+														tagProps.dataType = 10;
+														tagProps.dataLength = 100;
+														tagProps.isNullable = 'false';
+														tagProps.keyType = 1;
+														tagProps.showOnIndex = 'false';
+														tagProps.numberOfDecimals = 0;
+														folder.dataProperties.push(tagProps);
+													}
+												}
+												break;
+											case 'Properties':
+												if (folderNode.childNodes[1])
+													var propChildenNodes = propertyFolderNode.childNodes;
+												else
+													var propChildenNodes = propertyFolderNode.children;
+												for (var k = 0; k < propChildenNodes.length; k++) {
+													var propertyNode = propChildenNodes[k];
 
-                          if (!propertyNode.hidden) {
-                            if (propertyNode.properties)
-                              var propertyNodeProf = propertyNode.properties;
-                            else if (propertyNode.attributes)
-                              var propertyNodeProf = propertyNode.attributes.properties;
+													if (!propertyNode.hidden) {
+														if (propertyNode.properties)
+															var propertyNodeProf = propertyNode.properties;
+														else if (propertyNode.attributes)
+															var propertyNodeProf = propertyNode.attributes.properties;
 
-                            var props = {};
-                            props.columnName = propertyNodeProf.columnName;
-                            props.propertyName = propertyNodeProf.propertyName;
+														var props = {};
+														props.columnName = propertyNodeProf.columnName;
+														props.propertyName = propertyNodeProf.propertyName;
 
-                            props.dataType = 10;
-                            props.dataLength = propertyNodeProf.dataLength;
-                            if (propertyNodeProf.nullable == 'True')
-                              props.isNullable = 'true';
-                            else
-                              props.isNullable = 'false';
+														props.dataType = 10;
+														props.dataLength = propertyNodeProf.dataLength;
+														if (propertyNodeProf.nullable == 'True')
+															props.isNullable = 'true';
+														else
+															props.isNullable = 'false';
 
-                            if (props.columnName == keyName)
-                              props.keyType = 1;
-                            else
-                              props.keyType = 0;
+														if (props.columnName == keyName)
+															props.keyType = 1;
+														else
+															props.keyType = 0;
 
-                            if (propertyNodeProf.showOnIndex == 'True')
-                              props.showOnIndex = 'true';
-                            else
-                              props.showOnIndex = 'false';
+														if (propertyNodeProf.showOnIndex == 'True')
+															props.showOnIndex = 'true';
+														else
+															props.showOnIndex = 'false';
 
-                            props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
-                            folder.dataProperties.push(props);
-                          }
-                        }
-                        break;
-                      case 'Relationships':
-                        if (!relationFolderNode)
-                          break;
+														props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
+														folder.dataProperties.push(props);
+													}
+												}
+												break;
+											case 'Relationships':
+												if (!relationFolderNode)
+													break;
 
-                        if (relationFolderNode.childNodes)
-                          var relChildenNodes = relationFolderNode.childNodes;
-                        else
-                          var relChildenNodes = relationFolderNode.children;
+												if (relationFolderNode.childNodes)
+													var relChildenNodes = relationFolderNode.childNodes;
+												else
+													var relChildenNodes = relationFolderNode.children;
 
-                        if (relChildenNodes)
-                          for (var k = 0; k < relChildenNodes.length; k++) {
-                            var relationNode = relChildenNodes[k];
-                            var found = false;
-                            for (var ik = 0; ik < folder.dataRelationships.length; ik++)
-                              if (relationNode.text.toLowerCase() == folder.dataRelationships[ik].relationshipName.toLowerCase()) {
-                                found = true;
-                                break;
-                              }
+												if (relChildenNodes)
+													for (var k = 0; k < relChildenNodes.length; k++) {
+														var relationNode = relChildenNodes[k];
+														var found = false;
+														for (var ik = 0; ik < folder.dataRelationships.length; ik++)
+															if (relationNode.text.toLowerCase() == folder.dataRelationships[ik].relationshipName.toLowerCase()) {
+																found = true;
+																break;
+															}
 
-                            if (found || relationNode.text == '')
-                              continue;
+														if (found || relationNode.text == '')
+															continue;
 
-                            if (relationNode.attributes) {
-                              if (relationNode.attributes) {
-                                if (relationNode.attributes.propertyMap)
-                                  var relationNodeAttr = relationNode.attributes;
-                                else if (relationNode.attributes.propertyMap)
-                                  var relationNodeAttr = relationNode.attributes;
-                                else
-                                  var relationNodeAttr = relationNode.attributes;
-                              }
-                              else {
-                                var relationNodeAttr = relationNode.attributes;
-                              }
-                            }
-                            else {
-                              relationNodeAttr = relationNode;
-                            }
 
-                            var relation = {};
-                            relation.propertyMaps = new Array();
+														if (relationNode.attributes) {
+															if (relationNode.attributes.attributes) {
+																if (relationNode.attributes.attributes.propertyMap)
+																	var relationNodeAttr = relationNode.attributes.attributes;
+																else if (relationNode.attributes.propertyMap)
+																	var relationNodeAttr = relationNode.attributes;
+																else
+																	var relationNodeAttr = relationNode.attributes.attributes;
+															}
+															else {
+																var relationNodeAttr = relationNode.attributes;
+															}
+														}
+														else {
+															relationNodeAttr = relationNode;
+														}
 
-                            for (var m = 0; m < relationNodeAttr.propertyMap.length; m++) {
-                              var propertyPairNode = relationNodeAttr.propertyMap[m];
-                              var propertyPair = {};
 
-                              propertyPair.dataPropertyName = propertyPairNode.dataPropertyName;
-                              propertyPair.relatedPropertyName = propertyPairNode.relatedPropertyName;
-                              relation.propertyMaps.push(propertyPair);
-                            }
+														var relation = {};
+														relation.propertyMaps = new Array();
 
-                            relation.relatedObjectName = relationNodeAttr.relatedObjectName;
-                            relation.relationshipName = relationNodeAttr.text;
-                            relation.relationshipType = relationNodeAttr.relationshipTypeIndex;
-                            folder.dataRelationships.push(relation);
-                          }
-                        break;
-                    }
-                  }
-                  treeProperty.dataObjects.push(folder);
-                }
+														for (var m = 0; m < relationNodeAttr.propertyMap.length; m++) {
+															var propertyPairNode = relationNodeAttr.propertyMap[m];
+															var propertyPair = {};
 
-                Ext.Ajax.request({
-                  url: 'AdapterManager/Trees',
-                  method: 'POST',
-                  params: {
-                    scope: scopeName,
-                    app: appName,
-                    tree: JSON.stringify(treeProperty)
-                  },
-                  success: function (response, request) {
-                    var rtext = response.responseText;
-                    if (rtext.toUpperCase().indexOf('FALSE') == -1) {
-                      showDialog(400, 100, 'Tree saving result', 'The tree is saved successfully.', Ext.Msg.OK, null);
-                      var navpanel = Ext.getCmp('nav-panel');
-                      navpanel.onReload();
-                    }
-                    else {
-                      var ind = rtext.indexOf('}');
-                      var len = rtext.length - ind - 1;
-                      var msg = rtext.substring(ind + 1, rtext.length - 1);
-                      showDialog(400, 100, 'Tree saving result', msg, Ext.Msg.OK, null);
-                    }
-                  },
-                  failure: function (response, request) {
-                    showDialog(660, 300, 'Tree saving result',
+															propertyPair.dataPropertyName = propertyPairNode.dataPropertyName;
+															propertyPair.relatedPropertyName = propertyPairNode.relatedPropertyName;
+															relation.propertyMaps.push(propertyPair);
+														}
+
+														relation.relatedObjectName = relationNodeAttr.relatedObjectName;
+														relation.relationshipName = relationNodeAttr.text;
+														relation.relationshipType = relationNodeAttr.relationshipTypeIndex;
+														folder.dataRelationships.push(relation);
+													}
+												break;
+										}
+									}
+									treeProperty.dataObjects.push(folder);
+								}
+
+
+								Ext.Ajax.request({
+									url: 'AdapterManager/Trees',
+									method: 'POST',
+									params: {
+										scope: scopeName,
+										app: appName,
+										tree: JSON.stringify(treeProperty)
+									},
+									success: function (response, request) {
+										var rtext = response.responseText;
+										if (rtext.toUpperCase().indexOf('FALSE') == -1) {
+											showDialog(400, 100, 'Tree saving result', 'The tree is saved successfully.', Ext.Msg.OK, null);
+											var navpanel = Ext.getCmp('nav-panel');
+											navpanel.onReload();
+										}
+										else {
+											var ind = rtext.indexOf('}');
+											var len = rtext.length - ind - 1;
+											var msg = rtext.substring(ind + 1, rtext.length - 1);
+											showDialog(400, 100, 'Tree saving result', msg, Ext.Msg.OK, null);
+										}
+									},
+									failure: function (response, request) {
+										showDialog(660, 300, 'Tree saving result',
+
                     'Error happed when saving the tree', Ext.Msg.OK, null);
-                  }
-                });
-              }
-            }]
-          }),
-          listeners: {
-            click: function (node, e) {
-              if (node.isRoot) {
-                editPane = dataObjectsPane.items.items[1];
-                if (!editPane) {
-                  var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-                }
+									}
+								});
+							}
+						}]
+					}),
+					listeners: {
+						click: function (node, e) {
+							if (node.isRoot) {
+								editPane = dataObjectsPane.items.items[1];
+								if (!editPane) {
+									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+								}
 
-                setTablesSelectorPane(editPane);
-                return;
-              }
-              else if (!node)
-                return;
+								setTablesSelectorPane(editPane);
+								return;
+							}
+							else if (!node)
+								return;
 
-              var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-              if (!editPane)
-                editPane = dataObjectsPane.items.items[1];
+							var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+							if (!editPane)
+								editPane = dataObjectsPane.items.items[1];
 
-              var nodeType = node.attributes.type;
+							var nodeType = node.attributes.type;
 
-              if (!nodeType && node.attributes)
-                nodeType = node.attributes.type;
 
-              if (nodeType) {
-                editPane.show();
-                var editPaneLayout = editPane.getLayout();
+							if (!nodeType && node.attributes.attributes)
+								nodeType = node.attributes.attributes.type;
 
-                switch (nodeType.toUpperCase()) {
-                  case 'DATAOBJECT':
-                    setDataObject(editPane, node);
-                    break;
 
-                  case 'KEYS':
-                    setKeysFolder(editPane, node);
-                    break;
+							if (nodeType) {
+								editPane.show();
+								var editPaneLayout = editPane.getLayout();
 
-                  case 'KEYPROPERTY':
-                    setKeyProperty(editPane, node);
-                    break;
+								switch (nodeType.toUpperCase()) {
+									case 'DATAOBJECT':
+										setDataObject(editPane, node);
+										break;
 
-                  case 'PROPERTIES':
-                    setPropertiesFolder(editPane, node);
-                    break;
+									case 'KEYS':
+										setKeysFolder(editPane, node);
+										break;
 
-                  case 'DATAPROPERTY':
-                    setDataProperty(editPane, node);
-                    break;
+									case 'KEYPROPERTY':
+										setKeyProperty(editPane, node);
+										break;
 
-                  case 'RELATIONSHIPS':
-                    setRelations(editPane, node);
-                    break;
+									case 'PROPERTIES':
+										setPropertiesFolder(editPane, node);
+										break;
 
-                  case 'RELATIONSHIP':
-                    setRelationFields(editPane, node, scopeName, appName);
-                    break;
-                }
-              }
-              else {
-                editPane.hide();
-              }
-            }
-          }
-        }]
-      }, {
-        xtype: 'panel',
-        name: 'editor-panel',
-        id: scopeName + '.' + appName + '.editor-panel',
-        region: 'center',
-        layout: 'card'
-      }]
-    });
+									case 'DATAPROPERTY':
+										setDataProperty(editPane, node);
+										break;
 
-    var setTableNames = function () {
-      // populate selected tables			
-      var selectTableNames = new Array();
-      userTableNames = new Array();
+									case 'RELATIONSHIPS':
+										setRelations(editPane, node);
+										break;
 
-      for (var i = 0; i < dbDict.dataObjects.length; i++) {
-        var dataObject = dbDict.dataObjects[i];
-        userTableNames.push([dataObject.tableName, dataObject.tableName]);
-        selectTableNames.push(dataObject.tableName);
-      }
+									case 'RELATIONSHIP':
+										setRelationFields(editPane, node, scopeName, appName);
+										break;
+								}
+							}
+							else {
+								editPane.hide();
+							}
+						}
+					}
+				}]
+			}, {
+				xtype: 'panel',
+				name: 'editor-panel',
+				border: 1,
+				frame: false,
+				id: scopeName + '.' + appName + '.editor-panel',
+				region: 'center',
+				layout: 'card'
+			}]
+		});
 
-      return selectTableNames;
-    };
+		var setTableNames = function () {
+			// populate selected tables			
+			var selectTableNames = new Array();
+			userTableNames = new Array();
 
-    var showTree = function (dbObjectsTree) {
-      var selectTableNames = setTableNames();
-      var connStr = dbDict.ConnectionString;
-      var connStrParts = connStr.split(';');
-      dbInfo = {};
-      var provider = dbDict.Provider.toUpperCase();
+			for (var i = 0; i < dbDict.dataObjects.length; i++) {
+				var dataObject = dbDict.dataObjects[i];
+				userTableNames.push([dataObject.tableName, dataObject.tableName]);
+				selectTableNames.push(dataObject.tableName);
+			}
 
-      dbInfo.dbName = dbDict.SchemaName;
-      if (!dbInfo.dbUserName)
-        for (var i = 0; i < connStrParts.length; i++) {
-          var pair = connStrParts[i].split('=');
-          switch (pair[0].toUpperCase()) {
-            case 'DATA SOURCE':
-              if (provider.indexOf('MSSQL') > -1) {
-                var dsValue = pair[1].split('\\');
-                dbInfo.dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
-                dbInfo.dbInstance = dsValue[1];
-                dbInfo.portNumber = 1433;
-              }
-              else if (provider.indexOf('MYSQL') > -1) {
-                dbInfo.dbServer = (pair[1] == '.' ? 'localhost' : pair[1]);
-                dbInfo.portNumber = 3306;
-              }
-              else if (provider.indexOf('ORACLE') > -1) {
-                var dsStr = connStrParts[i].substring(12, connStrParts[i].length);
-                var dsValue = dsStr.split('=');
-                for (var j = 0; j < dsValue.length; j++) {
-                  dsValue[j] = dsValue[j].substring(dsValue[j].indexOf('(') + 1, dsValue[j].length);
-                  switch (dsValue[j].toUpperCase()) {
-                    case 'HOST':
-                      var server = dsValue[j + 1];
-                      var port = dsValue[j + 2];
-                      var index = server.indexOf(')');
-                      server = server.substring(0, index);
-                      dbInfo.portNumber = port.substring(0, 4);
-                      dbInfo.dbServer = (server == '.' ? 'localhost' : server);
-                      break;
-                    case 'SERVICE_NAME':
-                      var sername = dsValue[j + 1];
-                      index = sername.indexOf(')');
-                      dbInfo.dbInstance = sername.substring(0, index);
-                      break;
-                  }
-                }
-              }
-              break;
-            case 'INITIAL CATALOG':
-              dbInfo.dbName = pair[1];
-              break;
-            case 'USER ID':
-              dbInfo.dbUserName = pair[1];
-              break;
-            case 'PASSWORD':
-              dbInfo.dbPassword = pair[1];
-              break;
-          }
-        }
+			return selectTableNames;
+		};
 
-      var treeLoader = dbObjectsTree.getLoader();
-      var rootNode = dbObjectsTree.getRootNode();
+		var showTree = function (dbObjectsTree) {
+			var selectTableNames = setTableNames();
+			var connStr = dbDict.ConnectionString;
+			var connStrParts = connStr.split(';');
+			dbInfo = {};
+			var provider = dbDict.Provider.toUpperCase();
 
-      treeLoader.dataUrl = 'AdapterManager/DBObjects';
-      treeLoader.baseParams = {
-        scope: scopeName,
-        app: appName,
-        dbProvider: dbDict.Provider,
-        dbServer: dbInfo.dbServer,
-        dbInstance: dbInfo.dbInstance,
-        dbName: dbInfo.dbName,
-        dbSchema: dbDict.SchemaName,
-        dbUserName: dbInfo.dbUserName,
-        dbPassword: dbInfo.dbPassword,
-        portNumber: dbInfo.portNumber,
-        tableNames: selectTableNames
-      };
+			dbInfo.dbName = dbDict.SchemaName;
+			if (!dbInfo.dbUserName)
+				for (var i = 0; i < connStrParts.length; i++) {
+					var pair = connStrParts[i].split('=');
+					switch (pair[0].toUpperCase()) {
+						case 'DATA SOURCE':
+							if (provider.indexOf('MSSQL') > -1) {
+								var dsValue = pair[1].split('\\');
+								dbInfo.dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
+								dbInfo.dbInstance = dsValue[1];
+								dbInfo.portNumber = 1433;
+							}
+							else if (provider.indexOf('MYSQL') > -1) {
+								dbInfo.dbServer = (pair[1] == '.' ? 'localhost' : pair[1]);
+								dbInfo.portNumber = 3306;
+							}
+							else if (provider.indexOf('ORACLE') > -1) {
+								var dsStr = connStrParts[i].substring(12, connStrParts[i].length);
+								var dsValue = dsStr.split('=');
+								for (var j = 0; j < dsValue.length; j++) {
+									dsValue[j] = dsValue[j].substring(dsValue[j].indexOf('(') + 1, dsValue[j].length);
+									switch (dsValue[j].toUpperCase()) {
+										case 'HOST':
+											var server = dsValue[j + 1];
+											var port = dsValue[j + 2];
+											var index = server.indexOf(')');
+											server = server.substring(0, index);
+											dbInfo.portNumber = port.substring(0, 4);
+											dbInfo.dbServer = (server == '.' ? 'localhost' : server);
+											break;
+										case 'SERVICE_NAME':
+											var sername = dsValue[j + 1];
+											index = sername.indexOf(')');
+											dbInfo.dbInstance = sername.substring(0, index);
+											break;
+									}
+								}
+							}
+							break;
+						case 'INITIAL CATALOG':
+							dbInfo.dbName = pair[1];
+							break;
+						case 'USER ID':
+							dbInfo.dbUserName = pair[1];
+							break;
+						case 'PASSWORD':
+							dbInfo.dbPassword = pair[1];
+							break;
+					}
+				}
 
-      rootNode.reload(
+			var treeLoader = dbObjectsTree.getLoader();
+			var rootNode = dbObjectsTree.getRootNode();
+
+			treeLoader.dataUrl = 'AdapterManager/DBObjects';
+			treeLoader.baseParams = {
+				scope: scopeName,
+				app: appName,
+				dbProvider: dbDict.Provider,
+				dbServer: dbInfo.dbServer,
+				dbInstance: dbInfo.dbInstance,
+				dbName: dbInfo.dbName,
+				dbSchema: dbDict.SchemaName,
+				dbUserName: dbInfo.dbUserName,
+				dbPassword: dbInfo.dbPassword,
+				portNumber: dbInfo.portNumber,
+				tableNames: selectTableNames
+			};
+
+			rootNode.reload(
           function (rootNode) {
-            loadTree(rootNode);
+          	loadTree(rootNode);
           });
 
-      Ext.Ajax.request({
-        url: 'AdapterManager/TableNames',
-        method: 'POST',
-        timeout: 600000,
-        params: {
-          scope: scopeName,
-          app: appName,
-          dbProvider: dbDict.Provider,
-          dbServer: dbInfo.dbServer,
-          dbInstance: dbInfo.dbInstance,
-          dbName: dbInfo.dbName,
-          dbSchema: dbDict.SchemaName,
-          dbUserName: dbInfo.dbUserName,
-          dbPassword: dbInfo.dbPassword,
-          portNumber: dbInfo.portNumber
-        },
-        success: function (response, request) {
-          dbTableNames = Ext.util.JSON.decode(response.responseText);
-        },
-        failure: function (f, a) {
-          if (a.response)
-            showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
-        }
-      });
-    }
+			Ext.Ajax.request({
+				url: 'AdapterManager/TableNames',
+				method: 'POST',
+				timeout: 600000,
+				params: {
+					scope: scopeName,
+					app: appName,
+					dbProvider: dbDict.Provider,
+					dbServer: dbInfo.dbServer,
+					dbInstance: dbInfo.dbInstance,
+					dbName: dbInfo.dbName,
+					dbSchema: dbDict.SchemaName,
+					dbUserName: dbInfo.dbUserName,
+					dbPassword: dbInfo.dbPassword,
+					portNumber: dbInfo.portNumber
+				},
+				success: function (response, request) {
+					dbTableNames = Ext.util.JSON.decode(response.responseText);
+				},
+				failure: function (f, a) {
+					if (a.response)
+						showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
+				}
+			});
+		}
 
-    Ext.apply(this, {
-      id: scopeName + '.' + appName + '.-nh-config',
-      title: 'NHibernate Configuration - ' + scopeName + '.' + appName,
-      closable: true,
-      layout: 'fit',
-      items: [dataObjectsPane]
-    });
+		Ext.apply(this, {
+			id: scopeName + '.' + appName + '.-nh-config',
+			title: 'NHibernate Configuration - ' + scopeName + '.' + appName,
+			closable: true,
+			border: false,
+			frame: true,
+			layout: 'fit',
+			items: [dataObjectsPane]
+		});
 
-    Ext.EventManager.onWindowResize(this.doLayout, this);
+		Ext.EventManager.onWindowResize(this.doLayout, this);
 
-    Ext.Ajax.request({
-      url: 'AdapterManager/DBDictionary',
-      method: 'POST',
-      params: {
-        scope: scopeName,
-        app: appName
-      },
-      success: function (response, request) {
-        dbDict = Ext.util.JSON.decode(response.responseText);
+		Ext.Ajax.request({
+			url: 'AdapterManager/DBDictionary',
+			method: 'POST',
+			params: {
+				scope: scopeName,
+				app: appName
+			},
+			success: function (response, request) {
+				dbDict = Ext.util.JSON.decode(response.responseText);
 
-        var tab = Ext.getCmp('content-panel');
-        var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
-        var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-        var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+				var tab = Ext.getCmp('content-panel');
+				var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
+				var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
+				var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 
-        if (dbDict.dataObjects.length > 0) {
-          // populate data source form
-          showTree(dbObjectsTree);
-        }
-        else {
-          dbObjectsTree.disable();
-          editPane = dataObjectsPane.items.items[1];
-          if (!editPane) {
-            var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-          }
-          setDsConfigPane(editPane);
-        }
-      },
-      failure: function (response, request) {
-        editPane = dataObjectsPane.items.items[1];
-        if (!editPane) {
-          var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-        }
-        editPane.add(dsConfigPane);
-        editPane.getLayout().setActiveItem(editPane.items.length - 1);
-      }
-    });
+				if (dbDict.dataObjects.length > 0) {
+					// populate data source form
+					showTree(dbObjectsTree);
+				}
+				else {
+					dbObjectsTree.disable();
+					editPane = dataObjectsPane.items.items[1];
+					if (!editPane) {
+						var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+					}
+					setDsConfigPane(editPane);
+				}
+			},
+			failure: function (response, request) {
+				editPane = dataObjectsPane.items.items[1];
+				if (!editPane) {
+					var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+				}
+				editPane.add(dsConfigPane);
+				editPane.getLayout().setActiveItem(editPane.items.length - 1);
+			}
+		});
 
-    AdapterManager.NHibernateConfigWizard.superclass.constructor.apply(this, arguments);
-  }
+		AdapterManager.NHibernateConfigWizard.superclass.constructor.apply(this, arguments);
+	}
 });
 
 function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, configLabel, dbObjLabel, formLabel, callId, scopeName, appName) {
