@@ -34,7 +34,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
             split: true,
             bodyBorder: true,
             collapsed: false,
-            border: false,
+            border: 0,
             selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
             frame: false,
             source: {},
