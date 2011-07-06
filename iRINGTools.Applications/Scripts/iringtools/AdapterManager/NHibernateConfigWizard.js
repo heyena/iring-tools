@@ -31,7 +31,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
         if (node.attributes.properties)
           var properties = node.attributes.properties;
         else
-          var properties = node.attributes.attributes.properties;
+          var properties = node.attributes.properties;
 
         var keyPropertyFormPanel = new Ext.FormPanel({
           name: 'keyProperty',
@@ -1259,10 +1259,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           id: scopeName + '.' + appName + '.keysSelector.' + node.id,
           border: false,
           autoScroll: true,
-          layout: 'fit',
+         // layout: 'fit',
           bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
           labelWidth: 160,
-          defaults: { anchor: '100%' },
+         // defaults: { anchor: '100%' },
           items: [{
             xtype: 'label',
             fieldLabel: 'Select Keys',
@@ -1297,8 +1297,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                   if (!found) {
                     if (keysNode.childNodes[i].attributes.properties)
                       var properties = keysNode.childNodes[i].attributes.properties;
-                    else if (keysNode.childNodes[i].attributes.attributes.properties)
-                      var properties = keysNode.childNodes[i].attributes.attributes.properties;
+                    else if (keysNode.childNodes[i].attributes.properties)
+                      var properties = keysNode.childNodes[i].attributes.properties;
 
                     if (properties) {
                       properties['nullable'] = true;
@@ -1448,8 +1448,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
           id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
           border: false,
           autoScroll: true,
-          layout: 'fit',
-          defaults: { anchor: '100%' },
+          //layout: 'border',
+         // defaults: { anchor: '100%' },
           labelWidth: 160,
           items: [{
             xtype: 'label',
@@ -1859,13 +1859,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                               continue;
 
                             if (relationNode.attributes) {
-                              if (relationNode.attributes.attributes) {
-                                if (relationNode.attributes.attributes.propertyMap)
-                                  var relationNodeAttr = relationNode.attributes.attributes;
+                              if (relationNode.attributes) {
+                                if (relationNode.attributes.propertyMap)
+                                  var relationNodeAttr = relationNode.attributes;
                                 else if (relationNode.attributes.propertyMap)
                                   var relationNodeAttr = relationNode.attributes;
                                 else
-                                  var relationNodeAttr = relationNode.attributes.attributes;
+                                  var relationNodeAttr = relationNode.attributes;
                               }
                               else {
                                 var relationNodeAttr = relationNode.attributes;
@@ -1948,8 +1948,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
               var nodeType = node.attributes.type;
 
-              if (!nodeType && node.attributes.attributes)
-                nodeType = node.attributes.attributes.type;
+              if (!nodeType && node.attributes)
+                nodeType = node.attributes.type;
 
               if (nodeType) {
                 editPane.show();
@@ -2391,8 +2391,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
       }
     }
 
-    if (node.attributes.attributes)
-      var nodeAttribute = node.attributes.attributes;
+    if (node.attributes)
+      var nodeAttribute = node.attributes;
     else
       var nodeAttribute = node.attributes;
 
@@ -2512,8 +2512,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
         listeners: { 'select': function (combo, record, index) {
           var relatedObjectName = record.data.field2;
           var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
-          if (node.attributes.attributes)
-            node.attributes.attributes.relatedObjectName = relatedObjectName;
+          if (node.attributes)
+            node.attributes.relatedObjectName = relatedObjectName;
           else
             node.attributes.relatedObjectName = relatedObjectName;
 
@@ -2568,8 +2568,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
         displayField: 'text',
         valueField: 'value',
         listeners: { 'select': function (combo, record, index) {
-          node.attributes.attributes.relationshipType = record.data.field2;
-          node.attributes.attributes.relationshipTypeIndex = record.data.index;
+          node.attributes.relationshipType = record.data.field2;
+          node.attributes.relationshipTypeIndex = record.data.field1;
         }
         }
       }, {
@@ -2624,8 +2624,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
           text: 'Apply',
           tooltip: 'Apply the current changes to the data objects tree',
           handler: function () {
-            if (node.attributes.attributes)
-              var attribute = node.attributes.attributes;
+            if (node.attributes)
+              var attribute = node.attributes;
             else
               var attribute = node.attributes;
 
@@ -2722,14 +2722,14 @@ function setRelationFields(editPane, node, scopeName, appName) {
     var relationConfigForm = relationConfigPanel.getForm();
     var dataRelationPane = relationConfigPanel.items.items[7];
     relationConfigForm.findField('relatedObjectName').setValue(relatedObjectName);
-    if (node.attributes.attributes)
-      var relationTypeIndex = node.attributes.attributes.relationshipTypeIndex;
+    if (node.attributes)
+      var relationTypeIndex = node.attributes.relationshipTypeIndex;
     else
       var relationTypeIndex = node.attributes.relationshipTypeIndex;
     relationConfigForm.findField('relationType').setValue(relationTypeIndex);
 
-    if (node.attributes.attributes)
-      var propertyMaps = node.attributes.attributes.propertyMap;
+    if (node.attributes)
+      var propertyMaps = node.attributes.propertyMap;
     else
       var propertyMaps = node.attributes.propertyMap;
 
