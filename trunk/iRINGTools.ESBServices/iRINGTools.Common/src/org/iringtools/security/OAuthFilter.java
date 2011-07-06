@@ -129,7 +129,8 @@ public class OAuthFilter implements Filter
             authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
             response.addCookie(authCookie);
             
-            obtainOAuthToken(userInfoJson);
+            if (!obtainOAuthToken(userInfoJson))
+              return;
           }
         }
       }
@@ -141,7 +142,9 @@ public class OAuthFilter implements Filter
         try
         {
           String userInfoJson = JSONUtil.serialize(userInfo);
-          obtainOAuthToken(userInfoJson);
+          
+          if (!obtainOAuthToken(userInfoJson))
+            return;
         }
         catch (JSONException e)
         {
@@ -159,7 +162,9 @@ public class OAuthFilter implements Filter
       try
       {
         String userInfoJson = JSONUtil.serialize(userInfo);
-        obtainOAuthToken(userInfoJson);
+        
+        if (!obtainOAuthToken(userInfoJson))
+          return;
       }
       catch (JSONException e)
       {
@@ -182,7 +187,7 @@ public class OAuthFilter implements Filter
   @Override
   public void destroy(){}
   
-  private void obtainOAuthToken(String userInfoJson) throws IOException
+  private boolean obtainOAuthToken(String userInfoJson) throws IOException
   {
     String tokenServiceUri = filterConfig.getInitParameter("tokenServiceUri");
     String applicationKey = filterConfig.getInitParameter("applicationKey");
@@ -207,15 +212,18 @@ public class OAuthFilter implements Filter
         
         String oAuthToken = accessToken.get("token");
         session.setAttribute(AUTH_TOKEN_NAME, oAuthToken);
-        response.addHeader(AUTH_TOKEN_NAME, oAuthToken);            
+        response.addHeader(AUTH_TOKEN_NAME, oAuthToken);
       }
       catch (Exception ex)
       {
         logger.error("Error obtaining OAuth token from Apigee: " + ex);
         session.invalidate();
         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        return false;
       }
     }
+    
+    return true;
   }
   
   public void logHeaders(HttpServletRequest request)
