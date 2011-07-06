@@ -8,7 +8,7 @@
       <result>/federation-manager.html</result>
     </action>    
     <action name="xchmgr">
-      <result>/exchange-manager.html</result>
+      <result>/exchange-manager.jsp</result>
     </action>
   </package>
   

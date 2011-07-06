@@ -1,11 +1,43 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="java.util.Map" %>
+<%@ page import="org.iringtools.filters.OAuthFilter" %>
+<%@ page import="org.iringtools.security.LdapAuthorizationProvider" %>
+<%@ page import="org.iringtools.utility.HttpUtils" %>
+<% 
+String APP_AUTHORIZATION_ATTR = "ExchangeManager.Authorized";
+
+LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
+authProvider.init(getServletContext().getRealPath("/") + "WEB-INF/config/ldap.properties");
+authProvider.setAuthorizedGroup("exchangeAdmins");
+
+Cookie[] cookies = request.getCookies();
+Cookie authorizationCookie = HttpUtils.getCookie(cookies, APP_AUTHORIZATION_ATTR);
+
+if (authorizationCookie == null)
+{
+  Cookie authenticationCookie = HttpUtils.getCookie(cookies, OAuthFilter.AUTH_COOKIE_NAME);
+  Map<String, String> claims = HttpUtils.getCookieAttributes(authenticationCookie.getValue());
+  
+  if (!authProvider.isAuthorized(claims))
+  {
+    session.invalidate();
+    response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+  }
+  else
+  {
+    response.addCookie(new Cookie(APP_AUTHORIZATION_ATTR, "true"));
+  }
+}
+%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
   <meta http-equiv="Cache-Control" content="no-cache">
-	<meta http-equiv="Pragma" content="no-cache">
-	<meta http-equiv="Expires" content="0">
-	
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
   <title>iRINGTools: Exchange Manager</title>
   <link rel="shortcut icon" href="resources/images/favicon.ico">
   

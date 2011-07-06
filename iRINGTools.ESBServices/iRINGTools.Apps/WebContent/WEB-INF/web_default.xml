@@ -40,7 +40,7 @@
       <param-value>/sp/startSSO.ping</param-value>
     </init-param>
     <init-param>
-      <param-name>refResolverUri</param-name>
+      <param-name>authenticationServiceUri</param-name>
       <param-value>https://sso.mypsn.com/ext/ref/pickup?REF=</param-value>
     </init-param>
     <init-param>
@@ -54,6 +54,14 @@
     <init-param>
       <param-name>pingInstanceId</param-name>
       <param-value>PSN2AgentlessDemo</param-value>
+    </init-param>
+    <init-param>
+      <param-name>tokenServiceUri</param-name>
+      <param-value>https://api.mypsn.com/tokenexchange/accesstoken/create?key=</param-value>
+    </init-param>
+    <init-param>
+      <param-name>applicationKey</param-name>
+      <param-value>ede6c15add1696425ee2e48f4f9f8820</param-value>
     </init-param>
   </filter>
   <filter-mapping>
