@@ -427,7 +427,7 @@ namespace iRINGTools.Web.Controllers
         ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
         TemplateMap tMap = ctMap.templateMaps.Find(t => t.id.Equals(templateId));
         RoleMap rm = tMap.roleMaps.Find(r => r.id.Equals(roleId));
-        if (!string.IsNullOrEmpty(rm.propertyName))
+        if (!string.IsNullOrEmpty(rm.propertyName) || rm.dataType.StartsWith("xsd"))
           rm.type = RoleType.DataProperty;
         else
           rm.type = RoleType.Reference;
@@ -435,7 +435,7 @@ namespace iRINGTools.Web.Controllers
         rm.value = null;
         rm.valueListName = null;
         rm.classMap = null;
-        
+
         rm.type = RoleType.Reference;
       }
       catch
@@ -470,7 +470,6 @@ namespace iRINGTools.Web.Controllers
           RoleMap roleMap = tmap.roleMaps.FirstOrDefault(c => c.name == roleName);
           roleMap.type = RoleType.Possessor;
           roleMap.value = string.Empty;
-          roleMap.dataType = string.Empty;
           JsonTreeNode rolenode = GetRoleNode(roleMap, context);
           rolenode.text.Replace(unMappedToken, "");
           nodes.Add(rolenode);
@@ -649,26 +648,41 @@ namespace iRINGTools.Web.Controllers
       {
         string mappingNode = form["mappingNode"];
         string propertyName = form["propertyName"];
-        string[] propertyCtx = propertyName.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = propertyCtx[0];
-        string application = propertyCtx[1];
+        string scope = mappingCtx[0];
+        string application = mappingCtx[1];
         string graphName = mappingCtx[2];
         string classId = form["classId"];
+        string relatedObject = form["relatedObject"];
         string templateName = mappingCtx[mappingCtx.Count() - 2];
         string roleName = mappingCtx[mappingCtx.Count() - 1];
 
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
+        ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
+        TemplateMap tMap = ctMap.templateMaps.Find(t => t.name.Equals(templateName));
+        RoleMap rm = tMap.roleMaps.Find(r => r.name.Equals(roleName));
 
-        foreach (var ctemplateMaps in graphMap.classTemplateMaps)
+        if (!string.IsNullOrEmpty(rm.dataType) && rm.dataType.StartsWith("xsd"))
         {
-          if (!ctemplateMaps.classMap.id.Equals(classId)) continue;
-          TemplateMap tmap = ctemplateMaps.templateMaps.FirstOrDefault(c => c.name == templateName);
-          RoleMap roleMap = tmap.roleMaps.FirstOrDefault(c => c.name == roleName);
-          roleMap.propertyName =
-                string.Format("{0}.{1}", propertyName.Split(delimiters)[4], propertyName.Split(delimiters)[5]);
+          if (relatedObject != "undefined")
+          {
+            rm.propertyName = string.Format("{0}.{1}.{2}",
+              graphMap.dataObjectName,
+              relatedObject,
+              propertyName);
+          }
+          else
+          {
+            rm.propertyName =
+                string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
+          }
         }
+        else
+        {
+          throw new Exception("Please select a DataPRoperty or Property role...");
+        }
+
       }
       catch (Exception ex)
       {
