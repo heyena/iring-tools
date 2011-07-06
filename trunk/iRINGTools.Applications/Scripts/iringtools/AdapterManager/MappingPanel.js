@@ -488,6 +488,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onDeleteTemplateMap: function () {
+    var that = this;
     var node = this.mappingPanel.getSelectionModel().getSelectedNode();
     that.getParentClass(node);
     Ext.Ajax.request({
@@ -510,6 +511,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onResetMapping: function (node) {
+    var that = this;
     var node = this.mappingPanel.getSelectionModel().getSelectedNode();
     Ext.Ajax.request({
       url: 'mapping/resetmapping',
@@ -544,7 +546,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         { text: 'Cancel', scope: this, handler: this.onClose }
         ],
       items: [
-              { xtype: 'hidden', name: 'propertyName', id: 'propertyName' }
+              { xtype: 'hidden', name: 'propertyName', id: 'propertyName' },
+              { xtype: 'hidden', name: 'relatedObject', id: 'relatedObject' }
              ],
       html: '<div class="property-target' + formid + '" '
           + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
@@ -573,8 +576,10 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
               return false;
             }
             else {
-              Ext.get('propertyName').dom.value = data.node.id;
-              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.id.split('/')[5] + '</b></td></tr>'
+              Ext.get('propertyName').dom.value = data.node.attributes.record.Name;
+              if (data.node.parentNode != undefined && data.node.parentNode.attributes.record != undefined)
+                Ext.get('relatedObject').dom.value = data.node.parentNode.attributes.record.Name;
+              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.attributes.record.Name + '</b></td></tr>'
               msg += '</table>'
               Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg)
               return true;
@@ -602,10 +607,13 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
   onSubmitPropertyMap: function (btn, e) {
     var that = this;
+    var related = "";
     var form = btn.findParentByType('form');
     var node = this.mappingPanel.getSelectionModel().getSelectedNode();
     var win = btn.findParentByType('window');
     var propertyNames = Ext.get('propertyName').dom.value;
+    if (Ext.get('relatedObject').dom.value != undefined)
+      related = Ext.get('relatedObject').dom.value;
     if (form.getForm().isValid())
       Ext.Ajax.request({
         url: 'mapping/mapproperty',
@@ -613,7 +621,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         params: {
           propertyName: propertyNames,
           mappingNode: node.attributes.id,
-          classId: node.parentNode.parentNode.attributes.identifier
+          classId: node.parentNode.parentNode.attributes.identifier,
+          relatedObject: related
         },
         success: function (result, request) {
           that.onReload();
