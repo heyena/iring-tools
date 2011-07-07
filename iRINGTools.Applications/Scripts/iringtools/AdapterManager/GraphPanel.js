@@ -32,12 +32,12 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Panel, {
 
 		this.bbar = this.buildToolbar();
 
-		name = '';
-		nodeId = '';
-		objectName = '';
-		classLabel = '';
+		var name = '';
+		var nodeId = '';
+		var objectName = '';
+		var classLabel = '';
 		var classLab = '';
-		classUrl = '';
+		var classUrl = '';
 		var formid = '';
 		var identifier = '';
 		var scope = '';
@@ -57,16 +57,14 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Panel, {
 			classUrl = this.record.classTemplateMaps[0].classMap.id;
 			identifier = this.record.classTemplateMaps[0].classMap.identifiers[0].split('.')[1];
 		}
-		else {
-			this.isNew = true;
-		}
+		
 
 		if (identifier == '')
 			identifier = 'Drop a Key Property Node here.</div>';
 		else
 			identifier = 'Property: ' + identifier + '</div>';
 
-		if (this.classLabel == '')
+		if (classLabel == '')
 			classLab = 'Drop a Class Node here. </div>';
 		else
 			classLab = 'Class Label: ' + classLabel + '</div>';
