@@ -239,38 +239,41 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					dsConfigForm.findField('serviceName').hide();
 
 					dsConfigForm.findField('dbServer').setValue(dbInfo.dbServer);
+					dsConfigForm.findField('dbServer').show();
 					dsConfigForm.findField('dbInstance').setValue(dbInfo.dbInstance);
+					dsConfigForm.findField('dbInstance').show();
 					dsConfigForm.findField('dbName').setValue(dbInfo.dbName);
+					dsConfigForm.findField('dbName').show();
 					dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
 					dsConfigForm.findField('host').setValue(dbInfo.dbServer);
 					dsConfigForm.findField('serviceName').setValue(dbInfo.dbInstance);
 					dsConfigForm.findField('portNumber').setValue(dbInfo.portNumber);
+					dsConfigForm.findField('dbUserName').setValue(dbInfo.dbUserName);
+					dsConfigForm.findField('dbPassword').setValue(dbInfo.dbPassword);
+					dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
 				}
 			}
 			else {
-				dsConfigForm.findField('dbServer').setValue('');
-				dsConfigForm.findField('dbInstance').setValue('');
+				dsConfigForm.findField('dbServer').setValue('localhost');
+				dsConfigForm.findField('dbInstance').setValue('default');
+				dsConfigForm.findField('dbSchema').setValue('dbo');
+				dsConfigForm.findField('portNumber').setValue('1433');
+
 				dsConfigForm.findField('dbName').setValue('');
 				dsConfigForm.findField('dbUserName').setValue('');
 				dsConfigForm.findField('dbPassword').setValue('');
 				dsConfigForm.findField('dbProvider').setValue('');
-				dsConfigForm.findField('dbSchema').setValue('');
-
 				dsConfigForm.findField('host').setValue('');
 				dsConfigForm.findField('serviceName').setValue('');
-				dsConfigForm.findField('portNumber').setValue('');
 
-				dsConfigForm.findField('dbServer').clearInvalid();
-				dsConfigForm.findField('dbInstance').clearInvalid();
 				dsConfigForm.findField('dbName').clearInvalid();
 				dsConfigForm.findField('dbUserName').clearInvalid();
 				dsConfigForm.findField('dbPassword').clearInvalid();
 				dsConfigForm.findField('dbProvider').clearInvalid();
 				dsConfigForm.findField('dbSchema').clearInvalid();
-
 				dsConfigForm.findField('host').clearInvalid();
 				dsConfigForm.findField('serviceName').clearInvalid();
-				dsConfigForm.findField('portNumber').clearInvalid();
+
 			}
 		};
 
@@ -344,14 +347,35 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								}
 
 								if (host.hidden == true) {
-									if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
-										host.setValue(dbInfo.dbServer);
-										serviceName.setValue(dbInfo.dbInstance);
-										host.show();
-										serviceName.show();
-										userName.setValue(dbInfo.dbUserName);
-										password.setValue(dbInfo.dbPassword);
-										dbSchema.setValue(dbDict.SchemaName);
+									if (dbDict.Provider) {
+										if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
+											host.setValue(dbInfo.dbServer);
+											serviceName.setValue(dbInfo.dbInstance);
+											host.show();
+											serviceName.show();
+											userName.setValue(dbInfo.dbUserName);
+											password.setValue(dbInfo.dbPassword);
+											dbSchema.setValue(dbDict.SchemaName);
+										}
+										else {
+											host.setValue('');
+											host.clearInvalid();
+
+											serviceName.setValue('');
+											serviceName.clearInvalid();
+
+											host.show();
+											serviceName.show();
+
+											dbSchema.setValue('');
+											dbSchema.clearInvalid();
+
+											userName.setValue('');
+											userName.clearInvalid();
+
+											password.setValue('');
+											password.clearInvalid();
+										}
 									}
 									else {
 										host.setValue('');
@@ -359,6 +383,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 										serviceName.setValue('');
 										serviceName.clearInvalid();
+
+										host.show();
+										serviceName.show();
+
 										dbSchema.setValue('');
 										dbSchema.clearInvalid();
 
@@ -371,35 +399,68 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 									portNumber.setValue('1521');
 
-
 								}
 							}
 							else if (dbProvider.indexOf('MSSQL') > -1) {
-								if (dbName.hidden == true) {
-									dbName.setValue('');
-									dbName.clearInvalid();
-									dbName.show();
-								}
-
 								if (host.hidden == false) {
 									portNumber.hide();
 									host.hide();
 									serviceName.hide();
 								}
 
-								dbServer.setValue('localhost');
-								dbServer.show();
+								if (dbName.hidden == true) {
+									if (dbDict.Provider) {
+										if (dbDict.Provider.toUpperCase().indexOf('MSSQL') > -1) {
+											dbName.setValue(dbInfo.dbName);
+											dbServer.setValue(dbInfo.dbServer);
+											dbInstance.setValue(dbInfo.dbInstance);
+											dbName.show();
+											dbServer.show();
+											dbInstance.show();
+											dbSchema.setValue(dbDict.SchemaName);
+											userName.setValue(dbInfo.dbUserName);
+											password.setValue(dbInfo.dbPassword);											
+										}
+										else {
+											dbName.setValue('');
+											dbName.clearInvalid();
+											dbName.show();
 
-								dbInstance.setValue('default');
-								dbInstance.show();
+											dbServer.setValue('localhost');
+											dbServer.show();
 
-								dbSchema.setValue('dbo');
+											dbInstance.setValue('default');
+											dbInstance.show();
 
-								userName.setValue('');
-								userName.clearInvalid();
+											dbSchema.setValue('dbo');
 
-								password.setValue('');
-								password.clearInvalid();
+											userName.setValue('');
+											userName.clearInvalid();
+
+											password.setValue('');
+											password.clearInvalid();
+										}
+									}
+									else {
+										dbName.setValue('');
+										dbName.clearInvalid();
+										dbName.show();
+
+										dbServer.setValue('localhost');
+										dbServer.show();
+
+										dbInstance.setValue('default');
+										dbInstance.show();
+
+										dbSchema.setValue('dbo');
+
+										userName.setValue('');
+										userName.clearInvalid();
+
+										password.setValue('');
+										password.clearInvalid();
+									}
+								}
 
 								portNumber.setValue('1433');
 							}
