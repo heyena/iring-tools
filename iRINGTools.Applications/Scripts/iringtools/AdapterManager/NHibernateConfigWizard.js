@@ -210,18 +210,42 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		};
 
 		var setDsConfigFields = function (dsConfigForm) {
+			dbProvider = dbDict.Provider.toUpperCase();
 			if (dbInfo) {
-				dsConfigForm.findField('dbServer').setValue(dbInfo.dbServer);
-				dsConfigForm.findField('dbInstance').setValue(dbInfo.dbInstance);
-				dsConfigForm.findField('dbName').setValue(dbInfo.dbName);
-				dsConfigForm.findField('dbUserName').setValue(dbInfo.dbUserName);
-				dsConfigForm.findField('dbPassword').setValue(dbInfo.dbPassword);
-				dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
-				dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
+				if (dbProvider.indexOf('ORACLE') > -1) {
+					dsConfigForm.findField('dbName').hide();
+					dsConfigForm.findField('dbServer').hide();
+					dsConfigForm.findField('dbInstance').hide();
 
-				dsConfigForm.findField('host').setValue(dbInfo.dbServer);
-				dsConfigForm.findField('serviceName').setValue(dbInfo.dbInstance);
-				dsConfigForm.findField('portNumber').setValue(dbInfo.portNumber);
+					dsConfigForm.findField('dbServer').setValue(dbInfo.dbServer);
+					dsConfigForm.findField('dbInstance').setValue(dbInfo.dbInstance);
+					dsConfigForm.findField('dbName').setValue(dbInfo.dbName);
+
+					dsConfigForm.findField('dbUserName').setValue(dbInfo.dbUserName);
+					dsConfigForm.findField('dbPassword').setValue(dbInfo.dbPassword);
+					dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
+					dsConfigForm.findField('dbSchema').setValue(dbDict.SchemaName);
+
+					dsConfigForm.findField('host').setValue(dbInfo.dbServer);
+					dsConfigForm.findField('host').show();
+					dsConfigForm.findField('serviceName').setValue(dbInfo.dbInstance);
+					dsConfigForm.findField('serviceName').show();
+					dsConfigForm.findField('portNumber').setValue(dbInfo.portNumber);
+					dsConfigForm.findField('portNumber').show();
+				}
+				else if (dbProvider.indexOf('MSSQL') > -1) {
+					dsConfigForm.findField('portNumber').hide();
+					dsConfigForm.findField('host').hide();
+					dsConfigForm.findField('serviceName').hide();
+
+					dsConfigForm.findField('dbServer').setValue(dbInfo.dbServer);
+					dsConfigForm.findField('dbInstance').setValue(dbInfo.dbInstance);
+					dsConfigForm.findField('dbName').setValue(dbInfo.dbName);
+					dsConfigForm.findField('dbProvider').setValue(dbDict.Provider);
+					dsConfigForm.findField('host').setValue(dbInfo.dbServer);
+					dsConfigForm.findField('serviceName').setValue(dbInfo.dbInstance);
+					dsConfigForm.findField('portNumber').setValue(dbInfo.portNumber);
+				}
 			}
 			else {
 				dsConfigForm.findField('dbServer').setValue('');
@@ -309,6 +333,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							var dbInstance = dsConfigPane.getForm().findField('dbInstance');
 							var serviceName = dsConfigPane.getForm().findField('serviceName');
 							var dbSchema = dsConfigPane.getForm().findField('dbSchema');
+							var userName = dsConfigPane.getForm().findField('dbUserName');
+							var password = dsConfigPane.getForm().findField('dbPassword');
 
 							if (dbProvider.indexOf('ORACLE') > -1) {
 								if (dbName.hidden == false) {
@@ -318,16 +344,34 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								}
 
 								if (host.hidden == true) {
-									host.setValue('');
-									host.clearInvalid();
-									host.show();
+									if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
+										host.setValue(dbInfo.dbServer);
+										serviceName.setValue(dbInfo.dbInstance);
+										host.show();
+										serviceName.show();
+										userName.setValue(dbInfo.dbUserName);
+										password.setValue(dbInfo.dbPassword);
+										dbSchema.setValue(dbDict.SchemaName);
+									}
+									else {
+										host.setValue('');
+										host.clearInvalid();
+
+										serviceName.setValue('');
+										serviceName.clearInvalid();
+										dbSchema.setValue('');
+										dbSchema.clearInvalid();
+
+										userName.setValue('');
+										userName.clearInvalid();
+
+										password.setValue('');
+										password.clearInvalid();
+									}
 
 									portNumber.setValue('1521');
-									portNumber.show();
 
-									serviceName.setValue('');
-									serviceName.clearInvalid();
-									serviceName.show();
+
 								}
 							}
 							else if (dbProvider.indexOf('MSSQL') > -1) {
@@ -335,14 +379,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									dbName.setValue('');
 									dbName.clearInvalid();
 									dbName.show();
-
-									dbServer.setValue('');
-									dbServer.clearInvalid();
-									dbServer.show();
-
-									dbInstance.setValue('');
-									dbInstance.clearInvalid();
-									dbInstance.show();
 								}
 
 								if (host.hidden == false) {
@@ -350,6 +386,21 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									host.hide();
 									serviceName.hide();
 								}
+
+								dbServer.setValue('localhost');
+								dbServer.show();
+
+								dbInstance.setValue('default');
+								dbInstance.show();
+
+								dbSchema.setValue('dbo');
+
+								userName.setValue('');
+								userName.clearInvalid();
+
+								password.setValue('');
+								password.clearInvalid();
+
 								portNumber.setValue('1433');
 							}
 							else if (dbProvider.indexOf('MYSQL') > -1) {
@@ -372,6 +423,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						xtype: 'textfield',
 						name: 'dbServer',
 						fieldLabel: 'Database Server',
+						value: 'localhost',
 						allowBlank: false
 					}, {
 						xtype: 'textfield',
@@ -390,7 +442,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						xtype: 'textfield',
 						name: 'dbInstance',
 						fieldLabel: 'Database Instance',
-						value: 'Default',
+						value: 'default',
 						allowBlank: false
 					}, {
 						xtype: 'textfield',
@@ -406,20 +458,29 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						allowBlank: false
 					}, {
 						xtype: 'textfield',
-						name: 'dbSchema',
-						fieldLabel: 'Schema Name',
-						value: 'dbo',
-						allowBlank: false
-					}, {
-						xtype: 'textfield',
 						name: 'dbUserName',
 						fieldLabel: 'User Name',
-						allowBlank: false
+						allowBlank: false,
+						listeners: { 'change': function (field, newValue, oldValue) {
+							var dbProvider = dsConfigPane.getForm().findField('dbProvider').getValue().toUpperCase();
+							if (dbProvider.indexOf('ORACLE') > -1) {
+								var dbSchema = dsConfigPane.getForm().findField('dbSchema');
+								dbSchema.setValue(newValue);
+								dbSchema.show();
+							}
+						}
+						}
 					}, {
 						xtype: 'textfield',
 						inputType: 'password',
 						name: 'dbPassword',
 						fieldLabel: 'Password',
+						allowBlank: false
+					}, {
+						xtype: 'textfield',
+						name: 'dbSchema',
+						fieldLabel: 'Schema Name',
+						value: 'dbo',
 						allowBlank: false
 					}],
 					tbar: new Ext.Toolbar({
@@ -597,7 +658,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						frame: true,
 						name: 'tableSelector',
 						imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
-						multiselects: [{							
+						multiselects: [{
 							width: 240,
 							height: 370,
 							store: availItems,
@@ -656,8 +717,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								else {
 									var tableNames = tablesSelForm.findField('tableSelector').toMultiselect.store.data.items;
 									var selectTableNames = new Array();
-									for (var i = 0; i < tableNames.length; i++)
+									for (var i = 0; i < tableNames.length; i++) {
 										selectTableNames.push(tableNames[i].data.text);
+									}
 								}
 
 								if (selectTableNames.length < 1) {
@@ -666,6 +728,22 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										rootNode.removeChild(rootNode.firstChild);
 									}
 									return;
+								}
+
+								userTableNames = new Array();
+
+								if (selectTableNames[1]) {
+									if (selectTableNames[1].length > 1 && selectTableNames[0].length > 1) {
+										for (var i = 0; i < selectTableNames.length; i++) {
+											userTableNames.push(selectTableNames[i]);
+										}
+									}
+									else {
+										userTableNames.push(selectTableNames)
+									}
+								}
+								else {
+									userTableNames.push(selectTableNames[0]);
 								}
 
 								treeLoader.dataUrl = 'AdapterManager/DBObjects';
@@ -1248,7 +1326,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					name: 'keySelector',
 					frame: true,
 					imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
-          hideLabel: true,
+					hideLabel: true,
 
 					multiselects: [{
 						width: 240,
@@ -1273,7 +1351,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					id: scopeName + '.' + appName + '.keysSelector.' + node.id,
 					border: false,
 					autoScroll: true,
-         // layout: 'fit',
+					// layout: 'fit',
 
 					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					labelWidth: 160,
@@ -1472,7 +1550,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					frame: false,
 					autoScroll: true,
 
-          layout: 'fit',
+					layout: 'fit',
 					defaults: { anchor: '100%' },
 					labelWidth: 160,
 					items: [{
@@ -1713,7 +1791,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									dbServer = (dbServer == 'localhost' ? '.' : dbServer);
 									var upProvider = treeProperty.provider.toUpperCase();
 
-
 									if (upProvider.indexOf('MSSQL') > -1) {
 										var dbInstance = dsConfigForm.findField('dbInstance').getValue();
 										var dbDatabase = dsConfigForm.findField('dbName').getValue();
@@ -1737,7 +1814,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								}
 								else {
 									treeProperty.provider = dbDict.Provider;
-									var dbServer = dbInfo.dbServer;									
+									var dbServer = dbInfo.dbServer;
 									var upProvider = treeProperty.provider.toUpperCase();
 									dbServer = (dbServer == 'localhost' ? '.' : dbServer);
 
@@ -1763,6 +1840,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                                             + ';User ID=' + dbInfo.dbUserName
                                             + ';Password=' + dbInfo.dbPassword;
 									treeProperty.schemaName = dbDict.SchemaName;
+								}
+
+								if (!dbDict.ConnectionString) {
+									dbDict.ConnectionString = treeProperty.connectionString;
+									dbDict.SchemaName = treeProperty.schemaName;
+									dbDict.Provider = treeProperty.provider;
+									dbDict.dataObjects = userTableNames;
 								}
 
 								var keyName;
@@ -2046,12 +2130,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var setTableNames = function () {
 			// populate selected tables			
 			var selectTableNames = new Array();
-			userTableNames = new Array();
 
 			for (var i = 0; i < dbDict.dataObjects.length; i++) {
-				var dataObject = dbDict.dataObjects[i];
-				userTableNames.push([dataObject.tableName, dataObject.tableName]);
-				selectTableNames.push(dataObject.tableName);
+				var tableName = (dbDict.dataObjects[i].tableName ? dbDict.dataObjects[i].tableName : dbDict.dataObjects[i]);
+				selectTableNames.push(tableName);
 			}
 
 			return selectTableNames;
@@ -2060,6 +2142,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var showTree = function (dbObjectsTree) {
 			var selectTableNames = setTableNames();
 			var connStr = dbDict.ConnectionString;
+			if (!connStr) {
+				showDialog(400, 100, 'Warning', 'Please save the Data Objects tree first.', Ext.Msg.OK, null);
+			}
+
 			var connStrParts = connStr.split(';');
 			dbInfo = {};
 			var provider = dbDict.Provider.toUpperCase();
@@ -2141,7 +2227,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			Ext.Ajax.request({
 				url: 'AdapterManager/TableNames',
 				method: 'POST',
-				timeout: 600000,
 				params: {
 					scope: scopeName,
 					app: appName,
