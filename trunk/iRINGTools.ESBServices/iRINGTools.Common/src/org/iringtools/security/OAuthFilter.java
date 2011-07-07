@@ -2,7 +2,6 @@ package org.iringtools.security;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.Filter;
@@ -46,82 +45,77 @@ public class OAuthFilter implements Filter
   {
     response = (HttpServletResponse) res;
     request = (HttpServletRequest) req;
-    session = request.getSession(false);
-        
-    if (session == null)
-    {
-      session = request.getSession(true);
-    }
+    session = request.getSession();
     
+    logger.debug("Session ID: " + session.getId());
+    logger.debug("Request URL: " + request.getRequestURL());
     Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTHENTICATED_USER_KEY);
     
-    if (session.getAttribute(AUTHENTICATED_USER_KEY) == null)
-    {      
-      if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))  // use has not signed on
+    if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))  // use has not signed on
+    {
+      String ref = request.getParameter(REF_PARAM);
+      
+      if (IOUtils.isNullOrEmpty(ref))  // no reference token, attempt to obtain one
       {
-        String ref = request.getParameter(REF_PARAM);
+        String federationServiceUri = filterConfig.getInitParameter("federationServiceUri");
+        String idpId = filterConfig.getInitParameter("idpId");
+        String spFederationPath = filterConfig.getInitParameter("spFederationPath");          
+        String returnPath = request.getRequestURL().toString();          
         
-        if (IOUtils.isNullOrEmpty(ref))  // no reference token, attempt to obtain one
+        String ssoUrl = federationServiceUri + spFederationPath + "?PartnerIdpId=" + 
+          idpId + "&TargetResource=" + URLEncoder.encode(returnPath, URL_ENCODING);
+        
+        response.setContentType("text/html");
+        response.sendRedirect(ssoUrl);
+      }
+      else  // got reference ID, get user info
+      {
+        String authenticationServiceUri = filterConfig.getInitParameter("authenticationServiceUri");
+        String pingUserName = filterConfig.getInitParameter("pingUserName");
+        String pingPassword = filterConfig.getInitParameter("pingPassword");
+        String pingInstanceId = filterConfig.getInitParameter("pingInstanceId");
+       
+        HttpClient pingIdClient = new HttpClient(authenticationServiceUri + ref);
+        pingIdClient.addHeader("ping.uname", pingUserName);
+        pingIdClient.addHeader("ping.pwd", pingPassword);
+        pingIdClient.addHeader("ping.instanceId", pingInstanceId);
+        
+        String userAttrsJson = null;
+        
+        try
         {
-          String federationServiceUri = filterConfig.getInitParameter("federationServiceUri");
-          String idpId = filterConfig.getInitParameter("idpId");
-          String spFederationPath = filterConfig.getInitParameter("spFederationPath");          
-          String returnPath = request.getRequestURL().toString();          
-          
-          String ssoUrl = federationServiceUri + spFederationPath + "?PartnerIdpId=" + 
-            idpId + "&TargetResource=" + URLEncoder.encode(returnPath, URL_ENCODING);
-          
-          response.setContentType("text/html");
-          response.sendRedirect(ssoUrl);
-          return;
+          userAttrsJson = pingIdClient.get(String.class);
         }
-        else  // got reference ID, get user info
+        catch (HttpClientException e)
         {
-          String authenticationServiceUri = filterConfig.getInitParameter("authenticationServiceUri");
-          String pingUserName = filterConfig.getInitParameter("pingUserName");
-          String pingPassword = filterConfig.getInitParameter("pingPassword");
-          String pingInstanceId = filterConfig.getInitParameter("pingInstanceId");
-         
-          HttpClient pingIdClient = new HttpClient(authenticationServiceUri + ref);
-          pingIdClient.addHeader("ping.uname", pingUserName);
-          pingIdClient.addHeader("ping.pwd", pingPassword);
-          pingIdClient.addHeader("ping.instanceId", pingInstanceId);
-          
-          String userAttrsJson = null;
+          logger.error(e);
+        }
+        
+        if (userAttrsJson == null)
+        {
+          response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+        else 
+        {
+          Map<String, String> userAttrs = null;
           
           try
           {
-            userAttrsJson = pingIdClient.get(String.class);
+            userAttrs = (Map<String, String>) JSONUtil.deserialize(userAttrsJson);
           }
-          catch (HttpClientException e)
+          catch (JSONException e)
           {
-            logger.error(e);
+            String message = "Error deserializing user info json: " + e;
+            logger.error(message);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
           }
           
-          if (userAttrsJson == null)
+          if (userAttrs != null)
           {
-            session.invalidate();
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
-          }
-          else 
-          {
-            Map<String, String> userAttrs = null;
-            
-            try
-            {
-              userAttrs = (Map<String, String>) JSONUtil.deserialize(userAttrsJson);
-            }
-            catch (JSONException e)
-            {
-              logger.error("Error deserializing user info json: " + e);
-              session.invalidate();
-              response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-              return;
-            }
-            
             String multiValue = userAttrs.toString();
             multiValue = multiValue.substring(1, multiValue.length() - 1);
+            
+            // make authenticated user attributes available in both session and cookie
             session.setAttribute(AUTHENTICATED_USER_KEY, multiValue);
             
             authCookie = new Cookie(AUTHENTICATED_USER_KEY, multiValue);
@@ -129,55 +123,47 @@ public class OAuthFilter implements Filter
             response.addCookie(authCookie);
             
             if (!obtainOAuthToken(userAttrsJson))
-              return;
+            {
+              String message = "Unable to obtain OAuth token.";
+              response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+            }
+            else
+            {
+              chain.doFilter(req, res); 
+            }
           }
         }
       }
-      else  // user signed on but session has not been validated
-      {
-        Map<String, String> userAttrs = HttpUtils.getCookieAttributes(authCookie.getValue());
-        
-        try
-        {
-          String multiValue = userAttrs.toString();
-          multiValue = multiValue.substring(1, multiValue.length() - 1);
-          session.setAttribute(AUTHENTICATED_USER_KEY, multiValue);
-          
-          String userAttrsJson = JSONUtil.serialize(userAttrs);
-          
-          if (!obtainOAuthToken(userAttrsJson))
-            return;
-        }
-        catch (JSONException e)
-        {
-          logger.error("Error serializing user info: " + e);
-          session.invalidate();
-          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-          return;
-        }        
-      }
     }
-    else
+    else  // user signed on but session has not been validated
     {
-      Map<String, String> userAttrs = HttpUtils.getCookieAttributes(authCookie.getValue());
+      Map<String, String> userAttrs = HttpUtils.toMap(authCookie.getValue());
       
       try
       {
+        String multiValue = userAttrs.toString();
+        multiValue = multiValue.substring(1, multiValue.length() - 1);
+        session.setAttribute(AUTHENTICATED_USER_KEY, multiValue);
+        
         String userAttrsJson = JSONUtil.serialize(userAttrs);
         
         if (!obtainOAuthToken(userAttrsJson))
-          return;
+        {
+          String message = "Unable to obtain OAuth token.";
+          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+        }
+        else
+        {
+          chain.doFilter(req, res);
+        }
       }
       catch (JSONException e)
       {
-        logger.error("Error serializing user info: " + e);
-        session.invalidate();
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        return;
-      }
+        String message = "Error serializing user info: " + e;
+        logger.error(message);
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+      }        
     }
-
-    chain.doFilter(request, response); 
   }
 
   @Override
@@ -219,25 +205,10 @@ public class OAuthFilter implements Filter
       catch (Exception ex)
       {
         logger.error("Error obtaining OAuth token from Apigee: " + ex);
-        session.invalidate();
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         return false;
       }
     }
     
     return true;
-  }
-  
-  public void logHeaders(HttpServletRequest request)
-  {
-    logger.debug("HEADERS:");
-    Enumeration<?> headers = request.getHeaderNames();
-    
-    while (headers != null && headers.hasMoreElements())
-    {
-      String name = (String)headers.nextElement();
-      String value = request.getHeader(name);
-      logger.debug(name + ": " + value);
-    }
   } 
 }

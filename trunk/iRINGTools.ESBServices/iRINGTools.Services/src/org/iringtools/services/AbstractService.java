@@ -23,8 +23,7 @@ public abstract class AbstractService
   
   public void initService()
   {
-    //settings = java.util.Collections.synchronizedMap(new HashMap<String, Object>());
-    settings = new HashMap<String, Object>();
+    settings = java.util.Collections.synchronizedMap(new HashMap<String, Object>());
     
     /*
      * COMMON SETTINGS

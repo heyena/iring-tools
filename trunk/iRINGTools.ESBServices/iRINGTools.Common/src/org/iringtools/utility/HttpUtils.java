@@ -25,7 +25,7 @@ public class HttpUtils
     return null;
   }
   
-  public static synchronized Map<String, String> getCookieAttributes(String multiValue)
+  public static synchronized Map<String, String> toMap(String multiValue)
   {
     Map<String, String> attrs = new HashMap<String, String>();
     
