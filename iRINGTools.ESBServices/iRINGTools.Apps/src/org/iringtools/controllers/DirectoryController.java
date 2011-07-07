@@ -1,9 +1,11 @@
 package org.iringtools.controllers;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.SessionAware;
+import org.iringtools.models.DataModel;
 import org.iringtools.models.DirectoryModel;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.widgets.tree.Tree;
@@ -21,23 +23,33 @@ public class DirectoryController extends ActionSupport implements SessionAware
   private String exchangeServiceUri;;
   private Tree directoryTree;
   
-  @Override
-  public void setSession(Map<String, Object> session)
-  {
-    this.session = session;
-  } 
-  
   public DirectoryController()
   {
     directoryModel = new DirectoryModel();
     exchangeServiceUri = ActionContext.getContext().getApplication().get("ExchangeServiceUri").toString();
   }
 
+  @Override
+  public void setSession(Map<String, Object> session)
+  {
+    this.session = session;
+    directoryModel.setSession(session);
+  } 
+  
   public String getDirectory()
   {
     try
     {
-      session.clear();
+      for (Entry<String, Object> entry : session.entrySet())
+      {
+        String key = entry.getKey();
+        
+        if (key.startsWith(DataModel.APP_PREFIX))
+        {
+          session.remove(key);
+        }
+      }
+      
       directoryTree = directoryModel.getDirectoryTree(exchangeServiceUri + "/directory");  
     }
     catch (HttpClientException ex)

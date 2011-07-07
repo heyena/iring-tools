@@ -1,8 +1,8 @@
 package org.iringtools.services.core;
 
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
@@ -19,9 +19,9 @@ import org.iringtools.dxfr.request.DfoRequest;
 
 public class DifferencingProvider
 {
-  //private Hashtable<String, String> settings;
+  //private Map<String, Object> settings;
 
-  public DifferencingProvider(Hashtable<String, String> settings)
+  public DifferencingProvider(Map<String, Object> settings)
   {
     //this.settings = settings;
   }

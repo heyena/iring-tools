@@ -1,7 +1,7 @@
 package org.iringtools.services.core;
 
 import java.io.IOException;
-import java.util.Hashtable;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -11,9 +11,9 @@ import org.iringtools.utility.JaxbUtils;
 
 public class DirectoryProvider
 {
-  private Hashtable<String, String> settings;
+  private Map<String, Object> settings;
 
-  public DirectoryProvider(Hashtable<String, String> settings)
+  public DirectoryProvider(Map<String, Object> settings)
   {
     this.settings = settings;
   }

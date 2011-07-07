@@ -5,6 +5,8 @@ import java.util.Map;
 
 import javax.servlet.http.Cookie;
 
+import org.iringtools.security.OAuthFilter;
+
 public class HttpUtils
 {
   public static synchronized Cookie getCookie(Cookie[] cookies, String cookieName)
@@ -23,13 +25,13 @@ public class HttpUtils
     return null;
   }
   
-  public static synchronized Map<String, String> getCookieAttributes(String cookieValue)
+  public static synchronized Map<String, String> getCookieAttributes(String multiValue)
   {
     Map<String, String> attrs = new HashMap<String, String>();
     
-    if (!IOUtils.isNullOrEmpty(cookieValue))
+    if (!IOUtils.isNullOrEmpty(multiValue))
     {
-      String[] pairs = cookieValue.split(" *, *");
+      String[] pairs = multiValue.split(" *, *");
       
       for (String pair : pairs)
       {
@@ -39,5 +41,20 @@ public class HttpUtils
     }
     
     return attrs;
+  }
+  
+  public static synchronized void addOAuthHeaders(Map<String, Object> settings, HttpClient httpClient)
+  {
+    String authenticatedUser = (String)settings.get(OAuthFilter.AUTHENTICATED_USER_KEY);
+    if (!IOUtils.isNullOrEmpty(authenticatedUser))
+    {
+      httpClient.addHeader(OAuthFilter.AUTHENTICATED_USER_KEY, authenticatedUser);
+    }
+    
+    String authorizationToken = (String)settings.get(OAuthFilter.AUTHORIZATION_TOKEN_KEY);
+    if (!IOUtils.isNullOrEmpty(authorizationToken))
+    {
+      httpClient.addHeader(OAuthFilter.AUTHORIZATION_TOKEN_KEY, authorizationToken);
+    }
   }
 }

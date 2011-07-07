@@ -40,6 +40,7 @@ import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
+import org.iringtools.utility.HttpUtils;
 import org.iringtools.utility.IOUtils;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
@@ -80,9 +81,10 @@ public class DataModel
     relationalOperatorMap.put("gt", RelationalOperator.GREATER_THAN);
   }
 
-  protected final String MANIFEST_PREFIX = "manifest-";
-  protected final String DTI_PREFIX = "dti-";
-  protected final String XLOGS_PREFIX = "xlogs-";
+  public static final String APP_PREFIX = "xchmgr-";
+  protected final String MANIFEST_PREFIX = APP_PREFIX + "manifest-";
+  protected final String DTI_PREFIX = APP_PREFIX + "dti-";
+  protected final String XLOGS_PREFIX = APP_PREFIX + "xlogs-";
   protected final String FULL_DTI_KEY_PREFIX = DTI_PREFIX + "full";
   protected final String PART_DTI_KEY_PREFIX = DTI_PREFIX + "part";
   protected final String FILTER_KEY_PREFIX = DTI_PREFIX + "filter-key";
@@ -107,7 +109,7 @@ public class DataModel
     this.refDataServiceUri = refDataServiceUri;
     this.fieldFit = fieldFit;
   }
-
+  
   // only cache full dti and one filtered dti
   protected DataTransferIndices getDtis(String serviceUri, String manifestRelativePath, String dtiRelativePath, String filter,
       String sortBy, String sortOrder)
@@ -129,6 +131,8 @@ public class DataModel
         dxiRequest.setDataFilter(new DataFilter());
         
         HttpClient httpClient = new HttpClient(serviceUri);
+        HttpUtils.addOAuthHeaders(session, httpClient);
+        
         dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
         session.put(fullDtiKey, dtis);
 
@@ -164,6 +168,8 @@ public class DataModel
             dxiRequest.setDataFilter(dataFilter);
             
             HttpClient httpClient = new HttpClient(serviceUri);
+            HttpUtils.addOAuthHeaders(session, httpClient);
+            
             dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
           }
           if (dtis != null && dtis.getDataTransferIndexList() != null
@@ -187,6 +193,8 @@ public class DataModel
           dxiRequest.setDataFilter(dataFilter);
           
           HttpClient httpClient = new HttpClient(serviceUri);
+          HttpUtils.addOAuthHeaders(session, httpClient);
+          
           dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
         }
 
@@ -291,6 +299,8 @@ public class DataModel
         List<DataTransferIndex> partialDtiList = null;
         
         HttpClient httpClient = new HttpClient(serviceUri);
+        HttpUtils.addOAuthHeaders(session, httpClient);
+        
         String destinationUri = dtiRelativePath + "?destination=source";
         
         DxiRequest dxiRequest = new DxiRequest();
@@ -445,6 +455,8 @@ public class DataModel
       dxoRequest.setDataTransferIndices(dtis);
 
       HttpClient httpClient = new HttpClient(serviceUri);
+      HttpUtils.addOAuthHeaders(session, httpClient);
+      
       dtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
     }
     catch (HttpClientException ex)
@@ -549,6 +561,8 @@ public class DataModel
         try
         {
           HttpClient httpClient = new HttpClient(serviceUri);
+          HttpUtils.addOAuthHeaders(session, httpClient);
+          
           relatedDtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
                     
           // apply filter          
@@ -653,6 +667,8 @@ public class DataModel
     try
     {
       HttpClient httpClient = new HttpClient(refDataServiceUri);
+      HttpUtils.addOAuthHeaders(session, httpClient);
+      
       Entity value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");
       
       if (value != null)
@@ -843,6 +859,7 @@ public class DataModel
     else 
     {
       HttpClient httpClient = new HttpClient(serviceUri);
+      HttpUtils.addOAuthHeaders(session, httpClient);
       
       try
       {
@@ -877,7 +894,9 @@ public class DataModel
   protected void removeSessionData(String key)
   {
     if (session != null && session.keySet().contains(key))
+    {
       session.remove(key);
+    }
   }
 
   private boolean parsePartialDtis(List<DataTransferIndex> partialDtiList, List<DataTransferIndex> fullDtiList)
