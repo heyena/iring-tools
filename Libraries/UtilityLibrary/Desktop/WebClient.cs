@@ -203,6 +203,7 @@ namespace org.iringtools.utility
         {
             try
             {
+              if (relativeUri.Contains(" ")) HttpUtility.HtmlEncode(relativeUri);
                 string uri = _baseUri + relativeUri; // GetUri(relativeUri);
 
                 WebRequest request = HttpWebRequest.Create(uri);

@@ -23,6 +23,7 @@ namespace org.iringtools.modulelibrary.types
     Generate,
     UpdateMapping,
     PostClass,
-    PostTemplate
+    PostTemplate,
+    GetEntityTypes
   }
 }

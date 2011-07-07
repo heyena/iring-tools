@@ -46,7 +46,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
     private ClassDefinitionBLL _classBLL = null;
     private EditorMode _editorMode = EditorMode.Add;
     private string _clickedButton = String.Empty;
-
+    
     private Button btnOK
     {
       get { return ButtonCtrl("btnOK1"); }
@@ -87,6 +87,10 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
       get { return ComboBoxCtrl("cmbRepositories"); }
     }
 
+    private ComboBox cmbEntityType
+    {
+      get { return ComboBoxCtrl("cmbEntityType"); }
+    }
     public ClassDefinitionEditorPresenter(IClassDefinitionEditorView view, IIMPresentationModel model,
         IRegionManager regionManager,
         IReferenceData referenceDataService,
@@ -100,6 +104,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
         this.aggregator = aggregator;
         this.referenceDataService = referenceDataService;
         referenceDataService.GetRepositories();
+        
 
         addSpecialization.Click += (object sender, RoutedEventArgs e)
         => { addSpecializationClickHandler(sender, e); };
@@ -133,10 +138,36 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
           repositorySelectionChanged(sender, e);
         };
 
+        cmbEntityType.SelectionChanged += (object sender, SelectionChangedEventArgs e) =>
+        {
+          entityTypeSelectionChanged(sender, e);
+        };
+
         referenceDataService.OnDataArrived += OnDataArrivedHandler;
 
         aggregator.GetEvent<ButtonEvent>().Subscribe(showClassEditorHandler);
 
+      }
+      catch (Exception ex)
+      {
+        Error.SetError(ex);
+      }
+    }
+
+    private void entityTypeSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      try
+      {
+        ComboBox cb = sender as ComboBox;
+        ComboBoxItem cbi = cb.SelectedItem as ComboBoxItem;
+
+        if (this.model.SelectedQMXF == null)
+          this.model.SelectedQMXF = new QMXF();
+
+        Entity ent = cbi.Tag as Entity;
+
+        if (_classBLL != null)
+          _classBLL.EntityType = ent.Uri.ToString();
       }
       catch (Exception ex)
       {
@@ -188,9 +219,35 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
 
             cmbRepositories.Items.Add(item);
           }
-
+          referenceDataService.GetEntityTypes();
         }
 
+        if (args.CheckForType(CompletedEventType.GetEntityTypes))
+        {
+          
+          if (args.Error != null)
+          {
+            MessageBox.Show(args.FriendlyErrorMessage, "Get EntityTypes Error", MessageBoxButton.OK);
+            return;
+          }
+
+           object obj = args.Data;
+           foreach (Entity en in (Entities)obj)
+           {
+             string label = en.Label;
+
+             ComboBoxItem item = new ComboBoxItem
+             {
+               Content = label,
+               Tag = en,
+               Height = 20,
+               FontSize = 10
+             };
+
+             cmbEntityType.Items.Add(item);
+           }
+
+        }
         //if (args.CheckForType(CompletedEventType.GetClass))
         //{
         //  if (args.Error != null)
@@ -276,6 +333,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
       try
       {
         EditorMode editorMode = EditorMode.Add;
+        
         InitializeEditor(editorMode, null);
       }
       catch (Exception ex)
@@ -294,11 +352,11 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
             if (model.SelectedTreeItem.Tag is ClassDefinition)
             {
                 _classBLL = new ClassDefinitionBLL((ClassDefinition)model.SelectedTreeItem.Tag);
-
+              //  Uri entityType = new Uri(_classBLL.EntityType);
                 TextCtrl("className").DataContext = _classBLL;
-                TextCtrl("entityType").DataContext = _classBLL;
+                SetEntityType(_classBLL.EntityType);
                 TextCtrl("description").DataContext = _classBLL;
-
+              //  ComboBoxCtrl("cmbEntityType").SelectedValue = entityType.ToString().Substring(1);
                 TextCtrl("authority").DataContext = _classBLL;
                 TextCtrl("recorded").DataContext = _classBLL;
                 TextCtrl("dateFrom").DataContext = _classBLL;
@@ -313,7 +371,9 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
             _classBLL = new ClassDefinitionBLL(new ClassDefinition());
 
             TextCtrl("className").DataContext = _classBLL;
-            TextCtrl("entityType").DataContext = _classBLL;
+           
+           // ComboBoxCtrl("cmbEntityType").SelectedValue = _classBLL.EntityType;
+            //    TextCtrl("entityType").DataContext = _classBLL;
             TextCtrl("description").DataContext = _classBLL;
 
             TextCtrl("authority").DataContext = _classBLL;
@@ -331,6 +391,24 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
       }
     }
 
+    private void SetEntityType(String entityType)
+    {
+      if (string.IsNullOrEmpty(entityType))
+        return;
+      int i = 0;
+      Uri uri = new Uri(entityType);
+      string label = uri.Fragment.Substring(1);
+      foreach (ComboBoxItem cb in cmbEntityType.Items)
+      {
+        if (cb.Content.ToString() == label)
+        {
+          cmbEntityType.SelectedIndex =  i;
+          break;
+        }
+        i++;
+      }
+    }
+
     public void showClassEditorHandler(ButtonEventArgs e)
     {
       try
@@ -341,6 +419,8 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
           InitializeEditorForAdd();
           if (cmbRepositories.Items.Count > 0)
             cmbRepositories.SelectedIndex = 0;
+          if (cmbEntityType.Items.Count > 0)
+            cmbEntityType.SelectedIndex = 0;
 
           IRegion region = regionManager.Regions["ClassEditorRegion"];
 
@@ -355,6 +435,10 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
           InitializeEditor(EditorMode.Edit, model.SelectedQMXF);
           if (cmbRepositories.Items.Count > 0)
             cmbRepositories.SelectedIndex = 0;
+
+          //if (cmbEntityType.Items.Count > 0)
+           // cmbEntityType.SelectedIndex = 0;
+
           IRegion region = regionManager.Regions["ClassEditorRegion"];
 
           foreach (UserControl userControl in region.Views)
@@ -388,11 +472,11 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                 errorMsg = errorMsg + "Parameter[ClassName] cannot be null\r\n";
                 isRaiseEx = true;
             }
-            if (TextCtrl("entityType").Text.Trim() == string.Empty)
-            {
-                errorMsg = errorMsg + "Parameter[EntityType] cannot be null\r\n";
-                isRaiseEx = true;
-            }
+            //if (TextCtrl("entityType").Text.Trim() == string.Empty)
+            //{
+            //    errorMsg = errorMsg + "Parameter[EntityType] cannot be null\r\n";
+            //    isRaiseEx = true;
+            //}
 
             #endregion
 
@@ -434,7 +518,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                 errorMsg = errorMsg + "Parameter[ClassName] cannot be null\r\n";
                 isRaiseEx = true;
             }
-            if (TextCtrl("entityType").Text.Trim() == string.Empty)
+            if (ComboBoxCtrl("cmbentityType").SelectedIndex == -1)
             {
                 errorMsg = errorMsg + "Parameter[EntityType] cannot be null\r\n";
                 isRaiseEx = true;

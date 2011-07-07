@@ -39,6 +39,8 @@ namespace org.iringtools.modulelibrary.layerdal
 
         Repositories GetRepositories();
 
+        Entities GetEntityTypes();
+
         string GetReferenceDataServiceUri { get; }
 
 

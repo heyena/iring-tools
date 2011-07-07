@@ -54,6 +54,7 @@ namespace org.iringtools.modulelibrary.layerdal
         private WebClient _postClassClient;
         private WebClient _postTemplateClient;
         private WebClient _getRepositoriesClient;
+        private WebClient _getEntityTypesClient;
         private string _referenceDataServiceUri;
 
         /// <summary>
@@ -81,6 +82,7 @@ namespace org.iringtools.modulelibrary.layerdal
               _postClassClient = new WebClient();
               _postTemplateClient = new WebClient();
               _getRepositoriesClient = new WebClient();
+              _getEntityTypesClient = new WebClient();
 
               #region // All Async data results will be handled by OnCompleteEventHandler
               _searchClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
@@ -96,6 +98,7 @@ namespace org.iringtools.modulelibrary.layerdal
               _postClassClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
               _postTemplateClient.UploadStringCompleted += new UploadStringCompletedEventHandler(OnCompletedEvent);
               _getRepositoriesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
+              _getEntityTypesClient.DownloadStringCompleted += new DownloadStringCompletedEventHandler(OnCompletedEvent);
               #endregion
 
             }
@@ -171,6 +174,37 @@ namespace org.iringtools.modulelibrary.layerdal
                        s + "\nPlease review the log on the server.",
                   };
               }
+          }
+          if (sender == _getEntityTypesClient)
+          {
+            try
+            {
+              string result = ((DownloadStringCompletedEventArgs)e).Result;
+              Entities entities = result.DeserializeDataContract<Entities>();
+              if (entities == null)
+                return;
+
+              args = new CompletedEventArgs
+              {
+                
+                CompletedType = CompletedEventType.GetEntityTypes,
+                Data = entities
+              };
+
+            }
+            catch (Exception ex)
+            {
+              string s = "Reference Data Service returned an error while getting entity types.";
+              args = new CompletedEventArgs
+              {
+                CompletedType = CompletedEventType.GetEntityTypes,
+                Error = ex,
+                FriendlyErrorMessage =
+                 IsServiceUnavailable(ex) ?
+                 s + "\nPlease verify if the Reference Data Service is available." :
+                 s + "\nPlease review the log on the server.",
+              };
+            }
           }
           #endregion
           //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -670,6 +704,12 @@ namespace org.iringtools.modulelibrary.layerdal
         {
             _getRepositoriesClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/repositories"));
             return null;
+        }
+
+        public Entities GetEntityTypes()
+        {
+          _getEntityTypesClient.DownloadStringAsync(new Uri(_referenceDataServiceUri + "/entitytypes"));
+          return null;
         }
 
         public RefDataEntities Search(string query)
