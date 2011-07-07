@@ -79,7 +79,7 @@ namespace iRINGTools.Web.Controllers
 			
 			response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"]);
 
-			if (response.ToUpper().Contains("ERROR"))
+			if (response != null && response.ToUpper().Contains("ERROR"))
 			{
 				int inds = response.ToUpper().IndexOf("<MESSAGE>");
 				int inde = response.ToUpper().IndexOf(";");
