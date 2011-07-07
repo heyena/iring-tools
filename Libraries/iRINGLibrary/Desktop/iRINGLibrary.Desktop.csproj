@@ -121,6 +121,8 @@
     <Compile Include="DataLayerConfig.cs" />
     <Compile Include="DataLayers.cs" />
     <Compile Include="GenericDataObject.cs" />
+    <Compile Include="IAuthenticationLayer.cs" />
+    <Compile Include="IAuthorizationLayer.cs" />
     <Compile Include="MappingExtensions.cs" />
     <Compile Include="DataObjects.cs" />
     <Compile Include="DataProviders.cs" />

@@ -121,7 +121,7 @@
     <Compile Include="AdapterModule.cs" />
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BasePart7ProjectionEngine.cs" />
-    <Compile Include="SSOAuthenticationProvider.cs" />
+    <Compile Include="SSOIdentityProvider.cs" />
     <Compile Include="DxiRequest.cs" />
     <Compile Include="DxoRequest.cs" />
     <Compile Include="DataProjectionEngine.cs" />
@@ -136,12 +136,11 @@
     <Compile Include="IIdentityLayer.cs" />
     <Compile Include="IProjectionLayer.cs" />
     <Compile Include="ISemanticLayer.cs" />
-    <Compile Include="AnonymousProvider.cs" />
+    <Compile Include="AnonymousIdentityProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\..\AssemblyInfo.cs" />
     <Compile Include="RdfProjectionEngine.cs" />
-    <Compile Include="STSProvider.cs" />
-    <Compile Include="WindowsAuthenticationProvider.cs" />
+    <Compile Include="WindowsIdentityProvider.cs" />
     <Compile Include="XmlProjectionEngine.cs" />
   </ItemGroup>
   <ItemGroup>
