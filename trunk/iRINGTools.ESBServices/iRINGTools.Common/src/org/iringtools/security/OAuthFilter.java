@@ -47,8 +47,6 @@ public class OAuthFilter implements Filter
     request = (HttpServletRequest) req;
     session = request.getSession();
     
-    logger.debug("Session ID: " + session.getId());
-    logger.debug("Request URL: " + request.getRequestURL());
     Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTHENTICATED_USER_KEY);
     
     if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))  // use has not signed on
