@@ -103,8 +103,12 @@ AdapterManager.ValueListPanel = Ext.extend(Ext.Panel, {
 
 	onSave: function () {
 		var that = this;    // consists the main/previous class object
-
-		this.form.getForm().submit({
+		var thisForm = this.form.getForm();
+		if (thisForm.findField('valueList').getValue() == '') {
+			showDialog(400, 100, 'Warning', 'Please type in a value list name before saving.', Ext.Msg.OK, null);
+			return;
+		}
+		thisForm.submit({
 			waitMsg: 'Saving Data...',
 			success: function (f, a) {
 				//Ext.Msg.alert('Success', 'Changes saved successfully!');

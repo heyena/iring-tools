@@ -433,25 +433,6 @@ Ext.onReady(function () {
 
 	}, this);
 
-	
-	directoryPanel.on('deletevaluelist', function (npanel, node) {
-		Ext.Ajax.request({
-			url: 'directory/deletescope',
-			method: 'POST',
-			params: {
-				'nodeid': node.attributes.id
-			},
-			success: function (o) {
-				directoryPanel.onReload(node);
-			},
-			failure: function (f, a) {
-				//Ext.Msg.alert('Warning', 'Error!!!');
-				var message = 'Error deleting scope!';
-				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-			}
-		});
-	}, this);
-
 
 	directoryPanel.on('NewGraphMap', function (npanel, node) {
 		var newTab = new AdapterManager.GraphPanel({
@@ -525,7 +506,41 @@ Ext.onReady(function () {
 	}, this);
 
 
+	directoryPanel.on('NewValueListMap', function (npanel, node) {
+		var newTab = new AdapterManager.ValueListMapPanel({
+			id: 'tab-' + node.id,
+			record: node.attributes.record,
+			node: node,
+			url: 'mapping/addvaluelistmap'
+		});
 
+		newTab.on('save', function (panel) {
+			win.close();
+			directoryPanel.onReload(node);
+			if (node.expanded == false)
+				node.expand();
+
+			showDialog(400, 100, 'Info', 'The new ValueListMap is added.', Ext.Msg.OK, null);
+		}, this);
+
+		newTab.on('Cancel', function (panel) {
+			win.close();
+		}, this);
+
+		var win = new Ext.Window({
+			closable: true,
+			modal: false,
+			layout: 'fit',
+			title: 'Add new ValueListMap to valueList',
+			iconCls: 'tabsValueListMap',
+			height: 150,
+			width: 430,
+			plain: true,
+			items: newTab
+		});
+
+		win.show();
+	}, this);
 
 
 

@@ -2770,7 +2770,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
         xtype: 'combo',
         name: 'relationType',
         fieldLabel: 'Relation Type',
-        store: [['1', 'OneToOne'], ['2', 'OneToMany']],
+        store: [['0', 'OneToOne'], ['1', 'OneToMany']],
         mode: 'local',
         editable: false,
         triggerAction: 'all',
