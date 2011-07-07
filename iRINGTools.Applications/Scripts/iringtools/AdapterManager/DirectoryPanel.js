@@ -308,7 +308,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     },
 			{
 				text: 'New Value Map',
-				handler: this.onAddValueListMap,
+				handler: this.onNewValueListMap,
 				icon: 'Content/img/16x16/document-new.png',
 				scope: this
 			}
@@ -409,6 +409,12 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
 		this.fireEvent('EditGraphMap', this, node);
 	},
+	
+
+	onNewValueListMap: function (btn, ev) {
+		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+		this.fireEvent('NewValueListMap', this, node);
+	},
 
 	onDeleteValueList: function (btn, e) {
 		var that = this;
@@ -455,7 +461,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		}
 	},
 	
-	onAddValueListMap: function () {
+
+	onANewValueListMap: function () {
 		var dirnode = this.directoryPanel.getSelectionModel().getSelectedNode();
 		var formid = 'valuelisttarget-' + dirnode.parentNode.parentNode.text + '-' + dirnode.parentNode.text;
 		var form = new Ext.form.FormPanel({

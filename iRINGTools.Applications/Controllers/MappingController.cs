@@ -862,30 +862,7 @@ namespace iRINGTools.Web.Controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
-    public JsonResult EditValuelist(FormCollection form)
-    {
-      try
-      {
-        string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = context[0];
-        string oldValueList = context[context.Count() - 1];
-        string application = context[1];
-        Mapping mapping = GetMapping(scope, application);
-        string newvalueList = form["valueList"];
-        var valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
-        if (valueListMap != null)
-        {
-          valueListMap.name = newvalueList;
-          _repository.UpdateMapping(scope, application, mapping);
-        }
-
-      }
-      catch (Exception ex)
-      {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-      }
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-    }
+   
 
     public JsonResult AddValueListMap(FormCollection form)
     {
@@ -919,7 +896,7 @@ namespace iRINGTools.Web.Controllers
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-    }
+    }		
 
     public JsonResult AddValueList(FormCollection form)
     {
@@ -948,6 +925,76 @@ namespace iRINGTools.Web.Controllers
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
+
+		public JsonResult EditValuelist(FormCollection form)
+		{
+			try
+			{
+				string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+				string scope = context[0];
+				string oldValueList = context[context.Count() - 1];
+				string application = context[1];
+				Mapping mapping = GetMapping(scope, application);
+				string newvalueList = form["valueList"];
+				var valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
+				if (valueListMap != null)
+				{
+					valueListMap.name = newvalueList;
+					_repository.UpdateMapping(scope, application, mapping);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+			}
+			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+		}
+
+		public JsonResult valueList(FormCollection form)
+		{
+			try
+			{
+				string oldValueList = "";
+				ValueListMap valueListMap = null;
+
+				string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+				string scope = context[0];
+				
+				if (context.Count() >= 1)
+					oldValueList = context[context.Count() - 1];
+
+				string application = context[1];
+				Mapping mapping = GetMapping(scope, application);
+				string newvalueList = form["valueList"];
+
+				if (oldValueList != "")
+					valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
+				else
+					valueListMap = mapping.valueListMaps.Find(c => c.name == newvalueList);
+
+				if (valueListMap == null)
+				{
+					ValueListMap valuelistMap = new ValueListMap
+					{
+						name = newvalueList
+					};
+
+					mapping.valueListMaps.Add(valuelistMap);
+					_repository.UpdateMapping(scope, application, mapping);
+				}
+				else
+				{
+					valueListMap.name = newvalueList;
+					_repository.UpdateMapping(scope, application, mapping);
+				}
+			}
+			catch (Exception ex)
+			{
+				return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+			}
+			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+		}
 
     public JsonResult EditGraphName(FormCollection form)
     {
