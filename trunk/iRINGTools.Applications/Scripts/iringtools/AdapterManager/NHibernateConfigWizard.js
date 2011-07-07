@@ -2436,8 +2436,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
       }
     }
 
-    if (node.attributes)
-      var nodeAttribute = node.attributes;
+    if (node.attributes.attributes)
+      var nodeAttribute = node.attributes.attributes;
     else
       var nodeAttribute = node.attributes;
 
@@ -2557,8 +2557,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
         listeners: { 'select': function (combo, record, index) {
           var relatedObjectName = record.data.field2;
           var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
-          if (node.attributes)
-            node.attributes.relatedObjectName = relatedObjectName;
+          if (node.attributes.attributes)
+            node.attributes.attributes.relatedObjectName = relatedObjectName;
           else
             node.attributes.relatedObjectName = relatedObjectName;
 
@@ -2669,8 +2669,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
           text: 'Apply',
           tooltip: 'Apply the current changes to the data objects tree',
           handler: function () {
-            if (node.attributes)
-              var attribute = node.attributes;
+            if (node.attributes.attributes)
+              var attribute = node.attributes.attributes;
             else
               var attribute = node.attributes;
 
@@ -2767,14 +2767,14 @@ function setRelationFields(editPane, node, scopeName, appName) {
     var relationConfigForm = relationConfigPanel.getForm();
     var dataRelationPane = relationConfigPanel.items.items[7];
     relationConfigForm.findField('relatedObjectName').setValue(relatedObjectName);
-    if (node.attributes)
-      var relationTypeIndex = node.attributes.relationshipTypeIndex;
+    if (node.attributes.attributes)
+      var relationTypeIndex = node.attributes.attributes.relationshipTypeIndex;
     else
       var relationTypeIndex = node.attributes.relationshipTypeIndex;
     relationConfigForm.findField('relationType').setValue(relationTypeIndex);
 
-    if (node.attributes)
-      var propertyMaps = node.attributes.propertyMap;
+    if (node.attributes.attributes)
+      var propertyMaps = node.attributes.attributes.propertyMap;
     else
       var propertyMaps = node.attributes.propertyMap;
 
