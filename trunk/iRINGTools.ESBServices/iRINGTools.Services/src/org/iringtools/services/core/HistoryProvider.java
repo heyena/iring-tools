@@ -3,8 +3,8 @@ package org.iringtools.services.core;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -15,9 +15,9 @@ import org.iringtools.utility.JaxbUtils;
 
 public class HistoryProvider
 {
-  private Hashtable<String, String> settings;
+  private Map<String, Object> settings;
 
-  public HistoryProvider(Hashtable<String, String> settings)
+  public HistoryProvider(Map<String, Object> settings)
   {
     this.settings = settings;
   }

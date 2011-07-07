@@ -5,28 +5,46 @@
 <%@ page import="org.iringtools.security.LdapAuthorizationProvider" %>
 <%@ page import="org.iringtools.utility.HttpUtils" %>
 <% 
-String APP_AUTHORIZATION_ATTR = "ExchangeManager.Authorized";
-
-LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
-authProvider.init(getServletContext().getRealPath("/") + "WEB-INF/config/ldap.properties");
-authProvider.setAuthorizedGroup("exchangeAdmins");
+String appName = "exchangeManager";
+String authorizedAppKey = "authorized-app";
+String authorizedGroupName = "exchangeAdmins";
 
 Cookie[] cookies = request.getCookies();
-Cookie authorizationCookie = HttpUtils.getCookie(cookies, APP_AUTHORIZATION_ATTR);
+Cookie authorizedAppCookie = HttpUtils.getCookie(cookies, authorizedAppKey);
 
-if (authorizationCookie == null)
+//DEBUG
+/*
+for (Cookie cookie : cookies)
 {
-  Cookie authenticationCookie = HttpUtils.getCookie(cookies, OAuthFilter.AUTH_COOKIE_NAME);
-  Map<String, String> claims = HttpUtils.getCookieAttributes(authenticationCookie.getValue());
+  String name = cookie.getName();
+  System.out.println("Cookie: " + name + " - " + cookie.getValue());
+}
+
+java.util.Enumeration attrNames =  session.getAttributeNames();
+while (attrNames.hasMoreElements())
+{
+  String name = (String)attrNames.nextElement();
+  System.out.println("Attribute: " + name + " - " + session.getAttribute(name));
+}
+*/
+
+if (authorizedAppCookie == null)  // user not authorized, attempt to authorize
+{
+  String authenticatedUser = (String)session.getAttribute(OAuthFilter.AUTHENTICATED_USER_KEY);
+  Map<String, String> userAttrs = HttpUtils.getCookieAttributes(authenticatedUser);
   
-  if (!authProvider.isAuthorized(claims))
+  LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
+  authProvider.init(getServletContext().getRealPath("/") + "WEB-INF/config/ldap.properties");
+  authProvider.setAuthorizedGroup(authorizedGroupName);
+  
+  if (!authProvider.isAuthorized(userAttrs))
   {
     session.invalidate();
     response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
   }
   else
   {
-    response.addCookie(new Cookie(APP_AUTHORIZATION_ATTR, "true"));
+    response.addCookie(new Cookie(authorizedAppKey, appName));
   }
 }
 %>

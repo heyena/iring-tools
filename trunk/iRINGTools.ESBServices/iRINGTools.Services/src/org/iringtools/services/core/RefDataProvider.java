@@ -6,7 +6,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -54,28 +53,23 @@ import org.iringtools.utility.JaxbUtils;
 import org.iringtools.utility.NamespaceMapper;
 import org.iringtools.utility.NetworkCredentials;
 import org.iringtools.utility.ReferenceObject;
-import org.w3._2005.sparql.results.Binding;
-import org.w3._2005.sparql.results.Result;
-import org.w3._2005.sparql.results.Results;
-import org.w3._2005.sparql.results.Sparql;
-
 import org.jrdf.graph.Graph;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.TripleImpl;
-import org.jrdf.graph.Node;
 import org.jrdf.graph.global.LiteralImpl;
 import org.jrdf.graph.global.URIReferenceImpl;
 import org.jrdf.graph.local.BlankNodeImpl;
-import org.jrdf.parser.ntriples.NTriplesFormatParser;
-import org.jrdf.parser.ntriples.parser.*;
-
+import org.w3._2005.sparql.results.Binding;
+import org.w3._2005.sparql.results.Result;
+import org.w3._2005.sparql.results.Results;
+import org.w3._2005.sparql.results.Sparql;
 
 
 public class RefDataProvider
 {
-  private Hashtable<String, String> _settings;
+  private Map<String, Object> _settings;
   private List<Repository> _repositories = null;
   private Queries _queries = null;
   private String defaultLanguage = "en";
@@ -93,16 +87,13 @@ public class RefDataProvider
   private final String rdfType = "rdf:type";
   
   private StringBuilder sparqlStr = new StringBuilder();
-
-
+  
   //NTriplesFormat formatter = new NTriplesParser();
   SubjectNode dsubj ,isubj, subj; 
   PredicateNode dpred, ipred, pred;
   ObjectNode dobj, iobj, obj;
-
-
   
-  public RefDataProvider(Hashtable<String, String> settings)
+  public RefDataProvider(Map<String, Object> settings)
   {
     try
     {
@@ -1468,8 +1459,8 @@ public class RefDataProvider
       }
       else
       {
-        String registry = (_useExampleRegistryBase) ? _settings.get("ExampleRegistryBase") : _settings
-            .get("ClassRegistryBase");
+        String registry = (_useExampleRegistryBase) ? _settings.get("ExampleRegistryBase").toString() : _settings
+            .get("ClassRegistryBase").toString();
         StringBuilder sparqlDelete = new StringBuilder();
         ///////////////////////////////////////////////////////////////////////////////
         /// Base templates do have the following properties
@@ -1507,9 +1498,9 @@ public class RefDataProvider
             else
             {
               if (_useExampleRegistryBase)
-                generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), templateName);
+                generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), templateName);
               else
-                generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), templateName);
+                generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), templateName);
               identifier = getIdFromURI(generatedId);
             }
             
@@ -1581,9 +1572,9 @@ public class RefDataProvider
                   if (roleIdentifier==null || roleIdentifier=="")
                   {
                     if (_useExampleRegistryBase)
-                      generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), roleName);
+                      generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), roleName);
                     else
-                      generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), roleName);
+                      generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), roleName);
                     roleIdentifier = generatedId;
                   }
                   
@@ -1726,9 +1717,9 @@ public class RefDataProvider
                 if(role.getId()==null || role.getId()=="")
                 {
                   if (_useExampleRegistryBase)
-                    generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), genName);
+                    generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), genName);
                   else
-                    generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), genName);
+                    generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), genName);
                   roleID = Long.parseLong(getIdFromURI(generatedId));
                 }
                 else
@@ -1834,9 +1825,9 @@ public class RefDataProvider
             else
             {
               if (_useExampleRegistryBase)
-                generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), templateName);
+                generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), templateName);
               else
-                generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), templateName);
+                generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), templateName);
 
               templateID = Long.parseLong(getIdFromURI(generatedId));
             }
@@ -1949,9 +1940,9 @@ public class RefDataProvider
                     if (newRoleID==null || newRoleID == "")
                     {
                       if (_useExampleRegistryBase)
-                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), roleName);
+                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), roleName);
                       else
-                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), roleName);
+                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), roleName);
                       newRoleID = generatedId;
                     }
                     //RoleQualification orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
@@ -2041,9 +2032,9 @@ public class RefDataProvider
                     if (newRoleID==null || newRoleID=="")
                     {
                       if (_useExampleRegistryBase)
-                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), roleName);
+                        generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), roleName);
                       else
-                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), roleName);
+                        generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), roleName);
                       newRoleID = generatedId;
                     }
                     //RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
@@ -2189,9 +2180,9 @@ public class RefDataProvider
                 if (newRole.getId()==null && newRole.getId()=="")
                 {
                   if (_useExampleRegistryBase)
-                    generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase"), genName);
+                    generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), genName);
                   else
-                    generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase"), genName);
+                    generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), genName);
 
                   roleID = Long.parseLong(getIdFromURI(generatedId));
                 }
@@ -2402,7 +2393,8 @@ public class RefDataProvider
           }
           else
           {
-              String registry = _useExampleRegistryBase ? _settings.get("ExampleRegistryBase") : _settings.get("ClassRegistryBase");
+              String registry = _useExampleRegistryBase ? _settings.get("ExampleRegistryBase").toString() : 
+                _settings.get("ClassRegistryBase").toString();
               
               for (ClassDefinition clsDef : qmxf.getClassDefinitions())
               {
@@ -3196,7 +3188,7 @@ public class RefDataProvider
     HttpClient httpClient = null;
     try
     {
-      String uri = _settings.get("idGenServiceUri");
+      String uri = _settings.get("idGenServiceUri").toString();
       httpClient = new HttpClient(uri);
     }
     catch (Exception e)

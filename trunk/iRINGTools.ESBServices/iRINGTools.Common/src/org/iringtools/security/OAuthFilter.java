@@ -28,11 +28,9 @@ public class OAuthFilter implements Filter
 {
   private static final Logger logger = Logger.getLogger(OAuthFilter.class);
   
-  public static final String AUTH_COOKIE_NAME = "Auth";
   public static final int AUTH_COOKIE_EXPIRY = 28800;  // 8 hours
-  public static final String AUTH_USER_KEY = "AuthenticatedUser";
-  public static final String AUTH_TOKEN_NAME = "Authorization";
-  public static final String USERID_KEY = "EMailAddress";
+  public static final String AUTHENTICATED_USER_KEY = "authenticated-user";
+  public static final String AUTHORIZATION_TOKEN_KEY = "Authorization";
   public static final String REF_PARAM = "REF";
   public static final String URL_ENCODING = "UTF-8";
   
@@ -55,9 +53,9 @@ public class OAuthFilter implements Filter
       session = request.getSession(true);
     }
     
-    Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTH_COOKIE_NAME);
+    Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTHENTICATED_USER_KEY);
     
-    if (session.getAttribute(AUTH_USER_KEY) == null)
+    if (session.getAttribute(AUTHENTICATED_USER_KEY) == null)
     {      
       if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))  // use has not signed on
       {
@@ -77,7 +75,7 @@ public class OAuthFilter implements Filter
           response.sendRedirect(ssoUrl);
           return;
         }
-        else  // got reference ID, retrieve user info
+        else  // got reference ID, get user info
         {
           String authenticationServiceUri = filterConfig.getInitParameter("authenticationServiceUri");
           String pingUserName = filterConfig.getInitParameter("pingUserName");
@@ -89,18 +87,18 @@ public class OAuthFilter implements Filter
           pingIdClient.addHeader("ping.pwd", pingPassword);
           pingIdClient.addHeader("ping.instanceId", pingInstanceId);
           
-          String userInfoJson = null;
+          String userAttrsJson = null;
           
           try
           {
-            userInfoJson = pingIdClient.get(String.class);
+            userAttrsJson = pingIdClient.get(String.class);
           }
           catch (HttpClientException e)
           {
             logger.error(e);
           }
           
-          if (userInfoJson == null)
+          if (userAttrsJson == null)
           {
             session.invalidate();
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
@@ -108,11 +106,11 @@ public class OAuthFilter implements Filter
           }
           else 
           {
-            Map<String, String> userInfo = null;
+            Map<String, String> userAttrs = null;
             
             try
             {
-              userInfo = (Map<String, String>) JSONUtil.deserialize(userInfoJson);
+              userAttrs = (Map<String, String>) JSONUtil.deserialize(userAttrsJson);
             }
             catch (JSONException e)
             {
@@ -122,28 +120,32 @@ public class OAuthFilter implements Filter
               return;
             }
             
-            String userInfoStr = userInfo.toString();
-            userInfoStr = userInfoStr.substring(1, userInfoStr.length() - 1);
+            String multiValue = userAttrs.toString();
+            multiValue = multiValue.substring(1, multiValue.length() - 1);
+            session.setAttribute(AUTHENTICATED_USER_KEY, multiValue);
             
-            authCookie = new Cookie(AUTH_COOKIE_NAME, userInfoStr);
+            authCookie = new Cookie(AUTHENTICATED_USER_KEY, multiValue);
             authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
             response.addCookie(authCookie);
             
-            if (!obtainOAuthToken(userInfoJson))
+            if (!obtainOAuthToken(userAttrsJson))
               return;
           }
         }
       }
       else  // user signed on but session has not been validated
       {
-        Map<String, String> userInfo = HttpUtils.getCookieAttributes(authCookie.getValue());
-        session.setAttribute(AUTH_USER_KEY, userInfo.get(USERID_KEY));
+        Map<String, String> userAttrs = HttpUtils.getCookieAttributes(authCookie.getValue());
         
         try
         {
-          String userInfoJson = JSONUtil.serialize(userInfo);
+          String multiValue = userAttrs.toString();
+          multiValue = multiValue.substring(1, multiValue.length() - 1);
+          session.setAttribute(AUTHENTICATED_USER_KEY, multiValue);
           
-          if (!obtainOAuthToken(userInfoJson))
+          String userAttrsJson = JSONUtil.serialize(userAttrs);
+          
+          if (!obtainOAuthToken(userAttrsJson))
             return;
         }
         catch (JSONException e)
@@ -157,13 +159,13 @@ public class OAuthFilter implements Filter
     }
     else
     {
-      Map<String, String> userInfo = HttpUtils.getCookieAttributes(authCookie.getValue());
+      Map<String, String> userAttrs = HttpUtils.getCookieAttributes(authCookie.getValue());
       
       try
       {
-        String userInfoJson = JSONUtil.serialize(userInfo);
+        String userAttrsJson = JSONUtil.serialize(userAttrs);
         
-        if (!obtainOAuthToken(userInfoJson))
+        if (!obtainOAuthToken(userAttrsJson))
           return;
       }
       catch (JSONException e)
@@ -187,23 +189,23 @@ public class OAuthFilter implements Filter
   @Override
   public void destroy(){}
   
-  private boolean obtainOAuthToken(String userInfoJson) throws IOException
+  private boolean obtainOAuthToken(String userAttrsJson) throws IOException
   {
     String tokenServiceUri = filterConfig.getInitParameter("tokenServiceUri");
     String applicationKey = filterConfig.getInitParameter("applicationKey");
     
-    if (session.getAttribute(AUTH_TOKEN_NAME) != null)
+    if (session.getAttribute(AUTHORIZATION_TOKEN_KEY) != null)
     {
-      response.addHeader(AUTH_TOKEN_NAME, (String)session.getAttribute(AUTH_TOKEN_NAME));      
+      response.addHeader(AUTHORIZATION_TOKEN_KEY, (String)session.getAttribute(AUTHORIZATION_TOKEN_KEY));      
     }
-    else if (request.getHeader(AUTH_TOKEN_NAME) == null &&
+    else if (request.getHeader(AUTHORIZATION_TOKEN_KEY) == null &&
         !IOUtils.isNullOrEmpty(tokenServiceUri) && !IOUtils.isNullOrEmpty(applicationKey))
     {
       HttpClient apigeeClient = new HttpClient(tokenServiceUri + applicationKey);
       
       try
       {
-        byte[] data = userInfoJson.getBytes("utf8");
+        byte[] data = userAttrsJson.getBytes("utf8");
         String apigeeResponse = apigeeClient.postByteData(String.class, "", data);
         
         @SuppressWarnings("unchecked")
@@ -211,8 +213,8 @@ public class OAuthFilter implements Filter
         Map<String, String> accessToken = apigeeResponseObj.get("accesstoken");  
         
         String oAuthToken = accessToken.get("token");
-        session.setAttribute(AUTH_TOKEN_NAME, oAuthToken);
-        response.addHeader(AUTH_TOKEN_NAME, oAuthToken);
+        session.setAttribute(AUTHORIZATION_TOKEN_KEY, oAuthToken);
+        response.addHeader(AUTHORIZATION_TOKEN_KEY, oAuthToken);
       }
       catch (Exception ex)
       {

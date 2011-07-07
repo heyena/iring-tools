@@ -2,6 +2,7 @@ package org.iringtools.models;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.iringtools.directory.Application;
 import org.iringtools.directory.ApplicationData;
@@ -13,6 +14,7 @@ import org.iringtools.directory.Graph;
 import org.iringtools.directory.Scope;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
+import org.iringtools.utility.HttpUtils;
 import org.iringtools.widgets.tree.LeafNode;
 import org.iringtools.widgets.tree.Node;
 import org.iringtools.widgets.tree.Tree;
@@ -20,9 +22,18 @@ import org.iringtools.widgets.tree.TreeNode;
 
 public class DirectoryModel 
 {
+  private Map<String, Object> session;
+  
+  public void setSession(Map<String, Object> session)
+  {
+    this.session = session;
+  }
+  
   public Tree getDirectoryTree(String directoryUrl) throws HttpClientException
   {
     HttpClient httpClient = new HttpClient(directoryUrl);
+    HttpUtils.addOAuthHeaders(session, httpClient);
+    
     Directory directory = httpClient.get(Directory.class);
     return directoryToTree(directory);
   }

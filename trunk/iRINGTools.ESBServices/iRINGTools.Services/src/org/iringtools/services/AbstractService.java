@@ -1,24 +1,30 @@
 package org.iringtools.services;
 
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.ws.rs.core.Context;
-//import javax.ws.rs.core.SecurityContext;
-//import org.apache.cxf.jaxrs.ext.MessageContext;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.SecurityContext;
+
+import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.iringtools.security.OAuthFilter;
 
 public abstract class AbstractService
 {
-  @Context private ServletContext servletContext;  
-  //@Context private SecurityContext securityContext;
-  //@Context private MessageContext messageContext;
+  @Context protected ServletContext servletContext; 
+  @Context protected MessageContext messageContext; 
+  @Context protected SecurityContext securityContext;
   
-  protected Hashtable<String, String> settings;
+  protected Map<String, Object> settings;
   
   public void initService()
   {
-    settings = new Hashtable<String, String>();
+    //settings = java.util.Collections.synchronizedMap(new HashMap<String, Object>());
+    settings = new HashMap<String, Object>();
     
     /*
      * COMMON SETTINGS
@@ -39,7 +45,25 @@ public abstract class AbstractService
     if (idGenServiceUri == null || idGenServiceUri.equals(""))
     	idGenServiceUri = "http://localhost:8080/services/idgen";
     settings.put("idGenServiceUri", idGenServiceUri);
-
+    
+    /*
+     * OAUTH SETTINGS
+     */    
+    //TODO: process authorization
+    MultivaluedMap<String, String> headers = messageContext.getHttpHeaders().getRequestHeaders();
+    
+    List<String> authenticatedUser = headers.get(OAuthFilter.AUTHENTICATED_USER_KEY);    
+    if (authenticatedUser != null && authenticatedUser.size() > 0)
+    {
+      settings.put(OAuthFilter.AUTHENTICATED_USER_KEY, authenticatedUser.toString());
+    }
+    
+    List<String> authorization = headers.get(OAuthFilter.AUTHORIZATION_TOKEN_KEY); 
+    if (authorization != null && authorization.size() > 0)
+    {
+      settings.put(OAuthFilter.AUTHORIZATION_TOKEN_KEY, authorization.get(0));
+    }
+    
     /*
      * REFERENCE DATA SETTINGS
      */    	

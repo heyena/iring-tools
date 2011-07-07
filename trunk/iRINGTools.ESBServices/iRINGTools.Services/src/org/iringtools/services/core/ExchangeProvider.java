@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -49,13 +49,14 @@ import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
+import org.iringtools.utility.HttpUtils;
 import org.iringtools.utility.IOUtils;
 import org.iringtools.utility.JaxbUtils;
 
 public class ExchangeProvider
 {
   private static final Logger logger = Logger.getLogger(ExchangeProvider.class);
-  private Hashtable<String, String> settings;
+  private Map<String, Object> settings;
   private static DatatypeFactory datatypeFactory = null;   
   private HttpClient httpClient = null; 
   
@@ -69,11 +70,12 @@ public class ExchangeProvider
   private String targetGraphName = null;
   private String hashAlgorithm = null;
   
-  public ExchangeProvider(Hashtable<String, String> settings) throws DatatypeConfigurationException
+  public ExchangeProvider(Map<String, Object> settings) throws DatatypeConfigurationException
   {
     this.settings = settings;
     datatypeFactory = DatatypeFactory.newInstance();
     httpClient = new HttpClient();
+    HttpUtils.addOAuthHeaders(settings, httpClient);
   }
   
   public Directory getDirectory() throws JAXBException, IOException
@@ -437,7 +439,7 @@ public class ExchangeProvider
 
       // create a pool DTOs to send to target endpoint
       int dtiSize = dtiList.size();
-      int presetPoolSize = Integer.parseInt(settings.get("poolSize"));      
+      int presetPoolSize = Integer.parseInt((String)settings.get("poolSize"));      
       int poolSize = Math.min(presetPoolSize, dtiSize);
 
       for (int i = 0; i < dtiSize; i += poolSize)
@@ -658,7 +660,7 @@ public class ExchangeProvider
     Collections.sort(filesInFolder);
     
     // if number of log files exceed the limit, remove the oldest ones
-    while (filesInFolder.size() > Integer.valueOf(settings.get("numOfExchangeLogFiles")))
+    while (filesInFolder.size() > Integer.valueOf((String)settings.get("numOfExchangeLogFiles")))
     {
       File oldestFile = new File(path + "/" + filesInFolder.get(0));      
       oldestFile.delete();
