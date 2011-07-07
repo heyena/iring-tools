@@ -22,6 +22,13 @@
     <uri>http://rdl.rdlfacade.org/data</uri>
   </repository>
   <repository>
+    <description>EntityTypes Data Library</description>
+    <isReadOnly>true</isReadOnly>
+    <name>EntityTypes</name>
+    <repositoryType>RDSWIP</repositoryType>
+    <uri>http://dm.rdlfacade.org/data</uri>
+  </repository>
+  <repository>
     <description>RDS/Proto and P7 Initial Set Templates</description>
     <isReadOnly>true</isReadOnly>
     <name>Proto and Initial</name>
