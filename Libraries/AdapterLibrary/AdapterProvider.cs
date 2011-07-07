@@ -1063,14 +1063,7 @@ namespace org.iringtools.adapter
 
         _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
 
-        if (_keyRing.Count > 0)
-        {
-          //if (_keyRing["Provider"].ToString() == "WindowsAuthenticationProvider")
-          //{
-            string userName = _keyRing["Name"].ToString();
-            _settings["UserName"] = userName;
-          //}
-        }
+        _settings.AppendKeyRing(_keyRing);
       }
       catch (Exception ex)
       {

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace org.iringtools.adapter.identity
 {
-  public class WindowsAuthenticationProvider : IIdentityLayer
+  public class WindowsIdentityProvider : IIdentityLayer
   {
     public IDictionary GetKeyRing()
     {
@@ -15,10 +15,10 @@ namespace org.iringtools.adapter.identity
       {
         IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
 
-        keyRing.Add("Provider", "WindowsAuthenticationProvider");
+        keyRing.Add("Provider", "WindowsIdentityProvider");
         keyRing.Add("AuthenticationType", identity.AuthenticationType);
         keyRing.Add("IsAuthenticated", identity.IsAuthenticated.ToString());
-        keyRing.Add("Name", identity.Name);
+        keyRing.Add("UserName", identity.Name);
       }
 
       return keyRing;

@@ -6,15 +6,15 @@ using System.ServiceModel;
 
 namespace org.iringtools.adapter.identity
 {
-  public class AnonymousProvider : IIdentityLayer
+  public class AnonymousIdentityProvider : IIdentityLayer
   {
     public IDictionary GetKeyRing()
     {
       IDictionary keyRing = new Dictionary<string, string>();      
       if (ServiceSecurityContext.Current == null)
       {
-        keyRing.Add("Provider", "AnonymousProvider");
-        keyRing.Add("Name", "anonymous");
+        keyRing.Add("Provider", "AnonymousIdentityProvider");
+        keyRing.Add("UserName", "anonymous");
       }
 
       return keyRing;

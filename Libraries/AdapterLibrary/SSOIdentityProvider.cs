@@ -8,13 +8,15 @@ using System.ServiceModel.Web;
 
 namespace org.iringtools.adapter.identity
 {
-  public class SSOAuthenticationProvider : IIdentityLayer
+  public class SSOIdentityProvider : IIdentityLayer
   {
     private const string OAUTH_HEADER_NAME = "authenticated-user";
 
     public IDictionary GetKeyRing()
     {
       IDictionary keyRing = new Dictionary<string, string>();
+
+      keyRing.Add("Provider", "SSOIdentityProvider");
 
       if (WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
       {
@@ -28,7 +30,7 @@ namespace org.iringtools.adapter.identity
 
           if (pair[0].ToLower() == "bechtelusername")
           {
-            keyRing.Add("Name", pair[1].ToLower());
+            keyRing.Add("UserName", pair[1].ToLower());
           }
         }
       }

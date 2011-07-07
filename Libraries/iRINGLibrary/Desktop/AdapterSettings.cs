@@ -4,6 +4,7 @@ using System.ServiceModel;
 using org.iringtools.library;
 using StaticDust.Configuration;
 using org.iringtools.utility;
+using System.Collections;
 
 namespace org.iringtools.adapter
 {
@@ -58,6 +59,21 @@ namespace org.iringtools.adapter
         if (!this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase))
         {
           this.Add(key, settings[key].ToString());
+        }
+      }
+    }
+
+    //Append KeyRing from IdentityProvider.
+    public void AppendKeyRing(IDictionary keyRing)
+    {
+      foreach (string key in keyRing.Keys)
+      {
+        string value = keyRing[key].ToString();
+
+        //Protect existing settings, but add new ones.
+        if (!this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase))
+        {
+          this.Add(key, value);
         }
       }
     }
