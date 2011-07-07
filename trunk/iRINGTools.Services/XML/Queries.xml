@@ -677,6 +677,12 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetEntityTypes</key>
+    <query>
+      <fileName>GetEntityTypes.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>PostPart8Template_1</key>
     <query>
       <fileName>PostPart8Template_1.txt</fileName>

@@ -115,6 +115,7 @@
     <Content Include="SPARQL\GetClass.txt" />
     <Content Include="SPARQL\GetClassification.txt" />
     <Content Include="SPARQL\GetClassTemplates.txt" />
+    <Content Include="SPARQL\GetEntityTypes.txt" />
     <Content Include="SPARQL\GetInstances.txt" />
     <Content Include="SPARQL\GetLabel.txt" />
     <Content Include="SPARQL\GetProperties.txt" />

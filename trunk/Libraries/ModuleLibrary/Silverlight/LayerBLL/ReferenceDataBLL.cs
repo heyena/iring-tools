@@ -172,6 +172,11 @@ namespace org.iringtools.modulelibrary.layerbll
        return dal.GetRepositories();
     }
 
+    public Entities GetEntityTypes()
+    {
+      StartService("GetEntityTypes");
+      return dal.GetEntityTypes();
+    }
     /// <summary>
     /// do a search
     /// </summary>

@@ -970,6 +970,44 @@ namespace org.iringtools.refdata
       }
       return queryResult;
     }
+    public Entities GetEntityTypes()
+    {
+      Entities queryResult = new Entities();
+      string sparql = string.Empty;
+      try
+      {
+        Query getEntities = (Query)_queries.FirstOrDefault(c => c.Key.Equals("GetEntityTypes")).Query;
+        sparql = ReadSPARQL(getEntities.FileName);
+        foreach (Repository rep in _repositories)
+        {
+          if (rep.Name.Equals("EntityTypes"))
+          {
+            SparqlResultSet sparqlResults = QueryFromRepository(rep, sparql);
+            foreach (SparqlResult result in sparqlResults)
+            {
+              Entity entity = new Entity();
+              foreach (String v in result.Variables)
+              {
+                if (((UriNode)result[v]).Uri != null)
+                {
+                  Uri e = ((UriNode)result[v]).Uri;
+                  entity.Uri = e.ToString();
+                  entity.Label = e.Fragment.Substring(1);
+                }
+              }
+              queryResult.Add(entity);
+            }
+          }
+        }
+      }
+      catch(Exception e)
+      {
+        _logger.Error("Error in GetSubClasses: " + e);
+        throw new Exception("Error getting EntityTypes " + e.ToString(), e);
+      }
+      
+      return queryResult;
+    }
 
     public Entities GetClassTemplates(string id)
     {
@@ -2929,6 +2967,7 @@ namespace org.iringtools.refdata
         pred = work.CreateUriNode(rdfType);
         obj = work.CreateUriNode(objectId);
         work.Assert(new Triple(subj, pred, obj));
+        pred = work.CreateUriNode("rdfs:subClassOf");
         obj = work.CreateUriNode("owl:Class");
         work.Assert(new Triple(subj, pred, obj));
       }

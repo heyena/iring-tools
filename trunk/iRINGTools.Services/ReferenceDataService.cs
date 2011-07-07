@@ -170,6 +170,20 @@ namespace org.iringtools.services
     }
 
     /// <summary>
+    /// return class label
+    /// </summary>
+    [Description("return entity types")]
+    [WebGet(UriTemplate = "/entitytypes")]
+    public Entities GetEntityTypes()
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _referenceDataProvider.GetEntityTypes();
+    }
+
+
+    /// <summary>
     /// return class details
     /// </summary>
     //[XmlSerializerFormat]
