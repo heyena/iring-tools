@@ -4,47 +4,41 @@
 <%@ page import="org.iringtools.security.OAuthFilter" %>
 <%@ page import="org.iringtools.security.LdapAuthorizationProvider" %>
 <%@ page import="org.iringtools.utility.HttpUtils" %>
-<% 
-String appName = "exchangeManager";
-String authorizedAppKey = "authorized-app";
+<%
+String authorizedAppKey = "exchange-manager.authorized";
 String authorizedGroupName = "exchangeAdmins";
+String ldapPropsPath = "WEB-INF/config/ldap.properties";
 
 Cookie[] cookies = request.getCookies();
 Cookie authorizedAppCookie = HttpUtils.getCookie(cookies, authorizedAppKey);
 
-//DEBUG
-/*
-for (Cookie cookie : cookies)
-{
-  String name = cookie.getName();
-  System.out.println("Cookie: " + name + " - " + cookie.getValue());
-}
-
-java.util.Enumeration attrNames =  session.getAttributeNames();
-while (attrNames.hasMoreElements())
-{
-  String name = (String)attrNames.nextElement();
-  System.out.println("Attribute: " + name + " - " + session.getAttribute(name));
-}
-*/
-
 if (authorizedAppCookie == null)  // user not authorized, attempt to authorize
 {
-  String authenticatedUser = (String)session.getAttribute(OAuthFilter.AUTHENTICATED_USER_KEY);
-  Map<String, String> userAttrs = HttpUtils.getCookieAttributes(authenticatedUser);
+  Map<String, String> userAttrs = null;
+  
+  // get user attributes
+  try
+  {
+	  String authUser = (String)session.getAttribute(OAuthFilter.AUTHENTICATED_USER_KEY);
+	  userAttrs = HttpUtils.toMap(authUser);
+  }
+  catch (Exception e)
+  {
+    Cookie authUserCookie = HttpUtils.getCookie(cookies, OAuthFilter.AUTHENTICATED_USER_KEY);
+    userAttrs = HttpUtils.toMap(authUserCookie.getValue());
+  }
   
   LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
-  authProvider.init(getServletContext().getRealPath("/") + "WEB-INF/config/ldap.properties");
+  authProvider.init(getServletContext().getRealPath("/") + ldapPropsPath);
   authProvider.setAuthorizedGroup(authorizedGroupName);
   
-  if (!authProvider.isAuthorized(userAttrs))
+  if (userAttrs == null || !authProvider.isAuthorized(userAttrs))
   {
-    session.invalidate();
     response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
   }
   else
   {
-    response.addCookie(new Cookie(authorizedAppKey, appName));
+    response.addCookie(new Cookie(authorizedAppKey, "true"));
   }
 }
 %>
