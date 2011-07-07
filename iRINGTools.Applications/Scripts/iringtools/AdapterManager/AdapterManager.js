@@ -238,7 +238,6 @@ Ext.onReady(function () {
 
 		newTab.on('save', function (panel) {
 			win.close();
-			node.attributes.
 			directoryPanel.onReload(node);
 			if (node.expanded == false)
 				node.expand();
