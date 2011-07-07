@@ -753,7 +753,7 @@ namespace iRINGTools.Web.Controllers
 
         if (!string.IsNullOrEmpty(rm.dataType) && rm.dataType.StartsWith("xsd"))
         {
-          if (relatedObject != "undefined")
+          if (relatedObject != "undefined" && relatedObject != "")
           {
             rm.propertyName = string.Format("{0}.{1}.{2}",
               graphMap.dataObjectName,
