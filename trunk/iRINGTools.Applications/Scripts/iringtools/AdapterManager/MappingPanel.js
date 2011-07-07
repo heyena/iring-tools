@@ -576,7 +576,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             }
             else {
               Ext.get('propertyName').dom.value = data.node.attributes.record.Name;
-              if (data.node.parentNode != undefined && data.node.parentNode.attributes.record != undefined)
+              if (data.node.parentNode != undefined 
+                  && data.node.parentNode.attributes.record != undefined
+                  && data.node.parentNode.attributes.type != 'DataObjectNode')
                 Ext.get('relatedObject').dom.value = data.node.parentNode.attributes.record.Name;
               var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.attributes.record.Name + '</b></td></tr>'
               msg += '</table>'
@@ -606,13 +608,13 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
   onSubmitPropertyMap: function (btn, e) {
     var that = this;
-    var related = "";
+   // var related = "";
     var form = btn.findParentByType('form');
     var node = this.mappingPanel.getSelectionModel().getSelectedNode();
     var win = btn.findParentByType('window');
     var propertyNames = Ext.get('propertyName').dom.value;
     if (Ext.get('relatedObject').dom.value != undefined)
-      related = Ext.get('relatedObject').dom.value;
+    var  related = Ext.get('relatedObject').dom.value;
     if (form.getForm().isValid())
       Ext.Ajax.request({
         url: 'mapping/mapproperty',
