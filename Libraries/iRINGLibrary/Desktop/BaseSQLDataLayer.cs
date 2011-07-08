@@ -16,10 +16,12 @@ namespace org.iringtools.library
     private const string WHERECLAUSE_ALIAS = "_t";
     private DataDictionary _dataDictionary;
     private string _execAssemblyName;
+    protected AdapterSettings _settings = null;
     
     #region BaseSQLDataLayer methods
     public BaseSQLDataLayer(AdapterSettings settings)
     {
+        _settings = new AdapterSettings();
         _settings = settings;
       _execAssemblyName = settings["ExecutingAssemblyName"];
       _dataDictionary = GetDictionary();
