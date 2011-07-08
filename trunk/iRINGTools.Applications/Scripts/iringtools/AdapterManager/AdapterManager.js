@@ -366,7 +366,7 @@ Ext.onReady(function () {
 			id: 'tab-' + node.id,
 			record: node.attributes.record,
 			nodeId: node.id,
-			url: 'mapping/valueList'
+			url: 'mapping/addvalueList'
 		});
 
 		newTab.on('save', function (panel) {
@@ -401,7 +401,7 @@ Ext.onReady(function () {
 			id: 'tab-' + node.id,
 			record: node.attributes.record,
 			nodeId: node.id,
-			url: 'mapping/valueList'
+			url: 'mapping/editvalueList'
 		});
 
 		var parentNode = node.parentNode;
@@ -439,7 +439,7 @@ Ext.onReady(function () {
 			id: 'tab-' + node.id,
 			record: node.attributes.record,
 			node: node,
-			url: 'mapping/graphMap'
+			url: 'mapping/addgraphMap'
 		});
 
 		newTab.on('save', function (panel) {
@@ -473,7 +473,7 @@ Ext.onReady(function () {
 			id: 'tab-' + node.id,
 			record: node.attributes.record,
 			node: node,
-			url: 'mapping/graphMap'
+			url: 'mapping/editgraphname'
 		});
 
 		var parentNode = node.parentNode;
