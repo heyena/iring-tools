@@ -9,6 +9,7 @@ Imports org.iringtools.utility
 Imports StaticDust.Configuration
 Imports Ninject
 Imports Ninject.Extensions.Xml
+Imports System.Reflection
 
 <TestFixture()>
 Public Class Test
@@ -16,51 +17,54 @@ Public Class Test
     Private _kernel As IKernel = Nothing
     Private _settings As NameValueCollection
     Private _adapterSettings As AdapterSettings
-  Private _sppidDataLayer As IDataLayer2
-  Public Sub New()
-    ' N inject magic
+    Private _sppidDataLayer As IDataLayer2
+    Public Sub New()
+        ' N inject magic
 
-    Dim ninjectSettings = New NinjectSettings() With {.LoadExtensions = False}
-    _kernel = New StandardKernel(ninjectSettings)
+        Dim ninjectSettings = New NinjectSettings() With {.LoadExtensions = False}
+        _kernel = New StandardKernel(ninjectSettings)
 
-    _kernel.Load(New XmlExtensionModule())
+        _kernel.Load(New XmlExtensionModule())
 
-    _kernel.Bind(Of AdapterSettings)().ToSelf().InSingletonScope()
-    _adapterSettings = _kernel.[Get](Of AdapterSettings)()
+        _kernel.Bind(Of AdapterSettings)().ToSelf().InSingletonScope()
+        _adapterSettings = _kernel.[Get](Of AdapterSettings)()
 
-    ' Start with some generic settings
-    _settings = New NameValueCollection()
+        ' Start with some generic settings
+        _settings = New NameValueCollection()
 
-    _settings("XmlPath") = ".\12345_000\"
-    _settings("ProjectName") = "12345_000"
-    _settings("ApplicationName") = "SPPID"
+        _settings("XmlPath") = ".\12345_000\"
+        _settings("ProjectName") = "12345_000"
+        _settings("ApplicationName") = "SPPID"
 
-    _baseDirectory = Directory.GetCurrentDirectory()
-    _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\bin"))
-    _settings("BaseDirectoryPath") = _baseDirectory
-    Directory.SetCurrentDirectory(_baseDirectory)
+        _baseDirectory = Directory.GetCurrentDirectory()
+        _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\bin"))
+        _settings("BaseDirectoryPath") = _baseDirectory
+        ' _settings("ExecutingAssemblyName") = Assembly.GetExecutingAssembly().GetName().Name
+        _settings("ExecutingAssemblyName") = "SPPIDDataLayer"
 
-    _adapterSettings.AppendSettings(_settings)
+        Directory.SetCurrentDirectory(_baseDirectory)
 
-    ' Add our specific settings
-    Dim appSettingsPath As String = [String].Format("{0}12345_000.SPPID.config", _adapterSettings("XmlPath"))
+        _adapterSettings.AppendSettings(_settings)
 
-    If File.Exists(appSettingsPath) Then
-      Dim appSettings As New AppSettingsReader(appSettingsPath)
-      _adapterSettings.AppendSettings(appSettings)
-    End If
+        ' Add our specific settings
+        Dim appSettingsPath As String = [String].Format("{0}12345_000.SPPID.config", _adapterSettings("XmlPath"))
 
-    ' and run the thing
-    Dim relativePath As String = [String].Format("{0}BindingConfiguration.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
+        If File.Exists(appSettingsPath) Then
+            Dim appSettings As New AppSettingsReader(appSettingsPath)
+            _adapterSettings.AppendSettings(appSettings)
+        End If
 
-    ' Ninject Extension requires fully qualified path.
-    Dim bindingConfigurationPath As String = Path.Combine(_settings("BaseDirectoryPath"), relativePath)
+        ' and run the thing
+        Dim relativePath As String = [String].Format("{0}BindingConfiguration.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
 
-    _kernel.Load(bindingConfigurationPath)
+        ' Ninject Extension requires fully qualified path.
+        Dim bindingConfigurationPath As String = Path.Combine(_settings("BaseDirectoryPath"), relativePath)
+
+        _kernel.Load(bindingConfigurationPath)
 
         Dim dataLayer As IDataLayer2 = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings)
-    _sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
-  End Sub
+        _sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
+    End Sub
     <Test()>
     Public Sub Create()
         Dim identifiers As IList(Of String) = New List(Of String)() From { _
@@ -84,6 +88,15 @@ Public Class Test
         Assert.IsTrue(actual.Level = StatusLevel.Success)
 
     End Sub
+    <Test()>
+    Public Sub GetObjects()
+        Dim identifiers As IList(Of String) = New List(Of String)() From { _
+     "E5E3A74C7A0F431AB5069EA1BCD0407D"
+    }
+
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get("Equipment", identifiers)
+    End Sub
+
     <Test()>
     Public Sub GetCountWithFilters()
 

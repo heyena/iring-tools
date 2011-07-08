@@ -35,8 +35,18 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
         MyBase.New(settings)
         ' _settings = settings
-        Dim connStr As String = "server=.\SQLEXPRESS;database=ABC;User ID=abc;Password=abc"
+        Dim connStr As String = "server=NDHD06670\SQLEXPRESSW;database=SPPID;User ID=sppid;Password=sppid"
         _conn = New SqlConnection(connStr)
+
+        'To-Do: Temp code should ne removed
+        Dim siteNode As String = _settings("SPPIDSiteNode")
+        Dim projectStr As String = _settings("SPPIDProjectNumber")
+        projectStr += "!" & projectStr
+        ' per TR-88021 in SPPID 2007 SP4
+        '_projDatasource = kernel.Get<ILMADataSource>();
+        _projDatasource = New Llama.LMADataSource()
+        _projDatasource.ProjectNumber = projectStr
+
     End Sub
 
 
@@ -119,11 +129,13 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             Dim name As String = commodity.FirstAttribute.Value
             ' string name = commodity.Element("name").Value;
+            '.objectNamespace = _settings("ExecutingAssemblyName")
 
             Dim dataObject As New DataObject() With { _
               .objectName = name, _
               .keyDelimeter = "_", _
-              .tableName = "tbl" + name
+              .tableName = "tbl" + name, _
+            .objectNamespace = "com.example"
             }
 
             Dim keyProperties As New List(Of KeyProperty)()
@@ -297,14 +309,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     End Function
 
     Public Overrides Function CreateDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
-        Try
-            LoadDataDictionary(tableName)
-            Dim allDataObjects As IList(Of IDataObject) = LoadDataObjects(tableName)
-
-        Catch ex As Exception
-
-        End Try
-
+        Throw New NotImplementedException()
     End Function
 
     Public Overrides Function DeleteDataTable(tableName As String, identifiers As IList(Of String)) As Response
@@ -325,6 +330,14 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 #Region "Private Functions"
 
+    Private Function LoadDataTable(tableName As String) As System.Data.DataTable
+        Dim _dataTables As New DataTable()
+
+        '    Dim _selectSql = ""
+
+        Return _dataTables
+
+    End Function
     Private Function LoadDataObjects(objectType As String) As IList(Of IDataObject)
         Try
 
@@ -668,8 +681,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     Private Sub LoadConfiguration()
         If _configuration Is Nothing Then
-            '  Dim uri As String = [String].Format("{0}Configuration.{1}.xml", _settings("XmlPath"), _settings("ApplicationName"))
-            Dim uri As String = [String].Format("{0}Configuration.{1}.xml", ".\12345_000\", "SPPID")
+
+            Dim uri As String = [String].Format("{0}Configuration.{1}.xml", _settings("XmlPath"), _settings("ApplicationName"))
 
             Dim configDocument As XDocument = XDocument.Load(uri)
             _configuration = configDocument.Element("configuration")
@@ -680,7 +693,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         If _configuration Is Nothing Then
             LoadConfiguration()
         End If
-
+        objectType = "Equipment"
         Dim commodityConfig As XElement = _configuration.Elements("commodities").Elements("commodity").Where(Function(o) o.FirstAttribute.Value = objectType).First()
 
         Return commodityConfig
