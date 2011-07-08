@@ -5,7 +5,7 @@ using System.Text;
 
 namespace org.iringtools.adapter.security
 {
-  interface IAuthorizationLayer
+  public interface IAuthorizationLayer
   {
     bool IsAuthorized(IDictionary<string, string> claims);
   }

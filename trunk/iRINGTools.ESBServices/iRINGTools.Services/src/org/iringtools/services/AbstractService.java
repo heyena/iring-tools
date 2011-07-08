@@ -140,10 +140,10 @@ public abstract class AbstractService
     /*
      * LDAP SETTINGS
      */    
-    String ldapPropertiesPath = servletContext.getInitParameter("ldapPropertiesPath");
-    if (ldapPropertiesPath != null && ldapPropertiesPath.length() > 0)
-      settings.put("ldapPropertiesPath", ldapPropertiesPath);
+    String ldapConfigPath = servletContext.getInitParameter("ldapConfigPath");
+    if (ldapConfigPath != null && ldapConfigPath.length() > 0)
+      settings.put("ldapConfigPath", ldapConfigPath);
     else
-      settings.put("ldapPropertiesPath", "WEB-INF/ldap.properties");
+      settings.put("ldapConfigPath", "WEB-INF/config/ldap.conf");
   }
 }
