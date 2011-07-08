@@ -166,7 +166,7 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Panel, {
 		this.form = thisform;
 
 		// super
-		AdapterManager.ScopePanel.superclass.initComponent.call(this);
+		AdapterManager.GraphPanel.superclass.initComponent.call(this);
 	},
 
 	buildToolbar: function () {

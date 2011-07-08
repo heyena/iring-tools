@@ -73,7 +73,7 @@ AdapterManager.ValueListPanel = Ext.extend(Ext.Panel, {
 		];
 
 		// super
-		AdapterManager.ScopePanel.superclass.initComponent.call(this);
+		AdapterManager.GraphPanel.superclass.initComponent.call(this);
 	},
 
 	buildToolbar: function () {
