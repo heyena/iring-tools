@@ -20,29 +20,30 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
   private static final String USERID_KEY = "EmailAddress";
   private DirContext dctx;
   private String authorizedGroup;
-  private Properties ldapProps;
+  private Properties ldapConfig;
 
-  public void init(String propsPath)
+  public void init(Map<String, Object> settings)
   {
-    ldapProps = new Properties();
+    String ldapConfigPath = (String)settings.get("ldapConfigPath");
+    ldapConfig = new Properties();
 
     try
     {
-      ldapProps.load(new FileInputStream(propsPath));
+      ldapConfig.load(new FileInputStream(ldapConfigPath));
       String credsProp = "java.naming.security.credentials";
-      String password = EncryptionUtils.decrypt(ldapProps.getProperty(credsProp));
-      ldapProps.put(credsProp, password);
+      String password = EncryptionUtils.decrypt(ldapConfig.getProperty(credsProp));
+      ldapConfig.put(credsProp, password);
     }
     catch (Exception ioe)
     {
       logger.error("Error loading ldap properties: " + ioe);
     }
 
-    if (ldapProps.size() > 0)
+    if (ldapConfig.size() > 0)
     {
       try
       {
-        dctx = new InitialDirContext(ldapProps);
+        dctx = new InitialDirContext(ldapConfig);
       }
       catch (Exception e)
       {
@@ -62,7 +63,7 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
 
     if (userId != null && dctx != null)
     {
-      String baseDN = ldapProps.getProperty("baseDN");
+      String baseDN = ldapConfig.getProperty("baseDN");
       if (baseDN == null || baseDN.length() == 0)
       {
         baseDN = "ou=iringtools,dc=iringug,dc=org";
@@ -86,7 +87,7 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
       }
       catch (NamingException ex)
       {
-        logger.error("Error authorizing user: " + userId);
+        logger.error("User [" + userId + "] not authorized.");
       }
     }
 
