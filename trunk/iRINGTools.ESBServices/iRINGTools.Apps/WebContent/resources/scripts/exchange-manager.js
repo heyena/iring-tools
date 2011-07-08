@@ -221,7 +221,7 @@ function loadPageDto(type, action, context, label){
               id: 'tb-exchange',
               xtype: 'button',
               tooltip: 'Send data to target endpoint',
-              icon: 'resources/images/exchange.png',
+              icon: 'resources/images/exchange-send.png',
               handler: function(){
                 var xidIndex = context.indexOf('&xid=');
                 var scope = context.substring(7, xidIndex);
@@ -237,7 +237,7 @@ function loadPageDto(type, action, context, label){
               id: 'tb-xlog',
               xtype: 'button',
               tooltip: 'Show/hide exchange results',
-              icon: 'resources/images/exchange-log.png',
+              icon: 'resources/images/history.png',
               handler: function(){            
                 var dtoTab = Ext.getCmp('content-pane').getActiveTab();
                 var xlogsContainer = dtoTab.items.map['xlogs-container-' + label]; 
