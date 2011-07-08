@@ -39,8 +39,8 @@ Public Class Test
         _baseDirectory = Directory.GetCurrentDirectory()
         _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\bin"))
         _settings("BaseDirectoryPath") = _baseDirectory
-        ' _settings("ExecutingAssemblyName") = Assembly.GetExecutingAssembly().GetName().Name
-        _settings("ExecutingAssemblyName") = "SPPIDDataLayer"
+        _settings("ExecutingAssemblyName") = Assembly.GetExecutingAssembly().GetName().Name
+
 
         Directory.SetCurrentDirectory(_baseDirectory)
 
@@ -130,7 +130,7 @@ Public Class Test
 
         Assert.IsNotNull(dictionary)
 
-        Dim path As String = [String].Format("{0}DataDictionary.{1}.xml", _adapterSettings("XmlPath"), _adapterSettings("ApplicationName"))
+        Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _adapterSettings("XmlPath"), _settings("ProjectName"), _adapterSettings("ApplicationName"))
 
         Utility.Write(Of DataDictionary)(dictionary, path, True)
     End Sub
