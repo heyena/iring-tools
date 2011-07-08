@@ -951,7 +951,7 @@ namespace iRINGTools.Web.Controllers
 			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
 		}
 
-		public JsonResult valueList(FormCollection form)
+		public ActionResult valueList(FormCollection form)
 		{
 			try
 			{
