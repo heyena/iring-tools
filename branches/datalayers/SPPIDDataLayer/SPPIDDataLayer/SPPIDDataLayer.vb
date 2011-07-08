@@ -4,14 +4,11 @@ Imports System.IO
 Imports System.Linq
 Imports System.Linq.Expressions
 Imports System.Xml.Linq
-Imports Ciloci.Flee
-Imports log4net
 Imports Ninject
 Imports org.iringtools.adapter
 Imports org.iringtools.library
 Imports org.iringtools.utility
 Imports System.Diagnostics
-Imports VBA
 Imports Llama
 Imports ISPClientData3
 Imports System.Data.SqlClient
@@ -128,14 +125,13 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             'commodity
 
             Dim name As String = commodity.FirstAttribute.Value
-            ' string name = commodity.Element("name").Value;
-            '.objectNamespace = _settings("ExecutingAssemblyName")
 
+            ''TO-DO: What should be the values for objectNamespace
             Dim dataObject As New DataObject() With { _
               .objectName = name, _
               .keyDelimeter = "_", _
               .tableName = "tbl" + name, _
-            .objectNamespace = "com.example"
+           .objectNamespace = _settings("ExecutingAssemblyName")
             }
 
             Dim keyProperties As New List(Of KeyProperty)()
@@ -681,11 +677,16 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     Private Sub LoadConfiguration()
         If _configuration Is Nothing Then
+            Try
 
+            
             Dim uri As String = [String].Format("{0}Configuration.{1}.xml", _settings("XmlPath"), _settings("ApplicationName"))
 
             Dim configDocument As XDocument = XDocument.Load(uri)
-            _configuration = configDocument.Element("configuration")
+                _configuration = configDocument.Element("configuration")
+            Catch ex As Exception
+
+            End Try
         End If
     End Sub
 
