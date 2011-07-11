@@ -41,12 +41,11 @@ namespace org.iringtools.adapter.datalayer
     AdapterProvider _adapterProvider = null;
 
     [Inject]
-    public NHibernateDataLayer(AdapterSettings settings, IDictionary keyRing)
+    public NHibernateDataLayer(AdapterSettings settings, IDictionary keyRing) : base(settings)
     {
       _kernel = new StandardKernel(new NHibernateModule());
       _nSettings = _kernel.Get<NHibernateSettings>();
       _nSettings.AppendSettings(settings);
-      _settings = settings;
       _keyRing = keyRing;
       _response = new Response();
       _kernel.Bind<Response>().ToConstant(_response);

@@ -53,12 +53,11 @@ namespace org.iringtools.adapter.datalayer
     private ExcelProvider _provider = null;
 
     [Inject]
-    public ExcelDataLayer(AdapterSettings settings)
+    public ExcelDataLayer(AdapterSettings settings) : base(settings)
     {
       try
       {
-        _settings = settings;        
-        _provider = new ExcelProvider(settings);
+        _provider = new ExcelProvider(_settings);
       }
       catch (Exception e)
       {
