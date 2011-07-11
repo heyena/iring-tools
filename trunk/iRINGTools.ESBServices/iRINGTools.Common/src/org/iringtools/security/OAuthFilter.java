@@ -202,7 +202,7 @@ public class OAuthFilter implements Filter
       }
       catch (Exception ex)
       {
-        logger.error("Error obtaining OAuth token from Apigee: " + ex);
+        logger.error("Error obtaining OAuth token: " + ex);
         return false;
       }
     }

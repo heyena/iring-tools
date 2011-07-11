@@ -94,6 +94,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.Protocols" />
     <Reference Include="System.Runtime.Serialization">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -121,6 +123,7 @@
     <Compile Include="AdapterModule.cs" />
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BasePart7ProjectionEngine.cs" />
+    <Compile Include="LdapAuthorizationProvider.cs" />
     <Compile Include="SSOIdentityProvider.cs" />
     <Compile Include="DxiRequest.cs" />
     <Compile Include="DxoRequest.cs" />
