@@ -92,6 +92,7 @@ namespace org.iringtools.library
     //  return ToSqlWhereClause(Type.GetType(objectType), objectAlias);
     //}
 
+    //TODO: Need to get objectAlias from the dataDictionary instead.
     public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
     {
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
