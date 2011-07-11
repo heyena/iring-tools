@@ -1417,9 +1417,9 @@ namespace org.iringtools.adapter.datalayer
 
     private bool isAuthorized()
     {
-      if (_keyRing != null && _keyRing["Name"] != null)
+      if (_keyRing != null && _keyRing["UserName"] != null)
       {
-        string userName = _keyRing["Name"].ToString();
+        string userName = _keyRing["UserName"].ToString();
         userName = userName.Substring(userName.IndexOf('\\') + 1).ToLower();
 
         if (userName == "anonymous")
