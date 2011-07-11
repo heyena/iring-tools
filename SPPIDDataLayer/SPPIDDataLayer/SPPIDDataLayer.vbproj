@@ -61,7 +61,8 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="UtilityLibrary">
+    <Reference Include="UtilityLibrary, Version=2.1.0.3107, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\library\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -115,15 +116,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <COMReference Include="ISPClientData3">
-      <Guid>{A32983E1-A1BD-11D3-BBEE-0800363EAF03}</Guid>
-      <VersionMajor>2</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
     <COMReference Include="VBA">
       <Guid>{000204EF-0000-0000-C000-000000000046}</Guid>
       <VersionMajor>6</VersionMajor>

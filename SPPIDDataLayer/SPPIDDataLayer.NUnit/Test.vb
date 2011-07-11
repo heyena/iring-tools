@@ -64,53 +64,54 @@ Public Class Test
 
         _kernel.Load(bindingConfigurationPath)
 
-        Dim dataLayer As IDataLayer2 = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings)
-        _sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
+    _sppidDataLayer = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings)
+    '_sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
     End Sub
-    <Test()>
-    Public Sub Create()
-        Dim identifiers As IList(Of String) = New List(Of String)() From { _
-     "E5E3A74C7A0F431AB5069EA1BCD0407D"
-    }
+  '<Test()>
+  'Public Sub Create()
+  '    Dim identifiers As IList(Of String) = New List(Of String)() From { _
+  ' "E5E3A74C7A0F431AB5069EA1BCD0407D"
+  '}
 
-        Dim random As New Random()
-        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Create("Equipment", identifiers)
+  '    Dim random As New Random()
+  '    Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Create("Equipment", identifiers)
 
-        For Each dataObject As IDataObject In dataObjects
-            dataObject.SetPropertyValue("Name", "PT-" & random.[Next](2, 10))
-            dataObject.SetPropertyValue("Drawing_DateCreated", DateTime.Today)
-        Next
+  '    For Each dataObject As IDataObject In dataObjects
+  '        dataObject.SetPropertyValue("Name", "PT-" & random.[Next](2, 10))
+  '        dataObject.SetPropertyValue("Drawing_DateCreated", DateTime.Today)
+  '    Next
 
-        Dim actual As Response = _sppidDataLayer.Post(dataObjects)
+  '    Dim actual As Response = _sppidDataLayer.Post(dataObjects)
 
-        If actual.Level <> StatusLevel.Success Then
-            Throw New AssertionException(Utility.SerializeDataContract(Of Response)(actual))
-        End If
+  '    If actual.Level <> StatusLevel.Success Then
+  '        Throw New AssertionException(Utility.SerializeDataContract(Of Response)(actual))
+  '    End If
 
-        Assert.IsTrue(actual.Level = StatusLevel.Success)
+  '    Assert.IsTrue(actual.Level = StatusLevel.Success)
 
-    End Sub
-    <Test()>
-    Public Sub GetObjects()
-        Dim identifiers As IList(Of String) = New List(Of String)() From { _
-     "E5E3A74C7A0F431AB5069EA1BCD0407D"
-    }
+  'End Sub
+  <Test()>
+  Public Sub GetObjects()
+    'THIS ID IS DIFFERENT FOR EACH TEST DATABASE!
+    Dim identifiers As IList(Of String) = New List(Of String)() From { _
+ "27D058CBC5CB4ABB8B256D9B10193313"
+}
 
-        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get("Equipment", identifiers)
-    End Sub
+    Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get("Equipment", identifiers)
+  End Sub
 
     <Test()>
     Public Sub GetCountWithFilters()
 
-        Dim dataFilter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
-              New Expression() With { _
-                .PropertyName = "DocumentCategory", _
-                .RelationalOperator = RelationalOperator.EqualTo, _
-                .Values = New Values() From { _
-                "Pipping Documents" _
-   }
-  }
- }
+    Dim dataFilter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
+          New Expression() With { _
+            .PropertyName = "Drawing_DocumentCategory", _
+            .RelationalOperator = RelationalOperator.EqualTo, _
+            .Values = New Values() From { _
+            "PipingDocuments" _
+}
+}
+}
 }
 
 
