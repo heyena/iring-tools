@@ -41,6 +41,8 @@ Public Class Test
         _settings("BaseDirectoryPath") = _baseDirectory
         _settings("ExecutingAssemblyName") = Assembly.GetExecutingAssembly().GetName().Name
 
+        'TO-Do Temporary settings
+        _settings("ExecutingAssemblyName") = "SPPIDDataLayer"
 
         Directory.SetCurrentDirectory(_baseDirectory)
 
