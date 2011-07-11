@@ -9,8 +9,8 @@ Imports org.iringtools.adapter
 Imports org.iringtools.library
 Imports org.iringtools.utility
 Imports System.Diagnostics
-Imports Llama
-Imports ISPClientData3
+'Imports Llama
+'Imports ISPClientData3
 Imports System.Data.SqlClient
 
 
@@ -24,15 +24,15 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     'Private _lmCriterion As Llama.LMACriterion = Nothing
     Private m_skipInternalAttributes As Boolean  ' ignore internal attributes
     Private m_skipNoDisplayAttributes As Boolean  ' ignore non-displayed attributes
-    Protected _configuration As XElement
+  'Protected _configuration As XElement
     Private _conn As SqlConnection
 
     <Inject()>
     Public Sub New(settings As AdapterSettings)
 
-        MyBase.New(settings)
-        ' _settings = settings
-        Dim connStr As String = "server=NDHD06670\SQLEXPRESSW;database=SPPID;User ID=SPPID;Password=sppid"
+    MyBase.New(settings)
+
+    Dim connStr As String = "server=.\SQLEXPRESS;database=SPPID;User ID=SPPID;Password=sppid"
         _conn = New SqlConnection(connStr)
 
         'To-Do: Temp code should ne removed
