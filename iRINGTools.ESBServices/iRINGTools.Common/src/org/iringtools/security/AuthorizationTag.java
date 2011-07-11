@@ -1,9 +1,13 @@
 package org.iringtools.security;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
+import javax.naming.NamingException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +27,7 @@ public class AuthorizationTag extends TagSupport
     HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
     HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
     
-    String ldapConfigPath = "WEB-INF/config/ldap.conf";
+    String ldapConfigPath = pageContext.getServletContext().getRealPath("/") + "WEB-INF/config/ldap.conf";
     String appName = (String)session.getAttribute("appName");
     String authorizedGroupName = (String)session.getAttribute("authorizedGroupName");
 
@@ -46,11 +50,35 @@ public class AuthorizationTag extends TagSupport
         userAttrs = HttpUtils.toMap(authUserCookie.getValue());
       }
       
+      Map<String, String> settings = new HashMap<String, String>();
+      
+      try
+      {
+        Properties props = new Properties();
+        props.load(new FileInputStream(ldapConfigPath));
+        
+        for (Entry<Object, Object> prop : props.entrySet())
+        {
+          settings.put((String)prop.getKey(), (String)prop.getValue());
+        }
+      }
+      catch (IOException ioe)
+      {
+        throw new JspException("Error loading LDAP properties: " + ioe);
+      }
+      
+      settings.put("authorizedGroup", authorizedGroupName);
+      
       LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
-      Map<String, Object> settings = new HashMap<String, Object>();
-      settings.put("ldapConfigPath", pageContext.getServletContext().getRealPath("/") + ldapConfigPath);
-      authProvider.init(settings);
-      authProvider.setAuthorizedGroup(authorizedGroupName);
+      
+      try
+      {
+        authProvider.init(settings);
+      }
+      catch (NamingException ne)
+      {
+        throw new JspException("Error initializing authentication provider: " + ne);
+      }
       
       if (userAttrs == null || !authProvider.isAuthorized(userAttrs))
       {

@@ -1,9 +1,8 @@
 package org.iringtools.security;
 
-import java.io.FileInputStream;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -12,65 +11,55 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 
 import org.apache.log4j.Logger;
+import org.iringtools.utility.EncryptionException;
 import org.iringtools.utility.EncryptionUtils;
 
 public class LdapAuthorizationProvider implements AuthorizationProvider
 {
   private static final Logger logger = Logger.getLogger(LdapAuthorizationProvider.class);
+  
+  private static final String BASE_DN = "ou=iringtools,dc=iringug,dc=org";
   private static final String USERID_KEY = "EmailAddress";
+  
   private DirContext dctx;
   private String authorizedGroup;
-  private Properties ldapConfig;
 
-  public void init(Map<String, Object> settings)
+  public void init(Map<String, String> settings) throws NamingException
   {
-    String ldapConfigPath = (String)settings.get("ldapConfigPath");
-    ldapConfig = new Properties();
-
+    String server = (String)settings.get("server");
+    String portNumber = (String)settings.get("portNumber");
+    String userName = (String)settings.get("userName");
+    String password = (String)settings.get("password");
+    
+    authorizedGroup = (String)settings.get("authorizedGroup");
+    
     try
     {
-      ldapConfig.load(new FileInputStream(ldapConfigPath));
-      String credsProp = "java.naming.security.credentials";
-      String password = EncryptionUtils.decrypt(ldapConfig.getProperty(credsProp));
-      ldapConfig.put(credsProp, password);
+      password = EncryptionUtils.decrypt(password);
     }
-    catch (Exception ioe)
+    catch (EncryptionException e)
     {
-      logger.error("Error loading ldap properties: " + ioe);
+      logger.error("Error decrypting ldap password [" + password + "]");
     }
 
-    if (ldapConfig.size() > 0)
-    {
-      try
-      {
-        dctx = new InitialDirContext(ldapConfig);
-      }
-      catch (Exception e)
-      {
-        logger.error("Error initializating directory context: " + e);
-      }
-    }
+    Properties ldapConfig = new Properties();
+    ldapConfig.put("java.naming.factory.initial", "com.sun.jndi.ldap.LdapCtxFactory");
+    ldapConfig.put("java.naming.provider.url", "ldap://" + server + ":" + portNumber);
+    ldapConfig.put("java.naming.security.authentication", "simple");
+    ldapConfig.put("java.naming.security.principal", userName);
+    ldapConfig.put("java.naming.security.credentials", password);
+    
+    dctx = new InitialDirContext(ldapConfig);
   }
   
-  public void setAuthorizedGroup(String authorizedGroup)
-  {
-    this.authorizedGroup = authorizedGroup;
-  }
-
   public boolean isAuthorized(Map<String, String> claims)
   {
     String userId = getUserId(claims);
 
     if (userId != null && dctx != null)
     {
-      String baseDN = ldapConfig.getProperty("baseDN");
-      if (baseDN == null || baseDN.length() == 0)
-      {
-        baseDN = "ou=iringtools,dc=iringug,dc=org";
-      }
-
-      String groupDN = "cn=" + authorizedGroup + ",cn=groups," + baseDN;
-      String qualUserId = "uid=" + userId + ",cn=users," + baseDN;
+      String groupDN = "cn=" + authorizedGroup + ",cn=groups," + BASE_DN;
+      String qualUserId = "uid=" + userId + ",cn=users," + BASE_DN;
       String filter = "(member=" + qualUserId + ")";
 
       SearchControls constraints = new SearchControls();
@@ -100,8 +89,7 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
     {
       if (entry.getKey().equalsIgnoreCase(USERID_KEY))
       {
-        String userId = entry.getValue();
-        return userId;
+        return entry.getValue();
       }
     }
 
