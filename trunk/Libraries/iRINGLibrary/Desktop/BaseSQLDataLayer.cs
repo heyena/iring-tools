@@ -10,19 +10,16 @@ using org.iringtools.adapter;
 
 namespace org.iringtools.library
 {
-  public abstract class BaseSQLDataLayer : IDataLayer2
+  public abstract class BaseSQLDataLayer : BaseDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseSQLDataLayer));
     private const string WHERECLAUSE_ALIAS = "_t";
     private DataDictionary _dataDictionary;
     private string _execAssemblyName;
-    protected AdapterSettings _settings = null;
     
     #region BaseSQLDataLayer methods
-    public BaseSQLDataLayer(AdapterSettings settings)
+    public BaseSQLDataLayer(AdapterSettings settings) : base(settings)
     {
-        _settings = new AdapterSettings();
-        _settings = settings;
       _execAssemblyName = settings["ExecutingAssemblyName"];
       _dataDictionary = GetDictionary();
     }
@@ -58,14 +55,14 @@ namespace org.iringtools.library
     #endregion
 
     #region IDataLayer pass-thru/implementation methods
-    public abstract DataDictionary GetDictionary();
-    public abstract Response Configure(XElement configuration);
-    public abstract XElement GetConfiguration();
+    //public abstract DataDictionary GetDictionary();
+    //public abstract Response Configure(XElement configuration);
+    //public abstract XElement GetConfiguration();
 
-    public virtual long GetCount(string objectTypeName, DataFilter filter)
+    public override long GetCount(string objectTypeName, DataFilter filter)
     {
       string tableName = GetTableName(objectTypeName);
-      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
+      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, null);
 
       try
       {
@@ -78,7 +75,7 @@ namespace org.iringtools.library
       }
     }
 
-    public virtual IList<string> GetIdentifiers(string objectTypeName, DataFilter filter)
+    public override IList<string> GetIdentifiers(string objectTypeName, DataFilter filter)
     {
       string tableName = GetTableName(objectTypeName);
       string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
@@ -94,7 +91,7 @@ namespace org.iringtools.library
       }
     }
 
-    public virtual IList<IDataObject> Create(string objectTypeName, IList<string> identifiers)
+    public override IList<IDataObject> Create(string objectTypeName, IList<string> identifiers)
     {
       string tableName = GetTableName(objectTypeName);
 
@@ -110,7 +107,7 @@ namespace org.iringtools.library
       }
     }
 
-    public virtual IList<IDataObject> Get(string objectTypeName, IList<string> identifiers)
+    public override IList<IDataObject> Get(string objectTypeName, IList<string> identifiers)
     {
       string tableName = GetTableName(objectTypeName);
 
@@ -126,7 +123,7 @@ namespace org.iringtools.library
       }
     }
 
-    public virtual IList<IDataObject> Get(string objectTypeName, DataFilter filter, int pageSize, int startIndex)
+    public override IList<IDataObject> Get(string objectTypeName, DataFilter filter, int pageSize, int startIndex)
     {
       string tableName = GetTableName(objectTypeName);
       string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
@@ -143,7 +140,7 @@ namespace org.iringtools.library
       }
     }
 
-    public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectTypeName)
+    public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectTypeName)
     {
       IList<IDataObject> relatedDataObjects = null;
       DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectTypeName);
@@ -164,7 +161,7 @@ namespace org.iringtools.library
       return relatedDataObjects;
     }
 
-   public virtual Response Post(IList<IDataObject> dataObjects)
+    public override Response Post(IList<IDataObject> dataObjects)
     {
       try
       {
@@ -178,7 +175,7 @@ namespace org.iringtools.library
       }
     }
 
-    public virtual Response Delete(string objectTypeName, DataFilter filter)
+    public override Response Delete(string objectTypeName, DataFilter filter)
     {
       string tableName = GetTableName(objectTypeName);
       string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
@@ -194,7 +191,7 @@ namespace org.iringtools.library
       }
     }
 
-    public virtual Response Delete(string objectTypeName, IList<string> identifiers)
+    public override Response Delete(string objectTypeName, IList<string> identifiers)
     {
       string tableName = GetTableName(objectTypeName);
 
@@ -251,10 +248,10 @@ namespace org.iringtools.library
       return null;
     }
 
-    protected Type GetObjectType(DataObject objectDefinition, string objectTypeName)
-    {
-      return Type.GetType(objectDefinition.objectNamespace + "." + objectTypeName + ", " + _execAssemblyName);
-    }
+    //protected Type GetObjectType(DataObject objectDefinition, string objectTypeName)
+    //{
+    //  return Type.GetType(objectDefinition.objectNamespace + "." + objectTypeName + ", " + _execAssemblyName);
+    //}
 
     protected IDataObject ToDataObject(DataRow dataRow, DataObject objectDefinition)
     {
@@ -264,8 +261,9 @@ namespace org.iringtools.library
       {
         try
         {
-          Type objectType = GetObjectType(objectDefinition, objectDefinition.objectName);
-          dataObject = (IDataObject)Activator.CreateInstance(objectType);
+          //Type objectType = GetObjectType(objectDefinition, objectDefinition.objectName);
+          //dataObject = (IDataObject)Activator.CreateInstance(objectType);
+          dataObject = new GenericDataObject();
         }
         catch (Exception ex)
         {

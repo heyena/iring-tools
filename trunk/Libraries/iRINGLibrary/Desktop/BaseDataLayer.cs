@@ -16,7 +16,12 @@ namespace org.iringtools.library
     protected XElement _configuration = null;
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(IDataLayer));
-        
+    
+    public BaseDataLayer(AdapterSettings settings)
+    {
+      _settings = settings;
+    }
+
     public virtual IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
       try
