@@ -344,10 +344,10 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         xtype: 'menuseparator'
       },
     {
-      text: 'Open GraphMap',
-      handler: this.onEditGraphMap,
-      icon: 'Content/img/16x16/mapping.png',
-      scope: this
+    	text: 'Open GraphMap',
+    	handler: this.onOpenGraphMap,
+    	icon: 'Content/img/16x16/mapping.png',
+    	scope: this
     }]
   },
 
@@ -551,16 +551,19 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       })
   },
 
-  /*
-  onEditGraphMap: function (btn, e) {
-  var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-  this.fireEvent('opengraphmap', this, node);
-  },
-  */
-  onNewApplication: function (btn, ev) {
-    var node = this.directoryPanel.getSelectionModel().getSelectedNode();
-    this.fireEvent('NewApplication', this, node);
-  },
+
+	
+	onOpenGraphMap: function (btn, e) {
+		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+		this.fireEvent('opengraphmap', this, node);
+	},
+	
+	onNewApplication: function (btn, ev) {
+		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+		this.fireEvent('NewApplication', this, node);
+	},
+
+
 
   onEditScope: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
