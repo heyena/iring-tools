@@ -19,6 +19,8 @@ namespace org.iringtools.adapter.identity
         keyRing.Add("AuthenticationType", identity.AuthenticationType);
         keyRing.Add("IsAuthenticated", identity.IsAuthenticated.ToString());
         keyRing.Add("UserName", identity.Name);
+        //for legacy datalayer support
+        keyRing.Add("Name", identity.Name);
       }
 
       return keyRing;
