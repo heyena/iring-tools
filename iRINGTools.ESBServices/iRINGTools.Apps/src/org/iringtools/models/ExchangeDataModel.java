@@ -19,6 +19,7 @@ import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
+import org.iringtools.utility.HttpUtils;
 import org.iringtools.widgets.grid.Field;
 import org.iringtools.widgets.grid.Grid;
 
@@ -103,6 +104,8 @@ public class ExchangeDataModel extends DataModel
     try
     {
       HttpClient httpClient = new HttpClient(serviceUri + exchangeRelativePath);
+      HttpUtils.addOAuthHeaders(session, httpClient);
+      
       response = httpClient.post(ExchangeResponse.class, "/submit", request);
 
       if (response.getLevel() != Level.ERROR)

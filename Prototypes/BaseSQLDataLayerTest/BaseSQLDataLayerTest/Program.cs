@@ -19,7 +19,7 @@ namespace BaseSQLDataLayerTest
       settings["ExecutingAssemblyName"] = Assembly.GetExecutingAssembly().GetName().Name;
       sampleDL = new SampleSQLDataLayer(settings);
 
-      // from iRING projection engine view
+      // from iRING service point of view
       IList<IDataObject> dataObjects = sampleDL.Get("LINES", null);
       
       Console.WriteLine("Object Count: " + dataObjects.Count);
@@ -30,6 +30,9 @@ namespace BaseSQLDataLayerTest
 
       foreach (IDataObject dataObject in dataObjects)
       {
+        // let's deal with GenericDataObject
+        ((GenericDataObject)dataObject).ObjectType = "LINES";
+
         // update tag value with timestamp
         string tag = dataObject.GetPropertyValue("TAG").ToString();
         string newTag = tag + DateTime.Now.ToString();
@@ -40,7 +43,7 @@ namespace BaseSQLDataLayerTest
         dataObject.SetPropertyValue("TAG", newTag);
       }
 
-      // from iRING projection engine view      
+      // from iRING service point of view
       Response response = sampleDL.Post(dataObjects);
 
       Console.WriteLine("Post result" + response.ToString());

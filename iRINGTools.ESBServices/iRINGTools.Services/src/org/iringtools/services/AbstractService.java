@@ -54,7 +54,7 @@ public abstract class AbstractService
     List<String> authenticatedUser = headers.get(OAuthFilter.AUTHENTICATED_USER_KEY);    
     if (authenticatedUser != null && authenticatedUser.size() > 0)
     {
-      settings.put(OAuthFilter.AUTHENTICATED_USER_KEY, authenticatedUser.toString());
+      settings.put(OAuthFilter.AUTHENTICATED_USER_KEY, authenticatedUser.get(0));
     }
     
     List<String> authorization = headers.get(OAuthFilter.AUTHORIZATION_TOKEN_KEY); 
