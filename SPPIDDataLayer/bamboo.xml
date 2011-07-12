@@ -1,0 +1,134 @@
+<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(MSBuildExtensionsPath32)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
+
+  <PropertyGroup>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs;</AssemblyInfoFile>
+    <Major>2</Major>
+    <Minor>1</Minor>
+    <Build>0</Build>
+    <Revision>0</Revision>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <ZipCmd>"$(MSBuildProjectDirectory)\library\7-Zip\7z.exe"</ZipCmd>
+    <NUnit-ToolPath>C:\Program Files\NUnit 2.5.10\bin\net-2.0</NUnit-ToolPath>
+    <SPPIDDataLayerDir>$(MSBuildProjectDirectory)\SPPIDDataLayer</SPPIDDataLayerDir>
+    <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
+    <DevDeploymentDir>c:\iring-tools-web\SPPID</DevDeploymentDir>
+    <DistDir>c:\bamboo\dist\SPPID</DistDir>
+    <SolutionFile>SPPIDDataLayer.sln</SolutionFile>
+
+    <!-- 
+       <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>        
+    <DistDir>c:\bamboo.iringtools.org\dist</DistDir>
+    <DevDeploymentDir>C:\iring-tools-web\dev.iringsandbox.org</DevDeploymentDir>
+       <AppsDeploymentDir>$(DeploymentDir)\iRINGTools\Apps</AppsDeploymentDir>
+      -->
+
+  </PropertyGroup>
+
+  <ItemGroup>
+
+    <DeploymentPackage Include="*.*">
+      <Options>a -tzip -y -r</Options>
+      <OutputDir></OutputDir>
+      <ZipFile>$(DevDeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip</ZipFile>
+      <FileSet>$(SPPIDDataLayerDir)\*</FileSet>
+    </DeploymentPackage>
+    <DeploymentPackage Include="*.*">
+      <Options>x -tzip -y -o</Options>
+      <OutputDir>$(DevDeploymentDir)</OutputDir>
+      <ZipFile>$(DevDeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip</ZipFile>
+      <FileSet></FileSet>
+    </DeploymentPackage>
+
+    <SPPIDDeployment
+      Include="$(SPPIDDataLayerDir)\**"
+        Exclude="$(SPPIDDataLayerDir)\bin\*.pdb;
+               $(SPPIDDataLayerDir)\obj\**;
+               $(SPPIDDataLayerDir)\Properties\**;
+               $(SPPIDDataLayerDir)\*.vbproj;
+               $(SPPIDDataLayerDir)\*.user;
+               $(SPPIDDataLayerDir)\*.vspscc;
+               $(SPPIDDataLayerDir)\web.config;
+               $(SPPIDDataLayerDir)\.svn\**;">
+    </SPPIDDeployment>
+
+  </ItemGroup>
+
+
+
+  <Target Name="Version">
+    <Message Text="Updating assembly info ..." />
+
+    <SvnVersion LocalPath="$(MSBuildProjectDirectory)">
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </SvnVersion>
+
+    <FileUpdate
+      Files="$(AssemblyInfoFile)"
+      Regex="(\d+)\.(\d+)\.(\d+)(\.(\d+))*"
+      ReplacementText="$(Major).$(Minor).$(Build).$(Revision)"/>
+  </Target>
+
+  <Target Name="SvnCleanUp">
+    <Message Text="Performing SVN clean-up ..." />
+    <Exec Command="svn cleanup"/>
+  </Target>
+
+  <Target Name="SvnUpdate">
+    <Message Text="Performing SVN update ..." />
+    <Exec Command="svn update"/>
+  </Target>
+
+  <Target Name="CleanBuild">
+    <Message Text="Performing MSBuild clean-up ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
+  </Target>
+
+  <Target Name="CreateDeployment">
+    <Message Text="Cleaning up old deployment folders..." />
+    <Exec Command="RmDir /S /Q $(DevDeploymentDir)" />
+    <MakeDir Directories="$(DevDeploymentDir); $(DistDir);"/>
+    <!--<Exec Command="Copy .\ClientAccessPolicy.xml $(ServicesDeploymentDir)\ClientAccessPolicy.xml" />
+    <Exec Command="Copy .\ClientAccessPolicy.xml $(AppsDeploymentDir)\ClientAccessPolicy.xml" />-->
+
+
+    <Message Text="Creating DataLayers deployment ..." />
+    <Copy SourceFiles="@(SPPIDDeployment)"
+          DestinationFiles="@(SPPIDDeployment->'$(DeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <!--<Exec Command="Move /Y $(DeploymentDir)\Web_Default.config $(AppsDeploymentDir)\Web.config" />-->
+
+
+  </Target>
+
+  <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
+    <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
+  </Target>
+
+  <Target Name="Build">
+    <!--DependsOnTargets="Version"-->
+    <Message Text="Performing MSBuild ..." />
+    <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
+  </Target>
+
+  <!--<Target Name="Test">
+    
+		<NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="SPPIDDataLayer\SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />
+		-->
+  <!--<NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="MSSQLLibrary\MSSQLLibrary.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />-->
+  <!--
+	</Target>-->
+
+  <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
+  <Target Name="Distribute">
+    <Copy SourceFiles="$(DevDeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip"
+          DestinationFiles="$(DistDir)\iRINGTools-DataLayer-SPPID.zip">
+    </Copy>
+    <!--<Copy SourceFiles="$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip" 
+          DestinationFiles="$(DistDir)\iRINGTools-SDK.zip">
+    </Copy>-->
+  </Target>
+  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages; Distribute"/>
+</Project>
