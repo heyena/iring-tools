@@ -45,6 +45,7 @@
 
   <xs:complexType name="Status">
     <xs:sequence>
+      <xs:element name="level" type="Level" />
       <xs:element name="identifier" type="xs:string" />
       <xs:element name="results" type="Results" />
       <xs:element name="messages" type="Messages" />

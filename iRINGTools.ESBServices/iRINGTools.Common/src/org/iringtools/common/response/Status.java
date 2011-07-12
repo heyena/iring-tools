@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="level" type="{http://www.iringtools.org/common/response}Level"/>
  *         &lt;element name="identifier" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="results" type="{http://www.iringtools.org/common/response}Results"/>
  *         &lt;element name="messages" type="{http://www.iringtools.org/common/response}Messages"/>
@@ -30,6 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Status", propOrder = {
+    "level",
     "identifier",
     "results",
     "messages"
@@ -37,11 +39,37 @@ import javax.xml.bind.annotation.XmlType;
 public class Status {
 
     @XmlElement(required = true)
+    protected Level level;
+    @XmlElement(required = true)
     protected String identifier;
     @XmlElement(required = true)
     protected Results results;
     @XmlElement(required = true)
     protected Messages messages;
+
+    /**
+     * Gets the value of the level property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Level }
+     *     
+     */
+    public Level getLevel() {
+        return level;
+    }
+
+    /**
+     * Sets the value of the level property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Level }
+     *     
+     */
+    public void setLevel(Level value) {
+        this.level = value;
+    }
 
     /**
      * Gets the value of the identifier property.
