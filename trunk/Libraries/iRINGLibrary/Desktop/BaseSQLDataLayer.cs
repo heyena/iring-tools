@@ -54,11 +54,7 @@ namespace org.iringtools.library
     public abstract Response RefreshDataTable(string tableName);
     #endregion
 
-    #region IDataLayer pass-thru/implementation methods
-    //public abstract DataDictionary GetDictionary();
-    //public abstract Response Configure(XElement configuration);
-    //public abstract XElement GetConfiguration();
-
+    #region IDataLayer implementation methods
     public override long GetCount(string objectTypeName, DataFilter filter)
     {
       string tableName = GetTableName(objectTypeName);
@@ -248,11 +244,6 @@ namespace org.iringtools.library
       return null;
     }
 
-    //protected Type GetObjectType(DataObject objectDefinition, string objectTypeName)
-    //{
-    //  return Type.GetType(objectDefinition.objectNamespace + "." + objectTypeName + ", " + _execAssemblyName);
-    //}
-
     protected IDataObject ToDataObject(DataRow dataRow, DataObject objectDefinition)
     {
       IDataObject dataObject = null;
@@ -261,8 +252,6 @@ namespace org.iringtools.library
       {
         try
         {
-          //Type objectType = GetObjectType(objectDefinition, objectDefinition.objectName);
-          //dataObject = (IDataObject)Activator.CreateInstance(objectType);
           dataObject = new GenericDataObject();
         }
         catch (Exception ex)
@@ -395,6 +384,12 @@ namespace org.iringtools.library
         foreach (IDataObject dataObject in dataObjects)
         {
           string objectTypeName = dataObject.GetType().Name;
+
+          if (objectTypeName == typeof(GenericDataObject).Name)
+          {
+            objectTypeName = ((GenericDataObject)dataObject).ObjectType;
+          }
+
           DataObject objectDefinition = GetObjectDefinition(objectTypeName);
           DataTable dataTable = null;
 

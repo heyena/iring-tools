@@ -345,6 +345,11 @@ namespace org.iringtools.adapter.projection
     {
       IDataObject relatedObject = _dataLayer.Create(relatedObjectType, new List<string> { relatedObjectIdentifier }).First();
 
+      if (relatedObject.GetType() == typeof(GenericDataObject))
+      {
+        ((GenericDataObject)relatedObject).ObjectType = relatedObjectType;
+      }
+
       foreach (var relatedRecordPair in relatedRecord)
       {
         relatedObject.SetPropertyValue(relatedRecordPair.Key, relatedRecordPair.Value);
@@ -460,6 +465,11 @@ namespace org.iringtools.adapter.projection
           {
             IDataObject dataObject = _dataLayer.Create(objectType, null).First();
 
+            if (dataObject.GetType() == typeof(GenericDataObject))
+            {
+              ((GenericDataObject)dataObject).ObjectType = objectType;
+            }
+
             foreach (var pair in dataRecord)
             {
               dataObject.SetPropertyValue(pair.Key, pair.Value);
@@ -492,8 +502,12 @@ namespace org.iringtools.adapter.projection
       }
       else  // key property is mapped, expect only one data object created/retrieved from data layer
       {
-        IList<IDataObject> dataObjects = _dataLayer.Create(objectType, new List<string> { identifier });
         IDataObject dataObject = _dataLayer.Create(objectType, new List<string> { identifier }).First<IDataObject>();
+
+        if (dataObject.GetType() == typeof(GenericDataObject))
+        {
+          ((GenericDataObject)dataObject).ObjectType = objectType;
+        }
 
         foreach (var pair in dataRecord)
         {
