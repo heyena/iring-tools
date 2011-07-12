@@ -834,7 +834,7 @@ public class HibernateDataLayer implements IDataLayer2 {
 
 	public ResponseExtension generate(String projectName, String applicationName)
 	    {
-	      Status status = new Status();
+/*	      Status status = new Status();
 
 	      try
 	      {
@@ -850,8 +850,8 @@ public class HibernateDataLayer implements IDataLayer2 {
 	        }
 	        else if (validateDatabaseDictionary(dbDictionary))
 	        {
-	          EntityGenerator generator = _kernel.Get<EntityGenerator>();
-	          _response.Append(generator.Generate(dbDictionary, projectName, applicationName));
+	          EntityGenerator generator = "";//_kernel.Get<EntityGenerator>();
+	          _response.append(generator.Generate(dbDictionary, projectName, applicationName));
 
 	          // Update binding configuration
 	          XElement binding = new XElement("module",
@@ -865,7 +865,7 @@ public class HibernateDataLayer implements IDataLayer2 {
 
 	          Response localResponse = _adapterProvider.UpdateBinding(projectName, applicationName, binding);
 
-	          _response.Append(localResponse);
+	          _response.append(localResponse);
 
 	          status.getMessages().getItems().add("Database dictionary updated successfully.");
 	        }
@@ -877,9 +877,11 @@ public class HibernateDataLayer implements IDataLayer2 {
 	        status.getMessages().getItems().add(String.format("Error updating database dictionary: {0}", ex));
 	      }
 
-	      _response.Append(status);
-	      return _response;
-	    }	
+	      _response.append(status);
+	      			return _response;
+*/	      
+			return null;
+	    }
 	
 	public final DatabaseDictionary getDictionary(String projectName,
 			String applicationName) {
