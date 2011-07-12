@@ -212,7 +212,7 @@ namespace iRINGTools.Web.Controllers
 
         if (parentType == "GraphMapNode")
         {
-          selectedClassMap = graphMap.classTemplateMaps.Find(c=>c.classMap.id.Equals(parentId)).classMap;
+          selectedClassMap = graphMap.classTemplateMaps.Find(c => c.classMap.id.Equals(parentId)).classMap;
         }
         else if (parentType == "ClassMapNode")
         {
@@ -560,102 +560,18 @@ namespace iRINGTools.Web.Controllers
       return graphNode;
     }
 
-		public ActionResult graphMap(FormCollection form)
-		{
-			List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-			try
-			{
-				string qName = string.Empty;
-				string format = String.Empty;
-				string oldGraphName = "";
-
-				string[] mappingCtx = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-				if (mappingCtx.Length > 3)
-					oldGraphName = mappingCtx[4];
-				string propertyCtx = form["objectName"];
-				if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
-				string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-				string scope = dataObjectVars[0];
-				string application = dataObjectVars[1];
-				Mapping mapping = GetMapping(scope, application);
-				string context = string.Format("{0}/{1}", scope, application);
-				string newGraphName = form["graphName"];
-				string classLabel = form["classLabel"];
-				string keyProperty = dataObjectVars[5];
-				string dataObject = dataObjectVars[4];
-				string classId = form["classUrl"];
-
-				bool qn = false;
-
-				qn = _nsMap.ReduceToQName(classId, out qName);
-
-				if (oldGraphName == "")
-				{
-					if (mapping.graphMaps == null)
-						mapping.graphMaps = new GraphMaps();
-
-					GraphMap graphMap = new GraphMap
-					{
-						name = newGraphName,
-						dataObjectName = dataObject
-					};
-					ClassMap classMap = new ClassMap
-					{
-						name = classLabel,
-						id = qn ? qName : classId
-					};
-
-					classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
-
-					graphMap.AddClassMap(null, classMap);
-
-					mapping.graphMaps.Add(graphMap);
-					nodes.Add(GetGraphNode(graphMap, context, (qn ? qName : classId)));
-				}
-				else
-				{
-					GraphMap graphMap = mapping.FindGraphMap(oldGraphName);
-					if (graphMap == null)
-						graphMap = new GraphMap();
-
-					graphMap.name = newGraphName;
-					graphMap.dataObjectName = dataObject;
-
-					ClassTemplateMaps ct = graphMap.classTemplateMaps;
-					for (int i = 0; i < ct.Count; i++)
-					{
-						ct.RemoveAt(i);
-					}
-
-					ClassMap classMap = new ClassMap
-					{
-						name = classLabel,
-						id = qn ? qName : classId
-					};
-
-					classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
-
-					graphMap.AddClassMap(null, classMap);
-					_repository.UpdateMapping(scope, application, mapping);
-				}
-
-			}
-			catch (Exception ex)
-			{
-				return Json(nodes, JsonRequestBehavior.AllowGet);
-			}
-			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-		}
-
-
-    public JsonResult AddGraphMap(FormCollection form)
+    public ActionResult GraphMap(FormCollection form)
     {
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
       try
       {
         string qName = string.Empty;
-
         string format = String.Empty;
+        string oldGraphName = "";
+
+        string[] mappingCtx = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+        if (mappingCtx.Length > 3)
+          oldGraphName = mappingCtx[4];
         string propertyCtx = form["objectName"];
         if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
         string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
@@ -663,41 +579,116 @@ namespace iRINGTools.Web.Controllers
         string application = dataObjectVars[1];
         Mapping mapping = GetMapping(scope, application);
         string context = string.Format("{0}/{1}", scope, application);
-        string graphName = form["graphName"];
+        string newGraphName = form["graphName"];
         string classLabel = form["classLabel"];
         string keyProperty = dataObjectVars[5];
         string dataObject = dataObjectVars[4];
         string classId = form["classUrl"];
+        string oldClassId = form["oldClassUrl"];
+        string oldClassLabel = form["oldClassLabel"];
 
         bool qn = false;
 
         qn = _nsMap.ReduceToQName(classId, out qName);
 
-        GraphMap graphMap = new GraphMap
+        if (oldGraphName == "")
         {
-          name = graphName,
-          dataObjectName = dataObject
-        };
-        ClassMap classMap = new ClassMap
+          if (mapping.graphMaps == null)
+            mapping.graphMaps = new GraphMaps();
+
+          GraphMap graphMap = new GraphMap
+          {
+            name = newGraphName,
+            dataObjectName = dataObject
+          };
+          ClassMap classMap = new ClassMap
+          {
+            name = classLabel,
+            id = qn ? qName : classId
+          };
+
+          classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
+
+          graphMap.AddClassMap(null, classMap);
+
+          mapping.graphMaps.Add(graphMap);
+          nodes.Add(GetGraphNode(graphMap, context, (qn ? qName : classId)));
+        }
+        else
         {
-          name = classLabel,
-          id = qn ? qName : classId
-        };
+          GraphMap graphMap = mapping.FindGraphMap(oldGraphName);
+          if (graphMap == null)
+            graphMap = new GraphMap();
+          graphMap.name = newGraphName;
+          graphMap.dataObjectName = dataObject;
+          ClassTemplateMap ctm = graphMap.classTemplateMaps.Find(c => c.classMap.name.Equals(oldClassLabel));
 
-        classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
+          ctm.classMap.name = classLabel;
+          ctm.classMap.id = qn ? qName : classId;
+          ctm.classMap.identifiers.Clear();
+          ctm.classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
+          _repository.UpdateMapping(scope, application, mapping);
+        }
 
-        graphMap.AddClassMap(null, classMap);
-        if (mapping.graphMaps == null)
-          mapping.graphMaps = new GraphMaps();
-        mapping.graphMaps.Add(graphMap);
-        nodes.Add(GetGraphNode(graphMap, context, (qn ? qName : classId)));
       }
       catch (Exception ex)
       {
         return Json(nodes, JsonRequestBehavior.AllowGet);
       }
-      return Json(nodes, JsonRequestBehavior.AllowGet);
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
+
+
+    //public JsonResult AddGraphMap(FormCollection form)
+    //{
+    //  List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+    //  try
+    //  {
+    //    string qName = string.Empty;
+
+    //    string format = String.Empty;
+    //    string propertyCtx = form["objectName"];
+    //    if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
+    //    string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+    //    string scope = dataObjectVars[0];
+    //    string application = dataObjectVars[1];
+    //    Mapping mapping = GetMapping(scope, application);
+    //    string context = string.Format("{0}/{1}", scope, application);
+    //    string graphName = form["graphName"];
+    //    string classLabel = form["classLabel"];
+    //    string keyProperty = dataObjectVars[5];
+    //    string dataObject = dataObjectVars[4];
+    //    string classId = form["classUrl"];
+
+    //    bool qn = false;
+
+    //    qn = _nsMap.ReduceToQName(classId, out qName);
+
+    //    GraphMap graphMap = new GraphMap
+    //    {
+    //      name = graphName,
+    //      dataObjectName = dataObject
+    //    };
+    //    ClassMap classMap = new ClassMap
+    //    {
+    //      name = classLabel,
+    //      id = qn ? qName : classId
+    //    };
+
+    //    classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
+
+    //    graphMap.AddClassMap(null, classMap);
+    //    if (mapping.graphMaps == null)
+    //      mapping.graphMaps = new GraphMaps();
+    //    mapping.graphMaps.Add(graphMap);
+    //    nodes.Add(GetGraphNode(graphMap, context, (qn ? qName : classId)));
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return Json(nodes, JsonRequestBehavior.AllowGet);
+    //  }
+    //  return Json(nodes, JsonRequestBehavior.AllowGet);
+    //}
 
     public JsonResult UpdateMapping(FormCollection form)
     {
@@ -805,7 +796,7 @@ namespace iRINGTools.Web.Controllers
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
         ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
-        TemplateMap tmap = ctm.templateMaps.Find(tm=>tm.name.Equals(templateName));
+        TemplateMap tmap = ctm.templateMaps.Find(tm => tm.name.Equals(templateName));
         RoleMap rmap = tmap.roleMaps.Find(rm => rm.name.Equals(roleName));
         if (rmap != null)
         {
@@ -872,7 +863,7 @@ namespace iRINGTools.Web.Controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
-   
+
 
     public JsonResult AddValueListMap(FormCollection form)
     {
@@ -906,53 +897,98 @@ namespace iRINGTools.Web.Controllers
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-    }		
+    }
 
-    public JsonResult AddValueList(FormCollection form)
+    //public JsonResult AddValueList(FormCollection form)
+    //{
+    //  try
+    //  {
+    //    string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+    //    string scope = context[0];
+    //    string application = context[1];
+    //    Mapping mapping = GetMapping(scope, application);
+    //    string valueList = form["valueList"];
+    //    var valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
+    //    if (valueListMap == null)
+    //    {
+    //      ValueListMap valuelistMap = new ValueListMap
+    //      {
+    //        name = valueList
+    //      };
+
+    //      mapping.valueListMaps.Add(valuelistMap);
+    //      _repository.UpdateMapping(scope, application, mapping);
+    //    }
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+    //  }
+    //  return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    //}
+
+    //public JsonResult EditValuelist(FormCollection form)
+    //{
+    //  try
+    //  {
+    //    string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+    //    string scope = context[0];
+    //    string oldValueList = context[context.Count() - 1];
+    //    string application = context[1];
+    //    Mapping mapping = GetMapping(scope, application);
+    //    string newvalueList = form["valueList"];
+    //    var valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
+    //    if (valueListMap != null)
+    //    {
+    //      valueListMap.name = newvalueList;
+    //      _repository.UpdateMapping(scope, application, mapping);
+    //    }
+
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+    //  }
+    //  return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    //}
+
+    public ActionResult valueList(FormCollection form)
     {
       try
       {
+        string oldValueList = "";
+        ValueListMap valueListMap = null;
+
         string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = context[0];
+
+        if (context.Count() >= 1)
+          oldValueList = context[context.Count() - 1];
+
         string application = context[1];
         Mapping mapping = GetMapping(scope, application);
-        string valueList = form["valueList"];
-        var valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
+        string newvalueList = form["valueList"];
+
+        if (oldValueList != "")
+          valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
+        else
+          valueListMap = mapping.valueListMaps.Find(c => c.name == newvalueList);
+
         if (valueListMap == null)
         {
           ValueListMap valuelistMap = new ValueListMap
           {
-            name = valueList
+            name = newvalueList
           };
 
           mapping.valueListMaps.Add(valuelistMap);
           _repository.UpdateMapping(scope, application, mapping);
         }
-      }
-      catch (Exception ex)
-      {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-      }
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-    }
-
-    public JsonResult EditValuelist(FormCollection form)
-    {
-      try
-      {
-        string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string scope = context[0];
-        string oldValueList = context[context.Count() - 1];
-        string application = context[1];
-        Mapping mapping = GetMapping(scope, application);
-        string newvalueList = form["valueList"];
-        var valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
-        if (valueListMap != null)
+        else
         {
           valueListMap.name = newvalueList;
           _repository.UpdateMapping(scope, application, mapping);
         }
-
       }
       catch (Exception ex)
       {
@@ -961,72 +997,27 @@ namespace iRINGTools.Web.Controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
-		public ActionResult valueList(FormCollection form)
-		{
-			try
-			{
-				string oldValueList = "";
-				ValueListMap valueListMap = null;
+    //public JsonResult EditGraphName(FormCollection form)
+    //{
+    //  try
+    //  {
 
-				string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-				string scope = context[0];
-
-				if (context.Count() >= 1)
-					oldValueList = context[context.Count() - 1];
-
-				string application = context[1];
-				Mapping mapping = GetMapping(scope, application);
-				string newvalueList = form["valueList"];
-
-				if (oldValueList != "")
-					valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
-				else
-					valueListMap = mapping.valueListMaps.Find(c => c.name == newvalueList);
-
-				if (valueListMap == null)
-				{
-					ValueListMap valuelistMap = new ValueListMap
-					{
-						name = newvalueList
-					};
-
-					mapping.valueListMaps.Add(valuelistMap);
-					_repository.UpdateMapping(scope, application, mapping);
-				}
-				else
-				{
-					valueListMap.name = newvalueList;
-					_repository.UpdateMapping(scope, application, mapping);
-				}
-			}
-			catch (Exception ex)
-			{
-				return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-			}
-			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-		}
-
-    public JsonResult EditGraphName(FormCollection form)
-    {
-      try
-      {
-
-        string[] mappingCtx = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-        string oldGraphName = mappingCtx[4];
-        string newGraphName = form["graphName"];
-        string scope = mappingCtx[0];
-        string application = mappingCtx[1];
-        Mapping mapping = GetMapping(scope, application);
-        GraphMap graphMap = mapping.FindGraphMap(oldGraphName);
-        graphMap.name = newGraphName;
-        _repository.UpdateMapping(scope, application, mapping);
-      }
-      catch (Exception ex)
-      {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-      }
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-    }
+    //    string[] mappingCtx = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+    //    string oldGraphName = mappingCtx[4];
+    //    string newGraphName = form["graphName"];
+    //    string scope = mappingCtx[0];
+    //    string application = mappingCtx[1];
+    //    Mapping mapping = GetMapping(scope, application);
+    //    GraphMap graphMap = mapping.FindGraphMap(oldGraphName);
+    //    graphMap.name = newGraphName;
+    //    _repository.UpdateMapping(scope, application, mapping);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+    //  }
+    //  return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    //}
     public JsonResult GetLabels(FormCollection form)
     {
       JsonArray jsonArray = new JsonArray();
