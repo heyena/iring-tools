@@ -77,6 +77,9 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="log4net">
+      <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -110,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Encryption.cs" />
+    <Compile Include="EncryptionUtility.cs" />
     <Compile Include="GenericDataTable.cs" />
     <Compile Include="IWebHttpClient.cs" />
     <Compile Include="Loggers\DebugLogger.cs" />

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
@@ -14,73 +14,65 @@ import org.apache.log4j.Logger;
 public class EncryptionUtils
 {
   private static final Logger logger = Logger.getLogger(EncryptionUtils.class);
-  private static final String ENCODING = "utf8";
+  private static final String ALGORITHM = "AES";
+  private static final String ENCODING = "UTF-8";
+  private static final String SECRET_KEY = "secret";
   
-  private static Base64 base64 = new Base64();
-  private static Cipher cipher = null;
-  private static SecretKey key = null;
+  private static Cipher cipher;
+  private static SecretKeySpec keySpec;
+  private static IvParameterSpec ivSpec;
   
   static
   {
     try
-    {
-      String algorithm = "DES";
-      String cipherKey = "buwHCL/4y+w=";
-
-//      javax.crypto.KeyGenerator keyGen = javax.crypto.KeyGenerator.getInstance(algorithm);
-//      keyGen.init(56);
-//      System.out.println("Key: " + base64.encodeToString(keyGen.generateKey().getEncoded()));
-
-      byte[] keyBytes = base64.decode(cipherKey);
-      key = new SecretKeySpec(keyBytes, algorithm);
-
-      cipher = Cipher.getInstance(algorithm);
+    {      
+      byte[] keyBytes = new byte[16];
+      byte[] buf = SECRET_KEY.getBytes(ENCODING);
+      int len = (buf.length > keyBytes.length) ? keyBytes.length : buf.length;
+      System.arraycopy(buf, 0, keyBytes, 0, len);
+      
+      cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+      keySpec = new SecretKeySpec(keyBytes, ALGORITHM);
+      ivSpec = new IvParameterSpec(keyBytes);
     }
     catch (Exception e)
     {
-      logger.error("Initialization error: " + e);
+      logger.error("Error initializing cryptor: " + e);
     }
   }
-
+  
   public static String encrypt(String plainText) throws EncryptionException
-  {
-    if (cipher != null)
+  {    
+    try
     {
-      try
-      {
-        cipher.init(Cipher.ENCRYPT_MODE, key);
-        byte[] encryptedBytes = cipher.doFinal(plainText.getBytes(ENCODING));
-        return base64.encodeToString(encryptedBytes);
-      }
-      catch (Exception ex)
-      {
-        throw new EncryptionException("Encryption error: " + ex);
-      }
+      cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
+      byte[] cipherTextBytes = cipher.doFinal(plainText.getBytes(ENCODING));    
+      return Base64.encodeBase64String(cipherTextBytes);
     }
-    
-    throw new EncryptionException("Encryptor not initialized.");
+    catch (Exception e)
+    {
+      String message = "Error encrypting [" + plainText + "]" + e;
+      logger.error(message);
+      throw new EncryptionException(message);
+    }
   }
-
+  
   public static synchronized String decrypt(String cipherText) throws EncryptionException
   {
-    if (cipher != null)
+    try
     {
-      try
-      {
-        cipher.init(Cipher.DECRYPT_MODE, key);
-        byte[] encryptedBytes = base64.decode(cipherText);
-        byte[] plainText = cipher.doFinal(encryptedBytes);
-        return new String(plainText, ENCODING);
-      }
-      catch (Exception ex)
-      {
-        throw new EncryptionException("Decryption error: " + ex);
-      }
+      cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+      byte[] plainTextBytes = cipher.doFinal(Base64.decodeBase64(cipherText));
+      return new String(plainTextBytes, ENCODING);
     }
-    
-    throw new EncryptionException("Encryptor not initialized.");
+    catch (Exception e)
+    {
+      String message = "Error decrypting [" + cipherText + "]" + e;
+      logger.error(message);
+      throw new EncryptionException(message);
+    }
   }
-
+  
   public static void main(String[] args) throws EncryptionException
   {
     String plainText = "";
