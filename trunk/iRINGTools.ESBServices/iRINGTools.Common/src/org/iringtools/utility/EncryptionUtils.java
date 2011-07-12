@@ -27,9 +27,9 @@ public class EncryptionUtils
       String algorithm = "DES";
       String cipherKey = "buwHCL/4y+w=";
 
-      // javax.crypto.KeyGenerator keyGen = javax.crypto.KeyGenerator.getInstance(algorithm);
-      // keyGen.init(128);
-      // System.out.println("Key: " + new BASE64Encoder().encode(keyGen.generateKey().getEncoded()));
+//      javax.crypto.KeyGenerator keyGen = javax.crypto.KeyGenerator.getInstance(algorithm);
+//      keyGen.init(56);
+//      System.out.println("Key: " + base64.encodeToString(keyGen.generateKey().getEncoded()));
 
       byte[] keyBytes = base64.decode(cipherKey);
       key = new SecretKeySpec(keyBytes, algorithm);
