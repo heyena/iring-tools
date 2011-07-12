@@ -1,71 +1,65 @@
 package org.iringtools.ext;
 
+import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
-
-
 import org.iringtools.common.response.StatusList;
-import org.iringtools.library.StatusLevel;
 
+public class ResponseExtension extends Response
+{
+  protected Level statuslevel;
 
+  public void append(Response response)
+  {
+    StatusList statuslist = response.getStatusList();
 
-public class ResponseExtension extends Response {
+    for (Status status : statuslist.getItems())
+    {
+      append(status);
+    }
+  }
 
-    protected StatusLevel statuslevel;
-	
-	public void append(Response response)
-	{
-    	
-	  StatusList statuslist = response.getStatusList();
+  public void append(Status status)
+  {
+    Status foundStatus = null;
+    boolean wasFound = false;
 
-	  for(Status status : statuslist.getItems()){
-		  append(status);
-	  }
-	}
-    
-	 public void append(Status status)
-		{
-		  StatusExtension foundStatus = null;
-		  boolean wasFound = false;
-		  
-		  StatusList statuslist = new StatusList();
-		  
-		  for (Status candidateStatus : statuslist.getItems())
-		  {
-			if (status.getIdentifier().equalsIgnoreCase(candidateStatus.getIdentifier()))
-			{
-			  foundStatus = (StatusExtension) candidateStatus;
-			  wasFound = true;
-			}
-		  }
+    StatusList statuslist = new StatusList();
 
-		  if (!wasFound)
-		  {
-			statuslist.getItems().add(status);
-		  }
-		  else
-		  {
-			if (foundStatus.getLevel().ordinal() < ((StatusExtension) status).getLevel().ordinal())
-			{
-			  foundStatus.setLevel(((StatusExtension) status).getLevel());
-			}
+    for (Status candidateStatus : statuslist.getItems())
+    {
+      if (status.getIdentifier().equalsIgnoreCase(candidateStatus.getIdentifier()))
+      {
+        foundStatus = (Status) candidateStatus;
+        wasFound = true;
+      }
+    }
 
-			for (String message : status.getMessages().getItems())
-	        {
-	          foundStatus.getMessages().getItems().add(message);
-	        }
-		  }
+    if (!wasFound)
+    {
+      statuslist.getItems().add(status);
+    }
+    else
+    {
+      if (foundStatus.getLevel().ordinal() < ((Status) status).getLevel().ordinal())
+      {
+        foundStatus.setLevel(((Status) status).getLevel());
+      }
 
-		  if (this.statuslevel.ordinal() < ((StatusExtension) status).getLevel().ordinal())
-		  {
-			  this.setLevel(((StatusExtension) status).getLevel());
-		  }
-		}
+      for (String message : status.getMessages().getItems())
+      {
+        foundStatus.getMessages().getItems().add(message);
+      }
+    }
 
-	 public void setLevel(StatusLevel levelValue) {
-	 		this.statuslevel = levelValue;
-	 	}
-    
-	 
-	 
+    if (this.statuslevel.ordinal() < ((Status) status).getLevel().ordinal())
+    {
+      this.setLevel(((Status) status).getLevel());
+    }
+  }
+
+  public void setLevel(Level statuslevel)
+  {
+    this.statuslevel = statuslevel;
+  }
 }

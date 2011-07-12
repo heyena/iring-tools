@@ -41,6 +41,7 @@
      <xs:element name="label" type="xs:string" />
       <xs:element name="repository" type="xs:string" />
       <xs:element name="uri" type="xs:string" />
+      <xs:element name="lang" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 

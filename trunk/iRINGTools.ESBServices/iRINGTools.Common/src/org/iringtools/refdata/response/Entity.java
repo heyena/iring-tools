@@ -120,7 +120,7 @@ public class Entity {
     public void setUri(String value) {
         this.uri = value;
     }
-    
+
     /**
      * Gets the value of the lang property.
      * 
@@ -144,6 +144,5 @@ public class Entity {
     public void setLang(String value) {
         this.lang = value;
     }
-
 
 }
