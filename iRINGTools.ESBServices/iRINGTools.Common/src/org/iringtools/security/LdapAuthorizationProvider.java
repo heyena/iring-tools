@@ -24,14 +24,14 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
   private DirContext dctx;
   private String authorizedGroup;
 
-  public void init(Map<String, String> settings) throws NamingException
+  public void init(Properties properties) throws NamingException
   {
-    String server = (String)settings.get("server");
-    String portNumber = (String)settings.get("portNumber");
-    String userName = (String)settings.get("userName");
-    String password = (String)settings.get("password");
+    String server = properties.getProperty("server");
+    String portNumber = properties.getProperty("portNumber");
+    String userName = properties.getProperty("userName");
+    String password = properties.getProperty("password");
     
-    authorizedGroup = (String)settings.get("authorizedGroup");
+    authorizedGroup = properties.getProperty("authorizedGroup");
     
     try
     {

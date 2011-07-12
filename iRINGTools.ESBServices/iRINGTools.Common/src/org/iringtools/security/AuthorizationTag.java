@@ -2,9 +2,7 @@ package org.iringtools.security;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.naming.NamingException;
@@ -16,6 +14,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.iringtools.utility.HttpUtils;
+import org.iringtools.utility.IOUtils;
 
 public class AuthorizationTag extends TagSupport
 {
@@ -25,75 +24,73 @@ public class AuthorizationTag extends TagSupport
   {
     HttpSession session = pageContext.getSession();
     HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-    HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+    HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();    
+    String authorizationEnabled = pageContext.getServletContext().getInitParameter("AuthorizationEnabled");
     
-    String ldapConfigPath = pageContext.getServletContext().getRealPath("/") + "WEB-INF/config/ldap.conf";
-    String appName = (String)session.getAttribute("appName");
-    String authorizedGroupName = (String)session.getAttribute("authorizedGroupName");
-
-    Cookie[] cookies = request.getCookies();
-    Cookie authorizedCookie = HttpUtils.getCookie(cookies, appName);
-
-    if (authorizedCookie == null)  // user not authorized, attempt to authorize
-    {
-      Map<String, String> userAttrs = null;
-      
-      // get user attributes
-      try
+    if (!IOUtils.isNullOrEmpty(authorizationEnabled) && authorizationEnabled.equalsIgnoreCase("true"))
+    {    
+      String ldapConfigPath = pageContext.getServletContext().getRealPath("/") + "WEB-INF/config/ldap.conf";
+      String appName = (String)session.getAttribute("appName");
+      String authorizedGroupName = (String)session.getAttribute("authorizedGroupName");
+  
+      Cookie[] cookies = request.getCookies();
+      Cookie authorizedCookie = HttpUtils.getCookie(cookies, appName);
+  
+      if (authorizedCookie == null)  // user not authorized, attempt to authorize
       {
-        String authUser = (String)session.getAttribute(OAuthFilter.AUTHENTICATED_USER_KEY);
-        userAttrs = HttpUtils.toMap(authUser);
-      }
-      catch (Exception e)
-      {
-        Cookie authUserCookie = HttpUtils.getCookie(cookies, OAuthFilter.AUTHENTICATED_USER_KEY);
-        userAttrs = HttpUtils.toMap(authUserCookie.getValue());
-      }
-      
-      Map<String, String> settings = new HashMap<String, String>();
-      
-      try
-      {
-        Properties props = new Properties();
-        props.load(new FileInputStream(ldapConfigPath));
+        Map<String, String> userAttrs = null;
         
-        for (Entry<Object, Object> prop : props.entrySet())
-        {
-          settings.put((String)prop.getKey(), (String)prop.getValue());
-        }
-      }
-      catch (IOException ioe)
-      {
-        throw new JspException("Error loading LDAP properties: " + ioe);
-      }
-      
-      settings.put("authorizedGroup", authorizedGroupName);
-      
-      LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
-      
-      try
-      {
-        authProvider.init(settings);
-      }
-      catch (NamingException ne)
-      {
-        throw new JspException("Error initializing authentication provider: " + ne);
-      }
-      
-      if (userAttrs == null || !authProvider.isAuthorized(userAttrs))
-      {
+        // get user attributes
         try
         {
-          response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+          String authUser = (String)session.getAttribute(OAuthFilter.AUTHENTICATED_USER_KEY);
+          userAttrs = HttpUtils.toMap(authUser);
         }
-        catch (IOException e)
+        catch (Exception e)
         {
-          e.printStackTrace();
+          Cookie authUserCookie = HttpUtils.getCookie(cookies, OAuthFilter.AUTHENTICATED_USER_KEY);
+          userAttrs = HttpUtils.toMap(authUserCookie.getValue());
         }
-      }
-      else
-      {
-        response.addCookie(new Cookie(appName, "authorized"));
+        
+        Properties props = new Properties();
+        
+        try
+        {
+          props.load(new FileInputStream(ldapConfigPath));
+        }
+        catch (IOException ioe)
+        {
+          throw new JspException("Error loading LDAP properties: " + ioe);
+        }
+        
+        props.put("authorizedGroup", authorizedGroupName);
+        
+        LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
+        
+        try
+        {
+          authProvider.init(props);
+        }
+        catch (NamingException ne)
+        {
+          throw new JspException("Error initializing authentication provider: " + ne);
+        }
+        
+        if (userAttrs == null || !authProvider.isAuthorized(userAttrs))
+        {
+          try
+          {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+          }
+          catch (IOException e)
+          {
+            e.printStackTrace();
+          }
+        }
+        else
+        {
+          response.addCookie(new Cookie(appName, "authorized"));
+        }
       }
     }
     

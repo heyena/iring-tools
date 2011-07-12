@@ -23,6 +23,10 @@
     <param-name>FieldFit</param-name>
     <param-value>header</param-value>
   </context-param>
+  <context-param>
+    <param-name>AuthorizationEnabled</param-name>
+    <param-value>false</param-value>
+  </context-param>
   <!--
   <filter>
 		<filter-name>sso</filter-name>
