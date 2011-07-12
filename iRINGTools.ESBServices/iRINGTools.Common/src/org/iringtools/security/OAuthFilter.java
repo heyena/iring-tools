@@ -27,8 +27,8 @@ public class OAuthFilter implements Filter
 {
   private static final Logger logger = Logger.getLogger(OAuthFilter.class);
   
+  public static final String AUTHENTICATED_USER_KEY = "Auth";
   public static final int AUTH_COOKIE_EXPIRY = 28800;  // 8 hours
-  public static final String AUTHENTICATED_USER_KEY = "authenticated-user";
   public static final String AUTHORIZATION_TOKEN_KEY = "Authorization";
   public static final String REF_PARAM = "REF";
   public static final String URL_ENCODING = "UTF-8";
@@ -53,7 +53,7 @@ public class OAuthFilter implements Filter
     {
       String ref = request.getParameter(REF_PARAM);
       
-      if (IOUtils.isNullOrEmpty(ref))  // no reference token, attempt to obtain one
+      if (IOUtils.isNullOrEmpty(ref))  // no reference token, attempt to obtain it
       {
         String federationServiceUri = filterConfig.getInitParameter("federationServiceUri");
         String idpId = filterConfig.getInitParameter("idpId");
@@ -110,13 +110,12 @@ public class OAuthFilter implements Filter
           
           if (userAttrs != null)
           {
-            String multiValue = userAttrs.toString();
-            multiValue = multiValue.substring(1, multiValue.length() - 1);
+            String authCookieValue = HttpUtils.toQueryParams(userAttrs);
             
             // make authenticated user attributes available in both session and cookie
-            session.setAttribute(AUTHENTICATED_USER_KEY, multiValue);
+            session.setAttribute(AUTHENTICATED_USER_KEY, authCookieValue);
             
-            authCookie = new Cookie(AUTHENTICATED_USER_KEY, multiValue);
+            authCookie = new Cookie(AUTHENTICATED_USER_KEY, authCookieValue);
             authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
             response.addCookie(authCookie);
             
@@ -135,16 +134,13 @@ public class OAuthFilter implements Filter
     }
     else  // user signed on but session has not been validated
     {
-      Map<String, String> userAttrs = HttpUtils.toMap(authCookie.getValue());
-      
       try
       {
-        String multiValue = userAttrs.toString();
-        multiValue = multiValue.substring(1, multiValue.length() - 1);
-        session.setAttribute(AUTHENTICATED_USER_KEY, multiValue);
+        Map<String, String> userAttrs = HttpUtils.fromQueryParams(authCookie.getValue());
+        String authCookieValue = HttpUtils.toQueryParams(userAttrs);
+        session.setAttribute(AUTHENTICATED_USER_KEY, authCookieValue);
         
-        String userAttrsJson = JSONUtil.serialize(userAttrs);
-        
+        String userAttrsJson = JSONUtil.serialize(userAttrs);        
         if (!obtainOAuthToken(userAttrsJson))
         {
           String message = "Unable to obtain OAuth token.";

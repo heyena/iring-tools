@@ -1,7 +1,11 @@
 package org.iringtools.utility;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.Cookie;
 
@@ -25,22 +29,44 @@ public class HttpUtils
     return null;
   }
   
-  public static synchronized Map<String, String> toMap(String multiValue)
+  public static synchronized String toQueryParams(Map<String, String> keyValuePairs) throws UnsupportedEncodingException
   {
-    Map<String, String> attrs = new HashMap<String, String>();
+    StringBuilder queryParams = new StringBuilder();
     
-    if (!IOUtils.isNullOrEmpty(multiValue))
+    if (keyValuePairs != null && keyValuePairs.size() > 0)
     {
-      String[] pairs = multiValue.split(" *, *");
+      for (Entry<String, String> entry : keyValuePairs.entrySet())
+      {
+        if (queryParams.length() > 0)
+        {
+          queryParams.append("&");
+        }
+        
+        String name = entry.getKey();        
+        String value = URLEncoder.encode(entry.getValue(), "UTF-8");
+        queryParams.append(name + "=" + value);
+      }
+    }
+    
+    return queryParams.toString();
+  }
+  
+  public static synchronized Map<String, String> fromQueryParams(String queryParams) throws UnsupportedEncodingException
+  {
+    Map<String, String> keyValuePairs = new HashMap<String, String>();
+    
+    if (!IOUtils.isNullOrEmpty(queryParams))
+    {
+      String[] pairs = queryParams.split("&");
       
       for (String pair : pairs)
       {
         String[] parts = pair.split("=");
-        attrs.put(parts[0], parts[1]);
+        keyValuePairs.put(parts[0], URLDecoder.decode(parts[1], "UTF-8"));
       }
     }
     
-    return attrs;
+    return keyValuePairs;
   }
   
   public static synchronized void addOAuthHeaders(Map<String, Object> settings, HttpClient httpClient)

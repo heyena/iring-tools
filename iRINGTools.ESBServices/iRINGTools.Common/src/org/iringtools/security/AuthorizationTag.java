@@ -2,6 +2,7 @@ package org.iringtools.security;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -44,12 +45,20 @@ public class AuthorizationTag extends TagSupport
         try
         {
           String authUser = (String)session.getAttribute(OAuthFilter.AUTHENTICATED_USER_KEY);
-          userAttrs = HttpUtils.toMap(authUser);
+          userAttrs = HttpUtils.fromQueryParams(authUser);
         }
         catch (Exception e)
         {
           Cookie authUserCookie = HttpUtils.getCookie(cookies, OAuthFilter.AUTHENTICATED_USER_KEY);
-          userAttrs = HttpUtils.toMap(authUserCookie.getValue());
+          
+          try
+          {
+            userAttrs = HttpUtils.fromQueryParams(authUserCookie.getValue());
+          }
+          catch (UnsupportedEncodingException ue)
+          {
+            throw new JspException("Error deserializing Auth cookie: " + ue);
+          }
         }
         
         Properties props = new Properties();
