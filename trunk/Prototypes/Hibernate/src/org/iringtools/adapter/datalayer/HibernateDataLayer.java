@@ -20,6 +20,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.iringtools.adapter.AdapterSettings;
 import org.iringtools.adapter.datalayer.proj_12345_000.ABC.LINES;
+import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Result;
@@ -32,7 +33,6 @@ import org.iringtools.data.filter.RelationalOperator;
 import org.iringtools.data.filter.Values;
 import org.iringtools.directory.Authorized;
 import org.iringtools.ext.ResponseExtension;
-import org.iringtools.ext.StatusExtension;
 import org.iringtools.hibernate.EntityGenerator;
 import org.iringtools.library.AuthroziedUsers;
 import org.iringtools.library.DataDictionary;
@@ -496,7 +496,7 @@ public class HibernateDataLayer implements IDataLayer2 {
 	            
 	              for (IDataObject dataObject : dataObjects)
 	              {
-	            	StatusExtension status = new StatusExtension();
+	            	Status status = new Status();
 	                status.setMessages(new Messages());
 
 	                if (dataObject != null)
@@ -527,7 +527,7 @@ public class HibernateDataLayer implements IDataLayer2 {
 	                      status.Results.Add("ResultTag", identifier);
 	                      _logger.Error("Error in Post saving: " + ex);*/
 	                      
-	                    status.setLevel(StatusLevel.ERROR);
+	                    status.setLevel(Level.ERROR);
 	                    status.getMessages().getItems().add(String.format("Error while posting record [%1$s]. %2$s", identifier, ex));
 	                    
 	                    Result result = new Result();
@@ -540,7 +540,7 @@ public class HibernateDataLayer implements IDataLayer2 {
 	                }
 	                else
 	                {
-	                  status.setLevel(StatusLevel.ERROR);
+	                  status.setLevel(Level.ERROR);
 	                  status.getMessages().getItems().add("Data object is null or duplicate.");
 	                }
 
@@ -602,8 +602,8 @@ public class HibernateDataLayer implements IDataLayer2 {
 	        {
 	          logger.error("Error in Delete: " + ex);
 
-	          StatusExtension status = new StatusExtension();
-	          status.setLevel(StatusLevel.ERROR);
+	          Status status = new Status();
+	          status.setLevel(Level.ERROR);
 	          status.getMessages().getItems().add(String.format("Error while deleting data objects of type [{0}]. {1}", objectType, ex));
 	          responseObj.append(status);
 	        }
@@ -682,6 +682,7 @@ public class HibernateDataLayer implements IDataLayer2 {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<IDataObject> getRelatedObjects(IDataObject sourceDataObject,
 			String relatedObjectType) {
@@ -819,14 +820,14 @@ public class HibernateDataLayer implements IDataLayer2 {
 	        _databaseDictionary = JaxbUtils.toObject(DatabaseDictionary.class, configuration.toString());
 	        JaxbUtils.write(_databaseDictionary, _hibernateConfigPath, false);
 	        _response = generate(_projectName, _applicationName);
-	        _response.setLevel(StatusLevel.SUCCESS);
+	        _response.setLevel(Level.SUCCESS);
 	        
 	      }
 	      catch (Exception ex)
 	      {
 	        _response.getMessages().getItems().add("Failed to Save datalayer Configuration");
 	        _response.getMessages().getItems().add(ex.getMessage());
-	        _response.setLevel(StatusLevel.ERROR);
+	        _response.setLevel(Level.ERROR);
 	        logger.error("Error in SaveConfiguration: " + ex);
 	      }
 	      return _response;
@@ -920,7 +921,7 @@ public class HibernateDataLayer implements IDataLayer2 {
 
 	public Response postDictionary(String projectName, String applicationName, DatabaseDictionary databaseDictionary)
 	{
-		Status status = new StatusExtension();
+		Status status = new Status();
 		
 		try
 		{
