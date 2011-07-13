@@ -528,7 +528,7 @@ namespace org.iringtools.adapter
 
         IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");        
-        XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap.name, ref dataObjects);
+        XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap, ref dataObjects);
 
         dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
       }

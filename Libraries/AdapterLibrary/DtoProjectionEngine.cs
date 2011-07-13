@@ -27,7 +27,25 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _graphMap = _mapping.FindGraphMap(graphName);
+        GraphMap graphMap = _mapping.FindGraphMap(graphName);
+        dtoDoc = ToXml(graphMap, ref dataObjects);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in ToXml: " + ex);
+        throw ex;
+      }
+
+      return dtoDoc;
+    }
+
+    public XDocument ToXml(GraphMap graphMap, ref IList<IDataObject> dataObjects)
+    {
+      XDocument dtoDoc = null;
+
+      try
+      {
+        _graphMap = graphMap;
 
         if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 &&
           dataObjects != null && dataObjects.Count > 0)
@@ -54,7 +72,25 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _graphMap = _mapping.FindGraphMap(graphName);
+        GraphMap graphMap = _mapping.FindGraphMap(graphName);
+        dtoDoc = ToXml(graphMap, ref dataObjects, className, classIdentifier);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in ToXml: " + ex);
+        throw ex;
+      }
+
+      return dtoDoc;
+    }
+
+    public XDocument ToXml(GraphMap graphMap, ref IList<IDataObject> dataObjects, string className, string classIdentifier)
+    {
+      XDocument dtoDoc = null;
+
+      try
+      {
+        _graphMap = graphMap;
 
         if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 && dataObjects != null)
         {
