@@ -13,14 +13,17 @@ namespace org.iringtools.library
   public abstract class BaseSQLDataLayer : BaseDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseSQLDataLayer));
-    private const string WHERECLAUSE_ALIAS = "_t";
-    private DataDictionary _dataDictionary;
-    private string _execAssemblyName;
-    
+    private DataDictionary _dataDictionary = null;
+    private string _whereClauseAlias = String.Empty;
+     
     #region BaseSQLDataLayer methods
     public BaseSQLDataLayer(AdapterSettings settings) : base(settings)
     {
-      _execAssemblyName = settings["ExecutingAssemblyName"];
+      if (!String.IsNullOrEmpty(settings["WhereClauseAlias"]))
+      {
+        _whereClauseAlias = settings["WhereClauseAlias"];
+      }
+
       _dataDictionary = GetDictionary();
     }
 
@@ -74,7 +77,7 @@ namespace org.iringtools.library
     public override IList<string> GetIdentifiers(string objectTypeName, DataFilter filter)
     {
       string tableName = GetTableName(objectTypeName);
-      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
+      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
 
       try
       {
@@ -122,7 +125,7 @@ namespace org.iringtools.library
     public override IList<IDataObject> Get(string objectTypeName, DataFilter filter, int pageSize, int startIndex)
     {
       string tableName = GetTableName(objectTypeName);
-      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
+      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
 
       try
       {
@@ -174,7 +177,7 @@ namespace org.iringtools.library
     public override Response Delete(string objectTypeName, DataFilter filter)
     {
       string tableName = GetTableName(objectTypeName);
-      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, WHERECLAUSE_ALIAS);
+      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
 
       try
       {

@@ -16,7 +16,7 @@ namespace BaseSQLDataLayerTest
     static void Main(string[] args)
     {
       AdapterSettings settings = new AdapterSettings();
-      settings["ExecutingAssemblyName"] = Assembly.GetExecutingAssembly().GetName().Name;
+      settings["WhereClauseAlias"] = "_t";
       sampleDL = new SampleSQLDataLayer(settings);
 
       // from iRING service point of view
