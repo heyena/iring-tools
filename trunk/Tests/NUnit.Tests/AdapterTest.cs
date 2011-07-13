@@ -131,21 +131,21 @@ namespace NUnit.Tests
     [Test]
     public void GetMapping()
     {
-        Mapping mapping = _adapterProvider.GetMapping(
-          _settings["ProjectName"], _settings["ApplicationName"]);
+      Mapping mapping = _adapterProvider.GetMapping(
+      _settings["ProjectName"], _settings["ApplicationName"]);
 
-        Assert.AreNotEqual(0, mapping.graphMaps.Count);
+      Assert.AreNotEqual(0, mapping.graphMaps.Count);
     }
 
     [Test]
     public void UpdateMapping()
     {
-        string mappingPath = String.Format(
-           "{0}Mapping.{1}.{2}.xml",
-           _settings["XmlPath"],
-           _settings["ProjectName"],
-           _settings["ApplicationName"]
-         );
+      string mappingPath = String.Format(
+         "{0}Mapping.{1}.{2}.xml",
+         _settings["XmlPath"],
+         _settings["ProjectName"],
+         _settings["ApplicationName"]
+       );
 
         XElement mapping = XDocument.Load(mappingPath).Root;
 

@@ -2,20 +2,65 @@
 using System.Web.Mvc;
 using iRINGTools.Web.Models;
 using org.iringtools.library;
+using org.iringtools.adapter.security;
 using iRINGTools.Web.Helpers;
 using System;
+using System.IO;
 using log4net;
+using System.Configuration;
+using System.Collections;
+using org.iringtools.utility;
 
 namespace iRINGTools.Web.Controllers
 {
-	public class AdapterManagerController : Controller
+
+  public abstract class BaseController : Controller
+  {
+    protected IAuthenticationLayer _authenticationLayer = new OAuthProvider();
+    protected IDictionary _allClaims = new Dictionary<string, string>();
+    protected string _oAuthToken = String.Empty;
+    protected IAuthorizationLayer _authorizationLayer = new LdapAuthorizationProvider();
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseController));
+
+    public BaseController()
+		{
+      string enableOAuth = ConfigurationManager.AppSettings["EnableOAuth"];
+
+      if (!String.IsNullOrEmpty(enableOAuth) && enableOAuth.ToUpper() == "TRUE")
+      {
+        _authenticationLayer.Authenticate(ref _allClaims, ref _oAuthToken);
+
+        //TODO: Do not hard code the path!
+        string ldapConfigFilePath = @"C:\iring-tools\trunk\iRINGTools.Applications\App_Data\ldap.conf";
+
+        if (System.IO.File.Exists(ldapConfigFilePath))
+        {
+          Properties ldapConfig = new Properties();
+          ldapConfig.Load(ldapConfigFilePath);
+          ldapConfig["authorizedGroup"] = "adapterAdmins";
+          _authorizationLayer.Init(ldapConfig);
+
+          if (!_authorizationLayer.IsAuthorized(_allClaims))
+          {
+            throw new UnauthorizedAccessException("User not authorized to access AdapterManager.");
+          }
+        }
+        else
+        {
+          _logger.Warn("LDAP Configuration is missing!");
+        }
+      }
+		}
+  }
+
+	public class AdapterManagerController : BaseController 
 	{
 		private AdapterRepository _repository;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterManagerController));
-
+    
 		public AdapterManagerController() : this(new AdapterRepository()) { }
 
-		public AdapterManagerController(AdapterRepository repository)
+		public AdapterManagerController(AdapterRepository repository) : base()
 		{
 			_repository = repository;
 		}
