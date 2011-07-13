@@ -732,62 +732,76 @@ namespace org.iringtools.adapter
 
             foreach (Template manifestTemplate in manifestTemplates)
             {
-              TemplateMap theMappingTemplate = null;
-              bool found = false;
-
+              TemplateMap crossedTemplate = null;
+              
               foreach (TemplateMap mappingTemplate in mappingTemplates)
               {
-                if (found) break;
-
                 if (mappingTemplate.id == manifestTemplate.id)
                 {
+                  List<string> unmatchedRoleIds = new List<string>();
                   int rolesMatchedCount = 0;
-
+                  
                   foreach (RoleMap roleMap in mappingTemplate.roleMaps)
                   {
-                    if (found) break;
+                    bool found = false;
 
                     foreach (Role manifestRole in manifestTemplate.roles)
                     {
                       if (manifestRole.id == roleMap.id)
                       {
-                        if (roleMap.type == RoleType.Reference && roleMap.classMap == null && roleMap.value == manifestRole.value)
+                        found = true;
+
+                        if (roleMap.type != RoleType.Reference || roleMap.value == manifestRole.value)
                         {
-                          theMappingTemplate = mappingTemplate;
-                          found = true;
+                          rolesMatchedCount++;
                         }
 
-                        rolesMatchedCount++;
                         break;
                       }
+                    }
+
+                    if (!found)
+                    {
+                      unmatchedRoleIds.Add(roleMap.id);
                     }
                   }
 
                   if (rolesMatchedCount == manifestTemplate.roles.Count)
                   {
-                    theMappingTemplate = mappingTemplate;
+                    crossedTemplate = Utility.CloneDataContractObject<TemplateMap>(mappingTemplate);
+                    
+                    if (unmatchedRoleIds.Count > 0)
+                    {                      
+                      // remove unmatched roles                      
+                      for (int i = 0; i < crossedTemplate.roleMaps.Count; i++)
+                      {
+                        if (unmatchedRoleIds.Contains(crossedTemplate.roleMaps[i].id))
+                        {
+                          crossedTemplate.roleMaps.RemoveAt(i--);
+                        }
+                      }                      
+                    }
                   }
                 }
               }
 
-              if (theMappingTemplate != null)
+              if (crossedTemplate != null)
               {
-                TemplateMap crossedTemplateMap = theMappingTemplate.Clone();
-                crossedTemplates.Add(crossedTemplateMap);
+                crossedTemplates.Add(crossedTemplate);
 
-                // assume that all roles within a template are matched, thus only interested in classMap
+                // set cardinality for crossed role map that references to class map
                 foreach (Role manifestRole in manifestTemplate.roles)
                 {
                   if (manifestRole.@class != null)
                   {
-                    foreach (RoleMap mappingRole in theMappingTemplate.roleMaps)
+                    foreach (RoleMap mappingRole in crossedTemplate.roleMaps)
                     {
                       if (mappingRole.classMap != null && mappingRole.classMap.id == manifestRole.@class.id)
                       {
                         Cardinality cardinality = mappingGraph.GetCardinality(mappingRole, _dataDictionary, _fixedIdentifierBoundary);
 
                         // get crossed role map and set its cardinality
-                        foreach (RoleMap crossedRoleMap in crossedTemplateMap.roleMaps)
+                        foreach (RoleMap crossedRoleMap in crossedTemplate.roleMaps)
                         {
                           if (crossedRoleMap.id == mappingRole.id)
                           {
