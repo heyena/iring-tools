@@ -329,7 +329,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   buildGraphMenu: function () {
     return [
      {
-       text: 'Edit GraphName',
+       text: 'Edit GraphMap',
        handler: this.onEditGraphMap,
        icon: 'Content/img/16x16/document-properties.png',
        scope: this
