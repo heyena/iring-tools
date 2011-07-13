@@ -75,6 +75,21 @@
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/XmlSchema-1.4.7.jar"/>
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-cxf-2.3.0/xmlsec-1.4.3.jar"/>
     </library>
+    <library name="hibernate-3.0" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/hibernate-annotations.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/hibernate3.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/jta-1.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/dom4j-1.6.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/javassist-3.12.0.GA.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/antlr-2.7.6.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/commons-collections-3.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/hibernate-jpa-2.0-api-1.0.0.Final.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/cglib-2.2.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/slf4j-api-1.6.1.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/log4j.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/hibernate-commons-annotations.jar"/>
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/hibernate-3.0/ejb3-persistence.jar"/>
+    </library>
     <library name="jaxb-ri-20100511" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxb-ri-20100511/lib/activation.jar"/>
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxb-ri-20100511/lib/collection-setter-injector.jar"/>
