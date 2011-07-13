@@ -11,7 +11,7 @@ using org.iringtools.mapping;
 
 namespace iRINGTools.Web.Controllers
 {
-    public class DirectoryController : Controller
+  public class DirectoryController : BaseController
     {
 
         IAdapterRepository _repository;

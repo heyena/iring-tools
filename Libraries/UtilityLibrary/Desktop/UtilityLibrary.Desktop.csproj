@@ -122,6 +122,7 @@
     <Compile Include="Loggers\ILogger.cs" />
     <Compile Include="Loggers\LoggerHelper.cs" />
     <Compile Include="PredicateBuilder.cs" />
+    <Compile Include="Properties.cs" />
     <Compile Include="Types\Category.cs" />
     <Compile Include="Types\Priority.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

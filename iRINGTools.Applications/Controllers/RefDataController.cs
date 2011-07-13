@@ -21,7 +21,7 @@ using VDS.RDF;
 
 namespace iRINGTools.Web.Controllers
 {
-    public class RefDataController : Controller
+    public class RefDataController : BaseController
     {
 
         private IRefDataRepository _refdataRepository = null;

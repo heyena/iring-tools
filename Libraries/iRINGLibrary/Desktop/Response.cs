@@ -30,6 +30,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.Linq;
 using System;
+using System.Text;
 
 namespace org.iringtools.library
 {
@@ -138,6 +139,21 @@ namespace org.iringtools.library
     {
       this.Messages = new Messages();
       this.Results = new Results();
+    }
+
+    public string ToString()
+    {
+      StringBuilder builder = new StringBuilder();
+
+      builder.AppendLine("Identifier: " + this.Identifier);
+      builder.AppendLine("Level: " + this.Level);
+
+      foreach (string message in this.Messages)
+      {
+        builder.AppendLine(message);
+      }
+
+      return builder.ToString();
     }
   }
 

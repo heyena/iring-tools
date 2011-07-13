@@ -6,8 +6,8 @@ using System.Collections;
 
 namespace org.iringtools.adapter.security
 {
-  interface IAuthenticationLayer
+  public interface IAuthenticationLayer
   {
-    string Authenticate(ref IDictionary allClaims, ref string OAuthtoken);
+    string Authenticate(ref IDictionary allClaims, ref string OAuthToken);
   }
 }

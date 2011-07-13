@@ -57,6 +57,8 @@ namespace org.iringtools.utility
         private string _baseUri = String.Empty;
         private NetworkCredential _credentials = null;
         private IWebProxy _proxy = null;
+        
+        private IDictionary<string, string> _headers = null;
 
         private const string NEW_LINE = "\r\n";
         private const int TIMEOUT = 600000;
@@ -162,6 +164,16 @@ namespace org.iringtools.utility
 
             return encodedUri;
         }
+
+        //private void PrepareHader(WebRequest request)
+        //{
+        //  foreach(KeyValuePair<string, string> pair in _headers)
+        //  {
+        //    request.Headers.
+        //  }
+
+        //  request
+        //}
 
         private void PrepareCredentials(WebRequest request)
         {

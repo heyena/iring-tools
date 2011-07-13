@@ -22,7 +22,7 @@ using VDS.RDF;
 
 namespace iRINGTools.Web.Controllers
 {
-  public class MappingController : Controller
+  public class MappingController : BaseController
   {
     NamespaceMapper _nsMap = new NamespaceMapper();
     private NameValueCollection _settings = null;

@@ -40,6 +40,7 @@ using Ninject.Extensions.Xml;
 using org.ids_adi.qmxf;
 using org.iringtools.adapter.identity;
 using org.iringtools.library;
+using org.iringtools.legacy;
 using org.iringtools.mapping;
 using org.iringtools.utility;
 using StaticDust.Configuration;
@@ -50,7 +51,6 @@ namespace org.iringtools.adapter
   public class AdapterProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
-
     private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
@@ -61,8 +61,8 @@ namespace org.iringtools.adapter
     private ISemanticLayer _semanticEngine = null;
     private IProjectionLayer _projectionEngine = null;
     private DataDictionary _dataDictionary = null;
-    private Mapping _mapping = null;
-    private GraphMap _graphMap = null;
+    private mapping.Mapping _mapping = null;
+    private mapping.GraphMap _graphMap = null;
     private DataObject _dataObjDef = null;
     private bool _isResourceGraph = false;
     private bool _isProjectionPart7 = false;
@@ -314,7 +314,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    public Mapping GetMapping(string projectName, string applicationName)
+    public mapping.Mapping GetMapping(string projectName, string applicationName)
     {
       try
       {
@@ -329,6 +329,51 @@ namespace org.iringtools.adapter
       }
     }
 
+    private mapping.Mapping LoadMapping(string path, ref Status status)
+    {
+      XElement mappingXml = Utility.ReadXml(path);
+
+      return LoadMapping(mappingXml, ref status);
+    }
+
+    private mapping.Mapping LoadMapping(XElement mappingXml, ref Status status)
+    {
+      mapping.Mapping mapping = new mapping.Mapping();
+
+      if (mappingXml.Name.NamespaceName.Contains("schemas.datacontract.org"))
+      {
+        status.Messages.Add("Detected legacy mapping. Attempting to convert it...");
+
+        try
+        {
+          org.iringtools.legacy.Mapping legacyMapping = null;
+
+          legacyMapping = Utility.DeserializeDataContract<legacy.Mapping>(mappingXml.ToString());
+
+          mapping = ConvertMapping(legacyMapping);
+        }
+        catch (Exception legacyEx)
+        {
+          try
+          {
+            mapping = ConvertMapping(mappingXml);
+          }
+          catch (Exception oldEx)
+          {
+            status.Messages.Add("Legacy mapping could not be converted.");
+          }
+        }
+
+        status.Messages.Add("Legacy mapping has been converted sucessfully.");
+      }
+      else
+      {
+        mapping = Utility.DeserializeDataContract<mapping.Mapping>(mappingXml.ToString());
+      }
+
+      return mapping;
+    }
+
     public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
       Status status = new Status();
@@ -339,70 +384,9 @@ namespace org.iringtools.adapter
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
-        if (mappingXml.Name.NamespaceName.Contains("schemas.datacontract.org"))
-        {
-          status.Messages.Add("Detected old mapping. Attempting to convert it...");
+        mapping.Mapping mapping = LoadMapping(mappingXml, ref status);
 
-          Mapping mapping = new Mapping();
-          _qmxfTemplateResultCache = new Dictionary<string, KeyValuePair<string, Dictionary<string, string>>>();
-
-          #region convert graphMaps
-          IEnumerable<XElement> graphMaps = mappingXml.Element("GraphMaps").Elements("GraphMap");
-          foreach (XElement graphMap in graphMaps)
-          {
-            string dataObjectName = graphMap.Element("DataObjectMaps").Element("DataObjectMap").Attribute("name").Value;
-            RoleMap roleMap = null;
-
-            GraphMap newGraphMap = new GraphMap();
-            newGraphMap.name = graphMap.Attribute("Name").Value;
-            newGraphMap.dataObjectName = dataObjectName;
-            mapping.graphMaps.Add(newGraphMap);
-
-            ConvertClassMap(ref newGraphMap, ref roleMap, graphMap, dataObjectName);
-          }
-          #endregion
-
-          #region convert valueMaps
-          IEnumerable<XElement> valueMaps = mappingXml.Element("ValueMaps").Elements("ValueMap");
-          string previousValueList = String.Empty;
-          ValueListMap newValueList = null;
-
-          foreach (XElement valueMap in valueMaps)
-          {
-            string valueList = valueMap.Attribute("valueList").Value;
-            ValueMap newValueMap = new ValueMap
-            {
-              internalValue = valueMap.Attribute("internalValue").Value,
-              uri = valueMap.Attribute("modelURI").Value
-            };
-
-            if (valueList != previousValueList)
-            {
-              newValueList = new ValueListMap
-              {
-                name = valueList,
-                valueMaps = { newValueMap }
-              };
-              mapping.valueListMaps.Add(newValueList);
-
-              previousValueList = valueList;
-            }
-            else
-            {
-              newValueList.valueMaps.Add(newValueMap);
-            }
-          }
-          #endregion
-
-          status.Messages.Add("Old mapping has been converted sucessfully.");
-
-          Utility.Write<Mapping>(mapping, path, true);
-        }
-        else
-        {
-          Mapping mapping = Utility.DeserializeDataContract<Mapping>(mappingXml.ToString());
-          Utility.Write<Mapping>(mapping, path, true);
-        }
+        Utility.Write<mapping.Mapping>(mapping, path, true);
 
         status.Messages.Add("Mapping file has been updated to path [" + path + "] successfully.");
       }
@@ -519,7 +503,7 @@ namespace org.iringtools.adapter
               Expression expression = new Expression
               {
                 PropertyName = key,
-                RelationalOperator = library.RelationalOperator.EqualTo,
+                RelationalOperator = RelationalOperator.EqualTo,
                 Values = new Values { value },
                 IsCaseSensitive = false,
               };
@@ -657,7 +641,7 @@ namespace org.iringtools.adapter
 
       if (classTemplateMap != null && classTemplateMap.classMap != null)
       {
-        ClassMap classMap = classTemplateMap.classMap;
+        mapping.ClassMap classMap = classTemplateMap.classMap;
 
         string[] identifierValues = !String.IsNullOrEmpty(classMap.identifierDelimiter)
           ? classIdentifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
@@ -812,7 +796,7 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
-        GraphMap graphMap = _mapping.FindGraphMap(graphName);
+        mapping.GraphMap graphMap = _mapping.FindGraphMap(graphName);
 
         string objectType = graphMap.dataObjectName;
         response = _dataLayer.Delete(objectType, new List<String> { identifier });
@@ -906,7 +890,7 @@ namespace org.iringtools.adapter
               new XAttribute("name", _settings["Scope"]),
               new XElement("bind",
                 new XAttribute("name", "DataLayer"),
-                new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+                new XAttribute("service", "org.iringtools.legacy.IDataLayer, iRINGLibrary"),
                 new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
               )
             );
@@ -929,14 +913,25 @@ namespace org.iringtools.adapter
 
           if (File.Exists(mappingPath))
           {
-            _mapping = Utility.Read<Mapping>(mappingPath);
+            try
+            {
+              _mapping = Utility.Read<mapping.Mapping>(mappingPath);
+            }
+            catch (Exception legacyEx)
+            {
+              Status status = new Status();
+
+              _mapping = LoadMapping(mappingPath, ref status);
+
+              _logger.Info(status.ToString());
+            }
           }
           else
           {
-            _mapping = new Mapping();
-            Utility.Write<Mapping>(_mapping, mappingPath);
+            _mapping = new mapping.Mapping();
+            Utility.Write<mapping.Mapping>(_mapping, mappingPath);
           }
-          _kernel.Bind<Mapping>().ToConstant(_mapping);
+          _kernel.Bind<mapping.Mapping>().ToConstant(_mapping);
 
           _isScopeInitialized = true;
         }
@@ -1253,11 +1248,210 @@ namespace org.iringtools.adapter
       return new KeyValuePair<string, Dictionary<string, string>>(templateName, roleIdNames);
     }
 
-    private void ConvertClassMap(ref GraphMap newGraphMap, ref RoleMap parentRoleMap, XElement classMap, string dataObjectName)
+    private mapping.Mapping ConvertMapping(legacy.Mapping legacyMapping)
+    {
+      mapping.Mapping mapping = new mapping.Mapping();
+      _qmxfTemplateResultCache = new Dictionary<string, KeyValuePair<string, Dictionary<string, string>>>();
+
+      #region convert graphMaps
+      IList<legacy.GraphMap> graphMaps = legacyMapping.graphMaps;
+      foreach (legacy.GraphMap graphMap in graphMaps)
+      {
+        string dataObjectName = graphMap.dataObjectMap;
+        mapping.RoleMap roleMap = null;
+
+        mapping.GraphMap newGraphMap = new mapping.GraphMap();
+        newGraphMap.name = graphMap.name;
+        newGraphMap.dataObjectName = dataObjectName;
+        mapping.graphMaps.Add(newGraphMap);
+
+        ConvertGraphMap(ref newGraphMap, ref roleMap, graphMap, dataObjectName);
+      }
+      #endregion
+
+      #region convert valueMaps
+      IList<legacy.ValueList> valueLists = legacyMapping.valueLists;
+      
+      foreach (legacy.ValueList valueList in valueLists)
+      {
+        string valueListName = valueList.name;
+
+        ValueListMap newValueList = new ValueListMap
+        {
+          name = valueList.name,
+          valueMaps = new ValueMaps()
+        };
+        mapping.valueListMaps.Add(newValueList);
+
+        foreach (legacy.ValueMap valueMap in valueList.valueMaps)
+        {
+          mapping.ValueMap newValueMap = new mapping.ValueMap
+          {
+            internalValue = valueMap.internalValue,
+            uri = valueMap.uri
+          };
+
+          newValueList.valueMaps.Add(newValueMap);
+        }
+      }
+      #endregion
+
+      return mapping;
+    }
+
+    private void ConvertGraphMap(ref mapping.GraphMap newGraphMap, ref mapping.RoleMap parentRoleMap, legacy.GraphMap graphMap, string dataObjectName)
+    {
+      foreach (var classTemplateListMap in graphMap.classTemplateListMaps)
+      {
+        ClassTemplateMap classTemplateMap = new ClassTemplateMap();
+
+        legacy.ClassMap legacyClassMap = classTemplateListMap.Key;
+
+        Identifiers identifiers = new Identifiers();
+
+        foreach (string identifier in legacyClassMap.identifiers)
+        {
+          identifiers.Add(identifier);
+        }
+
+        mapping.ClassMap newClassMap = new mapping.ClassMap
+        {
+          id = legacyClassMap.classId,
+          identifierDelimiter = legacyClassMap.identifierDelimiter,
+          identifiers = identifiers,
+          identifierValue = legacyClassMap.identifierValue,
+          name = legacyClassMap.name
+        };
+
+        classTemplateMap.classMap = newClassMap;
+
+        TemplateMaps templateMaps = new TemplateMaps();
+        foreach (legacy.TemplateMap templateMap in classTemplateListMap.Value)
+        {
+          mapping.TemplateType templateType = mapping.TemplateType.Definition;
+          Enum.TryParse<mapping.TemplateType>(templateMap.templateType.ToString(), out templateType);
+
+          mapping.TemplateMap newTemplateMap = new mapping.TemplateMap
+          {
+            id = templateMap.templateId,
+            name = templateMap.name,
+            type = templateType,
+            roleMaps = new RoleMaps(),
+          };
+
+          foreach(legacy.RoleMap roleMap in templateMap.roleMaps)
+          {
+            mapping.RoleType roleType = mapping.RoleType.DataProperty;
+            Enum.TryParse<mapping.RoleType>(roleMap.type.ToString(), out roleType);
+
+            newClassMap = null;
+            if (roleMap.classMap != null)
+            {
+              identifiers = new Identifiers();
+
+              foreach (string identifier in roleMap.classMap.identifiers)
+              {
+                identifiers.Add(identifier);
+              }
+
+              newClassMap = new mapping.ClassMap
+              {
+                id = roleMap.classMap.classId,
+                identifierDelimiter = roleMap.classMap.identifierDelimiter,
+                identifiers = identifiers,
+                identifierValue = roleMap.classMap.identifierValue,
+                name = roleMap.classMap.name
+              };
+            }
+
+            mapping.RoleMap newRoleMap = new mapping.RoleMap
+            {
+              id = roleMap.roleId,
+              name = roleMap.name,
+              type = roleType,
+              classMap = newClassMap,
+              dataType = roleMap.dataType,
+              propertyName = roleMap.propertyName,
+              value = roleMap.value,
+              valueListName = roleMap.valueList
+            };
+
+            newTemplateMap.roleMaps.Add(newRoleMap);
+          }
+
+          templateMaps.Add(newTemplateMap);
+        }
+
+        classTemplateMap.templateMaps = templateMaps;
+        
+        if (classTemplateMap.classMap != null)
+        {
+          newGraphMap.classTemplateMaps.Add(classTemplateMap);
+        }
+      }
+    }
+
+    private mapping.Mapping ConvertMapping(XElement mappingXml)
+    {
+      mapping.Mapping mapping = new mapping.Mapping();
+      _qmxfTemplateResultCache = new Dictionary<string, KeyValuePair<string, Dictionary<string, string>>>();
+
+      #region convert graphMaps
+      IEnumerable<XElement> graphMaps = mappingXml.Element("GraphMaps").Elements("GraphMap");
+      foreach (XElement graphMap in graphMaps)
+      {
+        string dataObjectName = graphMap.Element("DataObjectMaps").Element("DataObjectMap").Attribute("name").Value;
+        mapping.RoleMap roleMap = null;
+
+        mapping.GraphMap newGraphMap = new mapping.GraphMap();
+        newGraphMap.name = graphMap.Attribute("Name").Value;
+        newGraphMap.dataObjectName = dataObjectName;
+        mapping.graphMaps.Add(newGraphMap);
+
+        ConvertClassMap(ref newGraphMap, ref roleMap, graphMap, dataObjectName);
+      }
+      #endregion
+
+      #region convert valueMaps
+      IEnumerable<XElement> valueMaps = mappingXml.Element("ValueMaps").Elements("ValueMap");
+      string previousValueList = String.Empty;
+      ValueListMap newValueList = null;
+
+      foreach (XElement valueMap in valueMaps)
+      {
+        string valueList = valueMap.Attribute("valueList").Value;
+        mapping.ValueMap newValueMap = new mapping.ValueMap
+        {
+          internalValue = valueMap.Attribute("internalValue").Value,
+          uri = valueMap.Attribute("modelURI").Value
+        };
+
+        if (valueList != previousValueList)
+        {
+          newValueList = new ValueListMap
+          {
+            name = valueList,
+            valueMaps = { newValueMap }
+          };
+          mapping.valueListMaps.Add(newValueList);
+
+          previousValueList = valueList;
+        }
+        else
+        {
+          newValueList.valueMaps.Add(newValueMap);
+        }
+      }
+      #endregion
+
+      return mapping;
+    }
+
+    private void ConvertClassMap(ref mapping.GraphMap newGraphMap, ref mapping.RoleMap parentRoleMap, XElement classMap, string dataObjectName)
     {
       string classId = classMap.Attribute("classId").Value;
 
-      ClassMap newClassMap = new ClassMap();
+      mapping.ClassMap newClassMap = new mapping.ClassMap();
       newClassMap.id = classId;
       newClassMap.identifiers.Add(dataObjectName + "." + classMap.Attribute("identifier").Value);
 
@@ -1293,7 +1487,7 @@ namespace org.iringtools.adapter
         IEnumerable<XElement> roleMaps = templateMap.Element("RoleMaps").Elements("RoleMap");
         string templateId = templateMap.Attribute("templateId").Value;
 
-        TemplateMap newTemplateMap = new TemplateMap();
+        mapping.TemplateMap newTemplateMap = new mapping.TemplateMap();
         newTemplateMap.id = templateId;
         newTemplateMaps.templateMaps.Add(newTemplateMap);
 
@@ -1309,8 +1503,8 @@ namespace org.iringtools.adapter
 
         newTemplateMap.name = templateNameRolesPair.Key;
 
-        RoleMap newClassRoleMap = new RoleMap();
-        newClassRoleMap.type = RoleType.Possessor;
+        mapping.RoleMap newClassRoleMap = new mapping.RoleMap();
+        newClassRoleMap.type = mapping.RoleType.Possessor;
         newTemplateMap.roleMaps.Add(newClassRoleMap);
         newClassRoleMap.id = classRoleId;
 
@@ -1339,19 +1533,19 @@ namespace org.iringtools.adapter
           try { valueList = roleMap.Attribute("valueList").Value; }
 					catch (Exception ex) { _logger.Error("Error in ConvertClassMap: " + ex); }
 
-          RoleMap newRoleMap = new RoleMap();
+          mapping.RoleMap newRoleMap = new mapping.RoleMap();
           newTemplateMap.roleMaps.Add(newRoleMap);
           newRoleMap.id = roleMap.Attribute("roleId").Value;
           newRoleMap.name = roles[newRoleMap.id];
 
           if (!String.IsNullOrEmpty(value))
           {
-            newRoleMap.type = RoleType.FixedValue;
+            newRoleMap.type = mapping.RoleType.FixedValue;
             newRoleMap.value = value;
           }
           else if (!String.IsNullOrEmpty(reference))
           {
-            newRoleMap.type = RoleType.Reference;
+            newRoleMap.type = mapping.RoleType.Reference;
             newRoleMap.value = reference;
           }
           else if (!String.IsNullOrEmpty(propertyName))
@@ -1360,19 +1554,19 @@ namespace org.iringtools.adapter
 
             if (!String.IsNullOrEmpty(valueList))
             {
-              newRoleMap.type = RoleType.ObjectProperty;
+              newRoleMap.type = mapping.RoleType.ObjectProperty;
               newRoleMap.valueListName = valueList;
             }
             else
             {
-              newRoleMap.type = RoleType.DataProperty;
+              newRoleMap.type = mapping.RoleType.DataProperty;
               newRoleMap.dataType = roleMap.Attribute("dataType").Value;
             }
           }
 
           if (roleMap.HasElements)
           {
-            newRoleMap.type = RoleType.Reference;
+            newRoleMap.type = mapping.RoleType.Reference;
             newRoleMap.value = roleMap.Attribute("dataType").Value;
 
             ConvertClassMap(ref newGraphMap, ref newRoleMap, roleMap.Element("ClassMap"), dataObjectName);
@@ -1485,7 +1679,7 @@ namespace org.iringtools.adapter
         new XAttribute("name", _settings["Scope"]),
           new XElement("bind",
             new XAttribute("name", "DataLayer"),
-            new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
+            new XAttribute("service", "org.iringtools.legacy.IDataLayer2, iRINGLibrary"),
             new XAttribute("to", dataLayer)
           )
         );
