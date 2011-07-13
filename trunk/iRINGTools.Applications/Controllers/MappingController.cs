@@ -969,11 +969,13 @@ namespace iRINGTools.Web.Controllers
         Mapping mapping = GetMapping(scope, application);
         string newvalueList = form["valueList"];
 
-        if (oldValueList != "")
-          valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
-        else
-          valueListMap = mapping.valueListMaps.Find(c => c.name == newvalueList);
-
+        if (mapping.valueListMaps != null)
+        {
+            if (oldValueList != "")
+                valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
+            else
+                valueListMap = mapping.valueListMaps.Find(c => c.name == newvalueList);
+        }
         if (valueListMap == null)
         {
           ValueListMap valuelistMap = new ValueListMap
