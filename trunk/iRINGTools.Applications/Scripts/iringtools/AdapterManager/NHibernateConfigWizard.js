@@ -280,6 +280,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				portNumber.hide();
 
 				dbName.setValue('');
+				dbName.clearInvalid();
+				dbName.show();
 				userName.setValue('');
 				password.setValue('');
 				dbProvider.setValue('MsSql2008');
@@ -288,9 +290,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				serviceName.setValue('');
 				serviceName.hide();
 
-				dbName.clearInvalid();
 				userName.clearInvalid();
-				password.clearInvalid();				
+				password.clearInvalid();
 			}
 		};
 
