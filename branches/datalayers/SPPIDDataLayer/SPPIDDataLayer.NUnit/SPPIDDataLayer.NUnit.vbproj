@@ -46,7 +46,8 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="iRINGLibrary">
+    <Reference Include="iRINGLibrary, Version=2.1.0.3107, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\library\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
@@ -111,7 +112,6 @@
     <None Include="12345_000\12345_000.SPPID.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="12345_000\Equipment.csv" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
