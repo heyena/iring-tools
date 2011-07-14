@@ -15,7 +15,6 @@
 
 	<xs:element name="directory" type="Directory" />
 	<xs:element name="exchangeDefinition" type="ExchangeDefinition" />
-  <xs:element name="authorized" type="Authorized"/>
   
   <xs:complexType name="Directory">
     <xs:sequence>
@@ -132,11 +131,5 @@
 			<xs:element name="targetGraphName" type="xs:string" />
 			<xs:element name="hashAlgorithm" type="xs:string" />
 		</xs:sequence>
-	</xs:complexType>  
-  
-  <xs:complexType name="Authorized">
-    <xs:simpleContent>
-      <xs:extension base="xs:boolean" />
-    </xs:simpleContent>      
-  </xs:complexType>
+	</xs:complexType>
 </xs:schema>
