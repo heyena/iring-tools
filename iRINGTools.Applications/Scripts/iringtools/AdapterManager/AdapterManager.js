@@ -386,7 +386,7 @@ Ext.onReady(function () {
 			layout: 'fit',
 			title: 'Add Value List Name',
 			iconCls: 'tabsValueList',
-			height: 100,
+			height: 105,
 			width: 430,
 			plain: true,
 			items: newTab
@@ -423,7 +423,7 @@ Ext.onReady(function () {
 			layout: 'fit',
 			title: 'Edit Value List \"' + node.text + '\"',
 			iconCls: 'tabsValueList',
-			height: 100,
+			height: 105,
 			width: 430,
 			plain: true,
 			items: newTab
@@ -542,16 +542,42 @@ Ext.onReady(function () {
 		win.show();
 	}, this);
 
+	directoryPanel.on('editvaluelistmap', function (npanel, node) {
+		var newTab = new AdapterManager.ValueListMapPanel({
+			id: 'tab-' + node.id,
+			record: node.attributes.record,
+			node: node,
+			url: 'mapping/valuelistmap'
+		});
 
+		var parentNode = node.parentNode;
 
+		newTab.on('save', function (panel) {
+			win.close();
+			directoryPanel.onReload(node);
+			if (parentNode.expanded == false)
+				parentNode.expand();
+		}, this);
 
+		newTab.on('Cancel', function (panel) {
+			win.close();
+		}, this);
 
+		var win = new Ext.Window({
+			closable: true,
+			modal: false,
+			layout: 'fit',
+			title: 'Edit Value List \"' + node.text + '\"',
+			iconCls: 'tabsValueList',
+			height: 150,
+			width: 430,
+			plain: true,
+			items: newTab
+		});
 
+		win.show();
 
-
-
-
-
+	}, this);
 
 	// Load Stores
 	// searchPanel.load();

@@ -61,7 +61,7 @@ AdapterManager.ValueListPanel = Ext.extend(Ext.Panel, {
 
 			items: [
 			  { fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 120, value: nodeId, allowBlank: false },
-				{ fieldLabel: 'Value List Name', name: 'valueList', xtype: 'textfield', width: 120, value: name, allowBlank: false }
+				{ fieldLabel: 'Value List Name', name: 'valueList', xtype: 'textfield', width: 230, value: name, allowBlank: false }
       ],
 
 			autoDestroy: false
