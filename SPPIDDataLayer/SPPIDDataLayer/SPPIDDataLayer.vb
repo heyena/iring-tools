@@ -32,7 +32,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     MyBase.New(settings)
 
-    Dim connStr As String = "server=.\SQLEXPRESS;database=SPPID;User ID=SPPID;Password=sppid"
+        Dim connStr As String = "server=NDHD06670\SQLEXPRESSW;database=SPPID;User ID=SPPID;Password=sppid"
         _conn = New SqlConnection(connStr)
 
         'To-Do: Temp code should ne removed
@@ -230,6 +230,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
         Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
 
+      
         Return Utility.Read(Of DataDictionary)(path)
 
     End Function
@@ -245,7 +246,27 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim dataSet As New DataSet()
         adapter.Fill(dataSet, tableName)
 
+        Dim myTable As DataTable = dataSet.Tables(tableName)
+
+        '' Setup Filter and Sort Criteria
+        Dim strExpr As String = String.Empty
+        For Each i In identifiers
+            strExpr = strExpr + "'" + i + "', "
+        Next
+
+        'SP_ID is the Key column
+        strExpr = "SP_ID=" + Left(strExpr, strExpr.Length - 2)
+
+
+        '' Use the Select method to find all rows matching the filter.
+        Dim foundRows = myTable.Select(strExpr)
+
+
+        'dataSet.Tables(tableName).Rows.Clear()
+        'dataSet.Tables(tableName).Rows.Add(foundRows)
+
         Return dataSet.Tables(tableName)
+
 
     End Function
 

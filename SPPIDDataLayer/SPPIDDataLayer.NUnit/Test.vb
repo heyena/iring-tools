@@ -42,7 +42,7 @@ Public Class Test
         _settings("ExecutingAssemblyName") = Assembly.GetExecutingAssembly().GetName().Name
 
         'TO-Do Temporary settings
-        _settings("ExecutingAssemblyName") = "SPPIDDataLayer"
+        ' _settings("ExecutingAssemblyName") = "SPPIDDataLayer"
 
         Directory.SetCurrentDirectory(_baseDirectory)
 
@@ -89,7 +89,8 @@ Public Class Test
 
   '    Assert.IsTrue(actual.Level = StatusLevel.Success)
 
-  'End Sub
+    'End Sub
+
   <Test()>
   Public Sub GetObjects()
     'THIS ID IS DIFFERENT FOR EACH TEST DATABASE!
@@ -97,7 +98,14 @@ Public Class Test
  "27D058CBC5CB4ABB8B256D9B10193313"
 }
 
-    Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get("Equipment", identifiers)
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get("Equipment", identifiers)
+
+        Console.WriteLine("Object Count: " + dataObjects.Count().ToString())
+        For Each dataObject As IDataObject In dataObjects
+            Debug.WriteLine(dataObject.GetPropertyValue("SP_ID"), "Equipment")
+        Next
+
+
   End Sub
 
     <Test()>
