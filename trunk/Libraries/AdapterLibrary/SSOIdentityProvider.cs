@@ -23,16 +23,20 @@ namespace org.iringtools.adapter.identity
       if (WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
       {
         string oAuthHeader = WebOperationContext.Current.IncomingRequest.Headers.Get(OAUTH_HEADER_NAME);
-        string[] attrs = oAuthHeader.Split('&');
 
-        foreach (string attr in attrs)
+        if (!String.IsNullOrEmpty(oAuthHeader))
         {
-          string[] pair = attr.Trim().Split('=');
-          keyRing.Add(pair[0], HttpUtility.UrlDecode(pair[1], Encoding.UTF8));
+          string[] attrs = oAuthHeader.Split('&');
 
-          if (pair[0].ToLower() == "bechtelusername")
+          foreach (string attr in attrs)
           {
-            keyRing.Add("UserName", pair[1].ToLower());
+            string[] pair = attr.Trim().Split('=');
+            keyRing.Add(pair[0], HttpUtility.UrlDecode(pair[1], Encoding.UTF8));
+
+            if (pair[0].ToLower() == "bechtelusername")
+            {
+              keyRing.Add("UserName", pair[1].ToLower());
+            }
           }
         }
       }

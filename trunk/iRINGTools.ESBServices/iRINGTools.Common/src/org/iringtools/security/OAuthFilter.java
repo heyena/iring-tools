@@ -58,7 +58,9 @@ public class OAuthFilter implements Filter
         String federationServiceUri = filterConfig.getInitParameter("federationServiceUri");
         String idpId = filterConfig.getInitParameter("idpId");
         String spFederationPath = filterConfig.getInitParameter("spFederationPath");          
-        String returnPath = request.getRequestURL().toString();          
+        
+        String returnPath = request.getRequestURL().toString();
+        logger.debug("Return Path: " + returnPath);
         
         String ssoUrl = federationServiceUri + spFederationPath + "?PartnerIdpId=" + 
           idpId + "&TargetResource=" + URLEncoder.encode(returnPath, URL_ENCODING);

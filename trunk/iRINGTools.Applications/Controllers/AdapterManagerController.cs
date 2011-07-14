@@ -13,7 +13,6 @@ using org.iringtools.utility;
 
 namespace iRINGTools.Web.Controllers
 {
-
   public abstract class BaseController : Controller
   {
     protected IAuthenticationLayer _authenticationLayer = new OAuthProvider();
@@ -30,8 +29,8 @@ namespace iRINGTools.Web.Controllers
       {
         _authenticationLayer.Authenticate(ref _allClaims, ref _oAuthToken);
 
-        //TODO: Do not hard code the path!
-        string ldapConfigFilePath = @"C:\iring-tools\trunk\iRINGTools.Applications\App_Data\ldap.conf";
+        string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+        string ldapConfigFilePath = baseDirectory + @"App_Data\ldap.conf";
 
         if (System.IO.File.Exists(ldapConfigFilePath))
         {
