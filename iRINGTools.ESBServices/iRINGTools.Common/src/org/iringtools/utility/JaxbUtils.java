@@ -14,7 +14,7 @@ import javax.xml.bind.Unmarshaller;
 
 public final class JaxbUtils
 {
-	public static synchronized <T> void write(T object, String path, boolean indent) throws JAXBException, IOException
+	public static <T> void write(T object, String path, boolean indent) throws JAXBException, IOException
   {		
 	  OutputStream stream = new FileOutputStream(path);
 	  
@@ -28,20 +28,20 @@ public final class JaxbUtils
 	  }
   }
 	
-	public static synchronized <T> String toXml(T object, boolean indent) throws JAXBException, IOException 
+	public static <T> String toXml(T object, boolean indent) throws JAXBException, IOException 
   {
 	  OutputStream stream = toStream(object, indent);
     return stream.toString();   
   }
   
-	public static synchronized <T> OutputStream toStream(T object, boolean indent) throws JAXBException, IOException
+	public static <T> OutputStream toStream(T object, boolean indent) throws JAXBException, IOException
   {
 	  OutputStream stream = new ByteArrayOutputStream();    
     if (object != null) toXml(object, stream, indent);    
     return stream;
   }
   
-  public static synchronized <T> void toXml(T object, OutputStream stream, boolean indent) throws JAXBException, IOException
+  public static <T> void toXml(T object, OutputStream stream, boolean indent) throws JAXBException, IOException
   {		
     if (object.getClass().getName().equals("java.lang.String"))
     {    
@@ -60,13 +60,13 @@ public final class JaxbUtils
     }
   }
 	
-  public static synchronized <T> T read(Class<T> clazz, String filePath) throws JAXBException, IOException 
+  public static <T> T read(Class<T> clazz, String filePath) throws JAXBException, IOException 
   {
   	InputStream stream = new FileInputStream(filePath);
 	  return toObject(clazz, stream);
 	}
   
-  public static synchronized <T> T toObject(Class<T> clazz, String xml) throws JAXBException, IOException 
+  public static <T> T toObject(Class<T> clazz, String xml) throws JAXBException, IOException 
   {
     if (xml == null || xml.length() == 0) return null;
     InputStream stream = new ByteArrayInputStream(xml.getBytes());
@@ -74,7 +74,7 @@ public final class JaxbUtils
 	}
   
   @SuppressWarnings("unchecked")
-  public static synchronized <T> T toObject(Class<T> clazz, InputStream stream) throws JAXBException, IOException 
+  public static <T> T toObject(Class<T> clazz, InputStream stream) throws JAXBException, IOException 
   {
     if (clazz.getName().equals("java.lang.String"))
       return (T)IOUtils.toString(stream);

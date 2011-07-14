@@ -57,7 +57,7 @@ public class EncryptionUtils
     }
   }
   
-  public static synchronized String decrypt(String cipherText) throws EncryptionException
+  public static String decrypt(String cipherText) throws EncryptionException
   {
     try
     {

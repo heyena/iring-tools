@@ -25,7 +25,7 @@ namespace org.iringtools.adapter.security
       string server = properties["server"];
       int portNumber = Int32.Parse(properties["portNumber"]);
       string userName = properties["userName"];
-      string password = properties["password"];
+      string password = EncryptionUtility.Decrypt(properties["password"]);
 
       LdapDirectoryIdentifier ldapIdentifier = new LdapDirectoryIdentifier(server, portNumber, true, false);
       ldapConnection = new LdapConnection(ldapIdentifier);

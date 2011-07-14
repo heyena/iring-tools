@@ -13,7 +13,7 @@ import org.iringtools.security.OAuthFilter;
 
 public final class HttpUtils
 {
-  public static synchronized Cookie getCookie(Cookie[] cookies, String cookieName)
+  public static Cookie getCookie(Cookie[] cookies, String cookieName)
   {   
     if (cookies != null && cookies.length > 0)
     {
@@ -29,7 +29,7 @@ public final class HttpUtils
     return null;
   }
   
-  public static synchronized String toQueryParams(Map<String, String> keyValuePairs) throws UnsupportedEncodingException
+  public static String toQueryParams(Map<String, String> keyValuePairs) throws UnsupportedEncodingException
   {
     StringBuilder queryParams = new StringBuilder();
     
@@ -51,7 +51,7 @@ public final class HttpUtils
     return queryParams.toString();
   }
   
-  public static synchronized Map<String, String> fromQueryParams(String queryParams) throws UnsupportedEncodingException
+  public static Map<String, String> fromQueryParams(String queryParams) throws UnsupportedEncodingException
   {
     Map<String, String> keyValuePairs = new HashMap<String, String>();
     
@@ -69,7 +69,7 @@ public final class HttpUtils
     return keyValuePairs;
   }
   
-  public static synchronized void addOAuthHeaders(Map<String, Object> settings, HttpClient httpClient)
+  public static void addOAuthHeaders(Map<String, Object> settings, HttpClient httpClient)
   {
     String authenticatedUser = (String)settings.get(OAuthFilter.AUTHENTICATED_USER_KEY);
     if (!IOUtils.isNullOrEmpty(authenticatedUser))
