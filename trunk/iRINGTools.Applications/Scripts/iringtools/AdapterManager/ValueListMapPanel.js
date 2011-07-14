@@ -47,11 +47,11 @@ AdapterManager.ValueListMapPanel = Ext.extend(Ext.Panel, {
       formid = 'valueListMapTarget-' + this.node.parentNode.parentNode.text + '-' + this.node.parentNode.text;
     }
 
-    if (this.record != null && this.node.type == 'ListMapNode') {
-      interName = this.record.name;
+    if (this.record != null && this.node.attributes.type == 'ListMapNode') {
+      interName = this.record.internalValue;
       //objectName = scope + '/' + app + '/' + 'DataObjects/DataObject/' + this.record.classTemplateMaps[0].classMap.identifiers[0].replace('.', '/');
-      classUrl = this.record.classTemplateMaps[0].classMap.id;
-      classLabel = this.record.classTemplateMaps[0].classMap.name;
+      classUrl = this.record.uri;
+      classLabel = this.node.text.split('[')[0];
     }
 
     if (classLabel == '')
@@ -76,9 +76,10 @@ AdapterManager.ValueListMapPanel = Ext.extend(Ext.Panel, {
       defaultType: 'textfield',
 
       items: [
-				{ fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 120, value: nodeId, allowBlank: true },
-				{ fieldLabel: 'Internal Name', name: 'internalName', xtype: 'textfield', width: 120, value: interName, allowBlank: false },
-        { fieldLabel: 'Class Url', name: 'classUrl', xtype: 'hidden', width: 120, value: classUrl, allowBlank: false }
+				{ fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 230, value: nodeId, allowBlank: true },
+				{ fieldLabel: 'Internal Name', name: 'internalName', xtype: 'textfield', width: 230, value: interName, allowBlank: false },
+        { fieldLabel: 'Class Url', name: 'classUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false },
+				{ fieldLabel: 'Old Class Url', name: 'oldClassUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false }
       ],
 
       html: '<div class="class-target' + formid + '" '

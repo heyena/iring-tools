@@ -65,6 +65,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.valueListMenu = new Ext.menu.Menu();
     this.valueListMenu.add(this.buildvalueListMenu());
 
+    this.valueListMapMenu = new Ext.menu.Menu();
+    this.valueListMapMenu.add(this.buildvalueListMapMenu());
+
     this.graphsMenu = new Ext.menu.Menu();
     this.graphsMenu.add(this.buildGraphsMenu());
 
@@ -306,14 +309,32 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     {
       xtype: 'menuseparator'
     },
-			{
-			  text: 'New Value Map',
-			  handler: this.onNewValueListMap,
-			  icon: 'Content/img/16x16/document-new.png',
-			  scope: this
-			}
+		{
+			text: 'New Value Map',
+			handler: this.onNewValueListMap,
+			icon: 'Content/img/16x16/document-new.png',
+			scope: this
+		}
     ]
   },
+
+	buildvalueListMapMenu: function () {
+		return [
+		{
+    	text: 'Edit Value List Map',
+    	handler: this.onEditValueListMap,
+    	icon: 'Content/img/16x16/document-properties.png',
+    	scope: this
+		},
+		{
+    	text: 'Delete Value List Map',
+    	handler: this.onDeleteValueListMap,
+    	icon: 'Content/img/16x16/edit-delete.png',
+    	scope: this
+		}
+		]
+	},
+
 
   buildGraphsMenu: function () {
     return [
@@ -373,7 +394,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     } else if (obj.type == "ValueListsNode") {
       this.valueListsMenu.showAt([x, y]);
     } else if (obj.type == "ValueListNode") {
-      this.valueListMenu.showAt([x, y]);
+			this.valueListMenu.showAt([x, y]);
+    } else if (obj.type == "ListMapNode") {
+      this.valueListMapMenu.showAt([x, y]);
     } else if (obj.type == "GraphsNode") {
       this.graphsMenu.showAt([x, y]);
     } else if (obj.type == "GraphNode") {
@@ -416,6 +439,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.fireEvent('NewValueListMap', this, node);
   },
 
+  onEditValueListMap: function (btn, ev) {
+		var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+		this.fireEvent('EditValueListMap', this, node);
+  },
+
   onDeleteValueList: function (btn, e) {
     var that = this;
     var node = this.getSelectedNode();
@@ -432,7 +460,25 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       },
       failure: function (result, request) { }
     })
-  },
+    },
+
+    onDeleteValueListMap: function (btn, e) {
+    	var that = this;
+    	var node = this.getSelectedNode();
+    	Ext.Ajax.request({
+    		url: 'mapping/deleteValueMap',
+    		method: 'POST',
+    		params: {
+    			mappingNode: node.id,
+    			oldClassUrl: node.attributes.record.uri
+    		},
+    		success: function (result, request) {
+    			//Ext.Msg.show({ title: 'Success', msg: 'ValueList [' + node.id.split('/')[4] + '] removed from mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
+    			that.onReload();
+    		},
+    		failure: function (result, request) { }
+    	})
+    },
 
   onDeleteGraphMap: function (btn, e) {
     var that = this;
@@ -459,98 +505,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       if (win != undefined)
         win.close();
     }
-  },
-
-
-  onNewValueListMap: function () {
-    var dirnode = this.directoryPanel.getSelectionModel().getSelectedNode();
-    var formid = 'valuelisttarget-' + dirnode.parentNode.parentNode.text + '-' + dirnode.parentNode.text;
-    var form = new Ext.form.FormPanel({
-      id: formid,
-      layout: 'form',
-      method: 'POST',
-      border: false,
-      frame: false,
-      bbar: [
-				{ xtype: 'tbfill' },
-        { text: 'Ok', scope: this, handler: this.onSubmitValueListMap },
-        { text: 'Cancel', scope: this, handler: this.onClose }
-        ],
-      url: 'mapping/addvalueListMap',
-      items: [{ xtype: 'textfield', name: 'internalName', id: 'internalName', fieldLabel: 'Internal Name', width: 120, required: true },
-                { xtype: 'hidden', name: 'classUrl', id: 'classUrl' }
-             ],
-      html: '<div class="class-target' + formid + '" '
-          + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
-          + 'Drop a Class Node here. </div>',
-
-      afterRender: function (cmp) {
-        Ext.FormPanel.prototype.afterRender.apply(this, arguments);
-        var classTarget = this.body.child('div.class-target' + formid);
-        var classdd = new Ext.dd.DropTarget(classTarget, {
-          ddGroup: 'refdataGroup',
-          notifyDrop: function (classdd, e, data) {
-            if (data.node.attributes.type != 'ClassNode') {
-              var message = 'Please slect a RDL Class...';
-              showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-              return false;
-            }
-            Ext.get('classUrl').dom.value = data.node.attributes.record.Uri;
-            var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + data.node.attributes.record.Label + '</b></td></tr>'
-            msg += '</table>'
-            Ext.getCmp(formid).body.child('div.class-target' + formid).update(msg)
-            return true;
-
-          } //eo notifyDrop
-        }); //eo propertydd
-      }
-    });
-
-    var win = new Ext.Window({
-      closable: true,
-      modal: false,
-      layout: 'fit',
-      title: 'Add new ValueListMap to valueList',
-      items: form,
-      iconCls: 'tabsValueListMap',
-      height: 180,
-      width: 430,
-      plain: true,
-      scope: this
-    });
-
-    win.show();
-  },
-
-  onSubmitValueListMap: function (btn, e) {
-    var form = btn.findParentByType('form');
-    var win = btn.findParentByType('window');
-    var classurl = Ext.get('classUrl').dom.value;
-    var intname = Ext.get('internalName').dom.value;
-    var node = this.getSelectedNode();
-    var that = this;
-    if (form.getForm().isValid())
-      Ext.Ajax.request({
-        url: 'mapping/addvaluelistmap',
-        method: 'POST',
-        params: {
-          mappingNode: node.id,
-          classUrl: classurl,
-          internalName: intname
-        },
-        success: function (result, request) {
-          that.onReload();
-          win.close();
-          //Ext.Msg.show({ title: 'Success', msg: 'Added ValueListMap to mapping', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
-        },
-        failure: function (result, request) {
-          //Ext.Msg.show({ title: 'Failure', msg: 'Failed to Add ValueListMap to mapping', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
-          var message = 'Failed to Add ValueListMap to mapping';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-        }
-      })
-  },
-
+  }, 
 
 	
 	onOpenGraphMap: function (btn, e) {
