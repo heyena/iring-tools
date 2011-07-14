@@ -11,7 +11,7 @@ import javax.servlet.http.Cookie;
 
 import org.iringtools.security.OAuthFilter;
 
-public class HttpUtils
+public final class HttpUtils
 {
   public static synchronized Cookie getCookie(Cookie[] cookies, String cookieName)
   {   

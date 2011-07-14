@@ -10,6 +10,11 @@ public class HttpClientException extends Exception
     super();
     error = "";
   }
+  
+  public HttpClientException(Exception e)
+  {
+    super(e);
+  }
 
   public HttpClientException(String error)
   {

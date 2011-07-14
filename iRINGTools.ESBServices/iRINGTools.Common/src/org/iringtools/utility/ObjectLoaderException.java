@@ -1,29 +1,30 @@
 package org.iringtools.utility;
 
-public class EncryptionException extends Exception
+public class ObjectLoaderException extends Exception
 {
   private static final long serialVersionUID = 1L;
   private String error;
 
-  public EncryptionException()
+  public ObjectLoaderException()
   {
     super();
     error = "";
   }
-
-  public EncryptionException(Exception e)
+  
+  public ObjectLoaderException(Exception e)
   {
     super(e);
   }
 
-  public EncryptionException(String error)
+  public ObjectLoaderException(String error)
   {
     super(error);
     this.error = error;
   }
-
+  
   public String toString()
   {
     return error;
   }
 }
+  
