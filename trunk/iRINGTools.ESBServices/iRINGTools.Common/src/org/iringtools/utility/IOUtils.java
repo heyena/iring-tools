@@ -106,9 +106,9 @@ public final class IOUtils
     return props;
   }
 
-  public static synchronized List<String> getFiles(String directory) throws IOException
+  public static synchronized List<String> getFiles(String path) throws IOException
   {
-    File[] files = new File(directory).listFiles();
+    File[] files = new File(path).listFiles();
     List<String> fileNames = new ArrayList<String>();
 
     for (File file : files)
