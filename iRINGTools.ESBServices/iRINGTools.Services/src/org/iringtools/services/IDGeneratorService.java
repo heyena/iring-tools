@@ -2,6 +2,7 @@ package org.iringtools.services;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,6 +13,7 @@ import javax.ws.rs.QueryParam;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
+import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.IDGeneratorProvider;
 
 @Path("/")
@@ -19,7 +21,9 @@ import org.iringtools.services.core.IDGeneratorProvider;
 @Produces("application/xml")
 public class IDGeneratorService extends AbstractService
 {
-  public IDGeneratorService(){}
+  private final String SERVICE_TYPE = "coreService";
+  
+  public IDGeneratorService() {}
 
   @GET
   @Path("/acquireId")
@@ -32,7 +36,8 @@ public class IDGeneratorService extends AbstractService
       // System.out.println(uri);
       // generatedId = idGenProvider.generateRandomNumber(uri);
     }
-    catch (Exception ex){}
+    catch (Exception ex)
+    {}
 
     // return generatedId;
     return "";
@@ -46,15 +51,21 @@ public class IDGeneratorService extends AbstractService
   {
     Response response = new Response();
     String generatedId = null;
+
     try
     {
-      initService();
+      initService(SERVICE_TYPE);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+
+    try
+    {
       IDGeneratorProvider idGenProvider = new IDGeneratorProvider(settings);
-      System.out.println("params:" + params);
-      System.out.println("uri:" + uri);
-      System.out.println("comment:" + comment);
       generatedId = idGenProvider.generateRandomNumber(uri + "#", comment);
-      
+
       if (generatedId != null)
       {
         response.setLevel(Level.SUCCESS);
@@ -73,7 +84,10 @@ public class IDGeneratorService extends AbstractService
         messageList.add("Error Generating ID");
       }
     }
-    catch (Exception ex){}
+    catch (Exception e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+    }
 
     return response;
   }

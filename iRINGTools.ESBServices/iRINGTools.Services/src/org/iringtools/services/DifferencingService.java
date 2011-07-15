@@ -1,40 +1,48 @@
 package org.iringtools.services;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.apache.log4j.Logger;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
-import org.iringtools.dxfr.request.DfoRequest;
 import org.iringtools.dxfr.request.DfiRequest;
+import org.iringtools.dxfr.request.DfoRequest;
+import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.DifferencingProvider;
 
 @Path("/")
 @Produces("application/xml")
 @Consumes("application/xml")
 public class DifferencingService extends AbstractService
-{
-  private static final Logger logger = Logger.getLogger(DifferencingService.class);
+{  
+  private final String SERVICE_TYPE = "coreService";
   
   @POST
   @Path("/dxi")
   public DataTransferIndices diff(DfiRequest dxiRequest)
   {
     DataTransferIndices dxis = null;
+        
+    try
+    {
+      initService(SERVICE_TYPE);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
     
     try
     {
-      initService();
       DifferencingProvider diffProvider = new DifferencingProvider(settings);
       dxis = diffProvider.diff(dxiRequest);
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error("Error while comparing data transfer indices: " + ex);
-      dxis = null;
+      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
     return dxis;
@@ -47,15 +55,22 @@ public class DifferencingService extends AbstractService
     DataTransferObjects dxos = null;
     
     try
-    {    
-      initService();
+    {
+      initService(SERVICE_TYPE);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+    
+    try
+    {
       DifferencingProvider diffProvider = new DifferencingProvider(settings);
       dxos = diffProvider.diff(dxoRequest);
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error("Error while comparing data transfer objects: " + ex);
-      dxos = null;
+      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
     return dxos;
