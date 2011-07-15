@@ -32,7 +32,7 @@ public class AuthorizationTag extends TagSupport
     {    
       String ldapConfigPath = pageContext.getServletContext().getRealPath("/") + "WEB-INF/config/ldap.conf";
       String appName = (String)session.getAttribute("appName");
-      String authorizedGroupName = (String)session.getAttribute("authorizedGroupName");
+      String authorizedGroup = (String)session.getAttribute("authorizedGroupName");
   
       Cookie[] cookies = request.getCookies();
       Cookie authorizedCookie = HttpUtils.getCookie(cookies, appName);
@@ -72,7 +72,7 @@ public class AuthorizationTag extends TagSupport
           throw new JspException("Error loading LDAP properties: " + ioe);
         }
         
-        props.put("authorizedGroup", authorizedGroupName);
+        props.put("authorizedGroup", authorizedGroup);
         
         LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
         

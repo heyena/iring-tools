@@ -1,7 +1,6 @@
 package org.iringtools.services;
 
-import java.io.IOException;
-
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -9,9 +8,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.xml.bind.JAXBException;
 
-import org.apache.log4j.Logger;
 import org.iringtools.directory.Directory;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
@@ -20,29 +17,38 @@ import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
+import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.ExchangeProvider;
 
 @Path("/")
 @Produces("application/xml")
 public class ExchangeService extends AbstractService
 {
-  private static final Logger logger = Logger.getLogger(ExchangeService.class);
-
+  private final String SERVICE_TYPE = "coreService";
+  
   @GET
   @Path("/directory")
-  public Directory getDirectory() throws JAXBException, IOException
+  public Directory getDirectory() 
   {
     Directory directory = null;
     
     try
     {
-      initService();
+      initService(SERVICE_TYPE);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+    
+    try
+    {
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
       directory = exchangeProvider.getDirectory();
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error("Error in getDirectory(): " + ex);
+      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
     return directory;
@@ -59,13 +65,21 @@ public class ExchangeService extends AbstractService
     
     try
     {
-      initService();
+      initService(SERVICE_TYPE);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+    
+    try
+    {
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
       manifest = exchangeProvider.getManifest(scope, id);
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error("Error in getManifest(): " + ex);
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     return manifest;
@@ -84,7 +98,15 @@ public class ExchangeService extends AbstractService
     
     try
     {
-      initService();
+      initService(SERVICE_TYPE);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+    
+    try
+    {
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
       
       if (destination == null || destination.length() == 0)
@@ -96,9 +118,9 @@ public class ExchangeService extends AbstractService
         dataTransferIndices = exchangeProvider.getDataTransferIndices(scope, id, destination, dxiRequest);
       }
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error("Error in getDataTransferIndices(): " + ex);
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     return dataTransferIndices;
@@ -107,20 +129,30 @@ public class ExchangeService extends AbstractService
   @POST
   @Path("/{scope}/exchanges/{id}/page")
   @Consumes("application/xml")
-  public DataTransferObjects getDataTransferObjects(@PathParam("scope") String scope, @PathParam("id") String id,
+  public DataTransferObjects getDataTransferObjects(
+      @PathParam("scope") String scope, 
+      @PathParam("id") String id,
       DxoRequest dxoRequest)
   {
     DataTransferObjects dataTransferObjects = null;
     
     try
     {
-      initService();
+      initService(SERVICE_TYPE);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+    
+    try
+    {
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
       dataTransferObjects = exchangeProvider.getDataTransferObjects(scope, id, dxoRequest);
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error("Error in getDataTransferObjects(): " + ex);
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     return dataTransferObjects;
@@ -129,20 +161,30 @@ public class ExchangeService extends AbstractService
   @POST
   @Path("/{scope}/exchanges/{id}/submit")
   @Consumes("application/xml")
-  public ExchangeResponse submitExchange(@PathParam("scope") String scope, @PathParam("id") String id,
-      ExchangeRequest exchangeRequest) throws IOException, JAXBException
+  public ExchangeResponse submitExchange(
+      @PathParam("scope") String scope, 
+      @PathParam("id") String id,
+      ExchangeRequest exchangeRequest)
   {
     ExchangeResponse exchangeResponse = null;
   
     try
     {
-      initService();
+      initService(SERVICE_TYPE);
+    }
+    catch (AuthorizationException e)
+    {
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+    }
+    
+    try
+    {
       ExchangeProvider exchangeProvider = new ExchangeProvider(settings);
       exchangeResponse = exchangeProvider.submitExchange(scope, id, exchangeRequest);
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error("Error in submitExchange(): " + ex);
+      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     return exchangeResponse;
