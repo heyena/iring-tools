@@ -5,10 +5,6 @@ using System.Xml.Serialization;
 using System.Runtime.Serialization;
 using System.Linq;
 using System.Text;
-using Ninject;
-using Ninject.Modules;
-using Ninject.Parameters;
-//using Ninject.Extensions.Xml;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.adapter;
@@ -23,20 +19,20 @@ namespace org.iringtools.adapter.datalayer
     INSERT
   }
     
-  [DataContract(Name = "configration")]
-  public class ADONetConfiguration
+  [DataContract(Name = "configuration")]
+  public class ADONetConfiguration : IDisposable
   {
     private IDbConnection _connection = null;
 
     ~ADONetConfiguration()
     {
-      try
+      if (_connection != null)
       {
-        if (_connection != null)
+        if (_connection.State != ConnectionState.Closed)
+        {
           _connection.Close();
-      }
-      catch (Exception ex)
-      {
+          _connection.Dispose();
+        }
       }
     }
      
@@ -46,13 +42,13 @@ namespace org.iringtools.adapter.datalayer
     [DataMember(Name = "objects", Order = 1)]
     public List<ConfigObject> ConfigObjects { get; set; }
         
-    public IDbConnection GetConnection(StandardKernel kernel)
+    public IDbConnection GetConnection()
     {
-      if (_connection == null)      
+      if (_connection == null)
       {
         if (this.Connection != null && !this.Connection.Equals(String.Empty))
         {
-          _connection = kernel.Get<IDbConnection>();
+          _connection = ServiceLocator.Get<IDbConnection>();
           _connection.ConnectionString = this.Connection;
         }
       }
@@ -118,7 +114,8 @@ namespace org.iringtools.adapter.datalayer
 
     public static DbType GetDBType(DataType type)
     {
-      switch (type) {
+      switch (type)
+      {
         case DataType.Boolean:        
           return DbType.Boolean;     
         case DataType.Byte:       
@@ -148,6 +145,37 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    public void Dispose()
+    {
+      if (_connection != null)
+      {
+        if (_connection.State != ConnectionState.Closed)
+        {
+          _connection.Close();
+          _connection.Dispose();
+        }
+      }
+    }
+  }
+
+  [DataContract(Name = "column")]
+  public class RelatedColumn
+  {
+    [DataMember(Name = "name", Order = 0)]
+    public string Name { get; set; }
+
+    [DataMember(Name = "related", Order = 1)]
+    public string Related { get; set; }
+  }
+
+  [DataContract(Name = "relatedObject")]
+  public class RelatedObject
+  {
+    [DataMember(Name = "relatedObjectName", Order = 0, IsRequired = true)]
+    public string Name { get; set; }
+
+    [DataMember(Name = "columns", Order = 1)]
+    public List<RelatedColumn> Columns { get; set; }
   }
 
   [DataContract(Name = "identifier")]
@@ -161,14 +189,20 @@ namespace org.iringtools.adapter.datalayer
   }
 
   [DataContract(Name = "object")]
-  public class ConfigObject
+  public class ConfigObject : IDisposable
   {
-    private IDbConnection _connetion = null;
+    private IDbConnection _connection = null;
 
     ~ConfigObject() 
     {
-      if (_connetion != null)
-        _connetion.Close();
+      if (_connection != null)
+      {
+        if (_connection.State != ConnectionState.Closed)
+        {
+          _connection.Close();
+          _connection.Dispose();
+        }
+      }
     }
 
     [DataMember(Name = "name", Order = 0)]
@@ -192,66 +226,87 @@ namespace org.iringtools.adapter.datalayer
     [DataMember(Name = "insert", Order = 6, EmitDefaultValue = false)]
     public ConfigCommand Insert { get; set; }
 
-    public IDbConnection GetConnection(StandardKernel kernel)
+    [DataMember(Name = "relatedObjects", Order = 7, EmitDefaultValue = false)]
+    public List<RelatedObject> RelatedObjects { get; set; }
+
+    public IDbConnection GetConnection(IDbConnection connection)
     {
-      if (_connetion == null)
+      if (_connection == null)
       {
-        if (this.Connection != null && !this.Connection.Equals(String.Empty))
+        if (!string.IsNullOrEmpty(this.Connection))
         {
-          _connetion = kernel.Get<IDbConnection>();
-          _connetion.ConnectionString = this.Connection;
+          _connection = ServiceLocator.Get<IDbConnection>();
+          _connection.ConnectionString = this.Connection;
+        }
+        else
+        {
+          _connection = connection;
         }
       }
 
-      return _connetion;
+      return _connection;
     }
 
-    public IDbCommand GetCommand(StandardKernel kernel, QueryType type, IDbConnection connection)
+    public IDbCommand GetCommand(QueryType type, IDbConnection connection)
     {
       IDbCommand command = null;
-
-      if (this.GetConnection(kernel) != null)
-        connection = this.GetConnection(kernel);
-
+      
       switch (type)
       {
         case QueryType.SELECT:
           {
-            command = this.Select.GetCommand(kernel, connection);
+            command = this.Select.GetCommand(this.GetConnection(connection));
             break;
           }
         case QueryType.UPDATE:
           {
-            command = this.Update.GetCommand(kernel, connection);
+            command = this.Update.GetCommand(this.GetConnection(connection));
             break;
           }
         case QueryType.DELETE:
           {
-            command = this.Delete.GetCommand(kernel, connection);
+            command = this.Delete.GetCommand(this.GetConnection(connection));
             break;
           }
         case QueryType.INSERT:
           {
-            command = this.Insert.GetCommand(kernel, connection);
+            command = this.Insert.GetCommand(this.GetConnection(connection));
             break;
           }
-        
       }
 
       return command;
     }
+
+    public void Dispose()
+    {
+      if (_connection != null)
+      {
+        if (_connection.State != ConnectionState.Closed)
+        {
+          _connection.Close();
+          _connection.Dispose();
+        }
+      }
+    }
   }
 
   [DataContract(Name = "command")]
-  public class ConfigCommand
+  public class ConfigCommand : IDisposable
   {
-    private IDbConnection _connetion = null;
+    private IDbConnection _connection = null;
     private IDbCommand _command = null;
     
     ~ConfigCommand()
     {
-      if (_connetion != null)
-        _connetion.Close();
+      if (_connection != null)
+      {
+        if (_connection.State != ConnectionState.Closed)
+        {
+          _connection.Close();
+          _connection.Dispose();
+        }
+      }
     }
 
     [DataMember(Name = "connection", Order = 0, EmitDefaultValue = false)]
@@ -265,45 +320,64 @@ namespace org.iringtools.adapter.datalayer
 
     public ADONetConfiguration Configuration { get; set; }
 
-    public IDbConnection GetConnection(StandardKernel kernel)
+    public IDbConnection GetConnection(IDbConnection connection)
     {
-      if (_connetion == null)
+      if (_connection == null)
       {
         if (this.Connection != null && !this.Connection.Equals(String.Empty))
-          _connetion = kernel.Get<IDbConnection>(new Ninject.Parameters.ConstructorArgument("connectionString", this.Connection));
+        {
+          _connection = ServiceLocator.Get<IDbConnection>();
+          _connection.ConnectionString = this.Connection;
+        } else 
+        {
+          _connection = connection;
+        }
       }
 
-      return _connetion;
+      return _connection;
     }
 
-    public IDbCommand GetCommand(StandardKernel kernel, IDbConnection connection)
+    public IDbCommand GetCommand(IDbConnection connection)
     {
       if (_command == null)
       {
-        if (this.GetConnection(kernel) != null)
-          connection = this.GetConnection(kernel);
-
-        if (this.Query != null && !this.Query.Equals(String.Empty))
-        {           
-          _command = kernel.Get<IDbCommand>();
-          _command.Connection = connection;
+        if (!string.IsNullOrEmpty(this.Query))
+        {
+          _command = ServiceLocator.Get<IDbCommand>();
+          _command.Connection = this.GetConnection(connection);
           _command.CommandText = this.Query;
-          
+
           if (this.Parameters != null)
           {
             foreach (ConfigParameter parameter in this.Parameters)
             {
-              IDataParameter dataParameter = kernel.Get<IDataParameter>();
+              IDataParameter dataParameter = ServiceLocator.Get<IDataParameter>();
               dataParameter.ParameterName = parameter.Name;
               dataParameter.DbType = ADONetConfiguration.GetDBType(parameter.DataType);
               _command.Parameters.Add(parameter);
             }
           }
         }
-
       }
 
       return _command;
+    }
+
+    public void Dispose()
+    {
+      if (_command != null)
+      {
+        _command.Dispose();
+      }
+
+      if (_connection != null)
+      {
+        if (_connection.State != ConnectionState.Closed)
+        {
+          _connection.Close();
+          _connection.Dispose();
+        }
+      }
     }
   }
 

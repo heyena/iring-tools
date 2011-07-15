@@ -57,7 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="XML\adonet-configuration.12345_000.SQL.old" />
-    <Content Include="XML\adonet-binding.12345_000.SQL.xml" />
+    <Content Include="XML\adonet-binding.12345_000.SQL.xml">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ADONetDataLayer\ADONetDataLayer.csproj">

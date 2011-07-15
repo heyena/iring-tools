@@ -187,9 +187,24 @@ namespace org.iringtools.adapter.datalayer
     [Test]
     public void Read1()
     {
-      long count = _dataLayer.GetCount("Documents", null);
+      IList<string> identifiers = new List<string>() 
+      { 
+        "216-H1-L1, H/333580-701 2m01, CWP-705-01A, NEW, NOT STARTED, -", 
+        "216-N1-L1, H/333580-701 2m01, CWP-705-01A, NEW, NOT STARTED, -"
+      };
 
-      Assert.Greater(count, 0);
+      IList<IDataObject> dataObjects = _dataLayer.Get("CableTray", identifiers);
+
+      if (!(dataObjects.Count() > 0))
+      {
+        throw new AssertionException("No Rows returned.");
+      }
+
+      foreach (IDataObject dataObject in dataObjects)
+      {
+        Assert.IsNotNull(dataObject.GetPropertyValue("SiteId"));
+        Assert.IsNotNull(dataObject.GetPropertyValue("Plant"));
+      }
     }
   }
 }
