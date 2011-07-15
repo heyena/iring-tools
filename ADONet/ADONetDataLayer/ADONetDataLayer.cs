@@ -39,10 +39,10 @@ namespace org.iringtools.adapter.datalayer
     private ADONetConfiguration _config = null;
     private DataDictionary _dictionary = null;
     private Dictionary<string, Type> _dynamicTypes = new Dictionary<string, Type>();
-    private StandardKernel _kernel = null;
-
+    
     [Inject]
     public ADONetDataLayer(AdapterSettings settings)
+      : base(settings)
     {
       try
       {
@@ -53,10 +53,6 @@ namespace org.iringtools.adapter.datalayer
 
         _dictionaryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"], "DataDictionary." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml");
         _bindingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"], "adonet-binding." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml");
-
-        NinjectSettings nsettings = new NinjectSettings { LoadExtensions = false };
-        _kernel = new StandardKernel(nsettings, new ADONetModule());
-        //_kernel.Load(_bindingPath);
 
       }
       catch (Exception e)
@@ -161,7 +157,7 @@ namespace org.iringtools.adapter.datalayer
 
         ConfigObject configObject = GetConfigObject(objectType);
 
-        IDbCommand deleteCmd = configObject.GetCommand(_kernel, QueryType.DELETE, _config.GetConnection(_kernel));
+        IDbCommand deleteCmd = configObject.GetCommand(QueryType.DELETE, _config.GetConnection());
         
         foreach (var dataObject in dataObjects)
         {
@@ -188,7 +184,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {        
         ConfigObject configObject = GetConfigObject(objectType);
-        IDbCommand selectCmd = configObject.GetCommand(_kernel, QueryType.SELECT, _config.GetConnection(_kernel));
+        IDbCommand selectCmd = configObject.GetCommand(QueryType.SELECT, _config.GetConnection());
                                 
         List<IDataObject> dataObjects = new List<IDataObject>();
 
@@ -278,75 +274,74 @@ namespace org.iringtools.adapter.datalayer
         string[] delimiters = { configObject.Identifier.Delimiter };
         string[] ids = configObject.Identifier.Key.Split(delimiters, StringSplitOptions.None);
 
-        IDbCommand selectCmd = configObject.GetCommand(_kernel, QueryType.SELECT, _config.GetConnection(_kernel));
+        IDbCommand selectCmd = configObject.GetCommand(QueryType.SELECT, _config.GetConnection());
 
-        if (identifiers != null && identifiers.Count > 0)
+        using (IDbCommand tempCmd = ServiceLocator.Get<IDbCommand>())
         {
-          //select * from table
-          //select * from table where column = value
+          tempCmd.CommandText = selectCmd.CommandText;
+          tempCmd.Connection = selectCmd.Connection;
 
-          //id1 in (v11, v12, v13)
-          //id2 in (v21, v22, v23)
-
-          Dictionary<string, List<string>> wheres = new Dictionary<string, List<string>>();
-          for (int i = 0; i < ids.Length; i++)
-            wheres.Add(ids[i], new List<string>());
-
-          foreach (var identifier in identifiers)
+          if (identifiers != null && identifiers.Count > 0)
           {
-            string[] vls = identifier.Split(delimiters, StringSplitOptions.None);
+            #region WhereSql
 
+            //select * from table
+            //select * from table where column = value
+
+            //id1 in (v11, v12, v13)
+            //id2 in (v21, v22, v23)
+
+            Dictionary<string, List<string>> wheres = new Dictionary<string, List<string>>();
             for (int i = 0; i < ids.Length; i++)
+              wheres.Add(ids[i], new List<string>());
+
+            foreach (var identifier in identifiers)
             {
-              wheres[ids[i]].Add(vls[i]);
-            }
-          }
+              string[] vls = identifier.Split(delimiters, StringSplitOptions.None);
 
-          string whereSql = "";
-
-          for (int i = 0; i < wheres.Count; i++)
-          {
-            var where = wheres.ElementAt(i);
-            whereSql += where.Key + " in ('" + string.Join("','", where.Value) + "')";
-            if (i < wheres.Count - 1)
-            {
-              whereSql += " and ";
-            }
-          }
-
-          string selectSql = "";
-
-          if (!selectCmd.CommandText.Contains("where"))
-          {
-            selectSql += " where " + whereSql;
-          }
-          else
-          {
-            selectSql += " and " + whereSql;
-          }
-
-          selectCmd.CommandText += selectSql;
-
-        }
-
-        if (selectCmd.Connection.State != ConnectionState.Open)
-          selectCmd.Connection.Open();
-
-        using (IDataReader reader = selectCmd.ExecuteReader())
-        {
-          while (reader.Read())
-          {
-            IDataObject dataObject = new GenericDataObject()
-            {
-              ObjectType = objectType
-            };
-
-            for (int i = 0; i < reader.FieldCount; i++)
-            {
-              dataObject.SetPropertyValue(reader.GetName(i), reader.GetValue(i));
+              for (int i = 0; i < ids.Length; i++)
+              {
+                wheres[ids[i]].Add(vls[i]);
+              }
             }
 
-            dataObjects.Add(dataObject);
+            string whereSql = "";
+
+            for (int i = 0; i < wheres.Count; i++)
+            {
+              var where = wheres.ElementAt(i);
+              whereSql += where.Key + " in ('" + string.Join("','", where.Value) + "')";
+              if (i < wheres.Count - 1)
+              {
+                whereSql += " and ";
+              }
+            }
+
+            #endregion WhereSql
+
+            string selectSql = string.Format("select * from ({0}) as tmp where {1}", selectCmd.CommandText, whereSql);
+            tempCmd.CommandText = selectSql;
+          }
+
+          if (tempCmd.Connection.State != ConnectionState.Open)
+            tempCmd.Connection.Open();
+
+          using (IDataReader reader = tempCmd.ExecuteReader())
+          {
+            while (reader.Read())
+            {
+              IDataObject dataObject = new GenericDataObject()
+              {
+                ObjectType = objectType
+              };
+
+              for (int i = 0; i < reader.FieldCount; i++)
+              {
+                dataObject.SetPropertyValue(reader.GetName(i), reader.GetValue(i));
+              }
+
+              dataObjects.Add(dataObject);
+            }
           }
         }
 
@@ -383,40 +378,46 @@ namespace org.iringtools.adapter.datalayer
               dataProperties = new List<DataProperty>()
             };
 
+            string[] delimiters = { configObject.Identifier.Delimiter };
+            string[] ids = configObject.Identifier.Key.Split(delimiters, StringSplitOptions.None);
+
             _dictionary.dataObjects.Add(dataObject);
 
-            IDbCommand selectCmd = configObject.GetCommand(_kernel, QueryType.SELECT, _config.GetConnection(_kernel));
+            IDbCommand selectCmd = configObject.GetCommand(QueryType.SELECT, _config.GetConnection());
 
             if (selectCmd.Connection.State != ConnectionState.Open)
               selectCmd.Connection.Open();
 
-            IDataReader reader = selectCmd.ExecuteReader();
-            DataTable table = reader.GetSchemaTable();
-            foreach (DataRow row in table.Rows)
+            using (IDataReader reader = selectCmd.ExecuteReader())
             {
-              string columnName = row["ColumnName"].ToString();
-              DataType columnDataType = ADONetConfiguration.GetDataType((Type)row["DataType"]);
 
-              DataProperty dataProperty = new DataProperty()
-              {
-                columnName = columnName,
-                propertyName = columnName,
-                dataType = columnDataType,
-                dataLength = Convert.ToInt32(row["ColumnSize"].ToString())
-              };
 
-              if (configObject.Identifier.Key.Contains(columnName))
+              DataTable table = reader.GetSchemaTable();
+              foreach (DataRow row in table.Rows)
               {
-                dataObject.addKeyProperty(dataProperty);
+                string columnName = row["ColumnName"].ToString();
+                DataType columnDataType = ADONetConfiguration.GetDataType((Type)row["DataType"]);
+
+                DataProperty dataProperty = new DataProperty()
+                {
+                  columnName = columnName,
+                  propertyName = columnName,
+                  dataType = columnDataType,
+                  dataLength = Convert.ToInt32(row["ColumnSize"].ToString())
+                };
+
+                if (ids.Contains(columnName))
+                {
+                  dataObject.addKeyProperty(dataProperty);
+                }
+                else
+                {
+                  dataObject.dataProperties.Add(dataProperty);
+                }
+
               }
-              else
-              {
-                dataObject.dataProperties.Add(dataProperty);
-              }
-
             }
-            reader.Close();
-            reader.Dispose();
+
           }
 
           Utility.Write<DataDictionary>(_dictionary, _dictionaryPath, true);
@@ -521,6 +522,9 @@ namespace org.iringtools.adapter.datalayer
         
     public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
     {
+      //var genericObject = (GenericDataObject)dataObject;
+      //genericObject.ObjectType
+
       return new List<IDataObject>();
     }
 
@@ -531,7 +535,7 @@ namespace org.iringtools.adapter.datalayer
         DataObject dictionaryObject = _dictionary.dataObjects.Where(o => o.objectName.Equals(objectType)).SingleOrDefault();
         ConfigObject configObject = GetConfigObject(objectType);
 
-        IDbCommand selectCmd = configObject.GetCommand(_kernel, QueryType.SELECT, _config.GetConnection(_kernel));
+        IDbCommand selectCmd = configObject.GetCommand(QueryType.SELECT, _config.GetConnection());
 
         string queryText = selectCmd.CommandText;
         int fromIdx = queryText.IndexOf("from", 1);

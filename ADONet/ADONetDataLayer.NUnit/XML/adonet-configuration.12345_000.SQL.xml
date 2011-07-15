@@ -1,82 +1,803 @@
-<configration xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.adapter.datalayer" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
-  <connection>Data Source=miswsqa;Initial Catalog=livelink;User Id=projectguest;Password=E5rVo5yE;</connection>
+<configuration xmlns="http://schemas.datacontract.org/2004/07/org.iringtools.adapter.datalayer" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+  <connection>Data Source=brisqlprd01;Initial Catalog=H333580ProjDB;Integrated Security=true;</connection>
   <objects>
     <object>
-      <name>Documents</name>
+      <name>CableTray</name>
       <identifier>
-        <key>DataID</key>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
       </identifier>
       <select>
-        <query>select ownerid as ProjectID, DataID, VersionNum, name as DocumentName, CreateDate, ModifyDate from dtree where ownerid = 5738941 and subtype = 144</query>
-      </select>
-    </object>
-<!--
-    <object>
-      <name>Projects</name>
-      <identifier>
-        <key>ProjectID</key>
-      </identifier>
-      <select>
-        <query>select dataid as ProjectID, name as ProjectName, CreateDate, ModifyDate from dtree where dataid = 5738941 and subtype = 202</query>
-      </select>
-    </object>
-    <object>
-      <name>Document_Attributes</name>
-      <identifier>
-        <key>DataID, VersionNum</key>
-        <delimiter>,</delimiter>
-      </identifier>
-      <select>
-        <query>select dt.ownerid as ProjectID, * from ha_attrdocument as ado inner join dtree as dt on ado.dataid = dt.dataid and ado.versionnum = dt.versionnum where ownerid = 5738941 and subtype = 144</query>
-      </select>
-    </object>
-    <object>
-      <name>DocumentControl_Attributes</name>
-      <identifier>
-        <key>DataID, VersionNum</key>
-        <delimiter>,</delimiter>
-      </identifier>
-      <select>
-        <query>select dt.ownerid as ProjectID, * from ha_attrdocumentcontrol as adc inner join dtree as dt on adc.dataid = dt.dataid and adc.versionnum = dt.versionnum where ownerid = 5738941 and subtype = 144</query>
-      </select>
-    </object>
-    <object>
-      <name>Transmittals</name>
-      <identifier>
-        <key>TransmittalID</key>
-      </identifier>
-      <select>
-        <query>select ProjectID, Trid as TransmittalID, TransmittalID as TransmittalName, TransmitDate, IssueReason, PackageType, ContractNo as PackageNumber, RespReqDate, Status, TransmittalType, EndOfReviewDate from aus_transmittals where projectid = 5738941</query>
-      </select>
-    </object>
-    <object>
-      <name>Transmitted_Documents</name>
-      <identifier>
-        <key>TransmittalID, DocID, VersionNum</key>
-        <delimiter>,</delimiter>
-      </identifier>
-      <select>
-        <query>select tm.ProjectID, tm.TRID as TransmittalID, td.DocIDInt as DocumentID, td.VersionNoInt as VersionNum, td.RevisionNum, td.Grade, td.EndOfReviewDate from aus_transmittalsdrawings as td inner join aus_transmittals as tm on tm.trid = td.trid where tm.projectid = 5738941</query>
+        <query>
+          Select Distinct SiteId, SourceUniqueId, 'ERA' as Client, 'ERA' as Plant, 'H-333580' as Project, 'Cable Tray' as ItemType,
+          Area, SubArea, System, 'Auto' as Source,
+          coalesce(Module,'-') as Module, coalesce(SubModule,'-') as SubModule,
+          FBSCode, EWP, CWP,
+          TagNo, PSDSTray.Description as Description,
+          cast(DesignedQty as decimal(20,4)) as DesignedQty,
+          UOM, ConstructionType, PSDSStatus.Description as DesStatus,
+          getdate() as LastUpdate
+          from (Select coalesce(cuser_3,'') as SiteId,
+          coalesce(v.traytag,'') + coalesce(v.SAP_EWP,'') + coalesce(v.cwp,'') + coalesce(v.cons_typ,'') +
+          coalesce(v.D_Status,'') + coalesce(cuser_3,'') as SourceUniqueId,
+          case len(cast(v.area_no as varchar))
+          when 4 then substring(cast(v.area_no as varchar), 1, 1) + '000'
+          when 3 then substring(cast(v.area_no as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(v.area_no as varchar))
+          when 4 then substring(cast(v.area_no as varchar), 1, 2) + '00'
+          when 3 then substring(cast(v.area_no as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(v.area_no as varchar), 1, 4),'0000') as System,
+          coalesce('Cable Tray Group','') as Module, cast(min(v.service_level) as varchar) as SubModule,
+          coalesce(cast(v.area_no as varchar),'-') as FBSCode, v.SAP_EWP as EWP, v.CWP,
+          TrayTag as TagNo,
+          TrayTag as Description,
+          sum(cast(v.compleng as decimal(20,4))) as DesignedQty,
+          'mm' as UOM,
+          v.cons_typ as ConstructionType, v.D_Status
+          from H333580PSDS.dbo.VW_HA_CABLETRAY_DATA v inner join
+          H333580PSDS.dbo.TRAY_BUD t on v.bud_id = t.bud_id
+          Group by v.traytag, v.SAP_EWP, v.cwp, v.cons_typ, v.D_Status, coalesce(cuser_3,''),v.area_no) as PSDSTray
+          left outer join (Select Ranking, Input_Desc as Description from H333580PSDS.dbo.ha_d_status_desc) as PSDSStatus
+          on PSDSTray.D_Status = PSDSStatus.Ranking
+
+        </query>
       </select>
     </object>
     <object>
-      <name>Packages</name>
+      <name>CableTrayMTO</name>
       <identifier>
-        <key>DataID</key>
+        <key>SystemID</key>
+        <delimiter>, </delimiter>
       </identifier>
       <select>
-        <query>select ProjectId, Seq as DataId, PackageType, PackageNumber, PackageName, CompanyName, ResponsibleEngineer, PackagePhase, PackageStatus, CreateDate, ModifyDate from ha_catpackage as pk where projectid = 5738941</query>
+        <query>
+          Select Distinct SiteId, SourceUniqueId, 'ERA' as Client, 'ERA' as Plant, 'Auto' as Project, 'Cable Tray MTO' as ItemType,
+          Area, SubArea, System, 'Auto' as Source,
+          coalesce(Module,'-') as Module, coalesce(SubModule,'-') as SubModule,
+          FBSCode, EWP, CWP,
+          TagNo + ' : ' + PSDSTray.Description as Description, Size,
+          cast(DesignedQty as decimal(20,4)) as DesignedQty,
+          UOM, RelatedTo, ConstructionType, PSDSStatus.Description as DesStatus,
+          getdate() as LastUpdate
+          from (Select coalesce(cuser_3,'') as SiteId, cast(t.BUD_ID as varchar) as SourceUniqueId,
+          case len(cast(v.area_no as varchar))
+          when 4 then substring(cast(v.area_no as varchar), 1, 1) + '000'
+          when 3 then substring(cast(v.area_no as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(v.area_no as varchar))
+          when 4 then substring(cast(v.area_no as varchar), 1, 2) + '00'
+          when 3 then substring(cast(v.area_no as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(v.area_no as varchar), 1, 4),'0000') as System,
+          coalesce('Cable Tray Group','') as Module, cast(v.service_level as varchar) as SubModule,
+          coalesce(cast(v.area_no as varchar),'-') as FBSCode, v.SAP_EWP as EWP, v.CWP,
+          TrayTag as TagNo,
+          TrayStd_Desc + ' ' + Tray_Part_Desc + ' ' + TrayMatl_Desc + ' ' + Tray_Feature_Desc  as Description,
+          cast(v.depth as varchar) + 'D x ' + cast(v.width as varchar) +'W' +
+          case v.bud_type
+          when 'TRAY_TRHB'
+          then ' ' + cast(v.radius as varchar) + ' rad ' + cast(v.angle as varchar) +' deg'
+          when 'TRAY_TRVB'
+          then ' ' + cast(v.radius as varchar) + ' rad ' + cast(v.angle as varchar) +' deg'
+          when 'TRAY_TRTT'
+          then ' ' + cast(v.radius as varchar) + ' rad'
+          when 'TRAY_TRTX'
+          then ' ' + cast(v.radius as varchar) + ' rad'
+          else ''
+          end as Size,
+          case v.bud_type
+          when 'TRAY_TRAY' then cast(v.compleng as decimal(20,4))
+          else 1
+          end as DesignedQty,
+          case v.bud_type
+          when 'TRAY_TRAY' then 'mm'
+          else 'ea' end as UOM,
+          TrayTag as RelatedTo,
+          v.cons_typ as ConstructionType, v.D_Status
+          from H333580PSDS.dbo.VW_HA_CABLETRAY_DATA v inner join
+          H333580PSDS.dbo.TRAY_BUD t on v.bud_id = t.bud_id) as PSDSTray
+          left outer join (Select Ranking, Input_Desc as Description from H333580PSDS.dbo.ha_d_status_desc) as PSDSStatus
+          on PSDSTray.D_Status = PSDSStatus.Ranking
+        </query>
       </select>
     </object>
     <object>
-      <name>Package_Documents</name>
+      <name>ConcreteMTO</name>
       <identifier>
-        <key>DataID</key>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
       </identifier>
       <select>
-        <query>select pk.ProjectId, pd.DocId as DocumentID, pd.Version as VersionNum, pd.AddedDate, pd.ModifyDate from ha_catpackagedocuments as pd inner join ha_catpackage as pk on pk.dataid = pd.dataid and pk.seq = pd.seq where pk.projectid = 5738941 and pd.docid is not null</query>
+        <query>
+          Select
+          Distinct
+          SiteId,
+          SourceUniqueId,
+          'ERA' as Client,
+          'ERA' as Plant,
+          'H-333580' as Project,
+          'Structural Concrete MTO' as ItemType,
+          cd.Area, SubArea, System, 'Auto' as Source,
+          coalesce(s.Family,'-') as Module,
+          coalesce(s.Part,'-') as SubModule,
+          FBSCode,
+          EWP,
+          CWP,
+          cd.TagNo + ' : ' + Description as Description, cast(DesignedQty as decimal(20,4)) as DesignedQty,
+          UOM,
+          e.TagNo as RelatedTo,
+          ConstructionType,
+          DesStatus,
+          KeyDocument,
+          getdate() as LastUpdate
+          from (
+          Select
+          [MOD_ID] + '-' + Cast(coalesce(ID,' ') as nvarchar) as SourceUniqueId,
+          ID,
+          Family,
+          Part,
+          [MOD_ID] as KeyDocument
+          FROM
+          H333580PSDS.dbo.TF_BUD) as s
+          inner join (Select Family, Part from H333580PSDS.dbo.HA_Structural_MTO_Filter_Table	where report = 'Concrete MTO') as f
+          on s.Family = f.Family
+          and s.Part = f.Part
+          inner join (
+          Select
+          '' as SiteId,
+          ID,
+          Left([File_Name], len([File_Name])-4) as File_Name,
+          TagNo,
+          case len(cast(area as varchar))
+          when 4 then substring(cast(area as varchar), 1, 1) + '000'
+          when 3 then substring(cast(area as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(area as varchar))
+          when 4 then substring(cast(area as varchar), 1, 2) + '00'
+          when 3 then substring(cast(area as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(area as varchar), 1, 4),'0000') as System,
+          coalesce(Area,'-') as FBSCode,
+          EWP,
+          CWP,
+          D_Status as DesStatus,
+          ConsType as ConstructionType,
+          case when (Select PROP_val FROM H333580PSDS.dbo.PROJECT_CONFIG where PROPERTY ='B3D_SYSTEM_UNITS')='mm' then
+          cast(coalesce((cast(Quantity1 as decimal)),0) / 1000000 /1000 + 0	as nvarchar)
+          else
+          cast(coalesce((cast(Quantity1 as decimal)),0) /12/12/12 + 0 as nvarchar) ---what should the formula be
+          end  as DesignedQty,
+          case when (Select PROP_val FROM H333580PSDS.dbo.PROJECT_CONFIG where PROPERTY ='B3D_SYSTEM_UNITS')='mm' then
+          'm3'
+          else
+          'cuft'
+          end as UOM,
+          Description
+          from
+          H333580PSDS.dbo.HA_Structural_MTO_ConcData) as cd
+          on s.ID  = cd.ID
+          and cd.file_name = s.KeyDocument
+          left outer join (
+          Select
+          t.KeyTag as SystemID,
+          t.Client_Tag_No as TagNo,
+          e.eArea as Area,
+          e.etrain as Train,
+          e.enum as Num,
+          e.eSuffix as Suffix
+          from
+          dbo.Tag_reg t
+          inner join dbo.Equip e
+          on t.keytag = e.keytag) as e
+          on e.Area + '-FDN-' + coalesce(e.Train,'') + e.Num + coalesce(e.suffix,'') = cd.TagNo
+          union all
+          Select
+          Distinct
+          SiteId,
+          SourceUniqueId,
+          'ERA' as Client,
+          'ERA' as Plant,
+          'H-333580' as Project,
+          'Structural Concrete MTO' as ItemType,
+          cd.Area,
+          SubArea,
+          System,
+          'Auto' as Source,
+          coalesce(s.Family,'-') as Module,
+          coalesce(s.Part,'-') as SubModule,
+          FBSCode,
+          EWP,
+          CWP,
+          cd.TagNo + ' : ' + Description as Description, cast(DesignedQty as decimal(20,4)) as DesignedQty,
+          UOM,
+          e.TagNo as RelatedTo,
+          ConstructionType,
+          DesStatus,
+          KeyDocument,
+          getdate() as LastUpdate
+          from (
+          SELECT
+          [MOD_ID] + '-' + Cast(coalesce(ID,' ') as nvarchar) as SourceUniqueId,
+          ID,
+          Family,
+          Part,
+          [MOD_ID] as KeyDocument
+          FROM
+          H333580PSDS.dbo.STF_BUD
+          WHERE
+          Family like '%Concrete%') s
+          inner join (Select Family, Part from H333580PSDS.dbo.HA_Structural_MTO_Filter_Table) f
+          on s.Family = f.Family
+          and s.Part = f.Part
+          inner join (
+          Select
+          '' as SiteId,
+          ID,
+          Left([File_Name], len([File_Name])-4) as File_Name,
+          TagNo,
+          case len(cast(area as varchar))
+          when 4 then substring(cast(area as varchar), 1, 1) + '000'
+          when 3 then substring(cast(area as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(area as varchar))
+          when 4 then substring(cast(area as varchar), 1, 2) + '00'
+          when 3 then substring(cast(area as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(area as varchar), 1, 4),'0000') as System,
+          coalesce(Area,'-') as FBSCode,
+          EWP,
+          CWP,
+          D_Status as DesStatus,
+          ConsType as ConstructionType,
+          case when (Select PROP_val FROM H333580PSDS.dbo.PROJECT_CONFIG where PROPERTY ='B3D_SYSTEM_UNITS')='mm' then
+          cast(coalesce((cast(Quantity1 as decimal)),0) / 1000000 /1000 + 0	as nvarchar)
+          else
+          cast(coalesce((cast(Quantity1 as decimal)),0) /12/12/12 + 0 as nvarchar) ---what should the formula be
+          end  as DesignedQty,
+          case when (Select PROP_val FROM H333580PSDS.dbo.PROJECT_CONFIG where PROPERTY ='B3D_SYSTEM_UNITS')='mm' then
+          'm3'
+          else
+          'cuft'
+          end as UOM,
+          Description
+          from
+          H333580PSDS.dbo.HA_Structural_MTO_ConcData) as cd
+          on s.ID  = cd.ID
+          and cd.File_name = s.KeyDocument
+          left outer join (
+          Select
+          t.KeyTag as SystemID,
+          t.Client_Tag_No as TagNo,
+          e.eArea as Area,
+          e.etrain as Train,
+          e.enum as Num,
+          e.eSuffix as Suffix
+          from
+          dbo.Tag_reg t
+          inner join dbo.Equip e
+          on t.keytag = e.keytag
+          where
+          proj_stat &lt;&gt; 'DEL'
+          and tag_type &lt;&gt; 'AT_CONC') as e
+          on e.Area + '-FDN-' + coalesce(e.Train,'') + e.Num + coalesce(e.suffix,'') = cd.TagNo
+        </query>
       </select>
     </object>
--->
+    <object>
+      <name>ElectricalEquipment</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          Select
+          Distinct
+          coalesce(SiteId, '') as SiteId,
+          PDBEquipment.SourceUniqueId,
+          'ERA' as Client,
+          'ERA' as Plant,
+          'H-333580' as Project,
+          'Electrical Equipment' as ItemType,
+          Area,
+          SubArea,
+          System,
+          'Auto' as Source,
+          coalesce(Module,'-') as Module,
+          coalesce(SubModule,'-') as SubModule,
+          FBSCode,
+          ClientWBS,
+          EWP,
+          CWP,
+          TagNo,
+          PDBEquipment.Description,
+          DesignedQty,
+          UOM,
+          RelatedTo,
+          ConstructionType,
+          EngStatus,
+          PSDSStatus.Description as DesStatus,
+          KeyDocument,
+          getdate() as LastUpdate
+          from (
+          select cast(e.keytag as varchar) as SourceUniqueId,
+          case len(cast(earea as varchar))
+          when 4 then substring(cast(earea as varchar), 1, 1) + '000'
+          when 3 then substring(cast(earea as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(earea as varchar))
+          when 4 then substring(cast(earea as varchar), 1, 2) + '00'
+          when 3 then substring(cast(earea as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(earea as varchar), 1, 4),'0000') as System,
+          coalesce(e.system,'Equipment') as Module,
+          cast(etyp as varchar) as SubModule,
+          coalesce(cast(earea as varchar),'-') as FBSCode,
+          Client_FBS as ClientWBS,
+          WBS as EWP,
+          Client_tag_no as TagNo,
+          edesc1 + ' ' + edesc as Description,
+          1.0 as DesignedQty,
+          'ea' as UOM,
+          ParentId as RelatedTo,
+          const_type as ConstructionType,
+          eng_status as EngStatus,
+          pid_no as KeyDocument
+          from
+          equip e
+          inner join tag_reg t
+          on e.keytag = t.keytag
+          where
+          tag_type like 'AT_ELEC%'
+          and proj_stat &lt;&gt; 'DEL') as PDBEquipment
+          left outer join (Select min(CUSER_3) as SiteID, Keytag as SourceUniqueId, min(CWP) as CWP, min(D_Status) as D_Status from H333580PSDS.dbo.EQUIP_BUD Group by Keytag) as PSDSEquipment
+          on PSDSEquipment.SourceUniqueId = PDBEquipment.SourceUniqueId
+          left outer join (Select Ranking, Input_Desc as Description from H333580PSDS.dbo.ha_d_status_desc) as PSDSStatus
+          on PSDSEquipment.D_Status = PSDSStatus.Ranking
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>HVAC</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          Select Distinct SiteId, SourceUniqueId, 'ERA' as Client, 'ERA' as Plant, 'H-333580' as Project, 'HVAC' as ItemType,
+          Area, SubArea, System, 'Auto' as Source,
+          coalesce(Module,'-') as Module, coalesce(SubModule,'-') as SubModule,
+          FBSCode, EWP, CWP,
+          TagNo,
+          TagNo as Description,
+          cast(DesignedQty as decimal(20,4)) as DesignedQty,
+          UOM, ConstructionType, PSDSStatus.Description as DesStatus,
+          getdate() as LastUpdate
+          from (
+          select Coalesce(CUSER_3,'') as SiteID,
+          Coalesce(CUSER_3,'') + area_no+'-'+coalesce(train,'')+system_h+'-'+h_lineno+'-'+coalesce(SAP_EWP,'')+'-'+coalesce(cwp,'')+'-'+coalesce(cons_typ,'') as SourceUniqueId,
+          case len(cast(area_no as varchar))
+          when 4 then substring(cast(area_no as varchar), 1, 1) + '000'
+          when 3 then substring(cast(area_no as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(area_no as varchar))
+          when 4 then substring(cast(area_no as varchar), 1, 2) + '00'
+          when 3 then substring(cast(area_no as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(area_no as varchar), 1, 4),'0000') as System,
+          coalesce('HVAC Group','') as Module, cast(system_h as varchar) as SubModule,
+          coalesce(cast(area_no as varchar),'-') as FBSCode, SAP_EWP as EWP, CWP,
+          area_no+'-'+coalesce(train,'')+system_h+'-'+h_lineno as TagNo,
+          sum(cast(compleng as decimal(20,4))) as DesignedQty,
+          'm' as UOM,
+          cons_typ as ConstructionType,
+          min(D_Status) as D_Status
+          from H333580PSDS.dbo.HVAC_BUD
+          group by cuser_3, area_no, coalesce(train,''), system_h, h_lineno, SAP_EWP, cwp, cons_typ) as PSDSHVAC
+          left outer join (Select Ranking, Input_Desc as Description from H333580PSDS.dbo.ha_d_status_desc) as PSDSStatus
+          on PSDSHVAC.D_Status = PSDSStatus.Ranking
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>HVACMTO</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          Select Distinct SiteId, SourceUniqueId, 'ERA' as Client, 'ERA' as Plant, 'H-333580' as Project, 'HVAC MTO' as ItemType,
+          Area, SubArea, System, 'Auto' as Source,
+          coalesce(Module,'-') as Module, coalesce(SubModule,'-') as SubModule,
+          FBSCode, EWP, CWP,
+          coalesce(TagNo,'') + ' : ' + PSDSClasses.Description + ' : ' + coalesce(PSDSHVAC.Description,'') as Description,
+          PSDSHVAC.Size as Size,
+          cast(DesignedQty as decimal(20,4)) as DesignedQty,
+          UOM, RelatedTo, ConstructionType, PSDSStatus.Description as DesStatus,
+          getdate() as LastUpdate
+          from (select Coalesce(CUSER_3,'') as SiteID, cast(BUD_ID as varchar) as SourceUniqueId,
+          case len(cast(area_no as varchar))
+          when 4 then substring(cast(area_no as varchar), 1, 1) + '000'
+          when 3 then substring(cast(area_no as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(area_no as varchar))
+          when 4 then substring(cast(area_no as varchar), 1, 2) + '00'
+          when 3 then substring(cast(area_no as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(area_no as varchar), 1, 4),'0000') as System,
+          coalesce('HVAC Group','') as Module, cast(system_h as varchar) as SubModule,
+          coalesce(cast(area_no as varchar),'-') as FBSCode, SAP_EWP as EWP, CWP,
+          area_no+'-'+coalesce(train,'')+system_h+'-'+h_lineno as TagNo, CompType,
+          coalesce(HVACDESC,'') + ' ' + coalesce([TYPE],'') as Description,
+          case comptype
+          when 'HSPL'
+          then coalesce(HVACDESC,'') + ' ' + coalesce([TYPE],'')
+          when 'HSQC'
+          then ' '+ cast(diameter as varchar) +' dia '+ cast(angle as varchar) +' deg '+ cast(elb_rad as varchar) + ' rad ' + cast(segment as varchar) + ' segments'
+          when 'HVDC'
+          then ' '+ cast(diameter as varchar) +' dia'
+          when 'HVDR'
+          then ' '+ cast(width as varchar) +'W x '+ cast(height as varchar) + 'H'
+          when 'HVLC'
+          then ' '+ cast(diameter as varchar) +' dia '+ cast(angle as varchar) +' deg '+ cast(radius_r as varchar) + ' rad'
+          when 'HVLR'
+          then ' '+cast(width as varchar) +'W x '+ cast(height as varchar) +'H '+ cast(angle as varchar) +' deg '+ cast(radius_r as varchar) + ' rad'
+          when 'HVRC'
+          then ' '+ cast(diameter as varchar) +' dia to '+ cast(width as varchar) +'W x '+ cast(height as varchar)+'H x '+ cast(tran_len as varchar) + 'L'
+          when 'HVTC'
+          then ' '+ cast(diameter as varchar) +' dia '+ cast(tran_len as varchar)
+          when 'HVTR'
+          then ' '+ cast(width as varchar) +'W x '+ cast(height as varchar)+'H x '+ cast(tran_len as varchar) + 'L'
+          end
+          as Size,
+          case comptype
+          when 'HSPL' then 1
+          when 'HSQC' then 1
+          when 'HVLC' then 1
+          when 'HVLR' then 1
+          else cast(compleng as decimal(20,4))
+          end as DesignedQty,
+          case comptype
+          when 'HSPL' then 'ea'
+          when 'HSQC' then 'ea'
+          when 'HVLC' then 'ea'
+          when 'HVLR' then 'ea'
+          else 'm' end as UOM,
+          area_no+'-'+coalesce(train,'')+system_h+'-'+h_lineno as RelatedTo,
+          cons_typ as ConstructionType, D_Status
+          from H333580PSDS.dbo.HVAC_BUD) as PSDSHVAC
+          left outer join (Select distinct CompType, max(Description) as Description from H333580PSDS.dbo.CLASSES where Level_1 = 'HVAC'	Group by CompType) as PSDSClasses
+          on PSDSHVAC.CompType = PSDSClasses.CompType
+          left outer join (Select Ranking, Input_Desc as description from H333580PSDS.dbo.ha_d_status_desc) as PSDSStatus
+          on PSDSHVAC.D_Status = PSDSStatus.Ranking
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>InstrumentationEquipment</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          Select Distinct
+          coalesce(SiteId,'') as SiteId, PDBEquipment.SourceUniqueId, 'ERA' as Client, 'ERA' as Plant, 'H-333580' as Project, 'Instrumentation Equipment' as ItemType,
+          Area, SubArea, System, 'Auto' as Source,
+          coalesce(Module,'-') as Module, coalesce(SubModule,'-') as SubModule,
+          FBSCode, ClientWBS, EWP, CWP,
+          TagNo, PDBEquipment.Description,
+          DesignedQty,
+          UOM, RelatedTo, ConstructionType, EngStatus, PSDSStatus.Description as DesStatus,
+          KeyDocument, getdate() as LastUpdate
+          from (select cast(e.keytag as varchar) as SourceUniqueId,
+          case len(cast(earea as varchar))
+          when 4 then substring(cast(earea as varchar), 1, 1) + '000'
+          when 3 then substring(cast(earea as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(earea as varchar))
+          when 4 then substring(cast(earea as varchar), 1, 2) + '00'
+          when 3 then substring(cast(earea as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(earea as varchar), 1, 4),'0000') as System,
+          coalesce(e.system,'Equipment') as Module, cast(etyp as varchar) as SubModule,
+          coalesce(cast(earea as varchar),'-') as FBSCode, Client_FBS as ClientWBS, WBS as EWP, Client_tag_no as TagNo,
+          coalesce(edesc1,'') + ' ' + coalesce(edesc,'') as Description,  1.0 as DesignedQty, 'ea' as UOM, ParentId as RelatedTo,
+          const_type as ConstructionType, eng_status as EngStatus, pid_no as KeyDocument
+          from equip e inner join tag_reg t on e.keytag = t.keytag
+          where tag_type like 'AT_EQINST' and proj_stat &lt;&gt; 'DEL') as PDBEquipment
+          left outer join (Select min(CUSER_3) as SiteId, Keytag as SourceUniqueId, min(CWP) as CWP, min(D_Status) as D_Status from H333580PSDS.dbo.EQUIP_BUD Group by Keytag) as PSDSEquipment
+          on PSDSEquipment.SourceUniqueId = PDBEquipment.SourceUniqueId
+          left outer join (Select Ranking, Input_Desc as Description from H333580PSDS.dbo.ha_d_status_desc) as PSDSStatus
+          on PSDSEquipment.D_Status = PSDSStatus.Ranking
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>Instruments</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          Select Distinct coalesce(SiteId,'') as SiteId, PDBInstruments.SourceUniqueId, 'ERA' as Client, 'ERA' as Plant, 'H-333580' as Project, 'Instruments' as ItemType,
+          Area, SubArea, System, 'Auto' as Source,
+          coalesce(Module,'-') as Module, coalesce(SubModule,'-') as SubModule,
+          FBSCode, ClientWBS, EWP, CWP,
+          TagNo, PDBInstruments.Description,
+          DesignedQty,
+          UOM, PDBTagReg.ClientTagNo as RelatedTo, ConstructionType, EngStatus, PSDSStatus.Description as DesStatus,
+          KeyDocument, getdate() as LastUpdate
+          from (select cast(keytag as varchar) as SourceUniqueId,
+          case len(cast(iarea as varchar))
+          when 4 then substring(cast(iarea as varchar), 1, 1) + '000'
+          when 3 then substring(cast(iarea as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(iarea as varchar))
+          when 4 then substring(cast(iarea as varchar), 1, 2) + '00'
+          when 3 then substring(cast(iarea as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(iarea as varchar), 1, 4),'0000') as System,
+          'Instruments' as Module, coalesce(Ityp,'-') as SubModule,
+          coalesce(cast(iarea as varchar),'-') as FBSCode, Client_FBS as ClientWBS, WBS as EWP, Client_tag_no as TagNo,
+          coalesce([Service],'') as Description,  1.0 as DesignedQty, 'ea' as UOM, Plant_Key as RelatedToKeytag,
+          const_type as ConstructionType, eng_status as EngStatus, pid_no as KeyDocument
+          from instr
+          where proj_stat &lt;&gt; 'DEL') as PDBInstruments
+          left outer join (Select Keytag as SourceUniqueId, Line_Id as LineId, pspec as Spec from pipe_run) as PDBPipeRun
+          on PDBInstruments.RelatedToKeyTag = PDBPipeRun.LineId
+          left outer join (Select Keytag as SourceUniqueId, Client_Tag_no as ClientTagNo from Tag_reg) as PDBTagReg
+          on PDBInstruments.RelatedToKeyTag = PDBTagReg.SourceUniqueId
+          left outer join (Select Keytag as SourceUniqueId, min(CUSER_3) as SiteId, min(CWP) as CWP, min(D_Status) as D_Status
+          from H333580PSDS.dbo.Equip_Bud
+          group by keytag
+          Union all
+          Select Keytag, min(CUSER_3), min(CWP), min(D_Status)
+          from H333580PSDS.dbo.Pipe_Bud
+          group by keytag
+          Union all
+          Select Keytag, min(CUSER_3), min(CWP), min(D_Status)
+          from H333580PSDS.dbo.HVAC_Bud
+          group by keytag) as PSDSEquipPipe
+          on PDBInstruments.RelatedToKeyTag = PSDSEquipPipe.SourceUniqueId
+          left outer join (Select Ranking, Input_Desc as Description from H333580PSDS.dbo.ha_d_status_desc) as PSDSStatus
+          on PSDSEquipPipe.D_Status = PSDSStatus.Ranking
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>MechanicalEquipment</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          Select Distinct coalesce(SiteId,'') as SiteId, PDBEquipment.SourceUniqueId, 'ERA' as Client, 'ERA' as Plant, 'H-333580' as Project, 'Mechanical Equipment' as ItemType,
+          Area, SubArea, System, 'Auto' as Source,
+          coalesce(Module,'-') as Module, coalesce(SubModule,'-') as SubModule,
+          FBSCode, ClientWBS, EWP, CWP, EnquiryNo,
+          TagNo, PDBEquipment.Description, Capacity,
+          DesignedQty,
+          UOM, RelatedTo, ConstructionType, EngStatus, PSDSStatus.Description as DesStatus,
+          KeyDocument, getdate() as LastUpdate
+          from (select cast(e.keytag as varchar) as SourceUniqueId,
+          case len(cast(earea as varchar))
+          when 4 then substring(cast(earea as varchar), 1, 1) + '000'
+          when 3 then substring(cast(earea as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(earea as varchar))
+          when 4 then substring(cast(earea as varchar), 1, 2) + '00'
+          when 3 then substring(cast(earea as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(earea as varchar), 1, 4),'0000') as System,
+          coalesce(e.system,'Equipment') as Module, cast(etyp as varchar) as SubModule,
+          coalesce(cast(earea as varchar),'-') as FBSCode, Client_FBS as ClientWBS, WBS as EWP, t.Client_tag_no as TagNo,
+          coalesce(edesc1,'') + ' ' + coalesce(edesc,'') as Description, ecap as Capacity, 1.0 as DesignedQty, 'ea' as UOM, t2.Client_tag_no as RelatedTo,
+          const_type as ConstructionType, eng_status as EngStatus, pid_no as KeyDocument, enq_no as EnquiryNo
+          from equip e inner join tag_reg t on e.keytag = t.keytag
+          left outer join tag_reg t2 on e.parentid = t2.keytag
+          where t.tag_type like 'AT_EQ%' and t.tag_type &lt;&gt; 'at_eqinst' and t.proj_stat &lt;&gt; 'DEL') as PDBEquipment
+          left outer join (Select min(CUSER_3) as SiteId, Keytag as SourceUniqueId, min(CWP) as CWP, min(D_Status) as D_Status from H333580PSDS.dbo.EQUIP_BUD Group by Keytag) as PSDSEquipment
+          on PSDSEquipment.SourceUniqueId = PDBEquipment.SourceUniqueId
+          left outer join (Select Ranking, Input_Desc as Description from H333580PSDS.dbo.ha_d_status_desc) as PSDSStatus
+          on PSDSEquipment.D_Status = PSDSStatus.Ranking
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>Motors</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          Select Distinct coalesce(SiteId,'') as SiteId, PDBMotor.SourceUniqueId, 'ERA' as Client, 'ERA' as Plant, 'Auto' as Project, 'Motors' as ItemType,
+          Area, SubArea, System, 'Auto' as Source,
+          coalesce(Module,'-') as Module, coalesce(SubModule,'-') as SubModule,
+          FBSCode, ClientWBS, EWP, CWP, EnquiryNo,
+          TagNo, PDBMotor.Description,
+          DesignedQty,
+          UOM, Equip_tagNo as RelatedTo, ConstructionType, EngStatus, PSDSStatus.Description as DesStatus,
+          KeyDocument,
+          getdate() as LastUpdate
+          from (select cast(e.keytag as varchar) as SourceUniqueId,
+          case len(cast(earea as varchar))
+          when 4 then substring(cast(earea as varchar), 1, 1) + '000'
+          when 3 then substring(cast(earea as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(earea as varchar))
+          when 4 then substring(cast(earea as varchar), 1, 2) + '00'
+          when 3 then substring(cast(earea as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(earea as varchar), 1, 4),'0000') as System,
+          Coalesce(e.system,'Motor') as Module, cast(etyp as varchar) as SubModule,
+          coalesce(cast(earea as varchar),'-') as FBSCode, Client_FBS as ClientWBS,
+          t.Client_tag_no as TagNo,
+          coalesce(edesc1,'') + ' ' + coalesce(edesc,'') as Description,  1.0 as DesignedQty, 'ea' as UOM,
+          t2.keytag as RelatedKeytag,
+          const_type as ConstructionType, pid_no as KeyDocument, enq_no as EnquiryNo
+          from motor e inner join tag_reg t on e.keytag = t.keytag
+          left outer join tag_reg t2 on e.parentid = t2.keytag
+          where t.proj_stat &lt;&gt; 'DEL') as PDBMotor
+          left outer join (Select min(CUSER_3) as SiteId, Keytag as SourceUniqueId, min(CWP) as CWP, min(d_status) as D_Status from H333580PSDS.dbo.EQUIP_BUD Group by Keytag) as PSDSEquipment
+          on PSDSEquipment.SourceUniqueId = PDBMotor.RelatedKeytag
+          left outer join (Select equip.keytag as SourceUniqueId, client_tag_no as Equip_TagNo, WBS as EWP, eng_status as EngStatus
+          from Equip inner join tag_reg	on equip.keytag = tag_reg.keytag) as PDBEquip
+          on PDBMotor.RelatedKeytag = PDBEquip.SourceUniqueId
+          left outer join (Select Ranking, Input_Desc as description from H333580PSDS.dbo.ha_d_status_desc) as PSDSStatus
+          on PSDSEquipment.D_Status = PSDSStatus.Ranking
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>PipingSpecials</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          Select Distinct Coalesce(SiteId,'') as SiteID, PDBSpecial.SourceUniqueId, 'ERA' as Client, 'ERA' as Plant, 'H-333580' as Project, 'Piping Specials' as ItemType,
+          Area, SubArea, System, 'Auto' as Source,
+          Coalesce(Module,'-') as Module, coalesce(SubModule,'-') as SubModule,
+          FBSCode, ClientWBS,
+          PDBPipeRun.EWP,
+          PSDSPipe.CWP,
+          TagNo,
+          PDBSpecial.Description,
+          DesignedQty,
+          UOM,
+          PDBProcess.Client_Tag_No as RelatedTo,
+          ConstructionType, EngStatus, PSDSStatus.Description as DesStatus, KeyDocument, getdate() as LastUpdate
+          from (select t.keytag as SourceUniqueId,
+          case len(cast(sarea as varchar))
+          when 4 then substring(cast(sarea as varchar), 1, 1) + '000'
+          when 3 then substring(cast(sarea as varchar), 1, 1) + '00'
+          else '0000'
+          end as Area,
+          case len(cast(sarea as varchar))
+          when 4 then substring(cast(sarea as varchar), 1, 2) + '00'
+          when 3 then substring(cast(sarea as varchar), 1, 2) + '0'
+          else '0000'
+          end as SubArea,
+          coalesce(substring(cast(sarea as varchar), 1, 4),'0000') as System,
+          'Fluid Group' as Module, coalesce(type,'Piping Special') SubModule, coalesce(sarea,'-') as FBSCode, client_fbs as ClientWBS,
+          client_tag_no as TagNo,
+          'SP-' + coalesce(sspec_num,'***') + '-' + coalesce(snum,'***') + ' (' + coalesce(size,'#') + ') ' + coalesce(type,'') + ' ' + coalesce(DESCRIPT,'') as Description,
+          parentid as RelatedKeyTag,
+          1.0 as DesignedQty,
+          'ea' as UOM,
+          const_type as ConstructionType,
+          eng_status as EngStatus,
+          pid_no as KeyDocument
+          from spec_itm v inner join tag_reg t on t.keytag = v.keytag
+          where proj_stat &lt;&gt; 'DEL') as PDBSpecial
+          left outer join (Select Keytag as SourceUniqueId, run_id
+          from run_conn) as PDBRunConn on
+          PDBSpecial.SourceUniqueId = PDBRunConn.SourceUniqueId
+          left outer join (Select keytag as SourceUniqueId, line_id as LineID, pspec, wbs as EWP from pipe_run) as PDBPipeRun
+          on PDBPipeRun.SourceUniqueId = PDBRunConn.Run_ID
+          left outer join (Select process.keytag as SourceUniqueId, Client_Tag_No from process inner join
+          tag_reg on process.keytag = tag_reg.keytag) as PDBProcess on
+          PDBPipeRun.LineID = PDBProcess.SourceUniqueId
+          left outer join (Select min(CUSER_3) as SiteId, keytag as SourceUniqueId, CWP, min(D_status) as D_Status
+          from H333580PSDS.dbo.PIPE_BUD
+          Group by keytag, cwp) as PSDSPipe on
+          PSDSPipe.SourceUniqueId = PDBProcess.SourceUniqueId
+          left outer join (Select Ranking, Input_Desc as Description from H333580PSDS.dbo.ha_d_status_desc) as PSDSStatus
+          on PSDSPipe.D_Status = PSDSStatus.Ranking
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>PipingValves</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          select 1 as SourceUniqueId
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>ProcessPipeLines</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          select 1 as SourceUniqueId
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>ProcessPipeMTO</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          select 1 as SourceUniqueId
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>StructuralSteelMTO</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          select 1 as SourceUniqueId
+        </query>
+      </select>
+    </object>
+    <object>
+      <name>WBS</name>
+      <identifier>
+        <key>SourceUniqueId</key>
+        <delimiter>, </delimiter>
+      </identifier>
+      <select>
+        <query>
+          select 1 as SourceUniqueId
+        </query>
+      </select>
+    </object>
   </objects>
-</configration>
+</configuration>
+
