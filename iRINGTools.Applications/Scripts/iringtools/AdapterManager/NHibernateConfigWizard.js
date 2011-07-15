@@ -1335,6 +1335,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									treeNodeProps['objectName'] = objNam;
 									treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();
 									form.treeNode.ui.anchor.text = objNam;
+									form.treeNode.text = objNam;
+									form.treeNode.attributes.text = objNam;
+									form.treeNode.text = objNam;
 								}
 							}
 						}, {
@@ -2666,6 +2669,14 @@ function setRelationFields(editPane, node, scopeName, appName) {
         //relationConfigPane.destroy();
         var panelIndex = editPane.items.indexOf(relationConfigPane);
         editPane.getLayout().setActiveItem(panelIndex);
+
+        var relCombo = relationConfigPane.getForm().findField('relatedObjectName');
+        if (relCombo.store.data) {
+        	relCombo.reset();
+        	relCombo.store.removeAll();
+        }
+        relCombo.store.loadData(relatedObjects);
+        relCombo.store.commitChanges();
 
         var mapCombo = relationConfigPane.getForm().findField('mapPropertyName');
         if (mapCombo.store.data) {
