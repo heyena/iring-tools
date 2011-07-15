@@ -590,7 +590,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
   onClick: function (node) {
     try {
-      this.propertyPanel.setSource(node.attributes.record);
+      this.propertyPanel.setSource(node.attributes.property);
 
     } catch (e) {
       //  alert(e);

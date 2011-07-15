@@ -64,7 +64,7 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Panel, {
 		if (identifier == '')
 			identifier = 'Drop a Key Property Node here.</div>';
 		else
-			identifier = 'Property: ' + identifier + '</div>';
+			identifier = 'Identifier: ' + identifier + '</div>';
 
 		if (classLabel == '')
 			classLab = 'Drop a Class Node here. </div>';
