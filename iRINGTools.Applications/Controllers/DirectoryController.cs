@@ -57,7 +57,9 @@ namespace iRINGTools.Web.Controllers
                                 children = null,
                                 record = scope
                             };
-
+														node.property = new Dictionary<string, string>();
+														node.property.Add("Name", scope.Name);
+														node.property.Add("Description", scope.Description);
                             nodes.Add(node);
 
                         }
@@ -93,7 +95,10 @@ namespace iRINGTools.Web.Controllers
                                     Assembly = dataLayer.Assembly
                                 }
                             };
-
+														node.property = new Dictionary<string, string>();
+														node.property.Add("Name", application.Name);
+														node.property.Add("Description", application.Description);
+														node.property.Add("Data Layer", dataLayer.Name);
                             nodes.Add(node);
 
                         }
@@ -173,7 +178,8 @@ namespace iRINGTools.Web.Controllers
                                 children = null,
 																record = valueList
                             };
-
+														node.property = new Dictionary<string, string>();
+														node.property.Add("Name", valueList.name);
                             nodes.Add(node);
                         }
 
@@ -206,7 +212,9 @@ namespace iRINGTools.Web.Controllers
                           children = null,
                           record = valueMap
                         };
-
+												node.property = new Dictionary<string, string>();
+												node.property.Add("Name", valueMap.internalValue);
+												node.property.Add("Class Label", classLabel);
                         nodes.Add(node);
                       }
                       return Json(nodes, JsonRequestBehavior.AllowGet);
@@ -239,7 +247,8 @@ namespace iRINGTools.Web.Controllers
                               Name = dataObject.objectName
                             }
                           };
-
+													node.property = new Dictionary<string, string>();
+													node.property.Add("Name", dataObject.objectName);
                           nodes.Add(node);
 
                         }
@@ -248,6 +257,7 @@ namespace iRINGTools.Web.Controllers
                     }
                 case "DataObjectNode":
                     {
+											  string datatype, keytype;
                         string context = form["node"];
                         string scopeName = context.Split('/')[0];
                         string applicationName = context.Split('/')[1];
@@ -260,6 +270,8 @@ namespace iRINGTools.Web.Controllers
 
                         foreach (DataProperty property in dataObject.dataProperties)
                         {
+														keytype = getKeytype(property.propertyName, dataObject.dataProperties);
+														datatype = getDatatype(property.propertyName, dataObject.dataProperties);
                             JsonTreeNode node = new JsonTreeNode
                             {
                                 nodeType = "async",
@@ -273,11 +285,14 @@ namespace iRINGTools.Web.Controllers
                                 record = new
                                 {
                                     Name = property.propertyName,
-                                    Keytype = getKeytype(property.propertyName, dataObject.dataProperties),
-                                    Datatype= getDatatype(property.propertyName, dataObject.dataProperties)
+                                    Keytype = keytype,
+                                    Datatype= datatype
                                 }
                             };
-
+														node.property = new Dictionary<string, string>();
+														node.property.Add("Name", property.propertyName);
+														node.property.Add("Keytype", keytype);
+														node.property.Add("Datatype", datatype);
                             nodes.Add(node);
                         }
                         if (dataObject.dataRelationships.Count > 0)
@@ -301,6 +316,10 @@ namespace iRINGTools.Web.Controllers
                                 Related = relation.relatedObjectName
                               }
                             };
+														node.property = new Dictionary<string, string>();
+														node.property.Add("Name", relation.relationshipName);
+														node.property.Add("Type", relation.relationshipType.ToString());
+														node.property.Add("Related", relation.relatedObjectName);
                             nodes.Add(node);
                           }
                           
@@ -311,6 +330,7 @@ namespace iRINGTools.Web.Controllers
 
                 case "RelationshipNode":
                     {
+											string keytype, datatype;											
                       string context = form["node"];
                       string related = form["related"];
                       string scopeName = context.Split('/')[0];
@@ -320,6 +340,8 @@ namespace iRINGTools.Web.Controllers
                       DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
                       foreach (DataProperty property in dataObject.dataProperties)
                       {
+												keytype = getKeytype(property.propertyName, dataObject.dataProperties);
+												datatype = getDatatype(property.propertyName, dataObject.dataProperties);
                         JsonTreeNode node = new JsonTreeNode
                         {
                           nodeType = "async",
@@ -333,11 +355,14 @@ namespace iRINGTools.Web.Controllers
                           record = new
                           {
                             Name = property.propertyName,
-                            Keytype = getKeytype(property.propertyName, dataObject.dataProperties),
-                            Datatype = getDatatype(property.propertyName, dataObject.dataProperties)
+                            Keytype = keytype,
+                            Datatype = datatype
                           }
                         };
-
+												node.property = new Dictionary<string, string>();
+												node.property.Add("Name", property.propertyName);
+												node.property.Add("Type", keytype);
+												node.property.Add("Related", datatype);
                         nodes.Add(node);
                       }
                       return Json(nodes, JsonRequestBehavior.AllowGet);
@@ -369,7 +394,11 @@ namespace iRINGTools.Web.Controllers
                                 record = graph
 
                             };
-
+														node.property = new Dictionary<string, string>();
+														node.property.Add("Data Object Name", graph.dataObjectName);
+														node.property.Add("Name", graph.name);
+														node.property.Add("Identifier", graph.classTemplateMaps[0].classMap.identifiers[0].Split('.')[1]);
+														node.property.Add("Class Label", graph.classTemplateMaps[0].classMap.name);
                             nodes.Add(node);
                         }
 
