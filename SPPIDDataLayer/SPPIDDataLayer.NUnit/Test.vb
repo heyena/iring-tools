@@ -145,5 +145,23 @@ Public Class Test
 
         Utility.Write(Of DataDictionary)(dictionary, path, True)
     End Sub
+
+    Public Sub ReadWithFilter()
+
+
+        Dim dataFilter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
+              New Expression() With { _
+                .PropertyName = "PlantItemType", _
+                .RelationalOperator = RelationalOperator.NotEqualTo, _
+                .Values = New Values() From { _
+                "Null" _
+    }
+    }
+    }
+    }
+
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get("Equipment", dataFilter, 10, 0)
+
+    End Sub
 End Class
 
