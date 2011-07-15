@@ -668,7 +668,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (!dbObjectsTree.disabled) {
 					for (var j = 0; j < availTableName.length; j++)
 						for (var i = 0; i < rootNode.childNodes.length; i++) {
-							if (rootNode.childNodes[i].text == availTableName[j]) {
+							if (rootNode.childNodes[i].attributes.properties.tableName == availTableName[j]) {
 								found = true;
 								availTableName.splice(j, 1);
 								j--;
@@ -687,7 +687,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			if (!dbObjectsTree.disabled) {
 				var rootNode = dbObjectsTree.getRootNode();
 				for (var i = 0; i < rootNode.childNodes.length; i++) {
-					var nodeText = rootNode.childNodes[i].text;
+					var nodeText = rootNode.childNodes[i].attributes.properties.tableName;
 					selectTableNames.push([nodeText, nodeText]);
 				}
 			}
@@ -1139,19 +1139,24 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			}
 		}
 
-
-
 		var loadTree = function (rootNode) {
 			var relationTypeStr = ['OneToOne', 'OneToMany'];
 
 			// sync data object tree with data dictionary
 			for (var i = 0; i < rootNode.childNodes.length; i++) {
 				var dataObjectNode = rootNode.childNodes[i];
+				dataObjectNode.attributes.properties.tableName = dataObjectNode.text;
+				for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
+					var dataObject = dbDict.dataObjects[ijk];
+					if (dataObjectNode.text.toUpperCase() != dataObject.tableName.toUpperCase())
+						continue;
 
-				for (var ii = 0; ii < dbDict.dataObjects.length; ii++) {
-					var dataObject = dbDict.dataObjects[ii];
 					// sync data object
 					dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
+					dataObjectNode.attributes.properties.objectName = dataObject.objectName;
+					dataObjectNode.text = dataObject.objectName;
+					dataObjectNode.attributes.text = dataObject.objectName;
+					dataObjectNode.ui.anchor.text = dataObject.objectName;
 
 					if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
 						var keysNode = dataObjectNode.attributes.children[0];
@@ -1232,6 +1237,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						}
 					}
 				}
+				ijk++;
 			}
 		};
 
@@ -1294,7 +1300,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					}, {
 						name: 'tableName',
 						fieldLabel: 'Table Name',
-						value: node.text,
+						value: node.attributes.properties.tableName,
 						disabled: true
 					}, {
 						name: 'objectNamespace',
@@ -1324,8 +1330,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								var form = dataObjectFormPanel.getForm();
 								if (form.treeNode) {
 									var treeNodeProps = form.treeNode.attributes.properties;
-									treeNodeProps['objectName'] = form.findField('objectName').getValue();
+									var objNam = form.findField('objectName').getValue();
+									treeNodeProps['tableName'] = form.findField('tableName').getValue();
+									treeNodeProps['objectName'] = objNam;
 									treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();
+									form.treeNode.ui.anchor.text = objNam;
 								}
 							}
 						}, {
@@ -1934,7 +1943,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var folderNode = rootNode.childNodes[i];
 									var folderNodeProp = folderNode.attributes.properties;
 									var folder = {};
-									folder.tableName = folderNodeProp.objectName;
+									folder.tableName = folderNodeProp.tableName;
 									folder.objectNamespace = folderNodeProp.objectNamespace;
 									folder.objectName = folderNodeProp.objectName;
 									if (!folderNodeProp.keyDelimeter)
