@@ -284,7 +284,7 @@ namespace org.iringtools.refdata
         foreach (Repository repository in _repositories)
         {
           SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
-
+       
           foreach (SparqlResult result in sparqlResults)
           {
             foreach (var v in result.Variables)
@@ -360,7 +360,9 @@ namespace org.iringtools.refdata
 
     private List<Classification> ProcessClassifications(Repository repository, string sparql)
     {
+    
       SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
+     
       List<Classification> classifications = new List<Classification>();
       List<string> names = new List<string>();
       string resultValue = string.Empty;
@@ -406,7 +408,7 @@ namespace org.iringtools.refdata
         string sparql = String.Empty;
         string sparqlPart8 = String.Empty;
         string relativeUri = String.Empty;
-
+     
         List<Specialization> specializations = new List<Specialization>();
 
         Query queryGetSpecialization = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
@@ -418,16 +420,17 @@ namespace org.iringtools.refdata
 
         sparqlPart8 = ReadSPARQL(queryGetSubClassOf.FileName);
         sparqlPart8 = sparqlPart8.Replace("param1", id);
-
+     
         foreach (Repository repository in _repositories)
         {
           if (rep != null)
             if (rep.Name != repository.Name) continue;
-
+        
           if (repository.RepositoryType == RepositoryType.Part8)
           {
+      
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparqlPart8);
-
+    
             foreach (SparqlResult result in sparqlResults)
             {
               Specialization specialization = new Specialization();
@@ -449,6 +452,7 @@ namespace org.iringtools.refdata
               if (string.IsNullOrEmpty(specialization.label))
               {
                 Entity entity = GetLabel(uri);
+               
                 specialization.label = entity.Label;
                 specialization.lang = entity.Lang;
               }
@@ -626,8 +630,9 @@ namespace org.iringtools.refdata
 
             classDefinition.description.Add(description);
             classDefinition.status.Add(status);
-
+    
             classifications = GetClassifications(id, repository);
+     
             specializations = GetSpecializations(id, repository);
             if (classifications.Count > 0)
               classDefinition.classification = classifications;
@@ -1534,10 +1539,15 @@ namespace org.iringtools.refdata
       {
         string sparql = String.Empty;
         string relativeUri = String.Empty;
-
+        string qId = string.Empty;
         Query queryContainsSearch = null;
         Description description = new Description();
         QMXFStatus status = new QMXFStatus();
+
+        if (!id.Contains(":"))
+          qId = string.Format("tpl:{0}", id);
+        else
+          qId = id;
 
         foreach (Repository repository in _repositories)
         {
@@ -1587,7 +1597,7 @@ namespace org.iringtools.refdata
               }
             }
 
-            templateDefinition.identifier = "tpl:" + id;
+            templateDefinition.identifier = qId;
             templateDefinition.name.Add(name);
             templateDefinition.description.Add(description);
             templateDefinition.status.Add(status);
@@ -1677,8 +1687,13 @@ namespace org.iringtools.refdata
         string relativeUri = String.Empty;
         string sparqlQuery = string.Empty;
         string dataType = string.Empty;
-
+        string qId = string.Empty;
         Query getTemplateQualification = null;
+
+        if (!id.Contains(":"))
+          qId = string.Format("tpl:{0}", id);
+        else
+          qId = id;
 
         {
           foreach (Repository repository in _repositories)
@@ -1742,8 +1757,8 @@ namespace org.iringtools.refdata
                   templateQualification.qualifies = ((UriNode)result[v]).Uri.ToString();
                 }
               }
-
-              templateQualification.identifier = id;
+              
+              templateQualification.identifier = qId;
               templateQualification.name.Add(name);
               templateQualification.description.Add(description);
               templateQualification.status.Add(status);
@@ -1908,21 +1923,21 @@ namespace org.iringtools.refdata
       try
       {
         Response response = new Response();
-
-        string encryptedCredentials = repository.EncryptedCredentials;
-        string uri = string.IsNullOrEmpty(repository.UpdateUri) ? repository.Uri : repository.UpdateUri;
-
-        WebCredentials cred = new WebCredentials(encryptedCredentials);
-        if (cred.isEncrypted) cred.Decrypt();
-
+        
         SparqlRemoteUpdateEndpoint endpoint = new SparqlRemoteUpdateEndpoint(repository.UpdateUri);
+        string encryptedCredentials = repository.EncryptedCredentials;
+
+        WebCredentials  cred = new WebCredentials(encryptedCredentials);
+
+        if (cred.isEncrypted) cred.Decrypt();
 
         if (!string.IsNullOrEmpty(_settings["ProxyHost"])
           && !string.IsNullOrEmpty(_settings["ProxyPort"])
           && !string.IsNullOrEmpty(_settings["ProxyCredentialToken"])) /// need to use proxy
         {
           endpoint.Proxy = new WebProxy(_settings["ProxyHost"], Convert.ToInt32(_settings["ProxyPort"]));
-          WebProxyCredentials pcred = new WebProxyCredentials(_settings["ProxyCredentialToken"],
+          WebProxyCredentials pcred = new WebProxyCredentials(
+                                        _settings["ProxyCredentialToken"],
                                         _settings["ProxyHost"],
                                         Convert.ToInt32(_settings["ProxyPort"]));
           if (pcred.isEncrypted) pcred.Decrypt();
@@ -3083,7 +3098,6 @@ namespace org.iringtools.refdata
           foreach (ClassDefinition newClsDef in qmxf.classDefinitions)
           {
             string language = string.Empty;
-            int classCount = 0;
             string clsId = Utility.GetIdFromURI(newClsDef.identifier);
             QMXF oldQmxf = new QMXF();
 

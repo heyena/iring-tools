@@ -261,6 +261,17 @@ namespace org.iringtools.ontologyservice.presentation
       }
     }
 
+    private bool _selectedIsMapped;
+    public bool SelectedIsMapped
+    {
+      get { return _selectedIsMapped; }
+      set
+      {
+        _selectedIsMapped = value;
+        OnPropertyChanged("SelectedIsMapped");
+      }
+    }
+
     private QMXF _selectedQMXF;
     public QMXF SelectedQMXF
     {

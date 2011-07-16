@@ -518,7 +518,7 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                 errorMsg = errorMsg + "Parameter[ClassName] cannot be null\r\n";
                 isRaiseEx = true;
             }
-            if (ComboBoxCtrl("cmbentityType").SelectedIndex == -1)
+            if (ComboBoxCtrl("cmbEntityType").SelectedIndex == -1)
             {
                 errorMsg = errorMsg + "Parameter[EntityType] cannot be null\r\n";
                 isRaiseEx = true;
@@ -549,10 +549,10 @@ namespace org.iringtools.modelling.classdefinition.classdefinitioneditor
                   TextCtrl("className").Focus();
 
               }
-              else
-              {
-                  TextCtrl("entityType").Focus();                  
-              }
+              //else
+              //{
+              //    TextCtrl("entityType").Focus();                  
+              //}
 
           }
           else

@@ -1097,6 +1097,13 @@
             <param name="algebra">Algebra to optimise</param>
             <returns></returns>
         </member>
+        <member name="M:VDS.RDF.Query.Optimisation.StrictAlgebraOptimiser.IsApplicable(VDS.RDF.Query.SparqlQuery)">
+            <summary>
+            Returns that the optimiser is applicable to all queries
+            </summary>
+            <param name="q">Query</param>
+            <returns></returns>
+        </member>
         <member name="T:VDS.RDF.Query.Expressions.Functions.LeviathanCartesianFunction">
             <summary>
             Represents the Leviathan lfn:cartesian() function
@@ -1131,6 +1138,13 @@
             </summary>
             <param name="context">Evaluation Context</param>
             <param name="bindingID">Binding ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Expressions.ISparqlExpression.Transform(VDS.RDF.Query.Expressions.IExpressionTransformer)">
+            <summary>
+            Transforms the arguments of the expression using the given transformer
+            </summary>
+            <param name="transformer">Expression Transformer</param>
             <returns></returns>
         </member>
         <member name="P:VDS.RDF.Query.Expressions.ISparqlExpression.Variables">
@@ -1261,6 +1275,13 @@
             </summary>
             <param name="context">Evaluation Context</param>
             <param name="bindingID">Binding ID</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Expressions.BaseArithmeticExpression.Transform(VDS.RDF.Query.Expressions.IExpressionTransformer)">
+            <summary>
+            Transforms the arguments of the expression using the given transformer
+            </summary>
+            <param name="transformer">Expression Transformer</param>
             <returns></returns>
         </member>
         <member name="P:VDS.RDF.Query.Expressions.BaseArithmeticExpression.Variables">
@@ -1410,25 +1431,23 @@
             Gets whether Blank Nodes bound to variables should be preserved
             </summary>
         </member>
-        <member name="T:VDS.RDF.Query.Algebra.OneOrMorePath">
+        <member name="T:VDS.RDF.Query.Algebra.ParallelUnion">
             <summary>
-            Represents a One or More Path (e.g. rdf:type+) in the SPARQL Algebra
+            Represents a Union which will be evaluated in parallel
             </summary>
         </member>
-        <member name="T:VDS.RDF.Query.Algebra.BaseArbitraryLengthPathOperator">
+        <member name="T:VDS.RDF.Query.Algebra.IUnion">
             <summary>
-            Abstract Base Class for Arbitrary Length Path Operators
+            Represents an Algebra construct which is a Union
             </summary>
         </member>
-        <member name="T:VDS.RDF.Query.Algebra.BasePathOperator">
+        <member name="T:VDS.RDF.Query.Algebra.IAbstractJoin">
             <summary>
-            Abstract Base Class for Path Operators
+            Represents an Algebra construct which is an Abstract Join (i.e. any kind of Join over two algebra operators)
             </summary>
-        </member>
-        <member name="T:VDS.RDF.Query.Algebra.IPathOperator">
-            <summary>
-            Interface for Property Path Operators
-            </summary>
+            <remarks>
+            Specific sub-interfaces are used to mark specific kinds of Join
+            </remarks>
         </member>
         <member name="T:VDS.RDF.Query.Algebra.ISparqlAlgebra">
             <summary>
@@ -1459,6 +1478,212 @@
         <member name="P:VDS.RDF.Query.Algebra.ISparqlAlgebra.Variables">
             <summary>
             Gets the enumeration of Variables used in the Algebra
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.IAbstractJoin.Transform(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms both sides of the Join using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimser</param>
+            <returns></returns>
+            <remarks>
+            The join should retain all it's existing properties and just return a new version of itself with the two sides of the join having had the given optimiser applied to them
+            </remarks>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.IAbstractJoin.TransformLhs(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms the LHS of the Join using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimser</param>
+            <returns></returns>
+            <remarks>
+            The join should retain all it's existing properties and just return a new version of itself with LHS side of the join having had the given optimiser applied to them
+            </remarks>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.IAbstractJoin.TransformRhs(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms the RHS of the Join using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimser</param>
+            <returns></returns>
+            <remarks>
+            The join should retain all it's existing properties and just return a new version of itself with RHS side of the join having had the given optimiser applied to them
+            </remarks>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.IAbstractJoin.Lhs">
+            <summary>
+            Gets the LHS of the Join
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.IAbstractJoin.Rhs">
+            <summary>
+            Gets the RHS of the Join
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelUnion.#ctor(VDS.RDF.Query.Algebra.ISparqlAlgebra,VDS.RDF.Query.Algebra.ISparqlAlgebra)">
+            <summary>
+            Creates a new Union
+            </summary>
+            <param name="lhs">LHS Pattern</param>
+            <param name="rhs">RHS Pattern</param>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelUnion.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
+            <summary>
+            Evaluates the Union
+            </summary>
+            <param name="context"></param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelUnion.ToString">
+            <summary>
+            Gets the String representation of the Algebra
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelUnion.ToQuery">
+            <summary>
+            Converts the Algebra back to a SPARQL Query
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelUnion.ToGraphPattern">
+            <summary>
+            Converts the Algebra back to a SPARQL Query
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelUnion.Transform(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms both sides of the Join using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimser</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelUnion.TransformLhs(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms the LHS of the Join using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimser</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelUnion.TransformRhs(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms the RHS of the Join using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimser</param>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.ParallelUnion.Variables">
+            <summary>
+            Gets the Variables used in the Algebra
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.ParallelUnion.Lhs">
+            <summary>
+            Gets the LHS of the Join
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.ParallelUnion.Rhs">
+            <summary>
+            Gets the RHS of the Join
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Query.Algebra.ParallelJoin">
+            <summary>
+            Represents a Join which will be evaluated in parallel
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Query.Algebra.IJoin">
+            <summary>
+            Represents an Algebra construct which is a Join
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelJoin.#ctor(VDS.RDF.Query.Algebra.ISparqlAlgebra,VDS.RDF.Query.Algebra.ISparqlAlgebra)">
+            <summary>
+            Creates a new Join
+            </summary>
+            <param name="lhs">Left Hand Side</param>
+            <param name="rhs">Right Hand Side</param>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelJoin.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
+            <summary>
+            Evalutes a Join
+            </summary>
+            <param name="context">Evaluation Context</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelJoin.ToString">
+            <summary>
+            Gets the String representation of the Join
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelJoin.ToQuery">
+            <summary>
+            Converts the Algebra back to a SPARQL Query
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelJoin.ToGraphPattern">
+            <summary>
+            Converts the Algebra back to a SPARQL Query
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelJoin.Transform(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms both sides of the Join using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimser</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelJoin.TransformLhs(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms the LHS of the Join using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimser</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.ParallelJoin.TransformRhs(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms the RHS of the Join using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimser</param>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.ParallelJoin.Variables">
+            <summary>
+            Gets the Variables used in the Algebra
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.ParallelJoin.Lhs">
+            <summary>
+            Gets the LHS of the Join
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.ParallelJoin.Rhs">
+            <summary>
+            Gets the RHS of the Join
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Query.Algebra.OneOrMorePath">
+            <summary>
+            Represents a One or More Path (e.g. rdf:type+) in the SPARQL Algebra
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Query.Algebra.BaseArbitraryLengthPathOperator">
+            <summary>
+            Abstract Base Class for Arbitrary Length Path Operators
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Query.Algebra.BasePathOperator">
+            <summary>
+            Abstract Base Class for Path Operators
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Query.Algebra.IPathOperator">
+            <summary>
+            Interface for Property Path Operators
             </summary>
         </member>
         <member name="P:VDS.RDF.Query.Algebra.IPathOperator.PathStart">
@@ -1917,211 +2142,211 @@
             Event which is raised when the parser detects issues with the input which are non-fatal
             </summary>
         </member>
-        <member name="T:VDS.RDF.Parsing.Events.EventQueue">
+        <member name="T:VDS.RDF.Parsing.Events.EventQueue`1">
             <summary>
-            Represents a Queue of <see cref="T:VDS.RDF.Parsing.Events.IRdfXmlEvent">IRdfXmlEvent</see>'s for use by RDF/XML parsers
+            Represents a Queue of events for use by event based parsers
             </summary>
         </member>
-        <member name="T:VDS.RDF.Parsing.Events.BaseEventQueue">
+        <member name="T:VDS.RDF.Parsing.Events.BaseEventQueue`1">
             <summary>
             Abstract base implementation of an Event Queue
             </summary>
         </member>
-        <member name="T:VDS.RDF.Parsing.Events.IEventQueue">
+        <member name="T:VDS.RDF.Parsing.Events.IEventQueue`1">
             <summary>
             Interface for implementing Event Queues which provide Bufferable wrappers to Event Generators
             </summary>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.IEventQueue.Dequeue">
+        <member name="M:VDS.RDF.Parsing.Events.IEventQueue`1.Dequeue">
             <summary>
             Removes the first Event from the Queue
             </summary>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.IEventQueue.Enqueue(VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.Events.IEventQueue`1.Enqueue(`0)">
             <summary>
             Adds an Event to the end of the Queue
             </summary>
             <param name="e">Event to add</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.IEventQueue.Peek">
+        <member name="M:VDS.RDF.Parsing.Events.IEventQueue`1.Peek">
             <summary>
             Gets the first Event from the Queue without removing it
             </summary>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.IEventQueue.Clear">
+        <member name="M:VDS.RDF.Parsing.Events.IEventQueue`1.Clear">
             <summary>
             Clears the Event Queue
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.IEventQueue.EventGenerator">
+        <member name="P:VDS.RDF.Parsing.Events.IEventQueue`1.EventGenerator">
             <summary>
             Gets the Event Generator that this Queue uses
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.IEventQueue.Count">
+        <member name="P:VDS.RDF.Parsing.Events.IEventQueue`1.Count">
             <summary>
             Gets the number of Events in the Queue
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.IEventQueue.Events">
+        <member name="P:VDS.RDF.Parsing.Events.IEventQueue`1.Events">
             <summary>
             Gets the underlying Queue of Events
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.IEventQueue.Tracing">
+        <member name="P:VDS.RDF.Parsing.Events.IEventQueue`1.Tracing">
             <summary>
             Gets/Sets whether Generator Tracing should be used
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.IEventQueue.LastEventType">
+        <member name="P:VDS.RDF.Parsing.Events.IEventQueue`1.LastEventType">
             <summary>
             Gets the Event Type of the last Event dequeued
             </summary>
         </member>
-        <member name="F:VDS.RDF.Parsing.Events.BaseEventQueue._eventgen">
+        <member name="F:VDS.RDF.Parsing.Events.BaseEventQueue`1._eventgen">
             <summary>
             Generator used to fill the Event Queue
             </summary>
         </member>
-        <member name="F:VDS.RDF.Parsing.Events.BaseEventQueue._tracing">
+        <member name="F:VDS.RDF.Parsing.Events.BaseEventQueue`1._tracing">
             <summary>
             Variable indicating whether Generator Tracing is enabled
             </summary>
         </member>
-        <member name="F:VDS.RDF.Parsing.Events.BaseEventQueue._lasteventtype">
+        <member name="F:VDS.RDF.Parsing.Events.BaseEventQueue`1._lasteventtype">
             <summary>
             Type of Last Event dequeued
             </summary>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.BaseEventQueue.Dequeue">
+        <member name="M:VDS.RDF.Parsing.Events.BaseEventQueue`1.Dequeue">
             <summary>
             Dequeues an Event from the Queue
             </summary>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.BaseEventQueue.Enqueue(VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.Events.BaseEventQueue`1.Enqueue(`0)">
             <summary>
             Adds an Event to the Queue
             </summary>
             <param name="e">Event</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.BaseEventQueue.Peek">
+        <member name="M:VDS.RDF.Parsing.Events.BaseEventQueue`1.Peek">
             <summary>
             Gets the next Event from the Queue without removing it from the queue
             </summary>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.BaseEventQueue.Clear">
+        <member name="M:VDS.RDF.Parsing.Events.BaseEventQueue`1.Clear">
             <summary>
             Clears the Event Queue
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.BaseEventQueue.EventGenerator">
+        <member name="P:VDS.RDF.Parsing.Events.BaseEventQueue`1.EventGenerator">
             <summary>
             Gets the Event Generator used by the Queue
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.BaseEventQueue.Count">
+        <member name="P:VDS.RDF.Parsing.Events.BaseEventQueue`1.Count">
             <summary>
             Gets the number of Events in the Queue
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.BaseEventQueue.Events">
+        <member name="P:VDS.RDF.Parsing.Events.BaseEventQueue`1.Events">
             <summary>
             Gets the underlying Queue of Events
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.BaseEventQueue.Tracing">
+        <member name="P:VDS.RDF.Parsing.Events.BaseEventQueue`1.Tracing">
             <summary>
             Gets/Sets Tracing for the Event Queue
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.BaseEventQueue.LastEventType">
+        <member name="P:VDS.RDF.Parsing.Events.BaseEventQueue`1.LastEventType">
             <summary>
             Gets the Event Type of the last Event dequeued
             </summary>
         </member>
-        <member name="F:VDS.RDF.Parsing.Events.EventQueue._events">
+        <member name="F:VDS.RDF.Parsing.Events.EventQueue`1._events">
             <summary>
             Queue of Events
             </summary>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.EventQueue.#ctor">
+        <member name="M:VDS.RDF.Parsing.Events.EventQueue`1.#ctor">
             <summary>
             Creates a new Event Queue
             </summary>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.EventQueue.#ctor(VDS.RDF.Parsing.Events.IEventGenerator)">
+        <member name="M:VDS.RDF.Parsing.Events.EventQueue`1.#ctor(VDS.RDF.Parsing.Events.IEventGenerator{`0})">
             <summary>
             Creates a new Event Queue with the given Event Generator
             </summary>
             <param name="generator">Event Generator</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.EventQueue.Dequeue">
+        <member name="M:VDS.RDF.Parsing.Events.EventQueue`1.Dequeue">
             <summary>
             Dequeues and returns the next event in the Queue
             </summary>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.EventQueue.Enqueue(VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.Events.EventQueue`1.Enqueue(`0)">
             <summary>
             Adds an event to the end of the Queue
             </summary>
             <param name="e">Event</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.EventQueue.Peek">
+        <member name="M:VDS.RDF.Parsing.Events.EventQueue`1.Peek">
             <summary>
             Peeks and returns the next event in the Queue
             </summary>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.EventQueue.Clear">
+        <member name="M:VDS.RDF.Parsing.Events.EventQueue`1.Clear">
             <summary>
             Clears the Queue
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.EventQueue.Count">
+        <member name="P:VDS.RDF.Parsing.Events.EventQueue`1.Count">
             <summary>
             Gets the number of events currently in the Queue
             </summary>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.EventQueue.Events">
+        <member name="P:VDS.RDF.Parsing.Events.EventQueue`1.Events">
             <summary>
             Gets the underlying Queue of Events
             </summary>
         </member>
-        <member name="T:VDS.RDF.Parsing.Events.StreamingEventQueue">
+        <member name="T:VDS.RDF.Parsing.Events.StreamingEventQueue`1">
             <summary>
-            Represents a Queue of <see cref="T:VDS.RDF.Parsing.Events.IRdfXmlEvent">IRdfXmlEvent</see>'s which are streamed from an instance of a <see cref="T:VDS.RDF.Parsing.Events.IJitEventGenerator">IJitEventGenerator</see> for use by RDF/XML parsers
+            Represents a Queue of events which are streamed from an instance of a <see cref="!:IJitEventGenerator">IJitEventGenerator</see> for use by an event based parser
             </summary>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventQueue.#ctor(VDS.RDF.Parsing.Events.IJitEventGenerator)">
+        <member name="M:VDS.RDF.Parsing.Events.StreamingEventQueue`1.#ctor(VDS.RDF.Parsing.Events.IJitEventGenerator{`0})">
             <summary>
             Creates a new Streaming Event Queue
             </summary>
             <param name="generator">Event Generator</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventQueue.Enqueue(VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.Events.StreamingEventQueue`1.Enqueue(`0)">
             <summary>
             Adds an event to the Queue
             </summary>
             <param name="e">Event</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventQueue.Dequeue">
+        <member name="M:VDS.RDF.Parsing.Events.StreamingEventQueue`1.Dequeue">
             <summary>
             Gets the next event from the Queue and removes it from the Queue
             </summary>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventQueue.Peek">
+        <member name="M:VDS.RDF.Parsing.Events.StreamingEventQueue`1.Peek">
             <summary>
             Gets the next event from the Queue while leaving the Queue unchanged
             </summary>
             <returns></returns>
         </member>
-        <member name="P:VDS.RDF.Parsing.Events.StreamingEventQueue.Count">
+        <member name="P:VDS.RDF.Parsing.Events.StreamingEventQueue`1.Count">
             <summary>
             Gets the Count of events in the queue
             </summary>
@@ -9374,6 +9599,118 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:VDS.RDF.Query.Algebra.VariableRestrictionFilter">
+            <summary>
+            Abstract Base Class for specialised Filters which restrict the value of a variable to some values
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.VariableRestrictionFilter.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
+            <summary>
+            Evalutes the algebra for the given evaluation context
+            </summary>
+            <param name="context">Evaluation Context</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.VariableRestrictionFilter.ToString">
+            <summary>
+            Gets the String representation of the FILTER
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.VariableRestrictionFilter.ToQuery">
+            <summary>
+            Converts the Algebra back to a SPARQL Query
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.VariableRestrictionFilter.ToGraphPattern">
+            <summary>
+            Converts the Algebra back to a Graph Pattern
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.VariableRestrictionFilter.Transform(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms the Inner Algebra using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimiser</param>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.VariableRestrictionFilter.RestrictionVariable">
+            <summary>
+            Gets the Variable that this filter restricts the value of
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.VariableRestrictionFilter.Variables">
+            <summary>
+            Gets the Variables used in the Algebra
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.VariableRestrictionFilter.SparqlFilter">
+            <summary>
+            Gets the Filter to be used
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.VariableRestrictionFilter.InnerAlgebra">
+            <summary>
+            Gets the Inner Algebra
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Query.Algebra.SingleValueRestrictionFilter">
+            <summary>
+            Abstract Base Class for specialised Filters which restrict the value of a variable to a single value
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.SingleValueRestrictionFilter.Evaluate(VDS.RDF.Query.SparqlEvaluationContext)">
+            <summary>
+            Applies the Filter over the results of evaluating the inner pattern
+            </summary>
+            <param name="context">Evaluation Context</param>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Query.Algebra.SingleValueRestrictionFilter.RestrictionValue">
+            <summary>
+            Gets the Value Restriction which this filter applies
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Query.Algebra.IdentityFilter">
+            <summary>
+            Represents a special case Filter where the Filter restricts a variable to just one value i.e. FILTER(?x = &lt;value&gt;)
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.IdentityFilter.#ctor(VDS.RDF.Query.Algebra.ISparqlAlgebra,System.String,VDS.RDF.Query.Expressions.NodeExpressionTerm)">
+            <summary>
+            Creates a new Identity Filter
+            </summary>
+            <param name="pattern">Algebra the Filter applies over</param>
+            <param name="term">Expression Term</param>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.IdentityFilter.Transform(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms the Inner Algebra using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimiser</param>
+            <returns></returns>
+        </member>
+        <member name="T:VDS.RDF.Query.Algebra.SameTermFilter">
+            <summary>
+            Represents a special case Filter where the Filter is supposed to restrict a variable to just one value i.e. FILTER(SAMETERM(?x, &lt;value&gt;))
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.SameTermFilter.#ctor(VDS.RDF.Query.Algebra.ISparqlAlgebra,System.String,VDS.RDF.Query.Expressions.NodeExpressionTerm)">
+            <summary>
+            Creates a new Same Term Filter
+            </summary>
+            <param name="pattern">Algebra the Filter applies over</param>
+            <param name="term">Expression Term</param>
+        </member>
+        <member name="M:VDS.RDF.Query.Algebra.SameTermFilter.Transform(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
+            <summary>
+            Transforms the Inner Algebra using the given Optimiser
+            </summary>
+            <param name="optimiser">Optimiser</param>
+            <returns></returns>
+        </member>
         <member name="T:VDS.RDF.Query.Algebra.Bgp">
             <summary>
             Represents a BGP which is a set of Triple Patterns
@@ -10410,101 +10747,6 @@
             Constants defining Token Types
             </summary>
         </member>
-        <member name="T:VDS.RDF.Parsing.Events.StreamingEventGenerator">
-            <summary>
-            A JIT event generator for RDF/XML parsing that uses Streaming parsing to parse the events
-            </summary>
-            <remarks>
-            Currently unimplemented stub class
-            </remarks>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.IJitEventGenerator">
-            <summary>
-            Interface for event generators which generate events as required during the parsing process
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.IEventGenerator">
-            <summary>
-            Interface for Event Generators
-            </summary>
-            <remarks>
-            <para>
-            An Event Generator is a class which takes an input stream which contains XML and generates a series of events from it
-            </para>
-            <para>
-            This interface is a marker interface which indicates that the class is an event generator, implementations should implement one of the concrete derived interfaces as appropriate to their mode of operation.
-            </para>
-            </remarks>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.IJitEventGenerator.GetNextEvent">
-            <summary>
-            Causes the Event Generator to attempt to retrieve the next Event
-            </summary>
-            <returns></returns>
-            <exception cref="T:System.IO.IOException">Thrown if there is a problem reading the input</exception>
-            <exception cref="T:System.Xml.XmlException">Thrown if there is a problem with the XML being read</exception>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.IJitEventGenerator.Finished">
-            <summary>
-            Gets whether the Event Generator has finished reading events i.e. there are no further events available
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventGenerator.#ctor(System.IO.Stream)">
-            <summary>
-            Creates a new Streaming Event Generator
-            </summary>
-            <param name="stream">Stream</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventGenerator.#ctor(System.IO.Stream,System.String)">
-            <summary>
-            Creates a new Streaming Event Generator
-            </summary>
-            <param name="stream">Stream</param>
-            <param name="baseUri">Base URI</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventGenerator.#ctor(System.IO.TextReader)">
-            <summary>
-            Creates a new Streaming Event Generator
-            </summary>
-            <param name="reader">Text Reader</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventGenerator.#ctor(System.IO.TextReader,System.String)">
-            <summary>
-            Creates a new Streaming Event Generator
-            </summary>
-            <param name="reader">Text Reader</param>
-            <param name="baseUri">Base URI</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventGenerator.#ctor(System.String)">
-            <summary>
-            Creates a new Streaming Event Generator
-            </summary>
-            <param name="file">Filename</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventGenerator.#ctor(System.String,System.String)">
-            <summary>
-            Creates a new Streaming Event Generator
-            </summary>
-            <param name="file">Filename</param>
-            <param name="baseUri">Base URI</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventGenerator.GetSettings">
-            <summary>
-            Initialises the XML Reader settings
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.StreamingEventGenerator.GetNextEvent">
-            <summary>
-            Gets the next event from the XML stream
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.StreamingEventGenerator.Finished">
-            <summary>
-            Gets whether the event generator has finished generating events
-            </summary>
-        </member>
         <member name="T:VDS.RDF.Parsing.Handlers.StoreHandler">
             <summary>
             A RDF Handler that loads Quads into a <see cref="T:VDS.RDF.ITripleStore">ITripleStore</see> instance
@@ -11459,6 +11701,31 @@
             </para>
             </remarks>
         </member>
+        <member name="M:VDS.RDF.GraphFactory.GetGraph(System.Uri)">
+            <summary>
+            Gets a Graph Reference for the given Graph URI
+            </summary>
+            <param name="graphUri">Graph URI</param>
+            <returns></returns>
+            <remarks>
+            Synonym for the index access method i.e. factory[graphUri]
+            </remarks>
+        </member>
+        <member name="M:VDS.RDF.GraphFactory.TryGetGraph(System.Uri,System.Boolean@)">
+            <summary>
+            Gets a Graph Reference for the given Graph URI and indicates whether this was a new Graph reference
+            </summary>
+            <param name="graphUri">Graph URI</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.GraphFactory.Reset">
+            <summary>
+            Resets the Factory so any Graphs with contents are emptied
+            </summary>
+            <remarks>
+            May be useful if your use of this class requires that you
+            </remarks>
+        </member>
         <member name="P:VDS.RDF.GraphFactory.Item(System.Uri)">
             <summary>
             Gets a Graph Reference for the given Graph URI
@@ -11772,35 +12039,35 @@
             Starts the Parsing of the flattened Event Tree by calling the appropriate Grammar Production based on the type of the First Event in the Queue
             </summary>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionDoc(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.RootEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionDoc(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.RdfXml.RootEvent)">
             <summary>
             Implementation of the RDF/XML Grammar Production 'doc'
             </summary>
             <param name="context">Parser Context</param>
             <param name="root">Root Event to start applying Productions from</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionRDF(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.ElementEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionRDF(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.RdfXml.ElementEvent)">
             <summary>
             Implementation of the RDF/XML Grammar Production 'RDF'
             </summary>
             <param name="context">Parser Context</param>
             <param name="element">RDF Element to apply Production to</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionNodeElementList(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionNodeElementList(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue{VDS.RDF.Parsing.Events.IRdfXmlEvent})">
             <summary>
             Implementation of the RDF/XML Grammar Production 'nodeElementList'
             </summary>
             <param name="context">Parser Context</param>
             <param name="eventlist">Queue of Events to apply the Production to</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionNodeElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionNodeElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue{VDS.RDF.Parsing.Events.IRdfXmlEvent})">
             <summary>
             Implementation of the RDF/XML Grammar Production 'nodeElement'
             </summary>
             <param name="context">Parser Context</param>
             <param name="eventlist">Queue of Events that make up the Node Element and its Children to apply the Production to</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionPropertyElementList(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionPropertyElementList(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue{VDS.RDF.Parsing.Events.IRdfXmlEvent},VDS.RDF.Parsing.Events.IRdfXmlEvent)">
             <summary>
             Implementation of the RDF/XML Grammar Production 'propertyEltList'
             </summary>
@@ -11808,7 +12075,7 @@
             <param name="eventlist">Queue of Events to apply the Production to</param>
             <param name="parent">Parent Event (ie. Node) of the Property Elements</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionPropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionPropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue{VDS.RDF.Parsing.Events.IRdfXmlEvent},VDS.RDF.Parsing.Events.IRdfXmlEvent)">
             <summary>
             Implementation of the RDF/XML Grammar Production 'propertyElt'
             </summary>
@@ -11816,7 +12083,7 @@
             <param name="eventlist">Queue of Events that make up the Property Element and its Children</param>
             <param name="parent">Parent Event (ie. Node) of the Property Element</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionResourcePropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionResourcePropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue{VDS.RDF.Parsing.Events.IRdfXmlEvent},VDS.RDF.Parsing.Events.IRdfXmlEvent)">
             <summary>
             Implementation of the RDF/XML Grammar Production 'resourcePropertyElt'
             </summary>
@@ -11824,7 +12091,7 @@
             <param name="eventlist">Queue of Events that make up the Resource Property Element and its Children</param>
             <param name="parent">Parent Event (ie. Node) of the Property Element</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionLiteralPropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionLiteralPropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue{VDS.RDF.Parsing.Events.IRdfXmlEvent},VDS.RDF.Parsing.Events.IRdfXmlEvent)">
             <summary>
             Implementation of the RDF/XML Grammar Production 'literalPropertyElt'
             </summary>
@@ -11832,7 +12099,7 @@
             <param name="eventlist">Queue of Events that make up the Literal Property Element and its Children</param>
             <param name="parent">Parent Event (ie. Node) of the Property Element</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionParseTypeLiteralPropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionParseTypeLiteralPropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue{VDS.RDF.Parsing.Events.IRdfXmlEvent},VDS.RDF.Parsing.Events.IRdfXmlEvent)">
             <summary>
             Implementation of the RDF/XML Grammar Production 'parseTypeLiteralPropertyElt'
             </summary>
@@ -11840,7 +12107,7 @@
             <param name="eventlist">Queue of Events that make up the Literal Parse Type Property Element and its Children</param>
             <param name="parent">Parent Event (ie. Node) of the Property Element</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionParseTypeResourcePropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionParseTypeResourcePropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue{VDS.RDF.Parsing.Events.IRdfXmlEvent},VDS.RDF.Parsing.Events.IRdfXmlEvent)">
             <summary>
             Implementation of the RDF/XML Grammar Production 'parseTypeResourcePropertyElt'
             </summary>
@@ -11848,7 +12115,7 @@
             <param name="eventlist">Queue of Events that make up the Resource Parse Type Property Element and its Children</param>
             <param name="parent">Parent Event (ie. Node) of the Property Element</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionParseTypeCollectionPropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionParseTypeCollectionPropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IEventQueue{VDS.RDF.Parsing.Events.IRdfXmlEvent},VDS.RDF.Parsing.Events.IRdfXmlEvent)">
             <summary>
             Implementation of the RDF/XML Grammar Production 'parseTypeCollectionPropertyElt'
             </summary>
@@ -11856,7 +12123,7 @@
             <param name="eventlist">Queue of Events that make up the Collection Parse Type Property Element and its Children</param>
             <param name="parent">Parent Event (ie. Node) of the Property Element</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionEmptyPropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.ElementEvent,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.GrammarProductionEmptyPropertyElement(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.RdfXml.ElementEvent,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
             <summary>
             Implementation of the RDF/XML Grammar Production 'emptyPropertyElt'
             </summary>
@@ -11864,14 +12131,14 @@
             <param name="element">Element Event for the Empty Property Element</param>
             <param name="parent">Parent Event (ie. Node) of the Property Element</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.ApplyNamespaces(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.ElementEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.ApplyNamespaces(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.RdfXml.ElementEvent)">
             <summary>
             Applies the Namespace Attributes of an Element Event to the Namespace Map
             </summary>
             <param name="context">Parser Context</param>
             <param name="evt">Element Event</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.Resolve(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.UriReferenceEvent,System.String)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.Resolve(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.RdfXml.UriReferenceEvent,System.String)">
             <summary>
             Resolves a Uri Reference into a Uri Node against a given Base Uri
             </summary>
@@ -11890,7 +12157,7 @@
             <param name="pred">Predicate of the Triple</param>
             <param name="obj">Object of the Triple</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlParser.QueueJump(VDS.RDF.Parsing.Events.IEventQueue,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlParser.QueueJump(VDS.RDF.Parsing.Events.IEventQueue{VDS.RDF.Parsing.Events.IRdfXmlEvent},VDS.RDF.Parsing.Events.IRdfXmlEvent)">
             <summary>
             Helper function which inserts an Element back on the front of a Queue
             </summary>
@@ -11933,6 +12200,696 @@
         <member name="E:VDS.RDF.Parsing.RdfXmlParser.Warning">
             <summary>
             Event which Readers can raise when they notice syntax that is ambigious/deprecated etc which can still be parsed
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent">
+            <summary>
+            Static Class which defines the Event Types for RDF/XML Events
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.Root">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.Clear">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.Element">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.EndElement">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.Attribute">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.NamespaceAttribute">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.LanguageAttribute">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.ParseTypeAttribute">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.XmlBaseAttribute">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.Text">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.UriReference">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.QName">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.BlankNodeID">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.Literal">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfXml.RdfXmlEvent.TypedLiteral">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.RootEvent">
+            <summary>
+            Event representing the Root Node of the Document
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.BaseRdfXmlEvent">
+            <summary>
+            Abstract Base Class for <see cref="T:VDS.RDF.Parsing.Events.IRdfXmlEvent">IRdfXmlEvent</see> implementations
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.IEvent">
+            <summary>
+            Interface for parser events
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.IEvent.EventType">
+            <summary>
+            Gives some Integer representing the Event Type as understood by a specific Parser implementation
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.IEvent.Position">
+            <summary>
+            Gets the Position Information (if any)
+            </summary>
+            <remarks>
+            Availability of Position Information depends on the how the source document was parsed
+            </remarks>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.BaseEvent.EventType">
+            <summary>
+            Gets the Type for this Event
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.BaseEvent.Position">
+            <summary>
+            Gets the Position Information (if any)
+            </summary>
+            <remarks>
+            Availability of Position Information depends on the how the source document was parsed
+            </remarks>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.IRdfXmlEvent">
+            <summary>
+            Interface for RDF/XML events as defined by the RDF/XML Specification
+            </summary>
+            <remarks>Used to provide polymorphism for the XML/RDF Parser</remarks>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.IRdfXmlEvent.SourceXml">
+            <summary>
+            Gets the XML that produced the given event (if any)
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.BaseRdfXmlEvent.#ctor(System.Int32,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates an Event and fills in its Values
+            </summary>
+            <param name="eventType">Type of the Event</param>
+            <param name="sourceXml">Source XML that generated the Event</param>
+            <param name="pos">Position of the XML Event</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.BaseRdfXmlEvent.#ctor(System.Int32,System.String)">
+            <summary>
+            Creates an Event and fills in its Values
+            </summary>
+            <param name="eventType">Type of the Event</param>
+            <param name="sourceXml">Source XML that generated the Event</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.BaseRdfXmlEvent.SourceXml">
+            <summary>
+            Gets the XML that this Event was generated from
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.RootEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Root Event
+            </summary>
+            <param name="baseUri">Base Uri of the Document</param>
+            <param name="sourceXml">Source XML of the Document</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.RootEvent.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new Root Event
+            </summary>
+            <param name="baseUri">Base Uri of the Document</param>
+            <param name="sourceXml">Source XML of the Document</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.RootEvent.DocumentElement">
+            <summary>
+            Gets/Sets the ElementEvent that represents the actual DocumentElement
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.RootEvent.Children">
+            <summary>
+            Gets all the Child ElementEvents of the Document Root
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.RootEvent.BaseUri">
+            <summary>
+            Gets the Base Uri of the Node
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.RootEvent.Language">
+            <summary>
+            Gets the Language of the Node
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.ElementEvent">
+            <summary>
+            Event representing a Node from the XML Document
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.#ctor(System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Element Event
+            </summary>
+            <param name="qname">QName of the XML Node</param>
+            <param name="baseUri">Base Uri of the XML Node</param>
+            <param name="sourceXml">Source XML of the XML Node</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Creates a new Element Event
+            </summary>
+            <param name="qname">QName of the XML Node</param>
+            <param name="baseUri">Base Uri of the XML Node</param>
+            <param name="sourceXml">Source XML of the XML Node</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.#ctor(System.String,System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates new Element Event
+            </summary>
+            <param name="localname">Local Name of the XML Node</param>
+            <param name="ns">Namespace Prefix of the XML Node</param>
+            <param name="baseUri">Base Uri of the XML Node</param>
+            <param name="sourceXml">Source XML of the XML Node</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            Creates new Element Event
+            </summary>
+            <param name="localname">Local Name of the XML Node</param>
+            <param name="ns">Namespace Prefix of the XML Node</param>
+            <param name="baseUri">Base Uri of the XML Node</param>
+            <param name="sourceXml">Source XML of the XML Node</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.SetUri(VDS.RDF.Parsing.Events.RdfXml.UriReferenceEvent)">
+            <summary>
+            Method which sets the Uri for this Element Event
+            </summary>
+            <param name="u">Uri Reference to set Uri from</param>
+            <remarks>This can only be used on Elements which are rdf:li and thus need expanding into actual list elements according to List Expansion rules.  Attempting to set the Uri on any other Element Event will cause an Error message.</remarks>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.ToString">
+            <summary>
+            Gets the String representation of the Event
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.LocalName">
+            <summary>
+            Gets the Local Name of this Element Event
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.Namespace">
+            <summary>
+            Gets the Namespace of this Element Event
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.QName">
+            <summary>
+            Gets the QName of this Element Event
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.Children">
+            <summary>
+            Gets the Child Element Events 
+            </summary>
+            <remarks>These correspond to the Child Nodes of the XML Node</remarks>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.BaseUri">
+            <summary>
+            Gets/Sets the Base Uri of the XML Node
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.Attributes">
+            <summary>
+            Gets the Attribute Events
+            </summary>
+            <remarks>These correspond to the Attributes of the XML Node (with some exceptions as defined in the RDF/XML specification)</remarks>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.NamespaceAttributes">
+            <summary>
+            Gets the Namespace Attribute Events
+            </summary>
+            <remarks>
+            These correspond to all the Namespace Attributes of the XML Node
+            </remarks>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.ListCounter">
+            <summary>
+            Gets/Sets the List Counter
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.Language">
+            <summary>
+            Gets/Sets the Language of this Event
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.Subject">
+            <summary>
+            Gets/Sets the Subject Event of this Event
+            </summary>
+            <remarks>Will be assigned according to the Parsing rules during the Parsing process and later used to generate a Subject Node</remarks>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.SubjectNode">
+            <summary>
+            Gets/Sets the Subject Node of this Event
+            </summary>
+            <remarks>Will be created from the Subject at some point during the Parsing process</remarks>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ElementEvent.ParseType">
+            <summary>
+            Gets/Sets the Parse Type for this Event
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.EndElementEvent">
+            <summary>
+            An Event for representing the End of Elements
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.EndElementEvent.#ctor(VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new EndElementEvent
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.EndElementEvent.#ctor">
+            <summary>
+            Creates a new EndElementEvent
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.AttributeEvent">
+            <summary>
+            An Event for representing Attributes of XML Node
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.AttributeEvent.#ctor(System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Attribute Event from an XML Attribute
+            </summary>
+            <param name="qname">QName of the Attribute</param>
+            <param name="value">Value of the Attribute</param>
+            <param name="sourceXml">Source XML of the Attribute</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.AttributeEvent.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Creates a new Attribute Event from an XML Attribute
+            </summary>
+            <param name="qname">QName of the Attribute</param>
+            <param name="value">Value of the Attribute</param>
+            <param name="sourceXml">Source XML of the Attribute</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.AttributeEvent.#ctor(System.String,System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Attribute Event from an XML Attribute
+            </summary>
+            <param name="localname">Local Name of the Attribute</param>
+            <param name="ns">Namespace Prefix of the Attribute</param>
+            <param name="value">Value of the Attribute</param>
+            <param name="sourceXml">Source XML of the Attribute</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.AttributeEvent.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            Creates a new Attribute Event from an XML Attribute
+            </summary>
+            <param name="localname">Local Name of the Attribute</param>
+            <param name="ns">Namespace Prefix of the Attribute</param>
+            <param name="value">Value of the Attribute</param>
+            <param name="sourceXml">Source XML of the Attribute</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.AttributeEvent.LocalName">
+            <summary>
+            Gets the Local Name of the Attribute
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.AttributeEvent.Namespace">
+            <summary>
+            Gets the Namespace Prefix of the Attribute
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.AttributeEvent.QName">
+            <summary>
+            Gets the QName of the Attribute
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.AttributeEvent.Value">
+            <summary>
+            Gets the Value of the Attribute
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.NamespaceAttributeEvent">
+            <summary>
+            An Event for representing Namespace Attributes of an XML Node
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.NamespaceAttributeEvent.#ctor(System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Namespace Attribute Event
+            </summary>
+            <param name="prefix">Namespace Prefix</param>
+            <param name="uri">Namespace Uri</param>
+            <param name="sourceXml">Source XML</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.NamespaceAttributeEvent.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Creates a new Namespace Attribute Event
+            </summary>
+            <param name="prefix">Namespace Prefix</param>
+            <param name="uri">Namespace Uri</param>
+            <param name="sourceXml">Source XML</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.NamespaceAttributeEvent.Prefix">
+            <summary>
+            Gets the Namespace Prefix
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.NamespaceAttributeEvent.Uri">
+            <summary>
+            Gets the Namespace Uri
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.LanguageAttributeEvent">
+            <summary>
+            An Event for representing Language Attributes of an XML Node
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.LanguageAttributeEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Language Attribute Event
+            </summary>
+            <param name="lang">Language</param>
+            <param name="sourceXml">Source XML</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.LanguageAttributeEvent.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new Language Attribute Event
+            </summary>
+            <param name="lang">Language</param>
+            <param name="sourceXml">Source XML</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.LanguageAttributeEvent.Language">
+            <summary>
+            Gets the Language
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.ParseTypeAttributeEvent">
+            <summary>
+            An Event for representing rdf:parseType Attributes of an XML Node
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.ParseTypeAttributeEvent.#ctor(VDS.RDF.Parsing.RdfXmlParseType,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Parse Type Attribute Event
+            </summary>
+            <param name="type">Parse Type</param>
+            <param name="sourceXml">Source XML</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.ParseTypeAttributeEvent.#ctor(VDS.RDF.Parsing.RdfXmlParseType,System.String)">
+            <summary>
+            Creates a new Parse Type Attribute Event
+            </summary>
+            <param name="type">Parse Type</param>
+            <param name="sourceXml">Source XML</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.ParseTypeAttributeEvent.ParseType">
+            <summary>
+            Gets the Parse Type
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.XmlBaseAttributeEvent">
+            <summary>
+            An Event for representing xml:base attributes of XML Nodes
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.XmlBaseAttributeEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new XML Base Attribute
+            </summary>
+            <param name="baseUri">Base URI</param>
+            <param name="sourceXml">Source XML</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.XmlBaseAttributeEvent.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new XML Base Attribute
+            </summary>
+            <param name="baseUri">Base URI</param>
+            <param name="sourceXml">Source XML</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.XmlBaseAttributeEvent.BaseUri">
+            <summary>
+            Gets the Base URI
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.TextEvent">
+            <summary>
+            Event for representing plain text content (XML Text Nodes)
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.TextEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Text Node
+            </summary>
+            <param name="value">Textual Content of the XML Text Node</param>
+            <param name="sourceXml">Source XML of the Node</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.TextEvent.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new Text Node
+            </summary>
+            <param name="value">Textual Content of the XML Text Node</param>
+            <param name="sourceXml">Source XML of the Node</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.TextEvent.ToString">
+            <summary>
+            Gets the String representation of the Event
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.TextEvent.Value">
+            <summary>
+            Gets the Textual Content of the Event
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.UriReferenceEvent">
+            <summary>
+            Event for representing URIRefs
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.UriReferenceEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new URIRef Event from a URIRef in an XML Attribute value or similar
+            </summary>
+            <param name="identifier">URIRef</param>
+            <param name="sourceXml">Source XML of the URIRef</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.UriReferenceEvent.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new URIRef Event from a URIRef in an XML Attribute value or similar
+            </summary>
+            <param name="identifier">URIRef</param>
+            <param name="sourceXml">Source XML of the URIRef</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.UriReferenceEvent.Identifier">
+            <summary>
+            Gets the URIRef
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.QNameEvent">
+            <summary>
+            Event for representing QNames
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.QNameEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new QName Event
+            </summary>
+            <param name="qname">QName</param>
+            <param name="sourceXml">Source XML of the QName</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.QNameEvent.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new QName Event
+            </summary>
+            <param name="qname">QName</param>
+            <param name="sourceXml">Source XML of the QName</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.QNameEvent.QName">
+            <summary>
+            Gets the QName
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.BlankNodeIDEvent">
+            <summary>
+            Event for representing the need for a Blank Node
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.BlankNodeIDEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Blank Node ID Event for a named Blank Node
+            </summary>
+            <param name="identifier">Node ID for the Blank Node</param>
+            <param name="sourceXml">Source XML</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.BlankNodeIDEvent.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new Blank Node ID Event for a named Blank Node
+            </summary>
+            <param name="identifier">Node ID for the Blank Node</param>
+            <param name="sourceXml">Source XML</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.BlankNodeIDEvent.#ctor(System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Blank Node ID Event for an anonymous Blank Node
+            </summary>
+            <param name="sourceXml">Source XML</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.BlankNodeIDEvent.#ctor(System.String)">
+            <summary>
+            Creates a new Blank Node ID Event for an anonymous Blank Node
+            </summary>
+            <param name="sourceXml">Source XML</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.BlankNodeIDEvent.Identifier">
+            <summary>
+            Gets the Blank Node ID (if any)
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.PlainLiteralEvent">
+            <summary>
+            An Event for representing Plain Literals
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.PlainLiteralEvent.#ctor(System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Plain Literal Event
+            </summary>
+            <param name="value">Value of the Literal</param>
+            <param name="language">Language Specifier of the Literal</param>
+            <param name="sourceXml">Source XML of the Event</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.PlainLiteralEvent.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Creates a new Plain Literal Event
+            </summary>
+            <param name="value">Value of the Literal</param>
+            <param name="language">Language Specifier of the Literal</param>
+            <param name="sourceXml">Source XML of the Event</param>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.PlainLiteralEvent.Value">
+            <summary>
+            Gets the Value of the Plain Literal
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.PlainLiteralEvent.Language">
+            <summary>
+            Gets the Langugage Specifier of the Plain Literal
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.TypedLiteralEvent">
+            <summary>
+            An Event for representing Typed Literals
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.TypedLiteralEvent.#ctor(System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
+            <summary>
+            Creates a new Typed Literal Event
+            </summary>
+            <param name="value">Value of the Literal</param>
+            <param name="datatype">DataType Uri of the Literal</param>
+            <param name="sourceXml">Source XML of the Event</param>
+            <param name="pos">Position Info</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.TypedLiteralEvent.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Creates a new Typed Literal Event
+            </summary>
+            <param name="value">Value of the Literal</param>
+            <param name="datatype">DataType Uri of the Literal</param>
+            <param name="sourceXml">Source XML of the Event</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.TypedLiteralEvent.ToString">
+            <summary>
+            Gets the String representation of the Event
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.TypedLiteralEvent.Value">
+            <summary>
+            Gets the Value of the Typed Literal
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.TypedLiteralEvent.DataType">
+            <summary>
+            Gets the DataType of the Typed Literal
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.ClearQueueEvent">
+            <summary>
+            An Event for representing that the Event Queue should be cleared of previously queued events
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.ClearQueueEvent.#ctor">
+            <summary>
+            Creates a new Clear Queue Event
             </summary>
         </member>
         <member name="T:VDS.RDF.Triple">
@@ -13353,6 +14310,36 @@
             QName Constants for configuration classes
             </summary>
         </member>
+        <member name="F:VDS.RDF.Configuration.ConfigurationLoader.ClassRdfParser">
+            <summary>
+            QName Constants for configuration classes
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Configuration.ConfigurationLoader.ClassDatasetParser">
+            <summary>
+            QName Constants for configuration classes
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Configuration.ConfigurationLoader.ClassSparqlResultsParser">
+            <summary>
+            QName Constants for configuration classes
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Configuration.ConfigurationLoader.ClassRdfWriter">
+            <summary>
+            QName Constants for configuration classes
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Configuration.ConfigurationLoader.ClassDatasetWriter">
+            <summary>
+            QName Constants for configuration classes
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Configuration.ConfigurationLoader.ClassSparqlResultsWriter">
+            <summary>
+            QName Constants for configuration classes
+            </summary>
+        </member>
         <member name="F:VDS.RDF.Configuration.ConfigurationLoader.DefaultTypeTripleStore">
             <summary>
             QName Constants for Default Types for some configuration classes
@@ -13397,6 +14384,12 @@
         <member name="M:VDS.RDF.Configuration.ConfigurationLoader.AutoDetectObjectFactories(VDS.RDF.IGraph)">
             <summary>
             Given a Configuration Graph will detect Object Factories defined in the Graph and add them to the list of available factories
+            </summary>
+            <param name="g">Configuration Graph</param>
+        </member>
+        <member name="M:VDS.RDF.Configuration.ConfigurationLoader.AutoDetectReadersAndWriters(VDS.RDF.IGraph)">
+            <summary>
+            Given a Configuration Graph will detect Readers and Writers for RDF and SPARQL syntaxes and register them with <see cref="T:VDS.RDF.MimeTypesHelper">MimeTypesHelper</see>.  This will cause the library defaults to be overridden where appropriate.
             </summary>
             <param name="g">Configuration Graph</param>
         </member>
@@ -13452,6 +14445,20 @@
             <returns>
             Enumeration of values given for the property for the Object
             </returns>
+        </member>
+        <member name="M:VDS.RDF.Configuration.ConfigurationLoader.GetConfigurationArray(VDS.RDF.IGraph,VDS.RDF.INode,VDS.RDF.INode)">
+            <summary>
+            Gets all the literal values given for a property of a given Object in the Configuration Graph
+            </summary>
+            <param name="g">Configuration Graph</param>
+            <param name="objNode">Object Node</param>
+            <param name="property">Property Node</param>
+            <returns></returns>
+            <remarks>
+            <para>
+            Only returns the value part of Literal Nodes which are given as values for the property i.e. ignores all non-Literals and discards any language/data type from Literals
+            </para>
+            </remarks>
         </member>
         <member name="M:VDS.RDF.Configuration.ConfigurationLoader.GetConfigurationNode(VDS.RDF.IGraph,VDS.RDF.INode,VDS.RDF.INode)">
             <summary>
@@ -14422,6 +15429,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:VDS.RDF.Query.Expressions.BaseUnaryExpression.Transform(VDS.RDF.Query.Expressions.IExpressionTransformer)">
+            <summary>
+            Transforms the arguments of the expression using the given transformer
+            </summary>
+            <param name="transformer">Expression Transformer</param>
+            <returns></returns>
+        </member>
         <member name="P:VDS.RDF.Query.Expressions.BaseUnaryExpression.Variables">
             <summary>
             Gets an enumeration of all the Variables used in this expression
@@ -15189,16 +16203,198 @@
             Event which is raised when the parser detects issues with the input which are non-fatal
             </summary>
         </member>
-        <member name="T:VDS.RDF.Parsing.Events.IPreProcessingEventGenerator">
+        <member name="T:VDS.RDF.Parsing.Events.RdfA.Event">
+            <summary>
+            Static Class which defines the Event Types for RDFa Events
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfA.Event.Element">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfA.Event.EndElement">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfA.Event.Text">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.Events.RdfA.Event.XmlLiteral">
+            <summary>
+            Constants for Event Types
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.BaseRdfAEvent">
+            <summary>
+            Abstract Base Class for <see cref="T:VDS.RDF.Parsing.Events.IRdfAEvent">IRdfAEvent</see> implementations
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.IRdfAEvent">
+            <summary>
+            Interface for RDFa events
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.IRdfAEvent.HasAttribute(System.String)">
+            <summary>
+            Gets whether the Event has a given attribute
+            </summary>
+            <param name="name">Attribute Name</param>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.IRdfAEvent.Attributes">
+            <summary>
+            Gets the attributes of the event i.e. the attributes of the source element
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.IRdfAEvent.Item(System.String)">
+            <summary>
+            Gets the value of a specific attribute
+            </summary>
+            <param name="name">Attribute Name</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.BaseRdfAEvent.#ctor(System.Int32,VDS.RDF.Parsing.PositionInfo,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Creates a new RDFa Event
+            </summary>
+            <param name="eventType">Event Type</param>
+            <param name="pos">Position Info</param>
+            <param name="attributes">Attributes</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.BaseRdfAEvent.HasAttribute(System.String)">
+            <summary>
+            Gets whether the Event has a given attribute
+            </summary>
+            <param name="name">Attribute Name</param>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.BaseRdfAEvent.Attributes">
+            <summary>
+            Gets the attributes of the event i.e. the attributes of the source element
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.BaseRdfAEvent.Item(System.String)">
+            <summary>
+            Gets the value of a specific attribute
+            </summary>
+            <param name="name">Attribute Name</param>
+            <returns></returns>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.IEventGenerator`1">
+            <summary>
+            Interface for Event Generators
+            </summary>
+            <remarks>
+            <para>
+            An Event Generator is a class which takes an input stream which contains XML and generates a series of events from it
+            </para>
+            <para>
+            This interface is a marker interface which indicates that the class is an event generator, implementations should implement one of the concrete derived interfaces as appropriate to their mode of operation.
+            </para>
+            </remarks>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.IPreProcessingEventGenerator`2.GetAllEvents(`1)">
+            <summary>
+            Gets all available events
+            </summary>
+            <param name="context">Context</param>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.IRdfXmlPreProcessingEventGenerator">
             <summary>
             Interface for event generators which generate all events in one go prior to parsing taking place
             </summary>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.IPreProcessingEventGenerator.GetAllEvents(VDS.RDF.Parsing.Contexts.RdfXmlParserContext)">
+        <member name="M:VDS.RDF.Parsing.Events.IJitEventGenerator`1.GetNextEvent">
             <summary>
-            Gets all the Events
+            Gets the next available event
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.IJitEventGenerator`1.Finished">
+            <summary>
+            Gets whether the Event Generator has finished reading events i.e. there are no further events available
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.IRdfXmlJitEventGenerator">
+            <summary>
+            Interface for event generators which generate events as required during the parsing process
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage">
+            <summary>
+            Interface for RDFa Host Languages
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.InitTermMappings(VDS.RDF.Parsing.Contexts.RdfACoreParserContext)">
+            <summary>
+            Initialises the Term Mappings
             </summary>
             <param name="context">Parser Context</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.GetEventGenerator(System.IO.TextReader)">
+            <summary>
+            Gets an event generator
+            </summary>
+            <param name="reader">Input</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.ParseExtensions(VDS.RDF.Parsing.Contexts.RdfACoreParserContext,VDS.RDF.Parsing.Events.IRdfAEvent)">
+            <summary>
+            Parses any extensions that a host language supports
+            </summary>
+            <param name="context">Parser Context</param>
+            <param name="evt">Event</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.ParseLiteralLanguage(VDS.RDF.Parsing.Contexts.RdfACoreParserContext,VDS.RDF.Parsing.Events.IRdfAEvent)">
+            <summary>
+            Parses any literal language specifier on the current event
+            </summary>
+            <param name="context">Parser Context</param>
+            <param name="evt">Event</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.ParsePrefixMappings(VDS.RDF.Parsing.Contexts.RdfACoreParserContext,VDS.RDF.Parsing.Events.IRdfAEvent)">
+            <summary>
+            Parses any custom prefix mappings mechanism that the host language supports
+            </summary>
+            <param name="context">Parser Context</param>
+            <param name="evt">Event</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.IsRootElement(VDS.RDF.Parsing.Events.IRdfAEvent)">
+            <summary>
+            Gets whether an event is considered to be a root
+            </summary>
+            <param name="evt">Event</param>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.DefaultVocabularyUri">
+            <summary>
+            Gets the Default Vocabulary URI for the host language
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.InitialBaseUri">
+            <summary>
+            Gets the Initial Base URI for the host language (if any)
+            </summary>
+            <remarks>
+            The value of this is typically not available until after the <see cref="M:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.GetEventGenerator(System.IO.TextReader)">GetEventGenerator()</see> method has been called
+            </remarks>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.Version">
+            <summary>
+            Gets the declared RDFa Version (if any)
+            </summary>
+            <remarks>
+            The value of this is typically not available until after the <see cref="M:VDS.RDF.Parsing.Events.RdfA.IRdfAHostLanguage.GetEventGenerator(System.IO.TextReader)">GetEventGenerator()</see> method has been called
+            </remarks>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfA.BaseHost">
+            <summary>
+            Abstract Base Class for RDFa Host Languages
+            </summary>
         </member>
         <member name="T:VDS.RDF.Parsing.DataUriLoader">
             <summary>
@@ -19147,59 +20343,6 @@
             </summary>
             <param name="a_array">Array</param>
         </member>
-        <member name="T:VDS.RDF.Query.Algebra.IAbstractJoin">
-            <summary>
-            Represents an Algebra construct which is an Abstract Join (i.e. any kind of Join over two algebra operators)
-            </summary>
-            <remarks>
-            Specific sub-interfaces are used to mark specific kinds of Join
-            </remarks>
-        </member>
-        <member name="M:VDS.RDF.Query.Algebra.IAbstractJoin.Transform(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
-            <summary>
-            Transforms both sides of the Join using the given Optimiser
-            </summary>
-            <param name="optimiser">Optimser</param>
-            <returns></returns>
-            <remarks>
-            The join should retain all it's existing properties and just return a new version of itself with the two sides of the join having had the given optimiser applied to them
-            </remarks>
-        </member>
-        <member name="M:VDS.RDF.Query.Algebra.IAbstractJoin.TransformLhs(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
-            <summary>
-            Transforms the LHS of the Join using the given Optimiser
-            </summary>
-            <param name="optimiser">Optimser</param>
-            <returns></returns>
-            <remarks>
-            The join should retain all it's existing properties and just return a new version of itself with LHS side of the join having had the given optimiser applied to them
-            </remarks>
-        </member>
-        <member name="M:VDS.RDF.Query.Algebra.IAbstractJoin.TransformRhs(VDS.RDF.Query.Optimisation.IAlgebraOptimiser)">
-            <summary>
-            Transforms the RHS of the Join using the given Optimiser
-            </summary>
-            <param name="optimiser">Optimser</param>
-            <returns></returns>
-            <remarks>
-            The join should retain all it's existing properties and just return a new version of itself with RHS side of the join having had the given optimiser applied to them
-            </remarks>
-        </member>
-        <member name="P:VDS.RDF.Query.Algebra.IAbstractJoin.Lhs">
-            <summary>
-            Gets the LHS of the Join
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Query.Algebra.IAbstractJoin.Rhs">
-            <summary>
-            Gets the RHS of the Join
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Query.Algebra.IJoin">
-            <summary>
-            Represents an Algebra construct which is a Join
-            </summary>
-        </member>
         <member name="T:VDS.RDF.Query.Algebra.ILeftJoin">
             <summary>
             Represents an Algebra construct which is a Left Join
@@ -19208,11 +20351,6 @@
         <member name="P:VDS.RDF.Query.Algebra.ILeftJoin.Filter">
             <summary>
             Gets the Filter used on the Join
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Query.Algebra.IUnion">
-            <summary>
-            Represents an Algebra construct which is a Union
             </summary>
         </member>
         <member name="T:VDS.RDF.Query.Algebra.IMinus">
@@ -20273,6 +21411,11 @@
             <remarks>
             Setting the Cache to null does not disable it, to disable caching use the <see cref="P:VDS.RDF.Options.UriLoaderCaching">Options.UriLoaderCaching</see> property.
             </remarks>
+        </member>
+        <member name="P:VDS.RDF.Parsing.UriLoader.UserAgent">
+            <summary>
+            Gets/Sets an optional User Agent string that will be appended to HTTP Requests
+            </summary>
         </member>
         <member name="E:VDS.RDF.Parsing.UriLoader.Warning">
             <summary>
@@ -22850,6 +23993,70 @@
         <member name="P:VDS.RDF.Parsing.Tokens.PathToken.Path">
             <summary>
             Gets the Path this Token acts as a placeholder for
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.StreamingEventGenerator">
+            <summary>
+            A JIT event generator for RDF/XML parsing that uses Streaming parsing to parse the events
+            </summary>
+            <remarks>
+            Currently unimplemented stub class
+            </remarks>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.StreamingEventGenerator.#ctor(System.IO.Stream)">
+            <summary>
+            Creates a new Streaming Event Generator
+            </summary>
+            <param name="stream">Stream</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.StreamingEventGenerator.#ctor(System.IO.Stream,System.String)">
+            <summary>
+            Creates a new Streaming Event Generator
+            </summary>
+            <param name="stream">Stream</param>
+            <param name="baseUri">Base URI</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.StreamingEventGenerator.#ctor(System.IO.TextReader)">
+            <summary>
+            Creates a new Streaming Event Generator
+            </summary>
+            <param name="reader">Text Reader</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.StreamingEventGenerator.#ctor(System.IO.TextReader,System.String)">
+            <summary>
+            Creates a new Streaming Event Generator
+            </summary>
+            <param name="reader">Text Reader</param>
+            <param name="baseUri">Base URI</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.StreamingEventGenerator.#ctor(System.String)">
+            <summary>
+            Creates a new Streaming Event Generator
+            </summary>
+            <param name="file">Filename</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.StreamingEventGenerator.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new Streaming Event Generator
+            </summary>
+            <param name="file">Filename</param>
+            <param name="baseUri">Base URI</param>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.StreamingEventGenerator.GetSettings">
+            <summary>
+            Initialises the XML Reader settings
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.StreamingEventGenerator.GetNextEvent">
+            <summary>
+            Gets the next event from the XML stream
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Parsing.Events.RdfXml.StreamingEventGenerator.Finished">
+            <summary>
+            Gets whether the event generator has finished generating events
             </summary>
         </member>
         <member name="T:VDS.RDF.Parsing.Contexts.Notation3ParserContext">
@@ -29090,44 +30297,44 @@
             Indicates that the Handler accepts all Triples
             </summary>
         </member>
-        <member name="T:VDS.RDF.Parsing.Events.DomBasedEventGenerator">
+        <member name="T:VDS.RDF.Parsing.Events.RdfXml.DomBasedEventGenerator">
             <summary>
             A DOM Based event generator for RDF/XML parser that uses System.Xml DOM to parse events
             </summary>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.DomBasedEventGenerator.#ctor(System.Xml.XmlDocument)">
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.DomBasedEventGenerator.#ctor(System.Xml.XmlDocument)">
             <summary>
             Creates a new DOM Based event generator
             </summary>
             <param name="document">XML Document</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.DomBasedEventGenerator.#ctor(System.IO.StreamReader)">
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.DomBasedEventGenerator.#ctor(System.IO.StreamReader)">
             <summary>
             Creates a new DOM Based event generator
             </summary>
             <param name="input">Input Stream</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.DomBasedEventGenerator.#ctor(System.String)">
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.DomBasedEventGenerator.#ctor(System.String)">
             <summary>
             Creates a new DOM Based event generator
             </summary>
             <param name="file">Input File</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.DomBasedEventGenerator.GetAllEvents(VDS.RDF.Parsing.Contexts.RdfXmlParserContext)">
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.DomBasedEventGenerator.GetAllEvents(VDS.RDF.Parsing.Contexts.RdfXmlParserContext)">
             <summary>
             Gets all events from the XML DOM
             </summary>
             <param name="context">Parser Context</param>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.DomBasedEventGenerator.GenerateEventTree(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,System.Xml.XmlNode)">
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.DomBasedEventGenerator.GenerateEventTree(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,System.Xml.XmlNode)">
             <summary>
-            Given an XML Node that is the Root of the RDF/XML section of the Document Tree creates the RootEvent and generates the rest of the Event Tree by recursive calls to the <see cref="M:VDS.RDF.Parsing.Events.DomBasedEventGenerator.GenerateEvents(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,System.Xml.XmlNode,VDS.RDF.Parsing.Events.IRdfXmlEvent)">GenerateEvents</see> method
+            Given an XML Node that is the Root of the RDF/XML section of the Document Tree creates the RootEvent and generates the rest of the Event Tree by recursive calls to the <see cref="M:VDS.RDF.Parsing.Events.RdfXml.DomBasedEventGenerator.GenerateEvents(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,System.Xml.XmlNode,VDS.RDF.Parsing.Events.IRdfXmlEvent)">GenerateEvents</see> method
             </summary>
             <param name="context">Parser Context</param>
             <param name="docEl">XML Node that is the Root of the RDF/XML section of the Document Tree</param>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.DomBasedEventGenerator.GenerateEvents(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,System.Xml.XmlNode,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.DomBasedEventGenerator.GenerateEvents(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,System.Xml.XmlNode,VDS.RDF.Parsing.Events.IRdfXmlEvent)">
             <summary>
             Given an XML Node creates the relevant RDF/XML Events for it and recurses as necessary
             </summary>
@@ -29136,7 +30343,7 @@
             <param name="parent">The Parent Node of the given Node</param>
             <returns></returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.DomBasedEventGenerator.IsIgnorableNode(System.Xml.XmlNode)">
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.DomBasedEventGenerator.IsIgnorableNode(System.Xml.XmlNode)">
             <summary>
             Checks whether a given XML Node can be discarded as it does not have any equivalent Event in the RDF/XML Syntax model
             </summary>
@@ -29144,7 +30351,7 @@
             <returns>True if the Node can be ignored</returns>
             <remarks>Comment and Text Nodes are ignored.  Text Nodes will actually become Text Events but we'll access the Text using the InnerText property of the Element Nodes instead</remarks>
         </member>
-        <member name="M:VDS.RDF.Parsing.Events.DomBasedEventGenerator.FlattenEventTree(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IRdfXmlEvent,System.Int32)">
+        <member name="M:VDS.RDF.Parsing.Events.RdfXml.DomBasedEventGenerator.FlattenEventTree(VDS.RDF.Parsing.Contexts.RdfXmlParserContext,VDS.RDF.Parsing.Events.IRdfXmlEvent,System.Int32)">
             <summary>
             Takes the Event Tree and Flattens it into a Queue as per the rules laid out in the RDF/XML Specification
             </summary>
@@ -32281,6 +33488,38 @@
             Gets the Mapping of in-use IDs
             </summary>
         </member>
+        <member name="T:VDS.RDF.NestedReference`1">
+            <summary>
+            Represents a reference whose value may change based on nesting level
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="M:VDS.RDF.NestedReference`1.#ctor">
+            <summary>
+            Creates a new Nested Reference with an initial null value
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.NestedReference`1.#ctor(`0)">
+            <summary>
+            Creates a new nested reference with an initial value
+            </summary>
+            <param name="initValue">Initial Value</param>
+        </member>
+        <member name="M:VDS.RDF.NestedReference`1.IncrementNesting">
+            <summary>
+            Increments the nesting level
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.NestedReference`1.DecrementNesting">
+            <summary>
+            Decrements the nesting level
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.NestedReference`1.Value">
+            <summary>
+            Gets/Sets the value based on the current nesting level
+            </summary>
+        </member>
         <member name="T:VDS.RDF.Configuration.CachedObjectKey">
             <summary>
             Key for Objects that are cached by the Configuration Loader
@@ -34062,6 +35301,34 @@
             Gets the Temporary Variable Name of this Pattern
             </summary>
         </member>
+        <member name="T:VDS.RDF.Query.Optimisation.IdentityFilterOptimiser">
+            <summary>
+            An Algebra Optimiser which implements the Identity Filter optimisation
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Query.Optimisation.IdentityFilterOptimiser.Optimise(VDS.RDF.Query.Algebra.ISparqlAlgebra)">
+            <summary>
+            Optimises the Algebra to use Identity Filters where applicable
+            </summary>
+            <param name="algebra">Algebra</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Optimisation.IdentityFilterOptimiser.IsIdentityExpression(VDS.RDF.Query.Expressions.ISparqlExpression,System.String@,VDS.RDF.INode@,System.Boolean@)">
+            <summary>
+            Determines whether an expression is an Identity Expression
+            </summary>
+            <param name="expr">Expression</param>
+            <param name="var">Variable</param>
+            <param name="term">Term</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Optimisation.IdentityFilterOptimiser.IsApplicable(VDS.RDF.Query.SparqlQuery)">
+            <summary>
+            Returns that this optimiser is applicable to all queries
+            </summary>
+            <param name="q">Query</param>
+            <returns></returns>
+        </member>
         <member name="T:VDS.RDF.Query.Inference.SimpleN3RulesReasoner">
             <summary>
             An Inference Engine that supports simple N3 rules
@@ -35231,691 +36498,6 @@
             <param name="t">Type</param>
             <returns></returns>
         </member>
-        <member name="T:VDS.RDF.Parsing.Events.Event">
-            <summary>
-            Static Classes which define the Event Types for XML Events
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.Root">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.Clear">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.Element">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.EndElement">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.Attribute">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.NamespaceAttribute">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.LanguageAttribute">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.ParseTypeAttribute">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.XmlBaseAttribute">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.Text">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.UriReference">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.QName">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.BlankNodeID">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.Literal">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Parsing.Events.Event.TypedLiteral">
-            <summary>
-            Constants for Event Types
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.RootEvent">
-            <summary>
-            Event representing the Root Node of the Document
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.BaseEvent">
-            <summary>
-            Abstract Base Class for IRdfXmlEvent implementations
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.IRdfXmlEvent">
-            <summary>
-            Interface for XML/RDF Events as defined by the XML/RDF Specification
-            </summary>
-            <remarks>Used to provide polymorphism for the XML/RDF Parser</remarks>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.IRdfXmlEvent.EventType">
-            <summary>
-            Gives some Integer representing the Event Type as understood by a specific Parser implementation
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.IRdfXmlEvent.SourceXml">
-            <summary>
-            Gets the XML that produced the given event (if any)
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.IRdfXmlEvent.Position">
-            <summary>
-            Gets the Position Information (if any)
-            </summary>
-            <remarks>
-            Availability of Position Information depends on the how the XML was parsed
-            </remarks>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.BaseEvent.#ctor(System.Int32,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates an Event and fills in its Values
-            </summary>
-            <param name="eventType">Type of the Event</param>
-            <param name="sourceXml">Source XML that generated the Event</param>
-            <param name="pos">Position of the XML Event</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.BaseEvent.#ctor(System.Int32,System.String)">
-            <summary>
-            Creates an Event and fills in its Values
-            </summary>
-            <param name="eventType">Type of the Event</param>
-            <param name="sourceXml">Source XML that generated the Event</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.BaseEvent.EventType">
-            <summary>
-            Gets the Type for this Event
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.BaseEvent.SourceXml">
-            <summary>
-            Gets the XML that this Event was generated from
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.BaseEvent.Position">
-            <summary>
-            Gets the Position Information (if any)
-            </summary>
-            <remarks>
-            Availability of Position Information depends on the how the XML was parsed
-            </remarks>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.RootEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Root Event
-            </summary>
-            <param name="baseUri">Base Uri of the Document</param>
-            <param name="sourceXml">Source XML of the Document</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.RootEvent.#ctor(System.String,System.String)">
-            <summary>
-            Creates a new Root Event
-            </summary>
-            <param name="baseUri">Base Uri of the Document</param>
-            <param name="sourceXml">Source XML of the Document</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.RootEvent.DocumentElement">
-            <summary>
-            Gets/Sets the ElementEvent that represents the actual DocumentElement
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.RootEvent.Children">
-            <summary>
-            Gets all the Child ElementEvents of the Document Root
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.RootEvent.BaseUri">
-            <summary>
-            Gets the Base Uri of the Node
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.RootEvent.Language">
-            <summary>
-            Gets the Language of the Node
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.ElementEvent">
-            <summary>
-            Event representing a Node from the XML Document
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.ElementEvent.#ctor(System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Element Event
-            </summary>
-            <param name="qname">QName of the XML Node</param>
-            <param name="baseUri">Base Uri of the XML Node</param>
-            <param name="sourceXml">Source XML of the XML Node</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.ElementEvent.#ctor(System.String,System.String,System.String)">
-            <summary>
-            Creates a new Element Event
-            </summary>
-            <param name="qname">QName of the XML Node</param>
-            <param name="baseUri">Base Uri of the XML Node</param>
-            <param name="sourceXml">Source XML of the XML Node</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.ElementEvent.#ctor(System.String,System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates new Element Event
-            </summary>
-            <param name="localname">Local Name of the XML Node</param>
-            <param name="ns">Namespace Prefix of the XML Node</param>
-            <param name="baseUri">Base Uri of the XML Node</param>
-            <param name="sourceXml">Source XML of the XML Node</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.ElementEvent.#ctor(System.String,System.String,System.String,System.String)">
-            <summary>
-            Creates new Element Event
-            </summary>
-            <param name="localname">Local Name of the XML Node</param>
-            <param name="ns">Namespace Prefix of the XML Node</param>
-            <param name="baseUri">Base Uri of the XML Node</param>
-            <param name="sourceXml">Source XML of the XML Node</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.ElementEvent.SetUri(VDS.RDF.Parsing.Events.UriReferenceEvent)">
-            <summary>
-            Method which sets the Uri for this Element Event
-            </summary>
-            <param name="u">Uri Reference to set Uri from</param>
-            <remarks>This can only be used on Elements which are rdf:li and thus need expanding into actual list elements according to List Expansion rules.  Attempting to set the Uri on any other Element Event will cause an Error message.</remarks>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.ElementEvent.ToString">
-            <summary>
-            Gets the String representation of the Event
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.LocalName">
-            <summary>
-            Gets the Local Name of this Element Event
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.Namespace">
-            <summary>
-            Gets the Namespace of this Element Event
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.QName">
-            <summary>
-            Gets the QName of this Element Event
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.Children">
-            <summary>
-            Gets the Child Element Events 
-            </summary>
-            <remarks>These correspond to the Child Nodes of the XML Node</remarks>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.BaseUri">
-            <summary>
-            Gets/Sets the Base Uri of the XML Node
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.Attributes">
-            <summary>
-            Gets the Attribute Events
-            </summary>
-            <remarks>These correspond to the Attributes of the XML Node (with some exceptions as defined in the RDF/XML specification)</remarks>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.NamespaceAttributes">
-            <summary>
-            Gets the Namespace Attribute Events
-            </summary>
-            <remarks>
-            These correspond to all the Namespace Attributes of the XML Node
-            </remarks>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.ListCounter">
-            <summary>
-            Gets/Sets the List Counter
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.Language">
-            <summary>
-            Gets/Sets the Language of this Event
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.Subject">
-            <summary>
-            Gets/Sets the Subject Event of this Event
-            </summary>
-            <remarks>Will be assigned according to the Parsing rules during the Parsing process and later used to generate a Subject Node</remarks>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.SubjectNode">
-            <summary>
-            Gets/Sets the Subject Node of this Event
-            </summary>
-            <remarks>Will be created from the Subject at some point during the Parsing process</remarks>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ElementEvent.ParseType">
-            <summary>
-            Gets/Sets the Parse Type for this Event
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.EndElementEvent">
-            <summary>
-            An Event for representing the End of Elements
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.EndElementEvent.#ctor(VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new EndElementEvent
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.EndElementEvent.#ctor">
-            <summary>
-            Creates a new EndElementEvent
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.AttributeEvent">
-            <summary>
-            An Event for representing Attributes of XML Node
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.AttributeEvent.#ctor(System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Attribute Event from an XML Attribute
-            </summary>
-            <param name="qname">QName of the Attribute</param>
-            <param name="value">Value of the Attribute</param>
-            <param name="sourceXml">Source XML of the Attribute</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.AttributeEvent.#ctor(System.String,System.String,System.String)">
-            <summary>
-            Creates a new Attribute Event from an XML Attribute
-            </summary>
-            <param name="qname">QName of the Attribute</param>
-            <param name="value">Value of the Attribute</param>
-            <param name="sourceXml">Source XML of the Attribute</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.AttributeEvent.#ctor(System.String,System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Attribute Event from an XML Attribute
-            </summary>
-            <param name="localname">Local Name of the Attribute</param>
-            <param name="ns">Namespace Prefix of the Attribute</param>
-            <param name="value">Value of the Attribute</param>
-            <param name="sourceXml">Source XML of the Attribute</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.AttributeEvent.#ctor(System.String,System.String,System.String,System.String)">
-            <summary>
-            Creates a new Attribute Event from an XML Attribute
-            </summary>
-            <param name="localname">Local Name of the Attribute</param>
-            <param name="ns">Namespace Prefix of the Attribute</param>
-            <param name="value">Value of the Attribute</param>
-            <param name="sourceXml">Source XML of the Attribute</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.AttributeEvent.LocalName">
-            <summary>
-            Gets the Local Name of the Attribute
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.AttributeEvent.Namespace">
-            <summary>
-            Gets the Namespace Prefix of the Attribute
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.AttributeEvent.QName">
-            <summary>
-            Gets the QName of the Attribute
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.AttributeEvent.Value">
-            <summary>
-            Gets the Value of the Attribute
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.NamespaceAttributeEvent">
-            <summary>
-            An Event for representing Namespace Attributes of an XML Node
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.NamespaceAttributeEvent.#ctor(System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Namespace Attribute Event
-            </summary>
-            <param name="prefix">Namespace Prefix</param>
-            <param name="uri">Namespace Uri</param>
-            <param name="sourceXml">Source XML</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.NamespaceAttributeEvent.#ctor(System.String,System.String,System.String)">
-            <summary>
-            Creates a new Namespace Attribute Event
-            </summary>
-            <param name="prefix">Namespace Prefix</param>
-            <param name="uri">Namespace Uri</param>
-            <param name="sourceXml">Source XML</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.NamespaceAttributeEvent.Prefix">
-            <summary>
-            Gets the Namespace Prefix
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.NamespaceAttributeEvent.Uri">
-            <summary>
-            Gets the Namespace Uri
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.LanguageAttributeEvent">
-            <summary>
-            An Event for representing Language Attributes of an XML Node
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.LanguageAttributeEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Language Attribute Event
-            </summary>
-            <param name="lang">Language</param>
-            <param name="sourceXml">Source XML</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.LanguageAttributeEvent.#ctor(System.String,System.String)">
-            <summary>
-            Creates a new Language Attribute Event
-            </summary>
-            <param name="lang">Language</param>
-            <param name="sourceXml">Source XML</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.LanguageAttributeEvent.Language">
-            <summary>
-            Gets the Language
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.ParseTypeAttributeEvent">
-            <summary>
-            An Event for representing rdf:parseType Attributes of an XML Node
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.ParseTypeAttributeEvent.#ctor(VDS.RDF.Parsing.RdfXmlParseType,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Parse Type Attribute Event
-            </summary>
-            <param name="type">Parse Type</param>
-            <param name="sourceXml">Source XML</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.ParseTypeAttributeEvent.#ctor(VDS.RDF.Parsing.RdfXmlParseType,System.String)">
-            <summary>
-            Creates a new Parse Type Attribute Event
-            </summary>
-            <param name="type">Parse Type</param>
-            <param name="sourceXml">Source XML</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.ParseTypeAttributeEvent.ParseType">
-            <summary>
-            Gets the Parse Type
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.XmlBaseAttributeEvent">
-            <summary>
-            An Event for representing xml:base attributes of XML Nodes
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.XmlBaseAttributeEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new XML Base Attribute
-            </summary>
-            <param name="baseUri">Base URI</param>
-            <param name="sourceXml">Source XML</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.XmlBaseAttributeEvent.#ctor(System.String,System.String)">
-            <summary>
-            Creates a new XML Base Attribute
-            </summary>
-            <param name="baseUri">Base URI</param>
-            <param name="sourceXml">Source XML</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.XmlBaseAttributeEvent.BaseUri">
-            <summary>
-            Gets the Base URI
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.TextEvent">
-            <summary>
-            Event for representing plain text content (XML Text Nodes)
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.TextEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Text Node
-            </summary>
-            <param name="value">Textual Content of the XML Text Node</param>
-            <param name="sourceXml">Source XML of the Node</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.TextEvent.#ctor(System.String,System.String)">
-            <summary>
-            Creates a new Text Node
-            </summary>
-            <param name="value">Textual Content of the XML Text Node</param>
-            <param name="sourceXml">Source XML of the Node</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.TextEvent.ToString">
-            <summary>
-            Gets the String representation of the Event
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.TextEvent.Value">
-            <summary>
-            Gets the Textual Content of the Event
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.UriReferenceEvent">
-            <summary>
-            Event for representing URIRefs
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.UriReferenceEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new URIRef Event from a URIRef in an XML Attribute value or similar
-            </summary>
-            <param name="identifier">URIRef</param>
-            <param name="sourceXml">Source XML of the URIRef</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.UriReferenceEvent.#ctor(System.String,System.String)">
-            <summary>
-            Creates a new URIRef Event from a URIRef in an XML Attribute value or similar
-            </summary>
-            <param name="identifier">URIRef</param>
-            <param name="sourceXml">Source XML of the URIRef</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.UriReferenceEvent.Identifier">
-            <summary>
-            Gets the URIRef
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.QNameEvent">
-            <summary>
-            Event for representing QNames
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.QNameEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new QName Event
-            </summary>
-            <param name="qname">QName</param>
-            <param name="sourceXml">Source XML of the QName</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.QNameEvent.#ctor(System.String,System.String)">
-            <summary>
-            Creates a new QName Event
-            </summary>
-            <param name="qname">QName</param>
-            <param name="sourceXml">Source XML of the QName</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.QNameEvent.QName">
-            <summary>
-            Gets the QName
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.BlankNodeIDEvent">
-            <summary>
-            Event for representing the need for a Blank Node
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.BlankNodeIDEvent.#ctor(System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Blank Node ID Event for a named Blank Node
-            </summary>
-            <param name="identifier">Node ID for the Blank Node</param>
-            <param name="sourceXml">Source XML</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.BlankNodeIDEvent.#ctor(System.String,System.String)">
-            <summary>
-            Creates a new Blank Node ID Event for a named Blank Node
-            </summary>
-            <param name="identifier">Node ID for the Blank Node</param>
-            <param name="sourceXml">Source XML</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.BlankNodeIDEvent.#ctor(System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Blank Node ID Event for an anonymous Blank Node
-            </summary>
-            <param name="sourceXml">Source XML</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.BlankNodeIDEvent.#ctor(System.String)">
-            <summary>
-            Creates a new Blank Node ID Event for an anonymous Blank Node
-            </summary>
-            <param name="sourceXml">Source XML</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.BlankNodeIDEvent.Identifier">
-            <summary>
-            Gets the Blank Node ID (if any)
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.PlainLiteralEvent">
-            <summary>
-            An Event for representing Plain Literals
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.PlainLiteralEvent.#ctor(System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Plain Literal Event
-            </summary>
-            <param name="value">Value of the Literal</param>
-            <param name="language">Language Specifier of the Literal</param>
-            <param name="sourceXml">Source XML of the Event</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.PlainLiteralEvent.#ctor(System.String,System.String,System.String)">
-            <summary>
-            Creates a new Plain Literal Event
-            </summary>
-            <param name="value">Value of the Literal</param>
-            <param name="language">Language Specifier of the Literal</param>
-            <param name="sourceXml">Source XML of the Event</param>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.PlainLiteralEvent.Value">
-            <summary>
-            Gets the Value of the Plain Literal
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.PlainLiteralEvent.Language">
-            <summary>
-            Gets the Langugage Specifier of the Plain Literal
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.TypedLiteralEvent">
-            <summary>
-            An Event for representing Typed Literals
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.TypedLiteralEvent.#ctor(System.String,System.String,System.String,VDS.RDF.Parsing.PositionInfo)">
-            <summary>
-            Creates a new Typed Literal Event
-            </summary>
-            <param name="value">Value of the Literal</param>
-            <param name="datatype">DataType Uri of the Literal</param>
-            <param name="sourceXml">Source XML of the Event</param>
-            <param name="pos">Position Info</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.TypedLiteralEvent.#ctor(System.String,System.String,System.String)">
-            <summary>
-            Creates a new Typed Literal Event
-            </summary>
-            <param name="value">Value of the Literal</param>
-            <param name="datatype">DataType Uri of the Literal</param>
-            <param name="sourceXml">Source XML of the Event</param>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.TypedLiteralEvent.ToString">
-            <summary>
-            Gets the String representation of the Event
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.TypedLiteralEvent.Value">
-            <summary>
-            Gets the Value of the Typed Literal
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Parsing.Events.TypedLiteralEvent.DataType">
-            <summary>
-            Gets the DataType of the Typed Literal
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Parsing.Events.ClearQueueEvent">
-            <summary>
-            An Event for representing that the Event Queue should be cleared of previously queued events
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Parsing.Events.ClearQueueEvent.#ctor">
-            <summary>
-            Creates a new Clear Queue Event
-            </summary>
-        </member>
         <member name="T:VDS.RDF.Query.Filters.BaseUnaryFilter">
             <summary>
             Abstract Base class for Unary Filters that operate on a single Expression
@@ -37082,6 +37664,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:VDS.RDF.Query.Expressions.BaseBinaryExpression.Transform(VDS.RDF.Query.Expressions.IExpressionTransformer)">
+            <summary>
+            Transforms the arguments of the expression using the given transformer
+            </summary>
+            <param name="transformer">Expression Transformer</param>
+            <returns></returns>
+        </member>
         <member name="P:VDS.RDF.Query.Expressions.BaseBinaryExpression.Variables">
             <summary>
             Gets an enumeration of all the Variables used in this expression
@@ -37836,6 +38425,11 @@
             This lets you see whether the join is a join/cross product and in the case of a Minus whether the RHS can be ignored completely
             </remarks>
         </member>
+        <member name="F:VDS.RDF.Query.ExplanationLevel.Simulate">
+            <summary>
+            Sets whether Evaluation should be simulated (means timings will not be accurate but allows you to explain queries without needing actual data to evaluate them against)
+            </summary>
+        </member>
         <member name="F:VDS.RDF.Query.ExplanationLevel.AnalyseAll">
             <summary>
             Shows all analysis information
@@ -37843,7 +38437,7 @@
         </member>
         <member name="F:VDS.RDF.Query.ExplanationLevel.Basic">
             <summary>
-            Basic Explanation Level (Console Standard Output and Basic Information
+            Basic Explanation Level (Console Standard Output and Basic Information)
             </summary>
         </member>
         <member name="F:VDS.RDF.Query.ExplanationLevel.Default">
@@ -37856,7 +38450,7 @@
             Detailed Explanation Level (Default Outputs and All Information)
             </summary>
         </member>
-        <member name="F:VDS.RDF.Query.ExplanationLevel.All">
+        <member name="F:VDS.RDF.Query.ExplanationLevel.Full">
             <summary>
             Full Explanation Level (All Outputs, All Information and All Analysis)
             </summary>
@@ -40915,7 +41509,7 @@
             <param name="baseUri">Base Uri to Test</param>
             <returns>True if the Base Uri can be used for relative Uri resolution</returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsIDAttribute(VDS.RDF.Parsing.Events.AttributeEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsIDAttribute(VDS.RDF.Parsing.Events.RdfXml.AttributeEvent)">
             <summary>
             Checks whether an attribute is an rdf:ID attribute
             </summary>
@@ -40923,7 +41517,7 @@
             <returns>True if is an rdf:ID attribute</returns>
             <remarks>Does some validation on ID value but other validation occurs in the <see cref="!:ValidateID()">ValidateID</see> method which is called at other points in the Parsing</remarks>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsNodeIDAttribute(VDS.RDF.Parsing.Events.AttributeEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsNodeIDAttribute(VDS.RDF.Parsing.Events.RdfXml.AttributeEvent)">
             <summary>
             Checks whether an attribute is an rdf:nodeID attribute
             </summary>
@@ -40931,28 +41525,28 @@
             <returns>True if is an rdf:nodeID attribute</returns>
             <remarks>Does some validation on ID value but other validation occurs in the <see cref="!:ValidateID()">ValidateID</see> method which is called at other points in the Parsing</remarks>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsAboutAttribute(VDS.RDF.Parsing.Events.AttributeEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsAboutAttribute(VDS.RDF.Parsing.Events.RdfXml.AttributeEvent)">
             <summary>
             Checks whether an attribute is an rdf:about attribute
             </summary>
             <param name="attr">Attribute to Test</param>
             <returns>True if is an rdf:about attribute</returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsPropertyAttribute(VDS.RDF.Parsing.Events.AttributeEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsPropertyAttribute(VDS.RDF.Parsing.Events.RdfXml.AttributeEvent)">
             <summary>
             Checks whether an attribute is an property attribute
             </summary>
             <param name="attr">Attribute to Test</param>
             <returns>True if is an property attribute</returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsResourceAttribute(VDS.RDF.Parsing.Events.AttributeEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsResourceAttribute(VDS.RDF.Parsing.Events.RdfXml.AttributeEvent)">
             <summary>
             Checks whether an attribute is an rdf:resource attribute
             </summary>
             <param name="attr">Attribute to Test</param>
             <returns>True if is an rdf:resource attribute</returns>
         </member>
-        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsDataTypeAttribute(VDS.RDF.Parsing.Events.AttributeEvent)">
+        <member name="M:VDS.RDF.Parsing.RdfXmlSpecsHelper.IsDataTypeAttribute(VDS.RDF.Parsing.Events.RdfXml.AttributeEvent)">
             <summary>
             Checks whether an attribute is an rdf:datatype attribute
             </summary>
@@ -42623,6 +43217,9 @@
             <para>
             Connection to AllegroGraph is based on their new HTTP Protocol which is an extension of the <a href="http://www.openrdf.org/doc/sesame2/system/ch08.html">Sesame 2.0 HTTP Protocol</a>.  The specification for the AllegroGraph protocol can be found <a href="http://www.franz.com/agraph/support/documentation/current/new-http-server.html">here</a>
             </para>
+            <para>
+            If you wish to use a Store which is part of the Root Catalog on an AllegroGraph 4.x and higher server you can either use the constructor overloads that omit the <strong>catalogID</strong> parameter or pass in null as the value for that parameter
+            </para>
             </remarks>
         </member>
         <member name="M:VDS.RDF.Storage.AllegroGraphConnector.#ctor(System.String,System.String,System.String)">
@@ -42633,12 +43230,28 @@
             <param name="catalogID">Catalog ID</param>
             <param name="storeID">Store ID</param>
         </member>
+        <member name="M:VDS.RDF.Storage.AllegroGraphConnector.#ctor(System.String,System.String)">
+            <summary>
+            Creates a new Connection to an AllegroGraph store in the Root Catalog (AllegroGraph 4.x and higher)
+            </summary>
+            <param name="baseUri">Base Uri for the Store</param>
+            <param name="storeID">Store ID</param>
+        </member>
         <member name="M:VDS.RDF.Storage.AllegroGraphConnector.#ctor(System.String,System.String,System.String,System.String,System.String)">
             <summary>
             Creates a new Connection to an AllegroGraph store
             </summary>
             <param name="baseUri">Base Uri for the Store</param>
             <param name="catalogID">Catalog ID</param>
+            <param name="storeID">Store ID</param>
+            <param name="username">Username for connecting to the Store</param>
+            <param name="password">Password for connecting to the Store</param>
+        </member>
+        <member name="M:VDS.RDF.Storage.AllegroGraphConnector.#ctor(System.String,System.String,System.String,System.String)">
+            <summary>
+            Creates a new Connection to an AllegroGraph store in the Root Catalog (AllegroGraph 4.x and higher)
+            </summary>
+            <param name="baseUri">Base Uri for the Store</param>
             <param name="storeID">Store ID</param>
             <param name="username">Username for connecting to the Store</param>
             <param name="password">Password for connecting to the Store</param>
@@ -43177,6 +43790,11 @@
             <param name="context">SPARQL Evaluation Context</param>
             <returns></returns>
         </member>
+        <member name="T:VDS.RDF.Query.Algebra.NullOperator">
+            <summary>
+            Represents a part of the algebra that has been determined to not return any results in advance and so can be replaced with this operator which always returns null
+            </summary>
+        </member>
         <member name="T:VDS.RDF.Query.Algebra.AskBgp">
             <summary>
             Represents a BGP which is a set of Triple Patterns
@@ -43607,6 +44225,14 @@
             </summary>
             <param name="a">First URI</param>
             <param name="b">Second URI</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.ComparisonHelper.CompareUris(VDS.RDF.IUriNode,VDS.RDF.IUriNode)">
+            <summary>
+            Compares two URI Nodes
+            </summary>
+            <param name="a">First URI Node</param>
+            <param name="b">Second URI Node</param>
             <returns></returns>
         </member>
         <member name="M:VDS.RDF.ComparisonHelper.CompareLiterals(VDS.RDF.ILiteralNode,VDS.RDF.ILiteralNode)">
@@ -45555,6 +46181,30 @@
             <remarks>
             It is recommended that derived classes do not change this setting as this may hurt performance.  If you want to control the optimisation process in detail we suggest you implement <see cref="T:VDS.RDF.Query.Optimisation.IQueryOptimiser">IQueryOptimiser</see> directly in your own class and not derive from this implementation.
             </remarks>
+        </member>
+        <member name="T:VDS.RDF.Query.Expressions.IExpressionTransformer">
+            <summary>
+            An Expression Transformer is a class that can traverse a SPARQL Expression tree and apply transformations to it
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Query.Expressions.PrimaryExpressionSubstituter">
+            <summary>
+            Abstract implementation of an Expression Transformer which substitutes primary expressions
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Query.Expressions.PrimaryExpressionSubstituter.Transform(VDS.RDF.Query.Expressions.ISparqlExpression)">
+            <summary>
+            Transforms an expression into a form where primary expressions may be substituted
+            </summary>
+            <param name="expr">Expression</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Query.Expressions.PrimaryExpressionSubstituter.SubstitutePrimaryExpression(VDS.RDF.Query.Expressions.ISparqlExpression)">
+            <summary>
+            Returns the substitution for a given primary expression
+            </summary>
+            <param name="expr">Expression</param>
+            <returns></returns>
         </member>
         <member name="T:VDS.RDF.Parsing.SparqlBooleanParser">
             <summary>
@@ -50679,6 +51329,45 @@
             </summary>
             <param name="data">Data</param>
             <returns></returns>
+        </member>
+        <member name="T:VDS.RDF.Parsing.RdfACurieMode">
+            <summary>
+            Possible attribute parsing modes for RDFa
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.RdfACurieMode.Uri">
+            <summary>
+            Attribute must contain a URI
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.RdfACurieMode.SafeCurieOrCurieOrUri">
+            <summary>
+            Attributes must contain a Safe CURIE, CURIE or URI
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Parsing.RdfACurieMode.TermOrCurieOrAbsUri">
+            <summary>
+            Attributes must contain a Term, CURIE or Absolute URI
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Parsing.RdfACoreParser">
+            <summary>
+            Abstract Parser for RDFa 1.1 Core
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Parsing.RdfACoreParser.GetParserContext(VDS.RDF.IRdfHandler,System.IO.TextReader)">
+            <summary>
+            Abstract method which must be overridden by derived classes
+            </summary>
+            <param name="handler">RDF Handler</param>
+            <param name="reader">Input to read from</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Parsing.RdfACoreParser.RaiseWarning(System.String)">
+            <summary>
+            Helper method for raising the Warning event
+            </summary>
+            <param name="message">Warning message</param>
         </member>
         <member name="T:VDS.RDF.Parsing.IriSpecsHelper">
             <summary>
@@ -56789,6 +57478,16 @@
             Gets that this Handler does not accept all Triples
             </summary>
         </member>
+        <member name="T:VDS.RDF.Parsing.Contexts.RdfACoreParserContext">
+            <summary>
+            Parser Context for the host language independent RDFa 1.1 Core parser
+            </summary>
+            <remarks>
+            <para>
+            Compared to the original RDFa parser this context provides for much more efficient parsing since it uses efficient data structures which avoid unecessarily replicating data
+            </para>
+            </remarks>
+        </member>
         <member name="T:VDS.RDF.Query.SparqlSpecsHelper">
             <summary>
             Class containing Helper information and methods pertaining to the Sparql Query Language for RDF
@@ -60816,6 +61515,11 @@
             </summary>
             <param name="results">Result Set</param>
         </member>
+        <member name="T:VDS.RDF.Parsing.Events.RdfA.HtmlDomEventGenerator">
+            <summary>
+            A DOM based event generator for RDFa parsing
+            </summary>
+        </member>
         <member name="T:VDS.RDF.Parsing.Contexts.TriGParserContext">
             <summary>
             Parser Context class for TriG Parsers
@@ -61434,11 +62138,29 @@
             Initialises the MIME Type definitions
             </summary>
         </member>
+        <member name="M:VDS.RDF.MimeTypesHelper.ResetDefinitions">
+            <summary>
+            Resets the MIME Type Definitions (the associations between file extensions, MIME types and their respective parsers and writers) to the library defaults
+            </summary>
+            <remarks>
+            <para>
+            May be useful if you've altered the definitions and caused something to stop working as a result
+            </para>
+            </remarks>
+        </member>
         <member name="M:VDS.RDF.MimeTypesHelper.AddDefinition(VDS.RDF.MimeTypeDefinition)">
             <summary>
             Adds a new MIME Type Definition
             </summary>
             <param name="definition">MIME Type Definition</param>
+        </member>
+        <member name="M:VDS.RDF.MimeTypesHelper.RegisterParser(VDS.RDF.IRdfReader,System.Collections.Generic.IEnumerable{System.String},System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Registers a Parser as the default RDF Parser for all the given MIME types and updates relevant definitions to include the MIME types and file extensions
+            </summary>
+            <param name="parser"></param>
+            <param name="mimeTypes"></param>
+            <param name="fileExtensions"></param>
         </member>
         <member name="M:VDS.RDF.MimeTypesHelper.GetDefinitions(System.String)">
             <summary>

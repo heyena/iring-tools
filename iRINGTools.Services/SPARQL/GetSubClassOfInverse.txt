@@ -4,5 +4,5 @@ SELECT DISTINCT ?uri ?label
 WHERE { 
   rdl:param1 rdfs:subClassOf ?uri .
   OPTIONAL {?uri rdfs:label ?label .}
-  FILTER(?uri != rdl:param1 && isIRI(?uri))
+  FILTER(?uri != rdl:param1 && isIRI(?uri) && ?uri != owl:Class)
 } 
