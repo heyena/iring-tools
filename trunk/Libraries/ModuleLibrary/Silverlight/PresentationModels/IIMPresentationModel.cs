@@ -41,6 +41,7 @@ namespace org.iringtools.ontologyservice.presentation.presentationmodels
     CustomTreeItem SelectedTreeItem { get; set; }
 
     bool SelectedIsMappable { get; set; }
+    bool SelectedIsMapped { get; set; }
     QMXF SelectedQMXF { get; set; }
     Dictionary<string, QMXF> ClassesHistory { get; set; }
     Dictionary<string, QMXF> TemplatesHistory { get; set; }
