@@ -326,7 +326,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					frame: false,
 					border: false,
 					autoScroll: true,
-					bodyStyle: 'padding:10px 10px 0px 10px',
+					bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 					monitorValid: true,
 					defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
 					items: [{
@@ -1837,8 +1837,48 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							text: 'Reload',
 							tooltip: 'Reload Data Objects',
 							handler: function () {
-								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-								showTree(dbObjectsTree);
+								var editPane = dataObjectsPane.items.items[1];
+								var items = editPane.items.items;
+								
+								for (var i = 0; i < items.length; i++) {
+									items[i].destroy();
+									i--;
+								}
+
+								Ext.Ajax.request({
+									url: 'AdapterManager/DBDictionary',
+									method: 'POST',
+									params: {
+										scope: scopeName,
+										app: appName
+									},
+									success: function (response, request) {
+										dbDict = Ext.util.JSON.decode(response.responseText);
+
+										var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+
+										if (dbDict.dataObjects.length > 0) {
+											// populate data source form
+											showTree(dbObjectsTree);
+										}
+										else {
+											dbObjectsTree.disable();
+											editPane = dataObjectsPane.items.items[1];
+											if (!editPane) {
+												var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+											}
+											setDsConfigPane(editPane);
+										}
+									},
+									failure: function (response, request) {
+										editPane = dataObjectsPane.items.items[1];
+										if (!editPane) {
+											var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+										}
+										setDsConfigPane(editPane);
+										editPane.getLayout().setActiveItem(editPane.items.length - 1);
+									}
+								});
 							}
 						}, {
 							xtype: 'tbspacer',
