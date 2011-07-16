@@ -887,7 +887,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 								for (var j = 0; j < availTableName.length; j++)
 									for (var i = 0; i < rootNode.childNodes.length; i++) {
-										if (rootNode.childNodes[i].text == availTableName[j]) {
+										if (rootNode.childNodes[i].attributes.properties.tableName == availTableName[j]) {
 											found = true;
 											availTableName.splice(j, 1);
 											j--;
@@ -896,7 +896,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									}
 
 								for (var i = 0; i < rootNode.childNodes.length; i++) {
-									var nodeText = rootNode.childNodes[i].text;
+									var nodeText = rootNode.childNodes[i].attributes.properties.tableName;
 									selectTableNames.push([nodeText, nodeText]);
 									selectTableNamesSingle.push(nodeText);
 								}
@@ -932,6 +932,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									tablesSelector.toMultiselect.store.commitChanges();
 								}
 								else {
+									if (!tablesSelector) 
+										var tablesSelector = tablesSelectorPane.items.items[1];
 									if (tablesSelector.toMultiselect) {
 										tablesSelector.toMultiselect.reset();
 										tablesSelector.toMultiselect.store.removeAll();
@@ -1839,7 +1841,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							handler: function () {
 								var editPane = dataObjectsPane.items.items[1];
 								var items = editPane.items.items;
-								
+
 								for (var i = 0; i < items.length; i++) {
 									items[i].destroy();
 									i--;
