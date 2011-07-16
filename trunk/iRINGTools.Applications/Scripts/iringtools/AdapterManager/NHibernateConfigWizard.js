@@ -2712,6 +2712,9 @@ function setRelationFields(editPane, node, scopeName, appName) {
         var panelIndex = editPane.items.indexOf(relationConfigPane);
         editPane.getLayout().setActiveItem(panelIndex);
 
+        var objText = relationConfigPane.getForm().findField('objectName');
+        objText.setValue(dataObjectNode.text);
+
         var relCombo = relationConfigPane.getForm().findField('relatedObjectName');
         if (relCombo.store.data) {
         	relCombo.reset();
