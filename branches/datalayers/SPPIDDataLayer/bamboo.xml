@@ -12,7 +12,7 @@
 
   <PropertyGroup>
     <ZipCmd>"$(MSBuildProjectDirectory)\library\7-Zip\7z.exe"</ZipCmd>
-    <NUnit-ToolPath>C:\Program Files\NUnit 2.5.10\bin\net-2.0</NUnit-ToolPath>
+    <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
     <SPPIDDataLayerDir>$(MSBuildProjectDirectory)\SPPIDDataLayer</SPPIDDataLayerDir>
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <DevDeploymentDir>c:\iring-tools-web\SPPID</DevDeploymentDir>
