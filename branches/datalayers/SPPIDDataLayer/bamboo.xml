@@ -37,11 +37,10 @@
     </DeploymentPackage>
     <DeploymentPackage Include="*.*">
       <Options>x -tzip -y -o</Options>
-      <OutputDir>$(DistDir)</OutputDir>s
+      <OutputDir>$(DistDir)</OutputDir>
       <ZipFile>$(DevDeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet></FileSet>
     </DeploymentPackage>
-
     <SPPIDDeployment
       Include="$(SPPIDDataLayerDir)\bin\Debug\**"
         Exclude="$(SPPIDDataLayerDir)\bin\*.pdb;
