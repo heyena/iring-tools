@@ -114,7 +114,7 @@
   </Target>
 
   <Target Name="Test">
-    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="SPPIDDataLayer\SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />  
+    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />  
   </Target>
 
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
