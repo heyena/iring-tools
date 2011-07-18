@@ -113,13 +113,9 @@
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
   </Target>
 
-  <!--<Target Name="Test">
-    
-		<NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="SPPIDDataLayer\SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />
-		-->
-  <!--<NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="MSSQLLibrary\MSSQLLibrary.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />-->
-  <!--
-	</Target>-->
+  <Target Name="Test">
+    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="SPPIDDataLayer\SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" OutputXmlFile="test-results.xml" />  
+  </Target>
 
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
   <Target Name="Distribute">
