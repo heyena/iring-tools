@@ -390,6 +390,7 @@ namespace org.iringtools.modules.templateeditor.editorregion
 
             cmbRepositories.Items.Add(item);
           }
+          cmbRepositories.SelectedIndex = 0;
         }
         else if (args.CheckForType(CompletedEventType.PostTemplate))
         {
