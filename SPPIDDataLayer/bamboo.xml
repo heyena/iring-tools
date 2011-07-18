@@ -35,7 +35,7 @@
       <ZipFile>$(DeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet>$(DeploymentDir)\*</FileSet>
     </DeploymentPackage>
-    <DeploymentPackage Include="*.*">
+    <DeploymentPackage Include="SPPIDDataLayer.*">
       <Options>x -tzip -y -o</Options>
       <OutputDir>$(DistDir)</OutputDir>
       <ZipFile>$(DeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
