@@ -33,14 +33,14 @@
       <Options>a -tzip -y -r</Options>
       <OutputDir></OutputDir>
       <ZipFile>$(DeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
-      <FileSet>$(SPPIDDeployment)\*</FileSet>
+      <FileSet>$(DeploymentDir)\*</FileSet>
     </DeploymentPackage>
-    <!--<DeploymentPackage Include="*.*">
+    <DeploymentPackage Include="*.*">
       <Options>x -tzip -y -o</Options>
       <OutputDir>$(DistDir)</OutputDir>s
-      <ZipFile>$(DevDeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip</ZipFile>
+      <ZipFile>$(DevDeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet></FileSet>
-    </DeploymentPackage>-->
+    </DeploymentPackage>
 
     <SPPIDDeployment
       Include="$(SPPIDDataLayerDir)\bin\Debug\**"
