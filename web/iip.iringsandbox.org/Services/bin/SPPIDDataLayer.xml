@@ -1,0 +1,62 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+SPPIDDataLayer
+</name>
+</assembly>
+<members>
+<member name="P:iRINGTools.SDK.SPPIDDataLayer.My.Resources.Resources.ResourceManager">
+	<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.My.Resources.Resources.Culture">
+	<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.My.Resources.Resources">
+	<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configuration.commodities">
+	<remarks/>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.configuration">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodity.attributes">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodity.name">
+	<remarks/>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.configurationCommodity">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.name">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.displayName">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.nativeName">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.datatype">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.length">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.lengthSpecified">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.isKey">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.readonly">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.appSource">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.subclass">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.parse">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.receiveScope">
+	<remarks/>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute.symbolKey">
+	<remarks/>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute">
+	<remarks/>
+</member>
+</members>
+</doc>
