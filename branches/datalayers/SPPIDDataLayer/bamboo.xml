@@ -14,9 +14,8 @@
     <ZipCmd>"$(MSBuildProjectDirectory)\library\7-Zip\7z.exe"</ZipCmd>
     <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
     <SPPIDDataLayerDir>$(MSBuildProjectDirectory)\SPPIDDataLayer</SPPIDDataLayerDir>
-    <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
-    <DevDeploymentDir>C:\iring-tools-web\dev.iringsandbox.org\Services\bin</DevDeploymentDir>
-    <DistDir>c:\bamboo\dist\SPPID</DistDir>
+    <DeploymentDir>$(MSBuildProjectDirectory)\deployment</DeploymentDir>
+    <DistDir>C:\iring-tools-web\dev.iringsandbox.org\Services\bin</DistDir>
     <SolutionFile>SPPIDDataLayer.sln</SolutionFile>
 
     <!-- 
@@ -33,12 +32,12 @@
     <DeploymentPackage Include="*.*">
       <Options>a -tzip -y -r</Options>
       <OutputDir></OutputDir>
-      <ZipFile>$(DevDeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip</ZipFile>
+      <ZipFile>$(DeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet>$(SPPIDDataLayerDir)\*</FileSet>
     </DeploymentPackage>
     <!--<DeploymentPackage Include="*.*">
       <Options>x -tzip -y -o</Options>
-      <OutputDir>$(DevDeploymentDir)</OutputDir>
+      <OutputDir>$(DistDir)</OutputDir>
       <ZipFile>$(DevDeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet></FileSet>
     </DeploymentPackage>-->
@@ -84,16 +83,12 @@
 
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
-    <Exec Command="RmDir /S /Q $(DevDeploymentDir)" />
-    <MakeDir Directories="$(DevDeploymentDir); $(DistDir);"/>
-    <!--<Exec Command="Copy .\ClientAccessPolicy.xml $(ServicesDeploymentDir)\ClientAccessPolicy.xml" />
-    <Exec Command="Copy .\ClientAccessPolicy.xml $(AppsDeploymentDir)\ClientAccessPolicy.xml" />-->
-
+    <Exec Command="RmDir /S /Q $(DeploymentDir)" />
+    <MakeDir Directories="$(DeploymentDir);"/>
 
     <Message Text="Creating DataLayers deployment ..." />
     <Copy SourceFiles="@(SPPIDDeployment)"
           DestinationFiles="@(SPPIDDeployment->'$(DeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <!--<Exec Command="Move /Y $(DeploymentDir)\Web_Default.config $(AppsDeploymentDir)\Web.config" />-->
 
 
   </Target>
@@ -114,12 +109,9 @@
 
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
   <Target Name="Distribute">
-    <Copy SourceFiles="$(DevDeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip"
-          DestinationFiles="$(DistDir)\iRINGTools-DataLayer-SPPID.zip">
+    <Copy SourceFiles="$(DeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip"
+          DestinationFiles="$(DeploymentDir)\iRINGTools-DataLayer-SPPID.zip">
     </Copy>
-    <!--<Copy SourceFiles="$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip" 
-          DestinationFiles="$(DistDir)\iRINGTools-SDK.zip">
-    </Copy>-->
   </Target>
   <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages; Distribute"/>
 </Project>
