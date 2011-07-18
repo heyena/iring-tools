@@ -126,5 +126,5 @@
           DestinationFiles="$(DistDir)\iRINGTools-SDK.zip">
     </Copy>-->
   </Target>
-  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages; Distribute"/>
+  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages; Distribute"/>
 </Project>
