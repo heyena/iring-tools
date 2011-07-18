@@ -72,6 +72,11 @@
     <Message Text="Performing SVN update ..." />
     <Exec Command="svn update"/>
   </Target>
+  
+  <Target Name="IISReset">
+	<Message Text="Restarting IIS ..." />
+	<Exec Command="iisreset"/>
+  </Target>
 
   <Target Name="CleanBuild">
     <Message Text="Performing MSBuild clean-up ..." />
@@ -90,7 +95,7 @@
 
   </Target>
 
-  <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
+  <Target Name="CreatePackages" DependsOnTargets="IISReset; CreateDeployment">
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
   </Target>
 
