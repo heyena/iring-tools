@@ -15,7 +15,7 @@
     <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
     <SPPIDDataLayerDir>$(MSBuildProjectDirectory)\SPPIDDataLayer</SPPIDDataLayerDir>
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
-    <DevDeploymentDir>c:\iring-tools-web\SPPID</DevDeploymentDir>
+    <DevDeploymentDir>C:\iring-tools-web\dev.iringsandbox.org\Services\bin</DevDeploymentDir>
     <DistDir>c:\bamboo\dist\SPPID</DistDir>
     <SolutionFile>SPPIDDataLayer.sln</SolutionFile>
 
@@ -36,23 +36,18 @@
       <ZipFile>$(DevDeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet>$(SPPIDDataLayerDir)\*</FileSet>
     </DeploymentPackage>
-    <DeploymentPackage Include="*.*">
+    <!--<DeploymentPackage Include="*.*">
       <Options>x -tzip -y -o</Options>
       <OutputDir>$(DevDeploymentDir)</OutputDir>
       <ZipFile>$(DevDeploymentDir)\SPPID-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet></FileSet>
-    </DeploymentPackage>
+    </DeploymentPackage>-->
 
     <SPPIDDeployment
-      Include="$(SPPIDDataLayerDir)\**"
+      Include="$(SPPIDDataLayerDir)\bin\Debug\**"
         Exclude="$(SPPIDDataLayerDir)\bin\*.pdb;
-               $(SPPIDDataLayerDir)\obj\**;
-               $(SPPIDDataLayerDir)\Properties\**;
-               $(SPPIDDataLayerDir)\*.vbproj;
-               $(SPPIDDataLayerDir)\*.user;
-               $(SPPIDDataLayerDir)\*.vspscc;
-               $(SPPIDDataLayerDir)\web.config;
-               $(SPPIDDataLayerDir)\.svn\**;">
+                  $(SPPIDDataLayerDir)\.svn\**;">
+		<!--some XML files may be included later - none for now -->
     </SPPIDDeployment>
 
   </ItemGroup>
