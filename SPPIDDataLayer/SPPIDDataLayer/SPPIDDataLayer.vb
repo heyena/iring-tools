@@ -27,8 +27,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
   'Protected _configuration As XElement
     Private _conn As SqlConnection
 
-    <Inject()>
-    Public Sub New(settings As AdapterSettings)
+  <Inject()>
+  Public Sub New(settings As AdapterSettings)
 
     MyBase.New(settings)
 
@@ -45,7 +45,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     'Dim projectStr As String = _settings("SPPIDProjectNumber")
     'projectStr += "!" & projectStr
 
-    End Sub
+  End Sub
 
 
     'Public Overloads Overrides Function Delete(objectType As String, filter As org.iringtools.library.DataFilter) As org.iringtools.library.Response
