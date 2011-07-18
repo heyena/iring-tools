@@ -38,7 +38,7 @@
     <DeploymentPackage Include="*.*">
       <Options>x -tzip -y -o</Options>
       <OutputDir>$(DistDir)</OutputDir>
-      <ZipFile>$(DevDeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
+      <ZipFile>$(DeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet></FileSet>
     </DeploymentPackage>
     <SPPIDDeployment
@@ -49,8 +49,6 @@
     </SPPIDDeployment>
 
   </ItemGroup>
-
-
 
   <Target Name="Version">
     <Message Text="Updating assembly info ..." />
