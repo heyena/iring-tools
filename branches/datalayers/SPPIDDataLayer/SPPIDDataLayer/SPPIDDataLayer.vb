@@ -32,17 +32,18 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     MyBase.New(settings)
 
-        Dim connStr As String = "server=NDHD06670\SQLEXPRESSW;database=SPPID;User ID=SPPID;Password=sppid"
-        _conn = New SqlConnection(connStr)
+    Dim connStr As String = _settings("SPPIDConnectionString")
 
-        'To-Do: Temp code should ne removed
-        Dim siteNode As String = _settings("SPPIDSiteNode")
-        Dim projectStr As String = _settings("SPPIDProjectNumber")
-        projectStr += "!" & projectStr
-        ' per TR-88021 in SPPID 2007 SP4
-        '_projDatasource = kernel.Get<ILMADataSource>();
-        ' _projDatasource = New Llama.LMADataSource()
-        ' _projDatasource.ProjectNumber = projectStr
+    Try
+      connStr = Encryption.DecryptString(connStr)
+    Catch ex As Exception
+      'ToDo: Log Decryption Problem as warning
+    End Try
+
+    _conn = New SqlConnection(connStr)
+    'Dim siteNode As String = _settings("SPPIDSiteNode")
+    'Dim projectStr As String = _settings("SPPIDProjectNumber")
+    'projectStr += "!" & projectStr
 
     End Sub
 
