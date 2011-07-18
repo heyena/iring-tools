@@ -284,7 +284,7 @@ namespace org.iringtools.refdata
         foreach (Repository repository in _repositories)
         {
           SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
-       
+
           foreach (SparqlResult result in sparqlResults)
           {
             foreach (var v in result.Variables)
@@ -360,9 +360,9 @@ namespace org.iringtools.refdata
 
     private List<Classification> ProcessClassifications(Repository repository, string sparql)
     {
-    
+
       SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
-     
+
       List<Classification> classifications = new List<Classification>();
       List<string> names = new List<string>();
       string resultValue = string.Empty;
@@ -408,7 +408,7 @@ namespace org.iringtools.refdata
         string sparql = String.Empty;
         string sparqlPart8 = String.Empty;
         string relativeUri = String.Empty;
-     
+
         List<Specialization> specializations = new List<Specialization>();
 
         Query queryGetSpecialization = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
@@ -420,17 +420,17 @@ namespace org.iringtools.refdata
 
         sparqlPart8 = ReadSPARQL(queryGetSubClassOf.FileName);
         sparqlPart8 = sparqlPart8.Replace("param1", id);
-     
+
         foreach (Repository repository in _repositories)
         {
           if (rep != null)
             if (rep.Name != repository.Name) continue;
-        
+
           if (repository.RepositoryType == RepositoryType.Part8)
           {
-      
+
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparqlPart8);
-    
+
             foreach (SparqlResult result in sparqlResults)
             {
               Specialization specialization = new Specialization();
@@ -452,7 +452,7 @@ namespace org.iringtools.refdata
               if (string.IsNullOrEmpty(specialization.label))
               {
                 Entity entity = GetLabel(uri);
-               
+
                 specialization.label = entity.Label;
                 specialization.lang = entity.Lang;
               }
@@ -630,9 +630,9 @@ namespace org.iringtools.refdata
 
             classDefinition.description.Add(description);
             classDefinition.status.Add(status);
-    
+
             classifications = GetClassifications(id, repository);
-     
+
             specializations = GetSpecializations(id, repository);
             if (classifications.Count > 0)
               classDefinition.classification = classifications;
@@ -1005,12 +1005,12 @@ namespace org.iringtools.refdata
           }
         }
       }
-      catch(Exception e)
+      catch (Exception e)
       {
         _logger.Error("Error in GetSubClasses: " + e);
         throw new Exception("Error getting EntityTypes " + e.ToString(), e);
       }
-      
+
       return queryResult;
     }
 
@@ -1295,41 +1295,39 @@ namespace org.iringtools.refdata
             RoleDefinition roleDefinition = new RoleDefinition();
             QMXFName name = new QMXFName();
 
-            foreach (var v in result.Variables)
+            if (result["label"] != null)
             {
-              if ((INode)result[v] is LiteralNode && v.Equals("label"))
+              name.value = ((LiteralNode)result["label"]).Value;
+              name.lang = ((LiteralNode)result["label"]).Language;
+              if (string.IsNullOrEmpty(name.lang))
+                name.lang = defaultLanguage;
+            }
+            if (result["comment"] != null)
+            {
+              description.value = ((LiteralNode)result["comment"]).Value;
+              description.lang = ((LiteralNode)result["comment"]).Language;
+              if (string.IsNullOrEmpty(description.lang))
+                description.lang = defaultLanguage;
+            }
+            if (result["index"] != null)
+            {
+              if (string.IsNullOrEmpty(description.value))
               {
-                name.value = ((LiteralNode)result[v]).Value;
-                name.lang = ((LiteralNode)result[v]).Language;
-                if (string.IsNullOrEmpty(name.lang))
-                  name.lang = defaultLanguage;
-              }
-              else if ((INode)result[v] is LiteralNode && v.Equals("comment"))
-              {
-                description.value = ((LiteralNode)result[v]).Value;
-                description.lang = ((LiteralNode)result[v]).Language;
+                description.value = ((LiteralNode)result["index"]).Value;
+                description.lang = ((LiteralNode)result["index"]).Language;
                 if (string.IsNullOrEmpty(description.lang))
                   description.lang = defaultLanguage;
               }
-              else if ((INode)result[v] is LiteralNode && v.Equals("index"))
-              {
-                if (string.IsNullOrEmpty(description.value))
-                {
-                  description.value = ((LiteralNode)result[v]).Value;
-                  description.lang = ((LiteralNode)result[v]).Language;
-                  if (string.IsNullOrEmpty(description.lang))
-                    description.lang = defaultLanguage;
-                }
-              }
-              else if ((INode)result[v] is UriNode && v.Equals("role"))
-              {
-                roleDefinition.identifier = ((UriNode)result[v]).Uri.ToString();
-              }
-              else if ((INode)result[v] is UriNode && v.Equals("type"))
-              {
-                roleDefinition.range = ((UriNode)result[v]).Uri.ToString();
-              }
             }
+            if (result["role"] != null)
+            {
+              roleDefinition.identifier = ((UriNode)result["role"]).Uri.ToString();
+            }
+            if (result["type"] != null)
+            {
+              roleDefinition.range = ((UriNode)result["type"]).Uri.ToString();
+            }
+
             roleDefinition.description = description;
             roleDefinition.name.Add(name);
             Utility.SearchAndInsert(roleDefinitions, roleDefinition, RoleDefinition.sortAscending());
@@ -1470,53 +1468,50 @@ namespace org.iringtools.refdata
                 QMXFValue valvalue = new QMXFValue();
                 Description descr = new Description();
 
-                foreach (var v in result.Variables)
+                if (result["role"] != null)
                 {
-                  if (v.Equals("role") && result.HasValue(v))
+                  uri = ((UriNode)result["role"]).Uri.ToString();
+                  roleQualification.qualifies = uri;
+                  roleQualification.identifier = Utility.GetIdFromURI(uri);
+                }
+                if (result["comment"] != null)
+                {
+                  descr.value = ((LiteralNode)result["comment"]).Value;
+                  if (string.IsNullOrEmpty(((LiteralNode)result["comment"]).Language))
                   {
-                    uri = ((UriNode)result[v]).Uri.ToString();
-                    roleQualification.qualifies = uri;
-                    roleQualification.identifier = Utility.GetIdFromURI(uri);
+                    descr.lang = defaultLanguage;
                   }
-                  else if (v.Equals("comment") && result[v] != null)
+                  else
                   {
-                    descr.value = ((LiteralNode)result[v]).Value;
-                    if (string.IsNullOrEmpty(((LiteralNode)result[v]).Language))
-                    {
-                      descr.lang = defaultLanguage;
-                    }
-                    else
-                    {
-                      descr.lang = ((LiteralNode)result[v]).Language;
-                    }
-                  }
-                  else if (v.Equals("type") && result.HasValue(v))
-                  {
-                    roleQualification.range = ((UriNode)result[v]).Uri.ToString();
-                  }
-                  else if (v.Equals("label"))
-                  {
-                    if (result[v] == null)
-                    {
-                      Entity entity = GetLabel(uri);
-                      name.value = entity.Label;
-                      name.lang = entity.Lang;
-                    }
-                    else
-                    {
-                      name.value = ((LiteralNode)result[v]).Value;
-                      name.lang = ((LiteralNode)result[v]).Language;
-                    }
-                    if (string.IsNullOrEmpty(name.lang))
-                      name.lang = defaultLanguage;
-                  }
-                  else if (v.Equals("index") && result.HasValue(v))
-                  {
-                    ///TODO
+                    descr.lang = ((LiteralNode)result["comment"]).Language;
                   }
                 }
+                if (result["type"] != null)
+                {
+                  roleQualification.range = ((UriNode)result["type"]).Uri.ToString();
+                }
+                if (result["label"] == null)
+                {
+                  Entity entity = GetLabel(uri);
+                  name.value = entity.Label;
+                  name.lang = entity.Lang;
+                }
+                else
+                {
+                  name.value = ((LiteralNode)result["label"]).Value;
+                  name.lang = ((LiteralNode)result["label"]).Language;
+                }
+                if (string.IsNullOrEmpty(name.lang))
+                  name.lang = defaultLanguage;
+
+                if (result["index"] != null)
+                {
+                  ///TODO
+                }
+
                 roleQualification.name.Add(name);
                 Utility.SearchAndInsert(roleQualifications, roleQualification, RoleQualification.sortAscending());
+
               }
               break;
           }
@@ -1757,7 +1752,7 @@ namespace org.iringtools.refdata
                   templateQualification.qualifies = ((UriNode)result[v]).Uri.ToString();
                 }
               }
-              
+
               templateQualification.identifier = qId;
               templateQualification.name.Add(name);
               templateQualification.description.Add(description);
@@ -1923,11 +1918,11 @@ namespace org.iringtools.refdata
       try
       {
         Response response = new Response();
-        
+
         SparqlRemoteUpdateEndpoint endpoint = new SparqlRemoteUpdateEndpoint(repository.UpdateUri);
         string encryptedCredentials = repository.EncryptedCredentials;
 
-        WebCredentials  cred = new WebCredentials(encryptedCredentials);
+        WebCredentials cred = new WebCredentials(encryptedCredentials);
 
         if (cred.isEncrypted) cred.Decrypt();
 
@@ -2124,7 +2119,7 @@ namespace org.iringtools.refdata
                       GenerateDescription(ref insert, newDescr, templateId);
                     }
                   }
-                
+
                   index = 1;
                   ///  BaseTemplate roles do have the following properties
                   /// 1) baseclass of owl:Thing
@@ -2416,7 +2411,7 @@ namespace org.iringtools.refdata
                         GenerateDescription(ref insert, nd, templateID);
                       }
                     }
-                    else if(od == null && nd.value != null)
+                    else if (od == null && nd.value != null)
                     {
                       GenerateDescription(ref insert, nd, templateID);
                     }
@@ -2469,7 +2464,7 @@ namespace org.iringtools.refdata
                     {
                       string roleName = nrq.name[0].value;
                       string newRoleID = nrq.identifier;
-                      
+
                       if (string.IsNullOrEmpty(newRoleID))
                       {
                         if (_useExampleRegistryBase)
@@ -2619,7 +2614,7 @@ namespace org.iringtools.refdata
                 }
                 if (delete.IsEmpty && insert.IsEmpty)
                 {
-                  string errMsg = "No changes made to template ["+ templateName +"]";
+                  string errMsg = "No changes made to template [" + templateName + "]";
                   Status status = new Status();
                   response.Level = StatusLevel.Warning;
                   status.Messages.Add(errMsg);
@@ -3209,7 +3204,7 @@ namespace org.iringtools.refdata
               }
               if (delete.IsEmpty && insert.IsEmpty)
               {
-                string errMsg = "No changes made to class ["+ qmxf.classDefinitions[0].name[0].value +"]";
+                string errMsg = "No changes made to class [" + qmxf.classDefinitions[0].name[0].value + "]";
                 Status status = new Status();
                 response.Level = StatusLevel.Warning;
                 status.Messages.Add(errMsg);
