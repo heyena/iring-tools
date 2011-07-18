@@ -35,11 +35,11 @@
       <ZipFile>$(DeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet>$(DeploymentDir)\*</FileSet>
     </DeploymentPackage>
-    <DeploymentPackage Include="SPPIDDataLayer.*">
+    <DeploymentPackage Include="*.*">
       <Options>x -tzip -y -o</Options>
       <OutputDir>$(DistDir)</OutputDir>
       <ZipFile>$(DeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
-      <FileSet></FileSet>
+      <FileSet>SPPIDDataLayer.*</FileSet>
     </DeploymentPackage>
     <SPPIDDeployment
       Include="$(SPPIDDataLayerDir)\bin\Debug\**"
