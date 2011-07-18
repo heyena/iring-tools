@@ -15,7 +15,7 @@
     <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
     <SPPIDDataLayerDir>$(MSBuildProjectDirectory)\SPPIDDataLayer</SPPIDDataLayerDir>
     <DeploymentDir>$(MSBuildProjectDirectory)\deployment</DeploymentDir>
-    <DistDir>C:\iring-tools-web\dev.iringsandbox.org\Services\bin</DistDir>
+    <DistDir>C:\iring-tools-web\iip.iringsandbox.org\Services\bin</DistDir>
     <SolutionFile>SPPIDDataLayer.sln</SolutionFile>
 
     <!-- 
