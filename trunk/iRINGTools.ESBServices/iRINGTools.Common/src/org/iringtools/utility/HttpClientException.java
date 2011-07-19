@@ -3,12 +3,13 @@ package org.iringtools.utility;
 public class HttpClientException extends Exception
 {
   private static final long serialVersionUID = 1L;
-  private String error;
+  private int errorCode;
+  private String errorMessage;
 
   public HttpClientException()
   {
     super();
-    error = "";
+    setErrorMessage("");
   }
   
   public HttpClientException(Exception e)
@@ -16,15 +17,48 @@ public class HttpClientException extends Exception
     super(e);
   }
 
-  public HttpClientException(String error)
+  public HttpClientException(int errorCode, Exception e)
   {
-    super(error);
-    this.error = error;
+    super(e);
+    setErrorCode(errorCode);
+  }
+
+  public HttpClientException(int errorCode, String errorMessage)
+  {
+    super(errorMessage);
+    this.setErrorCode(errorCode);
+    setErrorMessage(errorMessage);
   }
   
+  public HttpClientException(String errorMessage)
+  {
+    super(errorMessage);
+    setErrorMessage(errorMessage);
+  }
+  
+  public void setErrorCode(int errorCode)
+  {
+    this.errorCode = errorCode;
+  }
+
+  public int getErrorCode()
+  {
+    return errorCode;
+  }
+  
+  public void setErrorMessage(String errorMessage)
+  {
+    this.errorMessage = errorMessage;
+  }
+
+  public String getErrorMessage()
+  {
+    return errorMessage;
+  }
+
   public String toString()
   {
-    return error;
+    return errorMessage;
   }
 }
   

@@ -28,9 +28,9 @@
     <param-value>false</param-value>
   </context-param>
   <!--
-  <filter>
-		<filter-name>sso</filter-name>
-		<filter-class>org.iringtools.security.OAuthFilter</filter-class>		
+ <filter>
+    <filter-name>sso</filter-name>
+    <filter-class>org.iringtools.security.OAuthFilter</filter-class>
     <init-param>
       <param-name>federationServiceUri</param-name>
       <param-value>https://sso.mypsn.com</param-value>
@@ -48,16 +48,16 @@
       <param-value>https://sso.mypsn.com/ext/ref/pickup?REF=</param-value>
     </init-param>
     <init-param>
+      <param-name>pingInstanceId</param-name>
+      <param-value>iRingTools</param-value>
+    </init-param>
+    <init-param>
       <param-name>pingUserName</param-name>
-      <param-value>PSN2AgentlessDemoUser</param-value>
+      <param-value>iRingToolsUser</param-value>
     </init-param>
     <init-param>
       <param-name>pingPassword</param-name>
-      <param-value>jlAclUVoA6oAfrlUbOEMo-Troe*</param-value>
-    </init-param>
-    <init-param>
-      <param-name>pingInstanceId</param-name>
-      <param-value>PSN2AgentlessDemo</param-value>
+      <param-value>st93tRle7rlef56eQoAx3UTlAp</param-value>
     </init-param>
     <init-param>
       <param-name>tokenServiceUri</param-name>
@@ -67,7 +67,7 @@
       <param-name>applicationKey</param-name>
       <param-value>ede6c15add1696425ee2e48f4f9f8820</param-value>
     </init-param>
-	</filter>
+  </filter>
 	<filter-mapping>
 		<filter-name>sso</filter-name>
 		<url-pattern>/*</url-pattern>

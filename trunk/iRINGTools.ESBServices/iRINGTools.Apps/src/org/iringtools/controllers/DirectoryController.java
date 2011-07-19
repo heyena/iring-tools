@@ -3,7 +3,6 @@ package org.iringtools.controllers;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.models.DataModel;
 import org.iringtools.models.DirectoryModel;
@@ -16,13 +15,12 @@ import com.opensymphony.xwork2.ActionSupport;
 public class DirectoryController extends ActionSupport implements SessionAware
 {
   private static final long serialVersionUID = 1L;
-  private static final Logger logger = Logger.getLogger(DirectoryController.class);
 
   private Map<String, Object> session;
   private DirectoryModel directoryModel;
   private String exchangeServiceUri;;
   private Tree directoryTree;
-  
+
   public DirectoryController()
   {
     directoryModel = new DirectoryModel();
@@ -34,30 +32,22 @@ public class DirectoryController extends ActionSupport implements SessionAware
   {
     this.session = session;
     directoryModel.setSession(session);
-  } 
-  
-  public String getDirectory()
+  }
+
+  public String getDirectory() throws HttpClientException
   {
-    try
+    for (Entry<String, Object> entry : session.entrySet())
     {
-      for (Entry<String, Object> entry : session.entrySet())
+      String key = entry.getKey();
+
+      if (key.startsWith(DataModel.APP_PREFIX))
       {
-        String key = entry.getKey();
-        
-        if (key.startsWith(DataModel.APP_PREFIX))
-        {
-          session.remove(key);
-        }
+        session.remove(key);
       }
-      
-      directoryTree = directoryModel.getDirectoryTree(exchangeServiceUri + "/directory");  
     }
-    catch (HttpClientException ex)
-    {
-      logger.error("Error in getDirectory: " + ex);
-      directoryTree = new Tree();
-    } 
-    
+
+    directoryTree = directoryModel.getDirectoryTree(exchangeServiceUri + "/directory");
+
     return SUCCESS;
   }
 

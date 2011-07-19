@@ -78,21 +78,10 @@ public class ExchangeProvider
     HttpUtils.addOAuthHeaders(settings, httpClient);
   }
   
-  public Directory getDirectory() throws JAXBException, IOException
-  {
-    Directory directory = null;
-
-    try
-    {
-      logger.debug("getDirectory()");
-      directory = httpClient.get(Directory.class, settings.get("directoryServiceUri") + "/directory");
-    }
-    catch (Exception ex)
-    {
-      logger.error("Error : getDirectory(): " + ex);
-    }
-
-    return directory;
+  public Directory getDirectory() throws HttpClientException
+  {   
+    logger.debug("getDirectory()");
+    return httpClient.get(Directory.class, settings.get("directoryServiceUri") + "/directory");
   }
   
   public Manifest getManifest(String scope, String id)
