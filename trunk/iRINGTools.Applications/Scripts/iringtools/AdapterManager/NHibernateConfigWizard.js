@@ -2769,6 +2769,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
         relCombo.store.commitChanges();
 
         relCombo.setValue(relatedObjectName);
+        relationConfigPanel.getForm().findField('relatedTable').setValue(relatedObjectName);
 
         var mapCombo = relationConfigPane.getForm().findField('mapPropertyName');
         if (mapCombo.store.data) {
@@ -3070,6 +3071,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
     var relationConfigForm = relationConfigPanel.getForm();
     var dataRelationPane = relationConfigPanel.items.items[7];
     relationConfigForm.findField('relatedObjectName').setValue(relatedObjectName);
+    relationConfigForm.findField('relatedTable').setValue(relatedObjectName);
     if (node.attributes.attributes)
       var relationTypeIndex = node.attributes.attributes.relationshipTypeIndex;
     else
