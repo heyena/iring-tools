@@ -1335,8 +1335,16 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var objNam = form.findField('objectName').getValue();
 									treeNodeProps['tableName'] = form.findField('tableName').getValue();
 									treeNodeProps['objectName'] = objNam;
-									treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();								
-									form.treeNode.setText(objNam);									
+									treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();									
+
+									for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
+										var dataObject = dbDict.dataObjects[ijk];
+										if (form.treeNode.text.toUpperCase() != dataObject.objectName.toUpperCase())
+											continue;
+										dataObject.objectName = objNam;
+									}
+
+									form.treeNode.setText(objNam);
 									form.treeNode.text = objNam;
 									form.treeNode.attributes.text = objNam;
 									form.treeNode.attributes.properties.objectName = objNam;
