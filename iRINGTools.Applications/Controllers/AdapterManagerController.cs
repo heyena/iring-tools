@@ -27,7 +27,14 @@ namespace iRINGTools.Web.Controllers
 
       if (!String.IsNullOrEmpty(enableOAuth) && enableOAuth.ToUpper() == "TRUE")
       {
-        _authenticationLayer.Authenticate(ref _allClaims, ref _oAuthToken);
+        try
+        {
+          _authenticationLayer.Authenticate(ref _allClaims, ref _oAuthToken);
+        }
+        catch (Exception e)
+        {
+          _logger.Error(e.ToString());
+        }
 
         string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         string ldapConfigFilePath = baseDirectory + @"App_Data\ldap.conf";
