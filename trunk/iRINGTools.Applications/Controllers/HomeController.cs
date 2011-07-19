@@ -5,9 +5,9 @@ using System.Web;
 using System.Web.Mvc;
 using System.Net;
 
-namespace iRINGTools.WebMVC.Controllers
+namespace iRINGTools.Web.Controllers
 {
-  public class HomeController : Controller
+  public class HomeController : BaseController
   {
     //
     // GET: /Home/

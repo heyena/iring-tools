@@ -90,50 +90,51 @@ namespace org.iringtools.adapter.security
 
 
           //call apigee to get the oauth headers for calling services
-
-          string tokenServerAddress = ConfigurationManager.AppSettings["tokenServiceAddress"].ToString() + ConfigurationManager.AppSettings["applicationKey"].ToString();
-          WebRequest reqApigee = WebRequest.Create(tokenServerAddress);
-          reqApigee.Method = "POST";
-
-          if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["ProxyAddress"]))
+          if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["applicationKey"]))
           {
-            reqApigee.Proxy = new WebProxy(ConfigurationManager.AppSettings["ProxyAddress"].ToString(), true);
-            reqApigee.Proxy.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["ProxyCredentialUserName"].ToString(),
-                ConfigurationManager.AppSettings["ProxyCredentialPassword"].ToString(),
-                ConfigurationManager.AppSettings["ProxyCredentialDomain"].ToString());
-          }
+            string tokenServerAddress = ConfigurationManager.AppSettings["tokenServiceAddress"].ToString() + ConfigurationManager.AppSettings["applicationKey"].ToString();
+            WebRequest reqApigee = WebRequest.Create(tokenServerAddress);
+            reqApigee.Method = "POST";
 
-          //post the json response from ping federate to the apigee url
-          ASCIIEncoding encoding = new ASCIIEncoding();
-          byte[] data = encoding.GetBytes(response);
-
-          reqApigee.ContentType = "application/xml";
-          reqApigee.ContentLength = data.Length;
-          Stream newStream = reqApigee.GetRequestStream();
-
-          // Send the data.
-          newStream.Write(data, 0, data.Length);
-          newStream.Close();
-
-          //get back the response from apigee
-          WebResponse respApigee = reqApigee.GetResponse();
-          StreamReader streamApigee = new StreamReader(respApigee.GetResponseStream());
-          string responseApigee = streamApigee.ReadToEnd();
-
-          //response from apigee is json - deserialize that into dictionaries for the purposes of display
-          JavaScriptSerializer desApigee = new JavaScriptSerializer();
-          IDictionary apigeeInfo = desApigee.Deserialize<Dictionary<string, string>>(responseApigee.Replace("{\"accesstoken\":", "").Replace("}}", "}"));
-
-          foreach (DictionaryEntry entry in apigeeInfo)
-          {
-            userInfo.Add("OAuth " + entry.Key.ToString(), entry.Value);
-
-            if (entry.Key.ToString() == "token")
+            if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["ProxyAddress"]))
             {
-              OAuthToken = entry.Value.ToString();
+              reqApigee.Proxy = new WebProxy(ConfigurationManager.AppSettings["ProxyAddress"].ToString(), true);
+              reqApigee.Proxy.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["ProxyCredentialUserName"].ToString(),
+                  ConfigurationManager.AppSettings["ProxyCredentialPassword"].ToString(),
+                  ConfigurationManager.AppSettings["ProxyCredentialDomain"].ToString());
+            }
+
+            //post the json response from ping federate to the apigee url
+            ASCIIEncoding encoding = new ASCIIEncoding();
+            byte[] data = encoding.GetBytes(response);
+
+            reqApigee.ContentType = "application/xml";
+            reqApigee.ContentLength = data.Length;
+            Stream newStream = reqApigee.GetRequestStream();
+
+            // Send the data.
+            newStream.Write(data, 0, data.Length);
+            newStream.Close();
+
+            //get back the response from apigee
+            WebResponse respApigee = reqApigee.GetResponse();
+            StreamReader streamApigee = new StreamReader(respApigee.GetResponseStream());
+            string responseApigee = streamApigee.ReadToEnd();
+
+            //response from apigee is json - deserialize that into dictionaries for the purposes of display
+            JavaScriptSerializer desApigee = new JavaScriptSerializer();
+            IDictionary apigeeInfo = desApigee.Deserialize<Dictionary<string, string>>(responseApigee.Replace("{\"accesstoken\":", "").Replace("}}", "}"));
+
+            foreach (DictionaryEntry entry in apigeeInfo)
+            {
+              userInfo.Add("OAuth " + entry.Key.ToString(), entry.Value);
+
+              if (entry.Key.ToString() == "token")
+              {
+                OAuthToken = entry.Value.ToString();
+              }
             }
           }
-
           //end of apigee interaction
           //---------------------------------------------
 
