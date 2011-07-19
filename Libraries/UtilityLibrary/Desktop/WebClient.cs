@@ -57,8 +57,6 @@ namespace org.iringtools.utility
         private string _baseUri = String.Empty;
         private NetworkCredential _credentials = null;
         private IWebProxy _proxy = null;
-        
-        private IDictionary<string, string> _headers = null;
 
         private const string NEW_LINE = "\r\n";
         private const int TIMEOUT = 600000;
@@ -165,15 +163,23 @@ namespace org.iringtools.utility
             return encodedUri;
         }
 
-        //private void PrepareHader(WebRequest request)
-        //{
-        //  foreach(KeyValuePair<string, string> pair in _headers)
-        //  {
-        //    request.Headers.
-        //  }
+        private void PrepareHeaders(WebRequest request)
+        {
+          if (HttpContext.Current != null)
+          {
+            if (HttpContext.Current.Request.Cookies["Auth"] != null)
+            {
+              HttpCookie authCookie = HttpContext.Current.Request.Cookies["Auth"];
+              request.Headers.Add("Auth", authCookie.Value);
+            }
 
-        //  request
-        //}
+            if (HttpContext.Current.Request.Cookies["Authorization"] != null)
+            {
+              HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
+              request.Headers.Add("Authorization", authorizationCookie.Value);
+            }
+          }
+        }
 
         private void PrepareCredentials(WebRequest request)
         {
@@ -221,6 +227,7 @@ namespace org.iringtools.utility
                 WebRequest request = HttpWebRequest.Create(uri);
 
                 PrepareCredentials(request);
+                PrepareHeaders(request);
               
                 request.Method = "Get";
                 request.Timeout = TIMEOUT;
@@ -253,6 +260,7 @@ namespace org.iringtools.utility
                 WebRequest request = HttpWebRequest.Create(uri);
 
                 PrepareCredentials(request);
+                PrepareHeaders(request);
                 
                 request.Method = "Get";
                 request.Timeout = TIMEOUT;
@@ -288,10 +296,10 @@ namespace org.iringtools.utility
               string uri = _baseUri + relativeUri; // GetUri(relativeUri);
 
                 MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
-
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
                 PrepareCredentials(request);
+                PrepareHeaders(request);
 
                 request.Timeout = TIMEOUT;
                 request.Method = "POST";
@@ -332,6 +340,7 @@ namespace org.iringtools.utility
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
                 PrepareCredentials(request);
+                PrepareHeaders(request);
                 
                 request.Timeout = TIMEOUT;
                 request.Method = "POST";
@@ -376,6 +385,7 @@ namespace org.iringtools.utility
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
             PrepareCredentials(request);
+            PrepareHeaders(request);
 
             request.Timeout = TIMEOUT;
             request.Method = "POST";
@@ -411,12 +421,11 @@ namespace org.iringtools.utility
             try
             {
                 string uri = _baseUri + relativeUri; // GetUri(relativeUri);
-
                 MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
-
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
                 PrepareCredentials(request);
+                PrepareHeaders(request);
 
                 request.Timeout = TIMEOUT;
                 request.Method = "PUT";
@@ -480,6 +489,7 @@ namespace org.iringtools.utility
                 stream.Write(encoding.GetBytes(header), 0, header.Length);
 
                 PrepareCredentials(request);
+                PrepareHeaders(request);
               
                 request.ContentLength = stream.Length;
                 request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
@@ -517,6 +527,7 @@ namespace org.iringtools.utility
             request.Timeout = TIMEOUT;
             
             PrepareCredentials(request);
+            PrepareHeaders(request);
             
             webStream = request.GetRequestStream();
             requestBase.InputStream.CopyTo(webStream);            
@@ -551,12 +562,11 @@ namespace org.iringtools.utility
             try
             {
                 string uri = _baseUri + relativeUri; // GetUri(relativeUri);
-
                 MemoryStream stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
-
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
 
                 PrepareCredentials(request);
+                PrepareHeaders(request);
 
                 request.Timeout = TIMEOUT;
                 request.Method = "POST";
