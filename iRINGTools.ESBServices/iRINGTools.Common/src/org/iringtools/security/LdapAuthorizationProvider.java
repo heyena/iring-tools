@@ -18,7 +18,7 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
 {
   private static final Logger logger = Logger.getLogger(LdapAuthorizationProvider.class);
   
-  private static final String BASE_DN = "ou=iringtools,dc=iringug,dc=org";
+  private static final String BASE_DN = "o=iringtools,dc=iringug,dc=org";
   private static final String USERID_KEY = "EmailAddress";
   
   private DirContext dctx;
@@ -58,8 +58,8 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
 
     if (userId != null && dctx != null)
     {
-      String groupDN = "cn=" + authorizedGroup + ",cn=groups," + BASE_DN;
-      String qualUserId = "uid=" + userId + ",cn=users," + BASE_DN;
+      String groupDN = "cn=" + authorizedGroup + ",ou=groups," + BASE_DN;
+      String qualUserId = "uid=" + userId + ",ou=users," + BASE_DN;
       String filter = "(member=" + qualUserId + ")";
 
       SearchControls constraints = new SearchControls();

@@ -14,7 +14,7 @@ namespace org.iringtools.adapter.security
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(LdapAuthorizationProvider));
 
-    private const string BASE_DN = "ou=iringtools,dc=iringug,dc=org";
+    private const string BASE_DN = "o=iringtools,dc=iringug,dc=org";
     private const string USERID_KEY = "emailaddress";
     
     private LdapConnection ldapConnection;
@@ -42,8 +42,8 @@ namespace org.iringtools.adapter.security
 
       if (userId != null && ldapConnection != null)
       {
-        string groupDN = "cn=" + authorizedGroup + ",cn=groups," + BASE_DN;
-        string qualUserId = "uid=" + userId + ",cn=users," + BASE_DN;
+        string groupDN = "cn=" + authorizedGroup + ",ou=groups," + BASE_DN;
+        string qualUserId = "uid=" + userId + ",ou=users," + BASE_DN;
         string filter = "(member=" + qualUserId + ")";
 
         SearchRequest request = new SearchRequest

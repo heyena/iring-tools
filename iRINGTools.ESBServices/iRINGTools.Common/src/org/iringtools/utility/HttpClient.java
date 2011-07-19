@@ -3,8 +3,8 @@ package org.iringtools.utility;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,16 +43,33 @@ public class HttpClient
 
   public <T> T get(Class<T> responseClass, String relativeUri) throws HttpClientException
   {
+    HttpURLConnection conn = null;
+    
     try
     {
-      URLConnection conn = getConnection(GET_METHOD, relativeUri);
+      conn = getConnection(GET_METHOD, relativeUri);
       InputStream responseStream = conn.getInputStream();
       return JaxbUtils.toObject(responseClass, responseStream);
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      throw new HttpClientException(ex.toString());
+      try
+      {
+        throw new HttpClientException(conn.getResponseCode(), e);
+      }
+      catch (IOException ex)
+      {
+        ex.printStackTrace();
+      }
     }
+    finally {
+      if (conn != null)
+      {
+        conn.disconnect();
+      }
+    }
+    
+    return null;
   }
 
   public <T> T get(Class<T> responseClass) throws HttpClientException
@@ -67,6 +84,8 @@ public class HttpClient
 
   public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity) throws HttpClientException
   {
+    HttpURLConnection conn = null;
+    
     try
     {
       String content = "";
@@ -74,7 +93,7 @@ public class HttpClient
       if (requestEntity != null && !requestEntity.getClass().getName().equals("java.lang.String"))
         content = JaxbUtils.toXml(requestEntity, false);
 
-      URLConnection conn = getConnection(POST_METHOD, relativeUri);
+      conn = getConnection(POST_METHOD, relativeUri);
       conn.setRequestProperty("Content-Type", "application/xml");
       conn.setRequestProperty("Content-Length", String.valueOf(content.length()));
 
@@ -88,17 +107,34 @@ public class HttpClient
 
       return response;
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      throw new HttpClientException(ex.toString());
+      try
+      {
+        throw new HttpClientException(conn.getResponseCode(), e);
+      }
+      catch (IOException ex)
+      {
+        ex.printStackTrace();
+      }
     }
+    finally {
+      if (conn != null)
+      {
+        conn.disconnect();
+      }
+    }
+    
+    return null;
   }
   
   public <R> R postByteData(Class<R> responseClass, String relativeUri, byte[] data) throws HttpClientException
   {
+    HttpURLConnection conn = null;
+    
     try
     {
-      URLConnection conn = getConnection(POST_METHOD, relativeUri);
+      conn = getConnection(POST_METHOD, relativeUri);
       conn.setRequestProperty("Content-type", "application/octet-stream");
       conn.setRequestProperty("Content-length", String.valueOf(data.length));
 
@@ -113,18 +149,35 @@ public class HttpClient
       return response;
       
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      throw new HttpClientException(ex.toString());
+      try
+      {
+        throw new HttpClientException(conn.getResponseCode(), e);
+      }
+      catch (IOException ex)
+      {
+        ex.printStackTrace();
+      }
     }
+    finally {
+      if (conn != null)
+      {
+        conn.disconnect();
+      }
+    }
+    
+    return null;
   }
 
   public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData,
       Map<String, String> headers) throws HttpClientException
   {
+    HttpURLConnection conn = null;
+    
     try
     {
-      URLConnection conn = getConnection(POST_METHOD, relativeUri);
+      conn = (HttpURLConnection) getConnection(POST_METHOD, relativeUri);
 
       for (Entry<String, String> pair : headers.entrySet())
       {
@@ -156,10 +209,25 @@ public class HttpClient
 
       return response;
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      throw new HttpClientException(ex.toString());
+      try
+      {
+        throw new HttpClientException(conn.getResponseCode(), e);
+      }
+      catch (IOException ex)
+      {
+        ex.printStackTrace();
+      }
     }
+    finally {
+      if (conn != null)
+      {
+        conn.disconnect();
+      }
+    }
+    
+    return null;
   }
 
   public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData)
@@ -221,13 +289,13 @@ public class HttpClient
     headers.put(name, value);
   }
 
-  private URLConnection getConnection(String method, String relativeUri) throws IOException, EncryptionException
+  private HttpURLConnection getConnection(String method, String relativeUri) throws IOException, EncryptionException
   {
     if (baseUri == null)
       baseUri = "";
 
     URL url = new URL(baseUri + relativeUri);
-    URLConnection conn = url.openConnection();
+    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
     
     String proxySet = System.getProperty("proxySet");
     if (proxySet != null && proxySet.equalsIgnoreCase("true"))

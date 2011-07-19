@@ -5,58 +5,51 @@ objectClass: domain
 objectClass: top
 dc: iringug
 
-dn: ou=iringtools,dc=iringug,dc=org
+dn: o=iringtools,dc=iringug,dc=org
+objectClass: organization
+objectClass: top
+o: iringtools
+
+dn: ou=groups,o=iringtools,dc=iringug,dc=org
 objectClass: organizationalUnit
 objectClass: top
-ou: iringtools
-description: iRINGTools
+ou: groups
 
-dn: cn=users,ou=iringtools,dc=iringug,dc=org
-objectClass: groupOfNames
+dn: ou=users,o=iringtools,dc=iringug,dc=org
+objectClass: organizationalUnit
 objectClass: top
-cn: users
+ou: users
 
-dn: cn=groups,ou=iringtools,dc=iringug,dc=org
+dn: uid=iring@ids-adi.org,ou=users,o=iringtools,dc=iringug,dc=org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
 objectClass: top
-objectClass: groupOfEntries
-cn: groups
-description: iRINGTools
+cn: iringtools
+sn: ids-adi
+uid: iring@ids-adi.org
 
-dn: cn=adapterAdmins,cn=groups,ou=iringtools,dc=iringug,dc=org
-objectClass: groupOfNames
-objectClass: top
-cn: adapterAdmins
-description: iRINGTools
-
-dn: cn=exchangeAdmins,cn=groups,ou=iringtools,dc=iringug,dc=org
+dn: cn=exchangeAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
 objectClass: groupOfNames
 objectClass: top
 cn: exchangeAdmins
-description: iRINGTools
+member: uid=iring@ids-adi.org,ou=users,o=iringtools,dc=iringug,dc=org
 
-dn: cn=refDataAdmins,cn=groups,ou=iringtools,dc=iringug,dc=org
+dn: cn=adapterAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
 objectClass: groupOfNames
 objectClass: top
-cn: refDataAdmins
-description: iRINGTools
+cn: adapterAdmins
+member: uid=iring@ids-adi.org,ou=users,o=iringtools,dc=iringug,dc=org
 
-dn: cn=directory,ou=iringtools,dc=iringug,dc=org
+dn: cn=federationAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
 objectClass: top
-objectClass: groupOfEntries
-cn: directory
+cn: federationAdmins
+member: uid=iring@ids-adi.org,ou=users,o=iringtools,dc=iringug,dc=org
 
-dn: cn=exchanges,ou=iringtools,dc=iringug,dc=org
+dn: cn=refdataAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
 objectClass: top
-objectClass: groupOfEntries
-cn: exchanges
-
-dn: cn=endpoints,ou=iringtools,dc=iringug,dc=org
-objectClass: top
-objectClass: groupOfEntries
-cn: endpoints
-
-dn: cn=federation,ou=iringtools,dc=iringug,dc=org
-objectClass: top
-objectClass: groupOfEntries
-cn: federation
+cn: refdataAdmins
+member: uid=iring@ids-adi.org,ou=users,o=iringtools,dc=iringug,dc=org
 
