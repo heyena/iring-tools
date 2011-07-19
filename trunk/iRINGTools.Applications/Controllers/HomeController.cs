@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Net;
 
-namespace iRINGTools.Web.Controllers
+namespace org.iringtools.web.controllers
 {
   public class HomeController : BaseController
   {

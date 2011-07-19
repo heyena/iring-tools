@@ -11,7 +11,7 @@ using System.Configuration;
 using System.Collections;
 using org.iringtools.utility;
 
-namespace iRINGTools.Web.Controllers
+namespace org.iringtools.web.controllers
 {
   public abstract class BaseController : Controller
   {

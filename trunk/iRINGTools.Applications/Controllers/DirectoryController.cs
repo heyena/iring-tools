@@ -9,7 +9,7 @@ using iRINGTools.Web.Models;
 using org.iringtools.library;
 using org.iringtools.mapping;
 
-namespace iRINGTools.Web.Controllers
+namespace org.iringtools.web.controllers
 {
   public class DirectoryController : BaseController
     {

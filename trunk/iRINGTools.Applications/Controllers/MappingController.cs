@@ -20,7 +20,7 @@ using iRINGTools.Web.Models;
 using org.ids_adi.qmxf;
 using VDS.RDF;
 
-namespace iRINGTools.Web.Controllers
+namespace org.iringtools.web.controllers
 {
   public class MappingController : BaseController
   {

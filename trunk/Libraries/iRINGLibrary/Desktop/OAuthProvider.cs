@@ -10,11 +10,14 @@ using System.IO;
 using System.Web.Script.Serialization;
 using System.Collections;
 using org.iringtools.utility;
+using log4net;
 
 namespace org.iringtools.adapter.security
 {
   public class OAuthProvider : IAuthenticationLayer
   {
+
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(OAuthProvider));
     const string LOGON_COOKIE_NAME = "Auth";
 
     public string Authenticate(ref System.Collections.IDictionary allClaims, ref string OAuthToken)
@@ -76,6 +79,8 @@ namespace org.iringtools.adapter.security
           StreamReader stream = new StreamReader(resp.GetResponseStream());
           string response = stream.ReadToEnd();
 
+          _logger.Debug("PingResponse: " + response);
+
           //response from both pingfederate is json - deserialize that into dictionaries for easier operation
           JavaScriptSerializer desSSO = new JavaScriptSerializer();
           IDictionary userInfo = desSSO.Deserialize<Dictionary<string, string>>(response);
@@ -92,6 +97,8 @@ namespace org.iringtools.adapter.security
           //call apigee to get the oauth headers for calling services
           if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["applicationKey"]))
           {
+            _logger.Debug("ApplicationKey: " + ConfigurationManager.AppSettings["applicationKey"]);
+
             string tokenServerAddress = ConfigurationManager.AppSettings["tokenServiceAddress"].ToString() + ConfigurationManager.AppSettings["applicationKey"].ToString();
             WebRequest reqApigee = WebRequest.Create(tokenServerAddress);
             reqApigee.Method = "POST";
@@ -132,6 +139,8 @@ namespace org.iringtools.adapter.security
               if (entry.Key.ToString() == "token")
               {
                 OAuthToken = entry.Value.ToString();
+
+                _logger.Debug("OAuthToken: " + OAuthToken);
               }
             }
           }
@@ -167,6 +176,9 @@ namespace org.iringtools.adapter.security
           }
 
           authenticatedUserName = userInfo["subject"].ToString();
+
+          _logger.Debug("authenticatedUserName: " + authenticatedUserName);
+
           HttpContext.Current.Response.Cookies.Add(authCookie);
           allClaims = userInfo;
         }
