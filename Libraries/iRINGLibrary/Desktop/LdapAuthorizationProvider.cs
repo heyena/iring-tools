@@ -31,6 +31,8 @@ namespace org.iringtools.adapter.security
       ldapConnection = new LdapConnection(ldapIdentifier);
       ldapConnection.Credential = new NetworkCredential(userName, password);
       ldapConnection.AuthType = AuthType.Basic;
+      LdapSessionOptions options = ldapConnection.SessionOptions;
+      options.ProtocolVersion = 3;
       ldapConnection.Bind();
 
       authorizedGroup = properties["authorizedGroup"];
