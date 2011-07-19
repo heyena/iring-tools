@@ -127,10 +127,11 @@ namespace org.iringtools.adapter.security
             WebResponse respApigee = reqApigee.GetResponse();
             StreamReader streamApigee = new StreamReader(respApigee.GetResponseStream());
             string responseApigee = streamApigee.ReadToEnd();
+            string accessToken = responseApigee.Replace("{\"accesstoken\":", "");
 
             //response from apigee is json - deserialize that into dictionaries for the purposes of display
             JavaScriptSerializer desApigee = new JavaScriptSerializer();
-            IDictionary apigeeInfo = desApigee.Deserialize<Dictionary<string, string>>(responseApigee.Replace("{\"accesstoken\":", "").Replace("}}", "}"));
+            IDictionary apigeeInfo = desApigee.Deserialize<Dictionary<string, string>>(accessToken.Replace("}}", "}"));
 
             foreach (DictionaryEntry entry in apigeeInfo)
             {
@@ -138,7 +139,11 @@ namespace org.iringtools.adapter.security
 
               if (entry.Key.ToString() == "token")
               {
-                OAuthToken = entry.Value.ToString();
+                OAuthToken = entry.Value.ToString(); 
+                
+                HttpCookie authorizationCookie = new HttpCookie("Authorization");
+                authorizationCookie.Value = OAuthToken;
+                HttpContext.Current.Response.Cookies.Add(authorizationCookie);
 
                 _logger.Debug("OAuthToken: " + OAuthToken);
               }
