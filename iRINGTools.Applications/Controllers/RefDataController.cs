@@ -19,7 +19,7 @@ using org.ids_adi.qmxf;
 using org.iringtools.mapping;
 using VDS.RDF;
 
-namespace iRINGTools.Web.Controllers
+namespace org.iringtools.web.controllers
 {
     public class RefDataController : BaseController
     {
