@@ -22,128 +22,171 @@ namespace org.iringtools.web.controllers
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseController));
 
     public BaseController()
-		{
-      string enableOAuth = ConfigurationManager.AppSettings["EnableOAuth"];
-
-      if (!String.IsNullOrEmpty(enableOAuth) && enableOAuth.ToUpper() == "TRUE")
+    {
+      try
       {
-        try
+        string enableOAuth = ConfigurationManager.AppSettings["EnableOAuth"];
+
+        if (!String.IsNullOrEmpty(enableOAuth) && enableOAuth.ToUpper() == "TRUE")
         {
           _authenticationLayer.Authenticate(ref _allClaims, ref _oAuthToken);
-        }
-        catch (Exception e)
-        {
-          _logger.Error(e.ToString());
-        }
 
-        string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        string ldapConfigFilePath = baseDirectory + @"App_Data\ldap.conf";
+          string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+          string ldapConfigFilePath = baseDirectory + @"App_Data\ldap.conf";
 
-        if (System.IO.File.Exists(ldapConfigFilePath))
-        {
-          Properties ldapConfig = new Properties();
-          ldapConfig.Load(ldapConfigFilePath);
-          ldapConfig["authorizedGroup"] = "adapterAdmins";
-          _authorizationLayer.Init(ldapConfig);
-
-          if (!_authorizationLayer.IsAuthorized(_allClaims))
+          if (System.IO.File.Exists(ldapConfigFilePath))
           {
-            throw new UnauthorizedAccessException("User not authorized to access AdapterManager.");
+            Properties ldapConfig = new Properties();
+            ldapConfig.Load(ldapConfigFilePath);
+            ldapConfig["authorizedGroup"] = "adapterAdmins";
+            _authorizationLayer.Init(ldapConfig);
+
+            if (!_authorizationLayer.IsAuthorized(_allClaims))
+            {
+              throw new UnauthorizedAccessException("User not authorized to access AdapterManager.");
+            }
+          }
+          else
+          {
+            _logger.Warn("LDAP Configuration is missing!");
           }
         }
-        else
-        {
-          _logger.Warn("LDAP Configuration is missing!");
-        }
       }
-		}
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+      }
+    }
   }
 
-	public class AdapterManagerController : BaseController 
-	{
-		private AdapterRepository _repository;
+  public class AdapterManagerController : BaseController
+  {
+    private AdapterRepository _repository;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterManagerController));
-    
-		public AdapterManagerController() : this(new AdapterRepository()) { }
 
-		public AdapterManagerController(AdapterRepository repository) : base()
-		{
-			_repository = repository;
-		}
+    public AdapterManagerController() : this(new AdapterRepository()) { }
 
-		public ActionResult Index()
-		{
-			return View();
-		}
+    public AdapterManagerController(AdapterRepository repository)
+      : base()
+    {
+      _repository = repository;
+    }
 
-		public ActionResult DBProviders()
-		{
-			DataProviders dataProviders = _repository.GetDBProviders();
+    public ActionResult Index()
+    {
+      return View();
+    }
 
-			List<DBProvider> providers = new List<DBProvider>();
-			foreach (Provider dataProvider in dataProviders)
-			{
-				providers.Add(new DBProvider() { Provider = dataProvider.ToString() });
-			}
+    public ActionResult DBProviders()
+    {
+      JsonContainer<List<DBProvider>> container = new JsonContainer<List<DBProvider>>();
 
-			JsonContainer<List<DBProvider>> container = new JsonContainer<List<DBProvider>>();
-			container.items = providers;
-			container.success = true;
-			container.total = dataProviders.Count;
+      try
+      {
+        DataProviders dataProviders = _repository.GetDBProviders();
 
-			return Json(container, JsonRequestBehavior.AllowGet);
-		}
+        List<DBProvider> providers = new List<DBProvider>();
+        foreach (Provider dataProvider in dataProviders)
+        {
+          providers.Add(new DBProvider() { Provider = dataProvider.ToString() });
+        }
 
-		public ActionResult DBDictionary(FormCollection form)
-		{
-			DatabaseDictionary dbDict = _repository.GetDBDictionary(form["scope"], form["app"]);
-			return Json(dbDict, JsonRequestBehavior.AllowGet);
-		}
+        container.items = providers;
+        container.success = true;
+        container.total = dataProviders.Count;
 
-		public ActionResult TableNames(FormCollection form)
-		{
-			List<string> dataObjects = _repository.GetTableNames(
-				form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
-				form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"]);
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+      }
 
-			JsonContainer<List<string>> container = new JsonContainer<List<string>>();
-			container.items = dataObjects;
-			container.success = true;
-			container.total = dataObjects.Count;
+      return Json(container, JsonRequestBehavior.AllowGet);
+    }
 
-			return Json(container, JsonRequestBehavior.AllowGet);
-		}
+    public ActionResult DBDictionary(FormCollection form)
+    {
+      try
+      {
+        DatabaseDictionary dbDict = _repository.GetDBDictionary(form["scope"], form["app"]);
+        return Json(dbDict, JsonRequestBehavior.AllowGet);
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+        return Json(null, JsonRequestBehavior.AllowGet);
+      }
+    }
 
-		public ActionResult DBObjects(FormCollection form)
-		{
-			List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
-				form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
-				form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"]);
+    public ActionResult TableNames(FormCollection form)
+    {
+      JsonContainer<List<string>> container = new JsonContainer<List<string>>();
 
-			return Json(dbObjects, JsonRequestBehavior.AllowGet);
-		}
-
-
-		public ActionResult Trees(FormCollection form)
-		{
-			string response = string.Empty;
-			
-			response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"]);
-
-			if (response != null && response.ToUpper().Contains("ERROR"))
-			{
-				int inds = response.ToUpper().IndexOf("<MESSAGE>");
-				int inde = response.ToUpper().IndexOf(";");
-				string msg = response.Substring(inds + 9, inde - inds - 13);
-				return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
-			}
-			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-		}
+      try
+      {
+        List<string> dataObjects = _repository.GetTableNames(
+          form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+          form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"]);
 
 
-		public class DBProvider
-		{
-			public string Provider { get; set; }
-		}
-	}
+        container.items = dataObjects;
+        container.success = true;
+        container.total = dataObjects.Count;
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+      }
+
+      return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    public ActionResult DBObjects(FormCollection form)
+    {
+      try
+      {
+        List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
+          form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
+          form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"]);
+
+        return Json(dbObjects, JsonRequestBehavior.AllowGet);
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+        return Json(null, JsonRequestBehavior.AllowGet);
+      }
+    }
+
+
+    public ActionResult Trees(FormCollection form)
+    {
+      try
+      {
+        string response = string.Empty;
+
+        response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"]);
+
+        if (response != null && response.ToUpper().Contains("ERROR"))
+        {
+          int inds = response.ToUpper().IndexOf("<MESSAGE>");
+          int inde = response.ToUpper().IndexOf(";");
+          string msg = response.Substring(inds + 9, inde - inds - 13);
+          return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+        }
+        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+    }
+
+
+    public class DBProvider
+    {
+      public string Provider { get; set; }
+    }
+  }
 }
