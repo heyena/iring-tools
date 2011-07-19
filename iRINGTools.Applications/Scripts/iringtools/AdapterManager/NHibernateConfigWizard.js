@@ -932,7 +932,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									tablesSelector.toMultiselect.store.commitChanges();
 								}
 								else {
-									if (!tablesSelector) 
+									if (!tablesSelector)
 										var tablesSelector = tablesSelectorPane.items.items[1];
 									if (tablesSelector.toMultiselect) {
 										tablesSelector.toMultiselect.reset();
@@ -1158,7 +1158,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					dataObjectNode.attributes.properties.objectName = dataObject.objectName;
 					dataObjectNode.text = dataObject.objectName;
 					dataObjectNode.attributes.text = dataObject.objectName;
-					dataObjectNode.ui.anchor.text = dataObject.objectName;
+					dataObjectNode.setText(dataObject.objectName);
 
 					if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
 						var keysNode = dataObjectNode.attributes.children[0];
@@ -1335,11 +1335,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var objNam = form.findField('objectName').getValue();
 									treeNodeProps['tableName'] = form.findField('tableName').getValue();
 									treeNodeProps['objectName'] = objNam;
-									treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();
-									form.treeNode.ui.anchor.text = objNam;
+									treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();								
+									form.treeNode.setText(objNam);									
 									form.treeNode.text = objNam;
 									form.treeNode.attributes.text = objNam;
-									form.treeNode.text = objNam;
+									form.treeNode.attributes.properties.objectName = objNam;
 								}
 							}
 						}, {
