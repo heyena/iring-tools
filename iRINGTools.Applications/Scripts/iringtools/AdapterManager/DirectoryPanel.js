@@ -173,14 +173,19 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 					}
 				}
 				//});
-			}
+			},
+			keys: [{
+						key: [Ext.EventObject.UP], handler: function () {
+							addRelationship(relationCreateFormPanel, node);
+						}
+					}],
 		});
 
 		this.directoryPanel.on('contextmenu', this.showContextMenu, this);
 		this.directoryPanel.on('click', this.onClick, this);
 		this.directoryPanel.on('dblclick', this.onDoubleClick, this);
 		this.directoryPanel.on('newgraphmap', this.newGraphmap, this);
-
+		
 
 
 		this.items = [
@@ -404,6 +409,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 		}
 		this.directoryPanel.getSelectionModel().select(node);
 		this.onClick(node);
+	
 		//}
 	},
 
@@ -596,4 +602,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 			//  alert(e);
 		}
 	}
+
+	
 });
