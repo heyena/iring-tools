@@ -65,6 +65,8 @@ public class OAuthFilter implements Filter
         String ssoUrl = federationServiceUri + spFederationPath + "?PartnerIdpId=" + 
           idpId + "&TargetResource=" + URLEncoder.encode(returnPath, URL_ENCODING);
         
+        logger.debug("Requesting REF ID: " + ssoUrl);
+        
         response.setContentType("text/html");
         response.sendRedirect(ssoUrl);
       }
@@ -75,10 +77,13 @@ public class OAuthFilter implements Filter
         String pingPassword = filterConfig.getInitParameter("pingPassword");
         String pingInstanceId = filterConfig.getInitParameter("pingInstanceId");
        
-        HttpClient pingIdClient = new HttpClient(authenticationServiceUri + ref);
+        String authServiceUrl = authenticationServiceUri + ref;
+        HttpClient pingIdClient = new HttpClient(authServiceUrl);
         pingIdClient.addHeader("ping.uname", pingUserName);
         pingIdClient.addHeader("ping.pwd", pingPassword);
         pingIdClient.addHeader("ping.instanceId", pingInstanceId);
+        
+        logger.debug("Requesting identity: " + authServiceUrl);
         
         String userAttrsJson = null;
         
@@ -173,6 +178,7 @@ public class OAuthFilter implements Filter
   
   private boolean obtainOAuthToken(String userAttrsJson) throws IOException
   {
+    logger.debug("obtainOAuthToken(" + userAttrsJson + ")");
     String tokenServiceUri = filterConfig.getInitParameter("tokenServiceUri");
     String applicationKey = filterConfig.getInitParameter("applicationKey");
     
