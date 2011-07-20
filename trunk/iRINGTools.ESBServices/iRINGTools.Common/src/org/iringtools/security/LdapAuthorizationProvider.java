@@ -58,6 +58,8 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
 
     if (userId != null && dctx != null)
     {
+      logger.debug("Attempting to authorize user [" + userId + "].");
+      
       String groupDN = "cn=" + authorizedGroup + ",ou=groups," + BASE_DN;
       String qualUserId = "uid=" + userId + ",ou=users," + BASE_DN;
       String filter = "(member=" + qualUserId + ")";

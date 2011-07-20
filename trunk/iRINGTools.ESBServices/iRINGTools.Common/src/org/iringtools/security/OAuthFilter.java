@@ -193,7 +193,7 @@ public class OAuthFilter implements Filter
       
       try
       {
-        byte[] data = userAttrsJson.getBytes("utf8");
+        byte[] data = userAttrsJson.getBytes("UTF-8");
         String apigeeResponse = apigeeClient.postByteData(String.class, "", data);
         
         @SuppressWarnings("unchecked")
