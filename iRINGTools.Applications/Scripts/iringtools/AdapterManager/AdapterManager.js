@@ -116,6 +116,7 @@ Ext.onReady(function () {
 
 		var win = new Ext.Window({
 			closable: true,
+			id: 'newwin-' + node.id,
 			modal: false,
 			layout: 'fit',
 			title: 'Add New Scope',
@@ -152,6 +153,7 @@ Ext.onReady(function () {
 
 		var win = new Ext.Window({
 			closable: true,
+			id: 'editwin-' + node.id,
 			modal: false,
 			layout: 'fit',
 			title: 'Edit Scope \"' + node.text + '\"',
@@ -184,6 +186,11 @@ Ext.onReady(function () {
 				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 			}
 		});
+
+		var editScopePane = Ext.getCmp('editwin-' + node.id);	
+		if (editScopePane)
+			editScopePane.destroy();
+		
 
 	}, this);
 
@@ -249,6 +256,7 @@ Ext.onReady(function () {
 
 		var win = new Ext.Window({
 			closable: true,
+			id: 'newwin-' + node.id,
 			modal: false,
 			layout: 'fit',
 			title: 'Add New Application',
@@ -283,7 +291,7 @@ Ext.onReady(function () {
 			var scope = node.parentNode.text;
 
 			if (dataLayerValue == 'ExcelLibrary') {
-				var configTab = contentPanel.items.map[scope + '.' + application + '.-nh-config'];						
+				var configTab = contentPanel.items.map[scope + '.' + application + '.-nh-config'];
 			}
 			else {
 				var configTab = contentPanel.items.map['tab-c.' + scope + '.' + application];
@@ -304,6 +312,7 @@ Ext.onReady(function () {
 		var win = new Ext.Window({
 			closable: true,
 			modal: false,
+			id: 'editwin-' + node.id,
 			layout: 'fit',
 			title: 'Edit Application \"' + node.text + '\"',
 			iconCls: 'tabsApplication',
@@ -337,6 +346,11 @@ Ext.onReady(function () {
 				showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
 			}
 		});
+
+		var editAppPane = Ext.getCmp('editwin-' + node.id);		
+		if (editAppPane)
+			editAppPane.destroy();	
+
 	}, this);
 
 	directoryPanel.on('opengraphmap', function (npanel, node) {
@@ -360,7 +374,7 @@ Ext.onReady(function () {
 
 	}, this);
 
-	
+
 	directoryPanel.on('newvaluelist', function (npanel, node) {
 		var newTab = new AdapterManager.ValueListPanel({
 			id: 'tab-' + node.id,
@@ -467,7 +481,7 @@ Ext.onReady(function () {
 
 		win.show();
 	}, this);
-	
+
 	directoryPanel.on('editgraphmap', function (npanel, node) {
 		var newTab = new AdapterManager.GraphPanel({
 			id: 'tab-' + node.id,
