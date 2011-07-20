@@ -14,7 +14,7 @@
     <AssemblyName>iRINGTools.Web</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <SilverlightApplicationList>{2AD28296-22DA-465F-90AA-6538661B3F86}|..\Applications\ApplicationEditor\ApplicationEditor.Silverlight.csproj|Content\css\ClientBin|False,{965B155F-23B5-4650-8CEF-2B36A1B6F843}|..\Applications\ReferenceDataEditor\ReferenceDataEditor.Silverlight.csproj|Content\css\ClientBin|False,{4549FEAF-A62B-4126-9D6D-10D1DB543466}|..\Applications\MappingEditor\MappingEditor.Silverlight.csproj|Content\css\ClientBin|False</SilverlightApplicationList>
+    <SilverlightApplicationList>{2AD28296-22DA-465F-90AA-6538661B3F86}|..\Applications\ApplicationEditor\ApplicationEditor.Silverlight.csproj|ClientBin|False,{965B155F-23B5-4650-8CEF-2B36A1B6F843}|..\Applications\ReferenceDataEditor\ReferenceDataEditor.Silverlight.csproj|ClientBin|False,{4549FEAF-A62B-4126-9D6D-10D1DB543466}|..\Applications\MappingEditor\MappingEditor.Silverlight.csproj|ClientBin|False</SilverlightApplicationList>
     <UseIISExpress>true</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -148,16 +148,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="about.html" />
-    <Content Include="Content\css\ClientBin\ApplicationEditor.xap" />
-    <Content Include="Content\css\ClientBin\MappingEditor.xap" />
-    <Content Include="Content\css\ClientBin\ReferenceDataEditor.xap" />
+    <Content Include="ClientBin\ApplicationEditor.xap" />
+    <Content Include="ClientBin\MappingEditor.xap" />
+    <Content Include="ClientBin\ReferenceDataEditor.xap" />
     <Content Include="Content\css\adaptermanager-gray.css" />
     <Content Include="Content\css\adaptermanager.css" />
     <Content Include="Content\css\interface.css" />
     <Content Include="Content\css\iring-tools.css" />
     <Content Include="Content\css\reset.css" />
     <Content Include="Content\css\sparql.css" />
-    <Content Include="Content\img\16x16\apply.png" />
     <Content Include="Content\img\16x16\document-new.png" />
     <Content Include="Content\img\16x16\document-open.png" />
     <Content Include="Content\img\16x16\document-properties.png" />
@@ -4687,16 +4686,13 @@
     <Content Include="Scripts\iringtools\AdapterManager\AjaxRowExpander.js" />
     <Content Include="Scripts\iringtools\AdapterManager\App.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ApplicationPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ValueListMapPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ExcelLibrary.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DictionaryPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DirectoryPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\GraphPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\MappingPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigWizard.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\SearchPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ValueListPanel.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\AppEditor\Index.aspx" />
@@ -4896,7 +4892,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>12345</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
