@@ -33,6 +33,8 @@ public abstract class AbstractService
   @Context protected SecurityContext securityContext;
   
   private String serviceType;
+  private String authUser;
+  
   protected Map<String, Object> settings;
   protected HttpServletRequest httpRequest;
   protected HttpServletResponse httpResponse;   
@@ -72,16 +74,17 @@ public abstract class AbstractService
      */    
     MultivaluedMap<String, String> headers = messageContext.getHttpHeaders().getRequestHeaders();
     
-    List<String> authenticatedUser = headers.get(OAuthFilter.AUTHENTICATED_USER_KEY);    
-    if (authenticatedUser != null && authenticatedUser.size() > 0)
+    List<String> authHeader = headers.get(OAuthFilter.AUTHENTICATED_USER_KEY);    
+    if (authHeader != null && authHeader.size() > 0)
     {
-      settings.put(OAuthFilter.AUTHENTICATED_USER_KEY, authenticatedUser.get(0));
+      authUser = authHeader.get(0);
+      settings.put(OAuthFilter.AUTHENTICATED_USER_KEY, authUser);
     }
     
-    List<String> authorization = headers.get(OAuthFilter.AUTHORIZATION_TOKEN_KEY); 
-    if (authorization != null && authorization.size() > 0)
+    List<String> tokenHeader = headers.get(OAuthFilter.AUTHORIZATION_TOKEN_KEY); 
+    if (tokenHeader != null && tokenHeader.size() > 0)
     {
-      settings.put(OAuthFilter.AUTHORIZATION_TOKEN_KEY, authorization.get(0));
+      settings.put(OAuthFilter.AUTHORIZATION_TOKEN_KEY, tokenHeader.get(0));
     }
     
     processAuthorization();    
@@ -189,7 +192,6 @@ public abstract class AbstractService
         // get user attributes
         try
         {
-          String authUser = (String)httpSession.getAttribute(OAuthFilter.AUTHENTICATED_USER_KEY);
           userAttrs = HttpUtils.fromQueryParams(authUser);
         }
         catch (Exception e)
@@ -206,37 +208,44 @@ public abstract class AbstractService
           }
         }
         
-        Properties props = new Properties();
-        
-        try
+        if (userAttrs != null && userAttrs.size() > 0)
         {
-          props.load(new FileInputStream(ldapConfigPath));
-        }
-        catch (IOException ioe)
-        {
-          throw new AuthorizationException("Error loading LDAP properties: " + ioe);
-        }
-        
-        props.put("authorizedGroup", authorizedGroup);
-        
-        LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
-        
-        try
-        {
-          authProvider.init(props);
-        }
-        catch (NamingException ne)
-        {
-          throw new AuthorizationException("Error initializing authentication provider: " + ne);
-        }
-        
-        if (userAttrs == null || !authProvider.isAuthorized(userAttrs))
-        {
-          throw new AuthorizationException("User not authorized");
+          Properties props = new Properties();
+          
+          try
+          {
+            props.load(new FileInputStream(ldapConfigPath));
+          }
+          catch (IOException ioe)
+          {
+            throw new AuthorizationException("Error loading LDAP properties: " + ioe);
+          }
+          
+          props.put("authorizedGroup", authorizedGroup);
+          
+          LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
+          
+          try
+          {
+            authProvider.init(props);
+          }
+          catch (NamingException ne)
+          {
+            throw new AuthorizationException("Error initializing authentication provider: " + ne);
+          }
+          
+          if (userAttrs == null || !authProvider.isAuthorized(userAttrs))
+          {
+            throw new AuthorizationException("User not authorized");
+          }
+          else
+          {
+            httpResponse.addCookie(new Cookie(authorizedGroup, "authorized"));
+          }
         }
         else
         {
-          httpResponse.addCookie(new Cookie(authorizedGroup, "authorized"));
+          throw new AuthorizationException("Invalid identity.");
         }
       }
     }
