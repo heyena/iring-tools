@@ -1156,6 +1156,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					// sync data object
 					dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
 					dataObjectNode.attributes.properties.objectName = dataObject.objectName;
+					dataObjectNode.attributes.properties.keyDelimeter = dataObject.keyDelimeter;
 					dataObjectNode.text = dataObject.objectName;
 					dataObjectNode.attributes.text = dataObject.objectName;
 					dataObjectNode.setText(dataObject.objectName);
@@ -1313,9 +1314,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						fieldLabel: 'Object Name',
 						value: node.attributes.properties.objectName
 					}, {
-						name: 'keyDelimiter',
+						name: 'keyDelimeter',
 						fieldLabel: 'Key Delimiter',
-						value: node.attributes.properties.keyDelimiter,
+						value: node.attributes.properties.keyDelimeter,
 						allowBlank: true
 					}],
 					treeNode: node,
@@ -1336,7 +1337,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var oldObjNam = treeNodeProps['objectName'];
 									treeNodeProps['tableName'] = form.findField('tableName').getValue();
 									treeNodeProps['objectName'] = objNam;
-									treeNodeProps['keyDelimiter'] = form.findField('keyDelimiter').getValue();									
+									treeNodeProps['keyDelimeter'] = form.findField('keyDelimeter').getValue();
 
 									for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
 										var dataObject = dbDict.dataObjects[ijk];
@@ -1356,14 +1357,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 									for (var i = 0; i < rootNode.childNodes.length; i++) {
 										var folderNode = rootNode.childNodes[i];
-										var folderNodeProp = folderNode.attributes.properties;									
+										var folderNodeProp = folderNode.attributes.properties;
 										if (folderNode.childNodes[2])
 											var relationFolderNode = folderNode.childNodes[2];
 										else
-											var relationFolderNode = folderNode.attributes.children[2];		
-											
+											var relationFolderNode = folderNode.attributes.children[2];
+
 										if (!relationFolderNode)
-											continue;												
+											continue;
 
 										if (relationFolderNode.childNodes)
 											var relChildenNodes = relationFolderNode.childNodes;
@@ -1372,7 +1373,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 										if (relChildenNodes) {
 											for (var k = 0; k < relChildenNodes.length; k++) {
-												var relationNode = relChildenNodes[k];												
+												var relationNode = relChildenNodes[k];
 
 												if (relationNode.text == '')
 													continue;
@@ -1380,12 +1381,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												if (relationNode.attributes.attributes)
 													var relationNodeAttr = relationNode.attributes.attributes;
 												else
-													var relationNodeAttr = relationNode.attributes;												
+													var relationNodeAttr = relationNode.attributes;
 
 												var relObjNam = relationNodeAttr.relatedObjectName;
 												if (relObjNam != objNam && relObjNam == oldObjNam)
-													relationNodeAttr.relatedObjectName = objNam;															
-											}			
+													relationNodeAttr.relatedObjectName = objNam;
+											}
 										}
 									}
 								}
@@ -1403,7 +1404,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								form.findField('tableName').setValue(node.text);
 								if (node.attributes.properties) {
 									form.findField('objectName').setValue(node.attributes.properties.objectName);
-									form.findField('keyDelimiter').setValue(node.attributes.properties.keyDelimiter);
+									form.findField('keyDelimeter').setValue(node.attributes.properties.keyDelimeter);
 								}
 							}
 						}]
@@ -2036,10 +2037,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									folder.tableName = folderNodeProp.tableName;
 									folder.objectNamespace = folderNodeProp.objectNamespace;
 									folder.objectName = folderNodeProp.objectName;
+
 									if (!folderNodeProp.keyDelimeter)
 										folder.keyDelimeter = 'null';
 									else
 										folder.keyDelimeter = folderNodeProp.keyDelimeter;
+
 									folder.keyProperties = new Array();
 									folder.dataProperties = new Array();
 									folder.dataRelationships = new Array();
@@ -2581,15 +2584,32 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
             if (callId == 0) {
               var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
               var node = dbObjectsTree.getSelectionModel().getSelectedNode();
-
-              var nodeChildren = new Array();
-              for (var j = 0; j < node.childNodes.length; j++)
-                nodeChildren.push(node.childNodes[j].text);
-              
               var exitNode = false;
-              var newNodeText = relationName.toLowerCase();
+
+							for (var j = 0; j < node.childNodes.length; j++) {
+								exitNode = false;
+								for (var i = 0; i < mydata.length; i++) {
+									newNodeText = mydata[i].data.relationName;
+									if (node.childNodes[j].text.toLowerCase() == newNodeText.toLowerCase()) {
+										exitNode = true;
+										break;
+									}
+								}
+								if (exitNode == false) {
+									var deleteNode = node.childNodes[j];
+									node.childNodes.splice(j, 1);
+									j--;
+									node.removeChild(deleteNode);
+								}
+							}
+
+							var nodeChildren = new Array();
+							for (var j = 0; j < node.childNodes.length; j++)
+								nodeChildren.push(node.childNodes[j].text);
+
+              newNodeText = relationName.toLowerCase();
               for (var j = 0; j < nodeChildren.length; j++) {
-                if (nodeChildren[j].toLowerCase() == newNodeText.toLowerCase()) {
+                if (nodeChildren[j].toLowerCase() == newNodeText) {
                   exitNode = true;
                   break;
                 }
@@ -2597,7 +2617,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 
               if (exitNode == false) {
                 var newNode = new Ext.tree.TreeNode({
-                  text: newNodeText,
+                	text: relationName,
                   type: 'relationship',
                   leaf: true,
                   iconCls: 'relation',
