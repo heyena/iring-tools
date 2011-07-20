@@ -55,6 +55,7 @@ namespace org.iringtools.web.controllers
       catch (Exception e)
       {
         _logger.Error(e.ToString());
+        throw e;
       }
     }
   }
@@ -99,6 +100,7 @@ namespace org.iringtools.web.controllers
       catch (Exception e)
       {
         _logger.Error(e.ToString());
+        throw e;
       }
 
       return Json(container, JsonRequestBehavior.AllowGet);
@@ -114,7 +116,7 @@ namespace org.iringtools.web.controllers
       catch (Exception e)
       {
         _logger.Error(e.ToString());
-        return Json(null, JsonRequestBehavior.AllowGet);
+        throw e;
       }
     }
 
@@ -136,6 +138,7 @@ namespace org.iringtools.web.controllers
       catch (Exception e)
       {
         _logger.Error(e.ToString());
+        throw e;
       }
 
       return Json(container, JsonRequestBehavior.AllowGet);
@@ -154,7 +157,7 @@ namespace org.iringtools.web.controllers
       catch (Exception e)
       {
         _logger.Error(e.ToString());
-        return Json(null, JsonRequestBehavior.AllowGet);
+        throw e;
       }
     }
 
@@ -179,7 +182,7 @@ namespace org.iringtools.web.controllers
       catch (Exception e)
       {
         _logger.Error(e.ToString());
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+        throw e;
       }
     }
 
