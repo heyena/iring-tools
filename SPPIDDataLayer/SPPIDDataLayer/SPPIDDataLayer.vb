@@ -32,10 +32,10 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     MyBase.New(settings)
 
-        Dim connStr As String = "server=NDHD06670\SQLEXPRESSW;database=SPPID;User ID=SPPID;Password=sppid"
-        _conn = New SqlConnection(connStr)
+        ' Dim connStr As String = "server=NDHD06670\SQLEXPRESSW;database=SPPID;User ID=SPPID;Password=sppid"
+        ' _conn = New SqlConnection(connStr)
 
-        ' Dim connStr As String = _settings("SPPIDConnectionString")
+        Dim connStr As String = _settings("SPPIDConnectionString")
 
     Try
       connStr = Encryption.DecryptString(connStr)
