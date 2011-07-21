@@ -68,28 +68,28 @@ Public Class Test
     '_sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
     End Sub
   '<Test()>
-  'Public Sub Create()
-  '    Dim identifiers As IList(Of String) = New List(Of String)() From { _
-  ' "E5E3A74C7A0F431AB5069EA1BCD0407D"
-  '}
+    Public Sub Create()
+        Dim identifiers As IList(Of String) = New List(Of String)() From { _
+     "E5E3A74C7A0F431AB5069EA1BCD0407D"
+    }
 
-  '    Dim random As New Random()
-  '    Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Create("Equipment", identifiers)
+        Dim random As New Random()
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Create("Equipment", identifiers)
 
-  '    For Each dataObject As IDataObject In dataObjects
-  '        dataObject.SetPropertyValue("Name", "PT-" & random.[Next](2, 10))
-  '        dataObject.SetPropertyValue("Drawing_DateCreated", DateTime.Today)
-  '    Next
+        For Each dataObject As IDataObject In dataObjects
+            dataObject.SetPropertyValue("Name", "PT-" & random.[Next](2, 10))
+            dataObject.SetPropertyValue("Drawing_DateCreated", DateTime.Today)
+        Next
 
-  '    Dim actual As Response = _sppidDataLayer.Post(dataObjects)
+        Dim actual As Response = _sppidDataLayer.Post(dataObjects)
 
-  '    If actual.Level <> StatusLevel.Success Then
-  '        Throw New AssertionException(Utility.SerializeDataContract(Of Response)(actual))
-  '    End If
+        If actual.Level <> StatusLevel.Success Then
+            Throw New AssertionException(Utility.SerializeDataContract(Of Response)(actual))
+        End If
 
-  '    Assert.IsTrue(actual.Level = StatusLevel.Success)
+        Assert.IsTrue(actual.Level = StatusLevel.Success)
 
-    'End Sub
+    End Sub
 
   <Test()>
   Public Sub GetObjects()
