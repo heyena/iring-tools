@@ -109,11 +109,21 @@ namespace org.iringtools.library
     public override IList<IDataObject> Get(string objectTypeName, IList<string> identifiers)
     {
       string tableName = GetTableName(objectTypeName);
+       List<IDataObject> _dataObjects = null;
 
       try
       {
         DataTable dataTable = GetDataTable(tableName, identifiers);
-        return ToDataObjects(dataTable, objectTypeName);
+        IList<IDataObject> allDataObjects = ToDataObjects(dataTable, objectTypeName);
+        var expressions = FormMultipleKeysPredicate(identifiers);
+
+
+        if (expressions != null)
+        {
+            _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList();
+        }
+
+        return _dataObjects;
       }
       catch (Exception ex)
       {
