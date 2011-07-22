@@ -53,18 +53,17 @@ import org.iringtools.utility.JaxbUtils;
 import org.iringtools.utility.NamespaceMapper;
 import org.iringtools.utility.NetworkCredentials;
 import org.iringtools.utility.ReferenceObject;
-import org.jrdf.graph.Graph;
-import org.jrdf.graph.ObjectNode;
-import org.jrdf.graph.PredicateNode;
-import org.jrdf.graph.SubjectNode;
-import org.jrdf.graph.TripleImpl;
-import org.jrdf.graph.global.LiteralImpl;
-import org.jrdf.graph.global.URIReferenceImpl;
-import org.jrdf.graph.local.BlankNodeImpl;
 import org.w3._2005.sparql.results.Binding;
 import org.w3._2005.sparql.results.Result;
 import org.w3._2005.sparql.results.Results;
 import org.w3._2005.sparql.results.Sparql;
+
+import com.hp.hpl.jena.rdf.model.Model;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Property;
+import com.hp.hpl.jena.rdf.model.RDFNode;
+import com.hp.hpl.jena.rdf.model.Resource;
+
 
 
 public class RefDataProvider
@@ -87,11 +86,11 @@ public class RefDataProvider
   private final String rdfType = "rdf:type";
   
   private StringBuilder sparqlStr = new StringBuilder();
-  
-  //NTriplesFormat formatter = new NTriplesParser();
-  SubjectNode dsubj ,isubj, subj; 
-  PredicateNode dpred, ipred, pred;
-  ObjectNode dobj, iobj, obj;
+
+
+  Resource dsubj ,isubj, subj; 
+  Property dpred, ipred, pred;
+  RDFNode dobj, iobj, obj;
   
   public RefDataProvider(Map<String, Object> settings)
   {
@@ -1434,9 +1433,10 @@ public class RefDataProvider
   {
 
 	//TODO - to be initialized
-    Graph delete=null;
-    Graph insert=null;
-    
+	Model delete = ModelFactory.createDefaultModel();
+    Model insert = ModelFactory.createDefaultModel();
+      
+      
     Response response = new Response();
     response.setLevel(Level.SUCCESS);
     boolean qn = false;
@@ -2366,8 +2366,12 @@ public class RefDataProvider
   public Response postClass(Qmxf qmxf)
   {
 	  //TODO - to be initialised
-      Graph delete = null;
-      Graph insert=null;
+	  Model delete = ModelFactory.createDefaultModel();
+      Model insert = ModelFactory.createDefaultModel();
+      
+      //delete.add(new NamespaceMapper(false)._uris);
+      //delete
+      
 
 	  Response response = new Response();
       response.setLevel(Level.SUCCESS);
@@ -3485,331 +3489,331 @@ public class RefDataProvider
   //updations
 
   
-  private Graph GenerateValue(Graph work, String subjId, String objId, Object gobj)
+  private Model GenerateValue(Model work, String subjId, String objId, Object gobj)
   {
     RoleQualification role = (RoleQualification)gobj;
-    pred = new URIReferenceImpl("tpl:R56456315674");
-    obj = new LiteralImpl(String.format("tpl:{0}", objId));
-    work.add(new TripleImpl(subj, pred, obj));
-    pred = new URIReferenceImpl("tpl:R89867215482");
-    obj = new LiteralImpl(String.format("tpl:{0}", role.getQualifies().split("#",1)));
-    work.add(new TripleImpl(subj, pred, obj));
-    pred = new URIReferenceImpl("tpl:R29577887690");
-    obj = new LiteralImpl(role.getValue().getText(), (role.getValue().getLang()==null || role.getValue().getLang()=="") ? defaultLanguage : role.getValue().getLang());
-    work.add(new TripleImpl(subj, pred, obj));
+    pred = work.createProperty("tpl:R56456315674");
+    obj = work.createProperty(String.format("tpl:{0}", objId));
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
+    pred = work.createProperty("tpl:R89867215482");
+    obj = work.createProperty(String.format("tpl:{0}", role.getQualifies().split("#",1)));
+    work.add(subj, pred, obj);
+    pred = work.createProperty("tpl:R29577887690");
+    obj = work.createProperty(role.getValue().getText(), (role.getValue().getLang()==null || role.getValue().getLang()=="") ? defaultLanguage : role.getValue().getLang());
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateReferenceQual(Graph work, Long subjId, String objId, Object gobj)
+  private Model GenerateReferenceQual(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-    pred = new URIReferenceImpl("tpl:R30741601855");
-    obj = new LiteralImpl(String.format("tpl:{0}", objId));
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("tpl:{0}", subjId));
+    pred = work.createProperty("tpl:R30741601855");
+    obj = work.createProperty(String.format("tpl:{0}", objId));
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateReferenceType(Graph work, Long subjId, String objId, Object gobj)
+  private Model GenerateReferenceType(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-    pred = new URIReferenceImpl(rdfType);
-    obj = new LiteralImpl("tpl:R40103148466");
-    work.add(new TripleImpl(subj, pred, obj));
-    pred = new URIReferenceImpl("tpl:R49267603385");
-    obj = new LiteralImpl(String.format("tpl:{0}", objId));
-    work.add(new TripleImpl(subj, pred, obj));
+	subj = work.createResource(String.format("tpl:{0}", subjId));
+    pred = work.createProperty(rdfType);
+    obj = work.createProperty("tpl:R40103148466");
+    work.add(subj, pred, obj);
+    pred = work.createProperty("tpl:R49267603385");
+    obj = work.createProperty(String.format("tpl:{0}", objId));
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateReferenceTpl(Graph work, Long subjId, String objId, Object gobj)
+  private Model GenerateReferenceTpl(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-    pred = new URIReferenceImpl("tpl:R21129944603");
-    obj = new LiteralImpl(objId);
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("tpl:{0}", subjId));
+    pred = work.createProperty("tpl:R21129944603");
+    obj = work.createProperty(objId);
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateQualifies(Graph work, Long subjId, String objId, Object gobj)
+  private Model GenerateQualifies(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-    pred = new URIReferenceImpl("tpl:R91125890543");
-    obj = new LiteralImpl(String.format("tpl:{0}", objId));
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("tpl:{0}", subjId));
+    pred = work.createProperty("tpl:R91125890543");
+    obj = work.createProperty(String.format("tpl:{0}", objId));
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateRange(Graph work, Long subjId, String objId, Object gobj)
+  private Model GenerateRange(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-    pred = new URIReferenceImpl("rdfs:range");
-    obj = new LiteralImpl(objId);
-    work.add(new TripleImpl(dsubj, dpred, dobj));
-    pred = new URIReferenceImpl("tpl:R98983340497");
-    obj = new LiteralImpl(qName);
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("tpl:{0}", subjId));
+    pred = work.createProperty("rdfs:range");
+    obj = work.createProperty(objId);
+    work.add(ModelFactory.createDefaultModel().createStatement(dsubj, dpred, dobj));
+    pred = work.createProperty("tpl:R98983340497");
+    obj = work.createProperty(qName);
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateHasRole(Graph work, Long subjId, String objId, Object gobj)
+  private Model GenerateHasRole(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-    pred = new URIReferenceImpl("p8:hasRole");
-    obj = new LiteralImpl(String.format("tpl:{0}", objId));
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("tpl:{0}", subjId));
+    pred = work.createProperty("p8:hasRole");
+    obj = work.createProperty(String.format("tpl:{0}", objId));
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateHasTemplate(Graph work, Long subjId, String objId, Object gobj)
+  private Model GenerateHasTemplate(Model work, Long subjId, String objId, Object gobj)
   {
     if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      pred = new URIReferenceImpl("p8:hasTemplate");
-      obj = new LiteralImpl(String.format("tpl:{0}", objId));
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(String.format("tpl:{0}", subjId));
+      pred = work.createProperty("p8:hasTemplate");
+      obj = work.createProperty(String.format("tpl:{0}", objId));
+      work.add(subj, pred, obj);
      }
     return work;
     
   }
 
-  private Graph GenerateRoleIndex(Graph work, Long subjId, int index) throws Exception
+  private Model GenerateRoleIndex(Model work, Long subjId, int index) throws Exception
   {
-	subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-	pred = new URIReferenceImpl("tpl:R97483568938");
-	obj = new LiteralImpl(String.valueOf(index), new URI("xsd:integer"));
-	work.add(new TripleImpl(subj, pred, obj));
+	subj = work.createResource(String.format("tpl:{0}", subjId));
+	pred = work.createProperty("tpl:R97483568938");
+	/*obj = work.createProperty(String.valueOf(index), new URI("xsd:integer"));*/
+	work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateRoleIndexPart8(Graph work, Long subjId, int index, Object gobj) throws Exception
+  private Model GenerateRoleIndexPart8(Model work, Long subjId, int index, Object gobj) throws Exception
   {
     if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      pred = new URIReferenceImpl("p8:valRoleIndex");
-      obj = new LiteralImpl(String.valueOf(index), new URI("xsd:integer"));
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(String.format("tpl:{0}", subjId));
+      pred = work.createProperty("p8:valRoleIndex");
+      /*obj = work.createProperty(String.valueOf(index), new URI("xsd:integer"));*/
+      work.add(subj, pred, obj);
     }
     return work;
   }
 
-  private Graph GenerateRoleDomain(Graph work, Long subjId, String objId)
+  private Model GenerateRoleDomain(Model work, Long subjId, String objId)
   {
-    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-    pred = new URIReferenceImpl("rdfs:domain");
-    obj = new LiteralImpl(String.format("tpl:{0}", objId));
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("tpl:{0}", subjId));
+    pred = work.createProperty("rdfs:domain");
+    obj = work.createProperty(String.format("tpl:{0}", objId));
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateRoleFillerType(Graph work, Long subjId, String qName)
+  private Model GenerateRoleFillerType(Model work, Long subjId, String qName)
   {
-    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-    pred = new URIReferenceImpl("p8:hasRoleFillerType");
-    obj = new LiteralImpl(qName);
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("tpl:{0}", subjId));
+    pred = work.createProperty("p8:hasRoleFillerType");
+    obj = work.createProperty(qName);
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateRoleCount(Graph work, int rolecount, Long subjId, Object gobj) throws Exception
+  private Model GenerateRoleCount(Model work, int rolecount, Long subjId, Object gobj) throws Exception
   {
     if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
     {
-      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      pred = new URIReferenceImpl("tpl:R35529169909");
-      obj = new LiteralImpl(String.valueOf(rolecount), new URI("xsd:integer"));
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(String.format("tpl:{0}", subjId));
+      pred = work.createProperty("tpl:R35529169909");
+      /*obj = work.createProperty(String.valueOf(rolecount), new URI("xsd:integer"));*/
+      work.add(subj, pred, obj);
     }
     return work;
   }
 
-  private Graph GenerateRoleCountPart8(Graph work, int rolecount, Long subjId, Object gobj) throws Exception
+  private Model GenerateRoleCountPart8(Model work, int rolecount, Long subjId, Object gobj) throws Exception
   {
     if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
     {
-      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      pred = new URIReferenceImpl("p8:valNumberOfRoles");
-      obj = new LiteralImpl(String.valueOf(rolecount), new URI("xsd:integer"));
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(String.format("tpl:{0}", subjId));
+      pred = work.createProperty("p8:valNumberOfRoles");
+      /*obj = work.createProperty(String.valueOf(rolecount), new URI("xsd:integer"));*/
+      work.add(subj, pred, obj);
     }
     return work;
   }
 
-  private Graph GenerateTypesPart8(Graph work, Long subjId, String objectId, Object gobj)
+  private Model GenerateTypesPart8(Model work, Long subjId, String objectId, Object gobj)
   {
     if (gobj instanceof TemplateDefinition)
     {
-      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      pred = new URIReferenceImpl(rdfType);
-      obj = new LiteralImpl("p8:TemplateDescription");
-      work.add(new TripleImpl(subj, pred, obj));
-      obj = new LiteralImpl("owl:Thing");
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(String.format("tpl:{0}", subjId));
+      pred = work.createProperty(rdfType);
+      obj = work.createProperty("p8:TemplateDescription");
+      work.add(subj, pred, obj);
+      obj = work.createProperty("owl:Thing");
+      work.add(subj, pred, obj);
     }
     else if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      pred = new URIReferenceImpl(rdfType);
-      obj = new LiteralImpl("owl:Thing");
-      work.add(new TripleImpl(subj, pred, obj));
-      obj = new LiteralImpl("p8:TemplateRoleDescription");
-      work.add(new TripleImpl(subj, pred, obj));
-      pred = new URIReferenceImpl("p8:hasTemplate");
-      obj = new LiteralImpl(String.format("tpl:{0}", objectId));
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(String.format("tpl:{0}", subjId));
+      pred = work.createProperty(rdfType);
+      obj = work.createProperty("owl:Thing");
+      work.add(subj, pred, obj);
+      obj = work.createProperty("p8:TemplateRoleDescription");
+      work.add(subj, pred, obj);
+      pred = work.createProperty("p8:hasTemplate");
+      obj = work.createProperty(String.format("tpl:{0}", objectId));
+      work.add(subj, pred, obj);
     }
     else if (gobj instanceof TemplateQualification)
     {
-      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      pred = new URIReferenceImpl(rdfType);
-      obj = new LiteralImpl("p8:TemplateDescription");
-      work.add(new TripleImpl(subj, pred, obj));
-      obj = new LiteralImpl("owl:Thing");
-      work.add(new TripleImpl(subj, pred, obj));
-      obj = new LiteralImpl("p8:CoreTemplate");
-      work.add(new TripleImpl(subj, pred, obj));
-      pred = new URIReferenceImpl("p8:hasSuperTemplate");
-      obj = new LiteralImpl(objectId);
-      work.add(new TripleImpl(subj, pred, obj));
-      subj = new URIReferenceImpl(objectId);
-      pred = new URIReferenceImpl("p8:hasSubTemplate");
-      obj = new LiteralImpl(String.format("tpl:{0}", subjId));
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(String.format("tpl:{0}", subjId));
+      pred = work.createProperty(rdfType);
+      obj = work.createProperty("p8:TemplateDescription");
+      work.add(subj, pred, obj);
+      obj = work.createProperty("owl:Thing");
+      work.add(subj, pred, obj);
+      obj = work.createProperty("p8:CoreTemplate");
+      work.add(subj, pred, obj);
+      pred = work.createProperty("p8:hasSuperTemplate");
+      obj = work.createProperty(objectId);
+      work.add(subj, pred, obj);
+      subj = work.createResource(objectId);
+      pred = work.createProperty("p8:hasSubTemplate");
+      obj = work.createProperty(String.format("tpl:{0}", subjId));
+      work.add(subj, pred, obj);
     }
     else if (gobj instanceof ClassDefinition)
     {
-      subj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
-      pred = new URIReferenceImpl(rdfType);
-      obj = new LiteralImpl(objectId);
-      work.add(new TripleImpl(subj, pred, obj));
-      obj = new LiteralImpl("owl:Class");
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(String.format("rdl:{0}", subjId));
+      pred = work.createProperty(rdfType);
+      obj = work.createProperty(objectId);
+      work.add(subj, pred, obj);
+      obj = work.createProperty("owl:Class");
+      work.add(subj, pred, obj);
     }
     return work;
   }
 
-  private Graph GenerateTypes(Graph work, Long subjId, String objId, Object gobj)
+  private Model GenerateTypes(Model work, Long subjId, String objId, Object gobj)
   {
     if (gobj instanceof TemplateDefinition)
     {
-      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      pred = new URIReferenceImpl(rdfType);
-      obj = new LiteralImpl("tpl:R16376066707");
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(String.format("tpl:{0}", subjId));
+      pred = work.createProperty(rdfType);
+      obj = work.createProperty("tpl:R16376066707");
+      work.add(subj, pred, obj);
     }
     else if (gobj instanceof RoleDefinition)
     {
-      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      pred = new URIReferenceImpl(rdfType);
-      obj = new LiteralImpl("tpl:R74478971040");
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(String.format("tpl:{0}", subjId));
+      pred = work.createProperty(rdfType);
+      obj = work.createProperty("tpl:R74478971040");
+      work.add(subj, pred, obj);
     }
     else if (gobj instanceof TemplateQualification)
     {
-      subj = new URIReferenceImpl(objId);
-      pred = new URIReferenceImpl("dm:hasSubclass");
-      obj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      work.add(new TripleImpl(subj, pred, obj));
-      subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-      pred = new URIReferenceImpl("dm:hasSuperclass");
-      obj = new LiteralImpl(objId);
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(objId);
+      pred = work.createProperty("dm:hasSubclass");
+      obj = work.createProperty(String.format("tpl:{0}", subjId));
+      work.add(subj, pred, obj);
+      subj = work.createResource(String.format("tpl:{0}", subjId));
+      pred = work.createProperty("dm:hasSuperclass");
+      obj = work.createProperty(objId);
+      work.add(subj, pred, obj);
     }
     else if (gobj instanceof RoleQualification)
     {
-      subj = new BlankNodeImpl("",subjId);
-      pred = new URIReferenceImpl(rdfType);
-      obj = new LiteralImpl("tpl:R76288246068");
-      work.add(new TripleImpl(isubj, ipred, iobj));
-      pred = new URIReferenceImpl("tpl:R99672026745");
-      obj = new LiteralImpl(String.format("tpl:{0}", objId));
-      work.add(new TripleImpl(subj, pred, obj));
-      pred = new URIReferenceImpl(rdfType);
-      obj = new LiteralImpl("tpl:R67036823327");
-      work.add(new TripleImpl(subj, pred, obj));
+      subj = work.createResource(subjId.toString());
+      pred = work.createProperty(rdfType);
+      obj = work.createProperty("tpl:R76288246068");
+      work.add(ModelFactory.createDefaultModel().createStatement(isubj, ipred, iobj));
+      pred = work.createProperty("tpl:R99672026745");
+      obj = work.createProperty(String.format("tpl:{0}", objId));
+      work.add(subj, pred, obj);
+      pred = work.createProperty(rdfType);
+      obj = work.createProperty("tpl:R67036823327");
+      work.add(subj, pred, obj);
     }
     return work;
   }
 
-  private Graph GenerateName(Graph work, Name name, Long subjId, Object gobj)
+  private Model GenerateName(Model work, Name name, Long subjId, Object gobj)
   {
-	subj = new BlankNodeImpl(String.format("tpl:{0}"), subjId);
-	pred = new URIReferenceImpl("rdfs:label");
-	obj = new LiteralImpl(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
-	work.add(new TripleImpl(subj, pred, obj));
+	subj = work.createResource(String.format("tpl:{0}", subjId));
+	pred = work.createProperty("rdfs:label");
+	obj = work.createProperty(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
+	work.add(subj, pred, obj);
 	return work;
   }
 
-  private Graph GenerateClassName(Graph work, Name name, Long subjId, Object gobj)
+  private Model GenerateClassName(Model work, Name name, Long subjId, Object gobj)
   {
-    subj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
-    pred = new URIReferenceImpl("rdfs:label");
-    obj = new LiteralImpl(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("rdl:{0}", subjId));
+    pred = work.createProperty("rdfs:label");
+    obj = work.createProperty(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
+    work.add(subj, pred, obj);
     return work;
   }
-  private Graph GenerateDescription(Graph work, Description descr, Long subjectId)
+  private Model GenerateDescription(Model work, Description descr, Long subjectId)
   {
-    subj = new BlankNodeImpl(String.format("tpl:{0}"), subjectId);
-    pred = new URIReferenceImpl("rdfs:comment");
-    obj = new LiteralImpl(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
-    work.add(new TripleImpl(subj, pred, obj));
-    return work;
-  }
-
-  private Graph GenerateClassDescription(Graph work, Description descr, Long subjectId)
-  {
-    subj = new BlankNodeImpl(String.format("rdl:{0}"), subjectId);
-    pred = new URIReferenceImpl("rdfs:comment");
-    obj = new LiteralImpl(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
-    work.add(new TripleImpl(subj, pred, obj));
-    return work;
-  }
-  private Graph GenerateRdfType(Graph work, Long subjId, String objId)
-  {
-    subj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
-    pred = new URIReferenceImpl("rdf:type");
-    obj = new LiteralImpl(objId);
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("tpl:{0}", subjectId));
+    pred = work.createProperty("rdfs:comment");
+    obj = work.createProperty(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateRdfSubClass(Graph work, Long subjId, String objId)
+  private Model GenerateClassDescription(Model work, Description descr, Long subjectId)
   {
-    subj = new URIReferenceImpl(objId);
-    pred = new URIReferenceImpl("rdfs:subClassOf");
-    obj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("rdl:{0}", subjectId));
+    pred = work.createProperty("rdfs:comment");
+    obj = work.createProperty(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
+    work.add(subj, pred, obj);
+    return work;
+  }
+  private Model GenerateRdfType(Model work, Long subjId, String objId)
+  {
+    subj = work.createResource(String.format("rdl:{0}", subjId));
+    pred = work.createProperty("rdf:type");
+    obj = work.createProperty(objId);
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateSuperClass(Graph work, String subjId, String objId)
+  private Model GenerateRdfSubClass(Model work, Long subjId, String objId)
   {
-    subj = new BlankNodeImpl(String.format("rdl:{0}"), Long.parseLong(objId));
-    pred = new URIReferenceImpl("rdfs:subClassOf");
-    obj = new LiteralImpl(subjId);
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(objId);
+    pred = work.createProperty("rdfs:subClassOf");
+    obj = work.createProperty(String.format("rdl:{0}", subjId));
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateDmClassification(Graph work, Long subjId, String objId)
+  private Model GenerateSuperClass(Model work, String subjId, String objId)
   {
-    subj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
-    pred = new URIReferenceImpl("dm:hasClassified");
-    obj = new LiteralImpl(objId);
-    work.add(new TripleImpl(subj, pred, obj));
-    pred = new URIReferenceImpl("dm:hasClassifier");
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("rdl:{0}", Long.parseLong(objId)));
+    pred = work.createProperty("rdfs:subClassOf");
+    obj = work.createProperty(subjId);
+    work.add(subj, pred, obj);
     return work;
   }
 
-  private Graph GenerateDmSubClass(Graph work, Long subjId, String objId)
+  private Model GenerateDmClassification(Model work, Long subjId, String objId)
   {
-    subj = new BlankNodeImpl(String.format("rdl:{0}"), subjId);
-    pred = new URIReferenceImpl("dm:hasSubclass");
-    obj = new LiteralImpl(objId);
-    work.add(new TripleImpl(subj, pred, obj));
+    subj = work.createResource(String.format("rdl:{0}", subjId));
+    pred = work.createProperty("dm:hasClassified");
+    obj = work.createProperty(objId);
+    work.add(subj, pred, obj);
+    pred = work.createProperty("dm:hasClassifier");
+    work.add(subj, pred, obj);
+    return work;
+  }
+
+  private Model GenerateDmSubClass(Model work, Long subjId, String objId)
+  {
+    subj = work.createResource(String.format("rdl:{0}", subjId));
+    pred = work.createProperty("dm:hasSubclass");
+    obj = work.createProperty(objId);
+    work.add(subj, pred, obj);
     return work;
   }
 
