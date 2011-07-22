@@ -154,4 +154,7 @@
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/tomcat-i18n-fr.jar"/>
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/tomcat-i18n-ja.jar"/>
     </library>
+	<library name="jena-2.6.0" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/jena-2.6.0.jar"/>
+    </library>
 </eclipse-userlibraries>
