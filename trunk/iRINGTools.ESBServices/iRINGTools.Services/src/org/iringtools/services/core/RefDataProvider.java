@@ -1441,7 +1441,7 @@ public class RefDataProvider
     Response response = new Response();
     response.setLevel(Level.SUCCESS);
     boolean qn = false;
-    ReferenceObject qName = null;
+    String qName = null;
     try
     {
       Repository repository = getRepository(qmxf.getTargetRepository());
@@ -1611,7 +1611,7 @@ public class RefDataProvider
                   }
                   if (role.getRange() != null)
                   {
-                    qn = _nsmap.reduceToQName(role.getRange(), qName);
+                    qName = _nsmap.reduceToQName(role.getRange());
                     if (repository.getRepositoryType() == RepositoryType.PART_8)
                     {
                     	insert = GenerateRoleFillerType(insert, tempRoleIdentifier, qName.toString());
@@ -1659,7 +1659,7 @@ public class RefDataProvider
                       }
                       if (role.getRange() != null)
                       {
-                        qn = _nsmap.reduceToQName(role.getRange(), qName);
+                        qName = _nsmap.reduceToQName(role.getRange());
                         if (repository.getRepositoryType() == RepositoryType.PART_8)
                         {
                         	delete = GenerateRoleFillerType(delete, tempRoleID, qName.toString());
@@ -1749,7 +1749,7 @@ public class RefDataProvider
                 }
                 if (role.getRange()!=null && role.getRange()!="")
                 {
-                  qn = _nsmap.reduceToQName(role.getRange(), qName);
+                  qName = _nsmap.reduceToQName(role.getRange());
                   if (repository.getRepositoryType() == RepositoryType.PART_8)
                   {
                 	  insert = GenerateRoleFillerType(insert, roleID, qName.toString());
@@ -1837,7 +1837,7 @@ public class RefDataProvider
             {
               for (TemplateQualification oldTQ : oldQmxf.getTemplateQualifications())
               {
-                qn = _nsmap.reduceToQName(oldTQ.getQualifies(), qName);
+                qName = _nsmap.reduceToQName(oldTQ.getQualifies());
                 for (Name nn : newTQ.getNames())
                 {
                   templateName = nn.getValue();
@@ -1971,7 +1971,7 @@ public class RefDataProvider
                         insert = GenerateHasRole(insert, templateID, tempNewRoleID, newTQ);
                         if (nrq.getRange()!=null && nrq.getRange()=="")
                         {
-                          qn = _nsmap.reduceToQName(nrq.getRange(), qName);
+                          qName = _nsmap.reduceToQName(nrq.getRange());
                           if (qn) 
                         	  insert = GenerateRoleFillerType(insert, tempNewRoleID, qName.toString());
                         }
@@ -1979,8 +1979,8 @@ public class RefDataProvider
                         {
                           if (nrq.getValue().getReference() != null)
                           {
-                            qn = _nsmap.reduceToQName(nrq.getValue().getReference(), qName);
-                            if (qn) 
+                            qName = _nsmap.reduceToQName(nrq.getValue().getReference());
+                            if (qName != "" && qName != "") 
                             	insert = GenerateRoleFillerType(insert, tempNewRoleID, qName.toString());
                           }
                           else if (nrq.getValue().getText() != null)
@@ -1993,9 +1993,9 @@ public class RefDataProvider
                       {
                         if (nrq.getRange()!=null && nrq.getRange()!="") //range restriction
                         {
-                          qn = _nsmap.reduceToQName(nrq.getRange(),qName);
-                          if (qn) 
-                        	  insert = GenerateRange(insert, tempNewRoleID, qName.toString(), nrq);
+                          qName = _nsmap.reduceToQName(nrq.getRange());
+                          if (qName != null && qName != "") 
+                        	  insert = GenerateRange(insert, tempNewRoleID, qName, nrq);
                           insert = GenerateTypes(insert, tempNewRoleID, templateID.toString(), nrq);
                           insert = GenerateQualifies(insert, tempNewRoleID, nrq.getQualifies().split("#")[1], nrq);
                         }
@@ -2005,8 +2005,8 @@ public class RefDataProvider
                           {
                         	  insert = GenerateReferenceType(insert, tempNewRoleID, templateID, nrq);
                         	  insert = GenerateReferenceQual(insert, tempNewRoleID, nrq.getQualifies().split("#")[1], nrq);
-                            qn = _nsmap.reduceToQName(nrq.getValue().getReference(), qName);
-                            if (qn) 
+                            qName = _nsmap.reduceToQName(nrq.getValue().getReference());
+                            if (qName !=  null && qName != "") 
                             	insert = GenerateReferenceTpl(insert, tempNewRoleID, qName.toString(), nrq);
                           }
                           else if (nrq.getValue().getText() != null)// value restriction
@@ -2062,16 +2062,16 @@ public class RefDataProvider
                         delete = GenerateHasRole(delete, templateID, tempNewRoleID.toString(), oldTQ);
                         if (orq.getRange()!=null && orq.getRange()!="")
                         {
-                          qn = _nsmap.reduceToQName(orq.getRange(), qName);
-                          if (qn) 
+                          qName = _nsmap.reduceToQName(orq.getRange());
+                          if (qName != null && qName != "") 
                         	  delete = GenerateRoleFillerType(delete, tempNewRoleID, qName.toString());
                         }
                         else if (orq.getValue()!= null)
                         {
                           if (orq.getValue().getReference() != null)
                           {
-                            qn = _nsmap.reduceToQName(orq.getValue().getReference(), qName);
-                            if (qn) 
+                            qName = _nsmap.reduceToQName(orq.getValue().getReference());
+                            if (qName != null && qName != "") 
                             	delete= GenerateRoleFillerType(delete, tempNewRoleID, qName.toString());
                           }
                           else if (nrq.getValue().getText()!= null)
@@ -2084,8 +2084,8 @@ public class RefDataProvider
                       {
                         if (orq.getRange()!=null && orq.getRange()!="") //range restriction
                         {
-                          qn = _nsmap.reduceToQName(orq.getRange(), qName);
-                          if (qn) 
+                          qName = _nsmap.reduceToQName(orq.getRange());
+                          if (qName != null && qName != "")  
                         	  delete = GenerateRange(delete, tempNewRoleID, qName.toString(), orq);
                           delete = GenerateTypes(delete, tempNewRoleID, templateID.toString(), nrq);
                           delete = GenerateQualifies(delete, tempNewRoleID, orq.getQualifies().split("#")[1], orq);
@@ -2096,8 +2096,8 @@ public class RefDataProvider
                           {
                         	  delete = GenerateReferenceType(delete, tempNewRoleID, templateID.toString(), orq);
                         	  delete = GenerateReferenceQual(delete, tempNewRoleID, orq.getQualifies().split("#")[1], orq);
-                            qn = _nsmap.reduceToQName(orq.getValue().getReference(), qName);
-                            if (qn) 
+                            qName = _nsmap.reduceToQName(orq.getValue().getReference());
+                            if (qName != null && qName != "")  
                             	insert = GenerateReferenceTpl(insert, tempNewRoleID, qName.toString(), orq);
                           }
                           else if (orq.getValue().getText() != null)// value restriction
@@ -2144,15 +2144,15 @@ public class RefDataProvider
               if (repository.getRepositoryType() == RepositoryType.PART_8)
               {
             	  insert = GenerateRoleCountPart8(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
-                qn = _nsmap.reduceToQName(newTQ.getQualifies(), qName);
-                if (qn) 
+                qName = _nsmap.reduceToQName(newTQ.getQualifies());
+                if (qName != null && qName != "") 
                 	insert = GenerateTypesPart8(insert, templateID, qName.toString(), newTQ);
               }
               else
               {
                 GenerateRoleCount(insert, newTQ.getRoleQualifications().size(), templateID, newTQ);
-                qn = _nsmap.reduceToQName(newTQ.getQualifies(), qName);
-                if (qn) 
+                qName = _nsmap.reduceToQName(newTQ.getQualifies());
+                if (qName != null && qName != "") 
                 	insert = GenerateTypes(insert, templateID, qName.toString(), newTQ);
 
               }
@@ -2203,16 +2203,16 @@ public class RefDataProvider
                   insert = GenerateHasRole(insert, templateID, roleID.toString(), newTQ);
                   if (newRole.getRange()!=null && newRole.getRange()!="")
                   {
-                    qn = _nsmap.reduceToQName(newRole.getRange(), qName);
-                    if (qn) 
+                    qName = _nsmap.reduceToQName(newRole.getRange());
+                    if (qName != null && qName != "") 
                     	insert = GenerateRoleFillerType(insert, roleID, qName.toString());
                   }
                   else if (newRole.getValue()!= null)
                   {
                     if (newRole.getValue().getReference() != null)
                     {
-                      qn = _nsmap.reduceToQName(newRole.getValue().getReference(), qName);
-                      if (qn) 
+                      qName = _nsmap.reduceToQName(newRole.getValue().getReference());
+                      if (qName != null && qName != "")  
                     	  insert = GenerateRoleFillerType(insert, roleID, qName.toString());
                     }
                     else if (newRole.getValue().getText() != null)
@@ -2226,8 +2226,8 @@ public class RefDataProvider
                   if (newRole.getRange()!=null && newRole.getRange()!="") //range restriction
                   {
 
-                    qn = _nsmap.reduceToQName(newRole.getRange(), qName);
-                    if (qn) 
+                    qName = _nsmap.reduceToQName(newRole.getRange());
+                    if (qName != null && qName != "")  
                     	insert = GenerateRange(insert, roleID, qName.toString(), newRole);
                     insert = GenerateTypes(insert, roleID, templateID.toString(), newRole);
                     insert = GenerateQualifies(insert, roleID, newRole.getQualifies().split("#")[1], newRole);
@@ -2238,8 +2238,8 @@ public class RefDataProvider
                     {
                     	insert = GenerateReferenceType(insert, roleID, templateID.toString(), newRole);
                     	insert = GenerateReferenceQual(insert, roleID, newRole.getQualifies().split("#")[1], newRole);
-                      qn = _nsmap.reduceToQName(newRole.getValue().getReference(), qName);
-                      if (qn) 
+                      qName = _nsmap.reduceToQName(newRole.getValue().getReference());
+                      if (qName != null && qName != "")  
                     	  insert = GenerateReferenceTpl(insert, roleID, qName.toString(), newRole);
                     }
                     else if (newRole.getValue().getText() != null)// value restriction
@@ -2364,7 +2364,8 @@ public class RefDataProvider
     return response;
   }
 
-  public Response postClass(Qmxf qmxf)
+  @SuppressWarnings("unchecked")
+public Response postClass(Qmxf qmxf)
   {
 	  //TODO - to be initialised
 	  Model delete = ModelFactory.createDefaultModel();
@@ -2377,7 +2378,7 @@ public class RefDataProvider
 	  Response response = new Response();
       response.setLevel(Level.SUCCESS);
       boolean qn = false;
-      ReferenceObject qName = null;
+      String qName = null;
       
       
       try
@@ -2477,8 +2478,8 @@ public class RefDataProvider
                                   
                                   if (ns == null)
                                   {
-                                    qn = _nsmap.reduceToQName(os.getReference(), qName);
-                                    if (qn) 
+                                    qName = _nsmap.reduceToQName(os.getReference());
+                                    if (qName != null && qName != "")  
                                     	delete = GenerateRdfSubClass(delete, clsId, qName.toString());
                                   }
                                 }
@@ -2497,8 +2498,8 @@ public class RefDataProvider
   								  }
                                   if (os == null)
                                   {
-                                    qn = _nsmap.reduceToQName(ns.getReference(), qName);
-                                    if (qn) 
+                                    qName = _nsmap.reduceToQName(ns.getReference());
+                                    if (qName != null && qName != "") 
                                     	insert = GenerateRdfSubClass(insert, clsId, qName.toString());
                                   }
                                 }
@@ -2521,15 +2522,15 @@ public class RefDataProvider
     								  }
                                   if (nc == null)
                                   {
-                                    qn = _nsmap.reduceToQName(oc.getReference(), qName);
+                                    qName = _nsmap.reduceToQName(oc.getReference());
                                     if (repository.getRepositoryType() == RepositoryType.PART_8)
                                     {
-                                      if (qn) 
+                                      if (qName != null && qName != "") 
                                     	  delete = GenerateSuperClass(delete, qName.toString(), clsId.toString()); ///delete from old
                                     }
                                     else
                                     {
-                                      if (qn) 
+                                      if (qName != null && qName != "") 
                                     	  delete = GenerateDmClassification(delete, clsId, qName.toString());
                                     }
                                   }
@@ -2549,15 +2550,15 @@ public class RefDataProvider
   								  }
                                   if (oc == null)
                                   {
-                                    qn = _nsmap.reduceToQName(nc.getReference(), qName);
+                                    qName = _nsmap.reduceToQName(nc.getReference());
                                     if (repository.getRepositoryType() == RepositoryType.PART_8)
                                     {
-                                      if (qn) 
+                                      if (qName != null && qName != "")  
                                     	  insert = GenerateSuperClass(insert, qName.toString(), clsId.toString()); ///insert from new
                                     }
                                     else
                                     {
-                                      if (qn) 
+                                      if (qName != null && qName != "")  
                                     	  insert = GenerateDmClassification(insert, clsId, qName.toString());
                                     }
                                   }
@@ -2591,8 +2592,8 @@ public class RefDataProvider
                       if (clsDef.getEntityType()!= null && 
                     		  (clsDef.getEntityType().getReference()!=null && clsDef.getEntityType().getReference()!=""))
                       {
-                        qn = _nsmap.reduceToQName(clsDef.getEntityType().getReference(), qName);
-                        if (qn) 
+                        qName = _nsmap.reduceToQName(clsDef.getEntityType().getReference());
+                        if (qName != null && qName != "")  
                         	insert = GenerateTypesPart8(insert, clsId, qName.toString(), clsDef);
                       }
                       // append specialization
@@ -2600,15 +2601,15 @@ public class RefDataProvider
                       {
                         if (ns.getReference()!=null && ns.getReference()!="")
                         {
-                          qn = _nsmap.reduceToQName(ns.getReference(), qName);
+                          qName = _nsmap.reduceToQName(ns.getReference());
                           if (repository.getRepositoryType() == RepositoryType.PART_8)
                           {
-                            if (qn) 
+                            if (qName != null && qName != "") 
                             	insert = GenerateRdfSubClass(insert, clsId, qName.toString());
                           }
                           else
                           {
-                            if (qn) 
+                            if (qName != null && qName != "") 
                             	insert = GenerateDmSubClass(insert, clsId, qName.toString());
                           }
                         }
@@ -2630,15 +2631,15 @@ public class RefDataProvider
                       for (Classification nc : clsDef.getClassifications())
                       {
                         if (nc.getReference()!=null && nc.getReference()!="")                        {
-                          qn = _nsmap.reduceToQName(nc.getReference(), qName);
+                          qName = _nsmap.reduceToQName(nc.getReference());
                           if (repository.getRepositoryType() == RepositoryType.PART_8)
                           {
-                            if (qn) 
+                            if (qName != null && qName != "")  
                             	insert = GenerateSuperClass(insert, qName.toString(), clsId.toString());
                           }
                           else
                           {
-                            if (qn) 
+                            if (qName != null && qName != "")  
                             	insert = GenerateDmClassification(insert, clsId, qName.toString());
                           }
                         }
@@ -3493,12 +3494,12 @@ public class RefDataProvider
   private Model GenerateValue(Model work, String subjId, String objId, Object gobj)
   {
     RoleQualification role = (RoleQualification)gobj;
-    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("tpl:R56456315674");
-    Resource obj = work.createResource(String.format("tpl:{0}", objId));
+    Resource obj = work.createResource(String.format("tpl:%s", objId));
     work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     pred = work.createProperty("tpl:R89867215482");
-    obj = work.createResource(String.format("tpl:{0}", role.getQualifies().split("#",1)));
+    obj = work.createResource(String.format("tpl:%s", role.getQualifies().split("#",1)));
     work.add(subj, pred, obj);
     pred = work.createProperty("tpl:R29577887690");
     Literal obj1 = work.createTypedLiteral(role.getValue().getText(), (role.getValue().getLang()==null || role.getValue().getLang()=="") ? defaultLanguage : role.getValue().getLang());
@@ -3508,28 +3509,28 @@ public class RefDataProvider
 
   private Model GenerateReferenceQual(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("tpl:R30741601855");
-    Resource obj = work.createResource(String.format("tpl:{0}", objId));
+    Resource obj = work.createResource(String.format("tpl:%s", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateReferenceType(Model work, String subjId, String objId, Object gobj)
   {
-	Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+	Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty(rdfType);
     Resource obj = work.createResource("tpl:R40103148466");
     work.add(subj, pred, obj);
     pred = work.createProperty("tpl:R49267603385");
-    obj = work.createProperty(String.format("tpl:{0}", objId));
+    obj = work.createProperty(String.format("tpl:%s", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateReferenceTpl(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("tpl:R21129944603");
     Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);
@@ -3538,16 +3539,16 @@ public class RefDataProvider
 
   private Model GenerateQualifies(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("tpl:R91125890543");
-    Resource obj = work.createResource(String.format("tpl:{0}", objId));
+    Resource obj = work.createResource(String.format("tpl:%s", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateRange(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("rdfs:range");
     Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);
@@ -3559,9 +3560,9 @@ public class RefDataProvider
 
   private Model GenerateHasRole(Model work, String subjId, String objId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("p8:hasRole");
-    Resource res = work.createResource(String.format("tpl:{0}", objId));
+    Resource res = work.createResource(String.format("tpl:%s", objId));
     work.add(subj, pred, res);
     return work;
   }
@@ -3570,9 +3571,9 @@ public class RefDataProvider
   {
     if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty("p8:hasTemplate");
-      Resource res = work.createResource(String.format("tpl:{0}", objId));
+      Resource res = work.createResource(String.format("tpl:%s", objId));
       work.add(subj, pred, res);
      }
     return work;
@@ -3581,7 +3582,7 @@ public class RefDataProvider
 
   private Model GenerateRoleIndex(Model work, String subjId, int index) throws Exception
   {
-	Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+	Resource subj = work.createResource(String.format("tpl:%s", subjId));
 	Property pred = work.createProperty("tpl:R97483568938");
 	Literal obj = work.createTypedLiteral(String.valueOf(index), "xsd:integer");
 	work.add(subj, pred, obj);
@@ -3592,7 +3593,7 @@ public class RefDataProvider
   {
     if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty("p8:valRoleIndex");
       Literal obj = work.createTypedLiteral(String.valueOf(index), "xsd:integer");
       work.add(subj, pred, obj);
@@ -3602,16 +3603,16 @@ public class RefDataProvider
 
   private Model GenerateRoleDomain(Model work, String subjId, String objId)
   {
-    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("rdfs:domain");
-    Resource obj = work.createProperty(String.format("tpl:{0}", objId));
+    Resource obj = work.createProperty(String.format("tpl:%s", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateRoleFillerType(Model work, String subjId, String qName)
   {
-    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("p8:hasRoleFillerType");
     Resource obj = work.createProperty(qName);
     work.add(subj, pred, obj);
@@ -3622,7 +3623,7 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty("tpl:R35529169909");
       Literal obj = work.createTypedLiteral(String.valueOf(rolecount), "xsd:integer");
       work.add(subj, pred, obj);
@@ -3634,7 +3635,7 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty("p8:valNumberOfRoles");
       Literal obj = work.createTypedLiteral(String.valueOf(rolecount), "xsd:integer");
       work.add(subj, pred, obj);
@@ -3646,7 +3647,7 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition)
     {
-      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("p8:TemplateDescription");
       work.add(subj, pred, obj);
@@ -3655,19 +3656,19 @@ public class RefDataProvider
     }
     else if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("owl:Thing");
       work.add(subj, pred, obj);
       obj = work.createResource("p8:TemplateRoleDescription");
       work.add(subj, pred, obj);
       pred = work.createProperty("p8:hasTemplate");
-      obj = work.createResource(String.format("tpl:{0}", objectId));
+      obj = work.createResource(String.format("tpl:%s", objectId));
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof TemplateQualification)
     {
-      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("p8:TemplateDescription");
       work.add(subj, pred, obj);
@@ -3680,12 +3681,12 @@ public class RefDataProvider
       work.add(subj, pred, obj);
       subj = work.createResource(objectId);
       pred = work.createProperty("p8:hasSubTemplate");
-      obj = work.createResource(String.format("tpl:{0}", subjId));
+      obj = work.createResource(String.format("tpl:%s", subjId));
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof ClassDefinition)
     {
-      Resource subj = work.createResource(String.format("rdl:{0}", subjId));
+      Resource subj = work.createResource(String.format("rdl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource(objectId);
       work.add(subj, pred, obj);
@@ -3699,14 +3700,14 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition)
     {
-      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("tpl:R16376066707");
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof RoleDefinition)
     {
-      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("tpl:R74478971040");
       work.add(subj, pred, obj);
@@ -3715,9 +3716,9 @@ public class RefDataProvider
     {
       Resource subj = work.createResource(objId);
       Property pred = work.createProperty("dm:hasSubclass");
-      Resource obj = work.createResource(String.format("tpl:{0}", subjId));
+      Resource obj = work.createResource(String.format("tpl:%s", subjId));
       work.add(subj, pred, obj);
-      subj = work.createResource(String.format("tpl:{0}", subjId));
+      subj = work.createResource(String.format("tpl:%s", subjId));
       pred = work.createProperty("dm:hasSuperclass");
       obj = work.createResource(objId);
       work.add(subj, pred, obj);
@@ -3729,7 +3730,7 @@ public class RefDataProvider
       Resource obj = work.createResource("tpl:R76288246068");
       work.add(subj, pred, obj);
       pred = work.createProperty("tpl:R99672026745");
-      obj = work.createResource(String.format("tpl:{0}", objId));
+      obj = work.createResource(String.format("tpl:%s", objId));
       work.add(subj, pred, obj);
       pred = work.createProperty(rdfType);
       obj = work.createResource("tpl:R67036823327");
@@ -3740,7 +3741,7 @@ public class RefDataProvider
 
   private Model GenerateName(Model work, Name name, String subjId, Object gobj)
   {
-	Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+	Resource subj = work.createResource(String.format("tpl:%s", subjId));
 	Property pred = work.createProperty("rdfs:label");
 	Literal obj = work.createTypedLiteral(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
 	work.add(subj, pred, obj);
@@ -3749,7 +3750,7 @@ public class RefDataProvider
 
   private Model GenerateClassName(Model work, Name name, String subjId, Object gobj)
   {
-    Resource subj = work.createResource(String.format("rdl:{0}", subjId));
+    Resource subj = work.createResource(String.format("rdl:%s" + subjId));
     Property pred = work.createProperty("rdfs:label");
     Literal obj = work.createTypedLiteral(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
     work.add(subj, pred, obj);
@@ -3757,7 +3758,7 @@ public class RefDataProvider
   }
   private Model GenerateDescription(Model work, Description descr, String subjectId)
   {
-    Resource subj = work.createResource(String.format("tpl:{0}", subjectId));
+    Resource subj = work.createResource(String.format("tpl:%s", subjectId));
     Property pred = work.createProperty("rdfs:comment");
     Literal obj = work.createTypedLiteral(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
     work.add(subj, pred, obj);
@@ -3766,7 +3767,7 @@ public class RefDataProvider
 
   private Model GenerateClassDescription(Model work, Description descr, String subjectId)
   {
-    Resource subj = work.createResource(String.format("rdl:{0}", subjectId));
+    Resource subj = work.createResource(String.format("rdl:%s", subjectId));
     Property pred = work.createProperty("rdfs:comment");
     Literal obj = work.createTypedLiteral(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
     work.add(subj, pred, obj);
@@ -3774,7 +3775,7 @@ public class RefDataProvider
   }
   private Model GenerateRdfType(Model work, String subjId, String objId)
   {
-    Resource subj = work.createResource(String.format("rdl:{0}", subjId));
+    Resource subj = work.createResource(String.format("rdl:%s", subjId));
     Property pred = work.createProperty("rdf:type");
     Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);
@@ -3785,14 +3786,14 @@ public class RefDataProvider
   {
     Resource subj = work.createResource(objId);
     Property pred = work.createProperty("rdfs:subClassOf");
-    Resource obj = work.createResource(String.format("rdl:{0}", subjId));
+    Resource obj = work.createResource(String.format("rdl:%s", subjId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateSuperClass(Model work, String subjId, String objId)
   {
-    Resource subj = work.createResource(String.format("rdl:{0}", Long.parseLong(objId)));
+    Resource subj = work.createResource(String.format("rdl:%s", Long.parseLong(objId)));
     Property pred = work.createProperty("rdfs:subClassOf");
     Resource obj = work.createResource(subjId);
     work.add(subj, pred, obj);
@@ -3801,7 +3802,7 @@ public class RefDataProvider
 
   private Model GenerateDmClassification(Model work, String subjId, String objId)
   {
-    Resource subj = work.createResource(String.format("rdl:{0}", subjId));
+    Resource subj = work.createResource(String.format("rdl:%s", subjId));
     Property pred = work.createProperty("dm:hasClassified");
     Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);
@@ -3812,7 +3813,7 @@ public class RefDataProvider
 
   private Model GenerateDmSubClass(Model work, String subjId, String objId)
   {
-    Resource subj = work.createResource(String.format("rdl:{0}", subjId));
+    Resource subj = work.createResource(String.format("rdl:%s", subjId));
     Property pred = work.createProperty("dm:hasSubclass");
     Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);

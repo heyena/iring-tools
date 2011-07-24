@@ -19,7 +19,7 @@ public interface NsMapper
 
 	Iterable<String> getPrefixes();
 
-	boolean reduceToQName(String uri, ReferenceObject<String> qname) throws Exception;
+	String reduceToQName(String uri) throws Exception;
 
 	void removeNamespace(String prefix) throws Exception;
 

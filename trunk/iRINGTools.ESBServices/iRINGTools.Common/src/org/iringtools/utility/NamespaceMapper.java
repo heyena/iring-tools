@@ -135,31 +135,33 @@ public class NamespaceMapper implements NsMapper {
 		return this._uris.keySet();
 	}
 
-	public final boolean reduceToQName(String uri, ReferenceObject<String> qname)
+	public final String reduceToQName(String uri)
 			throws Exception {
+		String qname = "";
+		String tmp = "";
 		for (URI u : this._uris.values()) {
 			String baseuri = u.toString();
 
 			// Does the Uri start with the Base Uri
 			if (uri.startsWith(baseuri)) {
 				// Remove the Base Uri from the front of the Uri
-				qname.argumentValue = uri.substring(baseuri.length());
+				tmp = uri.substring(baseuri.length());
 				// Add the Prefix back onto the front plus the colon to give a
 				// QName
-				qname.argumentValue = this._prefixes.get(getEnhancedHashCode(u))
-						+ ":" + qname.argumentValue;
-				if (qname.argumentValue.equals(":")) {
+				qname = this._prefixes.get(getEnhancedHashCode(u))
+						+ ":" + tmp;
+				if (qname.contains(":")) {
+					return qname;
+				}
+				if (qname.contains("/")
+						|| qname.contains("#")) {
 					continue;
 				}
-				if (qname.argumentValue.contains("/")
-						|| qname.argumentValue.contains("#")) {
-					continue;
-				}
-				return true;
+				return qname;
 			}
 		}
-		qname.argumentValue = "";
-		return false;
+		
+		return "";
 	}
 
 	public void importMap(NsMapper nsmap) {
