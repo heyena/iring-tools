@@ -1741,7 +1741,7 @@ public class RefDataProvider
                 {
                 	insert = GenerateRoleIndexPart8(insert, roleID, ++roleCount, role);
                 	insert = GenerateHasTemplate(insert, roleID, identifier, role);
-                	insert = GenerateHasRole(insert, Long.parseLong(identifier), roleID.toString(), role);
+                	insert = GenerateHasRole(insert, identifier, roleID.toString(), role);
                 }
                 else
                 {
@@ -2003,7 +2003,7 @@ public class RefDataProvider
                         {
                           if (nrq.getValue().getReference() != null) //reference restriction
                           {
-                        	  insert = GenerateReferenceType(insert, tempNewRoleID, templateID.toString(), nrq);
+                        	  insert = GenerateReferenceType(insert, tempNewRoleID, templateID, nrq);
                         	  insert = GenerateReferenceQual(insert, tempNewRoleID, nrq.getQualifies().split("#")[1], nrq);
                             qn = _nsmap.reduceToQName(nrq.getValue().getReference(), qName);
                             if (qn) 
@@ -2028,7 +2028,7 @@ public class RefDataProvider
                   {
                     String roleName = orq.getNames().get(0).getValue();
                     String newRoleID = orq.getId();
-                    Long tempNewRoleID = Long.parseLong(getIdFromURI(newRoleID));
+                    String tempNewRoleID = getIdFromURI(newRoleID);
 
                     if (newRoleID==null || newRoleID=="")
                     {
@@ -2172,7 +2172,7 @@ public class RefDataProvider
               for (RoleQualification newRole : newTQ.getRoleQualifications())
               {
                 String roleLabel = newRole.getNames().get(0).getValue();
-                Long roleID = 0L;
+                String roleID = "";
                 generatedId = null;
                 String genName = null;
                 String range = newRole.getRange();
@@ -2185,11 +2185,11 @@ public class RefDataProvider
                   else
                     generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), genName);
 
-                  roleID = Long.parseLong(getIdFromURI(generatedId));
+                  roleID = getIdFromURI(generatedId);
                 }
                 else
                 {
-                  roleID = Long.parseLong(getIdFromURI(newRole.getId()));
+                  roleID = getIdFromURI(newRole.getId());
                 }
                 if (repository.getRepositoryType() == RepositoryType.PART_8)
                 {
@@ -2585,7 +2585,7 @@ public class RefDataProvider
                       if (clsId==null)
                       {
                         String newClsName = "Class definition " + clsLabel;
-                        clsId = Long.parseLong(getIdFromURI(createIdsAdiId(registry, newClsName)));
+                        clsId =getIdFromURI(createIdsAdiId(registry, newClsName));
                       }
                       // append entity type
                       if (clsDef.getEntityType()!= null && 
@@ -3506,7 +3506,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateReferenceQual(Model work, Long subjId, String objId, Object gobj)
+  private Model GenerateReferenceQual(Model work, String subjId, String objId, Object gobj)
   {
     Resource subj = work.createResource(String.format("tpl:{0}", subjId));
     Property pred = work.createProperty("tpl:R30741601855");
@@ -3515,7 +3515,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateReferenceType(Model work, Long subjId, String objId, Object gobj)
+  private Model GenerateReferenceType(Model work, String subjId, String objId, Object gobj)
   {
 	Resource subj = work.createResource(String.format("tpl:{0}", subjId));
     Property pred = work.createProperty(rdfType);
@@ -3527,7 +3527,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateReferenceTpl(Model work, Long subjId, String objId, Object gobj)
+  private Model GenerateReferenceTpl(Model work, String subjId, String objId, Object gobj)
   {
     Resource subj = work.createResource(String.format("tpl:{0}", subjId));
     Property pred = work.createProperty("tpl:R21129944603");
@@ -3536,7 +3536,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateQualifies(Model work, Long subjId, String objId, Object gobj)
+  private Model GenerateQualifies(Model work, String subjId, String objId, Object gobj)
   {
     Resource subj = work.createResource(String.format("tpl:{0}", subjId));
     Property pred = work.createProperty("tpl:R91125890543");
@@ -3545,7 +3545,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateRange(Model work, Long subjId, String objId, Object gobj)
+  private Model GenerateRange(Model work, String subjId, String objId, Object gobj)
   {
     Resource subj = work.createResource(String.format("tpl:{0}", subjId));
     Property pred = work.createProperty("rdfs:range");
