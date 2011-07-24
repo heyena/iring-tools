@@ -47,8 +47,8 @@
     </fileset>
   </path>
 
-	<path id="jrdf-0.5.6.userclasspath">
-    <fileset dir="../libraries/jrdf-0.5.6">
+	<path id="jena.2.4.6.userclasspath">
+    <fileset dir="../libraries/jena-2.6.4">
       <include name="**/*.jar"/>
     </fileset>
 	</path>
