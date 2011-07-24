@@ -39,11 +39,11 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/classes"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/iRINGTools.Common"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jena-2.6.4">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/iRINGTools.Common"/>
 	<classpathentry kind="output" path="WebContent/WEB-INF/classes"/>
 </classpath>

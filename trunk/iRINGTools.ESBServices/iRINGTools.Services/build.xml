@@ -47,7 +47,7 @@
     </fileset>
   </path>
 
-	<path id="jena.2.4.6.userclasspath">
+	<path id="jena-2.6.4.userclasspath">
     <fileset dir="../libraries/jena-2.6.4">
       <include name="**/*.jar"/>
     </fileset>
@@ -104,7 +104,7 @@
 			<classpath refid="log4j-1.2.16.userclasspath" />
 			<classpath refid="commons-codec-1.4.userclasspath" />      
 			<classpath refid="json-utils.userclasspath" />
-			<classpath refid="jrdf-0.5.6.userclasspath" />
+			<classpath refid="jena-2.6.4.userclasspath" />
 		</javac>
 	</target>
 
@@ -119,7 +119,7 @@
 			<path refid="commons-codec-1.4.userclasspath" />
 			<path refid="log4j-1.2.16.userclasspath" />  
 			<path refid="json-utils.userclasspath" />    
-      <path refid="jrdf-0.5.6.userclasspath" />
+      <path refid="jena-2.6.4.userclasspath" />
 		</copy>
 		<jar destfile="dist/iringtools-services.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
     <!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->
