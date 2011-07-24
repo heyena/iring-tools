@@ -1523,8 +1523,8 @@ public class RefDataProvider
                   }
                   if(!existingName.getValue().equalsIgnoreCase(existingName.getValue()))
                   {
-                	  delete = GenerateName(delete, existingName, Long.parseLong(identifier), existingTemplate);
-                	  insert = GenerateName(insert, existingName, Long.parseLong(identifier), existingTemplate);
+                	  delete = GenerateName(delete, existingName, identifier, existingTemplate);
+                	  insert = GenerateName(insert, existingName, identifier, existingTemplate);
                   }
                   }
                 
@@ -1542,13 +1542,13 @@ public class RefDataProvider
                   if(description!=null && existingDescription!=null){
                 	  if (!existingDescription.getValue().equalsIgnoreCase(description.getValue()))
                       {
-                		  delete = GenerateDescription(delete, existingDescription, Long.parseLong(identifier));
-                		  insert = GenerateDescription(insert, description, Long.parseLong(identifier));
+                		  delete = GenerateDescription(delete, existingDescription, identifier);
+                		  insert = GenerateDescription(insert, description, identifier);
                       }
                     }
                   else if (description != null && existingDescription == null)
                   {
-                	  insert = GenerateDescription(insert, description, Long.parseLong(identifier));
+                	  insert = GenerateDescription(insert, description, identifier);
                   }
                 }
 
@@ -1580,7 +1580,7 @@ public class RefDataProvider
                   }
                   
                   RoleDefinition existingRole = null;
-                  Long tempRoleIdentifier = Long.parseLong(getIdFromURI(roleIdentifier));
+                  String tempRoleIdentifier = getIdFromURI(roleIdentifier);
                   for (RoleDefinition tempRoleDef : existingTemplate.getRoleDefinitions())
                   {
                     if (role.getId().equalsIgnoreCase(tempRoleDef.getId()))
@@ -1626,7 +1626,7 @@ public class RefDataProvider
                   {
                     for (RoleDefinition role : existingTemplate.getRoleDefinitions())
                     {
-                      Long tempRoleID = Long.parseLong(getIdFromURI(role.getId()));
+                      String tempRoleID = getIdFromURI(role.getId());
                       //RoleDefinition nrd = newTDef.roleDefinition.Find(r => r.identifier == ord.identifier);
                       RoleDefinition existingRole = null;
                       for (RoleDefinition tempRoleDef : existingTemplate.getRoleDefinitions())
@@ -1687,29 +1687,29 @@ public class RefDataProvider
             {
               if (repository.getRepositoryType() == RepositoryType.PART_8)
               {
-            	  insert = GenerateTypesPart8(insert, Long.parseLong(identifier), null, newTemplateDefinition);
-            	  insert = GenerateRoleCountPart8(insert, newTemplateDefinition.getRoleDefinitions().size(), Long.parseLong(identifier), newTemplateDefinition);
+            	  insert = GenerateTypesPart8(insert, identifier, null, newTemplateDefinition);
+            	  insert = GenerateRoleCountPart8(insert, newTemplateDefinition.getRoleDefinitions().size(), identifier, newTemplateDefinition);
               }
               else
               {
-            	  insert = GenerateTypes(insert, Long.parseLong(identifier), null, newTemplateDefinition);
-            	  insert = GenerateRoleCount(insert, newTemplateDefinition.getRoleDefinitions().size(), Long.parseLong(identifier), newTemplateDefinition);
+            	  insert = GenerateTypes(insert, identifier, null, newTemplateDefinition);
+            	  insert = GenerateRoleCount(insert, newTemplateDefinition.getRoleDefinitions().size(), identifier, newTemplateDefinition);
               }
               for (Name name : newTemplateDefinition.getNames())
               {
-            	  insert = GenerateName(insert, name, Long.parseLong(identifier), newTemplateDefinition);
+            	  insert = GenerateName(insert, name, identifier, newTemplateDefinition);
               }
 
               for (Description descr : newTemplateDefinition.getDescriptions())
               {
-            	  insert = GenerateDescription(insert, descr, Long.parseLong(identifier));
+            	  insert = GenerateDescription(insert, descr, identifier);
               }
               //form labels
               for (RoleDefinition role : newTemplateDefinition.getRoleDefinitions())
               {
 
                 String roleLabel = role.getNames().get(0).getValue();
-                Long roleID = 0L;
+                String roleID = "";
                 generatedId = null;
                 String genName = null;
                 String range = role.getRange();
@@ -1721,11 +1721,11 @@ public class RefDataProvider
                     generatedId = createIdsAdiId(_settings.get("ExampleRegistryBase").toString(), genName);
                   else
                     generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), genName);
-                  roleID = Long.parseLong(getIdFromURI(generatedId));
+                  roleID = getIdFromURI(generatedId);
                 }
                 else
                 {
-                	roleID = Long.parseLong(getIdFromURI(role.getId()));
+                	roleID = getIdFromURI(role.getId());
                 }
                 for (Name newName : role.getNames())
                 {
@@ -1809,17 +1809,17 @@ public class RefDataProvider
           {
             int roleCount = 0;
             String templateName = null;
-            Long templateID = 0L;
+            String templateID = "";
             String generatedId = null;
             String roleQualification = null;
             int index = 1;
             if (newTQ.getId()!=null && newTQ.getId()!="")
-              templateID = Long.parseLong(getIdFromURI(newTQ.getId()));
+              templateID = getIdFromURI(newTQ.getId());
 
             templateName = newTQ.getNames().get(0).getValue();
             Qmxf oldQmxf = new Qmxf();
             //if (templateID!=null && templateID!="")
-            if (templateID!=0L)
+            if (templateID!="" && templateID != null)
             {
               oldQmxf = getTemplate(templateID.toString(), TemplateType.QUALIFICATION.toString(), repository);
             }
@@ -1830,7 +1830,7 @@ public class RefDataProvider
               else
                 generatedId = createIdsAdiId(_settings.get("TemplateRegistryBase").toString(), templateName);
 
-              templateID = Long.parseLong(getIdFromURI(generatedId));
+              templateID = getIdFromURI(generatedId);
             }
             //region Form Delete/Insert SPARQL
             if (oldQmxf.getTemplateQualifications().size() > 0)
@@ -1936,7 +1936,7 @@ public class RefDataProvider
                   {
                     String roleName = nrq.getNames().get(0).getValue();
                     String newRoleID = nrq.getId();
-                    Long tempNewRoleID = Long.parseLong(getIdFromURI(newRoleID));
+                    String tempNewRoleID = getIdFromURI(newRoleID);
                     
                     if (newRoleID==null || newRoleID == "")
                     {
@@ -1967,8 +1967,8 @@ public class RefDataProvider
                         	insert = GenerateName(insert, nn, tempNewRoleID, nrq);
                         }
                         insert = GenerateRoleIndexPart8(insert, tempNewRoleID, ++count, nrq);
-                        insert = GenerateHasTemplate(insert, tempNewRoleID, templateID.toString(), nrq);
-                        insert = GenerateHasRole(insert, templateID, tempNewRoleID.toString(), newTQ);
+                        insert = GenerateHasTemplate(insert, tempNewRoleID, templateID, nrq);
+                        insert = GenerateHasRole(insert, templateID, tempNewRoleID, newTQ);
                         if (nrq.getRange()!=null && nrq.getRange()=="")
                         {
                           qn = _nsmap.reduceToQName(nrq.getRange(), qName);
@@ -2406,12 +2406,12 @@ public class RefDataProvider
 
                   String language = null;
                   int classCount = 0;
-                  Long clsId = Long.parseLong(getIdFromURI(clsDef.getId()));
+                  String clsId = getIdFromURI(clsDef.getId());
                   Qmxf existingQmxf = new Qmxf();
 
                   if (clsId!=null)
                   {
-                      existingQmxf = getClass(clsId.toString(), repository);
+                      existingQmxf = getClass(clsId, repository);
                   }
 
                   // delete class
@@ -3557,7 +3557,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateHasRole(Model work, Long subjId, String objId, Object gobj)
+  private Model GenerateHasRole(Model work, String subjId, String objId, Object gobj)
   {
     Resource subj = work.createResource(String.format("tpl:{0}", subjId));
     Property pred = work.createProperty("p8:hasRole");
@@ -3566,7 +3566,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateHasTemplate(Model work, Long subjId, String objId, Object gobj)
+  private Model GenerateHasTemplate(Model work, String subjId, String objId, Object gobj)
   {
     if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
@@ -3579,7 +3579,7 @@ public class RefDataProvider
     
   }
 
-  private Model GenerateRoleIndex(Model work, Long subjId, int index) throws Exception
+  private Model GenerateRoleIndex(Model work, String subjId, int index) throws Exception
   {
 	Resource subj = work.createResource(String.format("tpl:{0}", subjId));
 	Property pred = work.createProperty("tpl:R97483568938");
@@ -3588,7 +3588,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateRoleIndexPart8(Model work, Long subjId, int index, Object gobj) throws Exception
+  private Model GenerateRoleIndexPart8(Model work, String subjId, int index, Object gobj) throws Exception
   {
     if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
@@ -3600,7 +3600,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateRoleDomain(Model work, Long subjId, String objId)
+  private Model GenerateRoleDomain(Model work, String subjId, String objId)
   {
     Resource subj = work.createResource(String.format("tpl:{0}", subjId));
     Property pred = work.createProperty("rdfs:domain");
@@ -3609,7 +3609,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateRoleFillerType(Model work, Long subjId, String qName)
+  private Model GenerateRoleFillerType(Model work, String subjId, String qName)
   {
     Resource subj = work.createResource(String.format("tpl:{0}", subjId));
     Property pred = work.createProperty("p8:hasRoleFillerType");
@@ -3618,7 +3618,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateRoleCount(Model work, int rolecount, Long subjId, Object gobj) throws Exception
+  private Model GenerateRoleCount(Model work, int rolecount, String subjId, Object gobj) throws Exception
   {
     if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
     {
@@ -3630,7 +3630,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateRoleCountPart8(Model work, int rolecount, Long subjId, Object gobj) throws Exception
+  private Model GenerateRoleCountPart8(Model work, int rolecount, String subjId, Object gobj) throws Exception
   {
     if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
     {
@@ -3642,7 +3642,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateTypesPart8(Model work, Long subjId, String objectId, Object gobj)
+  private Model GenerateTypesPart8(Model work, String subjId, String objectId, Object gobj)
   {
     if (gobj instanceof TemplateDefinition)
     {
@@ -3695,7 +3695,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateTypes(Model work, Long subjId, String objId, Object gobj)
+  private Model GenerateTypes(Model work, String subjId, String objId, Object gobj)
   {
     if (gobj instanceof TemplateDefinition)
     {
@@ -3738,7 +3738,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateName(Model work, Name name, Long subjId, Object gobj)
+  private Model GenerateName(Model work, Name name, String subjId, Object gobj)
   {
 	Resource subj = work.createResource(String.format("tpl:{0}", subjId));
 	Property pred = work.createProperty("rdfs:label");
@@ -3747,7 +3747,7 @@ public class RefDataProvider
 	return work;
   }
 
-  private Model GenerateClassName(Model work, Name name, Long subjId, Object gobj)
+  private Model GenerateClassName(Model work, Name name, String subjId, Object gobj)
   {
     Resource subj = work.createResource(String.format("rdl:{0}", subjId));
     Property pred = work.createProperty("rdfs:label");
@@ -3755,7 +3755,7 @@ public class RefDataProvider
     work.add(subj, pred, obj);
     return work;
   }
-  private Model GenerateDescription(Model work, Description descr, Long subjectId)
+  private Model GenerateDescription(Model work, Description descr, String subjectId)
   {
     Resource subj = work.createResource(String.format("tpl:{0}", subjectId));
     Property pred = work.createProperty("rdfs:comment");
@@ -3764,7 +3764,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateClassDescription(Model work, Description descr, Long subjectId)
+  private Model GenerateClassDescription(Model work, Description descr, String subjectId)
   {
     Resource subj = work.createResource(String.format("rdl:{0}", subjectId));
     Property pred = work.createProperty("rdfs:comment");
@@ -3772,7 +3772,7 @@ public class RefDataProvider
     work.add(subj, pred, obj);
     return work;
   }
-  private Model GenerateRdfType(Model work, Long subjId, String objId)
+  private Model GenerateRdfType(Model work, String subjId, String objId)
   {
     Resource subj = work.createResource(String.format("rdl:{0}", subjId));
     Property pred = work.createProperty("rdf:type");
@@ -3781,7 +3781,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateRdfSubClass(Model work, Long subjId, String objId)
+  private Model GenerateRdfSubClass(Model work, String subjId, String objId)
   {
     Resource subj = work.createResource(objId);
     Property pred = work.createProperty("rdfs:subClassOf");
@@ -3799,7 +3799,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateDmClassification(Model work, Long subjId, String objId)
+  private Model GenerateDmClassification(Model work, String subjId, String objId)
   {
     Resource subj = work.createResource(String.format("rdl:{0}", subjId));
     Property pred = work.createProperty("dm:hasClassified");
@@ -3810,7 +3810,7 @@ public class RefDataProvider
     return work;
   }
 
-  private Model GenerateDmSubClass(Model work, Long subjId, String objId)
+  private Model GenerateDmSubClass(Model work, String subjId, String objId)
   {
     Resource subj = work.createResource(String.format("rdl:{0}", subjId));
     Property pred = work.createProperty("dm:hasSubclass");
