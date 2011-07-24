@@ -52,6 +52,12 @@
       <include name="**/*.jar"/>
     </fileset>
 	</path>
+	
+	<path id="jrdf-0.5.6.userclasspath">
+    <fileset dir="../libraries/jrdf-0.5.6">
+      <include name="**/*.jar"/>
+    </fileset>
+	</path>
 
 	<path id="iRINGTools.Common.classpath">
 		<pathelement location="${iRINGTools.Common.location}/bin" />
