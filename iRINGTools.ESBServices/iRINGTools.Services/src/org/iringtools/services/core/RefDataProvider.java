@@ -13,6 +13,7 @@ import java.util.TreeMap;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.cxf.jaxws.javaee.XsdIntegerType;
 import org.apache.log4j.Logger;
 import org.ids_adi.ns.qxf.model.ClassDefinition;
 import org.ids_adi.ns.qxf.model.Classification;
@@ -59,10 +60,10 @@ import org.w3._2005.sparql.results.Results;
 import org.w3._2005.sparql.results.Sparql;
 
 import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.RDFNode;
 import com.hp.hpl.jena.rdf.model.Resource;
+import com.hp.hpl.jena.rdf.model.ModelFactory;
 
 
 
@@ -88,9 +89,9 @@ public class RefDataProvider
   private StringBuilder sparqlStr = new StringBuilder();
 
 
-  Resource dsubj ,isubj, subj; 
-  Property dpred, ipred, pred;
-  RDFNode dobj, iobj, obj;
+//  Resource dsubj ,isubj, subj; 
+//  Property dpred, ipred, pred;
+//  RDFNode dobj, iobj, obj;
   
   public RefDataProvider(Map<String, Object> settings)
   {
@@ -3492,32 +3493,33 @@ public class RefDataProvider
   private Model GenerateValue(Model work, String subjId, String objId, Object gobj)
   {
     RoleQualification role = (RoleQualification)gobj;
-    pred = work.createProperty("tpl:R56456315674");
-    obj = work.createProperty(String.format("tpl:{0}", objId));
+    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Property pred = work.createProperty("tpl:R56456315674");
+    Resource obj = work.createResource(String.format("tpl:{0}", objId));
     work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     pred = work.createProperty("tpl:R89867215482");
-    obj = work.createProperty(String.format("tpl:{0}", role.getQualifies().split("#",1)));
+    obj = work.createResource(String.format("tpl:{0}", role.getQualifies().split("#",1)));
     work.add(subj, pred, obj);
     pred = work.createProperty("tpl:R29577887690");
-    obj = work.createProperty(role.getValue().getText(), (role.getValue().getLang()==null || role.getValue().getLang()=="") ? defaultLanguage : role.getValue().getLang());
-    work.add(subj, pred, obj);
+    Literal obj1 = work.createTypedLiteral(role.getValue().getText(), (role.getValue().getLang()==null || role.getValue().getLang()=="") ? defaultLanguage : role.getValue().getLang());
+    work.add(subj, pred, obj1);
     return work;
   }
 
   private Model GenerateReferenceQual(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = work.createResource(String.format("tpl:{0}", subjId));
-    pred = work.createProperty("tpl:R30741601855");
-    obj = work.createProperty(String.format("tpl:{0}", objId));
+    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Property pred = work.createProperty("tpl:R30741601855");
+    Resource obj = work.createResource(String.format("tpl:{0}", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateReferenceType(Model work, Long subjId, String objId, Object gobj)
   {
-	subj = work.createResource(String.format("tpl:{0}", subjId));
-    pred = work.createProperty(rdfType);
-    obj = work.createProperty("tpl:R40103148466");
+	Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Property pred = work.createProperty(rdfType);
+    Resource obj = work.createResource("tpl:R40103148466");
     work.add(subj, pred, obj);
     pred = work.createProperty("tpl:R49267603385");
     obj = work.createProperty(String.format("tpl:{0}", objId));
@@ -3527,28 +3529,28 @@ public class RefDataProvider
 
   private Model GenerateReferenceTpl(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = work.createResource(String.format("tpl:{0}", subjId));
-    pred = work.createProperty("tpl:R21129944603");
-    obj = work.createProperty(objId);
+    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Property pred = work.createProperty("tpl:R21129944603");
+    Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateQualifies(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = work.createResource(String.format("tpl:{0}", subjId));
-    pred = work.createProperty("tpl:R91125890543");
-    obj = work.createProperty(String.format("tpl:{0}", objId));
+    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Property pred = work.createProperty("tpl:R91125890543");
+    Resource obj = work.createResource(String.format("tpl:{0}", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateRange(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = work.createResource(String.format("tpl:{0}", subjId));
-    pred = work.createProperty("rdfs:range");
-    obj = work.createProperty(objId);
-    work.add(ModelFactory.createDefaultModel().createStatement(dsubj, dpred, dobj));
+    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Property pred = work.createProperty("rdfs:range");
+    Resource obj = work.createResource(objId);
+    work.add(subj, pred, obj);
     pred = work.createProperty("tpl:R98983340497");
     obj = work.createProperty(qName);
     work.add(subj, pred, obj);
@@ -3557,10 +3559,10 @@ public class RefDataProvider
 
   private Model GenerateHasRole(Model work, Long subjId, String objId, Object gobj)
   {
-    subj = work.createResource(String.format("tpl:{0}", subjId));
-    pred = work.createProperty("p8:hasRole");
-    obj = work.createProperty(String.format("tpl:{0}", objId));
-    work.add(subj, pred, obj);
+    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Property pred = work.createProperty("p8:hasRole");
+    Resource res = work.createResource(String.format("tpl:{0}", objId));
+    work.add(subj, pred, res);
     return work;
   }
 
@@ -3568,10 +3570,10 @@ public class RefDataProvider
   {
     if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      subj = work.createResource(String.format("tpl:{0}", subjId));
-      pred = work.createProperty("p8:hasTemplate");
-      obj = work.createProperty(String.format("tpl:{0}", objId));
-      work.add(subj, pred, obj);
+      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Property pred = work.createProperty("p8:hasTemplate");
+      Resource res = work.createResource(String.format("tpl:{0}", objId));
+      work.add(subj, pred, res);
      }
     return work;
     
@@ -3579,9 +3581,9 @@ public class RefDataProvider
 
   private Model GenerateRoleIndex(Model work, Long subjId, int index) throws Exception
   {
-	subj = work.createResource(String.format("tpl:{0}", subjId));
-	pred = work.createProperty("tpl:R97483568938");
-	/*obj = work.createProperty(String.valueOf(index), new URI("xsd:integer"));*/
+	Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+	Property pred = work.createProperty("tpl:R97483568938");
+	Literal obj = work.createTypedLiteral(String.valueOf(index), "xsd:integer");
 	work.add(subj, pred, obj);
     return work;
   }
@@ -3590,9 +3592,9 @@ public class RefDataProvider
   {
     if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      subj = work.createResource(String.format("tpl:{0}", subjId));
-      pred = work.createProperty("p8:valRoleIndex");
-      /*obj = work.createProperty(String.valueOf(index), new URI("xsd:integer"));*/
+      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Property pred = work.createProperty("p8:valRoleIndex");
+      Literal obj = work.createTypedLiteral(String.valueOf(index), "xsd:integer");
       work.add(subj, pred, obj);
     }
     return work;
@@ -3600,18 +3602,18 @@ public class RefDataProvider
 
   private Model GenerateRoleDomain(Model work, Long subjId, String objId)
   {
-    subj = work.createResource(String.format("tpl:{0}", subjId));
-    pred = work.createProperty("rdfs:domain");
-    obj = work.createProperty(String.format("tpl:{0}", objId));
+    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Property pred = work.createProperty("rdfs:domain");
+    Resource obj = work.createProperty(String.format("tpl:{0}", objId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateRoleFillerType(Model work, Long subjId, String qName)
   {
-    subj = work.createResource(String.format("tpl:{0}", subjId));
-    pred = work.createProperty("p8:hasRoleFillerType");
-    obj = work.createProperty(qName);
+    Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+    Property pred = work.createProperty("p8:hasRoleFillerType");
+    Resource obj = work.createProperty(qName);
     work.add(subj, pred, obj);
     return work;
   }
@@ -3620,9 +3622,9 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
     {
-      subj = work.createResource(String.format("tpl:{0}", subjId));
-      pred = work.createProperty("tpl:R35529169909");
-      /*obj = work.createProperty(String.valueOf(rolecount), new URI("xsd:integer"));*/
+      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Property pred = work.createProperty("tpl:R35529169909");
+      Literal obj = work.createTypedLiteral(String.valueOf(rolecount), "xsd:integer");
       work.add(subj, pred, obj);
     }
     return work;
@@ -3632,9 +3634,9 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition || gobj instanceof TemplateQualification)
     {
-      subj = work.createResource(String.format("tpl:{0}", subjId));
-      pred = work.createProperty("p8:valNumberOfRoles");
-      /*obj = work.createProperty(String.valueOf(rolecount), new URI("xsd:integer"));*/
+      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Property pred = work.createProperty("p8:valNumberOfRoles");
+      Literal obj = work.createTypedLiteral(String.valueOf(rolecount), "xsd:integer");
       work.add(subj, pred, obj);
     }
     return work;
@@ -3644,50 +3646,50 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition)
     {
-      subj = work.createResource(String.format("tpl:{0}", subjId));
-      pred = work.createProperty(rdfType);
-      obj = work.createProperty("p8:TemplateDescription");
+      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Property pred = work.createProperty(rdfType);
+      Resource obj = work.createResource("p8:TemplateDescription");
       work.add(subj, pred, obj);
       obj = work.createProperty("owl:Thing");
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
-      subj = work.createResource(String.format("tpl:{0}", subjId));
-      pred = work.createProperty(rdfType);
-      obj = work.createProperty("owl:Thing");
+      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Property pred = work.createProperty(rdfType);
+      Resource obj = work.createResource("owl:Thing");
       work.add(subj, pred, obj);
-      obj = work.createProperty("p8:TemplateRoleDescription");
+      obj = work.createResource("p8:TemplateRoleDescription");
       work.add(subj, pred, obj);
       pred = work.createProperty("p8:hasTemplate");
-      obj = work.createProperty(String.format("tpl:{0}", objectId));
+      obj = work.createResource(String.format("tpl:{0}", objectId));
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof TemplateQualification)
     {
-      subj = work.createResource(String.format("tpl:{0}", subjId));
-      pred = work.createProperty(rdfType);
-      obj = work.createProperty("p8:TemplateDescription");
+      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Property pred = work.createProperty(rdfType);
+      Resource obj = work.createResource("p8:TemplateDescription");
       work.add(subj, pred, obj);
-      obj = work.createProperty("owl:Thing");
+      obj = work.createResource("owl:Thing");
       work.add(subj, pred, obj);
-      obj = work.createProperty("p8:CoreTemplate");
+      obj = work.createResource("p8:CoreTemplate");
       work.add(subj, pred, obj);
       pred = work.createProperty("p8:hasSuperTemplate");
-      obj = work.createProperty(objectId);
+      obj = work.createResource(objectId);
       work.add(subj, pred, obj);
       subj = work.createResource(objectId);
       pred = work.createProperty("p8:hasSubTemplate");
-      obj = work.createProperty(String.format("tpl:{0}", subjId));
+      obj = work.createResource(String.format("tpl:{0}", subjId));
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof ClassDefinition)
     {
-      subj = work.createResource(String.format("rdl:{0}", subjId));
-      pred = work.createProperty(rdfType);
-      obj = work.createProperty(objectId);
+      Resource subj = work.createResource(String.format("rdl:{0}", subjId));
+      Property pred = work.createProperty(rdfType);
+      Resource obj = work.createResource(objectId);
       work.add(subj, pred, obj);
-      obj = work.createProperty("owl:Class");
+      obj = work.createResource("owl:Class");
       work.add(subj, pred, obj);
     }
     return work;
@@ -3697,40 +3699,40 @@ public class RefDataProvider
   {
     if (gobj instanceof TemplateDefinition)
     {
-      subj = work.createResource(String.format("tpl:{0}", subjId));
-      pred = work.createProperty(rdfType);
-      obj = work.createProperty("tpl:R16376066707");
+      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Property pred = work.createProperty(rdfType);
+      Resource obj = work.createResource("tpl:R16376066707");
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof RoleDefinition)
     {
-      subj = work.createResource(String.format("tpl:{0}", subjId));
-      pred = work.createProperty(rdfType);
-      obj = work.createProperty("tpl:R74478971040");
+      Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+      Property pred = work.createProperty(rdfType);
+      Resource obj = work.createResource("tpl:R74478971040");
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof TemplateQualification)
     {
-      subj = work.createResource(objId);
-      pred = work.createProperty("dm:hasSubclass");
-      obj = work.createProperty(String.format("tpl:{0}", subjId));
+      Resource subj = work.createResource(objId);
+      Property pred = work.createProperty("dm:hasSubclass");
+      Resource obj = work.createResource(String.format("tpl:{0}", subjId));
       work.add(subj, pred, obj);
       subj = work.createResource(String.format("tpl:{0}", subjId));
       pred = work.createProperty("dm:hasSuperclass");
-      obj = work.createProperty(objId);
+      obj = work.createResource(objId);
       work.add(subj, pred, obj);
     }
     else if (gobj instanceof RoleQualification)
     {
-      subj = work.createResource(subjId.toString());
-      pred = work.createProperty(rdfType);
-      obj = work.createProperty("tpl:R76288246068");
-      work.add(ModelFactory.createDefaultModel().createStatement(isubj, ipred, iobj));
+      Resource subj = work.createResource(subjId.toString());
+      Property pred = work.createProperty(rdfType);
+      Resource obj = work.createResource("tpl:R76288246068");
+      work.add(subj, pred, obj);
       pred = work.createProperty("tpl:R99672026745");
-      obj = work.createProperty(String.format("tpl:{0}", objId));
+      obj = work.createResource(String.format("tpl:{0}", objId));
       work.add(subj, pred, obj);
       pred = work.createProperty(rdfType);
-      obj = work.createProperty("tpl:R67036823327");
+      obj = work.createResource("tpl:R67036823327");
       work.add(subj, pred, obj);
     }
     return work;
@@ -3738,70 +3740,70 @@ public class RefDataProvider
 
   private Model GenerateName(Model work, Name name, Long subjId, Object gobj)
   {
-	subj = work.createResource(String.format("tpl:{0}", subjId));
-	pred = work.createProperty("rdfs:label");
-	obj = work.createProperty(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
+	Resource subj = work.createResource(String.format("tpl:{0}", subjId));
+	Property pred = work.createProperty("rdfs:label");
+	Literal obj = work.createTypedLiteral(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
 	work.add(subj, pred, obj);
 	return work;
   }
 
   private Model GenerateClassName(Model work, Name name, Long subjId, Object gobj)
   {
-    subj = work.createResource(String.format("rdl:{0}", subjId));
-    pred = work.createProperty("rdfs:label");
-    obj = work.createProperty(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
+    Resource subj = work.createResource(String.format("rdl:{0}", subjId));
+    Property pred = work.createProperty("rdfs:label");
+    Literal obj = work.createTypedLiteral(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
     work.add(subj, pred, obj);
     return work;
   }
   private Model GenerateDescription(Model work, Description descr, Long subjectId)
   {
-    subj = work.createResource(String.format("tpl:{0}", subjectId));
-    pred = work.createProperty("rdfs:comment");
-    obj = work.createProperty(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
+    Resource subj = work.createResource(String.format("tpl:{0}", subjectId));
+    Property pred = work.createProperty("rdfs:comment");
+    Literal obj = work.createTypedLiteral(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateClassDescription(Model work, Description descr, Long subjectId)
   {
-    subj = work.createResource(String.format("rdl:{0}", subjectId));
-    pred = work.createProperty("rdfs:comment");
-    obj = work.createProperty(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
+    Resource subj = work.createResource(String.format("rdl:{0}", subjectId));
+    Property pred = work.createProperty("rdfs:comment");
+    Literal obj = work.createTypedLiteral(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
     work.add(subj, pred, obj);
     return work;
   }
   private Model GenerateRdfType(Model work, Long subjId, String objId)
   {
-    subj = work.createResource(String.format("rdl:{0}", subjId));
-    pred = work.createProperty("rdf:type");
-    obj = work.createProperty(objId);
+    Resource subj = work.createResource(String.format("rdl:{0}", subjId));
+    Property pred = work.createProperty("rdf:type");
+    Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateRdfSubClass(Model work, Long subjId, String objId)
   {
-    subj = work.createResource(objId);
-    pred = work.createProperty("rdfs:subClassOf");
-    obj = work.createProperty(String.format("rdl:{0}", subjId));
+    Resource subj = work.createResource(objId);
+    Property pred = work.createProperty("rdfs:subClassOf");
+    Resource obj = work.createResource(String.format("rdl:{0}", subjId));
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateSuperClass(Model work, String subjId, String objId)
   {
-    subj = work.createResource(String.format("rdl:{0}", Long.parseLong(objId)));
-    pred = work.createProperty("rdfs:subClassOf");
-    obj = work.createProperty(subjId);
+    Resource subj = work.createResource(String.format("rdl:{0}", Long.parseLong(objId)));
+    Property pred = work.createProperty("rdfs:subClassOf");
+    Resource obj = work.createResource(subjId);
     work.add(subj, pred, obj);
     return work;
   }
 
   private Model GenerateDmClassification(Model work, Long subjId, String objId)
   {
-    subj = work.createResource(String.format("rdl:{0}", subjId));
-    pred = work.createProperty("dm:hasClassified");
-    obj = work.createProperty(objId);
+    Resource subj = work.createResource(String.format("rdl:{0}", subjId));
+    Property pred = work.createProperty("dm:hasClassified");
+    Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);
     pred = work.createProperty("dm:hasClassifier");
     work.add(subj, pred, obj);
@@ -3810,9 +3812,9 @@ public class RefDataProvider
 
   private Model GenerateDmSubClass(Model work, Long subjId, String objId)
   {
-    subj = work.createResource(String.format("rdl:{0}", subjId));
-    pred = work.createProperty("dm:hasSubclass");
-    obj = work.createProperty(objId);
+    Resource subj = work.createResource(String.format("rdl:{0}", subjId));
+    Property pred = work.createProperty("dm:hasSubclass");
+    Resource obj = work.createResource(objId);
     work.add(subj, pred, obj);
     return work;
   }

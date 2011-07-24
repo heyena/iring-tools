@@ -102,9 +102,6 @@
     <library name="jaxen-1.1.3" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jaxen-1.1.3/jaxen-1.1.3.jar"/>
     </library>
-    <library name="jrdf-0.5.6" systemlibrary="false">
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jrdf-0.5.6/jrdf-0.5.6.3.jar"/>
-    </library>
     <library name="json-utils" systemlibrary="false">
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/json-utils/commons-logging-1.0.4.jar"/>
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/json-utils/commons-logging-api-1.1.jar"/>
@@ -154,7 +151,16 @@
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/tomcat-i18n-fr.jar"/>
         <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/apache-tomcat-6.0/tomcat-i18n-ja.jar"/>
     </library>
-	<library name="jena-2.6.0" systemlibrary="false">
-        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/jena-2.6.0.jar"/>
+	<library name="jena-2.6.4" systemlibrary="false">
+        <archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/arq-2.8.7.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/icu4j-3.4.4.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/iri-0.8.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/jena-2.6.4.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/jena-2.6.4-tests.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/junit-4.5.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/lucene-core-2.3.1.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/stax-api-1.0.1.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/wstx-asl-3.2.9.jar"/>
+		<archive path="C:/iring-tools/iRINGTools.ESBServices/libraries/jena-2.6.0/xercesImpl-2.7.1.jar"/>
     </library>
 </eclipse-userlibraries>
