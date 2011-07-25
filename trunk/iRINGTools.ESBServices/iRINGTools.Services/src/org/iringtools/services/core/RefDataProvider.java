@@ -3513,7 +3513,7 @@ public Response postClass(Qmxf qmxf)
     work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     pred = work.createProperty("tpl:R29577887690");
     Literal obj1 = work.createTypedLiteral(role.getValue().getText(), (role.getValue().getLang()==null || role.getValue().getLang()=="") ? defaultLanguage : role.getValue().getLang());
-    work.add(subj, pred, obj1);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj1));
     return work;
   }
 
@@ -3573,7 +3573,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("p8:hasRole");
     Resource res = work.createResource(String.format("tpl:%s", objId));
-    work.add(subj, pred, res);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, res));
     return work;
   }
 
@@ -3584,8 +3584,8 @@ public Response postClass(Qmxf qmxf)
       Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty("p8:hasTemplate");
       Resource res = work.createResource(String.format("tpl:%s", objId));
-      work.add(subj, pred, res);
-     }
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, res));
+      }
     return work;
     
   }
