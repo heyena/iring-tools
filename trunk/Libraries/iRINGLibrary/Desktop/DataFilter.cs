@@ -107,6 +107,11 @@ namespace org.iringtools.library
 
           foreach (Expression expression in this.Expressions)
           {
+
+              if (whereClause.Length <= 8) // To avoid adding logical operator after where clause.
+              {
+                  expression.LogicalOperator = iringtools.library.LogicalOperator.None;
+              }
             string sqlExpression = ResolveSqlExpression(dataDictionary, objectType, expression, objectAlias);
             whereClause.Append(sqlExpression);
           }
