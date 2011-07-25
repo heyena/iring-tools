@@ -23,10 +23,6 @@ namespace org.iringtools.library
       {
         _whereClauseAlias = settings["WhereClauseAlias"];
       }
-
-      Initialize();
-
-      _dataDictionary = GetDictionary();
     }
 
     // get number of rows with (optional) filter
@@ -34,9 +30,6 @@ namespace org.iringtools.library
 
     // get list of identifiers with (optional) filter
     public abstract IList<string> GetIdentifiers(string tableName, string whereClause);
-
-    // initialize the datalayer before ANY methods are called.
-    public abstract void Initialize();
 
     // create or fetch data rows of given identifiers
     public abstract DataTable CreateDataTable(string tableName, IList<string> identifiers);
@@ -65,11 +58,13 @@ namespace org.iringtools.library
     #region IDataLayer implementation methods
     public override long GetCount(string objectTypeName, DataFilter filter)
     {
-      string tableName = GetTableName(objectTypeName);
-      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, null);
-
       try
       {
+        InitializeDataDictionary();
+
+        string tableName = GetTableName(objectTypeName);
+        string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, null);
+
         return GetCount(tableName, whereClause);
       }
       catch (Exception ex)
@@ -81,11 +76,13 @@ namespace org.iringtools.library
 
     public override IList<string> GetIdentifiers(string objectTypeName, DataFilter filter)
     {
-      string tableName = GetTableName(objectTypeName);
-      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
-
       try
       {
+        InitializeDataDictionary();
+        
+        string tableName = GetTableName(objectTypeName);
+        string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
+
         return GetIdentifiers(tableName, whereClause);
       }
       catch (Exception ex)
@@ -129,11 +126,13 @@ namespace org.iringtools.library
 
     public override IList<IDataObject> Get(string objectTypeName, DataFilter filter, int pageSize, int startIndex)
     {
-      string tableName = GetTableName(objectTypeName);
-      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
-
       try
       {
+        InitializeDataDictionary();
+
+        string tableName = GetTableName(objectTypeName);
+        string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
+
         DataTable dataTable = GetDataTable(tableName, whereClause, startIndex, pageSize);
         return ToDataObjects(dataTable, objectTypeName);
       }
@@ -181,11 +180,13 @@ namespace org.iringtools.library
 
     public override Response Delete(string objectTypeName, DataFilter filter)
     {
-      string tableName = GetTableName(objectTypeName);
-      string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
-
       try
       {
+        InitializeDataDictionary();
+
+        string tableName = GetTableName(objectTypeName);
+        string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
+
         return DeleteDataTable(tableName, whereClause);
       }
       catch (Exception ex)
@@ -228,6 +229,8 @@ namespace org.iringtools.library
     #region helper methods
     public string GetTableName(string objectTypeName)
     {
+      InitializeDataDictionary();
+
       foreach (DataObject dataObject in _dataDictionary.dataObjects)
       {
         if (dataObject.objectName.ToLower() == objectTypeName.ToLower())
@@ -241,6 +244,8 @@ namespace org.iringtools.library
 
     public DataObject GetObjectDefinition(string objectTypeName)
     {
+      InitializeDataDictionary();
+
       foreach (DataObject dataObject in _dataDictionary.dataObjects)
       {
         if (dataObject.objectName.ToLower() == objectTypeName.ToLower())
@@ -442,6 +447,14 @@ namespace org.iringtools.library
       }
 
       return dataTableDictionary.Values.ToList();
+    }
+
+    private void InitializeDataDictionary()
+    {
+      if (_dataDictionary == null)
+      {
+        _dataDictionary = GetDictionary();
+      }
     }
     #endregion
   }
