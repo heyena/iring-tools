@@ -13,8 +13,8 @@ namespace org.iringtools.library
   public abstract class BaseSQLDataLayer : BaseDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseSQLDataLayer));
-    private DataDictionary _dataDictionary = null;
-    private string _whereClauseAlias = String.Empty;
+    protected DataDictionary _dataDictionary = null;
+    protected string _whereClauseAlias = String.Empty;
      
     #region BaseSQLDataLayer methods
     public BaseSQLDataLayer(AdapterSettings settings) : base(settings)
@@ -24,6 +24,8 @@ namespace org.iringtools.library
         _whereClauseAlias = settings["WhereClauseAlias"];
       }
 
+      Initialize();
+
       _dataDictionary = GetDictionary();
     }
 
@@ -32,6 +34,9 @@ namespace org.iringtools.library
 
     // get list of identifiers with (optional) filter
     public abstract IList<string> GetIdentifiers(string tableName, string whereClause);
+
+    // initialize the datalayer before ANY methods are called.
+    public abstract void Initialize();
 
     // create or fetch data rows of given identifiers
     public abstract DataTable CreateDataTable(string tableName, IList<string> identifiers);
@@ -109,21 +114,11 @@ namespace org.iringtools.library
     public override IList<IDataObject> Get(string objectTypeName, IList<string> identifiers)
     {
       string tableName = GetTableName(objectTypeName);
-       List<IDataObject> _dataObjects = null;
 
       try
       {
         DataTable dataTable = GetDataTable(tableName, identifiers);
-        IList<IDataObject> allDataObjects = ToDataObjects(dataTable, objectTypeName);
-        var expressions = FormMultipleKeysPredicate(identifiers);
-
-
-        if (expressions != null)
-        {
-            _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList();
-        }
-
-        return _dataObjects;
+        return ToDataObjects(dataTable, objectTypeName);
       }
       catch (Exception ex)
       {

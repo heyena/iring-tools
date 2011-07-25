@@ -117,10 +117,8 @@ namespace org.iringtools.library
       }
     }
 
-    protected Expression<Func<IDataObject, bool>> FormMultipleKeysPredicate(IList<string> identifiers)
+    protected DataFilter FormMultipleKeysFilter(IList<string> identifiers)
     {
-      Expression<Func<IDataObject, bool>> predicate = null;
-
       List<Expression> expressions = new List<Expression>();
       foreach (string identifier in identifiers)
       {
@@ -149,6 +147,15 @@ namespace org.iringtools.library
         Expressions = expressions,
       };
 
+      return dataFilter;
+    }
+
+    protected Expression<Func<IDataObject, bool>> FormMultipleKeysPredicate(IList<string> identifiers)
+    {
+      Expression<Func<IDataObject, bool>> predicate = null;
+
+      DataFilter dataFilter = FormMultipleKeysFilter(identifiers);
+      
       predicate = dataFilter.ToPredicate(_dataObjectDefinition);
 
       return predicate; 
