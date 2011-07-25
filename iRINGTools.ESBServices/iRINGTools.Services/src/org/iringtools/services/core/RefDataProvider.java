@@ -64,6 +64,8 @@ import com.hp.hpl.jena.rdf.model.Literal;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
+import com.hp.hpl.jena.rdf.model.Statement;
+import com.hp.hpl.jena.rdf.model.StmtIterator;
 
 
 
@@ -2256,14 +2258,15 @@ public class RefDataProvider
 
             //endregion
             //region Generate Query and Post Qualification Template
-            //TODO
-            /*
+            
             if (!delete.isEmpty())
             {
               sparqlBuilder.append(deleteData);
-              for (Triple t : delete.Triples)
-              {
-                sparqlBuilder.append(t.ToString(formatter));
+              StmtIterator iter = delete.listStatements();
+              while (iter.hasNext()) {
+            	  Statement stmt = iter.nextStatement();
+                  //TODO formatter to be implemented
+            	  sparqlBuilder.append(stmt.toString());
               }
               if (insert.isEmpty())
                 sparqlBuilder.append("}");
@@ -2273,13 +2276,16 @@ public class RefDataProvider
             if (!insert.isEmpty())
             {
               sparqlBuilder.append(insertData);
-              for (Triple t : insert.Triples)
+              StmtIterator iter = insert.listStatements();
+              while (iter.hasNext()) 
               {
-                sparqlBuilder.append(t.ToString(formatter));
+            	  Statement stmt = iter.nextStatement();
+                  //TODO formatter to be implemented
+            	  sparqlBuilder.append(stmt.toString());
               }
               sparqlBuilder.append("}");
             }
-            */
+            
 
             String sparql = sparqlBuilder.toString();
             Response postResponse = postToRepository(repository, sparql);
@@ -2648,26 +2654,30 @@ public Response postClass(Qmxf qmxf)
                     if (!delete.isEmpty())
                     {
                       sparqlBuilder.append(deleteData);
-                      //TODO
-                      /*for (Triple t in delete.Triples)
-                      {
-                        sparqlBuilder.AppendLine(t.ToString(formatter));
+                      StmtIterator iter = delete.listStatements();
+                      while (iter.hasNext()) {
+                    	  Statement stmt = iter.nextStatement();
+                          //TODO formatter to be implemented
+                    	  sparqlBuilder.append(stmt.toString());
                       }
-                      if (insert.IsEmpty)
-                        sparqlBuilder.AppendLine("}");
+                      if (insert.isEmpty())
+                        sparqlBuilder.append("}");
                       else
-                        sparqlBuilder.AppendLine("};");*/
+                        sparqlBuilder.append("};");
                     }
                     if (!insert.isEmpty())
                     {
                       sparqlBuilder.append(insertData);
-                      /*for (Triple t in insert.Triples)
+                      StmtIterator iter = insert.listStatements();
+                      while (iter.hasNext()) 
                       {
-                        sparqlBuilder.AppendLine(t.ToString(formatter));
-                      }*/
+                    	  Statement stmt = iter.nextStatement();
+                          //TODO formatter to be implemented
+                    	  sparqlBuilder.append(stmt.toString());
+                      }
                       sparqlBuilder.append("}");
                     }
-
+                    
                     String sparql = sparqlBuilder.toString();
                     Response postResponse = postToRepository(repository, sparql);
                     //response.append(postResponse);
@@ -3500,7 +3510,7 @@ public Response postClass(Qmxf qmxf)
     work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     pred = work.createProperty("tpl:R89867215482");
     obj = work.createResource(String.format("tpl:%s", role.getQualifies().split("#",1)));
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     pred = work.createProperty("tpl:R29577887690");
     Literal obj1 = work.createTypedLiteral(role.getValue().getText(), (role.getValue().getLang()==null || role.getValue().getLang()=="") ? defaultLanguage : role.getValue().getLang());
     work.add(subj, pred, obj1);
@@ -3512,7 +3522,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("tpl:R30741601855");
     Resource obj = work.createResource(String.format("tpl:%s", objId));
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3521,10 +3531,10 @@ public Response postClass(Qmxf qmxf)
 	Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty(rdfType);
     Resource obj = work.createResource("tpl:R40103148466");
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     pred = work.createProperty("tpl:R49267603385");
     obj = work.createProperty(String.format("tpl:%s", objId));
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3533,7 +3543,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("tpl:R21129944603");
     Resource obj = work.createResource(objId);
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3542,7 +3552,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("tpl:R91125890543");
     Resource obj = work.createResource(String.format("tpl:%s", objId));
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3551,10 +3561,10 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("rdfs:range");
     Resource obj = work.createResource(objId);
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     pred = work.createProperty("tpl:R98983340497");
     obj = work.createProperty(qName);
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3585,7 +3595,7 @@ public Response postClass(Qmxf qmxf)
 	Resource subj = work.createResource(String.format("tpl:%s", subjId));
 	Property pred = work.createProperty("tpl:R97483568938");
 	Literal obj = work.createTypedLiteral(String.valueOf(index), "xsd:integer");
-	work.add(subj, pred, obj);
+	work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3596,7 +3606,7 @@ public Response postClass(Qmxf qmxf)
       Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty("p8:valRoleIndex");
       Literal obj = work.createTypedLiteral(String.valueOf(index), "xsd:integer");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     return work;
   }
@@ -3606,7 +3616,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("rdfs:domain");
     Resource obj = work.createProperty(String.format("tpl:%s", objId));
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3615,7 +3625,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("tpl:%s", subjId));
     Property pred = work.createProperty("p8:hasRoleFillerType");
     Resource obj = work.createProperty(qName);
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3626,7 +3636,7 @@ public Response postClass(Qmxf qmxf)
       Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty("tpl:R35529169909");
       Literal obj = work.createTypedLiteral(String.valueOf(rolecount), "xsd:integer");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     return work;
   }
@@ -3638,7 +3648,7 @@ public Response postClass(Qmxf qmxf)
       Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty("p8:valNumberOfRoles");
       Literal obj = work.createTypedLiteral(String.valueOf(rolecount), "xsd:integer");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     return work;
   }
@@ -3650,48 +3660,48 @@ public Response postClass(Qmxf qmxf)
       Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("p8:TemplateDescription");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       obj = work.createProperty("owl:Thing");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     else if (gobj instanceof RoleDefinition || gobj instanceof RoleQualification)
     {
       Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("owl:Thing");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       obj = work.createResource("p8:TemplateRoleDescription");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       pred = work.createProperty("p8:hasTemplate");
       obj = work.createResource(String.format("tpl:%s", objectId));
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     else if (gobj instanceof TemplateQualification)
     {
       Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("p8:TemplateDescription");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       obj = work.createResource("owl:Thing");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       obj = work.createResource("p8:CoreTemplate");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       pred = work.createProperty("p8:hasSuperTemplate");
       obj = work.createResource(objectId);
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       subj = work.createResource(objectId);
       pred = work.createProperty("p8:hasSubTemplate");
       obj = work.createResource(String.format("tpl:%s", subjId));
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     else if (gobj instanceof ClassDefinition)
     {
       Resource subj = work.createResource(String.format("rdl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource(objectId);
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       obj = work.createResource("owl:Class");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     return work;
   }
@@ -3703,38 +3713,38 @@ public Response postClass(Qmxf qmxf)
       Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("tpl:R16376066707");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     else if (gobj instanceof RoleDefinition)
     {
       Resource subj = work.createResource(String.format("tpl:%s", subjId));
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("tpl:R74478971040");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     else if (gobj instanceof TemplateQualification)
     {
       Resource subj = work.createResource(objId);
       Property pred = work.createProperty("dm:hasSubclass");
       Resource obj = work.createResource(String.format("tpl:%s", subjId));
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       subj = work.createResource(String.format("tpl:%s", subjId));
       pred = work.createProperty("dm:hasSuperclass");
       obj = work.createResource(objId);
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     else if (gobj instanceof RoleQualification)
     {
       Resource subj = work.createResource(subjId.toString());
       Property pred = work.createProperty(rdfType);
       Resource obj = work.createResource("tpl:R76288246068");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       pred = work.createProperty("tpl:R99672026745");
       obj = work.createResource(String.format("tpl:%s", objId));
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
       pred = work.createProperty(rdfType);
       obj = work.createResource("tpl:R67036823327");
-      work.add(subj, pred, obj);
+      work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     }
     return work;
   }
@@ -3744,7 +3754,7 @@ public Response postClass(Qmxf qmxf)
 	Resource subj = work.createResource(String.format("tpl:%s", subjId));
 	Property pred = work.createProperty("rdfs:label");
 	Literal obj = work.createTypedLiteral(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
-	work.add(subj, pred, obj);
+	work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
 	return work;
   }
 
@@ -3753,7 +3763,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("rdl:%s" + subjId));
     Property pred = work.createProperty("rdfs:label");
     Literal obj = work.createTypedLiteral(name.getValue(), (name.getLang()==null ||name.getLang()=="") ? defaultLanguage : name.getLang());
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
   private Model GenerateDescription(Model work, Description descr, String subjectId)
@@ -3761,7 +3771,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("tpl:%s", subjectId));
     Property pred = work.createProperty("rdfs:comment");
     Literal obj = work.createTypedLiteral(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3770,7 +3780,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("rdl:%s", subjectId));
     Property pred = work.createProperty("rdfs:comment");
     Literal obj = work.createTypedLiteral(descr.getValue(), (descr.getLang()==null || descr.getLang()=="") ? defaultLanguage : descr.getLang());
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
   private Model GenerateRdfType(Model work, String subjId, String objId)
@@ -3778,7 +3788,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("rdl:%s", subjId));
     Property pred = work.createProperty("rdf:type");
     Resource obj = work.createResource(objId);
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3787,7 +3797,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(objId);
     Property pred = work.createProperty("rdfs:subClassOf");
     Resource obj = work.createResource(String.format("rdl:%s", subjId));
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3796,7 +3806,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("rdl:%s", Long.parseLong(objId)));
     Property pred = work.createProperty("rdfs:subClassOf");
     Resource obj = work.createResource(subjId);
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3805,9 +3815,9 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("rdl:%s", subjId));
     Property pred = work.createProperty("dm:hasClassified");
     Resource obj = work.createResource(objId);
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     pred = work.createProperty("dm:hasClassifier");
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
@@ -3816,7 +3826,7 @@ public Response postClass(Qmxf qmxf)
     Resource subj = work.createResource(String.format("rdl:%s", subjId));
     Property pred = work.createProperty("dm:hasSubclass");
     Resource obj = work.createResource(objId);
-    work.add(subj, pred, obj);
+    work.add(ModelFactory.createDefaultModel().createStatement(subj, pred, obj));
     return work;
   }
 
