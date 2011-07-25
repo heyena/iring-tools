@@ -141,7 +141,7 @@ namespace org.iringtools.library
       this.Results = new Results();
     }
 
-    public string ToString()
+    public override string ToString()
     {
       StringBuilder builder = new StringBuilder();
 

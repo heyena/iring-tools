@@ -20,8 +20,6 @@ namespace BaseSQLDataLayerTest
       _conn = new SqlConnection(connStr);      
     }
 
-    public override void Initialize() {}
-
     public override DataDictionary GetDictionary()
     {
       return Utility.Read<DataDictionary>("../../SampleDictionary.xml");
