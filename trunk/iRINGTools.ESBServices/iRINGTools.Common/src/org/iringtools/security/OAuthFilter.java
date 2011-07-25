@@ -179,6 +179,7 @@ public class OAuthFilter implements Filter
   private boolean obtainOAuthToken(String userAttrsJson) throws IOException
   {
     logger.debug("obtainOAuthToken(" + userAttrsJson + ")");
+    
     String tokenServiceUri = filterConfig.getInitParameter("tokenServiceUri");
     String applicationKey = filterConfig.getInitParameter("applicationKey");
     
@@ -193,14 +194,16 @@ public class OAuthFilter implements Filter
       
       try
       {
-        byte[] data = userAttrsJson.getBytes("UTF-8");
+        byte[] data = userAttrsJson.getBytes(URL_ENCODING);
         String apigeeResponse = apigeeClient.postByteData(String.class, "", data);
         
         @SuppressWarnings("unchecked")
         Map<String, Map<String, String>> apigeeResponseObj = (Map<String, Map<String, String>>) JSONUtil.deserialize(apigeeResponse);
         Map<String, String> accessToken = apigeeResponseObj.get("accesstoken");  
         
-        String oAuthToken = accessToken.get("token");
+        String oAuthToken = accessToken.get("token");        
+        logger.debug("OAuth token: " + oAuthToken);
+        
         session.setAttribute(AUTHORIZATION_TOKEN_KEY, oAuthToken);
         response.addHeader(AUTHORIZATION_TOKEN_KEY, oAuthToken);
       }
