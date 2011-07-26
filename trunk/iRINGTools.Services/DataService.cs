@@ -211,7 +211,14 @@ namespace org.iringtools.services
           fullIndex = true;
         XDocument xDocument = _adapterProvider.GetDataProjection(projectName, applicationName, graphName, format, start, limit, sortOrder, sortBy, fullIndex, parameters);
 
-        context.ContentType = "application/xml";
+        if (format != null && format.ToUpper() == "HTML")
+        {
+          context.ContentType = "text/html";
+        }
+        else
+        {
+          context.ContentType = "application/xml";
+        }
 
         return xDocument.Root;
       }
