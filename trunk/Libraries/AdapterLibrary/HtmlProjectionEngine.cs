@@ -6,6 +6,7 @@ using Ninject;
 using System.Web;
 using org.iringtools.utility;
 using org.iringtools.library;
+using System.Text.RegularExpressions;
 
 namespace org.iringtools.adapter.projection
 {
@@ -35,13 +36,23 @@ namespace org.iringtools.adapter.projection
         XElement html = new XElement("html");
         doc.Add(html);
 
+        XElement head = new XElement("head");
+        html.Add(head);
+
+        XElement style = new XElement("style");
+        head.Add(style);
+
+        style.Add(new XAttribute("type", "text/css"));
+
+        Regex regex = new Regex(@"\s+");
+        string css = Utility.ReadString(_settings["DefaultStyleSheet"]);
+        style.Add(regex.Replace(css, " "));
+
         XElement body = new XElement("body");
         html.Add(body);
 
         XElement table = new XElement("table");
         body.Add(table);
-
-        table.Add(new XAttribute("border", 1));
 
         XElement headers = new XElement("tr");
         table.Add(headers);
@@ -53,26 +64,42 @@ namespace org.iringtools.adapter.projection
           headers.Add(new XElement("th", dataProperty.propertyName));
         }
 
-        foreach (IDataObject dataObj in dataObjects)
+        for (int i = 0; i < dataObjects.Count; i++)
         {
+          IDataObject dataObj = dataObjects[i];
+
           XElement row = new XElement("tr");
           table.Add(row);
+
+          if (i % 2 == 0)
+          {
+            row.Add(new XAttribute("class", "even"));
+          }
+          else
+          {
+            row.Add(new XAttribute("class", "odd"));
+          }
 
           foreach (DataProperty dataProperty in dataObject.dataProperties)
           {
             string value = Convert.ToString(dataObj.GetPropertyValue(dataProperty.propertyName));
 
-            if (String.IsNullOrEmpty(value))
+            if (value == null)
             {
-              value = "&nbsp;";
+              value = String.Empty;
             }
-            else if (dataProperty.dataType.ToString().ToLower().Contains("date"))
+            else if (dataProperty.dataType == DataType.DateTime)
             {
               value = Utility.ToXsdDateTime(value);
             }
 
-            XElement cellValue = new XElement("td", value);
-            row.Add(cellValue);
+            XElement cell = new XElement("td", value);
+            row.Add(cell);
+
+            if (IsNumeric(dataProperty.dataType))
+            {
+              cell.Add(new XAttribute("class", "right"));
+            }
           }
         }
 
@@ -106,6 +133,16 @@ namespace org.iringtools.adapter.projection
       }
 
       throw new Exception("DataObject [" + dataObjectName + "] does not exist.");
+    }
+
+    private bool IsNumeric(DataType dataType)
+    {
+      return (dataType == DataType.Decimal ||
+              dataType == DataType.Single ||
+              dataType == DataType.Double ||
+              dataType == DataType.Int16 ||
+              dataType == DataType.Int32 ||
+              dataType == DataType.Int64);
     }
     #endregion
   }

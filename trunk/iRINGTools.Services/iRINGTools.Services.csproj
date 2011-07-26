@@ -99,6 +99,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\default.css" />
     <Content Include="App_Data\FacadeIntro.txt" />
     <Content Include="App_Data\SandboxIntro.txt" />
     <Content Include="css\sparql-query.css" />
