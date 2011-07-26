@@ -25,6 +25,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   application: null,
   graph: null,
   parentClass: null,
+  contextButton: null,
   mappingMenu: null,
   graphmapMenu: null,
   templatemapMenu: null,
@@ -41,8 +42,15 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   * @protected
   */
   initComponent: function () {
-
-    this.tbar = this.buildToolbar();
+    this.contextButton = new Ext.Toolbar.Button({
+      pressed: true,
+      enableToggle: false,
+      text: 'ContextMenu',
+      menu: new Ext.menu.Menu()
+    });
+    this.tbar = new Ext.Toolbar();
+    this.tbar.add(this.buildToolbar());
+    this.tbar.add(this.contextButton);
 
     //    this.graphmapMenu = new Ext.menu.Menu();
     //    this.graphmapMenu.add(this.buildGraphmapMenu());
@@ -292,14 +300,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         return false;
       }
     })
-  },
-
-  onClick: function (node) {
-    try {
-      this.propertyPanel.setSource(node.attributes.record);
-    } catch (e) {
-
-    }
   },
 
   onReload: function () {
@@ -929,6 +929,24 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       failure: function (result, request) { }
     })
+  },
+
+   onClick: function (node) {
+     try {
+       var obj = node.attributes;
+      this.propertyPanel.setSource(node.attributes.record);
+      this.contextButton.menu.removeAll();
+      if (obj.type == "TemplateMapNode") {
+        this.contextButton.menu.add(this.buildTemplateMapMenu());
+      } else if (obj.type == "RoleMapNode") {
+        this.contextButton.menu.add(this.buildRoleMapMenu());
+      } else if (obj.type == "ClassMapNode") {
+       this.contextButton.menu.add(this.buildClassMapMenu());
+      }
+
+    } catch (e) {
+
+    }
   },
 
   showContextMenu: function (node, event) {
