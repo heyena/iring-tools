@@ -23,6 +23,7 @@ namespace org.iringtools.adapter
       this.Add("TrimData", "False");
       this.Add("DumpSettings", "False");
       this.Add("ExecutingAssemblyName", "App_Code");
+      this.Add("DefaultStyleSheet", @".\App_Data\default.css");
 
       if (OperationContext.Current != null)
       {
