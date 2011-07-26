@@ -138,6 +138,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       region: 'center',
       border: false,
       expandAll: true,
+      draggable: true,
+      ddScroll: true,
       rootVisible: true,
       animate: true,
       enableDD: false,
