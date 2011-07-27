@@ -4700,7 +4700,6 @@
     <Content Include="Views\Directory\Index.aspx" />
     <Content Include="Views\Home\Index.aspx" />
     <Content Include="Views\MappingEditor\Index.aspx" />
-    <Content Include="Views\Mapping\Export.aspx" />
     <Content Include="Views\RefDataEditor\Index.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
