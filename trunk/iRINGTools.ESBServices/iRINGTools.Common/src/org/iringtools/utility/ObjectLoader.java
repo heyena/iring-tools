@@ -128,7 +128,7 @@ public final class ObjectLoader
     throw new ObjectLoaderException("Path is unspecified.");
   }
   
-  private static <T> Constructor<T> findConstructor(Class<T> cls, Object... initArgs)
+  private static <T> Constructor<T> findConstructor(Class<T> cls, Object... initArgs) throws ObjectLoaderException
   {
     @SuppressWarnings("unchecked")
     Constructor<T>[] ctors = (Constructor<T>[]) cls.getDeclaredConstructors();
@@ -157,7 +157,7 @@ public final class ObjectLoader
       }
     }
     
-    return null;
+    throw new ObjectLoaderException("No matching constructor found.");
   }
   
   private static List<URL> getJarURLs(String path) throws IOException
