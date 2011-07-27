@@ -107,6 +107,7 @@ namespace org.iringtools.adapter.projection
       }
       catch (Exception e)
       {
+        _logger.Error("Error creating HTML content: " + e);
         throw e;
       }      
     }
