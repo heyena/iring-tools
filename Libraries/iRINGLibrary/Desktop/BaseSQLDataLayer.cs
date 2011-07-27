@@ -371,10 +371,21 @@ namespace org.iringtools.library
                 case DataType.Double:
                   dataRow[objectProperty.columnName] = Convert.ToDouble(value);
                   break;
+                case DataType.DateTime:
+                  dataRow[objectProperty.columnName] = Convert.ToDateTime(value);
+                  break;
                 default:
                   dataRow[objectProperty.columnName] = value;
                   break;
               }
+            }
+            else if (objectProperty.isNullable)
+            {
+              dataRow[objectProperty.columnName] = value;
+            }
+            else
+            {
+              throw new Exception("Object property is set to not nullable but received a null value.");
             }
           }
           catch (Exception ex)
