@@ -53,7 +53,6 @@ namespace org.iringtools.services
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
     private AdapterProvider _adapterProvider = null;
-    private ExchangeProvider _exchangeProvider = null;
 
     /// <summary>
     /// Adapter Service Constructor
@@ -61,7 +60,6 @@ namespace org.iringtools.services
     public AdapterService()
     {
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
-      _exchangeProvider = new ExchangeProvider(ConfigurationManager.AppSettings);
     }
 
     #region Public Resources

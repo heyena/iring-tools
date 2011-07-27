@@ -756,6 +756,20 @@ namespace org.iringtools.adapter
       try
       {
         InitializeScope(projectName, applicationName);
+
+        if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+        {
+          string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
+          _logger.Error(message);
+
+          response = new Response();
+          response.DateTimeStamp = DateTime.Now;
+          response.Level = StatusLevel.Error;
+          response.Messages = new Messages() { message };
+
+          return response;
+        }
+          
         InitializeDataLayer();
 
         _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
