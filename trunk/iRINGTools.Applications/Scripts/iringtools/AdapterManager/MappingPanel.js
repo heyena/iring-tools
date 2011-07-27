@@ -25,7 +25,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   application: null,
   graph: null,
   parentClass: null,
-  contextButton: null,
+//  contextButton: null,
   mappingMenu: null,
   graphmapMenu: null,
   templatemapMenu: null,
@@ -42,15 +42,15 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   * @protected
   */
   initComponent: function () {
-    this.contextButton = new Ext.Toolbar.Button({
-      pressed: true,
-      enableToggle: false,
-      text: 'ContextMenu',
-      menu: new Ext.menu.Menu()
-    });
+//    this.contextButton = new Ext.Toolbar.Button({
+//      pressed: true,
+//      enableToggle: false,
+//      text: 'ContextMenu',
+//      menu: new Ext.menu.Menu()
+//    });
     this.tbar = new Ext.Toolbar();
     this.tbar.add(this.buildToolbar());
-    this.tbar.add(this.contextButton);
+//    this.tbar.add(this.contextButton);
 
     //    this.graphmapMenu = new Ext.menu.Menu();
     //    this.graphmapMenu.add(this.buildGraphmapMenu());
@@ -933,16 +933,16 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
    onClick: function (node) {
      try {
-       var obj = node.attributes;
+//       var obj = node.attributes;
       this.propertyPanel.setSource(node.attributes.record);
-      this.contextButton.menu.removeAll();
-      if (obj.type == "TemplateMapNode") {
-        this.contextButton.menu.add(this.buildTemplateMapMenu());
-      } else if (obj.type == "RoleMapNode") {
-        this.contextButton.menu.add(this.buildRoleMapMenu());
-      } else if (obj.type == "ClassMapNode") {
-       this.contextButton.menu.add(this.buildClassMapMenu());
-      }
+//      this.contextButton.menu.removeAll();
+//      if (obj.type == "TemplateMapNode") {
+//        this.contextButton.menu.add(this.buildTemplateMapMenu());
+//      } else if (obj.type == "RoleMapNode") {
+//        this.contextButton.menu.add(this.buildRoleMapMenu());
+//      } else if (obj.type == "ClassMapNode") {
+//       this.contextButton.menu.add(this.buildClassMapMenu());
+//      }
 
     } catch (e) {
 

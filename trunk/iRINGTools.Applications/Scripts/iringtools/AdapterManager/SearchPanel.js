@@ -13,7 +13,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
   refClassTabPanel: null,
   propertyPanel: null,
   searchStore: null,
-  contextButton: null,
+ // contextButton: null,
   contextClassMenu: null,
   /**
   * initComponent
@@ -69,16 +69,16 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
       items: [this.refClassTabPanel]
 
     });
-    this.contextButton = new Ext.Toolbar.Button({
-      pressed: true,
-      enableToggle: false,
-      text: 'ContextMenu',
-      menu: new Ext.menu.Menu()
-    });
+//    this.contextButton = new Ext.Toolbar.Button({
+//      pressed: true,
+//      enableToggle: false,
+//      text: 'ContextMenu',
+//      menu: new Ext.menu.Menu()
+//    });
 
     this.tbar = new Ext.Toolbar();
     this.tbar.add(this.buildToolbar());
-    this.tbar.add(this.contextButton);
+//    this.tbar.add(this.contextButton);
 
     this.items = [this.mainPanel, this.propertyPanel];
 
@@ -239,17 +239,17 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     }
   },
   onClick: function (node) {
-    var obj = node.attributes;
+//    var obj = node.attributes;
     try {
       if (obj.type == "ClassNode" && node.childNodes.length > 0) {
         this.propertyPanel.setSource(node.childNodes[0].attributes.record);
       } else {
         this.propertyPanel.setSource(node.attributes.record);
       }
-      this.contextButton.menu.removeAll();
-      if (obj.type == 'ClassNode') {
-        this.contextButton.menu.add(this.buildClassContextMenu());
-      }
+//      this.contextButton.menu.removeAll();
+//      if (obj.type == 'ClassNode') {
+//        this.contextButton.menu.add(this.buildClassContextMenu());
+//      }
     } catch (e) { }
     node.expand();
   }

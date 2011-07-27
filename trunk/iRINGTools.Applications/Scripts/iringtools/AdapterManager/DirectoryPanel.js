@@ -19,7 +19,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   contentPanel: null,
   navigationUrl: null,
   directoryPanel: null,
-  contextButton: null,
+ // contextButton: null,
   scopesMenu: null,
   scopeMenu: null,
   valueListsMenu: null,
@@ -48,16 +48,16 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       ReloadNode: true
     });
    
-    this.contextButton = new Ext.Toolbar.Button({
-      pressed: true,
-      enableToggle: false,
-      text: 'ContextMenu',
-      menu: new Ext.menu.Menu()
-    });
+//    this.contextButton = new Ext.Toolbar.Button({
+//      pressed: true,
+//      enableToggle: false,
+//      text: 'ContextMenu',
+//      menu: new Ext.menu.Menu()
+//    });
 
     this.tbar = new Ext.Toolbar();
     this.tbar.add(this.buildToolbar());
-    this.tbar.add(this.contextButton);
+   // this.tbar.add(this.contextButton);
 
     this.scopesMenu = new Ext.menu.Menu();
     this.scopesMenu.add(this.buildScopesMenu());
@@ -138,8 +138,8 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       region: 'center',
       border: false,
       expandAll: true,
-      draggable: true,
-      ddScroll: true,
+     // draggable: true,
+     // ddScroll: true,
       rootVisible: true,
       animate: true,
       enableDD: false,
@@ -606,26 +606,26 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
   onClick: function (node) {
     try {
-      var obj = node.attributes;
+//      var obj = node.attributes;
       this.propertyPanel.setSource(node.attributes.property);
-      this.contextButton.menu.removeAll();
-      if (obj.type == "ScopesNode") {
-      this.contextButton.menu.add(this.buildScopesMenu());
-      } else if (obj.type == "ScopeNode") {
-      this.contextButton.menu.add(this.buildScopeMenu());
-      } else if (obj.type == "ApplicationNode") {
-        this.contextButton.menu.add(this.buildApplicationMenu());
-      } else if (obj.type == "ValueListsNode") {
-        this.contextButton.menu.add(this.buildvalueListsMenu());
-      } else if (obj.type == "ValueListNode") {
-        this.contextButton.menu.add(this.buildvalueListMenu());
-      } else if (obj.type == "ListMapNode") {
-        this.contextButton.menu.add(this.buildvalueListMapMenu());
-      } else if (obj.type == "GraphsNode") {
-        this.contextButton.menu.add(this.buildGraphsMenu());
-      } else if (obj.type == "GraphNode") {
-        this.contextButton.menu.add(this.buildGraphMenu());
-      }
+//      this.contextButton.menu.removeAll();
+//      if (obj.type == "ScopesNode") {
+//      this.contextButton.menu.add(this.buildScopesMenu());
+//      } else if (obj.type == "ScopeNode") {
+//      this.contextButton.menu.add(this.buildScopeMenu());
+//      } else if (obj.type == "ApplicationNode") {
+//        this.contextButton.menu.add(this.buildApplicationMenu());
+//      } else if (obj.type == "ValueListsNode") {
+//        this.contextButton.menu.add(this.buildvalueListsMenu());
+//      } else if (obj.type == "ValueListNode") {
+//        this.contextButton.menu.add(this.buildvalueListMenu());
+//      } else if (obj.type == "ListMapNode") {
+//        this.contextButton.menu.add(this.buildvalueListMapMenu());
+//      } else if (obj.type == "GraphsNode") {
+//        this.contextButton.menu.add(this.buildGraphsMenu());
+//      } else if (obj.type == "GraphNode") {
+//        this.contextButton.menu.add(this.buildGraphMenu());
+//      }
     } catch (e) {
       //  alert(e);
     }
