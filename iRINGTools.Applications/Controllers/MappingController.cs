@@ -19,6 +19,7 @@ using iRINGTools.Web.Helpers;
 using iRINGTools.Web.Models;
 using org.ids_adi.qmxf;
 using VDS.RDF;
+using System.Text;
 
 namespace org.iringtools.web.controllers
 {
@@ -1075,5 +1076,36 @@ namespace org.iringtools.web.controllers
         }
       }
     }
+
+    public ActionResult Export(string scope, string application, string graphMap)
+    {
+      //string scope = form["scope"];
+      //string application = form["application"];
+      //string graphMap = form["graphMap"];
+
+      Mapping mapping = GetMapping(scope, application);
+      Mapping export;
+      if (!string.IsNullOrEmpty(graphMap))
+      {
+        export = new Mapping();
+        export.graphMaps = new GraphMaps();
+        export.graphMaps.Add(mapping.FindGraphMap(graphMap));
+        export.valueListMaps = mapping.valueListMaps;
+      } else {
+        export = mapping;
+      }
+
+      string content = Utility.SerializeDataContract<Mapping>(export);
+
+      return File(Encoding.UTF8.GetBytes(content), "application/xml", string.Format("Mapping.{0}.{1}.xml", scope, application));
+    }
+
+    public ActionResult Import(FormCollection form)
+    {
+      Mapping mapping = Utility.DeserializeDataContract<Mapping>(form["mapping"]);
+      
+      return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+    }
+
   }
 }

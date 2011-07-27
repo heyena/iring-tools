@@ -24,6 +24,12 @@ namespace iRINGTools.Web
       routes.IgnoreRoute("{*favicon}", new { favicon = @"(.*/)?favicon.ico(/.*)?" });
 
       routes.MapRoute(
+          "MappingRoute", // Route name
+          "mapping/{action}/{scope}/{application}/{graphMap}", // URL with parameters
+          new { controller = "Mapping", action = "Index", scope = "", application = "", graphMap = UrlParameter.Optional } // Parameter defaults
+      );
+
+      routes.MapRoute(
           "Default", // Route name
           "{controller}/{action}/{id}", // URL with parameters
           new { controller = "Home", action = "Index", id = UrlParameter.Optional } // Parameter defaults
