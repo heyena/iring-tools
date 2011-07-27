@@ -276,75 +276,87 @@ namespace org.iringtools.facade
         status.Identifier = String.Format("{0}.{1}", scope, app);
 
         InitializeScope(scope, app);
-        InitializeDataLayer();
 
-        DateTime startTime = DateTime.Now;
-
-        #region move this portion to dotNetRdfEngine?
-        if (!request.ContainsKey("targetEndpointUri"))
-          throw new Exception("Target Endpoint Uri is required");
-
-        string targetEndpointUri = request["targetEndpointUri"];
-
-        if (!request.ContainsKey("targetGraphBaseUri"))
-          throw new Exception("Target graph uri is required");
-
-        string targetGraphBaseUri = request["targetGraphBaseUri"];
-        _settings["TargetGraphBaseUri"] =  targetGraphBaseUri;
-
-        SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetEndpointUri), targetGraphBaseUri);
-
-        if (request.ContainsKey("targetCredentials"))
+        if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
         {
-          string targetCredentialsXML = request["targetCredentials"];
-          WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+          string message = "Can not perform post on read-only data layer of [" + scope + "." + app + "].";
+          _logger.Error(message);
 
-          if (targetCredentials.isEncrypted)
-            targetCredentials.Decrypt();
-
-          endpoint.SetCredentials(targetCredentials.GetNetworkCredential().UserName, targetCredentials.GetNetworkCredential().Password, targetCredentials.GetNetworkCredential().Domain);
+          status.Level = StatusLevel.Error;
+          status.Messages.Add(message);
         }
-
-        string proxyHost = _settings["ProxyHost"];
-        string proxyPort = _settings["ProxyPort"];
-        if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+        else
         {
-          WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+          InitializeDataLayer();
 
-          WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
-          if (proxyCrendentials != null)
+          DateTime startTime = DateTime.Now;
+
+          #region move this portion to dotNetRdfEngine?
+          if (!request.ContainsKey("targetEndpointUri"))
+            throw new Exception("Target Endpoint Uri is required");
+
+          string targetEndpointUri = request["targetEndpointUri"];
+
+          if (!request.ContainsKey("targetGraphBaseUri"))
+            throw new Exception("Target graph uri is required");
+
+          string targetGraphBaseUri = request["targetGraphBaseUri"];
+          _settings["TargetGraphBaseUri"] = targetGraphBaseUri;
+
+          SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetEndpointUri), targetGraphBaseUri);
+
+          if (request.ContainsKey("targetCredentials"))
           {
-            endpoint.UseCredentialsForProxy = true;
-            webProxy.Credentials = _settings.GetProxyCredential();
+            string targetCredentialsXML = request["targetCredentials"];
+            WebCredentials targetCredentials = Utility.Deserialize<WebCredentials>(targetCredentialsXML, true);
+
+            if (targetCredentials.isEncrypted)
+              targetCredentials.Decrypt();
+
+            endpoint.SetCredentials(targetCredentials.GetNetworkCredential().UserName, targetCredentials.GetNetworkCredential().Password, targetCredentials.GetNetworkCredential().Domain);
           }
-          endpoint.SetProxy(webProxy.Address);
-          endpoint.SetProxyCredentials(proxyCrendentials.userName, proxyCrendentials.password);
+
+          string proxyHost = _settings["ProxyHost"];
+          string proxyPort = _settings["ProxyPort"];
+          if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+          {
+            WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
+            WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
+            if (proxyCrendentials != null)
+            {
+              endpoint.UseCredentialsForProxy = true;
+              webProxy.Credentials = _settings.GetProxyCredential();
+            }
+            endpoint.SetProxy(webProxy.Address);
+            endpoint.SetProxyCredentials(proxyCrendentials.userName, proxyCrendentials.password);
+          }
+
+          VDS.RDF.IGraph resultGraph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
+          #endregion
+
+          // call RdfProjectionEngine to fill data objects from a given graph
+          _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+
+          System.Text.StringBuilder sb = new System.Text.StringBuilder();
+          TextWriter textWriter = new StringWriter(sb);
+          VDS.RDF.Writing.RdfXmlWriter rdfWriter = new VDS.RDF.Writing.RdfXmlWriter();
+          rdfWriter.Save(resultGraph, textWriter);
+          XDocument xDocument = XDocument.Parse(sb.ToString());
+
+          _dataObjects = _projectionEngine.ToDataObjects(graph, ref xDocument);
+
+          // post data objects to data layer
+          _dataLayer.Post(_dataObjects);
+
+          DateTime endTime = DateTime.Now;
+          TimeSpan duration = endTime.Subtract(startTime);
+
+          status.Messages.Add(string.Format("Graph [{0}] has been posted to legacy system successfully.", graph));
+
+          status.Messages.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
+            duration.Minutes, duration.Seconds, duration.Milliseconds));
         }
-
-        VDS.RDF.IGraph resultGraph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
-        #endregion
-
-        // call RdfProjectionEngine to fill data objects from a given graph
-        _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
-
-        System.Text.StringBuilder sb = new System.Text.StringBuilder();
-        TextWriter textWriter = new StringWriter(sb);
-        VDS.RDF.Writing.RdfXmlWriter rdfWriter = new VDS.RDF.Writing.RdfXmlWriter();
-        rdfWriter.Save(resultGraph, textWriter);
-        XDocument xDocument = XDocument.Parse(sb.ToString());
-
-        _dataObjects = _projectionEngine.ToDataObjects(graph, ref xDocument);
-
-        // post data objects to data layer
-        _dataLayer.Post(_dataObjects);
-
-        DateTime endTime = DateTime.Now;
-        TimeSpan duration = endTime.Subtract(startTime);
-
-        status.Messages.Add(string.Format("Graph [{0}] has been posted to legacy system successfully.", graph));
-
-        status.Messages.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
-          duration.Minutes, duration.Seconds, duration.Milliseconds));
       }
       catch (Exception ex)
       {
