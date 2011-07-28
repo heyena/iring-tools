@@ -95,8 +95,10 @@ namespace org.iringtools.library
     //TODO: Need to get objectAlias from the dataDictionary instead.
     public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
     {
-      DataObject dataObject = dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
-
+      DataObject dataObject = null;
+#if !SILVERLIGHT
+      dataObject = dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+#endif
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
       else objectAlias = String.Empty;
 
@@ -127,7 +129,10 @@ namespace org.iringtools.library
           foreach (OrderExpression orderExpression in this.OrderExpressions)
           {
             string propertyName = orderExpression.PropertyName;
-            DataProperty dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
+            DataProperty dataProperty = null;
+#if !SILVERLIGHT
+            dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
+#endif
             string orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
             whereClause.Append(orderStatement);
           }
@@ -404,7 +409,10 @@ namespace org.iringtools.library
     private string ResolveSqlExpression(DataObject dataObject, Expression expression, string objectAlias)
     {
       string propertyName = expression.PropertyName;
-      DataProperty dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
+      DataProperty dataProperty = null;
+#if !SILVERLIGHT
+      dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
+#endif
       DataType propertyType = dataProperty.dataType;
       string columnName = dataProperty.columnName;      
       string qualColumnName = String.Empty;
