@@ -493,14 +493,14 @@ namespace org.iringtools.web.controllers
         private string getKeytype(string name, List<DataProperty> properties)
         {
             string keyType = string.Empty;
-            keyType = properties.FirstOrDefault(p => p.columnName == name).keyType.ToString();
+            keyType = properties.FirstOrDefault(p => p.propertyName == name).keyType.ToString();
 
             return keyType;
         }
         private string getDatatype(string name, List<DataProperty> properties)
         {
             string dataType = string.Empty;
-            dataType = properties.FirstOrDefault(p => p.columnName == name).dataType.ToString();
+            dataType = properties.FirstOrDefault(p => p.propertyName == name).dataType.ToString();
 
             return dataType;
         }
