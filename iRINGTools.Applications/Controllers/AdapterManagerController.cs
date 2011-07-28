@@ -5,6 +5,7 @@ using org.iringtools.library;
 using org.iringtools.adapter.security;
 using iRINGTools.Web.Helpers;
 using System;
+using System.Web;
 using System.IO;
 using log4net;
 using System.Configuration;
@@ -30,6 +31,9 @@ namespace org.iringtools.web.controllers
         if (!String.IsNullOrEmpty(enableOAuth) && enableOAuth.ToUpper() == "TRUE")
         {
           _authenticationLayer.Authenticate(ref _allClaims, ref _oAuthToken);
+
+          if (System.Web.HttpContext.Current.Response.IsRequestBeingRedirected)
+            return;
 
           string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
           string ldapConfigFilePath = baseDirectory + @"App_Data\ldap.conf";

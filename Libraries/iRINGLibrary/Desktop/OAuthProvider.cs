@@ -210,7 +210,9 @@ namespace org.iringtools.adapter.security
           string url = FederationServerAddress + SPFederationEndPoint + "?PartnerIdpId=" + PartnerIdpId +
               "&TargetResource=" + returnPath;
 
+          //This does not end the call in WCF, unlike ASP.NET.
           HttpContext.Current.Response.Redirect(url);
+          return null;
         }
       }
       return authenticatedUserName;
