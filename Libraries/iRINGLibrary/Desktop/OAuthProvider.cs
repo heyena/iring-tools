@@ -42,7 +42,7 @@ namespace org.iringtools.adapter.security
         {
           if (key != null)
           {
-            allClaims.Add(key, col.GetValues(key)[0]);
+            allClaims.Add(key, HttpUtility.UrlDecode(col.GetValues(key)[0]));
           }
         }
 
@@ -176,7 +176,7 @@ namespace org.iringtools.adapter.security
               default:
                 try
                 {
-                  authCookie.Values[entry.Key.ToString()] = entry.Value.ToString(); ;
+                  authCookie.Values[entry.Key.ToString()] = HttpUtility.UrlEncode(entry.Value.ToString());
                 }
                 catch { }
                 break;
