@@ -95,24 +95,27 @@ namespace org.iringtools.library
     //TODO: Need to get objectAlias from the dataDictionary instead.
     public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
     {
+      DataObject dataObject = dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
       else objectAlias = String.Empty;
 
       try
       {
         StringBuilder whereClause = new StringBuilder();
+
         if (Expressions != null && Expressions.Count > 0)
         {
           whereClause.Append(" WHERE ");
 
           foreach (Expression expression in this.Expressions)
           {
+            if (whereClause.Length <= 8) // To avoid adding logical operator after where clause.
+            {
+              expression.LogicalOperator = iringtools.library.LogicalOperator.None;
+            }
 
-              if (whereClause.Length <= 8) // To avoid adding logical operator after where clause.
-              {
-                  expression.LogicalOperator = iringtools.library.LogicalOperator.None;
-              }
-            string sqlExpression = ResolveSqlExpression(dataDictionary, objectType, expression, objectAlias);
+            string sqlExpression = ResolveSqlExpression(dataObject, expression, objectAlias);
             whereClause.Append(sqlExpression);
           }
         }
@@ -123,7 +126,9 @@ namespace org.iringtools.library
 
           foreach (OrderExpression orderExpression in this.OrderExpressions)
           {
-            string orderStatement = ResolveOrderExpression(orderExpression, objectAlias);
+            string propertyName = orderExpression.PropertyName;
+            DataProperty dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
+            string orderStatement = ResolveOrderExpression(orderExpression, objectAlias + dataProperty.columnName);
             whereClause.Append(orderStatement);
           }
         }
@@ -133,80 +138,6 @@ namespace org.iringtools.library
       catch (Exception ex)
       {
         throw new Exception("Error while geerating SQLWhereClause.", ex);
-      }
-    }
-
-    public LINQ.Expression<Func<IDataObject, bool>> ToPredicate(DataObject dataObjectDefinition)
-    {
-      _dataObjectDefinition = dataObjectDefinition;
-
-      return ToPredicate(0);
-    }
-
-    public LINQ.Expression<Func<IDataObject, bool>> ToPredicate(int groupLevel)
-    {
-      LINQ.Expression<Func<IDataObject, bool>> predicate = null;
-
-      try
-      {
-        if (Expressions != null && Expressions.Count > 0)
-        {
-          if (_filterBuffer == null)
-            _filterBuffer = Expressions.ToList();
-
-          List<Expression> localBuffer = _filterBuffer.ToList();
-          foreach (Expression expression in localBuffer)
-          {
-            _filterBuffer.Remove(expression);
-
-            groupLevel += (expression.OpenGroupCount - expression.CloseGroupCount);
-
-            switch (expression.LogicalOperator)
-            {
-              case LogicalOperator.And: 
-              case LogicalOperator.None:
-                if (predicate == null)
-                  predicate = PredicateBuilder.True<IDataObject>();
-                predicate = predicate.And(ResolvePredicate(expression));
-                break;
-
-              case LogicalOperator.AndNot:
-              case LogicalOperator.Not:
-                if (predicate == null)
-                  predicate = PredicateBuilder.True<IDataObject>();
-                predicate = predicate.And(ResolvePredicate(expression));
-                predicate = LINQ.Expression.Lambda<Func<IDataObject, bool>>(LINQ.Expression.Not(predicate.Body), predicate.Parameters[0]);
-                break;
-
-              case LogicalOperator.Or:
-                if (predicate == null)
-                  predicate = PredicateBuilder.False<IDataObject>();
-                predicate = predicate.Or(ResolvePredicate(expression));
-                break;
-
-              case LogicalOperator.OrNot:
-                if (predicate == null)
-                  predicate = PredicateBuilder.False<IDataObject>();
-                predicate = predicate.Or(ResolvePredicate(expression));
-                predicate = LINQ.Expression.Lambda<Func<IDataObject, bool>>(LINQ.Expression.Not(predicate.Body), predicate.Parameters[0]);
-                break;
-            }
-
-            if (groupLevel > 0)
-            {
-              predicate = predicate.And(ToPredicate(groupLevel));
-            }
-          }
-        }
-
-        if (predicate == null)
-          predicate = PredicateBuilder.True<IDataObject>();
-
-        return predicate;
-      }
-      catch (Exception ex)
-      {
-        throw new Exception("Error while generating Predicate.", ex);
       }
     }
 
@@ -236,6 +167,7 @@ namespace org.iringtools.library
       }
     }
 
+    #region old code
     //public string ToLinqExpression(string objectType, string objectVariable)
     //{
     //  return ToLinqExpression(Type.GetType(objectType), objectVariable);
@@ -467,36 +399,23 @@ namespace org.iringtools.library
 
     //  return sqlExpression.ToString();
     //}
+    #endregion old code
 
-    private string ResolveSqlExpression(DataDictionary dataDictionary, string objectType, Expression expression, string objectAlias)
+    private string ResolveSqlExpression(DataObject dataObject, Expression expression, string objectAlias)
     {
-      string PropertyName = expression.PropertyName;
+      string propertyName = expression.PropertyName;
+      DataProperty dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
+      DataType propertyType = dataProperty.dataType;
+      string columnName = dataProperty.columnName;      
+      string qualColumnName = String.Empty;
 
-      string qualifiedPropertyName = String.Empty;
       if (expression.IsCaseSensitive)
       {
-        qualifiedPropertyName = objectAlias + PropertyName;
+        qualColumnName = objectAlias + columnName;
       }
       else
       {
-        qualifiedPropertyName = "UPPER(" + objectAlias + PropertyName + ")";
-      }
-
-      //TODO: Is it better to default to string or non-string?
-      DataType propertyType = DataType.String;
-      foreach (DataObject dataObject in dataDictionary.dataObjects)
-      {
-        if (dataObject.objectName.ToUpper() == objectType.ToUpper())
-        {
-          foreach (DataProperty dataProperty in dataObject.dataProperties)
-          {
-            if (dataProperty.propertyName.ToUpper() == PropertyName.ToUpper())
-            {
-              propertyType = dataProperty.dataType;
-              break;
-            }
-          }
-        }
+        qualColumnName = "UPPER(" + objectAlias + columnName + ")";
       }
 
       bool isString = propertyType == DataType.String;
@@ -526,7 +445,7 @@ namespace org.iringtools.library
             value = expression.Values.FirstOrDefault().ToUpper();
           }
 
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '" + value + "%'");
+          sqlExpression.Append(qualColumnName + " LIKE '" + value + "%'");
 
           break;
 
@@ -542,7 +461,7 @@ namespace org.iringtools.library
             value = expression.Values.FirstOrDefault().ToUpper();
           }
 
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + value + "%'");
+          sqlExpression.Append(qualColumnName + " LIKE '%" + value + "%'");
 
           break;
 
@@ -558,7 +477,7 @@ namespace org.iringtools.library
             value = expression.Values.FirstOrDefault().ToUpper();
           }
 
-          sqlExpression.Append(qualifiedPropertyName + " LIKE '%" + value + "'");
+          sqlExpression.Append(qualColumnName + " LIKE '%" + value + "'");
           break;
 
         case RelationalOperator.In:
@@ -573,11 +492,11 @@ namespace org.iringtools.library
               value = String.Join("','", expression.Values.ToArray()).ToUpper();
             }
 
-            sqlExpression.Append(qualifiedPropertyName + " IN ('" + value + "')");
+            sqlExpression.Append(qualColumnName + " IN ('" + value + "')");
           }
           else
           {
-            sqlExpression.Append(qualifiedPropertyName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
+            sqlExpression.Append(qualColumnName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
           }
           break;
 
@@ -593,11 +512,11 @@ namespace org.iringtools.library
               value = expression.Values.FirstOrDefault().ToUpper();
             }
 
-            sqlExpression.Append(qualifiedPropertyName + "='" + value + "'");
+            sqlExpression.Append(qualColumnName + "='" + value + "'");
           }
           else
           {
-            sqlExpression.Append(qualifiedPropertyName + "=" + expression.Values.FirstOrDefault() + "");
+            sqlExpression.Append(qualColumnName + "=" + expression.Values.FirstOrDefault() + "");
           }
           break;
 
@@ -613,11 +532,11 @@ namespace org.iringtools.library
               value = expression.Values.FirstOrDefault().ToUpper();
             }
 
-            sqlExpression.Append(qualifiedPropertyName + "<>'" + value + "'");
+            sqlExpression.Append(qualColumnName + "<>'" + value + "'");
           }
           else
           {
-            sqlExpression.Append(qualifiedPropertyName + "<>" + expression.Values.FirstOrDefault() + "");
+            sqlExpression.Append(qualColumnName + "<>" + expression.Values.FirstOrDefault() + "");
           }
           break;
 
@@ -633,11 +552,11 @@ namespace org.iringtools.library
               value = expression.Values.FirstOrDefault().ToUpper();
             }
 
-            sqlExpression.Append(qualifiedPropertyName + ">'" + value + "'");
+            sqlExpression.Append(qualColumnName + ">'" + value + "'");
           }
           else
           {
-            sqlExpression.Append(qualifiedPropertyName + ">" + expression.Values.FirstOrDefault());
+            sqlExpression.Append(qualColumnName + ">" + expression.Values.FirstOrDefault());
           }
           break;
 
@@ -653,11 +572,11 @@ namespace org.iringtools.library
               value = expression.Values.FirstOrDefault().ToUpper();
             }
 
-            sqlExpression.Append(qualifiedPropertyName + ">='" + value + "'");
+            sqlExpression.Append(qualColumnName + ">='" + value + "'");
           }
           else
           {
-            sqlExpression.Append(qualifiedPropertyName + ">=" + expression.Values.FirstOrDefault());
+            sqlExpression.Append(qualColumnName + ">=" + expression.Values.FirstOrDefault());
           }
           break;
 
@@ -673,11 +592,11 @@ namespace org.iringtools.library
               value = expression.Values.FirstOrDefault().ToUpper();
             }
 
-            sqlExpression.Append(qualifiedPropertyName + "<'" + value + "'");
+            sqlExpression.Append(qualColumnName + "<'" + value + "'");
           }
           else
           {
-            sqlExpression.Append(qualifiedPropertyName + "<" + expression.Values.FirstOrDefault());
+            sqlExpression.Append(qualColumnName + "<" + expression.Values.FirstOrDefault());
           }
           break;
 
@@ -693,11 +612,11 @@ namespace org.iringtools.library
               value = expression.Values.FirstOrDefault().ToUpper();
             }
 
-            sqlExpression.Append(qualifiedPropertyName + "<='" + value + "'");
+            sqlExpression.Append(qualColumnName + "<='" + value + "'");
           }
           else
           {
-            sqlExpression.Append(qualifiedPropertyName + "<=" + expression.Values.FirstOrDefault());
+            sqlExpression.Append(qualColumnName + "<=" + expression.Values.FirstOrDefault());
           }
           break;
 
@@ -711,22 +630,18 @@ namespace org.iringtools.library
       return sqlExpression.ToString();
     }
 
-    private string ResolveOrderExpression(OrderExpression orderExpression, string objectAlias)
+    private string ResolveOrderExpression(OrderExpression orderExpression, string qualColumnName)
     {
-      string PropertyName = orderExpression.PropertyName;
-
-      string  qualifiedPropertyName = objectAlias + PropertyName;
-
       StringBuilder sqlExpression = new StringBuilder();
 
       switch (orderExpression.SortOrder)
       {
         case SortOrder.Asc:
-          sqlExpression.Append(qualifiedPropertyName + " ASC");
+          sqlExpression.Append(qualColumnName + " ASC");
           break;
 
         case SortOrder.Desc:
-          sqlExpression.Append(qualifiedPropertyName + " DESC");
+          sqlExpression.Append(qualColumnName + " DESC");
           break;
 
         default:
@@ -734,99 +649,6 @@ namespace org.iringtools.library
       }
 
       return sqlExpression.ToString();
-    }
-
-    private string ResolveLinqExpression<T>(Expression expression, string objectVariable)
-    {
-      string PropertyName = expression.PropertyName;
-      string qualifiedPropertyName = objectVariable + PropertyName;
-      Type propertyType = typeof(T).GetProperty(PropertyName).PropertyType;
-      bool isString = (propertyType == typeof(string));
-      StringBuilder linqExpression = new StringBuilder();
-
-      if (expression.LogicalOperator != LogicalOperator.None)
-      {
-        string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
-        linqExpression.Append(" " + logicalOperator + " ");
-      }
-
-      for (int i = 0; i < expression.OpenGroupCount; i++)
-        linqExpression.Append("(");
-
-      switch (expression.RelationalOperator)
-      {
-        case RelationalOperator.StartsWith:
-          if (!isString) throw new Exception("StartsWith operator used with non-string property");
-          linqExpression.Append(qualifiedPropertyName + ".StartsWith(\"" + expression.Values.FirstOrDefault() + "\")");
-          break;
-
-        case RelationalOperator.Contains:
-          if (!isString) throw new Exception("Contains operator used with non-string property");
-          linqExpression.Append(qualifiedPropertyName + ".Contains(\"" + expression.Values.FirstOrDefault() + "\")");
-          break;
-
-        case RelationalOperator.EndsWith:
-          if (!isString) throw new Exception("EndsWith operator used with non-string property");
-          linqExpression.Append(qualifiedPropertyName + ".EndsWith(\"" + expression.Values.FirstOrDefault() + "\")");
-          break;
-
-        case RelationalOperator.In:
-          if (isString)
-            linqExpression.Append("(" + qualifiedPropertyName + "=\"" + String.Join("\" OR " + qualifiedPropertyName + "=\"", expression.Values.ToArray()) + "\")");
-          else
-            linqExpression.Append("(" + qualifiedPropertyName + "=" + String.Join(" OR " + qualifiedPropertyName + "=", expression.Values.ToArray()) + ")");
-          break;
-
-        case RelationalOperator.EqualTo:
-          if (isString)
-            linqExpression.Append(qualifiedPropertyName + "=\"" + expression.Values.FirstOrDefault() + "\"");
-          else
-            linqExpression.Append(qualifiedPropertyName + "=" + expression.Values.FirstOrDefault() + "");
-          break;
-
-        case RelationalOperator.NotEqualTo:
-          if (isString)
-            linqExpression.Append(qualifiedPropertyName + "<>\"" + expression.Values.FirstOrDefault() + "\"");
-          else
-            linqExpression.Append(qualifiedPropertyName + "<>" + expression.Values.FirstOrDefault() + "");
-          break;
-
-        case RelationalOperator.GreaterThan:
-          if (isString)
-            linqExpression.Append(qualifiedPropertyName + ".CompareTo(\"" + expression.Values.FirstOrDefault() + "\")>0");
-          else
-            linqExpression.Append(qualifiedPropertyName + ">" + expression.Values.FirstOrDefault());
-          break;
-
-        case RelationalOperator.GreaterThanOrEqual:
-          if (isString)
-            linqExpression.Append(qualifiedPropertyName + ".CompareTo(\"" + expression.Values.FirstOrDefault() + "\")>=0");
-          else
-            linqExpression.Append(qualifiedPropertyName + ">=" + expression.Values.FirstOrDefault());
-          break;
-
-        case RelationalOperator.LesserThan:
-          if (isString)
-            linqExpression.Append(qualifiedPropertyName + ".CompareTo(\"" + expression.Values.FirstOrDefault() + "\")<0");
-          else
-            linqExpression.Append(qualifiedPropertyName + "<" + expression.Values.FirstOrDefault());
-          break;
-
-        case RelationalOperator.LesserThanOrEqual:
-          if (isString)
-            linqExpression.Append(qualifiedPropertyName + ".CompareTo(\"" + expression.Values.FirstOrDefault() + "\")<=0");
-          else
-            linqExpression.Append(qualifiedPropertyName + "<=" + expression.Values.FirstOrDefault());
-          break;
-
-        default:
-          throw new Exception("Relational operator does not exist.");
-      }
-
-      for (int i = 0; i < expression.CloseGroupCount; i++)
-        linqExpression.Append(")");
-
-      return linqExpression.ToString();
     }
 
     private string ResolveLogicalOperator(LogicalOperator logicalOperator)
@@ -851,6 +673,173 @@ namespace org.iringtools.library
         default:
           throw new Exception("Logical operator [" + logicalOperator + "] not supported.");
       }
+    }
+
+    public LINQ.Expression<Func<IDataObject, bool>> ToPredicate(DataObject dataObjectDefinition)
+    {
+      _dataObjectDefinition = dataObjectDefinition;
+
+      return ToPredicate(0);
+    }
+
+    public LINQ.Expression<Func<IDataObject, bool>> ToPredicate(int groupLevel)
+    {
+      LINQ.Expression<Func<IDataObject, bool>> predicate = null;
+
+      try
+      {
+        if (Expressions != null && Expressions.Count > 0)
+        {
+          if (_filterBuffer == null)
+            _filterBuffer = Expressions.ToList();
+
+          List<Expression> localBuffer = _filterBuffer.ToList();
+          foreach (Expression expression in localBuffer)
+          {
+            _filterBuffer.Remove(expression);
+
+            groupLevel += (expression.OpenGroupCount - expression.CloseGroupCount);
+
+            switch (expression.LogicalOperator)
+            {
+              case LogicalOperator.And:
+              case LogicalOperator.None:
+                if (predicate == null)
+                  predicate = PredicateBuilder.True<IDataObject>();
+                predicate = predicate.And(ResolvePredicate(expression));
+                break;
+
+              case LogicalOperator.AndNot:
+              case LogicalOperator.Not:
+                if (predicate == null)
+                  predicate = PredicateBuilder.True<IDataObject>();
+                predicate = predicate.And(ResolvePredicate(expression));
+                predicate = LINQ.Expression.Lambda<Func<IDataObject, bool>>(LINQ.Expression.Not(predicate.Body), predicate.Parameters[0]);
+                break;
+
+              case LogicalOperator.Or:
+                if (predicate == null)
+                  predicate = PredicateBuilder.False<IDataObject>();
+                predicate = predicate.Or(ResolvePredicate(expression));
+                break;
+
+              case LogicalOperator.OrNot:
+                if (predicate == null)
+                  predicate = PredicateBuilder.False<IDataObject>();
+                predicate = predicate.Or(ResolvePredicate(expression));
+                predicate = LINQ.Expression.Lambda<Func<IDataObject, bool>>(LINQ.Expression.Not(predicate.Body), predicate.Parameters[0]);
+                break;
+            }
+
+            if (groupLevel > 0)
+            {
+              predicate = predicate.And(ToPredicate(groupLevel));
+            }
+          }
+        }
+
+        if (predicate == null)
+          predicate = PredicateBuilder.True<IDataObject>();
+
+        return predicate;
+      }
+      catch (Exception ex)
+      {
+        throw new Exception("Error while generating Predicate.", ex);
+      }
+    }
+
+    private string ResolveLinqExpression<T>(Expression expression, string objectVariable)
+    {
+      string propertyName = expression.PropertyName;
+      string qualPropertyName = objectVariable + propertyName;
+      Type propertyType = typeof(T).GetProperty(propertyName).PropertyType;
+      bool isString = (propertyType == typeof(string));
+      StringBuilder linqExpression = new StringBuilder();
+
+      if (expression.LogicalOperator != LogicalOperator.None)
+      {
+        string logicalOperator = ResolveLogicalOperator(expression.LogicalOperator);
+        linqExpression.Append(" " + logicalOperator + " ");
+      }
+
+      for (int i = 0; i < expression.OpenGroupCount; i++)
+        linqExpression.Append("(");
+
+      switch (expression.RelationalOperator)
+      {
+        case RelationalOperator.StartsWith:
+          if (!isString) throw new Exception("StartsWith operator used with non-string property");
+          linqExpression.Append(qualPropertyName + ".StartsWith(\"" + expression.Values.FirstOrDefault() + "\")");
+          break;
+
+        case RelationalOperator.Contains:
+          if (!isString) throw new Exception("Contains operator used with non-string property");
+          linqExpression.Append(qualPropertyName + ".Contains(\"" + expression.Values.FirstOrDefault() + "\")");
+          break;
+
+        case RelationalOperator.EndsWith:
+          if (!isString) throw new Exception("EndsWith operator used with non-string property");
+          linqExpression.Append(qualPropertyName + ".EndsWith(\"" + expression.Values.FirstOrDefault() + "\")");
+          break;
+
+        case RelationalOperator.In:
+          if (isString)
+            linqExpression.Append("(" + qualPropertyName + "=\"" + String.Join("\" OR " + qualPropertyName + "=\"", expression.Values.ToArray()) + "\")");
+          else
+            linqExpression.Append("(" + qualPropertyName + "=" + String.Join(" OR " + qualPropertyName + "=", expression.Values.ToArray()) + ")");
+          break;
+
+        case RelationalOperator.EqualTo:
+          if (isString)
+            linqExpression.Append(qualPropertyName + "=\"" + expression.Values.FirstOrDefault() + "\"");
+          else
+            linqExpression.Append(qualPropertyName + "=" + expression.Values.FirstOrDefault() + "");
+          break;
+
+        case RelationalOperator.NotEqualTo:
+          if (isString)
+            linqExpression.Append(qualPropertyName + "<>\"" + expression.Values.FirstOrDefault() + "\"");
+          else
+            linqExpression.Append(qualPropertyName + "<>" + expression.Values.FirstOrDefault() + "");
+          break;
+
+        case RelationalOperator.GreaterThan:
+          if (isString)
+            linqExpression.Append(qualPropertyName + ".CompareTo(\"" + expression.Values.FirstOrDefault() + "\")>0");
+          else
+            linqExpression.Append(qualPropertyName + ">" + expression.Values.FirstOrDefault());
+          break;
+
+        case RelationalOperator.GreaterThanOrEqual:
+          if (isString)
+            linqExpression.Append(qualPropertyName + ".CompareTo(\"" + expression.Values.FirstOrDefault() + "\")>=0");
+          else
+            linqExpression.Append(qualPropertyName + ">=" + expression.Values.FirstOrDefault());
+          break;
+
+        case RelationalOperator.LesserThan:
+          if (isString)
+            linqExpression.Append(qualPropertyName + ".CompareTo(\"" + expression.Values.FirstOrDefault() + "\")<0");
+          else
+            linqExpression.Append(qualPropertyName + "<" + expression.Values.FirstOrDefault());
+          break;
+
+        case RelationalOperator.LesserThanOrEqual:
+          if (isString)
+            linqExpression.Append(qualPropertyName + ".CompareTo(\"" + expression.Values.FirstOrDefault() + "\")<=0");
+          else
+            linqExpression.Append(qualPropertyName + "<=" + expression.Values.FirstOrDefault());
+          break;
+
+        default:
+          throw new Exception("Relational operator does not exist.");
+      }
+
+      for (int i = 0; i < expression.CloseGroupCount; i++)
+        linqExpression.Append(")");
+
+      return linqExpression.ToString();
     }
 
     private LINQ.Expression<Func<IDataObject, bool>> ResolvePredicate(Expression expression)
