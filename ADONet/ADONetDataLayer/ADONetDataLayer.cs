@@ -46,14 +46,11 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-        _settings = settings;
-
         _configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"], "adonet-configuration." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml");
         _config = Utility.Read<ADONetConfiguration>(_configPath, true);
 
         _dictionaryPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"], "DataDictionary." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml");
         _bindingPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"], "adonet-binding." + _settings["ProjectName"] + "." + _settings["ApplicationName"] + ".xml");
-
       }
       catch (Exception e)
       {
