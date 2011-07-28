@@ -47,7 +47,7 @@ using System.Collections;
 
 namespace org.iringtools.facade
 {
-  public class FacadeProvider
+  public class FacadeProvider : BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(FacadeProvider));
     private Response _response = null;
@@ -60,11 +60,9 @@ namespace org.iringtools.facade
     private ScopeProjects _scopes = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
-    private WebHttpClient _webHttpClient = null;
     private IList<IDataObject> _dataObjects = new List<IDataObject>();
     private IProjectionLayer _projectionEngine = null;
-
-
+    
     private bool _isScopeInitialized = false;
     private bool _isDataLayerInitialized = false;
 
@@ -79,12 +77,6 @@ namespace org.iringtools.facade
       _settings.AppendSettings(settings);
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-
-      if (ServiceSecurityContext.Current != null)
-      {
-        IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
-        _settings["UserName"] = identity.Name;
-      }
 
       #region initialize webHttpClient for converting old mapping
       string proxyHost = _settings["ProxyHost"];
@@ -104,6 +96,12 @@ namespace org.iringtools.facade
         _webHttpClient = new WebHttpClient(rdsUri);
       }
       #endregion
+
+      if (ServiceSecurityContext.Current != null)
+      {
+        IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
+        _settings["UserName"] = identity.Name;
+      }
 
       string scopesPath = String.Format("{0}Scopes.xml", _settings["XmlPath"]);
       _settings["ScopesPath"] = scopesPath;
@@ -148,6 +146,7 @@ namespace org.iringtools.facade
         throw new Exception(string.Format("Error initializing identity: {0})", ex));
       }
     }
+
     public Response Delete(string scope, string app, string graph)
     {
       Status status = new Status();
@@ -247,15 +246,26 @@ namespace org.iringtools.facade
 
           if (File.Exists(mappingPath))
           {
-            _mapping = Utility.Read<Mapping>(mappingPath);
+            try
+            {
+              _mapping = Utility.Read<mapping.Mapping>(mappingPath);
+            }
+            catch (Exception legacyEx)
+            {
+              _logger.Warn("Error loading mapping file [" + mappingPath + "]:" + legacyEx);
+              Status status = new Status();
+
+              _mapping = LoadMapping(mappingPath, ref status);
+              _logger.Info(status.ToString());
+            }
           }
           else
           {
-            _mapping = new Mapping();
-            Utility.Write<Mapping>(_mapping, mappingPath);
+            _mapping = new mapping.Mapping();
+            Utility.Write<mapping.Mapping>(_mapping, mappingPath);
           }
-          _kernel.Bind<Mapping>().ToConstant(_mapping);
 
+          _kernel.Bind<mapping.Mapping>().ToConstant(_mapping);
           _isScopeInitialized = true;
         }
       }

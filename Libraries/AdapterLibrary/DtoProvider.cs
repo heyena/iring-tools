@@ -51,7 +51,7 @@ using Microsoft.ServiceModel.Web;
 
 namespace org.iringtools.adapter
 {
-  public class DataTranferProvider
+  public class DataTranferProvider : BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DataTranferProvider));
 
@@ -79,6 +79,25 @@ namespace org.iringtools.adapter
       _settings.AppendSettings(settings);
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
+
+      #region initialize webHttpClient for converting old mapping
+      string proxyHost = _settings["ProxyHost"];
+      string proxyPort = _settings["ProxyPort"];
+      string rdsUri = _settings["ReferenceDataServiceUri"];
+
+      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      {
+        WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
+        webProxy.Credentials = _settings.GetProxyCredential();
+
+        _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
+      }
+      else
+      {
+        _webHttpClient = new WebHttpClient(rdsUri);
+      }
+      #endregion
 
       if (!String.IsNullOrEmpty(_settings["fixedIdentifierBoundary"]))
       {
@@ -630,15 +649,26 @@ namespace org.iringtools.adapter
 
           if (File.Exists(mappingPath))
           {
-            _mapping = Utility.Read<Mapping>(mappingPath);
+            try
+            {
+              _mapping = Utility.Read<Mapping>(mappingPath);
+            }
+            catch (Exception legacyEx)
+            {
+              _logger.Warn("Error loading mapping file [" + mappingPath + "]:" + legacyEx);
+              Status status = new Status();
+
+              _mapping = LoadMapping(mappingPath, ref status);
+              _logger.Info(status.ToString());
+            }
           }
           else
           {
-            _mapping = new Mapping();
-            Utility.Write<Mapping>(_mapping, mappingPath);
+            _mapping = new mapping.Mapping();
+            Utility.Write<mapping.Mapping>(_mapping, mappingPath);
           }
-          _kernel.Bind<Mapping>().ToConstant(_mapping);
 
+          _kernel.Bind<Mapping>().ToConstant(_mapping);
           _isScopeInitialized = true;
         }
       }

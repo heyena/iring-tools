@@ -123,6 +123,7 @@
     <Compile Include="AdapterModule.cs" />
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BasePart7ProjectionEngine.cs" />
+    <Compile Include="BaseProvider.cs" />
     <Compile Include="HtmlProjectionEngine.cs" />
     <Compile Include="SSOIdentityProvider.cs" />
     <Compile Include="DxiRequest.cs" />
@@ -134,7 +135,6 @@
     <Compile Include="dotNetRDFEngine.cs" />
     <Compile Include="AdapterProvider.cs" />
     <Compile Include="DtoProjectionEngine.cs" />
-    <Compile Include="ExchangeProvider.cs" />
     <Compile Include="FacadeProvider.cs" />
     <Compile Include="IIdentityLayer.cs" />
     <Compile Include="IProjectionLayer.cs" />

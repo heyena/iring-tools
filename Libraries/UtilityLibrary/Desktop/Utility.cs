@@ -1225,6 +1225,5 @@ namespace org.iringtools.utility
       string returnValue = System.Text.ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
       return returnValue;
     }
-
   }
 }
