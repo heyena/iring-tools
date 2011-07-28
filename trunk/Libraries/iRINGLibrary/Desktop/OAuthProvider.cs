@@ -40,7 +40,10 @@ namespace org.iringtools.adapter.security
         String[] keyNames = col.AllKeys;
         foreach (string key in keyNames)
         {
-          allClaims.Add(key, col.GetValues(key)[0]);
+          if (key != null)
+          {
+            allClaims.Add(key, col.GetValues(key)[0]);
+          }
         }
 
         authenticatedUserName = authCookie["subject"].ToString();
