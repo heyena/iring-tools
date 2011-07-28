@@ -43,9 +43,8 @@ namespace org.iringtools.adapter.projection
 
         style.Add(new XAttribute("type", "text/css"));
 
-        Regex regex = new Regex(@"\s+");
         string css = Utility.ReadString(_settings["DefaultStyleSheet"]);
-        style.Add(regex.Replace(css, " "));
+        style.Add(Regex.Replace(css, @"\s+", " "));
 
         XElement body = new XElement("body");
         html.Add(body);
