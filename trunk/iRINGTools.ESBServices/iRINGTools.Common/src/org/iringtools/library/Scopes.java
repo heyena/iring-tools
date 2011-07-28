@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.iringtools.org/library}application" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://www.iringtools.org/library}scope" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,11 +33,11 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "", propOrder = {
     "items"
 })
-@XmlRootElement(name = "applications")
-public class Applications {
+@XmlRootElement(name = "scopes")
+public class Scopes {
 
-    @XmlElement(name = "application", required = true)
-    protected List<Application> items;
+    @XmlElement(name = "scope", required = true)
+    protected List<Scope> items;
 
     /**
      * Gets the value of the items property.
@@ -57,13 +57,13 @@ public class Applications {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Application }
+     * {@link Scope }
      * 
      * 
      */
-    public List<Application> getItems() {
+    public List<Scope> getItems() {
         if (items == null) {
-            items = new ArrayList<Application>();
+            items = new ArrayList<Scope>();
         }
         return this.items;
     }
@@ -73,10 +73,10 @@ public class Applications {
      * 
      * @param items
      *     allowed object is
-     *     {@link Application }
+     *     {@link Scope }
      *     
      */
-    public void setItems(List<Application> items) {
+    public void setItems(List<Scope> items) {
         this.items = items;
     }
 
