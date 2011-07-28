@@ -12,7 +12,7 @@ namespace org.iringtools.adapter.projection
 {
   public class HtmlProjectionEngine : BaseDataProjectionEngine
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataProjectionEngine));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(HtmlProjectionEngine));
     private DataDictionary _dictionary = null;
 
     [Inject]
@@ -48,6 +48,9 @@ namespace org.iringtools.adapter.projection
 
         XElement body = new XElement("body");
         html.Add(body);
+
+        XElement count = new XElement("span", "Total Count: " + this.Count);
+        body.Add(count);
 
         XElement table = new XElement("table");
         body.Add(table);
