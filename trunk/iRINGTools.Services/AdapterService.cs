@@ -35,7 +35,6 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.dxfr.manifest;
 using org.iringtools.adapter;
-using org.iringtools.exchange;
 using System.Xml;
 using System.ServiceModel.Channels;
 using System.IO;

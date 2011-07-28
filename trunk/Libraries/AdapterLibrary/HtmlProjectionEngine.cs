@@ -14,7 +14,6 @@ namespace org.iringtools.adapter.projection
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DataProjectionEngine));
     private DataDictionary _dictionary = null;
-    private XNamespace _appNamespace = null;
 
     [Inject]
     public HtmlProjectionEngine(AdapterSettings settings, DataDictionary dictionary)
