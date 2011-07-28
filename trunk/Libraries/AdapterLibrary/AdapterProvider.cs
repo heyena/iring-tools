@@ -336,7 +336,7 @@ namespace org.iringtools.adapter
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
-        mapping.Mapping mapping = LoadMapping(mappingXml, ref status);
+        mapping.Mapping mapping = LoadMapping(path, mappingXml, ref status);
 
         Utility.Write<mapping.Mapping>(mapping, path, true);
 

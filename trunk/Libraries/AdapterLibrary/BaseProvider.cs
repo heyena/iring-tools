@@ -25,12 +25,12 @@ namespace org.iringtools.adapter
     {
       XElement mappingXml = Utility.ReadXml(path);
 
-      return LoadMapping(mappingXml, ref status);
+      return LoadMapping(path, mappingXml, ref status);
     }
 
-    public mapping.Mapping LoadMapping(XElement mappingXml, ref Status status)
+    public mapping.Mapping LoadMapping(string path, XElement mappingXml, ref Status status)
     {
-      mapping.Mapping mapping = new mapping.Mapping();
+      mapping.Mapping mapping = null;
 
       if (mappingXml.Name.NamespaceName.Contains("schemas.datacontract.org"))
       {
@@ -58,12 +58,18 @@ namespace org.iringtools.adapter
           }
         }
 
-        status.Messages.Add("Legacy mapping has been converted sucessfully.");
+        if (mapping != null)
+        {
+          // write new mapping to disk
+          Utility.Write<mapping.Mapping>(mapping, path, true);
+          status.Messages.Add("Legacy mapping has been converted sucessfully.");
+        }
       }
-
-      // write new mapping to disk
-      mapping = Utility.DeserializeDataContract<mapping.Mapping>(mappingXml.ToString());
-
+      else
+      {
+        mapping = Utility.DeserializeDataContract<mapping.Mapping>(mappingXml.ToString());
+      }
+      
       return mapping;
     }
 
