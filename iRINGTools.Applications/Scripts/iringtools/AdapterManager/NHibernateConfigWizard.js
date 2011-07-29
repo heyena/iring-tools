@@ -2096,7 +2096,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 			var keyName;
 			for (var i = 0; i < rootNode.childNodes.length; i++) {
-				var folder = getFolderForChildNode(rootNode.childNodes[i]);
+				var folder = getFolderFromChildNode(rootNode.childNodes[i]);
 				treeProperty.dataObjects.push(folder);
 			}
 			return treeProperty;
