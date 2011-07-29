@@ -38,7 +38,7 @@ namespace org.iringtools.library
     public abstract DataTable GetDataTable(string tableName, IList<string> identifiers);
 
     // get a page of data rows with (optional) filter
-    public abstract DataTable GetDataTable(string tableName, string whereClause, int start, int limit);
+    public abstract DataTable GetDataTable(string tableName, string whereClause, long start, long limit);
 
     // get related data rows of a given data row
     public abstract DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName);
@@ -343,7 +343,7 @@ namespace org.iringtools.library
           {
             object value = dataObject.GetPropertyValue(objectProperty.propertyName);
 
-            if (value != null)
+            if (value != null && value.ToString().Trim().Length > 0)
             {
               switch (objectProperty.dataType)
               {
@@ -379,13 +379,14 @@ namespace org.iringtools.library
                   break;
               }
             }
-            else if (objectProperty.isNullable)
+            else if (objectProperty.dataType == DataType.String || objectProperty.isNullable)
             {
-              dataRow[objectProperty.columnName] = value;
+              dataRow[objectProperty.columnName] = null;
             }
             else
             {
-              throw new Exception("Object property is set to not nullable but received a null value.");
+              _logger.Error("Object property is set to not nullable but received a null value.");
+              return null;
             }
           }
           catch (Exception ex)
@@ -447,7 +448,11 @@ namespace org.iringtools.library
           try
           {
             DataRow dataRow = CreateDataRow(dataTable, dataObject, objectDefinition);
-            dataTable.Rows.Add(dataRow);
+
+            if (dataRow != null)
+            {
+              dataTable.Rows.Add(dataRow);
+            }
           }
           catch (Exception ex)
           {
