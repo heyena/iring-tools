@@ -440,6 +440,8 @@ namespace org.iringtools.adapter
           foreach (string key in parameters.AllKeys)
           {
             string[] expectedParameters = { 
+              "project",
+              "app",
               "format", 
               "start", 
               "limit", 

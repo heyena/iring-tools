@@ -104,6 +104,7 @@
     </Reference>
     <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Workflow.Activities">
       <RequiredTargetFramework>3.0</RequiredTargetFramework>
     </Reference>
@@ -124,6 +125,7 @@
     <Compile Include="BaseDataProjectionEngine.cs" />
     <Compile Include="BasePart7ProjectionEngine.cs" />
     <Compile Include="BaseProvider.cs" />
+    <Compile Include="JsonProjectionEngine.cs" />
     <Compile Include="HtmlProjectionEngine.cs" />
     <Compile Include="SSOIdentityProvider.cs" />
     <Compile Include="DxiRequest.cs" />
