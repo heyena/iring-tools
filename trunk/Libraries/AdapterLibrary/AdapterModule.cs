@@ -21,6 +21,7 @@ namespace org.iringtools.adapter
       Bind<IProjectionLayer>().To<XmlProjectionEngine>().Named("xml");
       Bind<IProjectionLayer>().To<DataProjectionEngine>().Named("data");
       Bind<IProjectionLayer>().To<HtmlProjectionEngine>().Named("html");
+      Bind<IProjectionLayer>().To<JsonProjectionEngine>().Named("json");
     }
   }
 }
