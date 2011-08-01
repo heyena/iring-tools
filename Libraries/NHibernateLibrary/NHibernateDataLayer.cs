@@ -233,7 +233,55 @@ namespace org.iringtools.adapter.datalayer
 
         if (identifiers != null && identifiers.Count > 0)
         {
-          queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray()) + "')");
+          DataObject dataObjectDef = (from DataObject o in _databaseDictionary.dataObjects
+                                   where o.objectName == objectType
+                                   select o).FirstOrDefault();
+
+          if (dataObjectDef == null)
+            return null;
+
+          string[] keyList = null;
+          int identifierIndex = 1;
+          foreach (string identifier in identifiers)
+          {
+            string[] idParts = identifier.Split(dataObjectDef.keyDelimeter.ToCharArray()[0]);
+
+            keyList = new string[idParts.Count()];
+
+            int partIndex = 0;
+            foreach (string part in idParts)
+            {
+              if (identifierIndex == identifiers.Count())
+              {
+                keyList[partIndex] += part;
+              }
+              else
+              {
+                keyList[partIndex] += part + ", ";
+              }
+
+              partIndex++;
+            }
+
+            identifierIndex++;
+          }
+
+          int propertyIndex = 0;
+          foreach (KeyProperty keyProperty in dataObjectDef.keyProperties)
+          {
+            string propertyValues = keyList[propertyIndex];
+
+            if (propertyIndex == 0)
+            {
+              queryString.Append(" where " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
+            }
+            else
+            {
+              queryString.Append(" and " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
+            }
+
+            propertyIndex++;
+          }
         }
 
         using (ISession session = OpenSession())
