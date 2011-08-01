@@ -606,7 +606,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									params: {
 										scope: scopeName,
 										app: appName,
-										serviceName: servieName,
 										serName: serName
 									},
 									success: function (f, a) {
