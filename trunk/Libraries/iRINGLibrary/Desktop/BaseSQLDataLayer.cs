@@ -381,7 +381,7 @@ namespace org.iringtools.library
             }
             else if (objectProperty.dataType == DataType.String || objectProperty.isNullable)
             {
-              dataRow[objectProperty.columnName] = null;
+              dataRow[objectProperty.columnName] = DBNull.Value;
             }
             else
             {
