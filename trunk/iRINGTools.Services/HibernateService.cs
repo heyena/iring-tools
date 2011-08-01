@@ -113,7 +113,7 @@ namespace org.iringtools.services
       context.ContentType = "application/xml";
 
 			return _NHibernateProvider.GetTableNames(scope, application, request["dbProvider"], request["dbServer"], request["portNumber"], request["dbInstance"],
-        request["dbName"], request["dbSchema"], request["dbUserName"], request["dbPassword"]);
+				request["dbName"], request["dbSchema"], request["dbUserName"], request["dbPassword"], request["serName"]);
     }
 
     //[WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{portNumber}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/{tableNames}/objects")]
@@ -124,7 +124,7 @@ namespace org.iringtools.services
       context.ContentType = "application/xml";
 
 			return _NHibernateProvider.GetDBObjects(scope, application, request["dbProvider"], request["dbServer"], request["portNumber"], request["dbInstance"],
-        request["dbName"], request["dbSchema"], request["dbUserName"], request["dbPassword"], request["tableNames"]);
+				request["dbName"], request["dbSchema"], request["dbUserName"], request["dbPassword"], request["tableNames"], request["serName"]);
     }
 
     #endregion

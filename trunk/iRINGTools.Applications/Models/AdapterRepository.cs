@@ -318,7 +318,7 @@ namespace iRINGTools.Web.Models
 				}
 
         public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,
-          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string portNumber)
+          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string portNumber, string serName)
         {
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
           var uri = String.Format("/{0}/{1}/tables", scope, application);
@@ -332,13 +332,14 @@ namespace iRINGTools.Web.Models
           request.Add("dbSchema",dbSchema);
           request.Add("dbUserName",dbUserName);
           request.Add("dbPassword",dbPassword);
+					request.Add("serName", serName);
 
           return client.Post<Request, List<string>>(uri, request, true);
         }
 
         // use appropriate icons especially node with children
         public List<JsonTreeNode> GetDBObjects(string scope, string application, string dbProvider, string dbServer,
-          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber)
+          string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName)
         {
           List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
 
@@ -355,6 +356,7 @@ namespace iRINGTools.Web.Models
           request.Add("dbUserName", dbUserName);
           request.Add("dbPassword", dbPassword);
           request.Add("tableNames", tableNames);
+					request.Add("serName", serName);
 
           List<DataObject> dataObjects = client.Post<Request, List<DataObject>>(uri, request, true);
 

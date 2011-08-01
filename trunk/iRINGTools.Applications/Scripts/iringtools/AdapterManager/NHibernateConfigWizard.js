@@ -209,7 +209,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			}
 		};
 
-		var setDsConfigFields = function (dsConfigForm) {
+		var setDsConfigFields = function (dsConfigPane) {
+			var dsConfigForm = dsConfigPane.getForm();
 			var Provider = null;
 
 			if (dbDict.Provider)
@@ -220,7 +221,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			var host = dsConfigForm.findField('host');
 			var dbServer = dsConfigForm.findField('dbServer');
 			var dbInstance = dsConfigForm.findField('dbInstance');
-			var serviceName = dsConfigForm.findField('serviceName');
+			var serviceName = dsConfigPane.items.items[10];
 			var dbSchema = dsConfigForm.findField('dbSchema');
 			var userName = dsConfigForm.findField('dbUserName');
 			var password = dsConfigForm.findField('dbPassword');
@@ -244,8 +245,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 						host.setValue(dbInfo.dbServer);
 						host.show();
-						serviceName.setValue(dbInfo.dbInstance);
+
 						serviceName.show();
+						creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
+
 						portNumber.setValue(dbInfo.portNumber);
 						portNumber.show();
 					}
@@ -262,7 +265,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						dbName.show();
 						dbProvider.setValue(dbDict.Provider);
 						host.setValue(dbInfo.dbServer);
-						serviceName.setValue(dbInfo.dbInstance);
+						creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
 						portNumber.setValue(dbInfo.portNumber);
 						userName.setValue(dbInfo.dbUserName);
 						password.setValue(dbInfo.dbPassword);
@@ -287,7 +290,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				dbProvider.setValue('MsSql2008');
 				host.setValue('');
 				host.hide();
-				serviceName.setValue('');
 				serviceName.hide();
 
 				userName.clearInvalid();
@@ -353,7 +355,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							var host = dsConfigPane.getForm().findField('host');
 							var dbServer = dsConfigPane.getForm().findField('dbServer');
 							var dbInstance = dsConfigPane.getForm().findField('dbInstance');
-							var serviceName = dsConfigPane.getForm().findField('serviceName');
+							var serviceName = dsConfigPane.items.items[10];
 							var dbSchema = dsConfigPane.getForm().findField('dbSchema');
 							var userName = dsConfigPane.getForm().findField('dbUserName');
 							var password = dsConfigPane.getForm().findField('dbPassword');
@@ -369,9 +371,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									if (dbDict.Provider) {
 										if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
 											host.setValue(dbInfo.dbServer);
-											serviceName.setValue(dbInfo.dbInstance);
-											host.show();
 											serviceName.show();
+											creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
+											host.show();
+
 											userName.setValue(dbInfo.dbUserName);
 											password.setValue(dbInfo.dbPassword);
 											dbSchema.setValue(dbDict.SchemaName);
@@ -380,11 +383,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											host.setValue('');
 											host.clearInvalid();
 
-											serviceName.setValue('');
-											serviceName.clearInvalid();
-
 											host.show();
-											serviceName.show();
 
 											dbSchema.setValue('');
 											dbSchema.clearInvalid();
@@ -394,17 +393,15 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 											password.setValue('');
 											password.clearInvalid();
+											serviceName.show();
+											creatRadioField(serviceName, serviceName.id, '', '', 1);
 										}
 									}
 									else {
 										host.setValue('');
 										host.clearInvalid();
 
-										serviceName.setValue('');
-										serviceName.clearInvalid();
-
 										host.show();
-										serviceName.show();
 
 										dbSchema.setValue('');
 										dbSchema.clearInvalid();
@@ -414,6 +411,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 										password.setValue('');
 										password.clearInvalid();
+										serviceName.show();
+										creatRadioField(serviceName, serviceName.id, '', '', 1);
 									}
 
 									portNumber.setValue('1521');
@@ -493,9 +492,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								if (host.hidden == false) {
 									portNumber.hide();
 									host.hide();
+
 									serviceName.hide();
+
+									portNumber.setValue('3306');
 								}
-								portNumber.setValue('3306');
 							}
 						}
 						}
@@ -519,17 +520,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						value: '1521',
 						allowBlank: false
 					}, {
-						xtype: 'textfield',
 						name: 'dbInstance',
 						fieldLabel: 'Database Instance',
 						value: 'default',
-						allowBlank: false
-					}, {
-						xtype: 'textfield',
-						name: 'serviceName',
-						fieldLabel: 'Service Name',
-						hidden: true,
-						value: 'Default',
 						allowBlank: false
 					}, {
 						xtype: 'textfield',
@@ -562,6 +555,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						fieldLabel: 'Schema Name',
 						value: 'dbo',
 						allowBlank: false
+					}, {
+						xtype: 'panel',
+						id: scopeName + '.' + appName + '.servicename',
+						name: 'serviceName',
+						hidden: true,
+						layout: 'fit',
+						border: false,
+						frame: false
 					}],
 					tbar: new Ext.Toolbar({
 						items: [{
@@ -579,16 +580,20 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								var host = dsConfigPane.getForm().findField('host');
 								var dbServer = dsConfigPane.getForm().findField('dbServer');
 								var dbInstance = dsConfigPane.getForm().findField('dbInstance');
-								var serviceName = dsConfigPane.getForm().findField('serviceName');
+								var serviceNamePane = dsConfigPane.items.items[10];
 								var dbSchema = dsConfigPane.getForm().findField('dbSchema');
+								var servieName = '';
+								var serName = '';
 								if (dbProvider.indexOf('ORACLE') > -1) {
-									dbServer.setValue(host.getValue());
-									dbInstance.setValue(serviceName.getValue());
+									dbServer.setValue(host.getValue());									
 									dbName.setValue(dbSchema.getValue());
+									servieName = serviceNamePane.items.items[0].value;
+									serName = serviceNamePane.items.items[0].serName;
+									dbInstance.setValue(servieName);
 								}
 								else if (dbProvider.indexOf('MSSQL') > -1) {
 									host.setValue(dbServer.getValue());
-									serviceName.setValue(dbInstance.getValue());
+									serviceName = dbInstance.getValue();
 								}
 								else if (dbProvider.indexOf('MYSQL') > -1) {
 									dbName.setValue(dbSchema.getValue());
@@ -600,7 +605,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									timeout: 600000,
 									params: {
 										scope: scopeName,
-										app: appName
+										app: appName,
+										serviceName: servieName,
+										serName: serName
 									},
 									success: function (f, a) {
 										dbTableNames = Ext.util.JSON.decode(a.response.responseText);
@@ -632,14 +639,14 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							text: 'Reset',
 							tooltip: 'Reset to the latest applied changes',
 							handler: function (f) {
-								setDsConfigFields(dsConfigPane.getForm());
+								setDsConfigFields(dsConfigPane);
 							}
 						}]
 					})
 				});
 
 				if (dbInfo)
-					setDsConfigFields(dsConfigPane.getForm());
+					setDsConfigFields(dsConfigPane);
 				editPane.add(dsConfigPane);
 				var panelIndex = editPane.items.indexOf(dsConfigPane);
 				editPane.getLayout().setActiveItem(panelIndex);
@@ -786,9 +793,19 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								var tablesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
 								var tablesSelForm = tablesSelectorPane.getForm();
 								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-
+								var serName = '';
+								var serviceName = '';
+								
 								if (dbObjectsTree.disabled) {
 									dbObjectsTree.enable();
+								}
+
+								if (dsConfigPane) {
+									var serviceNamePane = dsConfigPane.items.items[10];
+									serName = serviceNamePane.items.items[0].serName;
+								}	
+								else {
+									serName = dbInfo.serName;
 								}
 
 								var treeLoader = dbObjectsTree.getLoader();
@@ -840,7 +857,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										dbUserName: dsConfigForm.findField('dbUserName').getValue(),
 										dbPassword: dsConfigForm.findField('dbPassword').getValue(),
 										portNumber: dsConfigForm.findField('portNumber').getValue(),
-										tableNames: selectTableNames
+										tableNames: selectTableNames,
+										serName: serName
 									};
 								}
 								else {
@@ -855,7 +873,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										dbUserName: dbInfo.dbUserName,
 										dbPassword: dbInfo.dbPassword,
 										portNumber: dbInfo.portNumber,
-										tableNames: selectTableNames
+										tableNames: selectTableNames,
+										serName: serName
 									};
 								}
 
@@ -1857,6 +1876,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var dbServer = dsConfigForm.findField('dbServer').getValue();
 				dbServer = (dbServer == 'localhost' ? '.' : dbServer);
 				var upProvider = treeProperty.provider.toUpperCase();
+				var serviceNamePane = dsConfigPane.items.items[10];
+				var serviceName = serviceNamePane.items.items[0].value;
+				var serName = serviceNamePane.items.items[0].serName;
 
 				if (upProvider.indexOf('MSSQL') > -1) {
 					var dbInstance = dsConfigForm.findField('dbInstance').getValue();
@@ -1868,7 +1890,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					}
 				}
 				else if (upProvider.indexOf('ORACLE') > -1)
-					var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dsConfigForm.findField('portNumber').getValue() + ')))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=' + dsConfigForm.findField('serviceName').getValue() + ')))';
+					var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dsConfigForm.findField('portNumber').getValue() + ')))(CONNECT_DATA=(SERVER=DEDICATED)(' + serName + '=' + serviceName + ')))';
 				else if (upProvider.indexOf('MYSQL') > -1)
 					var dataSrc = 'Data Source=' + dbServer;
 
@@ -1896,7 +1918,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					}
 				}
 				else if (upProvider.indexOf('ORACLE') > -1)
-					var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dbInfo.portNumber + ')))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=' + dbInfo.dbInstance + ')))';
+					var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dbInfo.portNumber + ')))(CONNECT_DATA=(SERVER=DEDICATED)(' + dbInfo.serName + '=' + dbInfo.dbInstance + ')))';
 				else if (upProvider.indexOf('MYSQL') > -1)
 					var dataSrc = 'Data Source=' + dbServer;
 
@@ -2385,6 +2407,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											var sername = dsValue[j + 1];
 											index = sername.indexOf(')');
 											dbInfo.dbInstance = sername.substring(0, index);
+											dbInfo.serName = 'SERVICE_NAME';
+											break;
+										case 'SID':
+											var sername = dsValue[j + 1];
+											index = sername.indexOf(')');
+											dbInfo.dbInstance = sername.substring(0, index);
+											dbInfo.serName = 'SID';
 											break;
 									}
 								}
@@ -2417,7 +2446,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				dbUserName: dbInfo.dbUserName,
 				dbPassword: dbInfo.dbPassword,
 				portNumber: dbInfo.portNumber,
-				tableNames: selectTableNames
+				tableNames: selectTableNames,
+				serName: dbInfo.serName
 			};
 
 			rootNode.reload(
@@ -2438,7 +2468,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					dbSchema: dbDict.SchemaName,
 					dbUserName: dbInfo.dbUserName,
 					dbPassword: dbInfo.dbPassword,
-					portNumber: dbInfo.portNumber
+					portNumber: dbInfo.portNumber,
+					serName: dbInfo.serName
 				},
 				success: function (response, request) {
 					dbTableNames = Ext.util.JSON.decode(response.responseText);
@@ -2686,6 +2717,249 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
   });
   dataStore.load();
 }
+
+RadioField = Ext.extend(Ext.Panel, {
+	value: null,
+	label: null,
+	inputValue: null,
+	name: null,
+	labelWidth: null,
+	serName: null,
+
+	constructor: function (config) {
+		RadioField.superclass.constructor.call(this);
+		Ext.apply(this, config);
+
+		this.bodyStyle = 'background:#eee';
+
+		this.radioGroup = new Ext.form.RadioGroup({
+			columns: 1,
+			items: [{
+				name: 'sid',
+				inputValue: 0
+			}, {
+				name: 'sid',
+				inputValue: 1
+			}]
+		});
+
+		var that = this;
+		this.field1 = new Ext.form.TextField({
+			disabled: true,
+			allowBlank: false,
+			fieldLabel: 'Sid',
+			value: this.value,
+			labelWidth: 100,
+			anchor: '100%',
+			name: 'field_sid',
+			listeners: {
+				'change': function (field, newValue, oldValue) {
+					that.value = newValue.toUpperCase();
+				}
+			}
+		});
+
+
+		this.field2 = new Ext.form.TextField({
+			disabled: true,
+			allowBlank: false,
+			fieldLabel: 'Service Name',
+			value: this.value,
+			labelWidth: 100,
+			anchor: '100%',
+			name: 'field_serviceName',
+			listeners: {
+				'change': function (field, newValue, oldValue) {
+					that.value = newValue.toUpperCase();
+				}
+			}
+		});
+
+		if (this.serName != '') {
+			if (this.serName == 'SID') {
+				this.field1.disabled = false;
+				this.field2.disabled = true;
+				this.radioGroup.items[0].checked = true;
+			}
+			else {
+				this.field1.disabled = true;
+				this.field2.disabled = false;
+				this.radioGroup.items[1].checked = true;
+			}
+		}
+
+		this.layout = 'column';
+		this.border = false;
+		this.frame = false;
+
+		this.add([{
+			columnWidth: .037,
+			layout: 'form',
+			labelWidth: 1,
+			items: this.radioGroup,
+			border: false,
+			frame: false,
+			bodyStyle: 'background:#eee'
+		}, {
+			columnWidth: .963,
+			layout: 'form',
+			items: [this.field1, this.field2],
+			border: false,
+			frame: false,
+			anchor: '100%',
+			bodyStyle: 'background:#eee'
+		}]);
+
+		this.subscribeEvents();
+	},
+	subscribeEvents: function () {
+		this.radioGroup.on('change', this.toggleState, this);
+	},
+	toggleState: function (e, changed) {
+		if (changed) {
+			var value = this.radioGroup.getValue().inputValue;
+			if (value == 0) {
+				this.field2.disable();
+				this.field2.clearInvalid();
+				this.field1.enable();
+				this.field1.focus();				
+				this.serName = 'SID';
+			}
+			else {
+				this.field1.clearInvalid();
+				this.field1.disable();
+				this.field2.enable();
+				this.field2.focus();				
+				this.serName = 'SERVICE_NAME';
+			}
+		}
+	}
+});
+
+Ext.reg('radiofield', RadioField);
+
+
+function creatRadioField(panel, idLabel, value, serName) {
+	if (panel.items) {
+		var radioPane = panel.items.map[idLabel + 'radioField'];
+		if (radioPane) {
+			radioPane.value = value;
+			radioPane.serName = serName;
+			radioPane.show();
+			return;
+		}
+	}
+
+	var radioField = new RadioField({
+		id: idLabel + 'radioField',
+		value: value,
+		serName: serName
+	});
+
+	panel.add(radioField);
+	panel.doLayout();	
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 function setRelationFields(editPane, node, scopeName, appName) {
   if (editPane && node) {
@@ -3202,6 +3476,26 @@ var addPropertyMapping = function (relationConfigPanel) {
   }
 }
 
+
+
+function showDialog(width, height, title, message, buttons, callback) {
+  var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
+  Ext.Msg.show({
+    title: title,
+    msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
+    buttons: buttons,
+    fn: callback
+  });
+}
+
+Ext.grid.RowSelectionModel.override({
+  getSelectedIndex: function () {
+    return this.grid.store.indexOf(this.selections.itemAt(0));
+  }
+});
+
+
+
 var Base64 = {
 
   // private property
@@ -3309,22 +3603,3 @@ var Base64 = {
   }
 
 }
-
-function showDialog(width, height, title, message, buttons, callback) {
-  var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
-  Ext.Msg.show({
-    title: title,
-    msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
-    buttons: buttons,
-    fn: callback
-  });
-}
-
-Ext.grid.RowSelectionModel.override({
-  getSelectedIndex: function () {
-    return this.grid.store.indexOf(this.selections.itemAt(0));
-  }
-});
-
-
-
