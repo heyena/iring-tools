@@ -2841,11 +2841,8 @@ Ext.reg('radiofield', RadioField);
 function creatRadioField(panel, idLabel, value, serName) {
 	if (panel.items) {
 		var radioPane = panel.items.map[idLabel + 'radioField'];
-		if (radioPane) {
-			radioPane.value = value;
-			radioPane.serName = serName;
-			radioPane.show();
-			return;
+		if (radioPane) {			
+			radioPane.destroy();
 		}
 	}
 
