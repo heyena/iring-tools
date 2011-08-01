@@ -618,7 +618,7 @@ namespace org.iringtools.nhibernate
 		}
 
 		public List<string> GetTableNames(string projectName, string applicationName, string dbProvider,
-			string dbServer, string portNumber, string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword)
+			string dbServer, string portNumber, string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string serName)
 		{
 			List<string> tableNames = new List<string>();
 
@@ -627,7 +627,7 @@ namespace org.iringtools.nhibernate
 				InitializeScope(projectName, applicationName);
 
 				List<DataObject> dataObjects = new List<DataObject>();
-				ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword, portNumber);
+				ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword, portNumber, serName);
 				string sql = GetDatabaseMetaquery(dbProvider, dbName, dbSchema);
 				ISQLQuery query = session.CreateSQLQuery(sql);
 
@@ -648,10 +648,10 @@ namespace org.iringtools.nhibernate
 		}
 
 		public List<DataObject> GetDBObjects(string projectName, string applicationName, string dbProvider, string dbServer, string portNumber,
-			string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames)
+			string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string serName)
 		{
 			List<DataObject> dataObjects = new List<DataObject>();
-			ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword, portNumber);
+			ISession session = GetNHSession(dbProvider, dbServer, dbInstance, dbName, dbSchema, dbUserName, dbPassword, portNumber, serName);
 
 			foreach (string tableName in tableNames.Split(','))
 			{
@@ -726,7 +726,7 @@ namespace org.iringtools.nhibernate
 
 		#region private methods
 		private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema,
-			string dbUserName, string dbPassword, string portNumber)
+			string dbUserName, string dbPassword, string portNumber, string serName)
 		{
 			string connStr;
 
@@ -742,8 +742,8 @@ namespace org.iringtools.nhibernate
 				connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
 					dbServer, dbInstance, dbName, dbUserName, dbPassword);
 			else
-				connStr = String.Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME={2})));User ID={3};Password={4}",
-					dbServer, portNumber, dbInstance, dbUserName, dbPassword);
+				connStr = String.Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}",
+					dbServer, portNumber, serName, dbInstance, dbUserName, dbPassword);
 
 			Dictionary<string, string> properties = new Dictionary<string, string>();
 
