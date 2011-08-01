@@ -79,38 +79,38 @@ namespace org.iringtools.services
     /// <summary>
     /// Gets the dictionary of data objects for the specified scope.
     /// </summary>
-    /// <param name="project">Project name</param>
+    /// <param name="scope">scope name</param>
     /// <param name="app">Application name</param>
     /// <returns>Returns a DataDictionary object.</returns>
     [Description("Gets object definitions of an application.")]
-    [WebGet(UriTemplate = "/{project}/{app}/dictionary")]
-    public DataDictionary GetDictionary(string project, string app)
+    [WebGet(UriTemplate = "/{scope}/{app}/dictionary")]
+    public DataDictionary GetDictionary(string scope, string app)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _adapterProvider.GetDictionary(project, app);
+      return _adapterProvider.GetDictionary(scope, app);
     }
     #endregion
     #region Get
     /// <summary>
-    /// Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.
+    /// Gets an XML scopeion of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.
     /// </summary>
-    /// <param name="project">Project name</param>
+    /// <param name="scope">scope name</param>
     /// <param name="app">Application name</param>
     /// <param name="graph">Graph name</param>
     /// <param name="id">id</param>
     /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
     /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{project}/{app}/{graph}/{id}?format={format}")]
-    public void Get(string project, string app, string graph, string id, string format)
+    [Description("Gets an XML scopeion of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/{id}?format={format}")]
+    public void Get(string scope, string app, string graph, string id, string format)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
 
       try
       {
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, String.Empty, id, format, false);
+        XDocument xDocument = _adapterProvider.GetDataProjection(scope, app, graph, String.Empty, id, format, false);
         FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -120,24 +120,24 @@ namespace org.iringtools.services
     }
 
     /// <summary>
-    /// Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.
+    /// Gets an XML scopeion of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.
     /// </summary>
-    /// <param name="project">Project name</param>
+    /// <param name="scope">scope name</param>
     /// <param name="app">Application name</param>
     /// <param name="graph">Graph name</param>
     /// <param name="graph">Class name</param>
     /// <param name="id">id</param>
     /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
     /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{project}/{app}/{graph}/{clazz}/{id}?format={format}")]
-    public void GetIndividual(string project, string app, string graph, string clazz, string id, string format)
+    [Description("Gets an XML scopeion of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/{clazz}/{id}?format={format}")]
+    public void GetIndividual(string scope, string app, string graph, string clazz, string id, string format)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
 
       try
       {
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, clazz, id, format, false);
+        XDocument xDocument = _adapterProvider.GetDataProjection(scope, app, graph, clazz, id, format, false);
         FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -149,16 +149,16 @@ namespace org.iringtools.services
 
     #region GetListWithFilter
     /// <summary>
-    /// Gets an XML projection of the specified scope and graph.
+    /// Gets an XML scopeion of the specified scope and graph.
     /// </summary>
-    /// <param name="project">Project name</param>
+    /// <param name="scope">scope name</param>
     /// <param name="app">Application name</param>
     /// <param name="graph">Graph name</param>
     /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
     /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{project}/{app}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
-    public void GetListWithFilter(string project, string app, string graph, DataFilter filter, string format, int start, int limit, string indexStyle)
+    [Description("Gets an XML scopeion of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
+    public void GetListWithFilter(string scope, string app, string graph, DataFilter filter, string format, int start, int limit, string indexStyle)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
 
@@ -168,7 +168,7 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, filter, format, start, limit, fullIndex);
+        XDocument xDocument = _adapterProvider.GetDataProjection(scope, app, graph, filter, format, start, limit, fullIndex);
         FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -179,16 +179,16 @@ namespace org.iringtools.services
     #endregion
     #region GetList
     /// <summary>
-    /// Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.
+    /// Gets an XML scopeion of the specified scope and graph in the format (xml, dto, rdf ...) specified.
     /// </summary>
-    /// <param name="project">Project name</param>
+    /// <param name="scope">scope name</param>
     /// <param name="app">Application name</param>
     /// <param name="graph">Graph name</param>
     /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
     /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{project}/{app}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-    public void GetList(string project, string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    [Description("Gets an XML scopeion of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetList(string scope, string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
 
@@ -200,7 +200,7 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
         
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+        XDocument xDocument = _adapterProvider.GetDataProjection(scope, app, graph, format, start, limit, sortOrder, sortBy, fullIndex, parameters);
         FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -212,22 +212,22 @@ namespace org.iringtools.services
 
     #region PostList
     /// <summary>
-    /// Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified.
+    /// Updates the specified scope and graph with an XML scopeion in the format (xml, dto, rdf ...) specified.
     /// </summary>
-    /// <param name="project">Project name</param>
+    /// <param name="scope">scope name</param>
     /// <param name="app">Application name</param>
     /// <param name="graph">Graph name</param>
     /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
     /// <param name="xml">Arbitrary XML</param>
     /// <returns>Returns a Response object</returns>
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{project}/{app}/{graph}?format={format}")]
-    public Response PostList(string project, string app, string graph, string format, XElement xElement)
+    [Description("Updates the specified scope and graph with an XML scopeion in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}?format={format}")]
+    public Response PostList(string scope, string app, string graph, string format, XElement xElement)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+      return _adapterProvider.Post(scope, app, graph, format, new XDocument(xElement));
     }
     #endregion
 
@@ -235,19 +235,19 @@ namespace org.iringtools.services
     /// <summary>
     /// Deletes the specified individual based on scope, graph and id.
     /// </summary>
-    /// <param name="project">Project name</param>
+    /// <param name="scope">scope name</param>
     /// <param name="app">Application name</param>
     /// <param name="graph">Graph name</param>
     /// <param name="id">id</param>
     /// <returns>Returns an arbitrary XML</returns>
     [Description("Deletes a graph in the specified application.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/{project}/{app}/{graph}/{id}")]
-    public Response Delete(string project, string app, string graph, string id)
+    [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
+    public Response Delete(string scope, string app, string graph, string id)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _adapterProvider.DeleteIndividual(project, app, graph, id);
+      return _adapterProvider.DeleteIndividual(scope, app, graph, id);
     }
     #endregion
     #endregion

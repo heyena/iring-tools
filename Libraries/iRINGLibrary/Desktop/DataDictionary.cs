@@ -264,8 +264,6 @@ namespace org.iringtools.library
     [EnumMember]
     @Single,
     [EnumMember]
-    @String,
-    [EnumMember]
-    @TimeSpan,
+    @String
   }
 }

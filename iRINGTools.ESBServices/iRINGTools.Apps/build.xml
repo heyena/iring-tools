@@ -108,7 +108,9 @@
 			<path refid="log4j-1.2.16.userclasspath" />
 			<path refid="jaxb-ri-20100511.userclasspath" />
 		</copy>
-		<jar destfile="dist/iringtools-apps.war" basedir="WebContent" excludes="**/.svn/,WEB-INF/logs/*.*" />
+		<jar destfile="dist/apps.war" basedir="WebContent" excludes="WEB-INF/web.xml,**/.svn/,WEB-INF/logs/*.*" >
+		  <zipfileset dir="WebContent/WEB-INF/" includes="web_default.xml" fullpath="WEB-INF/web.xml"/>
+		</jar>
 		<!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->
 		<delete>
 			<fileset dir="WebContent/WEB-INF/lib" includes="*.jar" />
