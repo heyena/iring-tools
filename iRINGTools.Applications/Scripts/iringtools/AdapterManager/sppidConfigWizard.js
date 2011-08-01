@@ -19,9 +19,24 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
         var userTableNames;
 
 
+        var myStore = new Ext.data.SimpleStore({
+    fields: ['abbr', 'state'],
+    data :  [
+        ['Drawing', 'Drawing'],
+        ['EquipmentOther', 'EquipmentOther'],
+        ['Exchanger', 'Exchanger'],
+        ['Mechanical', 'Mechanical'],
+        ['Vessel', 'Vessel'],
+        ['Class', 'Class'],
+        ['FabricationCategory', 'FabricationCategory'],
+        ['InsulDensity', 'InsulDensity'],
+        ['Name', 'Name']]
+});
+        
+
         var setDsConfigPane = function (editPane) {
             if (editPane) {
-                   
+
 
                 var selectItems = null;
 
@@ -40,78 +55,114 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                         bodyStyle: 'padding:4px'
                     },
 
-                  items: [{
-        // Fieldset in Column 1
-        xtype:'fieldset',
-        columnWidth: 0.5,
-        collapsible: false,
-        autoHeight:true,
-        defaults: {
-            anchor: '-20' // leave room for error icon
-        },
-        defaultType: 'textfield',
-        items :[{
-            fieldLabel: 'Select Commodity',
-                xtype: 'combo',
-                 store: [[1, 'Equipment'], [2, 'Instrument'],[3, 'PipingSegment']]
-            }]
-    },{
-        xtype:'fieldset',
-        autoHeight: true,
-        columnWidth: 0.5,
-        items :[{
-            fieldLabel: 'Select Related Item',
-            xtype: 'combo',
-            store: [[1, 'Parent Tag'], [2, 'Drawing: Date Created'], [3, 'Drawing: Description']]
-            }]
-    },
+                    items: [{
+                        // Fieldset in Column 1
+                        xtype: 'fieldset',
+                        columnWidth: 0.5,
+                        collapsible: false,
+                        autoHeight: true,
+                        defaults: {
+                            anchor: '-20' // leave room for error icon
+                        },
+                        defaultType: 'textfield',
+                        items: [{
+                            fieldLabel: 'Select Commodity',
+                            xtype: 'combo',
+                            emptyText: "Select Commodity...",
+                            store: new Ext.data.SimpleStore({
+                                fields: ['alpha2code', 'name'],
+                                data: [
+              ["Equipment", "Equipment"], ["Instrument", "Instrument"], ["PipingSegment", "PipingSegment"], ["PipingComponent", "PipingComponent"]
+                  ]
+                            }), // end of Ext.data.SimpleStore
+                            displayField: 'name',
+                            valueField: 'alpha2code',
+                            selectOnFocus: true,
+                            mode: 'local',
+                            typeAhead: true,
+                            editable: false,
+                            triggerAction: 'all',
+                            listeners:
+          { select: { fn: function (combo, value) {
+              Ext.getCmp('cityCmb').clearValue();
+              Ext.getCmp('cityCmb').bindStore(myStore);
+             // Ext.getCmp('cityCmb').store.load(mystore);
+
+              // myStore.load({ params: { ddi_country: this.value} });
+
+          }
+          }
+          }
+                        }]
+                    }, {
+                        xtype: 'fieldset',
+                        autoHeight: true,
+                        columnWidth: 0.5,
+                        items: [{
+                            fieldLabel: 'Select Related Item',
+                            xtype: 'combo',
+                            autoHeight: true,
+                            id: 'cityCmb',
+                           // hiddenName: 'ddi_city',
+                            loadingText: "Loading...",
+                            emptyText: "Select Commodity first...",
+                            //store: null,
+                            mode: 'local',
+                            displayField: "abbr",
+                            valueField: "state",
+                           forceSelection: true,
+		                    typeAhead: true,
+		                    triggerAction: 'all',
+		                    lazyRender: true
+                        }]
+                    },
     {
-    xtype:'fieldset',
-     autoHeight: true,
-     columnWidth: 1,
-     border: true,
-       style: 'padding:3px; align:center',
-          items :[{
-				   
-				                        xtype: 'itemselector',
-				                        hideLabel: true,
-				                        bodyStyle: 'background:#eee',
-				                        frame: true,
-				                        name: 'tableSelector',
-				                        imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
-				                        multiselects: [{
-			                            width: 300,
-			                            height: 370,
-			                            //store: availItems,
-			                            store: new Ext.data.ArrayStore({
-		                                id: 0,
-		                                fields: [
+        xtype: 'fieldset',
+        autoHeight: true,
+        columnWidth: 1,
+        border: true,
+        style: 'padding:3px; align:center',
+        items: [{
+
+            xtype: 'itemselector',
+            hideLabel: true,
+            bodyStyle: 'background:#eee',
+            frame: true,
+            name: 'tableSelector',
+            imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
+            multiselects: [{
+                width: 300,
+                height: 370,
+                //store: availItems,
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: [
 								            'tableValue',
 								            'tableName'
 								        ],
-		                                data: [[1, 'item3'], [2, 'item4']]
-				                            }),
-			                            displayField: 'tableName',
-			                            valueField: 'tableValue',
-			                            border: 0
-				                        },{
-			                            width: 300,
-			                            height: 370,
-			                            store: new Ext.data.ArrayStore({
-			                                id: 0,
-			                                fields: [
+                    data: [[1, 'item3'], [2, 'item4']]
+                }),
+                displayField: 'tableName',
+                valueField: 'tableValue',
+                border: 0
+            }, {
+                width: 300,
+                height: 370,
+                store: new Ext.data.ArrayStore({
+                    id: 0,
+                    fields: [
 								            'tableValue',
 								            'tableName'
 								        ],
-			                                data: [[1, 'item1'], [2, 'item2']]
-			                            }),
-			                            displayField: 'tableName',
-			                            valueField: 'tableValue',
-			                            border: 0
-			                        }]
-			                    }] 
-                             }],
-                       tbar: new Ext.Toolbar({
+                    data: [[1, 'item1'], [2, 'item2']]
+                }),
+                displayField: 'tableName',
+                valueField: 'tableValue',
+                border: 0
+            }]
+        }]
+    }],
+                    tbar: new Ext.Toolbar({
                         items: [{
                             xtype: 'tbspacer',
                             width: 4
@@ -120,7 +171,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                             icon: 'Content/img/16x16/document-properties.png',
                             text: 'Apply',
                             tooltip: 'Apply'
-                           }, {
+                        }, {
                             xtype: 'tbspacer',
                             width: 4
                         }, {
@@ -129,7 +180,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                             text: 'Reset',
                             tooltip: 'Reset to the latest applied changes',
                             handler: function (f) {
-                               // setDsConfigFields(dsConfigPane.getForm());
+                                // setDsConfigFields(dsConfigPane.getForm());
                             }
                         }]
                     })
@@ -195,23 +246,23 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                             text: 'Save',
                             tooltip: 'Save the commodities tree to the back-end server',
                             formBind: true,
-                            handler:null
-                            }]
-                            })
-                          }]
-                        },
+                            handler: null
+                        }]
+                    })
+                }]
+            },
                              {
-                xtype: 'panel',
-                name: 'editor-panel',
-                border: 1,
-                frame: false,
-                id: scopeName + '.' + appName + '.editor-panel',
-                region: 'center',
-                layout: 'card'
-            }]
+                                 xtype: 'panel',
+                                 name: 'editor-panel',
+                                 border: 1,
+                                 frame: false,
+                                 id: scopeName + '.' + appName + '.editor-panel',
+                                 region: 'center',
+                                 layout: 'card'
+                             }]
         });
 
-      
+
 
         var showTree = function (dbObjectsTree) {
             var treeLoader = dbObjectsTree.getLoader();
