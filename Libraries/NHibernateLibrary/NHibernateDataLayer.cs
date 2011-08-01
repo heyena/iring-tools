@@ -240,47 +240,54 @@ namespace org.iringtools.adapter.datalayer
           if (dataObjectDef == null)
             return null;
 
-          string[] keyList = null;
-          int identifierIndex = 1;
-          foreach (string identifier in identifiers)
+          if (dataObjectDef.keyProperties.Count == 1)
           {
-            string[] idParts = identifier.Split(dataObjectDef.keyDelimeter.ToCharArray()[0]);
-
-            keyList = new string[idParts.Count()];
-
-            int partIndex = 0;
-            foreach (string part in idParts)
+            queryString.Append(" where Id in ('" + String.Join("','", identifiers.ToArray()) + "')");
+          }
+          else if (dataObjectDef.keyProperties.Count > 1)
+          {
+            string[] keyList = null;
+            int identifierIndex = 1;
+            foreach (string identifier in identifiers)
             {
-              if (identifierIndex == identifiers.Count())
+              string[] idParts = identifier.Split(dataObjectDef.keyDelimeter.ToCharArray()[0]);
+
+              keyList = new string[idParts.Count()];
+
+              int partIndex = 0;
+              foreach (string part in idParts)
               {
-                keyList[partIndex] += part;
+                if (identifierIndex == identifiers.Count())
+                {
+                  keyList[partIndex] += part;
+                }
+                else
+                {
+                  keyList[partIndex] += part + ", ";
+                }
+
+                partIndex++;
+              }
+
+              identifierIndex++;
+            }
+
+            int propertyIndex = 0;
+            foreach (KeyProperty keyProperty in dataObjectDef.keyProperties)
+            {
+              string propertyValues = keyList[propertyIndex];
+
+              if (propertyIndex == 0)
+              {
+                queryString.Append(" where " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
               }
               else
               {
-                keyList[partIndex] += part + ", ";
+                queryString.Append(" and " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
               }
 
-              partIndex++;
+              propertyIndex++;
             }
-
-            identifierIndex++;
-          }
-
-          int propertyIndex = 0;
-          foreach (KeyProperty keyProperty in dataObjectDef.keyProperties)
-          {
-            string propertyValues = keyList[propertyIndex];
-
-            if (propertyIndex == 0)
-            {
-              queryString.Append(" where " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
-            }
-            else
-            {
-              queryString.Append(" and " + keyProperty.keyPropertyName + " in ('" + propertyValues + "')");
-            }
-
-            propertyIndex++;
           }
         }
 
