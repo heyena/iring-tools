@@ -43,7 +43,7 @@
         style="font-family: Arial, Helvetica, Sans-Serif">Adapter Manager</font></span>
     </span>
     <span style="float:right;margin:18px 36px 1px 0"><a
-        href="http://iringug.org/wiki/index.php?title=ESBUsersGuide" target="_blank"  class="headerLnkBlack">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a 
+        href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank"  class="headerLnkBlack">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a 
         id="about-link" href="#" class="headerLnkBlack">About</a>
     </span>
   </div>    
