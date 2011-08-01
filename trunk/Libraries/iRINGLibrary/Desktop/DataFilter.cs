@@ -46,6 +46,8 @@ namespace org.iringtools.library
     {
       Expressions = new List<Expression>();
       OrderExpressions = new List<OrderExpression>();
+
+      DateTimeFormat = "YYYY-MM-DD HH24:MI:SS.FF TZH:TZM')";
     }
 
     [DataMember(Name = "expressions", Order = 0, EmitDefaultValue = false)]
@@ -53,6 +55,8 @@ namespace org.iringtools.library
 
     [DataMember(Name = "orderExpressions", Order = 1, EmitDefaultValue = false)]
     public List<OrderExpression> OrderExpressions { get; set; }
+
+    public string DateTimeFormat { get; set; } 
 
     public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
     {
@@ -960,15 +964,6 @@ namespace org.iringtools.library
 #else
           return String.Compare(str1, str2, StringComparison.InvariantCultureIgnoreCase);
 #endif
-
-        case DataType.TimeSpan:
-          TimeSpan span1 = TimeSpan.MinValue;
-          TimeSpan.TryParse(str1, out span1);
-
-          TimeSpan span2 = TimeSpan.MinValue;
-          TimeSpan.TryParse(str2, out span2);
-
-          return TimeSpan.Compare(span1, span2);
 
         default:
           throw new Exception("Invalid property datatype.");

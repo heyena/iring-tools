@@ -27,52 +27,6 @@
     <param-name>AuthorizationEnabled</param-name>
     <param-value>false</param-value>
   </context-param>
-  <!--
- <filter>
-    <filter-name>sso</filter-name>
-    <filter-class>org.iringtools.security.OAuthFilter</filter-class>
-    <init-param>
-      <param-name>federationServiceUri</param-name>
-      <param-value>https://sso.mypsn.com</param-value>
-    </init-param>
-    <init-param>
-      <param-name>idpId</param-name>
-      <param-value>PSN2-SAML2-Entity</param-value>
-    </init-param>
-    <init-param>
-      <param-name>spFederationPath</param-name>
-      <param-value>/sp/startSSO.ping</param-value>
-    </init-param>
-    <init-param>
-      <param-name>authenticationServiceUri</param-name>
-      <param-value>https://sso.mypsn.com/ext/ref/pickup?REF=</param-value>
-    </init-param>
-    <init-param>
-      <param-name>pingInstanceId</param-name>
-      <param-value>iRingTools</param-value>
-    </init-param>
-    <init-param>
-      <param-name>pingUserName</param-name>
-      <param-value>iRingToolsUser</param-value>
-    </init-param>
-    <init-param>
-      <param-name>pingPassword</param-name>
-      <param-value>st93tRle7rlef56eQoAx3UTlAp</param-value>
-    </init-param>
-    <init-param>
-      <param-name>tokenServiceUri</param-name>
-      <param-value>https://api.mypsn.com/tokenexchange/accesstoken/create?key=</param-value>
-    </init-param>
-    <init-param>
-      <param-name>applicationKey</param-name>
-      <param-value>ede6c15add1696425ee2e48f4f9f8820</param-value>
-    </init-param>
-  </filter>
-	<filter-mapping>
-		<filter-name>sso</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-  -->
   <filter>
     <filter-name>struts2</filter-name>
     <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>

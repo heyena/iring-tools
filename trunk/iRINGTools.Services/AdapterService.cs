@@ -113,14 +113,14 @@ namespace org.iringtools.services
     /// <summary>
     /// Gets the Ninject binding configuration for the specified scope.
     /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
+    /// <param name="scope">Project name</param>
+    /// <param name="app">Application name</param>
     /// <returns>Returns an arbitrary XML.</returns>
     [Description("Gets the Ninject binding configuration for the specified scope.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/binding")]
-    public XElement GetBinding(string projectName, string applicationName)
+    [WebGet(UriTemplate = "/{scope}/{app}/binding")]
+    public XElement GetBinding(string scope, string app)
     {
-      return _adapterProvider.GetBinding(projectName, applicationName);
+      return _adapterProvider.GetBinding(scope, app);
     }
     #endregion
 
@@ -128,15 +128,15 @@ namespace org.iringtools.services
     /// <summary>
     /// Replaces the Ninject binding configuration for the specified scope.
     /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
+    /// <param name="scope">Project name</param>
+    /// <param name="app">Application name</param>
     /// <param name="binding">An arbitrary XML</param>
     /// <returns>Returns a Response object.</returns>
     [Description("Replaces the Ninject binding configuration for the specified scope and returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/binding")]
-    public Response UpdateBinding(string projectName, string applicationName, XElement binding)
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/binding")]
+    public Response UpdateBinding(string scope, string app, XElement binding)
     {
-      return _adapterProvider.UpdateBinding(projectName, applicationName, binding);
+      return _adapterProvider.UpdateBinding(scope, app, binding);
     }
     #endregion
 
@@ -144,17 +144,17 @@ namespace org.iringtools.services
     /// <summary>
     /// Gets the dictionary of data objects for the specified scope.
     /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
+    /// <param name="scope">Project name</param>
+    /// <param name="app">Application name</param>
     /// <returns>Returns a DataDictionary object.</returns>
     [Description("Gets the dictionary of data objects for the specified scope.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/dictionary")]
-    public DataDictionary GetDictionary(string projectName, string applicationName)
+    [WebGet(UriTemplate = "/{scope}/{app}/dictionary")]
+    public DataDictionary GetDictionary(string scope, string app)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _adapterProvider.GetDictionary(projectName, applicationName);
+      return _adapterProvider.GetDictionary(scope, app);
     }
     #endregion
 
@@ -162,17 +162,17 @@ namespace org.iringtools.services
     /// <summary>
     /// Gets the iRING mapping for the specified scope.
     /// </summary>
-    /// <param name="projectName">Project name</param>
-    /// <param name="applicationName">Application name</param>
+    /// <param name="scope">Project name</param>
+    /// <param name="app">Application name</param>
     /// <returns>Returns a Mapping object.</returns>
     [Description("Gets the iRING mapping for the specified scope.")]
-    [WebGet(UriTemplate = "/{projectName}/{applicationName}/mapping")]
-    public Mapping GetMapping(string projectName, string applicationName)
+    [WebGet(UriTemplate = "/{scope}/{app}/mapping")]
+    public Mapping GetMapping(string scope, string app)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _adapterProvider.GetMapping(projectName, applicationName);
+      return _adapterProvider.GetMapping(scope, app);
     }
     #endregion
 
@@ -183,10 +183,10 @@ namespace org.iringtools.services
     /// <param name="mapping">An arbitrary XML</param>
     /// <returns>Returns a Response object.</returns>
     [Description("Replaces the iRING mapping for the specified scope and retuns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectName}/{applicationName}/mapping")]
-    public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/mapping")]
+    public Response UpdateMapping(string scope, string app, XElement mappingXml)
     {
-      return _adapterProvider.UpdateMapping(projectName, applicationName, mappingXml);
+      return _adapterProvider.UpdateMapping(scope, app, mappingXml);
     }
     #endregion
 
@@ -204,17 +204,17 @@ namespace org.iringtools.services
     #endregion
        
     [Description("Configure the selected data layer in the service.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{projectname}/{applicationName}/configure")]
-    public Response Configure(String projectName, String applicationName)
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/configure")]
+    public Response Configure(String scope, String app)
     {
-      return _adapterProvider.Configure(projectName, applicationName, HttpContext.Current.Request);
+      return _adapterProvider.Configure(scope, app, HttpContext.Current.Request);
     }
 
     [Description("Get configuration for a selected data layer in the service.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/{projectname}/{applicationName}/configuration")]
-    public XElement GetConfiguration(String projectName, String applicationName)
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/configuration")]
+    public XElement GetConfiguration(String scope, String app)
     {
-      return _adapterProvider.GetConfiguration(projectName, applicationName);
+      return _adapterProvider.GetConfiguration(scope, app);
     }
 
     #endregion
