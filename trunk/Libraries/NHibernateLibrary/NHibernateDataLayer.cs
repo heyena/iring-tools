@@ -26,7 +26,7 @@ namespace org.iringtools.adapter.datalayer
     private string _dataDictionaryPath = String.Empty;
     private string _databaseDictionaryPath = string.Empty;
     private DataDictionary _dataDictionary;
-    private DatabaseDictionary _databaseDictionary;
+    private DatabaseDictionary _dbDictionary;
     private IDictionary _keyRing = null;
     private ISessionFactory _sessionFactory;
     private string _hibernateConfigPath = string.Empty;
@@ -73,7 +73,7 @@ namespace org.iringtools.adapter.datalayer
       );
 
       if (File.Exists(_databaseDictionaryPath))
-        _databaseDictionary = Utility.Read<DatabaseDictionary>(_databaseDictionaryPath);
+        _dbDictionary = Utility.Read<DatabaseDictionary>(_databaseDictionaryPath);
 
       if (File.Exists(_hibernateConfigPath) && File.Exists(hibernateMappingPath))
         _sessionFactory = new Configuration()
@@ -148,9 +148,9 @@ namespace org.iringtools.adapter.datalayer
 
       try
       {
-        if (_databaseDictionary.IdentityConfiguration != null)
+        if (_dbDictionary.IdentityConfiguration != null)
         {
-          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+          IdentityProperties identityProperties = _dbDictionary.IdentityConfiguration[objectType];
 
           if (identityProperties.UseIdentityFilter)
           {
@@ -164,7 +164,7 @@ namespace org.iringtools.adapter.datalayer
         if (filter != null && filter.Expressions.Count > 0)
         {
           filter.OrderExpressions.Clear();
-          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
+          string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 
@@ -191,9 +191,9 @@ namespace org.iringtools.adapter.datalayer
 
       try
       {
-        if (_databaseDictionary.IdentityConfiguration != null)
+        if (_dbDictionary.IdentityConfiguration != null)
         {
-          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+          IdentityProperties identityProperties = _dbDictionary.IdentityConfiguration[objectType];
           if (identityProperties.UseIdentityFilter)
           {
             filter = FilterByIdentity(objectType, filter, identityProperties);
@@ -204,7 +204,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter != null && filter.Expressions.Count > 0)
         {
-          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
+          string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 
@@ -233,7 +233,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (identifiers != null && identifiers.Count > 0)
         {
-          DataObject dataObjectDef = (from DataObject o in _databaseDictionary.dataObjects
+          DataObject dataObjectDef = (from DataObject o in _dbDictionary.dataObjects
                                    where o.objectName == objectType
                                    select o).FirstOrDefault();
 
@@ -334,9 +334,9 @@ namespace org.iringtools.adapter.datalayer
 
       try
       {
-        if (_databaseDictionary.IdentityConfiguration != null)
+        if (_dbDictionary.IdentityConfiguration != null)
         {
-          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+          IdentityProperties identityProperties = _dbDictionary.IdentityConfiguration[objectType];
           if (identityProperties.UseIdentityFilter)
           {
             filter = FilterByIdentity(objectType, filter, identityProperties);
@@ -349,7 +349,7 @@ namespace org.iringtools.adapter.datalayer
         if (filter != null && ((filter.Expressions != null && filter.Expressions.Count > 0) ||
           (filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)))
         {
-          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
+          string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 
@@ -389,7 +389,7 @@ namespace org.iringtools.adapter.datalayer
 
     private DataFilter FilterByIdentity(string objectType, DataFilter filter, IdentityProperties identityProperties)
     {
-      DataObject dataObject = _databaseDictionary.dataObjects.Find(d => d.objectName == objectType);
+      DataObject dataObject = _dbDictionary.dataObjects.Find(d => d.objectName == objectType);
       DataProperty dataProperty = dataObject.dataProperties.Find(p => p.columnName == identityProperties.IdentityProperty);
       if (dataProperty != null)
       {
@@ -552,9 +552,9 @@ namespace org.iringtools.adapter.datalayer
 
       try
       {
-        if (_databaseDictionary.IdentityConfiguration != null)
+        if (_dbDictionary.IdentityConfiguration != null)
         {
-          IdentityProperties identityProperties = _databaseDictionary.IdentityConfiguration[objectType];
+          IdentityProperties identityProperties = _dbDictionary.IdentityConfiguration[objectType];
           if (identityProperties.UseIdentityFilter)
           {
             filter = FilterByIdentity(objectType, filter, identityProperties);
@@ -567,7 +567,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter.Expressions.Count > 0)
         {
-          string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectType, null);
+          string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 
@@ -674,8 +674,8 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         //_databaseDictionary = Utility.DeserializeDataContract<DatabaseDictionary>(configuration.Nodes().First().ToString());
-        _databaseDictionary = Utility.DeserializeFromXElement<DatabaseDictionary>(configuration);
-        Utility.Write<DatabaseDictionary>(_databaseDictionary, _hibernateConfigPath, true);
+        _dbDictionary = Utility.DeserializeFromXElement<DatabaseDictionary>(configuration);
+        Utility.Write<DatabaseDictionary>(_dbDictionary, _hibernateConfigPath, true);
         _response = Generate(_projectName, _applicationName);
         _response.Level = StatusLevel.Success;
       }
