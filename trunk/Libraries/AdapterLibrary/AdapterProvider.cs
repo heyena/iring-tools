@@ -45,6 +45,7 @@ using org.iringtools.utility;
 using StaticDust.Configuration;
 using org.iringtools.adapter.projection;
 
+
 namespace org.iringtools.adapter
 {
   public class AdapterProvider : BaseProvider
@@ -1221,6 +1222,7 @@ namespace org.iringtools.adapter
         //string binaryPath = @"file:///" + _settings["BaseDirectoryPath"] + "bin";        
 
         System.Type ti = typeof(IDataLayer);
+				int i = 0;
         foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
         {
           //if (!asm.IsDynamic && Path.GetDirectoryName(asm.CodeBase) == binaryPath)
@@ -1232,6 +1234,8 @@ namespace org.iringtools.adapter
                 bool configurable = t.BaseType.Equals(typeof(BaseConfigurableDataLayer));
                 string name = asm.FullName.Split(',')[0];
                 string assembly = string.Format("{0}, {1}", t.FullName, name);
+								_logger.Error("assembly=" + assembly + "  " + i);
+								i++;
                 DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
                 dataLayerAssemblies.Add(dataLayer);
               }
