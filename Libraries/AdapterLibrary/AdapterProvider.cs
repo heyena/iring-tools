@@ -1216,7 +1216,7 @@ namespace org.iringtools.adapter
     public DataLayers GetDataLayers()
     {
       DataLayers dataLayerAssemblies = new DataLayers();
-			int i = 0;
+			
       try
       {
         //string binaryPath = @"file:///" + _settings["BaseDirectoryPath"] + "bin";        
@@ -1233,9 +1233,7 @@ namespace org.iringtools.adapter
               {
                 bool configurable = t.BaseType.Equals(typeof(BaseConfigurableDataLayer));
                 string name = asm.FullName.Split(',')[0];
-                string assembly = string.Format("{0}, {1}", t.FullName, name);
-								_logger.Error("assembly=" + assembly + "  " + i);
-								i++;
+                string assembly = string.Format("{0}, {1}", t.FullName, name);								
                 DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
                 dataLayerAssemblies.Add(dataLayer);
               }
@@ -1251,9 +1249,7 @@ namespace org.iringtools.adapter
           Assembly = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", 
           Name = "NHibernateLibrary", 
           Configurable = true
-        };
-				_logger.Error("assembly=" + dataLayer.Assembly + "  " + i);
-				i++;
+        };				
 
 				bool found = false;
 				foreach (DataLayer datalayer in dataLayerAssemblies)
