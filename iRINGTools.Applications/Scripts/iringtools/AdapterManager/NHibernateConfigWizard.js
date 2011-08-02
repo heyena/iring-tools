@@ -803,7 +803,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 								if (dsConfigPane) {
 									var serviceNamePane = dsConfigPane.items.items[10];
-									serName = serviceNamePane.items.items[0].serName;
+									if (serviceNamePane.items.items[0])
+										serName = serviceNamePane.items.items[0].serName;
 								}	
 								else {
 									serName = dbInfo.serName;
