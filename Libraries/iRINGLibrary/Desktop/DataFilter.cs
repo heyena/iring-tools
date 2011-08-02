@@ -57,7 +57,18 @@ namespace org.iringtools.library
     public List<OrderExpression> OrderExpressions { get; set; }
 
     [DataMember(Name = "dateTimeFormat", Order = 2, EmitDefaultValue = false)]
-    public string DateTimeFormat { get; set; } 
+    public string DateTimeFormat { get; set; }
+
+    [Obsolete("Use ToSqlWhereClause(DatabaseDictionary dbDictionary, string objectType, string objectAlias) instead")]
+    public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
+    {
+      DatabaseDictionary dbDictionary = (DatabaseDictionary)dataDictionary;
+      dbDictionary.Provider = String.Empty;
+#if !SILVERLIGHT
+      dbDictionary.dataObjects = Utility.CloneDataContractObject<List<DataObject>>(dataDictionary.dataObjects);
+#endif
+      return ToSqlWhereClause(dbDictionary, objectType, objectAlias);
+    }
 
     public string ToSqlWhereClause(DatabaseDictionary dbDictionary, string objectType, string objectAlias)
     {

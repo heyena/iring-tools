@@ -252,6 +252,8 @@ namespace org.iringtools.library
     [EnumMember]
     @DateTime,
     [EnumMember]
+    @TimeSpan,
+    [EnumMember]
     @Decimal,
     [EnumMember]
     @Double,
