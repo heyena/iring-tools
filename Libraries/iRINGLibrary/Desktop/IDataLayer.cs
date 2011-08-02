@@ -72,6 +72,6 @@ namespace org.iringtools.library
     XElement GetConfiguration();
   }
 
-  [CollectionDataContract(Name = "authroziedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]
+  [CollectionDataContract(Name = "authorizedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]
   public class AuthorizedUsers : List<string> { }
 }

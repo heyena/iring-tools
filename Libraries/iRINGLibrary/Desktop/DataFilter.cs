@@ -40,14 +40,14 @@ namespace org.iringtools.library
   public class DataFilter
   {
     private List<Expression> _filterBuffer = null;
+    private String _provider = String.Empty;
     private DataObject _dataObjectDefinition = null;
 
     public DataFilter()
     {
       Expressions = new List<Expression>();
       OrderExpressions = new List<OrderExpression>();
-
-      DateTimeFormat = "YYYY-MM-DD HH24:MI:SS.FF TZH:TZM')";
+      DateTimeFormat = "YYYY-MM-DD HH24:MI:SS.FF TZH:TZM";
     }
 
     [DataMember(Name = "expressions", Order = 0, EmitDefaultValue = false)]
@@ -56,13 +56,15 @@ namespace org.iringtools.library
     [DataMember(Name = "orderExpressions", Order = 1, EmitDefaultValue = false)]
     public List<OrderExpression> OrderExpressions { get; set; }
 
+    [DataMember(Name = "dateTimeFormat", Order = 2, EmitDefaultValue = false)]
     public string DateTimeFormat { get; set; } 
 
-    public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
+    public string ToSqlWhereClause(DatabaseDictionary dbDictionary, string objectType, string objectAlias)
     {
+      _provider = dbDictionary.Provider;
       DataObject dataObject = null;
 #if !SILVERLIGHT
-      dataObject = dataDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+      dataObject = dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
 #endif
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
       else objectAlias = String.Empty;
@@ -137,6 +139,35 @@ namespace org.iringtools.library
       }
     }
 
+    private bool IsNumeric(DataType dataType)
+    {
+      return 
+        dataType == DataType.Byte ||
+        dataType == DataType.Decimal ||
+        dataType == DataType.Int16 ||
+        dataType == DataType.Int32 ||
+        dataType == DataType.Int64 ||
+        dataType == DataType.Single ||
+        dataType == DataType.Double;
+    }
+
+    private string ToOracleDateTimeExpression(Values values)
+    {
+      StringBuilder strBuilder = new StringBuilder();
+
+      foreach (string value in values)
+      {
+        if (strBuilder.Length > 0)
+        {
+          strBuilder.Append(", ");
+        }
+
+        strBuilder.Append(String.Format("TO_TIMESTAMP_TZ('{0}','{1}')", value, DateTimeFormat));
+      }
+
+      return strBuilder.ToString();
+    }
+
     private string ResolveSqlExpression(DataObject dataObject, Expression expression, string objectAlias)
     {
       string propertyName = expression.PropertyName;
@@ -148,7 +179,7 @@ namespace org.iringtools.library
       string columnName = dataProperty.columnName;
       string qualColumnName = String.Empty;
 
-      if (expression.IsCaseSensitive)
+      if (expression.IsCaseSensitive || IsNumeric(dataProperty.dataType) || dataProperty.dataType == DataType.DateTime)
       {
         qualColumnName = objectAlias + columnName;
       }
@@ -157,7 +188,7 @@ namespace org.iringtools.library
         qualColumnName = "UPPER(" + objectAlias + columnName + ")";
       }
 
-      bool isString = propertyType == DataType.String;
+      bool isString = (propertyType == DataType.String || propertyType == DataType.Char);
       StringBuilder sqlExpression = new StringBuilder();
 
       if (expression.LogicalOperator != LogicalOperator.None)
@@ -233,6 +264,20 @@ namespace org.iringtools.library
 
             sqlExpression.Append(qualColumnName + " IN ('" + value.Replace("'", "''") + "')");
           }
+          else if (dataProperty.dataType == DataType.DateTime)
+          {
+            if (_provider.ToUpper().StartsWith("ORACLE"))
+            {
+              //e.g. dateTimeCol IN (TO_TIMESTAMP_TZ('<date string 1>', '<format>'), TO_TIMESTAMP_TZ('<date string 2>', '<format>'))
+              sqlExpression.Append(qualColumnName + " IN (" + ToOracleDateTimeExpression(expression.Values) + ")");
+            }
+            else
+            {
+              //e.g. dateTimeCol IN ('<date string 1>', '<date string 2>')
+              value = String.Join("','", expression.Values.ToArray()).ToUpper();
+              sqlExpression.Append(qualColumnName + " IN ('" + value + "')");
+            }
+          }
           else
           {
             sqlExpression.Append(qualColumnName + " IN (" + String.Join(",", expression.Values.ToArray()) + ")");
@@ -252,6 +297,19 @@ namespace org.iringtools.library
             }
 
             sqlExpression.Append(qualColumnName + "='" + value.Replace("'", "''") + "'");
+          }
+          else if (dataProperty.dataType == DataType.DateTime)
+          {
+            if (_provider.ToUpper().StartsWith("ORACLE"))
+            {
+              //e.g. dateTimeCol = TO_TIMESTAMP_TZ('<date string>', '<format>')
+              sqlExpression.Append(qualColumnName + "=" + ToOracleDateTimeExpression(expression.Values));
+            }
+            else
+            {
+              //e.g. dateTimeCol = '<date string>'
+              sqlExpression.Append(qualColumnName + "='" + expression.Values.FirstOrDefault() + "'");
+            }
           }
           else
           {
@@ -273,6 +331,19 @@ namespace org.iringtools.library
 
             sqlExpression.Append(qualColumnName + "<>'" + value.Replace("'", "''") + "'");
           }
+          else if (dataProperty.dataType == DataType.DateTime)
+          {
+            if (_provider.ToUpper().StartsWith("ORACLE"))
+            {
+              //e.g. dateTimeCol <> TO_TIMESTAMP_TZ('<date string>', '<format>')
+              sqlExpression.Append(qualColumnName + "<>" + ToOracleDateTimeExpression(expression.Values));
+            }
+            else
+            {
+              //e.g. dateTimeCol <> '<date string>'
+              sqlExpression.Append(qualColumnName + "<>'" + expression.Values.FirstOrDefault() + "'");
+            }
+          }
           else
           {
             sqlExpression.Append(qualColumnName + "<>" + expression.Values.FirstOrDefault() + "");
@@ -292,6 +363,19 @@ namespace org.iringtools.library
             }
 
             sqlExpression.Append(qualColumnName + ">'" + value.Replace("'", "''") + "'");
+          }
+          else if (dataProperty.dataType == DataType.DateTime)
+          {
+            if (_provider.ToUpper().StartsWith("ORACLE"))
+            {
+              //e.g. dateTimeCol > TO_TIMESTAMP_TZ('<date string>', '<format>')
+              sqlExpression.Append(qualColumnName + ">" + ToOracleDateTimeExpression(expression.Values));
+            }
+            else
+            {
+              //e.g. dateTimeCol > '<date string>'
+              sqlExpression.Append(qualColumnName + ">'" + expression.Values.FirstOrDefault() + "'");
+            }
           }
           else
           {
@@ -313,6 +397,19 @@ namespace org.iringtools.library
 
             sqlExpression.Append(qualColumnName + ">='" + value.Replace("'", "''") + "'");
           }
+          else if (dataProperty.dataType == DataType.DateTime)
+          {
+            if (_provider.ToUpper().StartsWith("ORACLE"))
+            {
+              //e.g. dateTimeCol >= TO_TIMESTAMP_TZ('<date string>', '<format>')
+              sqlExpression.Append(qualColumnName + ">=" + ToOracleDateTimeExpression(expression.Values));
+            }
+            else
+            {
+              //e.g. dateTimeCol >= '<date string>'
+              sqlExpression.Append(qualColumnName + ">='" + expression.Values.FirstOrDefault() + "'");
+            }
+          }
           else
           {
             sqlExpression.Append(qualColumnName + ">=" + expression.Values.FirstOrDefault());
@@ -333,6 +430,19 @@ namespace org.iringtools.library
 
             sqlExpression.Append(qualColumnName + "<'" + value.Replace("'", "''") + "'");
           }
+          else if (dataProperty.dataType == DataType.DateTime)
+          {
+            if (_provider.ToUpper().StartsWith("ORACLE"))
+            {
+              //e.g. dateTimeCol < TO_TIMESTAMP_TZ('<date string>', '<format>')
+              sqlExpression.Append(qualColumnName + "<" + ToOracleDateTimeExpression(expression.Values));
+            }
+            else
+            {
+              //e.g. dateTimeCol < '<date string>'
+              sqlExpression.Append(qualColumnName + "<'" + expression.Values.FirstOrDefault() + "'");
+            }
+          }
           else
           {
             sqlExpression.Append(qualColumnName + "<" + expression.Values.FirstOrDefault());
@@ -352,6 +462,19 @@ namespace org.iringtools.library
             }
 
             sqlExpression.Append(qualColumnName + "<='" + value.Replace("'", "''") + "'");
+          }
+          else if (dataProperty.dataType == DataType.DateTime)
+          {
+            if (_provider.ToUpper().StartsWith("ORACLE"))
+            {
+              //e.g. dateTimeCol <= TO_TIMESTAMP_TZ('<date string>', '<format>')
+              sqlExpression.Append(qualColumnName + "<=" + ToOracleDateTimeExpression(expression.Values));
+            }
+            else
+            {
+              //e.g. dateTimeCol <= '<date string>'
+              sqlExpression.Append(qualColumnName + "<='" + expression.Values.FirstOrDefault() + "'");
+            }
           }
           else
           {
@@ -611,7 +734,7 @@ namespace org.iringtools.library
 
       DataType propertyType = dataProperty.dataType;
 
-      bool isString = propertyType == DataType.String;
+      bool isString = (propertyType == DataType.String || propertyType == DataType.Char);
       bool isBoolean = propertyType == DataType.Boolean;
 
       switch (expression.RelationalOperator)

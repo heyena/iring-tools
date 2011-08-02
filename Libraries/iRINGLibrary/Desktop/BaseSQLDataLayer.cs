@@ -13,7 +13,7 @@ namespace org.iringtools.library
   public abstract class BaseSQLDataLayer : BaseDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseSQLDataLayer));
-    protected DataDictionary _dataDictionary = null;
+    protected DatabaseDictionary _dbDictionary = null;
     protected string _whereClauseAlias = String.Empty;
      
     #region BaseSQLDataLayer methods
@@ -26,6 +26,8 @@ namespace org.iringtools.library
     }
 
     // get number of rows with (optional) filter
+    public abstract DatabaseDictionary GetDatabaseDictionary();
+
     public abstract long GetCount(string tableName, string whereClause);
 
     // get list of identifiers with (optional) filter
@@ -56,14 +58,19 @@ namespace org.iringtools.library
     #endregion
 
     #region IDataLayer implementation methods
-    public override long GetCount(string objectTypeName, DataFilter filter)
+    public override DataDictionary GetDictionary()
+    {
+      throw new NotImplementedException();
+    }
+
+    public override long GetCount(string objectType, DataFilter filter)
     {
       try
       {
         InitializeDataDictionary();
 
-        string tableName = GetTableName(objectTypeName);
-        string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, null);
+        string tableName = GetTableName(objectType);
+        string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
 
         return GetCount(tableName, whereClause);
       }
@@ -74,14 +81,14 @@ namespace org.iringtools.library
       }
     }
 
-    public override IList<string> GetIdentifiers(string objectTypeName, DataFilter filter)
+    public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
       try
       {
         InitializeDataDictionary();
         
-        string tableName = GetTableName(objectTypeName);
-        string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
+        string tableName = GetTableName(objectType);
+        string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, _whereClauseAlias);
 
         return GetIdentifiers(tableName, whereClause);
       }
@@ -92,14 +99,14 @@ namespace org.iringtools.library
       }
     }
 
-    public override IList<IDataObject> Create(string objectTypeName, IList<string> identifiers)
+    public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
-      string tableName = GetTableName(objectTypeName);
+      string tableName = GetTableName(objectType);
 
       try
       {
         DataTable dataTable = CreateDataTable(tableName, identifiers);
-        return ToDataObjects(dataTable, objectTypeName);
+        return ToDataObjects(dataTable, objectType);
       }
       catch (Exception ex)
       {
@@ -108,14 +115,14 @@ namespace org.iringtools.library
       }
     }
 
-    public override IList<IDataObject> Get(string objectTypeName, IList<string> identifiers)
+    public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
-      string tableName = GetTableName(objectTypeName);
+      string tableName = GetTableName(objectType);
 
       try
       {
         DataTable dataTable = GetDataTable(tableName, identifiers);
-        return ToDataObjects(dataTable, objectTypeName);
+        return ToDataObjects(dataTable, objectType);
       }
       catch (Exception ex)
       {
@@ -124,40 +131,40 @@ namespace org.iringtools.library
       }
     }
 
-    public override IList<IDataObject> Get(string objectTypeName, DataFilter filter, int pageSize, int startIndex)
+    public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       try
       {
         InitializeDataDictionary();
 
-        string tableName = GetTableName(objectTypeName);
-        string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
+        string tableName = GetTableName(objectType);
+        string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, _whereClauseAlias);
 
         DataTable dataTable = GetDataTable(tableName, whereClause, startIndex, pageSize);
-        return ToDataObjects(dataTable, objectTypeName);
+        return ToDataObjects(dataTable, objectType);
       }
       catch (Exception ex)
       {
-        _logger.Error("Error deleting data table: " + ex);
+        _logger.Error("Error get data table: " + ex);
         throw ex;
       }
     }
 
-    public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectTypeName)
+    public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
     {
       IList<IDataObject> relatedDataObjects = null;
-      DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectTypeName);
+      DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
       DataTable dataTable = new DataTable(relatedObjectDefinition.tableName);
       
       try
       {
         DataRow dataRow = CreateDataRow(dataTable, dataObject, relatedObjectDefinition);
         DataTable relatedDataTable = GetRelatedDataTable(dataRow, relatedObjectDefinition.tableName);
-        relatedDataObjects = ToDataObjects(relatedDataTable, relatedObjectTypeName);
+        relatedDataObjects = ToDataObjects(relatedDataTable, relatedObjectType);
       }
       catch (Exception ex)
       {
-        _logger.Error("Error deleting data table: " + ex);
+        _logger.Error("Error getting related objects: " + ex);
         throw ex;
       }
 
@@ -178,14 +185,14 @@ namespace org.iringtools.library
       }
     }
 
-    public override Response Delete(string objectTypeName, DataFilter filter)
+    public override Response Delete(string objectType, DataFilter filter)
     {
       try
       {
         InitializeDataDictionary();
 
-        string tableName = GetTableName(objectTypeName);
-        string whereClause = filter.ToSqlWhereClause(_dataDictionary, objectTypeName, _whereClauseAlias);
+        string tableName = GetTableName(objectType);
+        string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, _whereClauseAlias);
 
         return DeleteDataTable(tableName, whereClause);
       }
@@ -196,9 +203,9 @@ namespace org.iringtools.library
       }
     }
 
-    public override Response Delete(string objectTypeName, IList<string> identifiers)
+    public override Response Delete(string objectType, IList<string> identifiers)
     {
-      string tableName = GetTableName(objectTypeName);
+      string tableName = GetTableName(objectType);
 
       try
       {
@@ -211,29 +218,29 @@ namespace org.iringtools.library
       }
     }
 
-    public virtual Response Refresh(string objectTypeName)
+    public virtual Response Refresh(string objectType)
     {
       try
       {
-        string tableName = GetTableName(objectTypeName);
+        string tableName = GetTableName(objectType);
         return RefreshDataTable(tableName);
       }
       catch (Exception ex)
       {
-        _logger.Error("Error refreshing object type: [" + objectTypeName + "].");
+        _logger.Error("Error refreshing data table: [" + objectType + "].");
         throw ex;
       }
     }
     #endregion
 
     #region helper methods
-    public string GetTableName(string objectTypeName)
+    public string GetTableName(string objectType)
     {
       InitializeDataDictionary();
 
-      foreach (DataObject dataObject in _dataDictionary.dataObjects)
+      foreach (DataObject dataObject in _dbDictionary.dataObjects)
       {
-        if (dataObject.objectName.ToLower() == objectTypeName.ToLower())
+        if (dataObject.objectName.ToLower() == objectType.ToLower())
         {
           return dataObject.tableName;
         }
@@ -242,13 +249,13 @@ namespace org.iringtools.library
       return null;
     }
 
-    public DataObject GetObjectDefinition(string objectTypeName)
+    public DataObject GetObjectDefinition(string objectType)
     {
       InitializeDataDictionary();
 
-      foreach (DataObject dataObject in _dataDictionary.dataObjects)
+      foreach (DataObject dataObject in _dbDictionary.dataObjects)
       {
-        if (dataObject.objectName.ToLower() == objectTypeName.ToLower())
+        if (dataObject.objectName.ToLower() == objectType.ToLower())
         {
           return dataObject;
         }
@@ -298,10 +305,10 @@ namespace org.iringtools.library
       return dataObject;
     }
 
-    protected IList<IDataObject> ToDataObjects(DataTable dataTable, string objectTypeName)
+    protected IList<IDataObject> ToDataObjects(DataTable dataTable, string objectType)
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
-      DataObject objectDefinition = GetObjectDefinition(objectTypeName);
+      DataObject objectDefinition = GetObjectDefinition(objectType);
       
       if (objectDefinition != null && dataTable.Rows != null)
       {
@@ -408,19 +415,19 @@ namespace org.iringtools.library
       {
         foreach (IDataObject dataObject in dataObjects)
         {
-          string objectTypeName = dataObject.GetType().Name;
+          string objectType = dataObject.GetType().Name;
 
-          if (objectTypeName == typeof(GenericDataObject).Name)
+          if (objectType == typeof(GenericDataObject).Name)
           {
-            objectTypeName = ((GenericDataObject)dataObject).ObjectType;
+            objectType = ((GenericDataObject)dataObject).ObjectType;
           }
 
-          DataObject objectDefinition = GetObjectDefinition(objectTypeName);
+          DataObject objectDefinition = GetObjectDefinition(objectType);
           DataTable dataTable = null;
 
-          if (dataTableDictionary.ContainsKey(objectTypeName))
+          if (dataTableDictionary.ContainsKey(objectType))
           {
-            dataTable = dataTableDictionary[objectTypeName];
+            dataTable = dataTableDictionary[objectType];
           }
           else
           {
@@ -442,7 +449,7 @@ namespace org.iringtools.library
               dataTable.Columns.Add(dataColumn);
             }
 
-            dataTableDictionary[objectTypeName] = dataTable;
+            dataTableDictionary[objectType] = dataTable;
           }
 
           try
@@ -467,9 +474,9 @@ namespace org.iringtools.library
 
     private void InitializeDataDictionary()
     {
-      if (_dataDictionary == null)
+      if (_dbDictionary == null)
       {
-        _dataDictionary = GetDictionary();
+        _dbDictionary = GetDatabaseDictionary();
       }
     }
     #endregion
