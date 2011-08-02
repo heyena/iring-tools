@@ -154,10 +154,10 @@ namespace org.iringtools.library
     {
       IList<IDataObject> relatedDataObjects = null;
       DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
-      DataTable dataTable = new DataTable(relatedObjectDefinition.tableName);
       
       try
       {
+        DataTable dataTable = NewDataTable(relatedObjectDefinition);
         DataRow dataRow = CreateDataRow(dataTable, dataObject, relatedObjectDefinition);
         DataTable relatedDataTable = GetRelatedDataTable(dataRow, relatedObjectDefinition.tableName);
         relatedDataObjects = ToDataObjects(relatedDataTable, relatedObjectType);
@@ -407,6 +407,29 @@ namespace org.iringtools.library
       return dataRow;
     }
 
+    protected DataTable NewDataTable(DataObject objectDefinition)
+    {
+      DataTable dataTable = new DataTable(objectDefinition.tableName);
+
+      foreach (DataProperty objectProperty in objectDefinition.dataProperties)
+      {
+        DataColumn dataColumn = new DataColumn()
+        {
+          ColumnName = objectProperty.columnName,
+          DataType = Type.GetType("System." + objectProperty.dataType.ToString())
+        };
+
+        if (objectProperty.dataType == DataType.String)
+        {
+          dataColumn.MaxLength = objectProperty.dataLength;
+        }
+
+        dataTable.Columns.Add(dataColumn);
+      }
+
+      return dataTable;
+    }
+
     protected IList<DataTable> ToDataTables(IList<IDataObject> dataObjects)
     {
       Dictionary<string, DataTable> dataTableDictionary = new Dictionary<string, DataTable>();
@@ -431,24 +454,7 @@ namespace org.iringtools.library
           }
           else
           {
-            dataTable = new DataTable(objectDefinition.tableName);
-
-            foreach (DataProperty objectProperty in objectDefinition.dataProperties)
-            {
-              DataColumn dataColumn = new DataColumn()
-              {
-                ColumnName = objectProperty.columnName,
-                DataType = Type.GetType("System." + objectProperty.dataType.ToString())
-              };
-
-              if (objectProperty.dataType == DataType.String)
-              {
-                dataColumn.MaxLength = objectProperty.dataLength;
-              }
-
-              dataTable.Columns.Add(dataColumn);
-            }
-
+            dataTable = NewDataTable(objectDefinition);
             dataTableDictionary[objectType] = dataTable;
           }
 
