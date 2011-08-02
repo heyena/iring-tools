@@ -1254,7 +1254,16 @@ namespace org.iringtools.adapter
         };
 				_logger.Error("assembly=" + dataLayer.Assembly + "  " + i);
 				i++;
-        dataLayerAssemblies.Add(dataLayer);
+
+				bool found = false;
+				foreach (DataLayer datalayer in dataLayerAssemblies)
+				{
+					if (datalayer.Name.ToUpper() == "NHIBERNATELIBRARY")
+						found = true;
+				}
+
+				if (found == false)
+					dataLayerAssemblies.Add(dataLayer);
       }
 
       return dataLayerAssemblies;
