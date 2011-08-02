@@ -112,6 +112,7 @@ namespace org.iringtools.adapter.projection
     {
       string uri = _appNamespace.ToString() + "/";
 
+      int keyCounter = 0;
       foreach (KeyProperty keyProperty in dataObject.keyProperties)
       {
         DataProperty dataProperty = dataObject.dataProperties.Find(dp => dp.propertyName == keyProperty.keyPropertyName);
@@ -121,8 +122,12 @@ namespace org.iringtools.adapter.projection
         {
           XElement propertyElement = new XElement(_appNamespace + Utility.TitleCase(dataProperty.propertyName), value);
           parentElement.Add(propertyElement);
+          keyCounter++;
 
-          uri += value;
+          if (keyCounter == dataObject.keyProperties.Count)
+            uri += value;
+          else
+            uri += value + dataObject.keyDelimeter;
         }
       }
 
