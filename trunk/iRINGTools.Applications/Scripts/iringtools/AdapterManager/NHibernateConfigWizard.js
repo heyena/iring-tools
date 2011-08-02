@@ -587,7 +587,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								var servieName = '';
 								var serName = '';
 								if (dbProvider.indexOf('ORACLE') > -1) {
-									dbServer.setValue(host.getValue());									
+									dbServer.setValue(host.getValue());
 									dbName.setValue(dbSchema.getValue());
 									servieName = serviceNamePane.items.items[0].value;
 									serName = serviceNamePane.items.items[0].serName;
@@ -796,7 +796,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 								var serName = '';
 								var serviceName = '';
-								
+
 								if (dbObjectsTree.disabled) {
 									dbObjectsTree.enable();
 								}
@@ -805,9 +805,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var serviceNamePane = dsConfigPane.items.items[10];
 									if (serviceNamePane.items.items[0])
 										serName = serviceNamePane.items.items[0].serName;
-								}	
+								}
 								else {
-									serName = dbInfo.serName;
+									if (dbInfo.serName)
+										serName = dbInfo.serName;
 								}
 
 								var treeLoader = dbObjectsTree.getLoader();
@@ -1879,8 +1880,18 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				dbServer = (dbServer == 'localhost' ? '.' : dbServer);
 				var upProvider = treeProperty.provider.toUpperCase();
 				var serviceNamePane = dsConfigPane.items.items[10];
-				var serviceName = serviceNamePane.items.items[0].value;
-				var serName = serviceNamePane.items.items[0].serName;
+				var serviceName = '';
+				var serName = '';
+				if (serviceNamePane.items.items[0]) {
+					serviceName = serviceNamePane.items.items[0].value;
+					serName = serviceNamePane.items.items[0].serName;
+				}
+				else if (dbInfo) {					
+					if (dbInfo.dbInstance)
+						serviceName = dbInfo.dbInstance;
+					if (dbInfo.serName)
+						serName = dbInfo.serName;					
+				}
 
 				if (upProvider.indexOf('MSSQL') > -1) {
 					var dbInstance = dsConfigForm.findField('dbInstance').getValue();
