@@ -56,7 +56,7 @@
     <Reference Include="Ciloci.Flee">
       <HintPath>..\lib\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
     </Reference>
-    <Reference Include="iRINGLibrary, Version=2.1.0.2980, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="iRINGLibrary, Version=2.1.0.3107, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
@@ -78,7 +78,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UtilityLibrary, Version=2.1.0.2980, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UtilityLibrary, Version=2.1.0.3107, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>

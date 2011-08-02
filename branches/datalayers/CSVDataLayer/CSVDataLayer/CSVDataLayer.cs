@@ -16,19 +16,16 @@ namespace iRINGTools.SDK.CSVDataLayer
 {
   public class CSVDataLayer : BaseDataLayer, IDataLayer2
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(CSVDataLayer));
     private List<IDataObject> _dataObjects = null;
 
     //NOTE: This is required to deliver settings to constructor.
     //NOTE: Other objects could be requested on an as needed basis.
     [Inject]
-    public CSVDataLayer(AdapterSettings settings)
-    {
-      _settings = settings;
-    }
+    public CSVDataLayer(AdapterSettings settings) : base(settings) {}
 
     public override DataDictionary GetDictionary()
     {
-
       DataDictionary dataDictionary = new DataDictionary();
 
       LoadConfiguration();
