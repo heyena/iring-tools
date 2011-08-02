@@ -1216,13 +1216,13 @@ namespace org.iringtools.adapter
     public DataLayers GetDataLayers()
     {
       DataLayers dataLayerAssemblies = new DataLayers();
-
+			int i = 0;
       try
       {
         //string binaryPath = @"file:///" + _settings["BaseDirectoryPath"] + "bin";        
 
         System.Type ti = typeof(IDataLayer);
-				int i = 0;
+				
         foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
         {
           //if (!asm.IsDynamic && Path.GetDirectoryName(asm.CodeBase) == binaryPath)
@@ -1252,6 +1252,8 @@ namespace org.iringtools.adapter
           Name = "NHibernateLibrary", 
           Configurable = true
         };
+				_logger.Error("assembly=" + dataLayer.Assembly + "  " + i);
+				i++;
         dataLayerAssemblies.Add(dataLayer);
       }
 
