@@ -448,6 +448,9 @@ namespace org.iringtools.adapter
               "sortBy", 
               "sortOrder",
               "indexStyle",
+              "_dc",
+              "page",
+              "callback",
             };
 
             if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
