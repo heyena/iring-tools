@@ -248,7 +248,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 						serviceName.show();
 						creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
-
+						dsConfigPane.doLayout();
+						
 						portNumber.setValue(dbInfo.portNumber);
 						portNumber.show();
 					}
@@ -265,7 +266,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						dbName.show();
 						dbProvider.setValue(dbDict.Provider);
 						host.setValue(dbInfo.dbServer);
-						creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
 						portNumber.setValue(dbInfo.portNumber);
 						userName.setValue(dbInfo.dbUserName);
 						password.setValue(dbInfo.dbPassword);
@@ -559,10 +559,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						xtype: 'panel',
 						id: scopeName + '.' + appName + '.servicename',
 						name: 'serviceName',
-						hidden: true,
 						layout: 'fit',
-						monitorResize: true,
-						anchor: '100% -1',
+						anchor: '100% - 1',
 						border: false,
 						frame: false
 					}],
@@ -646,8 +644,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					})
 				});
 
-				if (dbInfo)
+				if (dbInfo) {
 					setDsConfigFields(dsConfigPane);
+				}
 				editPane.add(dsConfigPane);
 				var panelIndex = editPane.items.indexOf(dsConfigPane);
 				editPane.getLayout().setActiveItem(panelIndex);
@@ -986,10 +985,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (editPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + node.id]) {
 					var relationCreatePane = editPane.items.map[scopeName + '.' + appName + '.relationCreateForm.' + node.id];
 					if (relationCreatePane) {
-						//relationConfigPane.destroy();
-						var panelIndex = editPane.items.indexOf(relationCreatePane);
-						editPane.getLayout().setActiveItem(panelIndex);
-						return;
+						relationCreatePane.destroy();
+						//var panelIndex = editPane.items.indexOf(relationCreatePane);
+						//editPane.getLayout().setActiveItem(panelIndex);
+						//return;
 					}
 				}
 
@@ -1886,11 +1885,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					serviceName = serviceNamePane.items.items[0].value;
 					serName = serviceNamePane.items.items[0].serName;
 				}
-				else if (dbInfo) {					
+				else if (dbInfo) {
 					if (dbInfo.dbInstance)
 						serviceName = dbInfo.dbInstance;
 					if (dbInfo.serName)
-						serName = dbInfo.serName;					
+						serName = dbInfo.serName;
 				}
 
 				if (upProvider.indexOf('MSSQL') > -1) {
@@ -2733,10 +2732,6 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 
 RadioField = Ext.extend(Ext.Panel, {
 	value: null,
-	label: null,
-	inputValue: null,
-	name: null,
-	labelWidth: null,
 	serName: null,
 
 	constructor: function (config) {
@@ -2750,11 +2745,11 @@ RadioField = Ext.extend(Ext.Panel, {
 			items: [{
 				name: 'sid',
 				inputValue: 0,
-				style: 'margin-top: 4px;margin-right: 5px;'
+				style: 'margin-top: 4px'
 			}, {
 				name: 'sid',
 				inputValue: 1,
-				style: 'margin-top: 4px;margin-right: 5px;'
+				style: 'margin-top: 4px'
 			}]
 		});
 
@@ -2764,8 +2759,6 @@ RadioField = Ext.extend(Ext.Panel, {
 			allowBlank: false,
 			fieldLabel: 'Sid',
 			value: this.value,
-			labelWidth: 100,
-			anchor: '100%',
 			name: 'field_sid',
 			listeners: {
 				'change': function (field, newValue, oldValue) {
@@ -2779,8 +2772,6 @@ RadioField = Ext.extend(Ext.Panel, {
 			allowBlank: false,
 			fieldLabel: 'Service Name',
 			value: this.value,
-			labelWidth: 100,
-			anchor: '100%',
 			name: 'field_serviceName',
 			listeners: {
 				'change': function (field, newValue, oldValue) {
@@ -2793,10 +2784,12 @@ RadioField = Ext.extend(Ext.Panel, {
 			if (this.serName == 'SID') {
 				this.field1.disabled = false;
 				this.field2.disabled = true;
+				this.field2.value = '';
 				this.radioGroup.items[0].checked = true;
 			}
 			else {
 				this.field1.disabled = true;
+				this.field1.value = '';
 				this.field2.disabled = false;
 				this.radioGroup.items[1].checked = true;
 			}
@@ -2809,7 +2802,7 @@ RadioField = Ext.extend(Ext.Panel, {
 		this.add([{
 			width: 40,
 			layout: 'form',
-			labelWidth: 1,
+			labelWidth: 0.1,
 			items: this.radioGroup,
 			border: false,
 			frame: false,
@@ -2817,10 +2810,10 @@ RadioField = Ext.extend(Ext.Panel, {
 		}, {
 			columnWidth: 1,
 			layout: 'form',
+			defaults: { anchor: '100%', allowBlank: false, labelWidth: 100 },
 			items: [this.field1, this.field2],
 			border: false,
 			frame: false,
-			anchor: '100%',
 			bodyStyle: 'background:#eee'
 		}]);
 
@@ -2836,14 +2829,14 @@ RadioField = Ext.extend(Ext.Panel, {
 				this.field2.disable();
 				this.field2.clearInvalid();
 				this.field1.enable();
-				this.field1.focus();				
+				this.field1.focus();
 				this.serName = 'SID';
 			}
 			else {
 				this.field1.clearInvalid();
 				this.field1.disable();
 				this.field2.enable();
-				this.field2.focus();				
+				this.field2.focus();
 				this.serName = 'SERVICE_NAME';
 			}
 		}
@@ -3030,13 +3023,13 @@ function setRelationFields(editPane, node, scopeName, appName) {
     		xtype: 'textfield',
     		name: 'relationshipName',
     		fieldLabel: 'Relationship Name',
-    		value: node.text.toUpperCase(),
-    		allowBlank: false,
+    		value: node.text,
+    		allowBlank: false/*,
     		listeners: {
     			'change': function (field, newValue, oldValue) {
-    				node.text = newValue.toUpperCase();
+    				node.text = newValue;
     			}
-    		}
+    		}*/
     	}, {
     		xtype: 'textfield',
     		name: 'objectName',
@@ -3201,6 +3194,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
     				else
     					var attribute = node.attributes;
 
+    				var newNodeName = relationConfigPanel.getForm().findField('relationshipName').getValue();
+    				node.setText(newNodeName);
     				var dataRelationPane = relationConfigPanel.items.items[7];
     				var gridLabel = scopeName + '.' + appName + '.' + node.id;
     				var gridPane = dataRelationPane.items.map[gridLabel];
@@ -3255,6 +3250,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
     			text: 'Reset',
     			tooltip: 'Reset to the latest applied changes',
     			handler: function () {
+    				var newNodeName = relationConfigPanel.getForm().findField('relationshipName');
+    				newNodeName.setValue(node.text);
     				var propertyNameCombo = relationConfigPanel.getForm().findField('propertyName');
     				propertyNameCombo.setValue('');
     				propertyNameCombo.clearInvalid();
@@ -3265,7 +3262,11 @@ function setRelationFields(editPane, node, scopeName, appName) {
     				var properMap = new Array();
     				var dataRelationPane = relationConfigPanel.items.items[7];
 
-    				var attribute = node.attributes;
+						if (node.attributes.propertyMap)
+							var attribute = node.attributes;
+						else if (node.attributes.attributes.propertyMap)
+							var attribute = node.attributes.attributes;
+
     				if (attribute) {
     					for (i = 0; i < attribute.propertyMap.length; i++)
     						properMap.push([attribute.propertyMap.dataPropertyName, attribute.propertyMap.relatedPropertyName]);
