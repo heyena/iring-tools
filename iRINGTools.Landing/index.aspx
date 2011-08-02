@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="cache-control" content="no-cache">
     <link rel="stylesheet" type="text/css" href="css/iring-tools.css">
-    <title>iRINGTools Version 2.01.00</title>
+    <title>iRINGTools Adapter</title>
   </head>
   <body>
     <div class="banner">
@@ -33,31 +33,15 @@
       <table width="100%">
         <tr valign=top>
           <td>
-            <h2>iRINGTools Applications</h2>
+            <h2>iRINGTools Adapter Tools</h2>
             <ul>
               <li>
-                <a href="http://localhost:8080/apps/xchmgr">
-                ExchangeManager</a>
-              </li>
-              <li>
-                <a href="http://localhost:8080/apps/fedmgr">
-                FederationManager</a>
-              </li>
-                <li>
                 <a href="Apps/AdapterManager">
                 AdapterManager</a>
               </li>
               <li>
                 <a href="Apps/RefDataEditor">
                 Reference Data Editor</a>
-              </li>
-              <li>
-                <a href="Apps/AppEditor">
-                Application Editor</a>
-              </li>
-              <li>
-                <a href="Apps/MappingEditor">
-                Mapping Editor</a>
               </li>
               <li>
                 <a href="services/facade/sparql/query">
@@ -70,7 +54,7 @@
             </ul>
           </td>
           <td>
-            <h2>iRINGTools Services</h2>
+            <h2>iRINGTools Adapter Services</h2>
             <ul>
               <li>
                 <a href="services/refdata/help">
