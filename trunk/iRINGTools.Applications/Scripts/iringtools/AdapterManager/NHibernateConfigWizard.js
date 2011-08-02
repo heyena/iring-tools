@@ -561,6 +561,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						name: 'serviceName',
 						hidden: true,
 						layout: 'fit',
+						monitorResize: true,
+						anchor: '100% -1',
 						border: false,
 						frame: false
 					}],
@@ -2735,10 +2737,12 @@ RadioField = Ext.extend(Ext.Panel, {
 			columns: 1,
 			items: [{
 				name: 'sid',
-				inputValue: 0
+				inputValue: 0,
+				style: 'margin-top: 4px;margin-right: 5px;'
 			}, {
 				name: 'sid',
-				inputValue: 1
+				inputValue: 1,
+				style: 'margin-top: 4px;margin-right: 5px;'
 			}]
 		});
 
@@ -2757,7 +2761,6 @@ RadioField = Ext.extend(Ext.Panel, {
 				}
 			}
 		});
-
 
 		this.field2 = new Ext.form.TextField({
 			disabled: true,
@@ -2792,7 +2795,7 @@ RadioField = Ext.extend(Ext.Panel, {
 		this.frame = false;
 
 		this.add([{
-			columnWidth: .037,
+			width: 40,
 			layout: 'form',
 			labelWidth: 1,
 			items: this.radioGroup,
@@ -2800,7 +2803,7 @@ RadioField = Ext.extend(Ext.Panel, {
 			frame: false,
 			bodyStyle: 'background:#eee'
 		}, {
-			columnWidth: .963,
+			columnWidth: 1,
 			layout: 'form',
 			items: [this.field1, this.field2],
 			border: false,
@@ -2837,7 +2840,6 @@ RadioField = Ext.extend(Ext.Panel, {
 
 Ext.reg('radiofield', RadioField);
 
-
 function creatRadioField(panel, idLabel, value, serName) {
 	if (panel.items) {
 		var radioPane = panel.items.map[idLabel + 'radioField'];
@@ -2855,107 +2857,6 @@ function creatRadioField(panel, idLabel, value, serName) {
 	panel.add(radioField);
 	panel.doLayout();	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 function setRelationFields(editPane, node, scopeName, appName) {
   if (editPane && node) {
