@@ -247,8 +247,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						host.show();
 
 						serviceName.show();
-						creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
-						dsConfigPane.doLayout();
+						creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);						
 						
 						portNumber.setValue(dbInfo.portNumber);
 						portNumber.show();
@@ -323,7 +322,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				});
 
 				var dsConfigPane = new Ext.FormPanel({
-					labelWidth: 140,
+					labelWidth: 150,
 					id: scopeName + '.' + appName + '.dsconfigPane',
 					frame: false,
 					border: false,
@@ -2784,6 +2783,7 @@ RadioField = Ext.extend(Ext.Panel, {
 			if (this.serName == 'SID') {
 				this.field1.disabled = false;
 				this.field2.disabled = true;
+				
 				this.field2.value = '';
 				this.radioGroup.items[0].checked = true;
 			}
@@ -2810,7 +2810,8 @@ RadioField = Ext.extend(Ext.Panel, {
 		}, {
 			columnWidth: 1,
 			layout: 'form',
-			defaults: { anchor: '100%', allowBlank: false, labelWidth: 100 },
+			labelWidth: 110,
+			defaults: { anchor: '100%', allowBlank: false },
 			items: [this.field1, this.field2],
 			border: false,
 			frame: false,
