@@ -7,6 +7,7 @@ using System.Data;
 using log4net;
 using System.Xml.Linq;
 using org.iringtools.adapter;
+using System.Globalization;
 
 namespace org.iringtools.library
 {
@@ -370,7 +371,11 @@ namespace org.iringtools.library
                   dataRow[objectProperty.columnName] = Convert.ToInt64(value);
                   break;
                 case DataType.Decimal:
-                  dataRow[objectProperty.columnName] = Convert.ToDecimal(value);
+                  CultureInfo culture = new CultureInfo("en-US");
+                  String format = "YYYY-MM-DD HH24:MI:SS.FF TZH:TZM";
+                  DateTime dtValue = 
+                    DateTime.ParseExact((String)value, format, culture.DateTimeFormat, DateTimeStyles.AdjustToUniversal);
+                  dataRow[objectProperty.columnName] = dtValue;
                   break;
                 case DataType.Single:
                   dataRow[objectProperty.columnName] = Convert.ToSingle(value);
