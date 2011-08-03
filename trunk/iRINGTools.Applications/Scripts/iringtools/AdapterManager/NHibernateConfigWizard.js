@@ -992,7 +992,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				}
 
 				var relationCreateFormPanel = new Ext.FormPanel({
-					labelWidth: 155,
+					labelWidth: 160,
 					id: scopeName + '.' + appName + '.relationCreateForm.' + node.id,
 					border: false,
 					autoScroll: false,
@@ -2555,176 +2555,188 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
   }
 
   dataStore.on('load', function () {
-    if (dataGridPanel.items) {
-      var gridtab = dataGridPanel.items.map[gridlabel];
-      if (gridtab) {
-        gridtab.destroy();
-      }
-    }
+  	if (dataGridPanel.items) {
+  		var gridtab = dataGridPanel.items.map[gridlabel];
+  		if (gridtab) {
+  			gridtab.destroy();
+  		}
+  	}
 
-    var dataRelationGridPane = new Ext.grid.GridPanel({
-      id: gridlabel,
-      store: dataStore,
-      stripeRows: true,
-      autoScroll: true,
-      frame: false,
-      border: false,
-      cm: colModel,
-      selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
-      enableColLock: true,
-      viewConfig: { forceFit: true },
-      tbar: new Ext.Toolbar({
-        items: [{
-          xtype: 'tbspacer',
-          width: 4
-        }, {
-          xtype: 'tbbutton',
-          icon: 'Content/img/list-add.png',
-          text: 'Add',
-          tooltip: 'Add',
-          handler: function () {
-            var tab = Ext.getCmp('content-panel');
-            var rp = tab.items.map[configLabel];
-            var dataObjectsPane = rp.items.map[dbObjLabel];
-            var editPane = dataObjectsPane.items.items[1];
-            var form = editPane.items.map[formLabel].getForm();
-            var mydata = dataStore.data.items;
-            if (callId == 0) {
-              var relationName = form.findField('relationName').getValue().replace(/^\s*/, "").replace(/\s*$/, "");
-              if (relationName == '') {
-                showDialog(400, 100, 'Warning', msg, Ext.Msg.OK, null);
-                return;
-              }
-              for (var i = 0; i < mydata.length; i++)
-                if (mydata[i].data.relationName.toLowerCase() == relationName.toLowerCase()) {
-                  var message = relationName + ' already exits.';
-                  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-                  return;
-                }
-              var relationRecord = Ext.data.Record.create([
+  	var dataRelationGridPane = new Ext.grid.GridPanel({
+  		id: gridlabel,
+  		store: dataStore,
+  		stripeRows: true,
+  		autoScroll: true,
+  		frame: false,
+  		border: false,
+  		cm: colModel,
+  		selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
+  		enableColLock: true,
+  		viewConfig: { forceFit: true },
+  		tbar: new Ext.Toolbar({
+  			items: [{
+  				xtype: 'tbspacer',
+  				width: 4
+  			}, {
+  				xtype: 'tbbutton',
+  				icon: 'Content/img/list-add.png',
+  				text: 'Add',
+  				tooltip: 'Add',
+  				handler: function () {
+  					var tab = Ext.getCmp('content-panel');
+  					var rp = tab.items.map[configLabel];
+  					var dataObjectsPane = rp.items.map[dbObjLabel];
+  					var editPane = dataObjectsPane.items.items[1];
+  					var form = editPane.items.map[formLabel].getForm();
+  					var mydata = dataStore.data.items;
+  					var dbObjectsTree;
+  					var node;
+
+  					if (callId == 0) {
+  						dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+  						node = dbObjectsTree.getSelectionModel().getSelectedNode();
+  						var rootNode = dbObjectsTree.getRootNode();
+  						var numberOfRelation = rootNode.childNodes.length - 1;
+
+  						if (mydata.length >= numberOfRelation) {
+  							var message = 'Data object "' + node.parentNode.text + '" cannot have more than ' + numberOfRelation + ' relationship';
+  							showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+  							return;
+  						}
+
+  						var relationName = form.findField('relationName').getValue().replace(/^\s*/, "").replace(/\s*$/, "");
+  						if (relationName == '') {
+  							showDialog(400, 100, 'Warning', msg, Ext.Msg.OK, null);
+  							return;
+  						}
+  						for (var i = 0; i < mydata.length; i++)
+  							if (mydata[i].data.relationName.toLowerCase() == relationName.toLowerCase()) {
+  								var message = relationName + ' already exits.';
+  								showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+  								return;
+  							}
+  						var relationRecord = Ext.data.Record.create([
               { name: "relationName" }
             ]);
 
-              var newRelationRecord = new relationRecord({
-                relationName: relationName
-              });
-            }
-            else {
-              var propertyNameCombo = form.findField('propertyName');
-              var mapPropertyNameCombo = form.findField('mapPropertyName');
-              if (!propertyNameCombo.getValue() || !mapPropertyNameCombo.getValue())
-                return;
+  						var newRelationRecord = new relationRecord({
+  							relationName: relationName
+  						});
+  					}
+  					else {
+  						var propertyNameCombo = form.findField('propertyName');
+  						var mapPropertyNameCombo = form.findField('mapPropertyName');
+  						if (!propertyNameCombo.getValue() || !mapPropertyNameCombo.getValue())
+  							return;
 
-              var propertyName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
-              var mapPropertyName = mapPropertyNameCombo.store.getAt(mapPropertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
-              if (propertyName == "" || mapPropertyName == "") {
-                showDialog(400, 100, 'Warning', msg, Ext.Msg.OK, null);
-                return;
-              }
+  						var propertyName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
+  						var mapPropertyName = mapPropertyNameCombo.store.getAt(mapPropertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
+  						if (propertyName == "" || mapPropertyName == "") {
+  							showDialog(400, 100, 'Warning', msg, Ext.Msg.OK, null);
+  							return;
+  						}
 
-              for (var i = 0; i < mydata.length; i++)
-                if (mydata[i].data.property == propertyName && mydata[i].data.relatedProperty == mapPropertyName) {
-                  var message = 'The pair of ' + propertyName + ' and ' + mapPropertyName + ' cannot be added because the pair already exits.';
-                  showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-                  return;
-                }
+  						for (var i = 0; i < mydata.length; i++)
+  							if (mydata[i].data.property == propertyName && mydata[i].data.relatedProperty == mapPropertyName) {
+  								var message = 'The pair of ' + propertyName + ' and ' + mapPropertyName + ' cannot be added because the pair already exits.';
+  								showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+  								return;
+  							}
 
-              var propertyMapRecord = Ext.data.Record.create([
+  						var propertyMapRecord = Ext.data.Record.create([
                 { name: "property" },
                 { name: "relatedProperty" },
               ]);
 
-              var newRelationRecord = new propertyMapRecord({
-                property: propertyName,
-                relatedProperty: mapPropertyName
-              });
-            }
-            dataStore.add(newRelationRecord);
-            dataStore.commitChanges();
+  						var newRelationRecord = new propertyMapRecord({
+  							property: propertyName,
+  							relatedProperty: mapPropertyName
+  						});
+  					}
+  					dataStore.add(newRelationRecord);
+  					dataStore.commitChanges();
 
-            if (callId == 0) {
-              var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-              var node = dbObjectsTree.getSelectionModel().getSelectedNode();
-              var exitNode = false;
+  					if (callId == 0) {
+  						var exitNode = false;
 
-							for (var j = 0; j < node.childNodes.length; j++) {
-								exitNode = false;
-								for (var i = 0; i < mydata.length; i++) {
-									newNodeText = mydata[i].data.relationName;
-									if (node.childNodes[j].text.toLowerCase() == newNodeText.toLowerCase()) {
-										exitNode = true;
-										break;
-									}
-								}
-								if (exitNode == false) {
-									var deleteNode = node.childNodes[j];
-									node.childNodes.splice(j, 1);
-									j--;
-									node.removeChild(deleteNode);
-								}
-							}
+  						for (var j = 0; j < node.childNodes.length; j++) {
+  							exitNode = false;
+  							for (var i = 0; i < mydata.length; i++) {
+  								newNodeText = mydata[i].data.relationName;
+  								if (node.childNodes[j].text.toLowerCase() == newNodeText.toLowerCase()) {
+  									exitNode = true;
+  									break;
+  								}
+  							}
+  							if (exitNode == false) {
+  								var deleteNode = node.childNodes[j];
+  								node.childNodes.splice(j, 1);
+  								j--;
+  								node.removeChild(deleteNode);
+  							}
+  						}
 
-							var nodeChildren = new Array();
-							for (var j = 0; j < node.childNodes.length; j++)
-								nodeChildren.push(node.childNodes[j].text);
+  						var nodeChildren = new Array();
+  						for (var j = 0; j < node.childNodes.length; j++)
+  							nodeChildren.push(node.childNodes[j].text);
 
-							newNodeText = relationName.toLowerCase();
-							exitNode = false;
-              for (var j = 0; j < nodeChildren.length; j++) {
-                if (nodeChildren[j].toLowerCase() == newNodeText) {
-                  exitNode = true;
-                  break;
-                }
-              }
+  						newNodeText = relationName.toLowerCase();
+  						exitNode = false;
+  						for (var j = 0; j < nodeChildren.length; j++) {
+  							if (nodeChildren[j].toLowerCase() == newNodeText) {
+  								exitNode = true;
+  								break;
+  							}
+  						}
 
-              if (exitNode == false) {
-                var newNode = new Ext.tree.TreeNode({
-                	text: relationName,
-                  type: 'relationship',
-                  leaf: true,
-                  iconCls: 'relation',
-                  objectName: node.parentNode.text,
-                  relatedObjectName: '',
-                  relationshipType: 'OneToOne',
-                  relationshipTypeIndex: '1',
-                  propertyMap: []
-                });
-                newNode.iconCls = 'relation';
-                node.appendChild(newNode);
+  						if (exitNode == false) {
+  							var newNode = new Ext.tree.TreeNode({
+  								text: relationName,
+  								type: 'relationship',
+  								leaf: true,
+  								iconCls: 'relation',
+  								objectName: node.parentNode.text,
+  								relatedObjectName: '',
+  								relationshipType: 'OneToOne',
+  								relationshipTypeIndex: '1',
+  								propertyMap: []
+  							});
+  							newNode.iconCls = 'relation';
+  							node.appendChild(newNode);
 
-                if (node.expanded == false)
-                  node.expand();
+  							if (node.expanded == false)
+  								node.expand();
 
-                setRelationFields(editPane, newNode, scopeName, appName);								
-              }
-            }
-          }
-        }, {
-          xtype: 'tbspacer',
-          width: 4
-        }, {
-          xtype: 'tbbutton',
-          icon: 'Content/img/list-remove.png',
-          text: 'Remove',
-          tooltip: 'Remove',
-          handler: function () {
-            var selectModel = dataRelationGridPane.getSelectionModel();
-            if (selectModel.hasSelection()) {
-              var selectIndex = selectModel.getSelectedIndex();
-              dataStore.removeAt(selectIndex);
-            }
-            else {
-              if (dataStore.data.items.length < 1)
-                showDialog(400, 100, 'Warning', 'No records exits in the table', Ext.Msg.OK, null);
-              else
-                showDialog(400, 100, 'Warning', 'Please select a row first.', Ext.Msg.OK, null);
-            }
-          }
-        }]
-      })
-    });
-    dataGridPanel.add(dataRelationGridPane);
-    dataGridPanel.doLayout();
+  							setRelationFields(editPane, newNode, scopeName, appName);
+  						}
+  					}
+  				}
+  			}, {
+  				xtype: 'tbspacer',
+  				width: 4
+  			}, {
+  				xtype: 'tbbutton',
+  				icon: 'Content/img/list-remove.png',
+  				text: 'Remove',
+  				tooltip: 'Remove',
+  				handler: function () {
+  					var selectModel = dataRelationGridPane.getSelectionModel();
+  					if (selectModel.hasSelection()) {
+  						var selectIndex = selectModel.getSelectedIndex();
+  						dataStore.removeAt(selectIndex);
+  					}
+  					else {
+  						if (dataStore.data.items.length < 1)
+  							showDialog(400, 100, 'Warning', 'No records exits in the table', Ext.Msg.OK, null);
+  						else
+  							showDialog(400, 100, 'Warning', 'Please select a row first.', Ext.Msg.OK, null);
+  					}
+  				}
+  			}]
+  		})
+  	});
+  	dataGridPanel.add(dataRelationGridPane);
+  	dataGridPanel.doLayout();
   });
   dataStore.load();
 }
@@ -2871,13 +2883,39 @@ function setRelationFields(editPane, node, scopeName, appName) {
     var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
 
     var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-    var dataObjectNode = node.parentNode.parentNode;
-
+    
+    var relationFolderNode = node.parentNode;
+    var dataObjectNode = relationFolderNode.parentNode;
 
     var relatedObjects = new Array();
     var rootNode = dbObjectsTree.getRootNode();
-    for (var i = 0; i < rootNode.childNodes.length; i++)
-      relatedObjects.push([i.toString(), rootNode.childNodes[i].text]);
+    var thisObj = dataObjectNode.text;
+    var ifExist;
+    var relAttribute = null;
+    var relateObj;
+    var nodeRelateObj;
+
+    for (var i = 0; i < rootNode.childNodes.length; i++) {
+    	relateObj = rootNode.childNodes[i].text;
+			ifExist = false;
+			for (var j = 0; j < relationFolderNode.childNodes.length; j++) {
+				if (relationFolderNode.childNodes[j].attributes.attributes)
+					relAttribute = relationFolderNode.childNodes[j].attributes.attributes;
+				else if (relationFolderNode.childNodes[j].attributes)
+					relAttribute = relationFolderNode.childNodes[j].attributes;
+
+				if (relAttribute) {
+					nodeRelateObj = relAttribute.relatedObjectName;
+    			if (relateObj == nodeRelateObj)
+    				ifExist = true;
+    		}
+    	}
+
+    	if (relateObj != thisObj && ifExist == false)
+    		relatedObjects.push([i.toString(), relateObj]);
+			
+		}
+
     var selectedProperties = new Array();
 
     var ii = 0;
