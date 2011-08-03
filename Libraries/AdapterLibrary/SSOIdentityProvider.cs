@@ -7,13 +7,15 @@ using System.Collections.Generic;
 using System.ServiceModel.Web;
 using System.Web;
 using System.Text;
+using log4net;
+using System.Net;
 
 namespace org.iringtools.adapter.identity
 {
   public class SSOIdentityProvider : IIdentityLayer
   {
-    private const string OAUTH_HEADER_NAME = "Auth";
-
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(SSOIdentityProvider));
+    
     public IDictionary GetKeyRing()
     {
       IDictionary keyRing = new Dictionary<string, string>();
@@ -22,28 +24,56 @@ namespace org.iringtools.adapter.identity
 
       if (WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
       {
-        string oAuthHeader = WebOperationContext.Current.IncomingRequest.Headers.Get(OAUTH_HEADER_NAME);
+        WebHeaderCollection headers = WebOperationContext.Current.IncomingRequest.Headers;
 
-        if (!String.IsNullOrEmpty(oAuthHeader))
+        /*
+         * Available headers from Apigee:
+         * 
+         *  X-myPSN-AccessToken = [a valid token]
+         *  X-myPSN-UserID = [a valid guid]
+         *  X-myPSN-BechtelUserName = [a valid BUN]
+         *  X-myPSN-BechtelDomain = [domain]
+         *  X-myPSN-BechtelEmployeeNumber = [value]
+         *  X-myPSN-IsBechtelEmployee = [bool]
+         *  X-myPSN-EmailAddress = [value]**
+         *  X-myPSN-UserAttributes = [Full JSON Payload]
+         */
+
+        _logger.Info("OAuth headers: ");
+
+        string accessToken = headers.Get("X-myPSN-AccessToken");
+        _logger.Info("X-myPSN-AccessToken [" + accessToken + "]");
+        keyRing.Add("AccessToken", accessToken);
+
+        string emailAddress = headers.Get("X-myPSN-EmailAddress");
+        _logger.Info("X-myPSN-EmailAddress [" + emailAddress + "]");
+        keyRing.Add("UserName", emailAddress);
+
+        string userId = headers.Get("X-myPSN-UserID");
+        _logger.Info("X-myPSN-UserID [" + userId + "]");
+        keyRing.Add("UserId", userId);
+
+        string isBechtelEmployee = headers.Get("X-myPSN-IsBechtelEmployee");
+        _logger.Info("X-myPSN-IsBechtelEmployee [" + isBechtelEmployee + "]");
+
+        if (!String.IsNullOrEmpty(isBechtelEmployee) && 
+          (isBechtelEmployee.ToLower() == "true" || isBechtelEmployee.ToLower() == "yes"))
         {
-          string[] attrs = oAuthHeader.Split('&');
+          string bechtelUserName = headers.Get("X-myPSN-BechtelUserName");
+          _logger.Info("X-myPSN-BechtelUserName [" + bechtelUserName + "]");
+          keyRing.Add("BechtelUserName", bechtelUserName);
 
-          foreach (string attr in attrs)
-          {
-            string[] pair = attr.Trim().Split('=');
-            keyRing.Add(pair[0], HttpUtility.UrlDecode(pair[1], Encoding.UTF8));
+          string bechtelDomain = headers.Get("X-myPSN-BechtelDomain");
+          _logger.Info("X-myPSN-BechtelDomain [" + bechtelDomain + "]");
+          keyRing.Add("BechtelDomain", bechtelDomain);
 
-            if (pair[0].ToLower() == "bechtelusername")
-            {
-              keyRing.Add("UserName", pair[1].ToLower());
-            }
-          }
+          string bechtelEmployeeNumber = headers.Get("X-myPSN-BechtelEmployeeNumber");
+          _logger.Info("X-myPSN-BechtelEmployeeNumber [" + bechtelEmployeeNumber + "]");
+          keyRing.Add("BechtelEmployeeNumber", bechtelEmployeeNumber);
         }
-      }
 
-      if (!keyRing.Contains("UserName") && keyRing.Contains("EMailAddress"))
-      {
-        keyRing.Add("UserName", keyRing["EMailAddress"]);
+        string userAttrs = headers.Get("X-myPSN-UserAttributes");
+        _logger.Info("X-myPSN-UserAttributes [" + userAttrs + "]");
       }
 
       return keyRing;
