@@ -65,7 +65,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ObjectDataLayer\ObjectDataLayer.csproj">
       <Project>{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}</Project>
-      <Name>CSVDataLayer</Name>
+      <Name>ObjectDataLayer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

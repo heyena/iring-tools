@@ -11,95 +11,129 @@ using Ninject;
 using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.utility;
+using org.iringtools.sdk.objects.widgets;
 
 namespace org.iringtools.sdk.objects
 {
   public class ObjectDataLayer : BaseDataLayer, IDataLayer2
   {
-    private List<IDataObject> _dataObjects = null;
+    WidgetLibrary _widgetProvider = null;
+
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(ObjectDataLayer));
 
     //NOTE: This is required to deliver settings to constructor.
     //NOTE: Other objects could be requested on an as needed basis.
     [Inject]
     public ObjectDataLayer(AdapterSettings settings)
+      : base(settings)
     {
+      _widgetProvider = new WidgetLibrary();
+
       _settings = settings;
     }
 
     public override DataDictionary GetDictionary()
     {
-
       DataDictionary dataDictionary = new DataDictionary();
 
-      LoadConfiguration();
-
       List<DataObject> dataObjects = new List<DataObject>();
-      foreach (XElement commodity in _configuration.Elements("commodity"))
+
+      DataObject widget = new DataObject
       {
-        string name = commodity.Element("name").Value;
+        objectName = "Widget",
+        keyDelimeter = "_",
+      };
 
-        DataObject dataObject = new DataObject
+      List<KeyProperty> keyProperties = new List<KeyProperty>
+      {
+        new KeyProperty
         {
-          objectName = name,
-          keyDelimeter = "_",
-        };
+          keyPropertyName = "Id",
+        },
+      };
 
-        List<KeyProperty> keyProperties = new List<KeyProperty>();
-        List<DataProperty> dataProperties = new List<DataProperty>();
+      widget.keyProperties = keyProperties;
 
-        foreach (XElement attribute in commodity.Element("attributes").Elements("attribute"))
+      List<DataProperty> dataProperties = new List<DataProperty>
+      {
+        new DataProperty
         {
-          bool isKey = false;
-          if (attribute.Attribute("isKey") != null)
-          {
-            Boolean.TryParse(attribute.Attribute("isKey").Value, out isKey);
-          }
+          propertyName = "Id",
+          keyType = KeyType.unassigned,
+          dataLength = 32,
+          numberOfDecimals = 0,
+          dataType = DataType.Int32,
+        },
+        new DataProperty
+        {
+          propertyName = "Name",
+          dataLength = 32,
+          dataType = DataType.String,
+          showOnIndex = true,
+        },
+        new DataProperty
+        {
+          propertyName = "Description",
+          dataLength = 256,
+          dataType = DataType.String,
+        },
+        new DataProperty
+        {
+          propertyName = "Length",
+          dataLength = 32,
+          numberOfDecimals = 2,
+          dataType = DataType.Double,
+        },
+        new DataProperty
+        {
+          propertyName = "Width",
+          dataLength = 32,
+          numberOfDecimals = 2,
+          dataType = DataType.Double,
+        },
+        new DataProperty
+        {
+          propertyName = "Height",
+          dataLength = 32,
+          numberOfDecimals = 2,
+          dataType = DataType.Double,
+        },
+        new DataProperty
+        {
+          propertyName = "Weight",
+          dataLength = 32,
+          numberOfDecimals = 2,
+          dataType = DataType.Double,
+        },
+        new DataProperty
+        {
+          propertyName = "LengthUOM",
+          dataLength = 32,
+          dataType = DataType.String,
+        },
+        new DataProperty
+        {
+          propertyName = "WeightUOM",
+          dataLength = 32,
+          dataType = DataType.String,
+        },
+        new DataProperty
+        {
+          propertyName = "Material",
+          dataLength = 128,
+          dataType = DataType.String,
+        },
+        new DataProperty
+        {
+          propertyName = "Color",
+          dataLength = 32,
+          dataType = DataType.String,
+        },
+      };
 
-          string attributeName = attribute.Attribute("name").Value;
+      widget.dataProperties = dataProperties;
 
-          DataType dataType = DataType.String;
-          Enum.TryParse<DataType>(attribute.Attribute("dataType").Value, out dataType);
-
-          int dataLength = 0;
-          if (DataDictionary.IsNumeric(dataType))
-          {
-            dataLength = 16;
-          }
-          else
-          {
-            dataLength = 255;
-          }
-
-          DataProperty dataProperty = new DataProperty
-          {
-            propertyName = attributeName,
-            dataType = dataType,
-            dataLength = dataLength,
-            isNullable = true,
-            showOnIndex = false,
-          };
-
-          if (isKey)
-          {
-            dataProperty.isNullable = false;
-            dataProperty.showOnIndex = true;
-
-            KeyProperty keyProperty = new KeyProperty
-            {
-              keyPropertyName = attributeName,
-            };
-
-            keyProperties.Add(keyProperty);
-          }
-
-          dataProperties.Add(dataProperty);
-        }
-
-        dataObject.keyProperties = keyProperties;
-        dataObject.dataProperties = dataProperties;
-
-        dataObjects.Add(dataObject);
-      }
+      dataObjects.Add(widget);
 
       dataDictionary.dataObjects = dataObjects;
 
@@ -108,17 +142,29 @@ namespace org.iringtools.sdk.objects
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
+      _dataObjects = new List<IDataObject>();
+
       try
       {
-        LoadDataDictionary(objectType);
-
-        IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
-
-        var expressions = FormMultipleKeysPredicate(identifiers);
-
-        if (expressions != null)
+        switch (objectType.ToUpper())
         {
-          _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList();
+          case "WIDGET":
+
+            foreach (string identifier in identifiers)
+            {
+              int id = 0;
+              Int32.TryParse(identifier, out id);
+
+              Widget widget = _widgetProvider.ReadWidget(id);
+
+              IDataObject dataObject = FormDataObject(widget);
+
+              _dataObjects.Add(dataObject);
+            }
+            break;
+
+          default:
+            throw new Exception("Invalid object type provided");
         }
 
         return _dataObjects;
@@ -132,64 +178,7 @@ namespace org.iringtools.sdk.objects
 
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
-      try
-      {
-        LoadDataDictionary(objectType);
-
-        IList<IDataObject> allDataObjects = LoadDataObjects(objectType);
-
-        // Apply filter
-        if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
-        {
-          var predicate = filter.ToPredicate(_dataObjectDefinition);
-
-          if (predicate != null)
-          {
-            _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList();
-          }
-        }
-
-        if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
-        {
-          throw new NotImplementedException("OrderExpressions are not supported by the CSV DataLayer.");
-        }
-
-        //Page and Sort The Data
-        if (pageSize > _dataObjects.Count())
-          pageSize = _dataObjects.Count();
-        _dataObjects = _dataObjects.GetRange(startIndex, pageSize);
-
-        return _dataObjects;
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in GetList: " + ex);
-
-        throw new Exception(
-          "Error while getting a list of data objects of type [" + objectType + "].",
-          ex
-        );
-      }
-    }
-
-    public override long GetCount(string objectType, DataFilter filter)
-    {
-      try
-      {
-        //NOTE: pageSize of 0 indicates that all rows should be returned.
-        IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
-
-        return dataObjects.Count();
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in GetIdentifiers: " + ex);
-
-        throw new Exception(
-          "Error while getting a count of type [" + objectType + "].",
-          ex
-        );
-      }
+      throw new NotImplementedException();
     }
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
@@ -203,7 +192,7 @@ namespace org.iringtools.sdk.objects
 
         foreach (IDataObject dataObject in dataObjects)
         {
-          identifiers.Add((string)dataObject.GetPropertyValue("Tag"));
+          identifiers.Add((string)dataObject.GetPropertyValue("Id"));
         }
 
         return identifiers;
@@ -242,32 +231,44 @@ namespace org.iringtools.sdk.objects
       {
         objectType = ((GenericDataObject)dataObjects.FirstOrDefault()).ObjectType;
 
-        LoadDataDictionary(objectType);
-
-        IList<IDataObject> existingDataObjects = LoadDataObjects(objectType);
-
-        foreach (IDataObject dataObject in dataObjects)
+        switch (objectType.ToUpper())
         {
-          IDataObject existingDataObject = null;
+          case "WIDGET":
+            foreach (IDataObject dataObject in dataObjects)
+            {
+              Status status = new Status();
+              
+              Widget widget = FormWidget(dataObject);
+              string identifier = widget.Id.ToString();
+              status.Identifier = identifier;
 
-          string identifier = GetIdentifier(dataObject);
-          var predicate = FormKeyPredicate(identifier);
+              int result = _widgetProvider.UpdateWidgets(new List<Widget>{ widget });
 
-          if (predicate != null)
-          {
-            existingDataObject = existingDataObjects.AsQueryable().Where(predicate).FirstOrDefault();
-          }
+              string message = String.Empty;
+              if (result == 0)
+              {
+                message = String.Format(
+                  "DataObject [{0}] posted successfully.",
+                  identifier
+                );
+              }
+              else
+              {
+                message = String.Format(
+                  "Error while posting DataObject [{0}].",
+                  identifier
+                );
+              }
 
-          if (existingDataObject != null)
-          {
-            existingDataObjects.Remove(existingDataObject);
-          }
+              status.Messages.Add(message);
 
-          //TODO: Should this be per property?  Will it matter?
-          existingDataObjects.Add(dataObject);
+              response.Append(status);
+            }
+            break;
+
+          default:
+            throw new Exception("Invalid object type provided");
         }
-
-        response = SaveDataObjects(objectType, existingDataObjects);
 
         return response;
       }
@@ -295,32 +296,33 @@ namespace org.iringtools.sdk.objects
         return response;
       }
 
-      //Get Path from Scope.config ({project}.{app}.config)
-      string dataObjectPath = String.Format(
-        "{0}\\{1}",
-        _settings["CSVFolderPath"],
-        objectType
-      );
-
       foreach (string identifier in identifiers)
       {
         Status status = new Status();
         status.Identifier = identifier;
-
+        
         try
         {
-          string path = String.Format(
-            "{0}\\{1}.csv",
-            dataObjectPath,
-            identifier
-          );
+          int id = 0;
+          Int32.TryParse(identifier, out id);
 
-          File.Delete(path);
+          int result = _widgetProvider.DeleteWidgets(id);
 
-          string message = String.Format(
-            "DataObject [{0}] deleted successfully.",
-            identifier
-          );
+          string message = String.Empty;
+          if (result == 0)
+          {
+            message = String.Format(
+              "DataObject [{0}] deleted successfully.",
+              identifier
+            );
+          }
+          else
+          {
+            message = String.Format(
+              "Error while deleting dataObject [{0}].",
+              identifier
+            );
+          }
 
           status.Messages.Add(message);
         }
@@ -347,145 +349,26 @@ namespace org.iringtools.sdk.objects
 
     public override Response Delete(string objectType, DataFilter filter)
     {
-      try
-      {
-        IList<string> identifiers = new List<string>();
-
-        //NOTE: pageSize of 0 indicates that all rows should be returned.
-        IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
-
-        foreach (IDataObject dataObject in dataObjects)
-        {
-          identifiers.Add((string)dataObject.GetPropertyValue("Tag"));
-        }
-
-        return Delete(objectType, identifiers);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in Delete: " + ex);
-
-        throw new Exception(
-          "Error while deleting data objects of type [" + objectType + "].",
-          ex
-        );
-      }
+      throw new NotImplementedException();
     }
 
-    private void LoadConfiguration()
-    {
-      if (_configuration == null)
-      {
-        string uri = String.Format(
-            "{0}Configuration.{1}.xml",
-            _settings["XmlPath"],
-            _settings["ApplicationName"]
-        );
-
-        XDocument configDocument = XDocument.Load(uri);
-        _configuration = configDocument.Element("configuration");
-      }
-    }
-
-    private XElement GetCommodityConfig(string objectType)
-    {
-      if (_configuration == null)
-      {
-        LoadConfiguration();
-      }
-
-      XElement commodityConfig = _configuration.Elements("commodity").Where(o => o.Element("name").Value == objectType).First();
-
-      return commodityConfig;
-    }
-
-    private IList<IDataObject> LoadDataObjects(string objectType)
+    private IDataObject FormDataObject(Widget widget)
     {
       try
       {
-        IList<IDataObject> dataObjects = new List<IDataObject>();
+        IDataObject dataObject = new GenericDataObject();
 
-        //Get Path from Scope.config ({project}.{app}.config)
-        string path = String.Format(
-            "{0}\\{1}.csv",
-            _settings["CSVFolderPath"],
-            objectType
-        );
-
-        IDataObject dataObject = null;
-        TextReader reader = new StreamReader(path);
-        while (reader.Peek() >= 0)
-        {
-          string csvRow = reader.ReadLine();
-
-          dataObject = FormDataObject(objectType, csvRow);
-
-          if (dataObject != null)
-            dataObjects.Add(dataObject);
-        }
-        reader.Close();
-
-        return dataObjects;
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in LoadDataObjects: " + ex);
-        throw new Exception("Error while loading data objects of type [" + objectType + "].", ex);
-      }
-    }
-
-    private IDataObject FormDataObject(string objectType, string csvRow)
-    {
-      try
-      {
-        IDataObject dataObject = new GenericDataObject
-        {
-          ObjectType = objectType,
-        };
-
-        XElement commodityElement = GetCommodityConfig(objectType);
-
-        if (!String.IsNullOrEmpty(csvRow))
-        {
-          IEnumerable<XElement> attributeElements = commodityElement.Element("attributes").Elements("attribute");
-
-          string[] csvValues = csvRow.Split(',');
-
-          int index = 0;
-          foreach (var attributeElement in attributeElements)
-          {
-            string name = attributeElement.Attribute("name").Value;
-            string dataType = attributeElement.Attribute("dataType").Value.ToLower();
-            string value = csvValues[index++].Trim();
-
-            // if data type is not nullable, make sure it has a value
-            if (!(dataType.EndsWith("?") && value == String.Empty))
-            {
-              if (dataType.Contains("bool"))
-              {
-                if (value.ToUpper() == "TRUE" || value.ToUpper() == "YES")
-                {
-                  value = "1";
-                }
-                else
-                {
-                  value = "0";
-                }
-              }
-              else if (value == String.Empty && (
-                       dataType.StartsWith("int") ||
-                       dataType == "double" ||
-                       dataType == "single" ||
-                       dataType == "float" ||
-                       dataType == "decimal"))
-              {
-                value = "0";
-              }
-            }
-
-            dataObject.SetPropertyValue(name, value);
-          }
-        }
+        dataObject.SetPropertyValue("Id", widget.Id);
+        dataObject.SetPropertyValue("Name", widget.Name);
+        dataObject.SetPropertyValue("Description", widget.Description);
+        dataObject.SetPropertyValue("Length", widget.Length);
+        dataObject.SetPropertyValue("Width", widget.Width);
+        dataObject.SetPropertyValue("Height", widget.Height);
+        dataObject.SetPropertyValue("Weight", widget.Weight);
+        dataObject.SetPropertyValue("LengthUOM", widget.LengthUOM);
+        dataObject.SetPropertyValue("WeightUOM", widget.WeightUOM);
+        dataObject.SetPropertyValue("Material", widget.Material);
+        dataObject.SetPropertyValue("Color", widget.Color);
 
         return dataObject;
       }
@@ -494,96 +377,104 @@ namespace org.iringtools.sdk.objects
         _logger.Error("Error in FormDataObject: " + ex);
 
         throw new Exception(
-          "Error while forming a dataObject of type [" + objectType + "] from a CSV row.",
+          "Error while forming a dataObject from a widget.",
           ex
         );
       }
     }
 
-    private Response SaveDataObjects(string objectType, IList<IDataObject> dataObjects)
+    private Widget FormWidget(IDataObject dataObject)
     {
       try
       {
-        Response response = new Response();
+        Widget widget = new Widget();
 
-        // Create data object directory in case it does not exist
-        Directory.CreateDirectory(_settings["CSVFolderPath"]);
-
-        string path = String.Format(
-          "{0}\\{1}.csv",
-          _settings["CSVFolderPath"],
-          objectType
-        );
-
-        //TODO: Need to update file, not replace it!
-        TextWriter writer = new StreamWriter(path);
-
-        foreach (IDataObject dataObject in dataObjects)
+        if (dataObject.GetPropertyValue("Id") != null)
         {
-          Status status = new Status();
-
-          try
-          {
-            string identifier = GetIdentifier(dataObject);
-            status.Identifier = identifier;
-
-            List<string> csvRow = FormCSVRow(objectType, dataObject);
-
-            writer.WriteLine(String.Join(", ", csvRow.ToArray()));
-            status.Messages.Add("Record [" + identifier + "] has been saved successfully.");
-          }
-          catch (Exception ex)
-          {
-            status.Level = StatusLevel.Error;
-
-            string message = String.Format(
-              "Error while posting dataObject [{0}]. {1}",
-              dataObject.GetPropertyValue("Tag"),
-              ex.ToString()
-            );
-
-            status.Messages.Add(message);
-          }
-
-          response.Append(status);
+          string identifier = dataObject.GetPropertyValue("Id").ToString();
+          int id = 0;
+          Int32.TryParse(identifier, out id);
+          widget.Id = id;
         }
 
-        writer.Close();
+        if (dataObject.GetPropertyValue("Name") != null)
+        {
+          widget.Name = dataObject.GetPropertyValue("Name").ToString();
+        }
 
-        return response;
+        if (dataObject.GetPropertyValue("Description") != null)
+        {
+          widget.Description = dataObject.GetPropertyValue("Description").ToString();
+        }
+
+        if (dataObject.GetPropertyValue("Material") != null)
+        {
+          widget.Material = dataObject.GetPropertyValue("Material").ToString();
+        }
+
+        if (dataObject.GetPropertyValue("Length") != null)
+        {
+          string lengthValue = dataObject.GetPropertyValue("Length").ToString();
+          double length = 0;
+          Double.TryParse(lengthValue, out length);
+          widget.Length = length;
+        }
+
+        if (dataObject.GetPropertyValue("Width") != null)
+        {
+          string widthValue = dataObject.GetPropertyValue("Width").ToString();
+          double width = 0;
+          Double.TryParse(widthValue, out width);
+          widget.Width = width;
+        }
+
+        if (dataObject.GetPropertyValue("Height") != null)
+        {
+          string heightValue = dataObject.GetPropertyValue("Height").ToString();
+          double height = 0;
+          Double.TryParse(heightValue, out height);
+          widget.Height = height;
+        }
+
+        if (dataObject.GetPropertyValue("Weight") != null)
+        {
+          string weightValue = dataObject.GetPropertyValue("Weight").ToString();
+          double weight = 0;
+          Double.TryParse(weightValue, out weight);
+          widget.Weight = weight;
+        }
+
+        if (dataObject.GetPropertyValue("LengthUOM") != null)
+        {
+          string lengthUOMValue = dataObject.GetPropertyValue("LengthUOM").ToString();
+          LengthUOM lengthUOM = LengthUOM.feet;
+          Enum.TryParse<LengthUOM>(lengthUOMValue, out lengthUOM);
+          widget.LengthUOM = lengthUOM;
+        }
+
+        if (dataObject.GetPropertyValue("WeightUOM") != null)
+        {
+          string weightUOMValue = dataObject.GetPropertyValue("WeightUOM").ToString();
+          WeightUOM weightUOM = WeightUOM.grams;
+          Enum.TryParse<WeightUOM>(weightUOMValue, out weightUOM);
+          widget.WeightUOM = weightUOM;
+        }
+
+        if (dataObject.GetPropertyValue("Color") != null)
+        {
+          string colorValue = dataObject.GetPropertyValue("Color").ToString();
+          Color color = Color.Black;
+          Enum.TryParse<Color>(colorValue, out color);
+          widget.Color = color;
+        }
+        return widget;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in LoadDataObjects: " + ex);
-        throw new Exception("Error while loading data objects of type [" + objectType + "].", ex);
-      }
-    }
-
-    private List<string> FormCSVRow(string objectType, IDataObject dataObject)
-    {
-      try
-      {
-        List<string> csvRow = new List<string>();
-
-        XElement commodityElement = GetCommodityConfig(objectType);
-
-        IEnumerable<XElement> attributeElements = commodityElement.Element("attributes").Elements("attribute");
-
-        foreach (var attributeElement in attributeElements)
-        {
-          string name = attributeElement.Attribute("name").Value;
-          string value = Convert.ToString(dataObject.GetPropertyValue(name));
-          csvRow.Add(value);
-        }
-
-        return csvRow;
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in FormCSVRow: " + ex);
+        _logger.Error("Error in FormWidget: " + ex);
 
         throw new Exception(
-          "Error while forming a CSV row of type [" + objectType + "] from a DataObject.",
+          "Error while forming a Widget from a DataObject.",
           ex
         );
       }
