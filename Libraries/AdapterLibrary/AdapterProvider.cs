@@ -1243,13 +1243,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error in GetDataLayers: {0}", ex), ex);
-
-        DataLayer dataLayer = new DataLayer { 
-          Assembly = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", 
-          Name = "NHibernateLibrary", 
-          Configurable = true
-        };				
+        _logger.Error(string.Format("Error in GetDataLayers: {0}", ex), ex);        
 
 				bool found = false;
 				foreach (DataLayer datalayer in dataLayerAssemblies)
@@ -1259,7 +1253,15 @@ namespace org.iringtools.adapter
 				}
 
 				if (found == false)
+				{
+					DataLayer dataLayer = new DataLayer
+					{
+						Assembly = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary",
+						Name = "NHibernateLibrary",
+						Configurable = true
+					};				
 					dataLayerAssemblies.Add(dataLayer);
+				}
       }
 
       return dataLayerAssemblies;
