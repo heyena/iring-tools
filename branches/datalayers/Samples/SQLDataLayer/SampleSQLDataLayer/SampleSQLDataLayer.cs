@@ -8,7 +8,7 @@ using org.iringtools.utility;
 using System.Data;
 using System.Data.SqlClient;
 
-namespace org.iringtools.samples
+namespace org.iringtools.sdk.sql
 {
   public class SampleSQLDataLayer : BaseSQLDataLayer
   {

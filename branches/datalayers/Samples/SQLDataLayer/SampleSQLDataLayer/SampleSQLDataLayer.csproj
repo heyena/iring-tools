@@ -8,7 +8,7 @@
     <ProjectGuid>{28C6B077-6658-44E8-B234-D8BDCFF70D93}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.samples</RootNamespace>
+    <RootNamespace>org.iringtools.sdk.sql</RootNamespace>
     <AssemblyName>SampleSQLDataLayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>

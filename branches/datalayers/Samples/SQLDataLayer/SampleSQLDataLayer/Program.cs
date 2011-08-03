@@ -6,9 +6,8 @@ using org.iringtools.library;
 using org.iringtools.adapter;
 using System.Reflection;
 using org.iringtools.utility;
-using org.iringtools.samples;
 
-namespace org.iringtools.samples
+namespace org.iringtools.sdk.sql
 {
   public class Program
   {
