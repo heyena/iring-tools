@@ -7,7 +7,6 @@ using System.Data;
 using log4net;
 using System.Xml.Linq;
 using org.iringtools.adapter;
-using System.Globalization;
 
 namespace org.iringtools.library
 {
@@ -68,7 +67,7 @@ namespace org.iringtools.library
     {
       try
       {
-        InitializeDataDictionary();
+        InitializeDatabaseDictionary();
 
         string tableName = GetTableName(objectType);
         string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
@@ -86,7 +85,7 @@ namespace org.iringtools.library
     {
       try
       {
-        InitializeDataDictionary();
+        InitializeDatabaseDictionary();
         
         string tableName = GetTableName(objectType);
         string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, _whereClauseAlias);
@@ -132,16 +131,16 @@ namespace org.iringtools.library
       }
     }
 
-    public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
+    public override IList<IDataObject> Get(string objectType, DataFilter filter, int limit, int start)
     {
       try
       {
-        InitializeDataDictionary();
+        InitializeDatabaseDictionary();
 
         string tableName = GetTableName(objectType);
         string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, _whereClauseAlias);
 
-        DataTable dataTable = GetDataTable(tableName, whereClause, startIndex, pageSize);
+        DataTable dataTable = GetDataTable(tableName, whereClause, start, limit);
         return ToDataObjects(dataTable, objectType);
       }
       catch (Exception ex)
@@ -154,17 +153,44 @@ namespace org.iringtools.library
     public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
     {
       IList<IDataObject> relatedDataObjects = null;
-      DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
-      
+      string objectType = dataObject.GetType().Name;
+
+      if (objectType == typeof(GenericDataObject).Name)
+      {
+        objectType = ((GenericDataObject)dataObject).ObjectType;
+      }
+
       try
       {
-        DataTable dataTable = NewDataTable(relatedObjectDefinition);
-        DataRow dataRow = CreateDataRow(dataTable, dataObject, relatedObjectDefinition);
-        DataTable relatedDataTable = GetRelatedDataTable(dataRow, relatedObjectDefinition.tableName);
-        relatedDataObjects = ToDataObjects(relatedDataTable, relatedObjectType);
+        //Console.WriteLine("ckpt1: source object type [" + objectType + "]");
+        //Console.WriteLine("ckpt2: related object type [" + relatedObjectType + "]");
+
+        DataObject objectDefinition = GetObjectDefinition(objectType);
+        //Console.WriteLine("ckpt3: source object definition [" + org.iringtools.utility.Utility.SerializeDataContract<DataObject>(objectDefinition) + "].");
+        DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
+        //Console.WriteLine("ckpt4: related object definition [" + org.iringtools.utility.Utility.SerializeDataContract<DataObject>(relatedObjectDefinition) + "].");
+
+        DataTable dataTable = NewDataTable(objectDefinition);
+        //Console.WriteLine("ckpt5: source data table created.");
+        DataRow dataRow = CreateDataRow(dataTable, dataObject, objectDefinition);
+        //Console.WriteLine("ckpt6: source data row created.");
+
+        if (dataRow != null)
+        {
+          DataTable relatedDataTable = GetRelatedDataTable(dataRow, relatedObjectDefinition.tableName);
+          //Console.WriteLine("ckpt7: related data table created.");
+          relatedDataObjects = ToDataObjects(relatedDataTable, relatedObjectType);
+          //Console.WriteLine("ckpt8: related data objects created.");          
+        }
+        else
+        {
+          //Console.WriteLine("ckpt9: Error create data row for object [" + objectDefinition.objectName + "]");
+          _logger.Error("Error create data row for object [" + objectDefinition.objectName + "]");
+        }
       }
       catch (Exception ex)
       {
+        //Console.WriteLine("ckpt10: Error getting related objects: " + ex);
         _logger.Error("Error getting related objects: " + ex);
         throw ex;
       }
@@ -190,7 +216,7 @@ namespace org.iringtools.library
     {
       try
       {
-        InitializeDataDictionary();
+        InitializeDatabaseDictionary();
 
         string tableName = GetTableName(objectType);
         string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, _whereClauseAlias);
@@ -237,22 +263,26 @@ namespace org.iringtools.library
     #region helper methods
     public string GetTableName(string objectType)
     {
-      InitializeDataDictionary();
+      InitializeDatabaseDictionary();
 
-      foreach (DataObject dataObject in _dbDictionary.dataObjects)
+      if (_dbDictionary.dataObjects != null)
       {
-        if (dataObject.objectName.ToLower() == objectType.ToLower())
+        foreach (DataObject dataObject in _dbDictionary.dataObjects)
         {
-          return dataObject.tableName;
+          if (dataObject.objectName.ToLower() == objectType.ToLower())
+          {
+            return dataObject.tableName;
+          }
         }
       }
 
-      return null;
+      throw new Exception("ObjectType [" + objectType + "] not found in dictionary [" +
+        utility.Utility.SerializeDataContract<DatabaseDictionary>(_dbDictionary) + "]");
     }
 
     public DataObject GetObjectDefinition(string objectType)
     {
-      InitializeDataDictionary();
+      InitializeDatabaseDictionary();
 
       foreach (DataObject dataObject in _dbDictionary.dataObjects)
       {
@@ -371,11 +401,7 @@ namespace org.iringtools.library
                   dataRow[objectProperty.columnName] = Convert.ToInt64(value);
                   break;
                 case DataType.Decimal:
-                  CultureInfo culture = new CultureInfo("en-US");
-                  String format = "YYYY-MM-DD HH24:MI:SS.FF TZH:TZM";
-                  DateTime dtValue = 
-                    DateTime.ParseExact((String)value, format, culture.DateTimeFormat, DateTimeStyles.AdjustToUniversal);
-                  dataRow[objectProperty.columnName] = dtValue;
+                  dataRow[objectProperty.columnName] = Convert.ToDecimal(value);
                   break;
                 case DataType.Single:
                   dataRow[objectProperty.columnName] = Convert.ToSingle(value);
@@ -483,7 +509,7 @@ namespace org.iringtools.library
       return dataTableDictionary.Values.ToList();
     }
 
-    private void InitializeDataDictionary()
+    private void InitializeDatabaseDictionary()
     {
       if (_dbDictionary == null)
       {

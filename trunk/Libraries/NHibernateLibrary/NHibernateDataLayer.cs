@@ -90,7 +90,7 @@ namespace org.iringtools.adapter.datalayer
     #region public methods
     public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
-      if (!isAuthorized())
+      if (!IsAuthorized())
         throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
 
       try
@@ -143,7 +143,7 @@ namespace org.iringtools.adapter.datalayer
 
     public override long GetCount(string objectType, DataFilter filter)
     {
-      if (!isAuthorized())
+      if (!IsAuthorized())
         throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
 
       try
@@ -186,7 +186,7 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
-      if (!isAuthorized())
+      if (!IsAuthorized())
         throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
 
       try
@@ -223,7 +223,7 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
-      if (!isAuthorized())
+      if (!IsAuthorized())
         throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
 
       try
@@ -329,7 +329,7 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
-      if (!isAuthorized())
+      if (!IsAuthorized())
         throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
 
       try
@@ -343,42 +343,16 @@ namespace org.iringtools.adapter.datalayer
           }
         }
 
-        StringBuilder queryString = new StringBuilder();
-        queryString.Append("from " + objectType);
+        DataObject objectDefinition = _dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
 
-        if (filter != null && ((filter.Expressions != null && filter.Expressions.Count > 0) ||
-          (filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)))
+        if (objectDefinition == null)
         {
-          string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
-          queryString.Append(whereClause);
+          throw new Exception("Object type [" + objectType + "] not found.");
         }
 
-        using (ISession session = OpenSession())
-        {
-          IQuery query = session.CreateQuery(queryString.ToString());
-          IList<IDataObject> dataObjects = query.List<IDataObject>();
-
-          if (pageSize == 0)
-          {
-            dataObjects = dataObjects.ToList();
-          }
-          else if (startIndex + pageSize <= dataObjects.Count)
-          {
-            dataObjects = dataObjects.ToList().GetRange(startIndex, pageSize);
-          }
-          else if (startIndex <= dataObjects.Count)
-          {
-            int rowsRemaining = dataObjects.Count - startIndex;
-
-            dataObjects = dataObjects.ToList().GetRange(startIndex, rowsRemaining);
-          }
-          else
-          {
-            dataObjects = new List<IDataObject>();
-          }
-
-          return dataObjects;
-        }
+        ISession session = OpenSession();
+        ICriteria criteria = NHibernateUtility.CreateCriteria(session, objectDefinition, filter, startIndex, pageSize);
+        return criteria.List<IDataObject>();
       }
       catch (Exception ex)
       {
@@ -430,7 +404,7 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Post(IList<IDataObject> dataObjects)
     {
-      if (!isAuthorized())
+      if (!IsAuthorized())
         throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
 
       Response response = new Response();
@@ -501,7 +475,7 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Delete(string objectType, IList<string> identifiers)
     {
-      if (!isAuthorized())
+      if (!IsAuthorized())
         throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
 
       Response response = new Response();
@@ -543,7 +517,7 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Delete(string objectType, DataFilter filter)
     {
-      if (!isAuthorized())
+      if (!IsAuthorized())
         throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
 
       Response response = new Response();
@@ -605,7 +579,7 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
     {
-      if (!isAuthorized())
+      if (!IsAuthorized())
         throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
 
       IList<IDataObject> relatedObjects = null;
@@ -1470,39 +1444,43 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    private bool isAuthorized()
+    private bool IsAuthorized()
     {
-      if (_keyRing != null && _keyRing["UserName"] != null)
+      try
       {
-        string userName = _keyRing["UserName"].ToString();
-        userName = userName.Substring(userName.IndexOf('\\') + 1).ToLower();
-
-        if (userName == "anonymous")
+        if (_keyRing != null && _keyRing["UserName"] != null)
         {
-          return true;
-        }
+          string userName = _keyRing["UserName"].ToString();
+          userName = userName.Substring(userName.IndexOf('\\') + 1).ToLower();
 
-        AuthorizedUsers authUsers = null;
+          _logger.Debug("Authorizing user [" + userName + "]");
 
-        try
-        {
-          authUsers = Utility.Read<AuthorizedUsers>(_authorizationPath, true);
-        }
-        catch (Exception ex)
-        {
-          _logger.Warn("Error loading authorization file: " + ex);
-        }
-
-        if (authUsers != null)
-        {
-          foreach (string authUser in authUsers)
+          if (userName == "anonymous")
           {
-            if (authUser.ToLower() == userName)
+            return true;
+          }
+
+          AuthorizedUsers authUsers = Utility.Read<AuthorizedUsers>(_authorizationPath, true);
+
+          if (authUsers != null)
+          {
+            foreach (string authUser in authUsers)
             {
-              return true;
+              if (authUser.ToLower() == userName)
+              {
+                return true;
+              }
             }
           }
         }
+        else
+        {
+          _logger.Error("KeyRing is empty.");
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error during processing authorization: " + e);
       }
 
       return false;
