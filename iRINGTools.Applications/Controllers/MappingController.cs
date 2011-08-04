@@ -749,12 +749,13 @@ namespace org.iringtools.web.controllers
         string objectNames = form["objectNames"];
         string[] propertyCtx = objectNames.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+				int tempDepth = mappingCtx.Length;
         string scope = propertyCtx[0];
         string classId = form["classId"];
         string application = propertyCtx[1];
         string graphName = mappingCtx[2];
-        string templateName = mappingCtx[3];
-        string roleName = mappingCtx[4];
+				string templateName = mappingCtx[tempDepth - 2];
+				string roleName = mappingCtx[tempDepth - 1];
         string valueListName = propertyCtx[propertyCtx.Length - 1];
 
         Mapping mapping = GetMapping(scope, application);
