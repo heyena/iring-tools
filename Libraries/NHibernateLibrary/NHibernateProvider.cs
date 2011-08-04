@@ -334,7 +334,7 @@ namespace org.iringtools.nhibernate
 							dataProperties = new List<DataProperty>(),
 							keyProperties = new List<KeyProperty>(),
 							dataRelationships = new List<DataRelationship>(), // to be supported in the future
-							objectName = Utility.NameSafe(tableName)
+							objectName = Utility.ToSafeName(tableName)
 						};
 
 						dbDictionary.dataObjects.Add(table);
@@ -349,7 +349,7 @@ namespace org.iringtools.nhibernate
 							dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
 							dataLength = dataLength,
 							isNullable = isNullable,
-							propertyName = Utility.NameSafe(columnName)
+							propertyName = Utility.ToSafeName(columnName)
 						};
 
 						table.dataProperties.Add(column);
@@ -374,7 +374,7 @@ namespace org.iringtools.nhibernate
 							dataLength = dataLength,
 							isNullable = isNullable,
 							keyType = keyType,
-							propertyName = Utility.NameSafe(columnName),
+							propertyName = Utility.ToSafeName(columnName),
 						};
 
 						table.addKeyProperty(key);
@@ -422,7 +422,7 @@ namespace org.iringtools.nhibernate
 
 			try
 			{
-				_logger.Debug("I'm in!!!");
+        _logger.Debug(String.Format("In GetSchemaObjects({0}, {1})", projectName, applicationName));
 
 				InitializeScope(projectName, applicationName);
 				if (File.Exists(_settings["DBDictionaryPath"]))
@@ -514,8 +514,10 @@ namespace org.iringtools.nhibernate
 				dataProperties = new List<DataProperty>(),
 				keyProperties = new List<KeyProperty>(),
 				dataRelationships = new List<DataRelationship>(),
-				objectName = Utility.NameSafe(schemaObjectName)
+        objectNamespace = String.Format("org.iringtools.adapter.datalayer.proj_{0}.{1}", projectName, applicationName),
+				objectName = Utility.ToSafeName(schemaObjectName)
 			};
+
 			try
 			{
 				InitializeScope(projectName, applicationName);
@@ -566,7 +568,7 @@ namespace org.iringtools.nhibernate
 							dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
 							dataLength = dataLength,
 							isNullable = isNullable,
-							propertyName = Utility.NameSafe(columnName)
+							propertyName = Utility.ToSafeName(columnName)
 						};
 
 						dataObject.dataProperties.Add(column);
@@ -591,7 +593,7 @@ namespace org.iringtools.nhibernate
 							dataLength = dataLength,
 							isNullable = isNullable,
 							keyType = keyType,
-							propertyName = Utility.NameSafe(columnName),
+							propertyName = Utility.ToSafeName(columnName),
 						};
 						dataObject.addKeyProperty(key);
 					}
@@ -658,7 +660,7 @@ namespace org.iringtools.nhibernate
 				DataObject dataObject = new DataObject()
 				{
 					tableName = tableName,
-					objectName = Utility.NameSafe(tableName)
+					objectName = Utility.ToSafeName(tableName)
 				};
 
 				string sql = GetTableMetaQuery(dbProvider, dbName, dbSchema, tableName);
@@ -683,7 +685,7 @@ namespace org.iringtools.nhibernate
 							dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
 							dataLength = dataLength,
 							isNullable = isNullable,
-							propertyName = Utility.NameSafe(columnName)
+							propertyName = Utility.ToSafeName(columnName)
 						};
 
 						dataObject.dataProperties.Add(column);
@@ -708,7 +710,7 @@ namespace org.iringtools.nhibernate
 							dataLength = dataLength,
 							isNullable = isNullable,
 							keyType = keyType,
-							propertyName = Utility.NameSafe(columnName),
+							propertyName = Utility.ToSafeName(columnName),
 						};
 
 						dataObject.addKeyProperty(key);

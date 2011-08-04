@@ -349,17 +349,23 @@ namespace org.iringtools.adapter.datalayer
         }
 
         DataObject objectDefinition = _dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
-        
-        string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
-          ? String.Empty : (objectDefinition.objectNamespace + ".");
 
-        Type type = Type.GetType(ns + objectType + ", " + _settings["ExecutingAssemblyName"]);
-        
         if (objectDefinition == null)
         {
           throw new Exception("Object type [" + objectType + "] not found.");
         }
 
+        string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
+          ? String.Empty : (objectDefinition.objectNamespace + ".");
+
+        Type type = Type.GetType(ns + objectType + ", " + _settings["ExecutingAssemblyName"]);
+
+        // make an exception for tests
+        if (type == null)
+        {
+          type = Type.GetType(ns + objectType + ", NUnit.Tests");
+        }
+        
         ISession session = OpenSession();
         ICriteria criteria = NHibernateUtility.CreateCriteria(session, type, objectDefinition, filter, startIndex, pageSize);
         return criteria.List<IDataObject>();
@@ -928,7 +934,7 @@ namespace org.iringtools.adapter.datalayer
               dataProperties = new List<DataProperty>(),
               keyProperties = new List<KeyProperty>(),
               dataRelationships = new List<DataRelationship>(), // to be supported in the future
-              objectName = Utility.NameSafe(tableName)
+              objectName = Utility.ToSafeName(tableName)
             };
 
             dbDictionary.dataObjects.Add(table);
@@ -943,7 +949,7 @@ namespace org.iringtools.adapter.datalayer
               dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
               dataLength = dataLength,
               isNullable = isNullable,
-              propertyName = Utility.NameSafe(columnName)
+              propertyName = Utility.ToSafeName(columnName)
             };
 
             table.dataProperties.Add(column);
@@ -968,7 +974,7 @@ namespace org.iringtools.adapter.datalayer
               dataLength = dataLength,
               isNullable = isNullable,
               keyType = keyType,
-              propertyName = Utility.NameSafe(columnName),
+              propertyName = Utility.ToSafeName(columnName),
             };
 
             table.addKeyProperty(key);
@@ -1082,7 +1088,7 @@ namespace org.iringtools.adapter.datalayer
         dataProperties = new List<DataProperty>(),
         keyProperties = new List<KeyProperty>(),
         dataRelationships = new List<DataRelationship>(),
-        objectName = Utility.NameSafe(schemaObjectName)
+        objectName = Utility.ToSafeName(schemaObjectName)
       };
       try
       {
@@ -1134,7 +1140,7 @@ namespace org.iringtools.adapter.datalayer
               dataType = (DataType)Enum.Parse(typeof(DataType), dataType),
               dataLength = dataLength,
               isNullable = isNullable,
-              propertyName = Utility.NameSafe(columnName)
+              propertyName = Utility.ToSafeName(columnName)
             };
 
             dataObject.dataProperties.Add(column);
@@ -1159,7 +1165,7 @@ namespace org.iringtools.adapter.datalayer
               dataLength = dataLength,
               isNullable = isNullable,
               keyType = keyType,
-              propertyName = Utility.NameSafe(columnName),
+              propertyName = Utility.ToSafeName(columnName),
             };
             dataObject.addKeyProperty(key);
           }
