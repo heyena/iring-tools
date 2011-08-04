@@ -738,7 +738,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 			closable: true,
 			modal: false,
 			layout: 'form',
-			title: 'Map Valuelist to RoleMAp',
+			title: 'Map Valuelist to RoleMap',
 			items: form,
 			//height: 180,
 			width: 430,
