@@ -96,8 +96,13 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        DataObject dictionaryObject = _dataDictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
-        Type type = Type.GetType(dictionaryObject.objectNamespace + "." + objectType + ", " + _settings["ExecutingAssemblyName"]);
+        DataObject objectDefinition = _dataDictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
+        
+        string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
+          ? String.Empty : (objectDefinition.objectNamespace + ".");
+
+        Type type = Type.GetType(ns + objectType + ", " + _settings["ExecutingAssemblyName"]);
+        
         IDataObject dataObject = null;
 
         if (identifiers != null)
@@ -344,14 +349,19 @@ namespace org.iringtools.adapter.datalayer
         }
 
         DataObject objectDefinition = _dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+        
+        string ns = String.IsNullOrEmpty(objectDefinition.objectNamespace)
+          ? String.Empty : (objectDefinition.objectNamespace + ".");
 
+        Type type = Type.GetType(ns + objectType + ", " + _settings["ExecutingAssemblyName"]);
+        
         if (objectDefinition == null)
         {
           throw new Exception("Object type [" + objectType + "] not found.");
         }
 
         ISession session = OpenSession();
-        ICriteria criteria = NHibernateUtility.CreateCriteria(session, objectDefinition, filter, startIndex, pageSize);
+        ICriteria criteria = NHibernateUtility.CreateCriteria(session, type, objectDefinition, filter, startIndex, pageSize);
         return criteria.List<IDataObject>();
       }
       catch (Exception ex)

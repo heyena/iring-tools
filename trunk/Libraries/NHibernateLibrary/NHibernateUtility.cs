@@ -9,25 +9,17 @@ namespace org.iringtools.adapter.datalayer
 {
   public static class NHibernateUtility
   {
-    public static ICriteria CreateCriteria(ISession session, DataObject objectDefinition, DataFilter dataFilter)
-    {
-      string objectType = (String.IsNullOrEmpty(objectDefinition.objectNamespace)
-        ? String.Empty : objectDefinition.objectNamespace + ".") + objectDefinition.objectName;
+    public static ICriteria CreateCriteria(ISession session, Type objectType, DataObject objectDefinition, DataFilter dataFilter)
+    {      
       ICriteria criteria = session.CreateCriteria(objectType);
-
-      if (dataFilter != null && (
-        (dataFilter.Expressions != null && dataFilter.Expressions.Count > 0) ||
-        (dataFilter.OrderExpressions != null && dataFilter.OrderExpressions.Count > 0)))
-      {
-        AddCriteriaExpressions(criteria, objectDefinition, dataFilter);
-      }
+      AddCriteriaExpressions(criteria, objectDefinition, dataFilter);
 
       return criteria;
     }
 
-    public static ICriteria CreateCriteria(ISession session, DataObject objectDefinition, DataFilter dataFilter, int start, int limit)
+    public static ICriteria CreateCriteria(ISession session, Type objectType, DataObject objectDefinition, DataFilter dataFilter, int start, int limit)
     {
-      ICriteria criteria = CreateCriteria(session, objectDefinition, dataFilter);
+      ICriteria criteria = CreateCriteria(session, objectType, objectDefinition, dataFilter);
 
       if (start >= 0 && limit >= 0)
       {
@@ -48,11 +40,11 @@ namespace org.iringtools.adapter.datalayer
 
           foreach (Expression expression in dataFilter.Expressions)
           {
-            string propertyName = expression.PropertyName;
-            DataProperty dataProperty = objectDefinition.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
-
+            DataProperty dataProperty = objectDefinition.dataProperties.Find(x => x.propertyName.ToUpper() == expression.PropertyName.ToUpper());
+            
             if (dataProperty != null)
             {
+              string propertyName = dataProperty.propertyName;
               Values valuesStr = expression.Values;
               string valueStr = valuesStr.First();
               object value = ConvertValue(valueStr, dataProperty.dataType);
@@ -127,7 +119,7 @@ namespace org.iringtools.adapter.datalayer
           {
             criteria.Add(criterions.First());
           }
-          else
+          else if (criterions.Count > 1)
           {
             NHibernate.Criterion.ICriterion lhs = criterions.First();
 
@@ -172,7 +164,8 @@ namespace org.iringtools.adapter.datalayer
         {
           foreach (OrderExpression expression in dataFilter.OrderExpressions)
           {
-            string propertyName = expression.PropertyName;
+            DataProperty dataProperty = objectDefinition.dataProperties.Find(x => x.propertyName.ToUpper() == expression.PropertyName.ToUpper());
+            string propertyName = dataProperty.propertyName;
 
             if (expression.SortOrder == SortOrder.Asc)
             {
