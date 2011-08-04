@@ -21,7 +21,7 @@ namespace org.iringtools.adapter.datalayer
     {
       ICriteria criteria = CreateCriteria(session, objectType, objectDefinition, dataFilter);
 
-      if (start >= 0 && limit >= 0)
+      if (start >= 0 && limit > 0)
       {
         criteria.SetFirstResult(start).SetMaxResults(limit);
       }
@@ -218,10 +218,8 @@ namespace org.iringtools.adapter.datalayer
         case DataType.Byte:
           return Convert.ToByte(value);
         default:
-          throw new Exception("Unknown data type [" + dataType + "]");
+          throw new Exception("Data type [" + dataType + "] not supported.");
       }
     }
-
-
   }
 }

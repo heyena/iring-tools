@@ -1075,7 +1075,7 @@ namespace org.iringtools.utility
       }
     }
 
-    public static string NameSafe(string name)
+    public static string ToSafeName(string name)
     {
       return Regex.Replace(name, @"^\d*|\W", "");
     }    
