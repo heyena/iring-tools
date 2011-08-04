@@ -67,14 +67,17 @@ namespace org.iringtools.adapter
     //Append KeyRing from IdentityProvider.
     public void AppendKeyRing(IDictionary keyRing)
     {
-      foreach (string key in keyRing.Keys)
+      if (keyRing != null)
       {
-        string value = keyRing[key].ToString();
-
-        //Protect existing settings, but add new ones.
-        if (!this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase))
+        foreach (string key in keyRing.Keys)
         {
-          this.Add(key, value);
+          string value = keyRing[key].ToString();
+
+          //Protect existing settings, but add new ones.
+          if (!this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase))
+          {
+            this.Add(key, value);
+          }
         }
       }
     }

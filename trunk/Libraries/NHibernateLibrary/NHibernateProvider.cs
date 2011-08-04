@@ -125,6 +125,7 @@ namespace org.iringtools.nhibernate
 		public DatabaseDictionary GetDictionary(string projectName, string applicationName)
 		{
 			DatabaseDictionary databaseDictionary = new DatabaseDictionary();
+
 			try
 			{
 				InitializeScope(projectName, applicationName);
@@ -138,7 +139,6 @@ namespace org.iringtools.nhibernate
 					databaseDictionary = new DatabaseDictionary();
 					Utility.Write<DatabaseDictionary>(databaseDictionary, _settings["DBDictionaryPath"], true);
 				}
-
 			}
 			catch (Exception ex)
 			{
@@ -425,6 +425,7 @@ namespace org.iringtools.nhibernate
         _logger.Debug(String.Format("In GetSchemaObjects({0}, {1})", projectName, applicationName));
 
 				InitializeScope(projectName, applicationName);
+
 				if (File.Exists(_settings["DBDictionaryPath"]))
 					dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
 				else
@@ -727,6 +728,23 @@ namespace org.iringtools.nhibernate
 		#endregion
 
 		#region private methods
+    private DatabaseDictionary GetDatabaseDictionary(string path)
+    {
+      try
+      {
+        DatabaseDictionary dbDict = Utility.Read<DatabaseDictionary>(path);
+
+        // if connection string is not encrypted, encrypt and write it back
+
+        return dbDict;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error reading database dictionary: " + ex);
+        throw ex;
+      }
+    }
+
 		private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema,
 			string dbUserName, string dbPassword, string portNumber, string serName)
 		{
