@@ -6,7 +6,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Web;
 using Ninject;
-
+using log4net;
 
 using org.iringtools.library;
 using org.iringtools.utility;
@@ -17,6 +17,7 @@ namespace iRINGTools.Web.Models
     public class MappingRepository : IMappingRepository
     {
 
+			  private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingRepository));
         private NameValueCollection _settings = null;
         private WebHttpClient _client = null;
         private string _refDataServiceURI = string.Empty;
@@ -36,9 +37,10 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
             }
-            catch  
-            {
-            }
+						catch (Exception ex)
+						{
+							_logger.Error(ex.ToString());
+						}
 
             return obj;
         }
@@ -50,9 +52,10 @@ namespace iRINGTools.Web.Models
             {
               _client.Post<XElement>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), mappingXml, true);
             }
-            catch  
-            {
-            }         
+						catch (Exception ex)
+						{
+							_logger.Error(ex.ToString());
+						}  
         }
     }
 }
