@@ -20,11 +20,13 @@ using iRINGTools.Web.Models;
 using org.ids_adi.qmxf;
 using VDS.RDF;
 using System.Text;
+using log4net;
 
 namespace org.iringtools.web.controllers
 {
   public class MappingController : BaseController
   {
+		private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingController));
     NamespaceMapper _nsMap = new NamespaceMapper();
     private NameValueCollection _settings = null;
     private RefDataRepository _refdata = null;
@@ -128,6 +130,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(nodes, JsonRequestBehavior.AllowGet);
       }
       return Json(nodes, JsonRequestBehavior.AllowGet);
@@ -177,8 +180,9 @@ namespace org.iringtools.web.controllers
           throw new Exception("Error Creating Reference Map...");
         }
       }
-      catch
+			catch (Exception e)
       {
+				_logger.Error(e.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -256,6 +260,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(nodes, JsonRequestBehavior.AllowGet);
       }
       return Json(nodes, JsonRequestBehavior.AllowGet);
@@ -401,6 +406,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(new { success = false } + ex.Message, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -438,8 +444,9 @@ namespace org.iringtools.web.controllers
 
         rm.type = RoleType.Reference;
       }
-      catch
+			catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -481,6 +488,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(nodes, JsonRequestBehavior.AllowGet);
       }
       return Json(nodes, JsonRequestBehavior.AllowGet);
@@ -634,6 +642,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(nodes, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -653,6 +662,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -673,6 +683,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -722,6 +733,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -762,7 +774,9 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+				string msg = ex.ToString();
+				_logger.Error(msg);
+				return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
@@ -789,6 +803,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -810,6 +825,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -858,6 +874,7 @@ namespace org.iringtools.web.controllers
 			}
 			catch (Exception ex)
 			{
+				_logger.Error(ex.ToString());
 				return Json(new { success = false }, JsonRequestBehavior.AllowGet);
 			}
 			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -885,6 +902,7 @@ namespace org.iringtools.web.controllers
 			}
 			catch (Exception ex)
 			{
+				_logger.Error(ex.ToString());
 				return Json(new { success = false }, JsonRequestBehavior.AllowGet);
 			}
 			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -933,6 +951,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(new { success = false }, JsonRequestBehavior.AllowGet);
       }
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -958,6 +977,7 @@ namespace org.iringtools.web.controllers
       }
       catch (Exception ex)
       {
+				_logger.Error(ex.ToString());
         return Json(jsonArray, JsonRequestBehavior.AllowGet);
       }
       return Json(jsonArray, JsonRequestBehavior.AllowGet);
