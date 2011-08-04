@@ -355,7 +355,7 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.XYZ
           VALVES = relatedObjects;
           break;
 
-        default: 
+        default:
           throw new Exception("Related object [" + relatedObjectType + "] does not exist.");
       }
     }

@@ -162,35 +162,24 @@ namespace org.iringtools.library
 
       try
       {
-        //Console.WriteLine("ckpt1: source object type [" + objectType + "]");
-        //Console.WriteLine("ckpt2: related object type [" + relatedObjectType + "]");
-
         DataObject objectDefinition = GetObjectDefinition(objectType);
-        //Console.WriteLine("ckpt3: source object definition [" + org.iringtools.utility.Utility.SerializeDataContract<DataObject>(objectDefinition) + "].");
         DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
-        //Console.WriteLine("ckpt4: related object definition [" + org.iringtools.utility.Utility.SerializeDataContract<DataObject>(relatedObjectDefinition) + "].");
-
+        
         DataTable dataTable = NewDataTable(objectDefinition);
-        //Console.WriteLine("ckpt5: source data table created.");
         DataRow dataRow = CreateDataRow(dataTable, dataObject, objectDefinition);
-        //Console.WriteLine("ckpt6: source data row created.");
-
+        
         if (dataRow != null)
         {
           DataTable relatedDataTable = GetRelatedDataTable(dataRow, relatedObjectDefinition.tableName);
-          //Console.WriteLine("ckpt7: related data table created.");
           relatedDataObjects = ToDataObjects(relatedDataTable, relatedObjectType);
-          //Console.WriteLine("ckpt8: related data objects created.");          
         }
         else
         {
-          //Console.WriteLine("ckpt9: Error create data row for object [" + objectDefinition.objectName + "]");
           _logger.Error("Error create data row for object [" + objectDefinition.objectName + "]");
         }
       }
       catch (Exception ex)
       {
-        //Console.WriteLine("ckpt10: Error getting related objects: " + ex);
         _logger.Error("Error getting related objects: " + ex);
         throw ex;
       }
