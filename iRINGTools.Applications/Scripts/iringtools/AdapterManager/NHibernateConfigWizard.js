@@ -247,8 +247,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						host.show();
 
 						serviceName.show();
-						creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);						
-						
+						creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
+
 						portNumber.setValue(dbInfo.portNumber);
 						portNumber.show();
 					}
@@ -1215,11 +1215,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											text: nodeText,
 											type: "keyProperty",
 											leaf: true,
-											iconCls: 'property',											
+											iconCls: 'property',
 											hidden: false,
 											properties: properties
 										});
-										newKeyNode.iconCls = 'property';										
+										newKeyNode.iconCls = 'property';
 										propertiesNode.children.splice(jj, 1);
 										jj--;
 
@@ -1406,6 +1406,13 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 												var relObjNam = relationNodeAttr.relatedObjectName;
 												if (relObjNam.toLowerCase() != objNam.toLowerCase() && relObjNam.toLowerCase() == oldObjNam.toLowerCase())
 													relationNodeAttr.relatedObjectName = objNam;
+
+												var relatedObjPropMap = relationNodeAttr.relatedObjMap;
+
+												for (var iki = 0; iki < relatedObjPropMap.length; iki++) {
+													if (relatedObjPropMap[iki].relatedObjName.toLowerCase() == oldObjNam.toLowerCase())
+														relatedObjPropMap[iki].relatedObjName = objNam;
+												}
 											}
 										}
 									}
@@ -3163,12 +3170,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
     						}
     					}
     				}
-    			}
-
-    			if (node.attributes.attributes)
-    				node.attributes.attributes.relatedObjectName = relatedObjectName;
-    			else
-    				node.attributes.relatedObjectName = relatedObjectName;
+    			}   		
 
     			var mappingProperties = new Array();
     			var ii = 0;
@@ -3235,7 +3237,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
     								indexOf = i;
     							}
     					}
-    				}    			
+    				}
     			}
 
     			var colModel = new Ext.grid.ColumnModel([
@@ -3404,6 +3406,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
     					var attribute = node.attributes.attributes;
 
     				if (attribute) {
+    					relationConfigPanel.getForm().findField('relatedObjectName').setValue(attribute.relatedObjectName);
+    					relationConfigPanel.getForm().findField('relationType').setValue(attribute.relationshipTypeIndex);
     					for (i = 0; i < attribute.propertyMap.length; i++)
     						properMap.push([attribute.propertyMap[i].dataPropertyName.toUpperCase(), attribute.propertyMap[i].relatedPropertyName.toUpperCase()]);
 
