@@ -60,7 +60,12 @@ namespace org.iringtools.library
     #region IDataLayer implementation methods
     public override DataDictionary GetDictionary()
     {
-      throw new NotImplementedException();
+      InitializeDatabaseDictionary();
+
+      DataDictionary dictionary = new DataDictionary();
+      dictionary.dataObjects = utility.Utility.CloneDataContractObject<List<DataObject>>(_dbDictionary.dataObjects);
+
+      return dictionary;
     }
 
     public override long GetCount(string objectType, DataFilter filter)

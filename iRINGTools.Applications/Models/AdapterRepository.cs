@@ -12,6 +12,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
+using System.Text;
 
 
 namespace iRINGTools.Web.Models
@@ -304,7 +305,15 @@ namespace iRINGTools.Web.Models
 				public string SaveDBDictionary(string scope, string application, string tree)
 				{
 					WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-					DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
+          DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
+
+          string connStr = dbDictionary.ConnectionString;
+          if (!String.IsNullOrEmpty(connStr))
+          {
+            string urlEncodedConnStr = Utility.DecodeFrom64(connStr);
+            dbDictionary.ConnectionString = HttpUtility.UrlDecode(urlEncodedConnStr);
+          }
+
 					string postResult = null;
           try
           {
@@ -320,10 +329,15 @@ namespace iRINGTools.Web.Models
         public DatabaseDictionary GetDBDictionary(string scope, string application)
         {
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          DatabaseDictionary db = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
-					System.Web.Script.Serialization.JavaScriptSerializer oSerializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-					string s = oSerializer.Serialize(db);					
-					return db;
+          DatabaseDictionary dbDictionary = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+
+          string connStr = dbDictionary.ConnectionString;
+          if (!String.IsNullOrEmpty(connStr))
+          {
+            dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
+          }
+
+					return dbDictionary;
 				}
 
         public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,

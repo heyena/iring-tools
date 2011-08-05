@@ -1,22 +1,18 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
-using System.Reflection;
 using System.Text;
-using System.Web;
+using System.Xml;
+using System.Xml.Linq;
 using log4net;
 using NHibernate;
 using NHibernate.Cfg;
 using Ninject;
-using org.iringtools.adapter;
 using org.iringtools.library;
-using org.iringtools.utility;
 using org.iringtools.nhibernate;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -73,13 +69,35 @@ namespace org.iringtools.adapter.datalayer
       );
 
       if (File.Exists(_databaseDictionaryPath))
-        _dbDictionary = Utility.Read<DatabaseDictionary>(_databaseDictionaryPath);
+      {
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_databaseDictionaryPath);
+      }
 
       if (File.Exists(_hibernateConfigPath) && File.Exists(hibernateMappingPath))
-        _sessionFactory = new Configuration()
-          .Configure(_hibernateConfigPath)
-          .AddFile(hibernateMappingPath)
-          .BuildSessionFactory();
+      {
+        Configuration cfg = new Configuration();
+        cfg.Configure(_hibernateConfigPath);
+
+        string connStrProp = "connection.connection_string";
+        string connStr = cfg.Properties[connStrProp];
+
+        if (connStr.ToUpper().Contains("DATA SOURCE"))
+        {
+          // connection string is not encrypted, encrypt and write it back
+          string encryptedConnStr = EncryptionUtility.Encrypt(connStr);
+          cfg.Properties[connStrProp] = encryptedConnStr;
+          SaveConfiguration(cfg, _hibernateConfigPath);
+
+          // restore plain text connection string for creating session factory
+          cfg.Properties[connStrProp] = connStr;
+        }
+        else
+        {
+          cfg.Properties[connStrProp] = EncryptionUtility.Decrypt(connStr);
+        }
+
+        _sessionFactory = cfg.AddFile(hibernateMappingPath).BuildSessionFactory();
+      }
 
       _authorizationPath = string.Format("{0}Authorization.{1}.xml",
         _settings["DataPath"],
@@ -636,49 +654,6 @@ namespace org.iringtools.adapter.datalayer
       return relatedObjects;
     }
 
-    public XElement GetConfiguration(string connectionInfo)
-    {
-      DatabaseDictionary databaseDictionary = null;
-
-      try
-      {
-        databaseDictionary = new DatabaseDictionary
-        {
-          ConnectionString = connectionInfo
-        };
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error in GetConfiguration: " + ex);
-      }
-
-      return Utility.SerializeToXElement<DatabaseDictionary>(databaseDictionary);
-    }
-
-    public Response SaveConfiguration(XElement configuration)
-    {
-      Response _response = new Response();
-      _response.Messages = new Messages();
-      string _projectName = _settings["Scope"].Split('.')[0];
-      string _applicationName = _settings["Scope"].Split('.')[1];
-      try
-      {
-        //_databaseDictionary = Utility.DeserializeDataContract<DatabaseDictionary>(configuration.Nodes().First().ToString());
-        _dbDictionary = Utility.DeserializeFromXElement<DatabaseDictionary>(configuration);
-        Utility.Write<DatabaseDictionary>(_dbDictionary, _hibernateConfigPath, true);
-        _response = Generate(_projectName, _applicationName);
-        _response.Level = StatusLevel.Success;
-      }
-      catch (Exception ex)
-      {
-        _response.Messages.Add("Failed to Save datalayer Configuration");
-        _response.Messages.Add(ex.Message);
-        _response.Level = StatusLevel.Error;
-        _logger.Error("Error in SaveConfiguration: " + ex);
-      }
-      return _response;
-    }
-
     public Response Generate(string projectName, string applicationName)
     {
       Status status = new Status();
@@ -689,7 +664,7 @@ namespace org.iringtools.adapter.datalayer
 
         InitializeScope(projectName, applicationName);
 
-        DatabaseDictionary dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+        DatabaseDictionary dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
         if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
         {
           status.Messages.Add("Error project name and application name can not be null");
@@ -780,6 +755,36 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error(string.Format("Error initializing application: {0}", ex));
         throw new Exception(string.Format("Error initializing application: {0})", ex));
       }
+    }
+
+    private void SaveConfiguration(Configuration cfg, string path)
+    {
+      XmlTextWriter writer = new XmlTextWriter(path, Encoding.UTF8);
+      writer.Formatting = Formatting.Indented;
+
+      writer.WriteStartElement("configuration");
+      writer.WriteStartElement("hibernate-configuration", "urn:nhibernate-configuration-2.2");
+      writer.WriteStartElement("session-factory");
+
+      if (cfg.Properties != null)
+      {
+        foreach (var property in cfg.Properties)
+        {
+          if (property.Key != "use_reflection_optimizer")
+          {
+            writer.WriteStartElement("property");
+            writer.WriteAttributeString("name", property.Key);
+            writer.WriteString(property.Value);
+            writer.WriteEndElement();
+          }
+        }
+      }
+
+      writer.WriteEndElement(); // end session-factory
+      writer.WriteEndElement(); // end hibernate-configuration
+      writer.WriteEndElement(); // end configuration
+
+      writer.Close();
     }
 
     private bool ValidateDatabaseDictionary(DatabaseDictionary dbDictionary)
@@ -892,7 +897,7 @@ namespace org.iringtools.adapter.datalayer
 
     //    if (File.Exists(_settings["DBDictionaryPath"]))
     //    {
-    //      databaseDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+    //      databaseDictionary = NHibernateUtility.GetDatabaseDictionary(_settings["DBDictionaryPath"]);
     //    }
     //    else
     //    {
@@ -941,7 +946,7 @@ namespace org.iringtools.adapter.datalayer
     //    InitializeScope(projectName, applicationName);
 
     //    if (File.Exists(_settings["DBDictionaryPath"]))
-    //      dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+    //      dbDictionary = NHibernateUtility.GetDatabaseDictionary(_settings["DBDictionaryPath"]);
     //    else
     //    {
     //      Utility.Write<DatabaseDictionary>(dbDictionary, _settings["DBDictionaryPath"], true);
@@ -1178,7 +1183,7 @@ namespace org.iringtools.adapter.datalayer
     //  {
     //    InitializeScope(projectName, applicationName);
     //    if (File.Exists(_settings["DBDictionaryPath"]))
-    //      dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+    //      dbDictionary = NHibernateUtility.GetDatabaseDictionary(_settings["DBDictionaryPath"]);
     //    else
     //      return tableNames;
 
@@ -1250,7 +1255,7 @@ namespace org.iringtools.adapter.datalayer
     //    InitializeScope(projectName, applicationName);
 
     //    if (File.Exists(_settings["DBDictionaryPath"]))
-    //      dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+    //      dbDictionary = NHibernateUtility.GetDatabaseDictionary(_settings["DBDictionaryPath"]);
 
     //    string connString = dbDictionary.ConnectionString;
     //    string dbProvider = dbDictionary.Provider.ToString().ToUpper();
@@ -1502,6 +1507,48 @@ namespace org.iringtools.adapter.datalayer
     //    _logger.Error("Error in ParseConnectionString: " + ex);
     //    throw ex;
     //  }
+    //}
+
+    //public XElement GetConfiguration(string connectionInfo)
+    //{
+    //  DatabaseDictionary databaseDictionary = null;
+
+    //  try
+    //  {
+    //    databaseDictionary = new DatabaseDictionary
+    //    {
+    //      ConnectionString = connectionInfo
+    //    };
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error("Error in GetConfiguration: " + ex);
+    //  }
+
+    //  return Utility.SerializeToXElement<DatabaseDictionary>(databaseDictionary);
+    //}
+
+    //public Response SaveConfiguration(XElement configuration)
+    //{
+    //  Response _response = new Response();
+    //  _response.Messages = new Messages();
+    //  string _projectName = _settings["Scope"].Split('.')[0];
+    //  string _applicationName = _settings["Scope"].Split('.')[1];
+    //  try
+    //  {
+    //    _dbDictionary = Utility.DeserializeFromXElement<DatabaseDictionary>(configuration);
+    //    //Utility.Write<DatabaseDictionary>(_dbDictionary, _hibernateConfigPath, true);
+    //    _response = Generate(_projectName, _applicationName);
+    //    _response.Level = StatusLevel.Success;
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _response.Messages.Add("Failed to Save datalayer Configuration");
+    //    _response.Messages.Add(ex.Message);
+    //    _response.Level = StatusLevel.Error;
+    //    _logger.Error("Error in SaveConfiguration: " + ex);
+    //  }
+    //  return _response;
     //}
     #endregion
   }

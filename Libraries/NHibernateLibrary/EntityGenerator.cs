@@ -701,7 +701,7 @@ namespace org.iringtools.nhibernate
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "connection.connection_string");
-        configWriter.WriteString(connectionString);
+        configWriter.WriteString(EncryptionUtility.Encrypt(connectionString));
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "proxyfactory.factory_class");
