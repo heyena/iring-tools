@@ -2359,7 +2359,7 @@ namespace org.iringtools.refdata
               string templateID = string.Empty;
               string generatedId = string.Empty;
               string roleQualification = string.Empty;
-              int index = 1;
+              //int index = 1;
               if (!string.IsNullOrEmpty(newTQ.identifier))
                 templateID = Utility.GetIdFromURI(newTQ.identifier);
 
@@ -2448,7 +2448,7 @@ namespace org.iringtools.refdata
                     }
                   }
 
-                  index = 1;
+                  //index = 1;
                   ///  Qualification roles do have the following properties
                   /// 1) baseclass of owl:Thing
                   /// 2) rdf:type = p8:TemplateRoleDescription
