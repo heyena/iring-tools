@@ -1416,6 +1416,15 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											}
 										}
 									}
+
+									var items = editPane.items.items;
+
+									for (var i = 0; i < items.length; i++) {
+										var relateObjField = items[i].getForm().findField('relatedObjectName');
+										if (relateObjField)
+											if (relateObjField.getValue().toLowerCase() == oldObjNam.toLowerCase())
+												relateObjField.setValue(objNam);
+									}
 								}
 							}
 						}, {
@@ -2124,7 +2133,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			var tProp = setTreeProperty(dsConfigPane);
 			treeProperty.connectionString = tProp.connectionString;
 			if (treeProperty.connectionString != null && treeProperty.connectionString.length > 0) {
-			    treeProperty.connectionString = Base64.encode(tProp.connectionString);
+				treeProperty.connectionString = Base64.encode(tProp.connectionString);
 			}
 			treeProperty.schemaName = tProp.schemaName;
 			treeProperty.provider = tProp.provider;
@@ -2519,8 +2528,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				app: appName
 			},
 			success: function (response, request) {
-			    dbDict = Ext.util.JSON.decode(response.responseText);
-			    dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
+				dbDict = Ext.util.JSON.decode(response.responseText);
+				dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
 
 				var tab = Ext.getCmp('content-panel');
 				var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
@@ -2563,24 +2572,21 @@ function findNodeRelatedObjMap(node, relatedObjName) {
 	if (attribute)
 		var relatedObjMap = attribute.relatedObjMap;
 	var relateObjItem;
-	var ifHas = false;
-	var indexOf;
+	var ifHas = false;	
 
 	if (relatedObjMap)
 		for (var i = 0; i < relatedObjMap.length; i++) {
 			if (relatedObjMap[i].relatedObjName)
 				if (relatedObjMap[i].relatedObjName == relatedObjName) {
 					ifHas = true;
-					relateObjItem = relatedObjMap[i];
-					indexOf = i;
+					relateObjItem = relatedObjMap[i];					
 				}
 		}
 
 	if (ifHas == false) {
 		relateObjItem = {};
 		relateObjItem.relatedObjName = relatedObjName;
-		relateObjItem.propertyMap = new Array();
-		indexOf = -1;
+		relateObjItem.propertyMap = new Array();		
 		relatedObjMap.push(relateObjItem);
 	}
 
@@ -3015,16 +3021,24 @@ function setRelationFields(editPane, node, scopeName, appName) {
             ii++;
           }
       }
-    }
-
-    if (node.attributes.attributes)
-      var nodeAttribute = node.attributes.attributes;
-    else
-      var nodeAttribute = node.attributes;
+    }		 
 
     var mappingProperties = new Array();
     ii = 0;
-    var relatedObjectName = nodeAttribute.relatedObjectName;
+
+    if (editPane.items.map[scopeName + '.' + appName + '.relationFieldsForm.' + node.id]) {
+    	var relPane = editPane.items.map[scopeName + '.' + appName + '.relationFieldsForm.' + node.id];
+    	var relatedObjectName = relPane.getForm().findField('relatedObjectName').getValue();
+    }
+    else {
+    	if (node.attributes.attributes)
+    		var nodeAttribute = node.attributes.attributes;
+    	else
+    		var nodeAttribute = node.attributes;
+
+    	var relatedObjectName = nodeAttribute.relatedObjectName;
+    }
+
     if (relatedObjectName != '') {
       var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
       if (relatedDataObjectNode) {
@@ -3103,6 +3117,8 @@ function setRelationFields(editPane, node, scopeName, appName) {
         }
         propCombo.store.loadData(selectedProperties);
         propCombo.store.commitChanges();
+
+
         return;
       }
     }
@@ -3125,12 +3141,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
     		name: 'relationshipName',
     		fieldLabel: 'Relationship Name',
     		value: node.text,
-    		allowBlank: false/*,
-    		listeners: {
-    			'change': function (field, newValue, oldValue) {
-    				node.text = newValue;
-    			}
-    		}*/
+    		allowBlank: false
     	}, {
     		xtype: 'textfield',
     		name: 'objectName',
@@ -3152,26 +3163,6 @@ function setRelationFields(editPane, node, scopeName, appName) {
     		listeners: { 'select': function (combo, record, index) {
     			var relatedObjectName = record.data.field2;
     			var relatedDataObjectNode = rootNode.findChild('text', relatedObjectName);
-
-    			var curRelTable = relatedDataObjectNode.attributes.properties.tableName;
-    			var relField = relationConfigPanel.getForm().findField('relatedTable');
-    			var oldRelTable = relField.getValue();
-
-    			if (oldRelTable == '')
-    				relField.setValue(curRelTable);
-    			else if (oldRelTable != curRelTable) {
-    				var gridLabel = scopeName + '.' + appName + '.' + node.id;
-    				if (dataRelationPane.items) {
-    					var gridPane = dataRelationPane.items.map[gridLabel];
-    					if (gridPane) {
-    						var gridStore = gridPane.store;
-    						if (gridStore.data) {
-    							gridStore.removeAll();
-    							gridStore.commitChanges();
-    						}
-    					}
-    				}
-    			}   		
 
     			var mappingProperties = new Array();
     			var ii = 0;
@@ -3213,33 +3204,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
     			mapCombo.store.commitChanges();
 
     			var rnode = dbObjectsTree.getSelectionModel().getSelectedNode();
-
-    			if (rnode.attributes.attributes)
-    				var attribute = rnode.attributes.attributes;
-    			else
-    				var attribute = rnode.attributes;
-
-    			if (attribute)
-    				var relatedObjMap = attribute.relatedObjMap;
-
-    			var relateObjItem;
-    			var ifHas = false;
-    			var indexOf;
-    			var proxyData = [];
-
-    			if (relatedObjMap) {
-    				if (relatedObjMap.length > 0) {
-    					for (var i = 0; i < relatedObjMap.length; i++) {
-    						if (relatedObjMap[i].relatedObjName)
-    							if (relatedObjMap[i].relatedObjName == relatedObjectName) {
-    								ifHas = true;
-    								relateObjItem = relatedObjMap[i];
-    								proxyData = relateObjItem.propertyMap;
-    								indexOf = i;
-    							}
-    					}
-    				}
-    			}
+    			var proxyData = findNodeRelatedObjMap(rnode, relatedObjectName);
 
     			var colModel = new Ext.grid.ColumnModel([
                 { id: 'property', header: 'Property', dataIndex: 'property' },
