@@ -674,7 +674,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				if (!dbObjectsTree.disabled) {
 					for (var j = 0; j < availTableName.length; j++)
 						for (var i = 0; i < rootNode.childNodes.length; i++) {
-							if (rootNode.childNodes[i].attributes.properties.tableName == availTableName[j]) {
+							if (rootNode.childNodes[i].attributes.properties.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
 								found = true;
 								availTableName.splice(j, 1);
 								j--;
@@ -907,7 +907,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 								for (var j = 0; j < availTableName.length; j++)
 									for (var i = 0; i < rootNode.childNodes.length; i++) {
-										if (rootNode.childNodes[i].attributes.properties.tableName == availTableName[j]) {
+										if (rootNode.childNodes[i].attributes.properties.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
 											found = true;
 											availTableName.splice(j, 1);
 											j--;
@@ -1084,7 +1084,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                     { name: 'relationName' }
                   ])
 								});
-								createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName);
+								createRelationGrid(scopeName + '.' + appName + '.' + node.id, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName, '');
 							}
 						}]
 					})
@@ -1118,7 +1118,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
               { name: 'relationName' }
             ])
 				});
-				createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName);
+				createRelationGrid(gridLabel, deleteDataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationCreateForm.' + node.id, 0, scopeName, appName, '');
 			}
 		};
 
@@ -1189,8 +1189,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						// sync data properties
 						for (var j = 0; j < propertiesNode.children.length; j++) {
 							for (var jj = 0; jj < dataObject.dataProperties.length; jj++) {
-								if (propertiesNode.children[j].text.toLowerCase() ==
-                  dataObject.dataProperties[jj].propertyName.toLowerCase()) {
+								if (propertiesNode.children[j].text.toLowerCase() == dataObject.dataProperties[jj].propertyName.toLowerCase()) {
 									propertiesNode.children[j].hidden = false;
 								}
 							}
@@ -1216,11 +1215,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											text: nodeText,
 											type: "keyProperty",
 											leaf: true,
-											iconCls: 'property',
+											iconCls: 'property',											
 											hidden: false,
 											properties: properties
 										});
-										newKeyNode.iconCls = 'property';
+										newKeyNode.iconCls = 'property';										
 										propertiesNode.children.splice(jj, 1);
 										jj--;
 
@@ -1240,6 +1239,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								type: 'relationship',
 								leaf: true,
 								iconCls: 'relation',
+								relatedObjMap: [],
 								objectName: dataObjectNode.text,
 								relatedObjectName: dataObject.dataRelationships[j].relatedObjectName,
 								relationshipType: relationTypeStr[dataObject.dataRelationships[j].relationshipType],
@@ -1404,7 +1404,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 													var relationNodeAttr = relationNode.attributes;
 
 												var relObjNam = relationNodeAttr.relatedObjectName;
-												if (relObjNam != objNam && relObjNam == oldObjNam)
+												if (relObjNam.toLowerCase() != objNam.toLowerCase() && relObjNam.toLowerCase() == oldObjNam.toLowerCase())
 													relationNodeAttr.relatedObjectName = objNam;
 											}
 										}
@@ -1445,7 +1445,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var found = false;
 
 				for (var j = 0; j < node.childNodes.length; j++) {
-					if (node.childNodes[j].text == itemName) {
+					if (node.childNodes[j].text.toLowerCase() == itemName.toLowerCase()) {
 						found = true;
 						break;
 					}
@@ -1596,7 +1596,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										var newKeyNode;
 
 										for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
-											if (propertiesNode.childNodes[jj].text == selectedValues[j].data.text) {
+											if (propertiesNode.childNodes[jj].text.toLowerCase() == selectedValues[j].data.text.toLowerCase()) {
 												var properties = propertiesNode.childNodes[jj].attributes.properties;
 												properties.keyType = 'assigned';
 												properties.nullable = false;
@@ -1875,7 +1875,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				var dsConfigForm = dsConfigPane.getForm();
 				treeProperty.provider = dsConfigForm.findField('dbProvider').getValue();
 				var dbServer = dsConfigForm.findField('dbServer').getValue();
-				dbServer = (dbServer == 'localhost' ? '.' : dbServer);
+				dbServer = (dbServer.toLowerCase() == 'localhost' ? '.' : dbServer);
 				var upProvider = treeProperty.provider.toUpperCase();
 				var serviceNamePane = dsConfigPane.items.items[10];
 				var serviceName = '';
@@ -1915,7 +1915,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				treeProperty.provider = dbDict.Provider;
 				var dbServer = dbInfo.dbServer;
 				var upProvider = treeProperty.provider.toUpperCase();
-				dbServer = (dbServer == 'localhost' ? '.' : dbServer);
+				dbServer = (dbServer.toLowerCase() == 'localhost' ? '.' : dbServer);
 
 				if (upProvider.indexOf('MSSQL') > -1) {
 					if (dbInfo.dbInstance) {
@@ -2273,7 +2273,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											var ind = rtext.indexOf('}');
 											var len = rtext.length - ind - 1;
 											var msg = rtext.substring(ind + 1, rtext.length - 1);
-											showDialog(400, 100, 'Tree saving result', msg, Ext.Msg.OK, null);
+											showDialog(400, 100, 'Tree saving result - Error', msg, Ext.Msg.OK, null);
 										}
 									},
 									failure: function (response, request) {
@@ -2392,12 +2392,12 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						case 'DATA SOURCE':
 							if (provider.indexOf('MSSQL') > -1) {
 								var dsValue = pair[1].split('\\');
-								dbInfo.dbServer = (dsValue[0] == '.' ? 'localhost' : dsValue[0]);
+								dbInfo.dbServer = (dsValue[0].toLowerCase() == '.' ? 'localhost' : dsValue[0]);
 								dbInfo.dbInstance = dsValue[1];
 								dbInfo.portNumber = 1433;
 							}
 							else if (provider.indexOf('MYSQL') > -1) {
-								dbInfo.dbServer = (pair[1] == '.' ? 'localhost' : pair[1]);
+								dbInfo.dbServer = (pair[1].toLowerCase() == '.' ? 'localhost' : pair[1]);
 								dbInfo.portNumber = 3306;
 							}
 							else if (provider.indexOf('ORACLE') > -1) {
@@ -2412,7 +2412,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											var index = server.indexOf(')');
 											server = server.substring(0, index);
 											dbInfo.portNumber = port.substring(0, 4);
-											dbInfo.dbServer = (server == '.' ? 'localhost' : server);
+											dbInfo.dbServer = (server.toLowerCase() == '.' ? 'localhost' : server);
 											break;
 										case 'SERVICE_NAME':
 											var sername = dsValue[j + 1];
@@ -2546,9 +2546,43 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 	}
 });
 
-function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, configLabel, dbObjLabel, formLabel, callId, scopeName, appName) {
-  if (callId == 0) {
-    var msg = 'Relationship name cannot be added when the field is blank.';
+function findNodeRelatedObjMap(node, relatedObjName) {
+	if (node.attributes.attributes)
+		var attribute = node.attributes.attributes;
+	else
+		var attribute = node.attributes;
+
+	if (attribute)
+		var relatedObjMap = attribute.relatedObjMap;
+	var relateObjItem;
+	var ifHas = false;
+	var indexOf;
+
+	if (relatedObjMap)
+		for (var i = 0; i < relatedObjMap.length; i++) {
+			if (relatedObjMap[i].relatedObjName)
+				if (relatedObjMap[i].relatedObjName == relatedObjName) {
+					ifHas = true;
+					relateObjItem = relatedObjMap[i];
+					indexOf = i;
+				}
+		}
+
+	if (ifHas == false) {
+		relateObjItem = {};
+		relateObjItem.relatedObjName = relatedObjName;
+		relateObjItem.propertyMap = new Array();
+		indexOf = -1;
+		relatedObjMap.push(relateObjItem);
+	}
+
+	return relateObjItem.propertyMap;
+}
+
+
+function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, configLabel, dbObjLabel, formLabel, callId, scopeName, appName, relatedObjName) {
+	if (callId == 0) {
+    var msg = 'Relationship name cannot be added when the field is blank.';		
   }
   else {
     var msg = 'The pair of property name and mapping property cannot added when either value is blank.'
@@ -2586,15 +2620,13 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
   					var tab = Ext.getCmp('content-panel');
   					var rp = tab.items.map[configLabel];
   					var dataObjectsPane = rp.items.map[dbObjLabel];
+  					var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+  					var node = dbObjectsTree.getSelectionModel().getSelectedNode();
   					var editPane = dataObjectsPane.items.items[1];
   					var form = editPane.items.map[formLabel].getForm();
   					var mydata = dataStore.data.items;
-  					var dbObjectsTree;
-  					var node;
 
   					if (callId == 0) {
-  						dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-  						node = dbObjectsTree.getSelectionModel().getSelectedNode();
   						var rootNode = dbObjectsTree.getRootNode();
   						var numberOfRelation = rootNode.childNodes.length - 1;
 
@@ -2637,7 +2669,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
   						}
 
   						for (var i = 0; i < mydata.length; i++)
-  							if (mydata[i].data.property == propertyName && mydata[i].data.relatedProperty == mapPropertyName) {
+  							if (mydata[i].data.property.toLowerCase() == propertyName.toLowerCase() && mydata[i].data.relatedProperty.toLowerCase() == mapPropertyName.toLowerCase()) {
   								var message = 'The pair of ' + propertyName + ' and ' + mapPropertyName + ' cannot be added because the pair already exits.';
   								showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
   								return;
@@ -2652,6 +2684,9 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
   							property: propertyName,
   							relatedProperty: mapPropertyName
   						});
+
+  						var relatedMapItem = findNodeRelatedObjMap(node, relatedObjName);
+  						relatedMapItem.push([propertyName, mapPropertyName]);
   					}
   					dataStore.add(newRelationRecord);
   					dataStore.commitChanges();
@@ -2680,10 +2715,10 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
   						for (var j = 0; j < node.childNodes.length; j++)
   							nodeChildren.push(node.childNodes[j].text);
 
-  						newNodeText = relationName.toLowerCase();
+  						newNodeText = relationName;
   						exitNode = false;
   						for (var j = 0; j < nodeChildren.length; j++) {
-  							if (nodeChildren[j].toLowerCase() == newNodeText) {
+  							if (nodeChildren[j].toLowerCase() == newNodeText.toLowerCase()) {
   								exitNode = true;
   								break;
   							}
@@ -2695,6 +2730,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
   								type: 'relationship',
   								leaf: true,
   								iconCls: 'relation',
+  								relatedObjMap: [],
   								objectName: node.parentNode.text,
   								relatedObjectName: '',
   								relationshipType: 'OneToOne',
@@ -2706,6 +2742,9 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 
   							if (node.expanded == false)
   								node.expand();
+
+  							if (!newNode.isSelected())
+  								newNode.select();
 
   							setRelationFields(editPane, newNode, scopeName, appName);
   						}
@@ -2724,6 +2763,17 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
   					if (selectModel.hasSelection()) {
   						var selectIndex = selectModel.getSelectedIndex();
   						dataStore.removeAt(selectIndex);
+
+  						if (callId == 1) {
+  							var tab = Ext.getCmp('content-panel');
+  							var rp = tab.items.map[configLabel];
+  							var dataObjectsPane = rp.items.map[dbObjLabel];
+  							var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+  							var node = dbObjectsTree.getSelectionModel().getSelectedNode();
+
+  							var relatedMapItem = findNodeRelatedObjMap(node, relatedObjName);
+  							relatedMapItem.remove(relatedMapItem[selectIndex]);
+  						}
   					}
   					else {
   						if (dataStore.data.items.length < 1)
@@ -2792,7 +2842,7 @@ RadioField = Ext.extend(Ext.Panel, {
 		});
 
 		if (this.serName != '') {
-			if (this.serName == 'SID') {
+			if (this.serName.toUpperCase() == 'SID') {
 				this.field1.disabled = false;
 				this.field2.disabled = true;
 				
@@ -2878,7 +2928,7 @@ function creatRadioField(panel, idLabel, value, serName) {
 
 function setRelationFields(editPane, node, scopeName, appName) {
   if (editPane && node) {
-    var tab = Ext.getCmp('content-panel');
+		var tab = Ext.getCmp('content-panel');
     var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
     var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
 
@@ -2892,13 +2942,15 @@ function setRelationFields(editPane, node, scopeName, appName) {
     var thisObj = dataObjectNode.text;
     var ifExist;
     var relAttribute = null;
-    var relateObj;
+    var relateObjStr;
     var nodeRelateObj;
-
+		var rindex = 0
     for (var i = 0; i < rootNode.childNodes.length; i++) {
-    	relateObj = rootNode.childNodes[i].text;
+    	relateObjStr = rootNode.childNodes[i].text;
 			ifExist = false;
 			for (var j = 0; j < relationFolderNode.childNodes.length; j++) {
+				if (relationFolderNode.childNodes[j].text == '' || relationFolderNode.childNodes[j].id == node.id)
+					continue;
 				if (relationFolderNode.childNodes[j].attributes.attributes)
 					relAttribute = relationFolderNode.childNodes[j].attributes.attributes;
 				else if (relationFolderNode.childNodes[j].attributes)
@@ -2906,13 +2958,15 @@ function setRelationFields(editPane, node, scopeName, appName) {
 
 				if (relAttribute) {
 					nodeRelateObj = relAttribute.relatedObjectName;
-    			if (relateObj == nodeRelateObj)
+					if (relateObjStr.toLowerCase() == nodeRelateObj.toLowerCase())
     				ifExist = true;
     		}
     	}
 
-    	if (relateObj != thisObj && ifExist == false)
-    		relatedObjects.push([i.toString(), relateObj]);
+			if (relateObjStr.toLowerCase() != thisObj.toLowerCase() && ifExist == false) {
+    		relatedObjects.push([rindex.toString(), rootNode.childNodes[i].text]);
+    		rindex++;
+    	}
 			
 		}
 
@@ -3024,7 +3078,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
         relCombo.store.commitChanges();
 
         relCombo.setValue(relatedObjectName);
-        relationConfigPanel.getForm().findField('relatedTable').setValue(relatedObjectName);
+        relationConfigPane.getForm().findField('relatedTable').setValue(relatedObjectName);
 
         var mapCombo = relationConfigPane.getForm().findField('mapPropertyName');
         if (mapCombo.store.data) {
@@ -3154,6 +3208,49 @@ function setRelationFields(editPane, node, scopeName, appName) {
     			}
     			mapCombo.store.loadData(mappingProperties);
     			mapCombo.store.commitChanges();
+
+    			var rnode = dbObjectsTree.getSelectionModel().getSelectedNode();
+
+    			if (rnode.attributes.attributes)
+    				var attribute = rnode.attributes.attributes;
+    			else
+    				var attribute = rnode.attributes;
+
+    			if (attribute)
+    				var relatedObjMap = attribute.relatedObjMap;
+
+    			var relateObjItem;
+    			var ifHas = false;
+    			var indexOf;
+    			var proxyData = [];
+
+    			if (relatedObjMap) {
+    				if (relatedObjMap.length > 0) {
+    					for (var i = 0; i < relatedObjMap.length; i++) {
+    						if (relatedObjMap[i].relatedObjName)
+    							if (relatedObjMap[i].relatedObjName == relatedObjectName) {
+    								ifHas = true;
+    								relateObjItem = relatedObjMap[i];
+    								proxyData = relateObjItem.propertyMap;
+    								indexOf = i;
+    							}
+    					}
+    				}    			
+    			}
+
+    			var colModel = new Ext.grid.ColumnModel([
+                { id: 'property', header: 'Property', dataIndex: 'property' },
+                { header: 'Related Property', dataIndex: 'relatedProperty' }
+              ]);
+    			var dataStore = new Ext.data.Store({
+    				autoDestroy: true,
+    				proxy: new Ext.data.MemoryProxy(proxyData),
+    				reader: new Ext.data.ArrayReader({}, [
+                  { name: 'property' },
+                  { name: 'relatedProperty' }
+                ])
+    			});
+    			createRelationGrid(scopeName + '.' + appName + '.' + rnode.id, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + rnode.id, 1, scopeName, appName, relatedObjectName);
     		}
     		}
     	}, {
@@ -3247,10 +3344,10 @@ function setRelationFields(editPane, node, scopeName, appName) {
 
     						for (var i = 0; i < mydata.length; i++) {
     							var exitPropertyMap = false;
-    							var dataPropertyName = mydata[i].data.property.toLowerCase();
-    							var relatedPropertyName = mydata[i].data.relatedProperty.toLowerCase();
+    							var dataPropertyName = mydata[i].data.property;
+    							var relatedPropertyName = mydata[i].data.relatedProperty;
     							for (var j = 0; j < propertyMap.length; j++) {
-    								if (propertyMap[j][0] == dataPropertyName && propertyMap[j][1] == relatedPropertyName) {
+    								if (propertyMap[j][0].toLowerCase() == dataPropertyName.toLowerCase() && propertyMap[j][1].toLowerCase() == relatedPropertyName.toLowerCase()) {
     									exitPropertyMap = true;
     									break;
     								}
@@ -3265,9 +3362,9 @@ function setRelationFields(editPane, node, scopeName, appName) {
     						for (var j = 0; j < attribute.propertyMap.length; j++) {
     							exitPropertyMap = false;
     							for (var i = 0; i < mydata.length; i++) {
-    								dataPropertyName = mydata[i].data.property.toLowerCase();
-    								relatedPropertyName = mydata[i].data.relatedProperty.toLowerCase();
-    								if (attribute.propertyMap[j].dataPropertyName == dataPropertyName && attribute.propertyMap[j].relatedPropertyName == relatedPropertyName) {
+    								dataPropertyName = mydata[i].data.property;
+    								relatedPropertyName = mydata[i].data.relatedProperty;
+    								if (attribute.propertyMap[j].dataPropertyName.toLowerCase() == dataPropertyName.toLowerCase() && attribute.propertyMap[j].relatedPropertyName.toLowerCase() == relatedPropertyName.toLowerCase()) {
     									exitPropertyMap = true;
     									break;
     								}
@@ -3301,14 +3398,14 @@ function setRelationFields(editPane, node, scopeName, appName) {
     				var properMap = new Array();
     				var dataRelationPane = relationConfigPanel.items.items[7];
 
-						if (node.attributes.propertyMap)
-							var attribute = node.attributes;
-						else if (node.attributes.attributes.propertyMap)
-							var attribute = node.attributes.attributes;
+    				if (node.attributes.propertyMap)
+    					var attribute = node.attributes;
+    				else if (node.attributes.attributes.propertyMap)
+    					var attribute = node.attributes.attributes;
 
     				if (attribute) {
     					for (i = 0; i < attribute.propertyMap.length; i++)
-    						properMap.push([attribute.propertyMap.dataPropertyName, attribute.propertyMap.relatedPropertyName]);
+    						properMap.push([attribute.propertyMap[i].dataPropertyName.toUpperCase(), attribute.propertyMap[i].relatedPropertyName.toUpperCase()]);
 
     					var colModel = new Ext.grid.ColumnModel([
                   { id: 'property', header: 'Property', dataIndex: 'property' },
@@ -3316,13 +3413,13 @@ function setRelationFields(editPane, node, scopeName, appName) {
                 ]);
     					var dataStore = new Ext.data.Store({
     						autoDestroy: true,
-    						proxy: new Ext.data.MemoryProxy(myArray),
+    						proxy: new Ext.data.MemoryProxy(properMap),
     						reader: new Ext.data.ArrayReader({}, [
                     { name: 'property' },
                     { name: 'relatedProperty' }
                   ])
     					});
-    					createRelationGrid(scopeName + '.' + appName + '.' + node.id, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName);
+    					createRelationGrid(scopeName + '.' + appName + '.' + node.id, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName, relationConfigPanel.getForm().findField('relatedObjectName'));
     				}
     			}
     		}]
@@ -3341,7 +3438,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
       var relationTypeIndex = node.attributes.relationshipTypeIndex;
     relationConfigForm.findField('relationType').setValue(relationTypeIndex);
 
-    if (node.attributes.attributes)
+    if (node.attributes.attributes) 
       var propertyMaps = node.attributes.attributes.propertyMap;
     else
       var propertyMaps = node.attributes.propertyMap;
@@ -3356,8 +3453,15 @@ function setRelationFields(editPane, node, scopeName, appName) {
     }
     var myArray = new Array();
     var i = 0;
+
+    var relatedMapItem = findNodeRelatedObjMap(node, relatedObjectName);
+    var relPropertyName;
+    var relMapPropertyName;
     for (i = 0; i < propertyMaps.length; i++) {
-      myArray.push([propertyMaps[i].dataPropertyName.toUpperCase(), propertyMaps[i].relatedPropertyName.toUpperCase()]);
+    	relPropertyName = propertyMaps[i].dataPropertyName.toUpperCase();
+    	relMapPropertyName = propertyMaps[i].relatedPropertyName.toUpperCase();
+    	myArray.push([relPropertyName, relMapPropertyName]);
+    	relatedMapItem.push([relPropertyName, relMapPropertyName]);
     }
     var colModel = new Ext.grid.ColumnModel([
             { id: 'property', header: 'Property', width: 230, dataIndex: 'property' },
@@ -3371,7 +3475,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
               { name: 'relatedProperty' }
             ])
     });
-    createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName);
+    createRelationGrid(gridLabel, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName, relatedObjectName);
   }
 };
 
@@ -3403,7 +3507,7 @@ var addPropertyMapping = function (relationConfigPanel) {
       var myPropMap = dataStore.data.items;
 
       for (var i = 0; i < myPropMap.length; i++)
-        if (myPropMap[i].data.property == propertyName && myPropMap[i].data.relatedProperty == mapPropertyName) {
+      	if (myPropMap[i].data.property.toLowerCase() == propertyName.toLowerCase() && myPropMap[i].data.relatedProperty.toLowerCase() == mapPropertyName.toLowerCase()) {
           var message = 'The pair of ' + propertyName + ' and ' + mapPropertyName + ' already exits.';
           showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
           return;
