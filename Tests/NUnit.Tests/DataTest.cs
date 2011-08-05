@@ -10,7 +10,7 @@ using org.iringtools.library;
 namespace NUnit.Tests
 {
     [TestFixture]
-    public class DataTest
+    public class DataTest : BaseTest
     {
         private AdapterProvider _adapterProvider = null;
         private AdapterSettings _settings = null;
@@ -36,6 +36,8 @@ namespace NUnit.Tests
             _settings["GraphBaseUri"] = "http://www.example.com/";
 
             _adapterProvider = new AdapterProvider(_settings);
+
+            ResetDatabase();
         }
 
         [Test]
