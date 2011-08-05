@@ -11,11 +11,21 @@ namespace NUnit.Tests
   {
     public void ResetDatabase()
     {
+      ResetDatabase(
+        @"..\..\iRINGTools.Services\App_Data\ABC.Data.Complete.sql",
+        @".\XML\nh-configuration.12345_000.ABC.xml");
+
+      ResetDatabase(
+        @"..\..\iRINGTools.Services\App_Data\DEF.Data.Small.sql",
+        @".\XML\nh-configuration.12345_000.DEF.xml");
+    }
+
+    private void ResetDatabase(string sqlScript, string nhConfigPath)
+    {
       try
       {
-        string sql = Utility.ReadString(@"..\..\iRINGTools.Services\App_Data\ABC.Data.Complete.sql");
-
-        XDocument nhConfig = XDocument.Load(@".\XML\nh-configuration.12345_000.ABC.xml");
+        string sql = Utility.ReadString(sqlScript);
+        XDocument nhConfig = XDocument.Load(nhConfigPath);
 
         var properties = nhConfig
           .Element("configuration")
