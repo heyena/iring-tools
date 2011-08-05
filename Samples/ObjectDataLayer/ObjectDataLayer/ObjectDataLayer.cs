@@ -27,24 +27,26 @@ namespace org.iringtools.sdk.objects
     public ObjectDataLayer(AdapterSettings settings)
       : base(settings)
     {
-      _widgetProvider = new WidgetProvider();
-
       _settings = settings;
+
+      _widgetProvider = new WidgetProvider();
     }
 
     public override DataDictionary GetDictionary()
     {
       DataDictionary dataDictionary = new DataDictionary();
 
-      List<DataObject> dataObjects = new List<DataObject>();
-
-      DataObject widget = new DataObject
+      try
       {
-        objectName = "Widget",
-        keyDelimeter = "_",
-      };
+        List<DataObject> dataObjects = new List<DataObject>();
 
-      List<KeyProperty> keyProperties = new List<KeyProperty>
+        DataObject widget = new DataObject
+        {
+          objectName = "Widget",
+          keyDelimeter = "_",
+        };
+
+        List<KeyProperty> keyProperties = new List<KeyProperty>
       {
         new KeyProperty
         {
@@ -52,9 +54,9 @@ namespace org.iringtools.sdk.objects
         },
       };
 
-      widget.keyProperties = keyProperties;
+        widget.keyProperties = keyProperties;
 
-      List<DataProperty> dataProperties = new List<DataProperty>
+        List<DataProperty> dataProperties = new List<DataProperty>
       {
         new DataProperty
         {
@@ -131,11 +133,17 @@ namespace org.iringtools.sdk.objects
         },
       };
 
-      widget.dataProperties = dataProperties;
+        widget.dataProperties = dataProperties;
 
-      dataObjects.Add(widget);
+        dataObjects.Add(widget);
 
-      dataDictionary.dataObjects = dataObjects;
+        dataDictionary.dataObjects = dataObjects;
+      }
+      catch (Exception ex)
+      {
+        _logger.ErrorFormat("Error while getting DataDictionary: {0}", ex.ToString());
+        throw new Exception("Error while getting DataDictionary.", ex);
+      }
 
       return dataDictionary;
     }
@@ -166,30 +174,38 @@ namespace org.iringtools.sdk.objects
           default:
             throw new Exception("Invalid object type provided");
         }
-
-        return _dataObjects;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in Get: " + ex);
-        throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
+        _logger.ErrorFormat("Error while getting list of specified data objects of type [{0}]: {1}", objectType, ex);
+        throw new Exception("Error while getting list of specified data objects of type [" + objectType + "].", ex);
       }
+
+      return _dataObjects;
     }
 
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
-      if (filter != null)
-        throw new NotImplementedException();
-
-      _dataObjects = new List<IDataObject>();
+      List<IDataObject> page = new List<IDataObject>();
 
       try
       {
+        //This is in the base class
+        //loads the current object definition into _dataObjectDefinition.
+        //needed by FormFilterList
+        LoadDataDictionary(objectType);
+
+        List<Filter> filterList = null;
+        if (filter != null)
+          filterList = FormFilterList(filter);
+
+        _dataObjects = new List<IDataObject>();
+
         switch (objectType.ToUpper())
         {
           case "WIDGET":
 
-            List<Widget> widgets = _widgetProvider.ReadWidgets(null);
+            List<Widget> widgets = _widgetProvider.ReadWidgets(filterList);
 
             foreach (Widget widget in widgets)
             {
@@ -203,21 +219,27 @@ namespace org.iringtools.sdk.objects
             throw new Exception("Invalid object type provided");
         }
 
-        return _dataObjects.GetRange(startIndex, pageSize);
+        long count = _dataObjects.Count();
+        if (pageSize > count)
+          pageSize = (int)count;
+
+        page = _dataObjects.GetRange(startIndex, pageSize);
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in Get: " + ex);
-        throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
+        _logger.ErrorFormat("Error while getting a filtered page of data objects of type [{0}]: {1}", objectType, ex);
+        throw new Exception("Error while getting a filtered page of data objects of type [" + objectType + "].", ex);
       }
+
+      return page;
     }
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
+      List<string> identifiers = new List<string>();
+
       try
       {
-        List<string> identifiers = new List<string>();
-
         //NOTE: pageSize of 0 indicates that all rows should be returned.
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
 
@@ -225,18 +247,14 @@ namespace org.iringtools.sdk.objects
         {
           identifiers.Add((string)dataObject.GetPropertyValue("Id"));
         }
-
-        return identifiers;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in GetIdentifiers: " + ex);
-
-        throw new Exception(
-          "Error while getting a list of identifiers of type [" + objectType + "].",
-          ex
-        );
+        _logger.ErrorFormat("Error while getting a filtered list of identifiers of type [{0}]: {1}", objectType, ex);
+        throw new Exception("Error while getting a filtered list of identifiers of type [" + objectType + "].", ex);
       }
+
+      return identifiers;
     }
 
     public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
@@ -253,7 +271,7 @@ namespace org.iringtools.sdk.objects
       {
         Status status = new Status();
         status.Level = StatusLevel.Warning;
-        status.Messages.Add("Nothing to update.");
+        status.Messages.Add("Data object list provided was empty.");
         response.Append(status);
         return response;
       }
@@ -268,25 +286,25 @@ namespace org.iringtools.sdk.objects
             foreach (IDataObject dataObject in dataObjects)
             {
               Status status = new Status();
-              
+
               Widget widget = FormWidget(dataObject);
               string identifier = widget.Id.ToString();
               status.Identifier = identifier;
 
-              int result = _widgetProvider.UpdateWidgets(new List<Widget>{ widget });
+              int result = _widgetProvider.UpdateWidgets(new List<Widget> { widget });
 
               string message = String.Empty;
               if (result == 0)
               {
                 message = String.Format(
-                  "DataObject [{0}] posted successfully.",
+                  "Data object [{0}] posted successfully.",
                   identifier
                 );
               }
               else
               {
                 message = String.Format(
-                  "Error while posting DataObject [{0}].",
+                  "Error while posting data object [{0}].",
                   identifier
                 );
               }
@@ -300,18 +318,14 @@ namespace org.iringtools.sdk.objects
           default:
             throw new Exception("Invalid object type provided");
         }
-
-        return response;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in Post: " + ex);
-
-        throw new Exception(
-          "Error while posting dataObjects of type [" + objectType + "].",
-          ex
-        );
+        _logger.ErrorFormat("Error while processing a list of data objects of type [{0}]: {1}", objectType, ex);
+        throw new Exception("Error while processing a list of data objects of type [" + objectType + "].", ex);
       }
+
+      return response;
     }
 
     public override Response Delete(string objectType, IList<string> identifiers)
@@ -327,13 +341,13 @@ namespace org.iringtools.sdk.objects
         return response;
       }
 
-      foreach (string identifier in identifiers)
+      try
       {
-        Status status = new Status();
-        status.Identifier = identifier;
-        
-        try
+        foreach (string identifier in identifiers)
         {
+          Status status = new Status();
+          status.Identifier = identifier;
+
           int id = 0;
           Int32.TryParse(identifier, out id);
 
@@ -356,23 +370,16 @@ namespace org.iringtools.sdk.objects
           }
 
           status.Messages.Add(message);
-        }
-        catch (Exception ex)
-        {
-          _logger.Error("Error in Delete: " + ex);
 
-          status.Level = StatusLevel.Error;
 
-          string message = String.Format(
-            "Error while deleting dataObject [{0}]. {1}",
-            identifier,
-            ex
-          );
-
-          status.Messages.Add(message);
+          response.Append(status);
         }
 
-        response.Append(status);
+      }
+      catch (Exception ex)
+      {
+        _logger.ErrorFormat("Error while deleting a list of data objects of type [{0}]: {1}", objectType, ex);
+        throw new Exception("Error while deleting a list of data objects of type [" + objectType + "].", ex);
       }
 
       return response;
@@ -383,12 +390,13 @@ namespace org.iringtools.sdk.objects
       throw new NotImplementedException();
     }
 
+    #region Private Marshalling Methods
     private IDataObject FormDataObject(Widget widget)
     {
+      IDataObject dataObject = new GenericDataObject();
+
       try
       {
-        IDataObject dataObject = new GenericDataObject();
-
         dataObject.SetPropertyValue("Id", widget.Id);
         dataObject.SetPropertyValue("Name", widget.Name);
         dataObject.SetPropertyValue("Description", widget.Description);
@@ -400,26 +408,22 @@ namespace org.iringtools.sdk.objects
         dataObject.SetPropertyValue("WeightUOM", widget.WeightUOM);
         dataObject.SetPropertyValue("Material", widget.Material);
         dataObject.SetPropertyValue("Color", widget.Color);
-
-        return dataObject;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in FormDataObject: " + ex);
-
-        throw new Exception(
-          "Error while forming a dataObject from a widget.",
-          ex
-        );
+        _logger.ErrorFormat("Error while marshalling a widget into a data object: {1}", ex);
+        throw new Exception("Error while marshalling a widget into a data object.", ex);
       }
+
+      return dataObject;
     }
 
     private Widget FormWidget(IDataObject dataObject)
     {
+      Widget widget = new Widget();
+
       try
       {
-        Widget widget = new Widget();
-
         if (dataObject.GetPropertyValue("Id") != null)
         {
           string identifier = dataObject.GetPropertyValue("Id").ToString();
@@ -498,17 +502,108 @@ namespace org.iringtools.sdk.objects
           Enum.TryParse<Color>(colorValue, out color);
           widget.Color = color;
         }
-        return widget;
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in FormWidget: " + ex);
-
-        throw new Exception(
-          "Error while forming a Widget from a DataObject.",
-          ex
-        );
+        _logger.ErrorFormat("Error while marshalling a data object into a widget: {1}", ex);
+        throw new Exception("Error while marshalling a data object into a widget.", ex);
       }
+
+      return widget;
     }
+
+    private List<Filter> FormFilterList(DataFilter dataFilter)
+    {
+      List<Filter> filterList = new List<Filter>();
+
+      try
+      {
+        foreach (org.iringtools.library.Expression expression in dataFilter.Expressions)
+        {
+          Filter filter = new Filter();
+
+          string propertyName = expression.PropertyName;
+          DataProperty dataProperty = (from dp in _dataObjectDefinition.dataProperties
+                                       where dp.propertyName.ToUpper() == propertyName.ToUpper()
+                                       select dp).FirstOrDefault();
+
+          bool isString = (dataProperty.dataType == DataType.String || dataProperty.dataType == DataType.Char);
+
+          filter.AttributeName = propertyName;
+
+          if (expression.RelationalOperator == RelationalOperator.StartsWith)
+          {
+            if (!isString) throw new Exception("StartsWith operator used with non-string property");
+
+            filter.RelationalOperator = "like";
+            filter.Value = "'" + expression.Values.FirstOrDefault() + "%'";
+          }
+          else if (expression.RelationalOperator == RelationalOperator.EndsWith)
+          {
+            if (!isString) throw new Exception("EndsWith operator used with non-string property");
+
+            filter.RelationalOperator = "like";
+            filter.Value = "'%" + expression.Values.FirstOrDefault() + "'";
+          }
+          else if (expression.RelationalOperator == RelationalOperator.Contains)
+          {
+            if (!isString) throw new Exception("Contains operator used with non-string property");
+
+            filter.RelationalOperator = "like";
+            filter.Value = "'%" + expression.Values.FirstOrDefault() + "%'";
+          }
+          else if (expression.RelationalOperator == RelationalOperator.In)
+          {
+            filter.RelationalOperator = expression.RelationalOperator.ToString();
+            string values = String.Empty;
+            int valueIndex = 1;
+            int valueCount = expression.Values.Count();
+            foreach (string value in expression.Values)
+            {
+              if (isString)
+              {
+                if (valueIndex == valueCount)
+                  values += "'" + value + "'";
+                else
+                  values += "'" + value + "', ";
+              }
+              else
+              {
+                if (valueIndex == valueCount)
+                  values += value;
+                else
+                  values += value + ", ";
+              }
+
+              valueIndex++;
+            }
+
+            filter.Value = values;
+          }
+          else
+          {
+            filter.RelationalOperator = expression.RelationalOperator.ToString();
+              
+            if (isString)
+              filter.Value = "'" + expression.Values.FirstOrDefault() + "'";
+            else
+              filter.Value = expression.Values.FirstOrDefault();
+          }
+
+          filter.Logical = expression.LogicalOperator.ToString();
+
+          filterList.Add(filter);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.ErrorFormat("Error while marshalling a data filter into a filter list: {1}", ex);
+        throw new Exception("Error while marshalling a data filter into a filter list.", ex);
+      }
+
+      return filterList;
+    }
+    #endregion
+
   }
 }

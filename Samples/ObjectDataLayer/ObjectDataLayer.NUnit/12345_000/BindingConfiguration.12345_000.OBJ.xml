@@ -2,5 +2,5 @@
 <module name="12345_000.CSV">
   <bind name="DataLayer" 
         service="org.iringtools.library.IDataLayer, iRINGLibrary" 
-        to="iRINGTools.SDK.CSVDataLayer.CustomDataLayer, CSVDataLayer" />
+        to="org.iringtools.sdk.objects.ObjectDataLayer, ObjectDataLayer" />
 </module>

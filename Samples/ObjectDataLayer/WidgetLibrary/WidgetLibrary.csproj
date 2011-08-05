@@ -43,7 +43,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="WidgetFilter.cs" />
+    <Compile Include="Filter.cs" />
     <Compile Include="WidgetProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Widget.cs" />
