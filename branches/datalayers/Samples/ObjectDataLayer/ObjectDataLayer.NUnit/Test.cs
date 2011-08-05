@@ -139,48 +139,48 @@ namespace org.iringtools.sdk.objects.test
           }
         }
 
-        //[Test]
-        //public void ReadWithFilter()
-        //{
-        //  DataFilter dataFilter = new DataFilter
-        //  {
-        //    Expressions = new List<Expression>
-        //        {
-        //            new Expression
-        //            {
-        //                PropertyName = "Color",
-        //                RelationalOperator = RelationalOperator.EqualTo,
-        //                Values = new Values
-        //                {
-        //                    "Orange",
-        //                }
-        //            }
-        //        }
-        //  };
+        [Test]
+        public void ReadWithFilter()
+        {
+          DataFilter dataFilter = new DataFilter
+          {
+            Expressions = new List<Expression>
+                {
+                    new Expression
+                    {
+                        PropertyName = "Color",
+                        RelationalOperator = RelationalOperator.EqualTo,
+                        Values = new Values
+                        {
+                            "Orange",
+                        }
+                    }
+                }
+          };
 
-        //  IList<IDataObject> dataObjects = _dataLayer.Get("Widget", dataFilter, 10, 0);
+          IList<IDataObject> dataObjects = _dataLayer.Get("Widget", dataFilter, 10, 0);
 
-        //  if (!(dataObjects.Count() > 0))
-        //  {
-        //    throw new AssertionException("No Rows returned.");
-        //  }
+          if (!(dataObjects.Count() > 0))
+          {
+            throw new AssertionException("No Rows returned.");
+          }
 
-        //  Assert.AreEqual(dataObjects.Count(), 1);
+          Assert.AreEqual(1, dataObjects.Count());
 
-        //  foreach (IDataObject dataObject in dataObjects)
-        //  {
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Name"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Description"));
-        //    Assert.AreEqual(dataObject.GetPropertyValue("Color"), "Orange");
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Material"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Length"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Height"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Width"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("LengthUOM"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Weight"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("WeightUOM"));
-        //  }
-        //}
+          foreach (IDataObject dataObject in dataObjects)
+          {
+            Assert.IsNotNull(dataObject.GetPropertyValue("Name"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Description"));
+            Assert.AreEqual(dataObject.GetPropertyValue("Color"), "Orange");
+            Assert.IsNotNull(dataObject.GetPropertyValue("Material"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Length"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Height"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Width"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("LengthUOM"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Weight"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("WeightUOM"));
+          }
+        }
 
         [Test]
         public void GetDictionary()
@@ -191,8 +191,9 @@ namespace org.iringtools.sdk.objects.test
 
             Assert.IsNotNull(dictionary);
 
-            string path = String.Format("{0}DataDictionary.{1}.xml",
+            string path = String.Format("{0}DataDictionary.{1}.{2}.xml",
                   _adapterSettings["XmlPath"],
+                  _adapterSettings["ProjectName"],
                   _adapterSettings["ApplicationName"]
                 );
 
