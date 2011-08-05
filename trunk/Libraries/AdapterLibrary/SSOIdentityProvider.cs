@@ -39,47 +39,47 @@ namespace org.iringtools.adapter.identity
          *  X-myPSN-UserAttributes = [Full JSON Payload]
          */
 
-        _logger.Info("OAuth headers: ");
+        _logger.Debug("OAuth headers: ");
 
         string accessToken = headers.Get("X-myPSN-AccessToken");
-        _logger.Info("X-myPSN-AccessToken [" + accessToken + "]");        
+        _logger.Debug("X-myPSN-AccessToken [" + accessToken + "]");        
         if (!String.IsNullOrEmpty(accessToken))
           keyRing.Add("AccessToken", accessToken);
 
         string emailAddress = headers.Get("X-myPSN-EmailAddress");
-        _logger.Info("X-myPSN-EmailAddress [" + emailAddress + "]");
+        _logger.Debug("X-myPSN-EmailAddress [" + emailAddress + "]");
         if (!String.IsNullOrEmpty(emailAddress))
           keyRing.Add("UserName", emailAddress);
 
         string userId = headers.Get("X-myPSN-UserID");
-        _logger.Info("X-myPSN-UserID [" + userId + "]");
+        _logger.Debug("X-myPSN-UserID [" + userId + "]");
         if (!String.IsNullOrEmpty(userId))
           keyRing.Add("UserId", userId);
 
         string isBechtelEmployee = headers.Get("X-myPSN-IsBechtelEmployee");
-        _logger.Info("X-myPSN-IsBechtelEmployee [" + isBechtelEmployee + "]");
+        _logger.Debug("X-myPSN-IsBechtelEmployee [" + isBechtelEmployee + "]");
 
         if (!String.IsNullOrEmpty(isBechtelEmployee) && 
           (isBechtelEmployee.ToLower() == "true" || isBechtelEmployee.ToLower() == "yes"))
         {
           string bechtelUserName = headers.Get("X-myPSN-BechtelUserName");
-          _logger.Info("X-myPSN-BechtelUserName [" + bechtelUserName + "]");
+          _logger.Debug("X-myPSN-BechtelUserName [" + bechtelUserName + "]");
           if (!String.IsNullOrEmpty(bechtelUserName))
             keyRing.Add("BechtelUserName", bechtelUserName);
 
           string bechtelDomain = headers.Get("X-myPSN-BechtelDomain");
-          _logger.Info("X-myPSN-BechtelDomain [" + bechtelDomain + "]");
+          _logger.Debug("X-myPSN-BechtelDomain [" + bechtelDomain + "]");
           if (!String.IsNullOrEmpty(bechtelDomain))
             keyRing.Add("BechtelDomain", bechtelDomain);
 
           string bechtelEmployeeNumber = headers.Get("X-myPSN-BechtelEmployeeNumber");
-          _logger.Info("X-myPSN-BechtelEmployeeNumber [" + bechtelEmployeeNumber + "]");
+          _logger.Debug("X-myPSN-BechtelEmployeeNumber [" + bechtelEmployeeNumber + "]");
           if (!String.IsNullOrEmpty(bechtelEmployeeNumber))
             keyRing.Add("BechtelEmployeeNumber", bechtelEmployeeNumber);
         }
 
         string userAttrs = headers.Get("X-myPSN-UserAttributes");
-        _logger.Info("X-myPSN-UserAttributes [" + userAttrs + "]");
+        _logger.Debug("X-myPSN-UserAttributes [" + userAttrs + "]");
       }
 
       return keyRing;
