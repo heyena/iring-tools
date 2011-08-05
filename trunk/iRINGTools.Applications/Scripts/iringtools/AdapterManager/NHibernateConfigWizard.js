@@ -2122,8 +2122,10 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			treeProperty.IdentityConfiguration = null;
 
 			var tProp = setTreeProperty(dsConfigPane);
-
 			treeProperty.connectionString = tProp.connectionString;
+			if (treeProperty.connectionString != null && treeProperty.connectionString.length > 0) {
+			    treeProperty.connectionString = Base64.encode(tProp.connectionString);
+			}
 			treeProperty.schemaName = tProp.schemaName;
 			treeProperty.provider = tProp.provider;
 
@@ -2272,7 +2274,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									success: function (response, request) {
 										var rtext = response.responseText;
 										if (rtext.toUpperCase().indexOf('FALSE') == -1) {
-											showDialog(400, 100, 'Tree saving result', 'The tree is saved successfully.', Ext.Msg.OK, null);
+											showDialog(400, 100, 'Saving Result', 'The configuraiton has been saved successfully.', Ext.Msg.OK, null);
 											var navpanel = Ext.getCmp('nav-panel');
 											navpanel.onReload();
 										}
@@ -2280,13 +2282,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											var ind = rtext.indexOf('}');
 											var len = rtext.length - ind - 1;
 											var msg = rtext.substring(ind + 1, rtext.length - 1);
-											showDialog(400, 100, 'Tree saving result - Error', msg, Ext.Msg.OK, null);
+											showDialog(400, 100, 'Saving Result - Error', msg, Ext.Msg.OK, null);
 										}
 									},
 									failure: function (response, request) {
-										showDialog(660, 300, 'Tree saving result',
-
-                    'Error happed when saving the tree', Ext.Msg.OK, null);
+										showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
 									}
 								});
 							}
@@ -2519,7 +2519,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 				app: appName
 			},
 			success: function (response, request) {
-				dbDict = Ext.util.JSON.decode(response.responseText);
+			    dbDict = Ext.util.JSON.decode(response.responseText);
+			    dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
 
 				var tab = Ext.getCmp('content-panel');
 				var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
@@ -3550,113 +3551,3 @@ Ext.grid.RowSelectionModel.override({
     return this.grid.store.indexOf(this.selections.itemAt(0));
   }
 });
-
-
-
-var Base64 = {
-
-  // private property
-
-  _keyStr: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-
-  // public method for encoding
-
-  encode: function (input) {
-
-    var output = "";
-
-    var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-
-    var i = 0;
-
-    input = Base64._utf8_encode(input);
-
-    while (i < input.length) {
-
-      chr1 = input.charCodeAt(i++);
-
-      chr2 = input.charCodeAt(i++);
-
-      chr3 = input.charCodeAt(i++);
-
-      enc1 = chr1 >> 2;
-
-      enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-
-      enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-
-      enc4 = chr3 & 63;
-
-      if (isNaN(chr2)) {
-
-        enc3 = enc4 = 64;
-
-      } else if (isNaN(chr3)) {
-
-        enc4 = 64;
-
-      }
-
-      output = output +
-        this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) +
-        this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
-
-    }
-
-    return output;
-
-  },
-
-  // public method for decoding
-
-  decode: function (input) {
-
-    var output = "";
-
-    var chr1, chr2, chr3;
-
-    var enc1, enc2, enc3, enc4;
-
-    var i = 0;
-
-    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-
-    while (i < input.length) {
-
-      enc1 = this._keyStr.indexOf(input.charAt(i++));
-
-      enc2 = this._keyStr.indexOf(input.charAt(i++));
-
-      enc3 = this._keyStr.indexOf(input.charAt(i++));
-
-      enc4 = this._keyStr.indexOf(input.charAt(i++));
-
-      chr1 = (enc1 << 2) | (enc2 >> 4);
-
-      chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-
-      chr3 = ((enc3 & 3) << 6) | enc4;
-
-      output = output + String.fromCharCode(chr1);
-
-      if (enc3 != 64) {
-
-        output = output + String.fromCharCode(chr2);
-
-      }
-
-      if (enc4 != 64) {
-
-        output = output + String.fromCharCode(chr3);
-
-      }
-
-    }
-
-    output = Base64._utf8_decode(output);
-
-    return output;
-
-  }
-
-}

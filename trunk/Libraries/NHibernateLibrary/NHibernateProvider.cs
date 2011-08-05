@@ -29,18 +29,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Xml;
 using System.Xml.Linq;
-using System.Text;
 using log4net;
+using NHibernate;
 using Ninject;
-using org.ids_adi.qmxf;
+using org.iringtools.adapter;
+using org.iringtools.adapter.datalayer;
 using org.iringtools.library;
 using org.iringtools.utility;
-using NHibernate;
-using org.iringtools.adapter;
 
 namespace org.iringtools.nhibernate
 {
@@ -83,7 +79,7 @@ namespace org.iringtools.nhibernate
 
 				InitializeScope(projectName, applicationName);
 
-				DatabaseDictionary dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+				DatabaseDictionary dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
 				if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
 				{
 					status.Messages.Add("Error project name and application name can not be null");
@@ -132,12 +128,12 @@ namespace org.iringtools.nhibernate
 
 				if (File.Exists(_settings["DBDictionaryPath"]))
 				{
-					databaseDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+					databaseDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
 				}
 				else
 				{
 					databaseDictionary = new DatabaseDictionary();
-					Utility.Write<DatabaseDictionary>(databaseDictionary, _settings["DBDictionaryPath"], true);
+					NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"]);
 				}
 			}
 			catch (Exception ex)
@@ -145,6 +141,7 @@ namespace org.iringtools.nhibernate
 				_logger.Error("Error in GetDbDictionary: " + ex);
 				return null;
 			}
+
 			return databaseDictionary;
 		}
 
@@ -154,11 +151,11 @@ namespace org.iringtools.nhibernate
 			try
 			{
 				status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
-
 				InitializeScope(projectName, applicationName);
 
-				Utility.Write<DatabaseDictionary>(databaseDictionary, _settings["DBDictionaryPath"]);
+				NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"]);
 				Response response = Generate(projectName, applicationName);
+
 				if (response.Level.ToString().ToUpper() == "SUCCESS")
 					status.Messages.Add("Database Dictionary saved successfully");
 				else
@@ -185,13 +182,16 @@ namespace org.iringtools.nhibernate
 
 				InitializeScope(projectName, applicationName);
 
-				if (File.Exists(_settings["DBDictionaryPath"]))
-					dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
-				else
-				{
-					Utility.Write<DatabaseDictionary>(dbDictionary, _settings["DBDictionaryPath"], true);
-					return dbDictionary;
-				}
+        if (File.Exists(_settings["DBDictionaryPath"]))
+        {
+          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
+        }
+        else
+        {
+          NHibernateUtility.SaveDatabaseDictionary(dbDictionary, _settings["DBDictionaryPath"]);
+          return dbDictionary;
+        }
+
 				string connString = dbDictionary.ConnectionString;
 				string dbProvider = dbDictionary.Provider.ToString();
 				dbProvider = dbProvider.ToUpper();
@@ -427,7 +427,7 @@ namespace org.iringtools.nhibernate
 				InitializeScope(projectName, applicationName);
 
 				if (File.Exists(_settings["DBDictionaryPath"]))
-					dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
 				else
 					return tableNames;
 
@@ -524,7 +524,7 @@ namespace org.iringtools.nhibernate
 				InitializeScope(projectName, applicationName);
 
 				if (File.Exists(_settings["DBDictionaryPath"]))
-					dbDictionary = Utility.Read<DatabaseDictionary>(_settings["DBDictionaryPath"]);
+          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
 
 				string connString = dbDictionary.ConnectionString;
 				string dbProvider = dbDictionary.Provider.ToString().ToUpper();
@@ -728,24 +728,7 @@ namespace org.iringtools.nhibernate
 		#endregion
 
 		#region private methods
-    private DatabaseDictionary GetDatabaseDictionary(string path)
-    {
-      try
-      {
-        DatabaseDictionary dbDict = Utility.Read<DatabaseDictionary>(path);
-
-        // if connection string is not encrypted, encrypt and write it back
-
-        return dbDict;
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error reading database dictionary: " + ex);
-        throw ex;
-      }
-    }
-
-		private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema,
+    private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema,
 			string dbUserName, string dbPassword, string portNumber, string serName)
 		{
 			string connStr;

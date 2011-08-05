@@ -1214,16 +1214,24 @@ namespace org.iringtools.utility
 
     public static string EncodeTo64(string toEncode)
     {
-      byte[] toEncodeAsBytes = System.Text.ASCIIEncoding.ASCII.GetBytes(toEncode);
-      string returnValue = System.Convert.ToBase64String(toEncodeAsBytes);
-      return returnValue;
+      if (!String.IsNullOrEmpty(toEncode))
+      {
+        byte[] toEncodeAsBytes = ASCIIEncoding.ASCII.GetBytes(toEncode);
+        return Convert.ToBase64String(toEncodeAsBytes);
+      }
+
+      return toEncode;
     }
 
     public static string DecodeFrom64(string encodedData)
     {
-      byte[] encodedDataAsBytes = System.Convert.FromBase64String(encodedData);
-      string returnValue = System.Text.ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
-      return returnValue;
+      if (!String.IsNullOrEmpty(encodedData))
+      {
+        byte[] encodedDataAsBytes = Convert.FromBase64String(encodedData);
+        return ASCIIEncoding.ASCII.GetString(encodedDataAsBytes);
+      }
+
+      return encodedData;
     }
   }
 }

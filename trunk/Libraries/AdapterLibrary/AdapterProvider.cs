@@ -1028,7 +1028,6 @@ namespace org.iringtools.adapter
         _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
         _keyRing = _identityLayer.GetKeyRing();
         _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
-
         _settings.AppendKeyRing(_keyRing);
       }
       catch (Exception ex)

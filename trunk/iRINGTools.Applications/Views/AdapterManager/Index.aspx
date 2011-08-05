@@ -31,6 +31,7 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ExcelLibrary.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigWizard.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/HrefItem.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/Utility.js") %>" type="text/javascript"></script>
     <!-- page specific -->    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AdapterManager.js") %>" type="text/javascript"></script>    
 </head>
