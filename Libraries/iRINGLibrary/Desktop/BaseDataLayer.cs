@@ -13,6 +13,7 @@ namespace org.iringtools.library
   {
     protected AdapterSettings _settings = null;
     protected DataObject _dataObjectDefinition = null;
+    protected List<IDataObject> _dataObjects = null;
     protected XElement _configuration = null;
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseDataLayer));
@@ -24,38 +25,48 @@ namespace org.iringtools.library
 
     public virtual IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
+      IDataObject dataObject = null;
+      IList<IDataObject> dataObjects = new List<IDataObject>();
+
       try
       {
-        if (identifiers == null || identifiers.Count == 0)
-        {
-          throw new Exception("Identifiers must be specified.");
-        }
-
         LoadDataDictionary(objectType);
 
-        IList<IDataObject> dataObjects = Get(objectType, identifiers);
-
-        foreach (string identifier in identifiers)
+        if (identifiers == null || identifiers.Count == 0)
         {
-          IDataObject dataObject = null;
-
-          var predicate = FormKeyPredicate(identifier);
-
-          if (predicate != null)
+          dataObject = new GenericDataObject
           {
-            dataObject = dataObjects.AsQueryable().Where(predicate).FirstOrDefault();
-          }
+            ObjectType = objectType,
+          };
 
-          if (dataObject == null)
+          SetKeys(dataObject, null);
+
+          dataObjects.Add(dataObject);
+        }
+        else
+        {
+          dataObjects = Get(objectType, identifiers);
+
+          foreach (string identifier in identifiers)
           {
-            dataObject = new GenericDataObject
+            var predicate = FormKeyPredicate(identifier);
+
+            if (predicate != null)
             {
-              ObjectType = objectType,
-            };
+              dataObject = dataObjects.AsQueryable().Where(predicate).FirstOrDefault();
+            }
 
-            SetKeys(dataObject, identifier);
+            if (dataObject == null)
+            {
+              dataObject = new GenericDataObject
+              {
+                ObjectType = objectType,
+              };
 
-            dataObjects.Add(dataObject);
+              SetKeys(dataObject, identifier);
+
+              dataObjects.Add(dataObject);
+            }
           }
         }
 
@@ -72,8 +83,29 @@ namespace org.iringtools.library
       }
     }
 
+    public virtual long GetCount(string objectType, DataFilter filter)
+    {
+      try
+      {
+        if (_dataObjects == null)
+        {
+          IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
+        }
+
+        return _dataObjects.Count();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in GetCount: " + ex);
+
+        throw new Exception(
+          "Error while getting a count of type [" + objectType + "].",
+          ex
+        );
+      }
+    }
+
     #region Abstract Public Interface Methods
-    public abstract long GetCount(string objectType, DataFilter filter);
 
     public abstract IList<string> GetIdentifiers(string objectType, DataFilter filter);
 
@@ -213,19 +245,30 @@ namespace org.iringtools.library
     protected void SetKeys(IDataObject dataObject, string identifier)
     {
       string[] delimiter = new string[] { _dataObjectDefinition.keyDelimeter };
-      string[] identifierParts = identifier.Split(delimiter, StringSplitOptions.None);
 
-      if (identifierParts.Count() == _dataObjectDefinition.keyProperties.Count)
+      if (identifier == null)
       {
-        int i = 0;
         foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
         {
-          string identifierPart = identifierParts[i];
-          if (!String.IsNullOrEmpty(identifierPart))
+          dataObject.SetPropertyValue(keyProperty.keyPropertyName, null);
+        }
+      }
+      else
+      {
+        string[] identifierParts = identifier.Split(delimiter, StringSplitOptions.None);
+
+        if (identifierParts.Count() == _dataObjectDefinition.keyProperties.Count)
+        {
+          int i = 0;
+          foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
           {
-            dataObject.SetPropertyValue(keyProperty.keyPropertyName, identifierPart);
+            string identifierPart = identifierParts[i];
+            if (!String.IsNullOrEmpty(identifierPart))
+            {
+              dataObject.SetPropertyValue(keyProperty.keyPropertyName, identifierPart);
+            }
+            i++;
           }
-          i++;
         }
       }
     }
