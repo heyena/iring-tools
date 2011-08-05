@@ -112,44 +112,74 @@ namespace org.iringtools.sdk.objects.test
             }
         }
 
+        [Test]
+        public void ReadWithPaging()
+        {
+          IList<IDataObject> dataObjects = _dataLayer.Get("Widget", null, 2, 0);
+
+          if (!(dataObjects.Count() > 0))
+          {
+            throw new AssertionException("No Rows returned.");
+          }
+
+          Assert.AreEqual(dataObjects.Count(), 2);
+
+          foreach (IDataObject dataObject in dataObjects)
+          {
+            Assert.IsNotNull(dataObject.GetPropertyValue("Name"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Description"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Color"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Material"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Length"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Height"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Width"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("LengthUOM"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("Weight"));
+            Assert.IsNotNull(dataObject.GetPropertyValue("WeightUOM"));
+          }
+        }
+
         //[Test]
         //public void ReadWithFilter()
         //{
-        //    DataFilter dataFilter = new DataFilter
-        //    {
-        //        Expressions = new List<Expression>
+        //  DataFilter dataFilter = new DataFilter
+        //  {
+        //    Expressions = new List<Expression>
         //        {
         //            new Expression
         //            {
-        //                PropertyName = "PumpDriverType",
+        //                PropertyName = "Color",
         //                RelationalOperator = RelationalOperator.EqualTo,
         //                Values = new Values
         //                {
-        //                    "PDT-8",
+        //                    "Orange",
         //                }
         //            }
         //        }
-        //    };
+        //  };
 
-        //    IList<IDataObject> dataObjects = _dataLayer.Get("Equipment", dataFilter, 2, 0);
+        //  IList<IDataObject> dataObjects = _dataLayer.Get("Widget", dataFilter, 10, 0);
 
-        //    if (!(dataObjects.Count() > 0))
-        //    {
-        //        throw new AssertionException("No Rows returned.");
-        //    }
+        //  if (!(dataObjects.Count() > 0))
+        //  {
+        //    throw new AssertionException("No Rows returned.");
+        //  }
 
-        //    Assert.AreEqual(dataObjects.Count(), 2);
+        //  Assert.AreEqual(dataObjects.Count(), 1);
 
-        //    foreach (IDataObject dataObject in dataObjects)
-        //    {
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("PumpType"));
-        //        Assert.AreEqual(dataObject.GetPropertyValue("PumpDriverType"), "PDT-8");
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("DesignTemp"));
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("DesignPressure"));
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("Capacity"));
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("SpecificGravity"));
-        //        Assert.IsNotNull(dataObject.GetPropertyValue("DifferentialPressure"));
-        //    }
+        //  foreach (IDataObject dataObject in dataObjects)
+        //  {
+        //    Assert.IsNotNull(dataObject.GetPropertyValue("Name"));
+        //    Assert.IsNotNull(dataObject.GetPropertyValue("Description"));
+        //    Assert.AreEqual(dataObject.GetPropertyValue("Color"), "Orange");
+        //    Assert.IsNotNull(dataObject.GetPropertyValue("Material"));
+        //    Assert.IsNotNull(dataObject.GetPropertyValue("Length"));
+        //    Assert.IsNotNull(dataObject.GetPropertyValue("Height"));
+        //    Assert.IsNotNull(dataObject.GetPropertyValue("Width"));
+        //    Assert.IsNotNull(dataObject.GetPropertyValue("LengthUOM"));
+        //    Assert.IsNotNull(dataObject.GetPropertyValue("Weight"));
+        //    Assert.IsNotNull(dataObject.GetPropertyValue("WeightUOM"));
+        //  }
         //}
 
         [Test]

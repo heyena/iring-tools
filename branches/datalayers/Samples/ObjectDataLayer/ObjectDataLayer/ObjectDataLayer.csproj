@@ -108,7 +108,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WidgetProvider\WidgetLibrary.csproj">
+    <ProjectReference Include="..\WidgetLibrary\WidgetLibrary.csproj">
       <Project>{5D17134E-CFA6-49D1-A0B8-6825E2757178}</Project>
       <Name>WidgetLibrary</Name>
     </ProjectReference>

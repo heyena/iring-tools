@@ -17,7 +17,7 @@ namespace org.iringtools.sdk.objects
 {
   public class ObjectDataLayer : BaseDataLayer, IDataLayer2
   {
-    WidgetLibrary _widgetProvider = null;
+    WidgetProvider _widgetProvider = null;
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(ObjectDataLayer));
 
@@ -27,7 +27,7 @@ namespace org.iringtools.sdk.objects
     public ObjectDataLayer(AdapterSettings settings)
       : base(settings)
     {
-      _widgetProvider = new WidgetLibrary();
+      _widgetProvider = new WidgetProvider();
 
       _settings = settings;
     }
@@ -171,14 +171,45 @@ namespace org.iringtools.sdk.objects
       }
       catch (Exception ex)
       {
-        _logger.Error("Error in GetList: " + ex);
+        _logger.Error("Error in Get: " + ex);
         throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
       }
     }
 
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
-      throw new NotImplementedException();
+      if (filter != null)
+        throw new NotImplementedException();
+
+      _dataObjects = new List<IDataObject>();
+
+      try
+      {
+        switch (objectType.ToUpper())
+        {
+          case "WIDGET":
+
+            List<Widget> widgets = _widgetProvider.ReadWidgets(null);
+
+            foreach (Widget widget in widgets)
+            {
+              IDataObject dataObject = FormDataObject(widget);
+
+              _dataObjects.Add(dataObject);
+            }
+            break;
+
+          default:
+            throw new Exception("Invalid object type provided");
+        }
+
+        return _dataObjects.GetRange(startIndex, pageSize);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Get: " + ex);
+        throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
+      }
     }
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
