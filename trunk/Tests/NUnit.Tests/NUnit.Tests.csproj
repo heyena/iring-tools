@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="AdapterTest.cs" />
     <Compile Include="App_Code\Model.12345_000.ABC.cs" />
+    <Compile Include="BaseTest.cs" />
     <Compile Include="DataTest.cs" />
     <Compile Include="DxfrTest.cs" />
     <Compile Include="NHibernateTest.cs" />

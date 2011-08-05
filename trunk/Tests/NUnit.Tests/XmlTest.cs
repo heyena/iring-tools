@@ -10,7 +10,7 @@ using org.iringtools.library;
 namespace NUnit.Tests
 {
   [TestFixture]
-  public class XmlTest
+  public class XmlTest : BaseTest
   {
     private AdapterProvider _adapterProvider = null;
     private AdapterSettings _settings = null;
@@ -35,6 +35,8 @@ namespace NUnit.Tests
       Directory.SetCurrentDirectory(_baseDirectory);
 
       _adapterProvider = new AdapterProvider(_settings);
+
+      ResetDatabase();
     }
 
     [Test]

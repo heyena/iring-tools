@@ -19,7 +19,7 @@ using org.iringtools.nhibernate;
 namespace NUnit.Tests
 {
     [TestFixture]
-    public class DxfrTest
+    public class DxfrTest : BaseTest
     {
 	    private static readonly ILog _logger = LogManager.GetLogger(typeof(DxfrTest));      
       private AdapterSettings _settings = null;
@@ -43,6 +43,8 @@ namespace NUnit.Tests
 				_settings["BaseDirectoryPath"] = _baseDirectory;       
 				Directory.SetCurrentDirectory(_baseDirectory);
         _dxfrProvider = new DataTranferProvider(_settings);
+
+        ResetDatabase();
       }			
 
 			private XDocument ToXml<T>(T dataList)
@@ -371,37 +373,6 @@ namespace NUnit.Tests
 				}
       }
 			
-      // Restore the database ABC to initial state
-      private void CleanUpDatabase()
-      {
-        try
-        {
-          string sql = Utility.ReadString(@"..\..\iRINGTools.Services\App_Data\ABC.Data.Complete.sql");
-
-          XDocument nhConfig = XDocument.Load(@".\XML\nh-configuration.12345_000.ABC.xml");
-          
-          var properties = nhConfig
-            .Element("configuration")
-            .Element("{urn:nhibernate-configuration-2.2}hibernate-configuration")
-            .Element("{urn:nhibernate-configuration-2.2}session-factory")
-            .Descendants("{urn:nhibernate-configuration-2.2}property");
-
-          var property = from p in properties
-                         where p.Attribute("name").Value == "connection.connection_string"
-                         select p;
-
-          string connectionString = property.FirstOrDefault().Value;
-
-          Utility.ExecuteSQL(sql, connectionString);
-        }
-        catch (Exception ex)
-        {
-          string message = "Error cleaning up Database: " + ex;
-          _logger.Error(message);
-          throw new Exception(message);
-        }
-      }
-			
 			[Test]
 			public void PostDataTransferObjects()
 			{
@@ -472,7 +443,7 @@ namespace NUnit.Tests
 				}
 
 				//restore the table
-				CleanUpDatabase();
+				ResetDatabase();
 			}
 
     }
