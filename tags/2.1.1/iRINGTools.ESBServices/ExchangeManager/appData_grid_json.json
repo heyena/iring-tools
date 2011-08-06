@@ -1,0 +1,24 @@
+{
+    "sortBy": "IdentificationByTag",
+    "sortOrder": "DESC",
+    "pageSize": "20",
+    "filterSet": [
+        {
+            "type": "string",
+            "dataIndex": "IdentificationByTag"
+        },
+        {
+            "type": "string",
+            "dataIndex": "NominalDiameter_hasScale"
+        },
+        {
+            "type": "string",
+            "dataIndex": "NominalDiameter_valValue"
+        }
+    ],
+    "classObjName": "PIPING NETWORK SYSTEM",
+    "success": "true",
+    "cacheData": true,
+    "columnsData": "[{\"id\":\"IdentificationByTag\",\"header\":\"IdentificationByTag\",\"width\":110,\"sortable\":\"true\",\"dataIndex\":\"IdentificationByTag\"},{\"id\":\"NominalDiameter_hasScale\",\"header\":\"NominalDiameter.hasScale\",\"width\":154,\"sortable\":\"true\",\"dataIndex\":\"NominalDiameter_hasScale\"},{\"id\":\"NominalDiameter_valValue\",\"header\":\"NominalDiameter.valValue\",\"width\":154,\"sortable\":\"true\",\"dataIndex\":\"NominalDiameter_valValue\"}]",
+    "headersList": "[{\"name\":\"IdentificationByTag\"},{\"name\":\"NominalDiameter_hasScale\"},{\"name\":\"NominalDiameter_valValue\"}]"
+}

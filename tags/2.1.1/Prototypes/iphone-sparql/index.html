@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <script type="text/javascript">
+      function updateForm()
+      {
+        var isUpdateQuery = document.getElementById("queryType").checked;
+        
+        if (isUpdateQuery)
+        {
+          document.getElementById("queryForm").enctype = "multipart/form-data";
+          document.getElementById("queryForm").encoding = "multipart/form-data";
+          document.getElementById("textArea").name = "update";
+        }
+        else
+        {
+          document.getElementById("queryForm").enctype = "application/x-www-form-urlencoded";
+          document.getElementById("queryForm").encoding = "application/x-www-form-urlencoded";
+          document.getElementById("textArea").name = "query";
+          document.getElementById("queryForm").action = document.getElementById("sparqlEndpoint").value
+        }
+      }
+    </script>
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <meta content="minimum-scale=1.0, width=device-width, maximum-scale=0.6667, user-scalable=no" name="viewport" />
+    <link href="css/style.css" rel="stylesheet" media="screen" type="text/css" />
+    <script src="javascript/functions.js" type="text/javascript"></script>
+    <title>Title of your page</title>
+    <meta content="keyword1,keyword2,keyword3" name="keywords" />
+    <meta content="Description of your page" name="description" />
+    <link rel="apple-touch-icon" href="homescreen.png"/>
+    <link href="startup.png" rel="apple-touch-startup-image" />
+  </head>
+  <body>
+    <div id="topbar">
+      <div id="title">SPARQL Query</div>
+    </div>
+    <form id="queryForm" action="sandbox" enctype="application/x-www-form-urlencoded" method="post" onsubmit="return updateForm();">
+      <input type="hidden" name="outputMimeType" value="text/html">
+      <input type="hidden" name="stylesheet" size="25" value="/xml-to-html.xsl">
+    <div class="content">
+      <ul class="pageitem">
+        <li class="bigfield"><input width="80" placeholder="SPARQL Endpoint URL" id="sparqlEndpoint" type="text" /></li>
+      </ul>
+      <ul class="pageitem">
+        <li class="textbox">
+          <textarea id="textArea" rows="10">
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT * WHERE {
+  ?s ?p ?o .
+}
+LIMIT 10</textarea>
+        </li>
+      </ul>
+      <ul class="pageitem">
+        <li class="checkbox">
+          <span class="name">Update Query</span>
+          <input id="queryType" type="checkbox" />
+        </li>
+      </ul>
+    </div>
+    <ul class="pageitem">
+      <li class="button">
+        <input id="query" type="submit" value="Query" />
+      </li>
+    </ul>
+    </form>
+  </body>
+</html>
