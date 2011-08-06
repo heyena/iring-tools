@@ -66,8 +66,8 @@
 		<!--some XML files may be included later - none for now -->
     </SQLExecutableDeployment>
 	<SourceDeployment Include="$(SamplesDir)\**"
-		Exclude="$(SamplesDir)\*.cmd;
-				$(SamplesDir)\*.xml;
+		Exclude="$(SamplesDir)\*.*;
+				$(SamplesDir)\lib\**;
 				$(SamplesDir)\deployment\**;
 				$(SamplesDir)\dist\**;
 				$(SamplesDir)\.svn\**;
