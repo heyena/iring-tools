@@ -63,9 +63,6 @@
     <Compile Include="SQLDataLayer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="SampleDictionary.xml" />
     <Content Include="Widgets_Data.sql" />
     <Content Include="Widgets_Table.sql" />

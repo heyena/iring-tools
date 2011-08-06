@@ -11,17 +11,17 @@ using StaticDust.Configuration;
 using org.iringtools.sdk.sql;
 
 
-namespace org.iringtools.sdk.objects.test
+namespace org.iringtools.sdk.sql.test
 {
     [TestFixture]
-    public class ObjectDataLayerTest
+    public class SQLDataLayerTest
     {
         private string _baseDirectory = string.Empty;
         private NameValueCollection _settings;
         private AdapterSettings _adapterSettings;
         private SQLDataLayer _dataLayer;
 
-        public ObjectDataLayerTest()
+        public SQLDataLayerTest()
         {
             _settings = new NameValueCollection();
 

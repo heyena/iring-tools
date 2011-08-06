@@ -24,3 +24,12 @@ C:\iring-tools\branches\datalayers\Samples\ObjectDataLayer\lib\nunit\NUnit.Runne
 C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\bin\Debug\NUnit.Runner.exe.config
 C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\obj\x86\Debug\NUnit.Runner.exe
 C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\obj\x86\Debug\NUnit.Runner.pdb
+C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\bin\Debug\NUnit.Runner.exe
+C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\bin\Debug\NUnit.Runner.pdb
+C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\bin\Debug\nunit-gui-runner.dll
+C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\bin\Debug\nunit.util.dll
+C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\bin\Debug\nunit.uikit.dll
+C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\bin\Debug\nunit.core.dll
+C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\bin\Debug\nunit.core.interfaces.dll
+C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\bin\Debug\nunit.uiexception.dll
+C:\iring-tools\branches\datalayers\Samples\SQLDataLayer\lib\nunit\NUnit.Runner\obj\x86\Debug\ResolveAssemblyReference.cache

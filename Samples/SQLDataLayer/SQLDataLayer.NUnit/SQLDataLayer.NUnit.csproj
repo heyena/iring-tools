@@ -69,6 +69,12 @@
   <ItemGroup>
     <None Include="12345_000\12345_000.SQL.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SQLDataLayer\SQLDataLayer.csproj">
+      <Project>{4F181541-AFF4-4AE6-9FEE-A7A07E1ACB26}</Project>
+      <Name>SQLDataLayer</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
