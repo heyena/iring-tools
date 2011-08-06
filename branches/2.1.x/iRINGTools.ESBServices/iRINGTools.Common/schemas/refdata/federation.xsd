@@ -1,0 +1,120 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.iringtools.org/refdata/federation" targetNamespace="http://www.iringtools.org/refdata/federation"
+	elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	jaxb:extensionBindingPrefixes="xjc">
+
+	<xs:annotation>
+		<xs:appinfo>
+			<jaxb:globalBindings>
+				<xjc:simple />
+			</jaxb:globalBindings>
+		</xs:appinfo>
+	</xs:annotation>
+
+	<xs:element name="federation" type="Federation" />
+	<xs:element name="namespace" type="Namespace" />
+	<xs:element name="IDGenerator" type="IDGenerator" />
+	<xs:element name="repository" type="Repository" />
+
+	<xs:complexType name="Federation">
+		<xs:sequence>
+			<xs:element name="idGenerators" type="IDGenerators" />
+			<xs:element name="namespaces" type="Namespaces" />
+			<xs:element name="repositories" type="Repositories" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="IDGenerators">
+		<xs:sequence>
+			<xs:element name="sequenceId" type="xs:int" />
+			<xs:element name="idGenerator" type="IDGenerator" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:property name="items" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Namespaces">
+		<xs:sequence>
+			<xs:element name="sequenceId" type="xs:int" />
+			<xs:element name="namespace" type="Namespace" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:property name="items" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Repositories">
+		<xs:sequence>
+			<xs:element name="sequenceId" type="xs:int" />
+			<xs:element name="repository" type="Repository" maxOccurs="unbounded">
+				<xs:annotation>
+					<xs:appinfo>
+						<jaxb:property name="items" />
+					</xs:appinfo>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="IDGenerator">
+		<xs:sequence>
+			<xs:element name="id" type="xs:string" />
+			<xs:element name="uri" type="xs:string" />
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="description" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Namespace">
+		<xs:sequence>
+			<xs:element name="id" type="xs:string" />
+			<xs:element name="uri" type="xs:string" />
+			<xs:element name="alias" type="xs:string" />
+			<xs:element name="isWritable" type="xs:boolean" />
+			<xs:element name="description" type="xs:string" />
+			<xs:element name="idGenerator" type="xs:string" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Repository">
+		<xs:sequence>
+			<xs:element name="id" type="xs:string" />
+			<xs:element name="description" type="xs:string" />
+			<xs:element name="isReadOnly" type="xs:boolean" />
+			<xs:element name="name" type="xs:string" />
+			<xs:element name="repositoryType" type="RepositoryType" />
+			<xs:element name="uri" type="xs:string" />
+			<xs:element name="updateUri" type="xs:string" />
+			<xs:element name="namespaces" type="NamespaceList" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	  <xs:simpleType name="RepositoryType">
+	    <xs:restriction base="xs:string">
+	      <xs:enumeration value="Part8" />
+	      <xs:enumeration value="RDS/WIP" />
+	      <xs:enumeration value="Camelot" />
+	    </xs:restriction>
+	  </xs:simpleType>
+
+	<xs:complexType name="NamespaceList">
+		<xs:sequence>
+			<xs:element name="namespaceId" type="xs:string" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>
