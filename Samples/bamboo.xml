@@ -45,14 +45,14 @@
       <Options>x -tzip -y -o</Options>
       <OutputDir>$(DistDir)</OutputDir>
       <ZipFile>$(DeploymentDir)\ObjectDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
-      <FileSet>ObjectDataLayer.*</FileSet>
+      <FileSet>ObjectDataLayer.dll; WidgetLibrary.dll</FileSet>
     </DeploymentPackage>
-	<DeploymentPackage Include="*.*">
+	<!--<DeploymentPackage Include="*.*">
       <Options>x -tzip -y -o</Options>
       <OutputDir>$(DistDir)</OutputDir>
       <ZipFile>$(DeploymentDir)\SQLDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
-      <FileSet>SQLDataLayer.*</FileSet>
-    </DeploymentPackage>
+      <FileSet>SQLDataLayer.dll</FileSet>
+    </DeploymentPackage>-->
     <ObjectExecutableDeployment
       Include="$(ObjectDataLayerDir)\bin\Debug\**"
         Exclude="$(ObjectDataLayerDir)\bin\*.pdb;
