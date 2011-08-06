@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<module name="SDK.OBJ">
+  <bind name="DataLayer" service="org.iringtools.library.IDataLayer, iRINGLibrary" to="org.iringtools.sdk.objects.ObjectDataLayer, ObjectDataLayer" />
+</module>
