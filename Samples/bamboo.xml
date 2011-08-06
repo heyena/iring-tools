@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <ZipCmd>"$(MSBuildProjectDirectory)\ObjectDataLayer\lib\7-Zip\7z.exe"</ZipCmd>
+    <ZipCmd>"$(MSBuildProjectDirectory)\lib\7-Zip\7z.exe"</ZipCmd>
     <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
     <ObjectDataLayerDir>$(MSBuildProjectDirectory)\ObjectDataLayer\ObjectDataLayer</ObjectDataLayerDir>
 	<SQLDataLayerDir>$(MSBuildProjectDirectory)\SQLDataLayer\SQLDataLayer</SQLDataLayerDir>
