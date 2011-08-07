@@ -3028,7 +3028,11 @@ function setRelationFields(editPane, node, scopeName, appName) {
 
     if (editPane.items.map[scopeName + '.' + appName + '.relationFieldsForm.' + node.id]) {
     	var relPane = editPane.items.map[scopeName + '.' + appName + '.relationFieldsForm.' + node.id];
-    	var relatedObjectName = relPane.getForm().findField('relatedObjectName').getValue();
+    	var relatedObjectField = relPane.getForm().findField('relatedObjectName');
+    	if (relatedObjectField.getValue() != relatedObjectField.lastSelectionText && relatedObjectField.lastSelectionText && relatedObjectField.lastSelectionText != '')
+    		var relatedObjectName = relatedObjectField.lastSelectionText;
+			else
+				var relatedObjectName = relatedObjectField.getValue();			
     }
     else {
     	if (node.attributes.attributes)
@@ -3117,8 +3121,6 @@ function setRelationFields(editPane, node, scopeName, appName) {
         }
         propCombo.store.loadData(selectedProperties);
         propCombo.store.commitChanges();
-
-
         return;
       }
     }
@@ -3230,12 +3232,12 @@ function setRelationFields(editPane, node, scopeName, appName) {
     		editable: false,
     		triggerAction: 'all',
     		displayField: 'text',
-    		valueField: 'value',
+    		valueField: 'value'/*,
     		listeners: { 'select': function (combo, record, index) {
     			node.attributes.relationshipType = record.data.field2;
     			node.attributes.relationshipTypeIndex = record.data.field1;
     		}
-    		}
+    		}*/
     	}, {
     		xtype: 'combo',
     		name: 'propertyName',
@@ -3293,6 +3295,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
     			text: 'Apply',
     			tooltip: 'Apply the current changes to the data objects tree',
     			handler: function () {
+    				var relationTypeStr = ['OneToOne', 'OneToMany'];
     				if (node.attributes.attributes)
     					var attribute = node.attributes.attributes;
     				else
@@ -3300,6 +3303,18 @@ function setRelationFields(editPane, node, scopeName, appName) {
 
     				var newNodeName = relationConfigPanel.getForm().findField('relationshipName').getValue();
     				node.setText(newNodeName);
+
+    				attribute.relationshipTypeIndex = relationConfigPanel.getForm().findField('relationType').getValue();
+    				attribute.relationshipType = relationTypeStr[attribute.relationshipTypeIndex];
+
+    				var relatedObjectField = relationConfigPanel.getForm().findField('relatedObjectName');
+    				if (relatedObjectField.getValue() != relatedObjectField.lastSelectionText && relatedObjectField.lastSelectionText && relatedObjectField.lastSelectionText != '')
+    					var relatedName = relatedObjectField.lastSelectionText;
+    				else
+    					var relatedName = relatedObjectField.getValue();
+
+    				attribute.relatedObjectName = relatedName;
+
     				var dataRelationPane = relationConfigPanel.items.items[7];
     				var gridLabel = scopeName + '.' + appName + '.' + node.id;
     				var gridPane = dataRelationPane.items.map[gridLabel];
@@ -3374,8 +3389,22 @@ function setRelationFields(editPane, node, scopeName, appName) {
     				if (attribute) {
     					relationConfigPanel.getForm().findField('relatedObjectName').setValue(attribute.relatedObjectName);
     					relationConfigPanel.getForm().findField('relationType').setValue(attribute.relationshipTypeIndex);
-    					for (i = 0; i < attribute.propertyMap.length; i++)
-    						properMap.push([attribute.propertyMap[i].dataPropertyName.toUpperCase(), attribute.propertyMap[i].relatedPropertyName.toUpperCase()]);
+
+    					var relatedMapItem = findNodeRelatedObjMap(node, attribute.relatedObjectName);
+    					var relPropertyName;
+    					var relMapPropertyName;
+
+    					for (var i = 0; i < relatedMapItem.length; i++) {
+    						relatedMapItem.remove(relatedMapItem[i]);
+    						i--;
+    					}
+
+    					for (i = 0; i < attribute.propertyMap.length; i++) {
+    						relPropertyName = attribute.propertyMap[i].dataPropertyName.toUpperCase();
+    						relMapPropertyName = attribute.propertyMap[i].relatedPropertyName.toUpperCase();
+    						properMap.push([relPropertyName, relMapPropertyName]);
+    						relatedMapItem.push([relPropertyName, relMapPropertyName]);
+    					}
 
     					var colModel = new Ext.grid.ColumnModel([
                   { id: 'property', header: 'Property', dataIndex: 'property' },
@@ -3389,7 +3418,7 @@ function setRelationFields(editPane, node, scopeName, appName) {
                     { name: 'relatedProperty' }
                   ])
     					});
-    					createRelationGrid(scopeName + '.' + appName + '.' + node.id, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName, relationConfigPanel.getForm().findField('relatedObjectName'));
+    					createRelationGrid(scopeName + '.' + appName + '.' + node.id, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + node.id, 1, scopeName, appName, attribute.relatedObjectName);
     				}
     			}
     		}]
