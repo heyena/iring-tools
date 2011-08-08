@@ -1328,7 +1328,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					}, {
 						name: 'objectNamespace',
 						fieldLabel: 'Object Namespace',
-						value: node.attributes.properties.objectNamespace
+						value: node.attributes.properties.objectNamespace,
+                        disabled: true
 					}, {
 						name: 'objectName',
 						fieldLabel: 'Object Name',

@@ -723,6 +723,11 @@ public class DataModel
   @SuppressWarnings("unchecked")
   protected String getValueMap(String value)
   {
+    if (value != null && !value.toLowerCase().startsWith("rdl:") && !value.toLowerCase().startsWith("http://rdl"))
+    {
+      return value;  // value is label
+    }
+        
     Map<String, String> valueMaps;
     String valueMap = value;
     
