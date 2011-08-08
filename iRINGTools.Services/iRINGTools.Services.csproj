@@ -165,6 +165,7 @@
     <Compile Include="..\AssemblyInfo.cs">
       <Link>AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ApigeeService.cs" />
     <Compile Include="DataService.cs" />
     <Compile Include="DataTransferService.cs" />
     <Compile Include="FacadeService.cs" />
