@@ -953,6 +953,8 @@ namespace org.iringtools.mapping
 
     private string uriField;
 
+    private string labelField;
+
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
     public string internalValue
     {
@@ -976,6 +978,19 @@ namespace org.iringtools.mapping
       set
       {
         this.uriField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
+    public string label
+    {
+      get
+      {
+        return this.labelField;
+      }
+      set
+      {
+        this.labelField = value;
       }
     }
   }
