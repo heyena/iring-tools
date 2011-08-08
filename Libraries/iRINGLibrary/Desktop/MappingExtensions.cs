@@ -255,9 +255,6 @@ namespace org.iringtools.mapping
             {
               if (valueMap.internalValue == value)
               {
-                if (!String.IsNullOrEmpty(valueMap.label))
-                  return valueMap.label;
-
                 return valueMap.uri;  // uri with prefix
               }
             }
