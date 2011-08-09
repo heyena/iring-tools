@@ -37,7 +37,7 @@ public class DifferencingProvider
     DataTransferIndices targetDtis = null;
     
     /* determine source and target DTIs */
-    List<DataTransferIndices> dtisList = dfiRequest.getDataTransferIndicies();
+    List<DataTransferIndices> dtisList = dfiRequest.getDataTransferIndices();
     
     if (dtisList == null || dtisList.size() < 2) 
       return null;

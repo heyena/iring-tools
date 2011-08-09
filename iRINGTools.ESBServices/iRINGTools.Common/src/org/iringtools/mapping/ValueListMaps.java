@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="valueListMaps" type="{http://www.iringtools.org/mapping}ValueListMap" maxOccurs="unbounded"/>
+ *         &lt;element name="valueListMap" type="{http://www.iringtools.org/mapping}ValueListMap" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,7 +34,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ValueListMaps {
 
-    @XmlElement(name = "valueListMaps", required = true)
+    @XmlElement(name = "valueListMap", required = true)
     protected List<ValueListMap> items;
 
     /**

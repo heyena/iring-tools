@@ -1,8 +1,6 @@
 
 package org.iringtools.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -20,7 +18,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="valueMap" type="{http://www.iringtools.org/mapping}ValueMap" maxOccurs="unbounded"/>
+ *         &lt;element name="valueMaps" type="{http://www.iringtools.org/mapping}ValueMaps"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -32,14 +30,14 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ValueListMap", propOrder = {
     "name",
-    "items"
+    "valueMaps"
 })
 public class ValueListMap {
 
     @XmlElement(required = true)
     protected String name;
-    @XmlElement(name = "valueMap", required = true)
-    protected List<ValueMap> items;
+    @XmlElement(required = true)
+    protected ValueMaps valueMaps;
 
     /**
      * Gets the value of the name property.
@@ -66,44 +64,27 @@ public class ValueListMap {
     }
 
     /**
-     * Gets the value of the items property.
+     * Gets the value of the valueMaps property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the items property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getItems().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link ValueMap }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link ValueMaps }
+     *     
      */
-    public List<ValueMap> getItems() {
-        if (items == null) {
-            items = new ArrayList<ValueMap>();
-        }
-        return this.items;
+    public ValueMaps getValueMaps() {
+        return valueMaps;
     }
 
     /**
-     * Sets the value of the items property.
+     * Sets the value of the valueMaps property.
      * 
-     * @param items
+     * @param value
      *     allowed object is
-     *     {@link ValueMap }
+     *     {@link ValueMaps }
      *     
      */
-    public void setItems(List<ValueMap> items) {
-        this.items = items;
+    public void setValueMaps(ValueMaps value) {
+        this.valueMaps = value;
     }
 
 }

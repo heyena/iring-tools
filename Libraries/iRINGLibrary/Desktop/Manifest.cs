@@ -35,9 +35,12 @@ namespace org.iringtools.dxfr.manifest
 
     private string versionField;
 
+    private org.iringtools.mapping.ValueListMaps valueListMapsField;
+
     public Manifest()
     {
       graphs = new Graphs();
+      valueListMaps = new org.iringtools.mapping.ValueListMaps();
     }
 
     [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 0)]
@@ -63,6 +66,19 @@ namespace org.iringtools.dxfr.manifest
       set
       {
         this.versionField = value;
+      }
+    }
+
+    [System.Runtime.Serialization.DataMemberAttribute(EmitDefaultValue = false, Order = 2)]
+    public org.iringtools.mapping.ValueListMaps valueListMaps
+    {
+      get
+      {
+        return this.valueListMapsField;
+      }
+      set
+      {
+        this.valueListMapsField = value;
       }
     }
   }

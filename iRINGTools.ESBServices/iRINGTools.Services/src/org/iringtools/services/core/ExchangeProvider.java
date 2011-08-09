@@ -140,8 +140,8 @@ public class ExchangeProvider
       dfiRequest.setSourceAppName(sourceAppName);
       dfiRequest.setTargetScopeName(targetScopeName);
       dfiRequest.setTargetAppName(targetAppName);
-      dfiRequest.getDataTransferIndicies().add(sourceDtis);
-      dfiRequest.getDataTransferIndicies().add(targetDtis);
+      dfiRequest.getDataTransferIndices().add(sourceDtis);
+      dfiRequest.getDataTransferIndices().add(targetDtis);
 
       // request exchange service to diff the dti
       String dxiUrl = settings.get("differencingServiceUri") + "/dxi";
@@ -800,6 +800,9 @@ public class ExchangeProvider
         }      
       }
     }
+    
+    // merge source and target value-list maps
+    targetManifest.getValueListMaps().getItems().addAll(sourceManifest.getValueListMaps().getItems());
     
     return targetManifest;
   }

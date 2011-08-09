@@ -154,7 +154,8 @@ namespace org.iringtools.adapter
       Manifest manifest = new Manifest()
       {
         graphs = new Graphs(),
-        version = ""
+        version = "2.1.1",
+        valueListMaps = new ValueListMaps()
       };      
 
       try
@@ -257,6 +258,8 @@ namespace org.iringtools.adapter
             }
           }
         }
+
+        manifest.valueListMaps = Utility.CloneDataContractObject<ValueListMaps>(_mapping.valueListMaps);
       }
       catch (Exception ex)
       {
