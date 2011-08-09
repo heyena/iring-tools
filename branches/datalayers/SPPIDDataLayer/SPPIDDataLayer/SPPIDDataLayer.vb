@@ -241,7 +241,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim databaseDictionary As New DatabaseDictionary
         databaseDictionary.dataObjects = DataDictionary.dataObjects
         databaseDictionary.Provider = "MsSql2008"
-        databaseDictionary.ConnectionString = "Data Source=server=.\SQLEXPRESS;database=SPPID;User ID=SPPID;Password=sppid"
+        databaseDictionary.ConnectionString = "Data Source=.\SQLEXPRESS;database=SPPID;User ID=SPPID;Password=sppid"
         databaseDictionary.SchemaName = "dbo"
         '*************************************************
 
