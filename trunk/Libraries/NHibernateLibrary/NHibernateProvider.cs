@@ -674,8 +674,7 @@ namespace org.iringtools.nhibernate
 					string dataType = Utility.SqlTypeToCSharpType(Convert.ToString(metadata[1]));
 					int dataLength = Convert.ToInt32(metadata[2]);
 					bool isIdentity = Convert.ToBoolean(metadata[3]);
-					string nullable = Convert.ToString(metadata[4]).ToUpper();
-					bool isNullable = (nullable == "Y" || nullable == "TRUE");
+					bool isNullable = Convert.ToBoolean(metadata[4]);
 					string constraint = Convert.ToString(metadata[5]);
 
 					if (String.IsNullOrEmpty(constraint)) // process columns
