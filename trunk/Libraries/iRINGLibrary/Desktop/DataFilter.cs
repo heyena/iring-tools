@@ -70,12 +70,12 @@ namespace org.iringtools.library
       return ToSqlWhereClause(dbDictionary, objectType, objectAlias);
     }
 
-    public string ToSqlWhereClause(DatabaseDictionary dbDictionary, string objectType, string objectAlias)
+    public string ToSqlWhereClause(DatabaseDictionary dbDictionary, string tblname, string objectAlias)
     {
       _provider = dbDictionary.Provider;
       DataObject dataObject = null;
 #if !SILVERLIGHT
-      dataObject = dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+      dataObject = dbDictionary.dataObjects.Find(x => x.tableName.ToUpper() == tblname.ToUpper());
 #endif
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
       else objectAlias = String.Empty;

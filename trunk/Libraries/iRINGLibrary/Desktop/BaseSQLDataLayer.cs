@@ -13,7 +13,7 @@ namespace org.iringtools.library
   public abstract class BaseSQLDataLayer : BaseDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseSQLDataLayer));
-    protected DatabaseDictionary _dbDictionary = null;
+    public DatabaseDictionary _dbDictionary = null;
     protected string _whereClauseAlias = String.Empty;
      
     #region BaseSQLDataLayer methods
