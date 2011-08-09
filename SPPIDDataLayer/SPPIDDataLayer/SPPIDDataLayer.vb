@@ -27,16 +27,13 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     'Protected _configuration As XElement
     Private _conn As SqlConnection
 
-    Public Overrides Sub Initialize()
-
-    End Sub
-
 
     <Inject()>
     Public Sub New(settings As AdapterSettings)
 
         MyBase.New(settings)
 
+        'Dim connStr As String = "server=NDHD06670\SQLEXPRESSW;database=SPPID;User ID=SPPID;Password=sppid"
         Dim connStr As String = _settings("SPPIDConnectionString")
 
         Try
@@ -232,6 +229,26 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     '    Return dataDictionary
     'End Function
 
+    Public Overrides Function GetDatabaseDictionary() As DatabaseDictionary
+
+        Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
+
+        Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
+
+        _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
+
+        '*************************************************
+        Dim databaseDictionary As New DatabaseDictionary
+        databaseDictionary.dataObjects = DataDictionary.dataObjects
+        databaseDictionary.Provider = "MsSql2008"
+        databaseDictionary.ConnectionString = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=SPPID;User ID=sppid;Password=sppid"
+        databaseDictionary.SchemaName = "dbo"
+        '*************************************************
+
+        Return databaseDictionary
+
+    End Function
+
     Public Overrides Function GetDictionary() As DataDictionary
 
         Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
@@ -248,7 +265,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim filter As DataFilter = FormMultipleKeysFilter(identifiers)
 
         'TODO: Is the whereClauseAlias always set?
-        Dim whereClause As String = filter.ToSqlWhereClause(_dataDictionary, tableName, _whereClauseAlias)
+        Dim whereClause As String = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias)
 
         'TODO: Does the where clause include the word WHERE?
         Dim query As String = "SELECT * FROM " & tableName & whereClause
@@ -267,7 +284,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-    Public Overrides Function GetDataTable(tableName As String, whereClause As String, start As Integer, limit As Integer) As System.Data.DataTable
+    Public Overrides Function GetDataTable(tableName As String, whereClause As String, start As Long, limit As Long) As System.Data.DataTable
         Dim query As String = "SELECT * FROM " & tableName & " " & whereClause
 
         Dim adapter As New SqlDataAdapter()

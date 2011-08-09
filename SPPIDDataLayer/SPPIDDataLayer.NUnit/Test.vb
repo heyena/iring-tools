@@ -94,9 +94,10 @@ Public Class Test
   <Test()>
   Public Sub GetObjects()
     'THIS ID IS DIFFERENT FOR EACH TEST DATABASE!
-    Dim identifiers As IList(Of String) = New List(Of String)() From { _
- "27D058CBC5CB4ABB8B256D9B10193313"
-}
+        Dim identifiers As IList(Of String) = New List(Of String)() From { _
+     "27D058CBC5CB4ABB8B256D9B10193313",
+       "E5E3A74C7A0F431AB5069EA1BCD0407D"
+    }
 
         Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get("Equipment", identifiers)
 
