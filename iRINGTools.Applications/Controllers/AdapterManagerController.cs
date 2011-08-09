@@ -190,6 +190,25 @@ namespace org.iringtools.web.controllers
       }
     }
 
+		public ActionResult DataType()
+		{
+			try
+			{
+				Dictionary<String, String> dataTypeNames = new Dictionary<String, String>();				
+				
+				foreach (DataType dataType in Enum.GetValues(typeof(DataType)))
+				{
+					dataTypeNames.Add(((int)dataType).ToString(), dataType.ToString());					
+				}
+
+				return Json(dataTypeNames, JsonRequestBehavior.AllowGet);
+			}
+			catch (Exception e)
+			{
+				_logger.Error(e.ToString());
+				throw e;
+			}
+		}
 
     public class DBProvider
     {
