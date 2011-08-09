@@ -191,5 +191,50 @@
       </classTemplatesList>
     </graph>
   </graphs>
-  <version></version>
+  <version>2.1.1</version>
+  <valueListMaps xmlns:d2p1="http://www.iringtools.org/mapping">
+    <d2p1:valueListMap>
+      <d2p1:name>Length</d2p1:name>
+      <d2p1:valueMaps>
+        <d2p1:valueMap>
+          <d2p1:internalValue>METER</d2p1:internalValue>
+          <d2p1:uri>rdl:R52064275374</d2p1:uri>
+        </d2p1:valueMap>
+        <d2p1:valueMap>
+          <d2p1:internalValue>mm</d2p1:internalValue>
+          <d2p1:uri>rdl:R52054275374</d2p1:uri>
+        </d2p1:valueMap>
+        <d2p1:valueMap>
+          <d2p1:internalValue>INCH</d2p1:internalValue>
+          <d2p1:uri>rdl:R34755432270</d2p1:uri>
+        </d2p1:valueMap>
+      </d2p1:valueMaps>
+    </d2p1:valueListMap>
+    <d2p1:valueListMap>
+      <d2p1:name>Temperature</d2p1:name>
+      <d2p1:valueMaps>
+        <d2p1:valueMap>
+          <d2p1:internalValue>degC</d2p1:internalValue>
+          <d2p1:uri>rdl:R74877992703</d2p1:uri>
+        </d2p1:valueMap>
+        <d2p1:valueMap>
+          <d2p1:internalValue>degK</d2p1:internalValue>
+          <d2p1:uri>rdl:R53109662405</d2p1:uri>
+        </d2p1:valueMap>
+      </d2p1:valueMaps>
+    </d2p1:valueListMap>
+    <d2p1:valueListMap>
+      <d2p1:name>Pressure</d2p1:name>
+      <d2p1:valueMaps>
+        <d2p1:valueMap>
+          <d2p1:internalValue>PASCAL</d2p1:internalValue>
+          <d2p1:uri>rdl:R98787754267</d2p1:uri>
+        </d2p1:valueMap>
+        <d2p1:valueMap>
+          <d2p1:internalValue>BAR</d2p1:internalValue>
+          <d2p1:uri>rdl:R83490506551</d2p1:uri>
+        </d2p1:valueMap>
+      </d2p1:valueMaps>
+    </d2p1:valueListMap>
+  </valueListMaps>
 </manifest>
