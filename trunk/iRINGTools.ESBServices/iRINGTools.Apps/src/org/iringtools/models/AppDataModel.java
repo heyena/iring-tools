@@ -40,7 +40,7 @@ public class AppDataModel extends DataModel
         DataTransferObjects pageDtos = getPageDtos(serviceUri, manifestRelativePath, dtiRelativePath, 
             dtoRelativePath, filter, sortBy, sortOrder, start, limit);
         
-        pageDtoGrid = getDtoGrid(graph, pageDtos);
+        pageDtoGrid = getDtoGrid(manifest, graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
         pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());  
       }
@@ -65,7 +65,7 @@ public class AppDataModel extends DataModel
       DataTransferObjects dtos = getRelatedItems(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, 
           dtoIdentifier, filter, sortBy, sortOrder, start, limit);
       
-      pageDtoGrid = getRelatedItemGrid(graph, dtos, classId, classIdentifier);
+      pageDtoGrid = getRelatedItemGrid(manifest, graph, dtos, classId, classIdentifier);
     }
     
     return pageDtoGrid;
