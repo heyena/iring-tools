@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ValueListMaps complex type.
+ * <p>Java class for ValueMaps complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ValueListMaps">
+ * &lt;complexType name="ValueMaps">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="valueListMap" type="{http://www.iringtools.org/mapping}ValueListMap" maxOccurs="unbounded"/>
+ *         &lt;element name="valueMap" type="{http://www.iringtools.org/mapping}ValueMap" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ValueListMaps", propOrder = {
+@XmlType(name = "ValueMaps", propOrder = {
     "items"
 })
-public class ValueListMaps {
+public class ValueMaps {
 
-    @XmlElement(name = "valueListMap", required = true)
-    protected List<ValueListMap> items;
+    @XmlElement(name = "valueMap", required = true)
+    protected List<ValueMap> items;
 
     /**
      * Gets the value of the items property.
@@ -55,13 +55,13 @@ public class ValueListMaps {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ValueListMap }
+     * {@link ValueMap }
      * 
      * 
      */
-    public List<ValueListMap> getItems() {
+    public List<ValueMap> getItems() {
         if (items == null) {
-            items = new ArrayList<ValueListMap>();
+            items = new ArrayList<ValueMap>();
         }
         return this.items;
     }
@@ -71,10 +71,10 @@ public class ValueListMaps {
      * 
      * @param items
      *     allowed object is
-     *     {@link ValueListMap }
+     *     {@link ValueMap }
      *     
      */
-    public void setItems(List<ValueListMap> items) {
+    public void setItems(List<ValueMap> items) {
         this.items = items;
     }
 

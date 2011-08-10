@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.iringtools.mapping.ValueListMaps;
 
 
 /**
@@ -20,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="graphs" type="{http://www.iringtools.org/dxfr/manifest}Graphs"/>
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="valueListMaps" type="{http://www.iringtools.org/mapping}ValueListMaps"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Manifest", propOrder = {
     "graphs",
-    "version"
+    "version",
+    "valueListMaps"
 })
 @XmlRootElement(name = "manifest")
 public class Manifest {
@@ -40,6 +43,8 @@ public class Manifest {
     protected Graphs graphs;
     @XmlElement(required = true)
     protected String version;
+    @XmlElement(required = true)
+    protected ValueListMaps valueListMaps;
 
     /**
      * Gets the value of the graphs property.
@@ -87,6 +92,30 @@ public class Manifest {
      */
     public void setVersion(String value) {
         this.version = value;
+    }
+
+    /**
+     * Gets the value of the valueListMaps property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link ValueListMaps }
+     *     
+     */
+    public ValueListMaps getValueListMaps() {
+        return valueListMaps;
+    }
+
+    /**
+     * Sets the value of the valueListMaps property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link ValueListMaps }
+     *     
+     */
+    public void setValueListMaps(ValueListMaps value) {
+        this.valueListMaps = value;
     }
 
 }

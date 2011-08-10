@@ -47,7 +47,7 @@
       <xs:element name="sourceAppName" type="xs:string" />
       <xs:element name="targetScopeName" type="xs:string" />
       <xs:element name="targetAppName" type="xs:string" />
-      <xs:element name="dataTransferIndicies" type="dti:DataTransferIndices" maxOccurs="2" />
+      <xs:element name="dataTransferIndices" type="dti:DataTransferIndices" maxOccurs="2" />
     </xs:sequence>
   </xs:complexType>
 

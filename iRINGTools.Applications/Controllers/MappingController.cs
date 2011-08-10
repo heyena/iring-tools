@@ -843,7 +843,28 @@ namespace org.iringtools.web.controllers
 				string oldClassUrl = form["oldClassUrl"];
 				string internalName = form["internalName"];
 				string classUrl = form["classUrl"];
-				qn = _nsMap.ReduceToQName(classUrl, out qName);
+        string classLabel = form["classLabel"];
+
+        bool classUrlUsesPrefix = false;
+
+        if (!String.IsNullOrEmpty(classUrl))
+        {
+          foreach (string prefix in _nsMap.Prefixes)
+          {
+            if (classUrl.ToLower().StartsWith(prefix + ":"))
+            {
+              classUrlUsesPrefix = true;
+              qName = classUrl;
+              break;
+            }
+          }
+
+          if (!classUrlUsesPrefix)
+          {
+            qn = _nsMap.ReduceToQName(classUrl, out qName);
+          }
+        }
+
 				Mapping mapping = GetMapping(scope, application);
 				ValueListMap valuelistMap = null;
 
@@ -855,7 +876,8 @@ namespace org.iringtools.web.controllers
 					ValueMap valueMap = new ValueMap
 					{
 						internalValue = internalName,
-						uri = qName
+						uri = qName,
+            label = classLabel
 					};
 					if (valuelistMap.valueMaps == null)
 						valuelistMap.valueMaps = new ValueMaps();
@@ -869,6 +891,7 @@ namespace org.iringtools.web.controllers
 					{
 						valueMap.internalValue = internalName;
 						valueMap.uri = qName;
+            valueMap.label = classLabel;
 						_repository.UpdateMapping(scope, application, mapping);
 					}					
 				}

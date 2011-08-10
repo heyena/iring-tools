@@ -187,36 +187,53 @@ namespace org.iringtools.web.controllers
                     }
                 case "ValueListNode":
                     {
-                      string valueMapLabel = string.Empty;
                       string context = form["node"];
                       string scopeName = context.Split('/')[0];
                       string applicationName = context.Split('/')[1];
                       string valueList = context.Split('/')[4];
+
                       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                      Mapping mapping = GetMapping(scopeName, applicationName);
-                      
+                      Mapping mapping = GetMapping(scopeName, applicationName);                      
                       ValueListMap valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
                       
                       foreach (var valueMap in valueListMap.valueMaps)
                       {
-                          string classLabel = GetClassLabel(valueMap.uri.Split(':')[1]);
+                        string valueMapUri = valueMap.uri.Split(':')[1];
+                        string classLabel = String.Empty;
+
+                        if (!String.IsNullOrEmpty(valueMap.label))
+                        {
+                          classLabel = valueMap.label;
+                        }
+                        else if (Session[valueMapUri] != null)
+                        {
+                          classLabel = (string)Session[valueMapUri];
+                        }
+                        else
+                        {
+                          classLabel = GetClassLabel(valueMapUri);
+                          Session[valueMapUri] = classLabel;
+                        }
+
                         JsonTreeNode node = new JsonTreeNode
                         {
                           nodeType = "async",
                           type = "ListMapNode",
                           icon = "Content/img/value.png",
                           id = context + "/ValueMap/" + valueMap.internalValue,
-                          text =  classLabel + " ["+valueMap.internalValue+"]",
+                          text =  classLabel + " [" + valueMap.internalValue + "]",
                           expanded = false,
                           leaf = true,
                           children = null,
                           record = valueMap
                         };
+
 												node.property = new Dictionary<string, string>();
 												node.property.Add("Name", valueMap.internalValue);
 												node.property.Add("Class Label", classLabel);
                         nodes.Add(node);
                       }
+
                       return Json(nodes, JsonRequestBehavior.AllowGet);
                     }
 

@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="graphMaps" type="{http://www.iringtools.org/mapping}GraphMaps"/>
- *         &lt;element name="valueListMap" type="{http://www.iringtools.org/mapping}ValueListMap"/>
+ *         &lt;element name="valueListMaps" type="{http://www.iringtools.org/mapping}ValueListMaps"/>
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Mapping", propOrder = {
     "graphMaps",
-    "valueListMap",
+    "valueListMaps",
     "version"
 })
 @XmlRootElement(name = "mapping")
@@ -41,7 +41,7 @@ public class Mapping {
     @XmlElement(required = true)
     protected GraphMaps graphMaps;
     @XmlElement(required = true)
-    protected ValueListMap valueListMap;
+    protected ValueListMaps valueListMaps;
     @XmlElement(required = true)
     protected String version;
 
@@ -70,27 +70,27 @@ public class Mapping {
     }
 
     /**
-     * Gets the value of the valueListMap property.
+     * Gets the value of the valueListMaps property.
      * 
      * @return
      *     possible object is
-     *     {@link ValueListMap }
+     *     {@link ValueListMaps }
      *     
      */
-    public ValueListMap getValueListMap() {
-        return valueListMap;
+    public ValueListMaps getValueListMaps() {
+        return valueListMaps;
     }
 
     /**
-     * Sets the value of the valueListMap property.
+     * Sets the value of the valueListMaps property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ValueListMap }
+     *     {@link ValueListMaps }
      *     
      */
-    public void setValueListMap(ValueListMap value) {
-        this.valueListMap = value;
+    public void setValueListMaps(ValueListMaps value) {
+        this.valueListMaps = value;
     }
 
     /**

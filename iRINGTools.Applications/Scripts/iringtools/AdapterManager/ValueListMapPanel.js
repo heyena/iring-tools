@@ -78,8 +78,9 @@ AdapterManager.ValueListMapPanel = Ext.extend(Ext.Panel, {
       items: [
 				{ fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 230, value: nodeId, allowBlank: true },
 				{ fieldLabel: 'Internal Name', name: 'internalName', xtype: 'textfield', width: 230, value: interName, allowBlank: false },
-        { fieldLabel: 'Class Url', name: 'classUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false },
-				{ fieldLabel: 'Old Class Url', name: 'oldClassUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false }
+                { fieldLabel: 'Class Url', name: 'classUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false },
+				{ fieldLabel: 'Old Class Url', name: 'oldClassUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false },
+				{ fieldLabel: 'Class Label', name: 'classLabel', xtype: 'hidden', width: 230, value: classLabel, allowBlank: false }
       ],
 
       html: '<div class="class-target' + formid + '" '
@@ -98,6 +99,7 @@ AdapterManager.ValueListMapPanel = Ext.extend(Ext.Panel, {
               return false;
             }
             thisform.getForm().findField('classUrl').setValue(data.node.attributes.record.Uri);
+            thisform.getForm().findField('classLabel').setValue(data.node.attributes.record.Label);
             var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + data.node.attributes.record.Label + '</b></td></tr>'
             msg += '</table>'
             //Ext.getCmp(formid).body.child('div.class-target' + formid).update(msg);

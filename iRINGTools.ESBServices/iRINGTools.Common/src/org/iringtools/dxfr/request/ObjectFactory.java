@@ -30,6 +30,22 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DxoRequest }
+     * 
+     */
+    public DxoRequest createDxoRequest() {
+        return new DxoRequest();
+    }
+
+    /**
+     * Create an instance of {@link DfoRequest }
+     * 
+     */
+    public DfoRequest createDfoRequest() {
+        return new DfoRequest();
+    }
+
+    /**
      * Create an instance of {@link DfiRequest }
      * 
      */
@@ -46,27 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DxoRequest }
-     * 
-     */
-    public DxoRequest createDxoRequest() {
-        return new DxoRequest();
-    }
-
-    /**
      * Create an instance of {@link ExchangeRequest }
      * 
      */
     public ExchangeRequest createExchangeRequest() {
         return new ExchangeRequest();
-    }
-
-    /**
-     * Create an instance of {@link DfoRequest }
-     * 
-     */
-    public DfoRequest createDfoRequest() {
-        return new DfoRequest();
     }
 
 }

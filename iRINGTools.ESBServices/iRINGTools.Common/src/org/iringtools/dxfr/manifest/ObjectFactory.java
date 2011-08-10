@@ -30,22 +30,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Graphs }
-     * 
-     */
-    public Graphs createGraphs() {
-        return new Graphs();
-    }
-
-    /**
-     * Create an instance of {@link ClassTemplatesList }
-     * 
-     */
-    public ClassTemplatesList createClassTemplatesList() {
-        return new ClassTemplatesList();
-    }
-
-    /**
      * Create an instance of {@link Role }
      * 
      */
@@ -62,19 +46,19 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Roles }
+     * 
+     */
+    public Roles createRoles() {
+        return new Roles();
+    }
+
+    /**
      * Create an instance of {@link Templates }
      * 
      */
     public Templates createTemplates() {
         return new Templates();
-    }
-
-    /**
-     * Create an instance of {@link Graph }
-     * 
-     */
-    public Graph createGraph() {
-        return new Graph();
     }
 
     /**
@@ -86,11 +70,27 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Roles }
+     * Create an instance of {@link Graph }
      * 
      */
-    public Roles createRoles() {
-        return new Roles();
+    public Graph createGraph() {
+        return new Graph();
+    }
+
+    /**
+     * Create an instance of {@link Graphs }
+     * 
+     */
+    public Graphs createGraphs() {
+        return new Graphs();
+    }
+
+    /**
+     * Create an instance of {@link Manifest }
+     * 
+     */
+    public Manifest createManifest() {
+        return new Manifest();
     }
 
     /**
@@ -102,11 +102,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Manifest }
+     * Create an instance of {@link ClassTemplatesList }
      * 
      */
-    public Manifest createManifest() {
-        return new Manifest();
+    public ClassTemplatesList createClassTemplatesList() {
+        return new ClassTemplatesList();
     }
 
 }

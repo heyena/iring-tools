@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
   xmlns="http://www.iringtools.org/dxfr/manifest"  targetNamespace="http://www.iringtools.org/dxfr/manifest"
-  xmlns:map="http://www.iringtools.org/mapping" 
+  xmlns:mapping="http://www.iringtools.org/mapping" 
   elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
   jaxb:version="2.1" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
 
@@ -12,7 +12,8 @@
   <xs:complexType name="Manifest">
     <xs:sequence>
       <xs:element name="graphs" type="Graphs" />
-      <xs:element name="version" type="xs:string" />
+      <xs:element name="version" type="xs:string" />      
+      <xs:element name="valueListMaps" type="mapping:ValueListMaps" />
     </xs:sequence>
   </xs:complexType>
 
@@ -96,7 +97,7 @@
 
   <xs:complexType name="Role">
     <xs:sequence>
-      <xs:element name="type" type="map:RoleType" />
+      <xs:element name="type" type="mapping:RoleType" />
       <xs:element name="id" type="xs:string" />
       <xs:element name="name" type="xs:string" />
       <xs:element name="dataType" type="xs:string" />
