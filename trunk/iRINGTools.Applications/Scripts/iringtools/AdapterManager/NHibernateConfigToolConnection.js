@@ -105,8 +105,8 @@ function changeConfigOracle (host, dbSchema, userName, password, serviceName) {
 	creatRadioField(serviceName, serviceName.id, '', '', 1);
 }
 
-function changeConfig (ddbName, dbServer, dbInstance, dbSchema, userName, password) {
-	ddbName.setValue('');
+function changeConfig (dbName, dbServer, dbInstance, dbSchema, userName, password) {
+	dbName.setValue('');
 	dbName.clearInvalid();
 	dbName.show();
 
@@ -234,10 +234,10 @@ function setDsConfigPane (editPane, dbInfo, dbDict, scopeName, appName) {
 									password.setValue(dbInfo.dbPassword);
 								}
 								else
-									changeConfig(ddbName, dbServer, dbInstance, dbSchema, userName, password);
+									changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password);
 							}
 							else
-								changeConfig(ddbName, dbServer, dbInstance, dbSchema, userName, password);
+								changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password);
 						}
 
 						portNumber.setValue('1433');
@@ -637,7 +637,7 @@ function setTablesSelectorPane (editPane, dbInfo, dbDict, scopeName, appName) {
 						var rootNode = dbObjectsTree.getRootNode();
 						rootNode.reload(
             function (rootNode) {
-              loadTree(rootNode);
+              loadTree(rootNode, dbDict);
             });
 					}
 				}, {
