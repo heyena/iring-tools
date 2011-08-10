@@ -13,7 +13,7 @@ namespace org.iringtools.adapter.projection
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DataProjectionEngine));
     private DataDictionary _dictionary = null;
-    private XNamespace _appNamespace = null;
+    private XNamespace _graphNamespace = null;
 
     [Inject]
     public DataProjectionEngine(AdapterSettings settings, DataDictionary dictionary)
@@ -28,27 +28,31 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _appNamespace = FormAppBaseURI() + graphName;
-
+        string baseUri = _settings["GraphBaseUri"];
+        string project = _settings["ProjectName"];
+        string app = _settings["ApplicationName"];
+        string appBaseUri = Utility.FormAppBaseURI(_uriMaps, baseUri, project, app);
+        _graphNamespace = appBaseUri + graphName + "/";
+        
         //_dictionary = _dataLayer.GetDictionary();
         _dataObjects = dataObjects;
 
         if (_dataObjects != null && (_dataObjects.Count == 1 || FullIndex))
         {
-          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
+          xElement = new XElement(_graphNamespace + Utility.TitleCase(graphName) + "List");
 
           DataObject dataObject = FindGraphDataObject(graphName);
 
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(dataObject.objectName));
+            XElement rowElement = new XElement(_graphNamespace + Utility.TitleCase(dataObject.objectName));
             CreateHierarchicalXml(rowElement, dataObject, i);
             xElement.Add(rowElement);
           }
         }
         if (_dataObjects != null && (_dataObjects.Count > 1 && !FullIndex))
         {
-          xElement = new XElement(_appNamespace + Utility.TitleCase(graphName) + "List");
+          xElement = new XElement(_graphNamespace + Utility.TitleCase(graphName) + "List");
 
           XAttribute total = new XAttribute("total", this.Count);
           xElement.Add(total);
@@ -57,7 +61,7 @@ namespace org.iringtools.adapter.projection
 
           for (int i = 0; i < _dataObjects.Count; i++)
           {
-            XElement rowElement = new XElement(_appNamespace + Utility.TitleCase(dataObject.objectName));
+            XElement rowElement = new XElement(_graphNamespace + Utility.TitleCase(dataObject.objectName));
             CreateIndexXml(rowElement, dataObject, i);
             xElement.Add(rowElement);
           }
@@ -86,7 +90,7 @@ namespace org.iringtools.adapter.projection
     {
       foreach(DataProperty dataProperty in dataObject.dataProperties)
       {
-        XElement propertyElement = new XElement(_appNamespace + Utility.TitleCase(dataProperty.propertyName));
+        XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(dataProperty.propertyName));
         propertyElement.Add(new XAttribute("dataType", dataProperty.dataType));
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         
@@ -105,7 +109,7 @@ namespace org.iringtools.adapter.projection
 
     private void CreateIndexXml(XElement parentElement, DataObject dataObject, int dataObjectIndex)
     {
-      string uri = _appNamespace.ToString() + "/";
+      string uri = _graphNamespace.ToString() + "/";
 
       int keyCounter = 0;
       foreach (KeyProperty keyProperty in dataObject.keyProperties)
@@ -115,7 +119,7 @@ namespace org.iringtools.adapter.projection
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(_appNamespace + Utility.TitleCase(dataProperty.propertyName), value);
+          XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(dataProperty.propertyName), value);
           parentElement.Add(propertyElement);
           keyCounter++;
 
@@ -133,7 +137,7 @@ namespace org.iringtools.adapter.projection
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(indexProperty.propertyName);
         if (value != null)
         {
-          XElement propertyElement = new XElement(_appNamespace + Utility.TitleCase(indexProperty.propertyName), value);
+          XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(indexProperty.propertyName), value);
           parentElement.Add(propertyElement);
         }
       }

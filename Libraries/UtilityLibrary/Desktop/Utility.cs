@@ -42,6 +42,7 @@ using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.Data.SqlClient;
 using System.Runtime.Serialization.Json;
+using System.Web;
 
 namespace org.iringtools.utility
 {
@@ -1232,6 +1233,41 @@ namespace org.iringtools.utility
       }
 
       return encodedData;
+    }
+
+    private static string GetMapUri(Properties uriMaps, string uri)
+    {
+      if (!String.IsNullOrEmpty(uri) && uriMaps != null)
+      {
+        foreach (string key in uriMaps.Keys)
+        {
+          if (key.ToLower() == uri.ToLower())
+          {
+            return uriMaps[key];
+          }
+        }
+      }
+
+      return uri;
+    }
+
+    public static string FormAppBaseURI(Properties uriMaps, string baseUri, string project, string app)
+    {
+      const string DEFAULT_PROJECT = "all";
+      string appBaseUri = String.Empty;
+
+      if (project.ToLower() == DEFAULT_PROJECT)
+      {
+        appBaseUri = String.Format("{0}{1}/{2}/", baseUri, DEFAULT_PROJECT, HttpUtility.UrlEncode(app));
+        appBaseUri = GetMapUri(uriMaps, appBaseUri);
+      }
+      else
+      {
+        baseUri = GetMapUri(uriMaps, baseUri);
+        appBaseUri = String.Format("{0}{1}/{2}/", baseUri, HttpUtility.UrlEncode(app), HttpUtility.UrlEncode(project));
+      }
+
+      return appBaseUri;
     }
   }
 }

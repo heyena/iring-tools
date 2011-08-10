@@ -53,8 +53,12 @@ namespace org.iringtools.adapter.projection
         if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 &&
           dataObjects != null && dataObjects.Count > 0)
         {
-          _graphBaseUri = FormAppBaseURI() + _graphMap.name;
-
+          string baseUri = _settings["GraphBaseUri"];
+          string project = _settings["ProjectName"];
+          string app = _settings["ApplicationName"];
+          string appBaseUri = Utility.FormAppBaseURI(_uriMaps, baseUri, project, app);
+        
+          _graphBaseUri = appBaseUri + _graphMap.name + "/";
           _dataObjects = dataObjects;
           rdfDoc = new XDocument(BuildRdfXml());
         }
@@ -88,10 +92,13 @@ namespace org.iringtools.adapter.projection
 
         if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 && dataObjects != null)
         {
-          _dataObjects = dataObjects;
-
-          _graphBaseUri = FormAppBaseURI() + _graphMap.name;
-
+          string baseUri = _settings["GraphBaseUri"];
+          string project = _settings["ProjectName"];
+          string app = _settings["ApplicationName"];
+          string appBaseUri = Utility.FormAppBaseURI(_uriMaps, baseUri, project, app);
+        
+          _graphBaseUri = appBaseUri + _graphMap.name + "/";
+          _dataObjects = dataObjects;          
           rdfDoc = new XDocument(BuildRdfXml(className, classIdentifier));
         }
         else

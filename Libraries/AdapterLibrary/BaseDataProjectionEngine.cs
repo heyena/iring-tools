@@ -4,11 +4,15 @@ using System.Xml.Linq;
 using org.iringtools.library;
 using System;
 using System.Web;
+using org.iringtools.utility;
+using log4net;
 
 namespace org.iringtools.adapter.projection
 {
   public abstract class BaseDataProjectionEngine : IProjectionLayer
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseDataProjectionEngine));
+    
     protected static readonly XNamespace XSD_NS = "http://www.w3.org/2001/XMLSchema#";
     protected static readonly XNamespace XSI_NS = "http://www.w3.org/2001/XMLSchema-instance#";
 
@@ -19,12 +23,26 @@ namespace org.iringtools.adapter.projection
     protected IList<IDataObject> _dataObjects = null;
     protected List<string> _relatedObjectPaths = null;
     protected Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
+    protected Properties _uriMaps;
 
     public bool FullIndex { get; set; }
     public long Count { get; set; }
+
     public BaseDataProjectionEngine()
     {
       _dataObjects = new List<IDataObject>();
+
+      // load uri maps config
+      _uriMaps = new Properties();
+
+      try
+      {
+        _uriMaps.Load(_settings["DataPath"] + "UriMaps.conf");
+      }
+      catch (Exception e)
+      {
+        _logger.Info("Error loading [UriMaps.config]: " + e);
+      }
     }
 
     public abstract XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);
@@ -110,30 +128,6 @@ namespace org.iringtools.adapter.projection
           }
         }
       }
-    }
-
-    protected string FormAppBaseURI()
-    {
-      string baseGraphUri = String.Empty;
-
-      string projectName = _settings["ProjectName"];
-
-      if (projectName.ToUpper() == "ALL")
-      {
-        baseGraphUri = String.Format("{0}all/{1}/",
-          _settings["GraphBaseUri"],
-          HttpUtility.UrlEncode(_settings["ApplicationName"])
-        );
-      }
-      else
-      {
-        baseGraphUri = String.Format("{0}{1}/{2}/",
-          _settings["GraphBaseUri"],
-          HttpUtility.UrlEncode(_settings["ApplicationName"]),
-          HttpUtility.UrlEncode(projectName)
-        );
-      }
-      return baseGraphUri;
     }
 
     // senario:

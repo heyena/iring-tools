@@ -45,5 +45,25 @@ namespace org.iringtools.utility
         _dictionary[name] = value;
       }
     }
+
+    public int Count
+    {
+      get { return _dictionary.Count; }
+    }
+
+    public ICollection<string> Keys
+    {
+      get { return _dictionary.Keys; }
+    }
+
+    public ICollection<string> Values
+    {
+      get { return _dictionary.Values; }
+    }
+
+    public bool ContainsKey(string key)
+    {
+      return _dictionary.ContainsKey(key);
+    }
   }
 }

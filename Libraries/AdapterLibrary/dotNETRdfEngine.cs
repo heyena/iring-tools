@@ -56,11 +56,24 @@ namespace org.iringtools.adapter.semantic
     private XNamespace _graphNs = String.Empty;
     private string _dataObjectsAssemblyName = String.Empty;
     private string _dataObjectNs = String.Empty;
+    private Properties _uriMaps;
 
     [Inject]
     public dotNetRDFEngine(AdapterSettings settings, Mapping mapping)
     {
       _settings = settings;
+
+      // load uri maps config
+      _uriMaps = new Properties();
+
+      try
+      {
+        _uriMaps.Load(_settings["DataPath"] + "UriMaps.conf");
+      }
+      catch (Exception e)
+      {
+        _logger.Info("Error loading [UriMaps.config]: " + e);
+      }
 
       _tripleStore = new MicrosoftSqlStoreManager(
         _settings["dotNetRDFServer"],
@@ -72,16 +85,13 @@ namespace org.iringtools.adapter.semantic
       _mapping = mapping;
 
       _graph = new Graph();
-      _graphNs = String.Format("{0}{1}/{2}/",
-        _settings["GraphBaseUri"],
-        _settings["ProjectName"],
-        _settings["ApplicationName"]
-        );
 
-      _dataObjectNs = String.Format("{0}.proj_{1}",
-        DATALAYER_NS,
-        _settings["Scope"]
-      );
+      string baseUri = _settings["GraphBaseUri"];
+      string project = _settings["ProjectName"];
+      string app = _settings["ApplicationName"];
+      _graphNs = Utility.FormAppBaseURI(_uriMaps, baseUri, project, app);
+
+      _dataObjectNs = String.Format("{0}.proj_{1}", DATALAYER_NS, _settings["Scope"]);
 
       _dataObjectsAssemblyName = _settings["ExecutingAssemblyName"];
     }

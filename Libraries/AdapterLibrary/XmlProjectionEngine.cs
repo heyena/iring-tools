@@ -34,7 +34,10 @@ namespace org.iringtools.adapter.projection
     {
       _individualsCache = new Dictionary<string, List<string>>();
 
-      _appNamespace = FormAppBaseURI();
+      string baseUri = _settings["GraphBaseUri"];
+      string project = _settings["ProjectName"];
+      string app = _settings["ApplicationName"];
+      _appNamespace = Utility.FormAppBaseURI(_uriMaps, baseUri, project, app);
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
