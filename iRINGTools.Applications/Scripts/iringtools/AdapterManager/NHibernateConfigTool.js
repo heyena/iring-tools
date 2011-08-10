@@ -76,7 +76,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									},
 									success: function (response, request) {
 										dbDict = Ext.util.JSON.decode(response.responseText);
-										dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
+										if (dbDict.ConnectionString)
+											dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
 
 										var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 
@@ -287,7 +288,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 			},
 			success: function (response, request) {
 				dbDict = Ext.util.JSON.decode(response.responseText);
-				dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
+				if (dbDict.ConnectionString)
+					dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
 
 				var tab = Ext.getCmp('content-panel');
 				var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
