@@ -203,13 +203,13 @@ Ext.onReady(function () {
         var application = node.text;
         var scope = node.parentNode.text;
 
-        if (dataLayerValue == 'ExcelLibrary') {
+        if (dataLayerValue == 'SpreadsheetLibrary') {
             var newConfig = new AdapterManager.ExcelLibraryPanel({
                 id: 'tab-c.' + scope + '.' + application,
                 title: 'Configure - ' + scope + '.' + application,
                 scope: scope,
                 application: application,
-                url: 'excel/configure',
+                url: 'spreadsheet/configure',
                 closable: true
             });
 
@@ -306,7 +306,7 @@ Ext.onReady(function () {
             var application = node.text;
             var scope = node.parentNode.text;
 
-            if (dataLayerValue == 'ExcelLibrary') {
+            if (dataLayerValue == 'SpreadsheetDataLayer') {
                 var configTab = contentPanel.items.map[scope + '.' + application + '.-nh-config'];
             }
             else if (dataLayerValue == 'SPPIDDataLayer') {

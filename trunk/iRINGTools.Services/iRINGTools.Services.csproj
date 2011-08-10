@@ -77,13 +77,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\NHibernate.ByteCode.Castle.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
-    </Reference>
-    <Reference Include="Ninject.Extensions.Xml">
-      <HintPath>..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Runtime.Serialization" />
@@ -182,11 +175,6 @@
     <Folder Include="Logs\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Libraries\ExcelLibrary\ExcelLibrary\ExcelLibrary.csproj">
-      <Project>{4DDB5151-FE9D-4041-BA46-63486D7DA32D}</Project>
-      <Name>ExcelLibrary</Name>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
       <Name>NHibernateLibrary</Name>
@@ -206,6 +194,10 @@
     <ProjectReference Include="..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SpreadsheetLibrary\SpreadsheetLibrary.csproj">
+      <Project>{AA4E8B96-73BA-4A47-BAD8-FC9AD88C3978}</Project>
+      <Name>SpreadsheetLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
