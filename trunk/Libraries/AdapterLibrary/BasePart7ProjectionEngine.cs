@@ -82,9 +82,9 @@ namespace org.iringtools.adapter.projection
     protected GraphMap _graphMap = null;
     protected IList<IDataObject> _dataObjects = null;
     protected Dictionary<string, string>[] _dataRecords = null;
-    //protected Dictionary<string, List<string>> _classIdentifiers = null;
     protected List<string> _relatedObjectPaths = null;
     protected string _fixedIdentifierBoundary = "#";
+    protected Properties _uriMaps;
 
     // key is related object type at a data object index and value is list of related objects 
     protected Dictionary<string, IList<IDataObject>>[] _relatedObjects = null;
@@ -104,7 +104,6 @@ namespace org.iringtools.adapter.projection
     public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
     {
       _dataObjects = new List<IDataObject>();
-      //_classIdentifiers = new Dictionary<string, List<string>>();
       _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
 
       _settings = settings;
@@ -127,6 +126,18 @@ namespace org.iringtools.adapter.projection
       if (File.Exists(_settings["ClassificationTemplateFile"]))
       {
         _classificationConfig = Utility.Read<ClassificationTemplate>(_settings["ClassificationTemplateFile"]);
+      }
+
+      // load uri maps config
+      _uriMaps = new Properties();
+
+      try
+      {
+        _uriMaps.Load(_settings["DataPath"] + "UriMaps.conf");
+      }
+      catch (Exception e) 
+      {
+        _logger.Info("Error loading [UriMaps.config]: " + e);
       }
     }
 
@@ -164,30 +175,6 @@ namespace org.iringtools.adapter.projection
       }
 
       return parentObjects;
-    }
-
-    protected string FormAppBaseURI()
-    {
-      string baseGraphUri = String.Empty;
-
-      string projectName = _settings["ProjectName"];
-
-      if (projectName.ToUpper() == "ALL")
-      {
-        baseGraphUri = String.Format("{0}all/{1}/",
-          _settings["GraphBaseUri"],
-          HttpUtility.UrlEncode(_settings["ApplicationName"])
-        );
-      }
-      else
-      {
-        baseGraphUri = String.Format("{0}{1}/{2}/",
-          _settings["GraphBaseUri"],
-          HttpUtility.UrlEncode(_settings["ApplicationName"]),
-          HttpUtility.UrlEncode(projectName)
-        );
-      }
-      return baseGraphUri;
     }
 
     // senario (assume no circular relationships - should be handled by AppEditor): 
