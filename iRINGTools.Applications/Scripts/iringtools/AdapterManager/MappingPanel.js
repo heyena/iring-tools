@@ -42,12 +42,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 	* @protected
 	*/
 	initComponent: function () {
-		//    this.contextButton = new Ext.Toolbar.Button({
-		//      pressed: true,
-		//      enableToggle: false,
-		//      text: 'ContextMenu',
-		//      menu: new Ext.menu.Menu()
-		//    });
+
 		this.tbar = new Ext.Toolbar();
 		this.tbar.add(this.buildToolbar());
 		//    this.tbar.add(this.contextButton);

@@ -28,7 +28,7 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/GraphPanel.js") %>" type="text/javascript"></script>                 
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ApplicationPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AjaxRowExpander.js") %>" type="text/javascript"></script>    
-    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ExcelLibrary.js") %>" type="text/javascript"></script>
+    <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/SpreadsheetLibrary.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigTool.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigToolConnection.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/NHibernateConfigToolKeyandProperty.js") %>" type="text/javascript"></script>
