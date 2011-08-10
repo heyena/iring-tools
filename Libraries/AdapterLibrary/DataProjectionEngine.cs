@@ -28,12 +28,7 @@ namespace org.iringtools.adapter.projection
 
       try
       {
-        _appNamespace = String.Format("{0}{1}/{2}/{3}",
-           _settings["GraphBaseUri"],
-           HttpUtility.UrlEncode(_settings["ProjectName"]),
-           HttpUtility.UrlEncode(_settings["ApplicationName"]),
-           HttpUtility.UrlEncode(graphName)
-         );
+        _appNamespace = FormAppBaseURI() + graphName;
 
         //_dictionary = _dataLayer.GetDictionary();
         _dataObjects = dataObjects;

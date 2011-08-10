@@ -44,13 +44,15 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      XDocument xDocument =
+      object response =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"], _settings["ClassName"],
           _settings["Identifier"],
           "Xml", false
         );
+
+      XDocument xDocument = (XDocument)response;
 
       string path = String.Format(
          "{0}GetXmlIndividual.xml",

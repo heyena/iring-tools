@@ -55,7 +55,7 @@ namespace org.iringtools.adapter
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
     private ScopeProjects _scopes = null;
-    private IDataLayer _dataLayer = null;
+    private IDataLayer2 _dataLayer = null;
     private IIdentityLayer _identityLayer = null;
     private IDictionary _keyRing = null;
     private ISemanticLayer _semanticEngine = null;
@@ -66,6 +66,7 @@ namespace org.iringtools.adapter
     private DataObject _dataObjDef = null;
     private bool _isResourceGraph = false;
     private bool _isProjectionPart7 = false;
+    private bool _isFormatExpected = true;
 
     //Projection specific stuff
     private IList<IDataObject> _dataObjects = new List<IDataObject>(); // dictionary of object names and list of data objects
@@ -295,7 +296,7 @@ namespace org.iringtools.adapter
     }
     #endregion
 
-    #region adapter methods    
+    #region adapter methods
     public DataDictionary GetDictionary(string projectName, string applicationName)
     {
       try
@@ -382,7 +383,7 @@ namespace org.iringtools.adapter
 
     //DataFilter List
     public XDocument GetDataProjection(
-      string projectName, string applicationName, string resourceName, 
+      string projectName, string applicationName, string resourceName,
         DataFilter filter, string format, int start, int limit, bool fullIndex)
     {
       try
@@ -518,7 +519,7 @@ namespace org.iringtools.adapter
     }
 
     //Individual
-    public XDocument GetDataProjection(
+    public object GetDataProjection(
       string projectName, string applicationName, string resourceName, string className,
        string classIdentifier, string format, bool fullIndex)
     {
@@ -530,31 +531,40 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resourceName, format);
 
-        if (_isResourceGraph)
+        if (_isFormatExpected)
         {
-          _dataObjects = GetDataObject(className, classIdentifier);
-        }
-        else
-        {
-          List<string> identifiers = new List<string> { classIdentifier };
-          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
-        }
-        _projectionEngine.Count = _dataObjects.Count;
-
-        if (_dataObjects != null && _dataObjects.Count > 0)
-        {
-          if (_isProjectionPart7)
+          if (_isResourceGraph)
           {
-            return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects, className, classIdentifier);
+            _dataObjects = GetDataObject(className, classIdentifier);
           }
           else
           {
-            return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
-          } 
+            List<string> identifiers = new List<string> { classIdentifier };
+            _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
+          }
+          _projectionEngine.Count = _dataObjects.Count;
+
+          if (_dataObjects != null && _dataObjects.Count > 0)
+          {
+            if (_isProjectionPart7)
+            {
+              return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects, className, classIdentifier);
+            }
+            else
+            {
+              return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
+            }
+          }
+          else
+          {
+            throw new Exception("Data object with identifier [" + classIdentifier + "] not found.");
+          }
         }
         else
         {
-          throw new Exception("Data object with identifier [" + classIdentifier + "] not found.");
+          IContentObject content = _dataLayer.GetContent(_dataObjDef.objectName, classIdentifier, format);
+
+          return content;
         }
       }
       catch (Exception ex)
@@ -589,9 +599,9 @@ namespace org.iringtools.adapter
     {
       DataFilter filter = new DataFilter();
 
-      IList<string> identifiers = new List<string>{ classIdentifier };
+      IList<string> identifiers = new List<string> { classIdentifier };
 
-      string fixedIdentifierBoundary = (_settings["fixedIdentifierBoundary"] == null) 
+      string fixedIdentifierBoundary = (_settings["fixedIdentifierBoundary"] == null)
         ? "#" : _settings["fixedIdentifierBoundary"];
 
       #region parse identifier to build data filter
@@ -675,7 +685,7 @@ namespace org.iringtools.adapter
       if (dataObjects != null && dataObjects.Count > 0)
       {
         return dataObjects;
-      }     
+      }
 
       return null;
     }
@@ -727,7 +737,7 @@ namespace org.iringtools.adapter
 
           return response;
         }
-          
+
         InitializeDataLayer();
 
         _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
@@ -739,7 +749,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-				_logger.Error("Error in Post: " + ex);
+        _logger.Error("Error in Post: " + ex);
         if (response == null)
         {
           response = new Response();
@@ -778,7 +788,7 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-				_logger.Error("Error in DeleteIndividual: " + ex);
+        _logger.Error("Error in DeleteIndividual: " + ex);
         if (response == null)
         {
           response = new Response();
@@ -804,6 +814,8 @@ namespace org.iringtools.adapter
     {
       try
       {
+        string scope = String.Format("{0}.{1}", projectName, applicationName);
+
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;
@@ -821,18 +833,18 @@ namespace org.iringtools.adapter
             }
           }
 
-          string scope = String.Format("{0}.{1}", projectName, applicationName);
-
-          if (!isScopeValid) throw new Exception(String.Format("Invalid scope [{0}].", scope));
+          if (!isScopeValid)
+            scope = String.Format("all.{0}", applicationName);
+          //throw new Exception(String.Format("Invalid scope [{0}].", scope));
 
           _settings["ProjectName"] = projectName;
           _settings["ApplicationName"] = applicationName;
           _settings["Scope"] = scope;
 
           string appSettingsPath = String.Format("{0}{1}.config",
-            _settings["XmlPath"],
-            scope
-          );
+              _settings["XmlPath"],
+              scope
+            );
 
           if (File.Exists(appSettingsPath))
           {
@@ -847,7 +859,7 @@ namespace org.iringtools.adapter
 
           //Ninject Extension requires fully qualified path.
           string bindingConfigurationPath = Path.Combine(
-            _settings["BaseDirectoryPath"], 
+            _settings["BaseDirectoryPath"],
             relativePath
           );
 
@@ -856,27 +868,37 @@ namespace org.iringtools.adapter
           if (loadDataLayer)
           {
 
-          if (!File.Exists(bindingConfigurationPath))
-          {
-            XElement binding = new XElement("module",
-              new XAttribute("name", _settings["Scope"]),
-              new XElement("bind",
-                new XAttribute("name", "DataLayer"),
-                new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-                new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
-              )
-            );
+            if (!File.Exists(bindingConfigurationPath))
+            {
+              throw new FileNotFoundException(
+                String.Format(
+                  "No binding for requested Scope {0}.{1} was found", 
+                  projectName, 
+                  applicationName
+                )
+              );
 
-            binding.Save(bindingConfigurationPath);
-          }
+              //XElement binding = new XElement("module",
+              //  new XAttribute("name", _settings["Scope"]),
+              //  new XElement("bind",
+              //    new XAttribute("name", "DataLayer"),
+              //    new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+              //    new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
+              //  )
+              //);
+
+              //binding.Save(bindingConfigurationPath);
+            }
 
             _kernel.Load(bindingConfigurationPath);
           }
 
-          _settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml",
+          string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml",
             _settings["XmlPath"],
             scope
           );
+
+          _settings["DBDictionaryPath"] = dbDictionaryPath;
 
           string mappingPath = String.Format("{0}Mapping.{1}.xml",
             _settings["XmlPath"],
@@ -924,6 +946,18 @@ namespace org.iringtools.adapter
     {
       try
       {
+        string[] expectedFormats = { 
+              "data",
+              "xml",
+              "dto", 
+              "rdf", 
+              "json", 
+              "html",
+              null
+            };
+
+        _isFormatExpected = expectedFormats.Contains(format);
+
         _graphMap = _mapping.FindGraphMap(resourceName);
         _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == resourceName.ToUpper());
 
@@ -932,13 +966,13 @@ namespace org.iringtools.adapter
           _isResourceGraph = true;
           _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == _graphMap.dataObjectName.ToUpper());
         }
-        
+
         if (_dataObjDef == null)
         {
           throw new FileNotFoundException("Requested graph or dataObject not found.");
         }
 
-        if (format != null)
+        if (format != null && _isFormatExpected)
         {
           _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
 
@@ -992,12 +1026,11 @@ namespace org.iringtools.adapter
 
           try
           {
-            _dataLayer = (IDataLayer)_kernel.Get<IDataLayer2>("DataLayer");
+            _dataLayer = _kernel.Get<IDataLayer2>("DataLayer");
           }
           catch  
           {
-            //_logger.Warn(ex);
-            _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
+            _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
           }
 
           if (setDictionary)
@@ -1011,7 +1044,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    private void InitializeDictionary() 
+    private void InitializeDictionary()
     {
       if (!_isDataLayerInitialized)
       {
@@ -1180,7 +1213,7 @@ namespace org.iringtools.adapter
         throw ex;
       }
     }
-    
+
     private IList<IDataObject> CreateDataObjects(string graphName, string dataObjectsString)
     {
       IList<IDataObject> dataObjects = new List<IDataObject>();
@@ -1215,13 +1248,13 @@ namespace org.iringtools.adapter
     public DataLayers GetDataLayers()
     {
       DataLayers dataLayerAssemblies = new DataLayers();
-			
+
       try
       {
         //string binaryPath = @"file:///" + _settings["BaseDirectoryPath"] + "bin";        
 
         System.Type ti = typeof(IDataLayer);
-				
+
         foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
         {
           //if (!asm.IsDynamic && Path.GetDirectoryName(asm.CodeBase) == binaryPath)
@@ -1232,7 +1265,7 @@ namespace org.iringtools.adapter
               {
                 bool configurable = t.BaseType.Equals(typeof(BaseConfigurableDataLayer));
                 string name = asm.FullName.Split(',')[0];
-                string assembly = string.Format("{0}, {1}", t.FullName, name);								
+                string assembly = string.Format("{0}, {1}", t.FullName, name);
                 DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
                 dataLayerAssemblies.Add(dataLayer);
               }
@@ -1242,25 +1275,25 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error in GetDataLayers: {0}", ex), ex);        
+        _logger.Error(string.Format("Error in GetDataLayers: {0}", ex), ex);
 
-				bool found = false;
-				foreach (DataLayer datalayer in dataLayerAssemblies)
-				{
-					if (datalayer.Name.ToUpper() == "NHIBERNATELIBRARY")
-						found = true;
-				}
+        bool found = false;
+        foreach (DataLayer datalayer in dataLayerAssemblies)
+        {
+          if (datalayer.Name.ToUpper() == "NHIBERNATELIBRARY")
+            found = true;
+        }
 
-				if (found == false)
-				{
-					DataLayer dataLayer = new DataLayer
-					{
-						Assembly = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary",
-						Name = "NHibernateLibrary",
-						Configurable = true
-					};				
-					dataLayerAssemblies.Add(dataLayer);
-				}
+        if (found == false)
+        {
+          DataLayer dataLayer = new DataLayer
+          {
+            Assembly = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary",
+            Name = "NHibernateLibrary",
+            Configurable = true
+          };
+          dataLayerAssemblies.Add(dataLayer);
+        }
       }
 
       return dataLayerAssemblies;

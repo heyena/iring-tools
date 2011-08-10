@@ -9,6 +9,7 @@ using org.iringtools.utility;
 using org.iringtools.mapping;
 using log4net;
 using System.IO;
+using System.Web;
 
 namespace org.iringtools.adapter.projection
 {
@@ -163,6 +164,30 @@ namespace org.iringtools.adapter.projection
       }
 
       return parentObjects;
+    }
+
+    protected string FormAppBaseURI()
+    {
+      string baseGraphUri = String.Empty;
+
+      string projectName = _settings["ProjectName"];
+
+      if (projectName.ToUpper() == "ALL")
+      {
+        baseGraphUri = String.Format("{0}all/{1}/",
+          _settings["GraphBaseUri"],
+          HttpUtility.UrlEncode(_settings["ApplicationName"])
+        );
+      }
+      else
+      {
+        baseGraphUri = String.Format("{0}{1}/{2}/",
+          _settings["GraphBaseUri"],
+          HttpUtility.UrlEncode(_settings["ApplicationName"]),
+          HttpUtility.UrlEncode(projectName)
+        );
+      }
+      return baseGraphUri;
     }
 
     // senario (assume no circular relationships - should be handled by AppEditor): 

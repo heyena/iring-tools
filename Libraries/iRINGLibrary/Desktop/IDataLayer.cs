@@ -32,6 +32,7 @@ using System.Text;
 using org.ids_adi.qxf;
 using org.w3.sparql_results;
 using System.Runtime.Serialization;
+using System.IO;
 
 namespace org.iringtools.library
 {
@@ -40,6 +41,13 @@ namespace org.iringtools.library
     object GetPropertyValue(string propertyName);
 
     void SetPropertyValue(string propertyName, object value);
+  }
+
+  public interface IContentObject
+  {
+    string contentType { get; set; }
+
+    Stream content { get; set; }
   }
 
   public interface IDataLayer
@@ -68,6 +76,12 @@ namespace org.iringtools.library
   public interface IDataLayer2 : IDataLayer
   {
     Response Configure(XElement configuration);
+
+    IContentObject GetContent(string objectType, string identifier, string format);
+
+    //Response PostContent(string objectType, Stream content, string format);
+
+    //Response DeleteContent(string objectType, string identifier, string format);
 
     XElement GetConfiguration();
   }

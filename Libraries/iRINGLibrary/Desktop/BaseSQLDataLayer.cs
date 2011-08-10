@@ -252,6 +252,11 @@ namespace org.iringtools.library
         throw ex;
       }
     }
+
+    public virtual IContentObject GetContent(string objectType, string identifier, string format)
+    {
+      throw new NotImplementedException();
+    }
     #endregion
 
     #region helper methods
