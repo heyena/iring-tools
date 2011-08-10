@@ -290,7 +290,7 @@ namespace org.iringtools.adapter.datalayer
 
     public void Dispose()
     {
-      //Close();
+      _document.Close();
     }
   }
 }

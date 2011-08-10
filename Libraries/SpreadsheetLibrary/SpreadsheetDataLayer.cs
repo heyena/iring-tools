@@ -79,6 +79,10 @@ namespace org.iringtools.adapter.datalayer
       {
         throw new Exception("Error while creating dictionary.", e);
       }
+      finally
+      {
+        _provider.Dispose();
+      }
     }
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
