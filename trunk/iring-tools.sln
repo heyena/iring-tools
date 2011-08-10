@@ -100,7 +100,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnit.Tests", "Tests\NUnit.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigurationTool", "Utilities\ConfigurationTool\ConfigurationTool.csproj", "{DAFE844A-E5C9-4D6D-82B9-3D977D0FA40A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetLibrary", "SpreadsheetLibrary\SpreadsheetLibrary.csproj", "{AA4E8B96-73BA-4A47-BAD8-FC9AD88C3978}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetLibrary", "Libraries\Spreadsheet\SpreadsheetDataLayer\SpreadsheetDataLayer.csproj", "{AA4E8B96-73BA-4A47-BAD8-FC9AD88C3978}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
