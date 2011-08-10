@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{4DDB5151-FE9D-4041-BA46-63486D7DA32D}</ProjectGuid>
+    <ProjectGuid>{4ABA9650-C7C8-4D30-BAB4-39DE2CC065FD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.excel</RootNamespace>
-    <AssemblyName>ExcelLibrary</AssemblyName>
+    <RootNamespace>iRINGTools.SDK.SpreadsheetDataLayer</RootNamespace>
+    <AssemblyName>SpreadsheetDataLayer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,55 +32,48 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Ciloci.Flee">
-      <HintPath>..\..\..\ExternalBinaries\Flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
+      <HintPath>..\lib\flee-0.9.26.0\Ciloci.Flee.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.0.5022.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\OpenXML\DocumentFormat.OpenXml.dll</HintPath>
+    </Reference>
+    <Reference Include="iRINGLibrary">
+      <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
-      <HintPath>..\..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <Private>True</Private>
+      <HintPath>..\lib\log4net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>..\..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
-    </Reference>
-    <Reference Include="Office, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <Private>True</Private>
+      <HintPath>..\lib\ninject2\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="StaticDust.Configuration">
-      <HintPath>..\..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
+      <HintPath>..\lib\configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
-    <Reference Include="System.Web.Abstractions" />
-    <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UtilityLibrary">
-      <HintPath>..\..\..\Libraries\UtilityLibrary\Desktop\bin\Debug\UtilityLibrary.dll</HintPath>
+      <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExcelRepository.cs" />
-    <Compile Include="ExcelConfiguration.cs" />
-    <Compile Include="ExcelController.cs" />
-    <Compile Include="ExcelDataLayer.cs" />
-    <Compile Include="ExcelProvider.cs" />
-    <Compile Include="ExcelSettings.cs" />
+    <Compile Include="SpreadsheetConfiguration.cs" />
+    <Compile Include="SpreadsheetController.cs" />
+    <Compile Include="SpreadsheetDataLayer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
-      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary.Desktop</Name>
-    </ProjectReference>
+    <Compile Include="SpreadsheetProvider.cs" />
+    <Compile Include="SpreadsheetReference.cs" />
+    <Compile Include="SpreadsheetRepository.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -994,7 +994,7 @@ namespace org.iringtools.adapter
           {
             _dataLayer = (IDataLayer)_kernel.Get<IDataLayer2>("DataLayer");
           }
-          catch (Exception ex)
+          catch  
           {
             //_logger.Warn(ex);
             _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
