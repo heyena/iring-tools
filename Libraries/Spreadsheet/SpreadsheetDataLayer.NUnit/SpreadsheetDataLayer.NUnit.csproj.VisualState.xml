@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="false">
+  <TopNode>[0-1000]E:\iring-tools\branches\datalayers\Spreadsheet\SpreadsheetDataLayer.NUnit\SpreadsheetDataLayer.NUnit.csproj</TopNode>
+  <SelectedNode>[0-1003]iRINGTools.SDK.SpreadsheetDataLayer.NUnit.SpreadsheetDataLayerTest.A_Delete</SelectedNode>
+  <ExcludeCategories>false</ExcludeCategories>
+  <Nodes>
+    <Node UniqueName="[0-1000]E:\iring-tools\branches\datalayers\Spreadsheet\SpreadsheetDataLayer.NUnit\SpreadsheetDataLayer.NUnit.csproj" Expanded="true" />
+    <Node UniqueName="[0-1006]iRINGTools" Expanded="true" />
+    <Node UniqueName="[0-1007]iRINGTools.SDK" Expanded="true" />
+    <Node UniqueName="[0-1008]iRINGTools.SDK.SpreadsheetDataLayer" Expanded="true" />
+    <Node UniqueName="[0-1009]iRINGTools.SDK.SpreadsheetDataLayer.NUnit" Expanded="true" />
+    <Node UniqueName="[0-1001]iRINGTools.SDK.SpreadsheetDataLayer.NUnit.SpreadsheetDataLayerTest" Expanded="true" />
+  </Nodes>
+</VisualState>

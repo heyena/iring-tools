@@ -3,17 +3,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>
-    </ProductVersion>
+    <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E9F5F2E4-C5A5-4F02-B720-DB5E70B3BF82}</ProjectGuid>
+    <ProjectGuid>{2DC7B6D5-6E49-4F65-BF3B-B60D0F2104EA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ExcelDataLayer.Tests</RootNamespace>
-    <AssemblyName>ExcelDataLayer.Tests</AssemblyName>
+    <RootNamespace>iRINGTools.SDK.SpreadsheetDataLayer.NUnit</RootNamespace>
+    <AssemblyName>SpreadsheetDataLayer.NUnit</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,42 +32,42 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="iRINGLibrary">
-      <HintPath>..\..\..\Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll</HintPath>
+      <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="log4net">
+      <HintPath>..\lib\log4net\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\lib\nunit\framework\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="StaticDust.Configuration">
-      <HintPath>..\..\..\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
+      <HintPath>..\lib\configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
     <Reference Include="UtilityLibrary">
-      <HintPath>..\..\..\Libraries\UtilityLibrary\Desktop\bin\Debug\UtilityLibrary.dll</HintPath>
+      <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
-      <Visible>False</Visible>
-    </CodeAnalysisDependentAssemblyPaths>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ExcelTest.cs" />
+    <Compile Include="Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="excel-configuration.12345_000.EXCEL.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="excel-source.12345_000.EXCEL.xlsx" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ExcelLibrary\ExcelLibrary.csproj">
-      <Project>{4DDB5151-FE9D-4041-BA46-63486D7DA32D}</Project>
-      <Name>ExcelLibrary</Name>
+    <ProjectReference Include="..\SpreadsheetDataLayer\SpreadsheetDataLayer.csproj">
+      <Project>{4ABA9650-C7C8-4D30-BAB4-39DE2CC065FD}</Project>
+      <Name>SpreadsheetDataLayer</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="XML\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

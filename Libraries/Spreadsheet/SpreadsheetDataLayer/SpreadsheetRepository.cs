@@ -7,59 +7,62 @@ using System.Linq;
 using System.Text;
 using Ninject;
 
+using org.iringtools.datalayer;
 using org.iringtools.library;
 using org.iringtools.adapter;
 using org.iringtools.utility;
 using System.Xml.Linq;
+using DocumentFormat.OpenXml.Packaging;
 
-namespace org.iringtools.datalayer.excel
+namespace org.iringtools.datalayer.spreadsheet
 {
-  public interface IExcelRepository
+  public interface ISpreadsheetRepository
   {
-    ExcelConfiguration GetConfiguration(string scope, string application);
-
-    ExcelConfiguration ProcessConfiguration(ExcelConfiguration configuration);
-
-    List<ExcelWorksheet> GetWorksheets(ExcelConfiguration configuration);
-
-    List<ExcelColumn> GetColumns(ExcelConfiguration configuration, string worksheetName);
-
-    void Configure(string scope, string application, string datalayer, ExcelConfiguration configuration);
+    SpreadsheetConfiguration GetConfiguration(string scope, string application);
+    SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration);
+    List<WorksheetPart> GetWorksheets(SpreadsheetConfiguration configuration);
+    List<SpreadsheetColumn> GetColumns(SpreadsheetConfiguration configuration, string worksheetName);
+    void Configure(string scope, string application, string datalayer, SpreadsheetConfiguration configuration);
   }
 
-  public class ExcelRepository : IExcelRepository
+  public class SpreadsheetRepository : ISpreadsheetRepository
   {
     private AdapterSettings _settings { get; set; }
-    private ExcelProvider _provider { get; set; }
+    private SpreadsheetProvider _provider { get; set; }
     private WebHttpClient _client { get; set; }
 
     [Inject]
-    public ExcelRepository()
+    public SpreadsheetRepository()
     {
       _settings = new AdapterSettings();
       _settings.AppendSettings(ConfigurationManager.AppSettings);
       _client = new WebHttpClient(_settings["AdapterServiceUri"]);
     }
 
-    private ExcelProvider InitializeProvider(ExcelConfiguration configuration)
-    {      
+    private SpreadsheetProvider InitializeProvider(SpreadsheetConfiguration configuration)
+    {
       if (_provider == null)
       {
-        _provider = new ExcelProvider(configuration);
+        _provider = new SpreadsheetProvider(configuration);
       }
 
       return _provider;
     }
 
-    public List<ExcelWorksheet> GetWorksheets(ExcelConfiguration configuration)
+    public List<WorksheetPart> GetWorksheets(SpreadsheetConfiguration configuration)
     {
+      List<WorksheetPart> wp = new List<WorksheetPart>();
       using (InitializeProvider(configuration))
       {
-        return _provider.GetWorksheets();
+        foreach(SpreadsheetTable p in configuration.Tables)
+        {
+          wp.Add(_provider.GetWorksheetPart(p));
+        }
+        return wp;
       }
     }
 
-    public List<ExcelColumn> GetColumns(ExcelConfiguration configuration, string worksheetName)
+    public List<SpreadsheetColumn> GetColumns(SpreadsheetConfiguration configuration, string worksheetName)
     {
       using (InitializeProvider(configuration))
       {
@@ -67,14 +70,15 @@ namespace org.iringtools.datalayer.excel
       }
     }
 
-    public ExcelConfiguration ProcessConfiguration(ExcelConfiguration configuration) {
+    public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration)
+    {
       using (InitializeProvider(configuration))
       {
         return _provider.ProcessConfiguration(configuration);
       }
     }
 
-    public void Configure(string scope, string application, string datalayer, ExcelConfiguration configuration)
+    public void Configure(string scope, string application, string datalayer, SpreadsheetConfiguration configuration)
     {
       List<MultiPartMessage> requestMessages = new List<MultiPartMessage>();
       //string sourceFile = configuration.Location;
@@ -90,7 +94,7 @@ namespace org.iringtools.datalayer.excel
         type = MultipartMessageType.File
       });
       */
-            
+
       requestMessages.Add(new MultiPartMessage
       {
         name = "DataLayer",
@@ -108,25 +112,26 @@ namespace org.iringtools.datalayer.excel
       _client.PostMultipartMessage(string.Format("/{0}/{1}/configure", scope, application), requestMessages);
     }
 
-    public ExcelConfiguration GetConfiguration(string scope, string application)
+    public SpreadsheetConfiguration GetConfiguration(string scope, string application)
     {
-      ExcelConfiguration obj = null;
+      SpreadsheetConfiguration obj = null;
 
       try
       {
         XElement element = _client.Get<XElement>(string.Format("/{0}/{1}/configuration", scope, application));
         if (!element.IsEmpty)
         {
-          obj = Utility.DeserializeFromXElement<ExcelConfiguration>(element);
+          obj = Utility.DeserializeFromXElement<SpreadsheetConfiguration>(element);
         }
       }
       catch (Exception)
       {
-        
+
       }
-      
+
       return obj;
 
     }
   }
+
 }
