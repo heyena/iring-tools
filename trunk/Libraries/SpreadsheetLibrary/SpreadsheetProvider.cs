@@ -15,7 +15,7 @@ using DocumentFormat.OpenXml;
 using org.iringtools.adapter.datalayer;
 
 
-namespace org.iringtools.datalayer.spreadsheet
+namespace org.iringtools.adapter.datalayer
 {
   public class SpreadsheetProvider : IDisposable
   {

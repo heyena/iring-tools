@@ -7,14 +7,14 @@ using System.Linq;
 using System.Text;
 using Ninject;
 
-using org.iringtools.datalayer;
+using org.iringtools.adapter;
 using org.iringtools.library;
 using org.iringtools.adapter;
 using org.iringtools.utility;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace org.iringtools.datalayer.spreadsheet
+namespace org.iringtools.adapter.datalayer 
 {
   public interface ISpreadsheetRepository
   {

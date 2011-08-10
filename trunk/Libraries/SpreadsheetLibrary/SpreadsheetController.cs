@@ -19,7 +19,7 @@ using org.iringtools.utility;
 using org.iringtools.mapping;
 using DocumentFormat.OpenXml.Packaging;
 
-namespace org.iringtools.datalayer.spreadsheet
+namespace org.iringtools.adapter.datalayer
 {
 
   public class JsonTreeNode

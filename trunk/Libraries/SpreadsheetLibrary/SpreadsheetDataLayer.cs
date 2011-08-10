@@ -14,7 +14,7 @@ using org.iringtools.adapter;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml;
-using org.iringtools.datalayer.spreadsheet;
+using org.iringtools.adapter.datalayer;
 
 namespace org.iringtools.adapter.datalayer
 {
