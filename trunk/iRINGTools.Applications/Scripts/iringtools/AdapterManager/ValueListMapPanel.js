@@ -99,6 +99,7 @@ AdapterManager.ValueListMapPanel = Ext.extend(Ext.Panel, {
                             return false;
                         }
                         thisform.getForm().findField('classUrl').setValue(data.node.attributes.record.Uri);
+                        thisform.getForm().findField('classLabel').setValue(data.node.attributes.record.Label);
                         var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + data.node.attributes.record.Label + '</b></td></tr>'
                         msg += '</table>'
                         //Ext.getCmp(formid).body.child('div.class-target' + formid).update(msg);

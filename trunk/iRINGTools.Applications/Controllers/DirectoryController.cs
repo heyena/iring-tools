@@ -187,14 +187,13 @@ namespace org.iringtools.web.controllers
                     }
                 case "ValueListNode":
                     {
-                      string valueMapLabel = string.Empty;
-                      string context = form["node"];
+                     string context = form["node"];
                       string scopeName = context.Split('/')[0];
                       string applicationName = context.Split('/')[1];
                       string valueList = context.Split('/')[4];
-                      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-                      Mapping mapping = GetMapping(scopeName, applicationName);
                       
+                      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+                      Mapping mapping = GetMapping(scopeName, applicationName);                      
                       ValueListMap valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
                       
                       foreach (var valueMap in valueListMap.valueMaps)

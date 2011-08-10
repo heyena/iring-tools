@@ -4695,6 +4695,8 @@
     <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\SearchPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\Utility.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\ValueListMapPanel.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\ValueListPanel.js" />
     <Content Include="Scripts\Silverlight.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <Content Include="Views\AppEditor\Index.aspx" />
