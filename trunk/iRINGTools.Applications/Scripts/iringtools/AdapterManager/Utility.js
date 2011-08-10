@@ -45,8 +45,14 @@
 			Ext.Msg
 					.alert("Warning",
 							"The document contains invalid characters. Errors can occur when decoding it.");
-		}
-		input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+}
+
+if (input != null) {
+    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+}
+else {
+    input = "";
+}
 
 		do {
 			enc1 = this.keyStr.indexOf(input.charAt(i++));
