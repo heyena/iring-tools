@@ -304,7 +304,9 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
-        return _dataLayer.GetDictionary();
+        return _kernel.TryGet<DataDictionary>();
+
+        //return _dataLayer.GetDictionary();
       }
       catch (Exception ex)
       {
@@ -1366,7 +1368,8 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
-        throw new Exception(string.Format("Error getting configuration: {0}", ex));
+       // throw new Exception(string.Format("Error getting configuration: {0}", ex));
+        return null;
       }
     }
   }
