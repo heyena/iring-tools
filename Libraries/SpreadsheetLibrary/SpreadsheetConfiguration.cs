@@ -8,7 +8,7 @@ using System.Text;
 using org.iringtools.library;
 using org.iringtools.adapter.datalayer;
 
-namespace org.iringtools.datalayer.spreadsheet
+namespace org.iringtools.adapter.datalayer
 {
 
   [DataContract(Name = "document")]

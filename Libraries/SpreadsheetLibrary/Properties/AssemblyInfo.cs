@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SpreadsheetDataLayer")]
+[assembly: AssemblyTitle("SpreadsheetLibrary")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("SpreadsheetDataLayer")]
+[assembly: AssemblyProduct("SpreadsheetLibrary")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c7d4bc18-c1b3-4d86-acf9-4e0472d03507")]
+[assembly: Guid("5e890784-f48f-4663-a999-3361f988ee81")]
 
 // Version information for an assembly consists of the following four values:
 //
