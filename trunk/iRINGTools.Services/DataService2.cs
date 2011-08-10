@@ -45,17 +45,16 @@ namespace org.iringtools.services
 {
   [ServiceContract(Namespace = "http://www.iringtools.org/service")]
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
-  public class ApigeeService
+  public class DataService2
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(ApigeeService));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataService2));
     private AdapterProvider _adapterProvider = null;
 
-    public ApigeeService()
+    public DataService2()
     {
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
     }
 
-    #region DataService URIs
     [Description("Gets version of the service.")]
     [WebGet(UriTemplate = "/version")]
     public VersionInfo GetVersion()
@@ -67,7 +66,56 @@ namespace org.iringtools.services
     }
 
     [Description("Gets object definitions of an application.")]
-    [WebGet(UriTemplate = "/{project}/{app}/dictionary")]
+    [WebGet(UriTemplate = "/all/{app}/dictionary")]
+    public DataDictionary GetDictionaryAll(string app)
+    {
+      return GetDictionary("all", app);
+    }
+
+    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/all/{app}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetListAll(string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    {
+      GetList("all", app, graph, format, start, limit, sortOrder, sortBy, indexStyle);
+    }
+
+    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
+    public void GetListWithFilterAll(string app, string graph, DataFilter filter, string format, int start, int limit, string indexStyle)
+    {
+      GetListWithFilter("all", app, graph, filter, format, start, limit, indexStyle);
+    }
+
+    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/all/{app}/{graph}/{id}?format={format}")]
+    public void GetItemAll(string app, string graph, string id, string format)
+    {
+      GetItem("all", app, graph, id, format);
+    }
+
+    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/all/{app}/{graph}/{clazz}/{id}?format={format}")]
+    public void GetIndividualAll(string app, string graph, string clazz, string id, string format)
+    {
+      GetIndividual("all", app, graph, clazz, id, format);
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{graph}?format={format}")]
+    public Response PostListAll(string app, string graph, string format, XElement xElement)
+    {
+      return PostList("all", app, graph, format, xElement);
+    }
+
+    [Description("Deletes a graph in the specified application.")]
+    [WebInvoke(Method = "DELETE", UriTemplate = "/all/{app}/{graph}/{id}")]
+    public Response DeleteItemAll(string app, string graph, string id)
+    {
+      return DeleteItem("all", app, graph, id);
+    }
+
+    [Description("Gets object definitions of an application.")]
+    [WebGet(UriTemplate = "/{app}/{project}/dictionary")]
     public DataDictionary GetDictionary(string project, string app)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
@@ -76,16 +124,16 @@ namespace org.iringtools.services
       return _adapterProvider.GetDictionary(project, app);
     }
 
-    //[Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    //[WebGet(UriTemplate = "/{project}/{app}/{graph}/{id}?format={format}")]
-    public void Get(string project, string app, string graph, string id, string format)
+    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
+    public void GetItem(string project, string app, string graph, string id, string format)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
 
       try
       {
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, String.Empty, id, format, false);
-        FormatOutgoingMessage(xDocument.Root, format);
+        object content = _adapterProvider.GetDataProjection(project, app, graph, String.Empty, id, format, false);
+        FormatOutgoingMessage(content, format);
       }
       catch (Exception ex)
       {
@@ -94,15 +142,15 @@ namespace org.iringtools.services
     }
 
     [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{project}/{app}/{graph}/{clazz}/{id}?format={format}")]
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{clazz}/{id}?format={format}")]
     public void GetIndividual(string project, string app, string graph, string clazz, string id, string format)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
 
       try
       {
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, clazz, id, format, false);
-        FormatOutgoingMessage(xDocument.Root, format);
+        object content = _adapterProvider.GetDataProjection(project, app, graph, clazz, id, format, false);
+        FormatOutgoingMessage(content, format);
       }
       catch (Exception ex)
       {
@@ -111,7 +159,7 @@ namespace org.iringtools.services
     }
 
     [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{project}/{app}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
     public void GetListWithFilter(string project, string app, string graph, DataFilter filter, string format, int start, int limit, string indexStyle)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
@@ -131,8 +179,8 @@ namespace org.iringtools.services
       }
     }
 
-    //[Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    //[WebGet(UriTemplate = "/{project}/{app}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
     public void GetList(string project, string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
@@ -155,7 +203,7 @@ namespace org.iringtools.services
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{project}/{app}/{graph}?format={format}")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format={format}")]
     public Response PostList(string project, string app, string graph, string format, XElement xElement)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
@@ -165,8 +213,8 @@ namespace org.iringtools.services
     }
 
     [Description("Deletes a graph in the specified application.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/{project}/{app}/{graph}/{id}")]
-    public Response Delete(string project, string app, string graph, string id)
+    [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{graph}/{id}")]
+    public Response DeleteItem(string project, string app, string graph, string id)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
@@ -202,6 +250,25 @@ namespace org.iringtools.services
       }
     }
 
+    private void FormatOutgoingMessage(object content, string format)
+    {
+      if (content.GetType() == typeof(IContentObject))
+      {
+        IContentObject contentObject = (IContentObject)content;
+        HttpContext.Current.Response.ContentType = contentObject.contentType;
+        HttpContext.Current.Response.BinaryWrite(contentObject.content.ToMemoryStream().GetBuffer());
+      }
+      else if (content.GetType() == typeof(XDocument))
+      {
+        XDocument xDoc = (XDocument)content;
+        FormatOutgoingMessage(xDoc.Root, format);
+      }
+      else
+      {
+        throw new Exception("Invalid response type from DataLayer.");
+      }
+    }
+
     private void ExceptionHandler(OutgoingWebResponseContext context, Exception ex)
     {
       if (ex is FileNotFoundException)
@@ -220,9 +287,7 @@ namespace org.iringtools.services
       HttpContext.Current.Response.ContentType = "text/html";
       HttpContext.Current.Response.Write(ex.ToString());
     }
-    #endregion DataService URIs
 
-    #region ApigeeService URIs
     [Description("Gets WADL of the service.")]
     [WebGet(UriTemplate = "/wadl")]
     public XElement ApigeeGetWADL()
@@ -232,55 +297,5 @@ namespace org.iringtools.services
 
       return Utility.ReadXml(baseDirectory + @"XML\iring-adapter-wadl.xml");
     }
-
-    [Description("Gets object definitions of an application.")]
-    [WebGet(UriTemplate = "/{app}/dictionary?project={project}")]
-    public DataDictionary ApigeeGetDictionary(string project, string app)
-    {
-      return GetDictionary(project, app);
-    }
-
-    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{app}/{graph}/{id}?project={project}&format={format}")]
-    public void ApigeeGet(string project, string app, string graph, string id, string format)
-    {
-      Get(project, app, graph, id, format);
-    }
-
-    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{app}/{graph}/{clazz}/{id}?project={project}&format={format}")]
-    public void ApigeeGetIndividual(string project, string app, string graph, string clazz, string id, string format)
-    {
-      GetIndividual(project, app, graph, clazz, id, format);
-    }
-
-    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{graph}/filter?project={project}&format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
-    public void ApigeeGetListWithFilter(string project, string app, string graph, DataFilter filter, string format, int start, int limit, string indexStyle)
-    {
-      GetListWithFilter(project, app, graph, filter, format, start, limit, indexStyle);
-    }
-
-    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{app}/{graph}?project={project}&format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-    public void ApigeeGetList(string project, string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-    {
-      GetList(project, app, graph, format, start, limit, sortOrder, sortBy, indexStyle);
-    }
-
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{graph}?project={project}&format={format}")]
-    public Response ApigeePostList(string project, string app, string graph, string format, XElement xElement)
-    {
-      return ApigeePostList(project, app, graph, format, xElement);
-    }
-
-    [Description("Deletes a graph in the specified application.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{graph}/{id}?project={project}")]
-    public Response ApigeeDelete(string project, string app, string graph, string id)
-    {
-      return Delete(project, app, graph, id);
-    }
-    #endregion ApigeeService URIs
   }
 }

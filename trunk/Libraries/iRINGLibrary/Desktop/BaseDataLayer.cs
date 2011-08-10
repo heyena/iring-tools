@@ -288,5 +288,11 @@ namespace org.iringtools.library
 
       return identifier;
     }
+
+
+    public virtual IContentObject GetContent(string objectType, string identifier, string format)
+    {
+      throw new NotImplementedException();
+    }
   }
 }

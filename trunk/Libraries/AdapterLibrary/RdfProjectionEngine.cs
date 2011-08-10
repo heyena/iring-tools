@@ -53,11 +53,7 @@ namespace org.iringtools.adapter.projection
         if (_graphMap != null && _graphMap.classTemplateMaps.Count > 0 &&
           dataObjects != null && dataObjects.Count > 0)
         {
-          _graphBaseUri = String.Format("{0}{1}/{2}/{3}/",
-            _settings["GraphBaseUri"],
-            HttpUtility.UrlEncode(_settings["ProjectName"]),
-            HttpUtility.UrlEncode(_settings["ApplicationName"]),
-            HttpUtility.UrlEncode(_graphMap.name));
+          _graphBaseUri = FormAppBaseURI() + _graphMap.name;
 
           _dataObjects = dataObjects;
           rdfDoc = new XDocument(BuildRdfXml());
@@ -94,11 +90,7 @@ namespace org.iringtools.adapter.projection
         {
           _dataObjects = dataObjects;
 
-          _graphBaseUri = String.Format("{0}{1}/{2}/{3}/",
-            _settings["GraphBaseUri"],
-            HttpUtility.UrlEncode(_settings["ProjectName"]),
-            HttpUtility.UrlEncode(_settings["ApplicationName"]),
-            HttpUtility.UrlEncode(_graphMap.name));
+          _graphBaseUri = FormAppBaseURI() + _graphMap.name;
 
           rdfDoc = new XDocument(BuildRdfXml(className, classIdentifier));
         }
