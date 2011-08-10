@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-  xmlns="http://www.iringtools.org/mapping"  targetNamespace="http://www.iringtools.org/mapping" 
-  elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-  jaxb:version="2.1" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://www.iringtools.org/mapping"
+  targetNamespace="http://www.iringtools.org/mapping" elementFormDefault="qualified"
+  xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.1" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+  jaxb:extensionBindingPrefixes="xjc">
 
   <xs:annotation>
     <xs:appinfo>
@@ -17,15 +17,15 @@
   <xs:complexType name="Mapping">
     <xs:sequence>
       <xs:element name="graphMaps" type="GraphMaps" />
-      <xs:element name="valueListMap" type="ValueListMap" />
+      <xs:element name="valueListMaps" type="ValueListMaps" />
       <xs:element name="version" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="ValueListMaps">
     <xs:sequence>
-      <xs:element name="valueListMaps" type="ValueListMap" maxOccurs="unbounded">
-      <xs:annotation>
+      <xs:element name="valueListMap" type="ValueListMap" maxOccurs="unbounded">
+        <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
           </xs:appinfo>
@@ -37,8 +37,14 @@
   <xs:complexType name="ValueListMap">
     <xs:sequence>
       <xs:element name="name" type="xs:string" />
+      <xs:element name="valueMaps" type="ValueMaps" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ValueMaps">
+    <xs:sequence>
       <xs:element name="valueMap" type="ValueMap" maxOccurs="unbounded">
-      <xs:annotation>
+        <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
           </xs:appinfo>
@@ -46,18 +52,19 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  
-    <xs:complexType name="ValueMap">
+
+  <xs:complexType name="ValueMap">
     <xs:sequence>
       <xs:element name="internalValue" type="xs:string" />
       <xs:element name="uri" type="xs:string" />
+      <xs:element name="label" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="GraphMaps">
     <xs:sequence>
       <xs:element name="graphMap" type="GraphMap" maxOccurs="unbounded">
-      <xs:annotation>
+        <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
           </xs:appinfo>
@@ -77,7 +84,7 @@
   <xs:complexType name="ClassTemplateMaps">
     <xs:sequence>
       <xs:element name="classTemplateMaps" type="ClassTemplateMap" maxOccurs="unbounded">
-      <xs:annotation>
+        <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
           </xs:appinfo>
@@ -94,15 +101,15 @@
   </xs:complexType>
 
   <xs:simpleType name="Identifiers">
-    <xs:list itemType="xs:string"/>
+    <xs:list itemType="xs:string" />
   </xs:simpleType>
-  
+
   <xs:complexType name="ClassMap">
     <xs:sequence>
       <xs:element name="id" type="xs:string" />
       <xs:element name="name" type="xs:string" />
       <xs:element name="identifierDelimiter" type="xs:string" />
-      <xs:element name="identifiers" type="Identifiers"/>
+      <xs:element name="identifiers" type="Identifiers" />
       <xs:element name="identifierValue" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
@@ -110,7 +117,7 @@
   <xs:complexType name="TemplateMaps">
     <xs:sequence>
       <xs:element name="templateMap" type="TemplateMap" maxOccurs="unbounded">
-      <xs:annotation>
+        <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
           </xs:appinfo>
@@ -131,7 +138,7 @@
   <xs:complexType name="RoleMaps">
     <xs:sequence>
       <xs:element name="roleMap" type="RoleMap" maxOccurs="unbounded">
-      <xs:annotation>
+        <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="items" />
           </xs:appinfo>
@@ -163,8 +170,8 @@
       <xs:enumeration value="ObjectProperty" />
     </xs:restriction>
   </xs:simpleType>
-  
-    <xs:simpleType name="TemplateType">
+
+  <xs:simpleType name="TemplateType">
     <xs:restriction base="xs:string">
       <xs:enumeration value="Qualification" />
       <xs:enumeration value="Definition" />

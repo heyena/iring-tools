@@ -37,6 +37,8 @@ import org.iringtools.dxfr.manifest.Role;
 import org.iringtools.dxfr.manifest.Template;
 import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.DxoRequest;
+import org.iringtools.mapping.ValueListMap;
+import org.iringtools.mapping.ValueMap;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
@@ -477,7 +479,7 @@ public class DataModel
     return getDtos(serviceUri, manifestRelativePath, dtoRelativePath, pageDtis);
   }
 
-  protected Grid getDtoGrid(Graph graph, DataTransferObjects dtos)
+  protected Grid getDtoGrid(Manifest manifest, Graph graph, DataTransferObjects dtos)
   {
     Grid dtoGrid = new Grid();
     
@@ -512,7 +514,7 @@ public class DataModel
         dtoGrid.setIdentifier(classObject.getClassId());
         dtoGrid.setDescription(className);
         
-        processClassObject(graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
+        processClassObject(manifest, graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
       }
 
       String relatedClassesJson;
@@ -596,7 +598,7 @@ public class DataModel
     return relatedDtos;
   }
    
-  protected Grid getRelatedItemGrid(Graph graph, DataTransferObjects dtos, String classId, String classIdentifier)
+  protected Grid getRelatedItemGrid(Manifest manifest, Graph graph, DataTransferObjects dtos, String classId, String classIdentifier)
   { 
     Grid dtoGrid = new Grid();
     
@@ -633,7 +635,7 @@ public class DataModel
               rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
             }
             
-            processClassObject(graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
+            processClassObject(manifest, graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
             
             String relatedClassesJson;
             
@@ -721,11 +723,30 @@ public class DataModel
   }
 
   @SuppressWarnings("unchecked")
-  protected String getValueMap(String value)
-  {
+  protected String getValueMap(Manifest manifest, String value)
+  {     
     Map<String, String> valueMaps;
     String valueMap = value;
     
+    // find value map in manifest first
+    if (manifest != null && manifest.getValueListMaps() != null)
+    {
+      for (ValueListMap vlm : manifest.getValueListMaps().getItems())
+      {
+        if (vlm.getValueMaps() != null)
+        {
+          for (ValueMap vm : vlm.getValueMaps().getItems())
+          {
+            if (vm.getUri().equalsIgnoreCase(value) && vm.getLabel() != null && vm.getLabel().length() > 0)
+            {
+              return vm.getLabel();
+            }
+          }
+        }
+      }
+    }
+    
+    // if not found, find it in session
     if (session.containsKey("valueMaps"))
     {
       valueMaps = (Map<String, String>)session.get("valueMaps");
@@ -736,6 +757,7 @@ public class DataModel
       session.put("valueMaps", valueMaps);
     }
 
+    // if still not found, query reference data service 
     if (value != null && !value.isEmpty())
     {
       if (!valueMaps.containsKey(value))
@@ -1112,7 +1134,7 @@ public class DataModel
     return null;
   }
   
-  private void processClassObject(Graph graph, DataTransferObject dto, int dtoIndex, List<Field> fields, 
+  private void processClassObject(Manifest manifest, Graph graph, DataTransferObject dto, int dtoIndex, List<Field> fields, 
       ClassObject classObject, Grid dtoGrid, List<String> rowData, List<RelatedClass> relatedClasses)
   {
     String className = IOUtils.toCamelCase(classObject.getName());
@@ -1139,18 +1161,18 @@ public class DataModel
           // compute role value
           if (roleValues != null && roleValues.getItems().size() > 0)
           {
-            roleValue = getMultiRoleValues(roleObject, roleValues.getItems());
+            roleValue = getMultiRoleValues(manifest, roleObject, roleValues.getItems());
             
             if (roleOldValues != null && roleOldValues.getItems().size() > 0)
-              roleOldValue = getMultiRoleValues(roleObject, roleOldValues.getItems());
+              roleOldValue = getMultiRoleValues(manifest, roleObject, roleOldValues.getItems());
           }
           else if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
           {
-            roleValue = getValueMap(roleValue);
+            roleValue = getValueMap(manifest, roleValue);
             
             if (dataMode == DataMode.EXCHANGE) 
             {
-              roleOldValue = getValueMap(roleOldValue);
+              roleOldValue = getValueMap(manifest, roleOldValue);
             }
           }
           
@@ -1221,7 +1243,7 @@ public class DataModel
               if (relatedClassObject.getClassId().equals(roleObject.getRelatedClassId()) && 
                   relatedClassObject.getIdentifier().equals(relatedClassIdentifier))
               {
-                processClassObject(graph, dto, dtoIndex, fields, relatedClassObject, dtoGrid, rowData, relatedClasses);
+                processClassObject(manifest, graph, dto, dtoIndex, fields, relatedClassObject, dtoGrid, rowData, relatedClasses);
                 
                 break;
               }
@@ -1255,7 +1277,7 @@ public class DataModel
     return false;
   }
   
-  private String getMultiRoleValues(RoleObject roleObject, List<String> roleValues)
+  private String getMultiRoleValues(Manifest manifest, RoleObject roleObject, List<String> roleValues)
   {
     StringBuilder roleValueBuilder = new StringBuilder();
     
@@ -1263,7 +1285,7 @@ public class DataModel
     {
       if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
       {
-        value = getValueMap(value);
+        value = getValueMap(manifest, value);
       }
       
       if (roleValueBuilder.length() > 0)

@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="internalValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="label" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,7 +31,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ValueMap", propOrder = {
     "internalValue",
-    "uri"
+    "uri",
+    "label"
 })
 public class ValueMap {
 
@@ -38,6 +40,8 @@ public class ValueMap {
     protected String internalValue;
     @XmlElement(required = true)
     protected String uri;
+    @XmlElement(required = true)
+    protected String label;
 
     /**
      * Gets the value of the internalValue property.
@@ -85,6 +89,30 @@ public class ValueMap {
      */
     public void setUri(String value) {
         this.uri = value;
+    }
+
+    /**
+     * Gets the value of the label property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getLabel() {
+        return label;
+    }
+
+    /**
+     * Sets the value of the label property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setLabel(String value) {
+        this.label = value;
     }
 
 }

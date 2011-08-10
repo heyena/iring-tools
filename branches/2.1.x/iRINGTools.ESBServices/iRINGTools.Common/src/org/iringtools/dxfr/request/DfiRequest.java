@@ -25,7 +25,7 @@ import org.iringtools.dxfr.dti.DataTransferIndices;
  *         &lt;element name="sourceAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="targetScopeName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="targetAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="dataTransferIndicies" type="{http://www.iringtools.org/dxfr/dti}DataTransferIndices" maxOccurs="2"/>
+ *         &lt;element name="dataTransferIndices" type="{http://www.iringtools.org/dxfr/dti}DataTransferIndices" maxOccurs="2"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,7 +40,7 @@ import org.iringtools.dxfr.dti.DataTransferIndices;
     "sourceAppName",
     "targetScopeName",
     "targetAppName",
-    "dataTransferIndicies"
+    "dataTransferIndices"
 })
 @XmlRootElement(name = "dfiRequest")
 public class DfiRequest {
@@ -54,7 +54,7 @@ public class DfiRequest {
     @XmlElement(required = true)
     protected String targetAppName;
     @XmlElement(required = true)
-    protected List<DataTransferIndices> dataTransferIndicies;
+    protected List<DataTransferIndices> dataTransferIndices;
 
     /**
      * Gets the value of the sourceScopeName property.
@@ -153,18 +153,18 @@ public class DfiRequest {
     }
 
     /**
-     * Gets the value of the dataTransferIndicies property.
+     * Gets the value of the dataTransferIndices property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the dataTransferIndicies property.
+     * This is why there is not a <CODE>set</CODE> method for the dataTransferIndices property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getDataTransferIndicies().add(newItem);
+     *    getDataTransferIndices().add(newItem);
      * </pre>
      * 
      * 
@@ -174,23 +174,23 @@ public class DfiRequest {
      * 
      * 
      */
-    public List<DataTransferIndices> getDataTransferIndicies() {
-        if (dataTransferIndicies == null) {
-            dataTransferIndicies = new ArrayList<DataTransferIndices>();
+    public List<DataTransferIndices> getDataTransferIndices() {
+        if (dataTransferIndices == null) {
+            dataTransferIndices = new ArrayList<DataTransferIndices>();
         }
-        return this.dataTransferIndicies;
+        return this.dataTransferIndices;
     }
 
     /**
-     * Sets the value of the dataTransferIndicies property.
+     * Sets the value of the dataTransferIndices property.
      * 
-     * @param dataTransferIndicies
+     * @param dataTransferIndices
      *     allowed object is
      *     {@link DataTransferIndices }
      *     
      */
-    public void setDataTransferIndicies(List<DataTransferIndices> dataTransferIndicies) {
-        this.dataTransferIndicies = dataTransferIndicies;
+    public void setDataTransferIndices(List<DataTransferIndices> dataTransferIndices) {
+        this.dataTransferIndices = dataTransferIndices;
     }
 
 }

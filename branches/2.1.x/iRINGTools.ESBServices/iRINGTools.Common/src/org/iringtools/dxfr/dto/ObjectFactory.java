@@ -30,27 +30,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DataTransferObject }
+     * Create an instance of {@link ClassObject }
      * 
      */
-    public DataTransferObject createDataTransferObject() {
-        return new DataTransferObject();
+    public ClassObject createClassObject() {
+        return new ClassObject();
     }
 
     /**
-     * Create an instance of {@link TemplateObjects }
+     * Create an instance of {@link ClassObjects }
      * 
      */
-    public TemplateObjects createTemplateObjects() {
-        return new TemplateObjects();
-    }
-
-    /**
-     * Create an instance of {@link RoleObject }
-     * 
-     */
-    public RoleObject createRoleObject() {
-        return new RoleObject();
+    public ClassObjects createClassObjects() {
+        return new ClassObjects();
     }
 
     /**
@@ -70,19 +62,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ClassObjects }
+     * Create an instance of {@link RoleValues }
      * 
      */
-    public ClassObjects createClassObjects() {
-        return new ClassObjects();
-    }
-
-    /**
-     * Create an instance of {@link ClassObject }
-     * 
-     */
-    public ClassObject createClassObject() {
-        return new ClassObject();
+    public RoleValues createRoleValues() {
+        return new RoleValues();
     }
 
     /**
@@ -94,11 +78,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RoleValues }
+     * Create an instance of {@link DataTransferObject }
      * 
      */
-    public RoleValues createRoleValues() {
-        return new RoleValues();
+    public DataTransferObject createDataTransferObject() {
+        return new DataTransferObject();
     }
 
     /**
@@ -107,6 +91,22 @@ public class ObjectFactory {
      */
     public TemplateObject createTemplateObject() {
         return new TemplateObject();
+    }
+
+    /**
+     * Create an instance of {@link RoleObject }
+     * 
+     */
+    public RoleObject createRoleObject() {
+        return new RoleObject();
+    }
+
+    /**
+     * Create an instance of {@link TemplateObjects }
+     * 
+     */
+    public TemplateObjects createTemplateObjects() {
+        return new TemplateObjects();
     }
 
 }
