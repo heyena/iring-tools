@@ -958,7 +958,7 @@ namespace org.iringtools.adapter
               null
             };
 
-        _isFormatExpected = expectedFormats.Contains(format);
+        _isFormatExpected = expectedFormats.Contains(format.ToLower());
 
         _graphMap = _mapping.FindGraphMap(resourceName);
         _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == resourceName.ToUpper());
