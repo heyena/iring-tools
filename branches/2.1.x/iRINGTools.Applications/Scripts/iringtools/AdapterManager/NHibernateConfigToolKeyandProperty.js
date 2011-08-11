@@ -5,7 +5,10 @@ function setKeyProperty(editPane, node, scopeName, appName, dataTypes) {
 		if (editPane.items.map[scopeName + '.' + appName + '.keyPropertyForm.' + node.id]) {
 			var keyPropertyFormPane = editPane.items.map[scopeName + '.' + appName + '.keyPropertyForm.' + node.id];
 			if (keyPropertyFormPane) {
-				keyPropertyFormPane.destroy();
+				var panelIndex = editPane.items.indexOf(keyPropertyFormPane);
+				editPane.getLayout().setActiveItem(panelIndex);
+				return;
+				//keyPropertyFormPane.destroy();
 			}
 		}
 
@@ -456,9 +459,10 @@ function setKeysFolder(editPane, node, scopeName, appName) {
 		if (editPane.items.map[scopeName + '.' + appName + '.keysSelector.' + node.id]) {
 			var keysSelectorPane = editPane.items.map[scopeName + '.' + appName + '.keysSelector.' + node.id];
 			if (keysSelectorPane) {
-				var panelIndex = editPane.items.indexOf(keysSelectorPane);
-				editPane.getLayout().setActiveItem(panelIndex);
-				return;
+				//var panelIndex = editPane.items.indexOf(keysSelectorPane);
+				//editPane.getLayout().setActiveItem(panelIndex);
+				//return;
+				keysSelectorPane.destroy();
 			}
 		}
 
