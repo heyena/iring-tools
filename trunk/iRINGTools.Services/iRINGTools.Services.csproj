@@ -191,13 +191,13 @@
       <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
       <Name>ReferenceDataLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Libraries\SpreadsheetLibrary\SpreadsheetLibrary.csproj">
+      <Project>{A07F5056-4D03-4CB6-912B-A07561E9716E}</Project>
+      <Name>SpreadsheetLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SpreadsheetLibrary\SpreadsheetLibrary.csproj">
-      <Project>{AA4E8B96-73BA-4A47-BAD8-FC9AD88C3978}</Project>
-      <Name>SpreadsheetLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
