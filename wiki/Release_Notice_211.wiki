@@ -14,9 +14,9 @@ The download is available [http://iring-tools.googlecode.com/files/iRINGTools-Co
 
 == Bugs Fixed ==
  * Adapter Manager: 
-    + Property maps not retained when switching related objects in configuring object relationship
-    + Duplicate relationships to the same related object
-    + Incorrect data type being saved upon saving data objects
+   * Property maps not retained when switching related objects in configuring object relationship
+   * Duplicate relationships to the same related object
+   * Incorrect data type being saved upon saving data objects
     
 == Enhancements ==
   * Encrypt connection string in database dictionary and hibernate configuration file
