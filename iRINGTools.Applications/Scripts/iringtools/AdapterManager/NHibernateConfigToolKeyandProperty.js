@@ -118,7 +118,10 @@ function setKeyProperty(editPane, node, scopeName, appName, dataTypes) {
 }
 
 function applyProperty(form) {
-	var treeNodeProps = form.treeNode.attributes.properties;
+	if (form.treeNode.attributes.attributes)
+		var treeNodeProps = form.treeNode.attributes.attributes.properties;
+	else
+		var treeNodeProps = form.treeNode.attributes.properties;
 	treeNodeProps['columnName'] = form.findField('columnName').getValue();
 	var propertyName = form.findField('propertyName').getValue();
 	treeNodeProps['propertyName'] = propertyName;
