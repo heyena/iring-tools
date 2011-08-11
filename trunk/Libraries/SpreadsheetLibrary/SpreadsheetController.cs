@@ -286,25 +286,34 @@ namespace org.iringtools.adapter.datalayer
       return Json(nodes, JsonRequestBehavior.AllowGet);
     }
 
-    public ActionResult Configure(FormCollection form)
+    public JsonResult Configure(FormCollection form)
     {
       SpreadsheetConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
 
       if (configuration != null)
       {
-        _repository.Configure(form["scope"], form["application"], form["datalayer"], configuration);
-        return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-      }
+        _repository.Configure(form["Scope"], form["Application"], form["DataLayer"], configuration);
+        return new JsonResult() //(6)
+            {
+                ContentType = "text/html",
+                Data = new { success = true }
+            };
+        }
+      
       else
       {
-        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+        return new JsonResult() //(6)
+        {
+          ContentType = "text/html",
+          Data = new { success = false }
+        };
       }
     }
 
     public JsonResult GetWorksheets(FormCollection form)
     {
       JsonContainer<List<WorksheetPart>> container = new JsonContainer<List<WorksheetPart>>();
-      container.items = _repository.GetWorksheets(GetConfiguration(form["scope"], form["application"]));
+      container.items = _repository.GetWorksheets(GetConfiguration(form["Scope"], form["Application"]));
       container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
