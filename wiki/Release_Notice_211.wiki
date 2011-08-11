@@ -1,0 +1,25 @@
+#summary Date: 2011/8/11
+=iRINGTools-2.01.01.3550=
+
+A patch release of iRINGTools 2.1 that includes bug fixes.  
+
+The download is available [http://iring-tools.googlecode.com/files/iRINGTools-Core-2.1.1.zip here].  
+/iRINGTools-Adapter-2.1.1.zip here]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_Installation_Guide_v2.0.1.pdf Installation Guide]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_Users_Guide_v2.0.3.pdf Users Guide]
+
+[http://iring-tools.googlecode.com/files/iRINGTools_SDK_Guide_v2.0.2.pdf SDK Guide]
+
+== Bugs Fixed ==
+ * Adapter Manager: 
+    + Property maps not retained when switching related objects in configuring object relationship
+    + Duplicate relationships to the same related object
+    + Incorrect data type being saved upon saving data objects
+    
+== Enhancements ==
+  * Encrypt connection string in database dictionary and hibernate configuration file
+  * Store value-map label in mapping file to improve DTO loading on  Exchange Manager 
+
+Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
