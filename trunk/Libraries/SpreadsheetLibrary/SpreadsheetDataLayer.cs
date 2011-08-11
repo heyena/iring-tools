@@ -15,12 +15,13 @@ using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml;
 using org.iringtools.adapter.datalayer;
+using System.Xml.Linq;
 
 namespace org.iringtools.adapter.datalayer
 {
 
 
-  public class SpreadsheetDataLayer : BaseDataLayer
+  public class SpreadsheetDataLayer : BaseConfigurableDataLayer
   {
     private SpreadsheetProvider _provider = null;
     private List<IDataObject> _dataObjects = null;
@@ -506,6 +507,17 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error in LoadDataObjects: " + ex);
         throw new Exception("Error while loading data objects of type [" + objectType + "].", ex);
       }
-    }    
+    }
+
+    public override Response Configure(XElement configuration)
+    {
+      return null;
+    }
+
+    public override XElement GetConfiguration()
+    {      
+      SpreadsheetConfiguration sc = _provider.GetConfiguration();
+      return Utility.SerializeToXElement<SpreadsheetConfiguration>(sc);
+    }
   }
 }
