@@ -5,7 +5,7 @@ function setKeyProperty(editPane, node, scopeName, appName, dataTypes) {
 		if (editPane.items.map[scopeName + '.' + appName + '.keyPropertyForm.' + node.id]) {
 			var keyPropertyFormPane = editPane.items.map[scopeName + '.' + appName + '.keyPropertyForm.' + node.id];
 			if (keyPropertyFormPane) {
-				keysSelectorPane.destroy();					
+				keyPropertyFormPane.destroy();					
 			}
 		}
 
