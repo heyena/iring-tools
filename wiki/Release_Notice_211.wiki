@@ -15,6 +15,6 @@ The downloads are available here:
     
 == Enhancements ==
   * Encrypt connection string in database dictionary and hibernate configuration file
-  * Store value-map label in mapping file to improve DTO loading on  Exchange Manager 
+  * Store value-map label in mapping file to improve DTO grid loading on  Exchange Manager 
 
 Other Pages: [RoadMap] | [ISO15926] | [Documentation] | [Contributors]
