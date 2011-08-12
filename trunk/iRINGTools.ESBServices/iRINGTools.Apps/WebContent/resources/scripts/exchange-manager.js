@@ -62,7 +62,7 @@ function createGridPane(store, pageSize, viewConfig){
   
   var colModel = new Ext.grid.DynamicColumnModel(store);  
   var selModel = new Ext.grid.RowSelectionModel({ singleSelect: true });
-  var pagingToolbar = new Ext.MyPagingToolbar({
+  var pagingToolbar = new Ext.PagingToolbar({
 	  store: store,
 	  pageSize: pageSize,
 	  displayInfo: true,
