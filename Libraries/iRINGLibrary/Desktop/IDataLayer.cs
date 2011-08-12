@@ -77,11 +77,13 @@ namespace org.iringtools.library
   {
     Response Configure(XElement configuration);
 
+    List<IDataObject> Search(string objectType, string query);
+
     IContentObject GetContent(string objectType, string identifier, string format);
 
-    //Response PostContent(string objectType, Stream content, string format);
+    Response PostContent(string objectType, Stream content, string format);
 
-    //Response DeleteContent(string objectType, string identifier, string format);
+    Response DeleteContent(string objectType, string identifier, string format);
 
     XElement GetConfiguration();
   }
