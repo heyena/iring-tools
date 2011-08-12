@@ -456,8 +456,8 @@ public class ExchangeProvider
           }
         }
 
-        // only include SYNC DTIs if the DTOs have been reviewed         
-        if (exchangeRequest.getReviewed())
+        // only include SYNC DTIs if the DTOs were not reviewed         
+        if (!exchangeRequest.getReviewed())
           sourcePoolDtiList.addAll(syncDtiList);
 
         DataTransferObjects sourceDtos = null;
