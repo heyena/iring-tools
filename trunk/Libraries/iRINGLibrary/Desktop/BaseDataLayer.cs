@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using org.iringtools.adapter;
 using log4net;
 using System.Linq.Expressions;
+using System.IO;
 
 namespace org.iringtools.library
 {
@@ -289,8 +290,22 @@ namespace org.iringtools.library
       return identifier;
     }
 
+    public virtual List<IDataObject> Search(string objectType, string query)
+    {
+      throw new NotImplementedException();
+    }
 
     public virtual IContentObject GetContent(string objectType, string identifier, string format)
+    {
+      throw new NotImplementedException();
+    }
+
+    public virtual Response PostContent(string objectType, Stream content, string format)
+    {
+      throw new NotImplementedException();
+    }
+
+    public virtual Response DeleteContent(string objectType, string identifier, string format)
     {
       throw new NotImplementedException();
     }
