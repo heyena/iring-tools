@@ -30,8 +30,8 @@ namespace org.iringtools.adapter.datalayer
     [Inject]
     public SpreadsheetDataLayer(AdapterSettings settings)
       : base(settings)
-    {      
-      _provider = new SpreadsheetProvider(settings);     
+    {
+      _provider = new SpreadsheetProvider(settings);
     }
 
     public override DataDictionary GetDictionary()
@@ -84,6 +84,7 @@ namespace org.iringtools.adapter.datalayer
       {
         _provider.Dispose();
       }
+
     }
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
@@ -107,6 +108,10 @@ namespace org.iringtools.adapter.datalayer
       {
         _logger.Error("Error in GetList: " + ex);
         throw new Exception("Error while getting a list of data objects of type [" + objectType + "].", ex);
+      }
+      finally
+      {
+        _provider.Dispose();
       }
     }
 
@@ -133,7 +138,10 @@ namespace org.iringtools.adapter.datalayer
         {
           throw new NotImplementedException("OrderExpressions are not supported by the CSV DataLayer.");
         }
-
+        else
+        {
+          _dataObjects = allDataObjects.ToList();
+        }
         //Page and Sort The Data
         if (pageSize > _dataObjects.Count())
           pageSize = _dataObjects.Count();
@@ -149,6 +157,10 @@ namespace org.iringtools.adapter.datalayer
           "Error while getting a list of data objects of type [" + objectType + "].",
           ex
         );
+      }
+      finally
+      {
+        _provider.Dispose();
       }
     }
 
@@ -169,6 +181,10 @@ namespace org.iringtools.adapter.datalayer
           "Error while getting a count of type [" + objectType + "].",
           ex
         );
+      }
+      finally
+      {
+        _provider.Dispose();
       }
     }
 
@@ -197,6 +213,10 @@ namespace org.iringtools.adapter.datalayer
           ex
         );
       }
+      finally
+      {
+        _provider.Dispose();
+      }
     }
 
     public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
@@ -224,31 +244,6 @@ namespace org.iringtools.adapter.datalayer
 
         LoadDataDictionary(objectType);
 
-        //IList<IDataObject> existingDataObjects = LoadDataObjects(objectType);
-
-        //foreach (IDataObject dataObject in dataObjects)
-        //{
-        //  IDataObject existingDataObject = null;
-
-        //  string identifier = GetIdentifier(dataObject);
-        //  var predicate = FormKeyPredicate(identifier);
-
-        //  if (predicate != null)
-        //  {
-        //    existingDataObject = existingDataObjects.AsQueryable().Where(predicate).FirstOrDefault();
-        //  }
-
-        //  if (existingDataObject != null)
-        //  {
-        //    existingDataObjects.Remove(existingDataObject);
-        //  }
-
-        //  //TODO: Should this be per property?  Will it matter?
-        //  existingDataObjects.Add(dataObject);
-        //}
-
-        //response = SaveDataObjects(objectType, existingDataObjects);
-
         response = SaveDataObjects(objectType, dataObjects);
 
         return response;
@@ -262,86 +257,83 @@ namespace org.iringtools.adapter.datalayer
           ex
         );
       }
+      finally
+      {
+        _provider.Dispose();
+      }
     }
 
     public override Response Delete(string objectType, IList<string> identifiers)
     {
       Response response = new Response();
-
-      if (identifiers == null || identifiers.Count == 0)
+      try
       {
-        Status status = new Status();
-        status.Level = StatusLevel.Warning;
-        status.Messages.Add("Nothing to delete.");
-        response.Append(status);
-        return response;
-      }
-
-      SpreadsheetTable cftable = _provider.GetConfigurationTable(objectType);
-      SpreadsheetReference tableReference = cftable.GetReference();
-
-      WorksheetPart worksheetPart = _provider.GetWorksheetPart(tableReference.SheetName);
-      SpreadsheetColumn column = cftable.Columns.First<SpreadsheetColumn>(c => cftable.Identifier.Equals(c.Name));
-
-      IEnumerable<Row> rows = worksheetPart.Worksheet.Descendants<Row>();
-
-      foreach (string identifier in identifiers)
-      {
-        Status status = new Status();
-        status.Identifier = identifier;
-
-        try
+        if (identifiers == null || identifiers.Count == 0)
         {
-          foreach (Row row in rows)
+          Status status = new Status();
+          status.Level = StatusLevel.Warning;
+          status.Messages.Add("Nothing to delete.");
+          response.Append(status);
+          return response;
+        }
+
+        SpreadsheetTable cftable = _provider.GetConfigurationTable(objectType);
+        SpreadsheetReference tableReference = cftable.GetReference();
+
+        WorksheetPart worksheetPart = _provider.GetWorksheetPart(tableReference.SheetName);
+        SpreadsheetColumn column = cftable.Columns.First<SpreadsheetColumn>(c => cftable.Identifier.Equals(c.Name));
+
+        IEnumerable<Row> rows = worksheetPart.Worksheet.Descendants<Row>();
+
+        foreach (string identifier in identifiers)
+        {
+          Status status = new Status();
+          status.Identifier = identifier;
+          try
           {
-            Cell cell = row.Descendants<Cell>().First(c => SpreadsheetReference.GetColumnName(c.CellReference).Equals(column.ColumnIdx));
-
-            if (_provider.GetValue(cell).Equals(identifier))
+            foreach (Row row in rows)
             {
-              row.Remove();
+              Cell cell = row.Descendants<Cell>().First(c => SpreadsheetReference.GetColumnName(c.CellReference).Equals(column.ColumnIdx));
 
-              string message = String.Format(
-                "DataObject [{0}] deleted successfully.",
-                identifier
-              );
-
-              status.Messages.Add(message);
+              if (_provider.GetValue(cell).Equals(identifier))
+              {
+                row.Remove();
+                string message = String.Format(
+                  "DataObject [{0}] deleted successfully.",
+                  identifier
+                );
+                status.Messages.Add(message);
+              }
             }
           }
-
+          catch (Exception ex)
+          {
+            _logger.Error("Error in Delete: " + ex);
+            status.Level = StatusLevel.Error;
+            string message = String.Format(
+              "Error while deleting dataObject [{0}]. {1}",
+              identifier,
+              ex
+            );
+            status.Messages.Add(message);
+          }
+          response.Append(status);
+          rows = worksheetPart.Worksheet.Descendants<Row>().OrderBy(r => r.RowIndex.Value);
+          uint i = 1;
+          foreach (Row row in rows)
+          {
+            row.RowIndex.Value = i++;
+          }
+          tableReference.EndRow = --i;
+          worksheetPart.Worksheet.SheetDimension.Reference = tableReference.GetReference(false);
+          cftable.Reference = tableReference.GetReference(true);
+          worksheetPart.Worksheet.Save();
         }
-        catch (Exception ex)
-        {
-          _logger.Error("Error in Delete: " + ex);
-
-          status.Level = StatusLevel.Error;
-
-          string message = String.Format(
-            "Error while deleting dataObject [{0}]. {1}",
-            identifier,
-            ex
-          );
-
-          status.Messages.Add(message);
-        }
-
-        response.Append(status);
       }
-
-      rows = worksheetPart.Worksheet.Descendants<Row>().OrderBy(r => r.RowIndex.Value);
-
-      uint i = 1;
-      foreach (Row row in rows)
+      finally
       {
-        row.RowIndex.Value = i++;
+        _provider.Dispose();
       }
-
-      tableReference.EndRow = --i;
-            
-      worksheetPart.Worksheet.SheetDimension.Reference = tableReference.GetReference(false);
-      cftable.Reference = tableReference.GetReference(true);
-      worksheetPart.Worksheet.Save();
-      
       return response;
     }
 
@@ -370,6 +362,10 @@ namespace org.iringtools.adapter.datalayer
           ex
         );
       }
+      finally
+      {
+        _provider.Dispose();
+      }
     }
 
     private IList<IDataObject> LoadDataObjects(string objectType)
@@ -385,14 +381,15 @@ namespace org.iringtools.adapter.datalayer
 
         IEnumerable<Row> rows = worksheetPart.Worksheet.Descendants<Row>().Where(r => r.RowIndex > tableReference.StartRow && r.RowIndex <= tableReference.EndRow);
 
-        foreach(Row row in rows)
+        foreach (Row row in rows)
         {
           IDataObject dataObject = new GenericDataObject
           {
             ObjectType = objectType,
           };
 
-          foreach(Cell col in row.ChildElements) {
+          foreach (Cell col in row.ChildElements)
+          {
 
             string columnIdx = SpreadsheetReference.GetColumnName(col.CellReference);
             SpreadsheetColumn column = cfTable.Columns.First<SpreadsheetColumn>(c => columnIdx.Equals(c.ColumnIdx));
@@ -405,13 +402,17 @@ namespace org.iringtools.adapter.datalayer
 
           dataObjects.Add(dataObject);
         }
-        
+
         return dataObjects;
       }
       catch (Exception ex)
       {
         _logger.Error("Error in LoadDataObjects: " + ex);
         throw new Exception("Error while loading data objects of type [" + objectType + "].", ex);
+      }
+      finally
+      {
+        _provider.Dispose();
       }
     }
 
@@ -445,7 +446,7 @@ namespace org.iringtools.adapter.datalayer
               {
                 Cell existingCell = existingRow.Descendants<Cell>().First(c => SpreadsheetReference.GetColumnName(c.CellReference).Equals(col.ColumnIdx));
                 existingCell.DataType = SpreadsheetProvider.GetCellValue(col.DataType);
-                existingCell.CellValue.Text = Convert.ToString(dataObject.GetPropertyValue(col.Name));              
+                existingCell.CellValue.Text = Convert.ToString(dataObject.GetPropertyValue(col.Name));
               }
             }
             else
@@ -455,8 +456,8 @@ namespace org.iringtools.adapter.datalayer
               Row newRow = new Row
               {
                 RowIndex = (UInt32Value)tableReference.EndRow,
-                Spans = new ListValue<StringValue> 
-                { 
+                Spans = new ListValue<StringValue>
+                {
                   InnerText = string.Format("1:{0}", cfTable.Columns.Count)
                 }
               };
@@ -507,8 +508,11 @@ namespace org.iringtools.adapter.datalayer
         _logger.Error("Error in LoadDataObjects: " + ex);
         throw new Exception("Error while loading data objects of type [" + objectType + "].", ex);
       }
-    }
-
+      finally
+      {
+        _provider.Dispose();
+      }
+    }      
     public override Response Configure(XElement configuration)
     {
       return null;

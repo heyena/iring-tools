@@ -1305,7 +1305,8 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
       response.Messages = new Messages();
-
+     
+      
       try
       {
         string savedFileName = string.Empty;
@@ -1318,10 +1319,11 @@ namespace org.iringtools.adapter
 
           savedFileName = Path.Combine(
           AppDomain.CurrentDomain.BaseDirectory,
-          _settings["XmlPath"],
           Path.GetFileName(hpf.FileName));
           hpf.SaveAs(savedFileName);
         }
+
+        
 
         InitializeScope(projectName, applicationName, false);
 

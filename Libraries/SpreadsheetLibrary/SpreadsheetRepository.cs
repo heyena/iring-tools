@@ -16,7 +16,7 @@ using DocumentFormat.OpenXml.Packaging;
 
 namespace org.iringtools.adapter.datalayer 
 {
-  public interface ISpreadsheetRepository
+  public interface ISpreadsheetRepository  
   {
     SpreadsheetConfiguration GetConfiguration(string scope, string application);
     SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration);
@@ -54,9 +54,9 @@ namespace org.iringtools.adapter.datalayer
       List<WorksheetPart> wp = new List<WorksheetPart>();
       using (InitializeProvider(configuration))
       {
-        foreach(SpreadsheetTable p in configuration.Tables)
+        foreach(SpreadsheetTable st in configuration.Tables)
         {
-          wp.Add(_provider.GetWorksheetPart(p));
+          wp.Add(_provider.GetWorksheetPart(st));
         }
         return wp;
       }
@@ -66,7 +66,11 @@ namespace org.iringtools.adapter.datalayer
     {
       using (InitializeProvider(configuration))
       {
-        return _provider.GetColumns(worksheetName);
+      SpreadsheetTable table = configuration.Tables.Find(c => c.Name == worksheetName);
+      if (table != null)
+        return _provider.GetColumns(table);
+      else
+        return new List<SpreadsheetColumn>();
       }
     }
 
@@ -80,6 +84,8 @@ namespace org.iringtools.adapter.datalayer
 
     public void Configure(string scope, string application, string datalayer, SpreadsheetConfiguration configuration)
     {
+      using (InitializeProvider(configuration))
+      {
       List<MultiPartMessage> requestMessages = new List<MultiPartMessage>();
       //string sourceFile = configuration.Location;
       //configuration.Location = Path.GetFileName(sourceFile);
@@ -110,6 +116,7 @@ namespace org.iringtools.adapter.datalayer
       });
 
       _client.PostMultipartMessage(string.Format("/{0}/{1}/configure", scope, application), requestMessages);
+      }
     }
 
     public SpreadsheetConfiguration GetConfiguration(string scope, string application)
@@ -132,6 +139,7 @@ namespace org.iringtools.adapter.datalayer
       return obj;
 
     }
+
   }
 
 }
