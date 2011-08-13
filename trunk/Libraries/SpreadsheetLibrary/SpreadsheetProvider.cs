@@ -53,7 +53,8 @@ namespace org.iringtools.adapter.datalayer
         _configuration = configuration;
         if (File.Exists(_configuration.Location))
         {
-          if (_stream == null) _stream = OpenStream(_configuration.Location);
+         // if (_stream == null) _stream = OpenStream(_configuration.Location);
+          if (_document == null) _document = GetDocument(_configuration.Location);
           if (_configuration.Generate)
           {
             _configuration = ProcessConfiguration(_configuration);
@@ -70,13 +71,13 @@ namespace org.iringtools.adapter.datalayer
       return stream;
     }
 
-    private SpreadsheetDocument GetDocument()
+    private SpreadsheetDocument GetDocument(string path)
     {
       SpreadsheetDocument doc = null;
      
       try
       {
-        doc = SpreadsheetDocument.Open(_stream, true);
+        doc = SpreadsheetDocument.Open(path, true);
       }
       catch (IOException e)
       {
@@ -88,7 +89,7 @@ namespace org.iringtools.adapter.datalayer
     public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration)
     {
         List<SpreadsheetTable> tables = new List<SpreadsheetTable>();
-        _document = GetDocument();
+        _document = GetDocument(_configuration.Location);
         DefinedNames definedNames = _document.WorkbookPart.Workbook.DefinedNames;
         if (definedNames != null)
         {
@@ -245,7 +246,7 @@ namespace org.iringtools.adapter.datalayer
     public WorksheetPart GetWorksheetPart(string sheetName)
     {
      
-         _document = GetDocument();
+         _document = GetDocument(_configuration.Location);
         string relId = _document.WorkbookPart.Workbook.Descendants<Sheet>()
                              .Where(s => sheetName.Equals(s.Name))
                              .First()
@@ -300,7 +301,10 @@ namespace org.iringtools.adapter.datalayer
     public void Dispose()
     {
       if (_document != null)
+      {
         _document.Close();
+        _document = null;
+      }
     }
   }
 }
