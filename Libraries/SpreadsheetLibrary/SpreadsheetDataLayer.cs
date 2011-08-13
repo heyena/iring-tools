@@ -412,7 +412,7 @@ namespace org.iringtools.adapter.datalayer
       }
       finally
       {
-        _provider.Dispose();
+      //  _provider.Dispose();
       }
     }
 
