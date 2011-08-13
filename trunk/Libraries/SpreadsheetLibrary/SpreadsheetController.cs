@@ -333,17 +333,22 @@ namespace org.iringtools.adapter.datalayer
       SpreadsheetConfiguration configuration = GetConfiguration(form["scope"], form["application"]);
       List<WorksheetPart> worksheets = _repository.GetWorksheets(configuration);
 
-      List<string> worksheetNames = new List<string>(); //Utility.Deserialize<List<string>>(form["worksheets"], true);
+      object worksheetNames = form["worksheets"];
 
-      foreach (string worksheetName in worksheetNames)
-      {
-      //  WorksheetPart worksheet = worksheets.FirstOrDefault<WorksheetPart>(o => o.Worksheet. == worksheetName);
-        //ExcelWorksheet worksheet = worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == worksheetName);
-        //if (worksheet != null && configuration.Worksheets.Exists(Pred)
-        {
-      //    configuration.Tables.Add(worksheet);
-        }
-      }
+      //foreach (string worksheetName in worksheetNames)
+      //{
+      //  WorksheetPart worksheet = worksheets.FirstOrDefault<WorksheetPart>(o => o.Worksheet.LocalName == worksheetName);
+      ////  ExcelWorksheet worksheet = worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == worksheetName);
+      //  if (worksheet != null && !worksheets.Contains(worksheet))
+      //  {
+      //    SpreadsheetTable t = new SpreadsheetTable();
+      //    t.Name = worksheetName;
+      //    t.Label = worksheetName;
+      //    t.TableType = TableType.Worksheet;
+      //    t.Columns = new List<SpreadsheetColumn>();
+      //    configuration.Tables.Add(t);
+      //  }
+      //}
 
       return Json(new { success = false }, JsonRequestBehavior.AllowGet);
     }

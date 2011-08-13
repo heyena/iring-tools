@@ -14,21 +14,20 @@ using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml;
 using org.iringtools.adapter.datalayer;
 
-
 namespace org.iringtools.adapter.datalayer
 {
-  public class SpreadsheetProvider : IDisposable
+  public class SpreadsheetProvider  : IDisposable
   {
     private AdapterSettings _settings = null;
     private string _configurationPath = string.Empty;
     private SpreadsheetConfiguration _configuration = null;
     private SpreadsheetDocument _document = null;
+    private Stream _stream = null;
 
     public SpreadsheetProvider(SpreadsheetConfiguration configuration)
     {
       InitializeProvider(configuration);
     }
-
     public SpreadsheetProvider(AdapterSettings settings)
     {
       _settings = settings;
@@ -52,35 +51,104 @@ namespace org.iringtools.adapter.datalayer
       if (configuration != null)
       {
         _configuration = configuration;
-
         if (File.Exists(_configuration.Location))
         {
-          _document = SpreadsheetDocument.Open(_configuration.Location, true);
-
+          if (_stream == null) _stream = OpenStream(_configuration.Location);
           if (_configuration.Generate)
           {
             _configuration = ProcessConfiguration(_configuration);
             _configuration.Generate = false;
             Utility.Write<SpreadsheetConfiguration>(_configuration, _configurationPath, true);
           }
-        }        
+        }
       }
+    }
+
+    private Stream OpenStream(string path)
+    {
+      Stream stream = File.Open(path, FileMode.Open);
+      return stream;
+    }
+
+    private SpreadsheetDocument GetDocument()
+    {
+      SpreadsheetDocument doc = null;
+     
+      try
+      {
+        doc = SpreadsheetDocument.Open(_stream, true);
+      }
+      catch (IOException e)
+      {
+        throw new IOException(string.Format("File {0} is locked by other process", _configuration.Location));
+      }
+      return doc;
+    }
+
+    public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration)
+    {
+        List<SpreadsheetTable> tables = new List<SpreadsheetTable>();
+        _document = GetDocument();
+        DefinedNames definedNames = _document.WorkbookPart.Workbook.DefinedNames;
+        if (definedNames != null)
+        {
+          foreach (DefinedName definedName in definedNames)
+          {
+            SpreadsheetTable table = new SpreadsheetTable
+            {
+              TableType = TableType.DefinedName,
+              Name = definedName.Name,
+              Label = definedName.Name,
+              Reference = definedName.InnerText,
+              HeaderRow = 1
+            };
+            table.Columns = GetColumns(table);
+            table.Identifier = table.Columns[0].Name;
+
+            tables.Add(table);
+          }
+        }
+
+        Sheets sheets = _document.WorkbookPart.Workbook.Sheets;
+
+        if (sheets != null)
+        {
+          foreach (Sheet sheet in sheets)
+          {
+            WorksheetPart worksheetPart = (WorksheetPart)_document.WorkbookPart.GetPartById(sheet.Id);
+            SpreadsheetTable table = new SpreadsheetTable
+            {
+              TableType = TableType.Worksheet,
+              Name = sheet.Name,
+              Label = sheet.Name,
+              Reference = string.Format("'{0}!'{1}", sheet.Name, worksheetPart.Worksheet.SheetDimension.Reference),
+              HeaderRow = 1
+            };
+
+            table.Columns = GetColumns(table);
+            table.Identifier = table.Columns[0].Name;
+
+            tables.Add(table);
+          }
+        }
+        configuration.Tables = tables;
+        return configuration;
     }
 
     public static DataType GetDataType(EnumValue<CellValues> type)
     {
-      if (type == CellValues.Boolean) 
+      if (type == CellValues.Boolean)
       {
         return DataType.Boolean;
       }
       else if (type == CellValues.Date)
       {
         return DataType.DateTime;
-      }      
+      }
       else if (type == CellValues.Number)
       {
         return DataType.Double;
-      }      
+      }
       else
       {
         return DataType.String;
@@ -131,102 +199,41 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public List<SpreadsheetColumn> GetColumns(string table)
-    {
-        SpreadsheetTable t = new SpreadsheetTable();
-        t.Name = table;
-        return GetColumns(t);
-    }
-
     public List<SpreadsheetColumn> GetColumns(SpreadsheetTable table)
     {
-      if (table.Columns == null)
-      {
-        WorksheetPart worksheetPart = GetWorksheetPart(table);
-               
-        List<SpreadsheetColumn> columns = new List<SpreadsheetColumn>();
-
-        Row row = worksheetPart.Worksheet.Descendants<Row>().Where(r => r.RowIndex == 1).First();
-
-        foreach (Cell cell in row.ChildElements)
+        if (table.Columns == null)
         {
-          string value = GetValue(cell);
-                    
-          if (table.HeaderRow == 0)
-            value = SpreadsheetReference.GetColumnName(cell.CellReference);  
-          
-          SpreadsheetColumn column = new SpreadsheetColumn
+          WorksheetPart worksheetPart = GetWorksheetPart(table);
+
+          List<SpreadsheetColumn> columns = new List<SpreadsheetColumn>();
+
+          Row row = worksheetPart.Worksheet.Descendants<Row>().Where(r => r.RowIndex == 1).First();
+
+          foreach (Cell cell in row.ChildElements)
           {
-            Name = value,
-            Label = value,
-            DataType = GetDataType(cell.DataType),
-            ColumnIdx = SpreadsheetReference.GetColumnName(cell.CellReference)
-          };
+            string value = GetValue(cell);
 
-          columns.Add(column);
-        }        
+            if (table.HeaderRow == 0)
+              value = SpreadsheetReference.GetColumnName(cell.CellReference);
 
-        return columns;
-      }
-      else
-      {
-        return table.Columns;
-      }      
-    }
+            SpreadsheetColumn column = new SpreadsheetColumn
+            {
+              Name = value,
+              Label = value,
+              DataType = GetDataType(cell.DataType),
+              ColumnIdx = SpreadsheetReference.GetColumnName(cell.CellReference)
+            };
 
-    public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration)
-    {
-      List<SpreadsheetTable> tables = new List<SpreadsheetTable>();
+            columns.Add(column);
+          }
 
-      DefinedNames definedNames = _document.WorkbookPart.Workbook.DefinedNames;
-
-      if (definedNames != null)
-      {
-        foreach (DefinedName definedName in definedNames)
-        {
-          SpreadsheetTable table = new SpreadsheetTable
-          {
-            TableType = TableType.DefinedName,
-            Name = definedName.Name,
-            Label = definedName.Name,
-            Reference = definedName.InnerText,
-            HeaderRow = 1
-          };
-
-          table.Columns = GetColumns(table);
-          table.Identifier = table.Columns[0].Name;
-
-          tables.Add(table);
+          return columns;
         }
-      }
-
-      Sheets sheets = _document.WorkbookPart.Workbook.Sheets;
-
-      if (sheets != null)
-      {
-        foreach (Sheet sheet in sheets)
+        else
         {
-          WorksheetPart worksheetPart = (WorksheetPart)_document.WorkbookPart.GetPartById(sheet.Id);
-
-          SpreadsheetTable table = new SpreadsheetTable
-          {
-            TableType = TableType.Worksheet,
-            Name = sheet.Name,
-            Label = sheet.Name,
-            Reference = string.Format("'{0}!'{1}", sheet.Name, worksheetPart.Worksheet.SheetDimension.Reference),
-            HeaderRow = 1
-          };
-
-          table.Columns = GetColumns(table);
-          table.Identifier = table.Columns[0].Name;
-          
-          tables.Add(table);
+          return table.Columns;
         }
-      }
 
-      configuration.Tables = tables;
-
-      return configuration;
     }
 
     public WorksheetPart GetWorksheetPart(SpreadsheetTable table)
@@ -237,15 +244,17 @@ namespace org.iringtools.adapter.datalayer
 
     public WorksheetPart GetWorksheetPart(string sheetName)
     {
-      //get worksheet based on defined name 
-      string relId = _document.WorkbookPart.Workbook.Descendants<Sheet>()
-                           .Where(s => sheetName.Equals(s.Name))
-                           .First()
-                           .Id;
+     
+         _document = GetDocument();
+        string relId = _document.WorkbookPart.Workbook.Descendants<Sheet>()
+                             .Where(s => sheetName.Equals(s.Name))
+                             .First()
+                             .Id;
 
-      return (WorksheetPart)_document.WorkbookPart.GetPartById(relId);
-    }
+        return (WorksheetPart)_document.WorkbookPart.GetPartById(relId);
     
+    }
+
     private string GetCellValue(WorksheetPart worksheetPart, string startCol, int startRow)
     {
       string reference = startCol + startRow;
@@ -290,7 +299,8 @@ namespace org.iringtools.adapter.datalayer
 
     public void Dispose()
     {
-      _document.Close();
+      if (_document != null)
+        _document.Close();
     }
   }
 }
