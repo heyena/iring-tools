@@ -81,7 +81,7 @@ namespace org.iringtools.library
 
     IContentObject GetContent(string objectType, string identifier, string format);
 
-    Response PostContent(string objectType, Stream content, string format);
+    Response PostContent(string objectType, IDataObject dataObject, Stream content, string format);
 
     Response DeleteContent(string objectType, string identifier, string format);
 
