@@ -6,14 +6,14 @@ namespace org.iringtools.library
 {
   public class GenericDataObject : IDataObject
   {
-    private Dictionary<string, object> _dictionary = null;
+    protected IDictionary<string, object> _dictionary = null;
 
     public GenericDataObject()
     {
       _dictionary = new Dictionary<string, object>();
     }
 
-    public GenericDataObject(Dictionary<string, object> dict)
+    public GenericDataObject(IDictionary<string, object> dict)
     {
       _dictionary = dict;
     }

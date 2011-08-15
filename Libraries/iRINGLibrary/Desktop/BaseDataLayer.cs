@@ -300,7 +300,7 @@ namespace org.iringtools.library
       throw new NotImplementedException();
     }
 
-    public virtual Response PostContent(string objectType, Stream content, string format)
+    public virtual Response PostContent(string objectType, IDataObject dataObject, Stream content, string format)
     {
       throw new NotImplementedException();
     }

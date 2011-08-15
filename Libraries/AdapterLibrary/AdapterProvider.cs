@@ -872,24 +872,24 @@ namespace org.iringtools.adapter
 
             if (!File.Exists(bindingConfigurationPath))
             {
-              throw new FileNotFoundException(
-                String.Format(
-                  "No binding for requested Scope {0}.{1} was found", 
-                  projectName, 
-                  applicationName
+              XElement binding = new XElement("module",
+                new XAttribute("name", _settings["Scope"]),
+                new XElement("bind",
+                  new XAttribute("name", "DataLayer"),
+                  new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+                  new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
                 )
               );
 
-              //XElement binding = new XElement("module",
-              //  new XAttribute("name", _settings["Scope"]),
-              //  new XElement("bind",
-              //    new XAttribute("name", "DataLayer"),
-              //    new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-              //    new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
+              binding.Save(bindingConfigurationPath);
+
+              //throw new FileNotFoundException(
+              //  String.Format(
+              //    "No binding for requested Scope {0}.{1} was found", 
+              //    projectName, 
+              //    applicationName
               //  )
               //);
-
-              //binding.Save(bindingConfigurationPath);
             }
 
             _kernel.Load(bindingConfigurationPath);
