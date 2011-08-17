@@ -39,7 +39,7 @@ namespace org.iringtools.adapter.datalayer
 
         if (_configuration.Generate)
         {
-          _configuration = ProcessConfiguration(_configuration);
+          _configuration = ProcessConfiguration(_configuration, null);
           _configuration.Generate = false;
           Utility.Write<SpreadsheetConfiguration>(_configuration, _configurationPath, true);
         }
@@ -57,7 +57,7 @@ namespace org.iringtools.adapter.datalayer
           if (_document == null) _document = GetDocument(_configuration.Location);
           if (_configuration.Generate)
           {
-            _configuration = ProcessConfiguration(_configuration);
+            _configuration = ProcessConfiguration(_configuration, null);
             _configuration.Generate = false;
             Utility.Write<SpreadsheetConfiguration>(_configuration, _configurationPath, true);
           }
@@ -86,10 +86,17 @@ namespace org.iringtools.adapter.datalayer
       return doc;
     }
 
-    public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration)
+    public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration, Stream inputFile)
     {
         List<SpreadsheetTable> tables = new List<SpreadsheetTable>();
-        _document = GetDocument(_configuration.Location);
+        if (inputFile == null)
+        {
+          _document = GetDocument(_configuration.Location);
+        }
+        else
+        {
+          _document = SpreadsheetDocument.Open(inputFile, false);
+        }
         DefinedNames definedNames = _document.WorkbookPart.Workbook.DefinedNames;
         if (definedNames != null)
         {
@@ -245,7 +252,7 @@ namespace org.iringtools.adapter.datalayer
 
     public WorksheetPart GetWorksheetPart(string sheetName)
     {
-     
+         if(_document == null)
          _document = GetDocument(_configuration.Location);
         string relId = _document.WorkbookPart.Workbook.Descendants<Sheet>()
                              .Where(s => sheetName.Equals(s.Name))
@@ -285,6 +292,7 @@ namespace org.iringtools.adapter.datalayer
 
     public SpreadsheetConfiguration GetConfiguration()
     {
+      if (_configuration == null) _configuration = new SpreadsheetConfiguration() { Tables = new List<SpreadsheetTable>() };
       return _configuration;
     }
 

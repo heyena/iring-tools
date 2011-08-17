@@ -515,7 +515,27 @@ namespace org.iringtools.adapter.datalayer
     }      
     public override Response Configure(XElement configuration)
     {
-      return null;
+      Response resp = new Response(){ StatusList = new List<Status>()};
+      try
+      {
+        SpreadsheetConfiguration config = Utility.DeserializeFromXElement<SpreadsheetConfiguration>(configuration);
+        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"], string.Format("spreadsheet-configuration.{0}.xml", _settings["scope"]));
+        Utility.Write<SpreadsheetConfiguration>(config, path, true);
+        //if (inputFile != null)
+        //{
+        //  string docPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, config.Location);
+        //  inputFile.Position = 0;
+        //  SpreadsheetDocument doc = SpreadsheetDocument.Open(inputFile, false);
+        //  inputFile.Flush();
+        //  Utility.Write<SpreadsheetDocument>(doc, docPath, true);
+        //}
+      }
+      catch (Exception ex)
+      {
+        Status stat  = new Status { Level = StatusLevel.Error };
+        resp.StatusList.Add(stat);
+      }
+      return resp;
     }
 
     public override XElement GetConfiguration()

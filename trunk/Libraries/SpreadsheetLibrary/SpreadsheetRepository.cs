@@ -9,7 +9,6 @@ using Ninject;
 
 using org.iringtools.adapter;
 using org.iringtools.library;
-using org.iringtools.adapter;
 using org.iringtools.utility;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
@@ -19,10 +18,10 @@ namespace org.iringtools.adapter.datalayer
   public interface ISpreadsheetRepository  
   {
     SpreadsheetConfiguration GetConfiguration(string scope, string application);
-    SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration);
+    SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration, Stream inputFile);
     List<WorksheetPart> GetWorksheets(SpreadsheetConfiguration configuration);
     List<SpreadsheetColumn> GetColumns(SpreadsheetConfiguration configuration, string worksheetName);
-    void Configure(string scope, string application, string datalayer, SpreadsheetConfiguration configuration);
+    void Configure(string scope, string application, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile);
   }
 
   public class SpreadsheetRepository : ISpreadsheetRepository
@@ -74,48 +73,51 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration)
+    public SpreadsheetConfiguration ProcessConfiguration(SpreadsheetConfiguration configuration, Stream inputFile)
     {
       using (InitializeProvider(configuration))
       {
-        return _provider.ProcessConfiguration(configuration);
+        return _provider.ProcessConfiguration(configuration, inputFile);
       }
     }
 
-    public void Configure(string scope, string application, string datalayer, SpreadsheetConfiguration configuration)
+    public void Configure(string scope, string application, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile)
     {
       using (InitializeProvider(configuration))
       {
-      List<MultiPartMessage> requestMessages = new List<MultiPartMessage>();
-      //string sourceFile = configuration.Location;
-      //configuration.Location = Path.GetFileName(sourceFile);
+        List<MultiPartMessage> requestMessages = new List<MultiPartMessage>();
 
-      /*
-      requestMessages.Add(new MultiPartMessage
-      {
-        name = "SourceFile",
-        fileName = Path.GetFileName(sourceFile),
-        message = Utility.ReadStream(sourceFile),
-        mimeType = Utility.GetMimeType(sourceFile),        
-        type = MultipartMessageType.File
-      });
-      */
+        if (datalayer != null)
+        {
+          requestMessages.Add(new MultiPartMessage
+          {
+            name = "DataLayer",
+            message = datalayer,
+            type = MultipartMessageType.FormData
+          });
 
-      requestMessages.Add(new MultiPartMessage
-      {
-        name = "DataLayer",
-        message = datalayer,
-        type = MultipartMessageType.FormData
-      });
-
-      requestMessages.Add(new MultiPartMessage
-      {
-        name = "Configuration",
-        message = Utility.Serialize<XElement>(Utility.SerializeToXElement(configuration), true),
-        type = MultipartMessageType.FormData
-      });
-
-      _client.PostMultipartMessage(string.Format("/{0}/{1}/configure", scope, application), requestMessages);
+          requestMessages.Add(new MultiPartMessage
+          {
+            name = "Configuration",
+            message = Utility.Serialize<XElement>(Utility.SerializeToXElement(configuration), true),
+            type = MultipartMessageType.FormData
+          });
+          if (inputFile != null)
+          {
+            inputFile.Position = 0;
+            requestMessages.Add(new MultiPartMessage
+            {
+              name = "SourceFile",
+              fileName = configuration.Location,
+              message = inputFile,
+              //mimeType = "application/zip",
+              mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              type = MultipartMessageType.File
+            });
+            inputFile.Flush();
+          }
+          _client.PostMultipartMessage(string.Format("/{0}/{1}/configure", scope, application), requestMessages);
+        }
       }
     }
 

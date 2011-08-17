@@ -456,6 +456,7 @@ namespace org.iringtools.utility
         {
             try
             {
+               // Encoding encoding = Encoding.UTF8;
                 string uri = _baseUri + relativeUri;
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
                 request.ContentType = "multipart/form-data; boundary=" + _boundary;
@@ -476,6 +477,8 @@ namespace org.iringtools.utility
 
                     Stream fileData = (Stream)requestMessage.message;
                     fileData.CopyTo(stream);
+                    //add linefeed to enable multiple posts
+                    stream.Write(encoding.GetBytes("\r\n"), 0, 2);
                   }
                   else
                   {
