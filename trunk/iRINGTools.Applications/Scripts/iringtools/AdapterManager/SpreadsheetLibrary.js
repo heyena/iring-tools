@@ -30,8 +30,6 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
   application: null,
   dataLayer: null,
   assembly: null,
-  btnNext: null,
-  btnPrev: null,
 
   /**
   * initComponent
@@ -46,7 +44,7 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
     var scope = "";
 
     if (this.scope != null) {
-      scope = this.scope.Name;
+      scope = this.scope;
     }
 
     var application = "";
@@ -54,9 +52,8 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
     var assembly = "";
 
     if (this.application != null) {
-      application = this.application.Name;
-      dataLayer = this.application.DataLayer;
-      assembly = this.application.Assembly;
+      application = this.application
+      dataLayer = this.dataLayer;
     }
 
     this.bbar = [
@@ -66,9 +63,9 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
         ]
 
     this.items = [
-            { xtype: 'hidden', name: 'Scope', value: scope },
-            { xtype: 'hidden', name: 'Application', value: application },
-            { xtype: 'hidden', name: 'DataLayer', value: dataLayer },
+            { xtype: 'hidden', name: 'Scope', value: this.Scope },
+            { xtype: 'hidden', name: 'Application', value: this.Application },
+            { xtype: 'hidden', name: 'DataLayer', value: this.datalayer },
             {
               xtype: 'fileuploadfield',
               name: 'SourceFile',
@@ -92,6 +89,7 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
     this.getForm().submit({
       waitMsg: 'Uploading file...',
       url: this.url,
+      method: 'POST',
       success: function (f, a) {
         that.fireEvent('Uploaded', that, f.items.items[3].value);
       },
@@ -156,8 +154,8 @@ AdapterManager.SpreadsheetWorksheetSelection = Ext.extend(Ext.FormPanel, {
     var assembly = "";
 
     if (this.application != null) {
-      application = this.application.Name;
-      DataLayer = this.application.DataLayer;
+      application = this.application;
+      DataLayer = this.datalayer;
     }
 
     this.bbar = [
@@ -169,7 +167,7 @@ AdapterManager.SpreadsheetWorksheetSelection = Ext.extend(Ext.FormPanel, {
     this.items = [
       { xtype: 'hidden', name: 'Scope', value: scope },
       { xtype: 'hidden', name: 'Application', value: application },
-      { xtype: 'hidden', name: 'DataLayer', value: DataLayer }
+      { xtype: 'hidden', name: 'DataLayer', value: this.dataLayer }
     ];
 
     // super
@@ -488,11 +486,12 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
   },
 
   onUpload: function (panel) {
-
+    var that = this;
     var form = new AdapterManager.SpreadsheetSourcePanel({
-      Scope: this.scope,
-      Application: this.application,
-      DataLayer: this.dataLayer,
+      Scope: that.scope,
+      Application: that.application,
+      DataLayer: that.datalayer,
+      method: 'POST',
       url: 'spreadsheet/upload'
     });
 
