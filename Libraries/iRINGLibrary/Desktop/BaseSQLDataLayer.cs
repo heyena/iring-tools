@@ -169,7 +169,7 @@ namespace org.iringtools.library
       {
         DataObject objectDefinition = GetObjectDefinition(objectType);
         DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
-        
+
         DataTable dataTable = NewDataTable(objectDefinition);
         DataRow dataRow = CreateDataRow(dataTable, dataObject, objectDefinition);
         
@@ -278,11 +278,14 @@ namespace org.iringtools.library
     {
       InitializeDatabaseDictionary();
 
-      foreach (DataObject dataObject in _dbDictionary.dataObjects)
+      if (_dbDictionary.dataObjects != null)
       {
-        if (dataObject.objectName.ToLower() == objectType.ToLower())
+        foreach (DataObject dataObject in _dbDictionary.dataObjects)
         {
-          return dataObject;
+          if (dataObject.objectName.ToLower() == objectType.ToLower())
+          {
+            return dataObject;
+          }
         }
       }
 
@@ -298,6 +301,7 @@ namespace org.iringtools.library
         try
         {
           dataObject = new GenericDataObject();
+          ((GenericDataObject)dataObject).ObjectType = objectDefinition.objectName;
         }
         catch (Exception ex)
         {
@@ -507,7 +511,15 @@ namespace org.iringtools.library
     {
       if (_dbDictionary == null)
       {
-        _dbDictionary = GetDatabaseDictionary();
+        try
+        {
+          _dbDictionary = GetDatabaseDictionary();
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error initializing dictionary: " + ex);
+          throw ex;
+        }
       }
     }
     #endregion
