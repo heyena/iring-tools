@@ -954,11 +954,18 @@ namespace org.iringtools.adapter
               "dto", 
               "rdf", 
               "json", 
-              "html",
-              null
+              "html"
             };
 
-        _isFormatExpected = expectedFormats.Contains(format.ToLower());
+        if (format != null)
+        {
+          _isFormatExpected = expectedFormats.Contains(format.ToLower());
+        }
+        else
+        {
+          _isFormatExpected = true;
+        }
+        
 
         _graphMap = _mapping.FindGraphMap(resourceName);
         _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == resourceName.ToUpper());

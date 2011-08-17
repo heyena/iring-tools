@@ -33,11 +33,15 @@ namespace iRINGTools.Web.Models
 
         public ScopeProjects GetScopes()
         {
+          _logger.Debug("In AdapterRepository GetScopes");
+
             ScopeProjects obj = null;
 
             try
             {
                 obj = _client.Get<ScopeProjects>("/scopes");
+
+                _logger.Debug("Successfully called Adapter.");
             }
             catch (Exception ex)  
             {
