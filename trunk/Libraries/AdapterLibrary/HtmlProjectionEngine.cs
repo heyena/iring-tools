@@ -16,7 +16,7 @@ namespace org.iringtools.adapter.projection
     private DataDictionary _dictionary = null;
 
     [Inject]
-    public HtmlProjectionEngine(AdapterSettings settings, DataDictionary dictionary)
+    public HtmlProjectionEngine(AdapterSettings settings, DataDictionary dictionary) : base(settings)
     {
       _settings = settings;
       _dictionary = dictionary;

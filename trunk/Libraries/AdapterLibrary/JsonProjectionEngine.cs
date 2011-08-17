@@ -18,6 +18,7 @@ namespace org.iringtools.adapter.projection
 
     [Inject]
     public JsonProjectionEngine(AdapterSettings settings, DataDictionary dictionary)
+      : base(settings)
     {
       _settings = settings;
       _dictionary = dictionary;

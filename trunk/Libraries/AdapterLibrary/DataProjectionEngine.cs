@@ -16,9 +16,8 @@ namespace org.iringtools.adapter.projection
     private XNamespace _graphNamespace = null;
 
     [Inject]
-    public DataProjectionEngine(AdapterSettings settings, DataDictionary dictionary)
+    public DataProjectionEngine(AdapterSettings settings, DataDictionary dictionary) : base(settings)
     {
-      _settings = settings;
       _dictionary = dictionary;
     }
 

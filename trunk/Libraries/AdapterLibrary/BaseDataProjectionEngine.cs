@@ -28,8 +28,10 @@ namespace org.iringtools.adapter.projection
     public bool FullIndex { get; set; }
     public long Count { get; set; }
 
-    public BaseDataProjectionEngine()
+    public BaseDataProjectionEngine(AdapterSettings settings)
     {
+      _settings = settings;
+
       _dataObjects = new List<IDataObject>();
 
       // load uri maps config

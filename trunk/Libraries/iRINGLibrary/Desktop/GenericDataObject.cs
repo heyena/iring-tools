@@ -18,6 +18,14 @@ namespace org.iringtools.library
       _dictionary = dict;
     }
 
+    public IDictionary<string, object> Dictionary
+    {
+      get
+      {
+        return _dictionary;
+      }
+    }
+
     public object GetPropertyValue(string propertyName)
     {
       return _dictionary[propertyName];
