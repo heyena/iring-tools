@@ -71,49 +71,60 @@ namespace org.iringtools.adapter.datalayer
       return View();
     }
 
-    public ActionResult Upload(FormCollection form)
+    public JsonResult Upload(FormCollection form)
     {
-      string savedFileName = string.Empty;
-
-      HttpFileCollectionBase files = Request.Files;
-
-      foreach (string file in files)
+      try
       {
-        HttpPostedFileBase hpf = files[file] as HttpPostedFileBase;
-        if (hpf.ContentLength == 0)
-          continue;
+       
+        string datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDataLayer, SpreadsheetLibrary";
+        string savedFileName = string.Empty;
 
-        string location = _settings["Upload"];
+        HttpFileCollectionBase files = Request.Files;
 
-        if (!Path.IsPathRooted(location))
-          location = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, location);
-
-        savedFileName = Path.Combine(location, Path.GetFileName(hpf.FileName));
-
-        Directory.CreateDirectory(location);
-        hpf.SaveAs(savedFileName);
-
-        SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
+        foreach (string file in files)
         {
-          Location = savedFileName
-        };
+          HttpPostedFileBase hpf = files[file] as HttpPostedFileBase;
+          if (hpf.ContentLength == 0)
+            continue;
+          string fileLocation = string.Format(@"XML\SpreadsheetData.{0}.{1}.xlsx", form["Scope"], form["Application"]);
 
-        if (form["Generate"] != null)
-        {
-          configuration = _repository.ProcessConfiguration(configuration);
+          SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
+          {
+            Location = fileLocation
+          };
+
+          if (form["Generate"] != null)
+          {
+
+            configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
+            hpf.InputStream.Flush();
+            hpf.InputStream.Position = 0;
+            _repository.Configure(form["Scope"], form["Application"], datalayer, configuration, hpf.InputStream);
+          }
+          else
+          {
+            configuration.Generate = false;
+            configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
+          }
+
+          SetConfiguration(form["Scope"], form["Application"], configuration);
+
+          //break;
         }
-        else
-        {
-          configuration.Generate = false;
-          configuration.Tables = new List<SpreadsheetTable>();
-        }
-
-        SetConfiguration(form["Scope"], form["Application"], configuration);
-
-        //break;
       }
-
-      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+      catch
+      {
+        return new JsonResult()
+        {
+          ContentType = "text/html",
+          Data = new { success = false }
+        };
+      }
+      return new JsonResult()
+        {
+          ContentType = "text/html",
+          Data = new { success = true }
+        };
     }
 
     private SpreadsheetConfiguration GetConfiguration(string scope, string application)
@@ -146,7 +157,7 @@ namespace org.iringtools.adapter.datalayer
             }
           }
         }
-        _repository.Configure(form["scope"], form["application"], form["datalayer"], configuration);
+        _repository.Configure(form["scope"], form["application"], form["datalayer"], configuration,null);
         return Json(new { success = true }, JsonRequestBehavior.AllowGet);
       }
       else
@@ -292,7 +303,7 @@ namespace org.iringtools.adapter.datalayer
 
       if (configuration != null)
       {
-        _repository.Configure(form["Scope"], form["Application"], form["DataLayer"], configuration);
+        _repository.Configure(form["Scope"], form["Application"], form["DataLayer"], configuration, null);
         return new JsonResult() //(6)
             {
                 ContentType = "text/html",

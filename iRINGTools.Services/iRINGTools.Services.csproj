@@ -144,7 +144,6 @@
     <Content Include="SPARQL\TemplateExactSearch.txt" />
     <Content Include="SPARQL\TemplateGetProperties.txt" />
     <Content Include="SPARQL\TemplateTypes.txt" />
-    <Content Include="XML\Repositories.xml" />
     <Content Include="XML\Queries.xml">
       <SubType>Designer</SubType>
     </Content>

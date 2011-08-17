@@ -1305,7 +1305,6 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
       response.Messages = new Messages();
-     
       
       try
       {
@@ -1316,17 +1315,19 @@ namespace org.iringtools.adapter
           HttpPostedFile hpf = httpRequest.Files[file] as HttpPostedFile;
           if (hpf.ContentLength == 0)
             continue;
-
+          hpf.InputStream.Position = 0;
+          
           savedFileName = Path.Combine(
-          AppDomain.CurrentDomain.BaseDirectory,
+          AppDomain.CurrentDomain.BaseDirectory,_settings["XmlPath"],
           Path.GetFileName(hpf.FileName));
           hpf.SaveAs(savedFileName);
+          hpf.InputStream.Flush();
         }
 
         
 
         InitializeScope(projectName, applicationName, false);
-
+        
         string dataLayer = httpRequest.Form["DataLayer"];
         XElement configuration = Utility.DeserializeXml<XElement>(httpRequest.Form["Configuration"]);
 
