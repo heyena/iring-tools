@@ -169,6 +169,7 @@ namespace org.iringtools.adapter
     {
       Status status = new Status();
       status.Messages = new Messages();
+
       try
       {
         foreach (ScopeProject project in scopes)
@@ -177,13 +178,11 @@ namespace org.iringtools.adapter
 
           if (findProject != null)
           {
-
             findProject.Name = project.Name;
             findProject.Description = project.Description;
 
             foreach (ScopeApplication application in project.Applications)
             {
-
               ScopeApplication findApplication = findProject.Applications.FirstOrDefault<ScopeApplication>(o => o.Name == application.Name);
 
               if (findApplication != null)
@@ -195,14 +194,12 @@ namespace org.iringtools.adapter
               {
                 findProject.Applications.Add(application);
               }
-
             }
           }
           else
           {
             scopes.Add(project);
           }
-
         }
 
         Utility.Write<ScopeProjects>(scopes, _settings["ScopesPath"], true);

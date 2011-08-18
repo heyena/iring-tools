@@ -6,6 +6,7 @@ using System;
 using System.Web;
 using org.iringtools.utility;
 using log4net;
+using System.IO;
 
 namespace org.iringtools.adapter.projection
 {
@@ -37,13 +38,18 @@ namespace org.iringtools.adapter.projection
       // load uri maps config
       _uriMaps = new Properties();
 
-      try
+      string uriMapsFilePath = _settings["DataPath"] + "UriMaps.conf";
+
+      if (File.Exists(uriMapsFilePath))
       {
-        _uriMaps.Load(_settings["DataPath"] + "UriMaps.conf");
-      }
-      catch (Exception e)
-      {
-        _logger.Info("Error loading [UriMaps.config]: " + e);
+        try
+        {
+          _uriMaps.Load(uriMapsFilePath);
+        }
+        catch (Exception e)
+        {
+          _logger.Info("Error loading [UriMaps.config]: " + e);
+        }
       }
     }
 

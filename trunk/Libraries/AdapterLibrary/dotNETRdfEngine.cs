@@ -66,13 +66,18 @@ namespace org.iringtools.adapter.semantic
       // load uri maps config
       _uriMaps = new Properties();
 
-      try
+      string uriMapsFilePath = _settings["DataPath"] + "UriMaps.conf";
+
+      if (File.Exists(uriMapsFilePath))
       {
-        _uriMaps.Load(_settings["DataPath"] + "UriMaps.conf");
-      }
-      catch (Exception e)
-      {
-        _logger.Info("Error loading [UriMaps.config]: " + e);
+        try
+        {
+          _uriMaps.Load(uriMapsFilePath);
+        }
+        catch (Exception e)
+        {
+          _logger.Info("Error loading [UriMaps.config]: " + e);
+        }
       }
 
       _tripleStore = new MicrosoftSqlStoreManager(
