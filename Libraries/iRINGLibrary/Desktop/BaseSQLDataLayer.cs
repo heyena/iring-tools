@@ -75,7 +75,7 @@ namespace org.iringtools.library
         InitializeDatabaseDictionary();
 
         string tableName = GetTableName(objectType);
-        string whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, null);
+        string whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, String.Empty);
 
         return GetCount(tableName, whereClause);
       }
@@ -305,8 +305,7 @@ namespace org.iringtools.library
       {
         try
         {
-          dataObject = new GenericDataObject();
-          ((GenericDataObject)dataObject).ObjectType = objectDefinition.objectName;
+          dataObject = new GenericDataObject() { ObjectType = objectDefinition.objectName };
         }
         catch (Exception ex)
         {
