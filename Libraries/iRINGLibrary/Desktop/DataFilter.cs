@@ -39,6 +39,9 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "dataFilter")]
   public class DataFilter
   {
+    public static readonly String SYSTEM_DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss.ff";
+    public static readonly String UNIVERSAL_DATETIME_FORMAT = "YYYY-MM-DD HH24:MI:SS.FF TZH:TZM";
+    
     private List<Expression> _filterBuffer = null;
     private String _provider = String.Empty;
     private DataObject _dataObjectDefinition = null;
@@ -47,7 +50,6 @@ namespace org.iringtools.library
     {
       Expressions = new List<Expression>();
       OrderExpressions = new List<OrderExpression>();
-      DateTimeFormat = "YYYY-MM-DD HH24:MI:SS.FF TZH:TZM";
     }
 
     [DataMember(Name = "expressions", Order = 0, EmitDefaultValue = false)]
@@ -56,26 +58,23 @@ namespace org.iringtools.library
     [DataMember(Name = "orderExpressions", Order = 1, EmitDefaultValue = false)]
     public List<OrderExpression> OrderExpressions { get; set; }
 
-    [DataMember(Name = "dateTimeFormat", Order = 2, EmitDefaultValue = false)]
-    public string DateTimeFormat { get; set; }
-
-    [Obsolete("Use ToSqlWhereClause(DatabaseDictionary dbDictionary, string objectType, string objectAlias) instead")]
-    public string ToSqlWhereClause(DataDictionary dataDictionary, string objectType, string objectAlias)
+    [Obsolete("Use ToSqlWhereClause(DatabaseDictionary dbDictionary, string tableName, string objectAlias) instead")]
+    public string ToSqlWhereClause(DataDictionary dataDictionary, string tableName, string objectAlias)
     {
       DatabaseDictionary dbDictionary = (DatabaseDictionary)dataDictionary;
       dbDictionary.Provider = String.Empty;
 #if !SILVERLIGHT
       dbDictionary.dataObjects = Utility.CloneDataContractObject<List<DataObject>>(dataDictionary.dataObjects);
 #endif
-      return ToSqlWhereClause(dbDictionary, objectType, objectAlias);
+      return ToSqlWhereClause(dbDictionary, tableName, objectAlias);
     }
 
-    public string ToSqlWhereClause(DatabaseDictionary dbDictionary, string objectType, string objectAlias)
+    public string ToSqlWhereClause(DatabaseDictionary dbDictionary, string tableName, string objectAlias)
     {
       _provider = dbDictionary.Provider;
       DataObject dataObject = null;
 #if !SILVERLIGHT
-      dataObject = dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+      dataObject = dbDictionary.dataObjects.Find(x => x.tableName.ToUpper() == tableName.ToUpper());
 #endif
       if (!String.IsNullOrEmpty(objectAlias)) objectAlias += ".";
       else objectAlias = String.Empty;
@@ -120,7 +119,7 @@ namespace org.iringtools.library
       }
       catch (Exception ex)
       {
-        throw new Exception("Error while geerating SQLWhereClause.", ex);
+        throw new Exception("Error generating SQL WHERE clause.", ex);
       }
     }
 
@@ -173,7 +172,7 @@ namespace org.iringtools.library
           strBuilder.Append(", ");
         }
 
-        strBuilder.Append(String.Format("TO_TIMESTAMP_TZ('{0}','{1}')", value, DateTimeFormat));
+        strBuilder.Append(String.Format("TO_TIMESTAMP_TZ('{0}','{1}')", value, UNIVERSAL_DATETIME_FORMAT));
       }
 
       return strBuilder.ToString();
@@ -211,7 +210,21 @@ namespace org.iringtools.library
       for (int i = 0; i < expression.OpenGroupCount; i++)
         sqlExpression.Append("(");
 
+      if (propertyType == DataType.DateTime)
+      {
+        // convert datetime to correct format
+        for (int i = 0; i < expression.Values.Count; i++)
+        {
+          string dateTimeValue = expression.Values[i];
+          DateTime dateTime = DateTime.Parse(dateTimeValue);
+          string formattedDateTimeValue = dateTime.ToString(SYSTEM_DATETIME_FORMAT);
+
+          expression.Values[i] = formattedDateTimeValue;
+        }
+      }
+
       string value = String.Empty;
+      
       switch (expression.RelationalOperator)
       {
         case RelationalOperator.StartsWith:
