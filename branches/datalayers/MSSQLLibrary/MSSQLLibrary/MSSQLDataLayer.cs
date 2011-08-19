@@ -15,7 +15,7 @@ using Ninject;
 
 namespace org.iringtools.adapter.datalayer 
 {
-  public class MSSQLDataLayer : BaseDataLayer, IDataLayer2
+  public class MSSQLDataLayer : BaseSQLDataLayer
   {
 
    //private static readonly ILog _logger = LogManager.GetLogger(typeof(MSSQLDataLayer));
@@ -27,9 +27,9 @@ namespace org.iringtools.adapter.datalayer
     private string projectName = string.Empty;
     private string _xmlPath = string.Empty;
     private MSSQLConfiguration _msSQLconfiguration = null;
-
+    private ILog _logger = LogManager.GetLogger(typeof(MSSQLDataLayer));
     [Inject]
-    public MSSQLDataLayer(AdapterSettings settings)
+    public MSSQLDataLayer(AdapterSettings settings):base(settings)
     {
       _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml", settings["XmlPath"], settings["Scope"]);
       _settings = settings;
@@ -664,7 +664,62 @@ namespace org.iringtools.adapter.datalayer
         _response.Level = StatusLevel.Error;
       }
       return _response;
-    }    
+    }
 
+
+    public override DataTable CreateDataTable(string tableName, IList<string> identifiers)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Response DeleteDataTable(string tableName, IList<string> identifiers)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Response DeleteDataTable(string tableName, string whereClause)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override long GetCount(string tableName, string whereClause)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override DataTable GetDataTable(string tableName, string whereClause, long start, long limit)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override DataTable GetDataTable(string tableName, IList<string> identifiers)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override DatabaseDictionary GetDatabaseDictionary()
+    {
+        throw new NotImplementedException();
+    }
+
+    public override IList<string> GetIdentifiers(string tableName, string whereClause)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Response PostDataTables(IList<DataTable> dataTables)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override Response RefreshDataTable(string tableName)
+    {
+        throw new NotImplementedException();
+    }
   }
 }
