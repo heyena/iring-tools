@@ -109,6 +109,7 @@
     <Compile Include="ConfigFile.cs" />
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\AppEditorController.cs" />
+    <Compile Include="Controllers\GridManagerController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
@@ -122,6 +123,8 @@
     <Compile Include="Helpers\JsonContainer.cs" />
     <Compile Include="Helpers\JsonTreeNode.cs" />
     <Compile Include="Models\AdapterRepository.cs" />
+    <Compile Include="Models\IGridRepository.cs" />
+    <Compile Include="Models\GridRepository.cs" />
     <Compile Include="Models\IAdapterRepository.cs" />
     <Compile Include="Models\IMappingRepository.cs" />
     <Compile Include="Models\IRefDataRepository.cs" />
@@ -153,8 +156,10 @@
     <Content Include="ClientBin\ReferenceDataEditor.xap" />
     <Content Include="Content\css\adaptermanager-gray.css" />
     <Content Include="Content\css\adaptermanager.css" />
+    <Content Include="Content\css\GridFilters.css" />
     <Content Include="Content\css\interface.css" />
     <Content Include="Content\css\iring-tools.css" />
+    <Content Include="Content\css\RangeMenu.css" />
     <Content Include="Content\css\reset.css" />
     <Content Include="Content\css\sparql.css" />
     <Content Include="Content\img\16x16\document-new.png" />
@@ -163,7 +168,13 @@
     <Content Include="Content\img\16x16\document-save.png" />
     <Content Include="Content\img\16x16\edit-clear.png" />
     <Content Include="Content\img\16x16\edit-delete.png" />
+    <Content Include="Content\img\16x16\equals.png" />
+    <Content Include="Content\img\16x16\find.png" />
+    <Content Include="Content\img\16x16\greater_than.png" />
+    <Content Include="Content\img\16x16\less_than.png" />
     <Content Include="Content\img\16x16\mapping.png" />
+    <Content Include="Content\img\16x16\sort_filtered_asc.gif" />
+    <Content Include="Content\img\16x16\sort_filtered_desc.gif" />
     <Content Include="Content\img\16x16\view-refresh.png" />
     <Content Include="Content\img\applications-internet.png" />
     <Content Include="Content\img\blue-fade.png" />
@@ -3327,6 +3338,7 @@
     <Content Include="Scripts\ext-3.3.1\examples\ux\ItemSelector.js" />
     <Content Include="Scripts\ext-3.3.1\examples\ux\LockingGridView.js" />
     <Content Include="Scripts\ext-3.3.1\examples\ux\MultiSelect.js" />
+    <Content Include="Scripts\ext-3.3.1\examples\ux\paging-toolbar-resizer.js" />
     <Content Include="Scripts\ext-3.3.1\examples\ux\PagingMemoryProxy.js" />
     <Content Include="Scripts\ext-3.3.1\examples\ux\PanelResizer.js" />
     <Content Include="Scripts\ext-3.3.1\examples\ux\Portal.js" />
@@ -4686,14 +4698,32 @@
     <Content Include="Scripts\iringtools\AdapterManager\AjaxRowExpander.js" />
     <Content Include="Scripts\iringtools\AdapterManager\App.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ApplicationPanel.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\AppDataGrid.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\BooleanFilter.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\DateFilter.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\Filter.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\GridFilters.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\ItemSelector.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\ListFilter.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\ListMenu.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\MultiSelect.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigToolBack.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigToolConnection.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigToolSave.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigToolKeyandProperty.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigToolRelation.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ExcelLibrary.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DictionaryPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DirectoryPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\HrefItem.js" />
     <Content Include="Scripts\iringtools\AdapterManager\MappingPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigWizard.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigTool.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\NumericFilter.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\paging-toolbar-resizer.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\RangeMenu.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\SearchPanel.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\StringFilter.js" />
     <Content Include="Scripts\iringtools\AdapterManager\Utility.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ValueListMapPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ValueListPanel.js" />
@@ -4895,7 +4925,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
           <DevelopmentServerPort>12345</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
