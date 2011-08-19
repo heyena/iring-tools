@@ -68,6 +68,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.applicationMenu = new Ext.menu.Menu();
     this.applicationMenu.add(this.buildApplicationMenu());
 
+    this.appDataMenu = new Ext.menu.Menu();
+    this.appDataMenu.add(this.buildAppDataMenu());
+
     this.valueListsMenu = new Ext.menu.Menu();
     this.valueListsMenu.add(this.buildvalueListsMenu());
 
@@ -190,8 +193,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.directoryPanel.on('dblclick', this.onDoubleClick, this);
     this.directoryPanel.on('newgraphmap', this.newGraphmap, this);
 
-
-
     this.items = [
       this.directoryPanel,
       this.propertyPanel
@@ -292,6 +293,17 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         scope: this
       }
     ]
+  },
+
+  buildAppDataMenu: function () {
+    return [
+			{
+				text: 'Open Grid',
+				handler: this.onLoadPageDto,
+				icon: 'Content/img/16x16/document-properties.png',
+				scope: this
+			}
+		]
   },
 
   buildvalueListsMenu: function () {
@@ -415,7 +427,9 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     } else if (obj.type == "ScopeNode") {
       this.scopeMenu.showAt([x, y]);
     } else if (obj.type == "ApplicationNode") {
-      this.applicationMenu.showAt([x, y]);
+     	this.applicationMenu.showAt([x, y]);
+    } else if (obj.type == "DataObjectNode") {
+     	this.appDataMenu.showAt([x, y]);
     } else if (obj.type == "ValueListsNode") {
       this.valueListsMenu.showAt([x, y]);
     } else if (obj.type == "ValueListNode") {
@@ -545,8 +559,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     this.fireEvent('NewApplication', this, node);
   },
 
-
-
   onEditScope: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('EditScope', this, node);
@@ -555,6 +567,11 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   onEditApplication: function (btn, ev) {
     var node = this.directoryPanel.getSelectionModel().getSelectedNode();
     this.fireEvent('EditApplication', this, node);
+  },
+
+  onLoadPageDto: function (btn, ev) {
+  	var node = this.directoryPanel.getSelectionModel().getSelectedNode();  	
+  	this.fireEvent('LoadPageDto', this, node);
   },
 
   onDeleteScope: function (btn, ev) {
@@ -610,8 +627,12 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
   onDoubleClick: function (node) {
     if (node.attributes.type == 'GraphsNode') {
       this.AddGraphMap(this);
-    } else if (node.attributes.type == 'GraphNode') {
+    } 
+		else if (node.attributes.type == 'GraphNode') {
       this.fireEvent('opengraphmap', this, node);
+    }
+    else if (node.attributes.type == 'DataObjectsNode') {
+			this.fireEvent('LoadPageDto', this, node);
     }
   },
 
@@ -619,22 +640,34 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     try {
       var obj = node.attributes;
       this.propertyPanel.setSource(node.attributes.property);
-      this.contextButton.menu.removeAll();
+			if (this.contextButton)
+				this.contextButton.menu.removeAll();
+
       if (obj.type == "ScopesNode") {
-      this.contextButton.menu.add(this.buildScopesMenu());
-      } else if (obj.type == "ScopeNode") {
-      this.contextButton.menu.add(this.buildScopeMenu());
-      } else if (obj.type == "ApplicationNode") {
-        this.contextButton.menu.add(this.buildApplicationMenu());
-      } else if (obj.type == "ValueListsNode") {
+				this.contextButton.menu.add(this.buildScopesMenu());
+			} 
+			else if (obj.type == "ScopeNode") {
+				this.contextButton.menu.add(this.buildScopeMenu());
+			} 
+			else if (obj.type == "ApplicationNode") {
+     		this.contextButton.menu.add(this.buildApplicationMenu());
+     	}
+     	else if (obj.type == "DataObjectNode") {
+				this.contextButton.menu.add(this.buildAppDataMenu());
+			}			
+			else if (obj.type == "ValueListsNode") {
         this.contextButton.menu.add(this.buildvalueListsMenu());
-      } else if (obj.type == "ValueListNode") {
+      } 
+			else if (obj.type == "ValueListNode") {
         this.contextButton.menu.add(this.buildvalueListMenu());
-      } else if (obj.type == "ListMapNode") {
+      } 
+			else if (obj.type == "ListMapNode") {
         this.contextButton.menu.add(this.buildvalueListMapMenu());
-      } else if (obj.type == "GraphsNode") {
+      } 
+			else if (obj.type == "GraphsNode") {
         this.contextButton.menu.add(this.buildGraphsMenu());
-      } else if (obj.type == "GraphNode") {
+      } 
+			else if (obj.type == "GraphNode") {
         this.contextButton.menu.add(this.buildGraphMenu());
       }
     } catch (e) {
