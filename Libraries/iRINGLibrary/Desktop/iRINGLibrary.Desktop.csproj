@@ -122,10 +122,14 @@
     <Compile Include="BaseConfigurableDataLayer.cs" />
     <Compile Include="BaseDataLayer.cs" />
     <Compile Include="BaseSQLDataLayer.cs" />
+    <Compile Include="FilterExpression1.cs" />
+    <Compile Include="FilterExpression.cs" />
     <Compile Include="DataItems.cs" />
     <Compile Include="DataLayerConfig.cs" />
     <Compile Include="DataLayers.cs" />
+    <Compile Include="Field.cs" />
     <Compile Include="GenericDataObject.cs" />
+    <Compile Include="Grid.cs" />
     <Compile Include="IAuthenticationLayer.cs" />
     <Compile Include="IAuthorizationLayer.cs" />
     <Compile Include="LdapAuthorizationProvider.cs" />
