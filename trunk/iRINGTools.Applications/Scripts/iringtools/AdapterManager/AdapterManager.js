@@ -375,6 +375,13 @@ Ext.onReady(function () {
 
   }, this);
 
+   directoryPanel.on('LoadPageDto', function (npanel, node) {
+   	var scope = node.parentNode.parentNode.parentNode.text
+   	var app = node.parentNode.parentNode.text;
+   	var graph = node.text;   	
+   	loadAppPageDto(scope, app, graph);
+   }, this);
+
   directoryPanel.on('opengraphmap', function (npanel, node) {
 
     var scope = node.parentNode.parentNode.parentNode;
