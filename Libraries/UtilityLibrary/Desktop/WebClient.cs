@@ -314,7 +314,21 @@ namespace org.iringtools.utility
                 request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                R responseEntity = Utility.DeserializeFromStream<R>(response.GetResponseStream(), useDataContractSerializer);
+								R responseEntity = default(R);
+								Stream responseStream = response.GetResponseStream();
+
+								if (typeof(R) == typeof(String))
+								{
+									StreamReader reader = new StreamReader(responseStream);
+									string responseStr = reader.ReadToEnd();
+									reader.Close();
+
+									return (R)Convert.ChangeType(responseStr, typeof(R));
+								}
+								else
+								{
+									responseEntity = Utility.DeserializeFromStream<R>(responseStream, useDataContractSerializer);
+								}
 
                 return responseEntity;
             }
