@@ -79,6 +79,7 @@ namespace org.iringtools.web.controllers
     public JsonResult AddClassMap(FormCollection form)
     {
       JsonTreeNode nodes = new JsonTreeNode();
+      nodes.children = new List<JsonTreeNode>();
       try
       {
 
@@ -90,13 +91,23 @@ namespace org.iringtools.web.controllers
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
         string dataObject = dataObjectVars[4];
-        string propertyName = dataObjectVars[5];
+        string propertyName = dataObjectVars[dataObjectVars.Length - 1];
+        
         string graphName = mappingVars[2];
         string templateName = mappingVars[3];
         string roleName = mappingVars[4];
         string classId = form["classUrl"];
         string classLabel = form["classLabel"];
-
+        string idents = string.Empty;
+        if(dataObjectVars.Length == 6)
+        {
+          idents = string.Format("{0}.{1}", dataObject, propertyName);
+        }
+        else if(dataObjectVars.Length == 7)
+        {
+          string relation = dataObjectVars[dataObjectVars.Length - 2];
+          idents = string.Format("{0}.{1}.{2}", dataObject,relation, propertyName);
+        }
         ClassMap classMap = new ClassMap();
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
@@ -117,7 +128,8 @@ namespace org.iringtools.web.controllers
                   classMap.name = classLabel;
                   classMap.id = qn ? qName : classId;
                   classMap.identifiers = new Identifiers();
-                  classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, propertyName));
+                  
+                  classMap.identifiers.Add(idents);
                   graphMap.AddClassMap(role, classMap);
                   role.classMap = classMap;
                   nodes.children.Add(GetClassNode(classMap, mappingNode));
