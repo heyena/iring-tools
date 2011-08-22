@@ -252,7 +252,7 @@ namespace org.iringtools.services
 
     private void FormatOutgoingMessage(object content, string format)
     {
-      if (content.GetType() == typeof(IContentObject))
+      if (typeof(IContentObject).IsInstanceOfType(content))
       {
         IContentObject contentObject = (IContentObject)content;
         HttpContext.Current.Response.ContentType = contentObject.contentType;
