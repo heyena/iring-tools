@@ -122,8 +122,6 @@
     <Compile Include="BaseConfigurableDataLayer.cs" />
     <Compile Include="BaseDataLayer.cs" />
     <Compile Include="BaseSQLDataLayer.cs" />
-    <Compile Include="FilterExpression1.cs" />
-    <Compile Include="FilterExpression.cs" />
     <Compile Include="DataItems.cs" />
     <Compile Include="DataLayerConfig.cs" />
     <Compile Include="DataLayers.cs" />
