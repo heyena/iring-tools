@@ -198,6 +198,15 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
       this.propertyPanel
     ];
 
+    Ext.Ajax.request({
+    	url: 'GridManager/setSession',
+    	method: 'GET',
+    	success: function (response, request) {
+    	},
+    	failure: function (response, request) {
+    	}
+    });
+
     var state = Ext.state.Manager.get("AdapterManager");
 
     if (state) {
@@ -597,6 +606,15 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
     thisTreePanel.getLoader().load(thisTreePanel.getRootNode(), function () {
       panel.body.unmask();
       thisTreePanel.applyState(state, true);
+    });
+
+    Ext.Ajax.request({
+    url: 'GridManager/cleanSession',
+    method: 'GET',    
+    success: function (response, request) {     	
+    },
+    failure: function (response, request) {     
+    }
     });
   },
 

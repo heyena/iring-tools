@@ -30,8 +30,8 @@ namespace iRINGTools.Web.Models
 			private Grid dataGrid;
 			private string graph;
 			private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
-			private Dictionary<String, Object> session;
-			JavaScriptSerializer serializer;
+			static private HttpSessionStateBase session;
+			private JavaScriptSerializer serializer;
 
 			[Inject]
 			public GridRepository()
@@ -39,7 +39,6 @@ namespace iRINGTools.Web.Models
         _settings = ConfigurationManager.AppSettings;
 				_client = new WebHttpClient(_settings["DataServiceURI"]);
 				serializer = new JavaScriptSerializer();
-				session = new Dictionary<String, Object>();
 				dataGrid = new Grid();
       }
 
@@ -50,6 +49,11 @@ namespace iRINGTools.Web.Models
 				getDataItems(scope, app, graph, filter, sort, dir, start, limit);
 				getDataGrid();								
 				return dataGrid;
+			}
+
+			public void setSession(HttpSessionStateBase Session) 
+			{
+				GridRepository.session = Session;
 			}
 
 			private void getDatadictionary(String scope, String app)
@@ -72,7 +76,7 @@ namespace iRINGTools.Web.Models
 				DataFilter dataFilter = createDataFilter(filter, sort, dir);
 				try
 				{
-					string partialKey = "part" + "/" + scope + "/" + app + "/" + graph + "/" + filter + "/" + sort + "/" + dir;
+					string partialKey = "AppGrid-part" + "/" + scope + "/" + app + "/" + graph + "/" + filter + "/" + sort + "/" + dir;
 					setGridData(scope, app, graph, start, limit, dataFilter, partialKey);					
 				}
 				catch (Exception ex) 
@@ -84,26 +88,40 @@ namespace iRINGTools.Web.Models
 			private void setGridData(string scope, string app, string graph, string start, string limit, DataFilter dataFilter, string partialKey)
 			{
 				DataItems allDataItems = null;
-				string allDataItemsJson;
 				string key;
 				
 				if (dataFilter == null)
-					key = "full" + "/" + scope + "/" + app + "/" + graph;
+					key = "AppGrid-full" + "/" + scope + "/" + app + "/" + graph;
 				else 
-					key = partialKey;				
-					
-				if (!session.ContainsKey(key))
-				{
-					allDataItemsJson = _client.Post<DataFilter, string>("/" + app + "/" + scope + "/" + graph + "/filter?format=json", dataFilter, true);
-					allDataItems = (DataItems)serializer.Deserialize(allDataItemsJson, typeof(DataItems));
-					if (allDataItems.total > 0)
-						session.Add(key, allDataItems);
-				}
-				else					
-					allDataItems = (DataItems)session[key];							
+					key = partialKey;
 				
+				if (session != null)
+				{
+					if (session[key] == null)
+					{
+						allDataItems = getDataObjects(key, scope, app, graph, dataFilter);
+					}
+					else
+						allDataItems = (DataItems)session[key];
+				}
+				else
+					getDataObjects(key, scope, app, graph, dataFilter);
+
 				dataGrid.total = (int)allDataItems.total;		
 				getPageData(allDataItems, start, limit);
+			}
+
+			private DataItems getDataObjects(string key, string scope, string app, string graph, DataFilter dataFilter)
+			{
+				string allDataItemsJson;
+				DataItems allDataItems = null;
+				allDataItemsJson = _client.Post<DataFilter, string>("/" + app + "/" + scope + "/" + graph + "/filter?format=json", dataFilter, true);
+				allDataItems = (DataItems)serializer.Deserialize(allDataItemsJson, typeof(DataItems));
+				
+				if (allDataItems.total > 0)
+					session[key] = allDataItems;
+
+				return allDataItems;
 			}
 
 			private void getPageData(DataItems allDataItems, string start, string limit) 
@@ -207,109 +225,61 @@ namespace iRINGTools.Web.Models
 			{
 				DataFilter dataFilter = null;				
 				Dictionary<string, string> valueMaps = null;
-				//= (Dictionary<String, String>) session["valueMaps"];
-
+				
 				// process filtering
 				if (filter != null && filter.Count() > 0)
 				{
 					try
 					{
-						//DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
-						try
-						{
-							List<FilterExpression> filterExpressions = Utility.FromJson<List<FilterExpression>>(filter);
-							if (filterExpressions != null && filterExpressions.Count > 0)
-							{
-								dataFilter = new DataFilter();
-
-								List<Expression> expressions = new List<Expression>();
-								dataFilter.Expressions = expressions;
-
-								foreach (FilterExpression filterExpression in filterExpressions)
-								{
-									Expression expression = new Expression();
-									expressions.Add(expression);
-
-									if (expressions.Count > 1)
-									{
-										expression.LogicalOperator = LogicalOperator.And;
-									}
-
-									if (filterExpression.comparison != null)
-									{										
-										RelationalOperator optor = getOpt(filterExpression.comparison);
-										expression.RelationalOperator = optor;
-									}
-									else
-									{
-										expression.RelationalOperator = RelationalOperator.EqualTo;
-									}
-
-									expression.PropertyName = filterExpression.field;
-
-									Values values = new Values();
-									expression.Values = values;
-									string value = filterExpression.value.ToString();
-
-									if (valueMaps != null)
-									{
-										String valueMap = valueMaps[filterExpression.value];
-
-										if (valueMap != null && valueMap != String.Empty)
-										{
-											values.Add(valueMap);
-											value = valueMap;
-										}
-									}
-
-									values.Add(value);
-								}
-							}
-						}
-						catch
-						{
-							List<FilterExpression1> filterExpressions = Utility.FromJson<List<FilterExpression1>>(filter);
-							if (filterExpressions != null && filterExpressions.Count > 0)
-							{
-								dataFilter = new DataFilter();
-
-								List<Expression> expressions = new List<Expression>();
-								dataFilter.Expressions = expressions;
-
-								foreach (FilterExpression1 filterExpression in filterExpressions)
-								{
-									Expression expression = new Expression();
-									expressions.Add(expression);
-
-									if (expressions.Count > 1)
-									{
-										expression.LogicalOperator = LogicalOperator.And;
-									}
-									
-									expression.RelationalOperator = RelationalOperator.EqualTo;
-									expression.PropertyName = filterExpression.field;
-									Values values = new Values();
-									expression.Values = values;
-									string value = filterExpression.value.ToString();
-
-									if (valueMaps != null)
-									{
-										String valueMap = valueMaps[filterExpression.value];
-
-										if (valueMap != null && valueMap != String.Empty)
-										{
-											values.Add(valueMap);
-											value = valueMap;
-										}
-									}
-
-									values.Add(value);
-								}
-							}
-						}
+						List<Dictionary<String, String>> filterExpressions = (List<Dictionary<String, String>>)serializer.Deserialize(filter, typeof(List<Dictionary<String, String>>));
 						
+						if (filterExpressions != null && filterExpressions.Count > 0)
+						{
+							dataFilter = new DataFilter();
 
+							List<Expression> expressions = new List<Expression>();
+							dataFilter.Expressions = expressions;
 
+							foreach (Dictionary<String, String> filterExpression in filterExpressions)
+							{
+								Expression expression = new Expression();
+								expressions.Add(expression);
+
+								if (expressions.Count > 1)
+								{
+									expression.LogicalOperator = LogicalOperator.And;
+								}
+
+								if (filterExpression["comparison"] != null)
+								{										
+									RelationalOperator optor = getOpt(filterExpression["comparison"]);
+									expression.RelationalOperator = optor;
+								}
+								else
+								{
+									expression.RelationalOperator = RelationalOperator.EqualTo;
+								}
+
+								expression.PropertyName = filterExpression["field"];
+
+								Values values = new Values();
+								expression.Values = values;
+								string value = filterExpression["value"];
+
+								if (valueMaps != null)
+								{
+									String valueMap = valueMaps[filterExpression["value"]];
+
+									if (valueMap != null && valueMap != String.Empty)
+									{
+										values.Add(valueMap);
+										value = valueMap;
+									}
+								}
+
+								values.Add(value);
+							}
+						}
 					}
 					catch (Exception ex)
 					{
