@@ -238,10 +238,20 @@ namespace org.iringtools.utility
                 );
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream responseStream = response.GetResponseStream();
 
-                T entity = Utility.DeserializeFromStream<T>(response.GetResponseStream(), useDataContractSerializer);
+                if (typeof(T) == typeof(String))
+                {
+                  StreamReader reader = new StreamReader(responseStream);
+                  string responseStr = reader.ReadToEnd();
+                  reader.Close();
 
-                return entity;
+                  return (T)Convert.ChangeType(responseStr, typeof(T));
+                }
+                else
+                {
+                  return Utility.DeserializeFromStream<T>(responseStream, useDataContractSerializer);
+                }
             }
             catch (Exception exception)
             {
