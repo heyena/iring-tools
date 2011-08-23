@@ -1,5 +1,6 @@
 ﻿Imports System.Collections
 Imports System.Collections.Generic
+Imports System.Collections.Specialized
 Imports System.IO
 Imports System.Linq
 Imports System.Linq.Expressions
@@ -9,14 +10,17 @@ Imports org.iringtools.adapter
 Imports org.iringtools.library
 Imports org.iringtools.utility
 Imports System.Diagnostics
+
 'Imports Llama
 'Imports ISPClientData3
 Imports System.Data.SqlClient
-
-
+Imports System.Text
+Imports System.Text.RegularExpressions
 
 Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Implements IDataLayer2
+
+#Region " Variables "
 
     Private _dataObjects As List(Of IDataObject) = Nothing
     'Private _projDatasource As Llama.LMADataSource = Nothing ' SPPID DataSource
@@ -26,29 +30,67 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Private m_skipNoDisplayAttributes As Boolean  ' ignore non-displayed attributes
     'Protected _configuration As XElement
     Private _conn As SqlConnection
+    Private AppSettings As AdapterSettings
+    Private ProjConfig As Xml.XmlDocument
+    Private SPWorkSet As SPPIDWorkingSet
+    Private _dbDictionary As DataDictionary
 
+#End Region
+
+#Region " Instantiation "
 
     <Inject()>
     Public Sub New(settings As AdapterSettings)
 
         MyBase.New(settings)
 
-        'Dim connStr As String = "server=NDHD06670\SQLEXPRESSW;database=SPPID;User ID=SPPID;Password=sppid"
-        Dim connStr As String = _settings("SPPIDConnectionString")
+        'Dim projectConnStr As String = "server=NDHD06670\SQLEXPRESSW;database=SPPID;User ID=SPPID;Password=sppid"
+
+        ' ******** IMPORTANT NOTE TO DEVELOPERS (NEHA, ROB)  ********************************************
+        ' Please set your project and site connection strings in a file called 12345_000_<your name>_SPPID.confg
+        ' and load this file in your Console test instead of the 12345_000.SPPID.config file. 
+        ' I have added the file 12345_000_Adrian.SPPID.config to the project to serve as an example. This way we'll hopefully 
+        ' stop overwriting each other's configuration data and we can remove configuration data currently being set
+        ' directly in the code.
+        Dim projectConnStr As String = _settings("SPPIDConnectionString")
+        Dim siteConnStr As String = _settings("SPPIDSiteConnectionString")
+        Dim configPath As String
+        Dim siteDataQuery As XElement = Nothing
+
+        ' ToDo: Enable encryption once encryption is supported 
+        'Try
+        '    'projectConnStr = Encryption.DecryptString(projectConnStr)
+        '    'siteConnStr = Encryption.DecryptString(siteConnStr)
+        'Catch ex As Exception
+        '    'ToDo: Log Decryption Problem as warning
+        'End Try
+
+        AppSettings = settings
 
         Try
-            connStr = Encryption.DecryptString(connStr)
+
+            configPath = _settings("ProjectConfigurationPath")
+            AddProjConfigSettings(configPath)
+            GetQueryByName("!SiteData", siteDataQuery)
+            SPWorkSet = New SPPIDWorkingSet(New SqlConnection(projectConnStr), New SqlConnection(siteConnStr), siteDataQuery)
+
+            GetCurrentSPPIDSchema()
+            Test()
+
         Catch ex As Exception
-            'ToDo: Log Decryption Problem as warning
+            MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
+            ' this will likely only be loaded in this way while testing, so ignore the error
         End Try
 
-        _conn = New SqlConnection(connStr)
         'Dim siteNode As String = _settings("SPPIDSiteNode")
         'Dim projectStr As String = _settings("SPPIDProjectNumber")
         'projectStr += "!" & projectStr
 
     End Sub
 
+#End Region
+
+#Region " Overridden Public Methods "
 
     'Public Overloads Overrides Function Delete(objectType As String, filter As org.iringtools.library.DataFilter) As org.iringtools.library.Response
     '    Return New Response
@@ -229,37 +271,37 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     '    Return dataDictionary
     'End Function
 
-    Public Overrides Function GetDatabaseDictionary() As DatabaseDictionary
+    'Public Overrides Function GetDatabaseDictionary() As DatabaseDictionary
 
-        Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
+    '    Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
 
-        Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
+    '    Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
 
-        _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
+    '    _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
 
-        '*************************************************
-        Dim databaseDictionary As New DatabaseDictionary
-        databaseDictionary.dataObjects = DataDictionary.dataObjects
-        databaseDictionary.Provider = "MsSql2008"
-        databaseDictionary.ConnectionString = "Data Source=.\SQLEXPRESS;database=SPPID;User ID=SPPID;Password=sppid"
-        databaseDictionary.SchemaName = "dbo"
-        '*************************************************
+    '    '*************************************************
+    '    Dim databaseDictionary As New DatabaseDictionary
+    '    databaseDictionary.dataObjects = DataDictionary.dataObjects
+    '    databaseDictionary.Provider = "MsSql2008"
+    '    databaseDictionary.ConnectionString = "Data Source=.\SQLEXPRESS;database=SPPID;User ID=SPPID;Password=sppid"
+    '    databaseDictionary.SchemaName = "dbo"
+    '    '*************************************************
 
-        Return databaseDictionary
+    '    Return databaseDictionary
 
-    End Function
+    'End Function
 
     Public Overrides Function GetDictionary() As DataDictionary
 
         Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
-
         Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
 
-        _dataObjectDefinition = dataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
+        _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
 
         Return Utility.Read(Of DataDictionary)(path)
 
     End Function
+
     Public Overrides Function GetDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
 
         Dim filter As DataFilter = FormMultipleKeysFilter(identifiers)
@@ -285,6 +327,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     End Function
 
     Public Overrides Function GetDataTable(tableName As String, whereClause As String, start As Long, limit As Long) As System.Data.DataTable
+        'Public Overrides Function GetDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
+
         Dim query As String = "SELECT * FROM " & tableName & " " & whereClause
 
         Dim adapter As New SqlDataAdapter()
@@ -296,6 +340,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         adapter.Fill(dataSet, tableName)
 
         Return dataSet.Tables(tableName)
+
     End Function
 
     Public Overrides Function GetCount(tableName As String, whereClause As String) As Long
@@ -340,7 +385,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     End Function
 
     Public Overrides Function GetConfiguration() As System.Xml.Linq.XElement
-        Throw New NotImplementedException()
+        Throw New NotImplementedException
     End Function
 
     Public Overrides Function Configure(configuration As System.Xml.Linq.XElement) As Response
@@ -367,7 +412,199 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Throw New NotImplementedException()
     End Function
 
+#End Region
+
+#Region " Staging Methods "
+
+    Public Function GetCurrentSPPIDSchema() As String
+
+
+
+    End Function
+
+    Public Function Test() As String
+
+        Dim replacements As IEnumerable(Of XElement) = Nothing
+        Dim declarations As IEnumerable(Of XElement) = Nothing
+        Dim queryParts As New Dictionary(Of SQLClause, String)
+        Dim queryString As String
+        Dim stgCfgQueries As IEnumerable(Of XElement) = Nothing
+        Dim siteDataQuery As XElement = Nothing
+
+        ' ToDo *** stopped here *** need to use the dataset to fetch the schema, update with any DB-specific data (such as queryAlias)
+        ' from a config file, then use the dataType information to help create tehe staging table ddl
+
+        GetStagingQueries(stgCfgQueries)
+
+        For Each q As XElement In StgCfgQueries
+
+            queryParts.Clear()
+            GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions, _
+                          queryParts, replacements, declarations)
+        Next
+
+        ' ToDo - create the SET section if there is a DECLARE section
+        ' ToDo - create a master replacement dictionary for query variables, the use it to update the 
+        ' temporary values in the replacement iEnumerable(of XElement)
+
+        ' commbine the query parts and perform any necessary replacements
+        queryString = ReplaceQueryText(queryParts.BuildQuery, replacements)
+
+        Return "Pass"
+    End Function
+
+    ' fetch the staging setup configuration, which is the data (stored in the  <projectID>.SPPID.config file) detailing the server/db/login
+    ' data required to transfer data to the Staging location
+    ' DONE - this is now done in the constructor, although it uses a non-standard load routine utilizing an xmlReader
+
+    ' create a staging configuration schema; - work in progress; complete enough to start creating an import
+
+    ' fetch the staging configuration, which is set of query parameters specifying exactly what data will be pulled out of the 
+    ' SPPID. and indicates the distinct table names used when filling the staging DB. A session variable will be provided to append to the names
+    ' before the tables are created; these will be checked and deleted if they already exist. This allows both for the possibility of preserving
+    ' the staging data and negates the possibility that previous versions will conflict schema-wise with the the data pulled under any alteration of
+    ' the configuration
+
+    ' use the query parameters to build complete queries
+
+    ' run the complete queries against the SPPID database and transfer the data to the Staging database
+
+    ' nuke objects, report any errors, and complete.
+
+    ''' <summary>
+    ''' Fetch the named query from the staging configuration XDocument
+    ''' </summary>
+    ''' <param name="SiteDataQuery"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Function GetQueryByName(ByVal QueryName As String, ByRef SiteDataQuery As XElement) As String
+
+        Dim doc As XDocument
+
+        Try
+
+            doc = XDocument.Load(AppSettings("StagingConfigurationPath"))
+
+            ' fetch the site data query
+            Dim q As IEnumerable(Of XElement) = _
+            From el In doc...<query>
+            Select el
+            Where el.Attribute("name").Value = QueryName
+
+            SiteDataQuery = q.First
+
+        Catch ex As Exception
+            Return "Fail: " & ex.Message
+        End Try
+
+        Return "Pass"
+
+    End Function
+
+
+    ''' <summary>
+    ''' Fetch the queries from the staging configuration XDocument for this project
+    ''' </summary>
+    ''' <param name="StagingConfigQueries"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Function GetStagingQueries(ByRef StagingConfigQueries As IEnumerable(Of XElement)) As String
+
+        Dim doc As XDocument
+
+        Try
+
+            doc = XDocument.Load(AppSettings("StagingConfigurationPath"))
+
+            ' fetch all of the queries except any existing templates
+            StagingConfigQueries = _
+                From el In doc...<query>
+                Select el
+                Where el.Attribute("name").Value <> "!Template" AndAlso el.Attribute("name").Value <> "!SiteData"
+
+        Catch ex As Exception
+            Return "Fail: " & ex.Message
+        End Try
+
+        Return "Pass"
+
+    End Function
+
+    ''' <summary>
+    ''' replaces certain strings in the query with another value
+    ''' </summary>
+    ''' <param name="QueryString"></param>
+    ''' <param name="replacements"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Function ReplaceQueryText(QueryString As String, replacements As IEnumerable(Of XElement)) As String
+
+        Dim reg As Regex
+        Dim pat As String
+        'ToDo - add a replacement function where the declared variables (from the decs element) are substitued from some master list
+        ' and used to replace the variable names within the query sections. This is best done after the query has been built from
+        ' it's parts to avoid having to run the rplacement against multiple sections. 
+
+        Try
+
+            For Each r As XElement In replacements
+
+                pat = r.Attribute("name").Value & "[^a-zA-Z0-9_]" ' this pattern attempts to isolate the varaible to "whole word only"
+                QueryString = Regex.Replace(QueryString, pat, r.Attribute("value").Value)
+                'QueryString = QueryString.Replace(r.Attribute("name").Value
+
+            Next
+
+        Catch ex As Exception
+            Return "Fail: " & ex.Message
+        End Try
+
+        Return "Pass"
+
+
+    End Function
+
+#End Region
+
+
+
+
 #Region "Private Functions"
+
+    ''' <summary>
+    ''' Allows additional configuration settings to be added to the appSettings collection
+    ''' </summary>
+    ''' <param name="Path"></param>
+    ''' <returns></returns>
+    ''' <remarks>This allows, for instance, for test settings under a non-standard naming convention to be loaded</remarks>
+    Private Function AddProjConfigSettings([Path] As String) As String
+
+        Dim ProjConfigPath As String = [Path]
+        Dim x As Xml.XmlReader
+        Dim nvc As New NameValueCollection
+
+        Try
+
+            If File.Exists(ProjConfigPath) Then
+
+                x = Xml.XmlReader.Create(ProjConfigPath)
+                x.ReadToFollowing("appSettings")
+                x.ReadToDescendant("add")
+
+                Do
+                    nvc.Add(x.GetAttribute("key"), x.GetAttribute("value"))
+                Loop While x.ReadToNextSibling("add")
+
+                Return "Pass"
+
+            End If
+
+
+        Catch ex As Exception
+            Return "Fail: " & ex.Message
+        End Try
+
+    End Function
 
     Private Function LoadDataTable(tableName As String) As System.Data.DataTable
         Dim _dataTables As New DataTable()
