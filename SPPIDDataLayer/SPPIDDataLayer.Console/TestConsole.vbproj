@@ -59,13 +59,10 @@
       <HintPath>..\library\log4net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
-      <HintPath>..\SPPIDDataLayer\bin\Debug\Ninject.dll</HintPath>
+      <HintPath>..\library\ninject2\Ninject.dll</HintPath>
     </Reference>
     <Reference Include="Ninject.Extensions.Xml">
       <HintPath>..\library\ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
-    </Reference>
-    <Reference Include="SPPIDDataLayer">
-      <HintPath>..\SPPIDDataLayer\bin\Debug\SPPIDDataLayer.dll</HintPath>
     </Reference>
     <Reference Include="StaticDust.Configuration">
       <HintPath>..\library\configuration\StaticDust.Configuration.dll</HintPath>
@@ -140,6 +137,12 @@
     <Content Include="12345_000\DataDictionary.xml">
       <SubType>Designer</SubType>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SPPIDDataLayer\SPPIDDataLayer.vbproj">
+      <Project>{5541C20E-0ADA-44E3-B626-7CD54E05C412}</Project>
+      <Name>SPPIDDataLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
