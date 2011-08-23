@@ -62,7 +62,8 @@
     <Reference Include="nunit.framework">
       <HintPath>..\library\nunit\framework\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="StaticDust.Configuration">
+    <Reference Include="StaticDust.Configuration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=21c5f8854d868864">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\library\configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />

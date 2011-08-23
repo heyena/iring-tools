@@ -1,0 +1,408 @@
+<?xml version="1.0"?>
+	<!-- note that variables that can legally be provided as part of a T-SQL query must start with @
+		additionally, these queries allow non-legal string replacement variables that start with @!~; these
+		string replacements must take place before the query is sent to SQL Server or the query will fail
+	-->
+<configuration>
+	<queryShortcuts>
+		<!-- These are default aliases for tables and views, and are primarily for increasing the 
+			readability of queries during troubleshooting. Shortcuts may be overridden in individual queries so
+			always use the alias values written into the Sources section of a query rather than what is written here when
+			building a query from any given Query XML 
+		-->
+		<shortcut schema="SPAPLANT" source="MAX_ID" alias="" />
+		<shortcut schema="SPAPLANT" source="SPIDCache" alias="" />
+		<shortcut schema="SPAPLANT" source="T_ActiveWSSite" alias="" />
+		<shortcut schema="SPAPLANT" source="T_AppProject" alias="" />
+		<shortcut schema="SPAPLANT" source="T_Area" alias="" />
+		<shortcut schema="SPAPLANT" source="T_DrawingSite" alias="" />
+		<shortcut schema="SPAPLANT" source="T_DrawingSubscriber" alias="" />
+		<shortcut schema="SPAPLANT" source="T_Formats" alias="" />
+		<shortcut schema="SPAPLANT" source="T_FormatTypes" alias="" />
+		<shortcut schema="SPAPLANT" source="T_HierarchyLevels" alias="" />
+		<shortcut schema="SPAPLANT" source="T_InterSiteOPC" alias="" />
+		<shortcut schema="SPAPLANT" source="T_Plant" alias="P" />
+		<shortcut schema="SPAPLANT" source="T_PlantGroup" alias="PlG" />
+		<shortcut schema="SPAPLANT" source="T_PlantSetting" alias="PS" />
+		<shortcut schema="SPAPLANT" source="T_Project" alias="Prg" />
+		<shortcut schema="SPAPLANT" source="T_ProjectPlantGroup" alias="PPG" />
+		<shortcut schema="SPAPLANT" source="T_RoleAccess" alias="RA" />
+		<shortcut schema="SPAPLANT" source="T_ShowFieldTypeAttributes" alias="SFAtt" />
+		<shortcut schema="SPAPLANT" source="T_ShowFieldTypes" alias="SFTyp" />
+		<shortcut schema="SPAPLANT" source="T_ShowFieldUids" alias="SFUid" />
+		<shortcut schema="SPAPLANT" source="T_Unit" alias="U" />
+		<shortcut schema="SPAPLANT" source="T_WSSite" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="Applications" alias="Aps" />
+		<shortcut schema="DATA_DICTIONARY" source="attributes" alias="Att" />
+		<shortcut schema="DATA_DICTIONARY" source="Category" alias="Cat" />
+		<shortcut schema="DATA_DICTIONARY" source="CategoryFilter" alias="CatF" />
+		<shortcut schema="DATA_DICTIONARY" source="codelists" alias="Cl" />
+		<shortcut schema="DATA_DICTIONARY" source="correlatts" alias="Cor" />
+		<shortcut schema="DATA_DICTIONARY" source="entities" alias="Ent" />
+		<shortcut schema="DATA_DICTIONARY" source="Enumerations" alias="En" />
+		<shortcut schema="DATA_DICTIONARY" source="FilterCriteria" alias="FC" />
+		<shortcut schema="DATA_DICTIONARY" source="FilterDefinition" alias="FD" />
+		<shortcut schema="DATA_DICTIONARY" source="FilteredRelationship" alias="FR" />
+		<shortcut schema="DATA_DICTIONARY" source="FilterInstance" alias="FI" />
+		<shortcut schema="DATA_DICTIONARY" source="intersects" alias="ISec" />
+		<shortcut schema="DATA_DICTIONARY" source="Item" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="ItemAttributions" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="MAX_ID" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="relationships" alias="Rel" />
+		<shortcut schema="DATA_DICTIONARY" source="SourceDestObjectRels" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDApplications" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDattributes" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDCategory" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDCategoryFilter" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDcodelists" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDcorrelatts" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDentities" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDEnumerations" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDFilterCriteria" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDFilterDefinition" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDFilteredRelationship" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDFilterInstance" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDintersects" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDItem" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDItemAttributions" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDMAX_ID" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDrelationships" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDSourceDestObjectRels" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDSPSorts" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDSPTPAttributes" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDSPTPLayouts" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDSPTPViews" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDuniqueatts" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDVersion" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPPIDVersionInfo" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPSorts" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPTPAttributes" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPTPLayouts" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="SPTPViews" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="uniqueatts" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="Version" alias="" />
+		<shortcut schema="DATA_DICTIONARY" source="VersionInfo" alias="" />
+		<shortcut schema="SPPID" source="MAX_ID" alias="" />
+		<shortcut schema="SPPID" source="SPIDCache" alias="" />
+		<shortcut schema="SPPID" source="T_AreaBreak" alias="" />
+		<shortcut schema="SPPID" source="T_AreaBreakAttribute" alias="" />
+		<shortcut schema="SPPID" source="T_BoundedShape" alias="" />
+		<shortcut schema="SPPID" source="T_BoundedShapeVertex" alias="" />
+		<shortcut schema="SPPID" source="T_Case" alias="" />
+		<shortcut schema="SPPID" source="T_CaseControl" alias="" />
+		<shortcut schema="SPPID" source="T_CaseProcess" alias="" />
+		<shortcut schema="SPPID" source="T_Connector" alias="" />
+		<shortcut schema="SPPID" source="T_ConnectorVertex" alias="" />
+		<shortcut schema="SPPID" source="T_Drawing" alias="" />
+		<shortcut schema="SPPID" source="T_DrawingProject" alias="" />
+		<shortcut schema="SPPID" source="T_DrawingVersion" alias="" />
+		<shortcut schema="SPPID" source="T_EquipComponent" alias="" />
+		<shortcut schema="SPPID" source="T_Equipment" alias="" />
+		<shortcut schema="SPPID" source="T_EquipmentOther" alias="" />
+		<shortcut schema="SPPID" source="T_Exchanger" alias="" />
+		<shortcut schema="SPPID" source="T_GlobalDrawing" alias="" />
+		<shortcut schema="SPPID" source="T_History" alias="" />
+		<shortcut schema="SPPID" source="T_HydraulicCircuit" alias="" />
+		<shortcut schema="SPPID" source="T_Inconsistency" alias="" />
+		<shortcut schema="SPPID" source="T_InlineComp" alias="" />
+		<shortcut schema="SPPID" source="T_InstrFailMode" alias="" />
+		<shortcut schema="SPPID" source="T_InstrFunction" alias="" />
+		<shortcut schema="SPPID" source="T_InstrLoop" alias="" />
+		<shortcut schema="SPPID" source="T_InstrOption" alias="" />
+		<shortcut schema="SPPID" source="T_Instrument" alias="" />
+		<shortcut schema="SPPID" source="T_ItemNote" alias="" />
+		<shortcut schema="SPPID" source="T_Label" alias="" />
+		<shortcut schema="SPPID" source="T_LabelPersist" alias="" />
+		<shortcut schema="SPPID" source="T_LeaderVertex" alias="" />
+		<shortcut schema="SPPID" source="T_LlamaModification" alias="" />
+		<shortcut schema="SPPID" source="T_Location" alias="" />
+		<shortcut schema="SPPID" source="T_Mechanical" alias="" />
+		<shortcut schema="SPPID" source="T_ModelItem" alias="" />
+		<shortcut schema="SPPID" source="T_ModelItemClaim" alias="" />
+		<shortcut schema="SPPID" source="T_ModelItemClaimOffline" alias="" />
+		<shortcut schema="SPPID" source="T_ModelItemClaimRep" alias="" />
+		<shortcut schema="SPPID" source="T_ModelItemLookup" alias="" />
+		<shortcut schema="SPPID" source="T_Note" alias="" />
+		<shortcut schema="SPPID" source="T_Nozzle" alias="" />
+		<shortcut schema="SPPID" source="T_OPC" alias="" />
+		<shortcut schema="SPPID" source="T_OptionAutoGap" alias="" />
+		<shortcut schema="SPPID" source="T_OptionDispSet" alias="" />
+		<shortcut schema="SPPID" source="T_OptionDispSetFolder" alias="" />
+		<shortcut schema="SPPID" source="T_OptionFormat" alias="" />
+		<shortcut schema="SPPID" source="T_OptionHeatTrace" alias="" />
+		<shortcut schema="SPPID" source="T_OptionSetting" alias="" />
+		<shortcut schema="SPPID" source="T_OptionSymbology" alias="" />
+		<shortcut schema="SPPID" source="T_Package" alias="" />
+		<shortcut schema="SPPID" source="T_Pipeline" alias="" />
+		<shortcut schema="SPPID" source="T_PipeRun" alias="" />
+		<shortcut schema="SPPID" source="T_PipingComp" alias="" />
+		<shortcut schema="SPPID" source="T_PipingPoint" alias="" />
+		<shortcut schema="SPPID" source="T_PlantItem" alias="" />
+		<shortcut schema="SPPID" source="T_PlantItemGroup" alias="" />
+		<shortcut schema="SPPID" source="T_PlantItemGroupJoin" alias="" />
+		<shortcut schema="SPPID" source="T_PlantItemGroupOther" alias="" />
+		<shortcut schema="SPPID" source="T_PropertyBreak" alias="" />
+		<shortcut schema="SPPID" source="T_Relationship" alias="" />
+		<shortcut schema="SPPID" source="T_Representation" alias="" />
+		<shortcut schema="SPPID" source="T_RepresentationLookup" alias="" />
+		<shortcut schema="SPPID" source="T_Revision" alias="" />
+		<shortcut schema="SPPID" source="T_RuleReference" alias="" />
+		<shortcut schema="SPPID" source="T_SafetyClass" alias="" />
+		<shortcut schema="SPPID" source="T_SignalPoint" alias="" />
+		<shortcut schema="SPPID" source="T_SignalRun" alias="" />
+		<shortcut schema="SPPID" source="T_SmartFrame" alias="" />
+		<shortcut schema="SPPID" source="T_SmartFrameStorage" alias="" />
+		<shortcut schema="SPPID" source="T_Source" alias="" />
+		<shortcut schema="SPPID" source="T_Status" alias="" />
+		<shortcut schema="SPPID" source="T_Symbol" alias="" />
+		<shortcut schema="SPPID" source="T_System" alias="" />
+		<shortcut schema="SPPID" source="T_Task" alias="" />
+		<shortcut schema="SPPID" source="T_TaskItemProperty" alias="" />
+		<shortcut schema="SPPID" source="T_Vessel" alias="" />
+		<shortcut schema="SPPID" source="V_AsBuiltModelItemList" alias="" />
+		<shortcut schema="SPPID" source="V_AsBuiltNozzleList" alias="" />
+		<shortcut schema="SPPID" source="V_AsBuiltOPCTagList" alias="" />
+		<shortcut schema="SPPID" source="V_AsBuiltPlantItemGroupList" alias="" />
+		<shortcut schema="SPPID" source="V_AsBuiltTagList" alias="" />
+		<shortcut schema="SPPID" source="V_GlobalModelItemList" alias="" />
+		<shortcut schema="SPPID" source="V_GlobalNozzleList" alias="" />
+		<shortcut schema="SPPID" source="V_GlobalOPCTagList" alias="" />
+		<shortcut schema="SPPID" source="V_GlobalPlantItemGroupList" alias="" />
+		<shortcut schema="SPPID" source="V_GlobalTagList" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="Applications" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="attributes" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="Category" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="CategoryFilter" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="codelists" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="correlatts" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="entities" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="Enumerations" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="FilterCriteria" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="FilterDefinition" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="FilteredRelationship" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="FilterInstance" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="intersects" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="Item" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="ItemAttributions" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="MAX_ID" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="relationships" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="SourceDestObjectRels" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="SPSorts" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="SPTPAttributes" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="SPTPLayouts" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="SPTPViews" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="uniqueatts" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="Version" alias="" />
+		<shortcut schema="SPPIDDATA_DICTIONARY" source="VersionInfo" alias="" />	
+	</queryShortcuts>
+	<query name="!Template" stagingDestinationName="">
+		<description>
+		</description>
+		<variables>
+			<!-- a textReplacement is a string that MUST be replaced via a string replacement before the query 
+				can be sent to the server; without this, the query will not be valid. 
+				All textVariables should start with "@!~" 
+				a declaration is a SQL variable for which the value should be provided before the query can be sent to
+				the server. A default value may make this unnecessary. 
+				All sql declarations will appear bofore the query as part of a DECLARE statement, and then 
+				again in a SET statement where the sql variable's value is set. SQL Variables MUST begin with "@"
+				Note that the 'value' attribute for both textReplacement and declaration are for providing a default
+				value. This may or may not be replaced later with another value when the query is being built by the 
+				query build function
+			-->
+			<textReplacement name="" value="" datatype="" />
+			<declaration name="" value="" datatype="" />
+		</variables>
+		<selection value="distinct" />
+		<selection value="top 30%" />
+		<fields>
+			<!-- source should generally reference the source alias if there is one; otherwise the source name -->
+			<field source="" name="" datatype="" alias="" />
+			<field source="" name="" datatype="" alias="" />
+			<field source="" name="" datatype="" alias="" />
+			<field source="" name="" datatype="" alias="" />
+			<field source="" name="" datatype="" alias="" />
+			<field source="" name="" datatype="" alias="" />
+		</fields>
+		<sources>
+			<!-- note that for SPPID, schema is NOT the actual schema name because this may change from project to project.
+				instead, it denotes the SPPID schema type name. From this, the true schema name can be derived from the SPPID
+				Site DB
+			-->
+			<source name="" 	schema="" 	joinType=""		alias="">
+				<!-- the first source will have an empty relation -->
+				<relation leftSource="" leftField="" rightSource="" rightField="" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="" 	schema="" 	joinType="Inner"		alias="">
+				<!-- joinToText indicates that the right field name should not be concatenated with the rightSource; instead, it will be single quoted as a constant
+					by default the value is left blank, which is the same as 'false'. The first relation clause must always have an empty conjunction -->
+				<relation conjunction="" leftSource="" leftField="" operator="=" 
+					rightSource="" rightField="" 
+					joinToText="" />
+				<relation conjunction="and" leftSource="" leftField="" operator="=" 
+					rightSource="" rightField="" 
+					joinToText="" />					
+			</source>
+			<source name="" 	schema="" 	joinType="Left"		alias="">
+				<relation leftSource="" leftField="" rightSource="" rightField="" 
+					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="" leftField="" rightSource="" rightField="mud" 
+					joinToText="True" operator="=" conjunction="and" />
+			</source>
+			
+		</sources>
+		<filters>
+			<!-- the first filter will always have an empty conjunction. all others must have a conjunction -->
+			<filter  preParenCount="0" source="" fieldName="" operator="=" filterValue="" postParenCount="0" conjunction="" />
+			<filter  preParenCount="0" source="" fieldName="" operator="=" filterValue="" postParenCount="0" conjunction="and" />		
+		</filters>
+		<sorts>
+			<!-- sortDirection should be left blank, or set to DESC if desired -->
+			<sort source="" fieldName="" sortDirection="" />
+		</sorts>
+	</query>
+	
+	<query name="!SiteData" stagingDestinationName="">
+		<description>
+			The SiteData query gives schema mapping information for every project in the site
+		</description>
+		<variables>
+			<declaration name="@ProjectDBName" value="" datatype="varchar(240)" />
+		</variables>
+		<fields>
+			<field source="DB" name="Data_base" 			datatype="" 								alias="" />
+			<field source="DB" name="DBServer" 				datatype="" 								alias="" />
+			<field source="RI" name="Path" 					datatype="" 								alias="" />
+			<field source="DB" name="SP_Schema_Type" 		datatype="" 								alias="" />
+			<field source="DB" name="Username" 				datatype="" 								alias="" />
+			<field source="RI" name="Description" 			datatype="" 								alias="" />
+			<field source="RI" name="PlantGroupTypeName" 	datatype="" 								alias="" />
+			<field source="RI" name="DateCreated" 			datatype="" 								alias="" />
+			<field source="DB" name="SP_ID" 				datatype="" 								alias="" />
+			<field source="DB" name="SP_RootItemID" 		datatype="" 								alias="" />
+		</fields>
+		<sources>
+			<source name="T_DB_Data" 	schema="SITE" 	joinType=""							alias="DB">
+				<relation leftSource="" leftField="" rightSource="" rightField="" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="T_RootItem" 	schema="SITE" 	joinType="Inner"					alias="RI">
+				<relation conjunction="" leftSource="DB" leftField="SP_RootItemID" operator="=" 
+					rightSource="RI" rightField="SP_ID" 
+					joinToText="" />
+			</source>
+		</sources>
+		<filters>
+			<!-- the first filter will always have an empty conjunction. all others must have a conjunction -->
+			<filter  preParenCount="0" source="DB" fieldName="Data_Base" operator="=" 
+				filterValue="@ProjectDBName" postParenCount="0" conjunction="" />
+		</filters>
+		<sorts>
+		</sorts>
+	</query>
+  
+	<query name="SPPIDPanels" stagingDestinationName="Panels">
+		<description>
+		</description>
+		<variables>
+		</variables>
+		<selection value="distinct" />
+		<fields>
+			<field source="PlI" 	name="ItemTag" 						alias=""							datatype="" />
+			<field source="PlI" 	name="SupplyBy" 					alias=""							datatype="" />
+			<field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
+			<field source="PlI" 	name="SP_PlantGroupID" 				alias=""							datatype="" />
+			<field source="PlI" 	name="SP_PartOfID" 					alias=""							datatype="" />
+			<field source="PlI" 	name="Name" 						alias="PlantItemName"				datatype="" />
+			
+			<field source="PG" 		name="Name" 						alias="PidUnitName"					datatype="" />
+			<field source="PG" 		name="Description" 					alias="PidUnitDescription"			datatype="" />
+			
+			<field source="Dr" 		name="DrawingNumber" 				alias=""							datatype="" />
+			<field source="Dr" 		name="Name" 						alias="DrawingName"					datatype="" />
+			<field source="" 		name="" 							alias="Title"						datatype="" 
+				expression="REPLACE(REPLACE(REPLACE(Dr.Title,CHAR(9),' '),CHAR(10),' '),CHAR(13),' ')" />
+			<field source="Dr" 		name="Description" 					alias="DrawingDescription"			datatype="" />
+			
+			<field source="Inst" 	name="TagSequenceNo" 				alias=""							datatype="" />
+			<field source="Inst" 	name="TagSuffix" 					alias=""							datatype="" />
+			<field source="Inst" 	name="LoopTagSuffix" 				alias=""							datatype="" />
+			<field source="Inst" 	name="InstrumentClass" 				alias=""							datatype="" />
+			<field source="Inst" 	name="InstrumentType" 				alias=""							datatype="" />
+			<field source="Inst" 	name="PipingMaterialsClass" 		alias=""							datatype="" />
+			<field source="Inst" 	name="SP_PipeRunID" 				alias=""							datatype="" />
+			<field source="Inst" 	name="SP_SignalRunID" 				alias=""							datatype="" />
+			<field source="Inst" 	name="MeasuredVariableCode" 		alias="UnitProcessNo"				datatype="" />
+			<field source="Inst" 	name="InstrumentTypeModifier" 		alias="TagPrefix"					datatype="" />
+			
+			<field source="IC" 		name="NominalDiameter" 				alias=""							datatype="" />
+			<field source="IC" 		name="ActuatorType" 				alias=""							datatype="" />
+			
+			<field source="Cl" 		name="codeList_number" 				alias=""							datatype="" />
+			<field source="Cl"		name="codelist_text" 				alias=""							datatype="" />
+			<field source="Cl"		name="codelist_index" 				alias=""							datatype="" />
+			<field source="Cl" 		name="codelist_constraint" 			alias=""							datatype="" />
+			
+			<field source="En" 		name="Name" 						alias="EnumerationName"				datatype="" />
+			<field source="IFM" 	name="FailureAction" 				alias=""							datatype="" />
+			<field source="Rep" 	name="InStockPile" 					alias=""							datatype="" />
+			<field source="U" 		name="UnitCode" 					alias="PidUnitCode"					datatype="" />
+		</fields>
+		<sources>
+			<!-- note that for SPPID, schema is NOT the actual schema name because this may change from project to project.
+				instead, it denotes the SPPID schema type name. From this, the true schema name can be derived from the SPPID
+				Site DB
+			-->
+			<source name="T_PlantGroup" 	schema="SPAPLANT"					joinType=""					 	alias="PG">
+			</source> 
+			<source name="T_Drawing"		schema="SPPID"    					joinType="Inner" 				alias="Dr">
+				<relation leftSource="PG" leftField="SP_ID" rightSource="Dr" rightField="SP_PlantGroupID" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="T_Representation"	schema="SPPID"						joinType="Inner" 				alias="Rep">
+				<relation leftSource="Dr" leftField="SP_ID" rightSource="Rep" rightField="SP_DrawingID" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="T_Unit"			schema="SPAPLANT"					joinType="@!~IncludeStockpile" 	alias="U" >
+				<relation leftSource="PG" leftField="SP_ID" rightSource="U" rightField="SP_ID" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="T_PlantItem"		schema="SPPID"    					joinType="Inner" 				alias="PlI">
+				<relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="U" rightField="SP_ID" 
+					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="PlI" leftField="SP_ID" rightSource="Rep" rightField="SP_ModelItemID" 
+					joinToText="" operator="=" conjunction="and" />
+				<relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="PG" rightField="SP_ID" 
+					joinToText="" operator="=" conjunction="and" />
+			</source>
+			<source name="T_Instrument" 	chema="SPPID"    					joinType="Inner" 				alias="Inst">
+				<relation leftSource="Inst" leftField="SP_ID" rightSource="PlI" rightField="SP_ID" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="T_InlineComp"		schema="SPPID"    					joinType="Inner" 				alias="IC">
+				<relation leftSource="IC" leftField="SP_InstrumentID" rightSource="Inst" rightField="SP_ID" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="T_InstrFailMode"	schema="SPPID"    					joinType="Inner" 				alias="IFM">
+				<relation leftSource="IFM" leftField="SP_InstrumentID" rightSource="Inst" rightField="SP_ID" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Inner" 				alias="Cl">
+				<relation leftSource="Cl" leftField="codelistindex" rightSource="Inst" rightField="InstrumentType" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="Enumerations"		schema="SPPIDDATA_DICTIONARY"    	joinType="Inner" 				alias="En">
+				<relation leftSource="En" leftField="Id" rightSource="Cl" rightField="codelist_number" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+		</sources>
+		<filters>
+			<filter  preParenCount="0" source="En" fieldName="Name" operator="=" filterValue="InstrumentComponentType" postParenCount="0" conjunction="" />
+		</filters>
+		<sorts>
+			<sort source="" fieldName="" sortDirection="" />
+		</sorts>
+	</query>
+  
+</configuration>
