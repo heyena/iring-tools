@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="iRINGTools.Mediators">
+<project basedir="." default="build" name="iringtools-mediators">
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
-	<property name="iRINGTools.Common.location" value="../iRINGTools.Common" />
+	<property name="iringtools-common.location" value="../iRINGTools.Common" />
 
 	<path id="axiom-1.2.8.userclasspath">
 		<fileset dir="../libraries/axiom-1.2.8">
@@ -48,7 +48,7 @@
 	</path>
 
 	<path id="iRINGTools.Common.classpath">
-		<pathelement location="${iRINGTools.Common.location}/bin" />
+		<pathelement location="${iringtools-common.location}/bin" />
 	</path>
 
 	<target name="clean">
@@ -67,7 +67,7 @@
 	</target>
 
 	<target name="build-subprojects">
-		<ant antfile="build.xml" dir="${iRINGTools.Common.location}"
+		<ant antfile="build.xml" dir="${iringtools-common.location}"
 			inheritAll="false" target="build">
 			<propertyset>
 				<propertyref name="build.compiler" />
@@ -76,7 +76,7 @@
 	</target>
 
 	<target name="dist-subprojects">
-		<ant antfile="build.xml" dir="${iRINGTools.Common.location}"
+		<ant antfile="build.xml" dir="${iringtools-common.location}"
 			inheritAll="false" target="dist">
 			<propertyset>
 				<propertyref name="build.compiler" />
@@ -105,8 +105,8 @@
 			<fileset dir="dist" includes="**/*" />
 		</delete>
 		<copy todir="bin" flatten="false">
-			<fileset dir="${iRINGTools.Common.location}/bin" />
+			<fileset dir="${iringtools-common.location}/bin" />
 		</copy>
-		<jar destfile="dist/mediators.jar" basedir="bin" excludes="**/.svn/" />
+		<jar destfile="dist/${ant.project.name}.jar" basedir="bin" excludes="**/.svn/" />
 	</target>
 </project>
