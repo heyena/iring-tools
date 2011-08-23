@@ -168,4 +168,10 @@ public final class IOUtils
   {
     return (str == null || str.length() == 0);
   }
+  
+  public static boolean fileExists(String filePath)
+  {
+    File file = new File(filePath);
+    return file.exists();
+  }
 }

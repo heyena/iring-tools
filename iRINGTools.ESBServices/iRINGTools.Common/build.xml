@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project basedir="." default="build" name="iRINGTools.Common">
+<project basedir="." default="build" name="iringtools-common">
 	<property name="debuglevel" value="source,lines,vars" />
 	<property name="target" value="1.6" />
 	<property name="source" value="1.6" />
@@ -60,6 +60,7 @@
 
 	<target name="clean">
 		<delete dir="bin" />
+		<delete dir="dist" />
 	</target>
 
 	<target name="init" depends="clean">
