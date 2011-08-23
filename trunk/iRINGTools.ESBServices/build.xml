@@ -48,8 +48,8 @@
   </target>
   
   <target name="deploy" depends="dist">
-    <copy file="dist/apps.war" tofile="${tomcat.webapps.location}/apps.war"/>
-    <copy file="dist/services.war" tofile="${tomcat.webapps.location}/services.war"/>
+    <copy file="dist/iringtools-apps.war" tofile="${tomcat.webapps.location}/apps.war"/>
+    <copy file="dist/iringtools-services.war" tofile="${tomcat.webapps.location}/services.war"/>
     <jar destfile="${bamboo.dist.location}/iRINGTools-Services.zip" basedir="dist"/>    
   </target>
 </project>
