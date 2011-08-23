@@ -206,13 +206,17 @@ Public Class SPPIDWorkingSet
 
         ' fetch the site data
         Try
-            _siteDataTA.Adapter.SelectCommand = New SqlCommand(q, SiteConnection)
+            ' warning to implementers - you can set the command text, but do not attempt to replace the command itself;
+            ' setting the command will NOT update the prive CommandCollection, and the command will automatically be
+            ' overridden when Fill (or the default GetData) is called.
+            _siteDataTA.Adapter.SelectCommand.CommandText = q
         Catch ex As Exception
             Throw New InvalidExpressionException("The site data query '" & q & "' is malformed")
         End Try
 
-        _siteDataDT = _siteDataTA.GetData
-        _siteDataDV = New DataView(_siteDataDT, "SP_Schema_Type='SPAPLANT'", "SP_Schema_Type", DataViewRowState.CurrentRows)
+        _siteDataTA.ClearBeforeFill = True
+        _siteDataDT = _siteDataTA.GetData()
+        _siteDataDV = New DataView(_siteDataDT, "", "SP_Schema_Type", DataViewRowState.CurrentRows)
 
         ' set the project-specific schema set for this project
         For Each drv In _siteDataDV

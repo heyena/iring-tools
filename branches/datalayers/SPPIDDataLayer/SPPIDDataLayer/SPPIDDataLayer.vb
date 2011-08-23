@@ -22,7 +22,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 #Region " Variables "
 
-    Private _dataObjects As List(Of IDataObject) = Nothing
     'Private _projDatasource As Llama.LMADataSource = Nothing ' SPPID DataSource
     'Private _lmFilters As Llama.LMAFilter = Nothing
     'Private _lmCriterion As Llama.LMACriterion = Nothing
@@ -33,7 +32,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Private AppSettings As AdapterSettings
     Private ProjConfig As Xml.XmlDocument
     Private SPWorkSet As SPPIDWorkingSet
-    Private _dbDictionary As DataDictionary
 
 #End Region
 
@@ -92,204 +90,25 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 #Region " Overridden Public Methods "
 
-    'Public Overloads Overrides Function Delete(objectType As String, filter As org.iringtools.library.DataFilter) As org.iringtools.library.Response
-    '    Return New Response
-    'End Function
+    Public Overrides Function GetDatabaseDictionary() As DatabaseDictionary
 
-    'Public Overloads Overrides Function Delete(objectType As String, identifiers As System.Collections.Generic.IList(Of String)) As org.iringtools.library.Response
-    '    Return New Response
-    'End Function
+        Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
 
-    'Public Overloads Overrides Function [Get](objectType As String, filter As org.iringtools.library.DataFilter, pageSize As Integer, startIndex As Integer) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
+        Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
 
-    '    Try
-    '        LoadDataDictionary(objectType)
+        _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
 
-    '        Dim allDataObjects As IList(Of IDataObject) = LoadDataObjects(objectType)
+        '*************************************************
+        Dim databaseDictionary As New DatabaseDictionary
+        databaseDictionary.dataObjects = DataDictionary.dataObjects
+        databaseDictionary.Provider = "MsSql2008"
+        databaseDictionary.ConnectionString = "Data Source=.\SQLEXPRESS;database=SPPID;User ID=SPPID;Password=sppid"
+        databaseDictionary.SchemaName = "dbo"
+        '*************************************************
 
-    '        ' Apply filter
-    '        If filter IsNot Nothing AndAlso filter.Expressions IsNot Nothing AndAlso filter.Expressions.Count > 0 Then
-    '            Dim predicate = filter.ToPredicate(_dataObjectDefinition)
+        Return databaseDictionary
 
-    '            If predicate IsNot Nothing Then
-    '                _dataObjects = allDataObjects.AsQueryable().Where(predicate).ToList()
-    '            End If
-    '        End If
-
-    '        If filter IsNot Nothing AndAlso filter.OrderExpressions IsNot Nothing AndAlso filter.OrderExpressions.Count > 0 Then
-    '            Throw New NotImplementedException("OrderExpressions are not supported by the CSV DataLayer.")
-    '        End If
-
-    '        'Page and Sort The Data
-    '        If pageSize > _dataObjects.Count() Then
-    '            pageSize = _dataObjects.Count()
-    '        End If
-    '        _dataObjects = _dataObjects.GetRange(startIndex, pageSize)
-
-    '        ' Return _dataObjects
-    '    Catch ex As Exception
-    '        ' _logger.[Error]("Error in GetList: " & ex.ToString())
-
-    '        Throw New Exception("Error while getting a list of data objects of type [" & objectType & "].", ex)
-    '    End Try
-
-    '    Return New System.Collections.Generic.List(Of org.iringtools.library.IDataObject)
-    'End Function
-
-    'Public Overloads Overrides Function [Get](objectType As String, identifiers As System.Collections.Generic.IList(Of String)) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
-    '    Try
-
-    '        LoadDataDictionary(objectType)
-
-    '        Dim allDataObjects As IList(Of IDataObject) = LoadDataObjects(objectType)
-
-    '        Dim expressions = FormMultipleKeysPredicate(identifiers)
-
-    '        If expressions IsNot Nothing Then
-    '            _dataObjects = allDataObjects.AsQueryable().Where(expressions).ToList()
-    '        End If
-
-    '        Return _dataObjects
-    '    Catch ex As Exception
-    '        '  _logger.[Error]("Error in GetList: " & ex.ToString())
-    '        Throw New Exception("Error while getting a list of data objects of type [" & objectType & "].", ex)
-    '    End Try
-
-    'End Function
-    'Public Overrides Function GetRelatedObjects(dataObject As org.iringtools.library.IDataObject, relatedObjectType As String) As System.Collections.Generic.IList(Of org.iringtools.library.IDataObject)
-    '    Return New System.Collections.Generic.List(Of org.iringtools.library.IDataObject)
-    'End Function
-
-    'Public Overrides Function GetDictionary() As DataDictionary
-    '    Dim dataDictionary As New DataDictionary()
-
-    '    LoadConfiguration()
-
-    '    Dim dataObjects As New List(Of DataObject)()
-    '    For Each commodity As XElement In _configuration.Elements("commodities").Elements("commodity")
-    '        'commodity
-
-    '        Dim name As String = commodity.FirstAttribute.Value
-    '        '.objectNamespace = _settings("ExecutingAssemblyName")
-
-    '        ''TO-DO: What should be the values for objectNamespace
-    '        Dim dataObject As New DataObject() With { _
-    '          .objectName = name, _
-    '          .keyDelimeter = "_", _
-    '          .tableName = "tbl" + name, _
-    '       .objectNamespace = "com.example"
-    '        }
-
-    '        Dim keyProperties As New List(Of KeyProperty)()
-    '        Dim dataProperties As New List(Of DataProperty)()
-
-    '        For Each attribute As XElement In commodity.Element("attributes").Elements("attribute")
-    '            ' Name
-    '            Dim attributeName As String = attribute.Attribute("name").Value
-
-    '            'Column Name
-    '            Dim columnName As String = attribute.Attribute("name").Value
-
-    '            ' is key
-    '            Dim isKey As Boolean = False
-    '            If attribute.Attribute("isKey") IsNot Nothing Then
-    '                [Boolean].TryParse(attribute.Attribute("isKey").Value, isKey)
-    '            End If
-
-    '            ' Data type: String, Integer, Real, DateTime, Picklist, Boolean
-    '            Dim dataTypeName As String = attribute.Attribute("datatype").Value
-
-
-    '            Dim dataType__1 As DataType = DataType.[String]
-    '            'Enum.TryParse<DataType>(attribute.Attribute("dataType").Value, out dataType);
-    '            Select Case dataTypeName
-    '                Case "String"
-    '                    dataType__1 = DataType.[String]
-    '                    Exit Select
-    '                Case "Integer"
-    '                    dataType__1 = DataType.Int32
-    '                    Exit Select
-    '                Case "Real"
-    '                    dataType__1 = DataType.[Double]
-    '                    Exit Select
-    '                Case "DateTime"
-    '                    dataType__1 = DataType.DateTime
-    '                    Exit Select
-    '                Case "Picklist"
-    '                    dataType__1 = DataType.[String]
-    '                    Exit Select
-    '                Case "Boolean"
-    '                    dataType__1 = DataType.[Boolean]
-    '                    Exit Select
-    '                Case Else
-    '                    dataType__1 = DataType.[String]
-    '                    Exit Select
-    '            End Select
-
-    '            ' Data length
-    '            Dim dataLength As Integer = 0
-    '            If attribute.Attribute("length") IsNot Nothing Then
-    '                Int32.TryParse(attribute.Attribute("length").Value, dataLength)
-    '            End If
-
-    '            If dataLength = 0 AndAlso dataTypeName = "Picklist" Then
-    '                Int32.TryParse(_settings("PicklistDataLength"), dataLength)
-    '            End If
-
-
-    '            Dim dataProperty As New DataProperty() With { _
-    '              .propertyName = attributeName, _
-    '              .dataType = dataType__1, _
-    '              .dataLength = dataLength, _
-    '              .isNullable = True, _
-    '              .showOnIndex = False, _
-    '              .columnName = columnName
-    '            }
-
-    '            If isKey Then
-    '                dataProperty.isNullable = False
-    '                dataProperty.showOnIndex = True
-
-    '                Dim keyProperty As New KeyProperty() With { _
-    '                  .keyPropertyName = attributeName _
-    '                }
-
-    '                keyProperties.Add(keyProperty)
-    '            End If
-
-    '            dataProperties.Add(dataProperty)
-    '        Next
-
-    '        dataObject.keyProperties = keyProperties
-    '        dataObject.dataProperties = dataProperties
-
-    '        dataObjects.Add(dataObject)
-    '    Next
-
-    '    dataDictionary.dataObjects = dataObjects
-
-    '    Return dataDictionary
-    'End Function
-
-    'Public Overrides Function GetDatabaseDictionary() As DatabaseDictionary
-
-    '    Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
-
-    '    Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
-
-    '    _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
-
-    '    '*************************************************
-    '    Dim databaseDictionary As New DatabaseDictionary
-    '    databaseDictionary.dataObjects = DataDictionary.dataObjects
-    '    databaseDictionary.Provider = "MsSql2008"
-    '    databaseDictionary.ConnectionString = "Data Source=.\SQLEXPRESS;database=SPPID;User ID=SPPID;Password=sppid"
-    '    databaseDictionary.SchemaName = "dbo"
-    '    '*************************************************
-
-    '    Return databaseDictionary
-
-    'End Function
+    End Function
 
     Public Overrides Function GetDictionary() As DataDictionary
 
@@ -501,7 +320,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-
     ''' <summary>
     ''' Fetch the queries from the staging configuration XDocument for this project
     ''' </summary>
@@ -565,9 +383,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     End Function
 
 #End Region
-
-
-
 
 #Region "Private Functions"
 
@@ -679,7 +494,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Return New Response
     End Function
 
-
     'Private Function skipDwg( _
     '      ByRef rep As LMRepresentation, _
     '      ByRef errMsgs As String) As Boolean
@@ -704,7 +518,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     '        End If
     '    End If
     'End Function
-
 
     Private Sub LoadConfiguration()
         If _configuration Is Nothing Then
