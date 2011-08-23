@@ -224,7 +224,6 @@ namespace iRINGTools.Web.Models
 			private DataFilter createDataFilter(string filter, string sortBy, string sortOrder)
 			{
 				DataFilter dataFilter = null;				
-				Dictionary<string, string> valueMaps = null;
 				
 				// process filtering
 				if (filter != null && filter.Count() > 0)
@@ -266,16 +265,7 @@ namespace iRINGTools.Web.Models
 								expression.Values = values;
 								string value = filterExpression["value"];
 
-								if (valueMaps != null)
-								{
-									String valueMap = valueMaps[filterExpression["value"]];
-
-									if (valueMap != null && valueMap != String.Empty)
-									{
-										values.Add(valueMap);
-										value = valueMap;
-									}
-								}
+								
 
 								values.Add(value);
 							}
