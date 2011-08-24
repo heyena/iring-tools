@@ -201,7 +201,7 @@
 		<variables>
 			<!-- a textReplacement is a string that MUST be replaced via a string replacement before the query 
 				can be sent to the server; without this, the query will not be valid. 
-				All textVariables should start with "@!~" 
+				All textVariables should start with "!@~" 
 				a declaration is a SQL variable for which the value should be provided before the query can be sent to
 				the server. A default value may make this unnecessary. 
 				All sql declarations will appear bofore the query as part of a DECLARE statement, and then 
@@ -306,6 +306,7 @@
 		<description>
 		</description>
 		<variables>
+			<textReplacement name="!@~IncludeStockpileJoin" value="false" datatype="boolean" />
 		</variables>
 		<selection value="distinct" />
 		<fields>
@@ -364,7 +365,7 @@
 				<relation leftSource="Dr" leftField="SP_ID" rightSource="Rep" rightField="SP_DrawingID" 
 					joinToText="" operator="=" conjunction="" />
 			</source>
-			<source name="T_Unit"			schema="SPAPLANT"					joinType="@!~IncludeStockpile" 	alias="U" >
+			<source name="T_Unit"			schema="SPAPLANT"					joinType="!@~IncludeStockpilejoin" 	alias="U" >
 				<relation leftSource="PG" leftField="SP_ID" rightSource="U" rightField="SP_ID" 
 					joinToText="" operator="=" conjunction="" />
 			</source>
@@ -376,7 +377,7 @@
 				<relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="PG" rightField="SP_ID" 
 					joinToText="" operator="=" conjunction="and" />
 			</source>
-			<source name="T_Instrument" 	chema="SPPID"    					joinType="Inner" 				alias="Inst">
+			<source name="T_Instrument" 	schema="SPPID"    					joinType="Inner" 				alias="Inst">
 				<relation leftSource="Inst" leftField="SP_ID" rightSource="PlI" rightField="SP_ID" 
 					joinToText="" operator="=" conjunction="" />
 			</source>
