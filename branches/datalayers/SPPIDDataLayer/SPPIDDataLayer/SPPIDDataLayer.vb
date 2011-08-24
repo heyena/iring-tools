@@ -32,13 +32,17 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Private AppSettings As AdapterSettings
     Private ProjConfig As Xml.XmlDocument
     Private SPWorkSet As SPPIDWorkingSet
+    Private _queryVariableReplacementValues As Dictionary(Of String, String)
+    Private _textReplacementValues As Dictionary(Of String, String)
+
 
 #End Region
 
 #Region " Instantiation "
 
     <Inject()>
-    Public Sub New(settings As AdapterSettings)
+    Public Sub New(settings As AdapterSettings, ByRef queryVariables As Dictionary(Of String, String), _
+                   ByRef textReplacements As Dictionary(Of String, String))
 
         MyBase.New(settings)
 
@@ -52,6 +56,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         ' directly in the code.
         Dim projectConnStr As String = _settings("SPPIDConnectionString")
         Dim siteConnStr As String = _settings("SPPIDSiteConnectionString")
+        Dim stageConnStr As String = _settings("iRingStagingConnectionString")
         Dim configPath As String
         Dim siteDataQuery As XElement = Nothing
 
@@ -69,8 +74,20 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             configPath = _settings("ProjectConfigurationPath")
             AddProjConfigSettings(configPath)
+
+
+            ' create new dictionaries that are case-insensitive
+            _textReplacementValues = New Dictionary(Of String, String)(textReplacements, StringComparer.InvariantCultureIgnoreCase)
+            _queryVariableReplacementValues = New Dictionary(Of String, String)(queryVariables, StringComparer.InvariantCultureIgnoreCase)
+
+            ' this method of creating does not appear to set the comparer type correctly
+            '_textReplacementValues = textReplacements.ToDictionary(Function(k) k.Key, Function(v) v.Value, StringComparer.InvariantCultureIgnoreCase)
+            '_queryVariableReplacementValues = queryVariables.ToDictionary(Function(k) k.Key, Function(v) v.Value, StringComparer.InvariantCultureIgnoreCase)
             GetQueryByName("!SiteData", siteDataQuery)
-            SPWorkSet = New SPPIDWorkingSet(New SqlConnection(projectConnStr), New SqlConnection(siteConnStr), siteDataQuery)
+            SPWorkSet = New SPPIDWorkingSet(New SqlConnection(projectConnStr),
+                                            New SqlConnection(siteConnStr),
+                                            New SqlConnection(stageConnStr),
+                                            siteDataQuery)
 
             GetCurrentSPPIDSchema()
             Test()
@@ -246,9 +263,10 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim replacements As IEnumerable(Of XElement) = Nothing
         Dim declarations As IEnumerable(Of XElement) = Nothing
         Dim queryParts As New Dictionary(Of SQLClause, String)
-        Dim queryString As String
+        Dim queryText As String = ""
         Dim stgCfgQueries As IEnumerable(Of XElement) = Nothing
         Dim siteDataQuery As XElement = Nothing
+
 
         ' ToDo *** stopped here *** need to use the dataset to fetch the schema, update with any DB-specific data (such as queryAlias)
         ' from a config file, then use the dataType information to help create tehe staging table ddl
@@ -258,18 +276,23 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         For Each q As XElement In StgCfgQueries
 
             queryParts.Clear()
-            GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions, _
-                          queryParts, replacements, declarations)
+            GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
+                          queryParts, replacements, declarations, SPWorkSet.CommonServerName)
+
+            ' commbine the query parts and perform any necessary replacements
+            queryParts.BuildQuery(queryText, replacements, _textReplacementValues, SPWorkSet.StagingServerInCommon)
+
+            ' ToDo - create a new connection and execute the query in order to dump the data into the staging area
+            ' NOTE - although the user MUST have rights to read from source tables in the source DB 
+            ' and create tables in the Staging DB, we cannot depend on the user having sufficient rights to create 
+            ' linked tables; nor can we depend on OpenRowset being an available option. 
+            ' In cases where the source and destination servers differ, then our best option is to capture the data in
+            ' a temporary table, create the destination table separately, and then write back out to this table. 
+
         Next
 
-        ' ToDo - create the SET section if there is a DECLARE section
-        ' ToDo - create a master replacement dictionary for query variables, the use it to update the 
-        ' temporary values in the replacement iEnumerable(of XElement)
-
-        ' commbine the query parts and perform any necessary replacements
-        queryString = ReplaceQueryText(queryParts.BuildQuery, replacements)
-
         Return "Pass"
+
     End Function
 
     ' fetch the staging setup configuration, which is the data (stored in the  <projectID>.SPPID.config file) detailing the server/db/login
@@ -296,7 +319,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     ''' <param name="SiteDataQuery"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function GetQueryByName(ByVal QueryName As String, ByRef SiteDataQuery As XElement) As String
+    Private Function GetQueryByName(ByVal QueryName As String, ByRef QueryNode As XElement) As String
 
         Dim doc As XDocument
 
@@ -310,7 +333,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             Select el
             Where el.Attribute("name").Value = QueryName
 
-            SiteDataQuery = q.First
+            QueryNode = q.First
 
         Catch ex As Exception
             Return "Fail: " & ex.Message
@@ -345,40 +368,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         End Try
 
         Return "Pass"
-
-    End Function
-
-    ''' <summary>
-    ''' replaces certain strings in the query with another value
-    ''' </summary>
-    ''' <param name="QueryString"></param>
-    ''' <param name="replacements"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Private Function ReplaceQueryText(QueryString As String, replacements As IEnumerable(Of XElement)) As String
-
-        Dim reg As Regex
-        Dim pat As String
-        'ToDo - add a replacement function where the declared variables (from the decs element) are substitued from some master list
-        ' and used to replace the variable names within the query sections. This is best done after the query has been built from
-        ' it's parts to avoid having to run the rplacement against multiple sections. 
-
-        Try
-
-            For Each r As XElement In replacements
-
-                pat = r.Attribute("name").Value & "[^a-zA-Z0-9_]" ' this pattern attempts to isolate the varaible to "whole word only"
-                QueryString = Regex.Replace(QueryString, pat, r.Attribute("value").Value)
-                'QueryString = QueryString.Replace(r.Attribute("name").Value
-
-            Next
-
-        Catch ex As Exception
-            Return "Fail: " & ex.Message
-        End Try
-
-        Return "Pass"
-
 
     End Function
 

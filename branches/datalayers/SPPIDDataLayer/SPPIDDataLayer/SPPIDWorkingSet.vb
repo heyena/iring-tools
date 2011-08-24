@@ -25,10 +25,24 @@ Public Class SPPIDWorkingSet
     Private _SITESchemaName As String
     Private SPQueries As SmartPlantDBQueries
     Private _SchemaSubstitutions As Dictionary(Of String, String)
+    Private _StagingServerInCommon As Boolean
+    Private _CommonServerName As String
 
 #End Region
 
 #Region " Properties "
+
+    Public ReadOnly Property CommonServerName() As String
+        Get
+            Return _CommonServerName
+        End Get
+    End Property
+
+    Public ReadOnly Property StagingServerInCommon() As Boolean
+        Get
+            Return _StagingServerInCommon
+        End Get
+    End Property
 
     Public ReadOnly Property Connection As SqlConnection
         Get
@@ -98,9 +112,15 @@ Public Class SPPIDWorkingSet
 
 #Region " Constructors "
 
-    Public Sub New(ProjectConnection As SqlConnection, SiteConnection As SqlConnection, SiteDataQuery As XElement)
+    Public Sub New(ProjectConnection As SqlConnection,
+                   SiteConnection As SqlConnection,
+                   StagingConnection As SqlConnection,
+                   SiteDataQuery As XElement)
 
-        SPQueries = New SmartPlantDBQueries
+        'SPQueries = New SmartPlantDBQueries
+        _StagingServerInCommon = (ProjectConnection.DataSource = StagingConnection.DataSource)
+        _CommonServerName = IIf(_StagingServerInCommon, ProjectConnection.DataSource, "")
+
         _SchemaSubstitutions = New Dictionary(Of String, String)
         _siteDataTA = New SQLSchemaDSTableAdapters.SiteDataTableAdapter
         _tablesTA = New SQLSchemaDSTableAdapters.TablesTableAdapter
@@ -148,12 +168,12 @@ Public Class SPPIDWorkingSet
     ''' Derive the site schema, and from that, query the site to get the schema for the given database schema information
     ''' </summary>
     ''' <remarks></remarks>
-    Private Sub GetBaselineSchema(SiteConnection As SqlConnection, ProjectDBname As String, SiteDataQuery As XElement)
+    Private Sub GetBaselineSchema(SiteConnection As SqlConnection, ProjectDBname As String, ByVal SiteDataQuery As XElement)
 
         Dim SiteDR As SQLSchemaDS.SiteDataRow
         Dim TablesDR As SQLSchemaDS.TablesRow
         Dim drv As DataRowView
-        Dim q As String
+        Dim queryText As String = ""
         Dim schemaTp As SPSchemaType
         Dim rVal As Boolean
         Dim queryParts As New Dictionary(Of SQLClause, String)
@@ -197,21 +217,22 @@ Public Class SPPIDWorkingSet
         _SITESchemaName = TablesDR.Schema
         _SchemaSubstitutions.Clear()
         _SchemaSubstitutions.Add(SPSchemaType.SITE.ToString, _SITESchemaName)
-        GetQueryParts(SiteDataQuery, ColumnsView, TablesView, _SchemaSubstitutions, queryParts, replacements, declarations)
+        GetQueryParts(SiteDataQuery, ColumnsView, TablesView, _SchemaSubstitutions,
+                      queryParts, replacements, declarations)
 
         ' the only SET necessary should be the database name
         setClause = "SET @ProjectDBName='" & ProjectDBname & "'" & nltb
         queryParts.Add(SQLClause.Set, setClause)
-        q = queryParts.BuildQuery
+        queryParts.BuildQuery(queryText)
 
         ' fetch the site data
         Try
             ' warning to implementers - you can set the command text, but do not attempt to replace the command itself;
             ' setting the command will NOT update the prive CommandCollection, and the command will automatically be
             ' overridden when Fill (or the default GetData) is called.
-            _siteDataTA.Adapter.SelectCommand.CommandText = q
+            _siteDataTA.Adapter.SelectCommand.CommandText = queryText
         Catch ex As Exception
-            Throw New InvalidExpressionException("The site data query '" & q & "' is malformed")
+            Throw New InvalidExpressionException("The site data query '" & queryText & "' is malformed")
         End Try
 
         _siteDataTA.ClearBeforeFill = True

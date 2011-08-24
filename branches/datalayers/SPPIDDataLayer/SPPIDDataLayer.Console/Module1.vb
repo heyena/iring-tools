@@ -22,6 +22,8 @@ Module Module1
 
         Dim ninjectSettings = New NinjectSettings() With {.LoadExtensions = False}
         Dim spdl As iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer
+        Dim textReplacements As New Dictionary(Of String, String)
+        Dim queryVariables As New Dictionary(Of String, String)
         Dim tmp As String
 
         _kernel = New StandardKernel(ninjectSettings)
@@ -71,10 +73,20 @@ Module Module1
             _adapterSettings.AppendSettings(New SD.AppSettingsReader(_settings("ProjectConfigurationPath")))
         End If
 
-        ' Ninject Extension requires fully qualified path.
+        ' set up the list of text replacements and query variables. The variable or text replacement key should be in the form
+        ' <queryName>.<variableName>. the variableName portion of this for text replacements should always start with '!@~'
+        ' if the queryName is set to !All then this replacement will apply to all queries
 
+        ' NOTE: these key-value pairs are hard-coded here but should be built from user choices instead in a production environment
+        textReplacements.Add("!All.!@~IncludeStockpileJoin", "left")
+
+        ' NOTE: although you can provide a @ProjectDBName in the queryVariables, it will not be used to build the SITE data query and set the schema
+        ' for queries in SPPID; this information is instead taken from the ProjectConfiguration file
+        'queryVariables.Add("!All.@ProjectDBName", "whatever")
+
+        ' Ninject Extension requires fully qualified path.
         _kernel.Load(Path.Combine(_baseDirectory, tmp))
-        spdl = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings)
+        spdl = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings, queryVariables, textReplacements)
 
         '_sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
 
