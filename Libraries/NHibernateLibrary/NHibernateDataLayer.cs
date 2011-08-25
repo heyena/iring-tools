@@ -70,7 +70,7 @@ namespace org.iringtools.adapter.datalayer
 
       if (File.Exists(_databaseDictionaryPath))
       {
-        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_databaseDictionaryPath);
+        _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_databaseDictionaryPath, _settings["SecretKeyFile"]);
       }
 
       if (File.Exists(_hibernateConfigPath) && File.Exists(hibernateMappingPath))
@@ -84,7 +84,10 @@ namespace org.iringtools.adapter.datalayer
         if (connStr.ToUpper().Contains("DATA SOURCE"))
         {
           // connection string is not encrypted, encrypt and write it back
-          string encryptedConnStr = EncryptionUtility.Encrypt(connStr);
+          string encryptedConnStr = String.IsNullOrEmpty(_settings["SecretKeyFile"])
+            ? EncryptionUtility.Encrypt(connStr)
+            : EncryptionUtility.Encrypt(connStr, _settings["SecretKeyFile"]);
+
           cfg.Properties[connStrProp] = encryptedConnStr;
           SaveConfiguration(cfg, _hibernateConfigPath);
 
@@ -93,7 +96,10 @@ namespace org.iringtools.adapter.datalayer
         }
         else
         {
-          cfg.Properties[connStrProp] = EncryptionUtility.Decrypt(connStr);
+          cfg.Properties[connStrProp] =
+            String.IsNullOrEmpty(_settings["SecretKeyFile"])
+            ? EncryptionUtility.Decrypt(connStr)
+            : EncryptionUtility.Decrypt(connStr, _settings["SecretKeyFile"]);
         }
 
         _sessionFactory = cfg.AddFile(hibernateMappingPath).BuildSessionFactory();
@@ -664,7 +670,8 @@ namespace org.iringtools.adapter.datalayer
 
         InitializeScope(projectName, applicationName);
 
-        DatabaseDictionary dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
+        DatabaseDictionary dbDictionary = NHibernateUtility.LoadDatabaseDictionary(
+          _settings["DBDictionaryPath"], _settings["SecretKeyFile"]);
         if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
         {
           status.Messages.Add("Error project name and application name can not be null");

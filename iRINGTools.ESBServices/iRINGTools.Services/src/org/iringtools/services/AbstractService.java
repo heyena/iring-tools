@@ -20,6 +20,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.apache.log4j.Logger;
 import org.iringtools.security.AuthorizationException;
 import org.iringtools.security.LdapAuthorizationProvider;
 import org.iringtools.security.OAuthFilter;
@@ -31,6 +32,8 @@ public abstract class AbstractService
   @Context protected ServletContext servletContext; 
   @Context protected MessageContext messageContext; 
   @Context protected SecurityContext securityContext;
+  
+  private static final Logger logger = Logger.getLogger(AbstractService.class);
   
   private String serviceType;
   private String authUser;
@@ -85,6 +88,11 @@ public abstract class AbstractService
     if (tokenHeader != null && tokenHeader.size() > 0)
     {
       settings.put(OAuthFilter.AUTHORIZATION_TOKEN_KEY, tokenHeader.get(0));
+      logger.debug("OAuth token: " +  tokenHeader.get(0));
+    }
+    else
+    {
+      logger.debug("OAuth token not available.");
     }
     
     processAuthorization();    
@@ -155,13 +163,20 @@ public abstract class AbstractService
     else
       proxyInfoValid = false;
     
+    String proxyKeyFile = servletContext.getInitParameter("proxyKeyFile");
+    if (proxyKeyFile != null && proxyKeyFile.length() > 0)
+      sysProps.put("http.proxyKeyFile", proxyKeyFile);
+    
     String proxyDomain = servletContext.getInitParameter("proxyDomain");
     if (proxyDomain == null)
       proxyDomain = "";
     sysProps.put("http.proxyDomain", proxyDomain);
     
     if (proxyInfoValid)
+    {
       sysProps.put("proxySet", "true");
+      logger.debug("Proxy: [" + proxyHost + "," + proxyPort + "]");
+    }
     
     /*
      * LDAP SETTINGS

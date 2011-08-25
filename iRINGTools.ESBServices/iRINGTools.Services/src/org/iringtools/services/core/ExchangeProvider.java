@@ -56,6 +56,7 @@ import org.iringtools.utility.JaxbUtils;
 public class ExchangeProvider
 {
   private static final Logger logger = Logger.getLogger(ExchangeProvider.class);
+  
   private Map<String, Object> settings;
   private static DatatypeFactory datatypeFactory = null;   
   private HttpClient httpClient = null; 
@@ -109,14 +110,17 @@ public class ExchangeProvider
 
     try
     {
-      logger.debug("getDataTransferIndices(" + scope + "," + id + ")");
+      logger.debug("getDataTransferIndices(" + scope + "," + id + ",[manifest])");
 
       // init exchange definition
       initExchangeDefinition(scope, id);
       
       // get source dti
       String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
+      logger.debug("Source DTI Request URL: " + sourceDtiUrl);
+      
       DataTransferIndices sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, manifest);
+      logger.debug("Source DTI: " + JaxbUtils.toXml(sourceDtis, false));
       
       if (sourceDtis != null)
       {
@@ -126,7 +130,10 @@ public class ExchangeProvider
 
       // get target dti
       String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi?hashAlgorithm=" + hashAlgorithm;
+      logger.debug("Source DTI Request URL: " + targetDtiUrl);
+      
       DataTransferIndices targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, manifest);
+      logger.debug("Target DTI: " + JaxbUtils.toXml(targetDtis, false));
       
       if (targetDtis != null)
       {
@@ -162,7 +169,7 @@ public class ExchangeProvider
 
     try 
     {
-      logger.debug("getDataTransferIndices(" + scope + "," + id + ")");
+      logger.debug("getDataTransferIndices(" + scope + "," + id + ",[dxiRequest])");
       Manifest manifest = dxiRequest.getManifest();
       DataFilter dataFilter = dxiRequest.getDataFilter();
       
@@ -176,12 +183,18 @@ public class ExchangeProvider
       {
         // get source dti
         String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
-        dxis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, adapterDxiRequest);        
+        logger.debug("Source DTI Request URL: " + sourceDtiUrl);
+        
+        dxis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, adapterDxiRequest);  
+        logger.debug("Source DTI: " + JaxbUtils.toXml(dxis, false));
       }
       else 
       {
         String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
-        dxis = httpClient.post(DataTransferIndices.class, targetDtiUrl, adapterDxiRequest);
+        logger.debug("Target DTI Request URL: " + targetDtiUrl);
+        
+        dxis = httpClient.post(DataTransferIndices.class, targetDtiUrl, adapterDxiRequest); 
+        logger.debug("Target DTI: " + JaxbUtils.toXml(dxis, false));
       }
     }
     catch (Exception ex)
@@ -677,6 +690,11 @@ public class ExchangeProvider
     targetAppName = xdef.getTargetAppName();     
     targetGraphName = xdef.getTargetGraphName();
     hashAlgorithm = xdef.getHashAlgorithm();
+    
+    logger.debug("Exchange definition [" + scope + "," + id + "]: ");
+    try {
+      logger.debug(JaxbUtils.toXml(xdef, false));
+    } catch (Exception e) {}
   }
   
   private Status createStatus(String identifier, String message)
@@ -734,14 +752,24 @@ public class ExchangeProvider
     Manifest sourceManifest = httpClient.get(Manifest.class, sourceManifestUrl);
     
     if (sourceManifest == null || sourceManifest.getGraphs().getItems().size() == 0)
+    {
+      logger.debug("Source manifest: null");
       return null;
-
+    }
+    
+    logger.debug("Source manifest: " + JaxbUtils.toXml(sourceManifest, false));    
+    
     // get target manifest
     String targetManifestUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/manifest";
     Manifest targetManifest = httpClient.get(Manifest.class, targetManifestUrl);
     
     if (targetManifest == null || targetManifest.getGraphs().getItems().size() == 0)
+    {
+      logger.debug("Target manifest: null");
       return null;
+    }
+    
+    logger.debug("Target manifest: " + JaxbUtils.toXml(targetManifest, false));    
     
     Graph sourceGraph = sourceManifest.getGraphs().getItems().get(0);
     Graph targetGraph = targetManifest.getGraphs().getItems().get(0);
