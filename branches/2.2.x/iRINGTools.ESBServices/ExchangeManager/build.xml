@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="dist" name="ExchangeManager">
+  <target name="clean">
+    <mkdir dir="dist" />
+    <delete includeemptydirs="true">
+      <fileset dir="dist" includes="**/*" />
+    </delete>        
+  </target>
+
+  <target name="dist" depends="clean">
+    <echo message="${ant.project.name}: ${ant.file}" />
+    <jar destfile="dist/iringtools-xmgr.zip" basedir="${basedir}" excludes="**/.svn/,*.xml,**/nbproject/**" />
+  </target>
+</project>

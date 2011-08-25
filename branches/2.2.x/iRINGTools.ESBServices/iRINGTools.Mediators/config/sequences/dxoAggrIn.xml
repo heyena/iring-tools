@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sequence xmlns="http://ws.apache.org/ns/synapse" name="dxoAggrIn">
+	<log level="custom">
+		<property name="DXO_AGGR_IN" expression="*" />
+	</log>
+	<property name="sourceUrl" expression="//req:sourceUrl" xmlns:req="http://wso2.org/request" />
+	<property name="targetUrl" expression="//req:targetUrl" xmlns:req="http://wso2.org/request" />
+	<property name="DISABLE_CHUNKING" value="true" scope="axis2" type="BOOLEAN" />
+	<clone>
+		<target>
+			<sequence>
+				<script language="js"><![CDATA[
+          var req = new Namespace("http://wso2.org/request");
+          var dti = new Namespace("http://www.iringtools.org/dxfr/dti");
+          var payload = mc.getPayloadXML();
+          var manifest = payload.req::manifest.*;
+          var sourceDti = payload.req::dxi.dti::source.*;
+          mc.setPayloadXML(
+            <req:dtoPageRequest xmlns:req="http://www.iringtools.org/dxfr/request">
+              <req:manifest xmlns="http://www.iringtools.org/dxfr/manifest">{manifest}</req:manifest>
+              <req:dataTransferIndices xmlns="http://www.iringtools.org/dxfr/dti">{sourceDti.*}</req:dataTransferIndices>
+            </req:dtoPageRequest>);
+        ]]></script>
+				<property name="REST_URL_POSTFIX" expression="get-property('sourceUrl')" scope="axis2" />
+				<send>
+					<endpoint>
+						<address uri="" format="rest" />
+					</endpoint>
+				</send>
+			</sequence>
+		</target>
+		<target>
+			<sequence>
+				<script language="js"><![CDATA[
+          var req = new Namespace("http://wso2.org/request");
+          var dti = new Namespace("http://www.iringtools.org/dxfr/dti");
+          var payload = mc.getPayloadXML();
+          var manifest = payload.req::manifest.*;
+          var targetDti = payload.req::dxi.dti::target.*;
+          mc.setPayloadXML(
+            <req:dtoPageRequest xmlns:req="http://www.iringtools.org/dxfr/request">
+              <req:manifest xmlns="http://www.iringtools.org/dxfr/manifest">{manifest}</req:manifest>
+              <req:dataTransferIndices xmlns="http://www.iringtools.org/dxfr/dti">{targetDti.*}</req:dataTransferIndices>                  
+            </req:dtoPageRequest>);
+        ]]></script>
+				<property name="REST_URL_POSTFIX" expression="get-property('targetUrl')" scope="axis2" />
+				<send>
+					<endpoint>
+						<address uri="" format="rest" />
+					</endpoint>
+				</send>
+			</sequence>
+		</target>
+	</clone>
+</sequence>
