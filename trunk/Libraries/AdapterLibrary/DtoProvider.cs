@@ -151,6 +151,8 @@ namespace org.iringtools.adapter
 
 	  public Manifest GetManifest(string scope, string app)
     {
+      _logger.Debug("GetManifest(" + scope + "," + app + ")");
+
       Manifest manifest = new Manifest()
       {
         graphs = new Graphs(),

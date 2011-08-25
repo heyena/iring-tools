@@ -4,6 +4,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -11,9 +14,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
 
 public class HttpClient
 {
+  private static final Logger logger = Logger.getLogger(HttpClient.class);
+      
   private String baseUri;
   private NetworkCredentials networkCredentials = null;
   private Map<String, String> headers = null;
@@ -59,7 +65,7 @@ public class HttpClient
       }
       catch (IOException ex)
       {
-        ex.printStackTrace();
+        throw new HttpClientException(e);
       }
     }
     finally {
@@ -68,8 +74,6 @@ public class HttpClient
         conn.disconnect();
       }
     }
-    
-    return null;
   }
 
   public <T> T get(Class<T> responseClass) throws HttpClientException
@@ -115,7 +119,7 @@ public class HttpClient
       }
       catch (IOException ex)
       {
-        ex.printStackTrace();
+        throw new HttpClientException(ex);
       }
     }
     finally {
@@ -124,8 +128,6 @@ public class HttpClient
         conn.disconnect();
       }
     }
-    
-    return null;
   }
   
   public <R> R postByteData(Class<R> responseClass, String relativeUri, byte[] data) throws HttpClientException
@@ -146,8 +148,7 @@ public class HttpClient
       InputStream responseStream = conn.getInputStream();
       R response = JaxbUtils.toObject(responseClass, responseStream);
 
-      return response;
-      
+      return response;      
     }
     catch (Exception e)
     {
@@ -157,7 +158,7 @@ public class HttpClient
       }
       catch (IOException ex)
       {
-        ex.printStackTrace();
+        throw new HttpClientException(ex);
       }
     }
     finally {
@@ -166,8 +167,6 @@ public class HttpClient
         conn.disconnect();
       }
     }
-    
-    return null;
   }
 
   public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData,
@@ -217,7 +216,7 @@ public class HttpClient
       }
       catch (IOException ex)
       {
-        ex.printStackTrace();
+        throw new HttpClientException(ex);
       }
     }
     finally {
@@ -226,8 +225,6 @@ public class HttpClient
         conn.disconnect();
       }
     }
-    
-    return null;
   }
 
   public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData)
@@ -293,19 +290,41 @@ public class HttpClient
   {
     if (baseUri == null)
       baseUri = "";
+    
+    String requestUrl = baseUri + relativeUri;
+    logger.debug("Request URL: " + requestUrl);
 
-    URL url = new URL(baseUri + relativeUri);
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+    URL url = new URL(requestUrl);
+    HttpURLConnection conn;
     
     String proxySet = System.getProperty("proxySet");
     if (proxySet != null && proxySet.equalsIgnoreCase("true"))
     {
+      String proxyHost = System.getProperty("http.proxyHost");
+      int proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
+      SocketAddress address = new InetSocketAddress(proxyHost, proxyPort);
+      
+      logger.debug("Proxy: [" + proxyHost + "," + proxyPort + "]");
+      
+      Proxy httpProxy = new Proxy(Proxy.Type.HTTP, address);
+      conn = (HttpURLConnection) url.openConnection(httpProxy);
+      
       String proxyUserName = System.getProperty("http.proxyUserName");
-      String proxyPassword = EncryptionUtils.decrypt(System.getProperty("http.proxyPassword"));
+      String proxyKeyFile = System.getProperty("http.proxySecretKeyFile");
+      
+      String proxyPassword = (proxyKeyFile != null && proxyKeyFile.length() > 0)
+        ? EncryptionUtils.decrypt(System.getProperty("http.proxyPassword"), proxyKeyFile)
+        : EncryptionUtils.decrypt(System.getProperty("http.proxyPassword"));
+      
       String proxyDomain = System.getProperty("http.proxyDomain");      
       String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);
       
       conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
+      logger.debug("Proxy token: " + proxyCredsToken);
+    }
+    else
+    {
+      conn = (HttpURLConnection) url.openConnection();
     }
 
     if (networkCredentials != null)
@@ -316,9 +335,11 @@ public class HttpClient
     }
     
     // add headers
+    logger.debug("Request headers: ");
     for (Entry<String, String> header : headers.entrySet())
     {
       conn.setRequestProperty(header.getKey(), header.getValue());
+      logger.debug(header.getKey() + " = " + header.getValue());
     }
 
     if (method.equalsIgnoreCase(POST_METHOD))
@@ -337,7 +358,7 @@ public class HttpClient
 
     if (domain != null && domain.length() > 0)
     {
-      creds = domain + "\\\\" + creds;
+      creds = domain + "\\" + creds;
     }
 
     return new String(Base64.encodeBase64(creds.getBytes()));

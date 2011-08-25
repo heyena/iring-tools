@@ -30,12 +30,20 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
     String portNumber = properties.getProperty("portNumber");
     String userName = properties.getProperty("userName");
     String password = properties.getProperty("password");
+    String keyFile = properties.getProperty("secretKeyFile");
     
     authorizedGroup = properties.getProperty("authorizedGroup");
     
     try
     {
-      password = EncryptionUtils.decrypt(password);
+      if (keyFile != null && keyFile.length() > 0)
+      {
+        password = EncryptionUtils.decrypt(password, keyFile); 
+      }
+      else
+      {
+        password = EncryptionUtils.decrypt(password);
+      }
     }
     catch (EncryptionException e)
     {

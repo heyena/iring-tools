@@ -9,7 +9,7 @@ namespace org.iringtools.adapter.datalayer
 {
   public static class NHibernateUtility
   {
-    public static DatabaseDictionary LoadDatabaseDictionary(string path)
+    public static DatabaseDictionary LoadDatabaseDictionary(string path, string keyFile)
     {      
       DatabaseDictionary dbDictionary = Utility.Read<DatabaseDictionary>(path);
       string connStr = dbDictionary.ConnectionString;
@@ -19,21 +19,25 @@ namespace org.iringtools.adapter.datalayer
         if (connStr.ToUpper().Contains("DATA SOURCE"))
         {
           // connection string is not encrypted, encrypt and write it back
-          dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr);
-          Utility.Write<DatabaseDictionary>(dbDictionary, path);
+          dbDictionary.ConnectionString = String.IsNullOrEmpty(keyFile)
+            ? EncryptionUtility.Encrypt(connStr)
+            : EncryptionUtility.Encrypt(connStr, keyFile);
 
+          Utility.Write<DatabaseDictionary>(dbDictionary, path);
           dbDictionary.ConnectionString = connStr;
         }
         else
         {
-          dbDictionary.ConnectionString = EncryptionUtility.Decrypt(connStr);
+          dbDictionary.ConnectionString =  String.IsNullOrEmpty(keyFile)
+            ? EncryptionUtility.Decrypt(connStr)
+            : EncryptionUtility.Decrypt(connStr, keyFile);
         }
       }
 
       return dbDictionary;      
     }
 
-    public static void SaveDatabaseDictionary(DatabaseDictionary dbDictionary, string path)
+    public static void SaveDatabaseDictionary(DatabaseDictionary dbDictionary, string path, string keyFile)
     {
       string connStr = dbDictionary.ConnectionString;
 
@@ -42,7 +46,9 @@ namespace org.iringtools.adapter.datalayer
         if (connStr.ToUpper().Contains("DATA SOURCE"))
         {
           // connection string is not encrypted, encrypt and write it back
-          dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr);
+          dbDictionary.ConnectionString = String.IsNullOrEmpty(keyFile)
+            ? EncryptionUtility.Encrypt(connStr)
+            : EncryptionUtility.Encrypt(connStr, keyFile);
         }
       }
       

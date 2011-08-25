@@ -687,6 +687,10 @@ namespace org.iringtools.nhibernate
         StringBuilder configBuilder = new StringBuilder();
         XmlTextWriter configWriter = new XmlTextWriter(new StringWriter(configBuilder));
 
+        string encryptedConnectionString = String.IsNullOrEmpty(_settings["SecretKeyFile"])
+          ? EncryptionUtility.Encrypt(connectionString)
+          : EncryptionUtility.Encrypt(connectionString, _settings["SecretKeyFile"]);
+        
         configWriter.Formatting = Formatting.Indented;
         configWriter.WriteStartElement("configuration");
         configWriter.WriteStartElement("hibernate-configuration", "urn:nhibernate-configuration-2.2");
@@ -701,7 +705,7 @@ namespace org.iringtools.nhibernate
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "connection.connection_string");
-        configWriter.WriteString(EncryptionUtility.Encrypt(connectionString));
+        configWriter.WriteString(encryptedConnectionString);
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "proxyfactory.factory_class");

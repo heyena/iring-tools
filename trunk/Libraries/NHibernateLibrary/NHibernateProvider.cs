@@ -79,7 +79,7 @@ namespace org.iringtools.nhibernate
 
 				InitializeScope(projectName, applicationName);
 
-				DatabaseDictionary dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
+				DatabaseDictionary dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["SecretKeyFile"]);
 				if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
 				{
 					status.Messages.Add("Error project name and application name can not be null");
@@ -128,12 +128,12 @@ namespace org.iringtools.nhibernate
 
 				if (File.Exists(_settings["DBDictionaryPath"]))
 				{
-					databaseDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
+					databaseDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["SecretKeyFile"]);
 				}
 				else
 				{
 					databaseDictionary = new DatabaseDictionary();
-					NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"]);
+          NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"], _settings["SecretKeyFile"]);
 				}
 			}
 			catch (Exception ex)
@@ -153,7 +153,7 @@ namespace org.iringtools.nhibernate
 				status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 				InitializeScope(projectName, applicationName);
 
-				NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"]);
+        NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"], _settings["SecretKeyFile"]);
 				Response response = Generate(projectName, applicationName);
 
 				if (response.Level.ToString().ToUpper() == "SUCCESS")
@@ -184,11 +184,11 @@ namespace org.iringtools.nhibernate
 
         if (File.Exists(_settings["DBDictionaryPath"]))
         {
-          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
+          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["SecretKeyFile"]);
         }
         else
         {
-          NHibernateUtility.SaveDatabaseDictionary(dbDictionary, _settings["DBDictionaryPath"]);
+          NHibernateUtility.SaveDatabaseDictionary(dbDictionary, _settings["DBDictionaryPath"], _settings["SecretKeyFile"]);
           return dbDictionary;
         }
 
@@ -427,7 +427,7 @@ namespace org.iringtools.nhibernate
 				InitializeScope(projectName, applicationName);
 
 				if (File.Exists(_settings["DBDictionaryPath"]))
-          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
+          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["SecretKeyFile"]);
 				else
 					return tableNames;
 
@@ -524,7 +524,7 @@ namespace org.iringtools.nhibernate
 				InitializeScope(projectName, applicationName);
 
 				if (File.Exists(_settings["DBDictionaryPath"]))
-          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
+          dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"], _settings["SecretKeyFile"]);
 
 				string connString = dbDictionary.ConnectionString;
 				string dbProvider = dbDictionary.Provider.ToString().ToUpper();

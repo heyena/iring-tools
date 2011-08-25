@@ -207,7 +207,7 @@ public class EncryptionUtils
     }
     catch (Exception e)
     {
-      System.out.println("Error occurred: " + e);
+      System.out.println(e);
     }
     finally
     {
