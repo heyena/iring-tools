@@ -83,7 +83,6 @@ function storeSort(field, dir) {
 }
 
 function createGridStore(scope, app, graph) {
-	var javaUrl = 'adata?baseUri=http://localhost:54321/dxfr&scope=12345_000&app=ABC&graph=Lines';
 	var url = "GridManager/Pages"
 	var store = new Ext.data.Store({
 		proxy: new Ext.data.HttpProxy({
