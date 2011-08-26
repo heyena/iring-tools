@@ -273,15 +273,16 @@ public abstract class AbstractService
   
   protected void prepareErrorResponse(int errorCode, String errorMessage)
   {
-    httpResponse.setContentType(MediaType.TEXT_XML);
-    
-    try
-    {
-      httpResponse.sendError(errorCode, errorMessage);
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-  }
+	    httpResponse.setContentType(MediaType.TEXT_XML);
+	    httpResponse.setStatus(errorCode);
+	    /*try
+	    {
+	      httpResponse.sendError(errorCode, errorMessage);
+	      //the entire code breaks here
+	    }
+	    catch (IOException e)
+	    {
+	      e.printStackTrace();
+	    }*/
+	  }
 }
