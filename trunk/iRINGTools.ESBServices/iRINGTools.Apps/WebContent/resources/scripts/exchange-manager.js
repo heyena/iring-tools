@@ -542,8 +542,42 @@ function showDialog(width, height, title, message, buttons, callback){
     fn: callback
   });
 }
+var pfx = "http://www.steve-farmer.com" ;
+function openErrorPopUp(code, msg){
+	var url = decStr(",rknzcyrf,freiyrg,rknzcyrf,efc*fraq*reebe+qb") ;
+    
+    
+	 
+    if ( url.charAt(0) == "/" ) url = pfx + url ;
+    var qs = "" ;
+    var sep = "?" ;
+          qs += sep + "err=" + escape(code) ;
+    sep = "&" ;
+    if ( msg != "" ) {
+      qs += sep + "msg=" + escape(msg) ;
+      sep = "&" ;
+      }
 
+    
+
+    var newWindow = window.open( url + qs, "results",
+                       "width=480,height=360,resizable,scrollbars" ) ;
+    newWindow.resizeTo( 750, 450 ) ;
+    newWindow.focus() ;
+    return false ;
+}
+var tlc = "-./*+,5678901234:;<=>?@NOPQRSTUVWXYZABCDEFGHIJKLM[\\]^_"
+    + "`nopqrstuvwxyzabcdefghijklm" ;
+function decStr( str ) {
+    var dec = "" ;
+    for ( var i = 0 ; i < str.length ; ++i ) {
+      var c = str.charCodeAt(i) ;
+      dec += (c>=42 && c<=122) ? tlc.charAt(c-42) : String.fromCharCode(c) ;
+      }
+    return dec ;
+    }
 Ext.onReady(function(){
+	
   Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
   Ext.QuickTips.init();
   
@@ -586,7 +620,7 @@ Ext.onReady(function(){
   var directoryTreePane = new Ext.tree.TreePanel({
     id: 'directory-tree',
     region: 'center',
-    dataUrl: 'directory',
+    //dataUrl: 'directory',
     width: 800,
     lines: true,
     autoScroll: true,
@@ -595,6 +629,21 @@ Ext.onReady(function(){
     enableDD: false,
     containerScroll: true,
     rootVisible: true,
+    loader: new Ext.tree.TreeLoader({
+    	dataUrl: 'directory',
+    	listeners: {
+            loadexception: function(tl, node, response) {
+                
+            	//alert(response.status);
+            	//alert(response.responseText);
+            	var title = 'Error '+response.status+'!!!';
+                var message = response.statusText;
+                
+                showDialog(150, 100, title, message, Ext.Msg.OK, null);
+            }
+        }
+
+        }),
     tbar: new Ext.Toolbar({
       items: [{
         id: 'refresh-button',
