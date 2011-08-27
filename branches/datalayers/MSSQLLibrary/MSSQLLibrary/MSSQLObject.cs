@@ -7,7 +7,7 @@ using System.Data;
 
 namespace org.iringtools.adapter.datalayer 
 {
-  public class MSSQLObject : IDataObject
+  public class MSSQLObject 
   {
     private DataSet _dataSet = new DataSet();
     private string _primaryObject = string.Empty;
@@ -18,31 +18,37 @@ namespace org.iringtools.adapter.datalayer
     private string _sqlTableName = string.Empty;
     private List<string> _properties = new List<string>();
     private SqlObject _sqlObject;
-    private string _identifier = string.Empty;
+    private IList<string> _identifiers = null;
 
-    public MSSQLObject(SqlObject sqlObject, string identifier)
+    public MSSQLObject(SqlObject sqlObject, IList<string> identifiers)
     {
-      _identifier = identifier;
+      _identifiers = identifiers;
       _sqlObject = sqlObject;
       _primaryObject = sqlObject.ObjectTypeName;
       _primaryTable = sqlObject.ObjectName;
       _secondaryObjects = sqlObject.SecondaryObjects;
       DataCRUD getData = new DataCRUD(sqlObject.ConnectionString);
+
+      string columns = string.Format("{0}.*", _sqlObject.ObjectName);
+      
       sql = new StringBuilder();
+      
+      if (!string.IsNullOrEmpty(_sqlObject.MinimumProperties))
+      {
+        columns = _sqlObject.MinimumProperties;
+      }
       if (string.IsNullOrEmpty(sqlObject.SelectSqlJoin))
       {
-        sql.AppendLine(string.Format("SELECT * FROM {0}", sqlObject.ObjectName));
+        sql.AppendLine(string.Format("SELECT {0} FROM {1}", columns, sqlObject.ObjectName));
       }
       else
       {
-        sql.AppendLine(string.Format("SELECT {0}.* FROM {1}", 
-                                      sqlObject.ObjectName,
+        sql.AppendLine(string.Format("SELECT {0} FROM {1}", 
+                                      columns,
                                       sqlObject.ObjectName));
         sql.AppendLine(sqlObject.SelectSqlJoin);
       }
-      sql.AppendLine(string.Format(" WHERE {0} = '{1}'", 
-                                    sqlObject.IdentifierProperty, 
-                                    identifier));
+      sql.AppendLine(" WHERE "+sqlObject.IdentifierProperty+ " in ('" + String.Join("','", identifiers.ToArray()) + "')");
       _dataTable = getData.SelectRecords(sql.ToString());
       _dataTable.TableName = sqlObject.ObjectName;
       AddDataTable(_dataTable);
@@ -67,14 +73,11 @@ namespace org.iringtools.adapter.datalayer
 
           if (sqlObject.IdentifierProperty.Contains(so.IdentifierProperty))
           {
-            sql.AppendLine(string.Format(" WHERE {0} = '{1}'", 
-                                          sqlObject.IdentifierProperty, 
-                                          identifier));
+            sql.AppendLine(" WHERE "+so.IdentifierProperty+ " in ('" + String.Join("','", identifiers.ToArray()) + "')");
           }
           else
           {
-            sql.AppendLine(string.Format(" WHERE {0} = '{1}'", 
-                                          so.IdentifierProperty, identifier));
+            sql.AppendLine(" WHERE " + _sqlObject.IdentifierProperty + " in ('" + String.Join("','", identifiers.ToArray()) + "')");
           }
           if (so.SecondaryObjects[0].MinimumProperties != null)
           {
@@ -99,7 +102,7 @@ namespace org.iringtools.adapter.datalayer
 
     public string GetIdentifier()
     {
-      return _identifier;
+      return _identifiers[0];
     }
     public DataSet GetDataSet()
     {
@@ -126,35 +129,35 @@ namespace org.iringtools.adapter.datalayer
       _dataSet.Tables.Add(dataTable);
     }
 
-    public object GetPropertyValue(string propertyName)
-    {
-      object propertyValue = null;
-      if (_sqlObject.IdentifierProperty.Contains(propertyName))
-      {
-        propertyValue = _identifier;
-      }
-      else
-      {
-        foreach (DataTable dataTable in _dataSet.Tables)
-        {
-          if (dataTable.TableName == _primaryTable)
-          {
-            foreach (DataRow datafield in dataTable.Rows)
-            {
-              foreach (DataColumn property in dataTable.Columns)
-              {
-                if (property.ColumnName == propertyName)
-                {
-                  propertyValue = datafield[property];
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
-      return propertyValue;
-    }
+    //public object GetPropertyValue(string propertyName)
+    //{
+    //  object propertyValue = null;
+    //  if (_sqlObject.IdentifierProperty.Contains(propertyName))
+    //  {
+    //    propertyValue = _identifiers[0];
+    //  }
+    //  else
+    //  {
+    //    foreach (DataTable dataTable in _dataSet.Tables)
+    //    {
+    //      if (dataTable.TableName == _primaryTable)
+    //      {
+    //        foreach (DataRow datafield in dataTable.Rows)
+    //        {
+    //          foreach (DataColumn property in dataTable.Columns)
+    //          {
+    //            if (property.ColumnName == propertyName)
+    //            {
+    //              propertyValue = datafield[property];
+    //              break;
+    //            }
+    //          }
+    //        }
+    //      }
+    //    }
+    //  }
+    //  return propertyValue;
+    //}
 
     public IList<IDataObject> GetRelatedObjects(string relatedObjectType)
     {
@@ -202,34 +205,34 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public void SetPropertyValue(string propertyName, object value)
-    {
-      foreach (DataTable dataTable in _dataSet.Tables)
-      {
-        if (dataTable.TableName == _primaryTable)
-        {
-          if (dataTable.Rows.Count == 0)
-          {
-            DataRow newRow = dataTable.NewRow();
-            newRow[propertyName] = value;
-            dataTable.Rows.Add(newRow);
-          }
-          else
-          {
-            foreach (DataRow datafield in dataTable.Rows)
-            {
-              foreach (DataColumn property in dataTable.Columns)
-              {
-                if (property.ColumnName == propertyName)
-                {
-                  datafield[property] = value;
-                  break;
-                }
-              }
-            }
-          }
-        }
-      }
-    }
+    //public void SetPropertyValue(string propertyName, object value)
+    //{
+    //  foreach (DataTable dataTable in _dataSet.Tables)
+    //  {
+    //    if (dataTable.TableName == _primaryTable)
+    //    {
+    //      if (dataTable.Rows.Count == 0)
+    //      {
+    //        DataRow newRow = dataTable.NewRow();
+    //        newRow[propertyName] = value;
+    //        dataTable.Rows.Add(newRow);
+    //      }
+    //      else
+    //      {
+    //        foreach (DataRow datafield in dataTable.Rows)
+    //        {
+    //          foreach (DataColumn property in dataTable.Columns)
+    //          {
+    //            if (property.ColumnName == propertyName)
+    //            {
+    //              datafield[property] = value;
+    //              break;
+    //            }
+    //          }
+    //        }
+    //      }
+    //    }
+    //  }
+    //}
   }
 }
