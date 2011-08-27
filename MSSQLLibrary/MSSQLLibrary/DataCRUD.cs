@@ -89,16 +89,20 @@ namespace org.iringtools.adapter.datalayer
     {
       DataTable dataTable = new DataTable();
       StringBuilder sql = new StringBuilder();
-
+      string columns = sqlObject.ObjectName + ".*";
+      if (!string.IsNullOrEmpty(sqlObject.MinimumProperties))
+      {
+        columns = sqlObject.MinimumProperties;
+      }
       using (sConn)
       {
         if (string.IsNullOrEmpty(sqlObject.SelectSqlJoin))
         {
-          sql.AppendLine(string.Format("SELECT TOP 1 * FROM {0}", sqlObject.ObjectName));
+          sql.AppendLine(string.Format("SELECT TOP 1 {0} FROM {1}",columns, sqlObject.ObjectName));
         }
         else
         {
-          sql.AppendLine(string.Format("SELECT TOP 1 {0}.* FROM {1} ", sqlObject.ObjectName, sqlObject.ObjectName));
+          sql.AppendLine(string.Format("SELECT TOP 1 {0} FROM {1} ", columns , sqlObject.ObjectName));
           sql.AppendLine(sqlObject.SelectSqlJoin);
         }
         sql.AppendLine(string.Format(" WHERE {0}", sqlObject.ListSqlWhere));

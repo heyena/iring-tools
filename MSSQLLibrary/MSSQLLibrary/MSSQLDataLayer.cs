@@ -15,7 +15,7 @@ using Ninject;
 
 namespace org.iringtools.adapter.datalayer 
 {
-  public class MSSQLDataLayer : BaseSQLDataLayer
+  public class MSSQLDataLayer : BaseDataLayer
   {
 
    //private static readonly ILog _logger = LogManager.GetLogger(typeof(MSSQLDataLayer));
@@ -141,19 +141,23 @@ namespace org.iringtools.adapter.datalayer
         List<SecondaryObject> secondaryObjects = new List<SecondaryObject>();
         SqlObject objectSql = _msSQLconfiguration.FirstOrDefault(c => c.ObjectTypeName == objectType);
         secondaryObjects.AddRange(objectSql.SecondaryObjects);
-
+        DataTable dataTable = null;
+        MSSQLDatarow newDatarow = null;
+        IDataObject dataObject = null;
         DataCRUD getData = new DataCRUD(objectSql.ConnectionString);
         object keyValue = null;
         List<IDataObject> dataObjects = new List<IDataObject>();
 
         if (identifiers != null && identifiers.Count > 0)
         {
+          MSSQLObject sqlObjects = new MSSQLObject(objectSql, identifiers);
+          dataTable = sqlObjects.GetDataTable(objectSql.ObjectName);
           foreach (string identifier in identifiers)
           {
-            MSSQLObject dataObject = new MSSQLObject(objectSql, identifier);
-            keyValue = dataObject.GetPropertyValue(objectSql.KeyProperties);
-            if (!string.IsNullOrEmpty(identifier))
-            {
+           
+            keyValue = dataTable.Rows.Find(identifier);
+            //if (identifiers.Count > 0)
+            //{
               if (!string.IsNullOrEmpty(objectSql.KeyReferenceObject.ReferenceObjectName) && keyValue == null)
               {
                 sql = new StringBuilder();
@@ -164,6 +168,9 @@ namespace org.iringtools.adapter.datalayer
                 keyValue = Convert.ToInt32(keyValue) + 1;
                 if (keyValue != null)
                 {
+                 // DataRow newRow = primaryTable.NewRow();
+                  newDatarow = new MSSQLDatarow(dataTable.NewRow());
+                  dataObject = newDatarow;
                   sql = new StringBuilder();
                   sql.AppendLine(string.Format("UPDATE {0}", objectSql.KeyReferenceObject.ReferenceObjectName));
                   sql.AppendLine(string.Format(" SET {0} = '{1}'", objectSql.KeyReferenceObject.ReturnProperty, keyValue));
@@ -176,42 +183,42 @@ namespace org.iringtools.adapter.datalayer
                 string delimStr = objectSql.IdentifierMapSeperator;
                 char[] delimiters = delimStr.ToArray();
                 propertyMap.AddRange(objectSql.IdentifierMap.Split(delimiters, StringSplitOptions.RemoveEmptyEntries));
-                identifierMap.AddRange(identifier.Split(delimiters, StringSplitOptions.RemoveEmptyEntries));
+                identifierMap.AddRange(identifiers[0].Split(delimiters, StringSplitOptions.RemoveEmptyEntries));
               }
               else
               {
                 propertyMap.Add(objectSql.IdentifierMap);
-                identifierMap.Add(identifier);
+                identifierMap.Add(identifiers[0]);
               }
               //First do key column
               if (keyValue != null)
               {
-                dataObject.SetPropertyValue(objectSql.KeyProperties, keyValue);
+                newDatarow.SetPropertyValue(objectSql.KeyProperties, keyValue);
               }
               // then idetifier
               if (objectSql.IdentifierType != IdType.Foreign)
               {
-                dataObject.SetPropertyValue(objectSql.IdentifierProperty, identifier);
+                newDatarow.SetPropertyValue(objectSql.IdentifierProperty, identifiers[0]);
               }
 
               if (propertyMap.Count > 0)
               {
                 for (int i = 0; i <= propertyMap.Count - 1; i++)
                 {
-                  dataObject.SetPropertyValue(propertyMap[i], identifierMap[i]);
+                  newDatarow.SetPropertyValue(propertyMap[i], identifierMap[i]);
                 }
               }
               //then status if any
               if (!string.IsNullOrEmpty(objectSql.StatusProperty) && !string.IsNullOrEmpty(objectSql.CreateStatus))
               {
-                dataObject.SetPropertyValue(objectSql.StatusProperty, objectSql.CreateStatus);
+                newDatarow.SetPropertyValue(objectSql.StatusProperty, objectSql.CreateStatus);
               }
               //process any secondaty table values
-              DataTable primaryTable = null;
+              dataTable = null;
 
               SecondaryObject dso = null;
               List<string> selectProperties = new List<string>();
-              primaryTable = ((MSSQLObject)dataObject).GetDataTable(objectSql.ObjectName);
+              dataTable = ((MSSQLObject)sqlObjects).GetDataTable(objectSql.ObjectName);
               foreach (SecondaryObject so in secondaryObjects)
               {
 
@@ -227,15 +234,15 @@ namespace org.iringtools.adapter.datalayer
                   //process secondary table key
                   if (objectSql.KeyProperties.Contains(so.KeyProperty))
                   {
-                    ((MSSQLObject)dataObject).SetSecondaryProperty(so.KeyProperty, keyValue, so.ObjectName);
+                    ((MSSQLObject)sqlObjects).SetSecondaryProperty(so.KeyProperty, keyValue, so.ObjectName);
                   }
                   if (objectSql.IdentifierProperty.Contains(so.IdentifierProperty))
                   {
-                    ((MSSQLObject)dataObject).SetSecondaryProperty(so.IdentifierProperty, identifier, so.ObjectName);
+                    ((MSSQLObject)sqlObjects).SetSecondaryProperty(so.IdentifierProperty, identifiers[0], so.ObjectName);
                   }
                   if (!string.IsNullOrEmpty(so.StatusProperty) && !string.IsNullOrEmpty(so.CreateStatus))
                   {
-                    ((MSSQLObject)dataObject).SetSecondaryProperty(so.StatusProperty, so.CreateStatus, so.ObjectName);
+                    ((MSSQLObject)sqlObjects).SetSecondaryProperty(so.StatusProperty, so.CreateStatus, so.ObjectName);
                   }
                   //process other dependent properties
                   foreach (string select in selectProperties)
@@ -251,11 +258,11 @@ namespace org.iringtools.adapter.datalayer
                       string[] str = select.Split(' ');
                       value = str[str.Length - 1];
                     }
-                    ((MSSQLObject)dataObject).SetSecondaryProperty(value, result, so.ObjectName);
+                    ((MSSQLObject)sqlObjects).SetSecondaryProperty(value, result, so.ObjectName);
                   }
                 }
               }
-            }
+            //}
             dataObjects.Add(dataObject);
           }
         }
@@ -413,11 +420,16 @@ namespace org.iringtools.adapter.datalayer
           identifiers = new List<string>();
           identifiers = GetIdentifiers(objectType, null);
         }
-        foreach (String identifier in identifiers)
-        {
-          MSSQLObject dataObject = new MSSQLObject(objectSql, identifier);
-          dataObjects.Add(dataObject);
-        }
+        //foreach (String identifier in identifiers)
+        //{
+          MSSQLObject dataObject = new MSSQLObject(objectSql, identifiers);
+          foreach (DataRow dr in dataObject.GetDataTable(objectSql.ObjectName).Rows)
+          {
+            MSSQLDatarow msdr = new MSSQLDatarow(dr);
+            dataObjects.Add(msdr);
+          }
+         // dataObjects.Add(dataObject);
+        //}
 
         return dataObjects;
       }
@@ -496,7 +508,7 @@ namespace org.iringtools.adapter.datalayer
           sql.AppendLine("SELECT " + objectSql.IdentifierProperty);
           sql.AppendLine(" FROM " + objectSql.ObjectName);
           sql.AppendLine(" " + objectSql.SelectSqlJoin);
-          if (filter != null)
+          if (filter != null && filter.Expressions.Count > 0)
           {
             sql.AppendLine(" " + filter.ToSqlWhereClause(GetDictionary(), objectSql.ObjectName, objectSql.ObjectName));
           }
@@ -509,7 +521,7 @@ namespace org.iringtools.adapter.datalayer
         {
           sql.AppendLine("SELECT " + objectSql.IdentifierProperty);
           sql.AppendLine(" FROM " + objectSql.ObjectName);
-          if (filter != null)
+          if (filter != null && filter.Expressions.Count > 0)
           {
             sql.Append(filter.ToSqlWhereClause(GetDictionary(), objectSql.ObjectName, null));
           }
@@ -667,59 +679,5 @@ namespace org.iringtools.adapter.datalayer
     }
 
 
-    public override DataTable CreateDataTable(string tableName, IList<string> identifiers)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override Response DeleteDataTable(string tableName, IList<string> identifiers)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override Response DeleteDataTable(string tableName, string whereClause)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override long GetCount(string tableName, string whereClause)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override DataTable GetDataTable(string tableName, string whereClause, long start, long limit)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override DataTable GetDataTable(string tableName, IList<string> identifiers)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override DatabaseDictionary GetDatabaseDictionary()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override IList<string> GetIdentifiers(string tableName, string whereClause)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override Response PostDataTables(IList<DataTable> dataTables)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override Response RefreshDataTable(string tableName)
-    {
-        throw new NotImplementedException();
-    }
   }
 }
