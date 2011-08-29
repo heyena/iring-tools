@@ -217,7 +217,8 @@ namespace org.iringtools.nhibernate
 							"left join information_schema.key_column_usage t4 on t4.table_name = t1.table_name and t4.column_name = t1.column_name " +
 							"left join information_schema.table_constraints t5 on t5.constraint_name = t4.constraint_name " +
 							"where t1.data_type not in ('image') " +
-							"order by t1.table_name, t5.constraint_type, t1.column_name";// +
+							"order by t1.table_name, t5.constraint_type, t1.column_name";
+
 					properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
 
 					switch (dbProvider)
@@ -249,7 +250,7 @@ namespace org.iringtools.nhibernate
 						"inner join all_tab_cols t2 on t2.table_name = t1.object_name " +
 						"left join all_cons_columns t3 on t3.table_name = t2.table_name and t3.column_name = t2.column_name " +
 						"left join all_constraints t4 on t4.constraint_name = t3.constraint_name and (t4.constraint_type = 'P' or t4.constraint_type = 'R') " +
-						"where t1.object_type = 'TABLE' and (t1.owner = '{0}') order by t1.object_name, t4.constraint_type, t2.column_name", schemaName);
+						"where (t1.object_type = 'TABLE' or t1.object_type = 'VIEW') and (t1.owner = '{0}') order by t1.object_name, t4.constraint_type, t2.column_name", schemaName);
 					
 					properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
 
@@ -284,6 +285,7 @@ namespace org.iringtools.nhibernate
 					metadataQuery = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE,CHARACTER_MAXIMUM_LENGTH, COLUMN_KEY, IS_NULLABLE " +
 													"FROM INFORMATION_SCHEMA.COLUMNS " +
 													string.Format("WHERE TABLE_SCHEMA = '{0}'", connString.Split(';')[1].Split('=')[1]);
+
 					properties.Add("connection.driver_class", "NHibernate.Driver.MySqlDataDriver");
 
 					switch (dbProvider)
