@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="/WEB-INF/iringtools.tld" prefix="it" %> 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
@@ -11,7 +13,7 @@
 	<div>
             <a href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank">
             <img src="resources/images/iringtools-logo.png"/>
-            </a><div style="font-family:Arial;font-size:10pt;padding-left:165px;position:relative; top:-17px;">Version 2.01.00</div>
+            </a><div style="font-family:Arial;font-size:10pt;padding-left:165px;position:relative; top:-17px;">Version <it:version /></div>
             </div>
 	</div>
 
@@ -23,7 +25,7 @@
     <br/><br/><br/><br/>
 	<div style="height: 32px;text-align:justify;">
             <p style="font-family:Arial;font-size:8pt;">
-            Copyright Â© 2009 - 2011, iringug.org All rights reserved.
+            Copyright© 2009 - 2011, iringug.org All rights reserved.
             <a href="http://iringug.org" target="_blank"><img src="resources/images/iringug-logo.png" style="float: right" />
             </a></p>
 	</div>
