@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="/WEB-INF/iringtools.tld" prefix="it" %> 
 <html>
   <head>
     <meta http-equiv="cache-control" content="no-cache">
@@ -7,7 +9,7 @@
   <body>
     <div class="banner">
 	    <h1>
-	      <img src="resources/images/iringlogo-huge.png" />&nbsp;Version 2.1
+	      <img src="resources/images/iringlogo-huge.png" />&nbsp;Version <it:version />
 	    </h1>
     </div>
     <div class="main">

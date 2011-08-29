@@ -110,8 +110,10 @@
 			<path refid="log4j-1.2.16.userclasspath" />
 			<path refid="jaxb-ri-20100511.userclasspath" />
 		</copy>
+    <ant antfile="version.xml" dir="../" inheritAll="false" target="build"/>
 		<jar destfile="dist/${ant.project.name}.war" basedir="WebContent" excludes="WEB-INF/web.xml,**/.svn/" >
 		  <zipfileset dir="WebContent/WEB-INF/" includes="web_default.xml" fullpath="WEB-INF/web.xml"/>
+      <zipfileset dir="../" includes="version" fullpath="version"/>
 		</jar>
 		<!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->
 		<delete>
