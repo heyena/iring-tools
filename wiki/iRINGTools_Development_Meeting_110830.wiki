@@ -31,9 +31,9 @@
    * iip environment which is used for testing/demo of stable 2.2
    * should we utilize iringtools now?
   * Actions
-   * Split trunk to 2.2.x
-   * Change 2.2.x version to 2.2.0
-   * Change trunk version to 3.0.0
+   * Split trunk to 2.2.x - Rob
+   * Change 2.2.x version to 2.2.0 - Rob
+   * Change trunk version to 3.0.0 - Rob
    * In dotNet trunk
     * Remove silverlight apps - Koos - done
 	* Remove silverlight modules - Koos - done
