@@ -282,8 +282,9 @@ namespace org.iringtools.nhibernate
 				}
 				else if (dbProvider.Contains("MYSQL"))
 				{
-          metadataQuery = String.Format(@"select table_name, column_name, data_type, character_maximum_length, extra, is_nullable, 
-            column_key from information_schema.columns where table_schema = '{0}'", schemaName);
+          metadataQuery = String.Format(@"select t1.table_name, t1.column_name, t1.data_type, t1.character_maximum_length, 
+            t1.extra, t1.is_nullable, t1.column_key from information_schema.columns t1 left join information_schema.views t2 
+            on t2.table_name = t1.table_name where t1.table_schema = '{0}'", schemaName);
 
 					properties.Add("connection.driver_class", "NHibernate.Driver.MySqlDataDriver");
 
