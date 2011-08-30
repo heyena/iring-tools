@@ -24,7 +24,9 @@ Module Module1
         Dim spdl As iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer
         Dim textReplacements As New Dictionary(Of String, String)
         Dim queryVariables As New Dictionary(Of String, String)
+        Dim queryLog As New Dictionary(Of String, String)
         Dim tmp As String
+        Dim log As StreamWriter
 
         _kernel = New StandardKernel(ninjectSettings)
 
@@ -61,8 +63,10 @@ Module Module1
 
         tmp = [String].Format("{0}BindingConfiguration.{1}.{2}.xml", _
                       _settings("ProjectDirName"), _settings("ProjectName"), _settings("ApplicationName"))
-
         _adapterSettings.AppendSettings(_settings)
+
+        tmp = [String].Format("{0}QueryLog.txt", _settings("BaseConcatPath"))
+        _settings("LogPath") = Path.Combine(_baseDirectory, tmp)
 
         ' Add our specific settings
         Dim appSettingsPath As String = [String].Format("{0}12345_000.SPPID.config", _adapterSettings("XmlPath"))
@@ -72,6 +76,9 @@ Module Module1
         If File.Exists(_settings("ProjectConfigurationPath")) Then
             _adapterSettings.AppendSettings(New SD.AppSettingsReader(_settings("ProjectConfigurationPath")))
         End If
+
+        ' get the log streamwriter
+        log = File.CreateText(_settings("LogPath"))
 
         ' set up the list of text replacements and query variables. The variable or text replacement key should be in the form
         ' <queryName>.<variableName>. the variableName portion of this for text replacements should always start with '!@~'
@@ -86,7 +93,19 @@ Module Module1
 
         ' Ninject Extension requires fully qualified path.
         _kernel.Load(Path.Combine(_baseDirectory, tmp))
-        spdl = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings, queryVariables, textReplacements)
+        spdl = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings, queryVariables, textReplacements, queryLog)
+
+        For Each kvp As KeyValuePair(Of String, String) In queryLog
+
+            log.WriteLine("")
+            log.WriteLine("--" & StrDup(18, "*") & LSet("  Start Query '" & kvp.Key & "'", 60) & StrDup(20, "*"))
+            log.Write(kvp.Value)
+            log.WriteLine("--" & StrDup(18, "*") & LSet("  End Query '" & kvp.Key & "'", 60) & StrDup(20, "*"))
+            log.WriteLine("")
+
+        Next
+
+        log.Flush() : log.Close()
 
         '_sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
 
