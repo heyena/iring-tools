@@ -49,35 +49,36 @@ namespace org.iringtools.web.controllers
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
-              foreach (ScopeProject scope in _repository.GetScopes())
+              if (_repository.GetScopes() != null)
               {
-
-                _logger.Debug("Scope: " + scope.Name);
-
-                JsonTreeNode node = new JsonTreeNode
+                foreach (ScopeProject scope in _repository.GetScopes())
                 {
-                  nodeType = "async",
-                  type = "ScopeNode",
-                  icon = "Content/img/system-file-manager.png",
-                  id = scope.Name,
-                  text = scope.Name,
-                  expanded = false,
-                  leaf = false,
-                  children = null,
-                  record = scope
-                };
-                node.property = new Dictionary<string, string>();
-                node.property.Add("Name", scope.Name);
-                node.property.Add("Description", scope.Description);
-                nodes.Add(node);
+                  _logger.Debug("Scope: " + scope.Name);
 
+                  JsonTreeNode node = new JsonTreeNode
+                  {
+                    nodeType = "async",
+                    type = "ScopeNode",
+                    icon = "Content/img/system-file-manager.png",
+                    id = scope.Name,
+                    text = scope.Name,
+                    expanded = false,
+                    leaf = false,
+                    children = null,
+                    record = scope
+                  };
+
+                  node.property = new Dictionary<string, string>();
+                  node.property.Add("Name", scope.Name);
+                  node.property.Add("Description", scope.Description);
+                  nodes.Add(node);
+                }
               }
 
               return Json(nodes, JsonRequestBehavior.AllowGet);
             }
           case "ScopeNode":
             {
-
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
               ScopeProject scope = _repository.GetScope(form["node"]);
@@ -257,7 +258,6 @@ namespace org.iringtools.web.controllers
 
               foreach (DataObject dataObject in dictionary.dataObjects)
               {
-
                 JsonTreeNode node = new JsonTreeNode
                 {
                   nodeType = "async",
