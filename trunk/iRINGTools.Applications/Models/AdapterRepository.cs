@@ -225,7 +225,18 @@ namespace iRINGTools.Web.Models
         public string UpdateScope(string scopeName, string name, string description)
         {
             ScopeProjects scopes = GetScopes();
-            ScopeProject scope = scopes.FirstOrDefault<ScopeProject>(o => o.Name == scopeName);
+
+            if (scopes == null)
+            {
+              scopes = new ScopeProjects();
+            }
+
+            ScopeProject scope = null;
+
+            if (scopes != null)
+            {
+              scope = scopes.FirstOrDefault<ScopeProject>(o => o.Name == scopeName);
+            }
 
             if (scope == null)
             {
@@ -235,6 +246,7 @@ namespace iRINGTools.Web.Models
                     Description = description,
                     Applications = new ScopeApplications()
                 };
+
                 scopes.Add(scope);
             }
             else
@@ -242,6 +254,7 @@ namespace iRINGTools.Web.Models
                 scope.Name = name;
                 scope.Description = description;
             }
+
             return PostScopes(scopes);
         }
 

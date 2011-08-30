@@ -597,7 +597,7 @@ Ext.onReady(function(){
           win.close();
         }
       }],
-      autoLoad: 'about.html',
+      autoLoad: 'about-exchange-manager.jsp',
       listeners: {
         close:{
           fn: function(){
