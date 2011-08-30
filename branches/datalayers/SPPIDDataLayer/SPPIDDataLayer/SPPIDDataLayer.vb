@@ -28,21 +28,26 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Private m_skipInternalAttributes As Boolean  ' ignore internal attributes
     Private m_skipNoDisplayAttributes As Boolean  ' ignore non-displayed attributes
     'Protected _configuration As XElement
-    Private _conn As SqlConnection
     Private AppSettings As AdapterSettings
     Private ProjConfig As Xml.XmlDocument
     Private SPWorkSet As SPPIDWorkingSet
     Private _queryVariableReplacementValues As Dictionary(Of String, String)
     Private _textReplacementValues As Dictionary(Of String, String)
-
+    Private _queryLog As Dictionary(Of String, String)
+    Private _queryLogging As Boolean
+    Private _projConn As SqlConnection
+    Private _stageConn As SqlConnection
+    Property _siteConn As SqlConnection
 
 #End Region
 
 #Region " Instantiation "
 
     <Inject()>
-    Public Sub New(settings As AdapterSettings, ByRef queryVariables As Dictionary(Of String, String), _
-                   ByRef textReplacements As Dictionary(Of String, String))
+    Public Sub New(ByRef settings As AdapterSettings,
+                   ByRef queryVariables As Dictionary(Of String, String),
+                   ByRef textReplacements As Dictionary(Of String, String),
+                   Optional ByRef queryLog As Dictionary(Of String, String) = Nothing)
 
         MyBase.New(settings)
 
@@ -54,11 +59,14 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         ' I have added the file 12345_000_Adrian.SPPID.config to the project to serve as an example. This way we'll hopefully 
         ' stop overwriting each other's configuration data and we can remove configuration data currently being set
         ' directly in the code.
-        Dim projectConnStr As String = _settings("SPPIDConnectionString")
-        Dim siteConnStr As String = _settings("SPPIDSiteConnectionString")
-        Dim stageConnStr As String = _settings("iRingStagingConnectionString")
         Dim configPath As String
         Dim siteDataQuery As XElement = Nothing
+
+        _queryLog = queryLog
+        _queryLogging = IIf(_queryLog Is Nothing, False, True)
+        _projConn = New SqlConnection(_settings("SPPIDConnectionString"))
+        _stageConn = New SqlConnection(_settings("iRingStagingConnectionString"))
+        _siteConn = New SqlConnection(_settings("SPPIDSiteConnectionString"))
 
         ' ToDo: Enable encryption once encryption is supported 
         'Try
@@ -84,10 +92,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             '_textReplacementValues = textReplacements.ToDictionary(Function(k) k.Key, Function(v) v.Value, StringComparer.InvariantCultureIgnoreCase)
             '_queryVariableReplacementValues = queryVariables.ToDictionary(Function(k) k.Key, Function(v) v.Value, StringComparer.InvariantCultureIgnoreCase)
             GetQueryByName("!SiteData", siteDataQuery)
-            SPWorkSet = New SPPIDWorkingSet(New SqlConnection(projectConnStr),
-                                            New SqlConnection(siteConnStr),
-                                            New SqlConnection(stageConnStr),
-                                            siteDataQuery)
+            SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, siteDataQuery)
 
             GetCurrentSPPIDSchema()
             Test()
@@ -149,7 +154,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim query As String = "SELECT * FROM " & tableName & whereClause
 
         Dim adapter As New SqlDataAdapter()
-        adapter.SelectCommand = New SqlCommand(query, _conn)
+        adapter.SelectCommand = New SqlCommand(query, _projConn)
 
         Dim command As New SqlCommandBuilder(adapter)
 
@@ -168,7 +173,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim query As String = "SELECT * FROM " & tableName & " " & whereClause
 
         Dim adapter As New SqlDataAdapter()
-        adapter.SelectCommand = New SqlCommand(query, _conn)
+        adapter.SelectCommand = New SqlCommand(query, _projConn)
 
         Dim command As New SqlCommandBuilder(adapter)
 
@@ -196,7 +201,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim query As String = "SELECT * FROM " & tableName
 
         Dim adapter As New SqlDataAdapter()
-        adapter.SelectCommand = New SqlCommand(query, _conn)
+        adapter.SelectCommand = New SqlCommand(query, _projConn)
 
         Dim command As New SqlCommandBuilder(adapter)
         adapter.UpdateCommand = command.GetUpdateCommand()
@@ -266,14 +271,25 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim queryText As String = ""
         Dim stgCfgQueries As IEnumerable(Of XElement) = Nothing
         Dim siteDataQuery As XElement = Nothing
+        Dim tmpStr As String = ""
+        Dim exists As Boolean
+        Dim cmd As SqlCommand
+        Dim DT As DataTable
+        Dim DS As DataSet
+        Dim DA As SqlDataAdapter
 
 
-        ' ToDo *** stopped here *** need to use the dataset to fetch the schema, update with any DB-specific data (such as queryAlias)
-        ' from a config file, then use the dataType information to help create tehe staging table ddl
+        ' ToDo *** stopped here *** 
+        ' query creation is now in place and has passed initial testing.
+        ' now need to EITHER: write an add-on function to convert the SELECT portion to a ddl query when the Staging DB
+        ' is on a different server, THEN create data tables on the fly, change the source, and copy down data to the new location
+        ' Also, see if there is some way to create a table or automagically create a DDL from a table 
+        ' copying down data from one of these tables without DDL. Take a good look at the .net entity framework; this may hold 
+        ' the answer, although we may need to adjust the way we store and retrieve queries. 
 
         GetStagingQueries(stgCfgQueries)
 
-        For Each q As XElement In StgCfgQueries
+        For Each q As XElement In stgCfgQueries
 
             queryParts.Clear()
             GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
@@ -281,6 +297,26 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             ' commbine the query parts and perform any necessary replacements
             queryParts.BuildQuery(queryText, replacements, _textReplacementValues, SPWorkSet.StagingServerInCommon)
+
+            If _queryLogging Then
+
+                exists = _queryLog.TryGetValue(queryParts(SQLClause.QueryName), tmpStr)
+
+                If exists Then
+                    _queryLog(queryParts(SQLClause.QueryName)) = queryText
+                Else
+                    _queryLog.Add(queryParts(SQLClause.QueryName), queryText)
+                End If
+
+            End If
+
+            cmd = _projConn.CreateCommand()
+            cmd.CommandText = queryText
+            DS = New DataSet
+            DA = New SqlDataAdapter(cmd)
+            DA.MissingSchemaAction = MissingSchemaAction.AddWithKey
+            DA.Fill(DS, queryParts(SQLClause.StagingName))
+            DT = DS.Tables(queryParts(SQLClause.StagingName))
 
             ' ToDo - create a new connection and execute the query in order to dump the data into the staging area
             ' NOTE - although the user MUST have rights to read from source tables in the source DB 

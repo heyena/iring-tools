@@ -390,7 +390,7 @@
 					joinToText="" operator="=" conjunction="" />
 			</source>
 			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Inner" 				alias="Cl">
-				<relation leftSource="Cl" leftField="codelistindex" rightSource="Inst" rightField="InstrumentType" 
+				<relation leftSource="Cl" leftField="codelist_index" rightSource="Inst" rightField="InstrumentType" 
 					joinToText="" operator="=" conjunction="" />
 			</source>
 			<source name="Enumerations"		schema="SPPIDDATA_DICTIONARY"    	joinType="Inner" 				alias="En">

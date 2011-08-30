@@ -23,7 +23,7 @@ Public Class SPPIDWorkingSet
     Private _SPPIDSchemaName As String
     Private _SPPIDDATA_DICTIONARYSchemaName As String
     Private _SITESchemaName As String
-    Private SPQueries As SmartPlantDBQueries
+    'Private SPQueries As SmartPlantDBQueries
     Private _SchemaSubstitutions As Dictionary(Of String, String)
     Private _StagingServerInCommon As Boolean
     Private _CommonServerName As String
