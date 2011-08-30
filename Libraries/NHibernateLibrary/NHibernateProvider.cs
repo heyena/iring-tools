@@ -177,9 +177,9 @@ namespace org.iringtools.nhibernate
 		public DatabaseDictionary GetDatabaseSchema(string projectName, string applicationName, string schemaName)
 		{
 			DatabaseDictionary dbDictionary = new DatabaseDictionary();
+
 			try
 			{
-
 				InitializeScope(projectName, applicationName);
 
         if (File.Exists(_settings["DBDictionaryPath"]))
@@ -209,15 +209,16 @@ namespace org.iringtools.nhibernate
 
 				if (dbProvider.Contains("MSSQL"))
 				{
-					metadataQuery =
-							"select t1.table_name, t1.column_name, t1.data_type, t2.max_length, t2.is_identity, t2.is_nullable, t5.constraint_type " +
-							"from information_schema.columns t1 " +
-							"inner join sys.columns t2 on t2.name = t1.column_name " +
-							"inner join sys.tables t3 on t3.name = t1.table_name and t3.object_id = t2.object_id " +
-							"left join information_schema.key_column_usage t4 on t4.table_name = t1.table_name and t4.column_name = t1.column_name " +
-							"left join information_schema.table_constraints t5 on t5.constraint_name = t4.constraint_name " +
-							"where t1.data_type not in ('image') " +
-							"order by t1.table_name, t5.constraint_type, t1.column_name";// +
+					metadataQuery = @"
+            select t1.name as table_name, t2.name as column_name, t3.name as column_type, 
+            t2.max_length as column_length, t2.is_identity as column_identity, t2.is_nullable as column_nullable,
+            t5.constraint_type as column_constraint from sysobjects t1
+            inner join sys.columns t2 on t2.object_id = t1.id  
+            inner join sys.types t3 on t3.user_type_id = t2.user_type_id
+            left join information_schema.key_column_usage t4 on t4.table_name = t1.name and t4.column_name = t2.name 
+            left join information_schema.table_constraints t5 on t5.constraint_name = t4.constraint_name
+            where t1.xtype = 'u' order by t1.name";
+
 					properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
 
 					switch (dbProvider)
@@ -249,7 +250,7 @@ namespace org.iringtools.nhibernate
 						"inner join all_tab_cols t2 on t2.table_name = t1.object_name " +
 						"left join all_cons_columns t3 on t3.table_name = t2.table_name and t3.column_name = t2.column_name " +
 						"left join all_constraints t4 on t4.constraint_name = t3.constraint_name and (t4.constraint_type = 'P' or t4.constraint_type = 'R') " +
-						"where t1.object_type = 'TABLE' and (t1.owner = '{0}') order by t1.object_name, t4.constraint_type, t2.column_name", schemaName);
+						"where (t1.object_type = 'TABLE' or t1.object_type = 'VIEW') and (t1.owner = '{0}') order by t1.object_name, t4.constraint_type, t2.column_name", schemaName);
 					
 					properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
 
@@ -281,9 +282,10 @@ namespace org.iringtools.nhibernate
 				}
 				else if (dbProvider.Contains("MYSQL"))
 				{
-					metadataQuery = "SELECT TABLE_NAME, COLUMN_NAME, DATA_TYPE,CHARACTER_MAXIMUM_LENGTH, COLUMN_KEY, IS_NULLABLE " +
-													"FROM INFORMATION_SCHEMA.COLUMNS " +
-													string.Format("WHERE TABLE_SCHEMA = '{0}'", connString.Split(';')[1].Split('=')[1]);
+          metadataQuery = String.Format(@"select t1.table_name, t1.column_name, t1.data_type, t1.character_maximum_length, 
+            t1.extra, t1.is_nullable, t1.column_key from information_schema.columns t1 left join information_schema.views t2 
+            on t2.table_name = t1.table_name where t1.table_schema = '{0}'", schemaName);
+
 					properties.Add("connection.driver_class", "NHibernate.Driver.MySqlDataDriver");
 
 					switch (dbProvider)
@@ -302,8 +304,7 @@ namespace org.iringtools.nhibernate
 							break;
 					}
 				}
-
-
+        
 				NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
 				config.AddProperties(properties);
 

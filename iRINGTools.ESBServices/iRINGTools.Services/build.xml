@@ -117,10 +117,11 @@
 			<path refid="json-utils.userclasspath" />    
       <path refid="jena-2.6.4.userclasspath" />
 		</copy>
+    <ant antfile="version.xml" dir="../" inheritAll="false" target="build"/>
 		<jar destfile="dist/${ant.project.name}.war" basedir="WebContent" excludes="WEB-INF/web.xml,**/.svn/" >
 		  <zipfileset dir="WebContent/WEB-INF/" includes="web_default.xml" fullpath="WEB-INF/web.xml"/>
+      <zipfileset dir="../" includes="version" fullpath="version"/>
 	  </jar>
-
     <!-- clean up WEB-INF/lib to prevent eclipse jar and classes reference conflict -->
     <delete>
 			<fileset dir="WebContent/WEB-INF/lib" includes="*.jar" />

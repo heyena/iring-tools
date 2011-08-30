@@ -32,7 +32,7 @@ Ext.onReady(function () {
           win.close();
         }
       }],
-      autoLoad: 'about-federation.html',
+      autoLoad: 'about-federation-manager.jsp',
       listeners: {
         close:{
           fn: function(){
