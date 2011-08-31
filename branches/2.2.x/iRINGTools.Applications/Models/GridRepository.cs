@@ -32,47 +32,22 @@ namespace iRINGTools.Web.Models
 			private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
 			static private HttpSessionStateBase session;
 			private JavaScriptSerializer serializer;
-			private string response = "success";
 
 			[Inject]
 			public GridRepository()
       {
         _settings = ConfigurationManager.AppSettings;
-				_client = new WebHttpClient(_settings["DataServiceURI"]);				
+				_client = new WebHttpClient(_settings["DataServiceURI"]);
 				serializer = new JavaScriptSerializer();
 				dataGrid = new Grid();
       }
 
-			public string getResponse()
-			{
-				return response;
-			}
-
 			public Grid getGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
 			{
-				if (_settings["DataServiceURI"] == null)
-				{
-					response = "There is no key for DataServiceURI in web.config in application.";
-					_logger.Error(response);
-					return null;
-				}
-
 				this.graph = graph;
 				getDatadictionary(scope, app);
-
-				if (response != "success")
-					return null;
-
 				getDataItems(scope, app, graph, filter, sort, dir, start, limit);
-
-				if (response != "success")
-					return null;
-
-				getDataGrid();
-
-				if (response != "success")
-					return null;
-
+				getDataGrid();								
 				return dataGrid;
 			}
 
@@ -86,14 +61,10 @@ namespace iRINGTools.Web.Models
 				try
         {
 					dataDict = _client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary", true);
-					if (dataDict.dataObjects.Count == 0)
-						response = "There is no records in the database for data object \"" + app + "\"";
         }
         catch (Exception ex)
         {
 					_logger.Error("Error getting DatabaseDictionary." + ex);
-					if (response == "success")
-						response = ex.Message.ToString();
         }
       }
 
@@ -111,8 +82,6 @@ namespace iRINGTools.Web.Models
 				catch (Exception ex) 
 				{
 					_logger.Error("Error getting DatabaseDictionary." + ex);
-					if (response == "success")
-						response = ex.Message.ToString();
 				}
 			}
 
@@ -317,8 +286,6 @@ namespace iRINGTools.Web.Models
 					catch (Exception ex)
 					{
 						_logger.Error("Error deserializing filter: " + ex);
-						if (response == "success")
-							response = ex.Message.ToString();
 					}
 				}
 
@@ -348,7 +315,6 @@ namespace iRINGTools.Web.Models
 						catch (Exception ex)
 						{
 							_logger.Error(ex.ToString());
-							response = ex.Message.ToString();
 						}
 					}
 				}
