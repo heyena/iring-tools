@@ -51,7 +51,7 @@ namespace org.iringtools.adapter.identity
 
         string emailAddress = headers.Get("X-myPSN-EmailAddress");
         _logger.Debug("X-myPSN-EmailAddress [" + emailAddress + "]");
-        if (!String.IsNullOrEmpty(emailAddress))
+        if (!String.IsNullOrEmpty(emailAddress) && !keyRing.Contains("UserName"))
           keyRing.Add("UserName", emailAddress);
 
         string userId = headers.Get("X-myPSN-UserID");
