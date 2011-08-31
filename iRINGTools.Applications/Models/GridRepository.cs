@@ -64,7 +64,15 @@ namespace iRINGTools.Web.Models
 					return null;
 
 				getDataItems(scope, app, graph, filter, sort, dir, start, limit);
-				getDataGrid();								
+
+				if (response != "success")
+					return null;
+
+				getDataGrid();
+
+				if (response != "success")
+					return null;
+
 				return dataGrid;
 			}
 
@@ -78,11 +86,14 @@ namespace iRINGTools.Web.Models
 				try
         {
 					dataDict = _client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary", true);
+					if (dataDict.dataObjects.Count == 0)
+						response = "There is no records in the database for data object \"" + app + "\"";
         }
         catch (Exception ex)
         {
 					_logger.Error("Error getting DatabaseDictionary." + ex);
-					response = ex.Message.ToString();
+					if (response == "success")
+						response = ex.Message.ToString();
         }
       }
 
@@ -100,6 +111,8 @@ namespace iRINGTools.Web.Models
 				catch (Exception ex) 
 				{
 					_logger.Error("Error getting DatabaseDictionary." + ex);
+					if (response == "success")
+						response = ex.Message.ToString();
 				}
 			}
 
@@ -133,9 +146,21 @@ namespace iRINGTools.Web.Models
 			{
 				string allDataItemsJson;
 				DataItems allDataItems = null;
-				allDataItemsJson = _client.Post<DataFilter, string>("/" + app + "/" + scope + "/" + graph + "/filter?format=json", dataFilter, true);
-				allDataItems = (DataItems)serializer.Deserialize(allDataItemsJson, typeof(DataItems));
-				
+
+				try
+				{
+					allDataItemsJson = _client.Post<DataFilter, string>("/" + app + "/" + scope + "/" + graph + "/filter?format=json", dataFilter, true);
+					allDataItems = (DataItems)serializer.Deserialize(allDataItemsJson, typeof(DataItems));
+				}
+				catch (Exception ex)
+				{
+					if (ex.InnerException != null)
+						_logger.Error("Error deserializing filtered data objects: " + ex.InnerException);
+					_logger.Error("Error deserializing filtered data objects: " + ex);
+					if (response == "success")
+						response = ex.Message.ToString() + " " + ex.InnerException.Message.ToString();
+				}
+
 				if (allDataItems.total > 0)
 					session[key] = allDataItems;
 
@@ -292,6 +317,8 @@ namespace iRINGTools.Web.Models
 					catch (Exception ex)
 					{
 						_logger.Error("Error deserializing filter: " + ex);
+						if (response == "success")
+							response = ex.Message.ToString();
 					}
 				}
 
@@ -321,6 +348,7 @@ namespace iRINGTools.Web.Models
 						catch (Exception ex)
 						{
 							_logger.Error(ex.ToString());
+							response = ex.Message.ToString();
 						}
 					}
 				}
