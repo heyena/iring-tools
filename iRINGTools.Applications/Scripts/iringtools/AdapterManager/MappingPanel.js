@@ -140,7 +140,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
 
 
-    this.mappingPanel.on('beforenodedrop', this.onBeforeNodedrop, this);
+    this.mappingPanel.on('beforeDragDrop', this.onBeforeNodedrop, this);
     this.mappingPanel.on('expandnode', this.onExpandNode, this);
     this.mappingPanel.on('contextmenu', this.showContextMenu, this);
     this.mappingPanel.on('click', this.onClick, this);

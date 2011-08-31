@@ -1,327 +1,329 @@
-﻿Ext.ns('AdapterManager');
+﻿
+Ext.Define('AdapterManager.NHibernateConfigWizard', {
+  extend: 'Ext.container.Container',
+  alias: 'widget.AdapterManager.NHibernateConfigWizard',
+  scope: null,
+  app: null,
+  iconCls: 'tabsNhibernate',
+  border: false,
+  frame: false,
 
-AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
-	scope: null,
-	app: null,
-	iconCls: 'tabsNhibernate',
-	border: false,
-	frame: false,
+  constructor: function (config) {
+    config = config || {};
 
-	constructor: function (config) {
-		config = config || {};
+    var wizard = this;
+    var scopeName = config.scope;
+    var appName = config.app;
+    var dbDict;
+    var dbInfo;
+    var dbTableNames;
+    var userTableNames;
+    var dataTypes = null;
 
-		var wizard = this;
-		var scopeName = config.scope;
-		var appName = config.app;
-		var dbDict;
-		var dbInfo;
-		var dbTableNames;
-		var userTableNames;
-		var dataTypes = null;
+    var dataObjectsPane = new Ext.Panel({
+      layout: 'border',
+      id: scopeName + '.' + appName + '.dataObjectsPane',
+      frame: false,
+      border: false,
+      items: [{
+        xtype: 'panel',
+        name: 'data-objects-pane',
+        region: 'west',
+        minWidth: 240,
+        width: 300,
+        split: true,
+        autoScroll: true,
+        bodyStyle: 'background:#fff',
+        items: [{
+          xtype: 'treepanel',
+          border: false,
+          autoScroll: true,
+          animate: true,
+          lines: true,
+          frame: false,
+          enableDD: false,
+          containerScroll: true,
+          rootVisible: true,
+          root: {
+            text: 'Data Objects',
+            nodeType: 'async',
+            iconCls: 'folder'
+          },
+          loader: new Ext.tree.TreeLoader(),
+          tbar: new Ext.Toolbar({
+            items: [{
+              xtype: 'tbspacer',
+              width: 4
+            }, {
+              xtype: 'button',
+              icon: 'Content/img/16x16/view-refresh.png',
+              text: 'Reload',
+              tooltip: 'Reload Data Objects',
+              handler: function () {
+                var editPane = dataObjectsPane.items.items[1];
+                var items = editPane.items.items;
 
-		var dataObjectsPane = new Ext.Panel({
-			layout: 'border',
-			id: scopeName + '.' + appName + '.dataObjectsPane',
-			frame: false,
-			border: false,
-			items: [{
-				xtype: 'panel',
-				name: 'data-objects-pane',
-				region: 'west',
-				minWidth: 240,
-				width: 300,
-				split: true,
-				autoScroll: true,
-				bodyStyle: 'background:#fff',
-				items: [{
-					xtype: 'treepanel',
-					border: false,
-					autoScroll: true,
-					animate: true,
-					lines: true,
-					frame: false,
-					enableDD: false,
-					containerScroll: true,
-					rootVisible: true,
-					root: {
-						text: 'Data Objects',
-						nodeType: 'async',
-						iconCls: 'folder'
-					},
-					loader: new Ext.tree.TreeLoader(),
-					tbar: new Ext.Toolbar({
-						items: [{
-							xtype: 'tbspacer',
-							width: 4
-						}, {
-							xtype: 'button',
-							icon: 'Content/img/16x16/view-refresh.png',
-							text: 'Reload',
-							tooltip: 'Reload Data Objects',
-							handler: function () {
-								var editPane = dataObjectsPane.items.items[1];
-								var items = editPane.items.items;
+                for (var i = 0; i < items.length; i++) {
+                  items[i].destroy();
+                  i--;
+                }
 
-								for (var i = 0; i < items.length; i++) {
-									items[i].destroy();
-									i--;
-								}
+                Ext.Ajax.request({
+                  url: 'AdapterManager/DBDictionary',
+                  method: 'POST',
+                  params: {
+                    scope: scopeName,
+                    app: appName
+                  },
+                  success: function (response, request) {
+                    dbDict = Ext.util.JSON.decode(response.responseText);
+                    if (dbDict.ConnectionString)
+                      dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
 
-								Ext.Ajax.request({
-									url: 'AdapterManager/DBDictionary',
-									method: 'POST',
-									params: {
-										scope: scopeName,
-										app: appName
-									},
-									success: function (response, request) {
-										dbDict = Ext.util.JSON.decode(response.responseText);
-										if (dbDict.ConnectionString)
-											dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
+                    var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 
-										var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+                    if (dbDict.dataObjects.length > 0) {
+                      // populate data source form
+                      showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName);
+                    }
+                    else {
+                      dbObjectsTree.disable();
+                      editPane = dataObjectsPane.items.items[1];
+                      if (!editPane) {
+                        var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+                      }
+                      setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
+                    }
+                  },
+                  failure: function (response, request) {
+                    editPane = dataObjectsPane.items.items[1];
+                    if (!editPane) {
+                      var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+                    }
+                    setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
+                    editPane.getLayout().setActiveItem(editPane.items.length - 1);
+                  }
+                });
+              }
+            }, {
+              xtype: 'tbspacer',
+              width: 4
+            }, {
+              xtype: 'button',
+              icon: 'Content/img/16x16/document-properties.png',
+              text: 'Edit Connection',
+              tooltip: 'Edit database connection',
+              handler: function () {
+                editPane = dataObjectsPane.items.items[1];
+                if (!editPane) {
+                  var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+                }
+                setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
+              }
+            }, {
+              xtype: 'tbspacer',
+              width: 4
+            }, {
+              xtype: 'button',
+              icon: 'Content/img/16x16/document-save.png',
+              text: 'Save',
+              tooltip: 'Save the data objects tree to the back-end server',
+              formBind: true,
+              handler: function (button) {
+                editPane = dataObjectsPane.items.items[1];
 
-										if (dbDict.dataObjects.length > 0) {
-											// populate data source form
-											showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName);
-										}
-										else {
-											dbObjectsTree.disable();
-											editPane = dataObjectsPane.items.items[1];
-											if (!editPane) {
-												var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-											}
-											setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
-										}
-									},
-									failure: function (response, request) {
-										editPane = dataObjectsPane.items.items[1];
-										if (!editPane) {
-											var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-										}
-										setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
-										editPane.getLayout().setActiveItem(editPane.items.length - 1);
-									}
-								});
-							}
-						}, {
-							xtype: 'tbspacer',
-							width: 4
-						}, {
-							xtype: 'button',
-							icon: 'Content/img/16x16/document-properties.png',
-							text: 'Edit Connection',
-							tooltip: 'Edit database connection',
-							handler: function () {
-								editPane = dataObjectsPane.items.items[1];
-								if (!editPane) {
-									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-								}
-								setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
-							}
-						}, {
-							xtype: 'tbspacer',
-							width: 4
-						}, {
-							xtype: 'button',
-							icon: 'Content/img/16x16/document-save.png',
-							text: 'Save',
-							tooltip: 'Save the data objects tree to the back-end server',
-							formBind: true,
-							handler: function (button) {
-								editPane = dataObjectsPane.items.items[1];
+                if (!editPane) {
+                  var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+                }
 
-								if (!editPane) {
-									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-								}
+                var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
+                var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+                var rootNode = dbObjectsTree.getRootNode();
+                var treeProperty = getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes);
 
-								var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
-								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-								var rootNode = dbObjectsTree.getRootNode();
-								var treeProperty = getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes);
+                Ext.Ajax.request({
+                  url: 'AdapterManager/Trees',
+                  method: 'POST',
+                  params: {
+                    scope: scopeName,
+                    app: appName,
+                    tree: JSON.stringify(treeProperty)
+                  },
+                  success: function (response, request) {
+                    var rtext = response.responseText;
+                    if (rtext.toUpperCase().indexOf('FALSE') == -1) {
+                      showDialog(400, 100, 'Saving Result', 'The configuraiton has been saved successfully.', Ext.Msg.OK, null);
+                      var navpanel = Ext.getCmp('nav-panel');
+                      navpanel.onReload();
+                    }
+                    else {
+                      var ind = rtext.indexOf('}');
+                      var len = rtext.length - ind - 1;
+                      var msg = rtext.substring(ind + 1, rtext.length - 1);
+                      showDialog(400, 100, 'Saving Result - Error', msg, Ext.Msg.OK, null);
+                    }
+                  },
+                  failure: function (response, request) {
+                    showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
+                  }
+                });
+              }
+            }]
+          }),
+          listeners: {
+            click: function (node, e) {
+              if (node.isRoot) {
+                editPane = dataObjectsPane.items.items[1];
+                if (!editPane) {
+                  var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+                }
 
-								Ext.Ajax.request({
-									url: 'AdapterManager/Trees',
-									method: 'POST',
-									params: {
-										scope: scopeName,
-										app: appName,
-										tree: JSON.stringify(treeProperty)
-									},
-									success: function (response, request) {
-										var rtext = response.responseText;
-										if (rtext.toUpperCase().indexOf('FALSE') == -1) {
-											showDialog(400, 100, 'Saving Result', 'The configuraiton has been saved successfully.', Ext.Msg.OK, null);
-											var navpanel = Ext.getCmp('nav-panel');
-											navpanel.onReload();
-										}
-										else {
-											var ind = rtext.indexOf('}');
-											var len = rtext.length - ind - 1;
-											var msg = rtext.substring(ind + 1, rtext.length - 1);
-											showDialog(400, 100, 'Saving Result - Error', msg, Ext.Msg.OK, null);
-										}
-									},
-									failure: function (response, request) {
-										showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
-									}
-								});
-							}
-						}]
-					}),
-					listeners: {
-						click: function (node, e) {
-							if (node.isRoot) {
-								editPane = dataObjectsPane.items.items[1];
-								if (!editPane) {
-									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-								}
+                setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName);
+                return;
+              }
+              else if (!node)
+                return;
 
-								setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName);
-								return;
-							}
-							else if (!node)
-								return;
+              var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+              if (!editPane)
+                editPane = dataObjectsPane.items.items[1];
 
-							var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-							if (!editPane)
-								editPane = dataObjectsPane.items.items[1];
-
-							var nodeType = node.attributes.type;
-
-
-							if (!nodeType && node.attributes.attributes)
-								nodeType = node.attributes.attributes.type;
+              var nodeType = node.attributes.type;
 
 
-							if (nodeType) {
-								editPane.show();
-								var editPaneLayout = editPane.getLayout();
-
-								switch (nodeType.toUpperCase()) {
-									case 'DATAOBJECT':
-										setDataObject(editPane, node, dbDict, dataObjectsPane, scopeName, appName);
-										break;
-
-									case 'KEYS':
-										setKeysFolder(editPane, node, scopeName, appName);
-										break;
-
-									case 'KEYPROPERTY':
-										setKeyProperty(editPane, node, scopeName, appName, dataTypes);
-										break;
-
-									case 'PROPERTIES':
-										setPropertiesFolder(editPane, node, scopeName, appName);
-										break;
-
-									case 'DATAPROPERTY':
-										setDataProperty(editPane, node, scopeName, appName, dataTypes);
-										break;
-
-									case 'RELATIONSHIPS':
-										setRelations(editPane, node, scopeName, appName);
-										break;
-
-									case 'RELATIONSHIP':
-										setRelationFields(editPane, node, scopeName, appName);
-										break;
-								}
-							}
-							else {
-								editPane.hide();
-							}
-						}
-					}
-				}]
-			}, {
-				xtype: 'panel',
-				name: 'editor-panel',
-				border: 1,
-				frame: false,
-				id: scopeName + '.' + appName + '.editor-panel',
-				region: 'center',
-				layout: 'card'
-			}]
-		});
+              if (!nodeType && node.attributes.attributes)
+                nodeType = node.attributes.attributes.type;
 
 
-		Ext.apply(this, {
-			id: scopeName + '.' + appName + '.-nh-config',
-			title: 'NHibernate Configuration - ' + scopeName + '.' + appName,
-			closable: true,
-			border: false,
-			frame: true,
-			layout: 'fit',
-			items: [dataObjectsPane]
-		});
+              if (nodeType) {
+                editPane.show();
+                var editPaneLayout = editPane.getLayout();
 
-		Ext.Ajax.request({
-			url: 'AdapterManager/DataType',
-			method: 'GET',
+                switch (nodeType.toUpperCase()) {
+                  case 'DATAOBJECT':
+                    setDataObject(editPane, node, dbDict, dataObjectsPane, scopeName, appName);
+                    break;
 
-			success: function (response, request) {
-				var dataTypeName = Ext.util.JSON.decode(response.responseText);
-				dataTypes = new Array();
-				var i = 0;
-				while (!dataTypeName[i])
-					i++;
-				while (dataTypeName[i]) {
-					dataTypes.push([i, dataTypeName[i]]);
-					i++;
-				}
-			},
-			failure: function (f, a) {
-				if (a.response)
-					showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
-			}
-		});
+                  case 'KEYS':
+                    setKeysFolder(editPane, node, scopeName, appName);
+                    break;
 
-		Ext.EventManager.onWindowResize(this.doLayout, this);
+                  case 'KEYPROPERTY':
+                    setKeyProperty(editPane, node, scopeName, appName, dataTypes);
+                    break;
 
-		Ext.Ajax.request({
-			url: 'AdapterManager/DBDictionary',
-			method: 'POST',
-			params: {
-				scope: scopeName,
-				app: appName
-			},
-			success: function (response, request) {
-				dbDict = Ext.util.JSON.decode(response.responseText);
-				if (dbDict.ConnectionString)
-					dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
+                  case 'PROPERTIES':
+                    setPropertiesFolder(editPane, node, scopeName, appName);
+                    break;
 
-				var tab = Ext.getCmp('content-panel');
-				var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
-				var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-				var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+                  case 'DATAPROPERTY':
+                    setDataProperty(editPane, node, scopeName, appName, dataTypes);
+                    break;
 
-				if (dbDict.dataObjects.length > 0) {
-					// populate data source form
-					dbInfo = showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName);
-					var abcdd = 5;
-				}
-				else {
-					dbObjectsTree.disable();
-					editPane = dataObjectsPane.items.items[1];
-					if (!editPane) {
-						var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-					}
-					setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
-				}
-			},
-			failure: function (response, request) {
-				editPane = dataObjectsPane.items.items[1];
-				if (!editPane) {
-					var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-				}
-				editPane.add(dsConfigPane);
-				editPane.getLayout().setActiveItem(editPane.items.length - 1);
-			}
-		});
+                  case 'RELATIONSHIPS':
+                    setRelations(editPane, node, scopeName, appName);
+                    break;
 
-		AdapterManager.NHibernateConfigWizard.superclass.constructor.apply(this, arguments);
-	}
+                  case 'RELATIONSHIP':
+                    setRelationFields(editPane, node, scopeName, appName);
+                    break;
+                }
+              }
+              else {
+                editPane.hide();
+              }
+            }
+          }
+        }]
+      }, {
+        xtype: 'panel',
+        name: 'editor-panel',
+        border: 1,
+        frame: false,
+        id: scopeName + '.' + appName + '.editor-panel',
+        region: 'center',
+        layout: 'card'
+      }]
+    });
+
+
+    Ext.apply(this, {
+      id: scopeName + '.' + appName + '.-nh-config',
+      title: 'NHibernate Configuration - ' + scopeName + '.' + appName,
+      closable: true,
+      border: false,
+      frame: true,
+      layout: 'fit',
+      items: [dataObjectsPane]
+    });
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/DataType',
+      method: 'GET',
+
+      success: function (response, request) {
+        var dataTypeName = Ext.util.JSON.decode(response.responseText);
+        dataTypes = new Array();
+        var i = 0;
+        while (!dataTypeName[i])
+          i++;
+        while (dataTypeName[i]) {
+          dataTypes.push([i, dataTypeName[i]]);
+          i++;
+        }
+      },
+      failure: function (f, a) {
+        if (a.response)
+          showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
+      }
+    });
+
+    Ext.EventManager.onWindowResize(this.doLayout, this);
+
+    Ext.Ajax.request({
+      url: 'AdapterManager/DBDictionary',
+      method: 'POST',
+      params: {
+        scope: scopeName,
+        app: appName
+      },
+      success: function (response, request) {
+        dbDict = Ext.util.JSON.decode(response.responseText);
+        if (dbDict.ConnectionString)
+          dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
+
+        var tab = Ext.getCmp('content-panel');
+        var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
+        var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
+        var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+
+        if (dbDict.dataObjects.length > 0) {
+          // populate data source form
+          dbInfo = showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName);
+          var abcdd = 5;
+        }
+        else {
+          dbObjectsTree.disable();
+          editPane = dataObjectsPane.items.items[1];
+          if (!editPane) {
+            var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+          }
+          setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
+        }
+      },
+      failure: function (response, request) {
+        editPane = dataObjectsPane.items.items[1];
+        if (!editPane) {
+          var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
+        }
+        editPane.add(dsConfigPane);
+        editPane.getLayout().setActiveItem(editPane.items.length - 1);
+      }
+    });
+
+    this.callParent(arguments);
+//    AdapterManager.NHibernateConfigWizard.superclass.constructor.apply(this, arguments);
+  }
 });
 
 RadioField = Ext.extend(Ext.Panel, {

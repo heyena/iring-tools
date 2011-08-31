@@ -78,6 +78,7 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception e)
       {
+        _logger.Error("Error while creating dictionary.", e);
         throw new Exception("Error while creating dictionary.", e);
       }
       finally
