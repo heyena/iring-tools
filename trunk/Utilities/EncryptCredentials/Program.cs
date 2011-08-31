@@ -18,6 +18,12 @@ USAGE  EncryptCredentials username password [domain]
 
     static void Main(string[] args)
     {
+
+      string cred = "JbGWIKHtbRjgS7H88v+nyWB7XZvcvY5X0mBspo5msqR2NuFMbDS6gTRyERh77simqpUFYGvARAzBwjwYOH4wZQ==";
+      WebCredentials wcred = new WebCredentials(cred);
+      wcred.Decrypt();
+
+
       string userName = String.Empty;
       string password = String.Empty;
       string domain = String.Empty;

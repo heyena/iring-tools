@@ -13,6 +13,7 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
+using log4net;
 
 using org.iringtools.library;
 using org.iringtools.utility;
@@ -51,6 +52,7 @@ namespace org.iringtools.adapter.datalayer
     private NameValueCollection _settings = null;
     private ISpreadsheetRepository _repository { get; set; }
     private string _keyFormat = "Configuration.{0}.{1}";
+    private ILog _logger = LogManager.GetLogger(typeof(SpreadsheetController)); 
 
     public SpreadsheetController()
       : this(new SpreadsheetRepository())
@@ -112,8 +114,9 @@ namespace org.iringtools.adapter.datalayer
           //break;
         }
       }
-      catch
+      catch (Exception ex)
       {
+        _logger.Error("Error uploading file ..." + ex);
         return new JsonResult()
         {
           ContentType = "text/html",
@@ -345,21 +348,6 @@ namespace org.iringtools.adapter.datalayer
       List<WorksheetPart> worksheets = _repository.GetWorksheets(configuration);
 
       object worksheetNames = form["worksheets"];
-
-      //foreach (string worksheetName in worksheetNames)
-      //{
-      //  WorksheetPart worksheet = worksheets.FirstOrDefault<WorksheetPart>(o => o.Worksheet.LocalName == worksheetName);
-      ////  ExcelWorksheet worksheet = worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == worksheetName);
-      //  if (worksheet != null && !worksheets.Contains(worksheet))
-      //  {
-      //    SpreadsheetTable t = new SpreadsheetTable();
-      //    t.Name = worksheetName;
-      //    t.Label = worksheetName;
-      //    t.TableType = TableType.Worksheet;
-      //    t.Columns = new List<SpreadsheetColumn>();
-      //    configuration.Tables.Add(t);
-      //  }
-      //}
 
       return Json(new { success = false }, JsonRequestBehavior.AllowGet);
     }

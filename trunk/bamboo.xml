@@ -3,8 +3,8 @@
 
   <PropertyGroup>
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs;</AssemblyInfoFile> <!--$(MSBuildProjectDirectory)\iRINGTools.SDK\AssemblyInfo.cs-->
-    <Major>2</Major>
-    <Minor>2</Minor>
+    <Major>3</Major>
+    <Minor>0</Minor>
     <Build>0</Build>
     <Revision>0</Revision>
   </PropertyGroup>
@@ -107,8 +107,8 @@
     </AppsDeployment>
 
     <UtilitiesDeployment
-      Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
-               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
+      Include="Libraries\iRINGLibrary\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\bin\Debug\UtilityLibrary.dll;
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
                Utilities\ConfigurationTool\bin\Debug\ConfigurationTool.exe;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.dll;
@@ -149,8 +149,8 @@
     </SDKDeployment>
     
     <SDKLib
-      Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
-             Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;">
+      Include="Libraries\iRINGLibrary\bin\Debug\iRINGLibrary.dll;
+             Libraries\iRINGLibrary\bin\Debug\UtilityLibrary.dll;">
     </SDKLib>
 
     <SDKLibLog4Net

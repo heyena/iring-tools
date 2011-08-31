@@ -239,7 +239,7 @@ AdapterManager.SearchPanel = Ext.extend(Ext.Panel, {
     }
   },
   onClick: function (node) {
-//    var obj = node.attributes;
+    var obj = node.attributes;
     try {
       if (obj.type == "ClassNode" && node.childNodes.length > 0) {
         this.propertyPanel.setSource(node.childNodes[0].attributes.record);
