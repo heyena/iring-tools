@@ -5,8 +5,8 @@
 A patch release of iRINGTools 2.1 that includes bug fixes.  
 
 The downloads are available here:
- * [http://iring-tools.googlecode.com/files/iRINGTools-Adapter-2.1.1.zip iRINGTools-Adapter-2.1.0]
- * [http://iring-tools.googlecode.com/files/iRINGTools-Core-2.1.1.zip iRINGTools-Core-2.1.0]
+ * [http://iring-tools.googlecode.com/files/iRINGTools-Adapter-2.1.1.zip iRINGTools-Adapter-2.1.1]
+ * [http://iring-tools.googlecode.com/files/iRINGTools-Core-2.1.1.zip iRINGTools-Core-2.1.1]
 
 == Bugs Fixed ==
  * Adapter Manager: 
