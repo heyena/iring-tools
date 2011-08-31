@@ -12,5 +12,6 @@ namespace iRINGTools.Web.Models
   {
 		Grid getGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit);
 		void setSession(HttpSessionStateBase Session);
+		string getResponse();
   }
 }

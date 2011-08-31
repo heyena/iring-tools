@@ -4707,7 +4707,6 @@
     <Content Include="Scripts\iringtools\AdapterManager\ListFilter.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ListMenu.js" />
     <Content Include="Scripts\iringtools\AdapterManager\MultiSelect.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigToolBack.js" />
     <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigToolConnection.js" />
     <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigToolSave.js" />
     <Content Include="Scripts\iringtools\AdapterManager\NHibernateConfigToolKeyandProperty.js" />
