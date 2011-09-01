@@ -97,11 +97,15 @@ function createGridStore(scope, app, graph) {
 		reader: new Ext.data.DynamicGridReader({}),
 		remoteSort: true,
 		listeners: {
-			exception: function (ex) {
+			exception: function (ex, a, b, c, response) {
 				Ext.getBody().unmask();
-				showDialog(400, 100, 'Error', 'Error loading data at URL: ' + ex.url, Ext.Msg.OK, null);
+				var rtext = response.responseText;
+				var ind = rtext.indexOf('}');
+				var len = rtext.length - ind - 1;
+				var msg = rtext.substring(ind + 1, rtext.length - 1);
+				showDialog(400, 100, 'Error', msg, Ext.Msg.OK, null);
 			}
-		}
+		}		
 	});
 
 	store.sort = store.sort.createInterceptor(storeSort);

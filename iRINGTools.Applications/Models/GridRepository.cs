@@ -115,9 +115,21 @@ namespace iRINGTools.Web.Models
 			{
 				string allDataItemsJson;
 				DataItems allDataItems = null;
-				allDataItemsJson = _client.Post<DataFilter, string>("/" + app + "/" + scope + "/" + graph + "/filter?format=json", dataFilter, true);
-				allDataItems = (DataItems)serializer.Deserialize(allDataItemsJson, typeof(DataItems));
-				
+
+				try
+				{
+					allDataItemsJson = _client.Post<DataFilter, string>("/" + app + "/" + scope + "/" + graph + "/filter?format=json", dataFilter, true);
+					allDataItems = (DataItems)serializer.Deserialize(allDataItemsJson, typeof(DataItems));
+				}
+				catch (Exception ex)
+				{
+					if (ex.InnerException != null)
+						_logger.Error("Error deserializing filtered data objects: " + ex.InnerException);
+					_logger.Error("Error deserializing filtered data objects: " + ex);
+					if (response == "success")
+						response = ex.Message.ToString() + " " + ex.InnerException.Message.ToString();
+				}
+
 				if (allDataItems.total > 0)
 					session[key] = allDataItems;
 
