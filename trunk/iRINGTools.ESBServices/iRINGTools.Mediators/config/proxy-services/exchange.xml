@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<proxy xmlns="http://ws.apache.org/ns/synapse" name="exchange" transports="https http" startOnLoad="true" trace="disable">
-    <target inSequence="conf:/repository/synapse/sequences/exchangeIn" 
-            outSequence="conf:/repository/synapse/sequences/exchangeOut" 
-            faultSequence="conf:/repository/synapse/sequences/fault" />
-</proxy>

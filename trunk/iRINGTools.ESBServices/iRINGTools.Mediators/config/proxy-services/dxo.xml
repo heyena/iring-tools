@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<proxy xmlns="http://ws.apache.org/ns/synapse" name="dxo" transports="https http" startOnLoad="true" trace="disable">
-	<target inSequence="conf:/repository/synapse/sequences/dxoIn" 
-          outSequence="conf:/repository/synapse/sequences/dxoOut" 
-          faultSequence="conf:/repository/synapse/sequences/fault"/>
-</proxy>
