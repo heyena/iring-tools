@@ -31,7 +31,7 @@
    * iip environment which is used for testing/demo of stable 2.2
    * should we utilize iringtools now?
   * Actions
-   * Split trunk to 2.2.x - Rob
+   * Split trunk to 2.2.x - Rob - done
    * Change 2.2.x version to 2.2.0 - Rob
    * Change trunk version to 3.0.0 - Rob
    * In dotNet trunk
@@ -43,7 +43,7 @@
 	* Remove silverlight external binaries - Koos - done
 	* Remove Silverlight verison of other libs - Koos
 	* Remove desktop qualifier form other libs - Koos
-    * Move ESBServices to java trunk - Hahn
+    * Move ESBServices to java trunk - Hahn - done
 	* Move all documentation out of trunk and into dropbox? - Rob
 	* Need to release 2.2.0
 	 * build branch - Hahn - done
@@ -52,11 +52,10 @@
 	 * non-automated deploy verification - Koos
 	 * testing - Koos
 	 * relnote - Koos
-   * iRINGSandbox Actions
-	* showroom - needs to be upgraded to 2.2.x - rohit/devesh/?
-	* sdk - need to be removed - fang/aswini/rashmi
-	* iip - needs to be upgraded to 2.2.x - fang/aswini/rashmi/neha
-	* dev - build script will need to be fixed to support new trunk - Koos
-	* tomcat - need to switch to host java trunk not dotNet trunk - Hahn
-   
- 
+  * iRINGSandbox Actions
+	 * showroom - needs to be upgraded to 2.2.x - rohit/devesh/?
+	 * sdk - need to be removed - fang/aswini/rashmi
+	 * iip - needs to be upgraded to 2.2.x - fang/aswini/rashmi/neha
+	 * dev - build script will need to be fixed to support new trunk - Koos
+	 * tomcat - need to switch to host java trunk not dotNet trunk - Hahn
+
