@@ -1,0 +1,67 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://www.iringtools.org/refdata/queries" targetNamespace="http://www.iringtools.org/refdata/queries"
+  elementFormDefault="qualified" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+  jaxb:version="2.0" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc">
+
+  <xs:annotation>
+    <xs:appinfo>
+      <jaxb:globalBindings>
+        <xjc:simple/>
+      </jaxb:globalBindings>
+    </xs:appinfo>
+  </xs:annotation>
+
+  <xs:element name="queries" type="Queries"/>
+
+  <xs:complexType name="Queries">
+    <xs:sequence>
+      <xs:element name="queryItem" type="QueryItem" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="QueryItem">
+    <xs:sequence>
+      <xs:element name="key" type="xs:string" />
+      <xs:element name="query" type="Query" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Query">
+    <xs:sequence>
+      <xs:element name="fileName" type="xs:string" />
+      <xs:element name="bindings" type="QueryBindings"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="QueryBindings">
+    <xs:sequence>
+      <xs:element name="queryBinding" type="QueryBinding" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="items" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="QueryBinding">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" />
+      <xs:element name="type" type="SPARQLBindingType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="SPARQLBindingType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Uri"/>
+      <xs:enumeration value="Literal"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
