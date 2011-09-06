@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<directory xmlns="http://www.iringtools.org/directory">
+    <folder name="Power" type="GBU">
+        <endpoint name="BPS" description="Procurement BPS" baseUri="http://localhost:54321/dxfr/Procurement/BPS"/>
+        <folder name="Frederick" type="Site">
+            <folder name="12345_000" type="Project">
+                <exchange name="Power.BPS-&gt;Power.Frederick.12345_000.ABC"/>
+                <folder name="1" type="Unit">
+                    <endpoint name="ABC" description="BPS" baseUri="http://localhost:54321/dxfr"/>
+                    <endpoint name="DEF" description="BPS" baseUri="http://localhost:54321/dxfr"/>
+                    <exchange id="1" name="Power.Frederick.12345_000.ABC-&gt;Power.Frederick.12345_000.DEF"/>
+                    <exchange id="2" name="Power.Frederick.12345_000.DEF-&gt;Power.Frederick.12345_000.ABC"/>
+                </folder>
+                <folder name="Testing" type="folder">
+                    <exchange id="2" name="Power.Frederick.12345_000.DEF-&gt;Power.Frederick.12345_000.ABC"/>
+                    <exchange id="1" name="Power.Frederick.12345_000.ABC-&gt;Power.Frederick.12345_000.DEF"/>
+                </folder>
+            </folder>
+        </folder>
+    </folder>
+</directory>
