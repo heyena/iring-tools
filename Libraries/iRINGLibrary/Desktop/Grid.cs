@@ -9,7 +9,7 @@ namespace org.iringtools.library
 	public class Grid
 	{
 		[DataMember(Name = "total", IsRequired = true, Order = 0)]
-		public int total { get; set; }
+		public long total { get; set; }
 		
 		[DataMember(Name = "fields", IsRequired = true, Order = 1)]
 		public List<Field> fields { get; set; }

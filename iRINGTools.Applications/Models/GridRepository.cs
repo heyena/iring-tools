@@ -52,7 +52,7 @@ namespace iRINGTools.Web.Models
 			{
 				if (_settings["DataServiceURI"] == null)
 				{
-					response = "There is no key for DataServiceURI in web.config in application.";
+					response = "DataServiceURI is not configured.";
 					_logger.Error(response);
 					return null;
 				}
@@ -68,10 +68,10 @@ namespace iRINGTools.Web.Models
 				if (response != "success")
 					return null;
 
-				getDataGrid();
+        getDataGrid();
 
-				if (response != "success")
-					return null;
+        if (response != "success")
+          return null;
 
 				return dataGrid;
 			}
@@ -86,115 +86,47 @@ namespace iRINGTools.Web.Models
 				try
         {
 					dataDict = _client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary", true);
-					if (dataDict.dataObjects.Count == 0)
-						response = "There is no records in the database for data object \"" + app + "\"";
+
+					if (dataDict == null || dataDict.dataObjects.Count == 0)
+						response = "Data dictionary of [" + app + "] is empty.";
         }
         catch (Exception ex)
         {
-					_logger.Error("Error getting DatabaseDictionary." + ex);
-					if (response == "success")
-						response = ex.Message.ToString();
+					_logger.Error("Error getting dictionary." + ex);
+          response = ex.Message.ToString();
         }
       }
 
-			//[WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
-			private void getDataItems(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
-			{
-				string currFilter = filter + "/" + sort + "/" + dir;
+      private void getDataItems(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
+      {
+        try
+        {
+          DataFilter dataFilter = createDataFilter(filter, sort, dir);
 
-				DataFilter dataFilter = createDataFilter(filter, sort, dir);
-				try
-				{
-					string partialKey = "AppGrid-part" + "/" + scope + "/" + app + "/" + graph + "/" + filter + "/" + sort + "/" + dir;
-					setGridData(scope, app, graph, start, limit, dataFilter, partialKey);					
-				}
-				catch (Exception ex) 
-				{
-					_logger.Error("Error getting DatabaseDictionary." + ex);
-					if (response == "success")
-						response = ex.Message.ToString();
-				}
-			}
+          string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=json&start=" + start + "&limit=" + limit;
+          string dataItemsJson = _client.Post<DataFilter, string>(relativeUri, dataFilter, true);
 
-			private void setGridData(string scope, string app, string graph, string start, string limit, DataFilter dataFilter, string partialKey)
-			{
-				DataItems allDataItems = null;
-				string key;
-				
-				if (dataFilter == null)
-					key = "AppGrid-full" + "/" + scope + "/" + app + "/" + graph;
-				else 
-					key = partialKey;
-				
-				if (session != null)
-				{
-					if (session[key] == null)
-					{
-						allDataItems = getDataObjects(key, scope, app, graph, dataFilter);
-					}
-					else
-						allDataItems = (DataItems)session[key];
-				}
-				else
-					getDataObjects(key, scope, app, graph, dataFilter);
-
-				dataGrid.total = (int)allDataItems.total;		
-				getPageData(allDataItems, start, limit);
-			}
-
-			private DataItems getDataObjects(string key, string scope, string app, string graph, DataFilter dataFilter)
-			{
-				string allDataItemsJson;
-				DataItems allDataItems = null;
-
-				try
-				{
-					allDataItemsJson = _client.Post<DataFilter, string>("/" + app + "/" + scope + "/" + graph + "/filter?format=json", dataFilter, true);
-					allDataItems = (DataItems)serializer.Deserialize(allDataItemsJson, typeof(DataItems));
-				}
-				catch (Exception ex)
-				{
-					if (ex.InnerException != null)
-						_logger.Error("Error deserializing filtered data objects: " + ex.InnerException);
-					_logger.Error("Error deserializing filtered data objects: " + ex);
-					if (response == "success")
-						response = ex.Message.ToString() + " " + ex.InnerException.Message.ToString();
-				}
-
-				if (allDataItems.total > 0)
-					session[key] = allDataItems;
-
-				return allDataItems;
-			}
-
-			private void getPageData(DataItems allDataItems, string start, string limit) 
-			{
-				int startNum = int.Parse(start);
-				int limitNum = int.Parse(limit);
-				DataItems pageData = new DataItems();
-				pageData.total = allDataItems.total;
-				pageData.type = allDataItems.type;
-				pageData.items = new List<DataItem>();
-				int indexLimit = Math.Min((int)allDataItems.total, startNum + limitNum);
-
-				for (int i = startNum; i < indexLimit; i++) 				
-					pageData.items.Add(allDataItems.items.ElementAt(i));
-
-				dataItems = pageData;
-			}
+          dataItems = (DataItems) serializer.Deserialize(dataItemsJson, typeof(DataItems));
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error getting data items." + ex);
+          response = ex.Message.ToString();
+        }
+      }
 
 			private void getDataGrid()
 			{				
 				List<List<string>> gridData = new List<List<string>>();
 				List<Field> fields = new List<Field>();
 				createFields(ref fields, ref gridData);
+        dataGrid.total = dataItems.total;
 				dataGrid.fields = fields;
 				dataGrid.data = gridData;
 			}
 
 			private void createFields(ref List<Field> fields, ref List<List<string>> gridData)
 			{
-				string type;
 				foreach (DataObject dataObj in dataDict.dataObjects)
 				{
 					if (dataObj.objectName.ToUpper() != graph.ToUpper())
@@ -204,7 +136,7 @@ namespace iRINGTools.Web.Models
 						foreach (DataProperty dataProp in dataObj.dataProperties)
 						{
 							Field field = new Field();
-							string fieldName = dataProp.columnName;
+							string fieldName = dataProp.propertyName;
 							field.dataIndex = fieldName;
 							field.name = fieldName;
 
@@ -219,10 +151,7 @@ namespace iRINGTools.Web.Models
 								field.width = 50;
 							}
 
-							type = dataProp.dataType.ToString().ToLower();
-							if (type == "single")
-								type = "auto";
-							field.type = type;
+              field.type = ToExtJsType(dataProp.dataType);
 							fields.Add(field);
 						}
 					}
@@ -249,6 +178,36 @@ namespace iRINGTools.Web.Models
 					gridData.Add(rowData);
 				}
 			}
+
+      private String ToExtJsType(org.iringtools.library.DataType dataType)
+      {
+        switch (dataType)
+        {
+          case org.iringtools.library.DataType.Boolean:
+            return "boolean";
+
+          case org.iringtools.library.DataType.Char:
+          case org.iringtools.library.DataType.String:
+            return "string";
+
+          case org.iringtools.library.DataType.DateTime:
+            return "date";
+
+          case org.iringtools.library.DataType.Byte:
+          case org.iringtools.library.DataType.Int16:
+          case org.iringtools.library.DataType.Int32:
+          case org.iringtools.library.DataType.Int64:
+            return "int";
+
+          case org.iringtools.library.DataType.Single:
+          case org.iringtools.library.DataType.Double:
+          case org.iringtools.library.DataType.Decimal:
+            return "float";
+
+          default:
+            return "auto";
+        }
+      }
 
 			private RelationalOperator getOpt(string opt)
 			{
