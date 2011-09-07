@@ -39,7 +39,6 @@ namespace org.iringtools.adapter.projection
         if (_dataObjects != null && (_dataObjects.Count == 1 || FullIndex))
         {
           xElement = new XElement(_graphNamespace + Utility.TitleCase(graphName) + "List");
-
           DataObject dataObject = FindGraphDataObject(graphName);
 
           for (int i = 0; i < _dataObjects.Count; i++)
@@ -49,6 +48,7 @@ namespace org.iringtools.adapter.projection
             xElement.Add(rowElement);
           }
         }
+
         if (_dataObjects != null && (_dataObjects.Count > 1 && !FullIndex))
         {
           xElement = new XElement(_graphNamespace + Utility.TitleCase(graphName) + "List");

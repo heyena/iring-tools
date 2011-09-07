@@ -93,7 +93,7 @@ namespace org.iringtools.library
         InitializeDatabaseDictionary();
         
         string tableName = GetTableName(objectType);
-        string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, _whereClauseAlias);
+        string whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
 
         return GetIdentifiers(tableName, whereClause);
       }
@@ -143,7 +143,7 @@ namespace org.iringtools.library
         InitializeDatabaseDictionary();
 
         string tableName = GetTableName(objectType);
-        string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, _whereClauseAlias);
+        string whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
 
         DataTable dataTable = GetDataTable(tableName, whereClause, start, limit);
         return ToDataObjects(dataTable, objectType);
@@ -213,7 +213,7 @@ namespace org.iringtools.library
         InitializeDatabaseDictionary();
 
         string tableName = GetTableName(objectType);
-        string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, _whereClauseAlias);
+        string whereClause = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias);
 
         return DeleteDataTable(tableName, whereClause);
       }
@@ -253,9 +253,9 @@ namespace org.iringtools.library
       }
     }
 
-    public virtual IContentObject GetContent(string objectType, string identifier, string format)
+    public override IContentObject GetContent(string objectType, string identifier, string format)
     {
-      throw new NotImplementedException();
+      return null;
     }
     #endregion
 
