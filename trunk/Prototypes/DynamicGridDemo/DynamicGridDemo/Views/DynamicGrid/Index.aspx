@@ -4,9 +4,9 @@
 <head>
   <title>Dynamic Grid Demo</title>
   
-  <link rel="stylesheet" type="text/css" href="http://dev.iringsandbox.org/apps/scripts/ext-3.3.1/resources/css/ext-all.css" />
-  <script type="text/javascript" src="http://dev.iringsandbox.org/apps/scripts/ext-3.3.1/adapter/ext/ext-base.js"></script>  
-  <script type="text/javascript" src="http://dev.iringsandbox.org/apps/scripts/ext-3.3.1/ext-all.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://tomcat.dev.iringsandbox.org:8081/apps/resources/ext-3.3.0/resources/css/ext-all.css" />
+  <script type="text/javascript" src="http://tomcat.dev.iringsandbox.org:8081/apps/resources/ext-3.3.0/adapter/ext/ext-base.js"></script>  
+  <script type="text/javascript" src="http://tomcat.dev.iringsandbox.org:8081/apps/resources/ext-3.3.0/ext-all.js"></script>
   
   <link rel="stylesheet" type="text/css" href="http://tomcat.dev.iringsandbox.org:8081/apps/resources/ext-3.3.0/ux/gridfilters/css/GridFilters.css" />
   <link rel="stylesheet" type="text/css" href="http://tomcat.dev.iringsandbox.org:8081/apps/resources/ext-3.3.0/ux/gridfilters/css/RangeMenu.css" />
