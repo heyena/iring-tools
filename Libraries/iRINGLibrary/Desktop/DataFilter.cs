@@ -61,7 +61,7 @@ namespace org.iringtools.library
     [Obsolete("Use ToSqlWhereClause(DatabaseDictionary dbDictionary, string tableName, string objectAlias) instead")]
     public string ToSqlWhereClause(DataDictionary dataDictionary, string tableName, string objectAlias)
     {
-      DatabaseDictionary dbDictionary = (DatabaseDictionary)dataDictionary;
+      DatabaseDictionary dbDictionary = new DatabaseDictionary();
       dbDictionary.Provider = String.Empty;
 #if !SILVERLIGHT
       dbDictionary.dataObjects = Utility.CloneDataContractObject<List<DataObject>>(dataDictionary.dataObjects);
@@ -81,6 +81,11 @@ namespace org.iringtools.library
 
       try
       {
+        if (dataObject == null)
+        {
+          throw new Exception("Data object not found.");
+        }
+
         StringBuilder whereClause = new StringBuilder();
 
         if (Expressions != null && Expressions.Count > 0)
@@ -185,6 +190,12 @@ namespace org.iringtools.library
 #if !SILVERLIGHT
       dataProperty = dataObject.dataProperties.Find(x => x.propertyName.ToUpper() == propertyName.ToUpper());
 #endif
+
+      if (dataProperty == null)
+      {
+        throw new Exception("Data property [" + expression.PropertyName + "] not found.");
+      }
+
       DataType propertyType = dataProperty.dataType;
       string columnName = dataProperty.columnName;
       string qualColumnName = String.Empty;
