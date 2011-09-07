@@ -1,11 +1,10 @@
-﻿Ext.ns('AdapterManager');
-
-/**
+﻿/**
 * @class AdapterManager.SpreadsheetSourcePanel
 * @extends FormPanel
-* @author by Gert Jansen van Rensburg
 */
-AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
+Ext.define('AdapterManager.SpreadsheetSourcePanel', {
+  extend: 'Ext.form.Panel',
+  alias: 'widget.AdapterManager.SpreadsheetSourcePanel',
   width: 120,
   layout: 'fit',
 
@@ -80,7 +79,8 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
         ];
 
     // super
-    AdapterManager.SpreadsheetSourcePanel.superclass.initComponent.call(this);
+    this.callParent(arguments);
+//    AdapterManager.SpreadsheetSourcePanel.superclass.initComponent.call(this);
   },
 
   onUpload: function () {
@@ -109,7 +109,9 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
 * @extends Panel
 * @author by Gert Jansen van Rensburg
 */
-AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
+Ext.define('AdapterManager.SpreadsheetLibraryPanel', {
+   extend: 'Ext.panel.Panel',
+   alias: 'widget.AdapterManager.SpreadsheetLibraryPanel',
   title: 'SpreadsheetLibrary',
   width: 120,
   collapseMode: 'mini',
@@ -161,20 +163,20 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
 
     });
 
-    this.treeLoader.on("beforeload", function (treeLoader, node) {
-      treeLoader.baseParams.type = node.attributes.type;
-    }, this);
+//    this.treeLoader.on("beforeload", function (treeLoader, node) {
+//      treeLoader.baseParams.type = node.attributes.type;
+//    }, this);
 
-    this.rootNode = new Ext.tree.AsyncTreeNode({
-      id: 'root',
-      text: 'Workbook',
-      expanded: true,
-      draggable: false,
-      icon: 'Content/img/excel.png',
-      type: 'ExcelWorkbookNode'
-    });
+//    this.rootNode = new Ext.tree.AsyncTreeNode({
+//      id: 'root',
+//      text: 'Workbook',
+//      expanded: true,
+//      draggable: false,
+//      icon: 'Content/img/excel.png',
+//      type: 'ExcelWorkbookNode'
+//    });
 
-    this.configurationPanel = new Ext.tree.TreePanel({
+    this.configurationPanel = Ext.create('Ext.tree.Panel', {
       layout: 'fit',
       region: 'west',
       border: false,
@@ -184,13 +186,12 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
       rootVisible: true,
       autoScroll: true,
       width: 500,
-      loader: this.treeLoader,
-      root: this.rootNode
+      store: null
     });
 
     this.configurationPanel.on('click', this.onClick, this);
 
-    this.propertyPanel = new Ext.grid.PropertyGrid({
+    this.propertyPanel = new Ext.grid.property.Grid({
       title: 'Details',
       region: 'east',
       width: 200,
@@ -220,7 +221,7 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
     });
 
     //--------------
-    this.tablesConfigPanel = new Ext.Panel({
+    this.tablesConfigPanel = new Ext.panel.Panel({
       layout: 'fit',
       region: 'center',
       minWidth: 10,
@@ -237,7 +238,8 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
         ];
 
     // super
-    AdapterManager.SpreadsheetLibraryPanel.superclass.initComponent.call(this);
+    this.callParent(arguments);
+//    AdapterManager.SpreadsheetLibraryPanel.superclass.initComponent.call(this);
   },
 
   buildToolbar: function () {
