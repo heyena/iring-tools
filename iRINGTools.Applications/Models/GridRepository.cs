@@ -30,7 +30,6 @@ namespace iRINGTools.Web.Models
 			private Grid dataGrid;
 			private string graph;
 			private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
-			static private HttpSessionStateBase session;
 			private JavaScriptSerializer serializer;
 			private string response = "success";
 
@@ -50,6 +49,7 @@ namespace iRINGTools.Web.Models
 
 			public Grid getGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
 			{
+				response = "success";
 				if (_settings["DataServiceURI"] == null)
 				{
 					response = "DataServiceURI is not configured.";
@@ -74,12 +74,7 @@ namespace iRINGTools.Web.Models
           return null;
 
 				return dataGrid;
-			}
-
-			public void setSession(HttpSessionStateBase Session) 
-			{
-				GridRepository.session = Session;
-			}
+			}			
 
 			private void getDatadictionary(String scope, String app)
 			{
@@ -266,9 +261,6 @@ namespace iRINGTools.Web.Models
 								Values values = new Values();
 								expression.Values = values;
 								string value = filterExpression["value"];
-
-								
-
 								values.Add(value);
 							}
 						}

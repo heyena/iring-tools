@@ -39,6 +39,7 @@ namespace org.iringtools.web.controllers
 
 		public ActionResult Pages(FormCollection form)
 		{
+			_logger.Error("GridManagerController -- Pages");
 			JsonContainer<Grid> container = new JsonContainer<Grid>();
 			pageDtoGrid = _repository.getGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
 
@@ -49,24 +50,6 @@ namespace org.iringtools.web.controllers
 			}
 
 			return Json(pageDtoGrid, JsonRequestBehavior.AllowGet);
-		}
-
-		public ActionResult setSession()
-		{
-			_repository.setSession(Session);
-			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-		}
-
-		public ActionResult cleanSession()
-		{
-			foreach (string key in Session.Keys)
-			{
-				if (key.Contains("AppGrid"))
-				{
-					Session.Remove(key);
-				}
-			}
-			return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-		}
+		}		
 	}
 }
