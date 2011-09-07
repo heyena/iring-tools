@@ -217,7 +217,7 @@ namespace org.iringtools.nhibernate
             inner join sys.types t3 on t3.user_type_id = t2.user_type_id
             left join information_schema.key_column_usage t4 on t4.table_name = t1.name and t4.column_name = t2.name 
             left join information_schema.table_constraints t5 on t5.constraint_name = t4.constraint_name
-            where t1.xtype = 'u' order by t1.name";
+            where (t1.xtype = 'u' or t1.xtype = 'v') order by t1.name";
 
 					properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
 
