@@ -62,9 +62,10 @@ Ext.define('AdapterManager.MappingPanel', {
       reader: { type: 'json' }
     });
 
-    Ext.define('mappingmodel', {
-      extend: 'Ext.data.Model',
-      fields: [
+    if (!Ext.ModelManager.isRegistered('mappingmodel')) {
+      Ext.define('mappingmodel', {
+        extend: 'Ext.data.Model',
+        fields: [
          { name: 'id', type: 'string' },
          { name: 'property', type: 'object' },
          { name: 'identifier', type: 'string' },
@@ -72,7 +73,8 @@ Ext.define('AdapterManager.MappingPanel', {
          { name: 'type', type: 'string' },
          { name: 'record', type: 'object' }
        ]
-    });
+      });
+    }
 
     this.mappingStore = Ext.create('Ext.data.TreeStore', {
       model: 'mappingmodel',
@@ -146,7 +148,7 @@ Ext.define('AdapterManager.MappingPanel', {
       autoScroll: true,
       border: 0,
       frame: false,
-      height: 150, 
+      height: 150,
       selModel: new Ext.selection.RowModel({ mode: 'SINGLE' }),
       source: {},
       listeners: {

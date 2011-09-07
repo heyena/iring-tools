@@ -88,10 +88,10 @@ Ext.define('AdapterManager.DirectoryPanel', {
       },
       reader: { type: 'json' }
     });
-
-    Ext.define('scopesmodel', {
-      extend: 'Ext.data.Model',
-      fields: [
+    if (!Ext.ModelManager.isRegistered('scopesmodel')) {
+      Ext.define('scopesmodel', {
+        extend: 'Ext.data.Model',
+        fields: [
          { name: 'id', type: 'string' },
          { name: 'hidden', type: 'boolean' },
          { name: 'property', type: 'object' },
@@ -100,7 +100,8 @@ Ext.define('AdapterManager.DirectoryPanel', {
          { name: 'type', type: 'string' },
          { name: 'record', type: 'object' }
        ]
-    });
+      });
+    }
 
     this.directoryStore = Ext.create('Ext.data.TreeStore', {
       model: 'scopesmodel',

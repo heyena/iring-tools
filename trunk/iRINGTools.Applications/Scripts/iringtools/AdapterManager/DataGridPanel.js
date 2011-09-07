@@ -3,7 +3,8 @@
   alias: 'widget.datagridpanel',
   requires: [
         'Ext.form.field.Text',
-        'Ext.toolbar.TextItem'
+        'Ext.toolbar.TextItem',
+        'Ext.data.*'
     ],
   closable: true,
   scope: null,
@@ -15,24 +16,27 @@
 
   initComponent: function () {
 
-    Ext.define('Dynamic.Model', {
-      extend: 'Ext.data.Model',
-      fields: []
+    var storeProxy = Ext.create('Ext.data.proxy.Ajax', {
+      actionMethods: { read: 'POST' },
+      url: this.url,
+      extraParams: { scope: this.scope, app: this.app, graph: this.graph },
+      reader: { totalProperty: 'totalCount' }
     });
 
+    if (!Ext.ModelManager.isRegistered('Dynamic.Model')) {
+      Ext.define('Dynamic.Model', {
+        extend: 'Ext.data.Model',
+        fields: []
+      });
+    } 
+    
     var grid = this;
 
     this.store = Ext.create('Ext.data.JsonStore', {
       autoLoad: false,
       pageSize: 25,
       model: 'Dynamic.Model',
-      proxy: {
-        type: 'ajax',
-        actionMethods: { read: 'POST' },
-        url: this.url,
-        extraParams: { scope: this.scope, app: this.app, graph: this.graph },
-        reader: { totalProperty: 'totalCount' }
-      }
+      proxy: storeProxy 
     });
 
     Ext.apply(this, {
