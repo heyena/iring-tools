@@ -1,16 +1,13 @@
-﻿/// <reference path="../ext-3.2.1/adapter/ext/ext-base.js" />
-/// <reference path="../ext-3.2.1/ext-all.js" />
-/// <reference path="../../ext-3.3.1/ext-all-debug-w-comments.js" />
+﻿/// <reference path="../../extjs4/ext-all-debug.js" />
 
-
-Ext.ns('AdapterManager');
 /**
 * @class AdapterManager.MappingPanel
 * @extends Panel
 * @author by Gert Jansen van Rensburg
 */
-AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
-
+Ext.define('AdapterManager.MappingPanel', {
+  extend: 'Ext.panel.Panel',
+  alias: 'widget.AdapterManager.MappingPanel',
   height: 300,
   minSize: 150,
   layout: 'border',
@@ -19,13 +16,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   navigationUrl: null,
   propertyPanel: null,
   mappingPanel: null,
-  rootNode: null,
-  treeLoader: null,
   scope: null,
   application: null,
-  graph: null,
   parentClass: null,
-  //  contextButton: null,
   mappingMenu: null,
   graphmapMenu: null,
   templatemapMenu: null,
@@ -34,7 +27,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   directoryPanel: null,
   contentPanel: null,
   searchPanel: null,
-
+  mappingStore: null,
+  ajaxProxy: null,
   iconCls: 'tabsMapping',
 
   /**
@@ -43,12 +37,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   */
   initComponent: function () {
 
-    this.tbar = new Ext.Toolbar();
+    this.tbar = new Ext.toolbar.Toolbar();
     this.tbar.add(this.buildToolbar());
-    //    this.tbar.add(this.contextButton);
-
-    //    this.graphmapMenu = new Ext.menu.Menu();
-    //    this.graphmapMenu.add(this.buildGraphmapMenu());
 
     this.templatemapMenu = new Ext.menu.Menu();
     this.templatemapMenu.add(this.buildTemplateMapMenu());
@@ -59,36 +49,54 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     this.classmapMenu = new Ext.menu.Menu();
     this.classmapMenu.add(this.buildClassMapMenu());
 
-    this.treeLoader = new Ext.tree.TreeLoader({
-      baseParams: {
-        type: null,
+    this.ajaxProxy = Ext.create('Ext.data.proxy.Ajax', {
+      timeout: 120000,
+      actionMethods: { read: 'POST' },
+      url: this.navigationUrl,
+      extraParams: {
+        type: 'MappingNode',
         id: null,
         range: null,
-        graph: this.directoryPanel.getSelectedNode().attributes.id
+        graph: selectedDirectoryNode.data.id
       },
-      url: this.navigationUrl
+      reader: { type: 'json' }
     });
 
-    this.treeLoader.on("beforeload", function (treeLoader, node) {
-      treeLoader.baseParams.type = node.attributes.type;
-      if (node.attributes.record != undefined) {
-        treeLoader.baseParams.id = node.attributes.record.id;
+    Ext.define('mappingmodel', {
+      extend: 'Ext.data.Model',
+      fields: [
+         { name: 'id', type: 'string' },
+         { name: 'property', type: 'object' },
+         { name: 'identifier', type: 'string' },
+         { name: 'text', type: 'string' },
+         { name: 'type', type: 'string' },
+         { name: 'record', type: 'object' }
+       ]
+    });
+
+    this.mappingStore = Ext.create('Ext.data.TreeStore', {
+      model: 'mappingmodel',
+      clearOnLoad: true,
+      root: {
+        type: 'MappingNode',
+        id: this.scope.Name + "/" + this.application.Name,
+        expanded: true
+      },
+      proxy: this.ajaxProxy
+
+    });
+
+    this.mappingStore.on("beforeload", function (store, operation, eopts) {
+      this.ajaxProxy.extraParams.type = operation.node.data.type;
+      if (operation.node.data != undefined) {
+        this.ajaxProxy.extraParams.id = operation.node.data.identifier;
       }
     }, this);
 
-    this.rootNode = new Ext.tree.AsyncTreeNode({
-      id: this.scope.Name + "/" + this.application.Name,
-      text: 'Mapping',
-      expanded: true,
-      icon: 'Content/img/16x16/mapping.png',
-      type: 'MappingNode'
-    });
 
-    this.mappingPanel = new Ext.tree.TreePanel({
+    this.mappingPanel = Ext.create('Ext.tree.Panel', {
       region: 'center',
       id: 'Mapping-Panel',
-      enableDD: true,
-      ddGroup: 'refdataGroup',
       split: true,
       border: true,
       collapseMode: 'mini',
@@ -99,64 +107,47 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       rootVisible: false,
       pathSeparator: '>',
       lines: true,
-      autoScroll: true,
-      loader: this.treeLoader,
-      root: this.rootNode,
-      //bbar: new Ext.ux.StatusBar({ defaultText: 'Ready', statusAlign: 'right' }),
+      enableDD: true,
       stateful: true,
+      stateEvents: ['expand', 'collapse'],
+      stateId: 'mappingPanel-state-id',
       getState: function () {
-        var nodes = [];
-        this.getRootNode().eachChild(function (child) {
-          //function to store state of tree recursively
-          var storeTreeState = function (node, expandedNodes) {
-            if (node.isExpanded() && node.childNodes.length > 0) {
-              expandedNodes.push(node.getPath());
-              node.eachChild(function (child) {
-                storeTreeState(child, expandedNodes);
-              });
-            }
-          };
-          storeTreeState(child, nodes);
-        });
-
         return {
-          expandedNodes: nodes
+          collapsed: this.collapsed
         }
       },
-      applyState: function (state, isOnClick) {
-        var that = this;
-        //this.getLoader().on('load', function () {
-        if (isOnClick == true) {
-          var nodes = state.expandedNodes;
-          for (var i = 0; i < nodes.length; i++) {
-            if (typeof nodes[i] != 'undefined') {
-              that.expandPath(nodes[i]);
-            }
-          }
+      selModel: new Ext.selection.RowModel({ mode: 'SINGLE' }),
+      viewConfig: {
+        plugins: {
+          ptype: 'treeviewdragdrop',
+          dropGroup: 'refdataGroup'
         }
-        //});
-      }
+      },
+      store: this.mappingStore,
+      scroll: 'both'
+      //bbar: new Ext.ux.StatusBar({ defaultText: 'Ready', statusAlign: 'right' }),      
     });
 
 
+    this.mappingPanel.on('expand', this.onExpandNode, this);
+    this.mappingPanel.on('itemcontextmenu', this.showContextMenu, this);
+    this.mappingPanel.on('itemclick', this.onClick, this);
+    this.mappingPanel.on('select', this.onSelect, this);
+    this.mappingPanel.getView().on('beforedrop', this.onBeforeNodedrop, this);
 
-    this.mappingPanel.on('beforeDragDrop', this.onBeforeNodedrop, this);
-    this.mappingPanel.on('expandnode', this.onExpandNode, this);
-    this.mappingPanel.on('contextmenu', this.showContextMenu, this);
-    this.mappingPanel.on('click', this.onClick, this);
 
-    this.propertyPanel = new Ext.grid.PropertyGrid({
+    this.propertyPanel = new Ext.grid.property.Grid({
       title: 'Details',
       region: 'east',
       width: 350,
       split: true,
-      stripeRows: true,
+      viewConfig: { stripeRows: true },
       collapsible: true,
       autoScroll: true,
       border: 0,
       frame: false,
-      height: 150,
-      selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
+      height: 150, 
+      selModel: new Ext.selection.RowModel({ mode: 'SINGLE' }),
       source: {},
       listeners: {
         beforeedit: function (e) { e.cancel = true; },
@@ -172,32 +163,24 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     this.items = [
           this.propertyPanel,
           this.mappingPanel
-        ];
-
-
-    var state = Ext.state.Manager.get('mapping-state-' + this.scope.Name + '-' + this.application.Name);
-
-    if (state) {
-      if (this.mappingPanel.expandPath(state) == false) {
-        Ext.state.Manager.clear('mapping-state-' + this.scope.Name + '-' + this.application.Name);
-        this.mappingPanel.root.reload();
-      }
-    }
-
+        ]
     // super
-    AdapterManager.MappingPanel.superclass.initComponent.call(this);
+    this.callParent(arguments);
 
+    // this.mappingStore.load();
   },
 
   buildToolbar: function () {
     return [
       {
+        xtype: 'button',
         text: 'Reload',
         handler: this.onReload,
         icon: 'Content/img/16x16/view-refresh.png',
         scope: this
       },
       {
+        xtype: 'button',
         text: 'Save',
         handler: this.onSave,
         icon: 'Content/img/16x16/document-save.png',
@@ -222,30 +205,35 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   buildRoleMapMenu: function () {
     return [
           {
+            xtype: 'button',
             text: 'Add ClassMap',
             handler: this.onAddClassMap,
             icon: 'Content/img/16x16/document-new.png',
             scope: this
           },
           {
+            xtype: 'button',
             text: 'Make Possessor',
             handler: this.onMakePossessor,
             // icon: 'Content/img/16x16/view-refresh.png',
             scope: this
           },
           {
+            xtype: 'button',
             text: 'Map Property',
             handler: this.onMapProperty,
             // icon: '',
             scope: this
           },
           {
+            xtype: 'button',
             text: 'Map ValueList',
             handler: this.onMapValueList,
             // icon: '',
             scope: this
           },
           {
+            xtype: 'button',
             text: 'Reset Mapping',
             handler: this.onResetMapping,
             //icon: '',
@@ -257,12 +245,14 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   buildClassMapMenu: function () {
     return [
           {
+            xtype: 'button',
             text: 'Delete ClassMap',
             handler: this.onDeleteClassMap,
             icon: 'Content/img/16x16/edit-delete.png',
             scope: this
           },
           {
+            xtype: 'button',
             text: 'Change ClassMap',
             handler: this.onChangeClassMap,
             // icon:'',
@@ -271,9 +261,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       ]
   },
 
-  getSelectedNode: function () {
-    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
-    return node;
+  onSelect: function (selModel, model, idx) {
+    selectedMappingNode = model.store.getAt(idx);
   },
 
   onSave: function (c) {
@@ -287,8 +276,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       success: function (result, request) {
         that.onReload();
-        //  var node = that.getSelectedNode();
-        //  if (node.expanded == false)
+        //          var node = selectedMappingNode;
+        //          if (node.expanded == false)
         //    node.expand();
       },
       failure: function (result, request) {
@@ -300,17 +289,16 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   onReload: function () {
     //  this.mappingPanel.root.reload();
     //Ext.state.Manager.clear('mapping-state-' + this.scope.Name + '-' + this.application.Name);
-    var panel = this.directoryPanel;
+    var panel = this.mappingPanel;
     var thisTreePanel = Ext.getCmp('Mapping-Panel');
 
     //get state from tree
     var state = thisTreePanel.getState();
     panel.body.mask('Loading', 'x-mask-loading');
 
-    thisTreePanel.getLoader().load(thisTreePanel.getRootNode(), function () {
-      panel.body.unmask();
-      thisTreePanel.applyState(state, true);
-    });
+    thisTreePanel.getStore().load();
+    panel.body.unmask();
+    thisTreePanel.applyState(state, true);
   },
 
 
@@ -318,16 +306,16 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     node.reload();
   },
 
-  onExpandNode: function (node) {
+  onExpand: function (node) {
     Ext.state.Manager.set('mapping-state-' + this.scope.Name + '-' + this.application.Name, node.getPath());
   },
   getParentClass: function (n) {
 
     if (n.parentNode != undefined) {
-      if ((n.parentNode.attributes.type == 'ClassMapNode'
-         || n.parentNode.attributes.type == 'GraphMapNode')
-         && n.parentNode.attributes.identifier != undefined) {
-        this.parentClass = n.parentNode.attributes.identifier;
+      if ((n.parentNode.data.type == 'ClassMapNode'
+         || n.parentNode.data.type == 'GraphMapNode')
+         && n.parentNode.data.identifier != undefined) {
+        this.parentClass = n.parentNode.data.identifier;
         return this.parentClass;
       }
       else {
@@ -336,24 +324,24 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     }
 
   },
-  onBeforeNodedrop: function (e) {
-    e.target.expand();
-    this.getParentClass(e.target);
-    // var dir = this.getParentClass(e.target);
+
+  onBeforeNodedrop: function (domel, source, target, dropPosition) {
+    this.getParentClass(target);
+    var tree = this.mappingPanel;
     var nodetype, thistype, icn, txt, templateId, rec, parentId, context;
-    if (e.target.attributes.type == 'RoleMapNode') {
-      reference = e.data.node.attributes.record.Uri;
-      label = e.data.node.attributes.record.Label;
-      roleId = e.target.attributes.record.id;
-      roleName = e.target.attributes.record.name;
-      rec = e.data.node.attributes.record;
-      txt = e.data.node.attributes.record.Label;
-      context = e.target.id + '/' + txt;
+    if (target.data.type == 'RoleMapNode') {
+      reference = source.records[0].data.record.Uri;
+      label = source.records[0].data.record.Label;
+      roleId = target.data.record.id;
+      roleName = target.data.record.name;
+      rec = source.records[0].data.record;
+      txt = source.records[0].data.record.Label;
+      context = target.data.id + '/' + txt;
 
       parentId = this.parentClass;
       f = false;
       var that = this;
-      e.tree.getEl().mask('Loading...');
+      tree.getEl().mask('Loading...');
       Ext.Ajax.request({
         url: 'mapping/mapreference',
         method: 'POST',
@@ -366,7 +354,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           ctx: context
         },
         success: function (result, request) {
-          e.tree.getEl().unmask();
+          tree.getEl().unmask();
           that.onReload();
         },
         failure: function (result, request) {
@@ -375,18 +363,18 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         }
       })
     }
-    if (e.data.node.attributes.type == 'TemplateNode') {
-      ntype = e.target.attributes.type;
-      parentid = e.target.attributes.identifier;
-      thistype = e.data.node.attributes.type;
+    if (source.records[0].data.type == 'TemplateNode') {
+      ntype = target.data.type;
+      parentid = target.data.identifier;
+      thistype = source.records[0].data.type;
       icn = 'Content/img/template-map.png';
-      txt = e.data.node.attributes.record.Label;
-      templateId = e.data.node.attributes.identifier;
-      rec = e.data.node.attributes.record;
-      context = e.target.id + '/' + txt;
+      txt = source.records[0].data.record.Label;
+      templateId = source.records[0].data.identifier;
+      rec = source.records[0].data.record;
+      context = target.data.id + '/' + txt;
       lf = false;
       var that = this;
-      e.tree.getEl().mask('Loading...');
+      tree.getEl().mask('Loading...');
       Ext.Ajax.request({
         url: 'mapping/addtemplatemap',
         method: 'POST',
@@ -398,11 +386,11 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           ctx: context
         },
         success: function (result, request) {
-          e.tree.getEl().unmask();
+          tree.getEl().unmask();
           that.onReload();
+          return false;
         },
         failure: function (result, request) {
-          //don't drop it
           return false;
         }
       })
@@ -411,8 +399,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       return false;
     }
 
-    e.cancel = true; //don't want to remove it from the source
-    return true;
+    //e.cancel = true; //don't want to remove it from the source
+    return false;
 
   },
 
@@ -428,10 +416,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     var that = this;
     var form = btn.findParentByType('form');
     var win = btn.findParentByType('window');
-    var objectname = Ext.get('objectName').dom.value;
-    var classlabel = Ext.get('classLabel').dom.value;
-    var classurl = Ext.get('classUrl').dom.value;
-    var mapNode = Ext.get('mappingNode').dom.value;
+    var objectname = form.form.findField('objectName').getValue();
+    var classlabel = form.form.findField('classLabel').getValue();
+    var classurl = form.form.findField('classUrl').getValue();
     if (form.getForm().isValid())
       Ext.Ajax.request({
         url: 'mapping/addclassmap',
@@ -440,7 +427,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           objectName: objectname,
           classLabel: classlabel,
           classUrl: classurl,
-          mappingNode: that.mappingPanel.getSelectionModel().getSelectedNode().attributes.id
+          mappingNode: selectedMappingNode.data.id
         },
         success: function (result, request) {
           that.onReload();
@@ -463,19 +450,19 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     var form = btn.findParentByType('form');
     var win = btn.findParentByType('window');
     var graphname = Ext.get('graphName').dom.value;
-    var node = this.getSelectedNode();
+    var node = selectedMappingNode;
     Ext.Ajax.request({
       url: 'mapping/editGraphName',
       method: 'POST',
       params: {
         Scope: this.scope.Name,
         Application: this.application.Name,
-        mappingNode: node.id,
+        mappingNode: node.data.id,
         graphName: graphname
       },
       success: function (result, request) {
         //Ext.Msg.show({ title: 'Success', msg: 'Graph [' + node.id.split('/')[2] + '] renamed to [' + graphname + ']', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
-        var oldName = node.id.split('/')[2];
+        var oldName = node.data.id.split('/')[2];
         that.rootNode.removeChild(node);
         win.close();
         that.contentPanel.removeAll(true);
@@ -487,7 +474,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
   onDeleteTemplateMap: function () {
     var that = this;
-    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+    var node = selectedMappingNode;
     that.getParentClass(node);
     Ext.Ajax.request({
       url: 'mapping/deleteTemplateMap',
@@ -495,9 +482,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       params: {
         Scope: this.scope.Name,
         Application: this.application.Name,
-        mappingNode: node.id,
+        mappingNode: node.data.id,
         parentIdentifier: that.parentClass,
-        identifier: node.attributes.identifier
+        identifier: node.data.identifier
       },
       success: function (result, request) {
         that.onReload();
@@ -510,15 +497,16 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
   onResetMapping: function (node) {
     var that = this;
-    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+    var node = selectedMappingNode;
+    this.rolemapMenu.hide();
     Ext.Ajax.request({
       url: 'mapping/resetmapping',
       method: 'POST',
       params: {
-        mappingNode: node.attributes.id,
-        roleId: node.attributes.record.id,
-        templateId: node.parentNode.attributes.record.id,
-        parentClassId: node.parentNode.parentNode.attributes.identifier
+        mappingNode: node.data.id,
+        roleId: node.data.record.id,
+        templateId: node.parentNode.data.record.id,
+        parentClassId: node.parentNode.parentNode.data.identifier
       },
       success: function (result, request) {
         that.onReload();
@@ -530,11 +518,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onMapProperty: function (node) {
-    var mapnode = this.mappingPanel.getSelectionModel().getSelectedNode();
+    var mapnode = selectedMappingNode;
+    this.rolemapMenu.hide();
     var formid = 'propertytarget-' + this.scope.Name + '-' + this.application.Name;
-    var form = new Ext.form.FormPanel({
+    var thisform = new Ext.form.Panel({
       id: formid,
-      layout: 'form',
+      //   layout: 'form',
       method: 'POST',
       border: false,
       frame: false,
@@ -551,37 +540,37 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
           + 'Drop a Property Node here.</div>',
 
-      afterRender: function (cmp) {
-        Ext.FormPanel.prototype.afterRender.apply(this, arguments);
+      afterRender: function (cmp, eOpts) {
+        Ext.form.Panel.prototype.afterRender.apply(this, arguments);
 
         var propertyTarget = this.body.child('div.property-target' + formid);
         var propertydd = new Ext.dd.DropTarget(propertyTarget, {
           ddGroup: 'propertyGroup',
           notifyEnter: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode')
+            if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyOver: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode')
+            if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyDrop: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode') {
+            if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {
               return false;
             }
             else {
-              Ext.get('propertyName').dom.value = data.node.attributes.record.Name;
-              if (data.node.parentNode != undefined
-                  && data.node.parentNode.attributes.record != undefined
-                  && data.node.parentNode.attributes.type != 'DataObjectNode')
-                Ext.get('relatedObject').dom.value = data.node.parentNode.attributes.record.Name;
-              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.attributes.record.Name + '</b></td></tr>'
+              thisform.form.findField('propertyName').setValue(data.records[0].data.record.Name);
+              if (data.records[0].parentNode != undefined
+                  && data.records[0].parentNode.data.record != undefined
+                  && data.records[0].parentNode.data.type != 'DataObjectNode')
+                thisform.form.findField('relatedObject').setValue(data.records[0].parentNode.data.record.Name);
+              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.records[0].data.record.Name + '</b></td></tr>'
               msg += '</table>'
-              Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg)
+              thisform.body.child('div.property-target' + formid).update(msg)
               return true;
             }
           } //eo notifyDrop
@@ -589,12 +578,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       }
     });
 
-    var win = new Ext.Window({
+    var win = new Ext.window.Window({
       closable: true,
       modal: false,
-      layout: 'form',
+      //  layout: 'form',
       title: 'Map Data Property to RoleMAp',
-      items: form,
+      items: thisform,
       // height: 120,
       width: 430,
       plain: true,
@@ -609,19 +598,18 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     var that = this;
     // var related = "";
     var form = btn.findParentByType('form');
-    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+    var node = selectedMappingNode;
     var win = btn.findParentByType('window');
-    var propertyNames = Ext.get('propertyName').dom.value;
-    if (Ext.get('relatedObject').dom.value != undefined)
-      var related = Ext.get('relatedObject').dom.value;
+    var propertyNames = form.form.findField('propertyName').getValue();
+    var related = form.form.findField('relatedObject').getValue();
     if (form.getForm().isValid())
       Ext.Ajax.request({
         url: 'mapping/mapproperty',
         method: 'POST',
         params: {
           propertyName: propertyNames,
-          mappingNode: node.attributes.id,
-          classId: node.parentNode.parentNode.attributes.identifier,
+          mappingNode: node.data.id,
+          classId: node.parentNode.parentNode.data.identifier,
           relatedObject: related
         },
         success: function (result, request) {
@@ -638,7 +626,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onMapValueList: function (node) {
-    var mapnode = this.mappingPanel.getSelectionModel().getSelectedNode();
+    var mapnode = selectedMappingNode;
+    this.rolemapMenu.hide();
     var formid = 'valuelisttarget-' + this.scope.Name + '-' + this.application.Name;
     var form = new Ext.form.FormPanel({
       id: formid,
@@ -669,24 +658,24 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         var propertydd = new Ext.dd.DropTarget(propertyTarget, {
           ddGroup: 'propertyGroup',
           notifyEnter: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode')
+            if (data.node.data.type != 'DataPropertyNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyOver: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode')
+            if (data.node.data.type != 'DataPropertyNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyDrop: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode') {
+            if (data.node.data.type != 'DataPropertyNode') {
               return false;
             }
             else {
-              Ext.get('propertyName').dom.value = data.node.id;
-              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.id.split('/')[5] + '</b></td></tr>'
+              Ext.get('propertyName').dom.value = data.data.node.id;
+              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.data.id.split('/')[5] + '</b></td></tr>'
               msg += '</table>'
               Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg)
               return true;
@@ -717,9 +706,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
               showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
               return false;
             }
-            Ext.get('objectNames').dom.value = data.node.id;
+            Ext.get('objectNames').dom.value = data.node.data.id;
             var mapNode = Ext.get('mappingPanel')
-            var msg = '<table style="font-size:13px"><tr><td>Value List:</td><td><b>' + data.node.id.split('/')[4] + '</b></td></tr>'
+            var msg = '<table style="font-size:13px"><tr><td>Value List:</td><td><b>' + data.node.data.id.split('/')[4] + '</b></td></tr>'
             msg += '</table>'
             Ext.getCmp(formid).body.child('div.class-target' + formid).update(msg)
             return true;
@@ -733,7 +722,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       closable: true,
       modal: false,
       layout: 'form',
-      title: 'Map Valuelist to RoleMap',
+      title: 'Map Valuelist to RoleMAp',
       items: form,
       //height: 180,
       width: 430,
@@ -751,7 +740,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     var win = btn.findParentByType('window');
     var objectname = Ext.get('objectNames').dom.value;
     var propertyNames = Ext.get('propertyName').dom.value;
-    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+    var node = selectedMappingNode;
     if (form.getForm().isValid())
       Ext.Ajax.request({
         url: 'mapping/mapvaluelist',
@@ -759,22 +748,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         params: {
           propertyName: propertyNames,
           objectNames: objectname,
-          mappingNode: node.attributes.id,
-          classId: node.parentNode.parentNode.attributes.identifier
+          mappingNode: node.data.id,
+          classId: node.parentNode.parentNode.data.identifier
         },
         success: function (result, request) {
-          var rtext = result.responseText;
-          if (rtext.toUpperCase().indexOf('FALSE') == -1) {
-            that.onReload();
-            win.close();
-          }
-          else {
-            var ind = rtext.indexOf('}');
-            var ine = rtext.indexOf('at');
-            var len = rtext.length - ind - 1;
-            var msg = rtext.substring(ind + 1, ine - 7);
-            showDialog(400, 100, 'Valuelist mapping result - Error', msg, Ext.Msg.OK, null);
-          }
+          that.onReload();
+          win.close();
           //Ext.Msg.show({ title: 'Success', msg: 'Mapped ValueList to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
         },
         failure: function (result, request) {
@@ -787,14 +766,15 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
 
   onMakePossessor: function () {
+    this.rolemapMenu.hide();
     var that = this;
-    var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+    var node = selectedMappingNode;
     Ext.Ajax.request({
       url: 'mapping/makePossessor',
       method: 'POST',
       params: {
-        mappingNode: node.attributes.id,
-        classId: node.parentNode.parentNode.attributes.identifier
+        mappingNode: node.data.id,
+        classId: node.parentNode.parentNode.data.identifier
       },
       success: function (result, request) {
         that.onReload();
@@ -805,11 +785,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
   },
 
   onAddClassMap: function () {
-    var mapnode = this.mappingPanel.getSelectionModel().getSelectedNode();
+    this.rolemapMenu.hide();
+    var mapnode = selectedMappingNode;
     var formid = 'classtarget-' + this.scope.Name + '-' + this.application.Name;
-    var form = new Ext.form.FormPanel({
+    var thisform = new Ext.form.Panel({
       id: formid,
-      layout: 'form',
+      // layout: 'form',
       method: 'POST',
       border: false,
       frame: false,
@@ -822,8 +803,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       //{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true, value: null },
               {xtype: 'hidden', name: 'objectName', id: 'objectName' },
               { xtype: 'hidden', name: 'classLabel', id: 'classLabel' },
-              { xtype: 'hidden', name: 'classUrl', id: 'classUrl' },
-              { xtype: 'hidden', name: 'mappingNode', id: 'mappingNode', value: this.rootNode }
+              { xtype: 'hidden', name: 'classUrl', id: 'classUrl' }
              ],
       html: '<div class="property-target' + formid + '" '
           + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
@@ -832,33 +812,34 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
           + 'Drop a Class Node here. </div>',
 
-      afterRender: function (cmp) {
-        Ext.FormPanel.prototype.afterRender.apply(this, arguments);
+      afterRender: function (cmp, eOpts) {
+        Ext.form.Panel.prototype.afterRender.apply(this, arguments);
         var that = this;
         var propertyTarget = this.body.child('div.property-target' + formid);
         var propertydd = new Ext.dd.DropTarget(propertyTarget, {
           ddGroup: 'propertyGroup',
           notifyEnter: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode')
+            if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyOver: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode')
+            if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyDrop: function (dd, e, data) {
-            if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode') {
+            if (data.records[0].data.type != 'DataPropertyNode' && data.records[0].data.type != 'KeyDataPropertyNode') {
+
               return false;
             }
             else {
-              Ext.get('objectName').dom.value = data.node.id;
-              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.id.split('/')[data.node.id.split('/').length - 1] + '</b></td></tr>'
+              thisform.form.findField('objectName').setValue(data.records[0].data.id);
+              var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.records[0].data.id.split('/')[5] + '</b></td></tr>'
               msg += '</table>'
-              Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg)
+              thisform.body.child('div.property-target' + formid).update(msg)
               return true;
             }
           } //eo notifyDrop
@@ -867,32 +848,30 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         var classdd = new Ext.dd.DropTarget(classTarget, {
           ddGroup: 'refdataGroup',
           notifyEnter: function (dd, e, data) {
-            if (data.node.attributes.record.type != 'ClassNode')
+            if (data.records[0].data.record.type != 'ClassNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyOver: function (dd, e, data) {
-            if (data.node.attributes.type != 'ClassNode')
+            if (data.records[0].data.type != 'ClassNode')
               return this.dropNotAllowed;
             else
               return this.dropAllowed;
           },
           notifyDrop: function (classdd, e, data) {
-            if (data.node.attributes.type != 'ClassNode') {
+            if (data.records[0].data.type != 'ClassNode') {
 
               var message = 'Please slect a RDL Class...';
               showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
               return false;
             }
-            Ext.get('classLabel').dom.value = data.node.attributes.record.Label;
-            Ext.get('classUrl').dom.value = data.node.attributes.record.Uri;
-            var mapNode = Ext.get('mappingPanel')
+            thisform.form.findField('classLabel').setValue(data.records[0].data.record.Label);
+            thisform.form.findField('classUrl').setValue(data.records[0].data.record.Uri);
 
-            Ext.get('mappingNode').dom.value = mapnode.attributes.id;
-            var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + data.node.attributes.record.Label + '</b></td></tr>'
-            msg += '</table>'
-            Ext.getCmp(formid).body.child('div.class-target' + formid).update(msg)
+            var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + data.records[0].data.record.Label + '</b></td></tr>';
+            msg += '</table>';
+            thisform.body.child('div.class-target' + formid).update(msg);
             return true;
 
           } //eo notifyDrop
@@ -900,13 +879,12 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       }
     });
 
-    var win = new Ext.Window({
+    var win = new Ext.window.Window({
       closable: true,
       modal: false,
-      layout: 'form',
+      // layout: 'form',
       title: 'Add new ClassMap to RoleMAp',
-      items: form,
-      //  height: 180,
+      items: thisform,
       width: 430,
       plain: true,
       scope: this
@@ -915,8 +893,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     win.show();
   },
 
-  onDeleteClassMap: function (mnode) {
+  onDeleteClassMap: function (mapnode) {
     var that = this;
+    this.rolemapMenu.hide();
     var node = this.mappingPanel.getSelectionModel().getSelectedNode();
     Ext.Ajax.request({
       url: 'mapping/deleteclassmap',
@@ -930,49 +909,41 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       },
       success: function (result, request) {
         that.onReload();
-        //Ext.Msg.show({ title: 'Success', msg: 'Deleted Class Map from Mapping', icon: Ext.MessageBox.INFO, buttons: Ext.MessageBox.OK });
       },
       failure: function (result, request) { }
     })
   },
 
-  onClick: function (node) {
+  onClick: function (view, model, node, index, e) {
     try {
-      //       var obj = node.attributes;
-      this.propertyPanel.setSource(node.attributes.record);
-      //      this.contextButton.menu.removeAll();
-      //      if (obj.type == "TemplateMapNode") {
-      //        this.contextButton.menu.add(this.buildTemplateMapMenu());
-      //      } else if (obj.type == "RoleMapNode") {
-      //        this.contextButton.menu.add(this.buildRoleMapMenu());
-      //      } else if (obj.type == "ClassMapNode") {
-      //       this.contextButton.menu.add(this.buildClassMapMenu());
-      //      }
+      var obj = model.store.getAt(index).data;
+      if (obj.property != null && obj.property != "") {
 
+        this.propertyPanel.setSource(obj.property);
+      } else {
+        this.propertyPanel.setSource(obj.record);
+      }
     } catch (e) {
 
     }
   },
 
-  showContextMenu: function (node, event) {
+  showContextMenu: function (view, model, node, index, e) {
 
-    //  if (node.isSelected()) { 
-    var x = event.browserEvent.clientX;
-    var y = event.browserEvent.clientY;
-
-    var obj = node.attributes;
+    e.stopEvent();
+    var obj = model.store.getAt(index).data;
 
     if (obj.type == "MappingNode") {
-      this.mappingMenu.showAt([x, y]);
+      this.mappingMenu.showAt(e.getXY());
     } else if (obj.type == "TemplateMapNode") {
-      this.templatemapMenu.showAt([x, y]);
+      this.templatemapMenu.showAt(e.getXY());
     } else if (obj.type == "RoleMapNode") {
-      this.rolemapMenu.showAt([x, y]);
+      this.rolemapMenu.showAt(e.getXY());
     } else if (obj.type == "ClassMapNode") {
-      this.classmapMenu.showAt([x, y]);
+      this.classmapMenu.showAt(e.getXY());
     }
-    this.mappingPanel.getSelectionModel().select(node);
-    this.onClick(node);
+    //this.mappingPanel.getSelectionMedel().select(node);
+    //this.onClick(node);
   }
 });
 
