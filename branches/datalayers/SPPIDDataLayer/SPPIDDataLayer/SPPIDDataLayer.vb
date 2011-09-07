@@ -95,7 +95,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, siteDataQuery)
 
             GetCurrentSPPIDSchema()
-            Test()
+            MigrateSPPIDToStaging()
 
         Catch ex As Exception
             MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
@@ -263,7 +263,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-    Public Function Test() As String
+    Public Function MigrateSPPIDToStaging() As String
 
         Dim replacements As IEnumerable(Of XElement) = Nothing
         Dim declarations As IEnumerable(Of XElement) = Nothing
@@ -277,15 +277,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim DT As DataTable
         Dim DS As DataSet
         Dim DA As SqlDataAdapter
-
-
-        ' ToDo *** stopped here *** 
-        ' query creation is now in place and has passed initial testing.
-        ' now need to EITHER: write an add-on function to convert the SELECT portion to a ddl query when the Staging DB
-        ' is on a different server, THEN create data tables on the fly, change the source, and copy down data to the new location
-        ' Also, see if there is some way to create a table or automagically create a DDL from a table 
-        ' copying down data from one of these tables without DDL. Take a good look at the .net entity framework; this may hold 
-        ' the answer, although we may need to adjust the way we store and retrieve queries. 
+        Dim allQueryText As String
+        Dim sbc As New SqlBulkCopy(_stageConn)
 
         GetStagingQueries(stgCfgQueries)
 
@@ -295,59 +288,68 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
                           queryParts, replacements, declarations, SPWorkSet.CommonServerName)
 
-            ' commbine the query parts and perform any necessary replacements
-            queryParts.BuildQuery(queryText, replacements, _textReplacementValues, SPWorkSet.StagingServerInCommon)
+            ' commbine the query parts and perform any necessary replacements. 
+            ' NOTE - although it is possible to make use of an INTO clause to create a selection query that will 
+            ' also automatically create the destination table, this has limitations, the most serious of which is
+            ' it is not safe to assume that the Source DB and Staging DB have the same security requirements. Instead,
+            ' we will always assume that security is separate for these two databases and that the connection strings for the 
+            ' Source and Staging connections provide this information for each individual location. We also cannot assume that
+            ' the specified credentials have the power to create a Linked Server connection or that both SQL Server instances
+            ' allow ad hoc (OpenDataSource) queries. Instead, the provided credentials are used to copy the data to the 
+            ' local machine and then bulk copied out to the staging server, bypassing the need for a more sophisticated security
+            ' check/edit)
+            queryParts.BuildQuery(queryText, replacements, _textReplacementValues, False)
+            allQueryText = "--************ Table Definition ***************" & nl & queryParts(SQLClause.TableDef) & nl &
+                "--**************** End Table Definition  ***************" & nl & nl & queryText
 
             If _queryLogging Then
 
                 exists = _queryLog.TryGetValue(queryParts(SQLClause.QueryName), tmpStr)
 
                 If exists Then
-                    _queryLog(queryParts(SQLClause.QueryName)) = queryText
+                    _queryLog(queryParts(SQLClause.QueryName)) = allQueryText
                 Else
-                    _queryLog.Add(queryParts(SQLClause.QueryName), queryText)
+                    _queryLog.Add(queryParts(SQLClause.QueryName), allQueryText)
                 End If
 
             End If
 
+            ' delete any existing table in the Staging location by the destination name
+            cmd = _stageConn.CreateCommand
+            cmd.CommandText = _
+                "IF  EXISTS (" &
+                "SELECT object_id " &
+                "FROM sys.objects " &
+                "WHERE object_id = OBJECT_ID(N'dbo.[" & queryParts(SQLClause.StagingName) & "]')  AND type in (N'U'))" &
+                "   DROP TABLE dbo.[" & queryParts(SQLClause.StagingName) & "]"
+
+            If _stageConn.State = ConnectionState.Closed Then _stageConn.Open()
+            cmd.ExecuteNonQuery()
+
+            ' create a new table to hold the data
+            cmd = _stageConn.CreateCommand()
+            cmd.CommandText = queryParts(SQLClause.TableDef)
+            cmd.ExecuteNonQuery()
+
+            ' fetch the data
             cmd = _projConn.CreateCommand()
             cmd.CommandText = queryText
             DS = New DataSet
             DA = New SqlDataAdapter(cmd)
-            DA.MissingSchemaAction = MissingSchemaAction.AddWithKey
+            'DA.MissingSchemaAction = MissingSchemaAction.AddWithKey
             DA.Fill(DS, queryParts(SQLClause.StagingName))
             DT = DS.Tables(queryParts(SQLClause.StagingName))
 
-            ' ToDo - create a new connection and execute the query in order to dump the data into the staging area
-            ' NOTE - although the user MUST have rights to read from source tables in the source DB 
-            ' and create tables in the Staging DB, we cannot depend on the user having sufficient rights to create 
-            ' linked tables; nor can we depend on OpenRowset being an available option. 
-            ' In cases where the source and destination servers differ, then our best option is to capture the data in
-            ' a temporary table, create the destination table separately, and then write back out to this table. 
+            ' set the destination location and bulk copy the data to the new table
+            sbc.DestinationTableName = queryParts(SQLClause.StagingName)
+            sbc.WriteToServer(DT)
+            If _stageConn.State = ConnectionState.Open Then _stageConn.Close()
 
         Next
 
         Return "Pass"
 
     End Function
-
-    ' fetch the staging setup configuration, which is the data (stored in the  <projectID>.SPPID.config file) detailing the server/db/login
-    ' data required to transfer data to the Staging location
-    ' DONE - this is now done in the constructor, although it uses a non-standard load routine utilizing an xmlReader
-
-    ' create a staging configuration schema; - work in progress; complete enough to start creating an import
-
-    ' fetch the staging configuration, which is set of query parameters specifying exactly what data will be pulled out of the 
-    ' SPPID. and indicates the distinct table names used when filling the staging DB. A session variable will be provided to append to the names
-    ' before the tables are created; these will be checked and deleted if they already exist. This allows both for the possibility of preserving
-    ' the staging data and negates the possibility that previous versions will conflict schema-wise with the the data pulled under any alteration of
-    ' the configuration
-
-    ' use the query parameters to build complete queries
-
-    ' run the complete queries against the SPPID database and transfer the data to the Staging database
-
-    ' nuke objects, report any errors, and complete.
 
     ''' <summary>
     ''' Fetch the named query from the staging configuration XDocument
