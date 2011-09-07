@@ -47,6 +47,7 @@ namespace org.iringtools.web.controllers
 			{
 				return Json(new { success = false } + response, JsonRequestBehavior.AllowGet);
 			}
+
 			return Json(pageDtoGrid, JsonRequestBehavior.AllowGet);
 		}
 
