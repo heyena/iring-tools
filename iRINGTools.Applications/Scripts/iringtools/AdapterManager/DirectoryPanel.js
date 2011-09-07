@@ -139,10 +139,10 @@ Ext.define('AdapterManager.DirectoryPanel', {
         },
         //        // to copy but not edit content of property grid				
         afteredit: function (e) {
-//          e.grid.getSelectionModel().selections.items[0].data.value = e.originalValue;
-//          e.record.data.value = e.originalValue;
-//          e.value = e.originalValue;
-//          e.grid.getView().refresh();
+          //          e.grid.getSelectionModel().selections.items[0].data.value = e.originalValue;
+          //          e.record.data.value = e.originalValue;
+          //          e.value = e.originalValue;
+          //          e.grid.getView().refresh();
         }
       }
     });
@@ -169,11 +169,11 @@ Ext.define('AdapterManager.DirectoryPanel', {
       stateful: true,
       stateEvents: ['expand', 'collapse'],
       stateId: 'directory-state-id',
-      getState: function() {
-      return {
-         collapsed: this.collapsed
+      getState: function () {
+        return {
+          collapsed: this.collapsed
         }
-     }
+      }
     });
 
     this.directoryPanel.on('itemcontextmenu', this.showContextMenu, this);
@@ -555,6 +555,7 @@ Ext.define('AdapterManager.DirectoryPanel', {
   onLoadPageDto: function (btn, ev) {
     var node = selectedDirectoryNode;
     this.fireEvent('LoadPageDto', this, node);
+    this.appDataMenu.hide();
   },
 
   onDeleteScope: function (btn, ev) {
