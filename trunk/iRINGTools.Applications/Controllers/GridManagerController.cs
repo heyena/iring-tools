@@ -43,7 +43,7 @@ namespace org.iringtools.web.controllers
     public GridManagerController(IGridRepository repository)
     {
       _repository = repository;
-      //dataGrid = new Grid();
+
       serializer = new JavaScriptSerializer();
     }
 
@@ -61,47 +61,57 @@ namespace org.iringtools.web.controllers
         string graph = form["graph"];
         string filter = form["filter"];
         string sort = form["sort"];
-        string dir =  form["dir"];
-        string start = form["start"];
+        string dir = form["dir"];
+        int start1 = 0;
+        int start = 0;
+        int.TryParse(form["start"], out start1);
+        start = start1;
         string limit = form["limit"];
         string currFilter = filter + "/" + sort + "/" + dir;
         DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
-        
+        int pageSize = 25;
         if (dataDict == null)
           GetDatadictionary(scope, app);
 
-        DataObject dataObject = dataDict.dataObjects.FirstOrDefault(d => d.tableName == graph);
+        DataObject dataObject = dataDict.dataObjects.FirstOrDefault(d => d.objectName == graph);
         var fields = from row in dataObject.dataProperties
-                select new { 
-                  name = row.columnName, 
-                  header = row.columnName, 
-                  dataIndex = row.columnName,
-                  sortable = true
-                };
+                     select new
+                     {
+                       name = row.columnName,
+                       header = row.columnName,
+                       dataIndex = row.columnName,
+                       sortable = true
+                     };
         dataItems = GetDataObjects(scope, app, graph, dataFilter);
+        long total = dataItems.total;
+        var paginatedData = dataItems.items.Skip(start)
+                                          .Take(pageSize)
+                                          .ToList();
 
-      foreach (DataItem dataItem in dataItems.items)
-      {
-        var rowData = new Dictionary<string, object>();
-        foreach (var field in fields)
+        foreach (DataItem dataItem in paginatedData.ToList())
         {
-          foreach (KeyValuePair<string, string> property in dataItem.properties)
+          var rowData = new Dictionary<string, object>();
+          foreach (var field in fields)
           {
-            if (field.dataIndex.ToLower() == property.Key.ToLower())
+            foreach (KeyValuePair<string, string> property in dataItem.properties)
             {
-              rowData.Add(property.Key, property.Value);
-              break;
+              if (field.dataIndex.ToLower() == property.Key.ToLower())
+              {
+                rowData.Add(property.Key, property.Value);
+                break;
+              }
             }
           }
+          gridData.Add(rowData);
         }
-        gridData.Add(rowData);
-      }
-      metaData.Add("root", "data");
-      metaData.Add("fields",fields);
-      encode.Add("metaData", metaData);
-      encode.Add("success", "true");
-      encode.Add("data", gridData);
-      return Json(encode, JsonRequestBehavior.AllowGet);
+
+        metaData.Add("root", "data");
+        metaData.Add("fields", fields);
+        encode.Add("metaData", metaData);
+        encode.Add("success", "true");
+        encode.Add("data", gridData);
+        encode.Add("totalCount", total);
+        return Json(encode, JsonRequestBehavior.AllowGet);
       }
       catch (Exception ex)
       {
