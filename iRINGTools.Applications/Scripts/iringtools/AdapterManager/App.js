@@ -1,5 +1,8 @@
 ﻿//Ext.Compat.showErrors = true;
-
+Ext.application({
+  name: 'AdapterManager',
+  autoCreateViewport: true
+});
 
 Ext.onReady(function () {
   Ext.QuickTips.init();
@@ -362,7 +365,7 @@ Ext.onReady(function () {
       limit: 25,
       app: app,
       graph: graph,
-      url: 'gridmanager/getdata'
+      url: 'datagrid/getdata'
     });
 
     contentPanel.add(dataTab).show();

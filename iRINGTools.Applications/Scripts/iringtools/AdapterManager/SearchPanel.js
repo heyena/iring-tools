@@ -81,9 +81,10 @@ Ext.define('AdapterManager.SearchPanel', {
       reader: { type: 'json' }
     });
 
-    Ext.define('searchmodel', {
-      extend: 'Ext.data.Model',
-      fields: [
+    if (!Ext.ModelManager.isRegistered('searchmodel')) {
+      Ext.define('searchmodel', {
+        extend: 'Ext.data.Model',
+        fields: [
          { name: 'id', type: 'string' },
          { name: 'hidden', type: 'boolean' },
          { name: 'property', type: 'string' },
@@ -92,7 +93,8 @@ Ext.define('AdapterManager.SearchPanel', {
          { name: 'type', type: 'string' },
          { name: 'record', type: 'object' }
        ]
-    });
+      });
+    }
 
     this.searchStore = Ext.create('Ext.data.TreeStore', {
       model: 'searchmodel',
@@ -213,7 +215,7 @@ Ext.define('AdapterManager.SearchPanel', {
     node.expand();
   },
 
- 
+
   onSearch: function () {
     var searchText = Ext.getCmp('referencesearch').getValue();
     Ext.getCmp('content-pane').getEl().mask('Loading...');

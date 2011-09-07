@@ -67,14 +67,16 @@ Ext.define('AdapterManager.ApplicationPanel', {
       }
     });
 
-    Ext.define('dlModel', {
-      extend: 'Ext.data.Model',
-      fields: [
+    if (!Ext.ModelManager.isRegistered('dlModel')) {
+      Ext.define('dlModel', {
+        extend: 'Ext.data.Model',
+        fields: [
           { name: 'Assembly', type: 'string' },
           { name: 'Name', type: 'string' },
           { name: 'Configurable', type: 'string' }
        ]
-    });
+      });
+    }
 
     this.store = new Ext.data.Store({
       id: 'dataLayer',
@@ -112,7 +114,7 @@ Ext.define('AdapterManager.ApplicationPanel', {
       border: false, // removing the border of the form
 
       frame: false,
-      
+
       defaults: {
         width: 310,
         msgTarget: 'side'
@@ -142,7 +144,7 @@ Ext.define('AdapterManager.ApplicationPanel', {
     this.callParent(arguments);
 
     this.store.load();
-    
+
 
   },
 
