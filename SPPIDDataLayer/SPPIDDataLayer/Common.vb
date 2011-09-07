@@ -38,6 +38,7 @@ Public Module Common
     ''' <remarks></remarks>
     Public Enum SQLClause
 
+        TableDef = -2
         StagingName = -1
         QueryName = 0
         [Declare] = 1
@@ -211,6 +212,7 @@ Public Module Common
 
             ' skip the query names while building the query
             If part < SQLClause.Declare Then Continue For
+            If part = SQLClause.Into AndAlso Not SelectInto Then Continue For
 
             exists = Parts.TryGetValue(part, clause)
             If exists AndAlso clause.UnpaddedCount > (Len(part.ToString) + 4) Then sb.Append(clause & nl & nl)
@@ -260,6 +262,33 @@ Public Module Common
         End Try
 
         Return "Pass"
+
+    End Function
+
+    <Extension()> _
+    Public Function GetDataTypeString(Row As SQLSchemaDS.ColumnsRow) As String
+
+        Dim s As String
+
+        Select Case Row.DataType
+
+            Case "numeric", "decimal"
+                s = Row.DataType & "(" & Row.NumericPrecision & ", " & Row.NumericScale & ")"
+
+            Case "varchar", "nvarchar", "char", "nchar", "binary", "varbinary"
+
+                If Row.CharMaxLength > -1 Then
+                    s = Row.DataType & "(" & Row.CharMaxLength & ")"
+                Else
+                    s = Row.DataType & "(MAX)"
+                End If
+
+            Case Else
+                s = Row.DataType
+
+        End Select
+
+        Return s
 
     End Function
 
@@ -412,7 +441,7 @@ Public Module Common
                                     ByRef Declarations As IEnumerable(Of XElement),
                                     Optional ByVal CommonServerName As String = "") As String
 
-        Dim dec, s, f, w, g, h, o, i As New StringBuilder
+        Dim dec, s, f, w, g, h, o, i, t As New StringBuilder
         Dim tabWidthAlias As Integer = 50
         Dim l As Integer = 50
         Dim queryTables As IQueryable(Of XElement)
@@ -438,6 +467,9 @@ Public Module Common
         Dim svNm As String = ""
         Dim col As SQLSchemaDS.ColumnsRow
         Dim lastSource As String = ""
+        Dim dataType As String
+        Dim colNull As String
+        Dim isExpression As Boolean
 
         ' init
         If CommonServerName <> "" Then svNm = CommonServerName & "."
@@ -448,11 +480,13 @@ Public Module Common
             TablesDV.Sort = ""
 
             ' initialize the query part strings
-            s.Append("SELECT ") : f.Append("FROM ")
+            s.Append("SELECT ") : f.Append("FROM ") : t.Append("CREATE TABLE ")
             tmpX = QueryNode.Element("variables")
 
-            ' Query Name ************************************************************************************************
+            ' Query Names ************************************************************************************************
             QueryParts.Add(SQLClause.QueryName, QueryNode.Attribute("name").Value)
+            QueryParts.Add(SQLClause.StagingName, QueryNode.Attribute("stagingDestinationName").Value)
+            t.Append(QueryNode.Attribute("stagingDestinationName").Value & " (" & nltb)
 
             ' DELCARE clause ************************************************************************************************
 
@@ -586,11 +620,10 @@ Public Module Common
 
             QueryParts.Add(SQLClause.From, f.ToString)
 
-            ' SELECT clause ***************************************************************************************************
+            ' SELECT and TableDef clauses ***********************************************************************************
 
             ' fetch selection modifiers
-            Dim sels As IEnumerable(Of XElement) = _
-                QueryNode.Descendants("selection")
+            Dim sels As IEnumerable(Of XElement) = QueryNode.Descendants("selection")
 
             ' update the selection string with any selection restrictions
             For Each e As XElement In sels : s.Append(e.Attribute("value").Value & " ") : Next
@@ -606,6 +639,7 @@ Public Module Common
                 source = e.Attribute("source").Value
                 colName = e.Attribute("name").Value
                 stagingFieldName = e.Attribute("alias").Value
+                isExpression = Not (e.Attribute("expression") Is Nothing OrElse e.Attribute("expression").Value = "")
 
                 If source <> lastSource Then
 
@@ -615,23 +649,68 @@ Public Module Common
                 End If
 
                 ' update the select clause
-                If e.Attribute("expression") Is Nothing _
-                    OrElse e.Attribute("expression").Value = "" Then
-
-                    tmpStr = e.Attribute("source").Value & d & e.Attribute("name").Value
-                Else
-                    tmpStr = e.Attribute("expression").Value
+                If isExpression Then : tmpStr = e.Attribute("expression").Value
+                Else : tmpStr = source & d & "[" & colName & "]"
                 End If
 
                 If e IsNot fields.First Then tmpStr = "," & tmpStr
 
                 l = IIf((Len(tmpStr) + Len(tb)) > (tabWidthAlias + 1), Len(tmpStr) + Len(tb2), tabWidthAlias)
                 s.Append(nltb & LSet(tmpStr, l))
-                If e.Attribute("alias").Value <> "" Then s.Append("as " & e.Attribute("alias").Value)
-                's.Append(nltb)
+
+                If stagingFieldName = "" Then
+                    stagingFieldName = colName
+                Else
+                    s.Append("as " & stagingFieldName)
+                End If
+
+                If isExpression Then
+
+                    ' expressions may provide a datatype hint; if not, use nvarchar(max)
+                    If e.Attribute("datatype").Value = "" Then
+                        dataType = "nvarchar(MAX)"
+                    Else
+                        ' ToDo - it would be wise to verify this is a valid datatype here to catch typos
+                        dataType = e.Attribute("datatype").Value
+                    End If
+
+                    colNull = " null"
+
+                Else
+
+                    ' look up the data type of the column if this is not an expression
+                    exists = sourceAliasMap.TryGetValue(source, sourceUnique)
+
+                    If exists Then
+
+                        ColumnsDV.RowFilter = "TableSchema='" & sourceUnique.SchemaName & "' " & _
+                        "and TableName='" & sourceUnique.TableName & "' " & _
+                        "and ColumnName='" & colName & "'"
+
+                        If ColumnsDV.Count <> 1 Then
+                            Throw New InvalidExpressionException("The column '" & _
+                                sourceUnique.UniqueName & d & colName & "' is not a " & _
+                                "valid uniquely identified column; the query cannot be built")
+                        End If
+
+                        col = ColumnsDV(0).Row
+                        dataType = col.GetDataTypeString
+                        colNull = IIf(col.IsNullable = "Yes", " null", " not null")
+
+                    Else : Throw New InvalidExpressionException("The source value '" & source & _
+                        "' is not a valid uniquely identified table or table reference; the query cannot be built")
+
+                    End If
+
+                End If
+
+                If e IsNot fields.First Then t.Append(nltb & ",")
+                t.Append(stagingFieldName & " " & dataType & colNull)
 
             Next
 
+            t.Append(")")
+            QueryParts.Add(SQLClause.TableDef, t.ToString)
             QueryParts.Add(SQLClause.Select, s.ToString)
 
             ' WHERE clause ***************************************************************************************************
