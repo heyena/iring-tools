@@ -106,13 +106,10 @@
     </Compile>
     <Compile Include="ConfigFile.cs" />
     <Compile Include="Controllers\AdapterManagerController.cs" />
-    <Compile Include="Controllers\GridManagerController.cs" />
-    <None Include="Controllers\DirectoryController.cs.new" />
+    <Compile Include="Controllers\DatagridController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <None Include="Controllers\MappingController.cs.new" />
     <Compile Include="Controllers\MappingController.cs" />
-    <None Include="Controllers\RefDataController.cs.new" />
     <Compile Include="Controllers\RefDataController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -175,14 +172,11 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Scripts\adaptermanager\AppDataGrid.js" />
     <Content Include="Scripts\adaptermanager\nhibernateconfig\NHibernateConfigTool.js" />
     <Content Include="Scripts\adaptermanager\nhibernateconfig\NHibernateConfigToolConnection.js" />
     <Content Include="Scripts\adaptermanager\nhibernateconfig\NHibernateConfigToolKeyandProperty.js" />
     <Content Include="Scripts\adaptermanager\nhibernateconfig\NHibernateConfigToolRelation.js" />
     <Content Include="Scripts\adaptermanager\nhibernateconfig\NHibernateConfigToolSave.js" />
-    <Content Include="Scripts\adaptermanager\ux\form\ItemSelector.js" />
-    <Content Include="Scripts\adaptermanager\ux\RowExpander.js" />
     <Content Include="Scripts\extjs40\bootstrap.js" />
     <Content Include="Scripts\extjs40\ext-all-debug-w-comments.js" />
     <Content Include="Scripts\extjs40\ext-all-debug.js" />
@@ -1512,6 +1506,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Scripts\adaptermanager\ux\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
@@ -1527,9 +1522,6 @@
       <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
       <Name>UtilityLibrary</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

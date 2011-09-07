@@ -25,9 +25,9 @@ using System.Web.Script.Serialization;
 
 namespace org.iringtools.web.controllers
 {
-  public class GridManagerController : BaseController
+  public class DatagridController : BaseController
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(GridManagerController));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DatagridController));
     private IGridRepository _repository { get; set; }
     private DataDictionary dataDict;
     private DataItems dataItems;
@@ -38,9 +38,9 @@ namespace org.iringtools.web.controllers
     private string response = "success";
     private string _key = null;
 
-    public GridManagerController() : this(new GridRepository()) { }
+    public DatagridController() : this(new GridRepository()) { }
 
-    public GridManagerController(IGridRepository repository)
+    public DatagridController(IGridRepository repository)
     {
       _repository = repository;
 
