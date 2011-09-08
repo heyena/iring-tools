@@ -13,6 +13,7 @@
   url: null,
   page: null,
   limit: null,
+  reload: null,
 
   initComponent: function () {
 
@@ -28,30 +29,28 @@
         extend: 'Ext.data.Model',
         fields: []
       });
-    } 
-    
+    }
+
     var grid = this;
 
     this.store = Ext.create('Ext.data.JsonStore', {
       autoLoad: false,
       pageSize: 25,
       model: 'Dynamic.Model',
-      proxy: storeProxy 
-    });
-
-    var pagingtbar = Ext.create('Ext.PagingToolbar', {
-      store: this.store,
-      dock: 'bottom',
-      displayInfo: true,
-      plugins: Ext.create('Ext.ux.grid.PageSize', {})
+      proxy: storeProxy
     });
 
     Ext.apply(this, {
       iconCls: 'icon-grid',
       itemId: 'tablegrid_' + this.scope + '.' + this.app + '.' + this.graph,
-      title: this.scope + '.' + this.app + '.' + this.graph,
       store: this.store,
-      bbar: [pagingtbar],
+      dockedItems: [ {
+         xtype: 'pagingtoolbar',
+         store: this.store,
+         dock: 'bottom',
+         displayInfo: true,
+         plugins: Ext.create('Ext.ux.grid.PageSize', {})
+      } ],
       columns: {
         defaults: {
           field: { xtype: 'textfield' }
