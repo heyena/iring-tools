@@ -59,17 +59,17 @@ namespace org.iringtools.web.controllers
         string scope = form["scope"];
         string app = form["app"];
         string graph = form["graph"];
+        _key = string.Format("Data-full-{0}.{1}.{2}", scope, app, graph);
         string filter = form["filter"];
         string sort = form["sort"];
         string dir = form["dir"];
-        int start1 = 0;
         int start = 0;
-        int.TryParse(form["start"], out start1);
-        start = start1;
-        string limit = form["limit"];
+        int.TryParse(form["start"], out start);
+        int limit = 25;
+        int.TryParse(form["limit"], out limit);
         string currFilter = filter + "/" + sort + "/" + dir;
         DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
-        int pageSize = 25;
+        
         if (dataDict == null)
           GetDatadictionary(scope, app);
 
@@ -82,10 +82,16 @@ namespace org.iringtools.web.controllers
                        dataIndex = row.columnName,
                        sortable = true
                      };
-        dataItems = GetDataObjects(scope, app, graph, dataFilter);
+        if (Session[_key] == null)
+        {
+          Session[_key] = GetDataObjects(scope, app, graph, dataFilter);
+        }
+        
+        dataItems = (DataItems)Session[_key];
+     
         long total = dataItems.total;
         var paginatedData = dataItems.items.Skip(start)
-                                          .Take(pageSize)
+                                          .Take(limit)
                                           .ToList();
 
         foreach (DataItem dataItem in paginatedData.ToList())
