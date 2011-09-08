@@ -569,9 +569,8 @@ namespace org.iringtools.nhibernate
       else if (dbProvider.ToUpper().Contains("MSSQL"))
       {
         metaQuery = String.Format(@"
-          select name from sys.objects
-          where (upper(type) = 'U' or upper(type) = 'V') and upper(schema_name(schema_id)) = 'DBO' 
-          order by name", schemaName.ToUpper());
+          select name from sys.objects where (upper(type) = 'U' or upper(type) = 'V') 
+          and upper(schema_name(schema_id)) = '{0}' order by name", schemaName.ToUpper());
       }
       else if (dbProvider.ToUpper().Contains("ORACLE"))
       {
