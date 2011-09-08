@@ -39,18 +39,19 @@
       proxy: storeProxy 
     });
 
+    var pagingtbar = Ext.create('Ext.PagingToolbar', {
+      store: this.store,
+      dock: 'bottom',
+      displayInfo: true,
+      plugins: Ext.create('Ext.ux.grid.PageSize', {})
+    });
+
     Ext.apply(this, {
       iconCls: 'icon-grid',
       itemId: 'tablegrid_' + this.scope + '.' + this.app + '.' + this.graph,
-      //title: '',
-      //            plugins: [this.editing],
+      title: this.scope + '.' + this.app + '.' + this.graph,
       store: this.store,
-      dockedItems: [{
-        xtype: 'pagingtoolbar',
-        store: this.store,   // same store GridPanel is using
-        dock: 'bottom',
-        displayInfo: true
-      }],
+      bbar: [pagingtbar],
       columns: {
         defaults: {
           field: { xtype: 'textfield' }
@@ -58,7 +59,7 @@
       }
     }),
 
-		this.callParent();
+		this.callParent(arguments);
 
     this.store.load({
       callback: function (recs, options, success) {
