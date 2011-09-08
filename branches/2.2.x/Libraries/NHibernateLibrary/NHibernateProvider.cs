@@ -210,14 +210,13 @@ namespace org.iringtools.nhibernate
 				if (dbProvider.Contains("MSSQL"))
 				{
 					metadataQuery = @"
-            select t1.name as table_name, t2.name as column_name, t3.name as column_type, 
-            t2.max_length as column_length, t2.is_identity as column_identity, t2.is_nullable as column_nullable,
-            t5.constraint_type as column_constraint from sysobjects t1
+            select t1.name as table_name, t2.name as column_name, type_name(t2.user_type_id) as column_type, 
+            t2.max_length as data_length, t2.is_identity as is_identity, t2.is_nullable as is_nullable,
+            t4.column_id as is_primary_key from sysobjects t1
             inner join sys.columns t2 on t2.object_id = t1.id  
-            inner join sys.types t3 on t3.user_type_id = t2.user_type_id
-            left join information_schema.key_column_usage t4 on t4.table_name = t1.name and t4.column_name = t2.name 
-            left join information_schema.table_constraints t5 on t5.constraint_name = t4.constraint_name
-            where (t1.xtype = 'u' or t1.xtype = 'v') order by t1.name";
+            left join sys.indexes t3 on t3.object_id = t1.id 
+            left join sys.index_columns t4 on t4.object_id = t1.id and t4.index_id = t3.index_id and t4.column_id = t2.column_id
+            where (upper(t1.xtype) = 'U' or upper(t1.xtype) = 'V') order by t1.name";
 
 					properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
 
