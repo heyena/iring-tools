@@ -556,7 +556,7 @@ Ext.define('AdapterManager.DirectoryPanel', {
   onLoadPageDto: function (btn, ev) {
     var node = selectedDirectoryNode;
     this.fireEvent('LoadPageDto', this, node);
-    this.appDataMenu.hide();
+    this.appDataMenu.hide(); 
   },
 
   onDeleteScope: function (btn, ev) {
