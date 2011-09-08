@@ -50,7 +50,7 @@
     <Compile Include="MSSQLDataLayerTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="iRINGLibrary, Version=2.1.0.3020, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="iRINGLibrary, Version=3.0.0.4169, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
@@ -63,7 +63,7 @@
       <HintPath>..\lib\configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="UtilityLibrary, Version=2.1.0.3020, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UtilityLibrary, Version=3.0.0.4169, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
