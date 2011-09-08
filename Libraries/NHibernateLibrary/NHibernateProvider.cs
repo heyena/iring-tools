@@ -606,7 +606,7 @@ namespace org.iringtools.nhibernate
           t2.max_length as data_length, t2.is_identity as is_identity, 
           t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
           inner join sys.columns t2 on t2.object_id = t1.object_id  
-          left join sys.indexes t3 on t3.object_id = t1.object_id 
+          left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
           left join sys.index_columns t4 on t4.object_id = t1.object_id 
           and t4.index_id = t3.index_id and t4.column_id = t2.column_id
           where (upper(t1.type) = 'U' or upper(t1.type) = 'V') 
