@@ -169,7 +169,6 @@ Ext.define('AdapterManager.MappingPanel', {
     // super
     this.callParent(arguments);
 
-    // this.mappingStore.load();
   },
 
   buildToolbar: function () {
@@ -944,8 +943,7 @@ Ext.define('AdapterManager.MappingPanel', {
     } else if (obj.type == "ClassMapNode") {
       this.classmapMenu.showAt(e.getXY());
     }
-    //this.mappingPanel.getSelectionMedel().select(node);
-    //this.onClick(node);
+
   }
 });
 
