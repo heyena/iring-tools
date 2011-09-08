@@ -420,16 +420,12 @@ namespace org.iringtools.adapter.datalayer
           identifiers = new List<string>();
           identifiers = GetIdentifiers(objectType, null);
         }
-        //foreach (String identifier in identifiers)
-        //{
           MSSQLObject dataObject = new MSSQLObject(objectSql, identifiers);
           foreach (DataRow dr in dataObject.GetDataTable(objectSql.ObjectName).Rows)
           {
             MSSQLDatarow msdr = new MSSQLDatarow(dr);
             dataObjects.Add(msdr);
           }
-         // dataObjects.Add(dataObject);
-        //}
 
         return dataObjects;
       }
@@ -467,7 +463,7 @@ namespace org.iringtools.adapter.datalayer
         {
           sql.AppendLine("SELECT " + objectSql.IdentifierProperty);
           sql.AppendLine(" FROM " + objectSql.ObjectName);
-          if (filter != null)
+          if (filter != null && filter.Expressions.Count > 0)
           {
             sql.Append(filter.ToSqlWhereClause(GetDictionary(), objectSql.ObjectName, null));
           }
@@ -627,10 +623,7 @@ namespace org.iringtools.adapter.datalayer
       {
         msSQLCofiguration = Utility.Read<MSSQLConfiguration>(_xmlPath, true);
       }
-      //  else
-      //   {
-      //     throw new Exception("File " + scope + " not found at " + _xmlPath);
-      //   }
+
       return msSQLCofiguration;
     }
 
@@ -677,7 +670,5 @@ namespace org.iringtools.adapter.datalayer
       }
       return _response;
     }
-
-
   }
 }

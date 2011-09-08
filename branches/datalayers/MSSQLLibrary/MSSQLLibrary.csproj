@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="iRINGLibrary, Version=3.0.0.4169, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\iring-tools\iRINGLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\trunk\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
@@ -47,8 +51,15 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UtilityLibrary, Version=3.0.0.4169, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\iring-tools\UtilityLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\..\trunk\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="MSSQLLibrary\DataCRUD.cs" />
     <Compile Include="MSSQLLibrary\MSSQLConfiguration.cs" />
     <Compile Include="MSSQLLibrary\MSSQLDataLayer.cs" />
@@ -63,16 +74,6 @@
     <Content Include="XML\mssql-configuration.12345_000.GHI.xml">
       <SubType>Designer</SubType>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\trunk\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
-      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary.Desktop</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\trunk\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
-      <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
-      <Name>UtilityLibrary.Desktop</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
