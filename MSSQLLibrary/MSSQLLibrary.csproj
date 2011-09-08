@@ -57,18 +57,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\trunk\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="MSSQLLibrary\DataCRUD.cs" />
     <Compile Include="MSSQLLibrary\MSSQLConfiguration.cs" />
     <Compile Include="MSSQLLibrary\MSSQLDataLayer.cs" />
     <Compile Include="MSSQLLibrary\MSSQLDatarow.cs" />
     <Compile Include="MSSQLLibrary\MSSQLObject.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="XML\BindingConfiguration.12345_000.GHI.xml" />
     <Content Include="XML\mssql-configuration.12345_000.GHI.xml">
