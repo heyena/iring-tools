@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace org.iringtools.library
 {
   [DataContract(Namespace = "http://www.iringtools.org/data", Name = "dataItems")]
-  public class DataItems
+  public class DataItems 
   {
     [DataMember(Name = "type", Order = 0, EmitDefaultValue = false)]
     public string type { get; set; }

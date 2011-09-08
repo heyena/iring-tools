@@ -40,10 +40,6 @@
                 AdapterManager</a>
               </li>
               <li>
-                <a href="Apps/RefDataEditor">
-                Reference Data Editor</a>
-              </li>
-              <li>
                 <a href="services/facade/sparql/query">
                 Facade Query</a>
               </li>

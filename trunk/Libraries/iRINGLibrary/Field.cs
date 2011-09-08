@@ -9,22 +9,25 @@ namespace org.iringtools.library
 		[DataMember(Name = "name", IsRequired = true, Order = 0)]
 		public string name { get; set; }  // header
 
-		[DataMember(Name = "dataIndex", IsRequired = true, Order = 1)]
+    [DataMember(Name = "header", IsRequired = true, Order = 1)]
+    public string header { get; set; }
+
+		[DataMember(Name = "dataIndex", IsRequired = true, Order = 2)]
 		public string dataIndex { get; set; }
 
-		[DataMember(Name = "type", IsRequired = true, Order = 2)]
+		[DataMember(Name = "type", IsRequired = true, Order = 3)]
 		public string type { get; set; }  // data type
 
-		[DataMember(Name = "width", IsRequired = true, Order = 3)]
+		[DataMember(Name = "width", IsRequired = true, Order = 4)]
 		public int width { get; set; }
 
-		[DataMember(Name = "fix", IsRequired = true, Order = 4)]
+		[DataMember(Name = "fix", IsRequired = true, Order = 5)]
 		public bool fix = false;  // fixed width
 
-		[DataMember(Name = "filterable", IsRequired = true, Order = 5)]
+		[DataMember(Name = "filterable", IsRequired = true, Order = 6)]
 		public bool filterable = true;
 
-		[DataMember(Name = "sortable", IsRequired = true, Order = 6)]
+		[DataMember(Name = "sortable", IsRequired = true, Order = 7)]
 		public bool sortable = true;  
 	
 		public void setFixed(bool fix)

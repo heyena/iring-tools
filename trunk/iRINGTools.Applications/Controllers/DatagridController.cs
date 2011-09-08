@@ -91,8 +91,8 @@ namespace org.iringtools.web.controllers
      
         long total = dataItems.total;
         var paginatedData = dataItems.items.Skip(start)
-                                          .Take(limit)
-                                          .ToList();
+                                           .Take(limit)
+                                           .ToList();
 
         foreach (DataItem dataItem in paginatedData.ToList())
         {
