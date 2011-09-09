@@ -108,9 +108,13 @@ namespace org.iringtools.adapter.projection
 
     private void CreateIndexXml(XElement parentElement, DataObject dataObject, int dataObjectIndex)
     {
-      string uri = _graphNamespace.ToString() + "/";
+      string uri = _graphNamespace.ToString();
+
+      if (!uri.EndsWith("/"))
+        uri += "/";
 
       int keyCounter = 0;
+
       foreach (KeyProperty keyProperty in dataObject.keyProperties)
       {
         DataProperty dataProperty = dataObject.dataProperties.Find(dp => dp.propertyName == keyProperty.keyPropertyName);
