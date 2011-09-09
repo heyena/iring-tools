@@ -184,9 +184,7 @@ Ext.onReady(function () {
 
     var editScopePane = Ext.getCmp('editwin-' + node.id);
     if (editScopePane)
-      editScopePane.destroy();
-
-
+      editScopePane.destroy(); 
   }, this);
 
   directoryPanel.on('editgraphname', function (npanel, node) {
@@ -206,10 +204,8 @@ Ext.onReady(function () {
         application: application,
         url: 'spreadsheet/configure',
         closable: true
-      });
-
-      contentPanel.add(newConfig).show();
-      //contentPanel.activate(newConfig);
+      }); 
+      contentPanel.add(newConfig).show(); 
     }
     else if (dataLayerValue == 'NHibernateLibrary') {
       var nhConfigId = scope + '.' + application + '.-nh-config';
@@ -350,8 +346,7 @@ Ext.onReady(function () {
   directoryPanel.on('LoadPageDto', function (npanel, node) {
     var scope = node.parentNode.parentNode.parentNode.data.text;
     var app = node.parentNode.parentNode.data.text
-    var graph = node.data.text;
-    // loadAppPageDto(scope, app, graph);
+    var graph = node.data.text; 
     var newTab = Ext.create('AdapterManager.DatagridPanel', {
       title: 'Data-' + scope + '.' + app + '.' + graph,
       id: 'tablegrid_' + scope + '.' + app + '.' + graph,
