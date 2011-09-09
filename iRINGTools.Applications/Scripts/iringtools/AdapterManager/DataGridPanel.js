@@ -5,7 +5,7 @@
         'Ext.form.field.Text',
         'Ext.toolbar.TextItem',
         'Ext.data.*'
-    ],
+  ],
   closable: true,
   scope: null,
   app: null,
@@ -41,7 +41,7 @@
     });
 
     Ext.apply(this, {
-      iconCls: 'icon-grid',
+      iconCls: 'tabsMapping',
       itemId: 'tablegrid_' + this.scope + '.' + this.app + '.' + this.graph,
       store: this.store,
       dockedItems: [ {

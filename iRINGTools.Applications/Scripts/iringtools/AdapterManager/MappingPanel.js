@@ -94,11 +94,11 @@ Ext.define('AdapterManager.MappingPanel', {
         this.ajaxProxy.extraParams.id = operation.node.data.identifier;
       }
     }, this);
-
+    var uniqueId = 'Mapping-' + selectedDirectoryNode.data.id;
 
     this.mappingPanel = Ext.create('Ext.tree.Panel', {
       region: 'center',
-      id: 'Mapping-Panel',
+      id: 'Mapping-' + selectedDirectoryNode.data.id,
       split: true,
       border: true,
       collapseMode: 'mini',
