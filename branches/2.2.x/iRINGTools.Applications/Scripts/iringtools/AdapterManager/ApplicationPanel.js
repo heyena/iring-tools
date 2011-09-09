@@ -113,7 +113,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             items: [
           { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 300, value: scope, allowBlank: false },
           { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 300, value: name, allowBlank: false },
-          { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 300, value: name, allowBlank: false },
+          { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 300, value: name, allowBlank: false, id: 'name', regex: /^[a-z]+[0-9a-z]./, regexText: 'Name should not starts with number and should not have spaces.' },
           { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 300, value: description },
           cmbDataLayers
       ],
@@ -164,24 +164,31 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
     onSave: function () {
         var that = this;    // consists the main/prappNameclass object
-        if (this.form.getForm().getFieldValues().Scope != this.form.getForm().getFieldValues().Name) {
-            this.form.getForm().submit({
-                waitMsg: 'Saving Data...',
-                success: function (f, a) {
-                    that.fireEvent('Save', that);
-                },
-                failure: function (f, a) {
-                    //Ext.Msg.alert('Warning', 'Error saving changes!')
-                    var message = 'Error saving changes!';
-                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-                }
-            });
+        if (Ext.getCmp('name').isValid() == true) {
+            if (this.form.getForm().getFieldValues().Scope != this.form.getForm().getFieldValues().Name) {
+                this.form.getForm().submit({
+                    waitMsg: 'Saving Data...',
+                    success: function (f, a) {
+                        that.fireEvent('Save', that);
+                    },
+                    failure: function (f, a) {
+                        //Ext.Msg.alert('Warning', 'Error saving changes!')
+                        var message = 'Error saving changes!';
+                        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                    }
+                });
+            }
+            else {
+                var message = 'Scope & Application name cannot be same!';
+                showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+            }
         }
         else {
-            var message = 'Scope & Application name cannot be same!';
+            var message = 'Please correct error(s)!';
             showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
     }
+   
 
 });
 
