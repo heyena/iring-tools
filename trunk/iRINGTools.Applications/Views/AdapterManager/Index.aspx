@@ -4,24 +4,22 @@
 <head id="Head1" runat="server">
     <title>Adapter Manager</title>
   <link href="../../Content/css/adaptermanager-gray.css" rel="stylesheet" type="text/css" />
-<%-- <link href="../../Content/css/adaptermanager.css" rel="stylesheet" type="text/css" />--%>
-<%--  <link href="../../Scripts/extjs40/resources/css/ext-all.css" rel="stylesheet" type="text/css" />--%>
-  <link href="../../Scripts/extjs40/resources/css/ext-all-gray.css" rel="stylesheet"
-    type="text/css" />
-  <script src="<%: Url.Content("~/Scripts/extjs40/ext-all-debug.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/ux/PagingToolbar.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/sppidConfigWizard.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/ValueListPanel.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/ValueListMapPanel.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/SpreadsheetLibrary.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/SearchPanel.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/ScopePanel.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/MappingPanel.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/GraphPanel.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/ApplicationPanel.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/DirectoryPanel.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/DataGridPanel.js") %>" type="text/javascript"></script>
-  <script src="<%: Url.Content("~/Scripts/adaptermanager/App.js") %>" type="text/javascript"></script>
+  <link href="../../Scripts/extjs40/resources/css/ext-all.css" rel="stylesheet" type="text/css" />
+  <link href="../../Scripts/extjs40/resources/css/ext-all-gray.css" rel="stylesheet" type="text/css" />
+  <script src="../../Scripts/extjs40/ext-all-debug.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/ux/PagingToolbar.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/sppidConfigWizard.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/ValueListPanel.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/ValueListMapPanel.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/SpreadsheetLibrary.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/SearchPanel.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/ScopePanel.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/MappingPanel.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/GraphPanel.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/ApplicationPanel.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/DirectoryPanel.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/DataGridPanel.js" type="text/javascript"></script>
+  <script src="../../Scripts/adaptermanager/App.js" type="text/javascript"></script>
 
   
 </head>
