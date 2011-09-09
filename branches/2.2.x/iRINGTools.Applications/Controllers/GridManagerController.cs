@@ -44,7 +44,7 @@ namespace org.iringtools.web.controllers
 			pageDtoGrid = _repository.getGrid(form["scope"], form["app"], form["graph"], form["filter"], form["sort"], form["dir"], form["start"], form["limit"]);
 
 			string response = _repository.getResponse();
-			if (response != "success")
+			if (response != "")
 			{
 				return Json(new { success = false } + response, JsonRequestBehavior.AllowGet);
 			}
