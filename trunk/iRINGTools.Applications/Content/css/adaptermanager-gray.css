@@ -127,6 +127,9 @@ a:active {color: black}
   background-position:left bottom;
   height: 65px;
 }
+.tabsData {
+  background-image:url('../img/app-grid.png') !important;
+}
 
 .tabsScope {
   background-image:url('../img/system-file-manager.png') !important;
