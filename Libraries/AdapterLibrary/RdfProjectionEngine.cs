@@ -30,7 +30,7 @@ namespace org.iringtools.adapter.projection
     private XElement _rdfXml;
 
     [Inject]
-    public RdfProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping) 
+    public RdfProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping) 
       : base(settings, dataLayer, mapping)
     {
       _individualsCache = new Dictionary<string, List<string>>();

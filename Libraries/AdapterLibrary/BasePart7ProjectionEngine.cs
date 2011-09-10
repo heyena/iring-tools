@@ -76,7 +76,7 @@ namespace org.iringtools.adapter.projection
     protected ClassificationTemplate _classificationConfig;
 
     protected AdapterSettings _settings = null;
-    protected IDataLayer _dataLayer = null;
+    protected IDataLayer2 _dataLayer = null;
     protected Mapping _mapping = null;
     protected DataDictionary _dictionary = null;
     protected GraphMap _graphMap = null;
@@ -101,7 +101,7 @@ namespace org.iringtools.adapter.projection
     public bool FullIndex { get; set; }
     public long Count { get; set; }
 
-    public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
+    public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping)
     {
       _dataObjects = new List<IDataObject>();
       _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
