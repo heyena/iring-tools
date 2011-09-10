@@ -29,7 +29,7 @@ namespace org.iringtools.adapter.projection
     private XNamespace _appNamespace = null;
 
     [Inject]
-    public XmlProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
+    public XmlProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping)
       : base(settings, dataLayer, mapping)
     {
       _individualsCache = new Dictionary<string, List<string>>();

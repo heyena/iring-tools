@@ -1019,7 +1019,8 @@ namespace org.iringtools.adapter
       {
         if (!_isDataLayerInitialized)
         {
-					_logger.Debug("Initializing data layer...");
+          _logger.Debug("Initializing data layer...");
+
           if (_settings["DumpSettings"] == "True")
           {
             Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
@@ -1039,6 +1040,8 @@ namespace org.iringtools.adapter
           {
             _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
           }
+
+          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
 
           if (setDictionary)
             InitializeDictionary();

@@ -58,7 +58,7 @@ namespace org.iringtools.adapter
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
     private ScopeProjects _scopes = null;
-    private IDataLayer _dataLayer = null;
+    private IDataLayer2 _dataLayer = null;
     private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
     private IIdentityLayer _identityLayer = null;
@@ -635,7 +635,7 @@ namespace org.iringtools.adapter
               new XAttribute("name", _settings["Scope"]),
               new XElement("bind",
                 new XAttribute("name", "DataLayer"),
-                new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+                new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
                 new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
               )
             );
@@ -689,7 +689,16 @@ namespace org.iringtools.adapter
       {
         if (!_isDataLayerInitialized)
         {
-          _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
+          try
+          {
+            _dataLayer = _kernel.Get<IDataLayer2>("DataLayer");
+          }
+          catch
+          {
+            _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
+          }
+
+          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
 
           _dataDictionary = _dataLayer.GetDictionary();
           _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
