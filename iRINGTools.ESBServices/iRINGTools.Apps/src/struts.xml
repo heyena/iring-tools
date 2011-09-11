@@ -2,7 +2,7 @@
 <!DOCTYPE struts PUBLIC
     "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
     "http://struts.apache.org/dtds/struts-2.0.dtd">
-<struts>  
+<struts>
   <package name="default" extends="struts-default">
     <action name="xchmgr">
       <result>/exchange-manager.jsp</result>
@@ -11,15 +11,23 @@
       <result>/federation-manager.jsp</result>
     </action>
   </package>
-  
-	<package name="exchange-manager" extends="json-default">
+
+  <package name="exchange-manager" extends="json-default">
+    <global-results>
+      <result name="error">errors/500.jsp</result>
+    </global-results>
+
+    <global-exception-mappings>
+      <exception-mapping exception="java.lang.Exception" result="error" />
+    </global-exception-mappings>
+
     <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
       <result type="json">
         <param name="root">directoryTree.nodes</param>
       </result>
     </action>
 
-    <!--  app data -->
+    <!-- app data -->
     <action name="adata" class="org.iringtools.controllers.AppDataController" method="getPageDtos">
       <result type="json">
         <param name="root">pageDtoGrid</param>
@@ -31,7 +39,7 @@
       </result>
     </action>
 
-    <!--  exchange data -->
+    <!-- exchange data -->
     <action name="xdata" class="org.iringtools.controllers.ExchangeDataController" method="getPageDtos">
       <result type="json">
         <param name="root">pageDtoGrid</param>
@@ -57,16 +65,16 @@
         <param name="root">pageXLogsGrid</param>
       </result>
     </action>
-	</package>
-	
+  </package>
+
   <package name="federation-manager" extends="json-default">
     <action name="refdata" class="org.iringtools.controllers.RefDataController" method="searchPage">
       <result type="json">
         <param name="root">tree.nodes</param>
       </result>
     </action>
-  
-	<action name="class" class="org.iringtools.controllers.RefDataController" method="getClassifications">
+
+    <action name="class" class="org.iringtools.controllers.RefDataController" method="getClassifications">
       <result type="json">
         <param name="root">tree.nodes</param>
       </result>
@@ -85,8 +93,8 @@
       <result type="json">
         <param name="root">result</param>
       </result>
-    </action>   
-   	<action name="roles" class="org.iringtools.controllers.RefDataController" method="getRoles">
+    </action>
+    <action name="roles" class="org.iringtools.controllers.RefDataController" method="getRoles">
       <result type="json">
         <param name="root">qmxf</param>
       </result>

@@ -114,7 +114,7 @@ public class DataModel
 
   // only cache full dti and last filtered dti
   protected DataTransferIndices getDtis(String serviceUri, String manifestRelativePath, String dtiRelativePath,
-      String filter, String sortBy, String sortOrder)
+      String filter, String sortBy, String sortOrder) throws DataModelException
   {
     DataTransferIndices dtis = new DataTransferIndices();
     String fullDtiKey = FULL_DTI_KEY_PREFIX + dtiRelativePath;
@@ -155,16 +155,17 @@ public class DataModel
         }
       }
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error(ex);
+      logger.error(e.toString());
+      throw new DataModelException(e.getMessage());
     }
 
     return dtis;
   }
 
   private DataTransferIndices getFullDtis(String serviceUri, String manifestRelativePath, String dtiRelativePath,
-      String fullDtiKey, String partDtiKey, String lastFilterKey) throws HttpClientException
+      String fullDtiKey, String partDtiKey, String lastFilterKey) throws DataModelException
   {
     DxiRequest dxiRequest = new DxiRequest();
     dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
@@ -173,7 +174,16 @@ public class DataModel
     HttpClient httpClient = new HttpClient(serviceUri);
     HttpUtils.addOAuthHeaders(session, httpClient);
 
-    DataTransferIndices dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
+    DataTransferIndices dtis = null;
+    try
+    {
+      dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
+    }
+    catch (HttpClientException e)
+    {
+      logger.error(e.toString());
+      throw new DataModelException(e.getMessage());
+    }
     session.put(fullDtiKey, dtis);
 
     if (session.containsKey(partDtiKey))
@@ -191,7 +201,7 @@ public class DataModel
 
   private DataTransferIndices getFilteredDtis(DataFilter dataFilter, String manifestRelativePath,
       String dtiRelativePath, String serviceUri, String fullDtiKey, String partDtiKey, String lastFilterKey,
-      String currFilter) throws HttpClientException
+      String currFilter) throws DataModelException
   {
     DataTransferIndices dtis = null;
 
@@ -208,7 +218,15 @@ public class DataModel
       HttpClient httpClient = new HttpClient(serviceUri);
       HttpUtils.addOAuthHeaders(session, httpClient);
 
-      dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
+      try
+      {
+        dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
+      }
+      catch (HttpClientException e)
+      {
+        logger.error(e.toString());
+        throw new DataModelException(e.getMessage());
+      }
     }
 
     if (dtis != null && dtis.getDataTransferIndexList() != null
@@ -222,7 +240,7 @@ public class DataModel
   }
 
   protected DataTransferIndices getFilteredDtis(DataFilter dataFilter, String manifestRelativePath,
-      String dtiRelativePath, String serviceUri, String fullDtiKey)
+      String dtiRelativePath, String serviceUri, String fullDtiKey) throws DataModelException
   {
     DataTransferIndices resultDtis = new DataTransferIndices();
     Expression transferTypeExpression = null;
@@ -428,9 +446,10 @@ public class DataModel
         }
       }
     }
-    catch (Exception ex)
+    catch (Exception e)
     {
-      logger.error(ex);
+      logger.error(e.toString());
+      throw new DataModelException(e.getMessage());
     }
 
     return resultDtis;
@@ -449,7 +468,7 @@ public class DataModel
   }
 
   protected DataTransferObjects getDtos(String serviceUri, String manifestRelativePath, String dtoRelativePath,
-      List<DataTransferIndex> dtiList)
+      List<DataTransferIndex> dtiList) throws DataModelException
   {
     DataTransferObjects dtos = new DataTransferObjects();
 
@@ -469,16 +488,17 @@ public class DataModel
 
       dtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
     }
-    catch (HttpClientException ex)
+    catch (HttpClientException e)
     {
-      logger.error(ex);
+      logger.error(e.toString());
+      throw new DataModelException(e.getMessage());
     }
 
     return dtos;
   }
 
   protected DataTransferObjects getPageDtos(String serviceUri, String manifestRelativePath, String dtiRelativePath,
-      String dtoRelativePath, String filter, String sortBy, String sortOrder, int start, int limit)
+      String dtoRelativePath, String filter, String sortBy, String sortOrder, int start, int limit) throws DataModelException
   {
     DataTransferIndices dtis = getDtis(serviceUri, manifestRelativePath, dtiRelativePath, filter, sortBy, sortOrder);
     List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
@@ -487,7 +507,7 @@ public class DataModel
     return getDtos(serviceUri, manifestRelativePath, dtoRelativePath, pageDtis);
   }
 
-  protected Grid getDtoGrid(Manifest manifest, Graph graph, DataTransferObjects dtos)
+  protected Grid getDtoGrid(Manifest manifest, Graph graph, DataTransferObjects dtos) throws DataModelException
   {
     Grid dtoGrid = new Grid();
 
@@ -531,7 +551,7 @@ public class DataModel
       {
         relatedClassesJson = JSONUtil.serialize(relatedClasses);
       }
-      catch (JSONException ex)
+      catch (JSONException e)
       {
         relatedClassesJson = "[]";
       }
@@ -549,7 +569,8 @@ public class DataModel
 
   // TODO: apply start and limit
   protected DataTransferObjects getRelatedItems(String serviceUri, String manifestRelativePath, String dtiRelativePath,
-      String dtoRelativePath, String dtoIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
+      String dtoRelativePath, String dtoIdentifier, String filter, String sortBy, String sortOrder, int start, int limit) 
+      throws DataModelException
   {
     DataTransferObjects relatedDtos = new DataTransferObjects();
     DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
@@ -596,9 +617,10 @@ public class DataModel
             }
           }
         }
-        catch (HttpClientException ex)
+        catch (HttpClientException e)
         {
-          logger.error("Error in getDto: " + ex);
+          logger.error(e.toString());
+          throw new DataModelException(e.getMessage());
         }
       }
     }
@@ -607,7 +629,7 @@ public class DataModel
   }
 
   protected Grid getRelatedItemGrid(Manifest manifest, Graph graph, DataTransferObjects dtos, String classId,
-      String classIdentifier)
+      String classIdentifier) throws DataModelException
   {
     Grid dtoGrid = new Grid();
 
@@ -653,7 +675,7 @@ public class DataModel
             {
               relatedClassesJson = JSONUtil.serialize(relatedClasses);
             }
-            catch (JSONException ex)
+            catch (JSONException e)
             {
               relatedClassesJson = "[]";
             }
@@ -674,7 +696,7 @@ public class DataModel
     return dtoGrid;
   }
 
-  protected String resolveValueMap(String id)
+  protected String resolveValueMap(String id) throws DataModelException
   {
     String label = id;
 
@@ -690,9 +712,10 @@ public class DataModel
         label = value.getLabel();
       }
     }
-    catch (Exception e)
+    catch (HttpClientException e)
     {
-      logger.error("Error in resolveValueMap:" + e);
+      logger.error(e.toString());
+      throw new DataModelException(e.getMessage());
     }
 
     return label;
@@ -736,7 +759,7 @@ public class DataModel
   }
 
   @SuppressWarnings("unchecked")
-  protected String getValueMap(Manifest manifest, String value)
+  protected String getValueMap(Manifest manifest, String value) throws DataModelException
   {
     Map<String, String> valueMaps;
     String valueMap = value;
@@ -787,7 +810,7 @@ public class DataModel
     return valueMap;
   }
 
-  protected DataFilter createDataFilter(String filter, String sortBy, String sortOrder)
+  protected DataFilter createDataFilter(String filter, String sortBy, String sortOrder) throws DataModelException
   {
     DataFilter dataFilter = null;
 
@@ -854,9 +877,11 @@ public class DataModel
           }
         }
       }
-      catch (JSONException ex)
+      catch (JSONException e)
       {
-        logger.error("Error deserializing filter: " + ex);
+        String message = "Error creating data filter: " + e;
+        logger.error(message);
+        throw new DataModelException(message);
       }
     }
 
@@ -882,7 +907,7 @@ public class DataModel
     return dataFilter;
   }
 
-  protected Manifest getManifest(String serviceUri, String manifestRelativePath)
+  protected Manifest getManifest(String serviceUri, String manifestRelativePath) throws DataModelException
   {
     Manifest manifest = null;
     String manifestKey = MANIFEST_PREFIX + manifestRelativePath;
@@ -901,9 +926,10 @@ public class DataModel
         manifest = httpClient.get(Manifest.class, manifestRelativePath);
         session.put(manifestKey, manifest);
       }
-      catch (Exception ex)
+      catch (HttpClientException e)
       {
-        logger.error("Error getting manifest from [" + manifestRelativePath + "]: " + ex);
+        logger.error(e.toString());
+        throw new DataModelException(e.getMessage());
       }
     }
 
@@ -1147,7 +1173,8 @@ public class DataModel
   }
 
   private void processClassObject(Manifest manifest, Graph graph, DataTransferObject dto, int dtoIndex,
-      List<Field> fields, ClassObject classObject, Grid dtoGrid, List<String> rowData, List<RelatedClass> relatedClasses)
+      List<Field> fields, ClassObject classObject, Grid dtoGrid, List<String> rowData, List<RelatedClass> relatedClasses) 
+      throws DataModelException
   {
     String className = IOUtils.toCamelCase(classObject.getName());
 
@@ -1289,7 +1316,8 @@ public class DataModel
     return false;
   }
 
-  private String getMultiRoleValues(Manifest manifest, RoleObject roleObject, List<String> roleValues)
+  private String getMultiRoleValues(Manifest manifest, RoleObject roleObject, List<String> roleValues) 
+      throws DataModelException
   {
     StringBuilder roleValueBuilder = new StringBuilder();
 

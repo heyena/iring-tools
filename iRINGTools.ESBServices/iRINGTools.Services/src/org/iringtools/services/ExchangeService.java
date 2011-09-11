@@ -8,6 +8,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.iringtools.directory.Directory;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -21,14 +23,14 @@ import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.ExchangeProvider;
 
 @Path("/")
-@Produces("application/xml")
+@Produces(MediaType.APPLICATION_XML)
 public class ExchangeService extends AbstractService
 {
   private final String SERVICE_TYPE = "coreService";
   
   @GET
   @Path("/directory")
-  public Directory getDirectory() 
+  public Response getDirectory() 
   {
     Directory directory = null;
     
@@ -38,7 +40,7 @@ public class ExchangeService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     try
@@ -48,16 +50,16 @@ public class ExchangeService extends AbstractService
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
-    return directory;
+    return Response.ok().entity(directory).build();
   }
   
   @GET
   @Path("/{scope}/exchanges/{id}/manifest")
   @Consumes("application/xml")
-  public Manifest getManifest(
+  public Response getManifest(
       @PathParam("scope") String scope, 
       @PathParam("id") String id)
   {
@@ -69,7 +71,7 @@ public class ExchangeService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     try
@@ -79,16 +81,16 @@ public class ExchangeService extends AbstractService
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);      
     }
     
-    return manifest;
+    return Response.ok().entity(manifest).build();
   }
   
   @POST
   @Path("/{scope}/exchanges/{id}")
   @Consumes("application/xml")
-  public DataTransferIndices getDataTransferIndices(
+  public Response getDataTransferIndices(
       @PathParam("scope") String scope, 
       @PathParam("id") String id,
       @QueryParam("destination") String destination,
@@ -102,7 +104,7 @@ public class ExchangeService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     try
@@ -120,16 +122,16 @@ public class ExchangeService extends AbstractService
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
-    return dataTransferIndices;
+    return Response.ok().entity(dataTransferIndices).build();
   }
   
   @POST
   @Path("/{scope}/exchanges/{id}/page")
   @Consumes("application/xml")
-  public DataTransferObjects getDataTransferObjects(
+  public Response getDataTransferObjects(
       @PathParam("scope") String scope, 
       @PathParam("id") String id,
       DxoRequest dxoRequest)
@@ -142,7 +144,7 @@ public class ExchangeService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     try
@@ -152,16 +154,16 @@ public class ExchangeService extends AbstractService
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
-    return dataTransferObjects;
+    return Response.ok().entity(dataTransferObjects).build();
   }
 
   @POST
   @Path("/{scope}/exchanges/{id}/submit")
   @Consumes("application/xml")
-  public ExchangeResponse submitExchange(
+  public Response submitExchange(
       @PathParam("scope") String scope, 
       @PathParam("id") String id,
       ExchangeRequest exchangeRequest)
@@ -174,7 +176,7 @@ public class ExchangeService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     try
@@ -184,9 +186,9 @@ public class ExchangeService extends AbstractService
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
-    return exchangeResponse;
+    return Response.ok().entity(exchangeResponse).build();
   }
 }

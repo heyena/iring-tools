@@ -10,18 +10,14 @@ import org.iringtools.widgets.grid.Grid;
 
 public class AppDataModel extends DataModel
 {  
-  public AppDataModel(String refDataServiceUri, FieldFit fieldFit)
+  public AppDataModel(Map<String, Object> session, String refDataServiceUri, FieldFit fieldFit)
   {
-    super(DataMode.APP, refDataServiceUri, fieldFit);    
-  }
-  
-  public void setSession(Map<String, Object> session)
-  {
+    super(DataMode.APP, refDataServiceUri, fieldFit);
     this.session = session;
   }
   
   public Grid getDtoGrid(String serviceUri, String scopeName, String appName, String graphName, String filter, 
-      String sortBy, String sortOrder, int start, int limit)
+      String sortBy, String sortOrder, int start, int limit) throws DataModelException
   {
     String appRelativePath = "/" + scopeName + "/" + appName;
     String dtiRelativePath = appRelativePath + "/" + graphName + "/dxi/filter";
@@ -50,7 +46,8 @@ public class AppDataModel extends DataModel
   }
   
   public Grid getRelatedDtoGrid(String serviceUri, String scopeName, String appName, String graphName, String dtoIdentifier, 
-      String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
+      String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit) 
+      throws DataModelException
   {
     String dtiRelativePath = "/" + scopeName + "/" + appName + "/" + graphName + "/dxi/filter";
     String dtoRelativePath = "/" + scopeName + "/" + appName + "/" + graphName + "/dxo";

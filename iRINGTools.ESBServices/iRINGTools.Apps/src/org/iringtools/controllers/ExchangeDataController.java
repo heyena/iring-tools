@@ -1,24 +1,20 @@
 package org.iringtools.controllers;
 
-import java.util.Map;
-
 import org.apache.commons.lang.xwork.StringUtils;
-import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.dxfr.response.ExchangeResponse;
-import org.iringtools.models.ExchangeDataModel;
 import org.iringtools.models.DataModel.FieldFit;
+import org.iringtools.models.ExchangeDataModel;
+import org.iringtools.utility.IOUtils;
 import org.iringtools.widgets.grid.Grid;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-
-public class ExchangeDataController extends ActionSupport implements SessionAware
+public class ExchangeDataController extends AbstractController
 {
   private static final long serialVersionUID = 1L;
-  private ExchangeDataModel exchangeDataModel;
   
+  private String refDataServiceUri;
   private String exchangeServiceUri;
   private String historyServiceUri;
+  private FieldFit fieldFit;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
   
@@ -42,30 +38,34 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   
   public ExchangeDataController() 
   {    
-    Map<String, Object> appContext = ActionContext.getContext().getApplication();    
-    String refDataServiceUri = (String)appContext.get("RefDataServiceUri");   
+    refDataServiceUri = context.getInitParameter("RefDataServiceUri");   
     
-    String fieldFit = (String)appContext.get("FieldFit");    
-    FieldFit ff = (fieldFit == null || fieldFit.length() == 0) 
-      ? FieldFit.VALUE : FieldFit.valueOf(fieldFit.toUpperCase());
+    String fieldFitSetting = context.getInitParameter("FieldFit");    
+    fieldFit = IOUtils.isNullOrEmpty(fieldFitSetting) 
+      ? FieldFit.VALUE : FieldFit.valueOf(fieldFitSetting.toUpperCase());
     
-    exchangeDataModel = new ExchangeDataModel(refDataServiceUri, ff);
-    exchangeServiceUri = (String)appContext.get("ExchangeServiceUri");
-    historyServiceUri = (String)appContext.get("HistoryServiceUri");    
+    exchangeServiceUri = context.getInitParameter("ExchangeServiceUri");
+    historyServiceUri = context.getInitParameter("HistoryServiceUri"); 
+    
+    authorize("exchangeManager", "exchangeAdmins");
   }
-  
-  @Override
-  public void setSession(Map<String, Object> session)
-  {
-    exchangeDataModel.setSession(session);
-  } 
   
   //-------------------------------------
   // get a page of data transfer objects 
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = exchangeDataModel.getDtoGrid(exchangeServiceUri, scope, xid, filter, sort, dir, start, limit);    
+    try
+    {
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
+      pageDtoGrid = exchangeDataModel.getDtoGrid(exchangeServiceUri, scope, xid, filter, sort, dir, start, limit);  
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(500, e.toString());
+      return ERROR;
+    }
+    
     return SUCCESS;
   }
   
@@ -79,8 +79,18 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ----------------------------
   public String getPageRelatedItems() 
   {
-    pageRelatedItemGrid = exchangeDataModel.getRelatedDtoGrid(exchangeServiceUri, scope, xid, 
-        individual, classId, classIdentifier, filter, sort, dir, start, limit);
+    try
+    {
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
+      pageRelatedItemGrid = exchangeDataModel.getRelatedDtoGrid(exchangeServiceUri, scope, xid, individual, 
+          classId, classIdentifier, filter, sort, dir, start, limit);  
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(500, e.toString());
+      return ERROR;
+    }
+    
     return SUCCESS;
   }
 
@@ -94,8 +104,18 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // -------------------
   public String submitExchange() 
   {
-    ExchangeResponse response = exchangeDataModel.submitExchange(exchangeServiceUri, scope, xid, reviewed);  
-    xResultsGrid = StringUtils.join(response.getMessages().getItems(), "\r");    
+    try
+    {
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
+      ExchangeResponse response = exchangeDataModel.submitExchange(exchangeServiceUri, scope, xid, reviewed);  
+      xResultsGrid = StringUtils.join(response.getMessages().getItems(), "\r");  
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(500, e.toString());
+      return ERROR;
+    }
+      
     return SUCCESS;
   }
   
@@ -109,7 +129,17 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ---------------------------
   public String getXLogs()
   {
-    xLogsGrid = exchangeDataModel.getXlogsGrid(historyServiceUri, scope, xid, xlabel);    
+    try
+    {
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
+      xLogsGrid = exchangeDataModel.getXlogsGrid(historyServiceUri, scope, xid, xlabel);    
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(500, e.toString());
+      return ERROR;
+    }
+    
     return SUCCESS;
   }
   
@@ -123,7 +153,17 @@ public class ExchangeDataController extends ActionSupport implements SessionAwar
   // ---------------------------------
   public String getPageXLogs()
   {
-    pageXLogsGrid = exchangeDataModel.getPageXlogsGrid(historyServiceUri, scope, xid, xlabel, xtime, start, limit);    
+    try
+    {
+      ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
+      pageXLogsGrid = exchangeDataModel.getPageXlogsGrid(historyServiceUri, scope, xid, xlabel, xtime, start, limit); 
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(500, e.toString());
+      return ERROR;
+    }
+       
     return SUCCESS;
   }
   

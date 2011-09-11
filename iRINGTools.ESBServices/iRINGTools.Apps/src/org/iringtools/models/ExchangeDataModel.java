@@ -27,18 +27,14 @@ public class ExchangeDataModel extends DataModel
 {
   private static final Logger logger = Logger.getLogger(ExchangeDataModel.class);
  
-  public ExchangeDataModel(String refServiceUri, FieldFit fieldFit)
+  public ExchangeDataModel(Map<String, Object> session, String refServiceUri, FieldFit fieldFit)
   {
-    super(DataMode.EXCHANGE, refServiceUri, fieldFit);    
-  }
-  
-  public void setSession(Map<String, Object> session)
-  {
+    super(DataMode.EXCHANGE, refServiceUri, fieldFit); 
     this.session = session;
   }
-
+  
   public Grid getDtoGrid(String serviceUri, String scope, String xid, String filter, String sortBy, String sortOrder, 
-      int start, int limit)
+      int start, int limit) throws DataModelException
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
@@ -66,7 +62,7 @@ public class ExchangeDataModel extends DataModel
   }
 
   public Grid getRelatedDtoGrid(String serviceUri, String scope, String xid, String dtoIdentifier, String classId, 
-      String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit)
+      String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit) throws DataModelException
   {
     String dtiRelativePath = "/" + scope + "/exchanges/" + xid;
     String dtoRelativePath = dtiRelativePath + "/page";
@@ -87,7 +83,8 @@ public class ExchangeDataModel extends DataModel
     return pageDtoGrid;
   }
 
-  public ExchangeResponse submitExchange(String serviceUri, String scope, String xid, boolean reviewed)
+  public ExchangeResponse submitExchange(String serviceUri, String scope, String xid, boolean reviewed) 
+      throws DataModelException
   {
     String exchangeRelativePath = "/" + scope + "/exchanges/" + xid;
     String manifestRelativePath = exchangeRelativePath + "/manifest";
