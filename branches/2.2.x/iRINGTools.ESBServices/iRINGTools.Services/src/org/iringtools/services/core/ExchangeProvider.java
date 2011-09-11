@@ -97,7 +97,7 @@ public class ExchangeProvider
     }
     catch (HttpClientException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new ServiceProviderException(e.getMessage());
     }
   }
@@ -131,7 +131,7 @@ public class ExchangeProvider
     }
     catch (HttpClientException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new ServiceProviderException(e.getMessage());
     }
 
@@ -152,7 +152,7 @@ public class ExchangeProvider
     }
     catch (HttpClientException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new ServiceProviderException(e.getMessage());
     }
 
@@ -180,7 +180,7 @@ public class ExchangeProvider
     }
     catch (HttpClientException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new ServiceProviderException(e.getMessage());
     }
 
@@ -203,7 +203,7 @@ public class ExchangeProvider
     }
     catch (ServiceProviderException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new ServiceProviderException(e.getMessage());
     }
 
@@ -222,7 +222,7 @@ public class ExchangeProvider
       }
       catch (HttpClientException e)
       {
-        logger.error(e.toString());
+        logger.error(e.getMessage());
         throw new ServiceProviderException(e.getMessage());
       }
     }
@@ -236,7 +236,7 @@ public class ExchangeProvider
       }
       catch (HttpClientException e)
       {
-        logger.error(e.toString());
+        logger.error(e.getMessage());
         throw new ServiceProviderException(e.getMessage());
       }
     }
@@ -266,7 +266,7 @@ public class ExchangeProvider
     }
     catch (ServiceProviderException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new ServiceProviderException(e.getMessage());
     }
 
@@ -311,7 +311,7 @@ public class ExchangeProvider
       }
       catch (HttpClientException e)
       {
-        logger.error(e.toString());
+        logger.error(e.getMessage());
         throw new ServiceProviderException(e.getMessage());
       }
 
@@ -374,7 +374,7 @@ public class ExchangeProvider
       }
       catch (HttpClientException e)
       {
-        logger.error(e.toString());
+        logger.error(e.getMessage());
         throw new ServiceProviderException(e.getMessage());
       }
 
@@ -432,7 +432,7 @@ public class ExchangeProvider
       }
       catch (HttpClientException e)
       {
-        logger.error(e.toString());
+        logger.error(e.getMessage());
         throw new ServiceProviderException(e.getMessage());
       }
 
@@ -558,7 +558,7 @@ public class ExchangeProvider
         }
         catch (HttpClientException e)
         {
-          logger.error(e.toString());
+          logger.error(e.getMessage());
           throw new ServiceProviderException(e.getMessage());
         }
         List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
@@ -660,7 +660,7 @@ public class ExchangeProvider
         }
         catch (HttpClientException e)
         {
-          logger.error(e.toString());
+          logger.error(e.getMessage());
           throw new ServiceProviderException(e.getMessage());
         }
 
@@ -761,7 +761,7 @@ public class ExchangeProvider
     }
     catch (HttpClientException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new ServiceProviderException(e.getMessage());
     }
 
@@ -836,7 +836,7 @@ public class ExchangeProvider
     }
     catch (HttpClientException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new ServiceProviderException(e.getMessage());
     }
 
@@ -853,7 +853,7 @@ public class ExchangeProvider
     }
     catch (HttpClientException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new ServiceProviderException(e.getMessage());
     }
 

@@ -157,7 +157,7 @@ public class DataModel
     }
     catch (Exception e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new DataModelException(e.getMessage());
     }
 
@@ -181,7 +181,7 @@ public class DataModel
     }
     catch (HttpClientException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new DataModelException(e.getMessage());
     }
     session.put(fullDtiKey, dtis);
@@ -224,7 +224,7 @@ public class DataModel
       }
       catch (HttpClientException e)
       {
-        logger.error(e.toString());
+        logger.error(e.getMessage());
         throw new DataModelException(e.getMessage());
       }
     }
@@ -448,7 +448,7 @@ public class DataModel
     }
     catch (Exception e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new DataModelException(e.getMessage());
     }
 
@@ -490,7 +490,7 @@ public class DataModel
     }
     catch (HttpClientException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new DataModelException(e.getMessage());
     }
 
@@ -619,7 +619,7 @@ public class DataModel
         }
         catch (HttpClientException e)
         {
-          logger.error(e.toString());
+          logger.error(e.getMessage());
           throw new DataModelException(e.getMessage());
         }
       }
@@ -714,7 +714,7 @@ public class DataModel
     }
     catch (HttpClientException e)
     {
-      logger.error(e.toString());
+      logger.error(e.getMessage());
       throw new DataModelException(e.getMessage());
     }
 
@@ -928,7 +928,7 @@ public class DataModel
       }
       catch (HttpClientException e)
       {
-        logger.error(e.toString());
+        logger.error(e.getMessage());
         throw new DataModelException(e.getMessage());
       }
     }
