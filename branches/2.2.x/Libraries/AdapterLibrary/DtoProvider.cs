@@ -264,6 +264,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting manifest: " + ex);
+        throw ex;
       }
 
       return manifest;
@@ -288,6 +289,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer indices: " + ex);
+        throw ex;
       }
 
       return dataTransferIndices;
@@ -313,6 +315,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer indices: " + ex);
+        throw ex;
       }
 
       return dataTransferIndices;
@@ -336,6 +339,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer indices: " + ex);
+        throw ex;
       }
 
       return dataTransferIndices;
@@ -370,6 +374,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer indices: " + ex);
+        throw ex;
       }
 
       return dataTransferIndices;
@@ -404,6 +409,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer objects: " + ex);
+        throw ex;
       }
 
       return dataTransferObjects;
@@ -505,6 +511,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer objects: " + ex);
+        throw ex;
       }
 
       return dataTransferObjects;
@@ -571,6 +578,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer objects: " + ex);
+        throw ex;
       }
 
       return dataTransferObjects;
