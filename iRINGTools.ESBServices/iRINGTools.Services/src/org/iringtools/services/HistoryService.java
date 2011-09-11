@@ -5,6 +5,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
@@ -19,7 +20,7 @@ public class HistoryService extends AbstractService
   
   @GET
   @Path("/{scope}/exchanges/{exchangeId}")
-  public History getExchange(
+  public Response getExchange(
       @PathParam("scope") String scope, 
       @PathParam("exchangeId") String exchangeId) 
   {   
@@ -31,7 +32,7 @@ public class HistoryService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     try
@@ -41,20 +42,20 @@ public class HistoryService extends AbstractService
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
-    return history;
+    return Response.ok().entity(history).build();
   }
   
   @GET
   @Path("/{scope}/exchanges/{exchangeId}/{timestamp}")
-  public ExchangeResponse getExchange(
+  public Response getExchange(
       @PathParam("scope") String scope, 
       @PathParam("exchangeId") String exchangeId,
       @PathParam("timestamp") String timestamp) 
   {
-    ExchangeResponse response = null;
+    ExchangeResponse xResponse = null;
     
     try
     {
@@ -62,19 +63,19 @@ public class HistoryService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     try
     {
       HistoryProvider historyProvider = new HistoryProvider(settings);
-      response = historyProvider.getExchangeResponse(scope, exchangeId, timestamp);
+      xResponse = historyProvider.getExchangeResponse(scope, exchangeId, timestamp);
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
-    return response;
+    return Response.ok().entity(xResponse).build();
   }
 }

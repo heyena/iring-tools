@@ -6,6 +6,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
@@ -20,7 +21,7 @@ public class DirectoryService extends AbstractService
   
   @GET
   @Path("/directory")
-  public Directory getDirectory()
+  public Response getDirectory()
   {
     Directory directory = null;
 
@@ -30,7 +31,7 @@ public class DirectoryService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
 
     DirectoryProvider directoryProvider = new DirectoryProvider(settings);
@@ -41,15 +42,15 @@ public class DirectoryService extends AbstractService
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
 
-    return directory;
+    return Response.ok().entity(directory).build();
   }
 
   @GET
   @Path("/{scope}/exchanges/{exchangeId}")
-  public ExchangeDefinition getExchange(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId)
+  public Response getExchange(@PathParam("scope") String scope, @PathParam("exchangeId") String exchangeId)
   {
     ExchangeDefinition xdef = null;
 
@@ -59,7 +60,7 @@ public class DirectoryService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
 
     DirectoryProvider directoryProvider = new DirectoryProvider(settings);
@@ -70,9 +71,9 @@ public class DirectoryService extends AbstractService
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
 
-    return xdef;
+    return Response.ok().entity(xdef).build();
   }
 }

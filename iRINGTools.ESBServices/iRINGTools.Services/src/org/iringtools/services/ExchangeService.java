@@ -58,7 +58,7 @@ public class ExchangeService extends AbstractService
   
   @GET
   @Path("/{scope}/exchanges/{id}/manifest")
-  @Consumes("application/xml")
+  @Consumes(MediaType.APPLICATION_XML)
   public Response getManifest(
       @PathParam("scope") String scope, 
       @PathParam("id") String id)
@@ -89,7 +89,7 @@ public class ExchangeService extends AbstractService
   
   @POST
   @Path("/{scope}/exchanges/{id}")
-  @Consumes("application/xml")
+  @Consumes(MediaType.APPLICATION_XML)
   public Response getDataTransferIndices(
       @PathParam("scope") String scope, 
       @PathParam("id") String id,
@@ -130,7 +130,7 @@ public class ExchangeService extends AbstractService
   
   @POST
   @Path("/{scope}/exchanges/{id}/page")
-  @Consumes("application/xml")
+  @Consumes(MediaType.APPLICATION_XML)
   public Response getDataTransferObjects(
       @PathParam("scope") String scope, 
       @PathParam("id") String id,
@@ -162,7 +162,7 @@ public class ExchangeService extends AbstractService
 
   @POST
   @Path("/{scope}/exchanges/{id}/submit")
-  @Consumes("application/xml")
+  @Consumes(MediaType.APPLICATION_XML)
   public Response submitExchange(
       @PathParam("scope") String scope, 
       @PathParam("id") String id,

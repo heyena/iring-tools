@@ -5,6 +5,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
 
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
@@ -22,7 +23,7 @@ public class DifferencingService extends AbstractService
   
   @POST
   @Path("/dxi")
-  public DataTransferIndices diff(DfiRequest dxiRequest)
+  public Response diff(DfiRequest dxiRequest)
   {
     DataTransferIndices dxis = null;
         
@@ -32,7 +33,7 @@ public class DifferencingService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     try
@@ -42,15 +43,15 @@ public class DifferencingService extends AbstractService
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
-    return dxis;
+    return Response.ok().entity(dxis).build();
   }
   
   @POST
   @Path("/dxo")
-  public DataTransferObjects diff(DfoRequest dxoRequest) 
+  public Response diff(DfoRequest dxoRequest) 
   {
     DataTransferObjects dxos = null;
     
@@ -60,7 +61,7 @@ public class DifferencingService extends AbstractService
     }
     catch (AuthorizationException e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
+      return prepareErrorResponse(HttpServletResponse.SC_UNAUTHORIZED, e);
     }
     
     try
@@ -70,9 +71,9 @@ public class DifferencingService extends AbstractService
     }
     catch (Exception e)
     {
-      prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
+      return prepareErrorResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
     }
     
-    return dxos;
+    return Response.ok().entity(dxos).build();
   }
 }

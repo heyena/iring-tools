@@ -42,7 +42,7 @@ public class DirectoryProvider
     }
     catch (Exception e)
     {
-      String message = "Error exchange definition of [" + scope + "." + id + "]: " + e;
+      String message = "Error getting exchange definition of [" + scope + "." + id + "]: " + e;
       logger.error(message);
       throw new ServiceProviderException(message);
     }
