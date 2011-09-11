@@ -1,19 +1,15 @@
 package org.iringtools.controllers;
 
-import java.util.Map;
-
-import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.models.AppDataModel;
 import org.iringtools.models.DataModel.FieldFit;
+import org.iringtools.utility.IOUtils;
 import org.iringtools.widgets.grid.Grid;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-
-public class AppDataController extends ActionSupport implements SessionAware
+public class AppDataController extends AbstractController
 {
   private static final long serialVersionUID = 1L;
-  private AppDataModel appDataModel;
+  private String refDataServiceUri;
+  private FieldFit fieldFit;
   private Grid pageDtoGrid;
   private Grid pageRelatedItemGrid;
 
@@ -32,28 +28,33 @@ public class AppDataController extends ActionSupport implements SessionAware
   
   public AppDataController() 
   {
-	  Map<String, Object> appContext = ActionContext.getContext().getApplication();
-	  String refDataServiceUri = (String)appContext.get("RefDataServiceUri");
+    super();
+    
+	  refDataServiceUri = context.getInitParameter("RefDataServiceUri");
 	  
-	  String fieldFit = (String)appContext.get("FieldFit");	  
-	  FieldFit ff = (fieldFit == null || fieldFit.length() == 0) 
-	    ? FieldFit.VALUE : FieldFit.valueOf(fieldFit.toUpperCase());
+	  String fieldFitSetting = context.getInitParameter("FieldFit");	  
+	  fieldFit = IOUtils.isNullOrEmpty(fieldFitSetting) 
+	    ? FieldFit.VALUE : FieldFit.valueOf(fieldFitSetting.toUpperCase());
 	  
-    appDataModel = new AppDataModel(refDataServiceUri, ff);
+	  authorize("exchangeManager", "exchangeAdmins");
   }
-  
-  @Override
-  public void setSession(Map<String, Object> session)
-  {
-    appDataModel.setSession(session);
-  } 
   
   //-------------------------------------
   // get a page of data transfer objects 
   // ------------------------------------
   public String getPageDtos()
   {
-    pageDtoGrid = appDataModel.getDtoGrid(baseUri, scope, app, graph, filter, sort, dir, start, limit);    
+    try
+    {
+      AppDataModel appDataModel = new AppDataModel(session, refDataServiceUri, fieldFit);
+      pageDtoGrid = appDataModel.getDtoGrid(baseUri, scope, app, graph, filter, sort, dir, start, limit);    
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(500, e.toString());
+      return ERROR;
+    }
+    
     return SUCCESS;
   }
   
@@ -67,8 +68,18 @@ public class AppDataController extends ActionSupport implements SessionAware
   // ----------------------------
   public String getPageRelatedItems() 
   {
-    pageRelatedItemGrid = appDataModel.getRelatedDtoGrid(baseUri, scope, app, graph, individual, classId, 
-        classIdentifier, filter, sort, dir, start, limit);
+    try
+    {
+      AppDataModel appDataModel = new AppDataModel(session, refDataServiceUri, fieldFit);
+      pageRelatedItemGrid = appDataModel.getRelatedDtoGrid(baseUri, scope, app, graph, individual, 
+          classId, classIdentifier, filter, sort, dir, start, limit);
+    }
+    catch (Exception e)
+    {
+      prepareErrorResponse(500, e.toString());
+      return ERROR;
+    }
+    
     return SUCCESS;
   }
 

@@ -34,9 +34,10 @@ function createGridStore(url){
     reader: new Ext.data.DynamicGridReader({}),
     remoteSort: true,    
     listeners: {
-      exception: function(ex){
+      exception: function(proxy, type, action, request, response){
         Ext.getBody().unmask();       
-        showDialog(400, 100, 'Error', 'Error loading data at URL: ' + ex.url, Ext.Msg.OK, null);
+        var message = 'Request URL: /' + request.url + '. \n\nError description: ' + response.responseText;
+        showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
       }
     }
   });
@@ -656,7 +657,7 @@ Ext.onReady(function(){
       icon: 'resources/images/directory.png'
     },
     listeners: {
-      click: function(node, event){
+	  click: function(node, event){
         Ext.getCmp('property-pane').setSource(node.attributes.properties);
         
         try {
@@ -706,6 +707,13 @@ Ext.onReady(function(){
       }
     }
   });
+  
+  directoryTreePane.loader.on('loadexception', 
+    function(loader, node, response){
+	  showDialog(420, 160, 'Error', 'Error loading directory: ' + response.responseText, Ext.Msg.OK, null);
+	  return false;
+    }
+  );
   
   var propertyPane = new Ext.grid.PropertyGrid({
     id: 'property-pane',

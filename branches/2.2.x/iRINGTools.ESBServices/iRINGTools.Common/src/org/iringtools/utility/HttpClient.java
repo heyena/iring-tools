@@ -20,11 +20,11 @@ public class HttpClient
 
   private final static String GET_METHOD = "GET";
   private final static String POST_METHOD = "POST";
-  
+
   private final static String SPARQL_QUERY = "query";
   private final static String SPARQL_UPDATE = "update";
 
-  public HttpClient() 
+  public HttpClient()
   {
     this(null, null);
   }
@@ -37,39 +37,41 @@ public class HttpClient
   public HttpClient(String baseUri, NetworkCredentials networkCredentials)
   {
     setBaseUri(baseUri);
-    setNetworkCredentials(networkCredentials);    
+    setNetworkCredentials(networkCredentials);
     headers = new HashMap<String, String>();
   }
 
   public <T> T get(Class<T> responseClass, String relativeUri) throws HttpClientException
   {
     HttpURLConnection conn = null;
-    
+
     try
     {
       conn = getConnection(GET_METHOD, relativeUri);
-      InputStream responseStream = conn.getInputStream();
-      return JaxbUtils.toObject(responseClass, responseStream);
+
+      if (conn.getResponseCode() == HttpURLConnection.HTTP_OK)
+      {
+        InputStream responseStream = conn.getInputStream();
+        return JaxbUtils.toObject(responseClass, responseStream);
+      }
+      else
+      {
+        InputStream errorStream = conn.getErrorStream();
+        String error = IOUtils.toString(errorStream);
+        throw new HttpClientException(error);
+      }
     }
     catch (Exception e)
     {
-      try
-      {
-        throw new HttpClientException(conn.getResponseCode(), e);
-      }
-      catch (IOException ex)
-      {
-        ex.printStackTrace();
-      }
+      throw new HttpClientException(e);
     }
-    finally {
+    finally
+    {
       if (conn != null)
       {
         conn.disconnect();
       }
     }
-    
-    return null;
   }
 
   public <T> T get(Class<T> responseClass) throws HttpClientException
@@ -85,7 +87,7 @@ public class HttpClient
   public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity) throws HttpClientException
   {
     HttpURLConnection conn = null;
-    
+
     try
     {
       String content = "";
@@ -102,10 +104,17 @@ public class HttpClient
       requestStream.flush();
       requestStream.close();
 
-      InputStream responseStream = conn.getInputStream();
-      R response = JaxbUtils.toObject(responseClass, responseStream);
-
-      return response;
+      if (conn.getResponseCode() == HttpURLConnection.HTTP_OK)
+      {
+        InputStream responseStream = conn.getInputStream();
+        return JaxbUtils.toObject(responseClass, responseStream);
+      }
+      else
+      {
+        InputStream errorStream = conn.getErrorStream();
+        String error = IOUtils.toString(errorStream);
+        throw new HttpClientException(error);
+      }
     }
     catch (Exception e)
     {
@@ -118,20 +127,21 @@ public class HttpClient
         ex.printStackTrace();
       }
     }
-    finally {
+    finally
+    {
       if (conn != null)
       {
         conn.disconnect();
       }
     }
-    
+
     return null;
   }
-  
+
   public <R> R postByteData(Class<R> responseClass, String relativeUri, byte[] data) throws HttpClientException
   {
     HttpURLConnection conn = null;
-    
+
     try
     {
       conn = getConnection(POST_METHOD, relativeUri);
@@ -143,11 +153,17 @@ public class HttpClient
       requestStream.flush();
       requestStream.close();
 
-      InputStream responseStream = conn.getInputStream();
-      R response = JaxbUtils.toObject(responseClass, responseStream);
-
-      return response;
-      
+      if (conn.getResponseCode() == HttpURLConnection.HTTP_OK)
+      {
+        InputStream responseStream = conn.getInputStream();
+        return JaxbUtils.toObject(responseClass, responseStream);
+      }
+      else
+      {
+        InputStream errorStream = conn.getErrorStream();
+        String error = IOUtils.toString(errorStream);
+        throw new HttpClientException(error);
+      }
     }
     catch (Exception e)
     {
@@ -160,13 +176,14 @@ public class HttpClient
         ex.printStackTrace();
       }
     }
-    finally {
+    finally
+    {
       if (conn != null)
       {
         conn.disconnect();
       }
     }
-    
+
     return null;
   }
 
@@ -174,7 +191,7 @@ public class HttpClient
       Map<String, String> headers) throws HttpClientException
   {
     HttpURLConnection conn = null;
-    
+
     try
     {
       conn = (HttpURLConnection) getConnection(POST_METHOD, relativeUri);
@@ -204,10 +221,17 @@ public class HttpClient
       requestStream.flush();
       requestStream.close();
 
-      InputStream responseStream = conn.getInputStream();
-      T response = JaxbUtils.toObject(responseClass, responseStream);
-
-      return response;
+      if (conn.getResponseCode() == HttpURLConnection.HTTP_OK)
+      {
+        InputStream responseStream = conn.getInputStream();
+        return JaxbUtils.toObject(responseClass, responseStream);
+      }
+      else
+      {
+        InputStream errorStream = conn.getErrorStream();
+        String error = IOUtils.toString(errorStream);
+        throw new HttpClientException(error);
+      }
     }
     catch (Exception e)
     {
@@ -220,13 +244,14 @@ public class HttpClient
         ex.printStackTrace();
       }
     }
-    finally {
+    finally
+    {
       if (conn != null)
       {
         conn.disconnect();
       }
     }
-    
+
     return null;
   }
 
@@ -243,15 +268,15 @@ public class HttpClient
   {
     return postSparql(responseClass, relativeUri, SPARQL_QUERY, query, defaultGraphUri);
   }
-  
+
   public <T> T postSparqlUpdate(Class<T> responseClass, String relativeUri, String query, String defaultGraphUri)
       throws HttpClientException
   {
     return postSparql(responseClass, relativeUri, SPARQL_UPDATE, query, defaultGraphUri);
   }
-  
-  private <T> T postSparql(Class<T> responseClass, String relativeUri, String postType, String query, String defaultGraphUri)
-      throws HttpClientException
+
+  private <T> T postSparql(Class<T> responseClass, String relativeUri, String postType, String query,
+      String defaultGraphUri) throws HttpClientException
   {
     Map<String, String> headers = new HashMap<String, String>();
     headers.put("Content-Type", "application/x-www-form-urlencoded");
@@ -261,7 +286,7 @@ public class HttpClient
     formData.put(postType, query);
     formData.put("default-graph-uri", (defaultGraphUri != null) ? defaultGraphUri : "");
 
-    return postFormData(responseClass, relativeUri, formData, headers);    
+    return postFormData(responseClass, relativeUri, formData, headers);
   }
 
   public void setBaseUri(String baseUri)
@@ -283,7 +308,7 @@ public class HttpClient
   {
     return networkCredentials;
   }
-  
+
   public void addHeader(String name, String value)
   {
     headers.put(name, value);
@@ -296,15 +321,15 @@ public class HttpClient
 
     URL url = new URL(baseUri + relativeUri);
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-    
+
     String proxySet = System.getProperty("proxySet");
     if (proxySet != null && proxySet.equalsIgnoreCase("true"))
     {
       String proxyUserName = System.getProperty("http.proxyUserName");
       String proxyPassword = EncryptionUtils.decrypt(System.getProperty("http.proxyPassword"));
-      String proxyDomain = System.getProperty("http.proxyDomain");      
+      String proxyDomain = System.getProperty("http.proxyDomain");
       String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);
-      
+
       conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
     }
 
@@ -314,7 +339,7 @@ public class HttpClient
           networkCredentials.getPassword(), networkCredentials.getDomain());
       conn.setRequestProperty("Authorization", "Basic " + networkCredsToken);
     }
-    
+
     // add headers
     for (Entry<String, String> header : headers.entrySet())
     {

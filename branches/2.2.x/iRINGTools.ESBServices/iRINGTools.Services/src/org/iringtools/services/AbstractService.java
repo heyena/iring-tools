@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
@@ -87,7 +88,7 @@ public abstract class AbstractService
       settings.put(OAuthFilter.AUTHORIZATION_TOKEN_KEY, tokenHeader.get(0));
     }
     
-    processAuthorization();    
+    authorize();    
     
     /*
      * REFERENCE DATA SETTINGS
@@ -173,7 +174,7 @@ public abstract class AbstractService
       settings.put("ldapConfigPath", "WEB-INF/config/ldap.conf");
   }
   
-  protected void processAuthorization() throws AuthorizationException
+  protected void authorize() throws AuthorizationException
   {
     String authorizationEnabled = servletContext.getInitParameter("authorizationEnabled");
     
@@ -251,22 +252,13 @@ public abstract class AbstractService
     }
   }
   
-  protected void prepareErrorResponse(int errorCode, Exception e)
+  protected Response prepareErrorResponse(int errorCode, Exception e)
   {
-    prepareErrorResponse(errorCode, e.toString());
+    return prepareErrorResponse(errorCode, e.getMessage());
   }
   
-  protected void prepareErrorResponse(int errorCode, String errorMessage)
+  protected Response prepareErrorResponse(int errorCode, String errorMessage)
   {
-    httpResponse.setContentType(MediaType.TEXT_XML);
-    
-    try
-    {
-      httpResponse.sendError(errorCode, errorMessage);
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
+    return Response.status(errorCode).type(MediaType.TEXT_PLAIN).entity(errorMessage).build();
   }
 }

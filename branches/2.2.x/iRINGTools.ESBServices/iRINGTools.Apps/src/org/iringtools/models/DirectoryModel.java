@@ -22,17 +22,17 @@ import org.iringtools.widgets.tree.TreeNode;
 
 public class DirectoryModel 
 {
-  private Map<String, Object> session;
+  private Map<String, Object> settings;
   
-  public void setSession(Map<String, Object> session)
+  public DirectoryModel(Map<String, Object> settings)
   {
-    this.session = session;
+    this.settings = settings;
   }
   
   public Tree getDirectoryTree(String directoryUrl) throws HttpClientException
   {
     HttpClient httpClient = new HttpClient(directoryUrl);
-    HttpUtils.addOAuthHeaders(session, httpClient);
+    HttpUtils.addOAuthHeaders(settings, httpClient);
     
     Directory directory = httpClient.get(Directory.class);
     return directoryToTree(directory);

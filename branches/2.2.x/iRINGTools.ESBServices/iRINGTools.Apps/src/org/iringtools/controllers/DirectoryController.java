@@ -1,52 +1,48 @@
 package org.iringtools.controllers;
 
-import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.struts2.interceptor.SessionAware;
 import org.iringtools.models.DataModel;
 import org.iringtools.models.DirectoryModel;
-import org.iringtools.utility.HttpClientException;
 import org.iringtools.widgets.tree.Tree;
 
-import com.opensymphony.xwork2.ActionContext;
-import com.opensymphony.xwork2.ActionSupport;
-
-public class DirectoryController extends ActionSupport implements SessionAware
+public class DirectoryController extends AbstractController
 {
   private static final long serialVersionUID = 1L;
-
-  private Map<String, Object> session;
-  private DirectoryModel directoryModel;
+  
   private String exchangeServiceUri;;
   private Tree directoryTree;
 
   public DirectoryController()
   {
-    directoryModel = new DirectoryModel();
-    exchangeServiceUri = ActionContext.getContext().getApplication().get("ExchangeServiceUri").toString();
+    super();
+    
+    exchangeServiceUri = context.getInitParameter("ExchangeServiceUri");
+    authorize("exchangeManager", "exchangeAdmins");
   }
 
-  @Override
-  public void setSession(Map<String, Object> session)
+  public String getDirectory()
   {
-    this.session = session;
-    directoryModel.setSession(session);
-  }
-
-  public String getDirectory() throws HttpClientException
-  {
-    for (Entry<String, Object> entry : session.entrySet())
+    try
     {
-      String key = entry.getKey();
-
-      if (key.startsWith(DataModel.APP_PREFIX))
+      for (Entry<String, Object> entry : session.entrySet())
       {
-        session.remove(key);
+        String key = entry.getKey();
+  
+        if (key.startsWith(DataModel.APP_PREFIX))
+        {
+          session.remove(key);
+        }
       }
+  
+      DirectoryModel directoryModel = new DirectoryModel(session);      
+      directoryTree = directoryModel.getDirectoryTree(exchangeServiceUri + "/directory");
     }
-
-    directoryTree = directoryModel.getDirectoryTree(exchangeServiceUri + "/directory");
+    catch (Exception e)
+    {
+      prepareErrorResponse(500, e.toString());
+      return ERROR;
+    }
 
     return SUCCESS;
   }

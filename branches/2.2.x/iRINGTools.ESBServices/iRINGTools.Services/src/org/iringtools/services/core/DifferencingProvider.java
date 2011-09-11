@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.iringtools.dxfr.dti.DataTransferIndex;
 import org.iringtools.dxfr.dti.DataTransferIndexList;
 import org.iringtools.dxfr.dti.DataTransferIndices;
@@ -19,11 +20,13 @@ import org.iringtools.dxfr.request.DfoRequest;
 
 public class DifferencingProvider
 {
-  //private Map<String, Object> settings;
+  private static final Logger logger = Logger.getLogger(DifferencingProvider.class);
+
+  // private Map<String, Object> settings;
 
   public DifferencingProvider(Map<String, Object> settings)
   {
-    //this.settings = settings;
+    // this.settings = settings;
   }
 
   public DataTransferIndices diff(DfiRequest dfiRequest)
@@ -32,18 +35,18 @@ public class DifferencingProvider
     DataTransferIndexList resultDtiList = new DataTransferIndexList();
     resultDtis.setDataTransferIndexList(resultDtiList);
     List<DataTransferIndex> resultDtiListItems = resultDtiList.getItems();
-    
+
     DataTransferIndices sourceDtis = null;
     DataTransferIndices targetDtis = null;
-    
+
     /* determine source and target DTIs */
     List<DataTransferIndices> dtisList = dfiRequest.getDataTransferIndices();
-    
-    if (dtisList == null || dtisList.size() < 2) 
+
+    if (dtisList == null || dtisList.size() < 2)
       return null;
-    
-    if (dtisList.get(0).getScopeName().equalsIgnoreCase(dfiRequest.getSourceScopeName()) &&
-      dtisList.get(0).getAppName().equalsIgnoreCase(dfiRequest.getSourceAppName()))
+
+    if (dtisList.get(0).getScopeName().equalsIgnoreCase(dfiRequest.getSourceScopeName())
+        && dtisList.get(0).getAppName().equalsIgnoreCase(dfiRequest.getSourceAppName()))
     {
       sourceDtis = dtisList.get(0);
       targetDtis = dtisList.get(1);
@@ -52,13 +55,12 @@ public class DifferencingProvider
     {
       sourceDtis = dtisList.get(1);
       targetDtis = dtisList.get(0);
-    }    
+    }
 
     /*
      * Case 1:
      * 
-     *    Source DTIs:
-     *    Target DTIs: x x x x 
+     * Source DTIs: Target DTIs: x x x x
      */
     if (sourceDtis == null || sourceDtis.getDataTransferIndexList().getItems().size() == 0)
     {
@@ -70,15 +72,14 @@ public class DifferencingProvider
           dti.setHashValue(null);
         }
       }
-      
+
       return targetDtis;
     }
 
     /*
      * Case 2:
      * 
-     *    Source DTIs: x x x x
-     *    Target DTIs: 
+     * Source DTIs: x x x x Target DTIs:
      */
     if (targetDtis == null || targetDtis.getDataTransferIndexList().getItems().size() == 0)
     {
@@ -94,29 +95,27 @@ public class DifferencingProvider
     }
 
     List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndexList().getItems();
-    List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getItems();      
+    List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getItems();
     IdentifierComparator identifierComparator = new IdentifierComparator();
-    
+
     Collections.sort(sourceDtiList, identifierComparator);
     Collections.sort(targetDtiList, identifierComparator);
 
     /*
      * Case 3, 4:
      * 
-     *    Source DTIs: x x x x
-     *    Target DTIs:         x x x x 
+     * Source DTIs: x x x x Target DTIs: x x x x
      * 
-     *    Source DTIs:         x x x x
-     *    Target DTIs: x x x x 
+     * Source DTIs: x x x x Target DTIs: x x x x
      */
-    if (sourceDtiList.get(0).getIdentifier().compareTo(targetDtiList.get(targetDtiList.size() - 1).getIdentifier()) > 0 ||
-        targetDtiList.get(0).getIdentifier().compareTo(sourceDtiList.get(sourceDtiList.size() - 1).getIdentifier()) > 0)
+    if (sourceDtiList.get(0).getIdentifier().compareTo(targetDtiList.get(targetDtiList.size() - 1).getIdentifier()) > 0
+        || targetDtiList.get(0).getIdentifier().compareTo(sourceDtiList.get(sourceDtiList.size() - 1).getIdentifier()) > 0)
     {
       for (DataTransferIndex dti : sourceDtiList)
       {
         dti.setTransferType(TransferType.ADD);
       }
-      
+
       for (DataTransferIndex dti : targetDtiList)
       {
         dti.setTransferType(TransferType.DELETE);
@@ -125,41 +124,39 @@ public class DifferencingProvider
 
       resultDtiListItems.addAll(sourceDtiList);
       resultDtiListItems.addAll(targetDtiList);
-      
+
       resultDtis.setSortType(sourceDtis.getSortType());
       resultDtis.setSortOrder(sourceDtis.getSortOrder());
-      
+
       return resultDtis;
     }
 
     /*
      * Case 5, 6, 7:
-     *    
-     *    Source DTIs: x x x x
-     *    Target DTIs:     x x x x
-     *
-     *    Source DTIs: x x x x
-     *    Target DTIs: x x x x
-     *    
-     *    Source DTIs:     x x x x
-     *    Target DTIs: x x x x
+     * 
+     * Source DTIs: x x x x Target DTIs: x x x x
+     * 
+     * Source DTIs: x x x x Target DTIs: x x x x
+     * 
+     * Source DTIs: x x x x Target DTIs: x x x x
      */
     int sourceIndex = 0;
     int targetIndex = 0;
-    
+
     while (sourceIndex < sourceDtiList.size() && targetIndex < targetDtiList.size())
     {
       DataTransferIndex sourceDti = sourceDtis.getDataTransferIndexList().getItems().get(sourceIndex);
       DataTransferIndex targetDti = targetDtis.getDataTransferIndexList().getItems().get(targetIndex);
-      
+
       int value = sourceDti.getIdentifier().compareTo(targetDti.getIdentifier());
-      
+
       if (value < 0)
       {
         sourceDti.setTransferType(TransferType.ADD);
         resultDtiListItems.add(sourceDti);
-        
-        if (sourceIndex < sourceDtiList.size()) sourceIndex++;
+
+        if (sourceIndex < sourceDtiList.size())
+          sourceIndex++;
       }
       else if (value == 0)
       {
@@ -170,25 +167,28 @@ public class DifferencingProvider
         else
         {
           targetDti.setTransferType(TransferType.CHANGE);
-          targetDti.setHashValue(sourceDti.getHashValue());  // use source hash value
-          targetDti.setSortIndex(sourceDti.getSortIndex());  // use source sort index 
+          targetDti.setHashValue(sourceDti.getHashValue()); // use source hash value
+          targetDti.setSortIndex(sourceDti.getSortIndex()); // use source sort index
         }
-        
+
         resultDtiListItems.add(targetDti);
-        
-        if (sourceIndex < sourceDtiList.size()) sourceIndex++;          
-        if (targetIndex < targetDtiList.size()) targetIndex++;
+
+        if (sourceIndex < sourceDtiList.size())
+          sourceIndex++;
+        if (targetIndex < targetDtiList.size())
+          targetIndex++;
       }
       else
       {
         targetDti.setTransferType(TransferType.DELETE);
         targetDti.setHashValue(null);
-        resultDtiListItems.add(targetDti);   
-        
-        if (targetIndex < targetDtiList.size()) targetIndex++;
+        resultDtiListItems.add(targetDti);
+
+        if (targetIndex < targetDtiList.size())
+          targetIndex++;
       }
     }
-    
+
     if (sourceIndex < sourceDtiList.size())
     {
       for (int i = sourceIndex; i < sourceDtiList.size(); i++)
@@ -208,26 +208,26 @@ public class DifferencingProvider
         resultDtiListItems.add(targetDti);
       }
     }
-    
+
     resultDtis.setSortType(sourceDtis.getSortType());
     resultDtis.setSortOrder(sourceDtis.getSortOrder());
-    
+
     return resultDtis;
   }
 
   // compare 2 DTO lists using in-line differencing - result will be saved in source DTO list
-  public DataTransferObjects diff(DfoRequest dfoRequest) throws Exception
+  public DataTransferObjects diff(DfoRequest dfoRequest) throws ServiceProviderException
   {
     // determine which DTO is source and which DTO is target
     List<DataTransferObjects> dtosList = dfoRequest.getDataTransferObjects();
     DataTransferObjects sourceDtos = null;
     DataTransferObjects targetDtos = null;
-    
-    if (dtosList == null || dtosList.size() < 2) 
+
+    if (dtosList == null || dtosList.size() < 2)
       return null;
-    
-    if (dtosList.get(0).getScopeName().equalsIgnoreCase(dfoRequest.getSourceScopeName()) &&
-      dtosList.get(0).getAppName().equalsIgnoreCase(dfoRequest.getSourceAppName()))
+
+    if (dtosList.get(0).getScopeName().equalsIgnoreCase(dfoRequest.getSourceScopeName())
+        && dtosList.get(0).getAppName().equalsIgnoreCase(dfoRequest.getSourceAppName()))
     {
       sourceDtos = dtosList.get(0);
       targetDtos = dtosList.get(1);
@@ -236,11 +236,11 @@ public class DifferencingProvider
     {
       sourceDtos = dtosList.get(1);
       targetDtos = dtosList.get(0);
-    }    
-    
-    if (sourceDtos == null || targetDtos == null) 
+    }
+
+    if (sourceDtos == null || targetDtos == null)
       return null;
-    
+
     List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObjectList().getItems();
     List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObjectList().getItems();
 
@@ -263,65 +263,65 @@ public class DifferencingProvider
       {
         List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getItems();
         List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getItems();
-  
+
         for (int j = 0; j < targetClassObjectList.size(); j++)
         {
           ClassObject targetClassObject = targetClassObjectList.get(j);
           ClassObject sourceClassObject = getClassObject(sourceClassObjectList, targetClassObject.getClassId());
-  
+
           // assure target and source identifier are still the same
           if (j == 0 && !targetClassObject.getIdentifier().equalsIgnoreCase(sourceClassObject.getIdentifier()))
           {
-            throw new Exception(String.format(
+            String message = String.format(
                 "Identifiers are out of sync - source identifier [%s], target identifier [%s]",
-                sourceClassObject.getIdentifier(), targetClassObject.getIdentifier()));
+                sourceClassObject.getIdentifier(), targetClassObject.getIdentifier());
+            logger.error(message);
+            throw new ServiceProviderException(message);
           }
-  
+
           sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
-  
+
           if (targetClassObject.getTemplateObjects() != null && sourceClassObject.getTemplateObjects() != null)
           {
             List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getItems();
             List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getItems();
-    
+
             for (TemplateObject targetTemplateObject : targetTemplateObjectList)
             {
-              TemplateObject sourceTemplateObject = getTemplateObject(sourceTemplateObjectList, 
+              TemplateObject sourceTemplateObject = getTemplateObject(sourceTemplateObjectList,
                   targetTemplateObject.getTemplateId());
-              
+
               if (sourceTemplateObject != null)
               {
                 sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
-      
+
                 if (targetTemplateObject.getRoleObjects() != null && sourceTemplateObject.getRoleObjects() != null)
                 {
                   List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getItems();
                   List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getItems();
-        
+
                   // find and set old value for roles that are changed
                   for (RoleObject targetRoleObject : targetRoleObjectList)
                   {
                     RoleType targetRoleType = targetRoleObject.getType();
-        
-                    if (targetRoleType == RoleType.PROPERTY ||
-                        targetRoleType == RoleType.DATA_PROPERTY ||
-                        targetRoleType == RoleType.OBJECT_PROPERTY ||
-                        targetRoleType == RoleType.FIXED_VALUE)
+
+                    if (targetRoleType == RoleType.PROPERTY || targetRoleType == RoleType.DATA_PROPERTY
+                        || targetRoleType == RoleType.OBJECT_PROPERTY || targetRoleType == RoleType.FIXED_VALUE)
                     {
                       RoleObject sourceRoleObject = getRoleObject(sourceRoleObjectList, targetRoleObject.getRoleId());
 
                       if (sourceRoleObject != null)
                       {
                         boolean changed = false;
-                        
+
                         if (sourceRoleObject.getValues() != null)
                         {
                           List<String> sourceValues = sourceRoleObject.getValues().getItems();
-                          
+
                           if (targetRoleObject.getValues() != null)
                           {
                             List<String> targetValues = targetRoleObject.getValues().getItems();
-                            
+
                             if (!(sourceValues.size() == targetValues.size() && sourceValues.containsAll(targetValues)))
                             {
                               changed = true;
@@ -331,27 +331,27 @@ public class DifferencingProvider
                           {
                             changed = true;
                           }
-                          
+
                           sourceRoleObject.getOldValues().setItems(targetRoleObject.getValues().getItems());
                         }
                         else
                         {
                           String targetRoleValue = targetRoleObject.getValue();
                           String sourceRoleValue = sourceRoleObject.getValue();
-            
+
                           if (targetRoleValue == null)
                             targetRoleValue = "";
                           if (sourceRoleValue == null)
                             sourceRoleValue = "";
-            
+
                           sourceRoleObject.setOldValue(targetRoleValue);
-            
+
                           if (!targetRoleValue.equals(sourceRoleValue))
                           {
                             changed = true;
                           }
                         }
-                        
+
                         if (changed)
                         {
                           sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
@@ -368,10 +368,10 @@ public class DifferencingProvider
         }
       }
     }
-    
+
     return sourceDtos;
   }
-  
+
   private ClassObject getClassObject(List<ClassObject> classObjects, String classId)
   {
     for (ClassObject classObject : classObjects)
@@ -379,10 +379,10 @@ public class DifferencingProvider
       if (classObject.getClassId().equals(classId))
         return classObject;
     }
-    
+
     return null;
   }
-  
+
   private TemplateObject getTemplateObject(List<TemplateObject> templateObjects, String templateId)
   {
     for (TemplateObject templateObject : templateObjects)
@@ -390,10 +390,10 @@ public class DifferencingProvider
       if (templateObject.getTemplateId().equals(templateId))
         return templateObject;
     }
-    
+
     return null;
   }
-  
+
   private RoleObject getRoleObject(List<RoleObject> roleObjects, String roleId)
   {
     for (RoleObject roleObject : roleObjects)
@@ -401,7 +401,7 @@ public class DifferencingProvider
       if (roleObject.getRoleId().equals(roleId))
         return roleObject;
     }
-    
+
     return null;
   }
 }
