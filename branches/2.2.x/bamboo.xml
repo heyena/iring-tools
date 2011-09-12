@@ -129,6 +129,7 @@
   <ItemGroup>
     <DeploymentPackage Include="*.*">
       <Options>a -tzip -y -r</Options>
+      <OutputDir></OutputDir>
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
     </DeploymentPackage>
@@ -136,6 +137,7 @@
       <Options>x -tzip -y -o</Options>
       <OutputDir>$(DevDeploymentDir)</OutputDir>
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
+      <FileSet></FileSet>
     </DeploymentPackage>
   </ItemGroup>
 
