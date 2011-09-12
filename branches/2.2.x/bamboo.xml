@@ -83,7 +83,9 @@
 
     <AppsDeployment
       Include="$(ApplicationsDir)\**"
-      Exclude="$(ApplicationsDir)\bin\*.pdb;
+      Exclude="$(ApplicationsDir)\Controllers\**;
+               $(ApplicationsDir)\Models\**;               
+               $(ApplicationsDir)\bin\*.pdb;
                $(ApplicationsDir)\obj\**;
                $(ApplicationsDir)\Properties\**;
                $(ApplicationsDir)\*.cs;
