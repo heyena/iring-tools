@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project basedir="." default="build" name="version">
-  <property name="assembly-info.file" value="../AssemblyInfo.cs" />
-  <property name="version.file" value="./version" />
+  <property name="version" value="2.2.0" />
+  <property name="version.outfile" value="./version" />
 
   <path id="svnant.classpath">
     <fileset dir="${basedir}/libraries/svnant-1.3.0">
@@ -17,19 +17,11 @@
     </fileset>
   </path>
   
-  <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="ant-contrib.classpath" />
-  
   <target name="build">
-    <loadfile srcFile="${assembly-info.file}" property="assembly-info" />
-    <propertyregex property="version"
-              input="${assembly-info}"
-              regexp="AssemblyVersion\(&quot;([0-9]+\.[0-9]+\.[0-9]+)"
-              select="\1"
-              casesensitive="false" />
     <svn>
       <status path="${basedir}" revisionProperty="revision" />
     </svn>
-    <echo message="${version}.${revision}" file="${version.file}" />
+    <echo message="${version}.${revision}" file="${version.outfile}" />
   </target>
 </project>
   
