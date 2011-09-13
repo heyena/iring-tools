@@ -4,6 +4,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.SocketAddress;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -319,23 +322,39 @@ public class HttpClient
 
   private HttpURLConnection getConnection(String method, String relativeUri) throws IOException, EncryptionException
   {
+    HttpURLConnection conn = null;
+
     if (baseUri == null)
       baseUri = "";
 
     URL url = new URL(baseUri + relativeUri);
     logger.debug("Opening URL connection [" + url + "].");
     
-    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-
     String proxySet = System.getProperty("proxySet");
     if (proxySet != null && proxySet.equalsIgnoreCase("true"))
     {
+      String proxyHost = System.getProperty("http.proxyHost");
+      int proxyPort = Integer.parseInt(System.getProperty("http.proxyPort"));
+      SocketAddress address = new InetSocketAddress(proxyHost, proxyPort);
+      
+      Proxy httpProxy = new Proxy(Proxy.Type.HTTP, address);
+      conn = (HttpURLConnection) url.openConnection(httpProxy);
+      
       String proxyUserName = System.getProperty("http.proxyUserName");
-      String proxyPassword = EncryptionUtils.decrypt(System.getProperty("http.proxyPassword"));
-      String proxyDomain = System.getProperty("http.proxyDomain");
+      String proxyKeyFile = System.getProperty("http.proxySecretKeyFile");
+      
+      String proxyPassword = (proxyKeyFile != null && proxyKeyFile.length() > 0)
+        ? EncryptionUtils.decrypt(System.getProperty("http.proxyPassword"), proxyKeyFile)
+        : EncryptionUtils.decrypt(System.getProperty("http.proxyPassword"));
+      
+      String proxyDomain = System.getProperty("http.proxyDomain");      
       String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);
-
+      
       conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
+    }
+    else
+    {
+      conn = (HttpURLConnection) url.openConnection();
     }
 
     if (networkCredentials != null)

@@ -13,10 +13,10 @@
     <param-name>differencingServiceUri</param-name>
     <param-value>http://localhost:8080/services/diff</param-value>
   </context-param>
-   <context-param> 
+  <context-param> 
     <param-name>IDGenServiceUri</param-name>
     <param-value>http://localhost:8080/services/idgen</param-value>
-   </context-param>
+  </context-param>
   <context-param>
     <param-name>poolSize</param-name>
     <param-value>100</param-value>

@@ -25,7 +25,6 @@
   <!-- all other loggers -->
   <root>
     <level value="WARN" /> 
-    <appender-ref ref="stdout" /> 
-    <appender-ref ref="fileout" /> 
+    <appender-ref ref="stdout" />
   </root>
 </log4j:configuration> 
