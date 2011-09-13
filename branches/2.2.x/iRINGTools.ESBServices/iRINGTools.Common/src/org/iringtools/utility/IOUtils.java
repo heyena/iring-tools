@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -173,5 +174,11 @@ public final class IOUtils
   {
     File file = new File(filePath);
     return file.exists();
+  }
+  
+  public static String getStackTrace(Exception e) {
+    StringWriter writer = new StringWriter();
+    e.printStackTrace(new PrintWriter(writer));
+    return writer.toString();
   }
 }

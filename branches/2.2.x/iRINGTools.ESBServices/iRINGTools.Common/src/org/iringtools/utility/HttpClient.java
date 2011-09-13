@@ -11,9 +11,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.Logger;
 
 public class HttpClient
 {
+  private static final Logger logger = Logger.getLogger(HttpClient.class);
+  
   private String baseUri;
   private NetworkCredentials networkCredentials = null;
   private Map<String, String> headers = null;
@@ -320,6 +323,8 @@ public class HttpClient
       baseUri = "";
 
     URL url = new URL(baseUri + relativeUri);
+    logger.debug("Opening URL connection [" + url + "].");
+    
     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
     String proxySet = System.getProperty("proxySet");

@@ -178,8 +178,6 @@ public class OAuthFilter implements Filter
   
   private boolean obtainOAuthToken(String userAttrsJson) throws IOException
   {
-    logger.debug("obtainOAuthToken(" + userAttrsJson + ")");
-    
     String tokenServiceUri = filterConfig.getInitParameter("tokenServiceUri");
     String applicationKey = filterConfig.getInitParameter("applicationKey");
     
@@ -209,7 +207,7 @@ public class OAuthFilter implements Filter
       }
       catch (Exception ex)
       {
-        logger.error("Error obtaining OAuth token: " + ex);
+        logger.error("Error obtaining OAuth token for user [" + userAttrsJson + "]. " + ex);
         return false;
       }
     }
