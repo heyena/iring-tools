@@ -1257,56 +1257,39 @@ namespace org.iringtools.adapter
 
     public DataLayers GetDataLayers()
     {
-      DataLayers dataLayerAssemblies = new DataLayers();
+      DataLayers dataLayers = new DataLayers();            
+      Type ti = typeof(IDataLayer);
 
-      try
+      foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
       {
-        //string binaryPath = @"file:///" + _settings["BaseDirectoryPath"] + "bin";        
+        Type[] asmTypes = null;
 
-        System.Type ti = typeof(IDataLayer);
-
-        foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
+        try
+        {          
+          asmTypes = asm.GetTypes();
+        }
+        catch (Exception e) 
         {
-          //if (!asm.IsDynamic && Path.GetDirectoryName(asm.CodeBase) == binaryPath)
+          _logger.Error(string.Format("Error in GetDataLayers: {0}", e), e);
+        }
+
+        if (asmTypes != null)
+        {
+          foreach (System.Type asmType in asmTypes)
           {
-            foreach (System.Type t in asm.GetTypes())
+            if (!asmType.IsInterface && ti.IsAssignableFrom(asmType) && asmType.IsAbstract.Equals(false))
             {
-              if (!t.IsInterface && ti.IsAssignableFrom(t) && t.IsAbstract.Equals(false))
-              {
-                bool configurable = t.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-                string name = asm.FullName.Split(',')[0];
-                string assembly = string.Format("{0}, {1}", t.FullName, name);
-                DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
-                dataLayerAssemblies.Add(dataLayer);
-              }
+              bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+              string name = asm.FullName.Split(',')[0];
+              string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+              DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
+              dataLayers.Add(dataLayer);
             }
           }
         }
       }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in GetDataLayers: {0}", ex), ex);
 
-        bool found = false;
-        foreach (DataLayer datalayer in dataLayerAssemblies)
-        {
-          if (datalayer.Name.ToUpper() == "NHIBERNATELIBRARY")
-            found = true;
-        }
-
-        if (found == false)
-        {
-          DataLayer dataLayer = new DataLayer
-          {
-            Assembly = "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary",
-            Name = "NHibernateLibrary",
-            Configurable = true
-          };
-          dataLayerAssemblies.Add(dataLayer);
-        }
-      }
-
-      return dataLayerAssemblies;
+      return dataLayers;
     }
 
     public Response Configure(string projectName, string applicationName, HttpRequest httpRequest)

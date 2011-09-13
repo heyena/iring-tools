@@ -530,7 +530,7 @@ namespace org.iringtools.adapter.datalayer
         //  Utility.Write<SpreadsheetDocument>(doc, docPath, true);
         //}
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         Status stat  = new Status { Level = StatusLevel.Error };
         resp.StatusList.Add(stat);
