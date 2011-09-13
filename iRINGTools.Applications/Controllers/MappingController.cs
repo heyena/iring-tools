@@ -292,6 +292,7 @@ namespace org.iringtools.web.controllers
       string graphName = formgraph[formgraph.Count() - 1];
       string key = string.Format(_keyFormat, scope, application);
 
+
       Mapping mapping = GetMapping(scope, application);
 
       List<JsonTreeNode> nodes = new List<JsonTreeNode>();
@@ -316,14 +317,23 @@ namespace org.iringtools.web.controllers
           case "GraphMapNode":
             if (graphMap != null)
             {
-
+                    ///for dupe templates
+               int counter = 0;
+               string tId = string.Empty;
               foreach (var templateMaps in graphMap.classTemplateMaps)
               {
                 if (templateMaps.classMap.name != graphClassMap.name) continue;
                 foreach (var templateMap in templateMaps.templateMaps)
                 {
 
-                  JsonTreeNode templateNode = GetTemplateNode(templateMap, context);
+                    var tdupe = templateMaps.templateMaps.Where(t=>t.id.Equals(templateMap.id));
+                    if (tdupe.Count() > 1)
+                    {
+                        counter += 1;
+                    }
+                   
+                  JsonTreeNode templateNode = GetTemplateNode(templateMap, context+ counter);
+       
                   nodes.Add(templateNode);
                 }
               }
@@ -552,7 +562,7 @@ namespace org.iringtools.web.controllers
         identifier = templateMap.id,
         type = "TemplateMapNode",
         icon = "Content/img/template-map.png",
-        id = context + "/" + templateMap.name,
+        id = context + "/" + templateMap.name + 1,
         text = templateMap.name,
         expanded = false,
         leaf = false,
