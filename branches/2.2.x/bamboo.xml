@@ -32,7 +32,7 @@
     <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
     <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
 
-    <DevDeploymentDir>C:\iring-tools-web\dev.iringsandbox.org</DevDeploymentDir>
+    <DevDeploymentDir>C:\iring-tools-web\iip.iringsandbox.org</DevDeploymentDir>
 	
     <SolutionFile>iring-tools.sln</SolutionFile>
   </PropertyGroup>
