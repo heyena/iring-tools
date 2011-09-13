@@ -269,94 +269,98 @@ public class DifferencingProvider
           ClassObject targetClassObject = targetClassObjectList.get(j);
           ClassObject sourceClassObject = getClassObject(sourceClassObjectList, targetClassObject.getClassId());
 
-          // assure target and source identifier are still the same
-          if (j == 0 && !targetClassObject.getIdentifier().equalsIgnoreCase(sourceClassObject.getIdentifier()))
+          if (sourceClassObject != null)
           {
-            String message = String.format(
-                "Identifiers are out of sync - source identifier [%s], target identifier [%s]",
-                sourceClassObject.getIdentifier(), targetClassObject.getIdentifier());
-            logger.error(message);
-            throw new ServiceProviderException(message);
-          }
-
-          sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
-
-          if (targetClassObject.getTemplateObjects() != null && sourceClassObject.getTemplateObjects() != null)
-          {
-            List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getItems();
-            List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getItems();
-
-            for (TemplateObject targetTemplateObject : targetTemplateObjectList)
+            // assure target and source identifier are still the same
+            if (j == 0 && !targetClassObject.getIdentifier().equalsIgnoreCase(sourceClassObject.getIdentifier()))
             {
-              TemplateObject sourceTemplateObject = getTemplateObject(sourceTemplateObjectList,
-                  targetTemplateObject.getTemplateId());
+              String message = String.format(
+                  "Identifiers are out of sync - source identifier [%s], target identifier [%s]",
+                  sourceClassObject.getIdentifier(), targetClassObject.getIdentifier());
+              logger.error(message);
+              throw new ServiceProviderException(message);
+            }
 
-              if (sourceTemplateObject != null)
+            sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
+
+            if (targetClassObject.getTemplateObjects() != null && sourceClassObject.getTemplateObjects() != null)
+            {
+              List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getItems();
+              List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getItems();
+
+              for (TemplateObject targetTemplateObject : targetTemplateObjectList)
               {
-                sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
+                TemplateObject sourceTemplateObject = getTemplateObject(sourceTemplateObjectList,
+                    targetTemplateObject.getTemplateId());
 
-                if (targetTemplateObject.getRoleObjects() != null && sourceTemplateObject.getRoleObjects() != null)
+                if (sourceTemplateObject != null)
                 {
-                  List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getItems();
-                  List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getItems();
+                  sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
 
-                  // find and set old value for roles that are changed
-                  for (RoleObject targetRoleObject : targetRoleObjectList)
+                  if (targetTemplateObject.getRoleObjects() != null && sourceTemplateObject.getRoleObjects() != null)
                   {
-                    RoleType targetRoleType = targetRoleObject.getType();
+                    List<RoleObject> targetRoleObjectList = targetTemplateObject.getRoleObjects().getItems();
+                    List<RoleObject> sourceRoleObjectList = sourceTemplateObject.getRoleObjects().getItems();
 
-                    if (targetRoleType == RoleType.PROPERTY || targetRoleType == RoleType.DATA_PROPERTY
-                        || targetRoleType == RoleType.OBJECT_PROPERTY || targetRoleType == RoleType.FIXED_VALUE)
+                    // find and set old value for roles that are changed
+                    for (RoleObject targetRoleObject : targetRoleObjectList)
                     {
-                      RoleObject sourceRoleObject = getRoleObject(sourceRoleObjectList, targetRoleObject.getRoleId());
+                      RoleType targetRoleType = targetRoleObject.getType();
 
-                      if (sourceRoleObject != null)
+                      if (targetRoleType == RoleType.PROPERTY || targetRoleType == RoleType.DATA_PROPERTY
+                          || targetRoleType == RoleType.OBJECT_PROPERTY || targetRoleType == RoleType.FIXED_VALUE)
                       {
-                        boolean changed = false;
+                        RoleObject sourceRoleObject = getRoleObject(sourceRoleObjectList, targetRoleObject.getRoleId());
 
-                        if (sourceRoleObject.getValues() != null)
+                        if (sourceRoleObject != null)
                         {
-                          List<String> sourceValues = sourceRoleObject.getValues().getItems();
+                          boolean changed = false;
 
-                          if (targetRoleObject.getValues() != null)
+                          if (sourceRoleObject.getValues() != null)
                           {
-                            List<String> targetValues = targetRoleObject.getValues().getItems();
+                            List<String> sourceValues = sourceRoleObject.getValues().getItems();
 
-                            if (!(sourceValues.size() == targetValues.size() && sourceValues.containsAll(targetValues)))
+                            if (targetRoleObject.getValues() != null)
+                            {
+                              List<String> targetValues = targetRoleObject.getValues().getItems();
+
+                              if (!(sourceValues.size() == targetValues.size() && sourceValues
+                                  .containsAll(targetValues)))
+                              {
+                                changed = true;
+                              }
+                            }
+                            else
+                            {
+                              changed = true;
+                            }
+
+                            sourceRoleObject.getOldValues().setItems(targetRoleObject.getValues().getItems());
+                          }
+                          else
+                          {
+                            String targetRoleValue = targetRoleObject.getValue();
+                            String sourceRoleValue = sourceRoleObject.getValue();
+
+                            if (targetRoleValue == null)
+                              targetRoleValue = "";
+                            if (sourceRoleValue == null)
+                              sourceRoleValue = "";
+
+                            sourceRoleObject.setOldValue(targetRoleValue);
+
+                            if (!targetRoleValue.equals(sourceRoleValue))
                             {
                               changed = true;
                             }
                           }
-                          else
+
+                          if (changed)
                           {
-                            changed = true;
+                            sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                            sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                            sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
                           }
-
-                          sourceRoleObject.getOldValues().setItems(targetRoleObject.getValues().getItems());
-                        }
-                        else
-                        {
-                          String targetRoleValue = targetRoleObject.getValue();
-                          String sourceRoleValue = sourceRoleObject.getValue();
-
-                          if (targetRoleValue == null)
-                            targetRoleValue = "";
-                          if (sourceRoleValue == null)
-                            sourceRoleValue = "";
-
-                          sourceRoleObject.setOldValue(targetRoleValue);
-
-                          if (!targetRoleValue.equals(sourceRoleValue))
-                          {
-                            changed = true;
-                          }
-                        }
-
-                        if (changed)
-                        {
-                          sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
-                          sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
-                          sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
                         }
                       }
                     }
