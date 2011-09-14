@@ -32,14 +32,7 @@ function createGridStore(url){
       timeout: 120000
     }),
     reader: new Ext.data.DynamicGridReader({}),
-    remoteSort: true,    
-    listeners: {
-      exception: function(proxy, type, action, request, response){
-        Ext.getBody().unmask();       
-        var message = 'Request URI: /' + request.url + '.\n\nError description: ' + response.responseText;
-        showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
-      }
-    }
+    remoteSort: true
   });
   
   store.sort = store.sort.createInterceptor(storeSort);
@@ -707,14 +700,6 @@ Ext.onReady(function(){
       }
     }
   });
-  
-  directoryTreePane.loader.on('loadexception', 
-    function(loader, node, response){
-	  var message = 'Request URI: /' + loader.dataUrl + '.\n\nError description: ' + response.responseText;
-	  showDialog(420, 160, 'Error', message, Ext.Msg.OK, null);
-	  return false;
-    }
-  );
   
   var propertyPane = new Ext.grid.PropertyGrid({
     id: 'property-pane',
