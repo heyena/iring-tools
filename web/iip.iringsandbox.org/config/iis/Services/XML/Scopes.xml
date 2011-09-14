@@ -16,6 +16,10 @@
         <name>XYZ</name>
         <description>Test Application</description>
       </application>
+      <application>
+        <name>SPPID</name>
+        <description />
+      </application>
     </applications>
   </scope>
 </scopes>
