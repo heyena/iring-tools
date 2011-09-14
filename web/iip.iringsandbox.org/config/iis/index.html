@@ -1,0 +1,84 @@
+<html>
+<head>
+<meta http-equiv="cache-control" content="no-cache">
+<link rel="stylesheet" type="text/css" href="css/iring-sandbox.css">
+<title>iRINGSandbox Development</title>
+<script type="text/javascript" src="./js/sendRequest.js"></script>
+<script type="text/javascript">
+function loadXml(xml) {
+  var xmlDoc = null;
+  
+	if (window.DOMParser) {
+		parser = new DOMParser();
+		xmlDoc = parser.parseFromString(xml, "text/xml");
+	}
+	else { // IE
+		xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+		xmlDoc.async = "false";
+		xmlDoc.loadXML(xml);
+	} 
+
+	return xmlDoc;
+}
+
+function setVersion(versionXml) {
+  var xmlDoc = loadXml(versionXml);
+
+  if (xmlDoc != null) {    
+    var major = xmlDoc.getElementsByTagName('major')[0].firstChild.nodeValue;;
+    document.getElementById('major').innerHTML = major;
+
+    var minor = xmlDoc.getElementsByTagName('minor')[0].firstChild.nodeValue;
+    document.getElementById('minor').innerHTML = minor;
+    
+    var build = xmlDoc.getElementsByTagName('build')[0].firstChild.nodeValue;
+    document.getElementById('build').innerHTML = build;
+    
+    var revision = xmlDoc.getElementsByTagName('revision')[0].firstChild.nodeValue;
+    document.getElementById('revision').innerHTML = revision;
+  }
+}
+
+function getVersion() { 
+  var url = 'Services/adapter/version';
+  sendRequest(url, setVersion);
+}
+</script>
+</head>
+<body onload="getVersion()">
+<div class="banner">
+	<h1><img src="img/iring-sandbox-logo.png" />&nbsp; Development Environment</h1>
+</div>
+<div class="main">
+<p>
+
+This environment is an auto-deployed instance of the latest successful build of the iRINGTools trunk.
+  It is not for production use, and may be non-functional at times.
+</p>
+<br/>
+<h1>iRINGTools Version <span id="major"></span>.<span id="minor"></span>.<span id="build"></span>.<span id="revision"></span></h1>
+<hr/>
+<table width="100%">
+	<tr valign=top>
+		<td>
+		<h2>iRINGTools Adapter</h2>
+		<ul>
+            <li><a href="services/sandbox/sparql/query">Sandbox Query</a></li>
+			<li><a href="apps/AdapterManager">Adapter Manager</a></li>
+			<li><a href="services/facade/sparql/query">Facade Query</a></li>
+            <li><a href="services">Services</a></li>
+		</ul>
+		</td>
+		<td>
+        <h2>iRINGTools Core</h2>
+        <ul>
+			<li><a href="http://tomcat.dev.iringsandbox.org:8081/apps/xchmgr">Exchange Manager</a></li>
+			<li><a href="http://tomcat.dev.iringsandbox.org:8081/apps/fedmgr">Federation Manager</a></li>
+            <li><a href="http://tomcat.dev.iringsandbox.org:8081/services/">Services</a></li>
+		</ul>
+		</td>
+	</tr>
+</table>
+</div>
+</body>
+</html>

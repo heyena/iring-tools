@@ -1,0 +1,14 @@
+<exchangeDefinition xmlns="http://www.iringtools.org/directory">
+  <id>1</id>
+  <name>SDK.ABC -> SDK.DEF</name>
+  <description>Sending Line list from ABC to DEF</description>
+  <sourceUri>http://sdk.iringsandbox.org/services/dxfr</sourceUri>
+  <sourceScopeName>SDK</sourceScopeName>
+  <sourceAppName>ABC</sourceAppName>
+  <sourceGraphName>LINES</sourceGraphName>
+  <targetUri>http://sdk.iringsandbox.org/services/dxfr</targetUri>
+  <targetScopeName>SDK</targetScopeName>
+  <targetAppName>DEF</targetAppName>
+  <targetGraphName>LINES</targetGraphName>
+  <hashAlgorithm>MD5</hashAlgorithm>
+</exchangeDefinition>
