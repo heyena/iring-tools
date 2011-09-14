@@ -485,9 +485,9 @@ namespace org.iringtools.web.controllers
         string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
-        string graphName = dataObjectVars[2];
+        string graphName = dataObjectVars[2].Substring(0, dataObjectVars[2].Length - 1);
         string classId = form["classId"];
-        string templateName = dataObjectVars[dataObjectVars.Count() - 2];
+        string templateName = dataObjectVars[dataObjectVars.Count() - 2].Substring(0, dataObjectVars[dataObjectVars.Count() - 2].Length-1);
         string roleName = dataObjectVars[dataObjectVars.Count() - 1];
         string context = string.Format("{0}/{1}", scope, application);
         Mapping mapping = GetMapping(scope, application);
