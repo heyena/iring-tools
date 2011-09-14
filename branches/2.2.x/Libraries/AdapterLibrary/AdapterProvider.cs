@@ -1261,16 +1261,16 @@ namespace org.iringtools.adapter
       Type ti = typeof(IDataLayer);
 
       foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
-      {
+      {        
         Type[] asmTypes = null;
 
         try
-        {          
+        {
           asmTypes = asm.GetTypes();
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
-          _logger.Error(string.Format("Error in GetDataLayers: {0}", e), e);
+          _logger.Warn(String.Format("Unable to get type of [{0}]. ", asm.GetType()), e);
         }
 
         if (asmTypes != null)
