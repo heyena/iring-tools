@@ -1,5 +1,15 @@
 Ext.ns('org.iringtools.apps.commons');
 
+Ext.data.Connection.prototype.handleFailure = 
+  Ext.data.Connection.prototype.handleFailure.createInterceptor(
+    function(response, e) {
+      Ext.getBody().unmask();       
+      var message = 'Request URL: /' + response.argument.options.url + 
+      	'.\n\nError description: ' + response.responseText;
+      showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+    }
+  );
+
 Ext.data.DynamicGridReader = Ext.extend(Ext.data.JsonReader, {
   constructor: function(config) {
     Ext.data.DynamicGridReader.superclass.constructor.call(this, config, []);
