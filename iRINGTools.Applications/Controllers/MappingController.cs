@@ -811,7 +811,7 @@ namespace org.iringtools.web.controllers
         string scope = form["scope"];
         string application = form["application"];
         Mapping mapping = GetMapping(scope, application);
-        string parentNode = form["mappingNode"].Split('/')[2];
+        string parentNode = form["mappingNode"].Split('/')[2].Substring(0, form["mappingNode"].Split('/')[2].Length - 1);
         string templateId = form["identifier"];
         string parentClassId = form["parentIdentifier"];
         GraphMap graphMap = mapping.FindGraphMap(parentNode);
