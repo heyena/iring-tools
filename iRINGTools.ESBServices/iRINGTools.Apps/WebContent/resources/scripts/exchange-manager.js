@@ -36,7 +36,7 @@ function createGridStore(url){
     listeners: {
       exception: function(proxy, type, action, request, response){
         Ext.getBody().unmask();       
-        var message = 'Request URL: /' + request.url + '. \n\nError description: ' + response.responseText;
+        var message = 'Request URI: /' + request.url + '.\n\nError description: ' + response.responseText;
         showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
       }
     }
@@ -710,7 +710,8 @@ Ext.onReady(function(){
   
   directoryTreePane.loader.on('loadexception', 
     function(loader, node, response){
-	  showDialog(420, 160, 'Error', 'Error loading directory: ' + response.responseText, Ext.Msg.OK, null);
+	  var message = 'Request URI: /' + loader.dataUrl + '.\n\nError description: ' + response.responseText;
+	  showDialog(420, 160, 'Error', message, Ext.Msg.OK, null);
 	  return false;
     }
   );

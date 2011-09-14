@@ -62,7 +62,7 @@ public class ExchangeDataController extends AbstractController
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.toString());
+      prepareErrorResponse(500, e.getMessage());
       return ERROR;
     }
     
@@ -87,7 +87,7 @@ public class ExchangeDataController extends AbstractController
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.toString());
+      prepareErrorResponse(500, e.getMessage());
       return ERROR;
     }
     
@@ -112,7 +112,7 @@ public class ExchangeDataController extends AbstractController
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.toString());
+      prepareErrorResponse(500, e.getMessage());
       return ERROR;
     }
       
@@ -136,7 +136,7 @@ public class ExchangeDataController extends AbstractController
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.toString());
+      prepareErrorResponse(500, e.getMessage());
       return ERROR;
     }
     
@@ -160,7 +160,7 @@ public class ExchangeDataController extends AbstractController
     }
     catch (Exception e)
     {
-      prepareErrorResponse(500, e.toString());
+      prepareErrorResponse(500, e.getMessage());
       return ERROR;
     }
        
