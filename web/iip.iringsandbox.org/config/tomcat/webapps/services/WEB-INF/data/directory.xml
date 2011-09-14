@@ -1,55 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<directory xmlns="http://www.iringtools.org/directory">
-  <scope>
-    <name>SDK</name>
-    <applicationData>
-      <application>
-        <id>1</id>
-        <name>ABC</name>
-        <description>Test Application</description>
-        <baseUri>http://sdk.iringsandbox.org/services/dxfr</baseUri>
-        <graphs>
-          <graph>
-            <id>1</id>
-            <name>Lines</name>
-            <description>ABC Line List</description>
-            <commodity>PipingNetworkSystem</commodity>
-          </graph>
-        </graphs>
-      </application>
-      <application>
-        <id>3</id>
-        <name>DEF</name>
-        <description>Test Application</description>
-        <baseUri>http://sdk.iringsandbox.org/services/dxfr</baseUri>
-        <graphs>
-          <graph>
-            <id>2</id>
-            <name>Lines</name>
-            <description>DEF Line List</description>
-            <commodity>PipingNetworksSystem</commodity>
-          </graph>
-        </graphs>
-      </application>
-    </applicationData>
-    <dataExchanges>
-      <commodity>
-        <name>PipingNetworkSystem</name>
-        <exchanges>
-          <exchange>
-            <id>1</id>
-            <name>Lines: SDK.ABC -&gt; SDK.DEF</name>
-            <description>Line Exchange</description>
-          </exchange>
-          <exchange>
-            <id>2</id>
-            <name>Lines: SDK.DEF -&gt; SDK.ABC</name>
-            <description>Line Exchange</description>
-          </exchange>
-        </exchanges>
-      </commodity>
-    </dataExchanges>
-  </scope>
+<directory xmlns="http://www.iringtools.org/directory">  
   <scope>
 	<name>12345_000</name>
     <applicationData>
@@ -94,11 +44,6 @@
           <exchange>
             <id>2</id>
             <name>Lines: 12345_000.DEF -&gt; 12345_000.ABC</name>
-            <description>Line Exchange</description>
-          </exchange>
-          <exchange>
-            <id>3</id>
-            <name>Lines: 12345_000.ABC -&gt; SDK.DEF</name>
             <description>Line Exchange</description>
           </exchange>
         </exchanges>
