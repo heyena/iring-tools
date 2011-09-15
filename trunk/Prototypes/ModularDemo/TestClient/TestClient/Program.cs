@@ -20,6 +20,7 @@ namespace TestClient
 
       Console.WriteLine(test.SayHello("iRING"));
       Console.WriteLine(test.SayHello2("iRING"));
+      Console.WriteLine(Util.SaySomething("something else!"));
 
       Console.ReadKey();
     }
