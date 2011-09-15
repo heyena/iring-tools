@@ -613,77 +613,28 @@ namespace org.iringtools.nhibernate
     {
       string driver = String.Empty;
       string dialect = String.Empty;
-
-      switch (provider)
-      {
-        case Provider.MsSql2000:
-          driver = "NHibernate.Driver.SqlClientDriver";
-          dialect = "NHibernate.Dialect.MsSql2000Dialect";
-          break;
-
-        case Provider.MsSql2005:
-          driver = "NHibernate.Driver.SqlClientDriver";
-          dialect = "NHibernate.Dialect.MsSql2005Dialect";
-          break;
-
-        case Provider.MsSql2008:
-          driver = "NHibernate.Driver.SqlClientDriver";
-          dialect = "NHibernate.Dialect.MsSql2008Dialect";
-          break;
-
-        case Provider.MySql3:
-          driver = "NHibernate.Driver.MySqlDataDriver";
-          dialect = "NHibernate.Dialect.MySQLDialect";
-          break;
-
-        case Provider.MySql4:
-          driver = "NHibernate.Driver.MySqlDataDriver";
-          dialect = "NHibernate.Dialect.MySQLDialect";
-          break;
-
-        case Provider.MySql5:
-          driver = "NHibernate.Driver.MySqlDataDriver";
-          dialect = "NHibernate.Dialect.MySQL5Dialect";
-          break;
-
-        case Provider.Oracle8i:
-          driver = "NHibernate.Driver.OracleClientDriver";
-          dialect = "NHibernate.Dialect.Oracle8iDialect";
-          break;
-
-        case Provider.Oracle9i:
-          driver = "NHibernate.Driver.OracleClientDriver";
-          dialect = "NHibernate.Dialect.Oracle9iDialect";
-          break;
-
-        case Provider.Oracle10g:
-          driver = "NHibernate.Driver.OracleClientDriver";
-          dialect = "NHibernate.Dialect.Oracle10gDialect";
-          break;
-
-        case Provider.OracleLite:
-          driver = "NHibernate.Driver.OracleLiteDataClientDriver";
-          dialect = "NHibernate.Dialect.OracleLiteDialect";
-          break;
-
-        case Provider.PostgresSql81:
-          driver = "NHibernate.Driver.NpgsqlDriver";
-          dialect = "NHibernate.Dialect.PostgreSQL81Dialect";
-          break;
-
-        case Provider.PostgresSql82:
-          driver = "NHibernate.Driver.NpgsqlDriver";
-          dialect = "NHibernate.Dialect.PostgreSQL82Dialect";
-          break;
-
-        case Provider.SqLite:
-          driver = "NHibernate.Driver.SQLiteDriver";
-          dialect = "NHibernate.Dialect.SQLiteDialect";
-          break;
-      }
-
+            
       try
       {
+        string dbProvider = provider.ToString();
+
+        if (dbProvider.ToUpper().Contains("MSSQL"))
+        {
+          driver = "NHibernate.Driver.SqlClientDriver";
+        }
+        else if (dbProvider.ToUpper().Contains("MYSQL"))
+        {
+          driver = "NHibernate.Driver.MySqlDataDriver";
+        }
+        else if (dbProvider.ToUpper().Contains("ORACLE"))
+        {
+          driver = "NHibernate.Driver.OracleClientDriver";
+        }
+        else
+          throw new Exception(string.Format("Database provider {0} is not supported", dbProvider));
+
+        dialect = "NHibernate.Dialect." + dbProvider + "Dialect";
+
         StringBuilder configBuilder = new StringBuilder();
         XmlTextWriter configWriter = new XmlTextWriter(new StringWriter(configBuilder));
 
@@ -717,7 +668,7 @@ namespace org.iringtools.nhibernate
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "show_sql");
-        configWriter.WriteString("false");
+        configWriter.WriteString("true");
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteEndElement(); // end session-factory element
         configWriter.WriteEndElement(); // end hibernate-configuration element
