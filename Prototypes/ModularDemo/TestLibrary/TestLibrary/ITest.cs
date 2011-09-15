@@ -8,7 +8,6 @@ namespace TestLibrary
   public interface ITest
   {
     String SayHello(String name);
-    
-    //String SayHello2(String name);
+    String SayHello2(String name);
   }
 }
