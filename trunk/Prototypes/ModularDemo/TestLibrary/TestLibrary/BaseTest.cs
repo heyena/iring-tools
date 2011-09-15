@@ -12,9 +12,9 @@ namespace TestLibrary
       return "BaseTest says hello " + name;
     }
 
-    //public virtual String SayHello2(String name)
-    //{
-    //  return "BaseTest says hello2 " + name;
-    //}
+    public virtual String SayHello2(String name)
+    {
+      return "BaseTest says hello 2 " + name;
+    }
   }
 }
