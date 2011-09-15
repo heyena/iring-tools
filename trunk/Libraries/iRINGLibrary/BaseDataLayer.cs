@@ -139,15 +139,12 @@ namespace org.iringtools.library
 
     protected void LoadDataDictionary(string objectType)
     {
-      if (_dataObjectDefinition == null)
-      {
-        DataDictionary dataDictionary = GetDictionary();
+      DataDictionary dataDictionary = GetDictionary();
 
-        _dataObjectDefinition =
-          dataDictionary.dataObjects.Find(
-              o => o.objectName.ToUpper() == objectType.ToUpper()
-          );
-      }
+      _dataObjectDefinition =
+        dataDictionary.dataObjects.Find(
+            o => o.objectName.ToUpper() == objectType.ToUpper()
+        );
     }
 
     protected DataFilter FormMultipleKeysFilter(IList<string> identifiers)
