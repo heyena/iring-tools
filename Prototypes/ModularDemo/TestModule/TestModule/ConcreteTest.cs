@@ -12,11 +12,11 @@ namespace TestModule
    *   which does not have new method SayHello2.
    *   Visit BaseTest definition to see it yourself. 
    */
-  public class ConcreteTest : BaseTest
+  public class ConcreteTest : BaseTest, ITest
   {
     public override String SayHello(String name)
     {
-      return "ConcreteTest says hello " + name;
+      return "ConcreteTest says hello " + name + ", " + Util.SaySomething();
     }
   }
 }
