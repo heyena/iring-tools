@@ -4,21 +4,22 @@ package org.iringtools.mapping;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for GraphMap complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="GraphMap">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="classTemplateMaps" type="{http://www.iringtools.org/mapping}ClassTemplateMaps"/>
+ *         &lt;element ref="{http://www.iringtools.org/mapping}classTemplateMaps"/>
  *         &lt;element name="dataObjectName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -29,11 +30,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GraphMap", propOrder = {
+@XmlType(name = "", propOrder = {
     "name",
     "classTemplateMaps",
     "dataObjectName"
 })
+@XmlRootElement(name = "graphMap")
 public class GraphMap {
 
     @XmlElement(required = true)

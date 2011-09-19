@@ -4,16 +4,17 @@ package org.iringtools.mapping;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for RoleMap complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RoleMap">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -24,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="propertyName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="valueListName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="classMap" type="{http://www.iringtools.org/mapping}ClassMap"/>
+ *         &lt;element ref="{http://www.iringtools.org/mapping}classMap"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -34,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "RoleMap", propOrder = {
+@XmlType(name = "", propOrder = {
     "type",
     "id",
     "name",
@@ -44,6 +45,7 @@ import javax.xml.bind.annotation.XmlType;
     "valueListName",
     "classMap"
 })
+@XmlRootElement(name = "roleMap")
 public class RoleMap {
 
     @XmlElement(required = true)

@@ -4,23 +4,24 @@ package org.iringtools.mapping;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for TemplateMap complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TemplateMap">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="type" type="{http://www.iringtools.org/mapping}TemplateType"/>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="roleMaps" type="{http://www.iringtools.org/mapping}RoleMaps"/>
+ *         &lt;element ref="{http://www.iringtools.org/mapping}roleMaps"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -30,12 +31,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TemplateMap", propOrder = {
+@XmlType(name = "", propOrder = {
     "type",
     "id",
     "name",
     "roleMaps"
 })
+@XmlRootElement(name = "templateMap")
 public class TemplateMap {
 
     @XmlElement(required = true)
