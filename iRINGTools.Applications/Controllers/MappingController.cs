@@ -344,9 +344,7 @@ namespace org.iringtools.web.controllers
                   JsonTreeNode roleNode = new JsonTreeNode();
                   foreach (var role in templateMap.roleMaps)
                   {
-                      if (role.classMap == null)
-                      {
-                          roleNode = new JsonTreeNode
+                       roleNode = new JsonTreeNode
                          {
                              nodeType = "async",
                              type = "RoleMapNode",
@@ -359,8 +357,6 @@ namespace org.iringtools.web.controllers
                              children = null,
                              record = role
                          };
-                      }
-                     
                        
                        templateNode.children.Add(roleNode);
                   }
