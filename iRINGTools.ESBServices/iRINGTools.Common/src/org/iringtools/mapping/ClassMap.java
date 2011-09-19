@@ -1,29 +1,27 @@
 
 package org.iringtools.mapping;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlList;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for ClassMap complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ClassMap">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="identifierDelimiter" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="identifiers" type="{http://www.iringtools.org/mapping}Identifiers"/>
+ *         &lt;element ref="{http://www.iringtools.org/mapping}identifiers"/>
  *         &lt;element name="identifierValue" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -34,13 +32,14 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ClassMap", propOrder = {
+@XmlType(name = "", propOrder = {
     "id",
     "name",
     "identifierDelimiter",
     "identifiers",
     "identifierValue"
 })
+@XmlRootElement(name = "classMap")
 public class ClassMap {
 
     @XmlElement(required = true)
@@ -49,9 +48,8 @@ public class ClassMap {
     protected String name;
     @XmlElement(required = true)
     protected String identifierDelimiter;
-    @XmlList
     @XmlElement(required = true)
-    protected List<String> identifiers;
+    protected Identifiers identifiers;
     @XmlElement(required = true)
     protected String identifierValue;
 
@@ -130,30 +128,25 @@ public class ClassMap {
     /**
      * Gets the value of the identifiers property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the identifiers property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIdentifiers().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link Identifiers }
+     *     
      */
-    public List<String> getIdentifiers() {
-        if (identifiers == null) {
-            identifiers = new ArrayList<String>();
-        }
-        return this.identifiers;
+    public Identifiers getIdentifiers() {
+        return identifiers;
+    }
+
+    /**
+     * Sets the value of the identifiers property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Identifiers }
+     *     
+     */
+    public void setIdentifiers(Identifiers value) {
+        this.identifiers = value;
     }
 
     /**
@@ -178,18 +171,6 @@ public class ClassMap {
      */
     public void setIdentifierValue(String value) {
         this.identifierValue = value;
-    }
-
-    /**
-     * Sets the value of the identifiers property.
-     * 
-     * @param identifiers
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setIdentifiers(List<String> identifiers) {
-        this.identifiers = identifiers;
     }
 
 }
