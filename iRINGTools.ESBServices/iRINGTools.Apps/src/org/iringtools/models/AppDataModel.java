@@ -40,6 +40,10 @@ public class AppDataModel extends DataModel
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
         pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());  
       }
+      else
+      {
+        throw new DataModelException("Graph [" + graphName + "] not found.");
+      }
     }
     
     return pageDtoGrid;
