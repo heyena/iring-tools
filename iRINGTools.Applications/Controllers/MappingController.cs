@@ -94,8 +94,29 @@ namespace org.iringtools.web.controllers
         string dataObject = dataObjectVars[4];
         string propertyName = dataObjectVars[dataObjectVars.Length - 1];
 
-        string graphName = mappingVars[2].Substring(0, mappingVars[2].Length-1);
-        string templateName = mappingVars[3];
+        #region Check whether a counter is concanated or not
+        bool HasNumber = (from a in mappingVars[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string graphName = string.Empty;
+        if (HasNumber == true)
+        {
+            graphName = mappingVars[2].Substring(0, mappingVars[2].Length - 1);
+        }
+        else
+            graphName = mappingVars[2];
+
+        bool templateNameHasNumber = (from a in mappingVars[3].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string templateName = string.Empty;
+        if (templateNameHasNumber == true)
+        {
+            templateName = mappingVars[3].Substring(0, mappingVars[3].Length - 1);
+        }
+        else
+            templateName = mappingVars[3];
+
+        #endregion
+
+       
+       
         string roleName = mappingVars[4];
         string classId = form["classUrl"];
         string classLabel = form["classLabel"];
@@ -118,7 +139,7 @@ namespace org.iringtools.web.controllers
           foreach (var tMap in classTemplateMaps.templateMaps)
           {
 
-              if (classTemplateMaps.templateMaps.IndexOf(tMap)== index)
+              if (classTemplateMaps.templateMaps.IndexOf(tMap) == index && tMap.name == templateName)
             //if (tMap.name == templateName )
             {
               foreach (var role in tMap.roleMaps)
@@ -168,14 +189,36 @@ namespace org.iringtools.web.controllers
         string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
-        string graph = dataObjectVars[2].Substring(0,dataObjectVars[2].Length-1);
+
+        #region Check whether a counter is concanated or not
+        bool HasNumber = (from a in dataObjectVars[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string graph = string.Empty;
+        if (HasNumber == true)
+        {
+            graph = dataObjectVars[2].Substring(0, dataObjectVars[2].Length - 1);
+        }
+        else
+            graph = dataObjectVars[2];
+
+        #endregion
+
         int index = Convert.ToInt32(form["index"]);
         ///find the correct template
         for (int i = dataObjectVars.Length - 1; i >= 0; i--)
         {
           if (dataObjectVars[i] == roleName)
           {
-            templateName = dataObjectVars[i - 1].Substring(0,dataObjectVars[i - 1].Length-1);
+              #region Check whether a counter is concanated or not
+              bool templateNameHasNumber = (from a in dataObjectVars[i - 1].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+              if (templateNameHasNumber == true)
+              {
+                  templateName = dataObjectVars[i - 1].Substring(0, dataObjectVars[i - 1].Length - 1);
+              }
+              else
+                  templateName = dataObjectVars[i - 1];
+
+              #endregion
+
             continue;
           }
         }
@@ -344,6 +387,7 @@ namespace org.iringtools.web.controllers
                   JsonTreeNode roleNode = new JsonTreeNode();
                   foreach (var role in templateMap.roleMaps)
                   {
+                      
                        roleNode = new JsonTreeNode
                          {
                              nodeType = "async",
@@ -357,7 +401,23 @@ namespace org.iringtools.web.controllers
                              children = null,
                              record = role
                          };
-                       
+                       //if (role.classMap != null)
+                       //{
+                       //    roleNode.type = "ClassMapNode";
+                       //    roleNode.leaf = false;
+                       //}
+                       if (role.classMap != null && role.classMap.id != graphClassMap.id)
+                       {
+                           JsonTreeNode classNode = GetClassNode(role.classMap, context);
+                           if (roleNode.children == null)
+                               roleNode.children = new List<JsonTreeNode>();
+                           roleNode.children.Add(classNode);
+                       }
+                       else
+                       {
+                           roleNode.leaf = true;
+                       }
+
                        templateNode.children.Add(roleNode);
                   }
                   
@@ -374,9 +434,46 @@ namespace org.iringtools.web.controllers
               {
                 if (classTemplateMap.classMap.id == classMapId)
                 {
+                    int counter = 0;
                   foreach (var templateMap in classTemplateMap.templateMaps)
                   {
-                    JsonTreeNode templateNode = GetTemplateNode(templateMap, context);
+                      var tdupe = classTemplateMap.templateMaps.Where(t => t.id.Equals(templateMap.id));
+                      if (tdupe.Count() > 1)
+                      {
+                          counter += 1;
+                      }
+                    JsonTreeNode templateNode = GetTemplateNode(templateMap, context+counter);
+                    JsonTreeNode roleNode = new JsonTreeNode();
+                    foreach (var role in templateMap.roleMaps)
+                    {
+
+                        roleNode = new JsonTreeNode
+                        {
+                            nodeType = "async",
+                            type = "RoleMapNode",
+                            icon = "Content/img/role-map.png",
+                            id = templateNode.id + "/" + role.name,
+                            text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
+                                                     string.Format("{0}{1}", role.name, unMappedToken),
+                            expanded = false,
+                            leaf = true,
+                            children = null,
+                            record = role
+                        };
+                        if (role.classMap != null && role.classMap.id != graphClassMap.id)
+                        {
+                            JsonTreeNode classNode = GetClassNode(role.classMap, context);
+                            if (roleNode.children == null)
+                                roleNode.children = new List<JsonTreeNode>();
+                            roleNode.children.Add(classNode);
+                        }
+                        else
+                        {
+                            roleNode.leaf = true;
+                        }
+
+                        templateNode.children.Add(roleNode);
+                    }
                     nodes.Add(templateNode);
                   }
                   break;
@@ -474,8 +571,20 @@ namespace org.iringtools.web.controllers
         string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
-        string graphName = dataObjectVars[2].Substring(0,dataObjectVars[2].Length-1);
-          int index= Convert.ToInt32(form ["index"]);
+
+        #region Check whether a counter is concanated or not
+        bool HasNumber = (from a in dataObjectVars[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string graphName = string.Empty;
+        if (HasNumber == true)
+        {
+            graphName = dataObjectVars[2].Substring(0, dataObjectVars[2].Length - 1);
+        }
+        else
+            graphName = dataObjectVars[2];
+
+        #endregion
+
+        int index= Convert.ToInt32(form ["index"]);
         Mapping mapping = GetMapping(scope, application);
         GraphMap graphMap = mapping.FindGraphMap(graphName);
         ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
@@ -519,9 +628,30 @@ namespace org.iringtools.web.controllers
         string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = dataObjectVars[0];
         string application = dataObjectVars[1];
-        string graphName = dataObjectVars[2].Substring(0, dataObjectVars[2].Length - 1);
-        string classId = form["classId"];
-        string templateName = dataObjectVars[dataObjectVars.Count() - 2].Substring(0,dataObjectVars[dataObjectVars.Count() - 2].Length-1);
+
+        #region Check whether a counter is concanated or not
+        bool HasNumber = (from a in dataObjectVars[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string graphName = string.Empty;
+        if (HasNumber == true)
+        {
+            graphName = dataObjectVars[2].Substring(0, dataObjectVars[2].Length - 1);
+        }
+        else
+            graphName = dataObjectVars[2];
+
+        bool templateNameHasNumber = (from a in dataObjectVars[dataObjectVars.Count() - 2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string templateName = string.Empty;
+        if (templateNameHasNumber == true)
+        {
+            templateName = dataObjectVars[dataObjectVars.Count() - 2].Substring(0, dataObjectVars[dataObjectVars.Count() - 2].Length - 1);
+        }
+        else
+        {
+            templateName = dataObjectVars[dataObjectVars.Count() - 2];
+        } 
+        #endregion
+
+         string classId = form["classId"];
         string roleName = dataObjectVars[dataObjectVars.Count() - 1];
         string context = string.Format("{0}/{1}/{2}/{3}", scope, application, dataObjectVars[2], dataObjectVars[dataObjectVars.Count() - 2]);
         Mapping mapping = GetMapping(scope, application);
@@ -755,10 +885,31 @@ namespace org.iringtools.web.controllers
         string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
         string scope = mappingCtx[0];
         string application = mappingCtx[1];
-        string graphName = mappingCtx[2].Substring(0,mappingCtx[2].Length-1);
+
+        #region Check whether a counter is concanated or not
+        bool HasNumber = (from a in mappingCtx[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string graphName = string.Empty;
+        if (HasNumber == true)
+        {
+             graphName = mappingCtx[2].Substring(0, mappingCtx[2].Length - 1);
+        }
+        else
+            graphName = mappingCtx[2];
+
+        bool templateNameHasNumber = (from a in mappingCtx[mappingCtx.Count() - 2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string templateName = string.Empty;
+        if (templateNameHasNumber == true)
+        {
+            templateName = mappingCtx[mappingCtx.Count() - 2].Substring(0, mappingCtx[mappingCtx.Count() - 2].Length - 1);
+        }
+        else
+        {
+            templateName = mappingCtx[mappingCtx.Count() - 2];
+        }
+        #endregion
+
         string classId = form["classId"];
         string relatedObject = form["relatedObject"];
-        string templateName = mappingCtx[mappingCtx.Count() - 2].Substring(0, mappingCtx[mappingCtx.Count() - 2].Length-1);
         string roleName = mappingCtx[mappingCtx.Count() - 1];
         int index = Convert.ToInt16(form["index"]);
         Mapping mapping = GetMapping(scope, application);
@@ -766,28 +917,31 @@ namespace org.iringtools.web.controllers
         ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
         //TemplateMap tMap = ctMap.templateMaps.Find(t => t.name.Equals(templateName));
         TemplateMap tMap = ctMap.templateMaps[index];
-        RoleMap rm = tMap.roleMaps.Find(r => r.name.Equals(roleName));
-
-        if (!string.IsNullOrEmpty(rm.dataType) && rm.dataType.StartsWith("xsd"))
+        if (tMap.name == templateName)
         {
-          if (relatedObject != "undefined" && relatedObject != "")
-          {
-            rm.propertyName = string.Format("{0}.{1}.{2}",
-              graphMap.dataObjectName,
-              relatedObject,
-              propertyName);
-          }
-          else
-          {
-            rm.propertyName =
-                string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
-          }
-        }
-        else
-        {
-          throw new Exception("Please select a DataPRoperty or Property role...");
-        }
+            
+            RoleMap rm = tMap.roleMaps.Find(r => r.name.Equals(roleName));
 
+            if (!string.IsNullOrEmpty(rm.dataType) && rm.dataType.StartsWith("xsd"))
+            {
+                if (relatedObject != "undefined" && relatedObject != "")
+                {
+                    rm.propertyName = string.Format("{0}.{1}.{2}",
+                      graphMap.dataObjectName,
+                      relatedObject,
+                      propertyName);
+                }
+                else
+                {
+                    rm.propertyName =
+                        string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
+                }
+            }
+            else
+            {
+                throw new Exception("Please select a DataPRoperty or Property role...");
+            }
+        }
       }
       catch (Exception ex)
       {
@@ -811,9 +965,30 @@ namespace org.iringtools.web.controllers
         string scope = propertyCtx[0];
         string classId = form["classId"];
         string application = propertyCtx[1];
-        string graphName = mappingCtx[2].Substring(0,mappingCtx[2].Length-1);
-				string templateName = mappingCtx[tempDepth - 2].Substring(0,mappingCtx[tempDepth - 2].Length-1);
-				string roleName = mappingCtx[tempDepth - 1];
+
+        #region Check whether a counter is concanated or not
+        bool HasNumber = (from a in mappingCtx[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string graphName = string.Empty;
+        if (HasNumber == true)
+        {
+            graphName = mappingCtx[2].Substring(0,mappingCtx[2].Length-1);
+        }
+        else
+            graphName = mappingCtx[2];
+
+        bool templateNameHasNumber = (from a in mappingCtx[tempDepth - 2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string templateName = string.Empty;
+        if (templateNameHasNumber == true)
+        {
+             templateName = mappingCtx[tempDepth - 2].Substring(0,mappingCtx[tempDepth - 2].Length-1);
+        }
+        else
+        {
+            templateName = mappingCtx[tempDepth - 2];
+        }
+        #endregion
+
+		string roleName = mappingCtx[tempDepth - 1];
         string valueListName = propertyCtx[propertyCtx.Length - 1];
         int index = Convert.ToInt16(form["index"]);
 
@@ -849,7 +1024,19 @@ namespace org.iringtools.web.controllers
         string scope = form["scope"];
         string application = form["application"];
         Mapping mapping = GetMapping(scope, application);
-        string parentNode = form["mappingNode"].Split('/')[2].Substring(0, form["mappingNode"].Split('/')[2].Length-1);
+
+        #region Check whether a counter is concanated or not
+        bool HasNumber = (from a in form["mappingNode"].Split('/')[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        string parentNode = string.Empty;
+        if (HasNumber == true)
+        {
+            parentNode = form["mappingNode"].Split('/')[2].Substring(0, form["mappingNode"].Split('/')[2].Length - 1);
+        }
+        else
+            parentNode = form["mappingNode"].Split('/')[2];
+
+        #endregion
+
         string templateId = form["identifier"];
         string parentClassId = form["parentIdentifier"];
         GraphMap graphMap = mapping.FindGraphMap(parentNode);
