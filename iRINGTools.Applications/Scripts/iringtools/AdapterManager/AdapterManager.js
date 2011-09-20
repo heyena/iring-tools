@@ -103,6 +103,8 @@ Ext.onReady(function () {
       url: 'directory/scope'
     });
 
+    
+
     newTab.on('save', function (panel) {
       win.close();
       directoryPanel.onReload(node);
@@ -127,7 +129,10 @@ Ext.onReady(function () {
       items: newTab
     });
 
-    win.show();
+     win.show();
+
+     newTab.form.getForm().findField('Name').clearInvalid();
+
   }, this);
 
 
@@ -254,7 +259,7 @@ Ext.onReady(function () {
   }, this);
 
   directoryPanel.on('newapplication', function (npanel, node) {
-
+  	Ext.getBody().mask("Loading...", "x-mask-loading");    
     var newTab = new AdapterManager.ApplicationPanel({
       id: 'tab-' + node.id,
       scope: node.attributes.record,
@@ -283,10 +288,17 @@ Ext.onReady(function () {
       height: 200,
       width: 430,
       plain: true,
-      items: newTab
+      items: newTab,
+      listeners: {
+      	afterlayout: function (pane) {
+      		Ext.getBody().unmask();
+      	}
+      }
     });
 
     win.show();
+
+    newTab.form.getForm().findField('Name').clearInvalid();
 
   }, this);
 
