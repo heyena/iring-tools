@@ -139,7 +139,7 @@ namespace iRINGTools.Web.Models
 
 							if (fieldWidth > 40)
 							{
-								field.width = fieldWidth + 20;
+								field.width = fieldWidth + 23;
 							}
 							else
 							{

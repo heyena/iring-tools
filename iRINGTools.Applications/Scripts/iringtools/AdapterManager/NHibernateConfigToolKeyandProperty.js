@@ -659,37 +659,35 @@ function setPropertiesFolder(editPane, node, scopeName, appName) {
 		var propertiesItemSelector = new Ext.ux.ItemSelector({
 			bodyStyle: 'background:#eee',
 			name: 'propertySelector',
-			imagePath: 'scripts/ext-3.3.1/examples/ux/images/',
 			frame: true,
+			imagePath: 'scripts/ext-3.3.1/examples/ux/images/',			
 			hideLabel: true,
+
 			multiselects: [{
 				width: 240,
 				height: 370,
+				border: 0,
 				store: availItems,
 				displayField: 'propertyName',
-				valueField: 'propertyValue',
-				border: 0
+				valueField: 'propertyValue'				
 			}, {
 				width: 240,
 				height: 370,
+				border: 0,
 				store: selectedItems,
 				displayField: 'propertyName',
-				valueField: 'propertyValue',
-				border: 0
+				valueField: 'propertyValue'				
 			}],
 			treeNode: node
 		});
 
 		var propertiesSelectorPanel = new Ext.FormPanel({
-			bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
 			id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
 			border: false,
-			frame: false,
 			autoScroll: true,
-
-			layout: 'fit',
-			defaults: { anchor: '100%' },
-			labelWidth: 160,
+			bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+			labelWidth: 160,			
+			defaults: { anchor: '100%' },			
 			items: [{
 				xtype: 'label',
 				fieldLabel: 'Select Properties',
