@@ -21,6 +21,7 @@ using org.ids_adi.qmxf;
 using VDS.RDF;
 using System.Text;
 using log4net;
+using System.Text.RegularExpressions;
 
 namespace org.iringtools.web.controllers
 {
@@ -95,7 +96,9 @@ namespace org.iringtools.web.controllers
         string propertyName = dataObjectVars[dataObjectVars.Length - 1];
 
         #region Check whether a counter is concanated or not
-        bool HasNumber = (from a in mappingVars[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        Regex _regex = new Regex(@"\d$");
+        bool HasNumber = _regex.Match(mappingVars[2]).Success;
+        
         string graphName = string.Empty;
         if (HasNumber == true)
         {
@@ -104,7 +107,7 @@ namespace org.iringtools.web.controllers
         else
             graphName = mappingVars[2];
 
-        bool templateNameHasNumber = (from a in mappingVars[3].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        bool templateNameHasNumber = _regex.Match(mappingVars[3]).Success;
         string templateName = string.Empty;
         if (templateNameHasNumber == true)
         {
@@ -191,7 +194,9 @@ namespace org.iringtools.web.controllers
         string application = dataObjectVars[1];
 
         #region Check whether a counter is concanated or not
-        bool HasNumber = (from a in dataObjectVars[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        Regex _regex = new Regex(@"\d$");
+        bool HasNumber = _regex.Match(dataObjectVars[2]).Success;
+
         string graph = string.Empty;
         if (HasNumber == true)
         {
@@ -209,7 +214,7 @@ namespace org.iringtools.web.controllers
           if (dataObjectVars[i] == roleName)
           {
               #region Check whether a counter is concanated or not
-              bool templateNameHasNumber = (from a in dataObjectVars[i - 1].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+              bool templateNameHasNumber = _regex.Match(dataObjectVars[i - 1]).Success;
               if (templateNameHasNumber == true)
               {
                   templateName = dataObjectVars[i - 1].Substring(0, dataObjectVars[i - 1].Length - 1);
@@ -573,7 +578,9 @@ namespace org.iringtools.web.controllers
         string application = dataObjectVars[1];
 
         #region Check whether a counter is concanated or not
-        bool HasNumber = (from a in dataObjectVars[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        Regex _regex = new Regex(@"\d$");
+        bool HasNumber = _regex.Match(dataObjectVars[2]).Success;
+
         string graphName = string.Empty;
         if (HasNumber == true)
         {
@@ -630,7 +637,9 @@ namespace org.iringtools.web.controllers
         string application = dataObjectVars[1];
 
         #region Check whether a counter is concanated or not
-        bool HasNumber = (from a in dataObjectVars[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        Regex _regex = new Regex(@"\d$");
+        bool HasNumber = _regex.Match(dataObjectVars[2]).Success;
+
         string graphName = string.Empty;
         if (HasNumber == true)
         {
@@ -639,7 +648,7 @@ namespace org.iringtools.web.controllers
         else
             graphName = dataObjectVars[2];
 
-        bool templateNameHasNumber = (from a in dataObjectVars[dataObjectVars.Count() - 2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        bool templateNameHasNumber = _regex.Match(dataObjectVars[dataObjectVars.Count() - 2]).Success;
         string templateName = string.Empty;
         if (templateNameHasNumber == true)
         {
@@ -886,8 +895,11 @@ namespace org.iringtools.web.controllers
         string scope = mappingCtx[0];
         string application = mappingCtx[1];
 
+
         #region Check whether a counter is concanated or not
-        bool HasNumber = (from a in mappingCtx[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        Regex _regex = new Regex(@"\d$");
+
+        bool HasNumber = _regex.Match(mappingCtx[2]).Success;
         string graphName = string.Empty;
         if (HasNumber == true)
         {
@@ -896,7 +908,8 @@ namespace org.iringtools.web.controllers
         else
             graphName = mappingCtx[2];
 
-        bool templateNameHasNumber = (from a in mappingCtx[mappingCtx.Count() - 2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+
+        bool templateNameHasNumber = _regex.Match(mappingCtx[mappingCtx.Count() - 2]).Success;
         string templateName = string.Empty;
         if (templateNameHasNumber == true)
         {
@@ -967,7 +980,9 @@ namespace org.iringtools.web.controllers
         string application = propertyCtx[1];
 
         #region Check whether a counter is concanated or not
-        bool HasNumber = (from a in mappingCtx[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        Regex _regex = new Regex(@"\d$");
+        bool HasNumber = _regex.Match(mappingCtx[2]).Success;
+        
         string graphName = string.Empty;
         if (HasNumber == true)
         {
@@ -976,7 +991,7 @@ namespace org.iringtools.web.controllers
         else
             graphName = mappingCtx[2];
 
-        bool templateNameHasNumber = (from a in mappingCtx[tempDepth - 2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        bool templateNameHasNumber = _regex.Match(mappingCtx[tempDepth - 2]).Success;
         string templateName = string.Empty;
         if (templateNameHasNumber == true)
         {
@@ -1026,7 +1041,9 @@ namespace org.iringtools.web.controllers
         Mapping mapping = GetMapping(scope, application);
 
         #region Check whether a counter is concanated or not
-        bool HasNumber = (from a in form["mappingNode"].Split('/')[2].ToCharArray() where a >= '0' && a <= '9' select a).Count() > 0;
+        Regex _regex = new Regex(@"\d$");
+        bool HasNumber = _regex.Match(form["mappingNode"].Split('/')[2]).Success;
+        
         string parentNode = string.Empty;
         if (HasNumber == true)
         {
