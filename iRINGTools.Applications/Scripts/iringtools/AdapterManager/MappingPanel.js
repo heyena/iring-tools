@@ -138,8 +138,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             }
         });
 
-
-
         this.mappingPanel.on('beforenodedrop', this.onBeforeNodedrop, this);
         this.mappingPanel.on('expandnode', this.onExpandNode, this);
         this.mappingPanel.on('contextmenu', this.showContextMenu, this);
@@ -174,7 +172,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
           this.mappingPanel
         ];
 
-
         var state = Ext.state.Manager.get('mapping-state-' + this.scope.Name + '-' + this.application.Name);
 
         if (state) {
@@ -205,8 +202,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
       }
     ]
     },
-
-
 
     buildTemplateMapMenu: function () {
         return [
@@ -443,10 +438,11 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                 url: 'mapping/addclassmap',
                 method: 'POST',
                 params: {
+                    parentClassId: node.parentNode.parentNode.attributes.identifier,
                     objectName: objectname,
                     classLabel: classlabel,
                     classUrl: classurl,
-                    mappingNode: that.mappingPanel.getSelectionModel().getSelectedNode().attributes.id,
+                    mappingNode: node.attributes.id,
                     index: index
                 },
                 success: function (result, request) {
@@ -938,7 +934,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     onDeleteClassMap: function (mnode) {
         var that = this;
         var node = this.mappingPanel.getSelectionModel().getSelectedNode();
-        var index = this.mappingPanel.selModel.selNode.parentNode.parentNode.parentNode.indexOf(this.mappingPanel.selModel.selNode.parentNode.parentNode);
+        var index = node.parentNode.parentNode.parentNode.indexOf(node.parentNode.parentNode);
+
         Ext.Ajax.request({
             url: 'mapping/deleteclassmap',
             method: 'POST',
@@ -959,25 +956,23 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     },
 
     onClick: function (node) {
-        try {
-            //       var obj = node.attributes;
-            this.propertyPanel.setSource(node.attributes.record);
-            //      this.contextButton.menu.removeAll();
-            //      if (obj.type == "TemplateMapNode") {
-            //        this.contextButton.menu.add(this.buildTemplateMapMenu());
-            //      } else if (obj.type == "RoleMapNode") {
-            //        this.contextButton.menu.add(this.buildRoleMapMenu());
-            //      } else if (obj.type == "ClassMapNode") {
-            //       this.contextButton.menu.add(this.buildClassMapMenu());
-            //      }
+        var templateTypes = ['Qualification', 'Definition']
+        var roleTypes = ['Property', 'Possessor', 'Reference', 'FixedValue', 'DataProperty', 'ObjectProperty'];
 
-        } catch (e) {
-
+        // translate node type enum index to string for template and role
+        if (node.attributes && node.attributes.type) {
+            if (node.attributes.type == 'TemplateMapNode') {
+                node.attributes.record.type = templateTypes[node.attributes.record.type];
+            }
+            else if (node.attributes.type == 'RoleMapNode') {
+                node.attributes.record.type = roleTypes[node.attributes.record.type];
+            }
         }
+
+        this.propertyPanel.setSource(node.attributes.record);
     },
 
     showContextMenu: function (node, event) {
-
         //  if (node.isSelected()) { 
         var x = event.browserEvent.clientX;
         var y = event.browserEvent.clientY;

@@ -92,13 +92,11 @@ namespace org.iringtools.web.controllers
                 string propertyName = dataObjectVars[dataObjectVars.Length - 1];
                 string graphName = mappingVars[2];
 
-                string templateQName = mappingVars[3];
-                string templateName = Regex.Replace(templateQName, @"\(\d+\)", "");
-
-                string roleName = Regex.Replace(mappingVars[mappingVars.Length - 1], @"\(\d+\)", "");
+                string roleName = mappingVars[mappingVars.Length - 1];
                 string classId = form["classUrl"];
                 string classLabel = form["classLabel"];
                 string idents = string.Empty;
+
                 if (dataObjectVars.Length == 6)
                 {
                     idents = string.Format("{0}.{1}", dataObject, propertyName);
@@ -109,111 +107,49 @@ namespace org.iringtools.web.controllers
                     idents = string.Format("{0}.{1}.{2}", dataObject, relation, propertyName);
                 }
 
-                ClassMap classMap = new ClassMap();
                 Mapping mapping = GetMapping(scope, application);
                 GraphMap graphMap = mapping.FindGraphMap(graphName);
 
+                string parentClassId = form["parentClassId"];
+                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
 
-
-
-                foreach (var classTemplateMaps in graphMap.classTemplateMaps)
+                if (ctm != null)
                 {
+                  ClassMap classMap = new ClassMap();
+                  TemplateMap templateMap = ctm.templateMaps[index];
 
-                    if (classTemplateMaps.classMap.name == templateName)
+                  foreach (var role in templateMap.roleMaps)
+                  {
+                    if (role.name == roleName)
                     {
-                        TemplateMap tMap = classTemplateMaps.templateMaps[index];
+                      qn = _nsMap.ReduceToQName(classId, out qName);
+                      role.type = RoleType.Reference;
+                      role.value = qn ? qName : classId;
+                      classMap.name = classLabel;
+                      classMap.id = qn ? qName : classId;
+                      classMap.identifiers = new Identifiers();
 
-                        foreach (var role in tMap.roleMaps)
-                        {
-                            if (role.name == roleName)
-                            {
-                                qn = _nsMap.ReduceToQName(classId, out qName);
-                                role.type = RoleType.Reference;
-                                role.value = qn ? qName : classId;
-                                classMap.name = classLabel;
-                                classMap.id = qn ? qName : classId;
-                                classMap.identifiers = new Identifiers();
+                      classMap.identifiers.Add(idents);
+                      graphMap.AddClassMap(role, classMap);
+                      role.classMap = classMap;
 
-                                classMap.identifiers.Add(idents);
-                                graphMap.AddClassMap(role, classMap);
-                                role.classMap = classMap;
-                                nodes.children.Add(CreateClassNode(classMap, mappingNode));
-                                break;
-                            }
-                        }
+                      string context = scope + "/" + application + "/" + graphMap.name + "/" + classMap.name + "/" + 
+                        templateMap.name + "(" + index + ")" + role.name;
+
+                      nodes.children.Add(CreateClassNode(context, classMap));
+
+                      break;
                     }
-                    else
-                    {
-                        foreach (var templateMap in classTemplateMaps.templateMaps)
-                        {
-                            if (classTemplateMaps.templateMaps.IndexOf(templateMap) == index && templateMap.name == templateName)
-                            {
-                                foreach (var role in templateMap.roleMaps)
-                                {
-                                    if (role.name == roleName)
-                                    {
-                                        qn = _nsMap.ReduceToQName(classId, out qName);
-                                        role.type = RoleType.Reference;
-                                        role.value = qn ? qName : classId;
-                                        classMap.name = classLabel;
-                                        classMap.id = qn ? qName : classId;
-                                        classMap.identifiers = new Identifiers();
-
-                                        classMap.identifiers.Add(idents);
-                                        graphMap.AddClassMap(role, classMap);
-                                        role.classMap = classMap;
-                                        nodes.children.Add(CreateClassNode(classMap, mappingNode));
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    }
+                  }
                 }
             }
-            #region comented
-            // find the class (by id)
-            // find template and its position
-
-
-                //foreach (var tMap in classTemplateMaps.templateMaps)
-            //{
-
-
-                //    TemplateMap tMap1 = classTemplateMaps.templateMaps.Find(a => a.name.Equals(templateName));
-            //    if (classTemplateMaps.templateMaps.IndexOf(tMap) == index && tMap.name == templateName)
-            //  //if (tMap.name == templateName )
-
-                //  //if (classTemplateMaps.templateMaps.IndexOf(tMap) == index && tMap.name == templateName)
-
-                //  //{
-            //  //  //foreach (var role in tMap.roleMaps)
-            //  //  //{
-            //  //  //  if (role.name == roleName)
-            //  //  //  //{
-            //  //  //  //  qn = _nsMap.ReduceToQName(classId, out qName);
-            //  //  //  //  role.type = RoleType.Reference;
-            //  //  //  //  role.value = qn ? qName : classId;
-            //  //  //  //  classMap.name = classLabel;
-            //  //  //  //  classMap.id = qn ? qName : classId;
-            //  //  //  //  classMap.identifiers = new Identifiers();
-
-                //  //  //  //  classMap.identifiers.Add(idents);
-            //  //  //  //  graphMap.AddClassMap(role, classMap);
-            //  //  //  //  role.classMap = classMap;
-            //  //  //  //  nodes.children.Add(CreateClassNode(classMap, mappingNode));
-            //  //  //  //  break;
-            //  //  //  //}
-            //  //  //}
-            //  //}
-            //} 
-            #endregion
 
             catch (Exception ex)
             {
                 _logger.Error(ex.ToString());
                 return Json(nodes, JsonRequestBehavior.AllowGet);
             }
+
             return Json(nodes, JsonRequestBehavior.AllowGet);
         }
 
@@ -356,7 +292,6 @@ namespace org.iringtools.web.controllers
             string application = variables[1];
             string graphName = formgraph[formgraph.Count() - 1];
             string key = string.Format(_keyFormat, scope, application);
-            string mappingNode = form["mappingNode"];
 
             Mapping mapping = GetMapping(scope, application);
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
@@ -370,16 +305,15 @@ namespace org.iringtools.web.controllers
 
                 switch (form["type"])
                 {
-                    case "MappingNode":
-                        foreach (var graph in mapping.graphMaps)
-                        {
-                            if (graphMap != null && graphMap.name != graph.name) continue;
-                            JsonTreeNode graphNode = CreateGraphNode(graph, context, graphClassMap.id);
+                  case "MappingNode":
+                    foreach (var graph in mapping.graphMaps)
+                    {
+                      if (graphMap != null && graphMap.name != graph.name) continue;
+                      JsonTreeNode graphNode = CreateGraphNode(context, graph, graphClassMap);
+                      nodes.Add(graphNode);
+                    }
 
-                            nodes.Add(graphNode);
-                        }
-
-                        break;
+                    break;
 
                     case "GraphMapNode":
                         if (graphMap != null)
@@ -391,7 +325,7 @@ namespace org.iringtools.web.controllers
 
                                 foreach (var templateMap in templateMaps.templateMaps)
                                 {
-                                    JsonTreeNode templateNode = CreateTemplateNode(templateMap, context, templateIndex);
+                                    JsonTreeNode templateNode = CreateTemplateNode(context, templateMap, templateIndex);
                                     JsonTreeNode roleNode = new JsonTreeNode();
 
                                     foreach (var role in templateMap.roleMaps)
@@ -412,7 +346,7 @@ namespace org.iringtools.web.controllers
 
                                         if (role.classMap != null && role.classMap.id != graphClassMap.id)
                                         {
-                                            JsonTreeNode classNode = CreateClassNode(role.classMap, context);
+                                            JsonTreeNode classNode = CreateClassNode(context, role.classMap);
 
                                             if (roleNode.children == null)
                                                 roleNode.children = new List<JsonTreeNode>();
@@ -447,7 +381,7 @@ namespace org.iringtools.web.controllers
 
                                     foreach (var templateMap in classTemplateMap.templateMaps)
                                     {
-                                        JsonTreeNode templateNode = CreateTemplateNode(templateMap, context, templateIndex);
+                                        JsonTreeNode templateNode = CreateTemplateNode(context, templateMap, templateIndex);
                                         JsonTreeNode roleNode = new JsonTreeNode();
 
                                         foreach (var role in templateMap.roleMaps)
@@ -468,7 +402,7 @@ namespace org.iringtools.web.controllers
 
                                             if (role.classMap != null && role.classMap.id != graphClassMap.id)
                                             {
-                                                JsonTreeNode classNode = CreateClassNode(role.classMap, context);
+                                                JsonTreeNode classNode = CreateClassNode(context, role.classMap);
                                                 if (roleNode.children == null)
                                                     roleNode.children = new List<JsonTreeNode>();
                                                 roleNode.children.Add(classNode);
@@ -512,11 +446,12 @@ namespace org.iringtools.web.controllers
                             if (templateMap == null) break;
                             foreach (var role in templateMap.roleMaps)
                             {
-                                JsonTreeNode roleNode = CreateRoleNode(role, context);
+                                JsonTreeNode roleNode = CreateRoleNode(context, role);
                                 nodes.Add(roleNode);
+
                                 if (role.classMap != null && role.classMap.id != graphClassMap.id)
                                 {
-                                    JsonTreeNode classNode = CreateClassNode(role.classMap, context);
+                                    JsonTreeNode classNode = CreateClassNode(context, role.classMap);
                                     if (roleNode.children == null)
                                         roleNode.children = new List<JsonTreeNode>();
                                     roleNode.children.Add(classNode);
@@ -549,20 +484,19 @@ namespace org.iringtools.web.controllers
                 string application = dataObjectVars[1];
                 string graph = dataObjectVars[2];
                 string classId = form["classId"];
-                string parentClass = form["parentClass"];
-                string parentTemplate = form["parentTemplate"];
-                string parentRole = form["parentRole"];
+                string parentClassId = form["parentClass"];
+                string parentTemplateId = form["parentTemplate"];
+                string parentRoleId = form["parentRole"];
                 int index = Convert.ToInt32(form["index"]);
                 string className = dataObjectVars[dataObjectVars.Count() - 1];
                 Mapping mapping = GetMapping(scope, application);
                 GraphMap graphMap = mapping.FindGraphMap(graph);
-                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClass);
-                //TemplateMap tm = ctm.templateMaps.Find(t => t.id.Equals(parentTemplate));
-                TemplateMap tm = ctm.templateMaps[index];
+                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
+                TemplateMap tMap = ctm.templateMaps[index];
 
-                RoleMap rm = tm.roleMaps.Find(r => r.id.Equals(parentRole));
-                if (rm != null)
-                    graphMap.DeleteRoleMap(tm, rm.id);
+                RoleMap rMap = tMap.roleMaps.Find(r => r.id.Equals(parentRoleId));
+                if (rMap != null)
+                    graphMap.DeleteRoleMap(tMap, rMap.id);
                 else
                     throw new Exception("Error deleting ClassMap...");
 
@@ -592,26 +526,26 @@ namespace org.iringtools.web.controllers
                 int index = Convert.ToInt32(form["index"]);
                 Mapping mapping = GetMapping(scope, application);
                 GraphMap graphMap = mapping.FindGraphMap(graphName);
-                ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
-                TemplateMap tMap = ctMap.templateMaps[index];
-                RoleMap rm = tMap.roleMaps.Find(r => r.id.Equals(roleId));
+                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+                TemplateMap tMap = ctm.templateMaps[index];
+                RoleMap rMap = tMap.roleMaps.Find(r => r.id.Equals(roleId));
 
-                if (rm.classMap != null)
+                if (rMap.classMap != null)
                 {
-                    graphMap.DeleteRoleMap(tMap, rm.id);
+                    graphMap.DeleteRoleMap(tMap, rMap.id);
                 }
 
-                if (!string.IsNullOrEmpty(rm.propertyName) || rm.dataType.StartsWith("xsd"))
-                    rm.type = RoleType.DataProperty;
+                if (!string.IsNullOrEmpty(rMap.propertyName) || rMap.dataType.StartsWith("xsd"))
+                    rMap.type = RoleType.DataProperty;
                 else
-                    rm.type = RoleType.Reference;
+                    rMap.type = RoleType.Reference;
 
-                rm.propertyName = null;
-                rm.value = null;
-                rm.valueListName = null;
-                rm.classMap = null;
+                rMap.propertyName = null;
+                rMap.value = null;
+                rMap.valueListName = null;
+                rMap.classMap = null;
 
-                rm.type = RoleType.Reference;
+                rMap.type = RoleType.Reference;
             }
             catch (Exception ex)
             {
@@ -639,19 +573,19 @@ namespace org.iringtools.web.controllers
                 string graphName = dataObjectVars[2];
 
                 string classId = form["classId"];
-                string roleName = dataObjectVars[dataObjectVars.Count() - 1];
+                string roleName = dataObjectVars[dataObjectVars.Length - 1];
                 string context = string.Format("{0}/{1}/{2}/{3}", scope, application, dataObjectVars[2], dataObjectVars[dataObjectVars.Count() - 2]);
                 Mapping mapping = GetMapping(scope, application);
                 GraphMap graphMap = mapping.FindGraphMap(graphName);
                 ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
-                TemplateMap tmap = ctm.templateMaps[index];
-                RoleMap roleMap = tmap.roleMaps.FirstOrDefault(c => c.name == roleName);
+                TemplateMap tMap = ctm.templateMaps[index];
+                RoleMap rMap = tMap.roleMaps.FirstOrDefault(c => c.name == roleName);
 
-                if (roleMap != null)
+                if (rMap != null)
                 {
-                    roleMap.type = RoleType.Possessor;
-                    roleMap.value = string.Empty;
-                    JsonTreeNode rolenode = CreateRoleNode(roleMap, context);
+                    rMap.type = RoleType.Possessor;
+                    rMap.value = string.Empty;
+                    JsonTreeNode rolenode = CreateRoleNode(context, rMap);
                     rolenode.text.Replace(unMappedToken, "");
                     nodes.Add(rolenode);
                 }
@@ -669,27 +603,26 @@ namespace org.iringtools.web.controllers
             return Json(nodes, JsonRequestBehavior.AllowGet);
         }
 
-        private JsonTreeNode CreateGraphNode(GraphMap graph, string context, string identifier)
+        private JsonTreeNode CreateGraphNode(string context, GraphMap graph, ClassMap classMap)
         {
             JsonTreeNode graphNode = new JsonTreeNode
             {
                 nodeType = "async",
-                identifier = identifier,
+                identifier = classMap.id,
                 type = "GraphMapNode",
                 icon = "Content/img/class-map.png",
-                id = context + "/" + graph.name,
+                id = context + "/" + graph.name + "/" + classMap.name,
                 text = graph.name,
                 expanded = false,
                 leaf = false,
                 children = null,
                 record = graph
-
             };
 
             return graphNode;
         }
 
-        private JsonTreeNode CreateClassNode(ClassMap classMap, string context)
+        private JsonTreeNode CreateClassNode(string context, ClassMap classMap)
         {
             JsonTreeNode classNode = new JsonTreeNode
             {
@@ -708,7 +641,7 @@ namespace org.iringtools.web.controllers
             return classNode;
         }
 
-        private JsonTreeNode CreateTemplateNode(TemplateMap templateMap, string context, int index)
+        private JsonTreeNode CreateTemplateNode(string context, TemplateMap templateMap, int index)
         {
             if (!templateMap.id.Contains(":"))
                 templateMap.id = string.Format("tpl:{0}", templateMap.id);
@@ -730,9 +663,9 @@ namespace org.iringtools.web.controllers
             return templateNode;
         }
 
-        private JsonTreeNode CreateRoleNode(RoleMap role, string context)
+        private JsonTreeNode CreateRoleNode(string context, RoleMap role)
         {
-            JsonTreeNode templateNode = new JsonTreeNode
+            JsonTreeNode roleNode = new JsonTreeNode
             {
                 nodeType = "async",
                 type = "RoleMapNode",
@@ -746,7 +679,7 @@ namespace org.iringtools.web.controllers
                 record = role
             };
 
-            return templateNode;
+            return roleNode;
         }
 
         public ActionResult GraphMap(FormCollection form)
@@ -791,6 +724,7 @@ namespace org.iringtools.web.controllers
                         name = newGraphName,
                         dataObjectName = dataObject
                     };
+
                     ClassMap classMap = new ClassMap
                     {
                         name = classLabel,
@@ -798,11 +732,9 @@ namespace org.iringtools.web.controllers
                     };
 
                     classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
-
                     graphMap.AddClassMap(null, classMap);
-
                     mapping.graphMaps.Add(graphMap);
-                    nodes.Add(CreateGraphNode(graphMap, context, (qn ? qName : classId)));
+                    nodes.Add(CreateGraphNode(context, graphMap, classMap));
                 }
                 else
                 {
@@ -878,77 +810,39 @@ namespace org.iringtools.web.controllers
                 string application = mappingCtx[1];
                 string graphName = mappingCtx[2];
 
-                string templateQName = mappingCtx[mappingCtx.Length - 2];
-                string templateName = Regex.Replace(templateQName, @"\(\d+\)", "");
-
                 string classId = form["classId"];
                 string relatedObject = form["relatedObject"];
-                string roleName = mappingCtx[mappingCtx.Count() - 1];
+                string roleName = mappingCtx[mappingCtx.Length - 1];
                 int index = Convert.ToInt16(form["index"]);
                 Mapping mapping = GetMapping(scope, application);
                 GraphMap graphMap = mapping.FindGraphMap(graphName);
                 ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
-                TemplateMap tMap = ctMap.templateMaps[index];
-               
-                if (tMap.name == templateName)
-                {
-                    RoleMap rm = tMap.roleMaps.Find(r => r.name.Equals(roleName));
 
-                    if (!string.IsNullOrEmpty(rm.dataType) && rm.dataType.StartsWith("xsd"))
+                if (ctMap != null)
+                {
+                  TemplateMap tMap = ctMap.templateMaps[index];
+                  RoleMap rm = tMap.roleMaps.Find(r => r.name.Equals(roleName));
+
+                  if (!string.IsNullOrEmpty(rm.dataType) && rm.dataType.StartsWith("xsd"))
+                  {
+                    if (relatedObject != "undefined" && relatedObject != "")
                     {
-                        if (relatedObject != "undefined" && relatedObject != "")
-                        {
-                            rm.propertyName = string.Format("{0}.{1}.{2}",
-                              graphMap.dataObjectName,
-                              relatedObject,
-                              propertyName);
-                        }
-                        else
-                        {
-                            rm.propertyName =
-                                string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
-                        }
+                      rm.propertyName = string.Format("{0}.{1}.{2}",
+                        graphMap.dataObjectName,
+                        relatedObject,
+                        propertyName);
                     }
                     else
                     {
-                        throw new Exception("Please select a DataPRoperty or Property role...");
+                      rm.propertyName =
+                          string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
                     }
+                  }
+                  else
+                  {
+                    throw new Exception("Please select a DataPRoperty or Property role...");
+                  }
                 }
-                else
-                {
-                    List<TemplateMap> templateMap = ctMap.templateMaps.FindAll(a => a.name == templateName);
-
-                    for (int i = 0; i < templateMap.Count(); i++)
-                    {
-                        if (templateMap[i].name == templateName)
-                        {
-                            #region MyRegion
-                            RoleMap rm = tMap.roleMaps.Find(r => r.name.Equals(roleName));
-
-                            if (!string.IsNullOrEmpty(rm.dataType) && rm.dataType.StartsWith("xsd"))
-                            {
-                                if (relatedObject != "undefined" && relatedObject != "")
-                                {
-                                    rm.propertyName = string.Format("{0}.{1}.{2}",
-                                      graphMap.dataObjectName,
-                                      relatedObject,
-                                      propertyName);
-                                }
-                                else
-                                {
-                                    rm.propertyName =
-                                        string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
-                                }
-                            }
-                            else
-                            {
-                                throw new Exception("Please select a DataPRoperty or Property role...");
-                            }
-                            #endregion
-                        }
-                    }
-                }
-
             }
             catch (Exception ex)
             {
@@ -968,33 +862,33 @@ namespace org.iringtools.web.controllers
                 string objectNames = form["objectNames"];
                 string[] propertyCtx = objectNames.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
                 string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                int tempDepth = mappingCtx.Length;
                 string scope = propertyCtx[0];
                 string classId = form["classId"];
                 string application = propertyCtx[1];
                 string graphName = mappingCtx[2];
 
-                string templateQName = mappingCtx[tempDepth - 2];
-                string templateName = Regex.Replace(templateQName, @"\(\d+\)", "");
-
-                string roleName = mappingCtx[tempDepth - 1];
+                string roleName = mappingCtx[mappingCtx.Length - 1];
                 string valueListName = propertyCtx[propertyCtx.Length - 1];
                 int index = Convert.ToInt16(form["index"]);
 
                 Mapping mapping = GetMapping(scope, application);
                 GraphMap graphMap = mapping.FindGraphMap(graphName);
                 ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
-                TemplateMap tmap = ctm.templateMaps[index];
-                RoleMap rmap = tmap.roleMaps.Find(rm => rm.name.Equals(roleName));
 
-                if (rmap != null)
+                if (ctm != null)
                 {
+                  TemplateMap tmap = ctm.templateMaps[index];
+                  RoleMap rmap = tmap.roleMaps.Find(rm => rm.name.Equals(roleName));
+
+                  if (rmap != null)
+                  {
                     rmap.value = valueListName;
                     rmap.propertyName = string.Format("{0}.{1}", propertyName.Split(delimiters)[4], propertyName.Split(delimiters)[5]);
-                }
-                else
-                {
+                  }
+                  else
+                  {
                     throw new Exception("Error mapping ValueListMap...");
+                  }
                 }
             }
             catch (Exception ex)
