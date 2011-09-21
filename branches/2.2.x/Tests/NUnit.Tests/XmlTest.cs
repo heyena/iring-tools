@@ -44,7 +44,7 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       object response =
         _adapterProvider.GetDataProjection(
@@ -78,7 +78,7 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -112,7 +112,7 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -146,7 +146,7 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -215,7 +215,7 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -288,7 +288,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -326,7 +326,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -362,7 +362,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -398,7 +398,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -436,7 +436,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -509,7 +509,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
       
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -592,7 +592,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -639,7 +639,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -694,7 +694,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
@@ -787,7 +787,7 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
-      string format = "Xml";
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
