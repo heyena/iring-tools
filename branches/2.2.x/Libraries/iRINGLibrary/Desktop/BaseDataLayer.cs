@@ -287,7 +287,12 @@ namespace org.iringtools.library
       return identifier;
     }
 
-    public virtual List<IDataObject> Search(string objectType, string query, int pageSize, int startIndex)
+    public virtual IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex)
+    {
+      throw new NotImplementedException();
+    }
+
+    public virtual long GetCount(string objectType, string query)
     {
       throw new NotImplementedException();
     }

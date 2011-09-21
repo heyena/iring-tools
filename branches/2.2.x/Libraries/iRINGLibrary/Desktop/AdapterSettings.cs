@@ -14,7 +14,8 @@ namespace org.iringtools.adapter
     {
       this.Add("InterfaceService", @"http://localhost/services/facade/query");
       this.Add("ReferenceDataServiceUri", @"http://localhost/services/refdata");
-      this.Add("DefaultProjectionFormat", "xml");
+      this.Add("DefaultProjectionFormat", "json");
+      this.Add("DefaultListProjectionFormat", "json");
       this.Add("EndpointTimeout", "30000");
       this.Add("dotNetRDFServer", @".\SQLEXPRESS");
       this.Add("dotNetRDFCatalog", "InterfaceDb");
@@ -53,7 +54,13 @@ namespace org.iringtools.adapter
           if (!baseAddress.EndsWith("/"))
             baseAddress = baseAddress + "/";
           
-          settings[key] = baseAddress;
+          this[key] = baseAddress;
+        }
+
+        if (key.Equals("DefaultProjectionFormat"))
+        {
+          string format = settings[key].ToString();
+          this[key] = format;
         }
 
         //Protect existing settings, but add new ones.

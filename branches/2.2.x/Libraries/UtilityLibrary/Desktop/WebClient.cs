@@ -57,6 +57,7 @@ namespace org.iringtools.utility
         private string _baseUri = String.Empty;
         private NetworkCredential _credentials = null;
         private IWebProxy _proxy = null;
+        private string _accessToken = String.Empty;
 
         private const string NEW_LINE = "\r\n";
         private const int TIMEOUT = 600000;
@@ -134,6 +135,18 @@ namespace org.iringtools.utility
             this._credentials = credentials;
         }
 
+        public string AccessToken
+        {
+          get 
+          {
+            return _accessToken;
+          }
+          set
+          {
+            _accessToken = value;
+          }
+        }
+
         /// <summary>
         /// HttpUtility.UrlEncode does not encode alpha-numeric characters such as _ - . ' ( ) * and !
         /// This function encodes these characters to create a fully encoded uri
@@ -178,6 +191,11 @@ namespace org.iringtools.utility
               HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
               request.Headers.Add("Authorization", authorizationCookie.Value);
             }
+          }
+          else if (_accessToken != String.Empty)
+          {
+            HttpCookie authorizationCookie = new HttpCookie("Authorization", _accessToken);
+            request.Headers.Add("Authorization", authorizationCookie.Value);
           }
         }
 

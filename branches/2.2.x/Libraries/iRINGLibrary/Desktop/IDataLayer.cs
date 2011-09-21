@@ -77,7 +77,9 @@ namespace org.iringtools.library
   {
     Response Configure(XElement configuration);
 
-    List<IDataObject> Search(string objectType, string query, int pageSize, int startIndex);
+    IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex);
+
+    long GetCount(string objectType, string query);
 
     IContentObject GetContent(string objectType, string identifier, string format);
 

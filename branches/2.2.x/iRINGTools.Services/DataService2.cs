@@ -93,6 +93,18 @@ namespace org.iringtools.services
       GetItem("all", app, graph, id, format);
     }
 
+    [WebGet(UriTemplate = "/all/{app}/{graph}/{id}.{format}")]
+    public void GetItemContentAll(string app, string graph, string id, string format)
+    {
+      GetItem("all", app, graph, id, format);
+    }
+
+    [WebGet(UriTemplate = "/all/{app}/{graph}/{clazz}/{id}.{format}")]
+    public void GetIndividualContentAll(string app, string graph, string clazz, string id, string format)
+    {
+      GetIndividual("all", app, graph, clazz, id, format);
+    }
+
     [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
     [WebGet(UriTemplate = "/all/{app}/{graph}/{clazz}/{id}?format={format}")]
     public void GetIndividualAll(string app, string graph, string clazz, string id, string format)
@@ -124,6 +136,18 @@ namespace org.iringtools.services
       return _adapterProvider.GetDictionary(project, app);
     }
 
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{id}.{format}")]
+    public void GetItemContent(string project, string app, string graph, string id, string format)
+    {
+      GetItem(project, app, graph, id, format);
+    }
+
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{clazz}/{id}.{format}")]
+    public void GetIndividualContent(string project, string app, string graph, string clazz, string id, string format)
+    {
+      GetIndividual(project, app, graph, clazz, id, format);
+    }
+
     [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
     [WebGet(UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
     public void GetItem(string project, string app, string graph, string id, string format)
@@ -132,7 +156,7 @@ namespace org.iringtools.services
 
       try
       {
-        object content = _adapterProvider.GetDataProjection(project, app, graph, String.Empty, id, format, false);
+        object content = _adapterProvider.GetDataProjection(project, app, graph, String.Empty, id, ref format, false);
         FormatOutgoingMessage(content, format);
       }
       catch (Exception ex)
@@ -149,7 +173,7 @@ namespace org.iringtools.services
 
       try
       {
-        object content = _adapterProvider.GetDataProjection(project, app, graph, clazz, id, format, false);
+        object content = _adapterProvider.GetDataProjection(project, app, graph, clazz, id, ref format, false);
         FormatOutgoingMessage(content, format);
       }
       catch (Exception ex)
@@ -170,7 +194,7 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, filter, format, start, limit, fullIndex);
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, filter, ref format, start, limit, fullIndex);
         FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -193,7 +217,30 @@ namespace org.iringtools.services
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+        FormatOutgoingMessage(xDocument.Root, format);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(context, ex);
+      }
+    }
+
+    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}/search?q={query}&format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetSearch(string project, string app, string graph, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+
+      try
+      {
+        //NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
+        bool fullIndex = false;
+        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+          fullIndex = true;
+
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, query, ref format, start, limit, sortOrder, sortBy, fullIndex);
         FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)

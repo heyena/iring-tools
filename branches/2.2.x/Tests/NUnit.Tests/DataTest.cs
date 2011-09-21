@@ -45,12 +45,14 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "Data";
+
       object response =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"], _settings["ClassName"],
           _settings["Identifier"],
-          "Data", false
+          ref format, false
         );
 
       XDocument xDocument = (XDocument)response;
@@ -77,11 +79,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Data",
+          ref format,
           0, 0, null, null,
           false,
           null
@@ -109,11 +113,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Data",
+          ref format,
           0, 0, null, null,
           true,
           null
@@ -141,11 +147,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Data",
+          ref format,
           0, 5, null, null,
           false,
           null
@@ -178,7 +186,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Data",
+           ref format,
            i, 5, null, null,
            false,
            null
@@ -207,12 +215,14 @@ namespace NUnit.Tests
     public void GetPageFull()
     {
       XDocument benchmark = null;
+      
+      string format = "Data";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Data",
+          ref format,
           0, 5, null, null,
           true,
           null
@@ -245,7 +255,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Data",
+           ref format,
            i, 5, null, null,
            true,
            null
@@ -279,11 +289,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Data",
+          ref format,
           0, 0, null, null,
           false,
           parameters
@@ -315,11 +327,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Data",
+          ref format,
           0, 0, null, null,
           true,
           parameters
@@ -349,11 +363,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Data",
+          ref format,
           0, 0, "Asc", "System",
           false,
           parameters
@@ -383,11 +399,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Data",
+          ref format,
           0, 0, "Asc", "System",
           true,
           parameters
@@ -419,11 +437,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Data",
+          ref format,
           0, 5, "Desc", "System",
           false,
           parameters
@@ -456,7 +476,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Data",
+           ref format,
            i, 5, "Desc", "System",
            false,
            parameters
@@ -490,11 +510,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Data",
+          ref format,
           0, 5, "Desc", "System",
           true,
           parameters
@@ -527,7 +549,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Data",
+           ref format,
            i, 5, "Desc", "System",
            true,
            parameters
@@ -571,11 +593,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Data",
+          filter, ref format,
           0, 0,
           false
         );
@@ -616,11 +640,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Data",
+          filter, ref format,
           0, 0,
           true
         );
@@ -669,11 +695,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Data";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Data",
+          filter, ref format,
           0, 5,
           false
         );
@@ -709,7 +737,7 @@ namespace NUnit.Tests
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Data",
+          filter, ref format,
           i, 5,
           false
         );
@@ -759,12 +787,14 @@ namespace NUnit.Tests
       filter.OrderExpressions.Add(orderExpression);
 
       XDocument benchmark = null;
+      
+      string format = "Data";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Data",
+          filter, ref format,
           10, 5,
           true
         );
@@ -800,7 +830,7 @@ namespace NUnit.Tests
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Data",
+          filter, ref format,
           i, 5,
           true
         );
