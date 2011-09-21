@@ -554,7 +554,7 @@ namespace org.iringtools.adapter
         else
         {
           _dataObjects = _dataLayer.Get(_dataObjDef.objectName, new DataFilter(), limit, start);
-          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, null);
+          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, new DataFilter());
         }
 
         _projectionEngine.FullIndex = fullIndex;
