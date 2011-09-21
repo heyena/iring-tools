@@ -338,7 +338,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     },
     onBeforeNodedrop: function (e) {
         e.target.expand();
-       
+
         this.getParentClass(e.target);
         // var dir = this.getParentClass(e.target);
         var nodetype, thistype, icn, txt, templateId, rec, parentId, context;
@@ -435,7 +435,9 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         var classlabel = Ext.get('classLabel').dom.value;
         var classurl = Ext.get('classUrl').dom.value;
         var mapNode = Ext.get('mappingNode').dom.value;
-        var index = this.mappingPanel.selModel.selNode.parentNode.parentNode.indexOf(this.mappingPanel.selModel.selNode.parentNode);
+        var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+        var index = node.parentNode.parentNode.indexOf(node.parentNode);
+
         if (form.getForm().isValid())
             Ext.Ajax.request({
                 url: 'mapping/addclassmap',
@@ -516,7 +518,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     onResetMapping: function (node) {
         var that = this;
         var node = this.mappingPanel.getSelectionModel().getSelectedNode();
-        var index = this.mappingPanel.selModel.selNode.parentNode.parentNode.indexOf(this.mappingPanel.selModel.selNode.parentNode);
+        var index = node.parentNode.parentNode.indexOf(node.parentNode);
+
         Ext.Ajax.request({
             url: 'mapping/resetmapping',
             method: 'POST',
@@ -614,14 +617,15 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
 
     onSubmitPropertyMap: function (btn, e) {
         var that = this;
-        // var related = "";
         var form = btn.findParentByType('form');
-        var node = this.mappingPanel.getSelectionModel().getSelectedNode();
         var win = btn.findParentByType('window');
         var propertyNames = Ext.get('propertyName').dom.value;
-        var index = this.mappingPanel.selModel.selNode.parentNode.parentNode.indexOf(this.mappingPanel.selModel.selNode.parentNode);
+        var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+        var index = node.parentNode.parentNode.indexOf(node.parentNode);
+
         if (Ext.get('relatedObject').dom.value != undefined)
             var related = Ext.get('relatedObject').dom.value;
+
         if (form.getForm().isValid())
             Ext.Ajax.request({
                 url: 'mapping/mapproperty',
@@ -761,7 +765,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         var objectname = Ext.get('objectNames').dom.value;
         var propertyNames = Ext.get('propertyName').dom.value;
         var node = this.mappingPanel.getSelectionModel().getSelectedNode();
-        var index = this.mappingPanel.selModel.selNode.parentNode.parentNode.indexOf(this.mappingPanel.selModel.selNode.parentNode);
+        var index = node.parentNode.parentNode.indexOf(node.parentNode);
+
         if (form.getForm().isValid())
             Ext.Ajax.request({
                 url: 'mapping/mapvaluelist',
@@ -800,7 +805,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     onMakePossessor: function () {
         var that = this;
         var node = this.mappingPanel.getSelectionModel().getSelectedNode();
-        var index = this.mappingPanel.selModel.selNode.parentNode.parentNode.indexOf(this.mappingPanel.selModel.selNode.parentNode);
+        var index = node.parentNode.parentNode.indexOf(node.parentNode);
+
         Ext.Ajax.request({
             url: 'mapping/makePossessor',
             method: 'POST',
@@ -808,7 +814,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                 mappingNode: node.attributes.id,
                 classId: node.parentNode.parentNode.attributes.identifier,
                 node: node,
-                index:index
+                index: index
             },
             success: function (result, request) {
                 that.onReload();

@@ -396,7 +396,6 @@ namespace org.iringtools.web.controllers
 
           case "GraphsNode":
             {
-
               string context = form["node"];
               string scopeName = context.Split('/')[0];
               string applicationName = context.Split('/')[1];
