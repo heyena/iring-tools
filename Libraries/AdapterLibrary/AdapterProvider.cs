@@ -383,13 +383,13 @@ namespace org.iringtools.adapter
     //DataFilter List
     public XDocument GetDataProjection(
       string projectName, string applicationName, string resourceName,
-        DataFilter filter, string format, int start, int limit, bool fullIndex)
+        DataFilter filter, ref string format, int start, int limit, bool fullIndex)
     {
       try
       {
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
-        InitializeProjection(resourceName, format);
+        InitializeProjection(resourceName, ref format, false);
 
         IList<string> index = new List<string>();
 
@@ -416,17 +416,75 @@ namespace org.iringtools.adapter
       }
     }
 
+    //Search
+    public XDocument GetDataProjection(
+      string projectName, string applicationName, string resourceName,
+      string query, ref string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+        InitializeProjection(resourceName, ref format, false);
+
+        IList<string> index = new List<string>();
+
+        if (limit == 0)
+          limit = 100;
+
+        DataFilter filter = new DataFilter();
+
+        if (!String.IsNullOrEmpty(sortBy))
+        {
+          OrderExpression orderBy = new OrderExpression
+          {
+            PropertyName = sortBy,
+          };
+
+          if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
+          {
+            orderBy.SortOrder = SortOrder.Desc;
+          }
+          else
+          {
+            orderBy.SortOrder = SortOrder.Asc;
+          }
+
+          filter.OrderExpressions.Add(orderBy);
+        }
+
+        _dataObjects = _dataLayer.Search(_dataObjDef.objectName, query, limit, start);
+        _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, query);
+
+        _projectionEngine.FullIndex = fullIndex;
+
+        if (_isProjectionPart7)
+        {
+          return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
+        }
+        else
+        {
+          return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
+
     //List
     public XDocument GetDataProjection(
       string projectName, string applicationName, string resourceName,
-      string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
+      ref string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
       NameValueCollection parameters)
     {
       try
       {
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
-        InitializeProjection(resourceName, format);
+        InitializeProjection(resourceName, ref format, false);
 
         IList<string> index = new List<string>();
 
@@ -520,7 +578,7 @@ namespace org.iringtools.adapter
     //Individual
     public object GetDataProjection(
       string projectName, string applicationName, string resourceName, string className,
-       string classIdentifier, string format, bool fullIndex)
+       string classIdentifier, ref string format, bool fullIndex)
     {
       string dataObjectName = String.Empty;
 
@@ -528,7 +586,7 @@ namespace org.iringtools.adapter
       {
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
-        InitializeProjection(resourceName, format);
+        InitializeProjection(resourceName, ref format, true);
 
         if (_isFormatExpected)
         {
@@ -941,29 +999,32 @@ namespace org.iringtools.adapter
       InitializeScope(projectName, applicationName, true);
     }
 
-    private void InitializeProjection(string resourceName, string format)
+    private void InitializeProjection(string resourceName, ref string format, bool isIndividual)
     {
       try
       {
         string[] expectedFormats = { 
-              "data",
-              "xml",
-              "dto", 
               "rdf", 
+              "dto",
+              "p7xml",
+              "xml", 
               "json", 
               "html"
             };
 
-        if (format != null)
+        if (format == null)
         {
-          _isFormatExpected = expectedFormats.Contains(format.ToLower());
+          if (isIndividual)
+          {
+            format = _settings["DefaultProjectionFormat"];
+          }
+          else
+          {
+            format = _settings["DefaultListProjectionFormat"];
+          }
         }
-        else
-        {
-          _isFormatExpected = true;
-        }
+        _isFormatExpected = expectedFormats.Contains(format.ToLower());
         
-
         _graphMap = _mapping.FindGraphMap(resourceName);
         _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == resourceName.ToUpper());
 
@@ -991,14 +1052,11 @@ namespace org.iringtools.adapter
             }
           }
         }
-        else if (_isResourceGraph)
+        else if (format == _settings["DefaultProjectionFormat"] && _isResourceGraph)
         {
-          _projectionEngine = _kernel.Get<IProjectionLayer>("xml");
+          format = "p7xml";
+          _projectionEngine = _kernel.Get<IProjectionLayer>("p7xml");
           _isProjectionPart7 = true;
-        }
-        else
-        {
-          _projectionEngine = _kernel.Get<IProjectionLayer>("data");
         }
       }
       catch (Exception ex)

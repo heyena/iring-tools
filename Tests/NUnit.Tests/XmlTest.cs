@@ -44,12 +44,14 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       object response =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"], _settings["ClassName"],
           _settings["Identifier"],
-          "Xml", false
+          ref format, false
         );
 
       XDocument xDocument = (XDocument)response;
@@ -76,11 +78,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, null, null,
           false,
           null
@@ -108,11 +112,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, null, null,
           true,
           null
@@ -140,11 +146,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 5, null, null,
           false,
           null
@@ -177,7 +185,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Xml",
+           ref format,
            i, 5, null, null,
            false,
            null
@@ -207,11 +215,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 5, null, null,
           true,
           null
@@ -244,7 +254,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Xml",
+           ref format,
            i, 5, null, null,
            true,
            null
@@ -278,11 +288,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, null, null,
           false,
           parameters
@@ -314,11 +326,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, null, null,
           true,
           parameters
@@ -348,11 +362,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, "Asc", "System",
           false,
           parameters
@@ -382,11 +398,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, "Asc", "System",
           true,
           parameters
@@ -418,11 +436,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 5, "Desc", "System",
           false,
           parameters
@@ -455,7 +475,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Xml",
+           ref format,
            i, 5, "Desc", "System",
            false,
            parameters
@@ -488,12 +508,14 @@ namespace NUnit.Tests
       parameters.Add("Area", "90");
 
       XDocument benchmark = null;
+      
+      string format = "Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 5, "Desc", "System",
           true,
           parameters
@@ -526,7 +548,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Xml",
+           ref format,
            i, 5, "Desc", "System",
            true,
            parameters
@@ -570,11 +592,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           0, 0,
           false
         );
@@ -615,11 +639,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           0, 0,
           true
         );
@@ -668,11 +694,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           0, 5,
           false
         );
@@ -708,7 +736,7 @@ namespace NUnit.Tests
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           i, 5,
           false
         );
@@ -759,11 +787,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           10, 5,
           true
         );
@@ -799,7 +829,7 @@ namespace NUnit.Tests
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           i, 5,
           true
         );
