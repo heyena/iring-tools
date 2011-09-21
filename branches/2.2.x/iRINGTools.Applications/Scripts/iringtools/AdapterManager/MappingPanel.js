@@ -938,6 +938,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     onDeleteClassMap: function (mnode) {
         var that = this;
         var node = this.mappingPanel.getSelectionModel().getSelectedNode();
+        var index = this.mappingPanel.selModel.selNode.parentNode.parentNode.parentNode.indexOf(this.mappingPanel.selModel.selNode.parentNode.parentNode);
         Ext.Ajax.request({
             url: 'mapping/deleteclassmap',
             method: 'POST',
@@ -946,7 +947,8 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                 classId: node.attributes.identifier,
                 parentClass: node.parentNode.parentNode.parentNode.attributes.identifier,
                 parentTemplate: node.parentNode.parentNode.attributes.record.id,
-                parentRole: node.parentNode.attributes.record.id
+                parentRole: node.parentNode.attributes.record.id,
+                index: index
             },
             success: function (result, request) {
                 that.onReload();
