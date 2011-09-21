@@ -118,16 +118,18 @@ AdapterManager.ScopePanel = Ext.extend(Ext.Panel, {
             });
         }
         else {
-            var message = 'Scope & Application name cannot be same!';
+            var message = 'Scope/Application name already exists!';
             showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
         }
     },
 
     checkidNodeExists: function () {
-        var returnVal= true
+        var returnVal = true
         for (var i = 0; i < Ext.getCmp('Directory-Panel').root.childNodes.length; i++) {
             if (Ext.getCmp('Directory-Panel').root.childNodes[i].text == this.form.getForm().getFieldValues().Name) {
-                returnVal= false
+                if (Ext.getCmp('Directory-Panel').root.childNodes[i].attributes.record.Description == this.form.getForm().getFieldValues().Description) {
+                    returnVal = false
+                }
             }
         }
         return returnVal
