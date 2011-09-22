@@ -2,7 +2,7 @@
 End Class
 
 Partial Class SQLSchemaDS
-    Partial Class ColumnsDataTable
+    Partial Class SchemaColumnsDataTable
 
     End Class
 

@@ -8,9 +8,9 @@
           <Connection AppSettingsObjectName="MySettings" AppSettingsPropertyName="SPPID_SITEConnectionString" ConnectionStringObject="" IsAppSettingsProperty="true" Modifier="Assembly" Name="SPPID_SITEConnectionString (MySettings)" ParameterPrefix="@" PropertyReference="ApplicationSettings.iRINGTools.SDK.SPPIDDataLayer.My.MySettings.GlobalReference.Default.SPPID_SITEConnectionString" Provider="System.Data.SqlClient" />
         </Connections>
         <Tables>
-          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="TablesTableAdapter" GeneratorDataComponentClassName="TablesTableAdapter" Name="Tables" UserDataComponentName="TablesTableAdapter">
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="SchemaTablesTableAdapter" GeneratorDataComponentClassName="SchemaTablesTableAdapter" Name="SchemaTables" UserDataComponentName="SchemaTablesTableAdapter">
             <MainSource>
-              <DbSource ConnectionRef="PW_IRing_StagingConnectionString (MySettings)" DbObjectName="PW_IRing_Staging.INFORMATION_SCHEMA.TABLES" DbObjectType="View" GenerateMethods="Get" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="GetData">
+              <DbSource ConnectionRef="PW_IRing_StagingConnectionString (MySettings)" DbObjectName="PW_IRing_Staging.INFORMATION_SCHEMA.TABLES" DbObjectType="View" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Fill" GenerateShortCommands="false" GeneratorSourceName="Fill" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
                     <CommandText>SELECT        TABLE_NAME AS Name, TABLE_SCHEMA AS [Schema], '' AS SchemaType, '' AS QueryAlias
@@ -28,9 +28,9 @@ FROM            INFORMATION_SCHEMA.TABLES</CommandText>
             </Mappings>
             <Sources />
           </TableAdapter>
-          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="ColumnsTableAdapter" GeneratorDataComponentClassName="ColumnsTableAdapter" Name="Columns" UserDataComponentName="ColumnsTableAdapter">
+          <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="SchemaColumnsTableAdapter" GeneratorDataComponentClassName="SchemaColumnsTableAdapter" Name="SchemaColumns" UserDataComponentName="SchemaColumnsTableAdapter">
             <MainSource>
-              <DbSource ConnectionRef="PW_IRing_StagingConnectionString (MySettings)" DbObjectName="PW_IRing_Staging.INFORMATION_SCHEMA.COLUMNS" DbObjectType="View" GenerateMethods="Get" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="GetData">
+              <DbSource ConnectionRef="PW_IRing_StagingConnectionString (MySettings)" DbObjectName="PW_IRing_Staging.INFORMATION_SCHEMA.COLUMNS" DbObjectType="View" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Fill" GenerateShortCommands="false" GeneratorSourceName="Fill" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
                     <CommandText>SELECT        Table_Schema as TableSchema, TABLE_NAME AS TableName, COLUMN_NAME AS ColumnName, '' as StagingFieldName, IS_NULLABLE AS IsNullable, DATA_TYPE AS DataType, ISNULL(CHARACTER_MAXIMUM_LENGTH, - 1) 
@@ -62,19 +62,13 @@ FROM            INFORMATION_SCHEMA.COLUMNS</CommandText>
           </TableAdapter>
           <TableAdapter BaseClass="System.ComponentModel.Component" DataAccessorModifier="AutoLayout, AnsiClass, Class, Public" DataAccessorName="SiteDataTableAdapter" GeneratorDataComponentClassName="SiteDataTableAdapter" Name="SiteData" UserDataComponentName="SiteDataTableAdapter">
             <MainSource>
-              <DbSource ConnectionRef="SPPID_SITEConnectionString (MySettings)" DbObjectType="Unknown" GenerateMethods="Get" GenerateShortCommands="false" GeneratorGetMethodName="GetData" GetMethodModifier="Public" GetMethodName="GetData" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="GetData">
+              <DbSource ConnectionRef="SPPID_SITEConnectionString (MySettings)" DbObjectType="Unknown" FillMethodModifier="Public" FillMethodName="Fill" GenerateMethods="Fill" GenerateShortCommands="false" GeneratorSourceName="Fill" QueryType="Rowset" ScalarCallRetval="System.Object, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" UseOptimisticConcurrency="false" UserGetMethodName="GetData" UserSourceName="Fill">
                 <SelectCommand>
                   <DbCommand CommandType="Text" ModifiedByUser="true">
-                    <CommandText>select distinct                                                                    
-   DB.Data_base    ,DB.DBServer        ,RI.Path                ,DB.SP_Schema_Type  
-   ,DB.Username    ,RI.Description     ,RI.PlantGroupTypeName  ,RI.DateCreated     
-   ,DB.SP_ID       ,DB.SP_RootItemID                                   
-
-from DEN.T_DB_Data                      DB                                      
-   inner join DEN.T_RootItem            RI                                      
-       on DB.SP_RootItemID = RI.SP_ID                                  
-
-order by DB.Data_base, DB.Username</CommandText>
+                    <CommandText>SELECT DISTINCT 
+                         'DB.Data_base' AS Data_base, 'DB.DBServer' AS DBServer, 'RI.Path' AS Path, 'DB.SP_Schema_Type' AS SP_Schema_Type, 'DB.Username' AS UserName, 
+                         'RI.Description' AS Description, 'RI.PlantGroupTypeName' AS PlantGroupTypeName, '9/9/2099' AS DateCreated, '076BE1D3C0534A7AB03B3BEC2422499F' AS SP_ID,
+                          '4F55BA19B9B84420B769ECE710F0AA90' AS SP_RootItemID</CommandText>
                     <Parameters />
                   </DbCommand>
                 </SelectCommand>
@@ -85,9 +79,9 @@ order by DB.Data_base, DB.Username</CommandText>
               <Mapping SourceColumn="DBServer" DataSetColumn="DBServer" />
               <Mapping SourceColumn="Path" DataSetColumn="Path" />
               <Mapping SourceColumn="SP_Schema_Type" DataSetColumn="SP_Schema_Type" />
-              <Mapping SourceColumn="Username" DataSetColumn="Username" />
               <Mapping SourceColumn="Description" DataSetColumn="Description" />
               <Mapping SourceColumn="PlantGroupTypeName" DataSetColumn="PlantGroupTypeName" />
+              <Mapping SourceColumn="UserName" DataSetColumn="UserName" />
               <Mapping SourceColumn="DateCreated" DataSetColumn="DateCreated" />
               <Mapping SourceColumn="SP_ID" DataSetColumn="SP_ID" />
               <Mapping SourceColumn="SP_RootItemID" DataSetColumn="SP_RootItemID" />
@@ -102,7 +96,7 @@ order by DB.Data_base, DB.Username</CommandText>
   <xs:element name="SQLSchemaDS" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="SQLSchemaDS" msprop:Generator_UserDSName="SQLSchemaDS">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="Tables" msprop:Generator_TableClassName="TablesDataTable" msprop:Generator_TableVarName="tableTables" msprop:Generator_TablePropName="_Tables" msprop:Generator_RowDeletingName="TablesRowDeleting" msprop:Generator_UserTableName="Tables" msprop:Generator_RowChangingName="TablesRowChanging" msprop:Generator_RowEvHandlerName="TablesRowChangeEventHandler" msprop:Generator_RowDeletedName="TablesRowDeleted" msprop:Generator_RowEvArgName="TablesRowChangeEvent" msprop:Generator_RowChangedName="TablesRowChanged" msprop:Generator_RowClassName="TablesRow">
+        <xs:element name="SchemaTables" msprop:Generator_TableClassName="SchemaTablesDataTable" msprop:Generator_TableVarName="tableSchemaTables" msprop:Generator_TablePropName="SchemaTables" msprop:Generator_RowDeletingName="SchemaTablesRowDeleting" msprop:Generator_UserTableName="SchemaTables" msprop:Generator_RowChangingName="SchemaTablesRowChanging" msprop:Generator_RowEvHandlerName="SchemaTablesRowChangeEventHandler" msprop:Generator_RowDeletedName="SchemaTablesRowDeleted" msprop:Generator_RowEvArgName="SchemaTablesRowChangeEvent" msprop:Generator_RowChangedName="SchemaTablesRowChanged" msprop:Generator_RowClassName="SchemaTablesRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="Name" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" msprop:Generator_UserColumnName="Name">
@@ -136,7 +130,7 @@ order by DB.Data_base, DB.Username</CommandText>
             </xs:sequence>
           </xs:complexType>
         </xs:element>
-        <xs:element name="Columns" msprop:Generator_TableClassName="ColumnsDataTable" msprop:Generator_TableVarName="tableColumns" msprop:Generator_TablePropName="Columns" msprop:Generator_RowDeletingName="ColumnsRowDeleting" msprop:Generator_UserTableName="Columns" msprop:Generator_RowChangingName="ColumnsRowChanging" msprop:Generator_RowEvHandlerName="ColumnsRowChangeEventHandler" msprop:Generator_RowDeletedName="ColumnsRowDeleted" msprop:Generator_RowEvArgName="ColumnsRowChangeEvent" msprop:Generator_RowChangedName="ColumnsRowChanged" msprop:Generator_RowClassName="ColumnsRow">
+        <xs:element name="SchemaColumns" msprop:Generator_TableClassName="SchemaColumnsDataTable" msprop:Generator_TableVarName="tableSchemaColumns" msprop:Generator_TablePropName="SchemaColumns" msprop:Generator_RowDeletingName="SchemaColumnsRowDeleting" msprop:Generator_UserTableName="SchemaColumns" msprop:Generator_RowChangingName="SchemaColumnsRowChanging" msprop:Generator_RowEvHandlerName="SchemaColumnsRowChangeEventHandler" msprop:Generator_RowDeletedName="SchemaColumnsRowDeleted" msprop:Generator_RowEvArgName="SchemaColumnsRowChangeEvent" msprop:Generator_RowChangedName="SchemaColumnsRowChanged" msprop:Generator_RowClassName="SchemaColumnsRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="TableName" msprop:Generator_ColumnVarNameInTable="columnTableName" msprop:Generator_ColumnPropNameInRow="TableName" msprop:Generator_ColumnPropNameInTable="TableNameColumn" msprop:Generator_UserColumnName="TableName">
@@ -234,13 +228,6 @@ order by DB.Data_base, DB.Username</CommandText>
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="Username" msprop:Generator_ColumnVarNameInTable="columnUsername" msprop:Generator_ColumnPropNameInRow="Username" msprop:Generator_ColumnPropNameInTable="UsernameColumn" msprop:Generator_UserColumnName="Username" minOccurs="0">
-                <xs:simpleType>
-                  <xs:restriction base="xs:string">
-                    <xs:maxLength value="80" />
-                  </xs:restriction>
-                </xs:simpleType>
-              </xs:element>
               <xs:element name="Description" msprop:Generator_ColumnVarNameInTable="columnDescription" msprop:Generator_ColumnPropNameInRow="Description" msprop:Generator_ColumnPropNameInTable="DescriptionColumn" msprop:Generator_UserColumnName="Description" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
@@ -255,15 +242,28 @@ order by DB.Data_base, DB.Username</CommandText>
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="DateCreated" msprop:Generator_ColumnVarNameInTable="columnDateCreated" msprop:Generator_ColumnPropNameInRow="DateCreated" msprop:Generator_ColumnPropNameInTable="DateCreatedColumn" msprop:Generator_UserColumnName="DateCreated" type="xs:dateTime" minOccurs="0" />
-              <xs:element name="SP_ID" msprop:Generator_ColumnVarNameInTable="columnSP_ID" msprop:Generator_ColumnPropNameInRow="SP_ID" msprop:Generator_ColumnPropNameInTable="SP_IDColumn" msprop:Generator_UserColumnName="SP_ID">
+              <xs:element name="UserName" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnUserName" msprop:Generator_ColumnPropNameInRow="UserName" msprop:Generator_ColumnPropNameInTable="UserNameColumn" msprop:Generator_UserColumnName="UserName" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="11" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="DateCreated" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnDateCreated" msprop:Generator_ColumnPropNameInRow="DateCreated" msprop:Generator_ColumnPropNameInTable="DateCreatedColumn" msprop:Generator_UserColumnName="DateCreated" minOccurs="0">
+                <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                    <xs:maxLength value="8" />
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:element>
+              <xs:element name="SP_ID" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnSP_ID" msprop:Generator_ColumnPropNameInRow="SP_ID" msprop:Generator_ColumnPropNameInTable="SP_IDColumn" msprop:Generator_UserColumnName="SP_ID" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="32" />
                   </xs:restriction>
                 </xs:simpleType>
               </xs:element>
-              <xs:element name="SP_RootItemID" msprop:Generator_ColumnVarNameInTable="columnSP_RootItemID" msprop:Generator_ColumnPropNameInRow="SP_RootItemID" msprop:Generator_ColumnPropNameInTable="SP_RootItemIDColumn" msprop:Generator_UserColumnName="SP_RootItemID" minOccurs="0">
+              <xs:element name="SP_RootItemID" msdata:ReadOnly="true" msprop:Generator_ColumnVarNameInTable="columnSP_RootItemID" msprop:Generator_ColumnPropNameInRow="SP_RootItemID" msprop:Generator_ColumnPropNameInTable="SP_RootItemIDColumn" msprop:Generator_UserColumnName="SP_RootItemID" minOccurs="0">
                 <xs:simpleType>
                   <xs:restriction base="xs:string">
                     <xs:maxLength value="32" />
@@ -275,9 +275,5 @@ order by DB.Data_base, DB.Username</CommandText>
         </xs:element>
       </xs:choice>
     </xs:complexType>
-    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
-      <xs:selector xpath=".//mstns:SiteData" />
-      <xs:field xpath="mstns:SP_ID" />
-    </xs:unique>
   </xs:element>
 </xs:schema>

@@ -9,14 +9,15 @@ Public Class SPPIDWorkingSet
 
     Private _conn As SqlConnection
 
+    Private _CommonDataDS As SQLSchemaDS
     Private _siteDataDT As SQLSchemaDS.SiteDataDataTable
     Private _siteDataTA As SQLSchemaDSTableAdapters.SiteDataTableAdapter
     Private _siteDataDV As DataView
-    Private _tablesDT As SQLSchemaDS.TablesDataTable
-    Private _tablesTA As SQLSchemaDSTableAdapters.TablesTableAdapter
+    Private _tablesDT As SQLSchemaDS.SchemaTablesDataTable
+    Private _tablesTA As SQLSchemaDSTableAdapters.SchemaTablesTableAdapter
     Private _tablesDV As DataView
-    Private _columnsDT As SQLSchemaDS.ColumnsDataTable
-    Private _columnsTA As SQLSchemaDSTableAdapters.ColumnsTableAdapter
+    Private _columnsDT As SQLSchemaDS.SchemaColumnsDataTable
+    Private _columnsTA As SQLSchemaDSTableAdapters.SchemaColumnsTableAdapter
     Private _columnsDV As DataView
     Private _SPAPLANTSchemaName As String
     Private _DATA_DICTIONARYSchemaName As String
@@ -50,13 +51,13 @@ Public Class SPPIDWorkingSet
         End Get
     End Property
 
-    Public ReadOnly Property Tables As SQLSchemaDS.TablesDataTable
+    Public ReadOnly Property Tables As SQLSchemaDS.SchemaTablesDataTable
         Get
             Return _tablesDT
         End Get
     End Property
 
-    Public ReadOnly Property Columns As SQLSchemaDS.ColumnsDataTable
+    Public ReadOnly Property Columns As SQLSchemaDS.SchemaColumnsDataTable
         Get
             Return _columnsDT
         End Get
@@ -118,22 +119,26 @@ Public Class SPPIDWorkingSet
                    SiteDataQuery As XElement)
 
         'SPQueries = New SmartPlantDBQueries
+        _CommonDataDS = New SQLSchemaDS
         _StagingServerInCommon = (ProjectConnection.DataSource = StagingConnection.DataSource)
         _CommonServerName = IIf(_StagingServerInCommon, ProjectConnection.DataSource, "")
 
         _SchemaSubstitutions = New Dictionary(Of String, String)
         _siteDataTA = New SQLSchemaDSTableAdapters.SiteDataTableAdapter
-        _tablesTA = New SQLSchemaDSTableAdapters.TablesTableAdapter
-        _columnsTA = New SQLSchemaDSTableAdapters.ColumnsTableAdapter
+        _tablesTA = New SQLSchemaDSTableAdapters.SchemaTablesTableAdapter
+        _columnsTA = New SQLSchemaDSTableAdapters.SchemaColumnsTableAdapter
 
         GetBaselineSchema(SiteConnection, ProjectConnection.Database, SiteDataQuery)
 
         _tablesTA.Connection = ProjectConnection
         _columnsTA.Connection = ProjectConnection
-        _tablesDT.Clear()
-        _tablesDT = _tablesTA.GetData
+
+        _tablesDT = _CommonDataDS.SchemaTables
+        _tablesTA.Fill(_tablesDT)
         _tablesDV = _tablesDT.DefaultView
-        _columnsDT = _columnsTA.GetData
+
+        _columnsDT = _CommonDataDS.SchemaColumns
+        _columnsTA.fill(_columnsDT)
         _columnsDV = _columnsDT.DefaultView
 
     End Sub
@@ -171,7 +176,7 @@ Public Class SPPIDWorkingSet
     Private Sub GetBaselineSchema(SiteConnection As SqlConnection, ProjectDBname As String, ByVal SiteDataQuery As XElement)
 
         Dim SiteDR As SQLSchemaDS.SiteDataRow
-        Dim TablesDR As SQLSchemaDS.TablesRow
+        Dim TablesDR As SQLSchemaDS.SchemaTablesRow
         Dim drv As DataRowView
         Dim queryText As String = ""
         Dim schemaTp As SPSchemaType
@@ -185,18 +190,22 @@ Public Class SPPIDWorkingSet
 
             ' fetch the table information for the SITE database
             _tablesTA.Connection = SiteConnection
-            _tablesDT = _tablesTA.GetData
+            _tablesDT = _CommonDataDS.SchemaTables
+            _tablesTA.Fill(_tablesDT)
             _tablesDV = _tablesDT.DefaultView
 
             ' fetch the column information fro the SITE database
             _columnsTA.Connection = SiteConnection
-            _columnsDT = _columnsTA.GetData
+            _columnsDT = _CommonDataDS.SchemaColumns
+            _columnsTA.Fill(_columnsDT)
             _columnsDV = _columnsDT.DefaultView
 
             ' fetch the site data specifying information about all site projects
             _siteDataTA.Connection = SiteConnection
-            _siteDataDT = _siteDataTA.GetData
-            _siteDataDV = _siteDataDT.DefaultView
+            _siteDataDT = _CommonDataDS.SiteData
+            _siteDataTA.Fill(_siteDataDT) ' note that his fetches no data; it just forces the SelectCommand to initialize so the CommandText can be
+            ' set properly
+            '_siteDataDV = _siteDataDT.DefaultView
 
         Catch ex As InvalidOperationException
             Throw ex
@@ -228,15 +237,17 @@ Public Class SPPIDWorkingSet
         ' fetch the site data
         Try
             ' warning to implementers - you can set the command text, but do not attempt to replace the command itself;
-            ' setting the command will NOT update the prive CommandCollection, and the command will automatically be
+            ' setting the command will NOT update the private CommandCollection, and the command will automatically be
             ' overridden when Fill (or the default GetData) is called.
             _siteDataTA.Adapter.SelectCommand.CommandText = queryText
+
         Catch ex As Exception
             Throw New InvalidExpressionException("The site data query '" & queryText & "' is malformed")
         End Try
 
         _siteDataTA.ClearBeforeFill = True
-        _siteDataDT = _siteDataTA.GetData()
+        _CommonDataDS.EnforceConstraints = False
+        _siteDataTA.Fill(_siteDataDT)
         _siteDataDV = New DataView(_siteDataDT, "", "SP_Schema_Type", DataViewRowState.CurrentRows)
 
         ' set the project-specific schema set for this project
