@@ -266,7 +266,7 @@ Public Module Common
     End Function
 
     <Extension()> _
-    Public Function GetDataTypeString(Row As SQLSchemaDS.ColumnsRow) As String
+    Public Function GetDataTypeString(Row As SQLSchemaDS.SchemaColumnsRow) As String
 
         Dim s As String
 
@@ -465,7 +465,7 @@ Public Module Common
         Dim subs As Dictionary(Of String, String) = SchemaSubstitutions
         Dim conj As String = ""
         Dim svNm As String = ""
-        Dim col As SQLSchemaDS.ColumnsRow
+        Dim col As SQLSchemaDS.SchemaColumnsRow
         Dim lastSource As String = ""
         Dim dataType As String
         Dim colNull As String
