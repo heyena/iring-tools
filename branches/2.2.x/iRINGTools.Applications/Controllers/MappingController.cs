@@ -907,19 +907,15 @@ namespace org.iringtools.web.controllers
             {
                 string scope = form["scope"];
                 string application = form["application"];
-                Mapping mapping = GetMapping(scope, application);
-                string parentNode = form["mappingNode"].Split('/')[2]; ;
-
+                string parentNode = form["mappingNode"].Split('/')[2];
                 string templateId = form["identifier"];
-                string parentClassId = form["parentIdentifier"];
-                GraphMap graphMap = mapping.FindGraphMap(parentNode);
+                string parentClassId = form["parentIdentifier"];              
+                int index = Convert.ToInt16(form["index"]);
 
-                ClassTemplateMap tmap = graphMap.GetClassTemplateMap(parentClassId);
-                TemplateMap map = tmap.templateMaps.Find(t => t.id == templateId);
-                if (map != null)
-                    tmap.templateMaps.Remove(map);
-                else
-                    throw new Exception("Error deleting TemplateMap...");
+                Mapping mapping = GetMapping(scope, application);
+                GraphMap graphMap = mapping.FindGraphMap(parentNode);
+                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
+                ctm.templateMaps.RemoveAt(index);                
             }
             catch (Exception ex)
             {

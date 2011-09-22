@@ -493,6 +493,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         var node = this.mappingPanel.getSelectionModel().getSelectedNode();
         var index = node.parentNode.indexOf(node);
         that.getParentClass(node);
+
         Ext.Ajax.request({
             url: 'mapping/deleteTemplateMap',
             method: 'POST',
