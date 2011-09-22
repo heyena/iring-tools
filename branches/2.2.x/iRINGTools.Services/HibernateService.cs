@@ -8,6 +8,9 @@ using log4net;
 using org.iringtools.nhibernate;
 using org.iringtools.library;
 using System.ComponentModel;
+using org.iringtools.utility;
+using System.Web;
+using System.Net;
 
 namespace org.iringtools.services
 {
@@ -87,7 +90,7 @@ namespace org.iringtools.services
       return _NHibernateProvider.GetSchemaObjectSchema(scope, application, objectName);
     }
     
-    #region NHibernate Config Wizard support URIs
+    #region NHibernate Config support
     [WebGet(UriTemplate = "/providers")]
     public DataProviders GetProviders()
     {
@@ -104,8 +107,6 @@ namespace org.iringtools.services
       return _NHibernateProvider.GetDictionary(scope, application);
     }
 
-    ///TODO: create request object and do post or encrypt password
-    //[WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{portNumber}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/tables")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{application}/tables")]
 		public List<string> GetTableNames(string scope, string application, Request request)
     {
@@ -116,7 +117,6 @@ namespace org.iringtools.services
 				request["dbName"], request["dbSchema"], request["dbUserName"], request["dbPassword"], request["serName"]);
     }
 
-    //[WebGet(UriTemplate = "/{scope}/{application}/{dbProvider}/{dbServer}/{portNumber}/{dbInstance}/{dbName}/{dbSchema}/{dbUserName}/{dbPassword}/{tableNames}/objects")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{application}/objects")]
     public List<DataObject> GetDBObjects(string scope, string application, Request request)
     {
@@ -126,7 +126,62 @@ namespace org.iringtools.services
 			return _NHibernateProvider.GetDBObjects(scope, application, request["dbProvider"], request["dbServer"], request["portNumber"], request["dbInstance"],
 				request["dbName"], request["dbSchema"], request["dbUserName"], request["dbPassword"], request["tableNames"], request["serName"]);
     }
-
     #endregion
+
+    #region Regenerate methods
+    [Description("Regenerate NHibernate data layer artifacts for all applications in all projects. Only needed when upgrading to new iRINGTools version.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/regen")]
+    public void RegenerateAll()
+    {
+      try
+      {
+        Response response = _NHibernateProvider.Regenerate();
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
+    [Description("Regenerate NHibernate data layer artifacts for all applications in a specific project. Only needed when upgrading to new iRINGTools version.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/regen")]
+    public void RegenerateScope(String scope)
+    {
+      try
+      {
+        Response response = _NHibernateProvider.Regenerate(scope);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
+    [Description("Regenerate NHibernate data layer artifacts for a specific application in a project. Only needed when upgrading to new iRINGTools version.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/regen")]
+    public void RegenerateApp(String scope, String app)
+    {
+      try
+      {
+        Response response = _NHibernateProvider.Regenerate(scope, app);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+    #endregion Regenerate methods
   }
 }

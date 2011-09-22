@@ -43,6 +43,7 @@ using System;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using System.Web;
+using System.Net;
 
 namespace org.iringtools.services
 {
@@ -92,6 +93,22 @@ namespace org.iringtools.services
       return _adapterProvider.GetScopes();
     }
     #endregion
+
+    #region Config methods
+    [Description("Configure the selected data layer in the service.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/configure")]
+    public Response Configure(String scope, String app)
+    {
+      return _adapterProvider.Configure(scope, app, HttpContext.Current.Request);
+    }
+
+    [Description("Get configuration for a selected data layer in the service.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/configuration")]
+    public XElement GetConfiguration(String scope, String app)
+    {
+      return _adapterProvider.GetConfiguration(scope, app);
+    }
+    #endregion Config methods
     #endregion
 
     #region Private Resources
@@ -200,23 +217,7 @@ namespace org.iringtools.services
 
       return _adapterProvider.GetDataLayers();
     }
-
     #endregion
-       
-    [Description("Configure the selected data layer in the service.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/configure")]
-    public Response Configure(String scope, String app)
-    {
-      return _adapterProvider.Configure(scope, app, HttpContext.Current.Request);
-    }
-
-    [Description("Get configuration for a selected data layer in the service.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/configuration")]
-    public XElement GetConfiguration(String scope, String app)
-    {
-      return _adapterProvider.GetConfiguration(scope, app);
-    }
-
     #endregion
   }
 }

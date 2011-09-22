@@ -56,7 +56,8 @@ namespace org.iringtools.library
 
     public Response()
     {
-      this.StatusList = new List<Status>();      
+      this.StatusList = new List<Status>();
+      this.Messages = new Messages();
     }
 
     public void Append(Response response)
@@ -67,36 +68,28 @@ namespace org.iringtools.library
       }
     }
 
-    public void Append(Status status)
+    public void Append(Status newStatus)
     {
-      Status foundStatus = null;
-      bool wasFound = false;
-      foreach (Status candidateStatus in StatusList)
+      foreach (Status status in StatusList)
       {
-        if (status.Identifier == candidateStatus.Identifier)
+        if (status.Identifier == newStatus.Identifier)
         {
-          foundStatus = candidateStatus;
-          wasFound = true;
+          if (status.Level < newStatus.Level)
+            status.Level = newStatus.Level;
+
+          foreach (string message in newStatus.Messages)
+          {
+            status.Messages.Add(message);
+          } 
+
+          return;
         }
       }
 
-      if (!wasFound)
-      {
-        StatusList.Add(status);
-      }
-      else
-      {
-        if (foundStatus.Level < status.Level)
-          foundStatus.Level = status.Level;
+      StatusList.Add(newStatus);
 
-        foreach (string message in status.Messages)
-        {
-          foundStatus.Messages.Add(message);
-        }
-      }
-
-      if (Level < status.Level)
-        Level = status.Level;
+      if (Level < newStatus.Level)
+        Level = newStatus.Level;
     }
 
     public override string ToString()

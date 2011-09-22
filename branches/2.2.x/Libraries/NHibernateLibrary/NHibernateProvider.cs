@@ -44,10 +44,9 @@ namespace org.iringtools.nhibernate
 	{
 		private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateProvider));
 
-		private Response _response = null;
 		private IKernel _kernel = null;
 		private NHibernateSettings _settings = null;
-		//private WebProxyCredentials _proxyCredentials = null;
+    private ScopeProjects _scopes;
 
 		bool _isScopeInitialized = false;
 
@@ -63,20 +62,20 @@ namespace org.iringtools.nhibernate
 			Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
 			_adapterProvider = new AdapterProvider(_settings);
-
-			_response = new Response();
-			_kernel.Bind<Response>().ToConstant(_response);
+      _scopes = _adapterProvider.GetScopes();
 		}
 
 		#region public methods
 		public Response Generate(string projectName, string applicationName)
 		{
+      Response response = new Response();
 			Status status = new Status();
+
+      response.StatusList.Add(status);
 
 			try
 			{
 				status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
-
 				InitializeScope(projectName, applicationName);
 
 				DatabaseDictionary dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
@@ -87,7 +86,7 @@ namespace org.iringtools.nhibernate
 				else if (ValidateDatabaseDictionary(dbDictionary))
 				{
 					EntityGenerator generator = _kernel.Get<EntityGenerator>();
-					_response.Append(generator.Generate(dbDictionary, projectName, applicationName));
+					response.Append(generator.Generate(dbDictionary, projectName, applicationName));
 
 					// Update binding configuration
 					XElement binding = new XElement("module",
@@ -99,11 +98,8 @@ namespace org.iringtools.nhibernate
 						)
 					);
 
-					Response localResponse = _adapterProvider.UpdateBinding(projectName, applicationName, binding);
-
-					_response.Append(localResponse);
-
-					status.Messages.Add("Database dictionary updated successfully.");
+					response.Append(_adapterProvider.UpdateBinding(projectName, applicationName, binding));
+					status.Messages.Add("Database dictionary of [" + projectName + "." + applicationName + "] updated successfully.");
 				}
 			}
 			catch (Exception ex)
@@ -114,8 +110,7 @@ namespace org.iringtools.nhibernate
 				status.Messages.Add(string.Format("Error updating database dictionary: {0}", ex));
 			}
 
-			_response.Append(status);
-			return _response;
+			return response;
 		}
 
 		public DatabaseDictionary GetDictionary(string projectName, string applicationName)
@@ -147,14 +142,18 @@ namespace org.iringtools.nhibernate
 
 		public Response PostDictionary(string projectName, string applicationName, DatabaseDictionary databaseDictionary)
 		{
+      Response response = new Response();
 			Status status = new Status();
+
+      response.StatusList.Add(status);
+
 			try
 			{
 				status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 				InitializeScope(projectName, applicationName);
 
 				NHibernateUtility.SaveDatabaseDictionary(databaseDictionary, _settings["DBDictionaryPath"]);
-				Response response = Generate(projectName, applicationName);
+				response.Append(Generate(projectName, applicationName));
 
 				if (response.Level.ToString().ToUpper() == "SUCCESS")
 					status.Messages.Add("Database Dictionary saved successfully");
@@ -170,8 +169,7 @@ namespace org.iringtools.nhibernate
 				status.Messages.Add("Error in saving database dictionary" + ex.Message);
 			}
 
-			_response.Append(status);
-			return _response;
+			return response;
 		}
 
 		public DataRelationships GetRelationships()
@@ -518,9 +516,62 @@ namespace org.iringtools.nhibernate
 
 			return dataObjects;
 		}
-		#endregion
 
-		#region private methods
+    #region Regenerate methods
+    public Response Regenerate()
+    {
+      Response response = new Response();
+
+      foreach (ScopeProject sc in _scopes)
+      {
+        response.Append(Regenerate(sc));
+      }
+
+      return response;
+    }
+
+    public Response Regenerate(String scope)
+    {
+      foreach (ScopeProject sc in _scopes)
+      {
+        if (sc.Name.ToLower() == scope.ToLower())
+        {
+          return Regenerate(sc);
+        }
+      }
+
+      Response response = new Response()
+      {
+        Level = StatusLevel.Warning,
+        Messages = new Messages()
+        {
+          "Scope [" + scope + "] not found."
+        }
+      };
+
+      return response;
+    }
+
+    private Response Regenerate(ScopeProject scope)
+    {
+      Response response = new Response();
+
+      foreach (ScopeApplication sa in scope.Applications)
+      {
+        response.Append(Regenerate(scope.Name, sa.Name));
+      }
+
+      return response;
+    }
+
+    public Response Regenerate(String scope, String app)
+    {
+      return Generate(scope, app);
+    }
+    #endregion Regenerate methods
+    #endregion
+
+    #region private methods
     private ISession GetNHSession(string dbProvider, string dbServer, string dbInstance, string dbName, string dbSchema,
 			string dbUserName, string dbPassword, string portNumber, string serName)
 		{
