@@ -128,8 +128,7 @@ namespace org.iringtools.nhibernate
           parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "Iesi.Collections.dll");
           parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + "iRINGLibrary.dll");
           NHIBERNATE_ASSEMBLIES.ForEach(assembly => parameters.ReferencedAssemblies.Add(_settings["BinaryPath"] + assembly));
-
-
+          
           Utility.Compile(compilerOptions, parameters, new string[] { sourceCode });
           #endregion Compile entities
 
@@ -137,6 +136,7 @@ namespace org.iringtools.nhibernate
           string hibernateConfig = CreateConfiguration(
             (Provider)Enum.Parse(typeof(Provider), dbSchema.Provider, true), 
             dbSchema.ConnectionString, dbSchema.SchemaName);
+
           Utility.WriteString(hibernateConfig, _settings["XmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(mappingXml, _settings["XmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
@@ -144,7 +144,7 @@ namespace org.iringtools.nhibernate
           Utility.Write<DataDictionary>(dataDictionary, _settings["XmlPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
-          status.Messages.Add("Entities generated successfully.");
+          status.Messages.Add("Entities of [" + projectName + "." + applicationName + "] generated successfully.");
         }
         catch (Exception ex)
         {

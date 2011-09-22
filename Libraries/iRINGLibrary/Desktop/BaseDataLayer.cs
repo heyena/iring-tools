@@ -292,7 +292,7 @@ namespace org.iringtools.library
       throw new NotImplementedException();
     }
 
-    public virtual long GetCount(string objectType, string query)
+    public virtual long GetSearchCount(string objectType, string query)
     {
       throw new NotImplementedException();
     }

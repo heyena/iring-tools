@@ -51,7 +51,6 @@ namespace org.iringtools.adapter
   public class AdapterProvider : BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
-    private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
     private ScopeProjects _scopes = null;
@@ -119,10 +118,6 @@ namespace org.iringtools.adapter
         Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
 
-      _response = new Response();
-      _response.StatusList = new List<Status>();
-      _kernel.Bind<Response>().ToConstant(_response);
-
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
             _settings["XmlPath"]
           );
@@ -167,8 +162,10 @@ namespace org.iringtools.adapter
 
     public Response UpdateScopes(ScopeProjects scopes)
     {
+      Response response = new Response();
       Status status = new Status();
-      status.Messages = new Messages();
+
+      response.StatusList.Add(status);
 
       try
       {
@@ -215,14 +212,16 @@ namespace org.iringtools.adapter
         status.Messages.Add(string.Format("Error saving scopes: {0}", ex));
       }
 
-      _response.Append(status);
-      return _response;
+      return response;
     }
 
     public Response DeleteScope(string projectName, string applicationName)
     {
+      Response response = new Response();
       Status status = new Status();
-      status.Messages = new Messages();
+
+      response.StatusList.Add(status);
+
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -241,8 +240,7 @@ namespace org.iringtools.adapter
         status.Messages.Add(string.Format("Error deleting scope: {0}", ex));
       }
 
-      _response.Append(status);
-      return _response;
+      return response;
     }
 
     public XElement GetBinding(string projectName, string applicationName)
@@ -265,8 +263,11 @@ namespace org.iringtools.adapter
 
     public Response UpdateBinding(string projectName, string applicationName, XElement binding)
     {
+      Response response = new Response();
       Status status = new Status();
-      status.Messages = new Messages();
+
+      response.StatusList.Add(status);
+
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -278,7 +279,7 @@ namespace org.iringtools.adapter
 
         bindingConfiguration.Save(_settings["BindingConfigurationPath"]);
 
-        status.Messages.Add("BindingConfiguration was saved.");
+        status.Messages.Add("BindingConfiguration of [" + projectName + "." + applicationName + "] updated successfully.");
       }
       catch (Exception ex)
       {
@@ -288,8 +289,7 @@ namespace org.iringtools.adapter
         status.Messages.Add(string.Format("Error updating the binding configuration: {0}", ex));
       }
 
-      _response.Append(status);
-      return _response;
+      return response;
     }
     #endregion
 
@@ -329,8 +329,11 @@ namespace org.iringtools.adapter
 
     public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
     {
+      Response response = new Response();
       Status status = new Status();
-      status.Messages = new Messages();
+
+      response.StatusList.Add(status);
+
       string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
 
       try
@@ -341,7 +344,7 @@ namespace org.iringtools.adapter
 
         Utility.Write<mapping.Mapping>(mapping, path, true);
 
-        status.Messages.Add("Mapping file has been updated to path [" + path + "] successfully.");
+        status.Messages.Add("Mapping of [" + projectName + "." + applicationName + "] updated successfully.");
       }
       catch (Exception ex)
       {
@@ -351,14 +354,16 @@ namespace org.iringtools.adapter
         status.Messages.Add(string.Format("Error saving mapping file to path [{0}]: {1}", path, ex));
       }
 
-      _response.Append(status);
-      return _response;
+      return response;
     }
 
     public Response Refresh(string projectName, string applicationName, string graphName)
     {
+      Response response = new Response();
       Status status = new Status();
-      status.Messages = new Messages();
+
+      response.StatusList.Add(status);
+
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -366,7 +371,7 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
 
-        _response.Append(Refresh(graphName));
+        response.Append(Refresh(graphName));
       }
       catch (Exception ex)
       {
@@ -376,8 +381,7 @@ namespace org.iringtools.adapter
         status.Messages.Add(string.Format("Error refreshing graph [{0}]: {1}", graphName, ex));
       }
 
-      _response.Append(status);
-      return _response;
+      return response;
     }
 
     //DataFilter List
@@ -454,7 +458,7 @@ namespace org.iringtools.adapter
         }
 
         _dataObjects = _dataLayer.Search(_dataObjDef.objectName, query, limit, start);
-        _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, query);
+        _projectionEngine.Count = _dataLayer.GetSearchCount(_dataObjDef.objectName, query);
 
         _projectionEngine.FullIndex = fullIndex;
 
@@ -750,8 +754,11 @@ namespace org.iringtools.adapter
 
     public Response Delete(string projectName, string applicationName, string graphName)
     {
+      Response response = new Response();
       Status status = new Status();
-      status.Messages = new Messages();
+
+      response.StatusList.Add(status);
+
       try
       {
         status.Identifier = String.Format("{0}.{1}.{2}", projectName, applicationName, graphName);
@@ -760,7 +767,7 @@ namespace org.iringtools.adapter
 
         _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
 
-        _response.Append(_semanticEngine.Delete(graphName));
+        response.Append(_semanticEngine.Delete(graphName));
       }
       catch (Exception ex)
       {
@@ -770,8 +777,7 @@ namespace org.iringtools.adapter
         status.Messages.Add(string.Format("Error deleting all graphs: {0}", ex));
       }
 
-      _response.Append(status);
-      return _response;
+      return response;
     }
 
     public Response Post(string projectName, string applicationName, string graphName, string format, XDocument xml)
@@ -1425,5 +1431,4 @@ namespace org.iringtools.adapter
       }
     }
   }
-
 }
