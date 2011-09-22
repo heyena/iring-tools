@@ -503,7 +503,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                 mappingNode: node.id,
                 parentIdentifier: that.parentClass,
                 identifier: node.attributes.identifier,
-                index:index
+                index: index
             },
             success: function (result, request) {
                 that.onReload();
@@ -833,10 +833,10 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             border: false,
             frame: false,
             bbar: [
-        { xtype: 'tbfill' },
-        { text: 'Ok', scope: this, handler: this.onSubmitClassMap },
-        { text: 'Cancel', scope: this, handler: this.onClose }
-        ],
+                { xtype: 'tbfill' },
+                { text: 'Ok', scope: this, handler: this.onSubmitClassMap },
+                { text: 'Cancel', scope: this, handler: this.onClose }
+            ],
             items: [
             //{ xtype: 'textfield', name: 'graphName', id: 'graphName', fieldLabel: 'Graph Name', width: 120, required: true, value: null },
               {xtype: 'hidden', name: 'objectName', id: 'objectName' },
@@ -961,18 +961,24 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     onClick: function (node) {
         var templateTypes = ['Qualification', 'Definition']
         var roleTypes = ['Property', 'Possessor', 'Reference', 'FixedValue', 'DataProperty', 'ObjectProperty'];
+        var source = {};
 
-        // translate node type enum index to string for template and role
-        if (node.attributes && node.attributes.type) {
-            if (node.attributes.type == 'TemplateMapNode') {
-                node.attributes.record.type = templateTypes[node.attributes.record.type];
+        for (var propName in node.attributes.record) {
+            var propValue = node.attributes.record[propName];
+
+            if (propName == 'type') {
+                if (node.attributes.type == 'TemplateMapNode') {
+                    propValue = templateTypes[propValue];
+                }
+                else if (node.attributes.type == 'RoleMapNode') {
+                    propValue = roleTypes[propValue];
+                }
             }
-            else if (node.attributes.type == 'RoleMapNode') {
-                node.attributes.record.type = roleTypes[node.attributes.record.type];
-            }
+            
+            source[propName] = propValue;
         }
 
-        this.propertyPanel.setSource(node.attributes.record);
+        this.propertyPanel.setSource(source);
     },
 
     showContextMenu: function (node, event) {
