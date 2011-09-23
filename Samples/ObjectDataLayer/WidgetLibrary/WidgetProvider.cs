@@ -6,13 +6,14 @@ using System.IO;
 using System.Linq.Expressions;
 using org.iringtools.utility;
 using System.Reflection;
+using Ciloci.Flee;
 
 namespace org.iringtools.sdk.objects.widgets
 {
   public class WidgetProvider
   {
-    private List<Widget> _repository = null;
-    private string _fileName = "WidgetsStore.xml";
+    private Widgets _repository = null;
+    private string _fileName = @".\WidgetsStore.xml";
 
     public WidgetProvider()
     {
@@ -22,7 +23,7 @@ namespace org.iringtools.sdk.objects.widgets
     private void CreateWidget(Widget widget)
     {
       var ids = from w in _repository
-                  select w.Id;
+                select w.Id;
 
       int newId = ids.Max() + 1;
 
@@ -40,13 +41,72 @@ namespace org.iringtools.sdk.objects.widgets
       return widgets.FirstOrDefault();
     }
 
-    public List<Widget> ReadWidgets(List<Filter> filters)
+    public Widgets SearchWidgets(string query)
     {
-      //TODO: Need to implement filtering in Provider.
-      return _repository;
+      List<Filter> filters = new List<Filter>();
+
+      Filter name = new Filter
+      {
+        AttributeName = "Name",
+        RelationalOperator = "like",
+        Value = query,
+      };
+      filters.Add(name);
+
+      Filter description = new Filter
+      {
+        Logical = "or",
+        AttributeName = "Description",
+        RelationalOperator = "like",
+        Value = query,
+      };
+      filters.Add(description);
+
+      Filter material = new Filter
+      {
+        Logical = "or",
+        AttributeName = "Material",
+        RelationalOperator = "like",
+        Value = query,
+      };
+      filters.Add(material);
+      // for database applications ,the following function has to be called to build filters.
+      // Currently it is difficult to implement search functionality on Enum types
+
+      //filters = BuildSearchFiltersForResources("Widgets", query);
+      return ReadWidgets(filters);
     }
 
-    public int UpdateWidgets(List<Widget> widgets)
+    public Widgets ReadWidgets(List<Filter> filters)
+    {
+      Widgets widgets = _repository;
+
+      string linqExpression = filters.ToLinqExpression<Widget>("o");
+
+      if (linqExpression != String.Empty)
+      {
+        ExpressionContext context = new ExpressionContext();
+        context.Variables.DefineVariable("o", typeof(Widget));
+
+        for (int i = 0; i < widgets.Count; i++)
+        {
+          context.Variables["o"] = widgets[i];
+          var expression = context.CompileGeneric<bool>(linqExpression);
+          try
+          {
+            if (!expression.Evaluate())
+            {
+              widgets.RemoveAt(i--);
+            }
+          }
+          catch { } //If Expression fails to eval for item ignore item.
+        }
+      }
+
+      return widgets;
+    }
+
+    public int UpdateWidgets(Widgets widgets)
     {
       try
       {
@@ -102,17 +162,17 @@ namespace org.iringtools.sdk.objects.widgets
       return 0;
     }
 
-    private List<Widget> Initialize()
+    private Widgets Initialize()
     {
-      List<Widget> widgets = new List<Widget>();
+      Widgets widgets = new Widgets();
 
       if (File.Exists(_fileName))
       {
-        widgets = Utility.Read<List<Widget>>(_fileName, true);
+        widgets = Utility.Read<Widgets>(_fileName, true);
       }
       else
       {
-        widgets = new List<Widget>
+        widgets = new Widgets
         {
           new Widget
           {
@@ -120,7 +180,7 @@ namespace org.iringtools.sdk.objects.widgets
             Name = "Thing1",
             Description = "Sample Object 1",
             Color = Color.Orange,
-            Material = "Polyoxymethylene",
+            Material = "Oak Wood",
             Length = 3.14,
             Height = 4.0,
             Width = 5.25,
@@ -144,11 +204,11 @@ namespace org.iringtools.sdk.objects.widgets
           },
           new Widget
           {
-            Id = 2,
+            Id = 3,
             Name = "Thing3",
             Description = "Sample Object 3",
             Color = Color.Red,
-            Material = "Polyoxymethylene",
+            Material = "Maple Wood",
             Length = 8.14,
             Height = 12.0,
             Width = 25.25,
@@ -158,7 +218,7 @@ namespace org.iringtools.sdk.objects.widgets
           },
         };
 
-        Utility.Write<List<Widget>>(widgets, _fileName, true);
+        Utility.Write<Widgets>(widgets, _fileName, true);
       }
 
       return widgets;
@@ -166,7 +226,7 @@ namespace org.iringtools.sdk.objects.widgets
 
     private void Save()
     {
-      Utility.Write<List<Widget>>(_repository, _fileName, true);
+      Utility.Write<Widgets>(_repository, _fileName, true);
     }
   }
 }

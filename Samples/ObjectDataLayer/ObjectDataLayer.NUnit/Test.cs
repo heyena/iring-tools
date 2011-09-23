@@ -148,11 +148,11 @@ namespace org.iringtools.sdk.objects.test
                 {
                     new Expression
                     {
-                        PropertyName = "Color",
-                        RelationalOperator = RelationalOperator.EqualTo,
+                        PropertyName = "Material",
+                        RelationalOperator = RelationalOperator.Contains,
                         Values = new Values
                         {
-                            "Orange",
+                            "Wood",
                         }
                     }
                 }
@@ -173,7 +173,7 @@ namespace org.iringtools.sdk.objects.test
             Assert.IsNotNull(dataObject.GetPropertyValue("Name"));
             Assert.IsNotNull(dataObject.GetPropertyValue("Description"));
             //TODO: Need to implement filtering in Provider.
-            //Assert.AreEqual(dataObject.GetPropertyValue("Color"), "Orange");
+            Assert.IsTrue(dataObject.GetPropertyValue("Material").ToString().Contains("Wood"));
             Assert.IsNotNull(dataObject.GetPropertyValue("Color"));
             Assert.IsNotNull(dataObject.GetPropertyValue("Material"));
             Assert.IsNotNull(dataObject.GetPropertyValue("Length"));
