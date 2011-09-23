@@ -291,7 +291,7 @@ namespace org.iringtools.sdk.objects
               string identifier = widget.Id.ToString();
               status.Identifier = identifier;
 
-              int result = _widgetProvider.UpdateWidgets(new List<Widget> { widget });
+              int result = _widgetProvider.UpdateWidgets(new Widgets { widget });
 
               string message = String.Empty;
               if (result == 0)
@@ -536,21 +536,21 @@ namespace org.iringtools.sdk.objects
             if (!isString) throw new Exception("StartsWith operator used with non-string property");
 
             filter.RelationalOperator = "like";
-            filter.Value = "'" + expression.Values.FirstOrDefault() + "%'";
+            filter.Value = "\"" + expression.Values.FirstOrDefault() + "\"";
           }
           else if (expression.RelationalOperator == RelationalOperator.EndsWith)
           {
             if (!isString) throw new Exception("EndsWith operator used with non-string property");
 
             filter.RelationalOperator = "like";
-            filter.Value = "'%" + expression.Values.FirstOrDefault() + "'";
+            filter.Value = "\"" + expression.Values.FirstOrDefault() + "\"";
           }
           else if (expression.RelationalOperator == RelationalOperator.Contains)
           {
             if (!isString) throw new Exception("Contains operator used with non-string property");
 
             filter.RelationalOperator = "like";
-            filter.Value = "'%" + expression.Values.FirstOrDefault() + "%'";
+            filter.Value = "\"" + expression.Values.FirstOrDefault() + "\"";
           }
           else if (expression.RelationalOperator == RelationalOperator.In)
           {
@@ -563,9 +563,9 @@ namespace org.iringtools.sdk.objects
               if (isString)
               {
                 if (valueIndex == valueCount)
-                  values += "'" + value + "'";
+                  values += "\"" + value + "\"";
                 else
-                  values += "'" + value + "', ";
+                  values += "\"" + value + "\", ";
               }
               else
               {
@@ -585,12 +585,13 @@ namespace org.iringtools.sdk.objects
             filter.RelationalOperator = expression.RelationalOperator.ToString();
               
             if (isString)
-              filter.Value = "'" + expression.Values.FirstOrDefault() + "'";
+              filter.Value = "\"" + expression.Values.FirstOrDefault() + "\"";
             else
               filter.Value = expression.Values.FirstOrDefault();
           }
 
-          filter.Logical = expression.LogicalOperator.ToString();
+          if (expression.LogicalOperator != LogicalOperator.None)
+            filter.Logical = expression.LogicalOperator.ToString();
 
           filterList.Add(filter);
         }
