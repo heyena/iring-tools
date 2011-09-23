@@ -62,9 +62,12 @@ namespace org.iringtools.library
 
     public void Append(Response response)
     {
-      foreach (Status status in response.StatusList)
+      if (response != null)
       {
-        Append(status);
+        foreach (Status status in response.StatusList)
+        {
+          Append(status);
+        }
       }
     }
 

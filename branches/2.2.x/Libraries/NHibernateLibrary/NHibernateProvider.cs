@@ -46,11 +46,6 @@ namespace org.iringtools.nhibernate
 
 		private IKernel _kernel = null;
 		private NHibernateSettings _settings = null;
-    private ScopeProjects _scopes;
-
-		bool _isScopeInitialized = false;
-
-		AdapterProvider _adapterProvider = null;
 
 		[Inject]
 		public NHibernateProvider(NameValueCollection settings)
@@ -60,9 +55,6 @@ namespace org.iringtools.nhibernate
 			_settings.AppendSettings(settings);
 
 			Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-
-			_adapterProvider = new AdapterProvider(_settings);
-      _scopes = _adapterProvider.GetScopes();
 		}
 
 		#region public methods
@@ -98,7 +90,8 @@ namespace org.iringtools.nhibernate
 						)
 					);
 
-					response.Append(_adapterProvider.UpdateBinding(projectName, applicationName, binding));
+          AdapterProvider adapterProvider = new AdapterProvider(_settings);
+					response.Append(adapterProvider.UpdateBinding(projectName, applicationName, binding));
 					status.Messages.Add("Database dictionary of [" + projectName + "." + applicationName + "] updated successfully.");
 				}
 			}
@@ -521,8 +514,10 @@ namespace org.iringtools.nhibernate
     public Response Regenerate()
     {
       Response response = new Response();
+      AdapterProvider adapterProvider = new AdapterProvider(_settings);
+      ScopeProjects scopes = adapterProvider.GetScopes();
 
-      foreach (ScopeProject sc in _scopes)
+      foreach (ScopeProject sc in scopes)
       {
         response.Append(Regenerate(sc));
       }
@@ -532,7 +527,10 @@ namespace org.iringtools.nhibernate
 
     public Response Regenerate(String scope)
     {
-      foreach (ScopeProject sc in _scopes)
+      AdapterProvider adapterProvider = new AdapterProvider(_settings);
+      ScopeProjects scopes = adapterProvider.GetScopes();
+      
+      foreach (ScopeProject sc in scopes)
       {
         if (sc.Name.ToLower() == scope.ToLower())
         {
@@ -566,7 +564,16 @@ namespace org.iringtools.nhibernate
 
     public Response Regenerate(String scope, String app)
     {
-      return Generate(scope, app);
+      AdapterProvider adapterProvider = new AdapterProvider(_settings);
+      XElement binding = adapterProvider.GetBinding(scope, app);
+      string NHibernateDataLayer = "org.iringtools.adapter.datalayer.NHibernateDataLayer";
+      
+      if (binding.Element("bind").Attribute("to").Value.StartsWith(NHibernateDataLayer))
+      {
+        return Generate(scope, app);
+      }
+
+      return new Response();
     }
     #endregion Regenerate methods
     #endregion
@@ -744,21 +751,12 @@ namespace org.iringtools.nhibernate
 		{
 			try
 			{
-				if (!_isScopeInitialized)
-				{
-					string scope = string.Format("{0}.{1}", projectName, applicationName);
+				string scope = string.Format("{0}.{1}", projectName, applicationName);
 
-					_settings["ProjectName"] = projectName;
-					_settings["ApplicationName"] = applicationName;
-					_settings["Scope"] = scope;
-
-					_settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml",
-						_settings["XmlPath"],
-						scope
-					);
-
-					_isScopeInitialized = true;
-				}
+				_settings["ProjectName"] = projectName;
+				_settings["ApplicationName"] = applicationName;
+				_settings["Scope"] = scope;
+				_settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["XmlPath"], scope);
 			}
 			catch (Exception ex)
 			{
