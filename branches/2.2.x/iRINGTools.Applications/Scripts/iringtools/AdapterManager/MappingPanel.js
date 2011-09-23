@@ -548,17 +548,17 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
             border: false,
             frame: false,
             bbar: [
-        { xtype: 'tbfill' },
-        { text: 'Ok', scope: this, handler: this.onSubmitPropertyMap },
-        { text: 'Cancel', scope: this, handler: this.onClose }
-        ],
+                { xtype: 'tbfill' },
+                { text: 'Ok', scope: this, handler: this.onSubmitPropertyMap },
+                { text: 'Cancel', scope: this, handler: this.onClose }
+            ],
             items: [
-              { xtype: 'hidden', name: 'propertyName', id: 'propertyName' },
-              { xtype: 'hidden', name: 'relatedObject', id: 'relatedObject' }
+                { xtype: 'hidden', name: 'propertyName', id: 'propertyName' },
+                { xtype: 'hidden', name: 'relatedObject', id: 'relatedObject' }
              ],
             html: '<div class="property-target' + formid + '" '
-          + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
-          + 'Drop a Property Node here.</div>',
+                  + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
+                  + 'Drop a Property Node here.</div>',
 
             afterRender: function (cmp) {
                 Ext.FormPanel.prototype.afterRender.apply(this, arguments);
@@ -637,9 +637,18 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                     index: index
                 },
                 success: function (result, request) {
-                    that.onReload();
                     win.close();
-                    //Ext.Msg.show({ title: 'Success', msg: 'Mapped Property to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+
+                    var error = 'success = False';
+                    var index = result.responseText.indexOf(error);
+
+                    if (index != -1) {
+                        var msg = result.responseText.substring(index + error.length + 2);
+                        showDialog(500, 240, 'Mapping Error', msg.substring(0, msg.length - 1), Ext.Msg.OK, null);
+                    }
+                    else {
+                        that.onReload();
+                    }
                 },
                 failure: function (result, request) {
                     //Ext.Msg.show({ title: 'Failure', msg: 'Failed to Map Property to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
