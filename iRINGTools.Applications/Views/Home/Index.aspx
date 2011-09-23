@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="cache-control" content="no-cache"/>
     <link rel="stylesheet" type="text/css" href="<%=ResolveUrl("~/content/css/iring-tools.css") %>"/>
-    <title>iRINGTools Version 2.01.00</title>
+    <title>iRINGTools Version 2.02.00</title>
   </head>
   <body>
     <div class="banner">

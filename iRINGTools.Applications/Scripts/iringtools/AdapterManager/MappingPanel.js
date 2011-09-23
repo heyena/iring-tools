@@ -971,10 +971,15 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                     propValue = templateTypes[propValue];
                 }
                 else if (node.attributes.type == 'RoleMapNode') {
-                    propValue = roleTypes[propValue];
+                    if (node.text.indexOf('[unmapped]') != -1) {
+                        propValue = '';
+                    }
+                    else {
+                        propValue = roleTypes[propValue];
+                    }
                 }
             }
-            
+
             source[propName] = propValue;
         }
 

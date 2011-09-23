@@ -499,7 +499,6 @@ namespace org.iringtools.adapter
 
         if (parameters != null)
         {
-          List<Expression> expressions = new List<Expression>();
           foreach (string key in parameters.AllKeys)
           {
             string[] expectedParameters = { 
@@ -519,7 +518,7 @@ namespace org.iringtools.adapter
             if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
             {
               string value = parameters[key];
-
+              
               Expression expression = new Expression
               {
                 PropertyName = key,
@@ -528,10 +527,14 @@ namespace org.iringtools.adapter
                 IsCaseSensitive = false,
               };
 
-              expressions.Add(expression);
+              if (filter.Expressions.Count > 0)
+              {
+                expression.LogicalOperator = LogicalOperator.And;
+              }
+
+              filter.Expressions.Add(expression);
             }
           }
-          filter.Expressions = expressions;
 
           if (!String.IsNullOrEmpty(sortBy))
           {
