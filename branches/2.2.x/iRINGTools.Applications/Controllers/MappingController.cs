@@ -175,14 +175,16 @@ namespace org.iringtools.web.controllers
 
                 Mapping mapping = GetMapping(scope, application);
                 GraphMap graphMap = mapping.FindGraphMap(graph);
-                ClassTemplateMap cmap = graphMap.GetClassTemplateMap(classId);
-                TemplateMap tmap = cmap.templateMaps[index];
-                RoleMap rm = tmap.roleMaps.Find(c => c.name == roleName);
+                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+                TemplateMap tMap = ctm.templateMaps[index];
+                RoleMap rMap = tMap.roleMaps.Find(c => c.name == roleName);
 
-                if (rm != null)
+                if (rMap != null)
                 {
-                    rm.type = RoleType.Reference;
-                    rm.value = reference;
+                    rMap.type = RoleType.Reference;
+                    rMap.value = reference;
+                    rMap.propertyName = null;
+                    rMap.valueListName = null;
                 }
                 else
                 {
@@ -191,8 +193,9 @@ namespace org.iringtools.web.controllers
             }
             catch (Exception e)
             {
-                _logger.Error(e.ToString());
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+              String msg = e.ToString();
+                _logger.Error(msg);
+                return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -584,7 +587,9 @@ namespace org.iringtools.web.controllers
                 if (rMap != null)
                 {
                     rMap.type = RoleType.Possessor;
-                    rMap.value = string.Empty;
+                    rMap.propertyName = null;
+                    rMap.valueListName = null;
+                    rMap.value = null;
                     JsonTreeNode roleNode = CreateRoleNode(context, rMap);
                     roleNode.text.Replace(unMappedToken, "");
                     nodes.Add(roleNode);
@@ -839,6 +844,7 @@ namespace org.iringtools.web.controllers
                     }
 
                     rMap.type = RoleType.DataProperty;
+                    rMap.valueListName = null;
                   }
                   else
                   {
@@ -885,9 +891,10 @@ namespace org.iringtools.web.controllers
 
                   if (rMap != null)
                   {
-                    rMap.value = valueListName;
+                    rMap.valueListName = valueListName;
                     rMap.propertyName = string.Format("{0}.{1}", propertyName.Split(delimiters)[4], propertyName.Split(delimiters)[5]);
                     rMap.type = RoleType.ObjectProperty;
+                    rMap.value = null;
                   }
                   else
                   {

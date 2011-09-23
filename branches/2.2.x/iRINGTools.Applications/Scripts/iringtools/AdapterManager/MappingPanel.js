@@ -733,8 +733,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                     },
                     notifyDrop: function (classdd, e, data) {
                         if (data.node.attributes.type != 'ValueListNode') {
-
-                            var message = 'Please slect a RDL Class...';
+                            var message = 'Please select a ValueList.';
                             showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
                             return false;
                         }
