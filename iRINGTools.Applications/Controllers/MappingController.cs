@@ -842,14 +842,15 @@ namespace org.iringtools.web.controllers
                   }
                   else
                   {
-                    throw new Exception("Please select a DataPRoperty or Property role...");
+                    throw new Exception("Invalid property map.");
                   }
                 }
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.ToString());
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                string msg = ex.ToString();
+                _logger.Error(msg);
+                return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);

@@ -178,7 +178,7 @@ namespace org.iringtools.adapter
 
           foreach (DataObject dataObj in dataDictionary.dataObjects)
           {
-            if (dataObj.objectName == dataObjectName)
+            if (dataObj.objectName.ToLower() == dataObjectName.ToLower())
             {
               dataObject = dataObj;
               break;
@@ -232,6 +232,11 @@ namespace org.iringtools.adapter
                       roleMap.type == RoleType.DataProperty ||
                       roleMap.type == RoleType.ObjectProperty)
                   {
+                    if (String.IsNullOrEmpty(roleMap.propertyName))
+                    {
+                      throw new Exception("No data property mapped to role [" + classMap.name + "." + templateMap.name + "." + roleMap.name + "]");
+                    }
+
                     string[] property = roleMap.propertyName.Split('.');
                     string objectName = property[0].Trim();
                     string propertyName = property[1].Trim();
@@ -743,20 +748,20 @@ namespace org.iringtools.adapter
     private void BuildCrossGraphMap(Manifest manifest, string graph)
     {
       if (manifest == null || manifest.graphs == null || manifest.graphs.Count == 0)
-        throw new Exception("Target manifest of graph [" + graph + "] is empty.");
+        throw new Exception("Manifest of graph [" + graph + "] is empty.");
+
+      Graph manifestGraph = manifest.graphs.FirstOrDefault();
+
+      if (manifestGraph.classTemplatesList == null || manifestGraph.classTemplatesList.Count == 0)
+        throw new Exception("Manifest of graph [" + graph + "] does not contain any class-template-maps.");
 
       GraphMap mappingGraph = _mapping.FindGraphMap(graph);
-      Graph manifestGraph = manifest.graphs.FirstOrDefault();
+      ClassTemplates manifestClassTemplatesMap = manifestGraph.classTemplatesList.First();
+      Class manifestClass = manifestClassTemplatesMap.@class;
 
       _graphMap = new GraphMap();
       _graphMap.name = mappingGraph.name;
       _graphMap.dataObjectName = mappingGraph.dataObjectName;
-
-      if (manifestGraph.classTemplatesList == null || manifestGraph.classTemplatesList.Count == 0)
-        throw new Exception("Target manifest of graph [" + graph + "] does not contain any class-template-maps.");
-
-      ClassTemplates manifestClassTemplatesMap = manifestGraph.classTemplatesList.First();
-      Class manifestClass = manifestClassTemplatesMap.@class;
 
       if (manifestClassTemplatesMap != null)
       {
