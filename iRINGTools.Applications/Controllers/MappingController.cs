@@ -585,9 +585,9 @@ namespace org.iringtools.web.controllers
                 {
                     rMap.type = RoleType.Possessor;
                     rMap.value = string.Empty;
-                    JsonTreeNode rolenode = CreateRoleNode(context, rMap);
-                    rolenode.text.Replace(unMappedToken, "");
-                    nodes.Add(rolenode);
+                    JsonTreeNode roleNode = CreateRoleNode(context, rMap);
+                    roleNode.text.Replace(unMappedToken, "");
+                    nodes.Add(roleNode);
                 }
                 else
                 {
@@ -821,22 +821,24 @@ namespace org.iringtools.web.controllers
                 if (ctMap != null)
                 {
                   TemplateMap tMap = ctMap.templateMaps[index];
-                  RoleMap rm = tMap.roleMaps.Find(r => r.name.Equals(roleName));
+                  RoleMap rMap = tMap.roleMaps.Find(r => r.name.Equals(roleName));
 
-                  if (!string.IsNullOrEmpty(rm.dataType) && rm.dataType.StartsWith("xsd"))
+                  if (!string.IsNullOrEmpty(rMap.dataType) && rMap.dataType.StartsWith("xsd"))
                   {
                     if (relatedObject != "undefined" && relatedObject != "")
                     {
-                      rm.propertyName = string.Format("{0}.{1}.{2}",
+                      rMap.propertyName = string.Format("{0}.{1}.{2}",
                         graphMap.dataObjectName,
                         relatedObject,
                         propertyName);
                     }
                     else
                     {
-                      rm.propertyName =
+                      rMap.propertyName =
                           string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
                     }
+
+                    rMap.type = RoleType.DataProperty;
                   }
                   else
                   {
@@ -877,13 +879,14 @@ namespace org.iringtools.web.controllers
 
                 if (ctm != null)
                 {
-                  TemplateMap tmap = ctm.templateMaps[index];
-                  RoleMap rmap = tmap.roleMaps.Find(rm => rm.name.Equals(roleName));
+                  TemplateMap tMap = ctm.templateMaps[index];
+                  RoleMap rMap = tMap.roleMaps.Find(rm => rm.name.Equals(roleName));
 
-                  if (rmap != null)
+                  if (rMap != null)
                   {
-                    rmap.value = valueListName;
-                    rmap.propertyName = string.Format("{0}.{1}", propertyName.Split(delimiters)[4], propertyName.Split(delimiters)[5]);
+                    rMap.value = valueListName;
+                    rMap.propertyName = string.Format("{0}.{1}", propertyName.Split(delimiters)[4], propertyName.Split(delimiters)[5]);
+                    rMap.type = RoleType.ObjectProperty;
                   }
                   else
                   {
