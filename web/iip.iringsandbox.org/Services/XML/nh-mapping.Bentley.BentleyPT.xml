@@ -1,0 +1,40 @@
+﻿<hibernate-mapping default-lazy="true" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="org.iringtools.adapter.datalayer.proj_Bentley.BentleyPT.bentley, App_Code" table="&quot;bentley&quot;">
+    <id name="Id" column="&quot;TagName&quot;">
+      <generator class="assigned" />
+    </id>
+    <property name="TagName" column="&quot;TagName&quot;" update="false" insert="false" />
+    <property name="PressureTransmitte" column="&quot;PressureTransmitte&quot;" />
+    <property name="Callibrationupp" column="&quot;Callibrationupp&quot;" />
+    <property name="CalibrationLower" column="&quot;CalibrationLower&quot;" />
+    <property name="CallibrationUOM" column="&quot;CallibrationUOM&quot;" />
+    <property name="Manufacturer" column="&quot;Manufacturer&quot;" />
+    <property name="Services" column="&quot;Services&quot;" />
+    <property name="ProcessPressureDesign" column="&quot;ProcessPressureDesign&quot;" />
+    <property name="ProcessPressureMax" column="&quot;ProcessPressureMax&quot;" />
+    <property name="ProcessPressureMin" column="&quot;ProcessPressureMin&quot;" />
+    <property name="ProcessPressureOperation" column="&quot;ProcessPressureOperation&quot;" />
+    <property name="ProcessPressureUOM" column="&quot;ProcessPressureUOM&quot;" />
+    <property name="ProcessTempMax" column="&quot;ProcessTempMax&quot;" />
+    <property name="ProcessTempMin" column="&quot;ProcessTempMin&quot;" />
+    <property name="ProcessTempOpr" column="&quot;ProcessTempOpr&quot;" />
+    <property name="ProcesTempUOM" column="&quot;ProcesTempUOM&quot;" />
+    <property name="OperatingTempLow" column="&quot;OperatingTempLow&quot;" />
+    <property name="OperatingTempUpp" column="&quot;OperatingTempUpp&quot;" />
+    <property name="OperatingTempUOM" column="&quot;OperatingTempUOM&quot;" />
+    <property name="HousingMaterial" column="&quot;HousingMaterial&quot;" />
+    <property name="PowerSupply" column="&quot;PowerSupply&quot;" />
+    <property name="HousingPaintType" column="&quot;HousingPaintType&quot;" />
+    <property name="AreaClassification" column="&quot;AreaClassification&quot;" />
+    <property name="ProcessConnection" column="&quot;ProcessConnection&quot;" />
+    <property name="SignalType" column="&quot;SignalType&quot;" />
+    <property name="Mounting" column="&quot;Mounting&quot;" />
+    <property name="Indicator" column="&quot;Indicator&quot;" />
+    <property name="TransmitterModelNumber" column="&quot;TransmitterModelNumber&quot;" />
+    <property name="ManifoldModelNumber" column="&quot;ManifoldModelNumber&quot;" />
+    <property name="FillFluid" column="&quot;FillFluid&quot;" />
+    <property name="PressureSensor" column="&quot;PressureSensor&quot;" />
+    <property name="ResponseTime" column="&quot;ResponseTime&quot;" />
+    <property name="Accuracy" column="&quot;Accuracy&quot;" />
+  </class>
+</hibernate-mapping>
