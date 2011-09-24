@@ -87,6 +87,8 @@ function getDataTypeIndex(datatype, dataTypes) {
 function getFolderFromChildNode(folderNode, dataTypes) {
 	var folderNodeProp = folderNode.attributes.properties;
 	var folder = {};
+	var keyName = '';
+	
 	folder.tableName = folderNodeProp.tableName;
 	folder.objectNamespace = folderNodeProp.objectNamespace;
 	folder.objectName = folderNodeProp.objectName;
@@ -189,51 +191,55 @@ function getFolderFromChildNode(folderNode, dataTypes) {
 					}
 				}
 				break;
-			case 'Properties':
-				if (folderNode.childNodes[1])
-					var propChildenNodes = propertyFolderNode.childNodes;
-				else
-					var propChildenNodes = propertyFolderNode.children;
-				for (var k = 0; k < propChildenNodes.length; k++) {
-					var propertyNode = propChildenNodes[k];
+		case 'Properties':
+		  if (folderNode.childNodes[1])
+		    var propChildenNodes = propertyFolderNode.childNodes;
+		  else
+		    var propChildenNodes = propertyFolderNode.children;
+		  for (var k = 0; k < propChildenNodes.length; k++) {
+		    var propertyNode = propChildenNodes[k];
 
-					if (!propertyNode.hidden) {
-						if (propertyNode.properties)
-							var propertyNodeProf = propertyNode.properties;
-						else if (propertyNode.attributes)
-							var propertyNodeProf = propertyNode.attributes.properties;
+		    if (!propertyNode.hidden) {
+		      if (propertyNode.properties)
+		        var propertyNodeProf = propertyNode.properties;
+		      else if (propertyNode.attributes)
+		        var propertyNodeProf = propertyNode.attributes.properties;
 
-						var props = {};
-						props.columnName = propertyNodeProf.columnName;
-						props.propertyName = propertyNodeProf.propertyName;
+		      var props = {};
+		      props.columnName = propertyNodeProf.columnName;
+		      props.propertyName = propertyNodeProf.propertyName;
 
-						if (typeof propertyNodeProf.dataType == 'string')
-							props.dataType = getDataTypeIndex(propertyNodeProf.dataType, dataTypes);
-						else
-							props.dataType = propertyNodeProf.dataType;
+		      if (typeof propertyNodeProf.dataType == 'string')
+		        props.dataType = getDataTypeIndex(propertyNodeProf.dataType, dataTypes);
+		      else
+		        props.dataType = propertyNodeProf.dataType;
 
-						props.dataLength = propertyNodeProf.dataLength;
+		      props.dataLength = propertyNodeProf.dataLength;
 
-						if (propertyNodeProf.nullable)
-							props.isNullable = propertyNodeProf.nullable.toString().toLowerCase();
-						else
-							props.isNullable = 'false';
+		      if (propertyNodeProf.nullable)
+		        props.isNullable = propertyNodeProf.nullable.toString().toLowerCase();
+		      else
+		        props.isNullable = 'false';
 
-						if (props.columnName == keyName)
-							props.keyType = 1;
-						else
-							props.keyType = 0;
+		      if (keyName != '' ) {
+		        if (props.columnName == keyName)
+		          props.keyType = 1;
+		        else
+		          props.keyType = 0;
+		      }
+		      else
+		        props.keyType = 0;
 
-						if (propertyNodeProf.showOnIndex)
-							props.showOnIndex = propertyNodeProf.showOnIndex.toString().toLowerCase();
-						else
-							props.showOnIndex = 'false';
+		      if (propertyNodeProf.showOnIndex)
+		        props.showOnIndex = propertyNodeProf.showOnIndex.toString().toLowerCase();
+		      else
+		        props.showOnIndex = 'false';
 
-						props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
-						folder.dataProperties.push(props);
-					}
-				}
-				break;
+		      props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
+		      folder.dataProperties.push(props);
+		    }
+		  }
+		  break;
 			case 'Relationships':
 				if (!relationFolderNode)
 					break;
