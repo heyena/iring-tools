@@ -151,15 +151,15 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									},
 									success: function (response, request) {
 										var rtext = response.responseText;
-										if (rtext.toUpperCase().indexOf('FALSE') == -1) {
+										var error = 'SUCCESS = FALSE';
+										var index = rtext.toUpperCase().indexOf(error);
+										if (index == -1) {
 											showDialog(400, 100, 'Saving Result', 'The configuraiton has been saved successfully.', Ext.Msg.OK, null);
 											var navpanel = Ext.getCmp('nav-panel');
 											navpanel.onReload();
 										}
 										else {
-											var ind = rtext.indexOf('}');
-											var len = rtext.length - ind - 1;
-											var msg = rtext.substring(ind + 1, rtext.length - 1);
+											var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
 											showDialog(400, 100, 'Saving Result - Error', msg, Ext.Msg.OK, null);
 										}
 									},
@@ -461,11 +461,22 @@ function creatRadioField(panel, idLabel, value, serName) {
 }
 
 function showDialog(width, height, title, message, buttons, callback) {
+  if (message.indexOf('\\r\\n') != -1)
+    var msg = message.replace('\\r\\n', '\r\n');
+  else
+    var msg = message;
+
+  if (msg.indexOf("\\") != -1)
+    var msgg = msg.replace(/\\\\/g, "\\");
+  else
+    var msgg = msg;
+  
 	var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
 	Ext.Msg.show({
 		title: title,
-		msg: '<textarea ' + style + ' readonly="yes">' + message + '</textarea>',
+		msg: '<textarea ' + style + ' readonly="yes">' + msgg + '</textarea>',
 		buttons: buttons,
 		fn: callback
 	});
 }
+
