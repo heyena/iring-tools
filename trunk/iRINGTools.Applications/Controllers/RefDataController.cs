@@ -143,9 +143,9 @@ namespace org.iringtools.web.controllers
           JsonTreeNode node = new JsonTreeNode
           {
             type = "MemberNode",
-            icon = "Content/img/class.png",
+            iconCls = "treeClass",
             identifier = entity.Uri.Split('#')[1],
-            id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+            id = Guid.NewGuid().ToString(),
             text = entity.Label,
             expanded = false,
             leaf = false,
@@ -164,7 +164,7 @@ namespace org.iringtools.web.controllers
 
       JsonTreeNode memberNode = new JsonTreeNode
       {
-        id = ("Members" + label).GetHashCode().ToString(),
+          id = Guid.NewGuid().ToString(),
         children = null,
         iconCls = "folder",
         leaf = false,
@@ -177,7 +177,7 @@ namespace org.iringtools.web.controllers
 
       JsonTreeNode clasifNode = new JsonTreeNode
       {
-        id = ("Classifications" + label).GetHashCode().ToString(),
+          id = Guid.NewGuid().ToString(),
         children = null,
         leaf = false,
         iconCls = "folder",
@@ -188,7 +188,7 @@ namespace org.iringtools.web.controllers
       nodes.Add(clasifNode);
       JsonTreeNode supersNode = new JsonTreeNode
       {
-        id = ("Superclasses" + label).GetHashCode().ToString(),
+          id = Guid.NewGuid().ToString(),
         children = null,
         leaf = false,
         iconCls = "folder",
@@ -199,7 +199,7 @@ namespace org.iringtools.web.controllers
       nodes.Add(supersNode);
       JsonTreeNode subsNode = new JsonTreeNode
       {
-        id = ("Subclasses" + label).GetHashCode().ToString(),
+          id = Guid.NewGuid().ToString(),
         children = null,
         leaf = false,
         iconCls = "folder",
@@ -210,7 +210,7 @@ namespace org.iringtools.web.controllers
       nodes.Add(subsNode);
       JsonTreeNode tempsNode = new JsonTreeNode
       {
-        id = ("Templates" + label).GetHashCode().ToString(),
+          id = Guid.NewGuid().ToString(),
         children = null,
         leaf = false,
         iconCls = "folder",
@@ -243,11 +243,10 @@ namespace org.iringtools.web.controllers
         string prefix = _nsMap.GetPrefix(new Uri(entity.Uri.Substring(0, entity.Uri.LastIndexOf("#") + 1)));
         JsonTreeNode node = new JsonTreeNode
         {
-          nodeType = "async",
           type = (prefix.Equals("rdl")) ? "ClassNode" : "TemplateNode",
           iconCls = (prefix.Equals("rdl")) ? "treeClass" : "treeTemplate",
           identifier = entity.Uri.Split('#')[1],
-          id = (label).GetHashCode().ToString(),
+          id = Guid.NewGuid().ToString(),
           text = label,
           expanded = false,
           leaf = false,
@@ -274,11 +273,10 @@ namespace org.iringtools.web.controllers
           string prefix = _nsMap.GetPrefix(new Uri(entity.identifier.Substring(0, entity.identifier.LastIndexOf("#") + 1)));
           JsonTreeNode node = new JsonTreeNode
           {
-            nodeType = "async",
             type = (prefix.Equals("rdl")) ? "ClassNode" : "TemplateNode",
             iconCls = (prefix.Equals("rdl")) ? "treeClass" : "treeTemplate",
             identifier = entity.identifier.Split('#')[1],
-            id = (label).GetHashCode().ToString(),
+            id = Guid.NewGuid().ToString(),
             text = label,
             expanded = false,
             leaf = false,
@@ -306,7 +304,7 @@ namespace org.iringtools.web.controllers
 
           JsonTreeNode memberNode = new JsonTreeNode
           {
-            id = ("Members" + label + entity.repositoryName).GetHashCode().ToString(),
+              id = Guid.NewGuid().ToString(),
             children = new List<JsonTreeNode>(),
             iconCls = "folder",
             leaf = false,
@@ -318,7 +316,7 @@ namespace org.iringtools.web.controllers
 
           JsonTreeNode clasifNode = new JsonTreeNode
           {
-            id = ("Classifications" + label + entity.repositoryName).GetHashCode().ToString(),
+              id = Guid.NewGuid().ToString(),
             children = new List<JsonTreeNode>(),
             iconCls = "folder",
             leaf = false,
@@ -330,7 +328,7 @@ namespace org.iringtools.web.controllers
 
           JsonTreeNode supersNode = new JsonTreeNode
           {
-            id = ("Superclasses" + label + entity.repositoryName).GetHashCode().ToString(),
+              id = Guid.NewGuid().ToString(),
             children = new List<JsonTreeNode>(),
             iconCls = "folder",
             leaf = false,
@@ -341,7 +339,7 @@ namespace org.iringtools.web.controllers
 
           JsonTreeNode subsNode = new JsonTreeNode
           {
-            id = ("Subclasses" + label + entity.repositoryName).GetHashCode().ToString(),
+              id = Guid.NewGuid().ToString(),
             children = null,
             iconCls = "folder",
             leaf = false,
@@ -352,7 +350,7 @@ namespace org.iringtools.web.controllers
 
           JsonTreeNode tempsNode = new JsonTreeNode
           {
-            id = ("Templates" + label + entity.repositoryName).GetHashCode().ToString(),
+              id = Guid.NewGuid().ToString(),
             children = null,
             iconCls = "folder",
             leaf = false,
@@ -390,7 +388,7 @@ namespace org.iringtools.web.controllers
               iconCls = "treeClass",
               leaf = false,
               identifier = classification.reference.Split('#')[1],
-              id = (classification.label + entity.repositoryName).GetHashCode().ToString(),
+              id = Guid.NewGuid().ToString(),
               text = classification.label,
               expanded = false,
               children = null,
@@ -422,7 +420,7 @@ namespace org.iringtools.web.controllers
               iconCls = "treeClass",
               leaf = false,
               identifier = specialization.reference.Split('#')[1],
-              id = (specialization.label + entity.repositoryName).GetHashCode().ToString(),
+              id = Guid.NewGuid().ToString(),
               text = specialization.label,
               expanded = false,
               children = null,
@@ -482,7 +480,7 @@ namespace org.iringtools.web.controllers
             type = "ClassNode",
             iconCls = "treeClass",
             identifier = entity.Uri.Split('#')[1],
-            id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+            id = Guid.NewGuid().ToString(),
             text = entity.Label,
             expanded = false,
             leaf = false,
@@ -523,11 +521,10 @@ namespace org.iringtools.web.controllers
         {
           JsonTreeNode node = new JsonTreeNode
           {
-            nodeType = "async",
             type = "SubclassNode",
             iconCls = "treeClass",
             identifier = entity.Uri.Split('#')[1],
-            id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+            id = Guid.NewGuid().ToString(),
             text = entity.Label,
             expanded = false,
             leaf = false,
@@ -553,11 +550,10 @@ namespace org.iringtools.web.controllers
         {
           JsonTreeNode node = new JsonTreeNode
           {
-            nodeType = "async",
             type = "SuperClassNode",
             iconCls = "treeClass",
             identifier = entity.Uri.Split('#')[1],
-            id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+            id = Guid.NewGuid().ToString(),
             text = entity.Label,
             expanded = false,
             leaf = false,
@@ -583,7 +579,7 @@ namespace org.iringtools.web.controllers
             type = "ClassNode",
             iconCls = "treeClass",
             identifier = entity.Uri.Split('#')[1],
-            id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+            id = Guid.NewGuid().ToString(),
             text = entity.Label,
             expanded = false,
             leaf = false,
@@ -609,7 +605,7 @@ namespace org.iringtools.web.controllers
           {
             type = "TemplateNode",
             iconCls = "treeTemplate",
-            id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+            id = Guid.NewGuid().ToString(),
             identifier = entity.Uri.Split('#')[1],
             text = entity.Label,
             expanded = false,
@@ -651,10 +647,9 @@ namespace org.iringtools.web.controllers
         {
           JsonTreeNode node = new JsonTreeNode
           {
-            nodeType = "async",
             type = "TemplateNode",
             iconCls = "treeTemplate",
-            id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+            id = Guid.NewGuid().ToString(),
             identifier = entity.Uri.Split('#')[1],
             text = entity.Label,
             expanded = false,
@@ -685,7 +680,7 @@ namespace org.iringtools.web.controllers
             leaf = false,
             children = null,
             text = entity.classDefinitions[0].name[0].value,
-            id = ("ClassMap" + entity.classDefinitions[0].name[0].value).GetHashCode().ToString(),
+            id = Guid.NewGuid().ToString(),
             record = entity.classDefinitions[0],
             type = "ClassNode",
             iconCls = "treeClass"
@@ -712,7 +707,7 @@ namespace org.iringtools.web.controllers
             {
               JsonTreeNode entityNode = new JsonTreeNode
               {
-                id = ("Roles" + role.name[0].value).GetHashCode().ToString(),
+                  id = Guid.NewGuid().ToString(),
                 type = "RoleNode",
                 iconCls = "treeRole",
                 children = null,
@@ -738,7 +733,7 @@ namespace org.iringtools.web.controllers
               }
               JsonTreeNode entityNode = new JsonTreeNode
               {
-                id = ("Roles" + role.name[0].value).GetHashCode().ToString(),
+                  id = Guid.NewGuid().ToString(),
                 type = "RoleNode",
                 text = role.name[0].value,
                 iconCls = "treeRole",

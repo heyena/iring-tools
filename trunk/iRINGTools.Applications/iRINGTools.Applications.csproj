@@ -36,9 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF, Version=0.4.2.11625, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF, Version=0.5.0.20572, Culture=neutral, PublicKeyToken=8b91af99db2769f2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
+      <HintPath>..\ExternalBinaries\dotnetRDF\Core\net35\dotNetRDF.dll</HintPath>
     </Reference>
     <Reference Include="Ext.Net">
       <HintPath>..\ExternalBinaries\ext.net.community.1.0rc1\Ext.Net.dll</HintPath>
@@ -172,21 +172,42 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Scripts\adaptermanager\nhibernateconfig\NHibernateConfigTool.js" />
-    <Content Include="Scripts\adaptermanager\nhibernateconfig\NHibernateConfigToolConnection.js" />
-    <Content Include="Scripts\adaptermanager\nhibernateconfig\NHibernateConfigToolKeyandProperty.js" />
-    <Content Include="Scripts\adaptermanager\nhibernateconfig\NHibernateConfigToolRelation.js" />
-    <Content Include="Scripts\adaptermanager\nhibernateconfig\NHibernateConfigToolSave.js" />
-    <Content Include="Scripts\extjs40\bootstrap.js" />
-    <Content Include="Scripts\extjs40\ext-all-debug-w-comments.js" />
+    <Content Include="Scripts\AM\AM.js" />
+    <Content Include="Scripts\AM\controller\DirectoryController.js" />
+    <Content Include="Scripts\AM\controller\MappingController.js" />
+    <Content Include="Scripts\AM\model\DataLayerModel.js" />
+    <Content Include="Scripts\AM\model\DirectoryModel.js" />
+    <Content Include="Scripts\AM\model\DynamicModel.js" />
+    <Content Include="Scripts\AM\model\MappingModel.js" />
+    <Content Include="Scripts\AM\model\SearchModel.js" />
+    <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigTool.js" />
+    <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigToolConnection.js" />
+    <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigToolKeyandProperty.js" />
+    <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigToolRelation.js" />
+    <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigToolSave.js" />
+    <Content Include="Scripts\AM\store\DirectoryStore.js" />
+    <Content Include="Scripts\AM\store\SearchStore.js" />
+    <Content Include="Scripts\AM\view\common\CenterPanel.js" />
+    <Content Include="Scripts\AM\view\common\ContentPanel.js" />
+    <Content Include="Scripts\AM\view\common\PropertyPanel.js" />
+    <Content Include="Scripts\AM\view\directory\ApplicationPanel.js" />
+    <Content Include="Scripts\AM\view\directory\DataGridPanel.js" />
+    <Content Include="Scripts\AM\view\directory\DirectoryPanel.js" />
+    <Content Include="Scripts\AM\view\directory\DirectoryTree.js" />
+    <Content Include="Scripts\AM\view\directory\GraphPanel.js" />
+    <Content Include="Scripts\AM\view\directory\ScopePanel.js" />
+    <Content Include="Scripts\AM\view\directory\SpreadsheetPanel.js" />
+    <Content Include="Scripts\AM\view\directory\ValuelistMapPanel.js" />
+    <Content Include="Scripts\AM\view\directory\ValuelistPanel.js" />
+    <Content Include="Scripts\AM\view\mapping\MappingPanel.js" />
+    <Content Include="Scripts\AM\view\mapping\MappingTree.js" />
+    <Content Include="Scripts\AM\view\mapping\MapProperty.js" />
+    <Content Include="Scripts\AM\view\search\SearchPanel.js" />
+    <Content Include="Scripts\AM\view\search\SearchTree.js" />
+    <Content Include="Scripts\AM\view\Viewport.js" />
     <Content Include="Scripts\extjs40\ext-all-debug.js" />
-    <Content Include="Scripts\extjs40\ext-all-dev.js" />
-    <Content Include="Scripts\extjs40\ext-all.js" />
     <Content Include="Scripts\extjs40\ext-debug.js" />
-    <Content Include="Scripts\extjs40\ext-dev.js" />
     <Content Include="Scripts\extjs40\ext.js" />
-    <Content Include="Scripts\extjs40\ext3-compat.js" />
-    <Content Include="Scripts\extjs40\ext3-core-compat.js" />
     <Content Include="Scripts\extjs40\resources\css\ext-all-access.css" />
     <Content Include="Scripts\extjs40\resources\css\ext-all-gray.css" />
     <Content Include="Scripts\extjs40\resources\css\ext-all-scoped.css" />
@@ -1367,6 +1388,7 @@
     <Content Include="Scripts\extjs40\resources\themes\images\gray\window\window-default-corners.gif" />
     <Content Include="Scripts\extjs40\resources\themes\images\gray\window\window-default-sides.gif" />
     <Content Include="Scripts\extjs40\resources\themes\templates\resources\css\my-ext-theme.css" />
+    <Content Include="Scripts\extjs40\ux\TabScrollerMenu.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ActionPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\AdapterManager.js" />
     <Content Include="Scripts\iringtools\AdapterManager\AjaxRowExpander.js" />
@@ -1482,25 +1504,13 @@
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="Scripts\jquery-1.4.1.js" />
-    <Content Include="Scripts\jquery-1.4.1.min.js" />
-    <Content Include="Scripts\jquery-1.4.1-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
-    <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\MicrosoftAjax.js" />
-    <Content Include="Scripts\MicrosoftAjax.debug.js" />
-    <Content Include="Scripts\MicrosoftMvcAjax.js" />
-    <Content Include="Scripts\MicrosoftMvcAjax.debug.js" />
-    <Content Include="Scripts\MicrosoftMvcValidation.js" />
-    <Content Include="Scripts\MicrosoftMvcValidation.debug.js" />
     <Content Include="Views\Web.config">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Scripts\adaptermanager\ux\" />
+    <Folder Include="Scripts\AM\ux\plugin\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
