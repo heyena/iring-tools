@@ -31,8 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF">
-      <HintPath>..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
+    <Reference Include="dotNetRDF, Version=0.5.0.20572, Culture=neutral, PublicKeyToken=8b91af99db2769f2, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\dotnetRDF\Core\net35\dotNetRDF.dll</HintPath>
+    </Reference>
+    <Reference Include="dotNetRDF.Data.Sql, Version=0.5.0.20572, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\dotnetRDF\Data\Sql\net35\dotNetRDF.Data.Sql.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
@@ -62,10 +67,6 @@
     <Compile Include="ReferenceDataSettings.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AdapterLibrary\AdapterLibrary.csproj">
-      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
-      <Name>AdapterLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\iRINGLibrary\iRINGLibrary.csproj">
       <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
       <Name>iRINGLibrary</Name>

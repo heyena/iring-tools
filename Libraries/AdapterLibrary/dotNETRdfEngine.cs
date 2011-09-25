@@ -52,7 +52,7 @@ namespace org.iringtools.adapter.semantic
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private Graph _graph = null;  // dotNetRdf graph
-    private MicrosoftSqlStoreManager _tripleStore = null;
+    private MicrosoftAdoManager _tripleStore = null;
     private XNamespace _graphNs = String.Empty;
     private string _dataObjectsAssemblyName = String.Empty;
     private string _dataObjectNs = String.Empty;
@@ -80,7 +80,7 @@ namespace org.iringtools.adapter.semantic
         }
       }
 
-      _tripleStore = new MicrosoftSqlStoreManager(
+      _tripleStore = new MicrosoftAdoManager(
         _settings["dotNetRDFServer"],
         _settings["dotNetRDFCatalog"],
         _settings["dotNetRDFUser"],
@@ -175,12 +175,12 @@ namespace org.iringtools.adapter.semantic
       {
         status.Identifier = graphUri.ToString();
 
-        string graphId = _tripleStore.GetGraphID(graphUri);
+        int graphId = _tripleStore.GetGraphID(graphUri);
 
-        if (!String.IsNullOrEmpty(graphId))
+        if (graphId != null)
         {
-          _tripleStore.ClearGraph(graphId);
-          _tripleStore.RemoveGraph(graphId);
+           Uri uri =  _tripleStore.GetGraphUri(graphId);
+          _tripleStore.DeleteGraph(uri);
         }
 
         status.Messages.Add(String.Format("Graph [{0}] has been deleted successfully.", graphUri));
