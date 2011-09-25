@@ -67,9 +67,13 @@
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF, Version=0.3.0.18547, Culture=neutral, PublicKeyToken=d6907caf9fc97226, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF, Version=0.5.0.20572, Culture=neutral, PublicKeyToken=8b91af99db2769f2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\dotnetRDF\Core\net35\dotNetRDF.dll</HintPath>
+    </Reference>
+    <Reference Include="dotNetRDF.Data.Sql, Version=0.5.0.20572, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\dotnetRDF\Data\Sql\net35\dotNetRDF.Data.Sql.dll</HintPath>
     </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -54,13 +54,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.DynamicProxy2, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF, Version=0.5.0.20572, Culture=neutral, PublicKeyToken=8b91af99db2769f2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.DynamicProxy2.dll</HintPath>
+      <HintPath>..\ExternalBinaries\dotnetRDF\Core\net35\dotNetRDF.dll</HintPath>
     </Reference>
-    <Reference Include="dotNetRDF, Version=0.4.2.11625, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF.Data.Sql, Version=0.5.0.20572, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
+      <HintPath>..\ExternalBinaries\dotnetRDF\Data\Sql\net35\dotNetRDF.Data.Sql.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Iesi.Collections.dll</HintPath>
