@@ -52482,6 +52482,26 @@ Ext.define('Ext.data.NodeInterface', {
                     return Ext.Array.indexOf(this.childNodes, child);
                 },
 
+
+                /**
+                * Gets the hierarchical path from the root of the current node.
+                * @param {String} [field] The field to construct the path from. Defaults to the model idProperty.
+                * @param {String} [separator="/"] A separator to use.
+                * @return {String} The node path
+                */
+                getPath: function (field, separator) {
+                    field = field || this.idProperty;
+                    separator = separator || '/';
+
+                    var path = [this.get(field)],
+                        parent = this.parentNode;
+
+                    while (parent) {
+                        path.unshift(parent.get(field));
+                        parent = parent.parentNode;
+                    }
+                    return separator + path.join(separator);
+                },
                 
                 getDepth : function() {
                     return this.get('depth');
