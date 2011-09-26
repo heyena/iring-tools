@@ -744,13 +744,13 @@ namespace org.iringtools.adapter
       }
     }
 
-    // build cross graph map from manifest graph and mapping graph and save it in _graphMap
+    // build cross _graphmap from manifest graph and mapping graph
     private void BuildCrossGraphMap(Manifest manifest, string graph)
     {
       if (manifest == null || manifest.graphs == null || manifest.graphs.Count == 0)
         throw new Exception("Manifest of graph [" + graph + "] is empty.");
 
-      Graph manifestGraph = manifest.graphs.FirstOrDefault();
+      Graph manifestGraph = manifest.FindGraph(graph);
 
       if (manifestGraph.classTemplatesList == null || manifestGraph.classTemplatesList.Count == 0)
         throw new Exception("Manifest of graph [" + graph + "] does not contain any class-template-maps.");

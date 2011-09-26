@@ -127,6 +127,7 @@ public class ExchangeProvider
 
     try
     {
+      manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
       sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, manifest);
     }
     catch (HttpClientException e)
@@ -148,6 +149,7 @@ public class ExchangeProvider
 
     try
     {
+      manifest.getGraphs().getItems().get(0).setName(targetGraphName);
       targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, manifest);
     }
     catch (HttpClientException e)
@@ -218,6 +220,7 @@ public class ExchangeProvider
           + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
       try
       {
+        manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
         dxis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, adapterDxiRequest);
       }
       catch (HttpClientException e)
@@ -232,6 +235,7 @@ public class ExchangeProvider
           + "/dxi/filter?hashAlgorithm=" + hashAlgorithm;
       try
       {
+        manifest.getGraphs().getItems().get(0).setName(targetGraphName);
         dxis = httpClient.post(DataTransferIndices.class, targetDtiUrl, adapterDxiRequest);
       }
       catch (HttpClientException e)
@@ -307,6 +311,7 @@ public class ExchangeProvider
       String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxo";
       try
       {
+        manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
         sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDxoRequest);
       }
       catch (HttpClientException e)
@@ -370,6 +375,7 @@ public class ExchangeProvider
       String targetDtoUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxo";
       try
       {
+        manifest.getGraphs().getItems().get(0).setName(targetGraphName);
         targetDtos = httpClient.post(DataTransferObjects.class, targetDtoUrl, targetDxoRequest);
       }
       catch (HttpClientException e)
@@ -554,6 +560,7 @@ public class ExchangeProvider
         String sourceDtoUrl = sourceGraphUrl + "/dxo";
         try
         {
+          manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
           sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDxoRequest);
         }
         catch (HttpClientException e)
