@@ -13,11 +13,11 @@ namespace NUnit.Tests
     {
       ResetDatabase(
         @"..\..\iRINGTools.Services\App_Data\ABC.Data.Complete.sql",
-        @".\XML\nh-configuration.12345_000.ABC.xml");
+        @".\App_Data\nh-configuration.12345_000.ABC.xml");
 
       ResetDatabase(
         @"..\..\iRINGTools.Services\App_Data\DEF.Data.Small.sql",
-        @".\XML\nh-configuration.12345_000.DEF.xml");
+        @".\App_Data\nh-configuration.12345_000.DEF.xml");
     }
 
     private void ResetDatabase(string sqlScript, string nhConfigPath)

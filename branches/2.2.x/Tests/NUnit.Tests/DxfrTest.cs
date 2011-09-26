@@ -91,7 +91,7 @@ namespace NUnit.Tests
 
         string path = String.Format(
           "{0}DxfrGetDataTransferIndices.xml",
-            _settings["XmlPath"]
+            _settings["AppDataPath"]
             );
 
 				if (_settings["TestMode"].ToLower() != "usefiles")
@@ -146,7 +146,7 @@ namespace NUnit.Tests
 
         string path = String.Format(
           "{0}DxfrGetDataTransferIndicesWithFilter.xml",
-            _settings["XmlPath"]
+            _settings["AppDataPath"]
             );
 
 				if (_settings["TestMode"].ToLower() != "usefiles")
@@ -174,7 +174,7 @@ namespace NUnit.Tests
             
         string path = String.Format(
           "{0}DxfrGetManifest.xml",
-            _settings["XmlPath"]
+            _settings["AppDataPath"]
             );
 
 				if (_settings["TestMode"].ToLower() != "usefiles")
@@ -214,7 +214,7 @@ namespace NUnit.Tests
 
         string path = String.Format(
           "{0}DxfrGetDataTransferIndicesWithManifest.xml",
-            _settings["XmlPath"]
+            _settings["AppDataPath"]
             );
 
 				if (_settings["TestMode"].ToLower() != "usefiles")
@@ -271,7 +271,7 @@ namespace NUnit.Tests
 
         string path = String.Format(
             "{0}DxfrGetDataTransferIndicesByRequest.xml",
-            _settings["XmlPath"]
+            _settings["AppDataPath"]
           );
 
 				if (_settings["TestMode"].ToLower() != "usefiles")
@@ -312,7 +312,7 @@ namespace NUnit.Tests
 
         string path = String.Format(
             "{0}DxfrGetDataTransferObjects.xml",
-            _settings["XmlPath"]
+            _settings["AppDataPath"]
           );
 
 				if (_settings["TestMode"].ToLower() != "usefiles")
@@ -355,7 +355,7 @@ namespace NUnit.Tests
 
         string path = String.Format(
             "{0}DxfrGetDataTransferObjectsWithDxoRequest.xml",
-            _settings["XmlPath"]
+            _settings["AppDataPath"]
           );
 
 				if (_settings["TestMode"].ToLower() != "usefiles")
@@ -402,7 +402,7 @@ namespace NUnit.Tests
 				
 				string path = String.Format(
 						"{0}DxfrNewDto.xml",
-						_settings["XmlPath"]
+						_settings["AppDataPath"]
 					);
 				benchmark = XDocument.Load(path);
 
@@ -415,7 +415,7 @@ namespace NUnit.Tests
 
 				path = String.Format(
 						"{0}DxfrResponse.xml",
-						_settings["XmlPath"]
+						_settings["AppDataPath"]
 					);
 
 				if (_settings["TestMode"].ToLower() != "usefiles")

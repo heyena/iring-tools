@@ -85,7 +85,7 @@ namespace NUnit.Tests
     {
       string dictionaryPath = String.Format(
           "{0}DatabaseDictionary.{1}.{2}.xml",
-          _settings["XmlPath"],
+          _settings["AppDataPath"],
           _settings["ProjectName"],
           _settings["ApplicationName"]
         );
