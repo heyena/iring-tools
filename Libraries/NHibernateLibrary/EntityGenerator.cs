@@ -79,7 +79,7 @@ namespace org.iringtools.nhibernate
         {
           status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
-          Directory.CreateDirectory(_settings["XmlPath"]);
+          Directory.CreateDirectory(_settings["AppDataPath"]);
 
           _mappingBuilder = new StringBuilder();
           _mappingWriter = new XmlTextWriter(new StringWriter(_mappingBuilder));
@@ -137,11 +137,11 @@ namespace org.iringtools.nhibernate
             (Provider)Enum.Parse(typeof(Provider), dbSchema.Provider, true), 
             dbSchema.ConnectionString, dbSchema.SchemaName);
 
-          Utility.WriteString(hibernateConfig, _settings["XmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
-          Utility.WriteString(mappingXml, _settings["XmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+          Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+          Utility.WriteString(mappingXml, _settings["AppDataPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
           DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
-          Utility.Write<DataDictionary>(dataDictionary, _settings["XmlPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
+          Utility.Write<DataDictionary>(dataDictionary, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
           status.Messages.Add("Entities of [" + projectName + "." + applicationName + "] generated successfully.");
