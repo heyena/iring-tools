@@ -107,7 +107,7 @@ namespace RdfImportExport
       MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
       SqlGraph sqlGraph = null;
       List<Uri> graphUris = msStore.GetGraphUris();
-      FastRdfXmlWriter rdfXmlWriter = new FastRdfXmlWriter();
+      PrettyRdfXmlWriter rdfXmlWriter = new PrettyRdfXmlWriter();
 
       if (graphUri == null || graphUri == string.Empty)
       {
