@@ -38,7 +38,7 @@ namespace org.iringtools.adapter.projection
       // load uri maps config
       _uriMaps = new Properties();
 
-      string uriMapsFilePath = _settings["DataPath"] + "UriMaps.conf";
+      string uriMapsFilePath = _settings["AppDataPath"] + "UriMaps.conf";
 
       if (File.Exists(uriMapsFilePath))
       {

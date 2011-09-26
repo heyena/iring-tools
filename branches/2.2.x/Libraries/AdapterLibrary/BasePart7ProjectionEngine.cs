@@ -123,15 +123,17 @@ namespace org.iringtools.adapter.projection
       _secondaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
         _settings["SecondaryClassificationStyle"].ToString());
 
-      if (File.Exists(_settings["ClassificationTemplateFile"]))
+      string classificationTemplateFile = _settings["ClassificationTemplateFile"];
+
+      if (File.Exists(classificationTemplateFile))
       {
-        _classificationConfig = Utility.Read<ClassificationTemplate>(_settings["ClassificationTemplateFile"]);
+        _classificationConfig = Utility.Read<ClassificationTemplate>(classificationTemplateFile);
       }
 
       // load uri maps config
       _uriMaps = new Properties();
 
-      string uriMapsFilePath = _settings["DataPath"] + "UriMaps.conf";
+      string uriMapsFilePath = _settings["AppDataPath"] + "UriMaps.conf";
 
       if (File.Exists(uriMapsFilePath))
       {

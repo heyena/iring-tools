@@ -49,22 +49,22 @@ namespace org.iringtools.adapter.datalayer
       _adapterProvider = new AdapterProvider(_settings);
 
       _hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml",
-        _settings["XmlPath"],
+        _settings["AppDataPath"],
         _settings["Scope"]
       );
 
       string hibernateMappingPath = string.Format("{0}nh-mapping.{1}.xml",
-        _settings["XmlPath"],
+        _settings["AppDataPath"],
         _settings["Scope"]
       );
 
       _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml",
-        _settings["XmlPath"],
+        _settings["AppDataPath"],
         _settings["Scope"]
       );
 
       string _databaseDictionaryPath = string.Format("{0}DatabaseDictionary.{1}.xml",
-        _settings["XmlPath"],
+        _settings["AppDataPath"],
         _settings["Scope"]
       );
 
@@ -100,7 +100,7 @@ namespace org.iringtools.adapter.datalayer
       }
 
       _authorizationPath = string.Format("{0}Authorization.{1}.xml",
-        _settings["DataPath"],
+        _settings["AppDataPath"],
         _settings["Scope"]
       );
     }
@@ -743,7 +743,7 @@ namespace org.iringtools.adapter.datalayer
           _settings["Scope"] = scope;
 
           _settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             scope
           );
 

@@ -31,7 +31,7 @@ namespace org.iringtools.adapter.datalayer
     public SpreadsheetProvider(AdapterSettings settings)
     {
       _settings = settings;
-      _configurationPath = Path.Combine(_settings["XmlPath"], "spreadsheet-configuration." + _settings["Scope"] + ".xml");
+      _configurationPath = Path.Combine(_settings["AppDataPath"], "spreadsheet-configuration." + _settings["Scope"] + ".xml");
 
       if (File.Exists(_configurationPath))
       {
@@ -81,8 +81,9 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (IOException e)
       {
-        throw new IOException(string.Format("File {0} is locked by other process", _configuration.Location));
+        throw new IOException(string.Format("File {0} is locked by other process. " + e, _configuration.Location));
       }
+
       return doc;
     }
 

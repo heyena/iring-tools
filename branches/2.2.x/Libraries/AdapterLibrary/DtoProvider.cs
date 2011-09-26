@@ -110,7 +110,7 @@ namespace org.iringtools.adapter
         _settings["UserName"] = identity.Name;
       }
 
-      string scopesPath = String.Format("{0}Scopes.xml", _settings["XmlPath"]);
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
       _settings["ScopesPath"] = scopesPath;
 
       if (File.Exists(scopesPath))
@@ -123,9 +123,7 @@ namespace org.iringtools.adapter
         Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
 
-      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
-            _settings["XmlPath"]
-          );
+      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
       string bindingConfigurationPath = Path.Combine(
         _settings["BaseDirectoryPath"],
@@ -619,20 +617,15 @@ namespace org.iringtools.adapter
           _settings["ApplicationName"] = applicationName;
           _settings["Scope"] =  scope;
 
-          string appSettingsPath = String.Format("{0}{1}.config",
-            _settings["XmlPath"],
-            scope
-          );
+          string appSettingsPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope);
 
           if (File.Exists(appSettingsPath))
           {
             AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
             _settings.AppendSettings(appSettings);
           }
-          string relativePath = String.Format("{0}BindingConfiguration.{1}.xml",
-            _settings["XmlPath"],
-            scope
-          );
+
+          string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
 
           //Ninject Extension requires fully qualified path.
           string bindingConfigurationPath = Path.Combine(
@@ -658,10 +651,7 @@ namespace org.iringtools.adapter
 
           _kernel.Load(bindingConfigurationPath);
 
-          string mappingPath = String.Format("{0}Mapping.{1}.xml",
-            _settings["XmlPath"],
-            scope
-          );
+          string mappingPath = String.Format("{0}Mapping.{1}.xml", _settings["AppDataPath"], scope);
 
           if (File.Exists(mappingPath))
           {

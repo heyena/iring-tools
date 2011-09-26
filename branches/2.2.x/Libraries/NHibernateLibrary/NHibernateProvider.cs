@@ -756,7 +756,7 @@ namespace org.iringtools.nhibernate
 				_settings["ProjectName"] = projectName;
 				_settings["ApplicationName"] = applicationName;
 				_settings["Scope"] = scope;
-				_settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["XmlPath"], scope);
+				_settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["AppDataPath"], scope);
 			}
 			catch (Exception ex)
 			{

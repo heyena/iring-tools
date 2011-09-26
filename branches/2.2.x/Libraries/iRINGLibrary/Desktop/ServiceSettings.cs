@@ -4,6 +4,7 @@ using org.iringtools.utility;
 using System.Net;
 using System.ServiceModel;
 using org.iringtools.mapping;
+using System.IO;
 
 namespace org.iringtools.library
 {
@@ -12,15 +13,14 @@ namespace org.iringtools.library
     public ServiceSettings()
     {
       this.Add("BaseDirectoryPath", AppDomain.CurrentDomain.BaseDirectory);
-      this.Add("XmlPath", @".\XML\");
-      this.Add("DataPath", @".\App_Data\");
+      this.Add("AppDataPath", @".\App_Data\");
       this.Add("ProxyCredentialToken", String.Empty);
       this.Add("ProxyHost", String.Empty);
       this.Add("ProxyPort", String.Empty);
       this.Add("IgnoreSslErrors", "True");
       this.Add("PrimaryClassificationStyle", "Type");
       this.Add("SecondaryClassificationStyle", "Template");
-      this.Add("ClassificationTemplateFile", @".\XML\ClassificationTemplate.xml");
+      this.Add("ClassificationTemplateFile", this["AppDataPath"] + "ClassificationTemplate.xml");
 
       if (OperationContext.Current != null)
       {
@@ -58,6 +58,19 @@ namespace org.iringtools.library
         {
           //Override existing settings, and create new ones
           this.Set(key, settings[key]);
+        }
+      }
+
+      //Consolidate legacy XML folder to App_Data folder
+      if (this["AppDataPath"] == @".\App_Data\" && Directory.Exists(@".\XML\"))
+      {
+        string[] srcFiles = Directory.GetFiles(@".\XML\", "*.xml");
+
+        foreach (string srcFile in srcFiles)
+        {
+          string fileName = Path.GetFileName(srcFile);
+          string destFile = Path.Combine(this["AppDataPath"], fileName);
+          File.Copy(srcFile, destFile, true);
         }
       }
     }
