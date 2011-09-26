@@ -284,8 +284,8 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 									return;
 								}
 							var relationRecord = Ext.data.Record.create([
-              { name: "relationName" }
-            ]);
+                              { name: "relationName" }
+                            ]);
 
 							var newRelationRecord = new relationRecord({
 								relationName: relationName
@@ -297,7 +297,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 							if (!propertyNameCombo.getValue() || !mapPropertyNameCombo.getValue())
 								return;
 
-							var propertyName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
+							var propertyName = propertyNameCombo.store.getAt(propertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
 							var mapPropertyName = mapPropertyNameCombo.store.getAt(mapPropertyNameCombo.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
 							if (propertyName == "" || mapPropertyName == "") {
 								showDialog(400, 100, 'Warning', msg, Ext.Msg.OK, null);
@@ -312,9 +312,9 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 								}
 
 							var propertyMapRecord = Ext.data.Record.create([
-                { name: "property" },
-                { name: "relatedProperty" },
-              ]);
+                                { name: "property" },
+                                { name: "relatedProperty" },
+                            ]);
 
 							var newRelationRecord = new propertyMapRecord({
 								property: propertyName,
@@ -714,16 +714,16 @@ function setRelationFields(editPane, node, scopeName, appName) {
 					var proxyData = findNodeRelatedObjMap(rnode, relatedObjectName);
 
 					var colModel = new Ext.grid.ColumnModel([
-                { id: 'property', header: 'Property', dataIndex: 'property' },
-                { header: 'Related Property', dataIndex: 'relatedProperty' }
-              ]);
+                        { id: 'property', header: 'Property', dataIndex: 'property' },
+                        { header: 'Related Property', dataIndex: 'relatedProperty' }
+                    ]);
 					var dataStore = new Ext.data.Store({
 						autoDestroy: true,
 						proxy: new Ext.data.MemoryProxy(proxyData),
 						reader: new Ext.data.ArrayReader({}, [
-                  { name: 'property' },
-                  { name: 'relatedProperty' }
-                ])
+                          { name: 'property' },
+                          { name: 'relatedProperty' }
+                        ])
 					});
 					createRelationGrid(scopeName + '.' + appName + '.' + rnode.id, dataRelationPane, colModel, dataStore, scopeName + '.' + appName + '.-nh-config', scopeName + '.' + appName + '.dataObjectsPane', scopeName + '.' + appName + '.relationFieldsForm.' + rnode.id, 1, scopeName, appName, relatedObjectName);
 				}
@@ -742,7 +742,10 @@ function setRelationFields(editPane, node, scopeName, appName) {
 				xtype: 'combo',
 				name: 'propertyName',
 				fieldLabel: 'Property Name',
-				store: selectedProperties,
+				store: new Ext.data.SimpleStore({
+				    fields: ['value', 'text'],
+				    data: selectedProperties
+				}),				
 				mode: 'local',
 				editable: false,
 				triggerAction: 'all',
@@ -989,7 +992,7 @@ var addPropertyMapping = function (relationConfigPanel) {
 		return;
 	}
 
-	var propertyName = selectPropComboBox.store.getAt(selectPropComboBox.getValue()).data.field2.replace(/^\s*/, "").replace(/\s*$/, "");
+	var propertyName = selectPropComboBox.store.getAt(selectPropComboBox.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
 	var mapPropertyName = mapPropComboBox.store.getAt(mapPropComboBox.getValue()).data.text.replace(/^\s*/, "").replace(/\s*$/, "");
 	if (propertyName == "" || mapPropertyName == "") {
 		var message = 'Property Name or Mapping Property cannot be blank.';

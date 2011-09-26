@@ -125,7 +125,7 @@ function changeConfig (dbName, dbServer, dbInstance, dbSchema, userName, passwor
 	password.clearInvalid();
 }
 
-function setDsConfigPane (editPane, dbInfo, dbDict, scopeName, appName) {
+function setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane) {
 	if (editPane) {
 		if (editPane.items.map[scopeName + '.' + appName + '.dsconfigPane']) {
 			var dsConfigPanel = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
@@ -256,8 +256,8 @@ function setDsConfigPane (editPane, dbInfo, dbDict, scopeName, appName) {
 							portNumber.setValue('3306');
 						}
 					}
-				}
-				}
+				}	
+			    }
 			}, {
 				xtype: 'textfield',
 				name: 'dbServer',
@@ -368,13 +368,13 @@ function setDsConfigPane (editPane, dbInfo, dbDict, scopeName, appName) {
 							},
 							success: function (f, a) {
 								dbTableNames = Ext.util.JSON.decode(a.response.responseText);
-								var tab = Ext.getCmp('content-panel');
-								var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
-								var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
+								//var tab = Ext.getCmp('content-panel');
+								//var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
+								//var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
 								var editPane = dataObjectsPane.items.map[scopeName + '.' + appName + '.editor-panel'];
 								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 								dbObjectsTree.disable();
-								setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName);
+								setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 							},
 							failure: function (f, a) {
 								if (a.response)
@@ -456,10 +456,7 @@ function setSelectTables (dbObjectsTree) {
 	return selectTableNames;
 }
 
-function setTablesSelectorPane (editPane, dbInfo, dbDict, scopeName, appName) {
-	var tab = Ext.getCmp('content-panel');
-	var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
-	var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
+function setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane) {
 	var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 
 	if (editPane) {
@@ -542,7 +539,9 @@ function setTablesSelectorPane (editPane, dbInfo, dbDict, scopeName, appName) {
 					text: 'Apply',
 					tooltip: 'Apply the current changes to the data objects tree',
 					handler: function () {
-						var editPane = dataObjectsPane.items.items[1];
+					    //var tab = Ext.getCmp('content-panel');
+					    //var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
+					    //var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
 						var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
 						var tablesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
 						var tablesSelForm = tablesSelectorPane.getForm();
@@ -633,12 +632,20 @@ function setTablesSelectorPane (editPane, dbInfo, dbDict, scopeName, appName) {
 								serName: serName
 							};
 						}
+                       
+                        treeLoader.on("beforeload", function (treeLoader, node) {
+                            dataObjectsPane.body.mask("Loading...", "x-mask-loading");
+                        }, this);
+
+                        treeLoader.on("load", function (treeLoader, node) {
+                            dataObjectsPane.body.unmask();
+                        }, this);
 
 						var rootNode = dbObjectsTree.getRootNode();
 						rootNode.reload(
-            function (rootNode) {
-              loadTree(rootNode, dbDict);
-            });
+                        function (rootNode) {
+                          loadTree(rootNode, dbDict);
+                        });
 					}
 				}, {
 					xtype: 'tbspacer',
@@ -859,7 +866,7 @@ function setTableNames (dbDict) {
 	return selectTableNames;
 };
 
-function showTree (dbObjectsTree, dbInfo, dbDict, scopeName, appName) {
+function showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjectsPane) {
 	var selectTableNames = setTableNames(dbDict);
 	var connStr = dbDict.ConnectionString;
 	if (!connStr) {
@@ -946,7 +953,15 @@ function showTree (dbObjectsTree, dbInfo, dbDict, scopeName, appName) {
 		portNumber: dbInfo.portNumber,
 		tableNames: selectTableNames,
 		serName: dbInfo.serName
-	};
+	};  
+
+    treeLoader.on("beforeload", function (treeLoader, node) {
+        dataObjectsPane.body.mask("Loading...", "x-mask-loading");       
+    }, this);
+
+    treeLoader.on("load", function (treeLoader, node) {
+        dataObjectsPane.body.unmask();
+    }, this);
 
 	rootNode.reload(
       function (rootNode) {
