@@ -42,6 +42,9 @@
     <Reference Include="dotNetRDF">
       <HintPath>..\..\..\ExternalBinaries\dotnetRDF\Core\net35\dotNetRDF.dll</HintPath>
     </Reference>
+    <Reference Include="dotNetRDF.Data.Sql">
+      <HintPath>..\..\..\ExternalBinaries\dotnetRDF\Data\Sql\net35\dotNetRDF.Data.Sql.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -57,15 +60,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
-      <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
-      <Name>UtilityLibrary</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
