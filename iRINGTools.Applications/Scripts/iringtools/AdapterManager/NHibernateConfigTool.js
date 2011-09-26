@@ -17,8 +17,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var dbInfo;
 		var dbTableNames;
 		var userTableNames;
-		var dataTypes = null;
-
+		var dataTypes = null;		
 		var dataObjectsPane = new Ext.Panel({
 			layout: 'border',
 			id: scopeName + '.' + appName + '.dataObjectsPane',
@@ -49,7 +48,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 						nodeType: 'async',
 						iconCls: 'folder'
 					},
-					loader: new Ext.tree.TreeLoader(),
+		            loader: new Ext.tree.TreeLoader(),
 					tbar: new Ext.Toolbar({
 						items: [{
 							xtype: 'tbspacer',
@@ -84,7 +83,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 										if (dbDict.dataObjects.length > 0) {
 											// populate data source form
-											showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName);
+										    showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 										}
 										else {
 											dbObjectsTree.disable();
@@ -92,7 +91,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 											if (!editPane) {
 												var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 											}
-											setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
+								            setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 										}
 									},
 									failure: function (response, request) {
@@ -100,7 +99,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										if (!editPane) {
 											var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 										}
-										setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
+							            setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 										editPane.getLayout().setActiveItem(editPane.items.length - 1);
 									}
 								});
@@ -109,16 +108,16 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							xtype: 'tbspacer',
 							width: 4
 						}, {
-							xtype: 'button',
-							icon: 'Content/img/16x16/document-properties.png',
+						    xtype: 'button',
+                            icon: 'Content/img/16x16/document-properties.png',
 							text: 'Edit Connection',
 							tooltip: 'Edit database connection',
-							handler: function () {
+                            handler: function () {
 								editPane = dataObjectsPane.items.items[1];
 								if (!editPane) {
 									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 								}
-								setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
+					            setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 							}
 						}, {
 							xtype: 'tbspacer',
@@ -170,7 +169,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 							}
 						}]
 					}),
-					listeners: {
+					listeners: {                          	
 						click: function (node, e) {
 							if (node.isRoot) {
 								editPane = dataObjectsPane.items.items[1];
@@ -178,7 +177,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 								}
 
-								setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName);
+					            setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 								return;
 							}
 							else if (!node)
@@ -299,7 +298,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 				if (dbDict.dataObjects.length > 0) {
 					// populate data source form
-					dbInfo = showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName);
+				    dbInfo = showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 					var abcdd = 5;
 				}
 				else {
@@ -308,7 +307,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 					if (!editPane) {
 						var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 					}
-					setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName);
+		            setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 				}
 			},
 			failure: function (response, request) {
