@@ -59,7 +59,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
          "{0}GetIndividual.xml",
-         _settings["XmlPath"]
+         _settings["AppDataPath"]
        );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -93,7 +93,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -127,7 +127,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -161,7 +161,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetPageIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -194,7 +194,7 @@ namespace NUnit.Tests
 
         path = String.Format(
             "{0}GetPageIndex.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
@@ -230,7 +230,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetPageFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -263,7 +263,7 @@ namespace NUnit.Tests
 
         path = String.Format(
             "{0}GetPageFull.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
@@ -303,7 +303,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetFilterIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -341,7 +341,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetFilterFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -377,7 +377,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetSortIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -413,7 +413,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetSortFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -451,7 +451,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetFilterPageSortIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -484,7 +484,7 @@ namespace NUnit.Tests
 
         path = String.Format(
             "{0}GetFilterPageSortIndex.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
@@ -524,7 +524,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetFilterPageSortFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -557,7 +557,7 @@ namespace NUnit.Tests
 
         path = String.Format(
             "{0}GetFilterPageSortFull.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
@@ -606,7 +606,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetDataFilterIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -653,7 +653,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetDataFilterFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -708,7 +708,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetDataFilterPageSortIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -744,7 +744,7 @@ namespace NUnit.Tests
 
         path = String.Format(
             "{0}GetDataFilterPageSortIndex.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
@@ -801,7 +801,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetDataFilterPageSortFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -837,7 +837,7 @@ namespace NUnit.Tests
 
         path = String.Format(
             "{0}GetDataFilterPageSortFull.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
