@@ -90,7 +90,7 @@ namespace org.iringtools.adapter.projection
       foreach(DataProperty dataProperty in dataObject.dataProperties)
       {
         XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(dataProperty.propertyName));
-        propertyElement.Add(new XAttribute("dataType", dataProperty.dataType));
+        //propertyElement.Add(new XAttribute("dataType", dataProperty.dataType));
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         
         if (value != null)
