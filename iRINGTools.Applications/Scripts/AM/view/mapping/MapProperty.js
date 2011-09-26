@@ -25,7 +25,7 @@ Ext.define('AM.view.mapping.MapProperty', {
             bbar: [
                 { xtype: 'tbfill' },
                 { text: 'Ok', scope: this, handler: this.onSave },
-                { text: 'Cancel', scope: this, handler: this.onClose }
+                { text: 'Cancel', scope: this, handler: this.onReset }
             ],
             items: [
                     { xtype: 'hidden', name: 'propertyName', id: 'propertyName' },

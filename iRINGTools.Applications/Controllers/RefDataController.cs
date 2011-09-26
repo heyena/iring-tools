@@ -147,7 +147,7 @@ namespace org.iringtools.web.controllers
             identifier = entity.Uri.Split('#')[1],
             id = Guid.NewGuid().ToString(),
             text = entity.Label,
-            expanded = false,
+           // expanded = false,
             leaf = false,
             children = GetDefaultChildren(entity.Label),
             record = entity
@@ -171,7 +171,7 @@ namespace org.iringtools.web.controllers
         text = "Members",
         type = "MembersNode",
         identifier = null,
-        expanded = false
+      //  expanded = false
       };
       nodes.Add(memberNode);
 
@@ -183,7 +183,7 @@ namespace org.iringtools.web.controllers
         iconCls = "folder",
         text = "Member Of",
         type = "ClassificationsNode",
-        expanded = false
+      //  expanded = false
       };
       nodes.Add(clasifNode);
       JsonTreeNode supersNode = new JsonTreeNode
@@ -194,7 +194,7 @@ namespace org.iringtools.web.controllers
         iconCls = "folder",
         text = "Superclasses",
         type = "SuperclassesNode",
-        expanded = false
+    //    expanded = false
       };
       nodes.Add(supersNode);
       JsonTreeNode subsNode = new JsonTreeNode
@@ -205,7 +205,7 @@ namespace org.iringtools.web.controllers
         iconCls = "folder",
         text = "Subclasses",
         type = "SubclassesNode",
-        expanded = false
+     //   expanded = false
       };
       nodes.Add(subsNode);
       JsonTreeNode tempsNode = new JsonTreeNode
@@ -216,7 +216,7 @@ namespace org.iringtools.web.controllers
         iconCls = "folder",
         text = "Templates",
         type = "ClassTemplatesNode",
-        expanded = false
+     //   expanded = false
       };
       nodes.Add(tempsNode);
 
@@ -248,7 +248,7 @@ namespace org.iringtools.web.controllers
           identifier = entity.Uri.Split('#')[1],
           id = Guid.NewGuid().ToString(),
           text = label,
-          expanded = false,
+     //     expanded = false,
           leaf = false,
           // children = new List<JsonTreeNode>(),
           record = entity
@@ -278,7 +278,7 @@ namespace org.iringtools.web.controllers
             identifier = entity.identifier.Split('#')[1],
             id = Guid.NewGuid().ToString(),
             text = label,
-            expanded = false,
+       //     expanded = false,
             leaf = false,
             //  children = (prefix.Equals("rdl")) ? GetDefaultChildren(label) : null,
             record = entity
@@ -311,7 +311,7 @@ namespace org.iringtools.web.controllers
             text = "Members",
             type = "MembersNode",
             identifier = null,
-            expanded = false
+        //    expanded = false
           };
 
           JsonTreeNode clasifNode = new JsonTreeNode
@@ -323,7 +323,7 @@ namespace org.iringtools.web.controllers
             text = "Member Of",
             type = "ClassificationsNode",
             identifier = null,
-            expanded = false
+          //  expanded = false
           };
 
           JsonTreeNode supersNode = new JsonTreeNode
@@ -334,7 +334,7 @@ namespace org.iringtools.web.controllers
             leaf = false,
             text = "Superclasses",
             type = "SuperclassesNode",
-            expanded = false
+        //    expanded = false
           };
 
           JsonTreeNode subsNode = new JsonTreeNode
@@ -345,7 +345,7 @@ namespace org.iringtools.web.controllers
             leaf = false,
             text = "Subclasses",
             type = "SubclassesNode",
-            expanded = false
+        //    expanded = false
           };
 
           JsonTreeNode tempsNode = new JsonTreeNode
@@ -356,7 +356,7 @@ namespace org.iringtools.web.controllers
             leaf = false,
             text = "Templates",
             type = "ClassTemplatesNode",
-            expanded = false
+         //   expanded = false
           };
           #endregion
 
@@ -390,7 +390,7 @@ namespace org.iringtools.web.controllers
               identifier = classification.reference.Split('#')[1],
               id = Guid.NewGuid().ToString(),
               text = classification.label,
-              expanded = false,
+       //       expanded = false,
               children = null,
               record = classification
             };
@@ -422,7 +422,7 @@ namespace org.iringtools.web.controllers
               identifier = specialization.reference.Split('#')[1],
               id = Guid.NewGuid().ToString(),
               text = specialization.label,
-              expanded = false,
+        //      expanded = false,
               children = null,
               record = specialization
             };
@@ -482,7 +482,7 @@ namespace org.iringtools.web.controllers
             identifier = entity.Uri.Split('#')[1],
             id = Guid.NewGuid().ToString(),
             text = entity.Label,
-            expanded = false,
+         //   expanded = false,
             leaf = false,
             children = null,
             record = entity
@@ -526,7 +526,7 @@ namespace org.iringtools.web.controllers
             identifier = entity.Uri.Split('#')[1],
             id = Guid.NewGuid().ToString(),
             text = entity.Label,
-            expanded = false,
+        //    expanded = false,
             leaf = false,
             children = GetDefaultChildren(entity.Label),
             record = entity
@@ -555,7 +555,7 @@ namespace org.iringtools.web.controllers
             identifier = entity.Uri.Split('#')[1],
             id = Guid.NewGuid().ToString(),
             text = entity.Label,
-            expanded = false,
+         //   expanded = false,
             leaf = false,
             children = GetDefaultChildren(entity.Label),
             record = entity
@@ -581,7 +581,7 @@ namespace org.iringtools.web.controllers
             identifier = entity.Uri.Split('#')[1],
             id = Guid.NewGuid().ToString(),
             text = entity.Label,
-            expanded = false,
+        //    expanded = false,
             leaf = false,
             children = null,
             record = entity
@@ -608,7 +608,7 @@ namespace org.iringtools.web.controllers
             id = Guid.NewGuid().ToString(),
             identifier = entity.Uri.Split('#')[1],
             text = entity.Label,
-            expanded = false,
+        //    expanded = false,
             leaf = false,
             children = null,
             record = entity
@@ -652,7 +652,7 @@ namespace org.iringtools.web.controllers
             id = Guid.NewGuid().ToString(),
             identifier = entity.Uri.Split('#')[1],
             text = entity.Label,
-            expanded = false,
+        //    expanded = false,
             leaf = false,
             children = null,
             record = entity

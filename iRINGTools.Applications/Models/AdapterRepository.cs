@@ -406,7 +406,7 @@ namespace iRINGTools.Web.Models
             {
               text = "Keys",
               type = "keys",
-              expanded = true,
+           //  expanded = true,
 							iconCls = "folder",
               leaf = false,							
               children = new List<JsonTreeNode>()
@@ -416,7 +416,7 @@ namespace iRINGTools.Web.Models
             {
               text = "Properties",
               type = "properties",
-              expanded = true,
+           //   expanded = true,
 							iconCls = "folder",
               leaf = false,
               children = new List<JsonTreeNode>()
@@ -426,7 +426,7 @@ namespace iRINGTools.Web.Models
             {
               text = "Relationships",
               type = "relationships",
-              expanded = true,
+            //  expanded = true,
 							iconCls = "folder",
               leaf = false,
               children = new List<JsonTreeNode>()
