@@ -12,6 +12,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
     scope: null,
     record: null,
+    id: null,
     form: null,
     url: null,
 
@@ -34,9 +35,14 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
         var scope = "";
         var showconfigure = "";
+        var id = "";
 
         if (this.scope != null) {
             scope = this.scope.Name;
+        }
+
+        if (this.id != null) {
+            id = this.id;
         }
 
         var name = "";
@@ -63,11 +69,20 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
             root: 'items',
             idProperty: 'assembly',
             fields: [
-        { name: 'assembly', mapping: 'Assembly', allowBlank: false },
-        { name: 'name', mapping: 'Name', allowBlank: false },
-        { name: 'configurable', mapping: 'Configurable', allowBlank: false }
-      ]
+                { name: 'assembly', mapping: 'Assembly', allowBlank: false },
+                { name: 'name', mapping: 'Name', allowBlank: false },
+                { name: 'configurable', mapping: 'Configurable', allowBlank: false }
+            ]
         });
+
+        var panel = Ext.getCmp(id);
+        dataLayersStore.on('beforeload', function (store, options) {
+            panel.body.mask('Loading...', 'x-mask-loading');
+        }, this);
+
+        dataLayersStore.on('load', function (store, records, options) {
+            panel.body.unmask();
+        }, this);
 
         var cmbDataLayers = new Ext.form.ComboBox({
             fieldLabel: 'Data Layer',
@@ -164,24 +179,24 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
 
     onSave: function () {
         var that = this;    // consists the main/prappNameclass object       
-		if (this.form.getForm().getFieldValues().Scope != this.form.getForm().getFieldValues().Name) {
-			this.form.getForm().submit({
-				waitMsg: 'Saving Data...',
-				success: function (f, a) {
-					that.fireEvent('Save', that);
-				},
-				failure: function (f, a) {
-					//Ext.Msg.alert('Warning', 'Error saving changes!')
-					var message = 'Error saving changes!';
-					showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-				}
-			});
-		}
-		else {
-			var message = 'Scope & Application name cannot be same!';
-			showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-		}       
-    }   
+        if (this.form.getForm().getFieldValues().Scope != this.form.getForm().getFieldValues().Name) {
+            this.form.getForm().submit({
+                waitMsg: 'Saving Data...',
+                success: function (f, a) {
+                    that.fireEvent('Save', that);
+                },
+                failure: function (f, a) {
+                    //Ext.Msg.alert('Warning', 'Error saving changes!')
+                    var message = 'Error saving changes!';
+                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                }
+            });
+        }
+        else {
+            var message = 'Scope & Application name cannot be same!';
+            showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+        }
+    }
 
 });
 

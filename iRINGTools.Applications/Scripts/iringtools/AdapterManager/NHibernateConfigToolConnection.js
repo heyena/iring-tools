@@ -145,7 +145,15 @@ function setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjec
 			fields: [{
 				name: 'Provider'
 			}]
-		});
+        });
+
+        providersStore.on('beforeload', function (treeLoader, node) {
+            editPane.body.mask('Loading...', 'x-mask-loading');
+        }, this);
+
+        providersStore.on('load', function (treeLoader, node) {
+            editPane.body.unmask();
+        }, this);
 
 		var dsConfigPane = new Ext.FormPanel({
 			labelWidth: 150,
@@ -633,11 +641,11 @@ function setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dat
 							};
 						}
                        
-                        treeLoader.on("beforeload", function (treeLoader, node) {
-                            dataObjectsPane.body.mask("Loading...", "x-mask-loading");
+                        treeLoader.on('beforeload', function (treeLoader, node) {
+                            dataObjectsPane.body.mask('Loading...', 'x-mask-loading');
                         }, this);
 
-                        treeLoader.on("load", function (treeLoader, node) {
+                        treeLoader.on('load', function (treeLoader, node) {
                             dataObjectsPane.body.unmask();
                         }, this);
 
@@ -955,11 +963,11 @@ function showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjects
 		serName: dbInfo.serName
 	};  
 
-    treeLoader.on("beforeload", function (treeLoader, node) {
-        dataObjectsPane.body.mask("Loading...", "x-mask-loading");       
+    treeLoader.on('beforeload', function (treeLoader, node) {
+        dataObjectsPane.body.mask('Loading...', 'x-mask-loading');       
     }, this);
 
-    treeLoader.on("load", function (treeLoader, node) {
+    treeLoader.on('load', function (treeLoader, node) {
         dataObjectsPane.body.unmask();
     }, this);
 
