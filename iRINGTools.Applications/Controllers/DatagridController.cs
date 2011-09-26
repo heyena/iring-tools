@@ -30,10 +30,10 @@ namespace org.iringtools.web.controllers
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DatagridController));
     private IGridRepository _repository { get; set; }
     private DataDictionary dataDict;
-    private DataItems dataItems;
-    private Grid dataGrid;
-    private string graph;
-    private Grid pageDtoGrid;
+   // private DataItems dataItems;
+   // private Grid dataGrid;
+   // private string graph;
+   // private Grid pageDtoGrid;
     private JavaScriptSerializer serializer;
     private string response = "success";
     private string _key = null;
