@@ -61,7 +61,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "scope",
                                         id = scope.Name,
                                         text = scope.Name,
-                                        expanded = false,
+                                      //  expanded = false,
                                         leaf = false,
                                         children = null,
                                         record = scope
@@ -92,7 +92,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "application",
                                     id = scope.Name + "/" + application.Name,
                                     text = application.Name,
-                                    expanded = false,
+                                 //   expanded = false,
                                     leaf = false,
                                     children = null,
                                     record = new
@@ -125,7 +125,7 @@ namespace org.iringtools.web.controllers
               iconCls = "folder",
                                 id = context + "/DataObjects",
                                 text = "Data Objects",
-                                expanded = false,
+                             //   expanded = false,
                                 leaf = false,
                                 children = null
                             };
@@ -137,7 +137,7 @@ namespace org.iringtools.web.controllers
               iconCls = "folder",
                                 id = context + "/Graphs",
                                 text = "Graphs",
-                                expanded = false,
+                            //    expanded = false,
                                 leaf = false,
                                 children = null
                             };
@@ -148,7 +148,7 @@ namespace org.iringtools.web.controllers
               iconCls = "folder",
                                 id = context + "/ValueLists",
                                 text = "ValueLists",
-                                expanded = false,
+                           //     expanded = false,
                                 leaf = false,
                                 children = null
                             };
@@ -177,7 +177,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "valuelistmap",
                                     id = context + "/ValueList/" + valueList.name,
                                     text = valueList.name,
-                                    expanded = false,
+                              //      expanded = false,
                                     leaf = false,
                                     children = null,
                                     record = valueList
@@ -225,7 +225,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "valuemap",
                                     id = context + "/ValueMap/" + valueMap.internalValue,
                                     text = classLabel + " [" + valueMap.internalValue + "]",
-                                    expanded = false,
+                                 //   expanded = false,
                                     leaf = true,
                                     children = null,
                                     record = valueMap
@@ -257,7 +257,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "object",
                                     id = context + "/DataObject/" + dataObject.objectName,
                                     text = dataObject.objectName,
-                                    expanded = false,
+                                //    expanded = false,
                                     leaf = false,
                                     children = null,
                                     record = new
@@ -296,7 +296,7 @@ namespace org.iringtools.web.controllers
                 iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "key" : "property",
                                     id = context + "/" + property.propertyName,
                                     text = property.propertyName,
-                                    expanded = true,
+                                //    expanded = true,
                                     leaf = true,
                                     children = new List<JsonTreeNode>(),
                                     record = new
@@ -322,7 +322,7 @@ namespace org.iringtools.web.controllers
                   iconCls = "relation",
                                         id = context + "/" + dataObject.objectName + "/" + relation.relationshipName,
                                         text = relation.relationshipName,
-                                        expanded = false,
+                                  //      expanded = false,
                                         leaf = false,
                                         children = null,
                                         record = new
@@ -364,7 +364,7 @@ namespace org.iringtools.web.controllers
                 iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "key" : "property",
                                     id = context + "/" + property.propertyName,
                                     text = property.propertyName,
-                                    expanded = true,
+                               //     expanded = true,
                                     leaf = true,
                                     children = new List<JsonTreeNode>(),
                                     record = new
@@ -401,7 +401,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "graphmap",
                                     id = context + "/Graph/" + graph.name,
                                     text = graph.name,
-                                    expanded = true,
+                              //      expanded = true,
                                     leaf = true,
                                     children = new List<JsonTreeNode>(),
                                     record = graph

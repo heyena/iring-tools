@@ -199,6 +199,7 @@
     <Content Include="Scripts\AM\view\directory\SpreadsheetPanel.js" />
     <Content Include="Scripts\AM\view\directory\ValuelistMapPanel.js" />
     <Content Include="Scripts\AM\view\directory\ValuelistPanel.js" />
+    <Content Include="Scripts\AM\view\mapping\ClassmapForm.js" />
     <Content Include="Scripts\AM\view\mapping\MappingPanel.js" />
     <Content Include="Scripts\AM\view\mapping\MappingTree.js" />
     <Content Include="Scripts\AM\view\mapping\MapProperty.js" />

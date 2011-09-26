@@ -339,7 +339,7 @@ namespace org.iringtools.web.controllers
                                             id = templateNode.id + "/" + role.name,
                                             text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
                                                                       string.Format("{0}{1}", role.name, unMappedToken),
-                                            expanded = false,
+                                      //      expanded = false,
                                             leaf = false,
                                             children = null,
                                             record = role
@@ -394,7 +394,7 @@ namespace org.iringtools.web.controllers
                                                 id = templateNode.id + "/" + role.name,
                                                 text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
                                                                          string.Format("{0}{1}", role.name, unMappedToken),
-                                                expanded = false,
+                                             //   expanded = false,
                                                 leaf = false,
                                                 children = null,
                                                 record = role
@@ -612,7 +612,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "treeClass",
                 id = context + "/" + graph.name + "/" + classMap.name,
                 text = graph.name,
-                expanded = false,
+             //   expanded = false,
                 leaf = false,
                 children = null,
                 record = graph
@@ -630,7 +630,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "treeClass",
                 id = context + "/" + classMap.name,
                 text = classMap.name,
-                expanded = false,
+             //   expanded = false,
                 leaf = false,
                 children = null,
                 record = classMap
@@ -651,7 +651,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "treeTemplate",
                 id = context + "/" + templateMap.name + "(" + index + ")",
                 text = templateMap.name,
-                expanded = false,
+             //   expanded = false,
                 leaf = false,
                 children = new List<JsonTreeNode>(),
                 record = templateMap
@@ -669,7 +669,7 @@ namespace org.iringtools.web.controllers
                 id = context + "/" + role.name,
                 text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
                                          string.Format("{0}{1}", role.name, unMappedToken),
-                expanded = false,
+             //   expanded = false,
                 leaf = false,
                 children = null,
                 record = role
