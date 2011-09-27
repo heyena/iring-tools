@@ -61,12 +61,6 @@
              $(ServicesDir)\Service.cs;
              $(ServicesDir)\IService.cs;
              $(ServicesDir)\Global.asax.cs;
-             $(ServicesDir)\XML\DataDictionary.*.xml;
-             $(ServicesDir)\XML\DatabaseDictionary.*.xml;
-             $(ServicesDir)\XML\nh-configuration.*.xml;
-             $(ServicesDir)\XML\nh-mapping.*.xml;
-             $(ServicesDir)\XML\Repositories.xml;
-             $(ServicesDir)\XML\Scopes.xml;
              $(ServicesDir)\.svn\**;
              $(ServicesDir)\*\.svn\**;
              $(ServicesDir)\*\*\.svn\**;
@@ -175,8 +169,8 @@
     <Message Text="Preparing build ..." />
     <Exec Condition="!Exists('$(ServicesDir)\Web.config')" 
           Command="Copy $(ServicesDir)\Web_Default.config $(ServicesDir)\Web.config" />
-    <Exec Condition="!Exists('$(ServicesDir)\XML\Repositories.xml')" 
-          Command="Copy $(ServicesDir)\\XML\Repositories_Default.xml $(ServicesDir)\XML\Repositories.xml" />
+    <Exec Condition="!Exists('$(ServicesDir)\App_Data\Repositories.xml')" 
+          Command="Copy $(ServicesDir)\App_Data\Repositories_Default.xml $(ServicesDir)\App_Data\Repositories.xml" />
     <Exec Condition="!Exists('$(ServicesDir)\App_Data\config.ttl')" 
           Command="Copy $(ServicesDir)\App_Data\config_Default.ttl $(ServicesDir)\App_Data\config.ttl" />
     <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
@@ -207,7 +201,7 @@
     <Copy SourceFiles="@(ServicesDeployment)"
           DestinationFiles="@(ServicesDeployment ->'$(ServicesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\Web_Default.config $(ServicesDeploymentDir)\Web.config" />
-    <Exec Command="Move /Y $(ServicesDeploymentDir)\XML\Repositories_Default.xml $(ServicesDeploymentDir)\XML\Repositories.xml" />
+    <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Repositories_Default.xml $(ServicesDeploymentDir)\App_Data\Repositories.xml" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Config_Default.ttl $(ServicesDeploymentDir)\App_Data\Config.ttl" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>

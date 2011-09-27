@@ -79,7 +79,7 @@ namespace org.iringtools.nhibernate
 				{
 					EntityGenerator generator = _kernel.Get<EntityGenerator>();
 
-          string compilerVersion = "v3.5";
+          string compilerVersion = "v4.0";
           if (!String.IsNullOrEmpty(_settings["CompilerVersion"]))
           {
             compilerVersion = _settings["CompilerVersion"];
