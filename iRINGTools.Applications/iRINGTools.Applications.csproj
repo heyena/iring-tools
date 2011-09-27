@@ -173,7 +173,7 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\AM\AM.js" />
-    <Content Include="Scripts\AM\controller\DirectoryController.js" />
+    <Content Include="Scripts\AM\controller\AdapterManagerController.js" />
     <Content Include="Scripts\AM\controller\MappingController.js" />
     <Content Include="Scripts\AM\model\DataLayerModel.js" />
     <Content Include="Scripts\AM\model\DirectoryModel.js" />
@@ -203,6 +203,7 @@
     <Content Include="Scripts\AM\view\mapping\MappingPanel.js" />
     <Content Include="Scripts\AM\view\mapping\MappingTree.js" />
     <Content Include="Scripts\AM\view\mapping\MapProperty.js" />
+    <Content Include="Scripts\AM\view\mapping\MapValuelist.js" />
     <Content Include="Scripts\AM\view\search\SearchPanel.js" />
     <Content Include="Scripts\AM\view\search\SearchTree.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />

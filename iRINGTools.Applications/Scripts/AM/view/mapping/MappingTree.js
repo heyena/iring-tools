@@ -9,7 +9,7 @@
     lines: true,
     expandAll: true,
     rootVisible: false,
-  //  pathSeparator: '>',
+    //  pathSeparator: '>',
     lines: true,
     region: 'center',
     enableDD: true,
@@ -24,9 +24,10 @@
     templatemapMenu: null,
     rolemapMenu: null,
     classmapMenu: null,
+    parentClass: null,
     ajaxProxy: null,
     scroll: 'both',
-    viewConfig: {     
+    viewConfig: {
         plugins: {
             ptype: 'treeviewdragdrop',
             dropGroup: 'refdataGroup'
@@ -69,7 +70,6 @@
         this.classmapMenu.add(this.buildClassMapMenu());
 
         this.on('itemcontextmenu', this.showContextMenu, this);
-        this.on('itemclick', this.onClick, this);
 
         Ext.apply(this, {
             stateful: true,
@@ -143,10 +143,11 @@
     buildTemplateMapMenu: function () {
         return [
           {
+              xtype: 'button',
               text: 'Delete TemplateMap',
               icon: 'Content/img/16x16/edit-delete.png',
               scope: this,
-              action: 'deletetemplatemap'
+              action: 'templatemapdelete'
           }
       ]
     },
@@ -256,23 +257,9 @@
             else {
                 this.getParentClass(n.parentNode);
             }
-        }
-
+       }
     },
-
-    onClick: function (view, model, node, index, e) {
-        try {
-            var obj = model.store.getAt(index).data;
-            if (obj.property != null && obj.property != "") {
-
-                this.propertyPanel.setSource(obj.property);
-            } else {
-                this.propertyPanel.setSource(obj.record);
-            }
-        } catch (e) {
-
-        }
-    },
+    
 
     showContextMenu: function (view, model, node, index, e) {
 
@@ -361,7 +348,7 @@
                     ctx: context
                 },
                 success: function (result, request) {
-                   // me.getEl().unmask();
+                    me.getEl().unmask();
                     me.onReload();
                     return false;
                 },
@@ -373,8 +360,6 @@
         else {
             return false;
         }
-
-        //e.cancel = true; //don't want to remove it from the source
         return false;
 
     }

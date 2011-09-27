@@ -12,7 +12,7 @@ Ext.application({
     enableQuickTips: true,
     appFolder: 'Scripts/AM',
     controllers: [
-         'DirectoryController'
+         'AdapterManagerController'
     ],
     launch: function () {
         Ext.QuickTips.init();
@@ -24,12 +24,7 @@ Ext.application({
         } else {
             var exptime = null;
         }
-        Ext.state.Manager.setProvider(new Ext.state.CookieProvider());//{
-//            path: '/',
-  //          expires: exptime,
-    //        domain: null,
-      //      secure: false
-        //}));
+        Ext.state.Manager.setProvider(new Ext.state.CookieProvider()); 
 
         Ext.create('AM.view.Viewport');
 

@@ -1,4 +1,4 @@
-﻿Ext.define('AM.controller.DirectoryController', {
+﻿Ext.define('AM.controller.AdapterManagerController', {
     extend: 'Ext.app.Controller',
     views: [
         'directory.DirectoryPanel',
@@ -17,7 +17,8 @@
         'mapping.MappingPanel',
         'mapping.MappingTree',
         'mapping.MapProperty',
-        'mapping.ClassmapForm'
+        'mapping.ClassmapForm',
+        'mapping.MapValuelist'
     ],
     stores: [
         'DirectoryStore'
@@ -60,6 +61,7 @@
             selector: 'viewport > centerpanel > searchpanel > contentpanel'
         }
     ],
+    parentClass: null,
     init: function () {
         this.control({
             'menu button[action=newscope]': {
@@ -119,6 +121,21 @@
             'menu button[action=mapproperty]': {
                 click: this.mapProperty
             },
+            'menu button[action=makepossessor]': {
+                click: this.makePossessor
+            },
+            'menu button[action=resetmapping]': {
+                click: this.resetMapping
+            },
+            'menu button[action=templatemapdelete]': {
+                click: this.deleteTemplateMap
+            },
+            'menu button[action=deleteclassmap]': {
+                click: this.deleteClassMap
+            },
+            'menu button[action=mapvaluelist]': {
+                click: this.mapValueList
+            },
             'button[action=search]': {
                 click: this.onSearchRdl
             },
@@ -128,10 +145,149 @@
         });
     },
 
+    mapValueList: function (btn, e) {
+        var tree = this.getMappingPanel(),
+            node = tree.getSelectedNode(),
+            scope = node.data.id.split('/')[0],
+            application = node.data.id.split('/')[1];
+        this.getParentClass(node);
+        var conf = {
+            scope: scope,
+            application: application,
+            mappingNode: node.data.id,
+            index: node.parentNode.parentNode.indexOf(node.parentNode),
+            classId: this.parentClass
+        },
+            win = Ext.widget('valuelistform', conf);
+        win.on('Save', function (panel) {
+            win.destroy();
+            tree.onReload(node);
+            if (node.get('expanded') == false)
+                node.expand();
+        }, this);
+
+        win.on('Cancel', function (panel) {
+            win.destroy();
+        }, this);
+        win.show();
+        tree.rolemapMenu.hide();
+    },
+
+    deleteClassMap: function (mnode) {
+        var tree = this.getMappingPanel(),
+            node = tree.getSelectedNode();
+        Ext.Ajax.request({
+            url: 'mapping/deleteclassmap',
+            method: 'POST',
+            params: {
+                mappingNode: node.data.id,
+                classId: node.data.identifier,
+                parentClass: node.parentNode.parentNode.parentNode.data.identifier,
+                parentTemplate: node.parentNode.parentNode.data.record.id,
+                parentRole: node.parentNode.data.record.id
+            },
+            success: function (result, request) {
+                tree.onReload();
+            },
+            failure: function (result, request) { }
+        })
+    },
+
+    deleteTemplateMap: function () {
+        var tree = this.getMappingPanel(),
+            node = tree.getSelectedNode(),
+            index = node.parentNode.indexOf(node),
+            scope = node.data.id.split('/')[0],
+            application = node.data.id.split('/')[1];
+        this.getParentClass(node);
+        Ext.Ajax.request({
+            url: 'mapping/deleteTemplateMap',
+            method: 'POST',
+            params: {
+                Scope: scope,
+                Application: application,
+                mappingNode: node.id,
+                parentIdentifier: this.parentClass,
+                identifier: node.data.identifier,
+                index: index
+            },
+            success: function (result, request) {
+                tree.onReload();
+
+            },
+            failure: function (result, request) { }
+        })
+        tree.templatemapMenu.hide();
+    },
+    resetMapping: function (node) {
+        var tree = this.getMappingPanel(),
+            node = tree.getSelectedNode(),
+            index = node.parentNode.parentNode.indexOf(node.parentNode);
+        this.getParentClass(node)
+        Ext.Ajax.request({
+            url: 'mapping/resetmapping',
+            method: 'POST',
+            params: {
+                mappingNode: node.data.id,
+                roleId: node.data.record.id,
+                templateId: node.parentNode.data.record.id,
+                parentClassId: this.parentClass,
+                index: index
+            },
+            success: function (result, request) {
+                tree.onReload();
+            },
+            failure: function (result, request) { }
+        })
+        tree.rolemapMenu.hide();
+    },
+
+    makePossessor: function (btn, e) {
+        var tree = this.getMappingPanel(),
+            node = tree.getSelectedNode(),
+            index = node.parentNode.parentNode.indexOf(node.parentNode);
+        Ext.Ajax.request({
+            url: 'mapping/makePossessor',
+            method: 'POST',
+            params: {
+                mappingNode: node.data.id,
+                classId: node.parentNode.parentNode.data.identifier,
+                node: node,
+                index: index
+            },
+            success: function (result, request) {
+                tree.onReload();
+            },
+            failure: function (result, request) { }
+        })
+        tree.rolemapMenu.hide();
+    },
+
     addClassMap: function (btn, e) {
         var tree = this.getMappingPanel(),
             node = tree.getSelectedNode();
+        scope = node.data.id.split('/')[0],
+        application = node.data.id.split('/')[1],
+        this.getParentClass(node),
+        conf = {
+            scope: scope,
+            application: application,
+            mappingNode: node.data.id,
+            index: node.parentNode.parentNode.indexOf(node.parentNode),
+            parentClassId: this.parentClass
+        },
+        win = Ext.widget('classmapform', conf);
+        win.on('Save', function (panel) {
+            win.destroy();
+            tree.onReload(node);
+            if (node.get('expanded') == false)
+                node.expand();
+        }, this);
 
+        win.on('Cancel', function (panel) {
+            win.destroy();
+        }, this);
+        win.show();
         tree.rolemapMenu.hide();
     },
 
@@ -148,15 +304,15 @@
         },
         win = Ext.widget('propertyform', conf);
 
-        win.on('save', function (panel) {
-            win.close();
+        win.on('Save', function (panel) {
+            win.destroy();
             tree.onReload(node);
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
         win.on('Cancel', function (panel) {
-            win.close();
+            win.destroy();
         }, this);
         win.show();
         tree.rolemapMenu.hide();
@@ -167,7 +323,8 @@
             node = tree.getSelectedNode(),
             content = this.getMainContent(),
             scope = node.parentNode.parentNode.parentNode,
-            application = node.parentNode.parentNode;
+            application = node.parentNode.parentNode,
+            me = this;
 
         var conf = {
             scope: scope.data.record,
@@ -207,8 +364,23 @@
             if (obj.property != null && obj.property != "") {
                 mapprop.setSource(obj.property);
             } else {
-                mapprop.setSource(obj.record);
+                if (obj.record.type && !obj.record.roleMaps) {
+                    var arrStr = '';
+                    for (var i in obj.record) {
+                        if (obj.record[i] != null && obj.record[i] != '') {
+                            arrStr += i + '=' + obj.record[i] + '&';
+                        }
+                    };
+                    var type = me.getObjectType(obj.record.type)
+                    arrStr += 'typeDescription=' + type;
+                    var arr = Ext.Object.fromQueryString(arrStr);
+                    mapprop.setSource(arr);
+                }
+                else {
+                    mapprop.setSource(obj.record);
+                }
             }
+
         });
         var exist = content.items.map[panconf.id];
         if (exist == null) {
@@ -219,6 +391,22 @@
         tree.graphMenu.hide();
     },
 
+    getObjectType: function (t) {
+        switch (t) {
+            case 0:
+                return 'Property';
+            case 1:
+                return 'Possessor';
+            case 2:
+                return 'Reference';
+            case 3:
+                return 'FixedValue';
+            case 4:
+                return 'DataProperty';
+            case 5:
+                return 'ObjectProperty';
+        }
+    },
 
     onDeleteValueMap: function (btn, e) {
         var tree = this.getDirTree(),
@@ -670,5 +858,19 @@
         if (rec.node.data.record != undefined && rec.node.data.record.Related != undefined) {
             store.proxy.extraParams.related = rec.node.data.record.Related;
         }
+    },
+    getParentClass: function (n) {
+        if (n.parentNode != undefined) {
+            if ((n.parentNode.data.type == 'ClassMapNode'
+         || n.parentNode.data.type == 'GraphMapNode')
+         && n.parentNode.data.identifier != undefined) {
+                this.parentClass = n.parentNode.data.identifier;
+                return this.parentClass;
+            }
+            else {
+                this.getParentClass(n.parentNode);
+            }
+        }
+
     }
 });
