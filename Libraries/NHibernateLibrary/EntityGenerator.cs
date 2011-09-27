@@ -41,8 +41,6 @@ namespace org.iringtools.nhibernate
 {
   public class EntityGenerator
   {
-    private string NAMESPACE_PREFIX = "org.iringtools.adapter.datalayer.proj_";
-    private string COMPILER_VERSION = "v3.5";
     private List<string> NHIBERNATE_ASSEMBLIES = new List<string>() 
     {
       "NHibernate.dll",     
@@ -52,7 +50,6 @@ namespace org.iringtools.nhibernate
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(EntityGenerator));
 
-    private string _namespace = String.Empty;
     private NHibernateSettings _settings = null;
     private StringBuilder _mappingBuilder = null;
     private XmlTextWriter _mappingWriter = null;
@@ -65,14 +62,13 @@ namespace org.iringtools.nhibernate
       _settings = settings;
     }
 
-    public Response Generate(DatabaseDictionary dbSchema, string projectName, string applicationName)
+    public Response Generate(string compilerVersion, DatabaseDictionary dbSchema, string projectName, string applicationName)
     {
       Response response = new Response();
       Status status = new Status();
 
       if (dbSchema.dataObjects != null)
       {
-        _namespace = NAMESPACE_PREFIX + projectName + "." + applicationName;
         _dataObjects = dbSchema.dataObjects;
 
         try
@@ -96,21 +92,21 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.WriteLine("using System.Collections.Generic;");
           _dataObjectWriter.WriteLine("using Iesi.Collections.Generic;");
           _dataObjectWriter.WriteLine("using org.iringtools.library;");
-          _dataObjectWriter.WriteLine();
-          _dataObjectWriter.WriteLine("namespace {0}", _namespace);
-          _dataObjectWriter.Write("{"); // begin namespace block
-          _dataObjectWriter.Indent++;
-
+          
           foreach (DataObject dataObject in dbSchema.dataObjects)
           {
-            // create namespace for dataObject
-            dataObject.objectNamespace = _namespace;
+            _dataObjectWriter.WriteLine(); 
+            _dataObjectWriter.WriteLine("namespace {0}", dataObject.objectNamespace);
+            _dataObjectWriter.Write("{"); // begin namespace block
+            _dataObjectWriter.Indent++;
+
+            dataObject.objectNamespace = dataObject.objectNamespace;
 
             CreateNHibernateDataObjectMap(dataObject);
-          }
 
-          _dataObjectWriter.Indent--;
-          _dataObjectWriter.WriteLine("}"); // end namespace block                
+            _dataObjectWriter.Indent--;
+            _dataObjectWriter.WriteLine("}"); // end namespace block    
+          }            
 
           _mappingWriter.WriteEndElement(); // end hibernate-mapping element
           _mappingWriter.Close();
@@ -120,7 +116,7 @@ namespace org.iringtools.nhibernate
 
           #region Compile entities
           Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
-          compilerOptions.Add("CompilerVersion", COMPILER_VERSION);
+          compilerOptions.Add("CompilerVersion", compilerVersion);
 
           CompilerParameters parameters = new CompilerParameters();
           parameters.GenerateExecutable = false;
@@ -179,7 +175,7 @@ namespace org.iringtools.nhibernate
       string keyClassName = dataObject.objectName + "Id";
 
       _mappingWriter.WriteStartElement("class");
-      _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.objectName + ", " + _settings["ExecutingAssemblyName"]);
+      _mappingWriter.WriteAttributeString("name", dataObject.objectNamespace + "." + dataObject.objectName + ", " + _settings["ExecutingAssemblyName"]);
       _mappingWriter.WriteAttributeString("table", "\"" + dataObject.tableName + "\"");
 
       #region Create composite key
@@ -193,7 +189,7 @@ namespace org.iringtools.nhibernate
 
         _mappingWriter.WriteStartElement("composite-id");
         _mappingWriter.WriteAttributeString("name", "Id");
-        _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + _settings["ExecutingAssemblyName"]);
+        _mappingWriter.WriteAttributeString("class", dataObject.objectNamespace + "." + keyClassName + ", " + _settings["ExecutingAssemblyName"]);
 
         foreach (KeyProperty keyName in dataObject.keyProperties)
         {
@@ -597,6 +593,7 @@ namespace org.iringtools.nhibernate
         _dataObjectWriter.WriteLine("default:");
         _dataObjectWriter.Indent++;
         _dataObjectWriter.WriteLine("throw new Exception(\"Related object [\" + relatedObjectType + \"] does not exist.\");");
+        _dataObjectWriter.Indent--;
         _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}");
         _dataObjectWriter.Indent--;

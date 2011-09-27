@@ -78,7 +78,14 @@ namespace org.iringtools.nhibernate
 				else if (ValidateDatabaseDictionary(dbDictionary))
 				{
 					EntityGenerator generator = _kernel.Get<EntityGenerator>();
-					response.Append(generator.Generate(dbDictionary, projectName, applicationName));
+
+          string compilerVersion = "v3.5";
+          if (!String.IsNullOrEmpty(_settings["CompilerVersion"]))
+          {
+            compilerVersion = _settings["CompilerVersion"];
+          }
+
+					response.Append(generator.Generate(compilerVersion, dbDictionary, projectName, applicationName));
 
 					// Update binding configuration
 					XElement binding = new XElement("module",
@@ -92,6 +99,7 @@ namespace org.iringtools.nhibernate
 
           AdapterProvider adapterProvider = new AdapterProvider(_settings);
 					response.Append(adapterProvider.UpdateBinding(projectName, applicationName, binding));
+
 					status.Messages.Add("Database dictionary of [" + projectName + "." + applicationName + "] updated successfully.");
 				}
 			}
