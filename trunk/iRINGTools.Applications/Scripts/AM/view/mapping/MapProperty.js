@@ -16,8 +16,8 @@ Ext.define('AM.view.mapping.MapProperty', {
         this.items = [{
             xtype: 'form',
             method: 'POST',
-            mappingNode: this.mappingNode,
-            classId: this.classId,
+          //  mappingNode: this.mappingNode,
+          //  classId: this.classId,
             url: 'mapping/mapproperty',
             border: false,
             frame: false,
@@ -30,7 +30,7 @@ Ext.define('AM.view.mapping.MapProperty', {
             items: [
                     { xtype: 'hidden', name: 'propertyName', id: 'propertyName' },
                     { xtype: 'hidden', name: 'relatedObject', id: 'relatedObject' },
-                    { xtype: 'hidden', name: 'mappingNode', id: 'mappingNode' },
+                    { xtype: 'hidden', name: 'mappingNode', id: 'mappingNode',value: this.mappingNode },
                     { xtype: 'hidden', name: 'classId', id: 'classId' }
                 ],
             html: '<div class="property-target' + formid + '" '
@@ -85,22 +85,18 @@ Ext.define('AM.view.mapping.MapProperty', {
     },
 
     onSave: function () {
-        var me = this;    // consists the main/previous class object
+        var me = this;  
         var thisForm = this.items.items[0].getForm();
-//        if (thisForm.findField('propertyName').getValue() == '') {
 
-//            return;
-//        }
         thisForm.submit({
             waitMsg: 'Saving Data...',
             success: function (f, a) {
-                //Ext.Msg.alert('Success', 'Changes saved successfully!');
+               
                 me.fireEvent('Save', me);
             },
             failure: function (f, a) {
-                //Ext.Msg.alert('Warning', 'Error saving changes!')
-                var message = 'Error saving changes!';
-                showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+//                var message = 'Error saving changes!';
+//                showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
             }
         });
     }

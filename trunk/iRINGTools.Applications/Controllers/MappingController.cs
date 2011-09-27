@@ -332,6 +332,7 @@ namespace org.iringtools.web.controllers
 
                                     foreach (var role in templateMap.roleMaps)
                                     {
+                                        
                                         roleNode = new JsonTreeNode
                                         {
                                             type = "RoleMapNode",
@@ -833,6 +834,7 @@ namespace org.iringtools.web.controllers
                             rm.propertyName =
                                 string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
                         }
+                        rm.type = RoleType.DataProperty;
                     }
                     else
                     {
@@ -909,9 +911,9 @@ namespace org.iringtools.web.controllers
                 string templateId = form["identifier"];
                 string parentClassId = form["parentIdentifier"];
                 GraphMap graphMap = mapping.FindGraphMap(parentNode);
-
+                int index = Convert.ToInt16(form["index"]);
                 ClassTemplateMap tmap = graphMap.GetClassTemplateMap(parentClassId);
-                TemplateMap map = tmap.templateMaps.Find(t => t.id == templateId);
+                TemplateMap map = tmap.templateMaps[index];
                 if (map != null)
                     tmap.templateMaps.Remove(map);
                 else
