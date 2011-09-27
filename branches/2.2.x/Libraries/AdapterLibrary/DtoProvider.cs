@@ -762,6 +762,7 @@ namespace org.iringtools.adapter
           if (mappingClass.id == manifestClass.id)
           {
             RecurBuildCrossGraphMap(ref manifestGraph, manifestClass, mappingGraph, mappingClass);
+            break;
           }
         }
       }
@@ -771,12 +772,13 @@ namespace org.iringtools.adapter
     {
       List<Template> manifestTemplates = null;
 
-      // find manifest templates for the manifest class
+      // get manifest templates from the manifest class
       foreach (ClassTemplates manifestClassTemplates in manifestGraph.classTemplatesList)
       {
         if (manifestClassTemplates.@class.id == manifestClass.id)
         {
           manifestTemplates = manifestClassTemplates.templates;
+          break;
         }
       }
 
@@ -882,6 +884,8 @@ namespace org.iringtools.adapter
                 }
               }
             }
+
+            break;
           }
         }
       }

@@ -867,10 +867,11 @@ public class ExchangeProvider
     if (targetManifest == null || targetManifest.getGraphs().getItems().size() == 0)
       return null;
 
-    Graph sourceGraph = sourceManifest.getGraphs().getItems().get(0);
-    Graph targetGraph = targetManifest.getGraphs().getItems().get(0);
+    Graph sourceGraph = getGraph(sourceManifest, sourceGraphName);
+    Graph targetGraph = getGraph(targetManifest, targetGraphName);
 
-    if (sourceGraph.getClassTemplatesList() != null && targetGraph.getClassTemplatesList() != null)
+    if (sourceGraph != null && sourceGraph.getClassTemplatesList() != null && 
+        targetGraph != null && targetGraph.getClassTemplatesList() != null)
     {
       List<ClassTemplates> sourceClassTemplatesList = sourceGraph.getClassTemplatesList().getItems();
       List<ClassTemplates> targetClassTemplatesList = targetGraph.getClassTemplatesList().getItems();
@@ -929,6 +930,17 @@ public class ExchangeProvider
     targetManifest.getValueListMaps().getItems().addAll(sourceManifest.getValueListMaps().getItems());
 
     return targetManifest;
+  }
+  
+  private Graph getGraph(Manifest manifest, String graphName)
+  {
+    for (Graph graph : manifest.getGraphs().getItems())
+    {
+      if (graph.getName().equalsIgnoreCase(graphName))
+        return graph;
+    }
+    
+    return null;
   }
 
   private ClassTemplates getClassTemplates(List<ClassTemplates> classTemplatesList, String classId)

@@ -1196,21 +1196,24 @@ public class DataModel
             || roleType == RoleType.FIXED_VALUE || (cardinality != null && cardinality == Cardinality.SELF))
         {
           // compute role value
-          if (roleValues != null && roleValues.getItems().size() > 0)
+          if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
+          {
+            if (!IOUtils.isNullOrEmpty(roleValue))
+            {
+              roleValue = getValueMap(manifest, roleValue);
+  
+              if (dataMode == DataMode.EXCHANGE)
+              {
+                roleOldValue = getValueMap(manifest, roleOldValue);
+              }
+            }
+          }
+          else if (roleValues != null && roleValues.getItems().size() > 0)
           {
             roleValue = getMultiRoleValues(manifest, roleObject, roleValues.getItems());
 
             if (roleOldValues != null && roleOldValues.getItems().size() > 0)
               roleOldValue = getMultiRoleValues(manifest, roleObject, roleOldValues.getItems());
-          }
-          else if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
-          {
-            roleValue = getValueMap(manifest, roleValue);
-
-            if (dataMode == DataMode.EXCHANGE)
-            {
-              roleOldValue = getValueMap(manifest, roleOldValue);
-            }
           }
 
           // find the right column to insert value, fill in blank for any gap
@@ -1323,7 +1326,7 @@ public class DataModel
 
     for (String value : roleValues)
     {
-      if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap())
+      if (roleObject.getHasValueMap() != null && roleObject.getHasValueMap() && !IOUtils.isNullOrEmpty(value))
       {
         value = getValueMap(manifest, value);
       }
