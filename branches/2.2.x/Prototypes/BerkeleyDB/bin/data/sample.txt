@@ -1,0 +1,10 @@
+<abc>
+	<scope property="something">
+		<name>example 1</name>
+		<type>Oranges</type>
+	</scope>
+	<scope>
+		<name>example 2</name>
+		<type>Apples</type>
+	</scope>
+</abc>
