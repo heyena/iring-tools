@@ -70,7 +70,11 @@ namespace org.iringtools.library
         {
           string fileName = Path.GetFileName(srcFile);
           string destFile = Path.Combine(this["AppDataPath"], fileName);
-          File.Copy(srcFile, destFile, true);
+          
+          if (File.Exists(destFile))
+            File.Delete(srcFile);
+          else
+            File.Move(srcFile, destFile);
         }
       }
     }

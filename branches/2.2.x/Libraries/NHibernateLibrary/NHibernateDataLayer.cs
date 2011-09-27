@@ -654,55 +654,6 @@ namespace org.iringtools.adapter.datalayer
       return relatedObjects;
     }
 
-    public Response Generate(string projectName, string applicationName)
-    {
-      Status status = new Status();
-
-      try
-      {
-        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
-
-        InitializeScope(projectName, applicationName);
-
-        DatabaseDictionary dbDictionary = NHibernateUtility.LoadDatabaseDictionary(_settings["DBDictionaryPath"]);
-        if (String.IsNullOrEmpty(projectName) || String.IsNullOrEmpty(applicationName))
-        {
-          status.Messages.Add("Error project name and application name can not be null");
-        }
-        else if (ValidateDatabaseDictionary(dbDictionary))
-        {
-          EntityGenerator generator = _kernel.Get<EntityGenerator>();
-          _response.Append(generator.Generate(dbDictionary, projectName, applicationName));
-
-          // Update binding configuration
-          XElement binding = new XElement("module",
-            new XAttribute("name", _settings["Scope"]),
-            new XElement("bind",
-              new XAttribute("name", "DataLayer"),
-              new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-              new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
-            )
-          );
-
-          Response localResponse = _adapterProvider.UpdateBinding(projectName, applicationName, binding);
-
-          _response.Append(localResponse);
-
-          status.Messages.Add("Database dictionary updated successfully.");
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error in UpdateDatabaseDictionary: {0}", ex));
-
-        status.Level = StatusLevel.Error;
-        status.Messages.Add(string.Format("Error updating database dictionary: {0}", ex));
-      }
-
-      _response.Append(status);
-      return _response;
-    }
-
     public VersionInfo GetVersion()
     {
       Version version = this.GetType().Assembly.GetName().Version;
