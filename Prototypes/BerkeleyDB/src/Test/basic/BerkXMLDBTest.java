@@ -13,9 +13,8 @@ class BerkXMLDBTest
     XmlContainer myContainer = null;
     XmlManager myManager = null;
     String theContainer = "iring.dbxml";
-    String abcXmlContent="<abc><scope property='something'><name>exmaple 1</name><type>stupid1</type></scope><scope><name>exmaple 2</name><type>foolish1</type></scope></abc>";
-    String xyzXmlContent="<xyz><encoding property='something'><text>exmaple 1</text><mode>stupid</mode><setting><key>1</key><value>hello1</value></setting></encoding><encoding><text>exmaple 2</text><mode>foolish</mode><setting><key>2</key><value>hello2</value></setting></encoding></xyz>";
-
+    String abcXmlContent = null;
+    
     BerkXMLDBTest(){
     	try{
     		myManager = new XmlManager();
@@ -45,8 +44,9 @@ class BerkXMLDBTest
     	//berkXMLDBTest.createOpenAndInsert();
     	//berkXMLDBTest.insertContent("abc1.xml",berkXMLDBTest.abcXmlContent);
     	//berkXMLDBTest.viewXmlContent("abc.xml");
-    	berkXMLDBTest.updateXml();
-    	//berkXMLDBTest.queryXml();
+    	//erkXMLDBTest.updateXml();
+    	berkXMLDBTest.queryXml();
+    	
     }
     public void removeContainer(){
     	try{
@@ -65,12 +65,10 @@ class BerkXMLDBTest
     }
     public void createOpenAndInsert(){
 	    try {
-		    myManager = new XmlManager();
 		    
 		    myManager.createContainer(theContainer);
 		    
 		    myContainer = myManager.openContainer(theContainer);
-		    //System.out.println(myContainer.getNumDocuments());
 	    } catch (XmlException e) {
 	    	e.printStackTrace();
 	    } catch (Exception e) {
@@ -78,13 +76,13 @@ class BerkXMLDBTest
 	    }finally {
 		    cleanup(myManager, myContainer);
 		}
+	    abcXmlContent = (new ReadXmlTextFile()).getXmlFromFile();
 	    insertContent("abc.xml",abcXmlContent);
 
     }
     
     public void insertContent(String xmlName, String xmlContent){
 	    try {
-	    	myManager = new XmlManager();
 	    	
 	    	myContainer = myManager.openContainer(theContainer);
 		    myContainer.putDocument(xmlName, xmlContent);
@@ -103,7 +101,6 @@ class BerkXMLDBTest
     
     public void viewXmlContent(String xmlName){
 	    try {
-		    myManager = new XmlManager();
 		    
 		    myContainer = myManager.openContainer(theContainer);
 		    System.out.println(myContainer.getNumDocuments());
@@ -126,18 +123,18 @@ class BerkXMLDBTest
 		   	
 		    //Insert Node in Between
 		    //General Format : insert nodes [nodes] [keyword] [position]
-		    //String query="insert nodes <city>New Delhi</city> after doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[name='exmaple 1']/type";
+		    //String query="insert nodes <city>New Delhi</city> after doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[name='example 1']/type";
 		   	
 		    //Rename Node
-		    //String query = "rename node doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[name='exmaple 1']/city as 'cityName'";
+		    //String query = "rename node doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[name='example 1']/city as 'cityName'";
 		    
 		    //Replace Node as well as content
-		    //String query="replace node doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[name='exmaple 1']/cityName with <country>India</country>";
+		    //String query="replace node doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[name='example 1']/cityName with <country>India</country>";
 		    
 		    String query="replace value of node doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[country='India']/country with 'Spain'";
 		    
 		    //Delete Node
-		    //String query="delete nodes doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[name='exmaple 1']/country";
+		    //String query="delete nodes doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[name='example 1']/country";
 		   	
 		    XmlQueryContext qc = myManager.createQueryContext();
 		    
@@ -155,22 +152,24 @@ class BerkXMLDBTest
 		}
 	    viewXmlContent("abc.xml");
     }
+    
+    
     public void queryXml(){
     	try {
 		    myManager = new XmlManager();
 		    
 		    myContainer = myManager.openContainer(theContainer);
 		    //To retrieve something from the entire DB
-		    //String query ="collection('iring.dbxml')/abc/scope";
+		    String query ="collection('iring.dbxml')/abc/scope/name";
 		    
 		    //To retrieve some value from an the entire DB
-		    String query ="collection('iring.dbxml')/abc/scope[name='exmaple 1']/type/string()";
+		    //String query ="collection('iring.dbxml')/abc/scope[name='example 1']/type/string()";
 		   
 		    //To retrieve the entire xml document
 		    //String query = "doc('dbxml:/iring.dbxml/abc.xml')";
 		   
 		    //To retrieve some value from an xml
-		    //String query ="doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[name='exmaple 1']/type";
+		    //String query ="doc('dbxml:/iring.dbxml/abc.xml')/abc/scope[name='example 1']/type";
 		    
 		   
 		    XmlQueryContext qc = myManager.createQueryContext();
