@@ -1012,7 +1012,7 @@ namespace org.iringtools.utility
 
     public static string XsdTypeToCSharpType(string xsdType)
     {
-      string type = (xsdType.StartsWith("xsd:") || xsdType.StartsWith("XSD:")) ? xsdType.Substring(4) : xsdType;
+      string type = (xsdType.ToLower().StartsWith("xsd:")) ? xsdType.Substring(4) : xsdType;
 
       switch (type.ToLower())
       {
@@ -1029,9 +1029,8 @@ namespace org.iringtools.utility
         case "integer": return "Int32";
         case "long": return "Int64";
         case "short": return "Int16";
-        case "string": return "String";
         case "time": return "DateTime";
-        default: throw new Exception("XSD type \"" + xsdType + "\" not currently supported.");
+        default: return "String";
       }
     }
 
