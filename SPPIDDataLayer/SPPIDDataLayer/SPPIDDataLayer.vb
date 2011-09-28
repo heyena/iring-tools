@@ -18,7 +18,6 @@ Imports System.Text
 Imports System.Text.RegularExpressions
 
 Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
-    Implements IDataLayer2
 
 #Region " Variables "
 
