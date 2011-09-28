@@ -110,5 +110,5 @@
   </Target>
 
   <Target Name="Rebuild" DependsOnTargets="CleanBuild; Build"/>
-  <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages;"/>
+  <Target Name="All" DependsOnTargets="Rebuild; CreatePackages;"/>
 </Project>
