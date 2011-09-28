@@ -105,7 +105,7 @@ public class ExchangeDataModel extends DataModel
       
       response = httpClient.post(ExchangeResponse.class, "/submit", request);
 
-      if (response.getLevel() != Level.ERROR)
+      if (response.getLevel() == Level.SUCCESS)
       {
         // remove cache data related to this exchange including the app data
         String appRelativePath = response.getReceiverScopeName() + "/" + response.getReceiverAppName() + "/"

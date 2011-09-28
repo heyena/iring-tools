@@ -12,7 +12,6 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
 import org.iringtools.common.response.Messages;
@@ -471,8 +470,11 @@ public class ExchangeProvider
       throws ServiceProviderException
   {
     ExchangeResponse exchangeResponse = new ExchangeResponse();
+    exchangeResponse.setMessages(new Messages());
+    
     GregorianCalendar gcal = new GregorianCalendar();
     exchangeResponse.setStartTimeStamp(datatypeFactory.newXMLGregorianCalendar(gcal));
+    
     StatusList statusList = new StatusList();
     exchangeResponse.setStatusList(statusList);
     exchangeResponse.setLevel(Level.SUCCESS);
@@ -673,48 +675,33 @@ public class ExchangeProvider
 
         exchangeResponse.getStatusList().getItems().addAll(poolResponse.getStatusList().getItems());
 
-        if (exchangeResponse.getLevel() != Level.ERROR
-            || (exchangeResponse.getLevel() == Level.WARNING && poolResponse.getLevel() == Level.SUCCESS))
+        if (exchangeResponse.getLevel().ordinal() < poolResponse.getLevel().ordinal())
         {
           exchangeResponse.setLevel(poolResponse.getLevel());
 
           // find the errors and warnings to put in the summary
           for (Status status : poolResponse.getStatusList().getItems())
           {
-            String messages = StringUtils.join(status.getMessages().getItems(), " ");
-            if (!messages.contains("successful"))
-            {
-              exchangeResponse.getMessages().getItems().addAll(status.getMessages().getItems());
-            }
+            exchangeResponse.getMessages().getItems().addAll(status.getMessages().getItems());
           }
         }
       }
     }
 
-    List<Status> statusItems = exchangeResponse.getStatusList().getItems();
-
-    if (statusItems != null && statusItems.size() == 0)
+    if (exchangeResponse.getLevel() == Level.ERROR)
     {
-      exchangeResponse.setLevel(Level.WARNING);
-
-      Messages messages = new Messages();
-      messages.getItems().add("No Add/Change/Delete DTOs are found!");
-      exchangeResponse.setMessages(messages);
+      String message = "Exchange completed with error.";
+      exchangeResponse.getMessages().getItems().add(message);
     }
-    else if (exchangeResponse.getMessages() == null)
+    else if (exchangeResponse.getLevel() == Level.WARNING)
     {
-      if (exchangeResponse.getLevel() == Level.WARNING)
-      {
-        Messages messages = new Messages();
-        messages.getItems().add("Exchange completed with warning(s)!");
-        exchangeResponse.setMessages(messages);
-      }
-      else
-      {
-        Messages messages = new Messages();
-        messages.getItems().add("Exchange completed succesfully!");
-        exchangeResponse.setMessages(messages);
-      }
+      String message = "Exchange completed with warning.";
+      exchangeResponse.getMessages().getItems().add(message);
+    }
+    else if (exchangeResponse.getLevel() == Level.SUCCESS)
+    {
+      String message = "Exchange completed succesfully.";
+      exchangeResponse.getMessages().getItems().add(message);
     }
 
     XMLGregorianCalendar timestamp = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());

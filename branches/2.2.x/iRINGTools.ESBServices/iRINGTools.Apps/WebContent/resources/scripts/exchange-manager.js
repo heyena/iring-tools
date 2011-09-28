@@ -220,9 +220,9 @@ function loadPageDto(type, action, context, label){
                 var xidIndex = context.indexOf('&xid=');
                 var scope = context.substring(7, xidIndex);
                 var xid = context.substring(xidIndex + 5);
-                var msg = 'Are you sure you want to exchange [' + label + ']?';
+                var msg = 'Are you sure you want to exchange data \r\n[' + label + ']?';
                 var processUserResponse = submitExchange.createDelegate([label, scope, xid, true]);        
-                showDialog(400, 60, 'Submit Exchange?', msg, Ext.Msg.OKCANCEL, processUserResponse);
+                showDialog(460, 125, 'Exchange Confirmation', msg, Ext.Msg.OKCANCEL, processUserResponse);
               }
             },{
               xtype: 'tbspacer', 
@@ -498,18 +498,18 @@ function submitExchange(userResponse) {
   var xid = this[2];
   var reviewed = this[3];
   
-  if (userResponse == 'ok'){
-    //var filter = getFilters();
-    
+  if (userResponse == 'ok'){    
     Ext.Ajax.request({
       url: 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed=' + reviewed,
-      //method: 'POST',
-      //params: { filter: filter },
-      timeout: 600000,  // in milliseconds default 3000 
+      timeout: 600000,  // in milliseconds, default is 3000 
       success: function(response, request) {
         var responseText = Ext.decode(response.responseText);
-        var message = 'Data exchange [' + exchange + '] result: \r' + responseText;
-        showDialog(400, 100, 'Exchange Result', message, Ext.Msg.OK, null);
+        var message = 'Data exchange [' + exchange + '] result: ' + responseText;
+        
+        if (message.length < 300)
+          showDialog(460, 125, 'Exchange Result', message, Ext.Msg.OK, null);
+        else
+          showDialog(660, 300, 'Exchange Result', message, Ext.Msg.OK, null);
       },
       failure: function(response, request) {
         var title = 'Exchange Error (' + response.status + ')';
@@ -627,9 +627,9 @@ Ext.onReady(function(){
           var exchange = node.attributes["text"];
           var xid = node.attributes.properties['Id'];
           var reviewed = (node.reviewed != undefined);   
-          var msg = 'Are you sure you want to do data exchange [' + exchange + ']?';
+          var msg = 'Are you sure you want exchange data \r\n[' + exchange + ']?';
           var processUserResponse = submitExchange.createDelegate([exchange, scope, xid, reviewed]);          
-          showDialog(400, 60, 'Submit Exchange?', msg, Ext.Msg.OKCANCEL, processUserResponse); 
+          showDialog(460, 125, 'Exchange Confirmation', msg, Ext.Msg.OKCANCEL, processUserResponse); 
         }
       },{
         //TODO: TBD

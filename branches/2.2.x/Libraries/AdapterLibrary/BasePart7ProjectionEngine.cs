@@ -530,7 +530,8 @@ namespace org.iringtools.adapter.projection
 
         foreach (var pair in dataRecord)
         {
-          dataObject.SetPropertyValue(pair.Key, pair.Value);
+          if (pair.Value != null && pair.Value.ToString() != String.Empty)
+            dataObject.SetPropertyValue(pair.Key, pair.Value);
         }
 
         return dataObject;
