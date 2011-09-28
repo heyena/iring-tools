@@ -17,6 +17,7 @@ namespace org.iringtools.library
     {
       this.Add("BaseDirectoryPath", AppDomain.CurrentDomain.BaseDirectory);
       this.Add("AppDataPath", @".\App_Data\");
+      this.Add("XmlPath", this["AppDataPath"]);  // for backward compatibility
       this.Add("ProxyCredentialToken", String.Empty);
       this.Add("ProxyHost", String.Empty);
       this.Add("ProxyPort", String.Empty);
@@ -69,7 +70,7 @@ namespace org.iringtools.library
       {
         try
         {
-          string[] srcFiles = Directory.GetFiles(@".\XML\", "*.xml");
+          string[] srcFiles = Directory.GetFiles(@".\XML\", "*.*");
 
           foreach (string srcFile in srcFiles)
           {
@@ -117,6 +118,5 @@ namespace org.iringtools.library
 
       return proxyCredentials;
     }
-  }
-  
+  }  
 }

@@ -422,7 +422,7 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
       response.DateTimeStamp = DateTime.Now;
-
+      
       try
       {
         InitializeScope(scope, app);
@@ -439,6 +439,8 @@ namespace org.iringtools.adapter
 
           return response;
         }
+        
+        response.Level = StatusLevel.Success;
 
         InitializeDataLayer();
 
@@ -469,8 +471,6 @@ namespace org.iringtools.adapter
 
         if (deleteIdentifiers.Count > 0)
           response.Append(_dataLayer.Delete(_graphMap.dataObjectName, deleteIdentifiers));
-
-        response.Level = StatusLevel.Success;
       }
       catch (Exception ex)
       {
