@@ -19,6 +19,8 @@ namespace org.iringtools.adapter.datalayer
   public class NHibernateDataLayer : BaseConfigurableDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
+    private const string UNAUTHORIZED_ERROR = "User not authorized to access NHibernate data layer of [{0}]";
+
     private string _dataDictionaryPath = String.Empty;
     private string _databaseDictionaryPath = string.Empty;
     private DataDictionary _dataDictionary;
@@ -30,11 +32,7 @@ namespace org.iringtools.adapter.datalayer
     private Response _response = null;
     private IKernel _kernel = null;
     private NHibernateSettings _nSettings = null;
-    //private WebProxyCredentials _proxyCredentials = null;
-
-    bool _isScopeInitialized = false;
-
-    AdapterProvider _adapterProvider = null;
+    private bool _isScopeInitialized = false;
 
     [Inject]
     public NHibernateDataLayer(AdapterSettings settings, IDictionary keyRing) : base(settings)
@@ -45,8 +43,6 @@ namespace org.iringtools.adapter.datalayer
       _keyRing = keyRing;
       _response = new Response();
       _kernel.Bind<Response>().ToConstant(_response);
-
-      _adapterProvider = new AdapterProvider(_settings);
 
       _hibernateConfigPath = string.Format("{0}nh-configuration.{1}.xml",
         _settings["AppDataPath"],
@@ -109,7 +105,7 @@ namespace org.iringtools.adapter.datalayer
     public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
       if (!IsAuthorized())
-        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       try
       {
@@ -167,7 +163,7 @@ namespace org.iringtools.adapter.datalayer
     public override long GetCount(string objectType, DataFilter filter)
     {
       if (!IsAuthorized())
-        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       try
       {
@@ -210,7 +206,7 @@ namespace org.iringtools.adapter.datalayer
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
       if (!IsAuthorized())
-        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       try
       {
@@ -247,7 +243,7 @@ namespace org.iringtools.adapter.datalayer
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
       if (!IsAuthorized())
-        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       try
       {
@@ -353,7 +349,7 @@ namespace org.iringtools.adapter.datalayer
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
       if (!IsAuthorized())
-        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       try
       {
@@ -439,7 +435,7 @@ namespace org.iringtools.adapter.datalayer
     public override Response Post(IList<IDataObject> dataObjects)
     {
       if (!IsAuthorized())
-        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       Response response = new Response();
 
@@ -510,7 +506,7 @@ namespace org.iringtools.adapter.datalayer
     public override Response Delete(string objectType, IList<string> identifiers)
     {
       if (!IsAuthorized())
-        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       Response response = new Response();
 
@@ -552,7 +548,7 @@ namespace org.iringtools.adapter.datalayer
     public override Response Delete(string objectType, DataFilter filter)
     {
       if (!IsAuthorized())
-        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       Response response = new Response();
       response.StatusList = new List<Status>();
@@ -614,7 +610,7 @@ namespace org.iringtools.adapter.datalayer
     public override IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
     {
       if (!IsAuthorized())
-        throw new UnauthorizedAccessException("User not authorized to access NHibernate data layer.");
+        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       IList<IDataObject> relatedObjects = null;
       DataDictionary dictionary = GetDictionary();
