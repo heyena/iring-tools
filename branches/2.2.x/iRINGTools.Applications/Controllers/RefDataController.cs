@@ -73,19 +73,21 @@ namespace org.iringtools.web.controllers
 
         public JsonResult GetNode(FormCollection form)
         {
+            List<JsonTreeNode> nodes = null;
             int start = 0;
             int limit = 100;
             string roleClassId = string.Empty;
             string id = form["id"];
             string searchtype = form["type"];
             string query = form["query"];
+            if (string.IsNullOrEmpty(query)) return Json(nodes, JsonRequestBehavior.AllowGet);
             string range = form["range"];
             string isreset = form["reset"];
 
             Int32.TryParse(form["limit"], out limit);
             Int32.TryParse(form["start"], out start);
 
-            List<JsonTreeNode> nodes = null;
+
             if (!string.IsNullOrEmpty(range))
             {
                 roleClassId = range.Substring(range.LastIndexOf("#") + 1);
@@ -101,17 +103,17 @@ namespace org.iringtools.web.controllers
                     case "ClassificationsNode":
                         nodes = GetClasses(id);
                         break;
-                  case "MembersNode":
-                       // nodes = GetClassMembers(id);
+                    case "MembersNode":
+                        // nodes = GetClassMembers(id);
                         break;
                     case "SuperclassesNode":
                         nodes = GetSuperClasses(id);
                         break;
                     case "SubclassesNode":
-                         nodes = GetSubClasses(id);
+                        nodes = GetSubClasses(id);
                         break;
                     case "ClassTemplatesNode":
-                         nodes = GetTemplates(id);
+                        nodes = GetTemplates(id);
                         break;
                     case "TemplateNode":
                         nodes = GetRoles(id);
@@ -134,27 +136,26 @@ namespace org.iringtools.web.controllers
 
         private List<JsonTreeNode> GetClassMembers(string id)
         {
-          List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-          if (!string.IsNullOrEmpty(id))
-          {
-            Entities dataEntities = _refdataRepository.GetClassMembers(id);
-            foreach (Entity entity in dataEntities)
+            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+            if (!string.IsNullOrEmpty(id))
             {
-              JsonTreeNode node = new JsonTreeNode
-              {
-                type = "MemberNode",
-                icon = "Content/img/class.png",
-                identifier = entity.Uri.Split('#')[1],
-                id = (entity.Label + entity.Repository).GetHashCode().ToString(),
-                text = entity.Label,
-                expanded = false,
-                leaf = false,
-                children = GetDefaultChildren(entity.Label),
-                record = entity
-              };
-              node.children.Add(node);
+                Entities dataEntities = _refdataRepository.GetClassMembers(id);
+                foreach (Entity entity in dataEntities)
+                {
+                    JsonTreeNode node = new JsonTreeNode
+                    {
+                        type = "MemberNode",
+                        icon = "Content/img/class.png",
+                        identifier = entity.Uri.Split('#')[1],
+                        id = Guid.NewGuid().ToString(),
+                        text = entity.Label,
+                        leaf = false,
+                        children = GetDefaultChildren(entity.Label),
+                        record = entity
+                    };
+                    node.children.Add(node);
+                }
             }
-          }
             return nodes;
         }
 
@@ -162,44 +163,59 @@ namespace org.iringtools.web.controllers
         {
             List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
+            JsonTreeNode memberNode = new JsonTreeNode
+            {
+                id = Guid.NewGuid().ToString(),
+                children = null,
+                iconCls = "folder",
+                leaf = false,
+                text = "Members",
+                type = "MembersNode",
+                identifier = null,
+            };
+            nodes.Add(memberNode);
             JsonTreeNode clasifNode = new JsonTreeNode
             {
-                id = ("Classifications" + label).GetHashCode().ToString(),
+                icon = "Content/img/folder.png",
+                id = Guid.NewGuid().ToString(),
                 children = null,
                 leaf = false,
                 text = "Member Of",
                 type = "ClassificationsNode",
-                expanded = false
+                //  expanded = false
             };
             nodes.Add(clasifNode);
             JsonTreeNode supersNode = new JsonTreeNode
             {
-                id = ("Superclasses" + label).GetHashCode().ToString(),
+                icon = "Content/img/folder.png",
+                id = Guid.NewGuid().ToString(),
                 children = null,
                 leaf = false,
                 text = "Superclasses",
                 type = "SuperclassesNode",
-                expanded = false
+                //    expanded = false
             };
             nodes.Add(supersNode);
             JsonTreeNode subsNode = new JsonTreeNode
             {
-                id = ("Subclasses" + label).GetHashCode().ToString(),
+                icon = "Content/img/folder.png",
+                id = Guid.NewGuid().ToString(),
                 children = null,
                 leaf = false,
                 text = "Subclasses",
                 type = "SubclassesNode",
-                expanded = false
+                //   expanded = false
             };
             nodes.Add(subsNode);
             JsonTreeNode tempsNode = new JsonTreeNode
             {
-                id = ("Templates" + label).GetHashCode().ToString(),
+                id = Guid.NewGuid().ToString(),
+                icon = "Content/img/folder.png",
                 children = null,
                 leaf = false,
                 text = "Templates",
                 type = "ClassTemplatesNode",
-                expanded = false
+                //   expanded = false
             };
             nodes.Add(tempsNode);
 
@@ -226,13 +242,12 @@ namespace org.iringtools.web.controllers
                 string prefix = _nsMap.GetPrefix(new Uri(entity.Uri.Substring(0, entity.Uri.LastIndexOf("#") + 1)));
                 JsonTreeNode node = new JsonTreeNode
                 {
-                    nodeType = "async",
                     type = (prefix.Equals("rdl")) ? "ClassNode" : "TemplateNode",
                     icon = (prefix.Equals("rdl")) ? "Content/img/class.png" : "Content/img/template.png",
                     identifier = entity.Uri.Split('#')[1],
-                    id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+                    id = Guid.NewGuid().ToString(),
                     text = label,
-                    expanded = false,
+                    //     expanded = false,
                     leaf = false,
                     // children = new List<JsonTreeNode>(),
                     record = entity
@@ -257,13 +272,12 @@ namespace org.iringtools.web.controllers
                     string prefix = _nsMap.GetPrefix(new Uri(entity.identifier.Substring(0, entity.identifier.LastIndexOf("#") + 1)));
                     JsonTreeNode node = new JsonTreeNode
                     {
-                        nodeType = "async",
                         type = (prefix.Equals("rdl")) ? "ClassNode" : "TemplateNode",
                         icon = (prefix.Equals("rdl")) ? "Content/img/class.png" : "Content/img/template.png",
                         identifier = entity.identifier.Split('#')[1],
-                        id = (label + entity.repositoryName).GetHashCode().ToString(),
+                        id = Guid.NewGuid().ToString(),
                         text = label,
-                        expanded = false,
+                        //     expanded = false,
                         leaf = false,
                         //  children = (prefix.Equals("rdl")) ? GetDefaultChildren(label) : null,
                         record = entity
@@ -289,66 +303,67 @@ namespace org.iringtools.web.controllers
 
                     JsonTreeNode memberNode = new JsonTreeNode
                     {
-                      id = ("Members" + label).GetHashCode().ToString(),
-                      children = new List<JsonTreeNode>(),
-                      iconCls = "folder",
-                      leaf = false,
-                      text = "Members",
-                      type = "MembersNode",
-                      identifier = null,
-                      expanded = false
+                        id = Guid.NewGuid().ToString(),
+                        children = new List<JsonTreeNode>(),
+                        iconCls = "folder",
+                        leaf = false,
+                        text = "Members",
+                        type = "MembersNode",
+                        identifier = null,
+                        //    expanded = false
                     };
 
                     JsonTreeNode clasifNode = new JsonTreeNode
                     {
-                        id = ("Classifications" + label).GetHashCode().ToString(),
+                        id = Guid.NewGuid().ToString(),
                         children = new List<JsonTreeNode>(),
                         iconCls = "folder",
                         leaf = false,
                         text = "Member Of",
                         type = "ClassificationsNode",
                         identifier = null,
-                        expanded = false
+                        //  expanded = false
                     };
 
                     JsonTreeNode supersNode = new JsonTreeNode
                     {
-                        id = ("Superclasses" + label).GetHashCode().ToString(),
+                        id = Guid.NewGuid().ToString(),
                         children = new List<JsonTreeNode>(),
                         iconCls = "folder",
                         leaf = false,
                         text = "Superclasses",
                         type = "SuperclassesNode",
-                        expanded = false
+                        //    expanded = false
                     };
 
                     JsonTreeNode subsNode = new JsonTreeNode
                     {
-                        id = ("Subclasses" + label).GetHashCode().ToString(),
-                       // children = new List<JsonTreeNode>(),
+                        id = Guid.NewGuid().ToString(),
+                        children = null,
                         iconCls = "folder",
                         leaf = false,
                         text = "Subclasses",
                         type = "SubclassesNode",
-                        expanded = false
+                        //    expanded = false
                     };
 
                     JsonTreeNode tempsNode = new JsonTreeNode
                     {
-                        id = ("Templates" + label).GetHashCode().ToString(),
-                       // children = new List<JsonTreeNode>(),
+                        id = Guid.NewGuid().ToString(),
+                        children = null,
                         iconCls = "folder",
                         leaf = false,
                         text = "Templates",
                         type = "ClassTemplatesNode",
-                        expanded = false
+                        //   expanded = false
                     };
                     #endregion
 
                     #region Add Hidden node for Properties------------
                     string reference = string.Empty;
-                    if (entity.entityType!= null){
-                        reference=Convert.ToString(entity.entityType.reference);
+                    if (entity.entityType != null)
+                    {
+                        reference = Convert.ToString(entity.entityType.reference);
                     }
                     Dictionary<string, string> properties = new Dictionary<string, string>()
                           {
@@ -361,15 +376,9 @@ namespace org.iringtools.web.controllers
                             {"Status Class", Convert.ToString(entity.status[0].Class)},
                             {"Status From", Convert.ToString(entity.status[0].from)},
                           };
-                    JsonTreeNode hiddenNode = new JsonTreeNode
-                    {
-                        hidden = true,
-                        record = properties
-                    };
-                    nodes.Add(hiddenNode);
                     #endregion
-                   // nodes.Add(memberNode);
-                  
+                    // nodes.Add(memberNode);
+
 
                     #region Fill Data in Classification node--------
                     foreach (var classification in entity.classification)
@@ -381,9 +390,9 @@ namespace org.iringtools.web.controllers
                             icon = "Content/img/class.png",
                             leaf = false,
                             identifier = classification.reference.Split('#')[1],
-                            id = (classification.label),
+                            id = Guid.NewGuid().ToString(),
                             text = classification.label,
-                            expanded = false,
+                            //       expanded = false,
                             children = null,
                             record = classification
                         };
@@ -399,6 +408,7 @@ namespace org.iringtools.web.controllers
                     #endregion
 
                     JsonTreeNode membersNodes = GetClassMembers(classId, memberNode);
+                    memberNode.record = properties;
                     nodes.Add(membersNodes);
                     nodes.Add(clasifNode); // Add Classification node.
                     nodes.Add(supersNode); // Add SuperClassNode.
@@ -412,9 +422,9 @@ namespace org.iringtools.web.controllers
                             icon = "Content/img/class.png",
                             leaf = false,
                             identifier = specialization.reference.Split('#')[1],
-                            id = (specialization.label),
+                            id = Guid.NewGuid().ToString(),
                             text = specialization.label,
-                            expanded = false,
+                            //      expanded = false,
                             children = null,
                             record = specialization
                         };
@@ -436,17 +446,19 @@ namespace org.iringtools.web.controllers
 
                     if (subNodeCount == "0")
                     {
+                        subsNode.children = null;
                         subsNode.leaf = true;
                         subsNode.icon = "Content/img/folder.png";
                     }
                     nodes.Add(subsNode);
 
                     //Get Templates
-                   // JsonTreeNode templateNodes = GetTemplates(classId, tempsNode);
+                    // JsonTreeNode templateNodes = GetTemplates(classId, tempsNode);
                     string templateNodesCount = GetTemplatesCount(classId);
                     tempsNode.text = tempsNode.text + "(" + templateNodesCount + ")";
                     if (templateNodesCount == "0")
                     {
+                        tempsNode.children = null;
                         tempsNode.leaf = true;
                         tempsNode.icon = "Content/img/folder.png";
                     }
@@ -470,9 +482,9 @@ namespace org.iringtools.web.controllers
                         type = "ClassNode",
                         icon = "Content/img/class.png",
                         identifier = entity.Uri.Split('#')[1],
-                        id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+                        id = Guid.NewGuid().ToString(),
                         text = entity.Label,
-                        expanded = false,
+                        //   expanded = false,
                         leaf = false,
                         children = null,
                         record = entity
@@ -494,7 +506,7 @@ namespace org.iringtools.web.controllers
                 Entities dataEntities = _refdataRepository.GetSubClassesCount(classId);
                 foreach (var entity in dataEntities)
                 {
-                    count =entity.Label;
+                    count = entity.Label;
                 }
             }
             return count;
@@ -511,15 +523,14 @@ namespace org.iringtools.web.controllers
                 {
                     JsonTreeNode node = new JsonTreeNode
                     {
-                        nodeType = "async",
-                        type = "SubclassNode",
+                        type = "ClassNode",
                         icon = "Content/img/class.png",
                         identifier = entity.Uri.Split('#')[1],
-                        id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+                        id = Guid.NewGuid().ToString(),
                         text = entity.Label,
-                        expanded = false,
+                        //    expanded = false,
                         leaf = false,
-                        children = GetDefaultChildren(entity.Label),
+                        //  children = GetDefaultChildren(entity.Label),
                         record = entity
                     };
 
@@ -541,15 +552,14 @@ namespace org.iringtools.web.controllers
                 {
                     JsonTreeNode node = new JsonTreeNode
                     {
-                        nodeType = "async",
-                        type = "SuperClassNode",
+                        type = "ClassNode",
                         icon = "Content/img/class.png",
                         identifier = entity.Uri.Split('#')[1],
-                        id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+                        id = Guid.NewGuid().ToString(),
                         text = entity.Label,
-                        expanded = false,
+                        //   expanded = false,
                         leaf = false,
-                        children = GetDefaultChildren(entity.Label),
+                        //  children = GetDefaultChildren(entity.Label),
                         record = entity
                     };
                     nodes.Add(node);
@@ -561,30 +571,32 @@ namespace org.iringtools.web.controllers
 
         private JsonTreeNode GetClassMembers(string classId, JsonTreeNode tempsNode)
         {
-          if (!string.IsNullOrEmpty(classId))
-          {
-            Entities dataEntities = _refdataRepository.GetClassMembers(classId);
-            foreach(Entity entity in dataEntities)
+            if (!string.IsNullOrEmpty(classId))
             {
-              JsonTreeNode node = new JsonTreeNode
-              {
-                type = "ClassNode",
-                icon = "Content/img/class.png",
-                identifier = entity.Uri.Split('#')[1],
-                id = (entity.Label + entity.Repository).GetHashCode().ToString(),
-                text = entity.Label,
-                expanded = false,
-                leaf = false,
-                children = null,
-                record = entity
-              };
-              tempsNode.children.Add(node);
+                Entities dataEntities = _refdataRepository.GetClassMembers(classId);
+                foreach (Entity entity in dataEntities)
+                {
+                    JsonTreeNode node = new JsonTreeNode
+                    {
+                        type = "ClassNode",
+                        icon = "Content/img/class.png",
+                        identifier = entity.Uri.Split('#')[1],
+                        id = Guid.NewGuid().ToString(),
+                        text = entity.Label,
+                        //    expanded = false,
+                        leaf = false,
+                        //   children = null,
+                        record = entity
+                    };
+                    tempsNode.children.Add(node);
+                }
+                tempsNode.text = tempsNode.text + " (" + tempsNode.children.Count() + ")";
+                if (tempsNode.children.Count() == 0)
+                    tempsNode.leaf = true;
             }
-            tempsNode.text = tempsNode.text + " (" + tempsNode.children.Count() + ")";
-          }
-          return tempsNode;
+            return tempsNode;
         }
-       
+
         private JsonTreeNode GetTemplates(string classId, JsonTreeNode tempsNode)
         {
 
@@ -597,10 +609,10 @@ namespace org.iringtools.web.controllers
                     {
                         type = "TemplateNode",
                         icon = "Content/img/template.png",
-                        id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+                        id = Guid.NewGuid().ToString(),
                         identifier = entity.Uri.Split('#')[1],
                         text = entity.Label,
-                        expanded = false,
+                        //    expanded = false,
                         leaf = false,
                         children = null,
                         record = entity
@@ -642,10 +654,10 @@ namespace org.iringtools.web.controllers
                         nodeType = "async",
                         type = "TemplateNode",
                         icon = "Content/img/template.png",
-                        id = (entity.Label + entity.Repository).GetHashCode().ToString(),
+                        id = Guid.NewGuid().ToString(),
                         identifier = entity.Uri.Split('#')[1],
                         text = entity.Label,
-                        expanded = false,
+                        //    expanded = false,
                         leaf = false,
                         children = null,
                         record = entity
@@ -673,7 +685,7 @@ namespace org.iringtools.web.controllers
                         leaf = false,
                         children = null,
                         text = entity.classDefinitions[0].name[0].value,
-                        id = ("ClassMap" + entity.classDefinitions[0].name[0].value).GetHashCode().ToString(),
+                        id = Guid.NewGuid().ToString(),
                         record = entity.classDefinitions[0],
                         type = "ClassNode",
                         icon = "Content/img/class.png"
@@ -700,7 +712,7 @@ namespace org.iringtools.web.controllers
                         {
                             JsonTreeNode entityNode = new JsonTreeNode
                             {
-                                id = ("Roles" + role.name[0].value).GetHashCode().ToString(),
+                                id = Guid.NewGuid().ToString(),
                                 type = "RoleNode",
                                 icon = "Content/img/role.png",
                                 children = null,
@@ -726,7 +738,7 @@ namespace org.iringtools.web.controllers
                             }
                             JsonTreeNode entityNode = new JsonTreeNode
                             {
-                                id = ("Roles" + role.name[0].value).GetHashCode().ToString(),
+                                id = Guid.NewGuid().ToString(),
                                 type = "RoleNode",
                                 text = role.name[0].value,
                                 icon = "Content/img/role.png",
