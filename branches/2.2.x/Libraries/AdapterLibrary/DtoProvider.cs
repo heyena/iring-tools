@@ -367,12 +367,18 @@ namespace org.iringtools.adapter
         
         // get sort index
         string sortIndex = String.Empty;        
+        string sortOrder = String.Empty;
+
         if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
         {
           sortIndex = filter.OrderExpressions.First().PropertyName;
+          sortOrder = filter.OrderExpressions.First().SortOrder.ToString();
         }
 
         dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, sortIndex);
+
+        if (sortOrder != String.Empty)
+          dataTransferIndices.SortOrder = sortOrder;
       }
       catch (Exception ex)
       {

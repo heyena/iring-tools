@@ -678,12 +678,6 @@ public class ExchangeProvider
         if (exchangeResponse.getLevel().ordinal() < poolResponse.getLevel().ordinal())
         {
           exchangeResponse.setLevel(poolResponse.getLevel());
-
-          // find the errors and warnings to put in the summary
-          for (Status status : poolResponse.getStatusList().getItems())
-          {
-            exchangeResponse.getMessages().getItems().addAll(status.getMessages().getItems());
-          }
         }
       }
     }

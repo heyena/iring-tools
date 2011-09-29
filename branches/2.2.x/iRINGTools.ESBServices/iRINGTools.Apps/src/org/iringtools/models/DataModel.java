@@ -1053,7 +1053,7 @@ public class DataModel
       field.setDataIndex("Transfer Type");
       field.setType("string");
       field.setWidth(STATUS_FIELD_WIDTH);
-      field.setFixed(true);
+      field.setFilterable(true);
       fields.add(0, field);
     }
 
