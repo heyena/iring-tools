@@ -26,7 +26,7 @@ namespace NUnit.Tests
       _settings["ApplicationName"] = "ABC";
       _settings["GraphName"] = "Lines";
       _settings["Identifier"] = "90002-RV";
-      _settings["TestMode"] = "UseFiles"; //UseFiles/WriteFiles
+      _settings["TestMode"] = "WriteFiles"; //UseFiles/WriteFiles
       _settings["ClassName"] = "PIPINGNETWORKSYSTEM";
 
       _baseDirectory = Directory.GetCurrentDirectory();
