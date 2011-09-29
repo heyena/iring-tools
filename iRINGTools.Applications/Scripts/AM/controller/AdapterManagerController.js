@@ -145,7 +145,7 @@
         });
     },
 
-    mapValueList: function (btn, e) {
+    mapValueList: function () {
         var tree = this.getMappingPanel(),
             node = tree.getSelectedNode(),
             scope = node.data.id.split('/')[0],
@@ -159,21 +159,21 @@
             classId: this.parentClass
         },
             win = Ext.widget('valuelistform', conf);
-        win.on('Save', function (panel) {
+        win.on('Save', function () {
             win.destroy();
             tree.onReload(node);
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.destroy();
         }, this);
         win.show();
         tree.rolemapMenu.hide();
     },
 
-    deleteClassMap: function (mnode) {
+    deleteClassMap: function () {
         var tree = this.getMappingPanel(),
             node = tree.getSelectedNode();
         Ext.Ajax.request({
@@ -186,11 +186,11 @@
                 parentTemplate: node.parentNode.parentNode.data.record.id,
                 parentRole: node.parentNode.data.record.id
             },
-            success: function (result, request) {
+            success: function () {
                 tree.onReload();
             },
-            failure: function (result, request) { }
-        })
+            failure: function () { }
+        });
     },
 
     deleteTemplateMap: function () {
@@ -211,19 +211,19 @@
                 identifier: node.data.identifier,
                 index: index
             },
-            success: function (result, request) {
+            success: function () {
                 tree.onReload();
 
             },
-            failure: function (result, request) { }
-        })
+            failure: function () { }
+        });
         tree.templatemapMenu.hide();
     },
-    resetMapping: function (node) {
+    resetMapping: function () {
         var tree = this.getMappingPanel(),
             node = tree.getSelectedNode(),
             index = node.parentNode.parentNode.indexOf(node.parentNode);
-        this.getParentClass(node)
+        this.getParentClass(node);
         Ext.Ajax.request({
             url: 'mapping/resetmapping',
             method: 'POST',
@@ -234,15 +234,15 @@
                 parentClassId: this.parentClass,
                 index: index
             },
-            success: function (result, request) {
+            success: function () {
                 tree.onReload();
             },
-            failure: function (result, request) { }
-        })
+            failure: function () { }
+        });
         tree.rolemapMenu.hide();
     },
 
-    makePossessor: function (btn, e) {
+    makePossessor: function () {
         var tree = this.getMappingPanel(),
             node = tree.getSelectedNode(),
             index = node.parentNode.parentNode.indexOf(node.parentNode);
@@ -255,43 +255,43 @@
                 node: node,
                 index: index
             },
-            success: function (result, request) {
+            success: function () {
                 tree.onReload();
             },
-            failure: function (result, request) { }
-        })
+            failure: function () { }
+        });
         tree.rolemapMenu.hide();
     },
 
-    addClassMap: function (btn, e) {
+    addClassMap: function () {
         var tree = this.getMappingPanel(),
-            node = tree.getSelectedNode();
-        scope = node.data.id.split('/')[0],
-        application = node.data.id.split('/')[1],
-        this.getParentClass(node),
-        conf = {
+            node = tree.getSelectedNode(),
+            scope = node.data.id.split('/')[0],
+            application = node.data.id.split('/')[1];
+        this.getParentClass(node);
+        var conf = {
             scope: scope,
             application: application,
             mappingNode: node.data.id,
             index: node.parentNode.parentNode.indexOf(node.parentNode),
             parentClassId: this.parentClass
-        },
-        win = Ext.widget('classmapform', conf);
-        win.on('Save', function (panel) {
+        };
+        var win = Ext.widget('classmapform', conf);
+        win.on('Save', function () {
             win.destroy();
             tree.onReload(node);
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.destroy();
         }, this);
         win.show();
         tree.rolemapMenu.hide();
     },
 
-    mapProperty: function (btn, e) {
+    mapProperty: function () {
         var tree = this.getMappingPanel(),
         node = tree.getSelectedNode(),
         scope = node.data.id.split('/')[0],
@@ -304,21 +304,21 @@
         },
         win = Ext.widget('propertyform', conf);
 
-        win.on('Save', function (panel) {
+        win.on('Save', function () {
             win.destroy();
             tree.onReload(node);
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.destroy();
         }, this);
         win.show();
         tree.rolemapMenu.hide();
     },
 
-    openGraphMap: function (btn, e) {
+    openGraphMap: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode(),
             content = this.getMainContent(),
@@ -332,7 +332,7 @@
             record: node
         },
             maptree = Ext.widget('mappingtree', conf);
-        mapprop = Ext.widget('propertypanel', { title: 'Mapping Details', region: 'east', width: 350, height: 150, split: true, collapsible: true })
+        var mapprop = Ext.widget('propertypanel', { title: 'Mapping Details', region: 'east', width: 350, height: 150, split: true, collapsible: true });
         var panconf = {
             title: 'GraphMap - ' + scope.data.text + "." + application.data.text + '.' + node.data.text,
             id: 'GraphMap - ' + scope.data.text + "-" + application.data.text + '.' + node.data.text,
@@ -350,28 +350,28 @@
         mappanel = Ext.widget('panel', panconf);
         mappanel.items.add(maptree);
         mappanel.items.add(mapprop);
-        maptree.on('beforeitemexpand', function (node, eOpts) {
+        maptree.on('beforeitemexpand', function () {
             content.getEl().mask('Loading...');
         }, this);
-        maptree.on('load', function (store, model, a) {
+        maptree.on('load', function () {
             content.getEl().unmask();
         }, this);
-        maptree.on('itemexpand', function (node, eOpts) {
+        maptree.on('itemexpand', function () {
             content.getEl().unmask();
         }, this);
-        maptree.on('itemclick', function (view, model, node, index, e) {
+        maptree.on('itemclick', function (view, model, n, index) {
             var obj = model.store.getAt(index).data;
             if (obj.property != null && obj.property != "") {
                 mapprop.setSource(obj.property);
             } else {
-                if (obj.record.type && !obj.record.roleMaps) {
+                if (obj.record.type != null && !obj.record.roleMaps) {
                     var arrStr = '';
                     for (var i in obj.record) {
-                        if (obj.record[i] != null && obj.record[i] != '') {
+                        if (i != 'type' && obj.record[i] != null && obj.record[i] != '') {
                             arrStr += i + '=' + obj.record[i] + '&';
                         }
                     };
-                    var type = me.getObjectType(obj.record.type)
+                    var type = me.getObjectType(obj.record.type);
                     arrStr += 'typeDescription=' + type;
                     var arr = Ext.Object.fromQueryString(arrStr);
                     mapprop.setSource(arr);
@@ -391,8 +391,8 @@
         tree.graphMenu.hide();
     },
 
-    getObjectType: function (t) {
-        switch (t) {
+    getObjectType: function (type) {
+        switch (type) {
             case 0:
                 return 'Property';
             case 1:
@@ -408,7 +408,7 @@
         }
     },
 
-    onDeleteValueMap: function (btn, e) {
+    onDeleteValueMap: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode();
         Ext.Ajax.request({
@@ -418,13 +418,13 @@
                 mappingNode: node.data.id,
                 oldClassUrl: node.data.record.uri
             },
-            success: function (result, request) {
+            success: function () {
                 tree.onReload();
             },
-            failure: function (result, request) { }
-        })
+            failure: function () { }
+        });
     },
-    onEditValueMap: function (btn, e) {
+    onEditValueMap: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode(),
             conf = {
@@ -434,22 +434,21 @@
                 title: 'Edit Value List \"' + node.data.text + '\"'
             };
         var win = Ext.widget('valuelistmappanel', conf);
-        win.on('save', function (panel) {
+        win.on('save', function () {
             win.close();
             tree.onReload(node);
             if (node.get('expanded') == false)
                 node.expand();
-            //            showDialog(400, 100, 'Info', 'The new ValueListMap is added.', Ext.Msg.OK, null);
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.close();
         }, this);
         win.show();
         tree.valueListMenu.hide();
     },
 
-    onNewValueMap: function (btn, e) {
+    onNewValueMap: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode(),
             conf = {
@@ -459,22 +458,21 @@
                 title: 'Add new ValueListMap to valueList'
             };
         var win = Ext.widget('valuelistmappanel', conf);
-        win.on('save', function (panel) {
+        win.on('save', function () {
             win.close();
             tree.onReload(node);
             if (node.get('expanded') == false)
                 node.expand();
-            // showDialog(400, 100, 'Info', 'The new ValueListMap is added.', Ext.Msg.OK, null);
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.close();
         }, this);
         win.show();
         tree.valueListMenu.hide();
     },
 
-    onEditValueList: function (btn, e) {
+    onEditValueList: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode(),
             conf = {
@@ -484,21 +482,21 @@
                 title: 'Edit Value List \"' + node.data.text + '\"'
             };
         var win = Ext.widget('valuelistpanel', conf);
-        win.on('save', function (panel) {
+        win.on('save', function () {
             win.close();
             tree.onReload(node);
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.close();
         }, this);
         win.show();
         tree.valueListMenu.hide();
     },
 
-    onDeleteValueList: function (btn, e) {
+    onDeleteValueList: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode();
         Ext.Ajax.request({
@@ -508,14 +506,14 @@
                 mappingNode: node.data.id,
                 valueList: node.data.id.split('/')[4]
             },
-            success: function (result, request) {
+            success: function () {
                 tree.onReload(node);
             },
-            failure: function (result, request) { }
-        })
+            failure: function () { }
+        });
         tree.valueListMenu.hide();
     },
-    onNewValueList: function (btn, e) {
+    onNewValueList: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode(),
             conf = {
@@ -525,21 +523,21 @@
                 title: 'Add Value List Name'
             };
         var win = Ext.widget('valuelistpanel', conf);
-        win.on('save', function (panel) {
+        win.on('save', function () {
             win.close();
             tree.onReload();
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.close();
         }, this);
         win.show();
         tree.valueListsMenu.hide();
     },
 
-    onEditGraph: function (btn, e) {
+    onEditGraph: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode(),
             conf = {
@@ -552,21 +550,21 @@
                 width: 430
             };
         var win = Ext.widget('graphmapform', conf);
-        win.on('save', function (panel) {
+        win.on('save', function () {
             win.close();
             tree.onReload(node);
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.close();
         }, this);
         win.show();
         tree.graphMenu.hide();
     },
 
-    onDeleteGraph: function (btn, e) {
+    onDeleteGraph: function () {
         var tree = this.getDirTree(),
          node = tree.getSelectedNode();
         Ext.Ajax.request({
@@ -577,32 +575,34 @@
                 application: node.data.id.split('/')[1],
                 mappingNode: node.data.id
             },
-            success: function (result, request) {
+            success: function () {
                 tree.onReload();
             },
-            failure: function (result, request) { }
-        })
+            failure: function () { }
+        });
         tree.graphMenu.hide();
     },
 
-    onSearchRdl: function (btn, e) {
-        var pan = this.getSearchPanel(),
-           stb = pan.dockedItems.items[1].items.items[0]
-        searchText = pan.dockedItems.items[1].items.items[0].getValue(),
+    onSearchRdl: function () {
+        var pan = this.getSearchPanel();
+        var searchText = pan.dockedItems.items[1].items.items[0].getValue(),
            isreset = pan.dockedItems.items[1].items.items[2].checked,
            content = this.getSearchContent(),
            propPanel = this.getSearchProperty(),
            value = pan.dockedItems.items[1].items.items[5].value;
         if (!searchText && searchText.length == 0) return;
         content.getEl().mask('Loading...');
-        conf = {
+        var conf = {
             title: searchText,
             id: 'tab_' + searchText
         };
 
         var tree = Ext.widget('searchtree', conf);
+        tree.on('itemexpand', function () {
+            content.getEl().unmask();
+        }, this);
         tree.on('itemclick', this.onSearchClick, this);
-        tree.on('beforeload', function (store, action, a) {
+        tree.on('beforeload', function (store, action) {
             store.proxy.extraParams.type = (action.node.data.type == "" ? 'SearchNode' : action.node.data.type);
             if (searchText != undefined && searchText != '') {
                 store.proxy.extraParams.query = searchText;
@@ -615,10 +615,10 @@
                 store.proxy.extraParams.id = action.node.data.identifier;
             }
         }, this);
-        tree.on('beforeitemexpand', function (node, eOpts) {
+        tree.on('beforeitemexpand', function () {
             content.getEl().mask('Loading...');
         }, this);
-        tree.on('load', function (store, model, a) {
+        tree.on('load', function (store, model) {
             content.getEl().unmask();
             if (model.data.type == "ClassNode") {
                 try {
@@ -628,7 +628,7 @@
                     else {
                         propPanel.setSource(model.data.record);
                     }
-                } catch (e) { }
+                } catch (ex) { }
             }
         }, this);
 
@@ -642,10 +642,14 @@
 
     },
 
-    onSearchClick: function (view, model, n, idx, e) {
+    onSearchClick: function (view, model, n, idx) {
+        var content = this.getSearchContent(),
         propPanel = this.getSearchProperty();
+        var node = model.store.getAt(idx);
         try {
-            var node = model.store.getAt(idx);
+            node.on('expand', function () {
+                content.getEl().unmask();
+            }, this);
             if (node.data.type == "ClassNode" && model.firstChild) {
                 propPanel.setSource(model.firstChild.data.record);
             } else {
@@ -655,7 +659,7 @@
         node.expand();
     },
 
-    onNewGraph: function (btn, e) {
+    onNewGraph: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode(),
             conf = {
@@ -668,28 +672,28 @@
                 width: 430
             };
         var win = Ext.widget('graphmapform', conf);
-        win.on('save', function (panel) {
+        win.on('save', function () {
             win.close();
             tree.onReload();
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.close();
         }, this);
         win.show();
         tree.graphsMenu.hide();
     },
 
-    showDataGrid: function (btn, e) {
+    showDataGrid: function () {
         var tree = this.getDirTree(),
            content = this.getMainContent(),
            node = tree.getSelectedNode(),
            scope = node.parentNode.parentNode.parentNode.data.text,
            app = node.parentNode.parentNode.data.text,
            graph = node.data.text;
-        conf = {
+        var conf = {
             title: scope + '.' + app + '.' + graph,
             id: scope + app + graph + Ext.id(),
             scope: scope,
@@ -707,9 +711,10 @@
         var newtab = Ext.widget('datagridpanel', conf);
         content.add(newtab).show();
         tree.appDataMenu.hide();
+        return true;
     },
 
-    newApplication: function (btn, e) {
+    newApplication: function () {
         var tree = this.getDirTree(),
            node = tree.getSelectedNode(),
            conf = {
@@ -720,20 +725,20 @@
            };
         var win = Ext.widget('applicationform', conf);
 
-        win.on('save', function (panel) {
+        win.on('save', function () {
             win.close();
             tree.onReload();
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.close();
         }, this);
         win.show();
     },
 
-    editApplication: function (btn, e) {
+    editApplication: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode(),
             conf = {
@@ -745,20 +750,20 @@
             };
         var win = Ext.widget('applicationform', conf);
 
-        win.on('save', function (panel) {
+        win.on('save', function () {
             win.close();
             tree.onReload();
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.close();
         }, this);
         win.show();
     },
 
-    deleteApplication: function (btn, e) {
+    deleteApplication: function () {
         var tree = this.getDirTree(),
            node = tree.getSelectedNode();
         Ext.Ajax.request({
@@ -767,12 +772,12 @@
             params: {
                 'nodeid': node.data.id
             },
-            success: function (o) {
+            success: function () {
                 tree.onReload();
                 if (node.parentNode.expanded == false)
                     node.parentNode.expand();
             },
-            failure: function (f, a) {
+            failure: function () {
                 //Ext.Msg.alert('Warning', 'Error!!!');
                 var message = 'Error deleting application!';
                 showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
@@ -781,7 +786,7 @@
         tree.applicationMenu.hide();
     },
 
-    newScope: function (btn, ev) {
+    newScope: function () {
         var tree = this.getDirTree(),
            node = tree.getSelectedNode(),
            conf = {
@@ -793,14 +798,14 @@
            };
         var win = Ext.widget('scopeform', conf);
 
-        win.on('save', function (panel) {
+        win.on('save', function () {
             win.close();
             tree.onReload();
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.close();
         }, this);
         win.show();
@@ -809,7 +814,7 @@
 
     },
 
-    editScope: function (btn, e) {
+    editScope: function () {
         var tree = this.getDirTree(),
            node = tree.getSelectedNode(),
            conf = {
@@ -821,20 +826,20 @@
            };
         var win = Ext.widget('scopeform', conf);
 
-        win.on('save', function (panel) {
+        win.on('save', function () {
             win.close();
             tree.onReload();
             if (node.get('expanded') == false)
                 node.expand();
         }, this);
 
-        win.on('Cancel', function (panel) {
+        win.on('Cancel', function () {
             win.close();
         }, this);
         win.show();
     },
 
-    deleteScope: function (btn, e) {
+    deleteScope: function () {
         var tree = this.getDirTree(),
            node = tree.getSelectedNode();
         Ext.Ajax.request({
@@ -843,10 +848,10 @@
             params: {
                 'nodeid': node.data.id
             },
-            success: function (o) {
+            success: function () {
                 tree.onReload(node);
             },
-            failure: function (f, a) {
+            failure: function () {
                 var message = 'Error deleting scope!';
                 showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
             }
@@ -871,6 +876,6 @@
                 this.getParentClass(n.parentNode);
             }
         }
-
+        return this.parentClass;
     }
 });

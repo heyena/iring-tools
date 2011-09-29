@@ -77,7 +77,6 @@ Ext.define('AM.view.directory.DataGridPanel', {
     page: null,
     limit: null,
     reload: null,
-    store: this.store,
     initComponent: function () {
         var grid = this;
 
@@ -111,9 +110,10 @@ Ext.define('AM.view.directory.DataGridPanel', {
 		this.callParent(arguments);
 
         this.store.on('beforeload', this.onBeforeLoad, this);
+        var gridstore = this.store;
         this.store.load({
-            callback: function (recs, options, success) {
-                grid.reconfigure(this.store, recs[0].store.proxy.reader.fields);
+            callback: function (recs) {
+                grid.reconfigure(gridstore, recs[0].store.proxy.reader.fields);
                 grid.show();
             }
         });
@@ -123,7 +123,7 @@ Ext.define('AM.view.directory.DataGridPanel', {
         this.store.sync();
     },
 
-    onBeforeLoad: function (store, rec) {
+    onBeforeLoad: function (store) {
         store.proxy.extraParams.scope = this.scope;
         store.proxy.extraParams.start = this.start;
         store.proxy.extraParams.limit = this.limit;

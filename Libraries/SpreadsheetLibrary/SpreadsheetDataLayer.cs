@@ -520,16 +520,8 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         SpreadsheetConfiguration config = Utility.DeserializeFromXElement<SpreadsheetConfiguration>(configuration);
-        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["XmlPath"], string.Format("spreadsheet-configuration.{0}.xml", _settings["scope"]));
+        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"], string.Format("spreadsheet-configuration.{0}.xml", _settings["scope"]));
         Utility.Write<SpreadsheetConfiguration>(config, path, true);
-        //if (inputFile != null)
-        //{
-        //  string docPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, config.Location);
-        //  inputFile.Position = 0;
-        //  SpreadsheetDocument doc = SpreadsheetDocument.Open(inputFile, false);
-        //  inputFile.Flush();
-        //  Utility.Write<SpreadsheetDocument>(doc, docPath, true);
-        //}
       }
       catch (Exception ex)
       {

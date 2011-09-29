@@ -260,18 +260,16 @@ namespace org.iringtools.utility
                 throw new Exception("Error while executing HTTP GET request [" + uri + "].", exception);
             }
         }
-
-        public string GetMessage(string relativeUri)
+        public Stream GetStream(string relativeUri)
         {
             try
             {
-              string uri = _baseUri + relativeUri; // GetUri(relativeUri);
-
+                string uri = _baseUri + relativeUri;
                 WebRequest request = HttpWebRequest.Create(uri);
 
                 PrepareCredentials(request);
                 PrepareHeaders(request);
-                
+
                 request.Method = "Get";
                 request.Timeout = TIMEOUT;
 
@@ -281,18 +279,50 @@ namespace org.iringtools.utility
                 );
 
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                Stream responseStream = response.GetResponseStream();
 
-                string message = Utility.SerializeFromStream(response.GetResponseStream());
+                MemoryStream memStream = new MemoryStream();
+                byte[] buffer = new byte[4096];
 
+                try
+                {
+                    int bytesRead = responseStream.Read(buffer, 0, buffer.Length);
+                    while (bytesRead > 0)
+                    {
+                        memStream.Write(buffer, 0, bytesRead);
+                        bytesRead = responseStream.Read(buffer, 0, buffer.Length);
+                    }
+                    memStream.Position = 0;
+                }
+                finally
+                {
+                    responseStream.Close();
+                }
+
+                return memStream;
+            }
+            catch (Exception exception)
+            {
+                string uri = _baseUri + relativeUri;
+                throw new Exception("Error while executing HTTP GET request on" + uri + ".", exception);
+            }
+        }
+
+        public String GetMessage(string relativeUri)
+        {
+            try
+            {
+                Stream stream = GetStream(relativeUri);
+                string message = Utility.SerializeFromStream(stream);
                 return message;
             }
             catch (Exception exception)
             {
                 string uri = _baseUri + relativeUri;
-
                 throw new Exception("Error while executing HTTP GET request on" + uri + ".", exception);
             }
         }
+
 
         public R Post<T, R>(string relativeUri, T requestEntity)
         {

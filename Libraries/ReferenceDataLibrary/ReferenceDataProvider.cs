@@ -109,9 +109,9 @@ namespace org.iringtools.refdata
           _registryCredentials.Decrypt();
         }
         _proxyCredentials = _settings.GetWebProxyCredentials();
-        string queriesPath = _settings["XmlPath"] + QUERIES_FILE_NAME;
+        string queriesPath = _settings["AppDataPath"] + QUERIES_FILE_NAME;
         _queries = Utility.Read<Queries>(queriesPath);
-        string repositoriesPath = _settings["XmlPath"] + REPOSITORIES_FILE_NAME;
+        string repositoriesPath = _settings["AppDataPath"] + REPOSITORIES_FILE_NAME;
         _repositories = Utility.Read<Repositories>(repositoriesPath);
         _response = new Response();
         _kernel.Bind<Response>().ToConstant(_response);

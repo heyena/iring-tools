@@ -12,15 +12,10 @@ namespace org.iringtools.library
   {
     public DataRelationships()
     {
-#if !SILVERLIGHT
       foreach (RelationshipType relationship in System.Enum.GetValues(typeof(RelationshipType)))
       {
         this.Add(relationship);
       }
-#else
-      this.AddRange(Utility.GetEnumValues<RelationshipType>());
-
-#endif
     }
   }
 }

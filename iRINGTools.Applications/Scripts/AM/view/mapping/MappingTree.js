@@ -48,7 +48,7 @@
         });
         this.store = Ext.create('Ext.data.TreeStore', {
             model: 'AM.model.MappingModel',
-            clearOnLoad: true,
+           //clearOnLoad: true,
             root: {
                 type: 'MappingNode',
                 id: this.scope.Name + "/" + this.application.Name,

@@ -9,7 +9,7 @@ namespace org.iringtools.adapter.datalayer
 {
   public static class NHibernateUtility
   {
-    public static DatabaseDictionary LoadDatabaseDictionary(string path, string keyFile)
+    public static DatabaseDictionary LoadDatabaseDictionary(string path)
     {      
       DatabaseDictionary dbDictionary = Utility.Read<DatabaseDictionary>(path);
       string connStr = dbDictionary.ConnectionString;
@@ -19,25 +19,21 @@ namespace org.iringtools.adapter.datalayer
         if (connStr.ToUpper().Contains("DATA SOURCE"))
         {
           // connection string is not encrypted, encrypt and write it back
-          dbDictionary.ConnectionString = String.IsNullOrEmpty(keyFile)
-            ? EncryptionUtility.Encrypt(connStr)
-            : EncryptionUtility.Encrypt(connStr, keyFile);
-
+          dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr);
           Utility.Write<DatabaseDictionary>(dbDictionary, path);
+
           dbDictionary.ConnectionString = connStr;
         }
         else
         {
-          dbDictionary.ConnectionString =  String.IsNullOrEmpty(keyFile)
-            ? EncryptionUtility.Decrypt(connStr)
-            : EncryptionUtility.Decrypt(connStr, keyFile);
+          dbDictionary.ConnectionString = EncryptionUtility.Decrypt(connStr);
         }
       }
 
       return dbDictionary;      
     }
 
-    public static void SaveDatabaseDictionary(DatabaseDictionary dbDictionary, string path, string keyFile)
+    public static void SaveDatabaseDictionary(DatabaseDictionary dbDictionary, string path)
     {
       string connStr = dbDictionary.ConnectionString;
 
@@ -46,9 +42,7 @@ namespace org.iringtools.adapter.datalayer
         if (connStr.ToUpper().Contains("DATA SOURCE"))
         {
           // connection string is not encrypted, encrypt and write it back
-          dbDictionary.ConnectionString = String.IsNullOrEmpty(keyFile)
-            ? EncryptionUtility.Encrypt(connStr)
-            : EncryptionUtility.Encrypt(connStr, keyFile);
+          dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr);
         }
       }
       

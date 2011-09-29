@@ -41,8 +41,6 @@ namespace org.iringtools.nhibernate
 {
   public class EntityGenerator
   {
-    private string NAMESPACE_PREFIX = "org.iringtools.adapter.datalayer.proj_";
-    private string COMPILER_VERSION = "v3.5";
     private List<string> NHIBERNATE_ASSEMBLIES = new List<string>() 
     {
       "NHibernate.dll",     
@@ -52,7 +50,6 @@ namespace org.iringtools.nhibernate
 
     private static readonly ILog _logger = LogManager.GetLogger(typeof(EntityGenerator));
 
-    private string _namespace = String.Empty;
     private NHibernateSettings _settings = null;
     private StringBuilder _mappingBuilder = null;
     private XmlTextWriter _mappingWriter = null;
@@ -65,21 +62,20 @@ namespace org.iringtools.nhibernate
       _settings = settings;
     }
 
-    public Response Generate(DatabaseDictionary dbSchema, string projectName, string applicationName)
+    public Response Generate(string compilerVersion, DatabaseDictionary dbSchema, string projectName, string applicationName)
     {
       Response response = new Response();
       Status status = new Status();
 
       if (dbSchema.dataObjects != null)
       {
-        _namespace = NAMESPACE_PREFIX + projectName + "." + applicationName;
         _dataObjects = dbSchema.dataObjects;
 
         try
         {
           status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
-          Directory.CreateDirectory(_settings["XmlPath"]);
+          Directory.CreateDirectory(_settings["AppDataPath"]);
 
           _mappingBuilder = new StringBuilder();
           _mappingWriter = new XmlTextWriter(new StringWriter(_mappingBuilder));
@@ -96,15 +92,14 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.WriteLine("using System.Collections.Generic;");
           _dataObjectWriter.WriteLine("using Iesi.Collections.Generic;");
           _dataObjectWriter.WriteLine("using org.iringtools.library;");
-          _dataObjectWriter.WriteLine();
-          _dataObjectWriter.WriteLine("namespace {0}", _namespace);
-          _dataObjectWriter.Write("{"); // begin namespace block
-          _dataObjectWriter.Indent++;
-
           foreach (DataObject dataObject in dbSchema.dataObjects)
           {
-            // create namespace for dataObject
-            dataObject.objectNamespace = _namespace;
+            _dataObjectWriter.WriteLine(); 
+            _dataObjectWriter.WriteLine("namespace {0}", dataObject.objectNamespace);
+            _dataObjectWriter.Write("{"); // begin namespace block
+            _dataObjectWriter.Indent++;
+
+            dataObject.objectNamespace = dataObject.objectNamespace;
 
             CreateNHibernateDataObjectMap(dataObject);
           }
@@ -120,7 +115,7 @@ namespace org.iringtools.nhibernate
 
           #region Compile entities
           Dictionary<string, string> compilerOptions = new Dictionary<string, string>();
-          compilerOptions.Add("CompilerVersion", COMPILER_VERSION);
+          compilerOptions.Add("CompilerVersion", compilerVersion);
 
           CompilerParameters parameters = new CompilerParameters();
           parameters.GenerateExecutable = false;
@@ -137,14 +132,14 @@ namespace org.iringtools.nhibernate
           string hibernateConfig = CreateConfiguration(
             (Provider)Enum.Parse(typeof(Provider), dbSchema.Provider, true), 
             dbSchema.ConnectionString, dbSchema.SchemaName);
-          Utility.WriteString(hibernateConfig, _settings["XmlPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
-          Utility.WriteString(mappingXml, _settings["XmlPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+          Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
+          Utility.WriteString(mappingXml, _settings["AppDataPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
           DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
-          Utility.Write<DataDictionary>(dataDictionary, _settings["XmlPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
+          Utility.Write<DataDictionary>(dataDictionary, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
-          status.Messages.Add("Entities generated successfully.");
+          status.Messages.Add("Entities of [" + projectName + "." + applicationName + "] generated successfully.");
         }
         catch (Exception ex)
         {
@@ -179,7 +174,7 @@ namespace org.iringtools.nhibernate
       string keyClassName = dataObject.objectName + "Id";
 
       _mappingWriter.WriteStartElement("class");
-      _mappingWriter.WriteAttributeString("name", _namespace + "." + dataObject.objectName + ", " + _settings["ExecutingAssemblyName"]);
+      _mappingWriter.WriteAttributeString("name", dataObject.objectNamespace + "." + dataObject.objectName + ", " + _settings["ExecutingAssemblyName"]);
       _mappingWriter.WriteAttributeString("table", "\"" + dataObject.tableName + "\"");
 
       #region Create composite key
@@ -193,7 +188,7 @@ namespace org.iringtools.nhibernate
 
         _mappingWriter.WriteStartElement("composite-id");
         _mappingWriter.WriteAttributeString("name", "Id");
-        _mappingWriter.WriteAttributeString("class", _namespace + "." + keyClassName + ", " + _settings["ExecutingAssemblyName"]);
+        _mappingWriter.WriteAttributeString("class", dataObject.objectNamespace + "." + keyClassName + ", " + _settings["ExecutingAssemblyName"]);
 
         foreach (KeyProperty keyName in dataObject.keyProperties)
         {
@@ -598,6 +593,7 @@ namespace org.iringtools.nhibernate
         _dataObjectWriter.Indent++;
         _dataObjectWriter.WriteLine("throw new Exception(\"Related object [\" + relatedObjectType + \"] does not exist.\");");
         _dataObjectWriter.Indent--;
+        _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}");
         _dataObjectWriter.Indent--;
         _dataObjectWriter.WriteLine("}");
@@ -614,83 +610,30 @@ namespace org.iringtools.nhibernate
       string driver = String.Empty;
       string dialect = String.Empty;
 
-      switch (provider)
-      {
-        case Provider.MsSql2000:
-          driver = "NHibernate.Driver.SqlClientDriver";
-          dialect = "NHibernate.Dialect.MsSql2000Dialect";
-          break;
-
-        case Provider.MsSql2005:
-          driver = "NHibernate.Driver.SqlClientDriver";
-          dialect = "NHibernate.Dialect.MsSql2005Dialect";
-          break;
-
-        case Provider.MsSql2008:
-          driver = "NHibernate.Driver.SqlClientDriver";
-          dialect = "NHibernate.Dialect.MsSql2008Dialect";
-          break;
-
-        case Provider.MySql3:
-          driver = "NHibernate.Driver.MySqlDataDriver";
-          dialect = "NHibernate.Dialect.MySQLDialect";
-          break;
-
-        case Provider.MySql4:
-          driver = "NHibernate.Driver.MySqlDataDriver";
-          dialect = "NHibernate.Dialect.MySQLDialect";
-          break;
-
-        case Provider.MySql5:
-          driver = "NHibernate.Driver.MySqlDataDriver";
-          dialect = "NHibernate.Dialect.MySQL5Dialect";
-          break;
-
-        case Provider.Oracle8i:
-          driver = "NHibernate.Driver.OracleClientDriver";
-          dialect = "NHibernate.Dialect.Oracle8iDialect";
-          break;
-
-        case Provider.Oracle9i:
-          driver = "NHibernate.Driver.OracleClientDriver";
-          dialect = "NHibernate.Dialect.Oracle9iDialect";
-          break;
-
-        case Provider.Oracle10g:
-          driver = "NHibernate.Driver.OracleClientDriver";
-          dialect = "NHibernate.Dialect.Oracle10gDialect";
-          break;
-
-        case Provider.OracleLite:
-          driver = "NHibernate.Driver.OracleLiteDataClientDriver";
-          dialect = "NHibernate.Dialect.OracleLiteDialect";
-          break;
-
-        case Provider.PostgresSql81:
-          driver = "NHibernate.Driver.NpgsqlDriver";
-          dialect = "NHibernate.Dialect.PostgreSQL81Dialect";
-          break;
-
-        case Provider.PostgresSql82:
-          driver = "NHibernate.Driver.NpgsqlDriver";
-          dialect = "NHibernate.Dialect.PostgreSQL82Dialect";
-          break;
-
-        case Provider.SqLite:
-          driver = "NHibernate.Driver.SQLiteDriver";
-          dialect = "NHibernate.Dialect.SQLiteDialect";
-          break;
-      }
-
       try
       {
+        string dbProvider = provider.ToString();
+
+        if (dbProvider.ToUpper().Contains("MSSQL"))
+        {
+          driver = "NHibernate.Driver.SqlClientDriver";
+        }
+        else if (dbProvider.ToUpper().Contains("MYSQL"))
+        {
+          driver = "NHibernate.Driver.MySqlDataDriver";
+        }
+        else if (dbProvider.ToUpper().Contains("ORACLE"))
+        {
+          driver = "NHibernate.Driver.OracleClientDriver";
+        }
+        else
+          throw new Exception(string.Format("Database provider {0} is not supported", dbProvider));
+
+        dialect = "NHibernate.Dialect." + dbProvider + "Dialect";
+
         StringBuilder configBuilder = new StringBuilder();
         XmlTextWriter configWriter = new XmlTextWriter(new StringWriter(configBuilder));
 
-        string encryptedConnectionString = String.IsNullOrEmpty(_settings["SecretKeyFile"])
-          ? EncryptionUtility.Encrypt(connectionString)
-          : EncryptionUtility.Encrypt(connectionString, _settings["SecretKeyFile"]);
-        
         configWriter.Formatting = Formatting.Indented;
         configWriter.WriteStartElement("configuration");
         configWriter.WriteStartElement("hibernate-configuration", "urn:nhibernate-configuration-2.2");
@@ -705,7 +648,7 @@ namespace org.iringtools.nhibernate
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "connection.connection_string");
-        configWriter.WriteString(encryptedConnectionString);
+        configWriter.WriteString(EncryptionUtility.Encrypt(connectionString));
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "proxyfactory.factory_class");
@@ -721,7 +664,7 @@ namespace org.iringtools.nhibernate
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteStartElement("property");
         configWriter.WriteAttributeString("name", "show_sql");
-        configWriter.WriteString("false");
+        configWriter.WriteString("true");
         configWriter.WriteEndElement(); // end property element
         configWriter.WriteEndElement(); // end session-factory element
         configWriter.WriteEndElement(); // end hibernate-configuration element
