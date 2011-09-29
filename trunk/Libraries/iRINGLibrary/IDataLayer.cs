@@ -36,58 +36,60 @@ using System.IO;
 
 namespace org.iringtools.library
 {
-  public interface IDataObject
-  {    
-    object GetPropertyValue(string propertyName);
+    public interface IDataObject
+    {
+        object GetPropertyValue(string propertyName);
 
-    void SetPropertyValue(string propertyName, object value);
-  }
+        void SetPropertyValue(string propertyName, object value);
+    }
 
-  public interface IContentObject
-  {
-    string contentType { get; set; }
+    public interface IContentObject
+    {
+        string contentType { get; set; }
 
-    Stream content { get; set; }
-  }
+        Stream content { get; set; }
+    }
 
-  public interface IDataLayer
-  {
-    IList<IDataObject> Create(string objectType, IList<string> identifiers);
+    public interface IDataLayer
+    {
+        IList<IDataObject> Create(string objectType, IList<string> identifiers);
 
-    long GetCount(string objectType, DataFilter filter);
+        long GetCount(string objectType, DataFilter filter);
 
-    IList<string> GetIdentifiers(string objectType, DataFilter filter);
+        IList<string> GetIdentifiers(string objectType, DataFilter filter);
 
-    IList<IDataObject> Get(string objectType, IList<string> identifiers);
+        IList<IDataObject> Get(string objectType, IList<string> identifiers);
 
-    IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex);
+        IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex);
 
-    Response Post(IList<IDataObject> dataObjects);
+        Response Post(IList<IDataObject> dataObjects);
 
-    Response Delete(string objectType, IList<string> identifiers);
+        Response Delete(string objectType, IList<string> identifiers);
 
-    Response Delete(string objectType, DataFilter filter);
+        Response Delete(string objectType, DataFilter filter);
 
-    DataDictionary GetDictionary();
+        DataDictionary GetDictionary();
 
-    IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
-  }
+        IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
+    }
 
-  public interface IDataLayer2 : IDataLayer
-  {
-    Response Configure(XElement configuration);
+    public interface IDataLayer2 : IDataLayer
+    {
+        Response Configure(XElement configuration);
 
-    List<IDataObject> Search(string objectType, string query);
+        IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex);
 
-    IContentObject GetContent(string objectType, string identifier, string format);
+        long GetSearchCount(string objectType, string query);
 
-    Response PostContent(string objectType, IDataObject dataObject, Stream content, string format);
+        IContentObject GetContent(string objectType, string identifier, string format);
 
-    Response DeleteContent(string objectType, string identifier, string format);
+        Response PostContent(string objectType, IDataObject dataObject, Stream content, string format);
 
-    XElement GetConfiguration();
-  }
+        Response DeleteContent(string objectType, string identifier, string format);
 
-  [CollectionDataContract(Name = "authorizedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]
-  public class AuthorizedUsers : List<string> { }
+        XElement GetConfiguration();
+    }
+
+    [CollectionDataContract(Name = "authorizedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]
+    public class AuthorizedUsers : List<string> { }
 }

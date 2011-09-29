@@ -44,19 +44,21 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       object response =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"], _settings["ClassName"],
           _settings["Identifier"],
-          "Xml", false
+          ref format, false
         );
 
       XDocument xDocument = (XDocument)response;
 
       string path = String.Format(
          "{0}GetXmlIndividual.xml",
-         _settings["XmlPath"]
+         _settings["AppDataPath"]
        );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -76,11 +78,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, null, null,
           false,
           null
@@ -88,7 +92,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetXmlIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -108,11 +112,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, null, null,
           true,
           null
@@ -120,7 +126,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetXmlFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -140,11 +146,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 5, null, null,
           false,
           null
@@ -152,7 +160,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetXmlPageIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -177,7 +185,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Xml",
+           ref format,
            i, 5, null, null,
            false,
            null
@@ -185,7 +193,7 @@ namespace NUnit.Tests
 
         path = String.Format(
             "{0}GetXmlPageIndex.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
@@ -207,11 +215,13 @@ namespace NUnit.Tests
     {
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 5, null, null,
           true,
           null
@@ -219,7 +229,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetXmlPageFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -244,7 +254,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Xml",
+           ref format,
            i, 5, null, null,
            true,
            null
@@ -252,7 +262,7 @@ namespace NUnit.Tests
 
         path = String.Format(
             "{0}GetXmlPageFull.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
@@ -278,11 +288,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, null, null,
           false,
           parameters
@@ -290,7 +302,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetXmlFilterIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -314,11 +326,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, null, null,
           true,
           parameters
@@ -326,7 +340,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetXmlFilterFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -348,11 +362,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, "Asc", "System",
           false,
           parameters
@@ -360,7 +376,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetXmlSortIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -382,11 +398,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 0, "Asc", "System",
           true,
           parameters
@@ -394,7 +412,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetXmlSortFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -418,11 +436,13 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 5, "Desc", "System",
           false,
           parameters
@@ -430,7 +450,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetXmlFilterPageSortIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -455,7 +475,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Xml",
+           ref format,
            i, 5, "Desc", "System",
            false,
            parameters
@@ -463,7 +483,7 @@ namespace NUnit.Tests
 
         path = String.Format(
             "{0}GetXmlFilterPageSortIndex.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
@@ -488,12 +508,14 @@ namespace NUnit.Tests
       parameters.Add("Area", "90");
 
       XDocument benchmark = null;
+      
+      string format = "P7Xml";
 
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          "Xml",
+          ref format,
           0, 5, "Desc", "System",
           true,
           parameters
@@ -501,7 +523,7 @@ namespace NUnit.Tests
 
       string path = String.Format(
           "{0}GetXmlFilterPageSortFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -526,7 +548,7 @@ namespace NUnit.Tests
          _adapterProvider.GetDataProjection(
            _settings["ProjectName"], _settings["ApplicationName"],
            _settings["GraphName"],
-           "Xml",
+           ref format,
            i, 5, "Desc", "System",
            true,
            parameters
@@ -534,7 +556,7 @@ namespace NUnit.Tests
 
         path = String.Format(
             "{0}GetXmlFilterPageSortFull.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
@@ -570,18 +592,20 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           0, 0,
           false
         );
 
       string path = String.Format(
           "{0}GetXmlDataFilterIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -615,18 +639,20 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           0, 0,
           true
         );
 
       string path = String.Format(
           "{0}GetXmlDataFilterFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -668,18 +694,20 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           0, 5,
           false
         );
 
       string path = String.Format(
           "{0}GetXmlDataFilterPageSortIndex.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -708,14 +736,14 @@ namespace NUnit.Tests
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           i, 5,
           false
         );
 
         path = String.Format(
             "{0}GetXmlDataFilterPageSortIndex.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 
@@ -759,18 +787,20 @@ namespace NUnit.Tests
 
       XDocument benchmark = null;
 
+      string format = "P7Xml";
+
       XDocument xDocument =
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           10, 5,
           true
         );
 
       string path = String.Format(
           "{0}GetXmlDataFilterPageSortFull.xml",
-          _settings["XmlPath"]
+          _settings["AppDataPath"]
         );
 
       if (_settings["TestMode"].ToLower() != "usefiles")
@@ -799,14 +829,14 @@ namespace NUnit.Tests
         _adapterProvider.GetDataProjection(
           _settings["ProjectName"], _settings["ApplicationName"],
           _settings["GraphName"],
-          filter, "Xml",
+          filter, ref format,
           i, 5,
           true
         );
 
         path = String.Format(
             "{0}GetXmlDataFilterPageSortFull.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             (i / 5) + 1
           );
 

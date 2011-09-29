@@ -61,7 +61,7 @@ namespace NUnit.Tests
     {
       string scopesPath = String.Format(
          "{0}Scopes.xml",
-         _settings["XmlPath"]
+         _settings["AppDataPath"]
        );
 
       ScopeProjects scopes = Utility.Read<ScopeProjects>(scopesPath);
@@ -104,7 +104,7 @@ namespace NUnit.Tests
     {
       string bindingPath = String.Format(
          "{0}BindingConfiguration.{1}.{2}.xml",
-         _settings["XmlPath"],
+         _settings["AppDataPath"],
          _settings["ProjectName"], 
          _settings["ApplicationName"]
        );
@@ -142,7 +142,7 @@ namespace NUnit.Tests
     {
       string mappingPath = String.Format(
          "{0}Mapping.{1}.{2}.xml",
-         _settings["XmlPath"],
+         _settings["AppDataPath"],
          _settings["ProjectName"],
          _settings["ApplicationName"]
        );
