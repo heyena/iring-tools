@@ -140,13 +140,14 @@ public class ExchangeDataModel extends DataModel
     return String.format("%1$tY/%1$tm/%1$td-%1$tH:%1$tM:%1$tS.%1$tL", gcal);
   }
 
-  public Grid getXlogsGrid(String serviceUri, String scope, String xid, String xlabel)
+  public Grid getXlogsGrid(String serviceUri, String scope, String xid, String xlabel) throws DataModelException
   {
     String relativePath = "/" + scope + "/exchanges/" + xid;
     History xlogs = null;
 
     HttpClient httpClient = new HttpClient(serviceUri);
-
+    HttpUtils.addOAuthHeaders(session, httpClient);
+    
     try
     {
       xlogs = httpClient.get(History.class, relativePath);
@@ -154,6 +155,7 @@ public class ExchangeDataModel extends DataModel
     catch (HttpClientException ex)
     {
       logger.error("Error getting exchange logs: " + ex);
+      throw new DataModelException(ex.getMessage());
     }
 
     Grid xlogsGrid = new Grid();
@@ -249,7 +251,8 @@ public class ExchangeDataModel extends DataModel
     else
     {
       HttpClient httpClient = new HttpClient(xlogsServiceUri);
-
+      HttpUtils.addOAuthHeaders(session, httpClient);
+      
       try
       {
         if (session.containsKey(xlogsKey))
