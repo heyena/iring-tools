@@ -28,6 +28,7 @@ Public Class SPPIDWorkingSet
     Private _SchemaSubstitutions As Dictionary(Of String, String)
     Private _StagingServerInCommon As Boolean
     Private _CommonServerName As String
+    Private _StagingDataBaseName As String
 
 #End Region
 
@@ -109,6 +110,12 @@ Public Class SPPIDWorkingSet
         End Get
     End Property
 
+    Public ReadOnly Property SiteDatabaseName() As String
+        Get
+            Return _StagingDataBaseName
+        End Get
+    End Property
+
 #End Region
 
 #Region " Constructors "
@@ -116,7 +123,7 @@ Public Class SPPIDWorkingSet
     Public Sub New(ProjectConnection As SqlConnection,
                    SiteConnection As SqlConnection,
                    StagingConnection As SqlConnection,
-                   SiteDataQuery As XElement)
+                   SiteDataQuery As XElement, PlantConnection As SqlConnection)
 
         'SPQueries = New SmartPlantDBQueries
         _CommonDataDS = New SQLSchemaDS
@@ -130,15 +137,19 @@ Public Class SPPIDWorkingSet
 
         GetBaselineSchema(SiteConnection, ProjectConnection.Database, SiteDataQuery)
 
-        _tablesTA.Connection = ProjectConnection
-        _columnsTA.Connection = ProjectConnection
+        '_tablesTA.Connection = ProjectConnection
+        '_columnsTA.Connection = ProjectConnection
+
+        _tablesTA.Connection = PlantConnection
+        _columnsTA.Connection = PlantConnection
 
         _tablesDT = _CommonDataDS.SchemaTables
         _tablesTA.Fill(_tablesDT)
         _tablesDV = _tablesDT.DefaultView
 
         _columnsDT = _CommonDataDS.SchemaColumns
-        _columnsTA.fill(_columnsDT)
+        _columnsTA.Fill(_columnsDT)
+        _columnsDV.RowFilter = Nothing
         _columnsDV = _columnsDT.DefaultView
 
     End Sub
@@ -193,6 +204,7 @@ Public Class SPPIDWorkingSet
             _tablesDT = _CommonDataDS.SchemaTables
             _tablesTA.Fill(_tablesDT)
             _tablesDV = _tablesDT.DefaultView
+            _StagingDataBaseName = _tablesTA.Connection.Database
 
             ' fetch the column information fro the SITE database
             _columnsTA.Connection = SiteConnection
@@ -205,7 +217,7 @@ Public Class SPPIDWorkingSet
             _siteDataDT = _CommonDataDS.SiteData
             _siteDataTA.Fill(_siteDataDT) ' note that his fetches no data; it just forces the SelectCommand to initialize so the CommandText can be
             ' set properly
-            '_siteDataDV = _siteDataDT.DefaultView
+            ' _siteDataDV = _siteDataDT.DefaultView
 
         Catch ex As InvalidOperationException
             Throw ex
@@ -230,7 +242,10 @@ Public Class SPPIDWorkingSet
                       queryParts, replacements, declarations)
 
         ' the only SET necessary should be the database name
+        ' setClause = "SET @ProjectDBName='" & ProjectDBname & "'" & nltb
+        ProjectDBname = "SPPID_Project_Plant"
         setClause = "SET @ProjectDBName='" & ProjectDBname & "'" & nltb
+        _StagingDataBaseName = ProjectDBname
         queryParts.Add(SQLClause.Set, setClause)
         queryParts.BuildQuery(queryText)
 

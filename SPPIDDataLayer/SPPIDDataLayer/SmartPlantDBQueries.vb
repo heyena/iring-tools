@@ -155,10 +155,10 @@ Public Class SmartPlantDBQueries
             "   inner join [!schPT].T_Representation                        Rep                         " & _
             "       on Rep.SP_DrawingID = Dr.SP_ID                                                      " & _
             "   @!~StockpileJoin join [!schDT].T_Unit                       U                           " & _
-            "       on PG.SP_ID = U.SP_ID                                                               " & _
+            "      -- on PG.SP_ID = U.SP_ID                                                               " & _
             "   inner join [!schPT].T_PlantItem                             PlI                         " & _
-            "       on      PlI.SP_PlantGroupID = U.SP_ID                                               " & _
-            "           and PlI.SP_ID = Rep.SP_ModelItemID                                              " & _
+            "        --  PlI.SP_PlantGroupID = U.SP_ID                                               " & _
+            "           on  PlI.SP_ID = Rep.SP_ModelItemID                                              " & _
             "           and PlI.SP_PlantGroupID = PG.SP_ID                                              " & _
             "   inner join [!schPT].T_Instrument                            Inst                        " & _
             "       on Inst.SP_ID = PlI.SP_ID                                                           " & _
@@ -228,8 +228,8 @@ Public Class SmartPlantDBQueries
             "   @!~StockpileJoin join [!schDT].T_Unit                       U                           " & _
             "       on U.SP_ID = PG.SP_ID                                                               " & _
             "   inner join [!schPT].T_PlantItem                             PlI                         " & _
-            "       on      PlI.SP_PlantGroupID = U.SP_ID                                               " & _
-            "           and PlI.SP_ID = Rep.SP_ModelItemID                                              " & _
+            "       --      PlI.SP_PlantGroupID = U.SP_ID                                               " & _
+            "          on PlI.SP_ID = Rep.SP_ModelItemID                                              " & _
             "           and PlI.SP_PlantGroupID = PG.SP_ID                                              " & _
             "   inner join [!schPT].T_Instrument                            Inst                        " & _
             "       on Inst.SP_ID = PlI.SP_ID                                                           " & _
