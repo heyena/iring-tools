@@ -18,7 +18,7 @@ Imports System.Text
 Imports System.Text.RegularExpressions
 
 Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
-
+  Implements IDataLayer2
 #Region " Variables "
 
     'Private _projDatasource As Llama.LMADataSource = Nothing ' SPPID DataSource
