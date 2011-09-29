@@ -72,6 +72,8 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/pull")]
     public Response Pull(string scope, string app, string graph, Request request)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _facadeProvider.Pull(scope, app, graph, request);
     }
     #endregion
@@ -87,6 +89,8 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/refresh")]
     public Response RefreshAll(string scope, string app)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _facadeProvider.RefreshAll(scope, app);
     }
     #endregion
@@ -103,6 +107,8 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/refresh")]
     public Response RefreshGraph(string scope, string app, string graph)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _facadeProvider.Refresh(scope, app, graph);
     }
     #endregion
@@ -118,6 +124,8 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/delete")]
     public Response DeleteAll(string scope, string app)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _facadeProvider.DeleteAll(scope, app);
     }
     #endregion
@@ -134,11 +142,12 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/delete")]
     public Response DeleteGraph(string scope, string app, string graph)
     {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml"; 
       return _facadeProvider.Delete(scope, app, graph);
     }
     #endregion
-
-
+    
     #region GetVersion
     /// <summary>
     /// Gets the version of the service.
@@ -148,7 +157,8 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/version")]
     public VersionInfo GetVersion()
     {
-      
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
       return _facadeProvider.GetVersion();
     }
     #endregion
