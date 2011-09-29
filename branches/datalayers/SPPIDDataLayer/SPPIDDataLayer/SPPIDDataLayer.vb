@@ -37,6 +37,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Private _projConn As SqlConnection
     Private _stageConn As SqlConnection
     Property _siteConn As SqlConnection
+    Property _plantConn As SqlConnection
+
 
 #End Region
 
@@ -66,6 +68,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         _projConn = New SqlConnection(_settings("SPPIDConnectionString"))
         _stageConn = New SqlConnection(_settings("iRingStagingConnectionString"))
         _siteConn = New SqlConnection(_settings("SPPIDSiteConnectionString"))
+        _plantConn = New SqlConnection(_settings("SPPIDPLantConnectionString"))
 
         ' ToDo: Enable encryption once encryption is supported 
         'Try
@@ -91,7 +94,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             '_textReplacementValues = textReplacements.ToDictionary(Function(k) k.Key, Function(v) v.Value, StringComparer.InvariantCultureIgnoreCase)
             '_queryVariableReplacementValues = queryVariables.ToDictionary(Function(k) k.Key, Function(v) v.Value, StringComparer.InvariantCultureIgnoreCase)
             GetQueryByName("!SiteData", siteDataQuery)
-            SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, siteDataQuery)
+            SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, siteDataQuery, _plantConn)
 
             GetCurrentSPPIDSchema()
             MigrateSPPIDToStaging()
@@ -285,7 +288,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             queryParts.Clear()
             GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
-                          queryParts, replacements, declarations, SPWorkSet.CommonServerName)
+                          queryParts, replacements, declarations, SPWorkSet.CommonServerName, SPWorkSet.SiteDatabaseName)
 
             ' commbine the query parts and perform any necessary replacements. 
             ' NOTE - although it is possible to make use of an INTO clause to create a selection query that will 

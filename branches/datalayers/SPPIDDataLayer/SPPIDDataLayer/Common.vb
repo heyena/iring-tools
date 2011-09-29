@@ -439,7 +439,7 @@ Public Module Common
                                     ByRef QueryParts As Dictionary(Of SQLClause, String),
                                     ByRef Replacements As IEnumerable(Of XElement),
                                     ByRef Declarations As IEnumerable(Of XElement),
-                                    Optional ByVal CommonServerName As String = "") As String
+                                    Optional ByVal CommonServerName As String = "", Optional ByVal SiteDatabaseName As String = "") As String
 
         Dim dec, s, f, w, g, h, o, i, t As New StringBuilder
         Dim tabWidthAlias As Integer = 50
@@ -472,7 +472,7 @@ Public Module Common
         Dim isExpression As Boolean
 
         ' init
-        If CommonServerName <> "" Then svNm = CommonServerName & "."
+        If CommonServerName <> "" Then svNm = "[" & CommonServerName & "]."
 
         Try
 
@@ -575,8 +575,12 @@ Public Module Common
                 Else
                     If tablesX.Count > 1 Then f.Append(LCase(e.Attribute("joinType").Value) & " join ")
                 End If
+                If (SiteDatabaseName <> "") Then
+                    source = svNm & SiteDatabaseName & "." & sourceAliasMap(sourceAlias).UniqueName
+                Else
+                    source = svNm & sourceAliasMap(sourceAlias).UniqueName
+                End If
 
-                source = svNm & sourceAliasMap(sourceAlias).UniqueName
                 l = IIf((Len(source) + Len(tb)) > (tabWidthAlias + 1), Len(source) + Len(tb2), tabWidthAlias)
                 f.Append(LSet(source, l))
                 If e.Attribute("alias").Value <> "" Then f.Append("as " & sourceAlias)
