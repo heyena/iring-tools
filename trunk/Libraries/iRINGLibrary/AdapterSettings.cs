@@ -12,18 +12,19 @@ namespace org.iringtools.adapter
   {
     public AdapterSettings() : base()
     {
-      this.Add("InterfaceService", @"http://localhost/services/facade/query");
-      this.Add("ReferenceDataServiceUri", @"http://localhost/services/refdata");
-      this.Add("DefaultProjectionFormat", "xml");
-      this.Add("EndpointTimeout", "30000");
-      this.Add("dotNetRDFServer", @".\SQLEXPRESS");
-      this.Add("dotNetRDFCatalog", "InterfaceDb");
-      this.Add("dotNetRDFUser", "dotNetRDF");
-      this.Add("dotNetRDFPassword", "dotNetRDF");
-      this.Add("TrimData", "False");
-      this.Add("DumpSettings", "False");
-      this.Add("ExecutingAssemblyName", "App_Code");
-      this.Add("DefaultStyleSheet", @".\App_Data\default.css");
+        this.Add("InterfaceService", @"http://localhost/services/facade/query");
+        this.Add("ReferenceDataServiceUri", @"http://localhost/services/refdata");
+        this.Add("DefaultProjectionFormat", "json");
+        this.Add("DefaultListProjectionFormat", "json");
+        this.Add("EndpointTimeout", "30000");
+        this.Add("dotNetRDFServer", @".\SQLEXPRESS");
+        this.Add("dotNetRDFCatalog", "InterfaceDb");
+        this.Add("dotNetRDFUser", "dotNetRDF");
+        this.Add("dotNetRDFPassword", "dotNetRDF");
+        this.Add("TrimData", "False");
+        this.Add("DumpSettings", "False");
+        this.Add("ExecutingAssemblyName", "App_Code");
+        this.Add("DefaultStyleSheet", @".\App_Data\default.css");
 
       if (OperationContext.Current != null)
       {

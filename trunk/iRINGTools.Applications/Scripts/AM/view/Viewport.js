@@ -2,8 +2,8 @@
     extend: 'Ext.container.Viewport',
     // requires: [],
     layout: {
-        type: 'border',
-        padding: 2
+        type: 'border'
+//        padding: 2
     },
     items: [
         {

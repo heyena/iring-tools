@@ -76,7 +76,7 @@ namespace org.iringtools.adapter.projection
     protected ClassificationTemplate _classificationConfig;
 
     protected AdapterSettings _settings = null;
-    protected IDataLayer _dataLayer = null;
+    protected IDataLayer2 _dataLayer = null;
     protected Mapping _mapping = null;
     protected DataDictionary _dictionary = null;
     protected GraphMap _graphMap = null;
@@ -101,7 +101,7 @@ namespace org.iringtools.adapter.projection
     public bool FullIndex { get; set; }
     public long Count { get; set; }
 
-    public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
+    public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping)
     {
       _dataObjects = new List<IDataObject>();
       _relatedObjectsCache = new Dictionary<string, List<IDataObject>>();
@@ -123,15 +123,17 @@ namespace org.iringtools.adapter.projection
       _secondaryClassificationStyle = (ClassificationStyle)Enum.Parse(typeof(ClassificationStyle),
         _settings["SecondaryClassificationStyle"].ToString());
 
-      if (File.Exists(_settings["ClassificationTemplateFile"]))
+      string classificationTemplateFile = _settings["ClassificationTemplateFile"];
+
+      if (File.Exists(classificationTemplateFile))
       {
-        _classificationConfig = Utility.Read<ClassificationTemplate>(_settings["ClassificationTemplateFile"]);
+        _classificationConfig = Utility.Read<ClassificationTemplate>(classificationTemplateFile);
       }
 
       // load uri maps config
       _uriMaps = new Properties();
 
-      string uriMapsFilePath = _settings["DataPath"] + "UriMaps.conf";
+      string uriMapsFilePath = _settings["AppDataPath"] + "UriMaps.conf";
 
       if (File.Exists(uriMapsFilePath))
       {
@@ -528,7 +530,8 @@ namespace org.iringtools.adapter.projection
 
         foreach (var pair in dataRecord)
         {
-          dataObject.SetPropertyValue(pair.Key, pair.Value);
+          if (pair.Value != null && pair.Value.ToString() != String.Empty)
+              dataObject.SetPropertyValue(pair.Key, pair.Value);
         }
 
         return dataObject;

@@ -22,7 +22,7 @@
 
         this.store = Ext.create('Ext.data.TreeStore', {
             model: 'AM.model.DirectoryModel',
-            clearOnLoad: true,
+            //clearOnLoad: true,
             root: {
                 id: 'root',
                 expanded: true,

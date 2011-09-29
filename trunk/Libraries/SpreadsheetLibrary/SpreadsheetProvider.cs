@@ -31,7 +31,7 @@ namespace org.iringtools.adapter.datalayer
     public SpreadsheetProvider(AdapterSettings settings)
     {
       _settings = settings;
-      _configurationPath = Path.Combine(_settings["XmlPath"], "spreadsheet-configuration." + _settings["Scope"] + ".xml");
+      _configurationPath = Path.Combine(_settings["AppDataPath"], "spreadsheet-configuration." + _settings["Scope"] + ".xml");
 
       if (File.Exists(_configurationPath))
       {

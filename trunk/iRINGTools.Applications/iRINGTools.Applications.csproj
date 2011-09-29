@@ -204,6 +204,7 @@
     <Content Include="Scripts\AM\view\mapping\MappingTree.js" />
     <Content Include="Scripts\AM\view\mapping\MapProperty.js" />
     <Content Include="Scripts\AM\view\mapping\MapValuelist.js" />
+    <Content Include="Scripts\AM\view\nhybernateconfig\KeyPropertyForm.js" />
     <Content Include="Scripts\AM\view\search\SearchPanel.js" />
     <Content Include="Scripts\AM\view\search\SearchTree.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />

@@ -88,7 +88,7 @@ namespace org.iringtools.adapter.datalayer
           HttpPostedFileBase hpf = files[file] as HttpPostedFileBase;
           if (hpf.ContentLength == 0)
             continue;
-          string fileLocation = string.Format(@"XML\SpreadsheetData.{0}.{1}.xlsx", form["Scope"], form["Application"]);
+          string fileLocation = string.Format(@"App_Data\SpreadsheetData.{0}.{1}.xlsx", form["Scope"], form["Application"]);
 
           SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
           {

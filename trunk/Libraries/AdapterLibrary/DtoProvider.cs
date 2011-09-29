@@ -58,7 +58,7 @@ namespace org.iringtools.adapter
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
     private ScopeProjects _scopes = null;
-    private IDataLayer _dataLayer = null;
+    private IDataLayer2 _dataLayer = null;
     private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
     private IIdentityLayer _identityLayer = null;
@@ -110,7 +110,7 @@ namespace org.iringtools.adapter
         _settings["UserName"] = identity.Name;
       }
 
-      string scopesPath = String.Format("{0}Scopes.xml", _settings["XmlPath"]);
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
       _settings["ScopesPath"] = scopesPath;
 
       if (File.Exists(scopesPath))
@@ -123,9 +123,7 @@ namespace org.iringtools.adapter
         Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
 
-      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
-            _settings["XmlPath"]
-          );
+      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
       string bindingConfigurationPath = Path.Combine(
         _settings["BaseDirectoryPath"],
@@ -151,7 +149,6 @@ namespace org.iringtools.adapter
 
 	  public Manifest GetManifest(string scope, string app)
     {
-      _logger.Debug("GetManifest(" + scope + "," + app + ")");
 
       Manifest manifest = new Manifest()
       {
@@ -180,7 +177,7 @@ namespace org.iringtools.adapter
 
           foreach (DataObject dataObj in dataDictionary.dataObjects)
           {
-            if (dataObj.objectName == dataObjectName)
+            if (dataObj.objectName.ToLower() == dataObjectName.ToLower())
             {
               dataObject = dataObj;
               break;
@@ -234,6 +231,11 @@ namespace org.iringtools.adapter
                       roleMap.type == RoleType.DataProperty ||
                       roleMap.type == RoleType.ObjectProperty)
                   {
+                    if (String.IsNullOrEmpty(roleMap.propertyName))
+                    {
+                      throw new Exception("No data property mapped to role [" + classMap.name + "." + templateMap.name + "." + roleMap.name + "]");
+                    }
+
                     string[] property = roleMap.propertyName.Split('.');
                     string objectName = property[0].Trim();
                     string propertyName = property[1].Trim();
@@ -266,6 +268,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting manifest: " + ex);
+        throw ex;
       }
 
       return manifest;
@@ -290,6 +293,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer indices: " + ex);
+        throw ex;
       }
 
       return dataTransferIndices;
@@ -315,6 +319,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer indices: " + ex);
+        throw ex;
       }
 
       return dataTransferIndices;
@@ -338,6 +343,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer indices: " + ex);
+        throw ex;
       }
 
       return dataTransferIndices;
@@ -372,6 +378,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer indices: " + ex);
+        throw ex;
       }
 
       return dataTransferIndices;
@@ -406,6 +413,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer objects: " + ex);
+        throw ex;
       }
 
       return dataTransferObjects;
@@ -507,6 +515,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer objects: " + ex);
+        throw ex;
       }
 
       return dataTransferObjects;
@@ -573,6 +582,7 @@ namespace org.iringtools.adapter
       catch (Exception ex)
       {
         _logger.Error("Error getting data transfer objects: " + ex);
+        throw ex;
       }
 
       return dataTransferObjects;
@@ -608,20 +618,15 @@ namespace org.iringtools.adapter
           _settings["ApplicationName"] = applicationName;
           _settings["Scope"] =  scope;
 
-          string appSettingsPath = String.Format("{0}{1}.config",
-            _settings["XmlPath"],
-            scope
-          );
+          string appSettingsPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope);
 
           if (File.Exists(appSettingsPath))
           {
             AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
             _settings.AppendSettings(appSettings);
           }
-          string relativePath = String.Format("{0}BindingConfiguration.{1}.xml",
-            _settings["XmlPath"],
-            scope
-          );
+
+          string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
 
           //Ninject Extension requires fully qualified path.
           string bindingConfigurationPath = Path.Combine(
@@ -637,7 +642,7 @@ namespace org.iringtools.adapter
               new XAttribute("name", _settings["Scope"]),
               new XElement("bind",
                 new XAttribute("name", "DataLayer"),
-                new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+                new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
                 new XAttribute("to", "org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary")
               )
             );
@@ -647,10 +652,7 @@ namespace org.iringtools.adapter
 
           _kernel.Load(bindingConfigurationPath);
 
-          string mappingPath = String.Format("{0}Mapping.{1}.xml",
-            _settings["XmlPath"],
-            scope
-          );
+          string mappingPath = String.Format("{0}Mapping.{1}.xml", _settings["AppDataPath"], scope);
 
           if (File.Exists(mappingPath))
           {
@@ -691,7 +693,16 @@ namespace org.iringtools.adapter
       {
         if (!_isDataLayerInitialized)
         {
-          _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
+          try
+          {
+            _dataLayer = _kernel.Get<IDataLayer2>("DataLayer");
+          }
+          catch
+          {
+            _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
+          }
+
+          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
 
           _dataDictionary = _dataLayer.GetDictionary();
           _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
@@ -727,15 +738,20 @@ namespace org.iringtools.adapter
     // build cross graph map from manifest graph and mapping graph and save it in _graphMap
     private void BuildCrossGraphMap(Manifest manifest, string graph)
     {
-      GraphMap mappingGraph = _mapping.FindGraphMap(graph);
+      if (manifest == null || manifest.graphs == null || manifest.graphs.Count == 0)
+        throw new Exception("Manifest of graph [" + graph + "] is empty.");
+
       Graph manifestGraph = manifest.FindGraph(graph);
 
+      if (manifestGraph.classTemplatesList == null || manifestGraph.classTemplatesList.Count == 0)
+        throw new Exception("Manifest of graph [" + graph + "] does not contain any class-template-maps.");
+
+      GraphMap mappingGraph = _mapping.FindGraphMap(graph);
+      ClassTemplates manifestClassTemplatesMap = manifestGraph.classTemplatesList.First();
+      Class manifestClass = manifestClassTemplatesMap.@class;
       _graphMap = new GraphMap();
       _graphMap.name = mappingGraph.name;
       _graphMap.dataObjectName = mappingGraph.dataObjectName;
-
-      ClassTemplates manifestClassTemplatesMap = manifestGraph.classTemplatesList.First();
-      Class manifestClass = manifestClassTemplatesMap.@class;
 
       if (manifestClassTemplatesMap != null)
       {
@@ -746,6 +762,7 @@ namespace org.iringtools.adapter
           if (mappingClass.id == manifestClass.id)
           {
             RecurBuildCrossGraphMap(ref manifestGraph, manifestClass, mappingGraph, mappingClass);
+            break;
           }
         }
       }
@@ -761,6 +778,7 @@ namespace org.iringtools.adapter
         if (manifestClassTemplates.@class.id == manifestClass.id)
         {
           manifestTemplates = manifestClassTemplates.templates;
+          break;
         }
       }
 
@@ -866,6 +884,8 @@ namespace org.iringtools.adapter
                 }
               }
             }
+
+            break;
           }
         }
       }

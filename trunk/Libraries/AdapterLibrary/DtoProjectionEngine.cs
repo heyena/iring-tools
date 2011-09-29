@@ -18,7 +18,7 @@ namespace org.iringtools.adapter.projection
     private DataTransferObjects _dataTransferObjects;
 
     [Inject]
-    public DtoProjectionEngine(AdapterSettings settings, IDataLayer dataLayer, Mapping mapping)
+    public DtoProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping)
       : base(settings, dataLayer, mapping) { }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)

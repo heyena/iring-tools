@@ -106,7 +106,7 @@ namespace org.iringtools.adapter
       }
       #endregion
 
-      string scopesPath = String.Format("{0}Scopes.xml", _settings["XmlPath"]);
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
       _settings["ScopesPath"] = scopesPath;
 
       if (File.Exists(scopesPath))
@@ -124,7 +124,7 @@ namespace org.iringtools.adapter
       _kernel.Bind<Response>().ToConstant(_response);
 
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml",
-            _settings["XmlPath"]
+            _settings["AppDataPath"]
           );
 
       //Ninject Extension requires fully qualified path.
@@ -331,7 +331,7 @@ namespace org.iringtools.adapter
     {
       Status status = new Status();
       status.Messages = new Messages();
-      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["XmlPath"], projectName, applicationName);
+      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["AppDataPath"], projectName, applicationName);
 
       try
       {
@@ -841,7 +841,7 @@ namespace org.iringtools.adapter
           _settings["Scope"] = scope;
 
           string appSettingsPath = String.Format("{0}{1}.config",
-              _settings["XmlPath"],
+              _settings["AppDataPath"],
               scope
             );
 
@@ -852,7 +852,7 @@ namespace org.iringtools.adapter
           }
 
           string relativePath = String.Format("{0}BindingConfiguration.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             scope
           );
 
@@ -893,14 +893,14 @@ namespace org.iringtools.adapter
           }
 
           string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             scope
           );
 
           _settings["DBDictionaryPath"] = dbDictionaryPath;
 
           string mappingPath = String.Format("{0}Mapping.{1}.xml",
-            _settings["XmlPath"],
+            _settings["AppDataPath"],
             scope
           );
 
@@ -1324,7 +1324,7 @@ namespace org.iringtools.adapter
           hpf.InputStream.Position = 0;
           
           savedFileName = Path.Combine(
-          AppDomain.CurrentDomain.BaseDirectory,_settings["XmlPath"],
+          AppDomain.CurrentDomain.BaseDirectory,_settings["AppDataPath"],
           Path.GetFileName(hpf.FileName));
           hpf.SaveAs(savedFileName);
           hpf.InputStream.Flush();
