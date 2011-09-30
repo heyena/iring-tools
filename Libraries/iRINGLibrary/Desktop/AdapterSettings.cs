@@ -18,7 +18,7 @@ namespace org.iringtools.adapter
       this.Add("DefaultListProjectionFormat", "json");
       this.Add("EndpointTimeout", "30000");
       this.Add("dotNetRDFServer", @".\SQLEXPRESS");
-      this.Add("dotNetRDFCatalog", "InterfaceDb");
+      this.Add("dotNetRDFCatalog", "FacadeDb");
       this.Add("dotNetRDFUser", "dotNetRDF");
       this.Add("dotNetRDFPassword", "dotNetRDF");
       this.Add("TrimData", "False");
