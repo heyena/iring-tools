@@ -14,7 +14,9 @@ Module Module1
   Private _kernel As IKernel = Nothing
   Private _settings As NameValueCollection
   Private _adapterSettings As AdapterSettings
-  Private _sppidDataLayer As IDataLayer2
+    Private _sppidDataLayer As IDataLayer2
+    Private _queryVariables As Dictionary(Of String, String)
+    Private _textReplacements As Dictionary(Of String, String)
 
   Sub Main()
 
@@ -22,11 +24,14 @@ Module Module1
 
         Dim ninjectSettings = New NinjectSettings() With {.LoadExtensions = False}
         Dim spdl As iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer
-        Dim textReplacements As New Dictionary(Of String, String)
-        Dim queryVariables As New Dictionary(Of String, String)
+
         Dim queryLog As New Dictionary(Of String, String)
+        Dim errorLog As New List(Of String)
         Dim tmp As String
         Dim log As StreamWriter
+
+        _textReplacements = New Dictionary(Of String, String)
+        _queryVariables = New Dictionary(Of String, String)
 
         _kernel = New StandardKernel(ninjectSettings)
 
@@ -44,8 +49,6 @@ Module Module1
         _settings("ApplicationName") = "SPPID"
         _settings("BaseConfigurationPath") = _settings("XmlPath") & _settings("ProjectName")
         _settings("BaseConcatPath") = _settings("ProjectDirName") & _settings("ProjectName")
-
-
 
         _baseDirectory = Directory.GetCurrentDirectory()
         _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\bin"))
@@ -66,7 +69,10 @@ Module Module1
         _adapterSettings.AppendSettings(_settings)
 
         tmp = [String].Format("{0}QueryLog.txt", _settings("BaseConcatPath"))
-        _settings("LogPath") = Path.Combine(_baseDirectory, tmp)
+        _settings("QueryLogPath") = Path.Combine(_baseDirectory, tmp)
+
+        tmp = [String].Format("{0}ErrorLog.txt", _settings("BaseConcatPath"))
+        _settings("ErrorLogPath") = Path.Combine(_baseDirectory, tmp)
 
         ' Add our specific settings
         Dim appSettingsPath As String = [String].Format("{0}12345_000.SPPID.config", _adapterSettings("XmlPath"))
@@ -78,38 +84,34 @@ Module Module1
         End If
 
         ' get the log streamwriter
-        log = File.CreateText(_settings("LogPath"))
+        log = File.CreateText(_settings("QueryLogPath"))
 
         ' set up the list of text replacements and query variables. The variable or text replacement key should be in the form
         ' <queryName>.<variableName>. the variableName portion of this for text replacements should always start with '!@~'
         ' if the queryName is set to !All then this replacement will apply to all queries
 
         ' NOTE: these key-value pairs are hard-coded here but should be built from user choices instead in a production environment
-        textReplacements.Add("!All.!@~IncludeStockpileJoin", "left")
+        'textReplacements.Add("!!All.!@~IncludeStockpileJoin", "left")
 
         ' NOTE: although you can provide a @ProjectDBName in the queryVariables, it will not be used to build the SITE data query and set the schema
         ' for queries in SPPID; this information is instead taken from the ProjectConfiguration file
         'queryVariables.Add("!All.@ProjectDBName", "whatever")
 
         ' Ninject Extension requires fully qualified path.
-        _kernel.Load(Path.Combine(_baseDirectory, tmp))
-        spdl = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings, queryVariables, textReplacements, queryLog)
+        Try
 
-        For Each kvp As KeyValuePair(Of String, String) In queryLog
+            _kernel.Load(Path.Combine(_baseDirectory, tmp))
+            'spdl = _kernel.[Get](Of IDataLayer2)()
+            spdl = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings)
 
-            log.WriteLine("")
-            log.WriteLine("--" & StrDup(18, "*") & LSet("  Start Query '" & kvp.Key & "'", 60) & StrDup(20, "*"))
-            log.Write(kvp.Value)
-            log.WriteLine("--" & StrDup(18, "*") & LSet("  End Query '" & kvp.Key & "'", 60) & StrDup(20, "*"))
-            log.WriteLine("")
+        Catch ex As Exception
+            ' Intentionally Empty - catching an error here allows the querylog to be processed later
+        End Try
 
-        Next
 
-        log.Flush() : log.Close()
-
-        '_sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
 
     End Sub
+
 
     Private Sub Testing()
 
@@ -118,7 +120,7 @@ Module Module1
         Dim nvc As New NameValueCollection
 
         ' *** debug
-        ProjConfigPath = "C:\Users\dabshere\Documents\_Projects\iRing\DataLayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\12345_000\12345_000.Neha.SPPID.config"
+        ProjConfigPath = "C:\Users\dabshere\Documents\_Projects\iRing\DataLayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\12345_000\12345_000_Adrian2.SPPID.config"
 
         If File.Exists(ProjConfigPath) Then
 
