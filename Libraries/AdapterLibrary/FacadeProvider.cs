@@ -334,6 +334,9 @@ namespace org.iringtools.facade
           string targetGraphBaseUri = request["targetGraphBaseUri"];
           _settings["TargetGraphBaseUri"] = targetGraphBaseUri;
 
+          if (targetGraphBaseUri.ToLower() == "[default graph]")
+            targetGraphBaseUri = String.Empty;
+
           SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetEndpointUri), targetGraphBaseUri);
 
           if (request.ContainsKey("targetCredentials"))
