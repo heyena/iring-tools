@@ -236,7 +236,7 @@ Public Module Common
                     varName = e.Attribute("name").Value
                     varKey = Parts(SQLClause.QueryName) & "." & varName
                     exists = ReplacementValues.TryGetValue(varKey, varValue)
-                    varKey = "!All." & varName
+                    varKey = "!!All." & varName
                     If Not exists Then exists = ReplacementValues.TryGetValue(varKey, varValue)
 
                     ' use the default value if there is nothing else
@@ -323,7 +323,7 @@ Public Module Common
                 If Not exists Then
 
                     ' look for a variable provided for any any query
-                    exists = ValueDictionary.TryGetValue("!All." & varName, val)
+                    exists = ValueDictionary.TryGetValue("!!All." & varName, val)
 
                     ' use the default value if a value has not been provided
                     If Not exists Then val = e.Attribute("value").Value
@@ -339,14 +339,10 @@ Public Module Common
                     quoteIt = SQLUnique.IsQuotable(dType)
                 End If
 
-                If Not exists Then
+                If Not (exists AndAlso SuppressWarnings) Then
 
-                    If Not SuppressWarnings Then
-
-                        If rVal.Length < 1 Then rVal.Append("Warn: ")
-                        rVal.Append(nltb & "Variable '" & varName & "' was not provided with a value; the default will be used")
-
-                    End If
+                    If rVal.Length < 1 Then rVal.Append("Warn: ")
+                    rVal.Append(nltb & "Variable '" & varName & "' was not provided with a value; the default will be used")
 
                 End If
 
@@ -368,6 +364,58 @@ Public Module Common
         End Try
 
         Return "Pass"
+
+    End Function
+
+    ''' <summary>
+    ''' removes ALL leading and trailing space characters including tab and new line chars
+    ''' </summary>
+    ''' <param name="CharSequence"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    <Extension()> _
+    Public Function TrimToChars(CharSequence As String) As String
+
+        Dim sb As New StringBuilder
+        Dim ct As Integer = 0
+        Dim ct2 As Integer = 0
+        Dim s2 As String
+        Dim e As IEnumerable(Of Char)
+
+        For Each c As Char In CharSequence
+
+            Select Case c
+
+                Case vbCr, vbCrLf, vbLf, vbTab, " "
+                    ct += 1
+                Case Else
+                    Exit For
+
+            End Select
+
+        Next
+
+        If ct = CharSequence.Length Then Return ""
+        s2 = Mid(CharSequence, ct + 1)
+        e = s2.Reverse
+
+        For Each c As Char In e
+
+            Select Case c
+
+                Case vbCr, vbCrLf, vbLf, vbTab, " "
+                    ct2 += 1
+                Case Else
+                    Exit For
+
+            End Select
+
+        Next
+
+        If ct2 = s2.Length Then Return ""
+        If (ct + ct2) >= CharSequence.Length Then Return ""
+        Return Mid(CharSequence, ct + 1, CharSequence.Length - (ct + ct2))
+
 
     End Function
 
@@ -439,7 +487,8 @@ Public Module Common
                                     ByRef QueryParts As Dictionary(Of SQLClause, String),
                                     ByRef Replacements As IEnumerable(Of XElement),
                                     ByRef Declarations As IEnumerable(Of XElement),
-                                    Optional ByVal CommonServerName As String = "", Optional ByVal SiteDatabaseName As String = "") As String
+                                    Optional ByRef DeclarationValues As Dictionary(Of String, String) = Nothing,
+                                    Optional ByVal CommonServerName As String = "") As String
 
         Dim dec, s, f, w, g, h, o, i, t As New StringBuilder
         Dim tabWidthAlias As Integer = 50
@@ -470,6 +519,9 @@ Public Module Common
         Dim dataType As String
         Dim colNull As String
         Dim isExpression As Boolean
+        Dim vals As Dictionary(Of String, String) = DeclarationValues
+        Dim lastChecked As String = ""
+        Dim includeFilter As Boolean = False
 
         ' init
         If CommonServerName <> "" Then svNm = "[" & CommonServerName & "]."
@@ -722,65 +774,87 @@ Public Module Common
 
             For Each fil As XElement In filters
 
-                ' add conjunction
-                If fil.Attribute("conjunction").Value <> "" Then
-                    w.Append(tb & fil.Attribute("conjunction").Value & tb)
-                End If
-
-                ' add begining parentheses
-                If fil.Attribute("preParenCount").Value <> "" AndAlso fil.Attribute("preParenCount").Value <> "0" Then
-                    w.Append(StrDup(CInt(fil.Attribute("preParenCount").Value), "("))
-                End If
-
-                ' decide whether to quote the value or not by checking to see if it is a variable or
-                ' if the field's data type makes it necessary. Variables are never quoted; however string substitutions may still be
                 tmpStr = fil.Attribute("filterValue").Value
+                ' deal with optional filters
+                ' check to see if the filter value contains variables
+                If tmpStr.Contains("@") Then
 
-                If tmpStr.StartsWith("@") Then
-                    quoteTheValue = False
-                Else
+                    includeFilter = FilterValuesProvided(QueryParts(SQLClause.QueryName), tmpStr, Declarations, DeclarationValues, lastChecked)
 
-                    ' look up the data type of the column
-                    exists = sourceAliasMap.TryGetValue(fil.Attribute("source").Value, sourceUnique)
+                    ' if no value is provided and the 'Optional' flag is not set to true then the query cannot be built
+                    If Not includeFilter AndAlso (fil.Attribute("optional") Is Nothing OrElse fil.Attribute("optional").Value <> "true") Then
 
-                    If exists Then
-
-                        ColumnsDV.RowFilter = "TableSchema='" & sourceUnique.SchemaName & "' " & _
-                        "and TableName='" & sourceUnique.TableName & "' " & _
-                        "and ColumnName='" & fil.Attribute("fieldName").Value & "'"
-
-                        If ColumnsDV.Count <> 1 Then
-                            Throw New InvalidExpressionException("The column '" & _
-                                sourceUnique.UniqueName & d & fil.Attribute("fieldName").Value & "' is not a " & _
-                                "valid uniquely identified column; the query cannot be built")
-                        End If
-
-                        col = ColumnsDV(0).Row
-                        quoteTheValue = SQLUnique.IsQuotable(col.DataType)
-
-                    Else : Throw New InvalidExpressionException("The source value '" & fil.Attribute("source").Value & _
-                        "' is not a valid uniquely identified table or table reference; the query cannot be built")
+                        Throw New InvalidExpressionException("No value was provided for the declaration '" & lastChecked & _
+                            "' without this value, a valid SQL data query cannot be built from query '" & QueryParts(SQLClause.QueryName))
 
                     End If
 
                 End If
 
-                ' add filter clause
-                tmpStr = tmpStr.Replace("'", "''")
-                w.Append(fil.Attribute("source").Value & d & fil.Attribute("fieldName").Value)
-                w.Append(fil.Attribute("operator").Value & IIf(quoteTheValue, "'", ""))
-                w.Append(tmpStr & IIf(quoteTheValue, "'", ""))
+                ' add conjunction. Since it's possible for the first filter to be optional with no value provided, if this is the first valid
+                ' filter, then the conjunction is ignored
+                If fil.Attribute("conjunction").Value <> "" AndAlso w.Length > 5 AndAlso includeFilter Then
+                    w.Append(tb & fil.Attribute("conjunction").Value & tb)
+                End If
+
+                ' add begining parentheses; these get added regardless of whether the filter is included or not
+                If fil.Attribute("preParenCount").Value <> "" AndAlso fil.Attribute("preParenCount").Value <> "0" Then
+                    w.Append(StrDup(CInt(fil.Attribute("preParenCount").Value), "("))
+                End If
+
+                If includeFilter Then
+
+                    ' decide whether to quote the value or not by checking to see if it is a variable or
+                    ' if the field's data type makes it necessary. Variables are never quoted; however string substitutions may still be quoted
+                    If tmpStr.Contains("@") Then
+                        quoteTheValue = False
+                    Else
+
+                        ' look up the data type of the column
+                        exists = sourceAliasMap.TryGetValue(fil.Attribute("source").Value, sourceUnique)
+
+                        If exists Then
+
+                            ColumnsDV.RowFilter = "TableSchema='" & sourceUnique.SchemaName & "' " & _
+                            "and TableName='" & sourceUnique.TableName & "' " & _
+                            "and ColumnName='" & fil.Attribute("fieldName").Value & "'"
+
+                            If ColumnsDV.Count <> 1 Then
+                                Throw New InvalidExpressionException("The column '" & _
+                                    sourceUnique.UniqueName & d & fil.Attribute("fieldName").Value & "' is not a " & _
+                                    "valid uniquely identified column; the query cannot be built")
+                            End If
+
+                            col = ColumnsDV(0).Row
+                            quoteTheValue = SQLUnique.IsQuotable(col.DataType)
+
+                        Else : Throw New InvalidExpressionException("The source value '" & fil.Attribute("source").Value & _
+                            "' is not a valid uniquely identified table or table reference; the query cannot be built")
+
+                        End If
+
+                    End If
+
+                    ' add filter clause
+                    tmpStr = tmpStr.Replace("'", "''")
+                    w.Append(fil.Attribute("source").Value & d & fil.Attribute("fieldName").Value)
+                    w.Append(fil.Attribute("operator").Value & IIf(quoteTheValue, "'", ""))
+                    w.Append(tmpStr & IIf(quoteTheValue, "'", ""))
+
+                End If
 
                 ' add ending parentheses
                 If fil.Attribute("postParenCount").Value <> "" AndAlso fil.Attribute("postParenCount").Value <> "0" Then
                     w.Append(StrDup(CInt(fil.Attribute("postParenCount").Value), ")"))
                 End If
 
+                w = w.Replace("()", "")
                 w.Append(nltb)
 
             Next
 
-            If w.Length > 0 Then w.Insert(0, "WHERE " & nltb)
+            w = w.Replace("()", "")
+            If w.ToString.TrimToChars.Length > 3 Then w.Insert(0, "WHERE " & nltb)
             QueryParts.Add(SQLClause.Where, w.ToString)
 
             ' HAVING and GROUP BY clause ****************************************************************************************
@@ -807,6 +881,99 @@ Public Module Common
         End Try
 
         Return "Pass"
+
+    End Function
+
+    ''' <summary>
+    ''' Searches the values provided and detects any default values to determine if a valid query can be made using the input filter string
+    ''' </summary>
+    ''' <param name="QueryName"></param>
+    ''' <param name="FilterVal"></param>
+    ''' <param name="Declarations"></param>
+    ''' <param name="vars"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Function FilterValuesProvided(ByVal QueryName As String, _
+                                         ByVal FilterVal As String, _
+                                         ByVal Declarations As IEnumerable(Of XElement), _
+                                         ByVal vars As Dictionary(Of String, String), _
+                                         ByRef lastChecked As String) As Boolean
+
+        Dim pat As String
+        Dim matches As MatchCollection
+        Dim found, provided As Boolean
+        Dim tmp As String = ""
+
+        provided = False
+        pat = "(@[a-zA-Z0-9_\-\#\$]+)\w"
+        matches = Regex.Matches(FilterVal, pat, RegexOptions.IgnoreCase)
+
+        ' for each variable found
+        For Each m As System.Text.RegularExpressions.Match In matches
+
+            lastChecked = m.Value
+
+            ' look to see if a value is provided
+            If vars Is Nothing Then : found = False
+            Else
+
+                ' check first to see if a query-specific value is provided
+                found = vars.TryGetValue("!" & QueryName & "." & RTrim(m.Value), tmp)
+
+                If found Then
+
+                    ' an explicit !NoValue overrides any generic value that may be present, allowing
+                    ' for query-specific defaults to be used, or the removal of specific filters on
+                    ' a query by query basis
+                    If tmp = "!NoValue" Then found = False
+
+                    ' if not found, look for a generic value that is used for all queries
+                Else : found = vars.TryGetValue("!!All." & RTrim(m.Value), tmp)
+
+                End If
+
+            ' the above order of processing allows us to provide a single (generic) value for all queries to be processed that
+            ' can still be overridden by a query-specific value. The check for !NoValue allows us to override a generic value by
+            ' not providing any value at all for this specific query; this is useful for removing optional filters on specific queries
+            ' and also allows us to make use of a default value in specific instances and avoids forcing an eclipse of all query-specific
+            ' default values for a given variable.
+
+            End If
+
+            provided = found
+
+            ' NOTE; if it were common to have queries with > 4 variable filters, then it might be worth
+            ' our while to implement an iQueryProvider or dump the Declarations into a dictionary. Since
+            ' this is rare, we'll stick with the iEnumerable until it actually creates a verifiable 
+            ' performance problem that can be overcome with the additional overhead of the dictionary
+
+            ' if no value is provided for one of the variables, look to see if there is a default
+            If Not found Then
+
+                For Each x As XElement In Declarations
+
+                    ' look for a default; if found, then a value is considered to be provided. Note that this
+                    ' behavior constitutes an override of the OPTIONAL flag for the declaration - the default value
+                    ' will always be used if provided when an explicit value has not been provided, regardless of whether
+                    ' OPTIONAL is set or not
+                    If x.Attribute("name").Value = m.Value AndAlso x.Attribute("value").Value <> "" Then
+                        provided = True
+                        Exit For
+                    End If
+
+                Next
+
+                ' if the value is still not provided then exit for
+                If Not provided Then Exit For
+
+            End If
+
+        Next
+
+        ' if even one variable is not provided, then the provided flag will be false.
+        ' if a value for all variables is provided, then the provided flag will be true
+        ' return the provided flag
+        Return provided
 
     End Function
 

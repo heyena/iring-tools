@@ -2,6 +2,8 @@
 Option Compare Text
 
 Imports System.Data.SqlClient
+Imports System.IO
+Imports log4net
 
 Public Class SPPIDWorkingSet
 
@@ -28,11 +30,26 @@ Public Class SPPIDWorkingSet
     Private _SchemaSubstitutions As Dictionary(Of String, String)
     Private _StagingServerInCommon As Boolean
     Private _CommonServerName As String
-    Private _StagingDataBaseName As String
+    Private _StagingConfigurationDoc As XDocument
+    Private _textReplacementsMap As Dictionary(Of String, String)
+    Private _queryVariablesMap As Dictionary(Of String, String)
+    Private _logger As ILog
 
 #End Region
 
 #Region " Properties "
+
+    Public ReadOnly Property TextReplacementMap As Dictionary(Of String, String)
+        Get
+            Return _textReplacementsMap
+        End Get
+    End Property
+
+    Public ReadOnly Property QueryVariableMap As Dictionary(Of String, String)
+        Get
+            Return _queryVariablesMap
+        End Get
+    End Property
 
     Public ReadOnly Property CommonServerName() As String
         Get
@@ -123,18 +140,28 @@ Public Class SPPIDWorkingSet
     Public Sub New(ProjectConnection As SqlConnection,
                    SiteConnection As SqlConnection,
                    StagingConnection As SqlConnection,
-                   SiteDataQuery As XElement, PlantConnection As SqlConnection)
+                   StagingConfigurationPath As String,
+                   ByRef Logger As ILog)
+
+        Dim SiteDataQuery As XElement = Nothing
+
 
         'SPQueries = New SmartPlantDBQueries
         _CommonDataDS = New SQLSchemaDS
         _StagingServerInCommon = (ProjectConnection.DataSource = StagingConnection.DataSource)
         _CommonServerName = IIf(_StagingServerInCommon, ProjectConnection.DataSource, "")
+        _logger = Logger
 
         _SchemaSubstitutions = New Dictionary(Of String, String)
         _siteDataTA = New SQLSchemaDSTableAdapters.SiteDataTableAdapter
         _tablesTA = New SQLSchemaDSTableAdapters.SchemaTablesTableAdapter
         _columnsTA = New SQLSchemaDSTableAdapters.SchemaColumnsTableAdapter
+        _StagingConfigurationDoc = XDocument.Load(StagingConfigurationPath)
+        _textReplacementsMap = New Dictionary(Of String, String)(StringComparer.InvariantCultureIgnoreCase)
+        _queryVariablesMap = New Dictionary(Of String, String)(StringComparer.InvariantCultureIgnoreCase)
+        SetProjectVariablesAndReplacements(ProjectConnection)
 
+        GetQueryByName("!SiteData", SiteDataQuery)
         GetBaselineSchema(SiteConnection, ProjectConnection.Database, SiteDataQuery)
 
         '_tablesTA.Connection = ProjectConnection
@@ -158,6 +185,35 @@ Public Class SPPIDWorkingSet
 
 
 #Region " Public Methods "
+
+    ''' <summary>
+    ''' Fetch the named query from the staging configuration XDocument
+    ''' </summary>
+    ''' <param name="QueryName"></param>
+    ''' <param name="QueryNode"></param>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Public Function GetQueryByName(ByVal QueryName As String, ByRef QueryNode As XElement) As String
+
+        Dim doc As XDocument = _StagingConfigurationDoc
+
+        Try
+
+            ' fetch the site data query
+            Dim q As IEnumerable(Of XElement) = _
+            From el In doc...<query>
+            Select el
+            Where el.Attribute("name").Value = QueryName
+
+            QueryNode = q.First
+
+        Catch ex As Exception
+            Return "Fail: " & ex.Message
+        End Try
+
+        Return "Pass"
+
+    End Function
 
 #End Region
 
@@ -239,7 +295,7 @@ Public Class SPPIDWorkingSet
         _SchemaSubstitutions.Clear()
         _SchemaSubstitutions.Add(SPSchemaType.SITE.ToString, _SITESchemaName)
         GetQueryParts(SiteDataQuery, ColumnsView, TablesView, _SchemaSubstitutions,
-                      queryParts, replacements, declarations)
+                      queryParts, replacements, declarations, _queryVariablesMap)
 
         ' the only SET necessary should be the database name
         ' setClause = "SET @ProjectDBName='" & ProjectDBname & "'" & nltb
@@ -270,12 +326,80 @@ Public Class SPPIDWorkingSet
 
             SiteDR = drv.Row
             rVal = [Enum].TryParse(SiteDR.SP_Schema_Type, True, schemaTp)
-            SetSchemaType(schemaTp, SiteDR.Username)
-            SchemaSubstitutions.Add(SiteDR.SP_Schema_Type, SiteDR.Username)
+            SetSchemaType(schemaTp, SiteDR.UserName)
+            SchemaSubstitutions.Add(SiteDR.SP_Schema_Type, SiteDR.UserName)
 
         Next
 
     End Sub
+
+    ''' <summary>
+    ''' Fetches the variable values and text replacement values from the Staging configuration
+    ''' </summary>
+    ''' <returns></returns>
+    ''' <remarks></remarks>
+    Private Function SetProjectVariablesAndReplacements(ProjectConn As SqlConnection) As String
+
+        Dim vars As IEnumerable(Of XElement)
+        Dim key As String
+        Dim v As String = ""
+        Dim n As String
+        Dim found As Boolean
+
+        Try
+
+            ' This function makes the assumption that project variables and replacements are provided within the StagingConfiguration file
+            vars = _StagingConfigurationDoc...<projectVariables>...<assignment>
+
+            For Each var As XElement In vars
+
+                v = var.Attribute("value").Value
+                n = var.Attribute("name").Value
+
+                ' ignore variables where !NoValue is set (indicating that, although the variable is listed, a value is not provided
+                ' and ignore "empty lines" in the variable set. An empty line is indicated by an assignment with no name
+                If v = "!NoValue" OrElse n = "" Then Continue For
+
+                key = "!" & var.Attribute("query").Value & "." & var.Attribute("name").Value
+                found = _queryVariablesMap.TryGetValue(key, v)
+                If Not found Then _queryVariablesMap.Add("!" & var.Attribute("query").Value & "." & var.Attribute("name").Value, var.Attribute("value").Value)
+
+            Next
+
+            ' The variable @ProjectDBName should generally be set from the Project Connection information; if it already exists, then it is 
+            ' being overridden from the calling function
+            found = _queryVariablesMap.TryGetValue("!!All.@ProjectDBName", v)
+
+            If Not found Then : _queryVariablesMap.Add("!!All.@ProjectDBName", ProjectConn.Database)
+            Else
+
+                If v <> ProjectConn.Database Then
+                    _logger.Warn("The project connection database name differs from the default database name used by by the staging configuration queries")
+                End If
+
+            End If
+
+            vars = _StagingConfigurationDoc...<projectReplacements>...<assignment>
+
+            For Each var As XElement In vars
+
+                v = var.Attribute("value").Value
+                n = var.Attribute("name").Value
+                If v = "!NoValue" OrElse n = "" Then Continue For
+
+                key = "!" & var.Attribute("query").Value & "." & var.Attribute("name").Value
+                found = _textReplacementsMap.TryGetValue(key, v)
+                _textReplacementsMap.Add("!" & var.Attribute("query").Value & "." & var.Attribute("name").Value, var.Attribute("value").Value)
+
+            Next
+
+        Catch ex As Exception
+            Return "Fail: " & ex.Message
+        End Try
+
+        Return "Pass"
+
+    End Function
 
 #End Region
 
