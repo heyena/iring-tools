@@ -77,7 +77,7 @@ Public Class Test
         ' for queries in SPPID; this information is instead taken from the ProjectConfiguration file
         'queryVariables.Add("!All.@ProjectDBName", "whatever")
 
-        _sppidDataLayer = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings, queryVariables, textReplacements)
+        _sppidDataLayer = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings)
     '_sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
     End Sub
   '<Test()>

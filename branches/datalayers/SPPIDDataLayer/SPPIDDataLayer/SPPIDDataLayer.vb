@@ -1,4 +1,7 @@
-﻿Imports System.Collections
+﻿
+#Region " Imports "
+
+Imports System.Collections
 Imports System.Collections.Generic
 Imports System.Collections.Specialized
 Imports System.IO
@@ -10,12 +13,15 @@ Imports org.iringtools.adapter
 Imports org.iringtools.library
 Imports org.iringtools.utility
 Imports System.Diagnostics
+Imports log4net
 
 'Imports Llama
 'Imports ISPClientData3
 Imports System.Data.SqlClient
 Imports System.Text
 Imports System.Text.RegularExpressions
+
+#End Region
 
 Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
   Implements IDataLayer2
@@ -30,10 +36,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Private AppSettings As AdapterSettings
     Private ProjConfig As Xml.XmlDocument
     Private SPWorkSet As SPPIDWorkingSet
-    Private _queryVariableReplacementValues As Dictionary(Of String, String)
-    Private _textReplacementValues As Dictionary(Of String, String)
-    Private _queryLog As Dictionary(Of String, String)
-    Private _queryLogging As Boolean
+    Private Shared _logger As ILog
+
     Private _projConn As SqlConnection
     Private _stageConn As SqlConnection
     Property _siteConn As SqlConnection
@@ -45,10 +49,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 #Region " Instantiation "
 
     <Inject()>
-    Public Sub New(ByRef settings As AdapterSettings,
-                   ByRef queryVariables As Dictionary(Of String, String),
-                   ByRef textReplacements As Dictionary(Of String, String),
-                   Optional ByRef queryLog As Dictionary(Of String, String) = Nothing)
+    Public Sub New(ByRef settings As AdapterSettings)
 
         MyBase.New(settings)
 
@@ -61,10 +62,9 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         ' stop overwriting each other's configuration data and we can remove configuration data currently being set
         ' directly in the code.
         Dim configPath As String
-        Dim siteDataQuery As XElement = Nothing
+        Dim StagingConfigurationPath As String = ""
 
-        _queryLog = queryLog
-        _queryLogging = IIf(_queryLog Is Nothing, False, True)
+        _logger = LogManager.GetLogger(GetType(SPPIDDataLayer))
         _projConn = New SqlConnection(_settings("SPPIDConnectionString"))
         _stageConn = New SqlConnection(_settings("iRingStagingConnectionString"))
         _siteConn = New SqlConnection(_settings("SPPIDSiteConnectionString"))
@@ -83,20 +83,9 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Try
 
             configPath = _settings("ProjectConfigurationPath")
+            StagingConfigurationPath = _settings("StagingConfigurationPath")
             AddProjConfigSettings(configPath)
-
-
-            ' create new dictionaries that are case-insensitive
-            _textReplacementValues = New Dictionary(Of String, String)(textReplacements, StringComparer.InvariantCultureIgnoreCase)
-            _queryVariableReplacementValues = New Dictionary(Of String, String)(queryVariables, StringComparer.InvariantCultureIgnoreCase)
-
-            ' this method of creating does not appear to set the comparer type correctly
-            '_textReplacementValues = textReplacements.ToDictionary(Function(k) k.Key, Function(v) v.Value, StringComparer.InvariantCultureIgnoreCase)
-            '_queryVariableReplacementValues = queryVariables.ToDictionary(Function(k) k.Key, Function(v) v.Value, StringComparer.InvariantCultureIgnoreCase)
-            GetQueryByName("!SiteData", siteDataQuery)
-            SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, siteDataQuery, _plantConn)
-
-            GetCurrentSPPIDSchema()
+            SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, StagingConfigurationPath, _logger)
             MigrateSPPIDToStaging()
 
         Catch ex As Exception
@@ -259,12 +248,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 #Region " Staging Methods "
 
-    Public Function GetCurrentSPPIDSchema() As String
-
-
-
-    End Function
-
     Public Function MigrateSPPIDToStaging() As String
 
         Dim replacements As IEnumerable(Of XElement) = Nothing
@@ -274,114 +257,95 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim stgCfgQueries As IEnumerable(Of XElement) = Nothing
         Dim siteDataQuery As XElement = Nothing
         Dim tmpStr As String = ""
-        Dim exists As Boolean
         Dim cmd As SqlCommand
         Dim DT As DataTable
         Dim DS As DataSet
         Dim DA As SqlDataAdapter
         Dim allQueryText As String
         Dim sbc As New SqlBulkCopy(_stageConn)
-
-        GetStagingQueries(stgCfgQueries)
-
-        For Each q As XElement In stgCfgQueries
-
-            queryParts.Clear()
-            GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
-                          queryParts, replacements, declarations, SPWorkSet.CommonServerName, SPWorkSet.SiteDatabaseName)
-
-            ' commbine the query parts and perform any necessary replacements. 
-            ' NOTE - although it is possible to make use of an INTO clause to create a selection query that will 
-            ' also automatically create the destination table, this has limitations, the most serious of which is
-            ' it is not safe to assume that the Source DB and Staging DB have the same security requirements. Instead,
-            ' we will always assume that security is separate for these two databases and that the connection strings for the 
-            ' Source and Staging connections provide this information for each individual location. We also cannot assume that
-            ' the specified credentials have the power to create a Linked Server connection or that both SQL Server instances
-            ' allow ad hoc (OpenDataSource) queries. Instead, the provided credentials are used to copy the data to the 
-            ' local machine and then bulk copied out to the staging server, bypassing the need for a more sophisticated security
-            ' check/edit)
-            queryParts.BuildQuery(queryText, replacements, _textReplacementValues, False)
-            allQueryText = "--************ Table Definition ***************" & nl & queryParts(SQLClause.TableDef) & nl &
-                "--**************** End Table Definition  ***************" & nl & nl & queryText
-
-            If _queryLogging Then
-
-                exists = _queryLog.TryGetValue(queryParts(SQLClause.QueryName), tmpStr)
-
-                If exists Then
-                    _queryLog(queryParts(SQLClause.QueryName)) = allQueryText
-                Else
-                    _queryLog.Add(queryParts(SQLClause.QueryName), allQueryText)
-                End If
-
-            End If
-
-            ' delete any existing table in the Staging location by the destination name
-            cmd = _stageConn.CreateCommand
-            cmd.CommandText = _
-                "IF  EXISTS (" &
-                "SELECT object_id " &
-                "FROM sys.objects " &
-                "WHERE object_id = OBJECT_ID(N'dbo.[" & queryParts(SQLClause.StagingName) & "]')  AND type in (N'U'))" &
-                "   DROP TABLE dbo.[" & queryParts(SQLClause.StagingName) & "]"
-
-            If _stageConn.State = ConnectionState.Closed Then _stageConn.Open()
-            cmd.ExecuteNonQuery()
-
-            ' create a new table to hold the data
-            cmd = _stageConn.CreateCommand()
-            cmd.CommandText = queryParts(SQLClause.TableDef)
-            cmd.ExecuteNonQuery()
-
-            ' fetch the data
-            cmd = _projConn.CreateCommand()
-            cmd.CommandText = queryText
-            DS = New DataSet
-            DA = New SqlDataAdapter(cmd)
-            'DA.MissingSchemaAction = MissingSchemaAction.AddWithKey
-            DA.Fill(DS, queryParts(SQLClause.StagingName))
-            DT = DS.Tables(queryParts(SQLClause.StagingName))
-
-            ' set the destination location and bulk copy the data to the new table
-            sbc.DestinationTableName = queryParts(SQLClause.StagingName)
-            sbc.WriteToServer(DT)
-            If _stageConn.State = ConnectionState.Open Then _stageConn.Close()
-
-        Next
-
-        Return "Pass"
-
-    End Function
-
-    ''' <summary>
-    ''' Fetch the named query from the staging configuration XDocument
-    ''' </summary>
-    ''' <param name="SiteDataQuery"></param>
-    ''' <returns></returns>
-    ''' <remarks></remarks>
-    Private Function GetQueryByName(ByVal QueryName As String, ByRef QueryNode As XElement) As String
-
-        Dim doc As XDocument
+        Dim rVal As String
 
         Try
 
-            doc = XDocument.Load(AppSettings("StagingConfigurationPath"))
 
-            ' fetch the site data query
-            Dim q As IEnumerable(Of XElement) = _
-            From el In doc...<query>
-            Select el
-            Where el.Attribute("name").Value = QueryName
+            GetStagingQueries(stgCfgQueries)
 
-            QueryNode = q.First
+            For Each q As XElement In stgCfgQueries
+
+                queryParts.Clear()
+                rVal = GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
+                              queryParts, replacements, declarations, SPWorkSet.QueryVariableMap, SPWorkSet.CommonServerName)
+
+                ' commbine the query parts and perform any necessary replacements. 
+                ' NOTE - although it is possible to make use of an INTO clause to create a selection query that will 
+                ' also automatically create the destination table, this has limitations, the most serious of which is
+                ' it is not safe to assume that the Source DB and Staging DB have the same security requirements. Instead,
+                ' we will always assume that security is separate for these two databases and that the connection strings for the 
+                ' Source and Staging connections provide this information for each individual location. We also cannot assume that
+                ' the specified credentials have the power to create a Linked Server connection or that both SQL Server instances
+                ' allow ad hoc (OpenDataSource) queries. Instead, the provided credentials are used to copy the data to the 
+                ' local machine and then bulk copied out to the staging server, bypassing the need for a more sophisticated security
+                ' check/edit)
+
+                If Mid(rVal, 1, 4) = "Warn" Then _logger.Warn(Mid(rVal, 7))
+                If Mid(rVal, 1, 4) = "Fail" Then : _logger.Error("Query '" & queryParts(SQLClause.QueryName) & "' could not be built due to error: " & Mid(rVal, 7))
+                Else
+
+                    queryParts.BuildQuery(queryText, replacements, SPWorkSet.TextReplacementMap, False)
+                    allQueryText = nl & "--************ Table Definition ***************" & nl & queryParts(SQLClause.TableDef) & nl &
+                        "--**************** End Table Definition  ***************" & nl & nl & queryText
+
+                    _logger.Info("")
+                    _logger.Info("--" & StrDup(18, "*") & LSet("  Start Query '" & queryParts(SQLClause.QueryName) & "'", 60) & StrDup(20, "*"))
+                    _logger.Info(allQueryText)
+                    _logger.Info("--" & StrDup(18, "*") & LSet("  End Query '" & queryParts(SQLClause.QueryName) & "'", 60) & StrDup(20, "*"))
+                    _logger.Info("")
+
+                    ' delete any existing table in the Staging location by the destination name
+                    cmd = _stageConn.CreateCommand
+                    cmd.CommandText = _
+                        "IF  EXISTS (" &
+                        "SELECT object_id " &
+                        "FROM sys.objects " &
+                        "WHERE object_id = OBJECT_ID(N'dbo.[" & queryParts(SQLClause.StagingName) & "]')  AND type in (N'U'))" &
+                        "   DROP TABLE dbo.[" & queryParts(SQLClause.StagingName) & "]"
+
+                    If _stageConn.State = ConnectionState.Closed Then _stageConn.Open()
+                    cmd.ExecuteNonQuery()
+
+                    ' create a new table to hold the data
+                    cmd = _stageConn.CreateCommand()
+                    cmd.CommandText = queryParts(SQLClause.TableDef)
+                    cmd.ExecuteNonQuery()
+
+                    ' fetch the data
+                    cmd = _projConn.CreateCommand()
+                    cmd.CommandText = queryText
+                    DS = New DataSet
+                    DA = New SqlDataAdapter(cmd)
+                    'DA.MissingSchemaAction = MissingSchemaAction.AddWithKey
+                    DA.Fill(DS, queryParts(SQLClause.StagingName))
+                    DT = DS.Tables(queryParts(SQLClause.StagingName))
+
+                    ' set the destination location and bulk copy the data to the new table
+                    sbc.DestinationTableName = queryParts(SQLClause.StagingName)
+                    sbc.WriteToServer(DT)
+                    If _stageConn.State = ConnectionState.Open Then _stageConn.Close()
+
+                End If
+
+            Next
+
 
         Catch ex As Exception
-            Return "Fail: " & ex.Message
+            Debug.Print("got here")
         End Try
 
         Return "Pass"
 
     End Function
+
+
 
     ''' <summary>
     ''' Fetch the queries from the staging configuration XDocument for this project
