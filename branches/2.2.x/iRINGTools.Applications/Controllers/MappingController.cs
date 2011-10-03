@@ -1115,6 +1115,33 @@ namespace org.iringtools.web.controllers
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult ClassLabel(FormCollection form)
+        {
+          String label = String.Empty;
+
+          try
+          {
+            string classId = form["classId"];
+
+            if (!String.IsNullOrEmpty(classId))
+            {
+              if (classId.Contains(":"))
+                classId = classId.Substring(classId.IndexOf(":") + 1);
+
+              Entity entity = _refdata.GetClassLabel(classId);
+              label = entity.Label;
+            }
+          }
+          catch (Exception ex)
+          {
+            string msg = ex.ToString();
+            _logger.Error(msg);
+            return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+          }
+
+          return Json(label, JsonRequestBehavior.AllowGet);
+        }
+
         public JsonResult GetLabels(FormCollection form)
         {
             JsonArray jsonArray = new JsonArray();
