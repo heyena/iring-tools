@@ -85,7 +85,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             configPath = _settings("ProjectConfigurationPath")
             StagingConfigurationPath = _settings("StagingConfigurationPath")
             AddProjConfigSettings(configPath)
-            SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, StagingConfigurationPath, _logger)
+            SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, StagingConfigurationPath, _logger, _plantConn)
             MigrateSPPIDToStaging()
 
         Catch ex As Exception
@@ -274,7 +274,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
                 queryParts.Clear()
                 rVal = GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
-                              queryParts, replacements, declarations, SPWorkSet.QueryVariableMap, SPWorkSet.CommonServerName)
+                              queryParts, replacements, declarations, SPWorkSet.QueryVariableMap, SPWorkSet.CommonServerName, SPWorkSet.SiteDatabaseName)
 
                 ' commbine the query parts and perform any necessary replacements. 
                 ' NOTE - although it is possible to make use of an INTO clause to create a selection query that will 

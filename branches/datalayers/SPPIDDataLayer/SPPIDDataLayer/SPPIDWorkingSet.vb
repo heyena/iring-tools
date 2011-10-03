@@ -34,6 +34,7 @@ Public Class SPPIDWorkingSet
     Private _textReplacementsMap As Dictionary(Of String, String)
     Private _queryVariablesMap As Dictionary(Of String, String)
     Private _logger As ILog
+    Private _StagingDataBaseName As String
 
 #End Region
 
@@ -141,7 +142,7 @@ Public Class SPPIDWorkingSet
                    SiteConnection As SqlConnection,
                    StagingConnection As SqlConnection,
                    StagingConfigurationPath As String,
-                   ByRef Logger As ILog)
+                   ByRef Logger As ILog, PlantConnection As SqlConnection)
 
         Dim SiteDataQuery As XElement = Nothing
 
@@ -162,7 +163,7 @@ Public Class SPPIDWorkingSet
         SetProjectVariablesAndReplacements(ProjectConnection)
 
         GetQueryByName("!SiteData", SiteDataQuery)
-        GetBaselineSchema(SiteConnection, ProjectConnection.Database, SiteDataQuery)
+        GetBaselineSchema(SiteConnection, PlantConnection.Database, SiteDataQuery)
 
         '_tablesTA.Connection = ProjectConnection
         '_columnsTA.Connection = ProjectConnection
@@ -298,8 +299,6 @@ Public Class SPPIDWorkingSet
                       queryParts, replacements, declarations, _queryVariablesMap)
 
         ' the only SET necessary should be the database name
-        ' setClause = "SET @ProjectDBName='" & ProjectDBname & "'" & nltb
-        ProjectDBname = "SPPID_Project_Plant"
         setClause = "SET @ProjectDBName='" & ProjectDBname & "'" & nltb
         _StagingDataBaseName = ProjectDBname
         queryParts.Add(SQLClause.Set, setClause)
