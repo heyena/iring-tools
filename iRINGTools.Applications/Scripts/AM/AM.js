@@ -24,7 +24,7 @@ Ext.application({
         } else {
             var exptime = null;
         }
-        Ext.state.Manager.setProvider(new Ext.state.CookieProvider()); 
+        Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
         Ext.create('AM.view.Viewport');
 
@@ -58,3 +58,44 @@ Ext.application({
         });
     }
 });
+
+//Function to activate context menus with touch events
+(function () {
+    var EM = Ext.EventManager,
+    body = document.body,
+    activeTouches = {},
+    onTouchStart = function (e, t) {
+        var be = e.browserEvent;
+        Ext.id(t);
+        if (be.touches.length === 1) {
+            activeTouches[t.id] = fireContextMenu.defer(1200, null, [e, t]);
+        } else {
+            cancelContextMenu(e, t);
+        }
+    },
+    fireContextMenu = function (e, t) {
+        var touch = e.browserEvent.touches[0];
+        var me = document.createEvent("MouseEvents");
+        me.initMouseEvent("contextmenu", true, true, window,
+        1, // detail
+        touch.screenX,
+        touch.screenY,
+        touch.clientX,
+        touch.clientY,
+        false, false, false, false, // key modifiers
+        2, // button
+        null // relatedTarget
+    );
+        t.dispatchEvent(me);
+    },
+    cancelContextMenu = function (e, t) {
+        clearTimeout(activeTouches[t.id]);
+    };
+    if (navigator.userAgent.match(/iPad/i) != null) {
+        Ext.onReady(function () {
+            EM.on(body, "touchstart", onTouchStart);
+            EM.on(body, "touchmove", cancelContextMenu);
+            EM.on(body, "touchend", cancelContextMenu);
+        });
+    }
+})();
