@@ -28,7 +28,7 @@ Module Module1
         Dim queryLog As New Dictionary(Of String, String)
         Dim errorLog As New List(Of String)
         Dim tmp As String
-        Dim log As StreamWriter
+        'Dim log As StreamWriter
 
         _textReplacements = New Dictionary(Of String, String)
         _queryVariables = New Dictionary(Of String, String)
@@ -58,7 +58,7 @@ Module Module1
         ' NOTE - for testing and to separate from other testers, the string '_Adrian' is inserted into the project config path
         ' Please create a new file (replacing 'Adrian' with your name) and customize the connection strings for your own testing
         'tmp = [String].Format("{0}_<YOUR NAME HERE>.{1}.config", _settings("BaseConcatPath"), _settings("ApplicationName"))
-        tmp = [String].Format("{0}.Neha.{1}.config", _settings("BaseConcatPath"), _settings("ApplicationName"))
+        tmp = [String].Format("{0}_Adrian.{1}.config", _settings("BaseConcatPath"), _settings("ApplicationName"))
         _settings("ProjectConfigurationPath") = Path.Combine(_baseDirectory, tmp)
 
         tmp = [String].Format("{0}.StagingConfiguration.{1}.xml", _settings("BaseConcatPath"), _settings("ApplicationName"))
@@ -66,7 +66,7 @@ Module Module1
 
         tmp = [String].Format("{0}BindingConfiguration.{1}.{2}.xml", _
                       _settings("ProjectDirName"), _settings("ProjectName"), _settings("ApplicationName"))
-        _adapterSettings.AppendSettings(_settings)
+        _settings("BindingConfigurationPath") = Path.Combine(_baseDirectory, tmp)
 
         tmp = [String].Format("{0}QueryLog.txt", _settings("BaseConcatPath"))
         _settings("QueryLogPath") = Path.Combine(_baseDirectory, tmp)
@@ -74,17 +74,20 @@ Module Module1
         tmp = [String].Format("{0}ErrorLog.txt", _settings("BaseConcatPath"))
         _settings("ErrorLogPath") = Path.Combine(_baseDirectory, tmp)
 
-        ' Add our specific settings
-        Dim appSettingsPath As String = [String].Format("{0}12345_000.SPPID.config", _adapterSettings("XmlPath"))
+        _adapterSettings.AppendSettings(_settings)
+
+
+        'Dim appSettingsPath As String = [String].Format("{0}12345_000.SPPID.config", _adapterSettings("XmlPath"))
 
         'Testing()
 
+        ' Add our specific settings
         If File.Exists(_settings("ProjectConfigurationPath")) Then
             _adapterSettings.AppendSettings(New SD.AppSettingsReader(_settings("ProjectConfigurationPath")))
         End If
 
         ' get the log streamwriter
-        log = File.CreateText(_settings("QueryLogPath"))
+        'log = File.CreateText(_settings("QueryLogPath"))
 
         ' set up the list of text replacements and query variables. The variable or text replacement key should be in the form
         ' <queryName>.<variableName>. the variableName portion of this for text replacements should always start with '!@~'

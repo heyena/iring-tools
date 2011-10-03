@@ -274,7 +274,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
                 queryParts.Clear()
                 rVal = GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
-                              queryParts, replacements, declarations, SPWorkSet.QueryVariableMap, SPWorkSet.CommonServerName, SPWorkSet.SiteDatabaseName)
+                              queryParts, replacements, declarations, SPWorkSet.QueryVariableMap, SPWorkSet.CommonServerName)
 
                 ' commbine the query parts and perform any necessary replacements. 
                 ' NOTE - although it is possible to make use of an INTO clause to create a selection query that will 
@@ -403,10 +403,10 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     nvc.Add(x.GetAttribute("key"), x.GetAttribute("value"))
                 Loop While x.ReadToNextSibling("add")
 
-                Return "Pass"
-
+            Else : Return "Fail: Configuration file '" & ProjConfigPath & "' cannot be found"
             End If
 
+            Return "Pass"
 
         Catch ex As Exception
             Return "Fail: " & ex.Message
@@ -481,6 +481,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         '            '_logger.[Error]("Error in LoadDataObjects: " & ex.ToString())
         '            Throw New Exception("Error while loading data objects of type [" & objectType & "].", ex)
         '        End Try
+        Return Nothing
     End Function
 
     Private Function SaveDataObjects(objectType As String, dataObjects As IList(Of IDataObject)) As Response

@@ -627,11 +627,8 @@ Public Module Common
                 Else
                     If tablesX.Count > 1 Then f.Append(LCase(e.Attribute("joinType").Value) & " join ")
                 End If
-                If (SiteDatabaseName <> "") Then
-                    source = svNm & SiteDatabaseName & "." & sourceAliasMap(sourceAlias).UniqueName
-                Else
-                    source = svNm & sourceAliasMap(sourceAlias).UniqueName
-                End If
+
+                source = svNm & sourceAliasMap(sourceAlias).UniqueName
 
                 l = IIf((Len(source) + Len(tb)) > (tabWidthAlias + 1), Len(source) + Len(tb2), tabWidthAlias)
                 f.Append(LSet(source, l))

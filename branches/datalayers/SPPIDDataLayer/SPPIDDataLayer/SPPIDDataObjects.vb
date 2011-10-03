@@ -1627,9 +1627,8 @@ Namespace com.example
         End Property
         Private m_AABBCC_CODE As [String]
 
-
-
         Public Function GetPropertyValue(propertyName As [String]) As Object Implements IDataObject.GetPropertyValue
+
             Select Case propertyName
                 Case "SP_ID"
                     Return SP_ID
@@ -1991,6 +1990,8 @@ Namespace com.example
                     Return UPDATECOUNT
                 Case "AABBCC_CODE"
                     Return AABBCC_CODE
+                Case Else
+                    Return Nothing
             End Select
 
 
