@@ -287,13 +287,13 @@ namespace iRINGTools.Web.Models
 					if (sortBy != null)
 						orderExpression.PropertyName = sortBy;
 
-					string Sortorder = sortOrder.Substring(0, 1).ToUpper() + sortOrder.Substring(1);
+					string sortOrderEnumVal = sortOrder.Substring(0, 1).ToUpper() + sortOrder.Substring(1).ToLower();
 
-					if (Sortorder != null)
+					if (sortOrderEnumVal != null)
 					{
 						try
 						{
-							orderExpression.SortOrder = (SortOrder)Enum.Parse(typeof(SortOrder), Sortorder);
+							orderExpression.SortOrder = (SortOrder)Enum.Parse(typeof(SortOrder), sortOrderEnumVal);
 						}
 						catch (Exception ex)
 						{
