@@ -504,7 +504,7 @@ function submitExchange(userResponse) {
       timeout: 600000,  // in milliseconds, default is 3000 
       success: function(response, request) {
         var responseText = Ext.decode(response.responseText);
-        var message = 'Data exchange [' + exchange + '] result: ' + responseText;
+        var message = 'Data exchange [' + exchange + ']: ' + responseText;
         
         if (message.length < 300)
           showDialog(460, 125, 'Exchange Result', message, Ext.Msg.OK, null);

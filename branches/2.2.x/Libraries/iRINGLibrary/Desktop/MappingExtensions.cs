@@ -249,7 +249,7 @@ namespace org.iringtools.mapping
       {
         foreach (ValueListMap valueListMap in mapping.valueListMaps)
         {
-          if (valueListMap.name == valueListName)
+          if (valueListMap.name.ToLower() == valueListName.ToLower())
           {
             foreach (ValueMap valueMap in valueListMap.valueMaps)
             {
