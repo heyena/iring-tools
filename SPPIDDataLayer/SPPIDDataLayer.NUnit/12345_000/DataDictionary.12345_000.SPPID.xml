@@ -1,13 +1,13 @@
 <dataDictionary xmlns="http://www.iringtools.org/library" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
 	<dataObjects>
 		<dataObject>
-			<tableName>tblEquipment</tableName>
+			<tableName>Equipment</tableName>
 			<objectNamespace>com.example</objectNamespace>
 			<objectName>Equipment</objectName>
 			<keyDelimeter>_</keyDelimeter>
 			<keyProperties>
 				<keyProperty>
-					<keyPropertyName>SP_ID</keyPropertyName>
+					<keyPropertyName>SP_PlantGroupID</keyPropertyName>
 				</keyProperty>
 			</keyProperties>
 			<dataProperties>
@@ -205,8 +205,8 @@
 					<keyType>unassigned</keyType>
 				</dataProperty>
 				<dataProperty>
-					<columnName>UnitCode</columnName>
-					<propertyName>UnitCode</propertyName>
+					<columnName>PidUnitCode</columnName>
+					<propertyName>PidUnitCode</propertyName>
 					<dataType>String</dataType>
 					<dataLength>40</dataLength>
 					<isNullable>true</isNullable>

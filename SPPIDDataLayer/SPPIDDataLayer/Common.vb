@@ -488,7 +488,7 @@ Public Module Common
                                     ByRef Replacements As IEnumerable(Of XElement),
                                     ByRef Declarations As IEnumerable(Of XElement),
                                     Optional ByRef DeclarationValues As Dictionary(Of String, String) = Nothing,
-                                    Optional ByVal CommonServerName As String = "") As String
+                                    Optional ByVal CommonServerName As String = "", Optional ByVal SiteDatabaseName As String = "") As String
 
         Dim dec, s, f, w, g, h, o, i, t As New StringBuilder
         Dim tabWidthAlias As Integer = 50

@@ -34,14 +34,25 @@ Public Class Test
         ' Start with some generic settings
         _settings = New NameValueCollection()
 
+
         _settings("XmlPath") = ".\12345_000\"
+        _settings("ProjectDirName") = "12345_000\"
         _settings("ProjectName") = "12345_000"
         _settings("ApplicationName") = "SPPID"
+        _settings("BaseConfigurationPath") = _settings("XmlPath") & _settings("ProjectName")
+        _settings("BaseConcatPath") = _settings("ProjectDirName") & _settings("ProjectName")
 
         _baseDirectory = Directory.GetCurrentDirectory()
         _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\bin"))
         _settings("BaseDirectoryPath") = _baseDirectory
         _settings("ExecutingAssemblyName") = Assembly.GetExecutingAssembly().GetName().Name
+
+        Dim tmp = [String].Format("{0}.{1}.config", _settings("BaseConcatPath"), _settings("ApplicationName"))
+        _settings("ProjectConfigurationPath") = Path.Combine(_baseDirectory, tmp)
+
+
+        tmp = [String].Format("{0}.StagingConfiguration.{1}.xml", _settings("BaseConcatPath"), _settings("ApplicationName"))
+        _settings("StagingConfigurationPath") = Path.Combine(_baseDirectory, tmp)
 
         'TO-Do Temporary settings
         ' _settings("ExecutingAssemblyName") = "SPPIDDataLayer"
@@ -63,6 +74,9 @@ Public Class Test
 
         ' Ninject Extension requires fully qualified path.
         Dim bindingConfigurationPath As String = Path.Combine(_settings("BaseDirectoryPath"), relativePath)
+
+       
+
 
         _kernel.Load(bindingConfigurationPath)
 
@@ -108,7 +122,7 @@ Public Class Test
   Public Sub GetObjects()
     'THIS ID IS DIFFERENT FOR EACH TEST DATABASE!
         Dim identifiers As IList(Of String) = New List(Of String)() From { _
-     "27D058CBC5CB4ABB8B256D9B10193313",
+     "8AE275AC68014EE8B23F68E9FBED0A33",
        "E5E3A74C7A0F431AB5069EA1BCD0407D"
     }
 
@@ -120,21 +134,21 @@ Public Class Test
         Next
 
 
-  End Sub
+    End Sub
 
     <Test()>
     Public Sub GetCountWithFilters()
 
-    Dim dataFilter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
-          New Expression() With { _
-            .PropertyName = "Drawing_DocumentCategory", _
-            .RelationalOperator = RelationalOperator.EqualTo, _
-            .Values = New Values() From { _
-            "PipingDocuments" _
-}
-}
-}
-}
+        Dim dataFilter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
+              New Expression() With { _
+                .PropertyName = "Drawing_DocumentCategory", _
+                .RelationalOperator = RelationalOperator.EqualTo, _
+                .Values = New Values() From { _
+                "PipingDocuments" _
+    }
+    }
+    }
+    }
 
 
         Dim dataObjects As Long = _sppidDataLayer.GetCount("Equipment", dataFilter)

@@ -108,7 +108,7 @@ Module Module1
             ' Intentionally Empty - catching an error here allows the querylog to be processed later
         End Try
 
-
+        Testing()
 
     End Sub
 
@@ -120,7 +120,7 @@ Module Module1
         Dim nvc As New NameValueCollection
 
         ' *** debug
-        ProjConfigPath = "C:\Users\dabshere\Documents\_Projects\iRing\DataLayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\12345_000\12345_000_Adrian2.SPPID.config"
+        ProjConfigPath = _adapterSettings("ProjectConfigurationPath")
 
         If File.Exists(ProjConfigPath) Then
 
