@@ -12,6 +12,9 @@ Public Class SPPIDWorkingSet
     Private _conn As SqlConnection
 
     Private _CommonDataDS As SQLSchemaDS
+    Private _SiteDBName As String
+    Private _StagingDBName As String
+    Private _ProjectDBName As String
     Private _siteDataDT As SQLSchemaDS.SiteDataDataTable
     Private _siteDataTA As SQLSchemaDSTableAdapters.SiteDataTableAdapter
     Private _siteDataDV As DataView
@@ -61,12 +64,6 @@ Public Class SPPIDWorkingSet
     Public ReadOnly Property StagingServerInCommon() As Boolean
         Get
             Return _StagingServerInCommon
-        End Get
-    End Property
-
-    Public ReadOnly Property Connection As SqlConnection
-        Get
-            Return _conn
         End Get
     End Property
 
@@ -128,9 +125,21 @@ Public Class SPPIDWorkingSet
         End Get
     End Property
 
-    Public ReadOnly Property SiteDatabaseName() As String
+    Public ReadOnly Property SiteDBName() As String
         Get
-            Return _StagingDataBaseName
+            Return _SiteDBName
+        End Get
+    End Property
+
+    Public ReadOnly Property ProjectDBName As String
+        Get
+            Return _ProjectDBName
+        End Get
+    End Property
+
+    Public ReadOnly Property StagingDBName As String
+        Get
+            Return _StagingDBName
         End Get
     End Property
 
@@ -151,6 +160,9 @@ Public Class SPPIDWorkingSet
         _CommonDataDS = New SQLSchemaDS
         _StagingServerInCommon = (ProjectConnection.DataSource = StagingConnection.DataSource)
         _CommonServerName = IIf(_StagingServerInCommon, ProjectConnection.DataSource, "")
+        _SiteDBName = SiteConnection.Database
+        _StagingDBName = StagingConnection.Database
+        _ProjectDBName = ProjectConnection.Database
         _logger = Logger
 
         _SchemaSubstitutions = New Dictionary(Of String, String)
@@ -163,13 +175,10 @@ Public Class SPPIDWorkingSet
         SetProjectVariablesAndReplacements(ProjectConnection)
 
         GetQueryByName("!SiteData", SiteDataQuery)
-        GetBaselineSchema(SiteConnection, PlantConnection.Database, SiteDataQuery)
+        GetBaselineSchema(SiteConnection, SiteDataQuery)
 
-        '_tablesTA.Connection = ProjectConnection
-        '_columnsTA.Connection = ProjectConnection
-
-        _tablesTA.Connection = PlantConnection
-        _columnsTA.Connection = PlantConnection
+        _tablesTA.Connection = ProjectConnection
+        _columnsTA.Connection = ProjectConnection
 
         _tablesDT = _CommonDataDS.SchemaTables
         _tablesTA.Fill(_tablesDT)
@@ -183,7 +192,6 @@ Public Class SPPIDWorkingSet
     End Sub
 
 #End Region
-
 
 #Region " Public Methods "
 
@@ -241,7 +249,7 @@ Public Class SPPIDWorkingSet
     ''' Derive the site schema, and from that, query the site to get the schema for the given database schema information
     ''' </summary>
     ''' <remarks></remarks>
-    Private Sub GetBaselineSchema(SiteConnection As SqlConnection, ProjectDBname As String, ByVal SiteDataQuery As XElement)
+    Private Sub GetBaselineSchema(SiteConnection As SqlConnection, ByVal SiteDataQuery As XElement)
 
         Dim SiteDR As SQLSchemaDS.SiteDataRow
         Dim TablesDR As SQLSchemaDS.SchemaTablesRow
@@ -261,7 +269,6 @@ Public Class SPPIDWorkingSet
             _tablesDT = _CommonDataDS.SchemaTables
             _tablesTA.Fill(_tablesDT)
             _tablesDV = _tablesDT.DefaultView
-            _StagingDataBaseName = _tablesTA.Connection.Database
 
             ' fetch the column information fro the SITE database
             _columnsTA.Connection = SiteConnection
@@ -299,8 +306,7 @@ Public Class SPPIDWorkingSet
                       queryParts, replacements, declarations, _queryVariablesMap)
 
         ' the only SET necessary should be the database name
-        setClause = "SET @ProjectDBName='" & ProjectDBname & "'" & nltb
-        _StagingDataBaseName = ProjectDBname
+        setClause = "SET @ProjectDBName='" & _ProjectDBName & "'" & nltb
         queryParts.Add(SQLClause.Set, setClause)
         queryParts.BuildQuery(queryText)
 
