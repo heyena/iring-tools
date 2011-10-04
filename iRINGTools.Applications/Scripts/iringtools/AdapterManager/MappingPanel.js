@@ -144,7 +144,6 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
         this.mappingPanel.on('click', this.onClick, this);
 
         this.propertyPanel = new Ext.grid.PropertyGrid({
-            id: 'MappingPropertyPanel',
             title: 'Details',
             region: 'east',
             width: 350,
@@ -970,6 +969,7 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
     onClick: function (node) {
         var templateTypes = ['Qualification', 'Definition']
         var roleTypes = ['Property', 'Possessor', 'Reference', 'FixedValue', 'DataProperty', 'ObjectProperty'];
+        var classLabelKey = 'value label';
         var source = {};
 
         for (var propName in node.attributes.record) {
@@ -985,37 +985,15 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                     }
                     else {
                         propValue = roleTypes[propValue];
-
-                        if (propValue == 'Reference') {
-                            var classId = node.attributes.record.value;
-
-                            Ext.Ajax.request({
-                                url: 'mapping/classlabel',
-                                method: 'POST',
-                                params: {
-                                    classId: classId
-                                },
-                                success: function (result, request) {
-                                    var propertyPanel = Ext.getCmp('MappingPropertyPanel');
-                                    var source = propertyPanel.getSource();
-                                    var responseText = result.responseText;
-
-                                    if (responseText != null && responseText.length > 2) {
-                                        source['value label'] = responseText.substring(1, responseText.length - 1);
-                                        propertyPanel.setSource(source);
-                                    }
-                                },
-                                failure: function (result, request) {
-                                    var message = 'Error resolving label of class [' + classId + ']: ' + result.responseText;
-                                    showDialog(400, 100, 'Error', message, Ext.Msg.OK, null);
-                                }
-                            })
-                        }
                     }
                 }
             }
 
             source[propName] = propValue;
+
+            if (propValue == 'Reference') {
+                source[classLabelKey] = node.attributes.properties[classLabelKey];
+            }
         }
 
         this.propertyPanel.setSource(source);
