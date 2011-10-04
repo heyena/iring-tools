@@ -1,0 +1,5 @@
+C:\Development\dotNet\WCFWithSQL\Service\Service\bin\Service.dll
+C:\Development\dotNet\WCFWithSQL\Service\Service\bin\Service.pdb
+C:\Development\dotNet\WCFWithSQL\Service\Service\obj\Debug\ResolveAssemblyReference.cache
+C:\Development\dotNet\WCFWithSQL\Service\Service\obj\Debug\Service.dll
+C:\Development\dotNet\WCFWithSQL\Service\Service\obj\Debug\Service.pdb
