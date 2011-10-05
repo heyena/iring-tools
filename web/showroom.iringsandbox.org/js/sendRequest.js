@@ -38,7 +38,7 @@ function sendRequest(url, callback) {
 		  callback(xmlHttp.responseText);
           xmlHttp = null;
         }
-      }
+      }, 100
     );
   }
 }
