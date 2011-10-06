@@ -10,7 +10,7 @@ namespace org.iringtools.nunit
     {
         static void Main()
         {
-          string commandLine = @"/run ../../../../../ObjectDataLayer.NUnit/ObjectDataLayer.NUnit.csproj";
+          string commandLine = @"/run ../../../../../SQLDataLayer.NUnit/SQLDataLayer.NUnit.csproj";
 
             string[] args = commandLine.Split(' ');
             AppEntry.Main(args);

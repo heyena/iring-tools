@@ -31,7 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="iRINGLibrary, Version=2.1.0.2980, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="iRINGLibrary, Version=3.0.0.4264, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
@@ -64,7 +64,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="12345_000\BindingConfiguration.12345_000.SQL.xml" />
-    <Content Include="12345_000\DataDictionary.12345_000.SQL.xml" />
+    <Content Include="12345_000\DatabaseDictionary.12345_000.ABC.xml" />
+    <Content Include="12345_000\DataDictionary.12345_000.SQL.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="12345_000\DataDictionary.SQL.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="12345_000\DataDictionary.SQL_old.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="12345_000\12345_000.SQL.config" />
