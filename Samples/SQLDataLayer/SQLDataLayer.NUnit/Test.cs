@@ -9,7 +9,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using StaticDust.Configuration;
 using org.iringtools.sdk.sql;
-
+using System.Data;
 
 namespace org.iringtools.sdk.sql.test
 {
@@ -26,7 +26,7 @@ namespace org.iringtools.sdk.sql.test
             _settings = new NameValueCollection();
 
             _settings["ProjectName"] = "12345_000";
-            _settings["XmlPath"] = @"..\ObjectDataLayer.NUnit\12345_000\";
+            _settings["XmlPath"] = @"..\SQLDataLayer.NUnit\12345_000\";
             _settings["ApplicationName"] = "SQL";
             _settings["TestMode"] = "WriteFiles"; //UseFiles/WriteFiles
 
@@ -54,44 +54,15 @@ namespace org.iringtools.sdk.sql.test
         }
 
         [Test]
-        public void Create()
-        {
-            Random random = new Random();
-
-            IList<IDataObject> dataObjects = _dataLayer.Create("Lines", null);
-            foreach (IDataObject dataObject in dataObjects)
-            {
-                dataObject.SetPropertyValue("Name", "Widget-" + random.Next(2, 10));
-                dataObject.SetPropertyValue("Description", "This is Widget #" + random.Next(2, 10));
-                dataObject.SetPropertyValue("Length", (double)random.Next(2, 10));
-                dataObject.SetPropertyValue("Width", (double)random.Next(2, 10));
-                dataObject.SetPropertyValue("Height", (double)random.Next(2, 10));
-                dataObject.SetPropertyValue("Weight", (double)random.Next(2, 10));
-                dataObject.SetPropertyValue("LengthUOM", "inches");
-                dataObject.SetPropertyValue("WeightUOM", "pounds");
-                dataObject.SetPropertyValue("Material", "Wood");
-                dataObject.SetPropertyValue("Color", "Red");
-            }
-            Response actual = _dataLayer.Post(dataObjects);
-
-            if (actual.Level != StatusLevel.Success)
-            {
-                throw new AssertionException(Utility.SerializeDataContract<Response>(actual));
-            }
-
-            Assert.IsTrue(actual.Level == StatusLevel.Success);
-        }
-
-        [Test]
-        public void Read()
+        public void ReadWithIdentifiers()
         {
             IList<string> identifiers = new List<string>() 
             { 
-                "1", 
-                "2",
+                "66015-O", 
+                "90003-SC",
             };
 
-            IList<IDataObject> dataObjects = _dataLayer.Get("Widget", identifiers);
+            IList<IDataObject> dataObjects = _dataLayer.Get("Lines", identifiers);
 
             if (!(dataObjects.Count() > 0))
             {
@@ -100,88 +71,74 @@ namespace org.iringtools.sdk.sql.test
 
             foreach (IDataObject dataObject in dataObjects)
             {
-              Assert.IsNotNull(dataObject.GetPropertyValue("Name"));
-              Assert.IsNotNull(dataObject.GetPropertyValue("Description"));
-              Assert.IsNotNull(dataObject.GetPropertyValue("Length"));
-              Assert.IsNotNull(dataObject.GetPropertyValue("Width"));
-              Assert.IsNotNull(dataObject.GetPropertyValue("Height"));
-              Assert.IsNotNull(dataObject.GetPropertyValue("Weight"));
-              Assert.IsNotNull(dataObject.GetPropertyValue("LengthUOM"));
-              Assert.IsNotNull(dataObject.GetPropertyValue("WeightUOM"));
-              Assert.IsNotNull(dataObject.GetPropertyValue("Material"));
-              Assert.IsNotNull(dataObject.GetPropertyValue("Color"));
+
             }
         }
 
         [Test]
         public void ReadWithPaging()
         {
-          IList<IDataObject> dataObjects = _dataLayer.Get("Widget", null, 2, 0);
+            DataFilter filter = new DataFilter();
+            IList<IDataObject> dataObjects = _dataLayer.Get("Lines", filter , 2, 0);
 
-          if (!(dataObjects.Count() > 0))
-          {
-            throw new AssertionException("No Rows returned.");
-          }
+            if (!(dataObjects.Count() > 0))
+            {
+                throw new AssertionException("No Rows returned.");
+            }
 
-          Assert.AreEqual(dataObjects.Count(), 2);
+            Assert.AreEqual(dataObjects.Count(), 2);
 
-          foreach (IDataObject dataObject in dataObjects)
-          {
-            Assert.IsNotNull(dataObject.GetPropertyValue("Name"));
-            Assert.IsNotNull(dataObject.GetPropertyValue("Description"));
-            Assert.IsNotNull(dataObject.GetPropertyValue("Color"));
-            Assert.IsNotNull(dataObject.GetPropertyValue("Material"));
-            Assert.IsNotNull(dataObject.GetPropertyValue("Length"));
-            Assert.IsNotNull(dataObject.GetPropertyValue("Height"));
-            Assert.IsNotNull(dataObject.GetPropertyValue("Width"));
-            Assert.IsNotNull(dataObject.GetPropertyValue("LengthUOM"));
-            Assert.IsNotNull(dataObject.GetPropertyValue("Weight"));
-            Assert.IsNotNull(dataObject.GetPropertyValue("WeightUOM"));
-          }
+            foreach (IDataObject dataObject in dataObjects)
+            {
+            }
         }
 
-        //[Test]
-        //public void ReadWithFilter()
-        //{
-        //  DataFilter dataFilter = new DataFilter
-        //  {
-        //    Expressions = new List<Expression>
-        //        {
-        //            new Expression
-        //            {
-        //                PropertyName = "Color",
-        //                RelationalOperator = RelationalOperator.EqualTo,
-        //                Values = new Values
-        //                {
-        //                    "Orange",
-        //                }
-        //            }
-        //        }
-        //  };
+        [Test]
+        public void TestAll()
+        {
+            
+            IDataObject dataObject = _dataLayer.Get("Lines", new DataFilter(), 1, 0).First();   
+            string identifier = dataObject.GetPropertyValue("TAG").ToString();
 
-        //  IList<IDataObject> dataObjects = _dataLayer.Get("Widget", dataFilter, 10, 0);
+            Response actual = _dataLayer.Delete("Lines", new List<string> { identifier });
 
-        //  if (!(dataObjects.Count() > 0))
-        //  {
-        //    throw new AssertionException("No Rows returned.");
-        //  }
+            ((GenericDataObject)dataObject).ObjectType = "Lines";
+            _dataLayer.Post(new List<IDataObject> {dataObject});
 
-        //  Assert.AreEqual(dataObjects.Count(), 1);
+            Assert.IsTrue(actual.Level == StatusLevel.Success);
+        }
 
-        //  foreach (IDataObject dataObject in dataObjects)
-        //  {
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Name"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Description"));
-        //    Assert.AreEqual(dataObject.GetPropertyValue("Color"), "Orange");
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Material"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Length"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Height"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Width"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("LengthUOM"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("Weight"));
-        //    Assert.IsNotNull(dataObject.GetPropertyValue("WeightUOM"));
-        //  }
-        //}
+        [Test]
+        public void ReadWithFilter()
+        {
+            DataFilter dataFilter = new DataFilter
+            {
+                Expressions = new List<Expression>
+                {
+                    new Expression
+                    {
+                        PropertyName = "TAG",
+                        RelationalOperator = RelationalOperator.EqualTo,
+                        Values = new Values
+                        {
+                            "90003-SL",
+                        }
+                    }
+                }
+            };
+            IList<IDataObject> dataObjects = _dataLayer.Get("Lines", dataFilter, 10, 0);
+
+            if (!(dataObjects.Count() > 0))
+            {
+                throw new AssertionException("No Rows returned.");
+            }
+
+            Assert.AreEqual(dataObjects.Count(), 1);
+
+            foreach (IDataObject dataObject in dataObjects)
+            {
+            }
+        }
 
         [Test]
         public void GetDictionary()
@@ -211,5 +168,135 @@ namespace org.iringtools.sdk.sql.test
               );
             }
         }
+
+        [Test]
+        public void DeleteDataTable()
+        {
+            DataFilter dataFilter = new DataFilter
+            {
+                Expressions = new List<Expression>
+                {
+                    new Expression
+                    {
+                        PropertyName = "TAG",
+                        RelationalOperator = RelationalOperator.EqualTo,
+                        Values = new Values
+                        {
+                            "Hello",
+                        }
+                    }
+                }
+            };
+            Response actual = _dataLayer.Delete("Lines", dataFilter);
+
+            if (actual.Level != StatusLevel.Success)
+            {
+                throw new AssertionException(Utility.SerializeDataContract<Response>(actual));
+            }
+
+            Assert.IsTrue(actual.Level == StatusLevel.Success);
+        }
+
+        [Test]
+        public void DeleteWithIdentifiers()
+        {
+            IList<string> identifiers = new List<string>() 
+            { 
+                "Hello2", 
+                "Hello1",
+            };
+
+            Response actual = _dataLayer.Delete("Lines", identifiers);
+
+            if (actual.Level != StatusLevel.Success)
+            {
+                throw new AssertionException(Utility.SerializeDataContract<Response>(actual));
+            }
+
+            Assert.IsTrue(actual.Level == StatusLevel.Success);
+        }
+
+        [Test]
+        public void Read()
+        {
+            DataFilter filter = new DataFilter();
+
+            IList<string> identifiers = _dataLayer.GetIdentifiers("Lines", filter);
+
+            if (!(identifiers.Count() > 0))
+            {
+                throw new AssertionException("No Rows returned.");
+            }
+
+            Assert.AreEqual(identifiers.Count(), 32);
+
+        }
+        
+        [Test]
+        public void GetCount()
+        {
+            DataFilter dataFilter = new DataFilter
+            {
+                Expressions = new List<Expression>
+                {
+                    new Expression
+                    {
+                        PropertyName = "TAG",
+                        RelationalOperator = RelationalOperator.EqualTo,
+                        Values = new Values
+                        {
+                            "90003-SL",
+                        }
+                    }
+                }
+            };
+            long count = _dataLayer.GetCount("Lines", dataFilter);
+
+            if (count == 0)
+            {
+                throw new AssertionException("No Rows returned.");
+            }
+
+            Assert.AreEqual(count, 1);
+
+        }
+
+        [Test]
+        public void CreateDataTable()
+        {
+
+            IList<string> identifiers = new List<string>() 
+            { 
+                "66015-O", 
+                "90003-S",
+            };
+
+            IList<IDataObject> dataObjects = _dataLayer.Create("Lines", identifiers);
+
+            if (!(dataObjects.Count() > 0))
+            {
+                throw new AssertionException("No Rows returned.");
+            }
+
+        }
+
+        [Test]
+        public void GetRelatedDataTables()
+        {
+
+            IDataObject dataObject = _dataLayer.Get("Lines", new DataFilter(), 1, 0).First();
+            
+            ((GenericDataObject)dataObject).ObjectType = "Lines";
+
+            IList<IDataObject> dataObjects = _dataLayer.GetRelatedObjects(dataObject, "Valves");
+           
+            if (!(dataObjects.Count() > 0))
+            {
+                throw new AssertionException("No Rows returned.");
+            }
+            Assert.Greater(dataObjects.Count, 0);
+        }
+
+
     }
 }

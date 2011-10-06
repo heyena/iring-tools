@@ -38,10 +38,12 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="iRINGLibrary">
+    <Reference Include="iRINGLibrary, Version=3.0.0.4264, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\log4net\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Ninject">
@@ -63,7 +65,10 @@
     <Compile Include="SQLDataLayer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SampleDictionary.xml" />
+    <Content Include="dictionary.xml" />
+    <Content Include="SampleDictionary.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Widgets_Data.sql" />
     <Content Include="Widgets_Table.sql" />
   </ItemGroup>
