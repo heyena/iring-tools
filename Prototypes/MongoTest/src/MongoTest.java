@@ -1,25 +1,14 @@
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.xml.bind.JAXBException;
-
-import org.bson.BSON;
-import org.bson.BSONObject;
-import org.iringtools.directory.Application;
-import org.iringtools.directory.Commodity;
-import org.iringtools.directory.DataExchanges;
+import org.apache.struts2.json.JSONUtil;
+import org.iringtools.library.Application;
 import org.iringtools.directory.Directory;
-import org.iringtools.directory.Exchange;
-import org.iringtools.directory.Exchanges;
-import org.iringtools.directory.Graph;
-import org.iringtools.directory.Scope;
+import org.iringtools.directory.MyDirectory;
 import org.iringtools.utility.JaxbUtils;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -29,9 +18,10 @@ import com.mongodb.Mongo;
 import com.mongodb.MongoException;
 import com.mongodb.WriteResult;
 
+
 public class MongoTest {
 
-	private BasicDBObject doc = null;
+//	private BasicDBObject doc = null;
 
 	private DBCollection collection = null;
 	
@@ -58,7 +48,7 @@ public class MongoTest {
 				// select the collection
  				this.collection = db.getCollection("directory");
  				
- 				System.out.println("\nDatabase connected successfully  ["+ collection.getName() +"]");
+ 				//System.out.println("\nDatabase connected successfully  ["+ collection.getName() +"]");
  				
  			}else{
  				
@@ -95,20 +85,17 @@ public class MongoTest {
 		
 	}
 	
-	public DBObject createDirectoryObject(Directory directory){
+	/*public DBObject createDBObjectObject(Directory directory){
 		
 		//String jsonStr = null;
-
 		DBObject dbobject = new BasicDBObject();
-		
+
 		if(directory.getItems().size()>0){
 
 			Map directoryMap = new HashMap();
 			ArrayList dir = new ArrayList();
 			
-			
 			List<Scope> scopeList = directory.getItems();
-			
 			
 			if(scopeList.size()>0){
 
@@ -136,6 +123,7 @@ public class MongoTest {
 							appmap.put("baseUri", application.getBaseUri());
 							
 							ArrayList grapharr = new ArrayList();
+
 							List<Graph> graphList = application.getGraphs().getItems();
 							
 							if(graphList.size()>0){
@@ -185,7 +173,6 @@ public class MongoTest {
 									Map<String, Object> exchangemap = null;
 									
 									for(Exchange exchange : exchangeList){
-										
 										exchangemap = new HashMap<String, Object>();
 										exchangemap.put("id",exchange.getId());
 										exchangemap.put("name",exchange.getName());
@@ -205,23 +192,14 @@ public class MongoTest {
 					}
 					dir.add(scopecollection);
 				}
-
-				
 			}
-			
 			//System.out.println(directoryMap);
-			
 			directoryMap.put("directory", dir);
-			
 			dbobject.putAll(directoryMap);
-			
 			//System.out.println(dbobject);
-			
-			
 		}
-
 		return dbobject;
-	}
+	}*/
 	
 	public Set<String> getCollections(){
 		
@@ -244,7 +222,58 @@ public class MongoTest {
 		return cursor;
 	}
 
+	private long insertobject(Directory directoryObject){
+		
+		long insertedId = 0;
+
+		try{
+		
+		/*
+		Application app = new Application();
+		app.setName("BBC");
+		//System.out.println(JSONUtil.serialize(app));
+		System.out.println("Application:"+app);
+ 		*/
+			
+		DBObject bdo = new BasicDBObject();
+		
+		
+		/*
+		 * bdo.put("mydirectory", new MyDirectory());
+		 * System.out.println("directoryObject :"+JSONUtil.serialize(directoryObject));
+		 * bdo.put("directory", directoryObject);
+		 * bdo.append("directory", directoryObject);
+		 * 
+		 * java.lang.IllegalArgumentException: can't serialize class org.iringtools.directory.Directory
+		 * 
+		 * */
+
+		//System.out.println("bdo "+bdo);
+		
+		String directoryClassJson = JSONUtil.serialize(directoryObject);
+		//String directoryClassJson = "{directory:{folder:[{name:'12345_000',type:'scope',folder:{name:'Application Data',type:'folder',endpoint:[{name:'ABC',source:'dxfr',description:'ABC',baseuri:'http://localhost:54321/dxfr/12345_000/ABC'},{name:'DEF',source:'dxfr',description:'DEF',baseuri:'http://localhost:54321/dxfr/12345_000/DEF'}]}},{name:'Dat Exchanges',type:'folder',folder:{name:'PipingNetworkSystem',type:'commodity',exchange:[{id:1,name:'12345_000.ABC.LINES->12345_000.DEF.LINES',description:'Exchange Lines from 12345_000.ABC to 12345_000.DEF'},{id:2,name:'12345_000.DEF.LINES->12345_000.ABC.LINES',description:'Exchange Lines from 12345_000.DEF to 12345_000.ABC'}]}},{name:'12345_000',type:'scope',folder:{name:'Application Data',type:'folder',endpoint:[{name:'ABC',source:'data',description:'ABC',baseuri:'http://localhost:54321/data/12345_000/ABC'},{name:'DEF',source:'data',description:'DEF',baseuri:'http://localhost:54321/data/12345_000/DEF'}]}}]}}";
+
+		Map<String, Object> directoryMap = (Map<String, Object>) JSONUtil.deserialize(directoryClassJson);
+		
+		bdo.put("directory", directoryMap);
+		
+		// collection has 2 methods and it takes DBObject as input so deserialize to Map and putting this Map to BasicDBObject 
+		WriteResult wr = collection.insert(bdo);
+		
+		
+	
+		insertedId = wr.getN();
+
+		}catch(Exception ex){
+			
+			ex.printStackTrace();
+		}
+
+		return insertedId;
+	} 
+	
 	private long insertdbobject(DBObject dbObject){
+		
 		System.out.println("\n\n\t"+dbObject);
 		//DBObject db = BasicDBObjectBuilder.start().add("project", document).get();
 		WriteResult wr = collection.insert(dbObject);
@@ -256,16 +285,17 @@ public class MongoTest {
 		System.out.println("\nGet Application Data where scope: "+scopeName+" app name : "+appName+"\n");
 		
 		DBObject query = new BasicDBObject();
-		query.put("directory.scope.name", scopeName);
-		query.put("directory.scope.applicationData.application.name",appName);
+		query.put("directory.folder.name", scopeName);
+		query.put("directory.folder.type","scope");
+		
 		
 		DBObject fields = new BasicDBObject();
 		fields.put("_id", 0);
-		//fields.put("directory.scope.applicationData.application",1);
+		//fields.put("directory.folder.name",1);
 		//fields.put("directory.scope.name",1);
 		//fields.put("directory.scope.applicationData.application",1);
 		//fields.put("directory.scope.applicationData.application.graphs",1);
-		fields.put("directory.scope.applicationData.application",1);
+		//fields.put("directory.$.application",1);
 		//fields.put("directory.scope.appliocationData.application.graphs",1);
 		
 		//System.out.println(fields);
@@ -278,6 +308,15 @@ public class MongoTest {
 			
 			System.out.println(cursor.next());
 		}*/
+		
+		List<DBObject> application1 = collection.find(query, fields).toArray();
+		
+		for(DBObject dbObject:application1){
+			
+			System.out.println("!~!!!!!!!!! "+dbObject);
+			
+		}
+		
 		
 		DBObject application = collection.findOne(query, fields);
 		
@@ -302,15 +341,13 @@ public class MongoTest {
 	private void updateScopeName(String OldName,String ScopeName){
 		
 		DBObject query = new BasicDBObject();
-		query.put("directory.scope.name", OldName);
-		
+		query.put("directory.folder.name", OldName);
+		query.put("directory.folder.type", "scope");
 		DBObject query1 = new BasicDBObject();
-		query1.put("directory.scope.name", ScopeName);
+		query1.put("directory\\.folder\\.name", ScopeName);
 	
 		try{
-			
 			WriteResult wr = collection.update(query,query1,false,false);
-			
 			System.out.println("Errrro"+wr.getError());
 			
 		}catch(Exception ex){
@@ -326,35 +363,33 @@ public class MongoTest {
 		
 		MongoTest testObj = new MongoTest();
 		
-		if(testObj.getRowCount()==0){
-			
-			Directory directory = testObj.readDirectoryXML("C:\\iringtools3.0\\services\\WebContent\\WEB-INF\\data\\directory.xml");
-			
-			DBObject dbobject = testObj.createDirectoryObject(directory);
-			
-			testObj.insertdbobject(dbobject);
-			
-		}else{
+		//if(testObj.getRowCount()==0){
 		
-			DBCursor cursor = testObj.getCollectionsRecords();
+			Directory directory = testObj.readDirectoryXML("C:\\iringtools3.0\\services\\WebContent\\WEB-INF\\data\\directory_old.xml");
+			//Directory directory = testObj.readDirectoryXML("C:\\iringtools3.0\\services\\WebContent\\WEB-INF\\data\\directory.xml");
 			
-			//System.out.println("Total records : "+cursor.count());
-
-			while(cursor.hasNext()){
+				//DBObject dbobject = testObj.createDBObjectObject(directory);
+				//testObj.insertdbobject(dbobject);
+			
+				testObj.insertobject(directory);
+				DBCursor cursor = testObj.getCollectionsRecords();
 				
-				System.out.println("\n\t"+cursor.next());
-			}
-		}
+				//System.out.println("Total records : "+cursor.count());
+
+				while(cursor.hasNext()){
+					
+					System.out.println("\n\t"+cursor.next());
+				}
+			
+		//}else{
+		
+		//}
 		
 		// To Get The Filter Data
-		// testObj.getFilterRecords("12345_000","ABC");
+		 testObj.getFilterRecords("12345_000","ABC");
 
 		// To update record
-		   testObj.updateScopeName("12345_000","1111111");
-		
-
-		
-			
+		//  testObj.updateScopeName("12345_000","1111111");
 		
 	}
 
