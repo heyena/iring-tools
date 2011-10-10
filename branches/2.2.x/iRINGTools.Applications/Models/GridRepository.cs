@@ -220,7 +220,7 @@ namespace iRINGTools.Web.Models
 
 			private DataFilter createDataFilter(string filter, string sortBy, string sortOrder)
 			{
-				DataFilter dataFilter = null;				
+				DataFilter dataFilter = new DataFilter();
 				
 				// process filtering
 				if (filter != null && filter.Count() > 0)
@@ -231,8 +231,6 @@ namespace iRINGTools.Web.Models
 						
 						if (filterExpressions != null && filterExpressions.Count > 0)
 						{
-							dataFilter = new DataFilter();
-
 							List<Expression> expressions = new List<Expression>();
 							dataFilter.Expressions = expressions;
 
@@ -275,9 +273,6 @@ namespace iRINGTools.Web.Models
 				// process sorting
 				if (sortBy != null && sortBy.Count() > 0 && sortOrder != null && sortOrder.Count() > 0)
 				{
-					if (dataFilter == null)
-						dataFilter = new DataFilter();
-
 					List<OrderExpression> orderExpressions = new List<OrderExpression>();
 					dataFilter.OrderExpressions = orderExpressions;
 
@@ -305,7 +300,5 @@ namespace iRINGTools.Web.Models
 
 				return dataFilter;
 			}
-
-
 		}
 }

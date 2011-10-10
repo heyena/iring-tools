@@ -527,6 +527,12 @@ namespace iRINGTools.Web.Models
 
           return dbObjectNodes;
         }
+
+        public Response RegenAll()
+        {
+          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+          return client.Get<Response>("/regen");
+        }
         #endregion
     }
 }

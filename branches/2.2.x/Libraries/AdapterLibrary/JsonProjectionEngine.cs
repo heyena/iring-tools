@@ -36,7 +36,14 @@ namespace org.iringtools.adapter.projection
 
         if (dataObjects.Count > 0)
         {
-          dataItems.type = dataObjects[0].GetType().Name;
+          try
+          {
+            dataItems.type = dataObjects[0].GetType().Name;
+          }
+          catch (Exception e)
+          {
+            throw new Exception("Invalid data object: " + e);
+          }
         }
 
         DataObject dataObject = FindGraphDataObject(graphName);
