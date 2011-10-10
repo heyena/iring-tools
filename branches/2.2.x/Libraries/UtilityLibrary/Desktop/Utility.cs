@@ -532,6 +532,26 @@ namespace org.iringtools.utility
       }
     }
 
+    public static string ReadString(Stream stream)
+    {
+      StreamReader streamReader = null;
+      try
+      {
+        streamReader = new StreamReader(stream);
+        string query = streamReader.ReadToEnd();
+        streamReader.Close();
+        return query;
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error reading string from stream.", exception);
+      }
+      finally
+      {
+        if (streamReader != null) streamReader.Close();
+      }
+    }
+
     public static XElement ReadXml(string path)
     {
       try
@@ -668,6 +688,27 @@ namespace org.iringtools.utility
         using (XmlWriter xw = doc.CreateWriter())
         {
           ser.Serialize(xw, graph);
+          xw.Close();
+        }
+
+        return doc.Root;
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
+      }
+    }
+
+    public static XElement ToXElement<T>(this T graph)
+    {
+      try
+      {
+        DataContractSerializer ser = new DataContractSerializer(typeof(T));
+        XDocument doc = new XDocument();
+
+        using (XmlWriter xw = doc.CreateWriter())
+        {
+          ser.WriteObject(xw, graph);
           xw.Close();
         }
 

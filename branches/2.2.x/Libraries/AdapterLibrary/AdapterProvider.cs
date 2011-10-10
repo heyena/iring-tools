@@ -77,7 +77,7 @@ namespace org.iringtools.adapter
     [Inject]
     public AdapterProvider(NameValueCollection settings)
     {
-      var ninjectSettings = new NinjectSettings { LoadExtensions = false };
+      var ninjectSettings = new NinjectSettings { LoadExtensions = false, UseReflectionBasedInjection = true };
       _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
 
       _kernel.Load(new XmlExtensionModule());

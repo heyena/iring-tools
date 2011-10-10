@@ -40,6 +40,7 @@ using System.IO;
 using System.Net;
 using System.Web.Script.Serialization;
 using System.Web;
+using System.ServiceModel.Channels;
 
 namespace org.iringtools.services
 {
@@ -112,12 +113,12 @@ namespace org.iringtools.services
       GetIndividual("all", app, graph, clazz, id, format);
     }
 
-    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{graph}?format={format}")]
-    public Response PostListAll(string app, string graph, string format, XElement xElement)
-    {
-      return PostList("all", app, graph, format, xElement);
-    }
+    //[Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{graph}?format={format}")]
+    //public void PostListXmlAll(string app, string graph, string format, XElement xElement)
+    //{
+    //  PostListXml("all", app, graph, xElement);
+    //}
 
     [Description("Deletes a graph in the specified application.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/all/{app}/{graph}/{id}")]
@@ -250,13 +251,57 @@ namespace org.iringtools.services
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format={format}")]
-    public Response PostList(string project, string app, string graph, string format, XElement xElement)
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format=xml", RequestFormat=WebMessageFormat.Xml)]
+    public Response PostListXml(string project, string app, string graph, XElement xElement)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+      return _adapterProvider.Post(project, app, graph, "xml", new XDocument(xElement));
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format=p7xml", RequestFormat = WebMessageFormat.Xml)]
+    public Response PostListP7Xml(string project, string app, string graph, XElement xElement)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.Post(project, app, graph, "p7xml", new XDocument(xElement));
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format=rdf", RequestFormat = WebMessageFormat.Xml)]
+    public Response PostListRdf(string project, string app, string graph, XElement xElement)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.Post(project, app, graph, "rdf", new XDocument(xElement));
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format=json", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json)]
+    public Response PostListJson(string project, string app, string graph, DataItems dataItems)
+    {
+      HttpResponse context = HttpContext.Current.Response;
+      context.ContentType = "application/json; charset=utf-8";
+
+      XElement xElement = dataItems.ToXElement();
+
+      return _adapterProvider.Post(project, app, graph, "json", new XDocument(xElement));
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}", ResponseFormat=WebMessageFormat.Json, RequestFormat=WebMessageFormat.Json)]
+    public Response PostList(string project, string app, string graph, DataItems dataItems)
+    {
+      HttpResponse context = HttpContext.Current.Response;
+      context.ContentType = "application/json; charset=utf-8";
+
+      XElement xElement = dataItems.ToXElement();
+
+      return _adapterProvider.Post(project, app, graph, "json", new XDocument(xElement));
     }
 
     [Description("Deletes a graph in the specified application.")]
