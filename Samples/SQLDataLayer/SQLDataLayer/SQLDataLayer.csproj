@@ -65,7 +65,6 @@
     <Compile Include="SQLDataLayer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dictionary.xml" />
     <Content Include="SampleDictionary.xml">
       <SubType>Designer</SubType>
     </Content>
