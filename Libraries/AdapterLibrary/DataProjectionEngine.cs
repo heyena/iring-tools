@@ -12,12 +12,15 @@ namespace org.iringtools.adapter.projection
   public class DataProjectionEngine : BaseDataProjectionEngine
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DataProjectionEngine));
+    private IDataLayer2 _dataLayer = null;
     private DataDictionary _dictionary = null;
     private XNamespace _graphNamespace = null;
+    private string _graphName = String.Empty;
 
     [Inject]
-    public DataProjectionEngine(AdapterSettings settings, DataDictionary dictionary) : base(settings)
+    public DataProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, DataDictionary dictionary) : base(settings)
     {
+      _dataLayer = dataLayer;
       _dictionary = dictionary;
     }
 
@@ -31,6 +34,7 @@ namespace org.iringtools.adapter.projection
         string project = _settings["ProjectName"];
         string app = _settings["ApplicationName"];
         string appBaseUri = Utility.FormAppBaseURI(_uriMaps, baseUri, project, app);
+        _graphName = graphName;
         _graphNamespace = appBaseUri + graphName + "/";
         
         //_dictionary = _dataLayer.GetDictionary();
@@ -90,7 +94,7 @@ namespace org.iringtools.adapter.projection
       foreach(DataProperty dataProperty in dataObject.dataProperties)
       {
         XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(dataProperty.propertyName));
-        //propertyElement.Add(new XAttribute("dataType", dataProperty.dataType));
+        
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         
         if (value != null)
@@ -103,6 +107,16 @@ namespace org.iringtools.adapter.projection
           parentElement.Add(propertyElement);
         }
         
+      }
+
+      foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+      {
+        XElement relationshipElement = new XElement(_graphNamespace + Utility.TitleCase(dataRelationship.relationshipName));
+
+        IList<IDataObject> relatedObjects = _dataLayer.GetRelatedObjects(_dataObjects[dataObjectIndex], dataRelationship.relatedObjectName);
+
+        //CreateHierarchicalXml(relationshipElement, dataObject, i);
+        parentElement.Add(relationshipElement);
       }
     }
 
