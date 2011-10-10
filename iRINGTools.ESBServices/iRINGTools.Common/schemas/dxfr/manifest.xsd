@@ -13,7 +13,7 @@
     <xs:sequence>
       <xs:element name="graphs" type="Graphs" />
       <xs:element name="version" type="xs:string" />      
-      <xs:element name="valueListMaps" type="mapping:ValueListMaps" />
+      <xs:element ref="mapping:valueListMaps" />
     </xs:sequence>
   </xs:complexType>
 

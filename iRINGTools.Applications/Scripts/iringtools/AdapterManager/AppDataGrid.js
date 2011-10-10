@@ -103,7 +103,7 @@ function createGridStore(scope, app, graph) {
 				var ind = rtext.indexOf('}');
 				var len = rtext.length - ind - 1;
 				var msg = rtext.substring(ind + 1, rtext.length - 1);
-				showDialog(400, 100, 'Error', msg, Ext.Msg.OK, null);
+				showDialog(560, 320, 'Error', msg, Ext.Msg.OK, null);
 			}
 		}		
 	});

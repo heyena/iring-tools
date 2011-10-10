@@ -571,18 +571,13 @@ namespace org.iringtools.utility
     public static MemoryStream ToMemoryStream(this Stream requestStream)
     {
       MemoryStream usableStream = new MemoryStream();
-
-      byte[] buffer = new byte[10000];
-
+      byte[] buffer = new byte[4096];
       int bytesRead = 0;
 
       do
       {
-
         bytesRead = requestStream.Read(buffer, 0, buffer.Length);
-
         usableStream.Write(buffer, 0, bytesRead);
-
       } while (bytesRead > 0);
 
       usableStream.Position = 0;

@@ -268,7 +268,7 @@ namespace org.iringtools.utility
         }
         else
         {
-          return Utility.DeserializeFromStream<T>(responseStream, useDataContractSerializer);
+          return Utility.DeserializeFromStream<T>(responseStream.ToMemoryStream(), useDataContractSerializer);
         }
       }
       catch (Exception exception)
@@ -299,31 +299,25 @@ namespace org.iringtools.utility
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
         Stream responseStream = response.GetResponseStream();
-
-        MemoryStream memStream = new MemoryStream();
-        byte[] buffer = new byte[4096];
-
-        try
-        {
-          int bytesRead = responseStream.Read(buffer, 0, buffer.Length);
-          while (bytesRead > 0)
-          {
-            memStream.Write(buffer, 0, bytesRead);
-            bytesRead = responseStream.Read(buffer, 0, buffer.Length);
-          }
-          memStream.Position = 0;
-        }
-        finally
-        {
-          responseStream.Close();
-        }
-        
-        return memStream;
+        return responseStream.ToMemoryStream();
       }
-      catch (Exception exception)
+      catch (Exception e)
       {
+        String error = String.Empty;
+
+        if (e.GetType() == typeof(WebException))
+        {
+          HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
+          Stream responseStream = response.GetResponseStream();
+          error = Utility.SerializeFromStream(responseStream);
+        }
+        else
+        {
+          error = e.ToString();
+        }
+
         string uri = _baseUri + relativeUri;
-        throw new Exception("Error while executing HTTP GET request on" + uri + ".", exception);
+        throw new Exception("Error with HTTP GET from URI [" + uri + "]. " + error);
       }
     }
 
@@ -335,10 +329,9 @@ namespace org.iringtools.utility
         string message = Utility.SerializeFromStream(stream);
         return message;
       }
-      catch (Exception exception)
+      catch (Exception e)
       {
-        string uri = _baseUri + relativeUri;
-        throw new Exception("Error while executing HTTP GET request on" + uri + ".", exception);
+        throw e;
       }
     }
 
@@ -372,7 +365,6 @@ namespace org.iringtools.utility
         request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
 
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-        R responseEntity = default(R);
         Stream responseStream = response.GetResponseStream();
 
         if (typeof(R) == typeof(String))
@@ -385,15 +377,26 @@ namespace org.iringtools.utility
         }
         else
         {
-          responseEntity = Utility.DeserializeFromStream<R>(responseStream, useDataContractSerializer);
+          return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
+        }
+      }
+      catch (Exception e)
+      {
+        String error = String.Empty;
+
+        if (e.GetType() == typeof(WebException))
+        {
+          HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
+          Stream responseStream = response.GetResponseStream();
+          error = Utility.SerializeFromStream(responseStream);
+        }
+        else
+        {
+          error = e.ToString();
         }
 
-        return responseEntity;
-      }
-      catch (Exception exception)
-      {
         string uri = _baseUri + relativeUri;
-        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+        throw new Exception("Error with HTTP POST from URI [" + uri + "]. " + error);
       }
     }
 
