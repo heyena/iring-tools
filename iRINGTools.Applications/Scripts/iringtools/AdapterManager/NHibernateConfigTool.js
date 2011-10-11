@@ -117,7 +117,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								if (!editPane) {
 									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 								}
-					            setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
+					      dbTableNames = setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 							}
 						}, {
 							xtype: 'tbspacer',
@@ -177,7 +177,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 								}
 
-					            setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
+							setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane, dbTableNames);
 								return;
 							}
 							else if (!node)

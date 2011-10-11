@@ -321,11 +321,10 @@ function getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes) {
 		treeProperty.dataObjects.push(folder);
   }
 
-  if (!dbDict.ConnectionString) {
-    dbDict.ConnectionString = treeProperty.connectionString;
-    dbDict.SchemaName = treeProperty.schemaName;
-    dbDict.Provider = treeProperty.provider;
-    dbDict.dataObjects = treeProperty.dataObjects;
-  }
+  dbDict.ConnectionString = treeProperty.connectionString;
+  dbDict.SchemaName = treeProperty.schemaName;
+  dbDict.Provider = treeProperty.provider;
+  dbDict.dataObjects = treeProperty.dataObjects;
+  
 	return treeProperty;
 };
