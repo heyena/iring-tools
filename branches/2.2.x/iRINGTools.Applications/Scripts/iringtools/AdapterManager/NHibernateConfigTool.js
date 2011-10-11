@@ -83,7 +83,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 										if (dbDict.dataObjects.length > 0) {
 											// populate data source form
-										    showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
+										  dbInfo = showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 										}
 										else {
 											dbObjectsTree.disable();

@@ -313,19 +313,19 @@ function getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes) {
 		treeProperty.connectionString = Base64.encode(tProp.connectionString);
 	}
 	treeProperty.schemaName = tProp.schemaName;
-	treeProperty.provider = tProp.provider;
-
-	if (!dbDict.ConnectionString) {
-		dbDict.ConnectionString = treeProperty.connectionString;
-		dbDict.SchemaName = treeProperty.schemaName;
-		dbDict.Provider = treeProperty.provider;
-		dbDict.dataObjects = userTableNames;
-	}
+	treeProperty.provider = tProp.provider;	
 
 	var keyName;
 	for (var i = 0; i < rootNode.childNodes.length; i++) {
 		var folder = getFolderFromChildNode(rootNode.childNodes[i], dataTypes);
 		treeProperty.dataObjects.push(folder);
-	}
+  }
+
+  if (!dbDict.ConnectionString) {
+    dbDict.ConnectionString = treeProperty.connectionString;
+    dbDict.SchemaName = treeProperty.schemaName;
+    dbDict.Provider = treeProperty.provider;
+    dbDict.dataObjects = treeProperty.dataObjects;
+  }
 	return treeProperty;
 };
