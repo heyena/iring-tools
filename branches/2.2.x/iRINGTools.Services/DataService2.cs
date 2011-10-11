@@ -41,6 +41,8 @@ using System.Net;
 using System.Web.Script.Serialization;
 using System.Web;
 using System.ServiceModel.Channels;
+using System.Runtime.Serialization.Json;
+using System.Text;
 
 namespace org.iringtools.services
 {
@@ -328,12 +330,15 @@ namespace org.iringtools.services
       }
       else if (format.ToUpper() == "JSON")
       {
-        DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-        string json = serializer.Serialize(dataItems);
+        DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());        
+        DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DataItems));
+        MemoryStream ms = new MemoryStream();
+        serializer.WriteObject(ms, dataItems);
+        byte[] json = ms.ToArray();
+        ms.Close();
 
         HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
-        HttpContext.Current.Response.Write(json);
+        HttpContext.Current.Response.Write(Encoding.UTF8.GetString(json, 0, json.Length));
       }
       else
       {

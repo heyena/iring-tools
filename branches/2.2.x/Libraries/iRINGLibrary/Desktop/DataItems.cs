@@ -9,7 +9,7 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://www.iringtools.org/data", Name = "dataItems")]
   public class DataItems
   {
-    [DataMember(Name = "type", Order = 0, EmitDefaultValue = false)]
+    [DataMember(Name = "type", Order = 0)]
     public string type { get; set; }
 
     [DataMember(Name = "total", Order = 1, EmitDefaultValue = false)]
@@ -26,6 +26,9 @@ namespace org.iringtools.library
     public string id { get; set; }
 
     [DataMember(Name = "properties", Order = 1, EmitDefaultValue = false)]
-    public IDictionary<string, string> properties { get; set; }
+    public Dictionary<string, string> properties { get; set; }
+
+    [DataMember(Name = "relatedItems", Order = 2, EmitDefaultValue = false)]
+    public List<DataItems> relatedItems { get; set; }
   }
 }

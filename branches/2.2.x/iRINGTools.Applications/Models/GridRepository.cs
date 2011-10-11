@@ -18,6 +18,8 @@ using org.iringtools.dxfr.manifest;
 
 using org.iringtools.adapter;
 using System.Web.Script.Serialization;
+using System.IO;
+using System.Runtime.Serialization.Json;
 
 namespace iRINGTools.Web.Models
 {
@@ -30,15 +32,13 @@ namespace iRINGTools.Web.Models
 			private Grid dataGrid;
 			private string graph;
 			private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
-			private JavaScriptSerializer serializer;
 			private string response = "";
 
 			[Inject]
 			public GridRepository()
       {
         _settings = ConfigurationManager.AppSettings;
-				_client = new WebHttpClient(_settings["DataServiceURI"]);				
-				serializer = new JavaScriptSerializer();
+        _client = new WebHttpClient(_settings["DataServiceURI"]);
 				dataGrid = new Grid();
       }
 
@@ -97,11 +97,13 @@ namespace iRINGTools.Web.Models
         try
         {
           DataFilter dataFilter = createDataFilter(filter, sort, dir);
-
           string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=json&start=" + start + "&limit=" + limit;
           string dataItemsJson = _client.Post<DataFilter, string>(relativeUri, dataFilter, true);
-
-          dataItems = (DataItems) serializer.Deserialize(dataItemsJson, typeof(DataItems));
+          
+          MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(dataItemsJson));
+          DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DataItems));
+          dataItems = (DataItems) serializer.ReadObject(ms);
+          ms.Close();
         }
         catch (Exception ex)
         {
@@ -227,7 +229,9 @@ namespace iRINGTools.Web.Models
 				{
 					try
 					{
-						List<Dictionary<String, String>> filterExpressions = (List<Dictionary<String, String>>)serializer.Deserialize(filter, typeof(List<Dictionary<String, String>>));
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+						List<Dictionary<String, String>> filterExpressions = 
+              (List<Dictionary<String, String>>)serializer.Deserialize(filter, typeof(List<Dictionary<String, String>>));
 						
 						if (filterExpressions != null && filterExpressions.Count > 0)
 						{
