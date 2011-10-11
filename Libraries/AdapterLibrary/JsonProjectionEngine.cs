@@ -8,6 +8,8 @@ using org.iringtools.utility;
 using org.iringtools.library;
 using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
+using System.Runtime.Serialization.Json;
+using System.IO;
 
 namespace org.iringtools.adapter.projection
 {
@@ -17,11 +19,12 @@ namespace org.iringtools.adapter.projection
     private DataDictionary _dictionary = null;
 
     [Inject]
-    public JsonProjectionEngine(AdapterSettings settings, DataDictionary dictionary)
+    public JsonProjectionEngine(AdapterSettings settings, DataDictionary dictionary, IDataLayer2 dataLayer)
       : base(settings)
     {
       _settings = settings;
       _dictionary = dictionary;
+      _dataLayer = dataLayer;
     }
 
     public override XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects)
@@ -99,7 +102,32 @@ namespace org.iringtools.adapter.projection
 
     public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
     {
-      throw new NotImplementedException();
+      try
+      {
+        DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xml.ToString());
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        string dataItemType = dataItems.type;
+
+        foreach (DataItem dataItem in dataItems.items)
+        {
+          IDataObject dataObject = _dataLayer.Create(dataItemType, null)[0];
+
+          foreach (var pair in dataItem.properties)
+          {
+            dataObject.SetPropertyValue(pair.Key, pair.Value);
+          }
+
+          dataObjects.Add(dataObject);
+        }
+
+        return dataObjects;
+      }
+      catch (Exception e)
+      {
+        string message = "Error marshalling data items to data objects." + e;
+        _logger.Error(message);
+        throw new Exception(message);
+      }
     }
 
     #region helper methods    
