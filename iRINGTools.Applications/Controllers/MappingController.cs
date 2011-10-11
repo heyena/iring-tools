@@ -194,8 +194,8 @@ namespace org.iringtools.web.controllers
             catch (Exception e)
             {
               String msg = e.ToString();
-                _logger.Error(msg);
-                return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+              _logger.Error(msg);
+              return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
             }
 
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
@@ -224,60 +224,87 @@ namespace org.iringtools.web.controllers
                 string graph = dataObjectVars[2];
                 string context = string.Format("{0}/{1}", scope, application);
 
-                ClassMap selectedClassMap = null;
+                ClassTemplateMap selectedCtm = null;
                 Mapping mapping = GetMapping(scope, application);
                 GraphMap graphMap = mapping.FindGraphMap(graph);
                 ClassMap graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
-                QMXF newtemplate = _refdata.GetTemplate(identifier);
+                QMXF templateQmxf = _refdata.GetTemplate(identifier);
 
                 if (parentType == "GraphMapNode")
                 {
-                    selectedClassMap = graphMap.classTemplateMaps.Find(c => c.classMap.id.Equals(parentId)).classMap;
+                  selectedCtm = graphMap.classTemplateMaps.Find(c => c.classMap.id.Equals(parentId));
                 }
                 else if (parentType == "ClassMapNode")
                 {
-                    foreach (var classTemplateMap in graphMap.classTemplateMaps)
+                  foreach (var classTemplateMap in graphMap.classTemplateMaps)
+                  {
+                    if (classTemplateMap.classMap.id == parentId)
                     {
-                        if (classTemplateMap.classMap.id == parentId)
-                        {
-                            selectedClassMap = classTemplateMap.classMap;
-                            break;
-                        }
+                      selectedCtm = classTemplateMap;
+                      break;
                     }
+                  }
                 }
 
-                object template = null;
-                TemplateMap templateMap = new TemplateMap();
-
-                if (newtemplate.templateDefinitions.Count > 0)
+                if (selectedCtm != null)
                 {
-                    foreach (var defs in newtemplate.templateDefinitions)
+                  ClassMap selectedClassMap = selectedCtm.classMap;
+                  TemplateMap newTemplateMap = new TemplateMap();
+                  object template = null;
+                  
+                  if (templateQmxf.templateDefinitions.Count > 0)
+                  {
+                    foreach (var templateDef in templateQmxf.templateDefinitions)
                     {
-                        template = defs;
-                        templateMap.id = defs.identifier;
-                        templateMap.name = defs.name[0].value;
-                        templateMap.type = TemplateType.Definition;
-                        GetRoleMaps(selectedClassMap.id, template, templateMap);
+                      template = templateDef;
+                      newTemplateMap.id = templateDef.identifier;
+                      newTemplateMap.name = templateDef.name[0].value;
+                      newTemplateMap.type = TemplateType.Definition;
+                      GetRoleMaps(selectedClassMap.id, template, newTemplateMap);
                     }
-                }
-                else
-                {
-                    foreach (var quals in newtemplate.templateQualifications)
+                  }
+                  else
+                  {
+                    foreach (var templateQual in templateQmxf.templateQualifications)
                     {
-                        template = quals;
-                        templateMap.id = quals.identifier;
-                        templateMap.name = quals.name[0].value;
-                        templateMap.type = TemplateType.Qualification;
-                        GetRoleMaps(selectedClassMap.id, template, templateMap);
+                      template = templateQual;
+                      newTemplateMap.id = templateQual.identifier;
+                      newTemplateMap.name = templateQual.name[0].value;
+                      newTemplateMap.type = TemplateType.Qualification;
+                      GetRoleMaps(selectedClassMap.id, template, newTemplateMap);
                     }
-                }
+                  }
 
-                graphMap.AddTemplateMap(selectedClassMap, templateMap);
+                  #region DO NOT DELETE THIS CODE BLOCK, PENDING FOR MODELER'S CONFIRMATION
+                  // duplicate templates in the same class are not allowed
+                  //foreach (TemplateMap templateMap in selectedCtm.templateMaps)
+                  //{
+                  //  if (templateMap.id.Substring(templateMap.id.IndexOf(":") + 1) == identifier)
+                  //  {
+                  //    foreach (RoleMap roleMap in templateMap.roleMaps)
+                  //    {
+                  //      if (roleMap.type == RoleType.Reference)
+                  //      {
+                  //        RoleMap newRoleMap = newTemplateMap.roleMaps.Find(x => x.id == roleMap.id);
+
+                  //        if (newRoleMap.value != null && newRoleMap.value.ToLower() == roleMap.value.ToLower())
+                  //        {
+                  //          throw new Exception("Duplicate templates in the same class are not allowed!");
+                  //        }
+                  //      }
+                  //    }
+                  //  }
+                  //}
+                  #endregion
+
+                  graphMap.AddTemplateMap(selectedClassMap, newTemplateMap);
+                }
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.ToString());
-                return Json(nodes, JsonRequestBehavior.AllowGet);
+              string msg = ex.ToString();
+              _logger.Error(msg);
+              return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
             }
 
             return Json(nodes, JsonRequestBehavior.AllowGet);

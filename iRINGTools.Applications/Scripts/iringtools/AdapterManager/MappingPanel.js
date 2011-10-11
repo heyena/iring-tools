@@ -397,10 +397,19 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                 },
                 success: function (result, request) {
                     e.tree.getEl().unmask();
+
+                    var error = 'success = False';
+                    var index = result.responseText.indexOf(error);
+
+                    if (index != -1) {
+                        var msg = result.responseText.substring(index + error.length + 2);
+                        showDialog(500, 240, 'Adding Template Error', msg.substring(0, msg.length - 1), Ext.Msg.OK, null);
+                    }
+
                     that.onReload();
                 },
                 failure: function (result, request) {
-                    //don't drop it
+                    e.tree.getEl().unmask();
                     return false;
                 }
             })
@@ -584,13 +593,19 @@ AdapterManager.MappingPanel = Ext.extend(Ext.Panel, {
                         }
                         else {
                             Ext.get('propertyName').dom.value = data.node.attributes.record.Name;
+
                             if (data.node.parentNode != undefined
-                  && data.node.parentNode.attributes.record != undefined
-                  && data.node.parentNode.attributes.type != 'DataObjectNode')
-                                Ext.get('relatedObject').dom.value = data.node.parentNode.attributes.record.Name;
-                            var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.attributes.record.Name + '</b></td></tr>'
-                            msg += '</table>'
-                            Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg)
+                              && data.node.parentNode.attributes.record != undefined
+                              && data.node.parentNode.attributes.type != 'DataObjectNode') 
+                            {   
+                                Ext.get('relatedObject').dom.value = data.node.parentNode.attributes.record.Related;
+                            }
+
+                            var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.node.attributes.record.Name +
+                                '</b></td></tr></table>';
+
+                            Ext.getCmp(formid).body.child('div.property-target' + formid).update(msg);
+
                             return true;
                         }
                     } //eo notifyDrop
