@@ -129,7 +129,8 @@ function setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjec
 	if (editPane) {
 		if (editPane.items.map[scopeName + '.' + appName + '.dsconfigPane']) {
 			var dsConfigPanel = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
-			if (dsConfigPanel) {				
+			
+      if (dsConfigPanel) {				
 				var panelIndex = editPane.items.indexOf(dsConfigPanel);
 				editPane.getLayout().setActiveItem(panelIndex);
 				return;
@@ -641,20 +642,20 @@ function setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dat
 							};
 						}
                        
-                        treeLoader.on('beforeload', function (treeLoader, node) {
-                            dataObjectsPane.body.mask('Loading...', 'x-mask-loading');
-                        }, this);
+            treeLoader.on('beforeload', function (treeLoader, node) {
+                dataObjectsPane.body.mask('Loading...', 'x-mask-loading');
+            }, this);
 
-                        treeLoader.on('load', function (treeLoader, node) {
-                            dataObjectsPane.body.unmask();
-                        }, this);
+            treeLoader.on('load', function (treeLoader, node) {
+                dataObjectsPane.body.unmask();
+            }, this);
 
 						var rootNode = dbObjectsTree.getRootNode();
 						rootNode.reload(
-                        function (rootNode) {
-                          loadTree(rootNode, dbDict);
-                        });
-					}
+              function (rootNode) {
+                loadTree(rootNode, dbDict);               
+              });
+					  }
 				}, {
 					xtype: 'tbspacer',
 					width: 4
@@ -747,18 +748,19 @@ function setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dat
 		editPane.getLayout().setActiveItem(panelIndex);
 
 	}
-};		
+};
 
-function loadTree (rootNode, dbDict) {
+function loadTree(rootNode, dbDict) {  
 	var relationTypeStr = ['OneToOne', 'OneToMany'];
 
 	// sync data object tree with data dictionary
 	for (var i = 0; i < rootNode.childNodes.length; i++) {
-		var dataObjectNode = rootNode.childNodes[i];
+	  var dataObjectNode = rootNode.childNodes[i];	  
 		dataObjectNode.attributes.properties.tableName = dataObjectNode.text;
 		for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
-			var dataObject = dbDict.dataObjects[ijk];
-			if (dataObjectNode.text.toUpperCase() != dataObject.tableName.toUpperCase())
+		  var dataObject = dbDict.dataObjects[ijk];		  
+
+		  if (dataObjectNode.text.toUpperCase() != dataObject.tableName.toUpperCase())
 				continue;
 
 			// sync data object
