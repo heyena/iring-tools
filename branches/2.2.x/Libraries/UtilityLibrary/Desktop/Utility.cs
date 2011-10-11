@@ -451,24 +451,36 @@ namespace org.iringtools.utility
       }
     }
 
-    public static void WriteStream(Stream graph, string path)
+    public static void WriteBytes(byte[] data, string path)
     {
       FileStream stream = null;
       try
       {
         stream = new FileStream(path, FileMode.Create, FileAccess.Write);
 
-        byte[] data = ((MemoryStream)graph).ToArray();
-
         stream.Write(data, 0, data.Length);
       }
       catch (Exception exception)
       {
-        throw new Exception("Error writing stream to [" + path + "].", exception);
+        throw new Exception("Error writing bytes to [" + path + "].", exception);
       }
       finally
       {
         stream.Close();
+      }
+    }
+
+    public static void WriteStream(Stream graph, string path)
+    {
+      try
+      {
+        byte[] data = ((MemoryStream)graph).ToArray();
+
+        WriteBytes(data, path);
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error writing stream to [" + path + "].", exception);
       }
     }
 
@@ -817,7 +829,10 @@ namespace org.iringtools.utility
       XmlDictionaryReader reader = null;
       try
       {
-        reader = XmlDictionaryReader.CreateTextReader(stream, new XmlDictionaryReaderQuotas());
+        XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
+        quotas.MaxStringContentLength = int.MaxValue;
+
+        reader = XmlDictionaryReader.CreateTextReader(stream, quotas);
         if (useDataContractSerializer)
         {
           DataContractSerializer serializer = new DataContractSerializer(typeof(T));
