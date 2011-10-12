@@ -650,7 +650,7 @@ Ext.onReady(function(){
       icon: 'resources/images/directory.png'
     },
     listeners: {
-	  click: function(node, event){
+	    click: function(node, event){
         Ext.getCmp('property-pane').setSource(node.attributes.properties);
         
         try {
