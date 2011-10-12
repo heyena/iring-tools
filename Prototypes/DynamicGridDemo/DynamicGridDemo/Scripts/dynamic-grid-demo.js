@@ -3,8 +3,6 @@
     Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
     var baseParams = {
-        scope: '12345_000',
-        app: 'abc',
         dataObject: 'lines'
     };
 

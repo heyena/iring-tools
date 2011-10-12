@@ -21,8 +21,8 @@ namespace DynamicGridDemo
 
       routes.MapRoute(
           "DynamicGrid",  // Route name
-          "{controller}/{action}/{scope}/{app}/{dataObject}/{start}/{limit}/{sort}/{dir}/{filter}",  // URL with parameters
-          new { controller = "DynamicGrid", action = "Index", scope = "", app = "", dataObject = "", start = 0, limit = 25, 
+          "{controller}/{action}/{dataObject}/{start}/{limit}/{sort}/{dir}/{filter}",  // URL with parameters
+          new { controller = "DynamicGrid", action = "Index", dataObject = "", start = 0, limit = 25, 
             sort = "", dir = "", filter = "" }  // Parameter defaults
       );
     }
