@@ -1,5 +1,6 @@
 package org.iringtools.services.core;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,15 +32,24 @@ public class HistoryProvider
 
     try
     {
-      List<String> filesInFolder = IOUtils.getFiles(path);
-      Collections.sort(filesInFolder);
-
-      // show most recent first
-      for (int i = filesInFolder.size() - 1; i >= 0; i--)
+      File file = new File(path);
+      
+      if (file.exists())
+      {      
+        List<String> filesInFolder = IOUtils.getFiles(path);
+        Collections.sort(filesInFolder);
+  
+        // show most recent first
+        for (int i = filesInFolder.size() - 1; i >= 0; i--)
+        {
+          ExchangeResponse response = JaxbUtils.read(ExchangeResponse.class, path + "/" + filesInFolder.get(i));
+          response.setStatusList(null); // only interest in summary status
+          responses.add(response);
+        }
+      }
+      else
       {
-        ExchangeResponse response = JaxbUtils.read(ExchangeResponse.class, path + "/" + filesInFolder.get(i));
-        response.setStatusList(null); // only interest in summary status
-        responses.add(response);
+        throw new Exception("No exchange history found.");
       }
     }
     catch (Exception e)

@@ -5,19 +5,19 @@
   <title>iRINGTools: Federation Manager</title>
   <link rel="shortcut icon" href="resources/images/favicon.ico">
   
-  <link rel="stylesheet" type="text/css" href="resources/ext-3.3.0/resources/css/ext-all.css" />  
-  <link rel="stylesheet" type="text/css" href="resources/ext-3.3.0/resources/css/xtheme-gray.css" />
+  <link rel="stylesheet" type="text/css" href="resources/ext-3.4.0/resources/css/ext-all.css" />  
+  <link rel="stylesheet" type="text/css" href="resources/ext-3.4.0/resources/css/xtheme-gray.css" />
   <link rel="stylesheet" type="text/css" href="resources/css/exchange-manager-gray.css"/>
-  <link rel="stylesheet" type="text/css" href="resources/ext-3.3.0/resources/css/xtheme-gray_iringTools.css"/>
+  <link rel="stylesheet" type="text/css" href="resources/ext-3.4.0/resources/css/xtheme-gray_iringTools.css"/>
   <link rel="stylesheet" type="text/css" href="resources/css/index.css"/>
   
-  <script type="text/javascript" src="resources/ext-3.3.0/adapter/ext/ext-base.js"></script> 
-  <script type="text/javascript" src="resources/ext-3.3.0/ext-all.js"></script>
-  <script type="text/javascript" src="resources/ext-3.3.0/ux/ux-all.js"></script>
+  <script type="text/javascript" src="resources/ext-3.4.0/adapter/ext/ext-base.js"></script> 
+  <script type="text/javascript" src="resources/ext-3.4.0/ext-all.js"></script>
+  <script type="text/javascript" src="resources/ext-3.4.0/ux/ux-all.js"></script>
    
-  <link rel="stylesheet" type="text/css" href="resources/ext-3.3.0/ux/multiselect/css/MultiSelect.css" />  
-  <script type="text/javascript" src="resources/ext-3.3.0/ux/multiselect/MultiSelect.js"></script>
-  <script type="text/javascript" src="resources/ext-3.3.0/ux/multiselect/ItemSelector.js"></script>
+  <link rel="stylesheet" type="text/css" href="resources/ext-3.4.0/ux/multiselect/css/MultiSelect.css" />  
+  <script type="text/javascript" src="resources/ext-3.4.0/ux/multiselect/MultiSelect.js"></script>
+  <script type="text/javascript" src="resources/ext-3.4.0/ux/multiselect/ItemSelector.js"></script>
 
   <script type="text/javascript" src="resources/scripts/App.js"></script>
   <script type="text/javascript" src="resources/scripts/AjaxRowExpander.js"></script>
