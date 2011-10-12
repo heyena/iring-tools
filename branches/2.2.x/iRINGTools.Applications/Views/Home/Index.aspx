@@ -8,7 +8,7 @@
   <body>
     <div class="banner">
     <h1>
-      <img src="<%=ResolveUrl("~/content/img/iring-tools-logo.png") %>" />&nbsp; Version 2.01.00</h1>
+      <img src="<%=ResolveUrl("~/content/img/iring-tools-logo.png") %>" />&nbsp; Version 2.02.00</h1>
     </div>      
     <div class="main">
       <p>iRINGTools is a set of free, public domain, open source (BSD 3 license) software applications and utilities that 
