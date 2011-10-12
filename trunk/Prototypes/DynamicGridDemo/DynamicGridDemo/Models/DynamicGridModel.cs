@@ -30,19 +30,19 @@ namespace DynamicGridDemo.Models
       };
     }
 
-    public GridDefinition GetGridDefinition(String scope, String app, String dataObject)
+    public GridDefinition GetGridDefinition(String dataObject)
     {
-      WebHttpClient client = new WebHttpClient(dataServiceUri + "/" + app + "/" + scope + "/");
+      WebHttpClient client = new WebHttpClient(dataServiceUri);
       DataDictionary dictionary = client.Get<DataDictionary>("dictionary");
       return PrepareGridDefinition(dictionary, dataObject);
     }
 
-    public GridData GetGridData(String scope, String app, String dataObject, int start, int limit, 
+    public GridData GetGridData(String dataObject, int start, int limit, 
       String sortBy, String sortDir, String filter)
     {
       DataFilter dataFilter = CreateDataFilter(sortBy, sortDir, filter);
       String relativeURI = dataObject + "/filter?format=json&start=" + start + "&limit=" + limit;
-      WebHttpClient client = new WebHttpClient(dataServiceUri + "/" + app + "/" + scope + "/");
+      WebHttpClient client = new WebHttpClient(dataServiceUri);
       String dataItemsJson = client.Post<DataFilter, String>(relativeURI, dataFilter);
       DataItems dataItems = (DataItems)serializer.Deserialize(dataItemsJson, typeof(DataItems));
       return PrepareGridData(dataItems);

@@ -23,16 +23,16 @@ namespace DynamicGridDemo.Controllers
       return View();
     }
 
-    public ActionResult GridDefinition(String scope, String app, String dataObject)
+    public ActionResult GridDefinition(String dataObject)
     {
-      GridDefinition gridDef = model.GetGridDefinition(scope, app, dataObject);
+      GridDefinition gridDef = model.GetGridDefinition(dataObject);
       return Json(gridDef, JsonRequestBehavior.AllowGet);
     }
 
-    public ActionResult GridData(String scope, String app, String dataObject, int start, int limit, 
+    public ActionResult GridData(String dataObject, int start, int limit, 
       String sort, String dir, String filter)
     {
-      GridData gridData = model.GetGridData(scope, app, dataObject, start, limit, sort, dir, filter);
+      GridData gridData = model.GetGridData(dataObject, start, limit, sort, dir, filter);
       return Json(gridData, JsonRequestBehavior.AllowGet);
     }
   }
