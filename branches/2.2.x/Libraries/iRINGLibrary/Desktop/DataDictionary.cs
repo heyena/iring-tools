@@ -96,6 +96,12 @@ namespace org.iringtools.library
     [DataMember(IsRequired = false, Order = 6, EmitDefaultValue = false)]
     public List<DataRelationship> dataRelationships { get; set; }
 
+    [DataMember(IsRequired = false, Order = 7, EmitDefaultValue = false)]
+    public bool isReadOnly { get; set; }
+
+    [DataMember(IsRequired = false, Order = 8, EmitDefaultValue = false)]
+    public bool hasContent { get; set; }
+
     public bool isKeyProperty(string propertyName)
     {
       foreach (KeyProperty keyProperty in keyProperties)
@@ -168,6 +174,12 @@ namespace org.iringtools.library
 
     [DataMember(EmitDefaultValue = false, Order = 7)]
     public int numberOfDecimals { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 8)]
+    public bool isReadOnly { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 9)]
+    public bool showOnSearch { get; set; }
   }
 
   [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]
