@@ -252,11 +252,6 @@ namespace org.iringtools.library
         throw ex;
       }
     }
-
-    public override IContentObject GetContent(string objectType, string identifier, string format)
-    {
-      return null;
-    }
     #endregion
 
     #region helper methods

@@ -296,20 +296,5 @@ namespace org.iringtools.library
     {
       throw new NotImplementedException();
     }
-
-    public virtual IContentObject GetContent(string objectType, string identifier, string format)
-    {
-      throw new NotImplementedException();
-    }
-
-    public virtual Response PostContent(string objectType, IDataObject dataObject, Stream content, string format)
-    {
-      throw new NotImplementedException();
-    }
-
-    public virtual Response DeleteContent(string objectType, string identifier, string format)
-    {
-      throw new NotImplementedException();
-    }
   }
 }

@@ -330,7 +330,7 @@ namespace org.iringtools.services
       }
       else if (format.ToUpper() == "JSON")
       {
-        DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());        
+        DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
         DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DataItems));
         MemoryStream ms = new MemoryStream();
         serializer.WriteObject(ms, dataItems);
