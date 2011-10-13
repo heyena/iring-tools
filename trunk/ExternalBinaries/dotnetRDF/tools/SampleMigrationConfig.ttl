@@ -12,10 +12,10 @@
 
 <dotnetrdf:migration:source> a dnr:SqlIOManager ;
 								dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
-								dnr:server "localhost" ;
-								dnr:database "source" ;
-								dnr:user "example" ;
-								dnr:password "password" .
+								dnr:server "localhost\sqlexpress" ;
+								dnr:database "InterfaceDb" ;
+								dnr:user "dotNetRDF" ;
+								dnr:password "dotNetRDF" .
 					
 # While the migration target shown here is the new ADO Store it may actually be any
 # valid IGenericIOManager instance i.e. you can use a migration configuration to migrate from
@@ -23,7 +23,7 @@
 			
 <dotnetrdf:migration:target> a dnr:GenericIOManager ;
 								dnr:type "VDS.RDF.Storage.MicrosoftAdoManager, dotNetRDF.Data.Sql" ;
-								dnr:server "localhost" ;
-								dnr:database "target" ;
-								dnr:user "example" ;
-								dnr:password "password" .
+								dnr:server "localhost\sqlexpress" ;
+								dnr:database "InterfaceDb050" ;
+								dnr:user "dotNetRDF" ;
+								dnr:password "dotNetRDF" .

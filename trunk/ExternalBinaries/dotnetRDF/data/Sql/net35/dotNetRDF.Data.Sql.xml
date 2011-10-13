@@ -153,28 +153,6 @@
             </summary>
             <param name="manager">Microsoft SQL Server ADO Manager</param>
         </member>
-        <member name="T:VDS.RDF.Configuration.AdoObjectFactory">
-            <summary>
-            An Object Factory that can create objects of the classes provided by the dotNetRDF.Data.Sql library
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Configuration.AdoObjectFactory.TryLoadObject(VDS.RDF.IGraph,VDS.RDF.INode,System.Type,System.Object@)">
-            <summary>
-            Attempts to load an Object of the given type identified by the given Node and returned as the Type that this loader generates
-            </summary>
-            <param name="g">Configuration Graph</param>
-            <param name="objNode">Object Node</param>
-            <param name="targetType">Target Type</param>
-            <param name="obj">Created Object</param>
-            <returns>True if the loader succeeded in creating an Object</returns>
-        </member>
-        <member name="M:VDS.RDF.Configuration.AdoObjectFactory.CanLoadObject(System.Type)">
-            <summary>
-            Returns whether this Factory is capable of creating objects of the given type
-            </summary>
-            <param name="t">Target Type</param>
-            <returns></returns>
-        </member>
         <member name="T:VDS.RDF.Query.Optimisation.BaseAdoOptimiser`5">
             <summary>
             An abstract algebra optimiser implementation that optimises the algebra to use Virtual Node terms in place of Node terms where the Virtual Nodes originate from an ADO Store
@@ -233,161 +211,6 @@
             Creates a new Microsoft SQL Server ADO Optimiser
             </summary>
             <param name="manager">Microsoft SQL Server ADO Store Manager</param>
-        </member>
-        <member name="T:VDS.RDF.Storage.AdoSchemaDefinition">
-            <summary>
-            Represents a database schema that provides the required ADO store stored procedures
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Storage.AdoSchemaDefinition.#ctor(System.String,System.String,System.Collections.Generic.IEnumerable{VDS.RDF.Storage.AdoSchemaScriptDefinition})">
-            <summary>
-            Creates a new Schema Definition
-            </summary>
-            <param name="name">Schema Name</param>
-            <param name="descrip">Description</param>
-            <param name="scripts">Schema Scripts</param>
-        </member>
-        <member name="M:VDS.RDF.Storage.AdoSchemaDefinition.HasScript(VDS.RDF.Storage.AdoSchemaScriptType,VDS.RDF.Storage.AdoSchemaScriptDatabase)">
-            <summary>
-            Gets whether the definition has a specific script
-            </summary>
-            <param name="type">Script Type</param>
-            <param name="db">Database Type</param>
-            <returns></returns>
-        </member>
-        <member name="M:VDS.RDF.Storage.AdoSchemaDefinition.GetScript(VDS.RDF.Storage.AdoSchemaScriptType,VDS.RDF.Storage.AdoSchemaScriptDatabase)">
-            <summary>
-            Gets the Script resource name (or null if it doesn't exist) for a specific script
-            </summary>
-            <param name="type">Script Type</param>
-            <param name="db">Database Type</param>
-            <returns></returns>
-        </member>
-        <member name="P:VDS.RDF.Storage.AdoSchemaDefinition.Name">
-            <summary>
-            Gets the Schema Name
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Storage.AdoSchemaDefinition.Description">
-            <summary>
-            Gets the Schema Description
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Storage.AdoSchemaDefinition.ScriptDefinitions">
-            <summary>
-            Gets the available scripts for this Schema Definition
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Storage.AdoSchemaScriptType">
-            <summary>
-            Possible Schema Script Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Storage.AdoSchemaScriptType.Create">
-            <summary>
-            Script for creating the database
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Storage.AdoSchemaScriptType.Drop">
-            <summary>
-            Script for dropping the database
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Storage.AdoSchemaScriptDatabase">
-            <summary>
-            Supported Database Types
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Storage.AdoSchemaScriptDatabase.MicrosoftSqlServer">
-            <summary>
-            Microsoft SQL Server (and SQL Azure)
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Storage.AdoSchemaScriptDefinition">
-            <summary>
-            Represents the definition of a schema script
-            </summary>
-        </member>
-        <member name="M:VDS.RDF.Storage.AdoSchemaScriptDefinition.#ctor(VDS.RDF.Storage.AdoSchemaScriptType,VDS.RDF.Storage.AdoSchemaScriptDatabase,System.String)">
-            <summary>
-            Creates a new Schema Script Definition
-            </summary>
-            <param name="type">Script Type</param>
-            <param name="db">Database Type</param>
-            <param name="resource">Resource Name</param>
-        </member>
-        <member name="P:VDS.RDF.Storage.AdoSchemaScriptDefinition.ScriptType">
-            <summary>
-            Gets the Script Type
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Storage.AdoSchemaScriptDefinition.Database">
-            <summary>
-            Gets the Database Type
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Storage.AdoSchemaScriptDefinition.ScriptResource">
-            <summary>
-            Gets the Script Resource Name
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Storage.AdoSchemaHelper">
-            <summary>
-            Static Helper class which managers the available database schemas
-            </summary>
-            <remarks>
-            <para>
-            The ADO Store was specifically designed to be completely based upon use of stored procedures so any schema can potentially be used provided it exposed the stored procedures that the code expects to exist.
-            </para>
-            <para>
-            There are two schemas provided by default, the <strong>Hash</strong> schema is recommended but requires SQL Server 2005 or higher.  The <strong>Simple</strong> schema is less performant but has a version that works with earlier versions of SQL Server e.g. SQL Server 2000.  We <strong>strongly</strong> recommend the Hash schema for all new development!
-            </para>
-            </remarks>
-        </member>
-        <member name="M:VDS.RDF.Storage.AdoSchemaHelper.AddSchema(VDS.RDF.Storage.AdoSchemaDefinition)">
-            <summary>
-            Adds a new Schema Definition
-            </summary>
-            <param name="def">Definition</param>
-        </member>
-        <member name="M:VDS.RDF.Storage.AdoSchemaHelper.RemoveSchema(VDS.RDF.Storage.AdoSchemaDefinition)">
-            <summary>
-            Removes a Schema Definition
-            </summary>
-            <param name="def">Definition</param>
-        </member>
-        <member name="P:VDS.RDF.Storage.AdoSchemaHelper.SchemaDefinitions">
-            <summary>
-            Gets the available built-in schemas
-            </summary>
-        </member>
-        <member name="P:VDS.RDF.Storage.AdoSchemaHelper.DefaultSchema">
-            <summary>
-            Gets/Sets the Default Schema
-            </summary>
-        </member>
-        <member name="T:VDS.RDF.Storage.AzureAdoManager">
-            <summary>
-            An implementation of an ADO Store Manager for use with SQL Azure
-            </summary>
-            <remarks>
-            Essentially just derived from the more general <see cref="T:VDS.RDF.Storage.MicrosoftAdoManager">MicrosoftAdoManager</see> with a constructor which reduces the amount of input you need to create an instance that will connect to SQL Azure successfully
-            </remarks>
-        </member>
-        <member name="T:VDS.RDF.Storage.MicrosoftAdoManager">
-            <summary>
-            Implementation of the ADO Store against Microsoft SQL Server
-            </summary>
-            <remarks>
-            <para>
-            This code cannot communicate with legacy SQL Stores and this is by design, please see <a href="http://www.dotnetrdf.org?content.asp?pageID=dotNetRDF%20Store#migration">this page</a> for details on migrating legacy stores
-            </para>
-            </remarks>
-        </member>
-        <member name="T:VDS.RDF.Storage.BaseAdoSqlClientStore">
-            <summary>
-            Abstract Base implementation of the ADO Store for stores that are accessed using the System.Data.SqlClient API
-            </summary>
         </member>
         <member name="T:VDS.RDF.Storage.BaseAdoStore`5">
             <summary>
@@ -886,9 +709,24 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="P:VDS.RDF.Storage.BaseAdoStore`5.Version">
+            <summary>
+            Gets the Version as detected when this instance was created, use <see cref="M:VDS.RDF.Storage.BaseAdoStore`5.CheckVersion">CheckVersion()</see> to directly query the store for its version
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Storage.BaseAdoStore`5.Schema">
+            <summary>
+            Gets the Schema as detected when this instance was created, use <see cref="M:VDS.RDF.Storage.BaseAdoStore`5.CheckSchema">CheckSchema()</see> to directly query the store for its schema
+            </summary>
+        </member>
         <member name="P:VDS.RDF.Storage.BaseAdoStore`5.Connection">
             <summary>
             Gets the Connection to the underlying database
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Storage.BaseAdoStore`5.IOBehaviour">
+            <summary>
+            Gets the IO Behaviour of an ADO Store
             </summary>
         </member>
         <member name="P:VDS.RDF.Storage.BaseAdoStore`5.UpdateSupported">
@@ -921,11 +759,48 @@
             Gets the ID which signifies that no ID exists for the input (Is zero for ADO Stores)
             </summary>
         </member>
+        <member name="T:VDS.RDF.Storage.BaseAdoSqlClientStore">
+            <summary>
+            Abstract Base implementation of the ADO Store for stores that are accessed using the System.Data.SqlClient API
+            </summary>
+        </member>
         <member name="M:VDS.RDF.Storage.BaseAdoSqlClientStore.#ctor(System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
             Creates a new SQL Client based ADO Store
             </summary>
             <param name="parameters">Connection Parameters</param>
+        </member>
+        <member name="T:VDS.RDF.Configuration.AdoObjectFactory">
+            <summary>
+            An Object Factory that can create objects of the classes provided by the dotNetRDF.Data.Sql library
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Configuration.AdoObjectFactory.TryLoadObject(VDS.RDF.IGraph,VDS.RDF.INode,System.Type,System.Object@)">
+            <summary>
+            Attempts to load an Object of the given type identified by the given Node and returned as the Type that this loader generates
+            </summary>
+            <param name="g">Configuration Graph</param>
+            <param name="objNode">Object Node</param>
+            <param name="targetType">Target Type</param>
+            <param name="obj">Created Object</param>
+            <returns>True if the loader succeeded in creating an Object</returns>
+        </member>
+        <member name="M:VDS.RDF.Configuration.AdoObjectFactory.CanLoadObject(System.Type)">
+            <summary>
+            Returns whether this Factory is capable of creating objects of the given type
+            </summary>
+            <param name="t">Target Type</param>
+            <returns></returns>
+        </member>
+        <member name="T:VDS.RDF.Storage.MicrosoftAdoManager">
+            <summary>
+            Implementation of the ADO Store against Microsoft SQL Server
+            </summary>
+            <remarks>
+            <para>
+            This code cannot communicate with legacy SQL Stores and this is by design, please see <a href="http://www.dotnetrdf.org?content.asp?pageID=dotNetRDF%20Store#migration">this page</a> for details on migrating legacy stores
+            </para>
+            </remarks>
         </member>
         <member name="F:VDS.RDF.Storage.MicrosoftAdoManager.DefaultServer">
             <summary>
@@ -1103,6 +978,33 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:VDS.RDF.PluginExtensions">
+            <summary>
+            Represents common extensions that are useful across all Plugin libraries
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.PluginExtensions.ToSafeString(System.Object)">
+            <summary>
+            Gets either the String form of the Object of the Empty String
+            </summary>
+            <param name="obj">Object</param>
+            <returns>Result of calling <strong>ToString()</strong> on non-null objects and the empty string for null objects</returns>
+        </member>
+        <member name="M:VDS.RDF.PluginExtensions.EnsureObjectFactory(VDS.RDF.Configuration.ConfigurationSerializationContext,System.Type)">
+            <summary>
+            Ensures that a specific Object Factory type is registered in a Configuration Graph
+            </summary>
+            <param name="context">Configuration Serialization Context</param>
+            <param name="factoryType">Factory Type</param>
+        </member>
+        <member name="T:VDS.RDF.Storage.AzureAdoManager">
+            <summary>
+            An implementation of an ADO Store Manager for use with SQL Azure
+            </summary>
+            <remarks>
+            Essentially just derived from the more general <see cref="T:VDS.RDF.Storage.MicrosoftAdoManager">MicrosoftAdoManager</see> with a constructor which reduces the amount of input you need to create an instance that will connect to SQL Azure successfully
+            </remarks>
+        </member>
         <member name="M:VDS.RDF.Storage.AzureAdoManager.#ctor(System.String,System.String,System.String,System.String)">
             <summary>
             Creates a new Azure ADO Manager instance
@@ -1126,6 +1028,138 @@
             Gets the String representation of the connection
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:VDS.RDF.Storage.AdoSchemaDefinition">
+            <summary>
+            Represents a database schema that provides the required ADO store stored procedures
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Storage.AdoSchemaDefinition.#ctor(System.String,System.String,System.Collections.Generic.IEnumerable{VDS.RDF.Storage.AdoSchemaScriptDefinition})">
+            <summary>
+            Creates a new Schema Definition
+            </summary>
+            <param name="name">Schema Name</param>
+            <param name="descrip">Description</param>
+            <param name="scripts">Schema Scripts</param>
+        </member>
+        <member name="M:VDS.RDF.Storage.AdoSchemaDefinition.HasScript(VDS.RDF.Storage.AdoSchemaScriptType,VDS.RDF.Storage.AdoSchemaScriptDatabase)">
+            <summary>
+            Gets whether the definition has a specific script
+            </summary>
+            <param name="type">Script Type</param>
+            <param name="db">Database Type</param>
+            <returns></returns>
+        </member>
+        <member name="M:VDS.RDF.Storage.AdoSchemaDefinition.GetScript(VDS.RDF.Storage.AdoSchemaScriptType,VDS.RDF.Storage.AdoSchemaScriptDatabase)">
+            <summary>
+            Gets the Script resource name (or null if it doesn't exist) for a specific script
+            </summary>
+            <param name="type">Script Type</param>
+            <param name="db">Database Type</param>
+            <returns></returns>
+        </member>
+        <member name="P:VDS.RDF.Storage.AdoSchemaDefinition.Name">
+            <summary>
+            Gets the Schema Name
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Storage.AdoSchemaDefinition.Description">
+            <summary>
+            Gets the Schema Description
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Storage.AdoSchemaDefinition.ScriptDefinitions">
+            <summary>
+            Gets the available scripts for this Schema Definition
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Storage.AdoSchemaScriptType">
+            <summary>
+            Possible Schema Script Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Storage.AdoSchemaScriptType.Create">
+            <summary>
+            Script for creating the database
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Storage.AdoSchemaScriptType.Drop">
+            <summary>
+            Script for dropping the database
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Storage.AdoSchemaScriptDatabase">
+            <summary>
+            Supported Database Types
+            </summary>
+        </member>
+        <member name="F:VDS.RDF.Storage.AdoSchemaScriptDatabase.MicrosoftSqlServer">
+            <summary>
+            Microsoft SQL Server (and SQL Azure)
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Storage.AdoSchemaScriptDefinition">
+            <summary>
+            Represents the definition of a schema script
+            </summary>
+        </member>
+        <member name="M:VDS.RDF.Storage.AdoSchemaScriptDefinition.#ctor(VDS.RDF.Storage.AdoSchemaScriptType,VDS.RDF.Storage.AdoSchemaScriptDatabase,System.String)">
+            <summary>
+            Creates a new Schema Script Definition
+            </summary>
+            <param name="type">Script Type</param>
+            <param name="db">Database Type</param>
+            <param name="resource">Resource Name</param>
+        </member>
+        <member name="P:VDS.RDF.Storage.AdoSchemaScriptDefinition.ScriptType">
+            <summary>
+            Gets the Script Type
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Storage.AdoSchemaScriptDefinition.Database">
+            <summary>
+            Gets the Database Type
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Storage.AdoSchemaScriptDefinition.ScriptResource">
+            <summary>
+            Gets the Script Resource Name
+            </summary>
+        </member>
+        <member name="T:VDS.RDF.Storage.AdoSchemaHelper">
+            <summary>
+            Static Helper class which managers the available database schemas
+            </summary>
+            <remarks>
+            <para>
+            The ADO Store was specifically designed to be completely based upon use of stored procedures so any schema can potentially be used provided it exposed the stored procedures that the code expects to exist.
+            </para>
+            <para>
+            There are two schemas provided by default, the <strong>Hash</strong> schema is recommended but requires SQL Server 2005 or higher.  The <strong>Simple</strong> schema is less performant but has a version that works with earlier versions of SQL Server e.g. SQL Server 2000.  We <strong>strongly</strong> recommend the Hash schema for all new development!
+            </para>
+            </remarks>
+        </member>
+        <member name="M:VDS.RDF.Storage.AdoSchemaHelper.AddSchema(VDS.RDF.Storage.AdoSchemaDefinition)">
+            <summary>
+            Adds a new Schema Definition
+            </summary>
+            <param name="def">Definition</param>
+        </member>
+        <member name="M:VDS.RDF.Storage.AdoSchemaHelper.RemoveSchema(VDS.RDF.Storage.AdoSchemaDefinition)">
+            <summary>
+            Removes a Schema Definition
+            </summary>
+            <param name="def">Definition</param>
+        </member>
+        <member name="P:VDS.RDF.Storage.AdoSchemaHelper.SchemaDefinitions">
+            <summary>
+            Gets the available built-in schemas
+            </summary>
+        </member>
+        <member name="P:VDS.RDF.Storage.AdoSchemaHelper.DefaultSchema">
+            <summary>
+            Gets/Sets the Default Schema
+            </summary>
         </member>
     </members>
 </doc>
