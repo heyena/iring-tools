@@ -62,7 +62,7 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Panel, {
 
 
 		if (identifier == '')
-			identifier = 'Drop a Key Property Node here.</div>';
+			identifier = 'Drop a Property Node here.</div>';
 		else
 			identifier = 'Identifier: ' + identifier + '</div>';
 
@@ -111,19 +111,19 @@ AdapterManager.GraphPanel = Ext.extend(Ext.Panel, {
 				var propertydd = new Ext.dd.DropTarget(propertyTarget, {
 					ddGroup: 'propertyGroup',
 					notifyEnter: function (propertydd, e, data) {
-						if (data.node.attributes.type != 'KeyDataPropertyNode')
+						if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode')
 							return this.dropNotAllowed;
 						else
 							return this.dropAllowed;
 					},
 					notifyOver: function (propertydd, e, data) {
-						if (data.node.attributes.type != 'KeyDataPropertyNode')
+					    if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode')
 							return this.dropNotAllowed;
 						else
 							return this.dropAllowed;
 					},
 					notifyDrop: function (propertydd, e, data) {
-						if (data.node.attributes.type != 'KeyDataPropertyNode') {
+						if (data.node.attributes.type != 'DataPropertyNode' && data.node.attributes.type != 'KeyDataPropertyNode') {
 							return false;
 						}
 						else {

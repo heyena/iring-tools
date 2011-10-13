@@ -4703,6 +4703,7 @@
     <Content Include="Scripts\iringtools\AdapterManager\BooleanFilter.js" />
     <Content Include="Scripts\iringtools\AdapterManager\DateFilter.js" />
     <Content Include="Scripts\iringtools\AdapterManager\Filter.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\GraphPanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\GridFilters.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ItemSelector.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ListFilter.js" />
