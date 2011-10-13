@@ -100,6 +100,8 @@ namespace org.iringtools.adapter.projection
 
     public bool FullIndex { get; set; }
     public long Count { get; set; }
+    public int Start { get; set; }
+    public int Limit { get; set; }
 
     public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping)
     {

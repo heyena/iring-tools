@@ -34,6 +34,7 @@ namespace org.iringtools.adapter.projection
         DataItems dataItems = new DataItems()
         {
           total = this.Count,
+          start = this.Start,
           items = new List<DataItem>()
         };
 
@@ -83,6 +84,9 @@ namespace org.iringtools.adapter.projection
 
           dataItems.items.Add(dataItem);
         }
+
+
+        dataItems.limit = dataItems.items.Count;
 
         string xml = Utility.SerializeDataContract<DataItems>(dataItems);
         XElement xElement = XElement.Parse(xml);

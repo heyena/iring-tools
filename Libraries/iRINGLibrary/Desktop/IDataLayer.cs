@@ -43,11 +43,13 @@ namespace org.iringtools.library
     void SetPropertyValue(string propertyName, object value);
   }
 
-  public interface IContentObject
+  public interface IContentObject : IDataObject
   {
     string contentType { get; set; }
-
     Stream content { get; set; }
+    string hashType { get; set; }
+    string hash { get; set; }
+    string url { get; set; }
   }
 
   public interface IDataLayer
@@ -80,12 +82,6 @@ namespace org.iringtools.library
     IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex);
 
     long GetSearchCount(string objectType, string query);
-
-    IContentObject GetContent(string objectType, string identifier, string format);
-
-    Response PostContent(string objectType, IDataObject dataObject, Stream content, string format);
-
-    Response DeleteContent(string objectType, string identifier, string format);
 
     XElement GetConfiguration();
   }

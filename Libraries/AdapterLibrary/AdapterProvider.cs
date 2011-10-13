@@ -392,6 +392,9 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
         InitializeProjection(resourceName, ref format, false);
+       
+        _projectionEngine.Start = start;
+        _projectionEngine.Limit = limit;
 
         IList<string> index = new List<string>();
 
@@ -433,6 +436,9 @@ namespace org.iringtools.adapter
 
         if (limit == 0)
           limit = 100;
+
+        _projectionEngine.Start = start;
+        _projectionEngine.Limit = limit;
 
         DataFilter filter = new DataFilter();
 
@@ -492,6 +498,9 @@ namespace org.iringtools.adapter
 
         if (limit == 0)
           limit = 100;
+
+        _projectionEngine.Start = start;
+        _projectionEngine.Limit = limit;
 
         DataFilter filter = new DataFilter();
 
@@ -553,7 +562,7 @@ namespace org.iringtools.adapter
             filter.OrderExpressions.Add(orderBy);
           }
 
-          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
+          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);          
           _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
         }
         else
@@ -569,7 +578,7 @@ namespace org.iringtools.adapter
           return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
         }
         else
-        {
+        {          
           return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
         }
       }
@@ -624,9 +633,16 @@ namespace org.iringtools.adapter
         }
         else
         {
-          IContentObject content = _dataLayer.GetContent(_dataObjDef.objectName, classIdentifier, format);
+          List<string> identifiers = new List<string> { classIdentifier };
+          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
 
-          return content;
+          if (_dataObjects != null && _dataObjects.Count > 0)
+          {
+            IContentObject contentObject = (IContentObject)_dataObjects[0];
+            return contentObject;
+          }
+
+          return null;
         }
       }
       catch (Exception ex)
