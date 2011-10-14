@@ -14,6 +14,7 @@ Imports org.iringtools.library
 Imports org.iringtools.utility
 Imports System.Diagnostics
 Imports log4net
+Imports log4net.Config
 
 'Imports Llama
 'Imports ISPClientData3
@@ -36,13 +37,12 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Private AppSettings As AdapterSettings
     Private ProjConfig As Xml.XmlDocument
     Private SPWorkSet As SPPIDWorkingSet
-    Private Shared _logger As ILog
+    Private Shared ReadOnly _logger As ILog = LogManager.GetLogger(GetType(SPPIDDataLayer))
 
     Private _projConn As SqlConnection
     Private _stageConn As SqlConnection
     Property _siteConn As SqlConnection
     Property _plantConn As SqlConnection
-
 
 #End Region
 
@@ -53,8 +53,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
         MyBase.New(settings)
 
-        'Dim projectConnStr As String = "server=NDHD06670\SQLEXPRESSW;database=SPPID;User ID=SPPID;Password=sppid"
-
         ' ******** IMPORTANT NOTE TO DEVELOPERS (NEHA, ROB)  ********************************************
         ' Please set your project and site connection strings in a file called 12345_000_<your name>_SPPID.confg
         ' and load this file in your Console test instead of the 12345_000.SPPID.config file. 
@@ -64,7 +62,10 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim configPath As String
         Dim StagingConfigurationPath As String = ""
 
-        _logger = LogManager.GetLogger(GetType(SPPIDDataLayer))
+        ' configures the logger based on the configuration information in the app.config file
+        XmlConfigurator.Configure(New System.IO.FileInfo(".\app.config"))
+        'XmlConfigurator.Configure()
+
         _projConn = New SqlConnection(_settings("SPPIDConnectionString"))
         _stageConn = New SqlConnection(_settings("iRingStagingConnectionString"))
         _siteConn = New SqlConnection(_settings("SPPIDSiteConnectionString"))
@@ -266,7 +267,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim rVal As String
 
         Try
-
 
             GetStagingQueries(stgCfgQueries)
 

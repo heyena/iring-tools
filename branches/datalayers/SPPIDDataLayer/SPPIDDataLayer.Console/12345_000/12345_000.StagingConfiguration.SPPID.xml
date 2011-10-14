@@ -43,6 +43,8 @@
 				Note that the 'value' attribute for both textReplacement and declaration are for providing a default
 				value. This may or may not be replaced later with another value when the query is being built by the 
 				query build function
+				For types that required a length (such as varchar, nvarchar, etc.) you must provide a length at least as long
+				' as large as the source field length; otherwise the query will return no results (silent fail)
 			-->
 			<textReplacement name="" value="" datatype="" />
 			
@@ -77,7 +79,9 @@
 			</source>
 			<source name="" 	schema="" 	joinType="Inner"		alias="">
 				<!-- joinToText indicates that the right field name should not be concatenated with the rightSource; instead, it will be single quoted as a constant
-					by default the value is left blank, which is the same as 'false'. The first relation clause must always have an empty conjunction -->
+					by default the value is left blank, which is the same as 'false'. The first relation clause must always have an empty conjunction
+					If you wish to join to a numeric constant or any variable, then rightSource should be empty and joinToText should be FALSE. 
+				-->
 				<relation conjunction="" leftSource="" leftField="" operator="=" 
 					rightSource="" rightField="" 
 					joinToText="" />
@@ -149,6 +153,7 @@
 		</sorts>
 	</query>
   
+  <!--
 	<query name="SPPIDPanels" stagingDestinationName="Panels">
 		<description>
 		</description>
@@ -199,10 +204,6 @@
 			<field source="U" 		name="UnitCode" 					alias="PidUnitCode"					datatype="" />
 		</fields>
 		<sources>
-			<!-- note that for SPPID, schema is NOT the actual schema name because this may change from project to project.
-				instead, it denotes the SPPID schema type name. From this, the true schema name can be derived from the SPPID
-				Site DB
-			-->
 			<source name="T_PlantGroup" 	schema="SPAPLANT"					joinType=""					 	alias="PG">
 			</source> 
 			<source name="T_Drawing"		schema="SPPID"    					joinType="Inner" 				alias="Dr">
@@ -253,24 +254,27 @@
 			<sort source="" fieldName="" sortDirection="" />
 		</sorts>
 	</query>
-	
+-->
+
+<!--
 	<query name="SPPIDEquipment" stagingDestinationName="Equipment">
 		<description>
 		</description>
 		<variables>
 			<textReplacement name="!@~IncludeStockpileJoin" value="false" datatype="boolean" />
-			<declaration name="@EquipmentClassName" value="" datatype="nvarchar" optional="true" />
-			<declaration name="@PlantGroupID" value="" datatype="int" optional="true" />
+						<declaration name="@PlantGroupID" value="" datatype="int" optional="true" />
+			<declaration name="@EquipmentClassName" value="" datatype="nvarchar(80)" optional="true" />
+			<declaration name="@EquipmentSubClassName" value="" datatype="nvarchar(80)" optional="true" />
 		</variables>
 		<selection value="distinct" />
 		<fields>
 			<field source="PlI" 	name="ItemTag" 						alias=""							datatype="" />
-			<field source="PlI" 	name="SupplyBy" 					alias=""							datatype="" />
+			<field source="PlI" 	name="SupplyBy" 					alias="SupplyByID"					datatype="" />
 			<field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
 			<field source="PlI" 	name="SP_PlantGroupID" 				alias=""							datatype="" />
 			<field source="PlI" 	name="SP_PartOfID" 					alias=""							datatype="" />
 			<field source="PlI" 	name="aabbcc_code" 					alias=""							datatype="" />
-			<field source="PlI" 	name="ConstructionStatus" 			alias=""							datatype="" />
+			<field source="PlI" 	name="ConstructionStatus" 			alias="ConstructionStatusID"		datatype="" />
 			<field source="PlI" 	name="Name" 						alias="PlantItemName"				datatype="" />
 			
 			<field source="PG" 		name="Name" 						alias="PidUnitName"					datatype="" />
@@ -285,27 +289,22 @@
 			<field source="Eq" 		name="TagPrefix"	 				alias=""							datatype="" />
 			<field source="Eq" 		name="TagSequenceNo" 				alias=""							datatype="" />
 			<field source="Eq" 		name="TagSuffix" 					alias=""							datatype="" />
-			<field source="Eq" 		name="Class"		 				alias=""							datatype="" />
-			<field source="Eq" 		name="EquipmentSubClass"			alias=""							datatype="" />
-			<field source="Eq" 		name="EquipmentType" 				alias=""							datatype="" />
-			<field source="Eq" 		name="CoatingReqmts"			 		alias="CoatingRequirements"			datatype="" />
+			<field source="Eq" 		name="Class"		 				alias="EquipmentClassID"			datatype="" />
+			<field source="Eq" 		name="EquipmentSubClass"			alias="EquipmentSubClassID"			datatype="" />
+			<field source="Eq" 		name="EquipmentType" 				alias="EquipmentTypeID"				datatype="" />
+			<field source="Eq" 		name="CoatingReqmts"			 	alias="CoatingRequirementsID"			datatype="" />
 			
-			<field source="En" 		name="Name" 						alias="EnumerationName"				datatype="" />
-			<field source="En" 		name="Description" 					alias="EnumerationDescription"		datatype="" />
-			
-			<field source="Cl" 		name="codeList_number" 				alias=""							datatype="" />
-			<field source="Cl"		name="codelist_text" 				alias=""							datatype="" />
-			<field source="Cl"		name="codelist_index" 				alias=""							datatype="" />
-			<field source="Cl" 		name="codelist_constraint" 			alias=""							datatype="" />
+			<field source="Cl_SB" 		name="codeList_text" 			alias="SupplyBy"					datatype="" />
+			<field source="Cl_CS" 		name="codeList_text" 			alias="ConstructionStatus"			datatype="" />
+			<field source="Cl_EC" 		name="codeList_text" 			alias="EquipmentClass"				datatype="" />
+			<field source="Cl_ESC" 		name="codeList_text" 			alias="EquipmentSubClass"			datatype="" />
+			<field source="Cl_ET" 		name="codeList_text" 			alias="EquipmentType"				datatype="" />
+			<field source="Cl_CR" 		name="codeList_text" 			alias="CoatingRequirements"			datatype="" />
 			
 			<field source="Rep" 	name="InStockPile" 					alias=""							datatype="" />
 			<field source="U" 		name="UnitCode" 					alias="PidUnitCode"					datatype="" />
 		</fields>
 		<sources>
-			<!-- note that for SPPID, schema is NOT the actual schema name because this may change from project to project.
-				instead, it denotes the SPPID schema type name. From this, the true schema name can be derived from the SPPID
-				Site DB
-			-->
 			<source name="T_PlantGroup" 	schema="SPAPLANT"					joinType=""					 	alias="PG">
 			</source> 
 			<source name="T_Drawing"		schema="SPPID"    					joinType="Inner" 				alias="Dr">
@@ -332,30 +331,60 @@
 				<relation leftSource="Eq" leftField="SP_ID" rightSource="PlI" rightField="SP_ID" 
 					joinToText="" operator="=" conjunction="" />
 			</source>
-			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Inner" 				alias="Cl">
-				<relation leftSource="Cl" leftField="codelist_index" rightSource="Eq" rightField="Class" 
+			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_CS">
+				<relation leftSource="Cl_CS" leftField="codelist_index" rightSource="PlI" rightField="ConstructionStatus" 
 					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="Cl_CS" leftField="codelist_number" rightSource="" rightField="93" 
+					joinToText="" operator="=" conjunction="and" />
 			</source>
-			<source name="Enumerations"		schema="SPPIDDATA_DICTIONARY"    	joinType="Inner" 				alias="En">
-				<relation leftSource="En" leftField="Id" rightSource="Cl" rightField="codelist_number" 
+			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_SB">
+				<relation leftSource="Cl_SB" leftField="codelist_index" rightSource="PlI" rightField="SupplyBy" 
 					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="Cl_SB" leftField="codelist_number" rightSource="" rightField="1" 
+					joinToText="" operator="=" conjunction="and" />
 			</source>
+			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_CR">
+				<relation leftSource="Cl_CR" leftField="codelist_index" rightSource="Eq" rightField="CoatingReqmts" 
+					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="Cl_CR" leftField="codelist_number" rightSource="" rightField="3" 
+					joinToText="" operator="=" conjunction="and" />
+			</source>			
+			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_EC">
+				<relation leftSource="Cl_EC" leftField="codelist_index" rightSource="Eq" rightField="Class" 
+					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="Cl_EC" leftField="codelist_number" rightSource="" rightField="24" 
+					joinToText="" operator="=" conjunction="and" />
+			</source>
+			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_ESC">
+				<relation leftSource="Cl_ESC" leftField="codelist_index" rightSource="Eq" rightField="EquipmentSubClass" 
+					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="Cl_ESC" leftField="codelist_number" rightSource="" rightField="23" 
+					joinToText="" operator="=" conjunction="and" />
+			</source>
+			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_ET">
+				<relation leftSource="Cl_ET" leftField="codelist_index" rightSource="Eq" rightField="EquipmentType" 
+					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="Cl_ET" leftField="codelist_number" rightSource="" rightField="22" 
+					joinToText="" operator="=" conjunction="and" />
+			</source>			
 		</sources>
 		<filters>
-			<filter  preParenCount="0" source="En" fieldName="Name" operator="=" filterValue="@EquipmentClassName" postParenCount="0" conjunction="" optional="true" />
 			<filter  preParenCount="0" source="PlI" fieldName="SP_PlantGroupID" operator="=" filterValue="@PlantGroupID" postParenCount="0" conjunction="and" optional="true" />
+			<filter  preParenCount="0" source="CL_EC" fieldName="codelist_text" operator="=" filterValue="@EquipmentClassName" postParenCount="0" conjunction="" optional="true" />
+			<filter  preParenCount="0" source="CL_ESC" fieldName="codelist_text" operator="=" filterValue="@EquipmentSubClassName" postParenCount="0" conjunction="" optional="true" />
 		</filters>
 		<sorts>
 			<sort source="" fieldName="" sortDirection="" />
 		</sorts>
 	</query>
+
  
 	<query name="SPPIDInstrument" stagingDestinationName="Instruments">
 		<description>
 		</description>
 		<variables>
 			<textReplacement name="!@~IncludeStockpileJoin" value="false" datatype="boolean" />
-			<declaration name="@EquipmentClassName" value="" datatype="nvarchar" optional="true" />
+			<declaration name="@EquipmentClassName" value="" datatype="nvarchar(80)" optional="true" />
 			<declaration name="@PlantGroupID" value="" datatype="int" optional="true" />
 			<declaration name="@UnitCode" value="" datatype="nvarchar(22)" optional="true" />
 			<declaration name="@DrawingNumber" value="" datatype="nvarchar(80)" optional="true" />
@@ -363,12 +392,12 @@
 		<selection value="distinct" />
 		<fields>
 			<field source="PlI" 	name="ItemTag" 						alias=""							datatype="" />
-			<field source="PlI" 	name="SupplyBy" 					alias=""							datatype="" />
+			<field source="PlI" 	name="SupplyBy" 					alias="SupplyByID"					datatype="" />
 			<field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
 			<field source="PlI" 	name="SP_PlantGroupID" 				alias=""							datatype="" />
 			<field source="PlI" 	name="SP_PartOfID" 					alias=""							datatype="" />
 			<field source="PlI" 	name="aabbcc_code" 					alias=""							datatype="" />
-			<field source="PlI" 	name="ConstructionStatus" 			alias=""							datatype="" />
+			<field source="PlI" 	name="ConstructionStatus" 			alias="ConstructionStatusID"		datatype="" />
 			<field source="PlI" 	name="Name" 						alias="PlantItemName"				datatype="" />
 			
 			<field source="PG" 		name="Name" 						alias="PidUnitName"					datatype="" />
@@ -396,12 +425,11 @@
 			<field source="En" 		name="Description" 					alias="EnumerationDescription"		datatype="" />
 			
 			<field source="IC" 		name="NominalDiameter" 				alias=""							datatype="" />
-			<field source="IC" 		name="CoatingReqmts" 				alias="CoatingRequirements"			datatype="" />
-			
-			<field source="Cl" 		name="codeList_number" 				alias=""							datatype="" />
-			<field source="Cl"		name="codelist_text" 				alias=""							datatype="" />
-			<field source="Cl"		name="codelist_index" 				alias=""							datatype="" />
-			<field source="Cl" 		name="codelist_constraint" 			alias=""							datatype="" />
+			<field source="IC" 		name="CoatingReqmts" 				alias="CoatingRequirementsID"			datatype="" />
+					
+			<field source="Cl_SB" 		name="codeList_text" 			alias="SupplyBy"					datatype="" />
+			<field source="Cl_CS" 		name="codeList_text" 			alias="ConstructionStatus"			datatype="" />
+			<field source="Cl_CR" 		name="codeList_text" 			alias="CoatingRequirements"			datatype="" />
 			
 			<field source="PR" 		name="OperFluidCode" 				alias=""							datatype="" />
 			
@@ -409,10 +437,6 @@
 			<field source="U" 		name="UnitCode" 					alias="PidUnitCode"					datatype="" />
 		</fields>
 		<sources>
-			<!-- note that for SPPID, schema is NOT the actual schema name because this may change from project to project.
-				instead, it denotes the SPPID schema type name. From this, the true schema name can be derived from the SPPID
-				Site DB
-			-->
 			<source name="T_PlantGroup" 	schema="SPAPLANT"					joinType=""					 	alias="PG">
 			</source> 
 			<source name="T_Drawing"		schema="SPPID"    					joinType="Inner" 				alias="Dr">
@@ -455,6 +479,24 @@
 				<relation leftSource="PR" leftField="SP_ID" rightSource="IC" rightField="SP_PipeRunID" 
 					joinToText="" operator="=" conjunction="" />
 			</source>
+			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_CS">
+				<relation leftSource="Cl_CS" leftField="codelist_index" rightSource="PlI" rightField="ConstructionStatus" 
+					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="Cl_CS" leftField="codelist_number" rightSource="" rightField="93" 
+					joinToText="" operator="=" conjunction="and" />
+			</source>
+			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_SB">
+				<relation leftSource="Cl_SB" leftField="codelist_index" rightSource="PlI" rightField="SupplyBy" 
+					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="Cl_SB" leftField="codelist_number" rightSource="" rightField="1" 
+					joinToText="" operator="=" conjunction="and" />
+			</source>
+			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_CR">
+				<relation leftSource="Cl_CR" leftField="codelist_index" rightSource="IC" rightField="CoatingReqmts" 
+					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="Cl_CR" leftField="codelist_number" rightSource="" rightField="3" 
+					joinToText="" operator="=" conjunction="and" />
+			</source>	
 		</sources>
 		<filters>
 			<filter  preParenCount="0" source="En" fieldName="Name" operator="=" filterValue="@EquipmentClassName" postParenCount="0" conjunction="" optional="true" />
@@ -471,7 +513,6 @@
 		</description>
 		<variables>
 			<textReplacement name="!@~IncludeStockpileJoin" value="false" datatype="boolean" />
-			--<declaration name="@EquipmentClassName" value="" datatype="nvarchar" optional="true" />
 			<declaration name="@PlantGroupID" value="" datatype="int" optional="true" />
 			<declaration name="@UnitCode" value="" datatype="nvarchar(22)" optional="true" />
 			<declaration name="@DrawingNumber" value="" datatype="nvarchar(80)" optional="true" />
@@ -523,10 +564,6 @@
 			<field source="U" 		name="UnitCode" 					alias="PidUnitCode"					datatype="" />
 		</fields>
 		<sources>
-			<!-- note that for SPPID, schema is NOT the actual schema name because this may change from project to project.
-				instead, it denotes the SPPID schema type name. From this, the true schema name can be derived from the SPPID
-				Site DB
-			-->
 			<source name="T_PlantGroup" 	schema="SPAPLANT"					joinType=""					 	alias="PG">
 			</source> 
 			<source name="T_Drawing"		schema="SPPID"    					joinType="Inner" 				alias="Dr">
@@ -567,7 +604,6 @@
 			</source>
 		</sources>
 		<filters>
-			<filter  preParenCount="0" source="En" fieldName="Name" operator="=" filterValue="@EquipmentClassName" postParenCount="0" conjunction="" optional="true" />
 			<filter  preParenCount="0" source="PlI" fieldName="SP_PlantGroupID" operator="=" filterValue="@PlantGroupID" postParenCount="0" conjunction="and" optional="true" />
 			<filter  preParenCount="0" source="U" fieldName="UnitCode" operator="=" filterValue="@UnitCode" postParenCount="0" conjunction="and" optional="true" />
 			<filter  preParenCount="0" source="Dr" fieldName="DrawingNumber" operator="=" filterValue="@DrawingNumber" postParenCount="0" conjunction="and" optional="true" />
@@ -575,4 +611,94 @@
 		<sorts>
 		</sorts>
 	</query>
+	 -->
+	<query name="SPPIDPipeRun" stagingDestinationName="PipeRuns">
+		<description>
+		</description>
+		<variables>
+			<textReplacement name="!@~IncludeStockpileJoin" value="false" datatype="boolean" />
+			<declaration name="@PlantGroupID" value="" datatype="int" optional="true" />
+			<declaration name="@UnitCode" value="" datatype="nvarchar(22)" optional="true" />
+			<declaration name="@DrawingNumber" value="" datatype="nvarchar(80)" optional="true" />
+		</variables>
+		<selection value="distinct" />
+		<fields>
+			<field source="PlI" 	name="ItemTag" 						alias=""							datatype="" />
+			<field source="PlI" 	name="SupplyBy" 					alias=""							datatype="" />
+			<field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
+			<field source="PlI" 	name="SP_PlantGroupID" 				alias=""							datatype="" />
+			<field source="PlI" 	name="SP_PartOfID" 					alias=""							datatype="" />
+			<field source="PlI" 	name="aabbcc_code" 					alias=""							datatype="" />
+			<field source="PlI" 	name="ConstructionStatus" 			alias=""							datatype="" />
+			<field source="PlI" 	name="Name" 						alias="PlantItemName"				datatype="" />
+			
+			<field source="PG" 		name="Name" 						alias="PidUnitName"					datatype="" />
+			<field source="PG" 		name="Description" 					alias="PidUnitDescription"			datatype="" />
+			
+			<field source="Dr" 		name="DrawingNumber" 				alias=""							datatype="" />
+			<field source="Dr" 		name="Name" 						alias="DrawingName"					datatype="" />
+			<field source="" 		name="" 							alias="Title"						datatype="" 
+				expression="REPLACE(REPLACE(REPLACE(Dr.Title,CHAR(9),' '),CHAR(10),' '),CHAR(13),' ')" />
+			<field source="Dr" 		name="Description" 					alias="DrawingDescription"			datatype="" />
+			
+			<field source="PR" 	name="CoatingReqmts" 					alias="CoatingRequirements"			datatype="" />
+			<field source="PR" 	name="TagSequenceNo" 					alias=""							datatype="" />
+			<field source="PR" 	name="TagSuffix" 						alias=""							datatype="" />
+			<field source="PR" 	name="NominalDiameter" 					alias=""							datatype="" />
+			<field source="PR" 	name="PipingMaterialsClass" 			alias=""							datatype="" />
+			<field source="PR" 	name="OperFluidCode" 					alias=""							datatype="" />
+			<field source="PR" 	name="PipeRunType" 						alias=""							datatype="" />
+			<field source="PR" 	name="ScheduleOrThickness" 				alias=""							datatype="" />
+			<field source="PR" 	name="StressReliefReqmt" 				alias="StressReliefRequirement"		datatype="" />
+			<field source="PR" 	name="SP_JItemTag" 						alias="PipeLineItemTag"				datatype="" />
+
+			<field source="En" 		name="Name" 						alias="EnumerationName"				datatype="" />
+			<field source="En" 		name="Description" 					alias="EnumerationDescription"		datatype="" />
+			
+			<field source="Cl" 		name="codeList_number" 				alias=""							datatype="" />
+			<field source="Cl"		name="codelist_text" 				alias=""							datatype="" />
+			<field source="Cl"		name="codelist_index" 				alias=""							datatype="" />
+			<field source="Cl" 		name="codelist_constraint" 			alias=""							datatype="" />
+			
+			<field source="Rep" 	name="InStockPile" 					alias=""							datatype="" />
+			<field source="U" 		name="UnitCode" 					alias="PidUnitCode"					datatype="" />
+		</fields>
+		<sources>
+			<source name="T_PlantGroup" 	schema="SPAPLANT"					joinType=""					 	alias="PG">
+			</source> 
+			<source name="T_Drawing"		schema="SPPID"    					joinType="Inner" 				alias="Dr">
+				<relation leftSource="PG" leftField="SP_ID" rightSource="Dr" rightField="SP_PlantGroupID" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="T_Representation"	schema="SPPID"						joinType="Inner" 				alias="Rep">
+				<relation leftSource="Dr" leftField="SP_ID" rightSource="Rep" rightField="SP_DrawingID" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="T_Unit"			schema="SPAPLANT"					joinType="!@~IncludeStockpilejoin" 	alias="U" >
+				<relation leftSource="PG" leftField="SP_ID" rightSource="U" rightField="SP_ID" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+			<source name="T_PlantItem"		schema="SPPID"    					joinType="Inner" 				alias="PlI">
+				<relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="U" rightField="SP_ID" 
+					joinToText="" operator="=" conjunction="" />
+				<relation leftSource="PlI" leftField="SP_ID" rightSource="Rep" rightField="SP_ModelItemID" 
+					joinToText="" operator="=" conjunction="and" />
+				<relation leftSource="PlI" leftField="SP_PlantGroupID" rightSource="PG" rightField="SP_ID" 
+					joinToText="" operator="=" conjunction="and" />
+			</source>
+			<source name="T_PipeRun" 		schema="SPPID"    					joinType="Inner" 				alias="PR">
+				<relation leftSource="PR" leftField="SP_ID" rightSource="PlI" rightField="SP_ID" 
+					joinToText="" operator="=" conjunction="" />
+			</source>
+		</sources>
+		<filters>
+			<filter  preParenCount="0" source="PlI" fieldName="SP_PlantGroupID" operator="=" filterValue="@PlantGroupID" postParenCount="0" conjunction="and" optional="true" />
+			<filter  preParenCount="0" source="U" fieldName="UnitCode" operator="=" filterValue="@UnitCode" postParenCount="0" conjunction="and" optional="true" />
+			<filter  preParenCount="0" source="Dr" fieldName="DrawingNumber" operator="=" filterValue="@DrawingNumber" postParenCount="0" conjunction="and" optional="true" />
+		</filters>
+		<sorts>
+		</sorts>
+	</query>	
+
+	
 </configuration>
