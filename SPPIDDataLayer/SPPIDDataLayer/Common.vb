@@ -660,7 +660,14 @@ Public Module Common
                                 f.Append("'" & tmpStr & "'")
 
                             Else
-                                f.Append(r.Attribute("rightSource").Value & "." & r.Attribute("rightField").Value & " ")
+
+                                ' JoinToText should be FALSE if the join value is a number or variable
+                                If r.Attribute("rightSource").Value = "" Then
+                                    f.Append(r.Attribute("rightField").Value & " ")
+                                Else
+                                    f.Append(r.Attribute("rightSource").Value & "." & r.Attribute("rightField").Value & " ")
+                                End If
+
                             End If
 
                         Next
