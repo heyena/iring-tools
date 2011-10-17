@@ -58,7 +58,7 @@ Module Module1
         ' NOTE - for testing and to separate from other testers, the string '_Adrian' is inserted into the project config path
         ' Please create a new file (replacing 'Adrian' with your name) and customize the connection strings for your own testing
         'tmp = [String].Format("{0}_<YOUR NAME HERE>.{1}.config", _settings("BaseConcatPath"), _settings("ApplicationName"))
-        tmp = [String].Format("{0}_Adrian.{1}.config", _settings("BaseConcatPath"), _settings("ApplicationName"))
+        tmp = [String].Format("{0}.Neha.{1}.config", _settings("BaseConcatPath"), _settings("ApplicationName"))
         _settings("ProjectConfigurationPath") = Path.Combine(_baseDirectory, tmp)
 
         tmp = [String].Format("{0}.StagingConfiguration.{1}.xml", _settings("BaseConcatPath"), _settings("ApplicationName"))
@@ -84,6 +84,7 @@ Module Module1
         ' Add our specific settings
         If File.Exists(_settings("ProjectConfigurationPath")) Then
             _adapterSettings.AppendSettings(New SD.AppSettingsReader(_settings("ProjectConfigurationPath")))
+
         End If
 
         ' get the log streamwriter

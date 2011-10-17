@@ -162,7 +162,7 @@ Public Class SPPIDWorkingSet
         _CommonServerName = IIf(_StagingServerInCommon, ProjectConnection.DataSource, "")
         _SiteDBName = SiteConnection.Database
         _StagingDBName = StagingConnection.Database
-        _ProjectDBName = ProjectConnection.Database
+        _ProjectDBName = PlantConnection.Database
         _logger = Logger
 
         _SchemaSubstitutions = New Dictionary(Of String, String)
@@ -177,8 +177,8 @@ Public Class SPPIDWorkingSet
         GetQueryByName("!SiteData", SiteDataQuery)
         GetBaselineSchema(SiteConnection, SiteDataQuery)
 
-        _tablesTA.Connection = ProjectConnection
-        _columnsTA.Connection = ProjectConnection
+        _tablesTA.Connection = PlantConnection
+        _columnsTA.Connection = PlantConnection
 
         _tablesDT = _CommonDataDS.SchemaTables
         _tablesTA.Fill(_tablesDT)

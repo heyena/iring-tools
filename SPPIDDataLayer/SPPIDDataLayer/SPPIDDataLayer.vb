@@ -49,7 +49,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 #Region " Instantiation "
 
     <Inject()>
-    Public Sub New(ByRef settings As AdapterSettings)
+    Public Sub New(settings As AdapterSettings)
 
         MyBase.New(settings)
 
@@ -84,6 +84,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Try
 
             configPath = _settings("ProjectConfigurationPath")
+
             StagingConfigurationPath = _settings("StagingConfigurationPath")
             AddProjConfigSettings(configPath)
             SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, StagingConfigurationPath, _logger, _plantConn)
@@ -127,12 +128,19 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Public Overrides Function GetDictionary() As DataDictionary
 
         Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
-        Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
 
-        _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
+        If (File.Exists(path)) Then
 
-        Return Utility.Read(Of DataDictionary)(path)
+            Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
 
+            _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
+
+            Return Utility.Read(Of DataDictionary)(path)
+
+        Else
+            Return New DataDictionary()
+
+        End If
     End Function
 
     Public Overrides Function GetDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
