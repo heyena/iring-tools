@@ -250,7 +250,9 @@ Ext.onReady(function () {
       else {
         pidConfigWizard = new AdapterManager.sppidConfigWizard({
           scope: scope,
-          app: application
+          app: application,
+        datalayer: assembly
+
         });
         contentPanel.add(pidConfigWizard);
         contentPanel.activate(pidConfigWizard);

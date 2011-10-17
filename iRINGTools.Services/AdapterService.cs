@@ -109,6 +109,8 @@ namespace org.iringtools.services
       return _adapterProvider.GetConfiguration(scope, app);
     }
     #endregion Config methods
+
+   
     #endregion
 
     #region Private Resources

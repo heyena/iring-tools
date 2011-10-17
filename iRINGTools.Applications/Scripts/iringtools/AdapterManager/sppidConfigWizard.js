@@ -3,6 +3,7 @@
 AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
     scope: null,
     app: null,
+    datalayer: null,
     iconCls: 'tabsSPPID',
     border: false,
     frame: false,
@@ -14,25 +15,14 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
         var wizard = this;
         var scopeName = config.scope;
         var appName = config.app;
+        var datalayer = config.datalayer;
         var dbDict;
         var dbInfo;
         var dbTableNames;
         var userTableNames;
 
 
-        var myStore = new Ext.data.SimpleStore({
-            fields: ['abbr', 'state'],
-            data: [
-        ['Drawing', 'Drawing'],
-        ['EquipmentOther', 'EquipmentOther'],
-        ['Exchanger', 'Exchanger'],
-        ['Mechanical', 'Mechanical'],
-        ['Vessel', 'Vessel'],
-        ['Class', 'Class'],
-        ['FabricationCategory', 'FabricationCategory'],
-        ['InsulDensity', 'InsulDensity'],
-        ['Name', 'Name']]
-        });
+     
 
 
         var setDsConfigPane = function (editPane) {
@@ -66,16 +56,20 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                     frame: false,
                     border: false,
                     autoScroll: true,
+                    title: "Configure SP & ID Data Source",
                     bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
                     monitorValid: true,
                     defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
-                    items: [{
-                        xtype: 'label',
-                        fieldLabel: 'Configure SP & ID Data Source',
-                        labelSeparator: '',
-                        itemCls: 'form-title',
-                        labelWidth: 350
-                    },
+                    items: [
+
+//                    {
+//                        xtype: 'fieldset',
+//                        title: 'Configure SP & ID Data Source',
+//                        labelSeparator: '',
+//                        itemCls: 'form-title',
+//                        labelWidth: 350,
+//                        border: 0
+//                    },
             {
                 xtype: 'fieldset',
                 id: 'siteDatabase',
@@ -92,170 +86,13 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                     value: 'MsSql2008',
                     triggerAction: 'all',
                     displayField: 'Provider',
-                    valueField: 'Provider',
-                    listeners: { 'select': function (combo, record, index) {
-                        var dbProvider = record.data.Provider.toUpperCase();
-                        var dbName = dsConfigPane.getForm().findField('dbName');
-                        var portNumber = dsConfigPane.getForm().findField('portNumber');
-                        var host = dsConfigPane.getForm().findField('host');
-                        var dbServer = dsConfigPane.getForm().findField('dbServer');
-                        var dbInstance = dsConfigPane.getForm().findField('dbInstance');
-                        var serviceName = dsConfigPane.items.items[10];
-                        var dbSchema = dsConfigPane.getForm().findField('dbSchema');
-                        var userName = dsConfigPane.getForm().findField('dbUserName');
-                        var password = dsConfigPane.getForm().findField('dbPassword');
+                    valueField: 'Provider'
 
-                        if (dbProvider.indexOf('ORACLE') > -1) {
-                            if (dbName.hidden == false) {
-                                dbName.hide();
-                                dbServer.hide();
-                                dbInstance.hide();
-                            }
-
-                            if (host.hidden == true) {
-                                if (dbDict.Provider) {
-                                    if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
-                                        host.setValue(dbInfo.dbServer);
-                                        serviceName.show();
-                                        creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
-                                        host.show();
-
-                                        userName.setValue(dbInfo.dbUserName);
-                                        password.setValue(dbInfo.dbPassword);
-                                        dbSchema.setValue(dbDict.SchemaName);
-                                    }
-                                    else {
-                                        host.setValue('');
-                                        host.clearInvalid();
-
-                                        host.show();
-
-                                        dbSchema.setValue('');
-                                        dbSchema.clearInvalid();
-
-                                        userName.setValue('');
-                                        userName.clearInvalid();
-
-                                        password.setValue('');
-                                        password.clearInvalid();
-                                        serviceName.show();
-                                        creatRadioField(serviceName, serviceName.id, '', '', 1);
-                                    }
-                                }
-                                else {
-                                    host.setValue('');
-                                    host.clearInvalid();
-
-                                    host.show();
-
-                                    dbSchema.setValue('');
-                                    dbSchema.clearInvalid();
-
-                                    userName.setValue('');
-                                    userName.clearInvalid();
-
-                                    password.setValue('');
-                                    password.clearInvalid();
-                                    serviceName.show();
-                                    creatRadioField(serviceName, serviceName.id, '', '', 1);
-                                }
-
-                                portNumber.setValue('1521');
-                                portNumber.show();
-                            }
-                        }
-                        else if (dbProvider.indexOf('MSSQL') > -1) {
-                            if (host.hidden == false) {
-                                portNumber.hide();
-                                host.hide();
-                                serviceName.hide();
-                            }
-
-                            if (dbName.hidden == true) {
-                                if (dbDict.Provider) {
-                                    if (dbDict.Provider.toUpperCase().indexOf('MSSQL') > -1) {
-                                        dbName.setValue(dbInfo.dbName);
-                                        dbServer.setValue(dbInfo.dbServer);
-                                        dbInstance.setValue(dbInfo.dbInstance);
-                                        dbName.show();
-                                        dbServer.show();
-                                        dbInstance.show();
-                                        dbSchema.setValue(dbDict.SchemaName);
-                                        userName.setValue(dbInfo.dbUserName);
-                                        password.setValue(dbInfo.dbPassword);
-                                    }
-                                    else {
-                                        dbName.setValue('');
-                                        dbName.clearInvalid();
-                                        dbName.show();
-
-                                        dbServer.setValue('localhost');
-                                        dbServer.show();
-
-                                        dbInstance.setValue('default');
-                                        dbInstance.show();
-
-                                        dbSchema.setValue('dbo');
-
-                                        userName.setValue('');
-                                        userName.clearInvalid();
-
-                                        password.setValue('');
-                                        password.clearInvalid();
-                                    }
-                                }
-                                else {
-                                    dbName.setValue('');
-                                    dbName.clearInvalid();
-                                    dbName.show();
-
-                                    dbServer.setValue('localhost');
-                                    dbServer.show();
-
-                                    dbInstance.setValue('default');
-                                    dbInstance.show();
-
-                                    dbSchema.setValue('dbo');
-
-                                    userName.setValue('');
-                                    userName.clearInvalid();
-
-                                    password.setValue('');
-                                    password.clearInvalid();
-                                }
-                            }
-
-                            portNumber.setValue('1433');
-                        }
-                        else if (dbProvider.indexOf('MYSQL') > -1) {
-                            if (dbServer.hidden == true) {
-                                dbServer.setValue('');
-                                dbServer.clearInvalid();
-                                dbServer.show();
-                            }
-
-                            if (host.hidden == false) {
-                                portNumber.hide();
-                                host.hide();
-
-                                serviceName.hide();
-
-                                portNumber.setValue('3306');
-                            }
-                        }
-                    }
-                    }
                 }, {
                     xtype: 'textfield',
                     name: 'dbServer',
                     fieldLabel: 'Database Server',
                     value: 'localhost',
-                    allowBlank: false
-                }, {
-                    xtype: 'textfield',
-                    name: 'host',
-                    fieldLabel: 'Host Name',
-                    hidden: true,
                     allowBlank: false
                 }, {
                     xtype: 'textfield',
@@ -295,21 +132,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                     name: 'dbPassword',
                     fieldLabel: 'Password',
                     allowBlank: false
-                }, {
-                    xtype: 'textfield',
-                    name: 'dbSchema',
-                    fieldLabel: 'Schema Name',
-                    value: 'dbo',
-                    allowBlank: false
-                }, {
-                    xtype: 'panel',
-                    id: scopeName + '.' + appName + '.servicename',
-                    name: 'serviceName',
-                    layout: 'fit',
-                    anchor: '100% - 1',
-                    border: false,
-                    frame: false
-                },
+                },  
            {
                xtype: 'checkbox',
                name: 'isPlantSchemaSame',
@@ -354,159 +177,8 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                     value: 'MsSql2008',
                     triggerAction: 'all',
                     displayField: 'Provider',
-                    valueField: 'Provider',
-                    listeners: { 'select': function (combo, record, index) {
-                        var dbProvider = record.data.Provider.toUpperCase();
-                        var dbName = dsConfigPane.getForm().findField('dbName');
-                        var portNumber = dsConfigPane.getForm().findField('portNumber');
-                        var host = dsConfigPane.getForm().findField('host');
-                        var dbServer = dsConfigPane.getForm().findField('dbServer');
-                        var dbInstance = dsConfigPane.getForm().findField('dbInstance');
-                        var serviceName = dsConfigPane.items.items[10];
-                        var dbSchema = dsConfigPane.getForm().findField('dbSchema');
-                        var userName = dsConfigPane.getForm().findField('dbUserName');
-                        var password = dsConfigPane.getForm().findField('dbPassword');
+                    valueField: 'Provider'
 
-                        if (dbProvider.indexOf('ORACLE') > -1) {
-                            if (dbName.hidden == false) {
-                                dbName.hide();
-                                dbServer.hide();
-                                dbInstance.hide();
-                            }
-
-                            if (host.hidden == true) {
-                                if (dbDict.Provider) {
-                                    if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
-                                        host.setValue(dbInfo.dbServer);
-                                        serviceName.show();
-                                        creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
-                                        host.show();
-
-                                        userName.setValue(dbInfo.dbUserName);
-                                        password.setValue(dbInfo.dbPassword);
-                                        dbSchema.setValue(dbDict.SchemaName);
-                                    }
-                                    else {
-                                        host.setValue('');
-                                        host.clearInvalid();
-
-                                        host.show();
-
-                                        dbSchema.setValue('');
-                                        dbSchema.clearInvalid();
-
-                                        userName.setValue('');
-                                        userName.clearInvalid();
-
-                                        password.setValue('');
-                                        password.clearInvalid();
-                                        serviceName.show();
-                                        creatRadioField(serviceName, serviceName.id, '', '', 1);
-                                    }
-                                }
-                                else {
-                                    host.setValue('');
-                                    host.clearInvalid();
-
-                                    host.show();
-
-                                    dbSchema.setValue('');
-                                    dbSchema.clearInvalid();
-
-                                    userName.setValue('');
-                                    userName.clearInvalid();
-
-                                    password.setValue('');
-                                    password.clearInvalid();
-                                    serviceName.show();
-                                    creatRadioField(serviceName, serviceName.id, '', '', 1);
-                                }
-
-                                portNumber.setValue('1521');
-                                portNumber.show();
-                            }
-                        }
-                        else if (dbProvider.indexOf('MSSQL') > -1) {
-                            if (host.hidden == false) {
-                                portNumber.hide();
-                                host.hide();
-                                serviceName.hide();
-                            }
-
-                            if (dbName.hidden == true) {
-                                if (dbDict.Provider) {
-                                    if (dbDict.Provider.toUpperCase().indexOf('MSSQL') > -1) {
-                                        dbName.setValue(dbInfo.dbName);
-                                        dbServer.setValue(dbInfo.dbServer);
-                                        dbInstance.setValue(dbInfo.dbInstance);
-                                        dbName.show();
-                                        dbServer.show();
-                                        dbInstance.show();
-                                        dbSchema.setValue(dbDict.SchemaName);
-                                        userName.setValue(dbInfo.dbUserName);
-                                        password.setValue(dbInfo.dbPassword);
-                                    }
-                                    else {
-                                        dbName.setValue('');
-                                        dbName.clearInvalid();
-                                        dbName.show();
-
-                                        dbServer.setValue('localhost');
-                                        dbServer.show();
-
-                                        dbInstance.setValue('default');
-                                        dbInstance.show();
-
-                                        dbSchema.setValue('dbo');
-
-                                        userName.setValue('');
-                                        userName.clearInvalid();
-
-                                        password.setValue('');
-                                        password.clearInvalid();
-                                    }
-                                }
-                                else {
-                                    dbName.setValue('');
-                                    dbName.clearInvalid();
-                                    dbName.show();
-
-                                    dbServer.setValue('localhost');
-                                    dbServer.show();
-
-                                    dbInstance.setValue('default');
-                                    dbInstance.show();
-
-                                    dbSchema.setValue('dbo');
-
-                                    userName.setValue('');
-                                    userName.clearInvalid();
-
-                                    password.setValue('');
-                                    password.clearInvalid();
-                                }
-                            }
-
-                            portNumber.setValue('1433');
-                        }
-                        else if (dbProvider.indexOf('MYSQL') > -1) {
-                            if (dbServer.hidden == true) {
-                                dbServer.setValue('');
-                                dbServer.clearInvalid();
-                                dbServer.show();
-                            }
-
-                            if (host.hidden == false) {
-                                portNumber.hide();
-                                host.hide();
-
-                                serviceName.hide();
-
-                                portNumber.setValue('3306');
-                            }
-                        }
-                    }
-                    }
                 }, {
                     xtype: 'textfield',
                     name: 'dbplantServer',
@@ -515,13 +187,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                     allowBlank: false
                 }, {
                     xtype: 'textfield',
-                    name: 'host',
-                    fieldLabel: 'Host Name',
-                    hidden: true,
-                    allowBlank: false
-                }, {
-                    xtype: 'textfield',
-                    name: 'portNumber',
+                    name: 'plantportNumber',
                     fieldLabel: 'Port Number',
                     hidden: true,
                     value: '1521',
@@ -557,20 +223,71 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                     name: 'dbplantPassword',
                     fieldLabel: 'Password',
                     allowBlank: false
+                }]
+            },
+
+                {
+                xtype: 'fieldset',
+                id: 'staggingDatabase',
+                title: " Stagging Database Details",
+                defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false, width: 300 },
+                items: [{
+                    xtype: 'combo',
+                    fieldLabel: 'Database Provider',
+                    hiddenName: 'dbstageProvider',
+                    allowBlank: false,
+                    store: providersStore,
+                    mode: 'local',
+                    editable: false,
+                    value: 'MsSql2008',
+                    triggerAction: 'all',
+                    displayField: 'Provider',
+                    valueField: 'Provider'
+
                 }, {
                     xtype: 'textfield',
-                    name: 'dbplantSchema',
-                    fieldLabel: 'Schema Name',
-                    value: 'dbo',
+                    name: 'dbstageServer',
+                    fieldLabel: 'Database Server',
+                    value: 'localhost',
                     allowBlank: false
                 }, {
-                    xtype: 'panel',
-                    id: scopeName + '.' + appName + '.servicename',
-                    name: 'serviceName',
-                    layout: 'fit',
-                    anchor: '100% - 1',
-                    border: false,
-                    frame: false
+                    xtype: 'textfield',
+                    name: 'stageportNumber',
+                    fieldLabel: 'Port Number',
+                    hidden: true,
+                    value: '1521',
+                    allowBlank: false
+                }, {
+                    name: 'dbstageInstance',
+                    xtype: 'textfield',
+                    fieldLabel: 'Database Instance',
+                    value: 'default',
+                    allowBlank: false
+                }, {
+                    xtype: 'textfield',
+                    name: 'dbstageName',
+                    fieldLabel: 'Database Name',
+                    allowBlank: false
+                }, {
+                    xtype: 'textfield',
+                    name: 'dbstageUserName',
+                    fieldLabel: 'User Name',
+                    allowBlank: false,
+                    listeners: { 'change': function (field, newValue, oldValue) {
+                        var dbProvider = dsConfigPane.getForm().findField('dbProvider').getValue().toUpperCase();
+                        if (dbProvider.indexOf('ORACLE') > -1) {
+                            var dbSchema = dsConfigPane.getForm().findField('dbSchema');
+                            dbSchema.setValue(newValue);
+                            dbSchema.show();
+                        }
+                    }
+                    }
+                }, {
+                    xtype: 'textfield',
+                    inputType: 'password',
+                    name: 'dbstagePassword',
+                    fieldLabel: 'Password',
+                    allowBlank: false
                 }]
             },
             tbar = new Ext.Toolbar({
@@ -581,7 +298,64 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                     xtype: 'tbbutton',
                     icon: 'Content/img/16x16/document-properties.png',
                     text: 'Connect',
-                    tooltip: 'Connect'
+                    tooltip: 'Connect',
+                    handler: function (f) {
+                        var dbProvider = dsConfigPane.getForm().findField('dbProvider').getValue().toUpperCase();
+                        var dbName = dsConfigPane.getForm().findField('dbName');
+                        var portNumber = dsConfigPane.getForm().findField('portNumber');
+                        var dbServer = dsConfigPane.getForm().findField('dbServer');
+                        var dbInstance = dsConfigPane.getForm().findField('dbInstance');
+                        
+                        
+
+                        var dbplantProvider = dsConfigPane.getForm().findField('dbplantProvider').getValue().toUpperCase();
+                        var dbplantName = dsConfigPane.getForm().findField('dbplantName').getValue();
+                        var portplantNumber = dsConfigPane.getForm().findField('plantportNumber');
+                        var dbplantServer = dsConfigPane.getForm().findField('dbplantServer').getValue();
+                        var dbplantInstance = dsConfigPane.getForm().findField('dbplantInstance').getValue();
+                        
+                        
+                        var dbplantPassword = dsConfigPane.getForm().findField('dbplantPassword').getValue();
+                        var dbplantUsername = dsConfigPane.getForm().findField('dbplantUserName').getValue();
+
+                        var servieName = '';
+                        var serName = '';
+                        var _datalayer = '';
+
+                        dsConfigPane.getForm().submit({
+                            url: 'SPPID/UpdateConfig',
+                            timeout: 600000,
+                            params: {
+                                scope: scopeName,
+                                app: appName,
+                                serName: serName,
+                                //                                dbplantUserName: dbplantUsername,
+                                //                               dbplantPassword: dbplantPassword,
+                                //                               dbplantServer: dbplantServer,
+                                //                               dbplantInstance: dbplantInstance,
+                                //                               dbplantName: dbplantName,
+                                _datalayer: datalayer
+                            },
+                            success: function (f, a) {
+                                dbTableNames = Ext.util.JSON.decode(a.response.responseText);
+                                //var tab = Ext.getCmp('content-panel');
+                                //var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
+                                //var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
+                                var editPane = dataObjectsPane.items.map[scopeName + '.' + appName + '.editor-panel'];
+                                var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
+                                dbObjectsTree.disable();
+                                setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
+                            },
+                            failure: function (f, a) {
+                                if (a.response)
+                                    showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
+                                else {
+                                    showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
+                                }
+                            },
+                            waitMsg: 'Loading ...'
+                        });
+                    }
                 }, {
                     xtype: 'tbspacer',
                     width: 4
