@@ -66,6 +66,7 @@ namespace org.iringtools.adapter
     private bool _isResourceGraph = false;
     private bool _isProjectionPart7 = false;
     private bool _isFormatExpected = true;
+   
 
     //Projection specific stuff
     private IList<IDataObject> _dataObjects = new List<IDataObject>(); // dictionary of object names and list of data objects
@@ -1357,7 +1358,8 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
       response.Messages = new Messages();
-      
+      XElement binding;
+      XElement configuration = null;
       try
       {
         string savedFileName = string.Empty;
@@ -1381,23 +1383,90 @@ namespace org.iringtools.adapter
         InitializeScope(projectName, applicationName, false);
         
         string dataLayer = httpRequest.Form["DataLayer"];
-        XElement configuration = Utility.DeserializeXml<XElement>(httpRequest.Form["Configuration"]);
+          // Check request whether have Configuration in Request or not. SP & ID don't have this ----------------------
+                if (httpRequest.Form["Configuration"] != null)
+                {
+                    configuration = Utility.DeserializeXml<XElement>(httpRequest.Form["Configuration"]);
 
-        XElement binding = new XElement("module",
-        new XAttribute("name", _settings["Scope"]),
-          new XElement("bind",
-            new XAttribute("name", "DataLayer"),
-            new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-            new XAttribute("to", dataLayer)
-          )
-        );
+                    binding = new XElement("module",
+               new XAttribute("name", _settings["Scope"]),
+                 new XElement("bind",
+                   new XAttribute("name", "DataLayer"),
+                   new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+                   new XAttribute("to", dataLayer)
+                 )
+               );
+                }
+                else
+                {
+                    #region SPPID DataLayer
+
+                    string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
+
+
+                    NameValueCollection settings = new NameValueCollection();
+                    string _baseDirectory = Directory.GetCurrentDirectory();
+                    settings["BaseDirectoryPath"] = string.Format(_baseDirectory + _settings["AppDataPath"]);
+
+                    settings["BaseConfigurationPath"] = _settings["AppDataPath"] + _settings["ProjectName"];
+                    settings["ProjectConfigurationPath"] = Path.Combine(_baseDirectory, configPath);
+
+
+                    //string tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings["AppDataPath"], projectName, applicationName);
+                    string tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings["AppDataPath"], "12345_000", "SPPID");
+                    settings["StagingConfigurationPath"] = Path.Combine(_baseDirectory, tmp);
+
+                    _settings.AppendSettings(settings);
+
+
+                    // Create Config File ----------------------
+                    XElement config = new XElement("configuration",
+                      new XElement("appSettings",
+                      new XElement("add",
+                      new XAttribute("key", "SPPIDSiteConnectionString"),
+                      new XAttribute("value", httpRequest.Form["SiteConnectionString"])),
+                      new XElement("add",
+                      new XAttribute("key", "SPPIDPlantConnectionString"),
+                      new XAttribute("value", httpRequest.Form["PlantConnectionString"])),
+                      new XElement("add",
+                      new XAttribute("key", "iRingStagingConnectionString"),
+                      new XAttribute("value", httpRequest.Form["StagingConnectionString"])
+                      ))
+                    );
+
+                    if (File.Exists(configPath))
+                    {
+                        File.Delete(configPath);
+                    }
+                    config.Save(configPath);
+
+                    if (File.Exists(_settings["ProjectConfigurationPath"]))
+                    {
+                        _settings.AppendSettings(new AppSettingsReader(_settings["ProjectConfigurationPath"]));
+                    }
+
+                    // Create Binding Configuration File ----------------------
+                    binding = new XElement("module",
+                    new XAttribute("name", _settings["Scope"]),
+                        new XElement("bind",
+                        new XAttribute("name", "DataLayer"),
+                        new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
+                        new XAttribute("to", dataLayer)
+                    )
+                  );
+                    #endregion
+                }
+
 
         binding.Save(_settings["BindingConfigurationPath"]);
         _kernel.Load(_settings["BindingConfigurationPath"]);
 
         InitializeDataLayer(false);
+            if (httpRequest.Form["Configuration"] != null)
+                {
 
         ((IDataLayer2)_dataLayer).Configure(configuration);
+                }
 
         InitializeDictionary();
 

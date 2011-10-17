@@ -4774,6 +4774,10 @@
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Libraries\SPPID\SPPID.csproj">
+      <Project>{9A5D6D37-EEF7-4132-862D-1CA41B743E72}</Project>
+      <Name>SPPID</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Libraries\SpreadsheetLibrary\SpreadsheetLibrary.csproj">
       <Project>{A07F5056-4D03-4CB6-912B-A07561E9716E}</Project>
       <Name>SpreadsheetLibrary</Name>
@@ -4928,11 +4932,11 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>False</AutoAssignPort>
-          <DevelopmentServerPort>12345</DevelopmentServerPort>
+          <DevelopmentServerPort>32165</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:12345</IISUrl>
+          <IISUrl>http://localhost:32165</IISUrl>
           <OverrideIISAppRootUrl>True</OverrideIISAppRootUrl>
-          <IISAppRootUrl>http://localhost:12345/</IISAppRootUrl>
+          <IISAppRootUrl>http://localhost:32165/</IISAppRootUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
