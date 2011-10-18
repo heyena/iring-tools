@@ -84,8 +84,7 @@ namespace org.iringtools.adapter.projection
 
           dataItems.items.Add(dataItem);
         }
-
-
+        
         dataItems.limit = dataItems.items.Count;
 
         string xml = Utility.SerializeDataContract<DataItems>(dataItems);
@@ -108,20 +107,31 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
-        DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xml.ToString());
         IList<IDataObject> dataObjects = new List<IDataObject>();
-        string dataItemType = dataItems.type;
+        DataObject objectDefinition = FindGraphDataObject(graphName);
 
-        foreach (DataItem dataItem in dataItems.items)
+        if (objectDefinition != null)
         {
-          IDataObject dataObject = _dataLayer.Create(dataItemType, null)[0];
+          DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xml.ToString());
+          string dataItemType = dataItems.type;
 
-          foreach (var pair in dataItem.properties)
+          foreach (DataItem dataItem in dataItems.items)
           {
-            dataObject.SetPropertyValue(pair.Key, pair.Value);
-          }
+            IDataObject dataObject = _dataLayer.Create(dataItemType, null)[0];
 
-          dataObjects.Add(dataObject);
+            if (dataObject.GetType() == typeof(IContentObject) && objectDefinition.hasContent)
+            {
+              string base64Content = dataItem.content;
+              ((IContentObject)dataObject).content = base64Content.ToMemoryStream();
+            }
+
+            foreach (var pair in dataItem.properties)
+            {
+              dataObject.SetPropertyValue(pair.Key, pair.Value);
+            }
+
+            dataObjects.Add(dataObject);
+          }
         }
 
         return dataObjects;

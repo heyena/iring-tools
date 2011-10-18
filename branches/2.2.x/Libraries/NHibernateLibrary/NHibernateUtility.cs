@@ -69,7 +69,7 @@ namespace org.iringtools.adapter.datalayer
       return criteria;
     }
 
-    private static void AddCriteriaExpressions(ICriteria criteria, DataObject objectDefinition, DataFilter dataFilter)
+    public static void AddCriteriaExpressions(ICriteria criteria, DataObject objectDefinition, DataFilter dataFilter)
     {
       if (dataFilter != null)
       {

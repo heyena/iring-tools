@@ -185,10 +185,8 @@ namespace iRINGTools.Web.Models
 
           case org.iringtools.library.DataType.Char:
           case org.iringtools.library.DataType.String:
-            return "string";
-
           case org.iringtools.library.DataType.DateTime:
-            return "date";
+            return "string";
 
           case org.iringtools.library.DataType.Byte:
           case org.iringtools.library.DataType.Int16:
