@@ -155,9 +155,10 @@ public class EncryptionUtils
   private static int getOption(BufferedReader in) throws IOException
   {
     System.out.println("Select one of the following options: \n");
-    System.out.println("  1. Generate & Encrypt");
-    System.out.println("  2. Encrypt");
-    System.out.println("  3. Exit\n");
+    System.out.println("  1. Generate Secret Key file & Encrypt");
+    System.out.println("  2. Encrypt with existing Secret Key file");
+    System.out.println("  3. Encrypt with default Secret Key");
+    System.out.println("  4. Exit\n");
 
     String option = in.readLine();
     return Integer.parseInt(option);
@@ -197,6 +198,16 @@ public class EncryptionUtils
         String plainText = in.readLine();
 
         String cipherText = EncryptionUtils.encrypt(plainText, keyFile);
+        System.out.println("Cipher text: " + cipherText);
+
+        break;
+      }
+      case 3:
+      {
+        System.out.print("Enter text to encrypt: ");
+        String plainText = in.readLine();
+
+        String cipherText = EncryptionUtils.encrypt(plainText);
         System.out.println("Cipher text: " + cipherText);
 
         break;

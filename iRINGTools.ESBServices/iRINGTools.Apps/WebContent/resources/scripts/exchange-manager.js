@@ -29,7 +29,7 @@ function createGridStore(url){
   var store = new Ext.data.Store({
     proxy: new Ext.data.HttpProxy({
       url: url,
-      timeout: 120000
+      timeout: 3600000  // 1 hour
     }),
     reader: new Ext.data.DynamicGridReader({}),
     remoteSort: true

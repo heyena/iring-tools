@@ -617,6 +617,16 @@ namespace org.iringtools.utility
       return usableStream;
     }
 
+    public static MemoryStream ToMemoryStream(this string base64String)
+    {
+      byte[] bytes = Convert.FromBase64String(base64String);
+      
+      MemoryStream stream = new MemoryStream();
+      stream.Write(bytes, 0, bytes.Length);
+
+      return stream;
+    }
+
     public static T DeserializeDataContract<T>(this string xml)
     {
       return Deserialize<T>(xml, true);
@@ -767,6 +777,9 @@ namespace org.iringtools.utility
           XmlSerializer serializer = new XmlSerializer(typeof(T));
           serializer.Serialize(stream, graph);
         }
+
+        stream.Position = 0;
+
         return stream;
       }
       catch (Exception exception)

@@ -180,7 +180,7 @@ namespace org.iringtools.adapter.datalayer
         StringBuilder queryString = new StringBuilder();
         queryString.Append("select count(*) from " + objectType);
 
-        if (filter != null && filter.Expressions.Count > 0)
+        if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
         {
           filter.OrderExpressions.Clear();
           string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
@@ -381,8 +381,29 @@ namespace org.iringtools.adapter.datalayer
         }
         
         ISession session = OpenSession();
-        ICriteria criteria = NHibernateUtility.CreateCriteria(session, type, objectDefinition, filter, startIndex, pageSize);
-        return criteria.List<IDataObject>();
+        ICriteria criteria = NHibernateUtility.CreateCriteria(session, type, objectDefinition, filter);            
+
+        if (pageSize == 0 && startIndex == 0)
+        {
+          List<IDataObject> dataObjects = new List<IDataObject>();
+          long totalCount = GetCount(objectType, filter);
+          pageSize = (_settings["HibernateDefaultPageSize"] != null) ? int.Parse(_settings["HibernateDefaultPageSize"]) : 100;
+          int numOfRows = 0;
+
+          while (numOfRows < totalCount)
+          {
+            criteria.SetFirstResult(numOfRows).SetMaxResults(pageSize);
+            dataObjects.AddRange(criteria.List<IDataObject>());
+            numOfRows += pageSize;
+          }
+
+          return dataObjects;
+        }
+        else
+        {
+          criteria.SetFirstResult(startIndex).SetMaxResults(pageSize);
+          return criteria.List<IDataObject>();
+        }
       }
       catch (Exception ex)
       {

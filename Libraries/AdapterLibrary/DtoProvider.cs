@@ -591,7 +591,6 @@ namespace org.iringtools.adapter
       }
 
       return dataTransferObjects;
-
     }
 
     private void InitializeScope(string projectName, string applicationName)

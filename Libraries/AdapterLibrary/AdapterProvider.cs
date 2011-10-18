@@ -1030,17 +1030,25 @@ namespace org.iringtools.adapter
         _isFormatExpected = expectedFormats.Contains(format.ToLower());
         
         _graphMap = _mapping.FindGraphMap(resourceName);
-        _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == resourceName.ToUpper());
 
         if (_graphMap != null)
         {
           _isResourceGraph = true;
           _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == _graphMap.dataObjectName.ToUpper());
-        }
 
-        if (_dataObjDef == null)
+          if (_dataObjDef == null)
+          {
+            throw new FileNotFoundException("Data object [" + _graphMap.dataObjectName + "] not found.");
+          }
+        }
+        else
         {
-          throw new FileNotFoundException("Requested graph or dataObject not found.");
+          _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == resourceName.ToUpper());
+
+          if (_dataObjDef == null)
+          {
+            throw new FileNotFoundException("Resource [" + resourceName + "] not found.");
+          }
         }
 
         if (format != null && _isFormatExpected)
