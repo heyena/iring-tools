@@ -59,7 +59,7 @@ namespace org.iringtools.web.controllers
                   {
                     nodeType = "async",
                     type = "ScopeNode",
-                    icon = "Content/img/system-file-manager.png",
+                    iconCls = "scope",
                     id = scope.Name,
                     text = scope.Name,
                     expanded = false,
@@ -91,7 +91,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = "ApplicationNode",
-                  icon = "Content/img/applications-internet.png",
+                  iconCls = "applications",
                   id = scope.Name + "/" + application.Name,
                   text = application.Name,
                   expanded = false,
@@ -125,7 +125,7 @@ namespace org.iringtools.web.controllers
               {
                 nodeType = "async",
                 type = "DataObjectsNode",
-                icon = "Content/img/folder.png",
+                iconCls = "folder",
                 id = context + "/DataObjects",
                 text = "Data Objects",
                 expanded = false,
@@ -138,7 +138,7 @@ namespace org.iringtools.web.controllers
               {
                 nodeType = "async",
                 type = "GraphsNode",
-                icon = "Content/img/folder.png",
+                iconCls = "folder",
                 id = context + "/Graphs",
                 text = "Graphs",
                 expanded = false,
@@ -150,7 +150,7 @@ namespace org.iringtools.web.controllers
               {
                 nodeType = "async",
                 type = "ValueListsNode",
-                icon = "Content/img/folder.png",
+                iconCls = "folder",
                 id = context + "/ValueLists",
                 text = "ValueLists",
                 expanded = false,
@@ -180,7 +180,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = "ValueListNode",
-                  icon = "Content/img/valuelist.png",
+                  iconCls = "treeValuelist",
                   id = context + "/ValueList/" + valueList.name,
                   text = valueList.name,
                   expanded = false,
@@ -229,7 +229,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = "ListMapNode",
-                  icon = "Content/img/value.png",
+                  iconCls = "treeValue",
                   id = context + "/ValueMap/" + valueMap.internalValue,
                   text = classLabel + " [" + valueMap.internalValue + "]",
                   expanded = false,
@@ -262,7 +262,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = "DataObjectNode",
-                  icon = "Content/img/object.png",
+                  iconCls = "treeObject",
                   id = context + "/DataObject/" + dataObject.objectName,
                   text = dataObject.objectName,
                   expanded = false,
@@ -302,7 +302,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
-                  icon = (dataObject.isKeyProperty(property.propertyName)) ? "Content/img/key.png" : "Content/img/property.png",
+                  iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
                   id = context + "/" + property.propertyName,
                   text = property.propertyName,
                   expanded = true,
@@ -329,7 +329,7 @@ namespace org.iringtools.web.controllers
                   {
                     nodeType = "async",
                     type = "RelationshipNode",
-                    icon = "Content/img/relation.png",
+                    iconCls = "treeRelation",
                     id = context + "/" + dataObject.objectName + "/" + relation.relationshipName,
                     text = relation.relationshipName,
                     expanded = false,
@@ -372,7 +372,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
-                  icon = (dataObject.isKeyProperty(property.propertyName)) ? "Content/img/key.png" : "Content/img/property.png",
+                  iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
                   id = context + "/" + property.propertyName,
                   text = property.propertyName,
                   expanded = true,
@@ -396,6 +396,7 @@ namespace org.iringtools.web.controllers
 
           case "GraphsNode":
             {
+
               string context = form["node"];
               string scopeName = context.Split('/')[0];
               string applicationName = context.Split('/')[1];
@@ -410,7 +411,7 @@ namespace org.iringtools.web.controllers
                 {
                   nodeType = "async",
                   type = "GraphNode",
-                  icon = "Content/img/graph-map.png",
+                  iconCls = "treeGraph",
                   id = context + "/Graph/" + graph.name,
                   text = graph.name,
                   expanded = true,

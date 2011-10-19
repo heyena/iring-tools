@@ -661,7 +661,7 @@ namespace org.iringtools.web.controllers
                 nodeType = "async",
                 identifier = classMap.id,
                 type = "GraphMapNode",
-                icon = "Content/img/class-map.png",
+                icon = "Content/img/graph-map.png",
                 id = context + "/" + graph.name + "/" + classMap.name,
                 text = graph.name,
                 expanded = false,
@@ -764,6 +764,12 @@ namespace org.iringtools.web.controllers
                 bool qn = false;
 
                 qn = _nsMap.ReduceToQName(classId, out qName);
+                
+                if (string.IsNullOrEmpty(oldClassLabel))
+                    oldClassLabel = classLabel;
+
+                if (string.IsNullOrEmpty(oldClassId))
+                    oldClassId = classId;
 
                 if (oldGraphName == "")
                 {
