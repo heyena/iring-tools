@@ -62,7 +62,6 @@ namespace iRINGTools.Web
       //Bind<IMembershipService>().To<AccountMembershipService>();
       //Bind<MembershipProvider>().ToConstant(Membership.Provider);
       Bind<IAdapterRepository>().To<AdapterRepository>();
-      Bind<org.iringtools.adapter.datalayer.ISpreadsheetRepository>().To<org.iringtools.adapter.datalayer.SpreadsheetRepository>();
     }
   }
 }
