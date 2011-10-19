@@ -52,7 +52,7 @@ public class ExchangeDataModel extends DataModel
         DataTransferObjects pageDtos = getPageDtos(serviceUri, manifestRelativePath, dtiRelativePath, 
             dtoRelativePath, filter, sortBy, sortOrder, start, limit);
         
-        pageDtoGrid = getDtoGrid(manifest, graph, pageDtos);
+        pageDtoGrid = getDtoGrid(dtiRelativePath, manifest, graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
         pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());
       }      
@@ -77,7 +77,7 @@ public class ExchangeDataModel extends DataModel
       DataTransferObjects dtos = getRelatedItems(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, 
             dtoIdentifier, filter, sortBy, sortOrder, start, limit);
         
-      pageDtoGrid = getRelatedItemGrid(manifest, graph, dtos, classId, classIdentifier);
+      pageDtoGrid = getRelatedItemGrid(dtiRelativePath, manifest, graph, dtos, classId, classIdentifier);
     }
     
     return pageDtoGrid;
