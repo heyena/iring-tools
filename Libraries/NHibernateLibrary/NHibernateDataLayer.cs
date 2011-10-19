@@ -182,17 +182,16 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter != null && filter.Expressions != null && filter.Expressions.Count > 0)
         {
-          filter.OrderExpressions.Clear();
-          string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
+          DataFilter clonedFilter = Utility.CloneDataContractObject<DataFilter>(filter);
+          clonedFilter.OrderExpressions = null;
+          string whereClause = clonedFilter.ToSqlWhereClause(_dbDictionary, objectType, null);
           queryString.Append(whereClause);
         }
 
         using (ISession session = OpenSession())
         {
           IQuery query = session.CreateQuery(queryString.ToString());
-
           long count = query.List<long>().First();
-
           return count;
         }
       }
@@ -387,14 +386,14 @@ namespace org.iringtools.adapter.datalayer
         {
           List<IDataObject> dataObjects = new List<IDataObject>();
           long totalCount = GetCount(objectType, filter);
-          pageSize = (_settings["HibernateDefaultPageSize"] != null) ? int.Parse(_settings["HibernateDefaultPageSize"]) : 100;
+          int hibernatePageSize = (_settings["HibernateDefaultPageSize"] != null) ? int.Parse(_settings["HibernateDefaultPageSize"]) : 100;
           int numOfRows = 0;
 
           while (numOfRows < totalCount)
           {
-            criteria.SetFirstResult(numOfRows).SetMaxResults(pageSize);
+            criteria.SetFirstResult(numOfRows).SetMaxResults(hibernatePageSize);
             dataObjects.AddRange(criteria.List<IDataObject>());
-            numOfRows += pageSize;
+            numOfRows += hibernatePageSize;
           }
 
           return dataObjects;

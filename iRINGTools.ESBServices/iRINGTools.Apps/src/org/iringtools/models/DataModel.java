@@ -85,6 +85,7 @@ public class DataModel
 
   public static final String APP_PREFIX = "xchmgr-";
   protected final String MANIFEST_PREFIX = APP_PREFIX + "manifest-";
+  protected final String FIELDS_PREFIX = APP_PREFIX + "fields-";
   protected final String DTI_PREFIX = APP_PREFIX + "dti-";
   protected final String XLOGS_PREFIX = APP_PREFIX + "xlogs-";
   protected final String FULL_DTI_KEY_PREFIX = DTI_PREFIX + "full";
@@ -125,13 +126,9 @@ public class DataModel
     try
     {
       DataFilter dataFilter = createDataFilter(filter, sortBy, sortOrder);
+      dtis = getFullDtis(serviceUri, manifestRelativePath, dtiRelativePath, fullDtiKey, partDtiKey, lastFilterKey);
 
-      if (dataFilter == null || !session.containsKey(fullDtiKey))
-      {
-        dtis = getFullDtis(serviceUri, manifestRelativePath, dtiRelativePath, fullDtiKey, partDtiKey, lastFilterKey);
-      }
-
-      if (dataFilter != null)  // apply filter
+      if (dataFilter != null)
       {
         if (session.containsKey(lastFilterKey))  // check if filter has changed
         {
@@ -167,24 +164,32 @@ public class DataModel
   private DataTransferIndices getFullDtis(String serviceUri, String manifestRelativePath, String dtiRelativePath,
       String fullDtiKey, String partDtiKey, String lastFilterKey) throws DataModelException
   {
-    DxiRequest dxiRequest = new DxiRequest();
-    dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
-    dxiRequest.setDataFilter(new DataFilter());
-
-    HttpClient httpClient = new HttpClient(serviceUri);
-    HttpUtils.addOAuthHeaders(session, httpClient);
-
     DataTransferIndices dtis = null;
-    try
+    
+    if (session.containsKey(fullDtiKey))
     {
-      dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
+      dtis = (DataTransferIndices)session.get(fullDtiKey);      
     }
-    catch (HttpClientException e)
+    else
     {
-      logger.error(e.getMessage());
-      throw new DataModelException(e.getMessage());
+      DxiRequest dxiRequest = new DxiRequest();
+      dxiRequest.setManifest(getManifest(serviceUri, manifestRelativePath));
+      dxiRequest.setDataFilter(new DataFilter());
+
+      HttpClient httpClient = new HttpClient(serviceUri);
+      HttpUtils.addOAuthHeaders(session, httpClient);
+
+      try
+      {
+        dtis = httpClient.post(DataTransferIndices.class, dtiRelativePath, dxiRequest);
+        session.put(fullDtiKey, dtis);
+      }
+      catch (HttpClientException e)
+      {
+        logger.error(e.getMessage());
+        throw new DataModelException(e.getMessage());
+      }
     }
-    session.put(fullDtiKey, dtis);
 
     if (session.containsKey(partDtiKey))
     {
@@ -507,11 +512,11 @@ public class DataModel
     return getDtos(serviceUri, manifestRelativePath, dtoRelativePath, pageDtis);
   }
 
-  protected Grid getDtoGrid(Manifest manifest, Graph graph, DataTransferObjects dtos) throws DataModelException
+  protected Grid getDtoGrid(String fieldsContext, Manifest manifest, Graph graph, DataTransferObjects dtos) throws DataModelException
   {
     Grid dtoGrid = new Grid();
 
-    List<Field> fields = createFields(graph, null);
+    List<Field> fields = getFields(fieldsContext, graph, null);
     dtoGrid.setFields(fields);
 
     List<List<String>> gridData = new ArrayList<List<String>>();
@@ -628,12 +633,12 @@ public class DataModel
     return relatedDtos;
   }
 
-  protected Grid getRelatedItemGrid(Manifest manifest, Graph graph, DataTransferObjects dtos, String classId,
+  protected Grid getRelatedItemGrid(String fieldsContext, Manifest manifest, Graph graph, DataTransferObjects dtos, String classId,
       String classIdentifier) throws DataModelException
   {
     Grid dtoGrid = new Grid();
 
-    List<Field> fields = createFields(graph, classId);
+    List<Field> fields = getFields(fieldsContext, graph, classId);
     dtoGrid.setFields(fields);
 
     List<List<String>> gridData = new ArrayList<List<String>>();
@@ -1039,6 +1044,25 @@ public class DataModel
     }
 
     return filteredClassObjects;
+  }
+  
+  @SuppressWarnings("unchecked")
+  protected List<Field> getFields(String fieldsContext, Graph graph, String startClassId) throws DataModelException
+  {
+    List<Field> fields = null;
+    String fieldsKey = FIELDS_PREFIX + fieldsContext + ((startClassId == null) ? "" : startClassId);
+
+    if (session.containsKey(fieldsKey))
+    {
+      fields = (List<Field>) session.get(fieldsKey);
+    }
+    else
+    {
+      fields = createFields(graph, startClassId);
+      session.put(fieldsKey, fields);
+    }
+
+    return fields;
   }
 
   private List<Field> createFields(Graph graph, String startClassId)

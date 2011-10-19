@@ -36,7 +36,7 @@ public class AppDataModel extends DataModel
         DataTransferObjects pageDtos = getPageDtos(serviceUri, manifestRelativePath, dtiRelativePath, 
             dtoRelativePath, filter, sortBy, sortOrder, start, limit);
         
-        pageDtoGrid = getDtoGrid(manifest, graph, pageDtos);
+        pageDtoGrid = getDtoGrid(appRelativePath, manifest, graph, pageDtos);
         DataTransferIndices dtis = getCachedDtis(dtiRelativePath);
         pageDtoGrid.setTotal(dtis.getDataTransferIndexList().getItems().size());  
       }
@@ -53,9 +53,10 @@ public class AppDataModel extends DataModel
       String classId, String classIdentifier, String filter, String sortBy, String sortOrder, int start, int limit) 
       throws DataModelException
   {
-    String dtiRelativePath = "/" + scopeName + "/" + appName + "/" + graphName + "/dxi/filter";
-    String dtoRelativePath = "/" + scopeName + "/" + appName + "/" + graphName + "/dxo";
-    String manifestRelativePath = "/" + scopeName + "/" + appName + "/manifest";
+    String appRelativePath = "/" + scopeName + "/" + appName;
+    String dtiRelativePath = appRelativePath + "/" + graphName + "/dxi/filter";
+    String dtoRelativePath = appRelativePath + "/" + graphName + "/dxo";
+    String manifestRelativePath = appRelativePath + "/manifest";
     
     Grid pageDtoGrid = null;
     Manifest manifest = getManifest(serviceUri, manifestRelativePath);    
@@ -66,7 +67,7 @@ public class AppDataModel extends DataModel
       DataTransferObjects dtos = getRelatedItems(serviceUri, manifestRelativePath, dtiRelativePath, dtoRelativePath, 
           dtoIdentifier, filter, sortBy, sortOrder, start, limit);
       
-      pageDtoGrid = getRelatedItemGrid(manifest, graph, dtos, classId, classIdentifier);
+      pageDtoGrid = getRelatedItemGrid(appRelativePath, manifest, graph, dtos, classId, classIdentifier);
     }
     
     return pageDtoGrid;
