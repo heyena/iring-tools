@@ -51,6 +51,7 @@ namespace org.iringtools.adapter.datalayer
     private NameValueCollection _settings = null;
     private ISpreadsheetRepository _repository { get; set; }
     private string _keyFormat = "Configuration.{0}.{1}";
+    private string _appData = string.Empty;
 
     public SpreadsheetController()
       : this(new SpreadsheetRepository())
@@ -86,7 +87,7 @@ namespace org.iringtools.adapter.datalayer
           HttpPostedFileBase hpf = files[file] as HttpPostedFileBase;
           if (hpf.ContentLength == 0)
             continue;
-          string fileLocation = string.Format(@"XML\SpreadsheetData.{0}.{1}.xlsx", form["Scope"], form["Application"]);
+          string fileLocation = string.Format(@"{0}\SpreadsheetData.{1}.{2}.xlsx",_settings["XmlPath"], form["Scope"], form["Application"]);
 
           SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
           {
