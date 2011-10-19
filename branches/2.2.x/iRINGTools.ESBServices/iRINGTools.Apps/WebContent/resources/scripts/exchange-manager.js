@@ -501,7 +501,7 @@ function submitExchange(userResponse) {
   if (userResponse == 'ok'){    
     Ext.Ajax.request({
       url: 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed=' + reviewed,
-      timeout: 600000,  // in milliseconds, default is 3000 
+      timeout: 3600000,  // 1 hour
       success: function(response, request) {
         var responseText = Ext.decode(response.responseText);
         var message = 'Data exchange [' + exchange + ']: ' + responseText;

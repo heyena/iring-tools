@@ -120,7 +120,7 @@ public class ExchangeDataModel extends DataModel
     }
     catch (HttpClientException ex)
     {
-      String error = "Error in submitExchange: " + ex;
+      String error = "Error in submitExchange: " + ex.getMessage();
       logger.error(error);
 
       response = new ExchangeResponse();
