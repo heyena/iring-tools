@@ -101,10 +101,14 @@ namespace org.iringtools.adapter.projection
           {
             IDataObject dataObject = _dataLayer.Create(objectDefinition.objectName, null)[0];
 
-            if (dataObject.GetType() == typeof(IContentObject) && objectDefinition.hasContent)
+            if (objectDefinition.hasContent)
             {
               string base64Content = objEl.Element(ns + "content").Value;
-              ((IContentObject)dataObject).content = base64Content.ToMemoryStream();
+
+              if (!String.IsNullOrEmpty(base64Content))
+              {
+                ((IContentObject)dataObject).content = base64Content.ToMemoryStream();
+              }
             }
 
             foreach (DataProperty property in objectDefinition.dataProperties)

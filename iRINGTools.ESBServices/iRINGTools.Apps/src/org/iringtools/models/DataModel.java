@@ -1162,7 +1162,7 @@ public class DataModel
 
               if (!gridFilterTypes.contains(dataType))
               {
-                dataType = "auto";
+                dataType = "string";
               }
 
               field.setType(dataType);

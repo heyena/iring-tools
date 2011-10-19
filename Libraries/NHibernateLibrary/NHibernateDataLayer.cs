@@ -386,7 +386,7 @@ namespace org.iringtools.adapter.datalayer
         {
           List<IDataObject> dataObjects = new List<IDataObject>();
           long totalCount = GetCount(objectType, filter);
-          int hibernatePageSize = (_settings["HibernateDefaultPageSize"] != null) ? int.Parse(_settings["HibernateDefaultPageSize"]) : 100;
+          int hibernatePageSize = (_settings["HibernateDefaultPageSize"] != null) ? int.Parse(_settings["HibernateDefaultPageSize"]) : 1000;
           int numOfRows = 0;
 
           while (numOfRows < totalCount)
