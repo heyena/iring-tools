@@ -283,8 +283,8 @@ namespace org.iringtools.services
     }
     
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}", RequestFormat=WebMessageFormat.Json)]
-    public Response PostList(string project, string app, string graph, DataItems dataItems)
+    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}", RequestFormat=WebMessageFormat.Json)]
+    public Response PutItems(string project, string app, string graph, DataItems dataItems)
     {
       HttpResponse context = HttpContext.Current.Response;
       context.ContentType = "application/json; charset=utf-8";
@@ -294,8 +294,8 @@ namespace org.iringtools.services
       return _adapterProvider.Post(project, app, graph, "json", new XDocument(xElement));
     }
 
-    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format=json", RequestFormat=WebMessageFormat.Json)]
-    public Response PostListJson(string project, string app, string graph, DataItems dataItems)
+    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}?format=json", RequestFormat=WebMessageFormat.Json)]
+    public Response PutJsonItems(string project, string app, string graph, DataItems dataItems)
     {
       HttpResponse context = HttpContext.Current.Response;
       context.ContentType = "application/json; charset=utf-8";
@@ -306,8 +306,8 @@ namespace org.iringtools.services
     }
 
     [Description("Updates the specified scope and graph with an JSON projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format=content")]
-    public Response PostListStream(string project, string app, string graph, Stream dataItemsStream)
+    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}?format=content")]
+    public Response PutStreamItems(string project, string app, string graph, Stream dataItemsStream)
     {
       DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DataItems));
       DataItems dataItems = (DataItems)serializer.ReadObject(dataItemsStream);
@@ -317,6 +317,16 @@ namespace org.iringtools.services
 
       XElement xElement = dataItems.ToXElement();
       return _adapterProvider.Post(project, app, graph, "json", new XDocument(xElement));
+    }
+
+    [Description("Updates the specified scope and graph with an JSON projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}/{id}")]
+    public Response PostContent(string project, string app, string graph, string id, Stream content)
+    {
+      HttpResponse context = HttpContext.Current.Response;
+      context.ContentType = "application/json; charset=utf-8";
+
+      return _adapterProvider.PostContent(project, app, graph, "json", id, content);
     }
 
     [Description("Deletes a graph in the specified application.")]
