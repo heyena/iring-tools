@@ -295,7 +295,7 @@ Public Module Common
     <Extension()> _
     Public Function SetDeclarationValues(Parts As Dictionary(Of SQLClause, String), Declarations As IEnumerable(Of XElement), _
                                     ValueDictionary As Dictionary(Of String, String), _
-                                    Optional SuppressWarnings As Boolean = False) As String
+                                    _logger As log4net.ILog) As String
 
         Dim val As String = ""
         Dim s2 As String = ""
@@ -306,51 +306,65 @@ Public Module Common
         Dim quoteIt As Boolean
         Dim dType As String
         Dim qName As String
+        Dim defaultVal As String
 
         Try
 
             qName = Parts(SQLClause.QueryName)
 
-            ' use the declarations to determine what values need to be set
+            ' use the declarations to determine what values need to be set; the value dictionary may contain
+            ' value for variables not used in this query.
             For Each e As XElement In Declarations
 
                 varName = e.Attribute("name").Value
                 dType = e.Attribute("datatype").Value
 
                 ' look for a value provided specifically for this query
-                exists = ValueDictionary.TryGetValue(qName & "." & varName, val)
+                exists = ValueDictionary.TryGetValue("!" & qName & "." & varName, val)
 
                 If Not exists Then
 
                     ' look for a variable provided for any any query
                     exists = ValueDictionary.TryGetValue("!!All." & varName, val)
 
-                    ' use the default value if a value has not been provided
-                    If Not exists Then val = e.Attribute("value").Value
+                    ' use the default value if a value has not been provided. Note that providing a default value in the declaration
+                    ' will force the use of any filter (where clause expression) where the optional attribute is set to true;
+                    ' THUS, giving a default value overrides the "optional" flag. 
+                    If Not exists Then
+
+                        defaultVal = e.Attribute("value").Value
+
+                        If defaultVal = "" Then
+
+                            defaultVal = "!NoValue"
+                            _logger.Warn("Variable '" & varName & "' was not provided with a value;")
+
+                        Else
+                            _logger.Warn("Variable '" & varName & "' was not provided with a value; the default will be used")
+                        End If
+
+                        val = defaultVal
+
+                    End If
 
                 End If
 
-                ' if no datatype is provided, then quote the value if it's non-numeric
-                ' This basically creates a softening on the StagingConfiguration schema requirement; this may or may
-                ' not be a good idea
-                If dType = "" Then
-                    quoteIt = Not IsNumeric(val)
-                Else
-                    quoteIt = SQLUnique.IsQuotable(dType)
-                End If
+                If val <> "!NoValue" Then
 
-                If Not (exists AndAlso SuppressWarnings) Then
+                    ' if no datatype is provided, then quote the value if it's non-numeric
+                    ' This softens the StagingConfiguration schema requirement for a datatype but is NOT foolproof. 
+                    If dType = "" Then
+                        quoteIt = Not IsNumeric(val)
+                    Else
+                        quoteIt = SQLUnique.IsQuotable(dType)
+                    End If
 
-                    If rVal.Length < 1 Then rVal.Append("Warn: ")
-                    rVal.Append(nltb & "Variable '" & varName & "' was not provided with a value; the default will be used")
+                    s.Append(nltb & "SET " & varName & "=" & IIf(quoteIt, "'", "") & val & IIf(quoteIt, "'", ""))
 
                 End If
-
-                s.Append(nltb & varName & "=" & IIf(quoteIt, "'", "") & val & IIf(quoteIt, "'", ""))
 
             Next
 
-            If s.Length > 0 Then s.Insert(0, "SET ")
             exists = Parts.TryGetValue(SQLClause.Set, s2)
 
             If exists Then
@@ -755,7 +769,12 @@ Public Module Common
 
                         col = ColumnsDV(0).Row
                         dataType = col.GetDataTypeString
-                        colNull = IIf(col.IsNullable = "Yes", " null", " not null")
+
+                        ' I would generally prefer to pay attention to the nullability of the source field, but left joins against the source table
+                        ' make it possible for these values to be null even if the source table does not allow it. It's far safer to 
+                        ' simply set the nullability to 'yes'
+                        'colNull = IIf(col.IsNullable = "Yes", " null", " not null")
+                        colNull = " null"
 
                     Else : Throw New InvalidExpressionException("The source value '" & source & _
                         "' is not a valid uniquely identified table or table reference; the query cannot be built")
@@ -797,7 +816,7 @@ Public Module Common
 
                 ' add conjunction. Since it's possible for the first filter to be optional with no value provided, if this is the first valid
                 ' filter, then the conjunction is ignored
-                If fil.Attribute("conjunction").Value <> "" AndAlso w.Length > 5 AndAlso includeFilter Then
+                If fil.Attribute("conjunction").Value <> "" AndAlso w.ToString.TrimToChars.Length > 5 AndAlso includeFilter Then
                     w.Append(tb & fil.Attribute("conjunction").Value & tb)
                 End If
 
@@ -842,7 +861,7 @@ Public Module Common
                     ' add filter clause
                     tmpStr = tmpStr.Replace("'", "''")
                     w.Append(fil.Attribute("source").Value & d & fil.Attribute("fieldName").Value)
-                    w.Append(fil.Attribute("operator").Value & IIf(quoteTheValue, "'", ""))
+                    w.Append(" " & fil.Attribute("operator").Value & IIf(quoteTheValue, " '", " "))
                     w.Append(tmpStr & IIf(quoteTheValue, "'", ""))
 
                 End If
