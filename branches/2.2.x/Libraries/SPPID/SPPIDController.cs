@@ -12,7 +12,7 @@ namespace org.iringtools.adapter.datalayer
     {
         private NameValueCollection _settings = null;
         private ISPPIDRepository _repository { get; set; }
-        private string _keyFormat = "Configuration.{0}.{1}";
+        //private string _keyFormat = "Configuration.{0}.{1}";
 
         public SPPIDController()
             : this(new SPPIDRepository())

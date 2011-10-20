@@ -850,6 +850,63 @@ namespace org.iringtools.adapter
       return response;
     }
 
+    public Response PostContent(string projectName, string applicationName, string graphName, string format, string identifier, Stream stream)
+    {
+      Response response = null;
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+
+        if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+        {
+          string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
+          _logger.Error(message);
+
+          response = new Response();
+          response.DateTimeStamp = DateTime.Now;
+          response.Level = StatusLevel.Error;
+          response.Messages = new Messages() { message };
+
+          return response;
+        }
+
+        InitializeDataLayer();
+
+        _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        IContentObject contentObject = (IContentObject)new GenericDataObject();
+        contentObject.identifier = identifier;
+        contentObject.content = stream;
+        dataObjects.Add(contentObject);
+
+        response = _dataLayer.Post(dataObjects);
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Success;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Post: " + ex);
+        if (response == null)
+        {
+          response = new Response();
+        }
+
+        Status status = new Status
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message },
+        };
+
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Error;
+        response.StatusList.Add(status);
+      }
+
+      return response;
+    }
+
     public Response DeleteIndividual(string projectName, string applicationName, string graphName, string identifier)
     {
       Response response = null;
