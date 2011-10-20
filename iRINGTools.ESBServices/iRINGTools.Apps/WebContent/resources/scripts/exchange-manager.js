@@ -143,7 +143,7 @@ function createPageXlogs(scope, xid, xlabel, startTime, xtime){
     tab.show();
   }
   else { 
-    Ext.getBody().mask("Loading...", "x-mask-loading");    
+    Ext.getCmp('content-pane').getEl().mask("Loading...", "x-mask-loading");    
     
     var url = 'pageXlogs' + '?scope=' + scope + '&xid=' + xid + '&xtime=' + xtime;
     var store = createGridStore(url);
@@ -162,7 +162,7 @@ function createPageXlogs(scope, xid, xlabel, startTime, xtime){
   	  });	
   	  
   	  Ext.getCmp('content-pane').add(xlogsPagePane).show();
-  	  Ext.getBody().unmask();
+  	  Ext.getCmp('content-pane').getEl().unmask();
     });   
       
     store.load({
@@ -181,7 +181,7 @@ function loadPageDto(type, action, context, label){
     tab.show();
   }
   else { 
-    Ext.getBody().mask("Loading...", "x-mask-loading");    
+    Ext.getCmp('content-pane').getEl().mask("Loading...", "x-mask-loading");    
     
     var url = action + context;    
     var store = createGridStore(url);
@@ -265,7 +265,7 @@ function loadPageDto(type, action, context, label){
           items: [createGridPane(store, pageSize, {forceFit: false})],
           listeners: {
             afterlayout: function(pane){
-              Ext.getBody().unmask();
+              Ext.getCmp('content-pane').getEl().unmask();
             }
           }
         });
