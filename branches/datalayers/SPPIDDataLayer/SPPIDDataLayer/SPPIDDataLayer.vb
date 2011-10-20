@@ -283,6 +283,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 queryParts.Clear()
                 rVal = GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
                               queryParts, replacements, declarations, SPWorkSet.QueryVariableMap, SPWorkSet.CommonServerName)
+                SetDeclarationValues(queryParts, declarations, SPWorkSet.QueryVariableMap, _logger)
 
                 ' commbine the query parts and perform any necessary replacements. 
                 ' NOTE - although it is possible to make use of an INTO clause to create a selection query that will 
@@ -329,6 +330,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     ' fetch the data
                     cmd = _projConn.CreateCommand()
                     cmd.CommandText = queryText
+
                     DS = New DataSet
                     DA = New SqlDataAdapter(cmd)
                     'DA.MissingSchemaAction = MissingSchemaAction.AddWithKey
@@ -343,7 +345,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 End If
 
             Next
-
 
         Catch ex As Exception
             Debug.Print("got here")
