@@ -3,6 +3,9 @@
 <html>
 <head id="Head1" runat="server">
     <title>Adapter Manager</title>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/resources/css/ext-all.css"/>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/examples/ux/css/ux-all.css"/>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/examples/ux/css/Multiselect.css"/>

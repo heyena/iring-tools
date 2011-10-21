@@ -390,6 +390,15 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     buildGraphMenu: function () {
         return [
+         {
+             text: 'Refresh Facade',
+             handler: this.onRefreshFacade,
+             icon: 'Content/img/table_refresh.png',
+             scope: this
+         },
+         {
+             xtype: 'menuseparator'
+         },
      {
          text: 'Edit GraphMap',
          handler: this.onEditGraphMap,
@@ -508,6 +517,10 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         this.fireEvent('EditGraphMap', this, node);
     },
 
+    onRefreshFacade: function(btn, ev) {
+        var node = this.directoryPanel.getSelectionModel().getSelectedNode();
+        this.fireEvent('RefreshFacade', this, node);
+    },
 
     onNewValueListMap: function (btn, ev) {
         var node = this.directoryPanel.getSelectionModel().getSelectedNode();
