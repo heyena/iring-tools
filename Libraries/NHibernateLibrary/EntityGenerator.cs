@@ -89,6 +89,7 @@ namespace org.iringtools.nhibernate
 
           _dataObjectWriter.WriteLine(Utility.GeneratedCodeProlog);
           _dataObjectWriter.WriteLine("using System;");
+          _dataObjectWriter.WriteLine("using System.Globalization;");
           _dataObjectWriter.WriteLine("using System.Collections.Generic;");
           _dataObjectWriter.WriteLine("using Iesi.Collections.Generic;");
           _dataObjectWriter.WriteLine("using org.iringtools.library;");
@@ -496,12 +497,22 @@ namespace org.iringtools.nhibernate
         if (dataObject.keyProperties.Count == 1)
         {
           DataProperty keyProperty = dataObject.getKeyProperty(dataObject.keyProperties.First().keyPropertyName);
-
           DataType keyDataType = keyProperty.dataType;
-          _dataObjectWriter.WriteLine(@"
+
+          if (IsNumeric(keyDataType))
+          {
+            _dataObjectWriter.WriteLine(@"
+        case ""Id"":
+          Id = {0}.Parse((String)value, NumberStyles.Any);
+          break;", keyDataType);
+          }
+          else
+          {
+            _dataObjectWriter.WriteLine(@"
         case ""Id"":
           Id = Convert.To{0}(value);
           break;", keyDataType);
+          }
         }
         else if (dataObject.keyProperties.Count > 1)
         {
@@ -510,7 +521,7 @@ namespace org.iringtools.nhibernate
           Id = ({0}Id)value;
           break;", dataObject.objectName);
         }
-
+        
         /*
         foreach (KeyProperty keyName in dataObject.keyProperties)
         {
@@ -538,10 +549,17 @@ namespace org.iringtools.nhibernate
           _dataObjectWriter.WriteLine("case \"{0}\":", dataProperty.propertyName);
           _dataObjectWriter.Indent++;
 
-          bool isDataPropertyNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
-          if (isDataPropertyNullable)
+          bool dataPropertyIsNullable = (dataProperty.dataType == DataType.String || dataProperty.isNullable == true);
+          if (dataPropertyIsNullable)
           {
-            _dataObjectWriter.WriteLine("if (value != null) {0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
+            if (IsNumeric(dataProperty.dataType))
+            {
+              _dataObjectWriter.WriteLine("{0} = {1}.Parse((String)value, NumberStyles.Any);", dataProperty.propertyName, dataProperty.dataType);
+            }
+            else
+            {
+              _dataObjectWriter.WriteLine("{0} = Convert.To{1}(value);", dataProperty.propertyName, dataProperty.dataType);
+            }
           }
           else
           {
@@ -700,6 +718,22 @@ namespace org.iringtools.nhibernate
       }
 
       return String.Empty;
+    }
+
+    private bool IsNumeric(DataType dataType)
+    {
+      if (dataType == DataType.Int32 ||
+          dataType == DataType.Decimal ||
+          dataType == DataType.Double ||
+          dataType == DataType.Single ||
+          dataType == DataType.Int16 ||
+          dataType == DataType.Int64 ||
+          dataType == DataType.Byte)
+      {
+        return true;
+      }
+
+      return false;
     }
   }
 }
