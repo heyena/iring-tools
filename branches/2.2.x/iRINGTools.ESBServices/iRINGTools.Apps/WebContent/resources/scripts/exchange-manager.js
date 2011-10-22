@@ -90,16 +90,12 @@ function createXlogsPane(context, xlogsContainer, xlabel){
   xlogsStore.on('load', function(){
     var xlogsPane = new Ext.grid.GridPanel({
       id: 'xlogs-' + xlabel,
-      layout: 'fit',
       store: xlogsStore,
       stripeRows: true,
       loadMask: true,
       cm: new Ext.grid.DynamicColumnModel(xlogsStore),
       selModel: new Ext.grid.RowSelectionModel({ singleSelect: true }),
       enableColLock: true,
-      viewConfig: {
-        forceFit: true
-      },
       tbar: new Ext.Toolbar({
         items: [{
           xtype: 'tbspacer', 
