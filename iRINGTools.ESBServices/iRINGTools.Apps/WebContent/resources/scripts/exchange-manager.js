@@ -25,14 +25,21 @@ function storeSort(field, dir){
   this.reload();
 }
 
-function createGridStore(url){
+function createGridStore(container, url){
   var store = new Ext.data.Store({
     proxy: new Ext.data.HttpProxy({
       url: url,
       timeout: 86400000  // 24 hours
     }),
     reader: new Ext.data.DynamicGridReader({}),
-    remoteSort: true
+    remoteSort: true,
+    listeners: {
+      exception: function(proxy, type, action, request, response){
+        container.getEl().unmask();       
+        var message = 'Request URL: /' + request.url + '.\n\nError description: ' + response.responseText;
+        showDialog(500, 240, 'Error', message, Ext.Msg.OK, null);
+      }
+    }
   });
   
   store.sort = store.sort.createInterceptor(storeSort);
@@ -85,7 +92,7 @@ function createGridPane(store, pageSize, viewConfig){
 
 function createXlogsPane(context, xlogsContainer, xlabel){
   var xlogsUrl = 'xlogs' + context + '&xlabel=' + xlabel;
-  var xlogsStore = createGridStore(xlogsUrl);
+  var xlogsStore = createGridStore(xlogsContainer, xlogsUrl);
   
   xlogsStore.on('load', function(){
     var xlogsPane = new Ext.grid.GridPanel({
@@ -139,10 +146,11 @@ function createPageXlogs(scope, xid, xlabel, startTime, xtime){
     tab.show();
   }
   else { 
-    Ext.getCmp('content-pane').getEl().mask("Loading...", "x-mask-loading");    
+    var contentPane = Ext.getCmp('content-pane');    
+    contentPane.getEl().mask("Loading...", "x-mask-loading");    
     
     var url = 'pageXlogs' + '?scope=' + scope + '&xid=' + xid + '&xtime=' + xtime;
-    var store = createGridStore(url);
+    var store = createGridStore(contentPane, url);
     var pageSize = 25;    
     
     store.on('load', function(){
@@ -177,10 +185,11 @@ function loadPageDto(type, action, context, label){
     tab.show();
   }
   else { 
-    Ext.getCmp('content-pane').getEl().mask("Loading...", "x-mask-loading");    
+    var contentPane = Ext.getCmp('content-pane');
+    contentPane.getEl().mask("Loading...", "x-mask-loading");    
     
     var url = action + context;    
-    var store = createGridStore(url);
+    var store = createGridStore(contentPane, url);
     var pageSize = 25; 
     
     store.on('load', function(){
@@ -304,7 +313,6 @@ function loadPageDto(type, action, context, label){
 }
 
 function loadRelatedItem(type, context, individual, classId, className){
-  Ext.getBody().mask("Loading...", "x-mask-loading");
   var url = context + '&individual=' + individual + '&classId=' + classId;
   
   if (type == 'app'){
@@ -314,7 +322,10 @@ function loadRelatedItem(type, context, individual, classId, className){
     url = 'rxdata' + url;
   }
   
-  var store = createGridStore(url);
+  var contentPane = Ext.getCmp('content-pane');
+  contentPane.getEl().mask("Loading...", "x-mask-loading");    
+  
+  var store = createGridStore(contentPane, url);
   var pageSize = 25; 
   
   store.on('load', function(){
