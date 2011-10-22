@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Ninject.Modules;
-using org.iringtools.library;
-using System.Collections.Specialized;
+﻿using Ninject.Modules;
 
 namespace org.iringtools.nhibernate
 {

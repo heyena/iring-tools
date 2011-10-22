@@ -34,7 +34,6 @@ using log4net;
 using NHibernate;
 using Ninject;
 using org.iringtools.adapter;
-using org.iringtools.adapter.datalayer;
 using org.iringtools.library;
 using org.iringtools.utility;
 
@@ -775,49 +774,6 @@ namespace org.iringtools.nhibernate
 
 		private bool ValidateDatabaseDictionary(DatabaseDictionary dbDictionary)
 		{
-			ISession session = null;
-
-			try
-			{
-				// Validate connection string
-				string connectionString = dbDictionary.ConnectionString;
-				NHibernate.Cfg.Configuration config = new NHibernate.Cfg.Configuration();
-				Dictionary<string, string> properties = new Dictionary<string, string>();
-
-				properties.Add("connection.provider", "NHibernate.Connection.DriverConnectionProvider");
-				properties.Add("connection.connection_string", dbDictionary.ConnectionString);
-				properties.Add("proxyfactory.factory_class", "NHibernate.ByteCode.Castle.ProxyFactoryFactory, NHibernate.ByteCode.Castle");
-				properties.Add("default_schema", dbDictionary.SchemaName);
-				properties.Add("dialect", "NHibernate.Dialect." + dbDictionary.Provider + "Dialect");
-
-				if (dbDictionary.Provider.ToString().ToUpper().Contains("MSSQL"))
-				{
-					properties.Add("connection.driver_class", "NHibernate.Driver.SqlClientDriver");
-				}
-				else if (dbDictionary.Provider.ToString().ToUpper().Contains("ORACLE"))
-				{
-					properties.Add("connection.driver_class", "NHibernate.Driver.OracleClientDriver");
-				}
-				else
-				{
-					throw new Exception("Database not supported.");
-				}
-
-				config.AddProperties(properties);
-				ISessionFactory factory = config.BuildSessionFactory();
-
-				session = factory.OpenSession();
-			}
-			catch (Exception ex)
-			{
-				_logger.Error(string.Format("Error in ValidateDatabaseDictionary: {0}", ex));
-				throw new Exception("Invalid connection string: " + ex.Message);
-			}
-			finally
-			{
-				if (session != null) session.Close();
-			}
-
 			// Validate table key
 			foreach (DataObject dataObject in dbDictionary.dataObjects)
 			{

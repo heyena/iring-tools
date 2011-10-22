@@ -665,7 +665,14 @@ public class ExchangeProvider
         Response poolResponse;
         try
         {
+          logger.debug("Sending exchange pool [" + i + " - " + (i + poolSize) + "]");
           poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
+          
+          try 
+          {
+            logger.debug("Exchange pool response [" + JaxbUtils.toXml(poolResponse, true) + "]");
+          }
+          catch (Exception e) {}
         }
         catch (HttpClientException e)
         {
