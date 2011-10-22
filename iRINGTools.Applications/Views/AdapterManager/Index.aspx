@@ -2,7 +2,7 @@
 
 <html>
 <head id="Head1" runat="server">
-    <title>Adapter Manager</title>
+    <title>iRINGTools: Adapter Manager</title>
     <meta http-equiv="Cache-Control" content="no-cache"/>
     <meta http-equiv="Pragma" content="no-cache"/>
     <meta http-equiv="Expires" content="0"/>

@@ -437,7 +437,7 @@ namespace iRINGTools.Web.Models
             {
               text = dataObject.tableName,
               type = "dataObject",
-							iconCls = "object",
+              iconCls = "treeObject",
               leaf = false,
               children = new List<JsonTreeNode>()
               {
