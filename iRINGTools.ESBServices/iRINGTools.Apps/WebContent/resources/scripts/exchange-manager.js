@@ -29,7 +29,7 @@ function createGridStore(url){
   var store = new Ext.data.Store({
     proxy: new Ext.data.HttpProxy({
       url: url,
-      timeout: 3600000  // 1 hour
+      timeout: 86400000  // 24 hours
     }),
     reader: new Ext.data.DynamicGridReader({}),
     remoteSort: true
@@ -498,11 +498,15 @@ function submitExchange(userResponse) {
   var xid = this[2];
   var reviewed = this[3];
   
-  if (userResponse == 'ok'){    
+  if (userResponse == 'ok'){
+    Ext.getCmp('content-pane').getItem('tab-' + exchange).getEl().mask('Exchange in progress ...', 'x-mask-loading');
+    
     Ext.Ajax.request({
       url: 'xsubmit?scope=' + scope + '&xid=' + xid + '&reviewed=' + reviewed,
-      timeout: 3600000,  // 1 hour
+      timeout: 86400000 ,  // 24 hours
       success: function(response, request) {
+        Ext.getCmp('content-pane').getItem('tab-' + exchange).getEl().unmask();
+        
         var responseText = Ext.decode(response.responseText);
         var message = 'Data exchange [' + exchange + ']: ' + responseText;
         
@@ -512,6 +516,8 @@ function submitExchange(userResponse) {
           showDialog(660, 300, 'Exchange Result', message, Ext.Msg.OK, null);
       },
       failure: function(response, request) {
+        Ext.getCmp('content-pane').getItem('tab-' + exchange).getEl().unmask();
+        
         var title = 'Exchange Error (' + response.status + ')';
         var message = 'Error while exchanging [' + exchange + '].';
         
@@ -626,7 +632,7 @@ Ext.onReady(function(){
           var scope = node.parentNode.parentNode.parentNode.attributes['text'];
           var exchange = node.attributes["text"];
           var xid = node.attributes.properties['Id'];
-          var reviewed = (node.reviewed != undefined);   
+          var reviewed = (node.reviewed != undefined);
           var msg = 'Are you sure you want exchange data \r\n[' + exchange + ']?';
           var processUserResponse = submitExchange.createDelegate([exchange, scope, xid, reviewed]);          
           showDialog(460, 125, 'Exchange Confirmation', msg, Ext.Msg.OKCANCEL, processUserResponse); 

@@ -5,7 +5,7 @@ using NHibernate;
 using org.iringtools.library;
 using org.iringtools.utility;
 
-namespace org.iringtools.adapter.datalayer
+namespace org.iringtools.nhibernate
 {
   public static class NHibernateUtility
   {
