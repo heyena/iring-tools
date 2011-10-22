@@ -582,7 +582,10 @@ namespace org.iringtools.adapter
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");        
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap, ref dataObjects);
 
-        dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+        if (dtoDoc != null && dtoDoc.Root != null)
+          dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+        else
+          dataTransferObjects = new DataTransferObjects();
       }
       catch (Exception ex)
       {
