@@ -295,7 +295,7 @@ public class ExchangeDataModel extends DataModel
 
     field = new Field();
     field.setName("Result");
-    field.setWidth(100);
+    field.setWidth(120);
     field.setDataIndex("Result");
     field.setType("string");
     fields.add(field);
