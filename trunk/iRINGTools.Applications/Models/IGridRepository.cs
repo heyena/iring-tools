@@ -14,7 +14,7 @@ namespace iRINGTools.Web.Models
 
     DataDictionary GetDictionary(string relativeUrl);
 
-    DataItems GetDataItems(string app, string scope, string graph, DataFilter dataFilter);
+    DataItems GetDataItems(string app, string scope, string graph, DataFilter dataFilter, int start, int limit);
   }
 }
 

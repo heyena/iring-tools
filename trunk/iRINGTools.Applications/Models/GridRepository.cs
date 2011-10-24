@@ -48,9 +48,9 @@ namespace iRINGTools.Web.Models
         return _client.Get<DataDictionary>(relativeUrl, true);
       }
 
-      public DataItems GetDataItems(string app, string scope, string graph, DataFilter dataFilter)
+      public DataItems GetDataItems(string app, string scope, string graph, DataFilter dataFilter, int start, int limit)
       {
-        string relurl = string.Format("/{0}/{1}/{2}/filter?format=json", app, scope, graph);
+        string relurl = string.Format("/{0}/{1}/{2}/filter?format=json&start={3}&limit={4}", app, scope, graph, start, limit);
         string allDataItemsJson = _client.Post<DataFilter, string>(relurl, dataFilter, true);
         return (DataItems)serializer.Deserialize(allDataItemsJson, typeof(DataItems));
       }

@@ -174,7 +174,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\AM\AM.js" />
     <Content Include="Scripts\AM\controller\AdapterManagerController.js" />
-    <Content Include="Scripts\AM\controller\MappingController.js" />
+    <Content Include="Scripts\AM\controller\ConfigurationController.js" />
     <Content Include="Scripts\AM\model\DataLayerModel.js" />
     <Content Include="Scripts\AM\model\DirectoryModel.js" />
     <Content Include="Scripts\AM\model\DynamicModel.js" />

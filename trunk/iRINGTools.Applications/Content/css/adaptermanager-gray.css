@@ -56,7 +56,7 @@ a:active {color: black}
 }
 
 .x-tree-panel .x-grid-row .x-grid-cell-inner .graphmap {
-  background-image: url(../img/class-map.png) !important;
+  background-image: url(../img/graph-map.png) !important;
 }
 
 .x-tree-panel .x-grid-row .x-grid-cell-inner .templatemap {
@@ -156,6 +156,11 @@ a:active {color: black}
   
 .tabsGraph{
   background-image:url('../img/graph-map.png') !important;
+}
+
+.x-tree-panel .x-grid-row .x-grid-cell-inner .treeGraph 
+{
+  background-image: url("../img/graph-map.png")  !important;
 }
 
 .x-tree-panel .x-grid-row .x-grid-cell-inner .treeClass 
