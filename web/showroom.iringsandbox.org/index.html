@@ -40,7 +40,7 @@ function setVersion(versionXml) {
 }
 
 function getVersion() { 
-  var url = 'Services/AdapterService/version';
+  var url = 'Services/data/version';
   //var url = 'http://localhost:54321/adapter/version';
   sendRequest(url, setVersion);
 }
@@ -72,26 +72,25 @@ ISO 15926 formats (part7, part8 or part9).
 		<td>
 		<h2>iRINGTools Applications</h2>
 		<ul>
-			<li><a href="Apps/RefDataEditor">Reference Data Editor</a></li>
-			<li><a href="Apps/AppEditor">Application Editor</a></li>
-			<li><a href="Apps/MappingEditor">Mapping Editor</a></li>
+			<li><a href="apps/adaptermanager">Adapter Manager</a></li>
+			<li><a href="http://tomcat.dev.iringsandbox.org:8081/apps/xchmgr">Exchange Manager</a></li>
 		</ul>
 		<br />
-		<h2>iRINGTools SPARQL Endpoints</h2>
-		<ul>
+		<h2><a href="tools/service/reset">Reset Database</a></h2>
+		<!--<h2>iRINGTools SPARQL Endpoints</h2>
+	    <ul>
 			<li><a href="Services/SandboxService/query">Sandbox</a></li>
 			<li><a href="Services/InterfaceService/query">Façade</a></li>
-		</ul>
-		
+		</ul>-->	
 		</td>
 		<td>
 		<h2>iRINGTools Services</h2>
 		<ul>
 			
-			<li><a href="Services/RefDataService/help">Reference Data Service</a></li>
-			<li><a href="Services/AdapterService/help">Adapter Service</a></li>
-			<li><a href="Services/data/help">Data Service</a></li>
-			<li><a href="Services/dxfr/help">DataTransfer Service</a></li>
+			<li><a href="services/refdata/help">Reference Data Service</a></li>
+			<li><a href="services/adapter/help">Adapter Service</a></li>
+			<li><a href="services/data/help">Data Service</a></li>
+			<li><a href="services/dxfr/help">DataTransfer Service</a></li><br/>
 		</ul>
 		</td>
 	</tr>

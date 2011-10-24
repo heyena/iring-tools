@@ -14,6 +14,290 @@ using org.iringtools.library;
 
 namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
 {
+  public class EQUIPMENT : IDataObject
+  {
+    public virtual String Id { get; set; }
+    public virtual String TAG
+    {
+      get { return Id; }
+      set { Id = value; }
+    }
+    public virtual String INTERNAL_TAG { get; set; }
+    public virtual String ID { get; set; }
+    public virtual String AREA { get; set; }
+    public virtual String TRAINNUMBER { get; set; }
+    public virtual String EQTYPE { get; set; }
+    public virtual String EQPPREFIX { get; set; }
+    public virtual String EQSEQNO { get; set; }
+    public virtual String EQPSUFF { get; set; }
+    public virtual String EQUIPDESC1 { get; set; }
+    public virtual String EQUIPDESC2 { get; set; }
+    public virtual String CONSTTYPE { get; set; }
+    public virtual String EWP { get; set; }
+    public virtual String USER1 { get; set; }
+    public virtual String USER2 { get; set; }
+    public virtual String USER3 { get; set; }
+    public virtual String TAGSTATUS { get; set; }
+    public virtual String COMMODITY { get; set; }
+    
+    public virtual object GetPropertyValue(string propertyName)
+    {
+      switch (propertyName)
+      {
+        case "Id": return Id;
+        case "TAG": return TAG;
+        case "INTERNAL_TAG": return INTERNAL_TAG;
+        case "ID": return ID;
+        case "AREA": return AREA;
+        case "TRAINNUMBER": return TRAINNUMBER;
+        case "EQTYPE": return EQTYPE;
+        case "EQPPREFIX": return EQPPREFIX;
+        case "EQSEQNO": return EQSEQNO;
+        case "EQPSUFF": return EQPSUFF;
+        case "EQUIPDESC1": return EQUIPDESC1;
+        case "EQUIPDESC2": return EQUIPDESC2;
+        case "CONSTTYPE": return CONSTTYPE;
+        case "EWP": return EWP;
+        case "USER1": return USER1;
+        case "USER2": return USER2;
+        case "USER3": return USER3;
+        case "TAGSTATUS": return TAGSTATUS;
+        case "COMMODITY": return COMMODITY;
+        default: throw new Exception("Property [" + propertyName + "] does not exist.");
+      }
+    }
+    
+    public virtual void SetPropertyValue(string propertyName, object value)
+    {
+      switch (propertyName)
+      {
+        case "Id":
+          Id = Convert.ToString(value);
+          break;
+        case "TAG":
+          if (value != null) TAG = Convert.ToString(value);
+          break;
+        case "INTERNAL_TAG":
+          if (value != null) INTERNAL_TAG = Convert.ToString(value);
+          break;
+        case "ID":
+          if (value != null) ID = Convert.ToString(value);
+          break;
+        case "AREA":
+          if (value != null) AREA = Convert.ToString(value);
+          break;
+        case "TRAINNUMBER":
+          if (value != null) TRAINNUMBER = Convert.ToString(value);
+          break;
+        case "EQTYPE":
+          if (value != null) EQTYPE = Convert.ToString(value);
+          break;
+        case "EQPPREFIX":
+          if (value != null) EQPPREFIX = Convert.ToString(value);
+          break;
+        case "EQSEQNO":
+          if (value != null) EQSEQNO = Convert.ToString(value);
+          break;
+        case "EQPSUFF":
+          if (value != null) EQPSUFF = Convert.ToString(value);
+          break;
+        case "EQUIPDESC1":
+          if (value != null) EQUIPDESC1 = Convert.ToString(value);
+          break;
+        case "EQUIPDESC2":
+          if (value != null) EQUIPDESC2 = Convert.ToString(value);
+          break;
+        case "CONSTTYPE":
+          if (value != null) CONSTTYPE = Convert.ToString(value);
+          break;
+        case "EWP":
+          if (value != null) EWP = Convert.ToString(value);
+          break;
+        case "USER1":
+          if (value != null) USER1 = Convert.ToString(value);
+          break;
+        case "USER2":
+          if (value != null) USER2 = Convert.ToString(value);
+          break;
+        case "USER3":
+          if (value != null) USER3 = Convert.ToString(value);
+          break;
+        case "TAGSTATUS":
+          if (value != null) TAGSTATUS = Convert.ToString(value);
+          break;
+        case "COMMODITY":
+          if (value != null) COMMODITY = Convert.ToString(value);
+          break;
+        default:
+          throw new Exception("Property [" + propertyName + "] does not exist.");
+      }
+    }
+    
+    public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
+    {
+      switch (relatedObjectType)
+      {
+        default:
+          throw new Exception("Related object [" + relatedObjectType + "] does not exist.");
+      }
+    }
+  }
+}
+
+namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
+{
+  public class INSTRUMENTS : IDataObject
+  {
+    public virtual String Id { get; set; }
+    public virtual String TAG
+    {
+      get { return Id; }
+      set { Id = value; }
+    }
+    public virtual String KEYTAG { get; set; }
+    public virtual String TAG_NO { get; set; }
+    public virtual String TAG_CODE { get; set; }
+    public virtual String ASSOC_EQ { get; set; }
+    public virtual String IAREA { get; set; }
+    public virtual String ITRAIN { get; set; }
+    public virtual String ITYP { get; set; }
+    public virtual String INUM { get; set; }
+    public virtual String ISUFFIX { get; set; }
+    public virtual String MODIFIER1 { get; set; }
+    public virtual String MODIFIER2 { get; set; }
+    public virtual String MODIFIER3 { get; set; }
+    public virtual String MODIFIER4 { get; set; }
+    public virtual String STD_DETAIL { get; set; }
+    public virtual String DESCRIPT { get; set; }
+    public virtual String TAG_TYPE { get; set; }
+    public virtual String CONST_TYPE { get; set; }
+    public virtual String COMP_ID { get; set; }
+    public virtual String PROJ_STAT { get; set; }
+    public virtual String PID_NO { get; set; }
+    public virtual String LINE_NO { get; set; }
+    
+    public virtual object GetPropertyValue(string propertyName)
+    {
+      switch (propertyName)
+      {
+        case "Id": return Id;
+        case "TAG": return TAG;
+        case "KEYTAG": return KEYTAG;
+        case "TAG_NO": return TAG_NO;
+        case "TAG_CODE": return TAG_CODE;
+        case "ASSOC_EQ": return ASSOC_EQ;
+        case "IAREA": return IAREA;
+        case "ITRAIN": return ITRAIN;
+        case "ITYP": return ITYP;
+        case "INUM": return INUM;
+        case "ISUFFIX": return ISUFFIX;
+        case "MODIFIER1": return MODIFIER1;
+        case "MODIFIER2": return MODIFIER2;
+        case "MODIFIER3": return MODIFIER3;
+        case "MODIFIER4": return MODIFIER4;
+        case "STD_DETAIL": return STD_DETAIL;
+        case "DESCRIPT": return DESCRIPT;
+        case "TAG_TYPE": return TAG_TYPE;
+        case "CONST_TYPE": return CONST_TYPE;
+        case "COMP_ID": return COMP_ID;
+        case "PROJ_STAT": return PROJ_STAT;
+        case "PID_NO": return PID_NO;
+        case "LINE_NO": return LINE_NO;
+        default: throw new Exception("Property [" + propertyName + "] does not exist.");
+      }
+    }
+    
+    public virtual void SetPropertyValue(string propertyName, object value)
+    {
+      switch (propertyName)
+      {
+        case "Id":
+          Id = Convert.ToString(value);
+          break;
+        case "TAG":
+          if (value != null) TAG = Convert.ToString(value);
+          break;
+        case "KEYTAG":
+          if (value != null) KEYTAG = Convert.ToString(value);
+          break;
+        case "TAG_NO":
+          if (value != null) TAG_NO = Convert.ToString(value);
+          break;
+        case "TAG_CODE":
+          if (value != null) TAG_CODE = Convert.ToString(value);
+          break;
+        case "ASSOC_EQ":
+          if (value != null) ASSOC_EQ = Convert.ToString(value);
+          break;
+        case "IAREA":
+          if (value != null) IAREA = Convert.ToString(value);
+          break;
+        case "ITRAIN":
+          if (value != null) ITRAIN = Convert.ToString(value);
+          break;
+        case "ITYP":
+          if (value != null) ITYP = Convert.ToString(value);
+          break;
+        case "INUM":
+          if (value != null) INUM = Convert.ToString(value);
+          break;
+        case "ISUFFIX":
+          if (value != null) ISUFFIX = Convert.ToString(value);
+          break;
+        case "MODIFIER1":
+          if (value != null) MODIFIER1 = Convert.ToString(value);
+          break;
+        case "MODIFIER2":
+          if (value != null) MODIFIER2 = Convert.ToString(value);
+          break;
+        case "MODIFIER3":
+          if (value != null) MODIFIER3 = Convert.ToString(value);
+          break;
+        case "MODIFIER4":
+          if (value != null) MODIFIER4 = Convert.ToString(value);
+          break;
+        case "STD_DETAIL":
+          if (value != null) STD_DETAIL = Convert.ToString(value);
+          break;
+        case "DESCRIPT":
+          if (value != null) DESCRIPT = Convert.ToString(value);
+          break;
+        case "TAG_TYPE":
+          if (value != null) TAG_TYPE = Convert.ToString(value);
+          break;
+        case "CONST_TYPE":
+          if (value != null) CONST_TYPE = Convert.ToString(value);
+          break;
+        case "COMP_ID":
+          if (value != null) COMP_ID = Convert.ToString(value);
+          break;
+        case "PROJ_STAT":
+          if (value != null) PROJ_STAT = Convert.ToString(value);
+          break;
+        case "PID_NO":
+          if (value != null) PID_NO = Convert.ToString(value);
+          break;
+        case "LINE_NO":
+          if (value != null) LINE_NO = Convert.ToString(value);
+          break;
+        default:
+          throw new Exception("Property [" + propertyName + "] does not exist.");
+      }
+    }
+    
+    public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
+    {
+      switch (relatedObjectType)
+      {
+        default:
+          throw new Exception("Related object [" + relatedObjectType + "] does not exist.");
+      }
+    }
+  }
+}
+
+namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
+{
   public class LINES : IDataObject
   {
     public virtual String Id { get; set; }
@@ -28,7 +312,7 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
     public virtual String SPEC { get; set; }
     public virtual String SYSTEM { get; set; }
     public virtual String LINENO { get; set; }
-    public virtual String NOMDIAMETER { get; set; }
+    public virtual Single? NOMDIAMETER { get; set; }
     public virtual String INSULATIONTYPE { get; set; }
     public virtual String HTRACED { get; set; }
     public virtual String CONSTTYPE { get; set; }
@@ -122,7 +406,7 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
           if (value != null) LINENO = Convert.ToString(value);
           break;
         case "NOMDIAMETER":
-          if (value != null) NOMDIAMETER = Convert.ToString(value);
+          if (value != null) NOMDIAMETER = Convert.ToSingle(value);
           break;
         case "INSULATIONTYPE":
           if (value != null) INSULATIONTYPE = Convert.ToString(value);
@@ -203,8 +487,140 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
       switch (relatedObjectType)
       {
         default:
-          throw new NotImplementedException("This method has been deprecated.");
-        }
+          throw new Exception("Related object [" + relatedObjectType + "] does not exist.");
       }
     }
   }
+}
+
+namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
+{
+  public class VALVES : IDataObject
+  {
+    public virtual String Id { get; set; }
+    public virtual String TAG_NO
+    {
+      get { return Id; }
+      set { Id = value; }
+    }
+    public virtual String KEYTAG { get; set; }
+    public virtual String VAREA { get; set; }
+    public virtual String VTYP { get; set; }
+    public virtual String VTRAIN { get; set; }
+    public virtual String VNUM { get; set; }
+    public virtual String VSUFFIX { get; set; }
+    public virtual String TAG_TYPE { get; set; }
+    public virtual String CONST_TYPE { get; set; }
+    public virtual String COMP_ID { get; set; }
+    public virtual String VSIZE { get; set; }
+    public virtual String UOM_VSIZE { get; set; }
+    public virtual String VSPEC_TYPE { get; set; }
+    public virtual String VSPEC_NUM { get; set; }
+    public virtual String VPRESRATE { get; set; }
+    public virtual String VCONDITION { get; set; }
+    public virtual String PID_NO { get; set; }
+    public virtual String PROJ_STAT { get; set; }
+    
+    public virtual object GetPropertyValue(string propertyName)
+    {
+      switch (propertyName)
+      {
+        case "Id": return Id;
+        case "TAG_NO": return TAG_NO;
+        case "KEYTAG": return KEYTAG;
+        case "VAREA": return VAREA;
+        case "VTYP": return VTYP;
+        case "VTRAIN": return VTRAIN;
+        case "VNUM": return VNUM;
+        case "VSUFFIX": return VSUFFIX;
+        case "TAG_TYPE": return TAG_TYPE;
+        case "CONST_TYPE": return CONST_TYPE;
+        case "COMP_ID": return COMP_ID;
+        case "VSIZE": return VSIZE;
+        case "UOM_VSIZE": return UOM_VSIZE;
+        case "VSPEC_TYPE": return VSPEC_TYPE;
+        case "VSPEC_NUM": return VSPEC_NUM;
+        case "VPRESRATE": return VPRESRATE;
+        case "VCONDITION": return VCONDITION;
+        case "PID_NO": return PID_NO;
+        case "PROJ_STAT": return PROJ_STAT;
+        default: throw new Exception("Property [" + propertyName + "] does not exist.");
+      }
+    }
+    
+    public virtual void SetPropertyValue(string propertyName, object value)
+    {
+      switch (propertyName)
+      {
+        case "Id":
+          Id = Convert.ToString(value);
+          break;
+        case "TAG_NO":
+          if (value != null) TAG_NO = Convert.ToString(value);
+          break;
+        case "KEYTAG":
+          if (value != null) KEYTAG = Convert.ToString(value);
+          break;
+        case "VAREA":
+          if (value != null) VAREA = Convert.ToString(value);
+          break;
+        case "VTYP":
+          if (value != null) VTYP = Convert.ToString(value);
+          break;
+        case "VTRAIN":
+          if (value != null) VTRAIN = Convert.ToString(value);
+          break;
+        case "VNUM":
+          if (value != null) VNUM = Convert.ToString(value);
+          break;
+        case "VSUFFIX":
+          if (value != null) VSUFFIX = Convert.ToString(value);
+          break;
+        case "TAG_TYPE":
+          if (value != null) TAG_TYPE = Convert.ToString(value);
+          break;
+        case "CONST_TYPE":
+          if (value != null) CONST_TYPE = Convert.ToString(value);
+          break;
+        case "COMP_ID":
+          if (value != null) COMP_ID = Convert.ToString(value);
+          break;
+        case "VSIZE":
+          if (value != null) VSIZE = Convert.ToString(value);
+          break;
+        case "UOM_VSIZE":
+          if (value != null) UOM_VSIZE = Convert.ToString(value);
+          break;
+        case "VSPEC_TYPE":
+          if (value != null) VSPEC_TYPE = Convert.ToString(value);
+          break;
+        case "VSPEC_NUM":
+          if (value != null) VSPEC_NUM = Convert.ToString(value);
+          break;
+        case "VPRESRATE":
+          if (value != null) VPRESRATE = Convert.ToString(value);
+          break;
+        case "VCONDITION":
+          if (value != null) VCONDITION = Convert.ToString(value);
+          break;
+        case "PID_NO":
+          if (value != null) PID_NO = Convert.ToString(value);
+          break;
+        case "PROJ_STAT":
+          if (value != null) PROJ_STAT = Convert.ToString(value);
+          break;
+        default:
+          throw new Exception("Property [" + propertyName + "] does not exist.");
+      }
+    }
+    
+    public virtual IList<IDataObject> GetRelatedObjects(string relatedObjectType)
+    {
+      switch (relatedObjectType)
+      {
+        default:
+          throw new Exception("Related object [" + relatedObjectType + "] does not exist.");
+      }
+    }
+  }
+}
