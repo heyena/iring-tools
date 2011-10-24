@@ -4777,10 +4777,6 @@
       <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
       <Name>iRINGLibrary.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Libraries\SPPID\SPPID.csproj">
-      <Project>{9A5D6D37-EEF7-4132-862D-1CA41B743E72}</Project>
-      <Name>SPPID</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Libraries\SpreadsheetLibrary\SpreadsheetLibrary.csproj">
       <Project>{A07F5056-4D03-4CB6-912B-A07561E9716E}</Project>
       <Name>SpreadsheetLibrary</Name>
