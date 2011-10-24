@@ -56,7 +56,7 @@ namespace org.iringtools.web.controllers
         string scope = form["scope"];
         string app = form["app"];
         string graph = form["graph"];
-        _key = string.Format("Data-full-{0}.{1}.{2}", scope, app, graph);
+        _key = string.Format("Dictionary-{0}.{1}", scope, app);
         string filter = form["filter"];
         string sort = form["sort"];
         string dir = form["dir"];
@@ -66,11 +66,11 @@ namespace org.iringtools.web.controllers
         int.TryParse(form["limit"], out limit);
         string currFilter = filter + "/" + sort + "/" + dir;
         DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
-        
-        if (dataDict == null)
-          GetDatadictionary(scope, app);
 
-        DataObject dataObject = dataDict.dataObjects.FirstOrDefault(d => d.objectName == graph);
+        if (((DataDictionary)Session[_key]) == null)
+            GetDatadictionary(scope, app);
+
+        DataObject dataObject = ((DataDictionary)Session[_key]).dataObjects.FirstOrDefault(d => d.objectName == graph);
         var fields = from row in dataObject.dataProperties
                      select new
                      {
@@ -79,19 +79,13 @@ namespace org.iringtools.web.controllers
                        dataIndex = row.columnName,
                        sortable = true
                      };
-        if (Session[_key] == null)
-        {
-          Session[_key] = GetDataObjects(scope, app, graph, dataFilter);
-        }
-        
-        dataItems = (DataItems)Session[_key];
+
+
+          dataItems = GetDataObjects(scope, app, graph, dataFilter,start, limit);
      
         long total = dataItems.total;
-        var paginatedData = dataItems.items.Skip(start)
-                                           .Take(limit)
-                                           .ToList();
 
-        foreach (DataItem dataItem in paginatedData.ToList())
+        foreach (DataItem dataItem in dataItems.items)
         {
           var rowData = new Dictionary<string, object>();
           foreach (var field in fields)
@@ -231,7 +225,7 @@ namespace org.iringtools.web.controllers
       try
       {
         string reluri = string.Format("{0}/{1}", app, scope);
-        dataDict = _repository.GetDictionary(reluri);
+        Session[_key] = _repository.GetDictionary(reluri);
         if (dataDict.dataObjects.Count == 0)
           response = "There is no records in the database for data object \"" + app + "\"";
       }
@@ -244,12 +238,12 @@ namespace org.iringtools.web.controllers
     }
 
 
-    private DataItems GetDataObjects(string scope, string app, string graph, DataFilter dataFilter)
+    private DataItems GetDataObjects(string scope, string app, string graph, DataFilter dataFilter, int start, int limit)
     {
-      DataItems allDataItems = null;
+      DataItems dataItems = null;
       try
       {
-        allDataItems = _repository.GetDataItems(app, scope, graph, dataFilter);
+        dataItems = _repository.GetDataItems(app, scope, graph, dataFilter, start, limit);
       }
       catch (Exception ex)
       {
@@ -259,7 +253,7 @@ namespace org.iringtools.web.controllers
           response = ex.Message.ToString() + " " + ex.InnerException.Message.ToString();
       }
 
-      return allDataItems;
+      return dataItems;
     }
 
   }

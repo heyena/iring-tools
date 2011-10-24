@@ -32,6 +32,14 @@
             }
         });
 
+        this.tbar = [{
+            xtype: 'button',
+            text: 'Reload Tree',
+            handler: this.onReload,
+            icon: 'Content/img/16x16/view-refresh.png',
+            scope: this
+        }];
+
         Ext.apply(this, {
             stateful: true,
             stateId: this.id + '-state',
@@ -52,9 +60,7 @@
             reloadScopes: true,
             reloadNode: true
         });
-        this.tbar = new Ext.toolbar.Toolbar();
-        this.tbar.add(this.buildToolbar());
-
+        
         this.scopesMenu = new Ext.menu.Menu();
         this.scopesMenu.add(this.buildScopesMenu());
 
@@ -117,17 +123,6 @@
        // this.callParent(arguments);
     },
 
-    buildToolbar: function () {
-        return [
-      {
-          xtype: 'button',
-          text: 'Reload Tree',
-          handler: this.onReload,
-          icon: 'Content/img/16x16/view-refresh.png',
-          scope: this
-      }
-    ]
-    },
     buildScopesMenu: function () {
         return [
       {

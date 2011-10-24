@@ -610,7 +610,7 @@ namespace org.iringtools.web.controllers
             {
                 identifier = classMap.id,
                 type = "GraphMapNode",
-                iconCls = "treeClass",
+                iconCls = "treeGraph",
                 id = context + "/" + graph.name + "/" + classMap.name,
                 text = graph.name,
              //   expanded = false,
