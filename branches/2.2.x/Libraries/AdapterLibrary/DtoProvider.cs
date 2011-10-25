@@ -230,18 +230,16 @@ namespace org.iringtools.adapter
                       roleMap.type == RoleType.DataProperty ||
                       roleMap.type == RoleType.ObjectProperty)
                   {
-                    if (String.IsNullOrEmpty(roleMap.propertyName))
+                    if (!String.IsNullOrEmpty(roleMap.propertyName))
                     {
-                      throw new Exception("No data property mapped to role [" + classMap.name + "." + templateMap.name + "." + roleMap.name + "]");
-                    }
+                      string[] property = roleMap.propertyName.Split('.');
+                      string objectName = property[0].Trim();
+                      string propertyName = property[1].Trim();
 
-                    string[] property = roleMap.propertyName.Split('.');
-                    string objectName = property[0].Trim();
-                    string propertyName = property[1].Trim();
-
-                    if (dataObject.isKeyProperty(propertyName))
-                    {
-                      manifestTemplate.transferOption = TransferOption.Required;
+                      if (dataObject.isKeyProperty(propertyName))
+                      {
+                        manifestTemplate.transferOption = TransferOption.Required;
+                      }
                     }
                   }
 

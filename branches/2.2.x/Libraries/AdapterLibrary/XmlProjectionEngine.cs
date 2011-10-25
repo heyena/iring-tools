@@ -287,6 +287,10 @@ namespace org.iringtools.adapter.projection
           case RoleType.Property:
           case RoleType.DataProperty:
           case RoleType.ObjectProperty:
+            if (String.IsNullOrEmpty(roleMap.propertyName))
+            {
+              throw new Exception("No data property mapped to role [" + startClassName + "." + templateMap.name + "." + roleMap.name + "]");
+            }
             propertyRoles.Add(roleMap);
             break;
         }
