@@ -283,6 +283,11 @@ namespace org.iringtools.adapter.projection
                     roleMap.type == RoleType.ObjectProperty ||
                     roleMap.type == RoleType.FixedValue)
                 {
+                  if (String.IsNullOrEmpty(roleMap.propertyName))
+                  {
+                    throw new Exception("No data property mapped to role [" + classTemplateMap.classMap.name + "." + templateMap.name + "." + roleMap.name + "]");
+                  }
+
                   string[] propertyParts = roleMap.propertyName.Split('.');
                   string propertyName = propertyParts[propertyParts.Length - 1];
 
