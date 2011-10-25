@@ -39,6 +39,7 @@ using System;
 using System.Web;
 using org.iringtools.utility;
 using System.Net;
+using System.IO;
 
 namespace org.iringtools.services
 {
@@ -235,6 +236,25 @@ namespace org.iringtools.services
       {
         Response response = _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
 
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
+    }
+
+    [Description("Posts data transfer objects to add/update/delete as stream to data layer.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}?format=stream")]
+    public void PostStream(string scope, string app, string graph, Stream stream)
+    {
+      try
+      {
+        DataTransferObjects dataTransferObjects = Utility.DeserializeFromStream<DataTransferObjects>(stream.ToMemoryStream(), true);
+        Response response = _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
         HttpContext.Current.Response.ContentType = "application/xml";
         HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
       }

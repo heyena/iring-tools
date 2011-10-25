@@ -7,6 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.core.MediaType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -666,7 +667,7 @@ public class ExchangeProvider
         try
         {
           logger.debug("Sending exchange pool [" + i + " - " + (i + poolSize) + "]");
-          poolResponse = httpClient.post(Response.class, targetGraphUrl, poolDtos);
+          poolResponse = httpClient.post(Response.class, targetGraphUrl + "?format=stream", poolDtos, MediaType.TEXT_PLAIN);
           
           try 
           {

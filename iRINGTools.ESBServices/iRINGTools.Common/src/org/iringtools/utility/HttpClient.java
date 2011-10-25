@@ -89,8 +89,13 @@ public class HttpClient
   {
     return post(responseClass, "", requestEntity);
   }
-
+  
   public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity) throws HttpClientException
+  {
+    return post(responseClass, relativeUri, requestEntity, "application/xml");    
+  }
+
+  public <T, R> R post(Class<R> responseClass, String relativeUri, T requestEntity, String contentType) throws HttpClientException
   {
     HttpURLConnection conn = null;
 
@@ -102,7 +107,7 @@ public class HttpClient
         content = JaxbUtils.toXml(requestEntity, false);
 
       conn = getConnection(POST_METHOD, relativeUri);
-      conn.setRequestProperty("Content-Type", "application/xml");
+      conn.setRequestProperty("Content-Type", contentType);
       conn.setRequestProperty("Content-Length", String.valueOf(content.length()));
 
       DataOutputStream requestStream = new DataOutputStream(conn.getOutputStream());
