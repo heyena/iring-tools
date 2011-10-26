@@ -1,6 +1,5 @@
 package org.iringtools.controllers;
 
-import org.apache.commons.lang.xwork.StringUtils;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.models.DataModel.FieldFit;
 import org.iringtools.models.ExchangeDataModel;
@@ -35,6 +34,7 @@ public class ExchangeDataController extends AbstractController
   private String xid;
   private String xlabel;
   private String xtime;
+  private int itemCount;
   
   public ExchangeDataController() 
   {    
@@ -108,7 +108,7 @@ public class ExchangeDataController extends AbstractController
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
       ExchangeResponse response = exchangeDataModel.submitExchange(exchangeServiceUri, scope, xid, reviewed);  
-      xResultsGrid = StringUtils.join(response.getMessages().getItems(), "\r");  
+      xResultsGrid = response.getSummary();
     }
     catch (Exception e)
     {
@@ -156,7 +156,7 @@ public class ExchangeDataController extends AbstractController
     try
     {
       ExchangeDataModel exchangeDataModel = new ExchangeDataModel(session, refDataServiceUri, fieldFit);    
-      pageXLogsGrid = exchangeDataModel.getPageXlogsGrid(historyServiceUri, scope, xid, xlabel, xtime, start, limit); 
+      pageXLogsGrid = exchangeDataModel.getPageXlogsGrid(historyServiceUri, scope, xid, xlabel, xtime, start, limit, itemCount); 
     }
     catch (Exception e)
     {
@@ -303,5 +303,15 @@ public class ExchangeDataController extends AbstractController
   public String getXtime()
   {
     return xtime;
+  }
+  
+  public void setItemCount(int itemCount)
+  {
+    this.itemCount = itemCount;
+  }
+
+  public int getItemCount()
+  {
+    return itemCount;
   }
 }

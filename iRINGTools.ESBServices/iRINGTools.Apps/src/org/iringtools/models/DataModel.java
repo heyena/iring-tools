@@ -84,13 +84,13 @@ public class DataModel
   }
 
   public static final String APP_PREFIX = "xchmgr-";
-  protected final String MANIFEST_PREFIX = APP_PREFIX + "manifest-";
-  protected final String FIELDS_PREFIX = APP_PREFIX + "fields-";
-  protected final String DTI_PREFIX = APP_PREFIX + "dti-";
-  protected final String XLOGS_PREFIX = APP_PREFIX + "xlogs-";
-  protected final String FULL_DTI_KEY_PREFIX = DTI_PREFIX + "full";
-  protected final String PART_DTI_KEY_PREFIX = DTI_PREFIX + "part";
-  protected final String FILTER_KEY_PREFIX = DTI_PREFIX + "filter";
+  public static final String MANIFEST_PREFIX = APP_PREFIX + "manifest-";
+  public static final String FIELDS_PREFIX = APP_PREFIX + "fields-";
+  public static final String DTI_PREFIX = APP_PREFIX + "dti-";
+  public static final String XLOGS_PREFIX = APP_PREFIX + "xlogs-";
+  public static final String FULL_DTI_KEY_PREFIX = DTI_PREFIX + "full";
+  public static final String PART_DTI_KEY_PREFIX = DTI_PREFIX + "part";
+  public static final String FILTER_KEY_PREFIX = DTI_PREFIX + "filter";
 
   protected final int MIN_FIELD_WIDTH = 50;
   protected final int MAX_FIELD_WIDTH = 300;

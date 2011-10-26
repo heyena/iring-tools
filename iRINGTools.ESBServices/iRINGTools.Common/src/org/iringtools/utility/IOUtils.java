@@ -17,7 +17,9 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.stream.FactoryConfigurationError;
@@ -176,9 +178,28 @@ public final class IOUtils
     return file.exists();
   }
   
-  public static String getStackTrace(Exception e) {
+  public static String getStackTrace(Exception e) 
+  {
     StringWriter writer = new StringWriter();
     e.printStackTrace(new PrintWriter(writer));
     return writer.toString();
+  }
+  
+  public static Map<String, String> splitQueryParams(String str)
+  {
+    Map<String, String> map = new HashMap<String, String>();
+    
+    if (!isNullOrEmpty(str))
+    {
+      String[] pairs = str.split("&");
+      
+      for (String pair : pairs)
+      {
+        String[] keyValue = pair.split("=");
+        map.put(keyValue[0], keyValue[1]);
+      }
+    }
+    
+    return map;
   }
 }

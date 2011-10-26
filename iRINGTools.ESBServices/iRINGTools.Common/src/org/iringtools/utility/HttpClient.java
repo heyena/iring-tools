@@ -1,5 +1,6 @@
 package org.iringtools.utility;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -101,19 +102,16 @@ public class HttpClient
 
     try
     {
-      String content = "";
-
-      if (requestEntity != null && !requestEntity.getClass().getName().equals("java.lang.String"))
-        content = JaxbUtils.toXml(requestEntity, false);
-
+      ByteArrayOutputStream requestStream = (ByteArrayOutputStream)JaxbUtils.toStream(requestEntity, false);
+      
       conn = getConnection(POST_METHOD, relativeUri);
       conn.setRequestProperty("Content-Type", contentType);
-      conn.setRequestProperty("Content-Length", String.valueOf(content.length()));
-
-      DataOutputStream requestStream = new DataOutputStream(conn.getOutputStream());
-      requestStream.writeBytes(content);
-      requestStream.flush();
-      requestStream.close();
+      conn.setRequestProperty("Content-Length", String.valueOf(requestStream.size()));
+  
+      DataOutputStream outputStream = new DataOutputStream(conn.getOutputStream());
+      outputStream.write(requestStream.toByteArray());      
+      outputStream.flush();
+      outputStream.close();
 
       if (conn.getResponseCode() == HttpURLConnection.HTTP_OK)
       {

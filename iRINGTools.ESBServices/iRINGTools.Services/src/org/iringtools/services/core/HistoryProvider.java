@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.iringtools.common.response.Response;
 import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.utility.IOUtils;
@@ -26,7 +27,7 @@ public class HistoryProvider
   {
     History history = new History();
     List<ExchangeResponse> responses = new ArrayList<ExchangeResponse>();
-    history.setResponses(responses);
+    history.setExchangeResponses(responses);
 
     String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
 
@@ -36,14 +37,23 @@ public class HistoryProvider
       
       if (file.exists())
       {      
-        List<String> filesInFolder = IOUtils.getFiles(path);
-        Collections.sort(filesInFolder);
-  
-        // show most recent first
-        for (int i = filesInFolder.size() - 1; i >= 0; i--)
+        List<String> exchangeLogs = IOUtils.getFiles(path);
+        
+        // filter out pool logs
+        for (int i = 0; i < exchangeLogs.size(); i++)
         {
-          ExchangeResponse response = JaxbUtils.read(ExchangeResponse.class, path + "/" + filesInFolder.get(i));
-          response.setStatusList(null); // only interest in summary status
+          if (exchangeLogs.get(i).contains(ExchangeProvider.POOL_PREFIX))
+          {
+            exchangeLogs.remove(i--);
+          }
+        }
+        
+        // show most recent first
+        Collections.sort(exchangeLogs);
+  
+        for (int i = exchangeLogs.size() - 1; i >= 0; i--)
+        {
+          ExchangeResponse response = JaxbUtils.read(ExchangeResponse.class, path + "/" + exchangeLogs.get(i));          
           responses.add(response);
         }
       }
@@ -62,15 +72,15 @@ public class HistoryProvider
     return history;
   }
 
-  public ExchangeResponse getExchangeResponse(String scope, String id, String timestamp)
+  public Response getExchangeResponse(String scope, String id, String timestamp, int start, int limit)
       throws ServiceProviderException
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
-    String exchangeFile = path + "/" + timestamp.replace(":", ".") + ".xml";
+    String exchangeFile = path + "/" + timestamp.replace(":", ".") + ExchangeProvider.POOL_PREFIX + (start+1) + "-" + (start+limit) + ".xml";
 
     try
     {
-      return JaxbUtils.read(ExchangeResponse.class, exchangeFile);
+      return JaxbUtils.read(Response.class, exchangeFile);
     }
     catch (Exception e)
     {

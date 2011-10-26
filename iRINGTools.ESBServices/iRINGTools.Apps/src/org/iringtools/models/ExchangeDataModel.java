@@ -5,10 +5,9 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.xwork.StringUtils;
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
-import org.iringtools.common.response.Messages;
+import org.iringtools.common.response.Response;
 import org.iringtools.common.response.Status;
 import org.iringtools.dxfr.dti.DataTransferIndices;
 import org.iringtools.dxfr.dto.DataTransferObjects;
@@ -108,8 +107,8 @@ public class ExchangeDataModel extends DataModel
       if (response.getLevel() == Level.SUCCESS)
       {
         // remove cache data related to this exchange including the app data
-        String appRelativePath = response.getReceiverScopeName() + "/" + response.getReceiverAppName() + "/"
-          + response.getReceiverGraphName();
+        String appRelativePath = response.getReceiverScope() + "/" + response.getReceiverApp() + "/"
+          + response.getReceiverGraph();
         
         for (String key : session.keySet())
         {
@@ -124,12 +123,8 @@ public class ExchangeDataModel extends DataModel
       logger.error(error);
 
       response = new ExchangeResponse();
+      response.setSummary(error);
       response.setLevel(Level.ERROR);
-
-      Messages messages = new Messages();
-      response.setMessages(messages);
-      List<String> messageList = messages.getItems();
-      messageList.add(error);
     }
 
     return response;
@@ -160,9 +155,9 @@ public class ExchangeDataModel extends DataModel
 
     Grid xlogsGrid = new Grid();
 
-    if (xlogs != null && xlogs.getResponses().size() > 0)
+    if (xlogs != null && xlogs.getExchangeResponses().size() > 0)
     {
-      List<ExchangeResponse> xrs = xlogs.getResponses();
+      List<ExchangeResponse> xrs = xlogs.getExchangeResponses();
       List<Field> fields = new ArrayList<Field>();
       List<List<String>> data = new ArrayList<List<String>>();
 
@@ -212,25 +207,22 @@ public class ExchangeDataModel extends DataModel
 
       for (ExchangeResponse xr : xrs)
       {
-        List<String> row = new ArrayList<String>();
-        String exchangeTime = xr.getEndTimeStamp().toString().replace(":", ".");
-        String startTime = format(xr.getStartTimeStamp().toGregorianCalendar());
-        String endTime = format(xr.getEndTimeStamp().toGregorianCalendar());
+        List<String> row = new ArrayList<String>();        
+        String startTime = format(xr.getStartTime().toGregorianCalendar());
+        String endTime = format(xr.getEndTime().toGregorianCalendar());
+        String exchangeFile = xr.getStartTime().toString().replace(":", ".");
         
         row.add("<input type=\"image\" src=\"resources/images/info-small.png\" "
             + "onClick='javascript:createPageXlogs(\"" + scope + "\",\"" + xid + "\",\"" + xlabel 
-            + "\",\"" + startTime + "\",\"" + exchangeTime + "\")'>");
+            + "\",\"" + startTime + "\",\"" + exchangeFile + "\"," + xr.getPoolSize() 
+            + "," + xr.getItemCount() + ")'>");
 
         row.add(startTime);
         row.add(endTime);
-        row.add(xr.getSenderScopeName() + "." + xr.getSenderAppName() + "." + xr.getSenderGraphName());
-        row.add(xr.getReceiverScopeName() + "." + xr.getReceiverAppName() + "." + xr.getReceiverGraphName());
+        row.add(xr.getSenderScope() + "." + xr.getSenderApp() + "." + xr.getSenderGraph());
+        row.add(xr.getReceiverScope() + "." + xr.getReceiverApp() + "." + xr.getReceiverGraph());
+        row.add(xr.getSummary());
         
-        if (xr.getMessages() != null)
-          row.add(StringUtils.join(xr.getMessages().getItems(), "<br/>"));
-        else
-          row.add("<br/>");
-          
         data.add(row);
       }
 
@@ -243,15 +235,17 @@ public class ExchangeDataModel extends DataModel
   }
 
   public Grid getPageXlogsGrid(String xlogsServiceUri, String scope, String xid, String xlabel, String xtime, 
-      int start, int limit)
+      int start, int limit, int itemCount)
   {
-    String relativePath = "/" + scope + "/exchanges/" + xid + "/" + xtime;
+    int actualLimit = (start + limit > itemCount) ? (itemCount - start) : limit;
+    
+    String relativePath = "/" + scope + "/exchanges/" + xid + "/" + xtime + "/" + start + "/" + actualLimit;
     String xlogsKey = XLOGS_PREFIX + relativePath;
-    ExchangeResponse response;
+    Response response;
 
     if (session.containsKey(xlogsKey))
     {
-      response = (ExchangeResponse) session.get(xlogsKey);
+      response = (Response) session.get(xlogsKey);
     }
     else
     {
@@ -260,19 +254,13 @@ public class ExchangeDataModel extends DataModel
       
       try
       {
-        if (session.containsKey(xlogsKey))
-        {
-          response = (ExchangeResponse) session.get(xlogsKey);
-        }
-        else
-        {
-          response = httpClient.get(ExchangeResponse.class, relativePath);
-          session.put(xlogsKey, response);
-        }
+        response = httpClient.get(Response.class, relativePath);
+        session.put(xlogsKey, response);
       }
       catch (HttpClientException ex)
       {
-        response = new ExchangeResponse();
+        logger.error("Error getting pool log: " + ex);
+        response = new Response();
       }
     }
 
@@ -300,9 +288,7 @@ public class ExchangeDataModel extends DataModel
     field.setType("string");
     fields.add(field);
 
-    int actualLimit = Math.min(statuses.size(), start + limit);
-
-    for (int i = start; i < actualLimit; i++)
+    for (int i = 0; i < statuses.size(); i++)
     {
       List<String> row = new ArrayList<String>();
       StringBuilder messages = new StringBuilder();
@@ -322,7 +308,7 @@ public class ExchangeDataModel extends DataModel
       data.add(row);
     }
     
-    pageXlogsGrid.setTotal(statuses.size());
+    pageXlogsGrid.setTotal(itemCount);
 
     return pageXlogsGrid;
   }

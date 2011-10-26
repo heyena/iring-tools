@@ -9,33 +9,32 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 import org.iringtools.common.response.Level;
-import org.iringtools.common.response.Messages;
-import org.iringtools.common.response.StatusList;
 
 
 /**
- * <p>Java class for ExchangeResponse complex type.
+ * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ExchangeResponse">
+ * &lt;complexType>
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="level" type="{http://www.iringtools.org/common/response}Level"/>
- *         &lt;element name="startTimeStamp" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *         &lt;element name="endTimeStamp" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
+ *         &lt;element name="startTime" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
+ *         &lt;element name="endTime" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *         &lt;element name="senderUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="senderScopeName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="senderAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="senderGraphName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="senderScope" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="senderApp" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="senderGraph" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="receiverUri" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="receiverScopeName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="receiverAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="receiverGraphName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="messages" type="{http://www.iringtools.org/common/response}Messages"/>
- *         &lt;element name="statusList" type="{http://www.iringtools.org/common/response}StatusList"/>
+ *         &lt;element name="receiverScope" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="receiverApp" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="receiverGraph" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="itemCount" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="poolSize" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="summary" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -45,20 +44,21 @@ import org.iringtools.common.response.StatusList;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ExchangeResponse", propOrder = {
+@XmlType(name = "", propOrder = {
     "level",
-    "startTimeStamp",
-    "endTimeStamp",
+    "startTime",
+    "endTime",
     "senderUri",
-    "senderScopeName",
-    "senderAppName",
-    "senderGraphName",
+    "senderScope",
+    "senderApp",
+    "senderGraph",
     "receiverUri",
-    "receiverScopeName",
-    "receiverAppName",
-    "receiverGraphName",
-    "messages",
-    "statusList"
+    "receiverScope",
+    "receiverApp",
+    "receiverGraph",
+    "itemCount",
+    "poolSize",
+    "summary"
 })
 @XmlRootElement(name = "exchangeResponse")
 public class ExchangeResponse {
@@ -67,30 +67,30 @@ public class ExchangeResponse {
     protected Level level;
     @XmlElement(required = true)
     @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar startTimeStamp;
+    protected XMLGregorianCalendar startTime;
     @XmlElement(required = true)
     @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar endTimeStamp;
+    protected XMLGregorianCalendar endTime;
     @XmlElement(required = true)
     protected String senderUri;
     @XmlElement(required = true)
-    protected String senderScopeName;
+    protected String senderScope;
     @XmlElement(required = true)
-    protected String senderAppName;
+    protected String senderApp;
     @XmlElement(required = true)
-    protected String senderGraphName;
+    protected String senderGraph;
     @XmlElement(required = true)
     protected String receiverUri;
     @XmlElement(required = true)
-    protected String receiverScopeName;
+    protected String receiverScope;
     @XmlElement(required = true)
-    protected String receiverAppName;
+    protected String receiverApp;
     @XmlElement(required = true)
-    protected String receiverGraphName;
+    protected String receiverGraph;
+    protected int itemCount;
+    protected int poolSize;
     @XmlElement(required = true)
-    protected Messages messages;
-    @XmlElement(required = true)
-    protected StatusList statusList;
+    protected String summary;
 
     /**
      * Gets the value of the level property.
@@ -117,51 +117,51 @@ public class ExchangeResponse {
     }
 
     /**
-     * Gets the value of the startTimeStamp property.
+     * Gets the value of the startTime property.
      * 
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public XMLGregorianCalendar getStartTimeStamp() {
-        return startTimeStamp;
+    public XMLGregorianCalendar getStartTime() {
+        return startTime;
     }
 
     /**
-     * Sets the value of the startTimeStamp property.
+     * Sets the value of the startTime property.
      * 
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public void setStartTimeStamp(XMLGregorianCalendar value) {
-        this.startTimeStamp = value;
+    public void setStartTime(XMLGregorianCalendar value) {
+        this.startTime = value;
     }
 
     /**
-     * Gets the value of the endTimeStamp property.
+     * Gets the value of the endTime property.
      * 
      * @return
      *     possible object is
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public XMLGregorianCalendar getEndTimeStamp() {
-        return endTimeStamp;
+    public XMLGregorianCalendar getEndTime() {
+        return endTime;
     }
 
     /**
-     * Sets the value of the endTimeStamp property.
+     * Sets the value of the endTime property.
      * 
      * @param value
      *     allowed object is
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public void setEndTimeStamp(XMLGregorianCalendar value) {
-        this.endTimeStamp = value;
+    public void setEndTime(XMLGregorianCalendar value) {
+        this.endTime = value;
     }
 
     /**
@@ -189,75 +189,75 @@ public class ExchangeResponse {
     }
 
     /**
-     * Gets the value of the senderScopeName property.
+     * Gets the value of the senderScope property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getSenderScopeName() {
-        return senderScopeName;
+    public String getSenderScope() {
+        return senderScope;
     }
 
     /**
-     * Sets the value of the senderScopeName property.
+     * Sets the value of the senderScope property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setSenderScopeName(String value) {
-        this.senderScopeName = value;
+    public void setSenderScope(String value) {
+        this.senderScope = value;
     }
 
     /**
-     * Gets the value of the senderAppName property.
+     * Gets the value of the senderApp property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getSenderAppName() {
-        return senderAppName;
+    public String getSenderApp() {
+        return senderApp;
     }
 
     /**
-     * Sets the value of the senderAppName property.
+     * Sets the value of the senderApp property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setSenderAppName(String value) {
-        this.senderAppName = value;
+    public void setSenderApp(String value) {
+        this.senderApp = value;
     }
 
     /**
-     * Gets the value of the senderGraphName property.
+     * Gets the value of the senderGraph property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getSenderGraphName() {
-        return senderGraphName;
+    public String getSenderGraph() {
+        return senderGraph;
     }
 
     /**
-     * Sets the value of the senderGraphName property.
+     * Sets the value of the senderGraph property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setSenderGraphName(String value) {
-        this.senderGraphName = value;
+    public void setSenderGraph(String value) {
+        this.senderGraph = value;
     }
 
     /**
@@ -285,123 +285,131 @@ public class ExchangeResponse {
     }
 
     /**
-     * Gets the value of the receiverScopeName property.
+     * Gets the value of the receiverScope property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getReceiverScopeName() {
-        return receiverScopeName;
+    public String getReceiverScope() {
+        return receiverScope;
     }
 
     /**
-     * Sets the value of the receiverScopeName property.
+     * Sets the value of the receiverScope property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setReceiverScopeName(String value) {
-        this.receiverScopeName = value;
+    public void setReceiverScope(String value) {
+        this.receiverScope = value;
     }
 
     /**
-     * Gets the value of the receiverAppName property.
+     * Gets the value of the receiverApp property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getReceiverAppName() {
-        return receiverAppName;
+    public String getReceiverApp() {
+        return receiverApp;
     }
 
     /**
-     * Sets the value of the receiverAppName property.
+     * Sets the value of the receiverApp property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setReceiverAppName(String value) {
-        this.receiverAppName = value;
+    public void setReceiverApp(String value) {
+        this.receiverApp = value;
     }
 
     /**
-     * Gets the value of the receiverGraphName property.
+     * Gets the value of the receiverGraph property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getReceiverGraphName() {
-        return receiverGraphName;
+    public String getReceiverGraph() {
+        return receiverGraph;
     }
 
     /**
-     * Sets the value of the receiverGraphName property.
+     * Sets the value of the receiverGraph property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setReceiverGraphName(String value) {
-        this.receiverGraphName = value;
+    public void setReceiverGraph(String value) {
+        this.receiverGraph = value;
     }
 
     /**
-     * Gets the value of the messages property.
+     * Gets the value of the itemCount property.
+     * 
+     */
+    public int getItemCount() {
+        return itemCount;
+    }
+
+    /**
+     * Sets the value of the itemCount property.
+     * 
+     */
+    public void setItemCount(int value) {
+        this.itemCount = value;
+    }
+
+    /**
+     * Gets the value of the poolSize property.
+     * 
+     */
+    public int getPoolSize() {
+        return poolSize;
+    }
+
+    /**
+     * Sets the value of the poolSize property.
+     * 
+     */
+    public void setPoolSize(int value) {
+        this.poolSize = value;
+    }
+
+    /**
+     * Gets the value of the summary property.
      * 
      * @return
      *     possible object is
-     *     {@link Messages }
+     *     {@link String }
      *     
      */
-    public Messages getMessages() {
-        return messages;
+    public String getSummary() {
+        return summary;
     }
 
     /**
-     * Sets the value of the messages property.
+     * Sets the value of the summary property.
      * 
      * @param value
      *     allowed object is
-     *     {@link Messages }
+     *     {@link String }
      *     
      */
-    public void setMessages(Messages value) {
-        this.messages = value;
-    }
-
-    /**
-     * Gets the value of the statusList property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StatusList }
-     *     
-     */
-    public StatusList getStatusList() {
-        return statusList;
-    }
-
-    /**
-     * Sets the value of the statusList property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StatusList }
-     *     
-     */
-    public void setStatusList(StatusList value) {
-        this.statusList = value;
+    public void setSummary(String value) {
+        this.summary = value;
     }
 
 }
