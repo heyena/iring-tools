@@ -47,7 +47,7 @@ function createGridStore(container, url){
   return store;
 }
 
-function createGridPane(store, pageSize, viewConfig){
+function createGridPane(store, pageSize, viewConfig, withResizer){
   var filters = new Ext.ux.grid.GridFilters({
     remotesort: true,
     local: false,
@@ -55,11 +55,17 @@ function createGridPane(store, pageSize, viewConfig){
     filters: store.reader.filters 
   });
   
-  var pagingResizer = new Ext.ux.plugin.PagingToolbarResizer({
-    displayText: 'Page Size',
-    options: [25, 50, 75, 100], 
-    prependCombo: true
-  });  
+  var plugins = [filters];
+  
+  if (withResizer) {
+    var pagingResizer = new Ext.ux.plugin.PagingToolbarResizer({
+      displayText: 'Page Size',
+      options: [25, 50, 75, 100], 
+      prependCombo: true
+    });  
+    
+    plugins.push(pagingResizer);
+  }
   
   var colModel = new Ext.grid.DynamicColumnModel(store);  
   var selModel = new Ext.grid.RowSelectionModel({ singleSelect: true });
@@ -68,7 +74,7 @@ function createGridPane(store, pageSize, viewConfig){
 	  pageSize: pageSize,
 	  displayInfo: true,
 	  autoScroll: true,
-	  plugins: [filters, pagingResizer]
+	  plugins: plugins
 	});
   
   var gridPane = new Ext.grid.GridPanel({
@@ -138,9 +144,9 @@ function createXlogsPane(context, xlogsContainer, xlabel){
   xlogsStore.load();
 }
 
-function createPageXlogs(scope, xid, xlabel, startTime, xtime){ 
+function createPageXlogs(scope, xid, xlabel, startTime, xtime, poolSize, itemCount){ 
   var paneTitle = xlabel + ' (' + startTime + ')';
-  var tab = Ext.getCmp('content-pane').getItem(paneTitle);  
+  var tab = Ext.getCmp('content-pane').getItem(paneTitle);
   
   if (tab != null){
     tab.show();
@@ -149,12 +155,11 @@ function createPageXlogs(scope, xid, xlabel, startTime, xtime){
     var contentPane = Ext.getCmp('content-pane');    
     contentPane.getEl().mask("Loading...", "x-mask-loading");    
     
-    var url = 'pageXlogs' + '?scope=' + scope + '&xid=' + xid + '&xtime=' + xtime;
+    var url = 'pageXlogs' + '?scope=' + scope + '&xid=' + xid + '&xtime=' + xtime + '&itemCount=' + itemCount;
     var store = createGridStore(contentPane, url);
-    var pageSize = 25;    
     
     store.on('load', function(){
-      var gridPane = createGridPane(store, pageSize, {forceFit: true});
+      var gridPane = createGridPane(store, poolSize, {forceFit: true}, false);
       
       var xlogsPagePane = new Ext.Panel({  
     		id: paneTitle,
@@ -172,7 +177,7 @@ function createPageXlogs(scope, xid, xlabel, startTime, xtime){
     store.load({
       params: {
         start: 0,          
-        limit: pageSize
+        limit: poolSize
       }
     });
   }
@@ -267,7 +272,7 @@ function loadPageDto(type, action, context, label){
           layout: 'card',
           border: false,
           activeItem: 0,
-          items: [createGridPane(store, pageSize, {forceFit: false})],
+          items: [createGridPane(store, pageSize, {forceFit: false}, true)],
           listeners: {
             afterlayout: function(pane){
               Ext.getCmp('content-pane').getEl().unmask();
@@ -282,7 +287,14 @@ function loadPageDto(type, action, context, label){
           context: context,
           layout: 'border',
           closable: true,
-          items: [dtoNavPane, dtoContentPane]
+          items: [dtoNavPane, dtoContentPane],
+          listeners : {
+            close: function(panel) {
+              Ext.Ajax.request({
+                url: 'reset?dtoContext=' + escape(panel.context.substring(1))
+              });
+            }
+          }
         });
         
         if (type == 'exchange'){
@@ -353,7 +365,7 @@ function loadRelatedItem(type, context, individual, classId, className){
     });  
     
     dtoBcPane.doLayout();    
-    dtoContentPane.add(createGridPane(store, pageSize, {forceFit: false}));
+    dtoContentPane.add(createGridPane(store, pageSize, {forceFit: false}, true));
     dtoContentPane.getLayout().setActiveItem(dtoContentPane.items.length-1);
   });
   

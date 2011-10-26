@@ -1,9 +1,11 @@
 package org.iringtools.controllers;
 
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.iringtools.models.DataModel;
 import org.iringtools.models.DirectoryModel;
+import org.iringtools.utility.IOUtils;
 import org.iringtools.widgets.tree.Tree;
 
 public class DirectoryController extends AbstractController
@@ -12,6 +14,7 @@ public class DirectoryController extends AbstractController
   
   private String exchangeServiceUri;;
   private Tree directoryTree;
+  private String dtoContext;
 
   public DirectoryController()
   {
@@ -50,5 +53,27 @@ public class DirectoryController extends AbstractController
   public Tree getDirectoryTree()
   {
     return directoryTree;
+  }
+
+  public String resetDtoContext()
+  {
+    Map<String, String> map = IOUtils.splitQueryParams(dtoContext);    
+    
+    String dtoContextKey = (map.containsKey("xid"))    
+      ? map.get("scope") + "/exchanges/" + map.get("xid")    
+      : map.get("scope") + "/" + map.get("app") + "/" + map.get("graph"); 
+    
+    for (String key : session.keySet())
+    {
+      if (key.contains(dtoContextKey))
+        session.remove(key);
+    }
+            
+    return SUCCESS;
+  }
+  
+  public void setDtoContext(String dtoContext)
+  {
+    this.dtoContext = dtoContext;
   }
 }

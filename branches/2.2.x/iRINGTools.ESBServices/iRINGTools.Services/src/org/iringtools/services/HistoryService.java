@@ -6,8 +6,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-
-import org.iringtools.dxfr.response.ExchangeResponse;
 import org.iringtools.history.History;
 import org.iringtools.security.AuthorizationException;
 import org.iringtools.services.core.HistoryProvider;
@@ -49,13 +47,15 @@ public class HistoryService extends AbstractService
   }
   
   @GET
-  @Path("/{scope}/exchanges/{exchangeId}/{timestamp}")
+  @Path("/{scope}/exchanges/{exchangeId}/{timestamp}/{start}/{limit}")
   public Response getExchange(
       @PathParam("scope") String scope, 
       @PathParam("exchangeId") String exchangeId,
-      @PathParam("timestamp") String timestamp) 
+      @PathParam("timestamp") String timestamp,
+      @PathParam("start") int start,
+      @PathParam("limit") int limit) 
   {
-    ExchangeResponse xResponse = null;
+    org.iringtools.common.response.Response xResponse = null;
     
     try
     {
@@ -69,7 +69,7 @@ public class HistoryService extends AbstractService
     try
     {
       HistoryProvider historyProvider = new HistoryProvider(settings);
-      xResponse = historyProvider.getExchangeResponse(scope, exchangeId, timestamp);
+      xResponse = historyProvider.getExchangeResponse(scope, exchangeId, timestamp, start, limit);
     }
     catch (Exception e)
     {

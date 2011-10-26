@@ -2,7 +2,6 @@ package org.iringtools.services.core;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +14,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.log4j.Logger;
 import org.iringtools.common.response.Level;
-import org.iringtools.common.response.Messages;
 import org.iringtools.common.response.Response;
-import org.iringtools.common.response.Status;
-import org.iringtools.common.response.StatusList;
 import org.iringtools.data.filter.DataFilter;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
@@ -54,6 +50,8 @@ import org.iringtools.utility.JaxbUtils;
 public class ExchangeProvider
 {
   private static final Logger logger = Logger.getLogger(ExchangeProvider.class);
+  public static final String POOL_PREFIX = "_pool_";
+  
   private Map<String, Object> settings;
   private static DatatypeFactory datatypeFactory = null;
   private HttpClient httpClient = null;
@@ -470,21 +468,30 @@ public class ExchangeProvider
   public ExchangeResponse submitExchange(String scope, String id, ExchangeRequest exchangeRequest)
       throws ServiceProviderException
   {
-    ExchangeResponse exchangeResponse = new ExchangeResponse();
-    exchangeResponse.setMessages(new Messages());
-    
-    GregorianCalendar gcal = new GregorianCalendar();
-    exchangeResponse.setStartTimeStamp(datatypeFactory.newXMLGregorianCalendar(gcal));
-    
-    StatusList statusList = new StatusList();
-    exchangeResponse.setStatusList(statusList);
-    exchangeResponse.setLevel(Level.SUCCESS);
-
     logger.debug("submitExchange(" + scope + ", " + id + ", exchangeRequest)");
+    
+    ExchangeResponse exchangeResponse = new ExchangeResponse();    
+    exchangeResponse.setLevel(Level.SUCCESS);
+    
+    XMLGregorianCalendar startTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
+    exchangeResponse.setStartTime(startTime);
 
     if (exchangeRequest == null)
-      return null;
+    {
+      exchangeResponse.setLevel(Level.WARNING);
+      exchangeResponse.setSummary("Exchange request is empty.");
+      return exchangeResponse;
+    }
 
+    // create exchange log directory
+    String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
+    File dirPath = new File(path);
+
+    if (!dirPath.exists())
+    {
+      dirPath.mkdirs();
+    }
+    
     Manifest manifest = exchangeRequest.getManifest();
     DataTransferIndices dtis = exchangeRequest.getDataTransferIndices();
 
@@ -500,13 +507,13 @@ public class ExchangeProvider
 
     // add exchange definition info to exchange response
     exchangeResponse.setSenderUri(sourceUri);
-    exchangeResponse.setSenderScopeName(sourceScopeName);
-    exchangeResponse.setSenderAppName(sourceAppName);
-    exchangeResponse.setSenderGraphName(sourceGraphName);
+    exchangeResponse.setSenderScope(sourceScopeName);
+    exchangeResponse.setSenderApp(sourceAppName);
+    exchangeResponse.setSenderGraph(sourceGraphName);
     exchangeResponse.setReceiverUri(targetUri);
-    exchangeResponse.setReceiverScopeName(targetScopeName);
-    exchangeResponse.setReceiverAppName(targetAppName);
-    exchangeResponse.setReceiverGraphName(targetGraphName);
+    exchangeResponse.setReceiverScope(targetScopeName);
+    exchangeResponse.setReceiverApp(targetAppName);
+    exchangeResponse.setReceiverGraph(targetGraphName);
 
     // get target application uri
     String targetAppUrl = targetUri + "/" + targetScopeName + "/" + targetAppName;
@@ -517,6 +524,11 @@ public class ExchangeProvider
     int dtiSize = dtiList.size();
     int presetPoolSize = Integer.parseInt((String) settings.get("poolSize"));
     int poolSize = Math.min(presetPoolSize, dtiSize);
+    
+    exchangeResponse.setPoolSize(poolSize);
+    exchangeResponse.setItemCount(dtiSize);
+    
+    String exchangeFile = path + "/" + startTime.toString().replace(":", ".");
 
     for (int i = 0; i < dtiSize; i += poolSize)
     {
@@ -571,6 +583,7 @@ public class ExchangeProvider
           logger.error(e.getMessage());
           throw new ServiceProviderException(e.getMessage());
         }
+        
         List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
 
         // set transfer type for each DTO : poolDtoList and remove/report ones that have changed
@@ -593,8 +606,8 @@ public class ExchangeProvider
 
                   if (!hashValue.equalsIgnoreCase(dti.getHashValue()))
                   {
-                    Status status = createStatus(identifier, "DTO has changed.");
-                    exchangeResponse.getStatusList().getItems().add(status);
+                    //Status status = createStatus(identifier, "DTO has changed.");
+                    //exchangeResponse.getStatusList().getItems().add(status);
 
                     if (exchangeResponse.getLevel() != Level.ERROR)
                     {
@@ -609,14 +622,12 @@ public class ExchangeProvider
                   }
                   else
                   {
-                    sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType()
-                        .toString()));
+                    sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
                   }
                 }
                 else
                 {
-                  sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType()
-                      .toString()));
+                  sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
                 }
 
                 break;
@@ -626,6 +637,7 @@ public class ExchangeProvider
         }
       }
 
+      /*TODO: report in pool log
       // report DTOs that were deleted during review and acceptance
       if (exchangeRequest.getReviewed() && sourcePoolDtiList.size() > 0)
       {
@@ -637,7 +649,7 @@ public class ExchangeProvider
           if (exchangeResponse.getLevel() != Level.ERROR)
             exchangeResponse.setLevel(Level.WARNING);
         }
-      }
+      }*/
 
       DataTransferObjects poolDtos = new DataTransferObjects();
       DataTransferObjectList poolDtosList = new DataTransferObjectList();
@@ -666,14 +678,18 @@ public class ExchangeProvider
         Response poolResponse;
         try
         {
-          logger.debug("Sending exchange pool [" + i + " - " + (i + poolSize) + "]");
-          poolResponse = httpClient.post(Response.class, targetGraphUrl + "?format=stream", poolDtos, MediaType.TEXT_PLAIN);
+          poolResponse = httpClient.post(Response.class, targetGraphUrl + "?format=stream", poolDtos, MediaType.TEXT_PLAIN);          
           
           try 
           {
-            logger.debug("Exchange pool response [" + JaxbUtils.toXml(poolResponse, true) + "]");
+            // write pool response to disk
+            String poolResponseFile = exchangeFile + POOL_PREFIX + (i+1) + "-" + (i+actualPoolSize) + ".xml";
+            JaxbUtils.write(poolResponse, poolResponseFile, true);
           }
-          catch (Exception e) {}
+          catch (Exception e) 
+          {
+            logger.error("Error writing pool response to disk: " + e);
+          }
         }
         catch (HttpClientException e)
         {
@@ -681,8 +697,7 @@ public class ExchangeProvider
           throw new ServiceProviderException(e.getMessage());
         }
 
-        exchangeResponse.getStatusList().getItems().addAll(poolResponse.getStatusList().getItems());
-
+        // update level as needed
         if (exchangeResponse.getLevel().ordinal() < poolResponse.getLevel().ordinal())
         {
           exchangeResponse.setLevel(poolResponse.getLevel());
@@ -693,45 +708,47 @@ public class ExchangeProvider
     if (exchangeResponse.getLevel() == Level.ERROR)
     {
       String message = "Exchange completed with error.";
-      exchangeResponse.getMessages().getItems().add(message);
+      exchangeResponse.setSummary(message);
     }
     else if (exchangeResponse.getLevel() == Level.WARNING)
     {
       String message = "Exchange completed with warning.";
-      exchangeResponse.getMessages().getItems().add(message);
+      exchangeResponse.setSummary(message);
     }
     else if (exchangeResponse.getLevel() == Level.SUCCESS)
     {
       String message = "Exchange completed succesfully.";
-      exchangeResponse.getMessages().getItems().add(message);
+      exchangeResponse.setSummary(message);
     }
 
-    XMLGregorianCalendar timestamp = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
-    exchangeResponse.setEndTimeStamp(timestamp);
+    XMLGregorianCalendar endTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
+    exchangeResponse.setEndTime(endTime);
 
-    // save exchange response to file system
-    String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
-    File dirPath = new File(path);
-
-    if (!dirPath.exists())
-    {
-      dirPath.mkdirs();
-    }
-
-    String file = path + "/" + timestamp.toString().replace(":", ".") + ".xml";
+    // write exchange response to file system    
     try
     {
-      JaxbUtils.write(exchangeResponse, file, true);
+      JaxbUtils.write(exchangeResponse, exchangeFile + ".xml", false);
       List<String> filesInFolder = IOUtils.getFiles(path);
+      
+      // exclude exchange pool files
+      for (String fileInFolder : filesInFolder)
+      {
+        if (fileInFolder.startsWith(POOL_PREFIX))
+        {
+          filesInFolder.remove(fileInFolder);
+        }
+      }
+      
+      /*TODO:
+      // if number of log files exceed the limit, remove the oldest ones
       Collections.sort(filesInFolder);
 
-      // if number of log files exceed the limit, remove the oldest ones
       while (filesInFolder.size() > Integer.valueOf((String) settings.get("numOfExchangeLogFiles")))
       {
         File oldestFile = new File(path + "/" + filesInFolder.get(0));
         oldestFile.delete();
         filesInFolder.remove(0);
-      }
+      }*/
     }
     catch (Exception e)
     {
@@ -739,9 +756,6 @@ public class ExchangeProvider
       logger.error(message);
       throw new ServiceProviderException(message);
     }
-
-    // only interest in summary
-    exchangeResponse.setStatusList(null);
 
     return exchangeResponse;
   }
@@ -773,7 +787,7 @@ public class ExchangeProvider
     hashAlgorithm = xdef.getHashAlgorithm();
   }
 
-  private Status createStatus(String identifier, String message)
+  /*private Status createStatus(String identifier, String message)
   {
     Messages messages = new Messages();
     List<String> messageList = messages.getItems();
@@ -784,7 +798,7 @@ public class ExchangeProvider
     status.setMessages(messages);
 
     return status;
-  }
+  }*/
 
   private String md5Hash(DataTransferObject dataTransferObject)
   {

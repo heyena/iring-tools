@@ -99,8 +99,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigurationTool", "Utilit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpreadsheetLibrary", "Libraries\SpreadsheetLibrary\SpreadsheetLibrary.csproj", "{A07F5056-4D03-4CB6-912B-A07561E9716E}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "SPPIDDataLayer", "..\datalayers\SPPIDDataLayer\SPPIDDataLayer\SPPIDDataLayer.vbproj", "{5541C20E-0ADA-44E3-B626-7CD54E05C412}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -973,31 +971,6 @@ Global
 		{A07F5056-4D03-4CB6-912B-A07561E9716E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A07F5056-4D03-4CB6-912B-A07561E9716E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A07F5056-4D03-4CB6-912B-A07561E9716E}.Release|x86.ActiveCfg = Release|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Default|Any CPU.ActiveCfg = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Default|Any CPU.Build.0 = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Default|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Default|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Default|x86.ActiveCfg = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Demo|Any CPU.ActiveCfg = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Demo|Any CPU.Build.0 = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Demo|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Demo|Mixed Platforms.Build.0 = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Demo|x86.ActiveCfg = Debug|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.MobileDev|Any CPU.ActiveCfg = Release|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.MobileDev|Any CPU.Build.0 = Release|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.MobileDev|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.MobileDev|Mixed Platforms.Build.0 = Release|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.MobileDev|x86.ActiveCfg = Release|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{5541C20E-0ADA-44E3-B626-7CD54E05C412}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
