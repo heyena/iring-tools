@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
+using System.Linq;
 using log4net;
 using Ninject;
 using System.Web;
@@ -14,10 +15,12 @@ namespace org.iringtools.adapter.projection
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DataProjectionEngine));
     private DataDictionary _dictionary = null;
     private XNamespace _graphNamespace = null;
+    private string _graphName = String.Empty;
 
     [Inject]
-    public DataProjectionEngine(AdapterSettings settings, DataDictionary dictionary) : base(settings)
+    public DataProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, DataDictionary dictionary) : base(settings)
     {
+      _dataLayer = dataLayer;
       _dictionary = dictionary;
     }
 
@@ -31,15 +34,14 @@ namespace org.iringtools.adapter.projection
         string project = _settings["ProjectName"];
         string app = _settings["ApplicationName"];
         string appBaseUri = Utility.FormAppBaseURI(_uriMaps, baseUri, project, app);
-        _graphNamespace = appBaseUri + graphName + "/";
-        
-        //_dictionary = _dataLayer.GetDictionary();
+
+        _graphName = graphName;
+        _graphNamespace = appBaseUri + graphName + "/";        
         _dataObjects = dataObjects;
 
         if (_dataObjects != null && (_dataObjects.Count == 1 || FullIndex))
         {
           xElement = new XElement(_graphNamespace + Utility.TitleCase(graphName) + "List");
-
           DataObject dataObject = FindGraphDataObject(graphName);
 
           for (int i = 0; i < _dataObjects.Count; i++)
@@ -49,6 +51,7 @@ namespace org.iringtools.adapter.projection
             xElement.Add(rowElement);
           }
         }
+
         if (_dataObjects != null && (_dataObjects.Count > 1 && !FullIndex))
         {
           xElement = new XElement(_graphNamespace + Utility.TitleCase(graphName) + "List");
@@ -81,7 +84,61 @@ namespace org.iringtools.adapter.projection
 
     public override IList<IDataObject> ToDataObjects(string graphName, ref XDocument xml)
     {
-      throw new NotImplementedException();
+      try
+      {
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        DataObject objectDefinition = FindGraphDataObject(graphName);
+
+        if (objectDefinition != null)
+        {
+          XNamespace ns = xml.Root.Attribute("xmlns").Value;
+          string objectName = Utility.TitleCase(objectDefinition.objectName);
+
+          XElement rootEl = xml.Element(ns + objectName + "List");          
+          IEnumerable<XElement> objEls = from el in rootEl.Elements(ns + objectName) select el;
+
+          foreach (XElement objEl in objEls)
+          {
+            IDataObject dataObject = _dataLayer.Create(objectDefinition.objectName, null)[0];
+
+            if (objectDefinition.hasContent)
+            {
+              string base64Content = objEl.Element(ns + "content").Value;
+
+              if (!String.IsNullOrEmpty(base64Content))
+              {
+                ((IContentObject)dataObject).content = base64Content.ToMemoryStream();
+              }
+            }
+
+            foreach (DataProperty property in objectDefinition.dataProperties)
+            {
+              string propertyName = property.propertyName;
+              XElement valueEl = objEl.Element(ns + Utility.TitleCase(propertyName));
+
+              if (valueEl != null)
+              {
+                string value = valueEl.Value;
+
+                if (value != null)
+                {
+                  dataObject.SetPropertyValue(propertyName, value);
+                }
+              }
+            }
+
+            dataObjects.Add(dataObject);
+          }
+        }
+
+        return dataObjects;
+      }
+      catch (Exception e)
+      {
+        string message = "Error marshalling data items to data objects." + e;
+        _logger.Error(message);
+        throw new Exception(message);
+      }
     }
 
     #region helper methods
@@ -90,7 +147,7 @@ namespace org.iringtools.adapter.projection
       foreach(DataProperty dataProperty in dataObject.dataProperties)
       {
         XElement propertyElement = new XElement(_graphNamespace + Utility.TitleCase(dataProperty.propertyName));
-        //propertyElement.Add(new XAttribute("dataType", dataProperty.dataType));
+        
         var value = _dataObjects[dataObjectIndex].GetPropertyValue(dataProperty.propertyName);
         
         if (value != null)
@@ -103,6 +160,14 @@ namespace org.iringtools.adapter.projection
           parentElement.Add(propertyElement);
         }
         
+      }
+
+      foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+      {
+        XElement relationshipElement = new XElement(_graphNamespace + Utility.TitleCase(dataRelationship.relationshipName));
+        IList<IDataObject> relatedObjects = _dataLayer.GetRelatedObjects(_dataObjects[dataObjectIndex], dataRelationship.relatedObjectName);
+
+        parentElement.Add(relationshipElement);
       }
     }
 

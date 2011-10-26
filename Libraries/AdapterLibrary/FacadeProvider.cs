@@ -50,12 +50,11 @@ namespace org.iringtools.facade
   public class FacadeProvider : BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(FacadeProvider));
-    private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
     private IIdentityLayer _identityLayer = null;
     private IDictionary _keyRing = null;
-    private IDataLayer _dataLayer = null;
+    private IDataLayer2 _dataLayer = null;
     private ISemanticLayer _semanticEngine = null;
     private ScopeProjects _scopes = null;
     private Mapping _mapping = null;
@@ -116,15 +115,12 @@ namespace org.iringtools.facade
         Utility.Write<ScopeProjects>(_scopes, scopesPath);
       }
 
-      _response = new Response();
-      _response.StatusList = new List<Status>();
-      _kernel.Bind<Response>().ToConstant(_response);
-
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
       string bindingConfigurationPath = Path.Combine(
         _settings["BaseDirectoryPath"],
         relativePath
       );
+
       _kernel.Load(bindingConfigurationPath);
       InitializeIdentity();
     }
@@ -146,17 +142,48 @@ namespace org.iringtools.facade
       }
     }
 
+    private void InitializeDataLayer()
+    {
+      try
+      {
+        if (!_isDataLayerInitialized)
+        {
+          try
+          {
+            _dataLayer = _kernel.Get<IDataLayer2>("DataLayer");
+          }
+          catch
+          {
+            _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
+          }
+
+          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
+
+          _isDataLayerInitialized = true;
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing application: {0}", ex));
+        throw new Exception(string.Format("Error initializing application: {0})", ex));
+      }
+    }
+
     public Response Delete(string scope, string app, string graph)
     {
+      Response response = new Response();
+      response.Level = StatusLevel.Success;
+
       Status status = new Status();
       status.Messages = new Messages();
+
       try
       {
         status.Identifier = String.Format("{0}.{1}.{2}", scope, app, graph);
 
         InitializeScope(scope, app);
         _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
-        _response.Append(_semanticEngine.Delete(graph));
+        response.Append(_semanticEngine.Delete(graph));
       }
       catch (Exception ex)
       {
@@ -166,8 +193,8 @@ namespace org.iringtools.facade
         status.Messages.Add(string.Format("Error deleting all graphs: {0}", ex));
       }
 
-      _response.Append(status);
-      return _response;
+      response.Append(status);
+      return response;
     }
 
     private void InitializeScope(string projectName, string applicationName)
@@ -269,6 +296,9 @@ namespace org.iringtools.facade
 
     public Response Pull(string scope, string app, string graph, Request request)
     {
+      Response response = new Response();
+      response.Level = StatusLevel.Success;
+
       Status status = new Status();
       status.Messages = new Messages();
 
@@ -303,6 +333,9 @@ namespace org.iringtools.facade
 
           string targetGraphBaseUri = request["targetGraphBaseUri"];
           _settings["TargetGraphBaseUri"] = targetGraphBaseUri;
+
+          if (targetGraphBaseUri.ToLower() == "[default graph]")
+            targetGraphBaseUri = String.Empty;
 
           SparqlRemoteEndpoint endpoint = new SparqlRemoteEndpoint(new Uri(targetEndpointUri), targetGraphBaseUri);
 
@@ -367,32 +400,18 @@ namespace org.iringtools.facade
         status.Messages.Add(string.Format("Error pulling graph: {0}", ex));
       }
 
-      _response.Append(status);
-      return _response;
-    }
-
-    private void InitializeDataLayer()
-    {
-      try
-      {
-        if (!_isDataLayerInitialized)
-        {
-          _dataLayer = _kernel.Get<IDataLayer>("DataLayer");
-
-          _isDataLayerInitialized = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error initializing application: {0}", ex));
-        throw new Exception(string.Format("Error initializing application: {0})", ex));
-      }
+      response.Append(status);
+      return response;
     }
 
     public Response Refresh(string scope, string app, string graph)
     {
+      Response response = new Response();
+      response.Level = StatusLevel.Success;
+
       Status status = new Status();
       status.Messages = new Messages();
+
       try
       {
         status.Identifier = String.Format("{0}.{1}", scope, app);
@@ -400,7 +419,7 @@ namespace org.iringtools.facade
         InitializeScope(scope, app);
         InitializeDataLayer();
 
-        _response.Append(Refresh(graph));
+        response.Append(Refresh(graph));
       }
       catch (Exception ex)
       {
@@ -410,18 +429,16 @@ namespace org.iringtools.facade
         status.Messages.Add(string.Format("Error refreshing graph [{0}]: {1}", graph, ex));
       }
 
-      _response.Append(status);
-      return _response;
+      response.Append(status);
+      return response;
     }
 
     private Response Refresh(string graphName)
     {
       _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
-
       _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
 
       LoadDataObjectSet(graphName, null);
-
       XDocument rdf = _projectionEngine.ToXml(graphName, ref _dataObjects);
 
       return _semanticEngine.Refresh(graphName, rdf);
@@ -429,8 +446,12 @@ namespace org.iringtools.facade
 
     public Response RefreshAll(string projectName, string applicationName)
     {
+      Response response = new Response();
+      response.Level = StatusLevel.Success;
+
       Status status = new Status();
       status.Messages = new Messages();
+
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -442,7 +463,7 @@ namespace org.iringtools.facade
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          _response.Append(Refresh(graphMap.name));
+          response.Append(Refresh(graphMap.name));
         }
 
         DateTime end = DateTime.Now;
@@ -459,8 +480,8 @@ namespace org.iringtools.facade
         status.Messages.Add(string.Format("Error refreshing all graphs: {0}", ex));
       }
 
-      _response.Append(status);
-      return _response;
+      response.Append(status);
+      return response;
     }
 
     private void LoadDataObjectSet(string graphName, IList<string> identifiers)
@@ -477,8 +498,12 @@ namespace org.iringtools.facade
 
     public Response DeleteAll(string projectName, string applicationName)
     {
+      Response response = new Response();
+      response.Level = StatusLevel.Success;
+
       Status status = new Status();
       status.Messages = new Messages();
+
       try
       {
         status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
@@ -489,7 +514,7 @@ namespace org.iringtools.facade
 
         foreach (GraphMap graphMap in _mapping.graphMaps)
         {
-          _response.Append(_semanticEngine.Delete(graphMap.name));
+          response.Append(_semanticEngine.Delete(graphMap.name));
         }
       }
       catch (Exception ex)
@@ -500,8 +525,8 @@ namespace org.iringtools.facade
         status.Messages.Add(string.Format("Error deleting all graphs: {0}", ex));
       }
 
-      _response.Append(status);
-      return _response;
+      response.Append(status);
+      return response;
     }
 
     public VersionInfo GetVersion()

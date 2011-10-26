@@ -21,6 +21,7 @@ namespace org.iringtools.adapter.identity
       IDictionary keyRing = new Dictionary<string, string>();
 
       keyRing.Add("Provider", "SSOIdentityProvider");
+
       if (WebOperationContext.Current != null && WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
       {
         WebHeaderCollection headers = WebOperationContext.Current.IncomingRequest.Headers;
@@ -41,13 +42,13 @@ namespace org.iringtools.adapter.identity
         _logger.Debug("OAuth headers: ");
 
         string accessToken = headers.Get("X-myPSN-AccessToken");
-        _logger.Debug("X-myPSN-AccessToken [" + accessToken + "]");
+        _logger.Debug("X-myPSN-AccessToken [" + accessToken + "]");        
         if (!String.IsNullOrEmpty(accessToken))
           keyRing.Add("AccessToken", accessToken);
 
         string emailAddress = headers.Get("X-myPSN-EmailAddress");
         _logger.Debug("X-myPSN-EmailAddress [" + emailAddress + "]");
-        if (!String.IsNullOrEmpty(emailAddress) && !keyRing.Contains("UserName"))
+				if (!String.IsNullOrEmpty(emailAddress) && !keyRing.Contains("UserName"))
           keyRing.Add("UserName", emailAddress);
 
         string userId = headers.Get("X-myPSN-UserID");
@@ -58,7 +59,7 @@ namespace org.iringtools.adapter.identity
         string isBechtelEmployee = headers.Get("X-myPSN-IsBechtelEmployee");
         _logger.Debug("X-myPSN-IsBechtelEmployee [" + isBechtelEmployee + "]");
 
-        if (!String.IsNullOrEmpty(isBechtelEmployee) &&
+        if (!String.IsNullOrEmpty(isBechtelEmployee) && 
           (isBechtelEmployee.ToLower() == "true" || isBechtelEmployee.ToLower() == "yes"))
         {
           string bechtelUserName = headers.Get("X-myPSN-BechtelUserName");

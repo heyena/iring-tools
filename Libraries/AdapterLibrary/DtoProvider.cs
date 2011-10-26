@@ -149,11 +149,10 @@ namespace org.iringtools.adapter
 
 	  public Manifest GetManifest(string scope, string app)
     {
-
       Manifest manifest = new Manifest()
       {
         graphs = new Graphs(),
-        version = "2.1.1",
+        version = "3.0.0",
         valueListMaps = new ValueListMaps()
       };      
 
@@ -368,12 +367,18 @@ namespace org.iringtools.adapter
         
         // get sort index
         string sortIndex = String.Empty;        
+        string sortOrder = String.Empty;
+
         if (filter != null && filter.OrderExpressions != null && filter.OrderExpressions.Count > 0)
         {
           sortIndex = filter.OrderExpressions.First().PropertyName;
+          sortOrder = filter.OrderExpressions.First().SortOrder.ToString();
         }
 
         dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, sortIndex);
+
+        if (sortOrder != String.Empty)
+          dataTransferIndices.SortOrder = sortOrder;
       }
       catch (Exception ex)
       {
@@ -423,7 +428,7 @@ namespace org.iringtools.adapter
     {
       Response response = new Response();
       response.DateTimeStamp = DateTime.Now;
-
+      
       try
       {
         InitializeScope(scope, app);
@@ -440,6 +445,8 @@ namespace org.iringtools.adapter
 
           return response;
         }
+        
+        response.Level = StatusLevel.Success;
 
         InitializeDataLayer();
 
@@ -470,8 +477,6 @@ namespace org.iringtools.adapter
 
         if (deleteIdentifiers.Count > 0)
           response.Append(_dataLayer.Delete(_graphMap.dataObjectName, deleteIdentifiers));
-
-        response.Level = StatusLevel.Success;
       }
       catch (Exception ex)
       {
@@ -577,7 +582,10 @@ namespace org.iringtools.adapter
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");        
         XDocument dtoDoc = dtoProjectionEngine.ToXml(_graphMap, ref dataObjects);
 
-        dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+        if (dtoDoc != null && dtoDoc.Root != null)
+          dataTransferObjects = SerializationExtensions.ToObject<DataTransferObjects>(dtoDoc.Root);
+        else
+          dataTransferObjects = new DataTransferObjects();
       }
       catch (Exception ex)
       {
@@ -586,7 +594,6 @@ namespace org.iringtools.adapter
       }
 
       return dataTransferObjects;
-
     }
 
     private void InitializeScope(string projectName, string applicationName)
@@ -735,7 +742,7 @@ namespace org.iringtools.adapter
       }
     }
 
-    // build cross graph map from manifest graph and mapping graph and save it in _graphMap
+    // build cross _graphmap from manifest graph and mapping graph
     private void BuildCrossGraphMap(Manifest manifest, string graph)
     {
       if (manifest == null || manifest.graphs == null || manifest.graphs.Count == 0)
@@ -749,6 +756,7 @@ namespace org.iringtools.adapter
       GraphMap mappingGraph = _mapping.FindGraphMap(graph);
       ClassTemplates manifestClassTemplatesMap = manifestGraph.classTemplatesList.First();
       Class manifestClass = manifestClassTemplatesMap.@class;
+
       _graphMap = new GraphMap();
       _graphMap.name = mappingGraph.name;
       _graphMap.dataObjectName = mappingGraph.dataObjectName;
@@ -772,7 +780,7 @@ namespace org.iringtools.adapter
     {
       List<Template> manifestTemplates = null;
 
-      // find manifest templates for the manifest class
+      // get manifest templates from the manifest class
       foreach (ClassTemplates manifestClassTemplates in manifestGraph.classTemplatesList)
       {
         if (manifestClassTemplates.@class.id == manifestClass.id)

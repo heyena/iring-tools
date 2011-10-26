@@ -5,7 +5,7 @@ using NHibernate;
 using org.iringtools.library;
 using org.iringtools.utility;
 
-namespace org.iringtools.adapter.datalayer
+namespace org.iringtools.nhibernate
 {
   public static class NHibernateUtility
   {
@@ -69,7 +69,7 @@ namespace org.iringtools.adapter.datalayer
       return criteria;
     }
 
-    private static void AddCriteriaExpressions(ICriteria criteria, DataObject objectDefinition, DataFilter dataFilter)
+    public static void AddCriteriaExpressions(ICriteria criteria, DataObject objectDefinition, DataFilter dataFilter)
     {
       if (dataFilter != null)
       {

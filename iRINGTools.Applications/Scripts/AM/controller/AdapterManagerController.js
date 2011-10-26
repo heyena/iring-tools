@@ -88,6 +88,9 @@
             'menu button[action=newgraph]': {
                 click: this.onNewGraph
             },
+            'menu button[action=refreshfacade]': {
+                click: this.onRefreshFacade
+            },
             'menu button[action=editgraph]': {
                 click: this.onEditGraph
             },
@@ -143,6 +146,30 @@
                 beforeload: this.beforeLoad
             }
         });
+    },
+
+    onRefreshFacade: function () {
+
+        var tree = this.getDirTree(),
+        node = tree.getSelectedNode();
+
+        tree.getEl().mask('Loading', 'x-mask-loading');
+        Ext.Ajax.request({
+            url: 'facade/refreshFacade',
+            method: 'POST',
+            params: {
+                scope: node.data.id
+            },
+            success: function (o) {
+                directoryPanel.onReload(node);
+                tree.getEl().unmask();
+            },
+            failure: function (f, a) {
+                tree.getEl().unmask();
+                Ext.Msg.alert('Warning', 'Error!!!');
+            }
+        });
+        tree.graphMenu.hide();
     },
 
     mapValueList: function () {

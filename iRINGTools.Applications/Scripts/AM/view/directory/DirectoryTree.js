@@ -49,17 +49,17 @@
 
         this.callParent(arguments);
 
-        this.addEvents({
-            newScope: true,
-            newApplication: true,
-            editScope: true,
-            editApplication: true,
-            openMapping: true,
-            deleteScope: true,
-            deleteApplication: true,
-            reloadScopes: true,
-            reloadNode: true
-        });
+//        this.addEvents({
+//            newScope: true,
+//            newApplication: true,
+//            editScope: true,
+//            editApplication: true,
+//            openMapping: true,
+//            deleteScope: true,
+//            deleteApplication: true,
+//            reloadScopes: true,
+//            reloadNode: true
+//        });
         
         this.scopesMenu = new Ext.menu.Menu();
         this.scopesMenu.add(this.buildScopesMenu());
@@ -276,13 +276,23 @@
 
     buildGraphMenu: function () {
         return [
-     {
-         xtype: 'button',
-         text: 'Edit GraphMap',
-         icon: 'Content/img/16x16/document-properties.png',
-         scope: this,
-         action: 'editgraph'
-     },
+        {
+            xtype: 'button',
+            text: 'Refresh Facade',
+            icon: 'Content/img/table_refresh.png',
+            scope: this,
+            action: 'refreshfacade'
+        },
+        {
+            xtype: 'menuseparator'
+        },
+        {
+            xtype: 'button',
+            text: 'Edit GraphMap',
+            icon: 'Content/img/16x16/document-properties.png',
+            scope: this,
+            action: 'editgraph'
+        },
       {
           xtype: 'button',
           text: 'Delete GraphMap',

@@ -7,12 +7,11 @@ using org.iringtools.mapping;
 using System.IO;
 using log4net;
 
-
 namespace org.iringtools.library
 {
   public class ServiceSettings : NameValueCollection
   {
-      private static readonly ILog _logger = LogManager.GetLogger(typeof(ServiceSettings));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(ServiceSettings));
     
     public ServiceSettings()
     {
@@ -66,7 +65,7 @@ namespace org.iringtools.library
         }
       }
 
-         //Consolidate legacy XML folder to App_Data folder
+      //Consolidate legacy XML folder to App_Data folder
       if (this["AppDataPath"] == @".\App_Data\" && Directory.Exists(@".\XML\"))
       {
         try
@@ -90,9 +89,6 @@ namespace org.iringtools.library
         }
       }
     }
-
-
-
 
     public NetworkCredential GetProxyCredential()
     {
@@ -122,6 +118,5 @@ namespace org.iringtools.library
 
       return proxyCredentials;
     }
-  }
-  
+  }  
 }
