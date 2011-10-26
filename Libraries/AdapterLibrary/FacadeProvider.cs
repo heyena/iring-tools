@@ -352,18 +352,15 @@ namespace org.iringtools.facade
 
           string proxyHost = _settings["ProxyHost"];
           string proxyPort = _settings["ProxyPort"];
-          if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
-          {
-            WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+          string proxyCredsToken = _settings["ProxyCredentialToken"];
 
-            WebProxyCredentials proxyCrendentials = _settings.GetWebProxyCredentials();
-            if (proxyCrendentials != null)
-            {
-              endpoint.UseCredentialsForProxy = true;
-              webProxy.Credentials = _settings.GetProxyCredential();
-            }
-            endpoint.SetProxy(webProxy.Address);
-            endpoint.SetProxyCredentials(proxyCrendentials.userName, proxyCrendentials.password);
+          if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort) && !String.IsNullOrEmpty(proxyCredsToken))
+          {
+            endpoint.Proxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
+            WebProxyCredentials proxyCreds = new WebProxyCredentials(proxyCredsToken, proxyHost, Int32.Parse(proxyPort));
+            if (proxyCreds.isEncrypted) proxyCreds.Decrypt();
+            endpoint.ProxyCredentials = proxyCreds.GetNetworkCredential();
           }
 
           VDS.RDF.IGraph resultGraph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
