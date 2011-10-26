@@ -125,6 +125,7 @@ namespace org.iringtools.adapter.projection
         catch (Exception ex)
         {
           _logger.Error("Error projecting xml to data objects" + ex);
+          throw ex;
         }
       }
 
@@ -730,40 +731,43 @@ namespace org.iringtools.adapter.projection
       {
         TemplateObject templateObject = classObject.GetTemplateObject(templateMap);
 
-        foreach (RoleMap roleMap in templateMap.roleMaps)
+        if (templateObject != null)
         {
-          switch (roleMap.type)
+          foreach (RoleMap roleMap in templateMap.roleMaps)
           {
-            case RoleType.Reference:
-              if (roleMap.classMap != null)
-              {
-                ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(roleMap.classMap.id);
+            switch (roleMap.type)
+            {
+              case RoleType.Reference:
+                if (roleMap.classMap != null)
+                {
+                  ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMap(roleMap.classMap.id);
 
-                if (classTemplateMap != null && classTemplateMap.classMap != null)
-                {
-                  ProcessInboundClass(dataObjectIndex, classTemplateMap);
-                }
-                else  // reference class not found, process it as property role
-                {
-                  foreach (RoleObject roleObject in templateObject.roleObjects)
+                  if (classTemplateMap != null && classTemplateMap.classMap != null)
                   {
-                    if (roleObject.roleId == roleMap.id && roleObject.relatedClassId != null && roleObject.relatedClassId == roleMap.classMap.id)
+                    ProcessInboundClass(dataObjectIndex, classTemplateMap);
+                  }
+                  else  // reference class not found, process it as property role
+                  {
+                    foreach (RoleObject roleObject in templateObject.roleObjects)
                     {
-                      string identifier = roleObject.value;
-                      ProcessInboundClassIdentifiers(dataObjectIndex, roleMap.classMap, classObjectIndex, identifier);
-                      break;
+                      if (roleObject.roleId == roleMap.id && roleObject.relatedClassId != null && roleObject.relatedClassId == roleMap.classMap.id)
+                      {
+                        string identifier = roleObject.value;
+                        ProcessInboundClassIdentifiers(dataObjectIndex, roleMap.classMap, classObjectIndex, identifier);
+                        break;
+                      }
                     }
                   }
                 }
-              }
-              break;
+                break;
 
-            case RoleType.Property:
-            case RoleType.DataProperty:
-            case RoleType.ObjectProperty:
-            case RoleType.FixedValue:
-              ProcessInboundPropertyRole(dataObjectIndex, classObjectIndex, roleMap, templateObject);
-              break;
+              case RoleType.Property:
+              case RoleType.DataProperty:
+              case RoleType.ObjectProperty:
+              case RoleType.FixedValue:
+                ProcessInboundPropertyRole(dataObjectIndex, classObjectIndex, roleMap, templateObject);
+                break;
+            }
           }
         }
       }

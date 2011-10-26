@@ -59,7 +59,6 @@ namespace iRINGTools.Web
     public override void Load()
     {
       Bind<IAdapterRepository>().To<AdapterRepository>();
-      Bind<org.iringtools.adapter.datalayer.ISpreadsheetRepository>().To<org.iringtools.adapter.datalayer.SpreadsheetRepository>();
     }
   }
 }

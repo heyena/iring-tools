@@ -709,8 +709,13 @@ namespace org.iringtools.web.controllers
 
         if (dataEntities.templateDefinitions.Count > 0)
         {
-          foreach (var entity in dataEntities.templateDefinitions)
-          {
+                    var id = string.Empty; // solving bug when id exists in more than one repository
+                    foreach (var entity in dataEntities.templateDefinitions)
+                    {
+                        if (id != entity.identifier)
+                            id = entity.identifier;
+                        else
+                            continue; // multiple id's 
             foreach (var role in entity.roleDefinition)
             {
               JsonTreeNode entityNode = new JsonTreeNode
@@ -730,8 +735,13 @@ namespace org.iringtools.web.controllers
         }
         else if (dataEntities.templateQualifications.Count > 0)
         {
+                    var id = string.Empty; // solving bug when id exists in more than one repository
           foreach (var entity in dataEntities.templateQualifications)
           {
+                        if (id != entity.identifier)
+                            id = entity.identifier;
+                        else
+                            continue; // multiple id's 
             foreach (var role in entity.roleQualification)
             {
               string roleId = string.Empty;

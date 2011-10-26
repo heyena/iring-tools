@@ -100,6 +100,8 @@ namespace org.iringtools.adapter.projection
 
     public bool FullIndex { get; set; }
     public long Count { get; set; }
+    public int Start { get; set; }
+    public int Limit { get; set; }
 
     public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping)
     {
@@ -434,12 +436,30 @@ namespace org.iringtools.adapter.projection
       return false;
     }
 
+    private void SetPropertyValue(DataObject objDef, KeyValuePair<String, String> pair, IDataObject dataObject)
+    {
+      if (pair.Value != null && pair.Value != String.Empty)
+      {
+        DataProperty objProp = objDef.dataProperties.Find(p => p.propertyName.ToLower() == pair.Key.ToLower());
+
+        if (objProp.dataType == DataType.String && objProp.dataLength < pair.Value.ToString().Length)
+        {
+          string value = pair.Value.Substring(0, objProp.dataLength);
+          dataObject.SetPropertyValue(objProp.propertyName, value);
+        }
+        else
+        {
+          dataObject.SetPropertyValue(objProp.propertyName, pair.Value);
+        }
+      }
+    }
+
     // turn data record into data object
     protected IDataObject CreateDataObject(string objectType, int objectIndex)
     {
       Dictionary<string, string> dataRecord = _dataRecords[objectIndex];
-      DataObject dictionaryObject = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
-      List<KeyProperty> keyProperties = dictionaryObject.keyProperties;
+      DataObject objDef = _dictionary.dataObjects.First(c => c.objectName.ToUpper() == objectType.ToUpper());
+      List<KeyProperty> keyProperties = objDef.keyProperties;
       string identifier = String.Empty;
 
       foreach (KeyProperty keyProperty in keyProperties)
@@ -480,7 +500,7 @@ namespace org.iringtools.adapter.projection
         if (dataObjects == null || dataObjects.Count == 0)
         {
           // only create data object if key property (properties) is (are) unassigned (auto generated)
-          if (!ContainsAssignedKey(dictionaryObject))
+          if (!ContainsAssignedKey(objDef))
           {
             IDataObject dataObject = _dataLayer.Create(objectType, null).First();
 
@@ -491,7 +511,7 @@ namespace org.iringtools.adapter.projection
 
             foreach (var pair in dataRecord)
             {
-              dataObject.SetPropertyValue(pair.Key, pair.Value);
+              SetPropertyValue(objDef, pair, dataObject);
             }
 
             return dataObject;
@@ -508,7 +528,7 @@ namespace org.iringtools.adapter.projection
 
           foreach (var pair in dataRecord)
           {
-            dataObject.SetPropertyValue(pair.Key, pair.Value);
+            SetPropertyValue(objDef, pair, dataObject);
           }
 
           return dataObject;
@@ -530,8 +550,7 @@ namespace org.iringtools.adapter.projection
 
         foreach (var pair in dataRecord)
         {
-          if (pair.Value != null && pair.Value.ToString() != String.Empty)
-              dataObject.SetPropertyValue(pair.Key, pair.Value);
+          SetPropertyValue(objDef, pair, dataObject);
         }
 
         return dataObject;

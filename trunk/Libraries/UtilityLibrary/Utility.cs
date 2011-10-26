@@ -451,24 +451,36 @@ namespace org.iringtools.utility
       }
     }
 
-    public static void WriteStream(Stream graph, string path)
+    public static void WriteBytes(byte[] data, string path)
     {
       FileStream stream = null;
       try
       {
         stream = new FileStream(path, FileMode.Create, FileAccess.Write);
 
-        byte[] data = ((MemoryStream)graph).ToArray();
-
         stream.Write(data, 0, data.Length);
       }
       catch (Exception exception)
       {
-        throw new Exception("Error writing stream to [" + path + "].", exception);
+        throw new Exception("Error writing bytes to [" + path + "].", exception);
       }
       finally
       {
         stream.Close();
+      }
+    }
+
+    public static void WriteStream(Stream graph, string path)
+    {
+      try
+      {
+        byte[] data = ((MemoryStream)graph).ToArray();
+
+        WriteBytes(data, path);
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error writing stream to [" + path + "].", exception);
       }
     }
 
@@ -532,6 +544,26 @@ namespace org.iringtools.utility
       }
     }
 
+    public static string ReadString(Stream stream)
+    {
+      StreamReader streamReader = null;
+      try
+      {
+        streamReader = new StreamReader(stream);
+        string query = streamReader.ReadToEnd();
+        streamReader.Close();
+        return query;
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error reading string from stream.", exception);
+      }
+      finally
+      {
+        if (streamReader != null) streamReader.Close();
+      }
+    }
+
     public static XElement ReadXml(string path)
     {
       try
@@ -571,23 +603,28 @@ namespace org.iringtools.utility
     public static MemoryStream ToMemoryStream(this Stream requestStream)
     {
       MemoryStream usableStream = new MemoryStream();
-
-      byte[] buffer = new byte[10000];
-
+      byte[] buffer = new byte[4096];
       int bytesRead = 0;
 
       do
       {
-
         bytesRead = requestStream.Read(buffer, 0, buffer.Length);
-
         usableStream.Write(buffer, 0, bytesRead);
-
       } while (bytesRead > 0);
 
       usableStream.Position = 0;
 
       return usableStream;
+    }
+
+    public static MemoryStream ToMemoryStream(this string base64String)
+    {
+      byte[] bytes = Convert.FromBase64String(base64String);
+      
+      MemoryStream stream = new MemoryStream();
+      stream.Write(bytes, 0, bytes.Length);
+
+      return stream;
     }
 
     public static T DeserializeDataContract<T>(this string xml)
@@ -684,6 +721,27 @@ namespace org.iringtools.utility
       }
     }
 
+    public static XElement ToXElement<T>(this T graph)
+    {
+      try
+      {
+        DataContractSerializer ser = new DataContractSerializer(typeof(T));
+        XDocument doc = new XDocument();
+
+        using (XmlWriter xw = doc.CreateWriter())
+        {
+          ser.WriteObject(xw, graph);
+          xw.Close();
+        }
+
+        return doc.Root;
+      }
+      catch (Exception exception)
+      {
+        throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
+      }
+    }
+
     public static string SerializeFromStream(Stream graph)
     {
       try
@@ -719,6 +777,9 @@ namespace org.iringtools.utility
           XmlSerializer serializer = new XmlSerializer(typeof(T));
           serializer.Serialize(stream, graph);
         }
+
+        stream.Position = 0;
+
         return stream;
       }
       catch (Exception exception)
@@ -781,7 +842,10 @@ namespace org.iringtools.utility
       XmlDictionaryReader reader = null;
       try
       {
-        reader = XmlDictionaryReader.CreateTextReader(stream, new XmlDictionaryReaderQuotas());
+        XmlDictionaryReaderQuotas quotas = new XmlDictionaryReaderQuotas();
+        quotas.MaxStringContentLength = int.MaxValue;
+
+        reader = XmlDictionaryReader.CreateTextReader(stream, quotas);
         if (useDataContractSerializer)
         {
           DataContractSerializer serializer = new DataContractSerializer(typeof(T));
@@ -1012,7 +1076,7 @@ namespace org.iringtools.utility
 
     public static string XsdTypeToCSharpType(string xsdType)
     {
-      string type = (xsdType.StartsWith("xsd:") || xsdType.StartsWith("XSD:")) ? xsdType.Substring(4) : xsdType;
+      string type = (xsdType.ToLower().StartsWith("xsd:")) ? xsdType.Substring(4) : xsdType;
 
       switch (type.ToLower())
       {
@@ -1029,9 +1093,8 @@ namespace org.iringtools.utility
         case "integer": return "Int32";
         case "long": return "Int64";
         case "short": return "Int16";
-        case "string": return "String";
         case "time": return "DateTime";
-        default: throw new Exception("XSD type \"" + xsdType + "\" not currently supported.");
+        default: return "String";
       }
     }
 

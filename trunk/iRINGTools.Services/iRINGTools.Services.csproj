@@ -93,8 +93,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\default.css" />
-    <Content Include="App_Data\FacadeIntro.txt" />
-    <Content Include="App_Data\SandboxIntro.txt" />
     <Content Include="css\sparql-query.css" />
     <Content Include="css\iring-tools.css" />
     <Content Include="css\reset.css" />
@@ -148,10 +146,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="XML\Repositories_Default.xml" />
-    <None Include="App_Data\config.ttl" />
-    <None Include="Web.config">
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.cs">
@@ -198,6 +192,9 @@
       <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
       <Name>UtilityLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

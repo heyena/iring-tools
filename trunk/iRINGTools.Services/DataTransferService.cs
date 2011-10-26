@@ -35,6 +35,10 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.dxfr.manifest;
 using org.iringtools.adapter;
+using System;
+using System.Web;
+using org.iringtools.utility;
+using System.Net;
 
 namespace org.iringtools.services
 {
@@ -42,7 +46,6 @@ namespace org.iringtools.services
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
   public class DataTransferService
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataTransferService));
     private DataTranferProvider _dxfrProvider = null;
 
     public DataTransferService()
@@ -52,105 +55,214 @@ namespace org.iringtools.services
 
     [Description("Gets dto provider version.")]
     [WebGet(UriTemplate = "/version")]
-    public VersionInfo GetVersion()
+    public void GetVersion()
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      try
+      {
+        VersionInfo versionInfo = _dxfrProvider.GetVersion();
 
-      return _dxfrProvider.GetVersion();
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<VersionInfo>(versionInfo));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
 
     [Description("Gets manifest for an application.")]
     [WebGet(UriTemplate = "/{scope}/{app}/manifest")]
-    public Manifest GetManifest(string scope, string app)
+    public void GetManifest(string scope, string app)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _dxfrProvider.GetManifest(scope, app);
+      try
+      {
+        Manifest manifest = _dxfrProvider.GetManifest(scope, app);
+        
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Manifest>(manifest));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
 
     [Description("Gets data transfer indices for a particular graph.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
-    public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
+    public void GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      try
+      {
+        if (hashAlgorithm == null)
+          hashAlgorithm = "MD5";
 
-      if (hashAlgorithm == null)
-        hashAlgorithm = "MD5";
-      return _dxfrProvider.GetDataTransferIndices(scope, app, graph, hashAlgorithm);
+        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndices(scope, app, graph, hashAlgorithm);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
 
     [Description("Gets data transfer indices according to data filter.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter?hashAlgorithm={hashAlgorithm}")]
-    public DataTransferIndices GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DataFilter filter)
+    public void GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DataFilter filter)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-      return _dxfrProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, filter);
+      try
+      {
+        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, filter);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
+
     [Description("Gets data transfer indices according to the posted manifest.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
-    public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
+    public void GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      try
+      {
+        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
 
-      return _dxfrProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
+
     [Description("Gets data transfer indices according to manifest and filter request.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi/filter?hashAlgorithm={hashAlgorithm}")]
-    public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
+    public void GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-      return _dxfrProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
+      try
+      {
+        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesByRequest(scope, app, graph, hashAlgorithm, request);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
+
     [Description("Gets data transfer objects according to the posted data transfer indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
-    public DataTransferObjects GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
+    public void GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      try
+      {
+        DataTransferObjects dtos = _dxfrProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
 
-      return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dataTransferIndices);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
+
     [Description("Gets data transfer objects according to the posted manifest and data transfer indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
-    public DataTransferObjects GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest)
+    public void GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      try
+      {
+        DataTransferObjects dtos = _dxfrProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
 
-      return _dxfrProvider.GetDataTransferObjects(scope, app, graph, dxoRequest);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
+
     [Description("Gets single data transfer object by id.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}/{id}")]
-    public DataTransferObjects GetDataTransferObject(string scope, string app, string graph, string id)
+    public void GetDataTransferObject(string scope, string app, string graph, string id)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      try
+      {
+        DataTransferObjects dtos = _dxfrProvider.GetDataTransferObject(scope, app, graph, id);
 
-      return _dxfrProvider.GetDataTransferObject(scope, app, graph, id);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferObjects>(dtos));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
+
     [Description("Posts data transfer objects to add/update/delete to data layer.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
-    public Response PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
+    public void PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      try
+      {
+        Response response = _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
 
-      return _dxfrProvider.PostDataTransferObjects(scope, app, graph, dataTransferObjects);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
+
     [Description("Deletes a data transfer object by id.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
-    public Response DeletetDataTransferObject(string scope, string app, string graph, string id)
+    public void DeletetDataTransferObject(string scope, string app, string graph, string id)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      try
+      {
+        Response response = _dxfrProvider.DeleteDataTransferObject(scope, app, graph, id);
 
-      return _dxfrProvider.DeleteDataTransferObject(scope, app, graph, id);
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(Utility.SerializeDataContract<Response>(response));
+      }
+      catch (Exception e)
+      {
+        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+        HttpContext.Current.Response.ContentType = "text/plain";
+        HttpContext.Current.Response.Write(e.ToString());
+      }
     }
   }
 }
