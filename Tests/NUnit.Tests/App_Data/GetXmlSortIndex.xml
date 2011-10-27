@@ -8,14 +8,11 @@
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90010-O</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90009-O</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90020-O</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90033-O</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90032-O</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90031-O</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90030-O</PipingNetworkSystem>
+  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90032-O</PipingNetworkSystem>
+  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90033-O</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90058-O</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90043-RV</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90042-RV</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90041-RV</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90028-RV</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90026-RV</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90014-RV</PipingNetworkSystem>
@@ -23,13 +20,9 @@
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90008-RV</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90005-RV</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90002-RV</PipingNetworkSystem>
+  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90041-RV</PipingNetworkSystem>
+  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90042-RV</PipingNetworkSystem>
+  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90043-RV</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90003-SC</PipingNetworkSystem>
   <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90004-SC</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90007-SL</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90006-SL</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90004-SL</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90003-SL</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90025-SW</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90002-SW</PipingNetworkSystem>
-  <PipingNetworkSystem>http://www.example.com/ABC/12345_000//Lines/90003-V</PipingNetworkSystem>
 </Lines>
