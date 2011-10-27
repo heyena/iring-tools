@@ -1397,30 +1397,28 @@ namespace org.iringtools.adapter
 
       foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
       {        
-        Type[] asmTypes = null;
-
         try
         {
-          asmTypes = asm.GetTypes();
+          Type[] asmTypes = asm.GetTypes();
+
+          if (asmTypes != null)
+          {
+            foreach (System.Type asmType in asmTypes)
+            {
+              if (!asmType.IsInterface && ti.IsAssignableFrom(asmType) && asmType.IsAbstract.Equals(false))
+              {
+                bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+                string name = asm.FullName.Split(',')[0];
+                string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+                DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
+                dataLayers.Add(dataLayer);
+              }
+            }
+          }
         }
         catch (Exception e)
         {
-          _logger.Warn(String.Format("Unable to get type of [{0}]. ", asm.GetType()), e);
-        }
-
-        if (asmTypes != null)
-        {
-          foreach (System.Type asmType in asmTypes)
-          {
-            if (!asmType.IsInterface && ti.IsAssignableFrom(asmType) && asmType.IsAbstract.Equals(false))
-            {
-              bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-              string name = asm.FullName.Split(',')[0];
-              string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-              DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
-              dataLayers.Add(dataLayer);
-            }
-          }
+          _logger.Warn("Error in GetDataLayers() " + e);
         }
       }
 
