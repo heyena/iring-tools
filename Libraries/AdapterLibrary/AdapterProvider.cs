@@ -51,6 +51,8 @@ namespace org.iringtools.adapter
   public class AdapterProvider : BaseProvider
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
+    private static readonly int DEFAULT_PAGE_SIZE = 25;
+
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
     private ScopeProjects _scopes = null;
@@ -400,7 +402,9 @@ namespace org.iringtools.adapter
         IList<string> index = new List<string>();
 
         if (limit == 0)
-          limit = 100;
+        {
+          limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
+        }
 
         _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
         _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
@@ -436,7 +440,9 @@ namespace org.iringtools.adapter
         IList<string> index = new List<string>();
 
         if (limit == 0)
-          limit = 100;
+        {
+          limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
+        }
 
         _projectionEngine.Start = start;
         _projectionEngine.Limit = limit;
@@ -498,7 +504,9 @@ namespace org.iringtools.adapter
         IList<string> index = new List<string>();
 
         if (limit == 0)
-          limit = 100;
+        {
+          limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
+        }
 
         _projectionEngine.Start = start;
         _projectionEngine.Limit = limit;

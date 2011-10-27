@@ -359,14 +359,14 @@ namespace org.iringtools.adapter.datalayer
         {
           List<IDataObject> dataObjects = new List<IDataObject>();
           long totalCount = GetCount(objectType, filter);
-          int hibernatePageSize = (_settings["HibernateDefaultPageSize"] != null) ? int.Parse(_settings["HibernateDefaultPageSize"]) : 1000;
+          int internalPageSize = (_settings["InternalPageSize"] != null) ? int.Parse(_settings["InternalPageSize"]) : 1000;
           int numOfRows = 0;
 
           while (numOfRows < totalCount)
           {
-            criteria.SetFirstResult(numOfRows).SetMaxResults(hibernatePageSize);
+            criteria.SetFirstResult(numOfRows).SetMaxResults(internalPageSize);
             dataObjects.AddRange(criteria.List<IDataObject>());
-            numOfRows += hibernatePageSize;
+            numOfRows += internalPageSize;
           }
 
           return dataObjects;
