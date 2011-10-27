@@ -384,14 +384,15 @@ namespace org.iringtools.facade
 
               if (_dataObjects != null && _dataObjects.Count > 0)
               {
+                status.Messages.Add("Query target endpoint completed successfully.");
+                status.Messages.Add(String.Format("Number of data objects created [{0}].", _dataObjects.Count));
+                
                 // post data objects to data layer
-                _dataLayer.Post(_dataObjects);
+                response.Append(_dataLayer.Post(_dataObjects));
 
                 DateTime endTime = DateTime.Now;
                 TimeSpan duration = endTime.Subtract(startTime);
 
-                status.Messages.Add(string.Format("Graph [{0}] has been posted successfully.", graph));
-                status.Messages.Add(String.Format("Number of data objects posted [{0}].", _dataObjects.Count));
                 status.Messages.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
                   duration.Minutes, duration.Seconds, duration.Milliseconds));
               }
