@@ -618,6 +618,19 @@ namespace org.iringtools.utils.exchange
 
         listBoxResults.ScrollIntoView(listBoxResults.Items[listBoxResults.Items.Count - 1]);
       }
+
+      if (response.Level == StatusLevel.Success)
+      {
+        string message = "Operation completed successfully.";
+        string imageName = "Resources/success_22.png";
+        _messages.Add(new StatusMessage { Message = message, ImageName = imageName });
+      }
+      else if (response.Level == StatusLevel.Error)
+      {
+        string message = "Operation completed with error.";
+        string imageName = "Resources/error_22.png";
+        _messages.Add(new StatusMessage { Message = message, ImageName = imageName });
+      }
     }
 
     private bool ShowLoginDialog(CredentialType credentialType)
