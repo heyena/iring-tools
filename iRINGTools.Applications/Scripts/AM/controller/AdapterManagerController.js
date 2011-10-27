@@ -161,12 +161,12 @@
                 scope: node.data.id
             },
             success: function (o) {
-                directoryPanel.onReload(node);
+                tree.onReload(node);
                 tree.getEl().unmask();
             },
             failure: function (f, a) {
                 tree.getEl().unmask();
-                Ext.Msg.alert('Warning', 'Error!!!');
+                Ext.Msg.alert('Warning', 'Error Refreshing Facade!!!');
             }
         });
         tree.graphMenu.hide();
