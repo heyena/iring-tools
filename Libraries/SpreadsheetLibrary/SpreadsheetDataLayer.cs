@@ -19,12 +19,10 @@ using System.Xml.Linq;
 
 namespace org.iringtools.adapter.datalayer
 {
-
-
   public class SpreadsheetDataLayer : BaseConfigurableDataLayer
   {
     private SpreadsheetProvider _provider = null;
-    private List<IDataObject> _dataObjects = null;
+    //private List<IDataObject> _dataObjects = null;
     private ILog _logger = LogManager.GetLogger(typeof(SpreadsheetDataLayer));
 
     [Inject]

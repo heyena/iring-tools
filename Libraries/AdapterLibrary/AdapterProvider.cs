@@ -31,19 +31,19 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using log4net;
 using Ninject;
 using Ninject.Extensions.Xml;
-using org.ids_adi.qmxf;
 using org.iringtools.adapter.identity;
+using org.iringtools.adapter.projection;
 using org.iringtools.library;
 using org.iringtools.mapping;
 using org.iringtools.utility;
 using StaticDust.Configuration;
-using org.iringtools.adapter.projection;
 
 
 namespace org.iringtools.adapter
@@ -1392,37 +1392,37 @@ namespace org.iringtools.adapter
 
         public DataLayers GetDataLayers()
         {
-            DataLayers dataLayers = new DataLayers();
-            Type ti = typeof(IDataLayer);
+          DataLayers dataLayers = new DataLayers();
+          Type type = typeof(IDataLayer);
 
-            foreach (System.Reflection.Assembly asm in System.AppDomain.CurrentDomain.GetAssemblies())
+          foreach (System.Reflection.Assembly asm in Thread.GetDomain().GetAssemblies())
+          {
+            try
             {
-                try
-                {
-                    Type[] asmTypes = asm.GetTypes();
+              Type[] asmTypes = asm.GetTypes();
 
-                    if (asmTypes != null)
-                    {
-                        foreach (System.Type asmType in asmTypes)
-                        {
-                            if (!asmType.IsInterface && ti.IsAssignableFrom(asmType) && asmType.IsAbstract.Equals(false))
-                            {
-                                bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-                                string name = asm.FullName.Split(',')[0];
-                                string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-                                DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
-                                dataLayers.Add(dataLayer);
-                            }
-                        }
-                    }
-                }
-                catch (Exception e)
+              if (asmTypes != null)
+              {
+                foreach (System.Type asmType in asmTypes)
                 {
-                    _logger.Warn("Error in GetDataLayers() " + e);
+                  if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+                  {
+                    bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+                    string name = asm.FullName.Split(',')[0];
+                    string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+                    DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
+                    dataLayers.Add(dataLayer);
+                  }
                 }
+              }
             }
+            catch (Exception e)
+            {
+              _logger.Warn("Error in GetDataLayers() " + e);
+            }
+          }
 
-            return dataLayers;
+          return dataLayers;
         }
 
         public Response Configure(string projectName, string applicationName, HttpRequest httpRequest)

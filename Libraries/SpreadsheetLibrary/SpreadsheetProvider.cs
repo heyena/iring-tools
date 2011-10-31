@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Text;
-
-using org.iringtools.adapter;
-using org.iringtools.utility;
-using org.iringtools.library;
-
+using System.Linq;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml;
-using org.iringtools.adapter.datalayer;
+using org.iringtools.library;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -22,7 +16,7 @@ namespace org.iringtools.adapter.datalayer
     private string _configurationPath = string.Empty;
     private SpreadsheetConfiguration _configuration = null;
     private SpreadsheetDocument _document = null;
-    private Stream _stream = null;
+    //private Stream _stream = null;
 
     public SpreadsheetProvider(SpreadsheetConfiguration configuration)
     {
