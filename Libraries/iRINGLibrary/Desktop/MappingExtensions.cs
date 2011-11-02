@@ -221,24 +221,27 @@ namespace org.iringtools.mapping
 
     public static string ResolveValueMap(this Mapping mapping, string valueListName, string qualifiedUri)
     {
-      string uri = qualifiedUri.Replace(RDL_NS, "rdl:");
+      if (!String.IsNullOrEmpty(qualifiedUri))
+      {
+        string uri = qualifiedUri.Replace(RDL_NS, "rdl:");
 
-			if (mapping.valueListMaps != null)
-			{
-				foreach (ValueListMap valueListMap in mapping.valueListMaps)
-				{
-					if (valueListMap.name == valueListName)
-					{
-						foreach (ValueMap valueMap in valueListMap.valueMaps)
-						{
-							if (valueMap.uri == uri)
-							{
-								return valueMap.internalValue;
-							}
-						}
-					}
-				}
-			}
+        if (mapping.valueListMaps != null)
+        {
+          foreach (ValueListMap valueListMap in mapping.valueListMaps)
+          {
+            if (valueListMap.name.ToLower() == valueListName.ToLower())
+            {
+              foreach (ValueMap valueMap in valueListMap.valueMaps)
+              {
+                if (valueMap.uri == uri)
+                {
+                  return valueMap.internalValue;
+                }
+              }
+            }
+          }
+        }
+      }
 
       return String.Empty;
     }

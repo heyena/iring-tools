@@ -159,8 +159,6 @@ namespace org.iringtools.adapter.projection
 
             ProcessInboundClass(dataObjectIndex, rootClassTemplateMap);
 
-            //TBD: handle primary classification or composite graphs?
-
             dataObject = CreateDataObject(_graphMap.dataObjectName, dataObjectIndex);
             _dataObjects.Add(dataObject);
           }
@@ -273,9 +271,11 @@ namespace org.iringtools.adapter.projection
               }
             }
 
-            // NOTES: perform BFS for java exchange service to reliably recalculate the hash values
             foreach (TemplateMap templateMap in classTemplateMap.templateMaps)
             {
+              StringBuilder tempPropertyValues = new StringBuilder();
+              bool isTemplateValid = true;
+
               foreach (RoleMap roleMap in templateMap.roleMaps)
               {
                 if (roleMap.type == RoleType.Property ||
@@ -299,6 +299,12 @@ namespace org.iringtools.adapter.projection
                     string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
                     propertyValue = ParsePropertyValue(roleMap, propertyValue);
 
+                    if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
+                    {
+                      isTemplateValid = false;
+                      break;
+                    }
+                    
                     if (propertyName == sortIndex)
                     {
                       dti.SortIndex = propertyValue;
@@ -317,7 +323,7 @@ namespace org.iringtools.adapter.projection
                       }
                     }
 
-                    propertyValues.Append(propertyValue);
+                    tempPropertyValues.Append(propertyValue);                    
                   }
                   else  // related property
                   {
@@ -335,7 +341,14 @@ namespace org.iringtools.adapter.projection
                       IDataObject relatedObject = relatedObjects[classIdentifierIndex];
                       string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
                       propertyValue = ParsePropertyValue(roleMap, propertyValue);
-                      propertyValues.Append(propertyValue);
+
+                      if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
+                      {
+                        isTemplateValid = false;
+                        break;
+                      }
+                      
+                      tempPropertyValues.Append(propertyValue);
                     }
                     else  // related property is property map
                     {
@@ -343,8 +356,17 @@ namespace org.iringtools.adapter.projection
                       {
                         string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
                         propertyValue = ParsePropertyValue(roleMap, propertyValue);
-                        propertyValues.Append(propertyValue);
+
+                        if (!String.IsNullOrEmpty(roleMap.valueListName) && String.IsNullOrEmpty(propertyValue))
+                        {
+                          isTemplateValid = false;
+                          break;
+                        }
+                        
+                        tempPropertyValues.Append(propertyValue);
                       }
+
+                      if (!isTemplateValid) break;
                     }
                   }
                 }
@@ -352,7 +374,12 @@ namespace org.iringtools.adapter.projection
                 {
                   classRoles.Add(roleMap);
                 }
-              }              
+              }
+
+              if (isTemplateValid)
+              {
+                propertyValues.Append(tempPropertyValues.ToString());
+              }
             }
 
             foreach (RoleMap classRole in classRoles)
@@ -525,9 +552,10 @@ namespace org.iringtools.adapter.projection
             break;
         }
       }
-
+            
       if (propertyRoles.Count > 0)  // property template
       {
+        bool isTemplateValid = true;  // template is not valid when value list uri is empty
         List<List<RoleObject>> multiRoleObjects = new List<List<RoleObject>>();
 
         // create property elements
@@ -557,7 +585,17 @@ namespace org.iringtools.adapter.projection
             };
 
             if (!String.IsNullOrEmpty(propertyRole.valueListName))
-              roleObject.hasValueMap = true;
+            {
+              if (String.IsNullOrEmpty(propertyValue))
+              {
+                isTemplateValid = false;
+                break;
+              }
+              else 
+              {
+                roleObject.hasValueMap = true;
+              }
+            }
 
             roleObjects.Add(roleObject);
           }
@@ -581,7 +619,7 @@ namespace org.iringtools.adapter.projection
             };
 
             // reference class identifier has related property, process related object at classIdentifierIndex only
-            if (classIdentifierHasRelatedProperty)  
+            if (classIdentifierHasRelatedProperty)
             {
               IDataObject relatedObject = relatedObjects[classIdentifierIndex];
               string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
@@ -598,28 +636,42 @@ namespace org.iringtools.adapter.projection
                 propertyValue = ParsePropertyValue(propertyRole, propertyValue);
 
                 if (!String.IsNullOrEmpty(propertyRole.valueListName))
-                  roleObject.hasValueMap = true;
-
-                roleObject.values.Add(propertyValue);
+                {
+                  if (String.IsNullOrEmpty(propertyValue))
+                  {
+                    isTemplateValid = false;
+                    break;
+                  }
+                  else
+                  {
+                    roleObject.hasValueMap = true;
+                    roleObject.values.Add(propertyValue);
+                  }
+                }
               }
+
+              if (!isTemplateValid) break;
             }
 
             roleObjects.Add(roleObject);
           }
         }
 
-        // create template objects
-        if (multiRoleObjects.Count > 0 && multiRoleObjects[0].Count > 0)
+        if (isTemplateValid)
         {
-          for (int i = 0; i < multiRoleObjects[0].Count; i++)
+          // create template objects
+          if (multiRoleObjects.Count > 0 && multiRoleObjects[0].Count > 0)
           {
-            TemplateObject templateObject = Utility.CloneDataContractObject<TemplateObject>(baseTemplateObject);
-            classObject.templateObjects.Add(templateObject);
-
-            for (int j = 0; j < multiRoleObjects.Count; j++)
+            for (int i = 0; i < multiRoleObjects[0].Count; i++)
             {
-              RoleObject roleObject = multiRoleObjects[j][i];
-              templateObject.roleObjects.Add(roleObject);
+              TemplateObject templateObject = Utility.CloneDataContractObject<TemplateObject>(baseTemplateObject);
+              classObject.templateObjects.Add(templateObject);
+
+              for (int j = 0; j < multiRoleObjects.Count; j++)
+              {
+                RoleObject roleObject = multiRoleObjects[j][i];
+                templateObject.roleObjects.Add(roleObject);
+              }
             }
           }
         }
@@ -627,7 +679,7 @@ namespace org.iringtools.adapter.projection
       else if (classRoles.Count > 0)  // relationship template
       {
         bool templateValid = false;  // template is valid when exist at least one class referernce identifier that is not null
-        
+
         foreach (RoleMap classRole in classRoles)
         {
           bool refClassHasRelatedProperty;
@@ -772,6 +824,40 @@ namespace org.iringtools.adapter.projection
               case RoleType.FixedValue:
                 ProcessInboundPropertyRole(dataObjectIndex, classObjectIndex, roleMap, templateObject);
                 break;
+            }
+          }
+        }
+        else
+        {
+          // handle value list that has no uri map
+          foreach (RoleMap roleMap in templateMap.roleMaps)
+          {
+            if (!String.IsNullOrEmpty(roleMap.valueListName))
+            {
+              ValueListMap valueListMap = _mapping.valueListMaps.Find(x => x.name.ToLower() == roleMap.valueListName.ToLower());
+
+              if (valueListMap != null && valueListMap.valueMaps != null)
+              {
+                ValueMap valueMap = valueListMap.valueMaps.Find(x => String.IsNullOrEmpty(x.uri));
+
+                if (valueMap != null)
+                {
+                  string[] propertyPath = roleMap.propertyName.Split('.');
+                  string propertyName = propertyPath[propertyPath.Length - 1];
+
+                  if (propertyPath.Length > 2)  // related property
+                  {
+                    List<string> values = new List<string>();         
+                    values.Add(valueMap.internalValue);
+
+                    SetRelatedRecords(dataObjectIndex, classObjectIndex, roleMap.propertyName, values);
+                  }
+                  else
+                  {
+                    _dataRecords[dataObjectIndex][propertyName] = valueMap.internalValue;
+                  }
+                }
+              }
             }
           }
         }

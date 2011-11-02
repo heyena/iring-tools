@@ -148,10 +148,7 @@ AdapterManager.ValueListMapPanel = Ext.extend(Ext.Panel, {
     onSave: function () {
         var that = this;    // consists the main/previous class object	
         var thisForm = this.form.getForm();
-        if (thisForm.findField('internalName').getValue() == '' || thisForm.findField('classUrl').getValue() == '') {
-            showDialog(400, 100, 'Warning', 'Please fill in both fields in this form.', Ext.Msg.OK, null);
-            return;
-        }
+
         thisForm.submit({
             success: function (f, a) {
                 that.fireEvent('Save', that);

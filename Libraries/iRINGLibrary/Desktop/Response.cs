@@ -74,8 +74,16 @@ namespace org.iringtools.library
     public void Append(Status newStatus)
     {
       string identifier = newStatus.Identifier;
-
-      Status status = StatusList.Find(s => s.Identifier == identifier);
+      Status status = null;
+      
+      foreach (Status stat in StatusList)
+      {
+        if (stat.Identifier.ToLower() == identifier.ToLower())
+        {
+          status = stat;
+          break;
+        }
+      }
 
       if (status != null)
       {

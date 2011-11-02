@@ -760,18 +760,31 @@ namespace org.iringtools.adapter.projection
 
           if (String.IsNullOrEmpty(roleMap.valueListName))
           {
-            dataPropertyName = roleMap.propertyName;
             _valueListName = null;
           }
           else
           {
-            dataPropertyName = roleMap.propertyName;
             _valueListName = roleMap.valueListName;
 
             for (int i = 0; i < values.Count; i++)
             {
-              string value = values[i];
-              value = _mapping.ResolveValueMap(_valueListName, value);
+              string value = values[i];       
+              ValueListMap valueListMap = _mapping.valueListMaps.Find(x => x.name.ToLower() == roleMap.valueListName.ToLower());
+
+              if (valueListMap != null && valueListMap.valueMaps != null)
+              {
+                ValueMap valueMap = valueListMap.valueMaps.Find(x => x.uri == value);
+
+                if (valueMap != null)
+                {
+                  value = valueMap.internalValue;
+                }
+                else
+                {
+                  value = valueListMap.valueMaps[0].internalValue;
+                }
+              }
+
               values[i] = value;
             }
           }
