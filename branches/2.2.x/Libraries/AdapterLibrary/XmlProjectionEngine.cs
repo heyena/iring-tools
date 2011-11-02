@@ -298,8 +298,9 @@ namespace org.iringtools.adapter.projection
 
       if (propertyRoles.Count > 0)  // property template
       {
+        bool isTemplateValid = true;  // template is not valid when value list uri is empty
         List<List<XElement>> multiPropertyElements = new List<List<XElement>>();
-
+       
         // create property elements
         foreach (RoleMap propertyRole in propertyRoles)
         {
@@ -315,7 +316,15 @@ namespace org.iringtools.adapter.projection
           if (propertyParts.Length == 2)  // direct property
           {
             string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-            propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
+            XElement propertyElement = CreatePropertyElement(propertyRole, propertyValue);
+
+            if (propertyElement == null)
+            {
+              isTemplateValid = false;
+              break;
+            }
+
+            propertyElements.Add(propertyElement);
           }
           else  // related property
           {
@@ -332,31 +341,52 @@ namespace org.iringtools.adapter.projection
             {
               IDataObject relatedObject = relatedObjects[classIdentifierIndex];
               string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
-              propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
+              XElement propertyElement = CreatePropertyElement(propertyRole, propertyValue);
+
+              if (propertyElement == null)
+              {
+                isTemplateValid = false;
+                break;
+              }
+
+              propertyElements.Add(propertyElement);
             }
             else  // related property is property map
             {
               foreach (IDataObject relatedObject in relatedObjects)
               {
                 string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
-                propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
+                XElement propertyElement = CreatePropertyElement(propertyRole, propertyValue);
+
+                if (propertyElement == null)
+                {
+                  isTemplateValid = false;
+                  break;
+                }
+
+                propertyElements.Add(propertyElement);
               }
+
+              if (!isTemplateValid) break;
             }
           }
         }
 
-        // add property elements to template element(s)
-        if (multiPropertyElements.Count > 0 && multiPropertyElements[0].Count > 0)
+        if (isTemplateValid)
         {
-          for (int i = 0; i < multiPropertyElements[0].Count; i++)
+          // add property elements to template element(s)
+          if (multiPropertyElements.Count > 0 && multiPropertyElements[0].Count > 0)
           {
-            XElement templateElement = new XElement(baseTemplateElement);
-            individualElement.Add(templateElement);
-
-            for (int j = 0; j < multiPropertyElements.Count; j++)
+            for (int i = 0; i < multiPropertyElements[0].Count; i++)
             {
-              XElement propertyElement = multiPropertyElements[j][i];
-              templateElement.Add(propertyElement);
+              XElement templateElement = new XElement(baseTemplateElement);
+              individualElement.Add(templateElement);
+
+              for (int j = 0; j < multiPropertyElements.Count; j++)
+              {
+                XElement propertyElement = multiPropertyElements[j][i];
+                templateElement.Add(propertyElement);
+              }
             }
           }
         }
@@ -424,10 +454,11 @@ namespace org.iringtools.adapter.projection
         propertyValue = _mapping.ResolveValueList(propertyRole.valueListName, propertyValue);
 
         if (String.IsNullOrEmpty(propertyValue))
-          propertyValue = RDF_NIL;
-        else
-          propertyValue = propertyValue.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
-
+        {
+          return null;
+        }
+        
+        propertyValue = propertyValue.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
         propertyElement.Add(new XAttribute(REF_ATTR, propertyValue));
       }
 

@@ -400,6 +400,7 @@ namespace org.iringtools.adapter.projection
 
       if (propertyRoles.Count > 0)  // property template
       {
+        bool isTemplateValid = true;  // template is not valid when value list uri is empty
         List<List<XElement>> multiPropertyElements = new List<List<XElement>>();
 
         // create property elements
@@ -417,7 +418,15 @@ namespace org.iringtools.adapter.projection
           if (propertyParts.Length == 2)  // direct property
           {
             string propertyValue = Convert.ToString(dataObject.GetPropertyValue(propertyName));
-            propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
+            XElement propertyElement = CreatePropertyElement(propertyRole, propertyValue);
+
+            if (propertyElement == null)
+            {
+              isTemplateValid = false;
+              break;
+            }
+            
+            propertyElements.Add(propertyElement);
           }
           else  // related property
           {
@@ -434,51 +443,72 @@ namespace org.iringtools.adapter.projection
             {
               IDataObject relatedObject = relatedObjects[classIdentifierIndex];
               string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
-              propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
+              XElement propertyElement = CreatePropertyElement(propertyRole, propertyValue);
+
+              if (propertyElement == null)
+              {
+                isTemplateValid = false;
+                break;
+              }
+              
+              propertyElements.Add(propertyElement);
             }
             else  // related property is property map
             {
               foreach (IDataObject relatedObject in relatedObjects)
               {
                 string propertyValue = Convert.ToString(relatedObject.GetPropertyValue(propertyName));
-                propertyElements.Add(CreatePropertyElement(propertyRole, propertyValue));
+                XElement propertyElement = CreatePropertyElement(propertyRole, propertyValue);
+
+                if (propertyElement == null)
+                {
+                  isTemplateValid = false;
+                  break;
+                }
+
+                propertyElements.Add(propertyElement);
               }
+
+              if (!isTemplateValid) break;
             }
           }
         }
 
-        // add property elements to template element(s)
-        if (multiPropertyElements.Count > 0 && multiPropertyElements[0].Count > 0)
+        if (isTemplateValid)
         {
-          // enforce dotNetRDF to store/retrieve templates in order as expressed in RDF
-          string hashPrefixFormat = Regex.Replace(multiPropertyElements[0].Count.ToString(), "\\d", "0") + "0";
-
-          for (int i = 0; i < multiPropertyElements[0].Count; i++)
+          // add property elements to template element(s)
+          if (multiPropertyElements.Count > 0 && multiPropertyElements[0].Count > 0)
           {
-            XElement templateElement = new XElement(baseTemplateElement);
-            _rdfXml.Add(templateElement);
+            // enforce dotNetRDF to store/retrieve templates in order as expressed in RDF
+            string hashPrefixFormat = Regex.Replace(multiPropertyElements[0].Count.ToString(), "\\d", "0") + "0";
 
-            StringBuilder templateValue = new StringBuilder(baseValues.ToString());
-            for (int j = 0; j < multiPropertyElements.Count; j++)
+            for (int i = 0; i < multiPropertyElements[0].Count; i++)
             {
-              XElement propertyElement = multiPropertyElements[j][i];
-              templateElement.Add(propertyElement);
+              XElement templateElement = new XElement(baseTemplateElement);
+              _rdfXml.Add(templateElement);
 
-              if (!String.IsNullOrEmpty(propertyElement.Value))
-                templateValue.Append(propertyElement.Value);
-              else
-                templateValue.Append(propertyElement.Attribute(RDF_RESOURCE).Value);
+              StringBuilder templateValue = new StringBuilder(baseValues.ToString());
+              for (int j = 0; j < multiPropertyElements.Count; j++)
+              {
+                XElement propertyElement = multiPropertyElements[j][i];
+                templateElement.Add(propertyElement);
+
+                if (!String.IsNullOrEmpty(propertyElement.Value))
+                  templateValue.Append(propertyElement.Value);
+                else
+                  templateValue.Append(propertyElement.Attribute(RDF_RESOURCE).Value);
+              }
+
+              string hashCode = Utility.MD5Hash(templateValue.ToString());
+              hashCode = i.ToString(hashPrefixFormat) + hashCode.Substring(hashPrefixFormat.Length);
+              templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
             }
-
-            string hashCode = Utility.MD5Hash(templateValue.ToString());
-            hashCode = i.ToString(hashPrefixFormat) + hashCode.Substring(hashPrefixFormat.Length);
-            templateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
           }
         }
       }
       else if (classRoles.Count > 0)  // relationship template with known class role
       {
-        bool templateValid = false;  // template is valid when there is at least one class referernce identifier that is not null
+        bool isTemplateValid = false;  // template is valid when there is at least one class referernce identifier that is not null
         Dictionary<RoleMap, List<string>> relatedClassRoles = new Dictionary<RoleMap, List<string>>();
 
         foreach (RoleMap classRole in classRoles)
@@ -496,7 +526,7 @@ namespace org.iringtools.adapter.projection
 
             if (!String.IsNullOrEmpty(refClassIdentifier))
             {
-              templateValid = true;
+              isTemplateValid = true;
               baseValues.Append(refClassIdentifier);
 
               string roleId = classRole.id.Substring(classRole.id.IndexOf(":") + 1);
@@ -559,7 +589,7 @@ namespace org.iringtools.adapter.projection
             }
           }
         }
-        else if (templateValid)
+        else if (isTemplateValid)
         {
           string hashCode = Utility.MD5Hash(baseValues.ToString());
           baseTemplateElement.Add(new XAttribute(RDF_ABOUT, hashCode));
@@ -600,10 +630,11 @@ namespace org.iringtools.adapter.projection
         propertyValue = _mapping.ResolveValueList(propertyRole.valueListName, propertyValue);
 
         if (String.IsNullOrEmpty(propertyValue))
-          propertyValue = QUALIFIED_RDF_NIL;
-        else
-          propertyValue = propertyValue.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
-
+        {
+          return null;
+        }
+        
+        propertyValue = propertyValue.Replace(RDL_PREFIX, RDL_NS.NamespaceName);
         propertyElement.Add(new XAttribute(RDF_RESOURCE, propertyValue));
       }
 
@@ -769,11 +800,31 @@ namespace org.iringtools.adapter.projection
                   string value = Regex.Replace(result.ToString(), @".*= ", String.Empty);
 
                   if (value == QUALIFIED_RDF_NIL)
+                  {
                     value = String.Empty;
+                  }
                   else if (value.Contains("^^"))
+                  {
                     value = value.Substring(0, value.IndexOf("^^"));
+                  }
                   else if (!String.IsNullOrEmpty(propertyRole.valueListName))
-                    value = _mapping.ResolveValueMap(propertyRole.valueListName, value);
+                  {
+                    ValueListMap valueListMap = _mapping.valueListMaps.Find(x => x.name.ToLower() == propertyRole.valueListName.ToLower());
+
+                    if (valueListMap != null && valueListMap.valueMaps != null)
+                    {
+                      ValueMap valueMap = valueListMap.valueMaps.Find(x => x.uri == value);
+
+                      if (valueMap != null)
+                      {
+                        value = valueMap.internalValue;
+                      }
+                      else
+                      {
+                        value = valueListMap.valueMaps[0].internalValue;
+                      }
+                    }
+                  }
 
                   if (propertyPath.Length > 2)  // related property
                   {

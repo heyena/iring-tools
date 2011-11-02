@@ -208,21 +208,25 @@ namespace org.iringtools.web.controllers
 
               foreach (var valueMap in valueListMap.valueMaps)
               {
-                string valueMapUri = valueMap.uri.Split(':')[1];
                 string classLabel = String.Empty;
 
-                if (!String.IsNullOrEmpty(valueMap.label))
+                if (!String.IsNullOrEmpty(valueMap.uri))
                 {
-                  classLabel = valueMap.label;
-                }
-                else if (Session[valueMapUri] != null)
-                {
-                  classLabel = (string)Session[valueMapUri];
-                }
-                else
-                {
-                  classLabel = GetClassLabel(valueMapUri);
-                  Session[valueMapUri] = classLabel;
+                  string valueMapUri = valueMap.uri.Split(':')[1];
+
+                  if (!String.IsNullOrEmpty(valueMap.label))
+                  {
+                    classLabel = valueMap.label;
+                  }
+                  else if (Session[valueMapUri] != null)
+                  {
+                    classLabel = (string)Session[valueMapUri];
+                  }
+                  else
+                  {
+                    classLabel = GetClassLabel(valueMapUri);
+                    Session[valueMapUri] = classLabel;
+                  }
                 }
 
                 JsonTreeNode node = new JsonTreeNode
