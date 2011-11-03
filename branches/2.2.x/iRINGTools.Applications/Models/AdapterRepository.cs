@@ -496,32 +496,6 @@ namespace iRINGTools.Web.Models
               }
             }
 
-            // add relationship nodes
-						if (dataObject.dataRelationships.Count == 0)
-						{
-						  JsonTreeNode relationshipNode = new JsonTreeNode()
-						  {
-						    text = "",
-						    type = "relationship",
-						    leaf = true,
-						    hidden = true
-						  };
-						  relationshipsNode.children.Add(relationshipNode);
-						}
-
-            foreach (DataRelationship relationship in dataObject.dataRelationships)
-            {
-              JsonTreeNode relationshipNode = new JsonTreeNode()
-              {
-                text = relationship.relationshipName,
-                type = "relationship",
-                iconCls = "treeRelation",
-                leaf = true
-              };
-
-							relationshipsNode.children.Add(relationshipNode);
-            }
-
             dbObjectNodes.Add(dataObjectNode);
           }
 
