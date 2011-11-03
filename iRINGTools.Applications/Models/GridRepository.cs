@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Configuration;
-using System.Linq;
-using System.Xml.Linq;
-using System.Web;
 using Ninject;
 using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
-using org.iringtools.mapping;
 
-using iRINGTools.Web.Helpers;
-using System.Text;
-using org.iringtools.dxfr.manifest;
 
-using org.iringtools.adapter;
 using System.Web.Script.Serialization;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Text;
 
 namespace iRINGTools.Web.Models
 {
@@ -27,15 +19,15 @@ namespace iRINGTools.Web.Models
       private WebHttpClient _client = null;
 
 			private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
-			private JavaScriptSerializer serializer;
+            private DataContractJsonSerializer serializer;
 
 
 			[Inject]
 			public GridRepository()
       {
         _settings = ConfigurationManager.AppSettings;
-				_client = new WebHttpClient(_settings["DataServiceURI"]);				
-				serializer = new JavaScriptSerializer();
+				_client = new WebHttpClient(_settings["DataServiceURI"]);
+              
       }
 
       public DataDictionary GetDictionary(string scope)
@@ -50,9 +42,14 @@ namespace iRINGTools.Web.Models
 
       public DataItems GetDataItems(string app, string scope, string graph, DataFilter dataFilter, int start, int limit)
       {
+
+        serializer = new DataContractJsonSerializer(typeof(DataItems));
         string relurl = string.Format("/{0}/{1}/{2}/filter?format=json&start={3}&limit={4}", app, scope, graph, start, limit);
         string allDataItemsJson = _client.Post<DataFilter, string>(relurl, dataFilter, true);
-        return (DataItems)serializer.Deserialize(allDataItemsJson, typeof(DataItems));
+        MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(allDataItemsJson));
+        DataItems dataItems = (DataItems)serializer.ReadObject(ms);
+        ms.Close();
+        return dataItems;
       }
                 
 
