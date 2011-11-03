@@ -296,5 +296,9 @@ namespace org.iringtools.library
     {
       throw new NotImplementedException();
     }
+
+    public virtual Response Refresh() {
+      throw new NotImplementedException();
+    }
   }
 }
