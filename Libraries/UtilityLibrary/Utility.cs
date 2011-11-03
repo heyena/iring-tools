@@ -43,6 +43,7 @@ using System.Security.Cryptography;
 using System.Data.SqlClient;
 using System.Runtime.Serialization.Json;
 using System.Web;
+using System.Web.Script.Serialization;
 
 namespace org.iringtools.utility
 {
@@ -382,6 +383,28 @@ namespace org.iringtools.utility
       Write<T>(graph, path, true);
     }
 
+    public static void WriteJson<T>(T graph, string path, bool useDataContractSerializer)
+    {
+        try
+        {
+            string json = String.Empty;
+            if (useDataContractSerializer)
+            {
+                json = SerializeJson<T>(graph, true);
+            }
+            else
+            {
+                json = SerializeJson<T>(graph, false);
+            }
+            WriteString(json, path);
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error writing [" + typeof(T).Name + "] to " + path + ".", exception);
+        }
+
+    }
+
     public static void Write<T>(T graph, string path, bool useDataContractSerialize)
     {
       Write<T>(graph, path, useDataContractSerialize, null);
@@ -487,6 +510,35 @@ namespace org.iringtools.utility
     public static T Read<T>(string path)
     {
       return Read<T>(path, true);
+    }
+
+    public static T ReadJson<T>(string path, bool useDataContractSerializer)
+    {
+        T graph;
+        MemoryStream stream = new MemoryStream();
+        try
+        {
+            if (useDataContractSerializer)
+            {
+                stream = ReadStream(path);
+                graph = (T)DeserializeFromStreamJson<T>(stream, true);
+            }
+            else
+            {
+                stream = ReadStream(path);
+                graph = (T)DeserializeFromStreamJson<T>(stream, false);
+            }
+
+            return graph;
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error reading [" + typeof(T).Name + "] from [" + path + "].", exception);
+        }
+        finally
+        {
+            stream.Close();
+        }
     }
 
     public static T Read<T>(string path, bool useDataContractSerializer)
@@ -662,6 +714,62 @@ namespace org.iringtools.utility
       return Serialize<T>(graph, Encoding.UTF8, useDataContractSerializer, null);
     }
 
+    public static string SerializeJson<T>(T graph, bool useDataContractSerializer)
+    {
+        return SerializeJson<T>(graph, Encoding.UTF8, useDataContractSerializer);
+    }
+
+    public static string SerializeJson<T>(T graph, Encoding encoding, bool useDataContractSerializer)
+    {
+        string jsonString = String.Empty;
+
+        try
+        {
+            if (!useDataContractSerializer)
+            {
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                jsonString = serializer.Serialize(graph);
+            }
+            else
+            {
+                MemoryStream stream = new MemoryStream();
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+                serializer.WriteObject(stream, graph);
+                jsonString = Encoding.Default.GetString(stream.ToArray());
+                stream.Close();
+            }
+            return jsonString;
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
+        }
+
+    }
+
+    public static MemoryStream SerializeToStreamJSON<T>(T graph, bool useDataContractSerializer)
+    {
+        return SerializeToStreamJSON<T>(graph, Encoding.UTF8, useDataContractSerializer);
+    }
+    
+    public static MemoryStream SerializeToStreamJSON<T>(T graph, Encoding encoding, bool useDataContractSerializer)
+    {
+        MemoryStream stream = new MemoryStream();
+        if (!useDataContractSerializer)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string jsonString = serializer.Serialize(graph);
+            byte[] byteArray = encoding.GetBytes(jsonString);
+            stream = new MemoryStream(byteArray);
+        }
+        else
+        {
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+            serializer.WriteObject(stream, graph);
+        }
+        return stream;
+    }
+
     public static string Serialize<T>(T graph, Encoding encoding, bool useDataContractSerializer, XmlSerializerNamespaces namespaces)
     {
       string xml;
@@ -817,6 +925,63 @@ namespace org.iringtools.utility
       }
     }
 
+    public static T DeserializeJson<T>(string jsonString, bool useDataContractSerializer)
+    {
+        T graph = DeserializeJson<T>(jsonString, Encoding.UTF8, useDataContractSerializer);
+        return graph;
+    }
+
+    public static T DeserializeFromStreamJson<T>(MemoryStream stream, bool useDataContractSerializer)
+    {
+        return DeserializeFromStreamJson<T>(stream, Encoding.UTF8, useDataContractSerializer);
+    }
+
+
+    public static T DeserializeFromStreamJson<T>(MemoryStream stream, Encoding encoding, bool useDataContractSerializer)
+    {
+        T graph;
+
+        if (!useDataContractSerializer)
+        {
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            string json = ReadString(stream);
+            graph = (T)serializer.Deserialize<T>(json);
+        }
+        else
+        {
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+            graph = (T)serializer.ReadObject(stream);
+        }
+        return graph;
+    }
+
+    public static T DeserializeJson<T>(string jsonString, Encoding encoding, bool useDataContractSerializer)
+    {
+        T graph;
+
+        try
+        {
+            if (!useDataContractSerializer)
+            {
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                graph = (T)serializer.Deserialize<T>(jsonString);
+            }
+            else
+            {
+                
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+                byte[] byteArray = encoding.GetBytes(jsonString);
+                MemoryStream stream = new MemoryStream(byteArray);
+                graph = (T)serializer.ReadObject(stream);
+            }
+            return graph;
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error deserializing [" + typeof(T).Name + "].", exception);
+        }
+
+    }
     public static T DeserializeFromXElement<T>(XElement element)
     {      
       try

@@ -1,19 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using org.iringtools.library;
-using System.Xml;
 using System.Xml.Linq;
 using Ninject;
 using log4net;
-using System.Text.RegularExpressions;
-using VDS.RDF;
-using VDS.RDF.Storage;
 using org.iringtools.utility;
 using org.iringtools.mapping;
-using org.iringtools.dxfr.manifest;
-using System.Web;
 
 namespace org.iringtools.adapter.projection
 {

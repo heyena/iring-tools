@@ -17,20 +17,8 @@
     lines: true,
     tbar: null,
     scroll: 'both',
-    store: null,
+    store: 'DirectoryStore',
     initComponent: function () {
-
-        this.store = Ext.create('Ext.data.TreeStore', {
-            model: 'AM.model.DirectoryModel',
-            //clearOnLoad: true,
-            root: {
-                id: 'root',
-                expanded: true,
-                type: 'ScopesNode',
-                iconCls: 'scopes',
-                text: 'Scopes'
-            }
-        });
 
         this.tbar = [{
             xtype: 'button',
@@ -48,18 +36,6 @@
 
 
         this.callParent(arguments);
-
-//        this.addEvents({
-//            newScope: true,
-//            newApplication: true,
-//            editScope: true,
-//            editApplication: true,
-//            openMapping: true,
-//            deleteScope: true,
-//            deleteApplication: true,
-//            reloadScopes: true,
-//            reloadNode: true
-//        });
         
         this.scopesMenu = new Ext.menu.Menu();
         this.scopesMenu.add(this.buildScopesMenu());

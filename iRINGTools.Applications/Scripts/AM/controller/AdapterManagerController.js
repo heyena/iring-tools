@@ -22,7 +22,8 @@
     ],
     stores: [
         'DirectoryStore'
-        , 'SearchStore'
+    //, 'SearchStore'
+    // , 'MappingStore'
     ],
     models: [
         'DirectoryModel'
@@ -611,25 +612,25 @@
     },
 
     onSearchRdl: function () {
-        var pan = this.getSearchPanel();
-        var searchText = pan.dockedItems.items[1].items.items[0].getValue(),
+        var pan = this.getSearchPanel(),
+           searchText = pan.dockedItems.items[1].items.items[0].getValue(),
            isreset = pan.dockedItems.items[1].items.items[2].checked,
            content = this.getSearchContent(),
            propPanel = this.getSearchProperty(),
            value = pan.dockedItems.items[1].items.items[5].value;
         if (!searchText && searchText.length == 0) return;
-        content.getEl().mask('Loading...');
+        
         var conf = {
             title: searchText,
             id: 'tab_' + searchText
         };
-
         var tree = Ext.widget('searchtree', conf);
         tree.on('itemexpand', function () {
             content.getEl().unmask();
         }, this);
         tree.on('itemclick', this.onSearchClick, this);
         tree.on('beforeload', function (store, action) {
+            content.getEl().mask('Loading...');
             store.proxy.extraParams.type = (action.node.data.type == "" ? 'SearchNode' : action.node.data.type);
             if (searchText != undefined && searchText != '') {
                 store.proxy.extraParams.query = searchText;

@@ -18,6 +18,7 @@
     node: null,
     application: null,
     record: null,
+    rootId: null,
     parentClass: null,
     mappingMenu: null,
     graphmapMenu: null,
@@ -34,27 +35,39 @@
         }
     },
     initComponent: function () {
-        this.ajaxProxy = Ext.create('Ext.data.proxy.Ajax', {
-            timeout: 120000,
-            actionMethods: { read: 'POST' },
-            url: 'mapping/getnode',
-            extraParams: {
-                type: 'MappingNode',
-                id: null,
-                range: null,
-                graph: this.record.data.id
-            },
-            reader: { type: 'json' }
-        });
-        this.store = Ext.create('Ext.data.TreeStore', {
-            model: 'AM.model.MappingModel',
-           //clearOnLoad: true,
-            root: {
-                type: 'MappingNode',
-                id: this.scope.Name + "/" + this.application.Name,
-                expanded: true
-            },
-            proxy: this.ajaxProxy
+        Ext.apply(this, {
+            store: Ext.create('Ext.data.TreeStore', {
+                model: 'AM.model.MappingModel',
+                storeId: this.id,
+                root: {
+                    type: 'MappingNode',
+                    id: this.record.data.id,
+                    expanded: true
+                },
+                proxy: {
+                    type: 'ajax',
+                    timeout: 120000,
+                    actionMethods: { read: 'POST' },
+                    url: 'mapping/getnode',
+                    extraParams: {
+                        type: 'MappingNode',
+                        id: null,
+                        range: null,
+                        graph: this.record.data.id
+                    },
+                    reader: { type: 'json' }
+                }
+            }),
+            viewConfig: {
+                plugins: {
+                    ptype: 'treeviewdragdrop',
+                    dropGroup: 'refdataGroup'
+                },
+                store: this.store, //make sure tree.View uses same store
+                stateful: true,
+                stateId: this.id + '-state',
+                stateEvents: ['itemcollapse', 'itemexpand']
+            }
         });
 
         this.tbar = new Ext.toolbar.Toolbar();
@@ -71,21 +84,16 @@
 
         this.on('itemcontextmenu', this.showContextMenu, this);
 
-        Ext.apply(this, {
-            stateful: true,
-            stateId: this.id + '-state',
-            stateEvents: ['itemcollapse', 'itemexpand']
-        });
-
         this.callParent(arguments);
 
-        this.store.on("beforeload", function (store, operation, eopts) {
-            this.ajaxProxy.extraParams.type = operation.node.data.type;
+        this.on("beforeload", function (store, operation, eopts) {
+
+            store.proxy.extraParams.type = operation.node.data.type;
             if (operation.node.data != undefined) {
-                this.ajaxProxy.extraParams.id = operation.node.data.identifier;
+                store.proxy.extraParams.id = operation.node.data.identifier;
             }
         }, this);
-        this.on('expand', this.onExpandNode, this);
+
         this.getView().on('beforedrop', this.onBeforeNodedrop, this);
     },
 
@@ -118,7 +126,6 @@
                 this.expandPath(nodes[i], 'text');
             }
         }
-        // this.callParent(arguments);
     },
 
     buildToolbar: function () {
@@ -257,9 +264,9 @@
             else {
                 this.getParentClass(n.parentNode);
             }
-       }
+        }
     },
-    
+
 
     showContextMenu: function (view, model, node, index, e) {
 

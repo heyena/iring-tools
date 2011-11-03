@@ -80,13 +80,12 @@ namespace org.iringtools.web.controllers
       string id = form["id"];
       string searchtype = form["type"];
       string query = form["query"];
-      if (string.IsNullOrEmpty(query)) return Json(nodes, JsonRequestBehavior.AllowGet);
+      
       string range = form["range"];
       string isreset = form["reset"];
 
       Int32.TryParse(form["limit"], out limit);
       Int32.TryParse(form["start"], out start);
-
       
       if (!string.IsNullOrEmpty(range))
       {
