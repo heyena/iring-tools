@@ -1558,14 +1558,29 @@ namespace org.iringtools.adapter
                 InitializeScope(projectName, applicationName);
                 InitializeDataLayer();
 
-                return ((IDataLayer2)_dataLayer).GetConfiguration();
+                return _dataLayer.GetConfiguration();
             }
             catch (Exception ex)
             {
                 _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
-                // throw new Exception(string.Format("Error getting configuration: {0}", ex));
-                return null;
+                throw new Exception(string.Format("Error getting configuration: {0}", ex));
             }
+        }
+
+        public Response Refresh(string projectName, string applicationName)
+        {
+          try
+          {
+            InitializeScope(projectName, applicationName);
+            InitializeDataLayer();
+
+            return _dataLayer.Refresh();
+          }
+          catch (Exception ex)
+          {
+            _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
+             throw new Exception(string.Format("Error getting configuration: {0}", ex));
+          }
         }
     }
 }

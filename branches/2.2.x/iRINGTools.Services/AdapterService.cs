@@ -220,6 +220,18 @@ namespace org.iringtools.services
       return _adapterProvider.GetDataLayers();
     }
     #endregion
+
+    #region Refresh
+    [Description("Resets data layer state.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/refresh")]
+    public Response Refresh(string scope, string app)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.Refresh(scope, app);
+    }
+    #endregion
     #endregion
   }
 }

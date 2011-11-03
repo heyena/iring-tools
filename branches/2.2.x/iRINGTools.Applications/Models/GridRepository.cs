@@ -1,25 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
-using System.Xml.Linq;
-using System.Web;
-using Ninject;
+using System.Web.Script.Serialization;
 using log4net;
+using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
-using org.iringtools.mapping;
-
-using iRINGTools.Web.Helpers;
-using System.Text;
-using org.iringtools.dxfr.manifest;
-
-using org.iringtools.adapter;
-using System.Web.Script.Serialization;
-using System.IO;
-using System.Runtime.Serialization.Json;
 
 namespace iRINGTools.Web.Models
 {
@@ -100,10 +88,8 @@ namespace iRINGTools.Web.Models
           string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=json&start=" + start + "&limit=" + limit;
           string dataItemsJson = _client.Post<DataFilter, string>(relativeUri, dataFilter, true);
           
-          MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(dataItemsJson));
-          DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DataItems));
-          dataItems = (DataItems) serializer.ReadObject(ms);
-          ms.Close();
+          JavaScriptSerializer serializer = new JavaScriptSerializer();
+          dataItems = (DataItems)serializer.Deserialize(dataItemsJson, typeof(DataItems));
         }
         catch (Exception ex)
         {

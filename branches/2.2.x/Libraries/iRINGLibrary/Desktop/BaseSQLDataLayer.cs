@@ -10,7 +10,7 @@ using org.iringtools.adapter;
 
 namespace org.iringtools.library
 {
-  public abstract class BaseSQLDataLayer : BaseDataLayer, IDataLayer2
+  public abstract class BaseSQLDataLayer : BaseDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseSQLDataLayer));
     protected DatabaseDictionary _dbDictionary = null;
@@ -53,8 +53,6 @@ namespace org.iringtools.library
 
     // delete data rows by identifiers
     public abstract Response DeleteDataTable(string tableName, IList<string> identifiers);
-
-    public abstract Response RefreshDataTable(string tableName);
     #endregion
 
     #region IDataLayer implementation methods
@@ -235,20 +233,6 @@ namespace org.iringtools.library
       catch (Exception ex)
       {
         _logger.Error("Error deleting data table: " + ex);
-        throw ex;
-      }
-    }
-
-    public virtual Response Refresh(string objectType)
-    {
-      try
-      {
-        string tableName = GetTableName(objectType);
-        return RefreshDataTable(tableName);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error refreshing data table: [" + objectType + "].");
         throw ex;
       }
     }
