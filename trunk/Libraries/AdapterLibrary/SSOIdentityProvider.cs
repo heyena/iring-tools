@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Security.Principal;
-using System.ServiceModel;
-using Ninject;
 using System.Collections;
 using System.Collections.Generic;
 using System.ServiceModel.Web;
-using System.Web;
-using System.Text;
 using log4net;
 using System.Net;
 

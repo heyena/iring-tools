@@ -4,8 +4,8 @@
     collapsible: false,
     enableTabScroll: true,
     border: true,
-    split: true//,
-//    initComponent: function () {
-//        this.callParent(arguments);
-//    }
+    split: true,
+    initComponent: function () {
+        this.callParent(arguments);
+    }
 });

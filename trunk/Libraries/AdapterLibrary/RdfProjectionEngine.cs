@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using org.iringtools.library;
@@ -9,13 +8,10 @@ using Ninject;
 using log4net;
 using System.Text.RegularExpressions;
 using VDS.RDF;
-using VDS.RDF.Storage;
 using org.iringtools.utility;
 using System.Xml;
-using System.IO;
 using VDS.RDF.Parsing;
 using VDS.RDF.Query;
-using System.Web;
 using org.iringtools.mapping;
 
 namespace org.iringtools.adapter.projection

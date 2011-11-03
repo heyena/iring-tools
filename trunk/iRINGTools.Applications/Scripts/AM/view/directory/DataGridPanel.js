@@ -98,7 +98,7 @@ Ext.define('AM.view.directory.DataGridPanel', {
 
         Ext.apply(this, {
             iconCls: 'tabsData',
-            store: this.store,
+            //store: this.store,
             bbar: ptb,
             columns: {
                 defaults: {

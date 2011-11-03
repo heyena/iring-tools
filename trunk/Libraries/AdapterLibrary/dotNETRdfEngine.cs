@@ -1,26 +1,15 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using org.iringtools.adapter;
-using org.iringtools.adapter.semantic;
 using org.iringtools.utility;
 using org.iringtools.library;
 using VDS.RDF;
 using VDS.RDF.Parsing;
-using VDS.RDF.Query;
-using VDS.RDF.Query.Patterns;
 using VDS.RDF.Storage;
 using Ninject;
 using log4net;
 using System.IO;
-using System.Net;
 using System.Xml;
 using System.Xml.Linq;
-using Microsoft.ServiceModel.Web;
-using System.Text.RegularExpressions;
-using org.w3.sparql_results;
 using org.iringtools.mapping;
 
 namespace org.iringtools.adapter.semantic
