@@ -22,7 +22,7 @@
 		-->
 		<assignment query="SPPIDPanels" name="@InstrumentComponentType" value="!NoValue" />
 		<assignment query="SPPIDPipingComponents" name="@PipingComponentType" value="Ball Valve" />
-		<assignment query="!All" name="@DrawingNumber" value="M-FO02" />
+		<!--<assignment query="!All" name="@DrawingNumber" value="100" />-->
 		<assignment query="" name="" value="" />
 	</projectVariables>
 	
@@ -273,9 +273,9 @@
 		</variables>
 		<selection value="distinct" />
 		<fields>
+      <field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
 			<field source="PlI" 	name="ItemTag" 						alias=""							datatype="" />
 			<field source="PlI" 	name="SupplyBy" 					alias="SupplyByID"					datatype="" />
-			<field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
 			<field source="PlI" 	name="SP_PlantGroupID" 				alias=""							datatype="" />
 			<field source="PlI" 	name="SP_PartOfID" 					alias=""							datatype="" />
 			<field source="PlI" 	name="aabbcc_code" 					alias=""							datatype="" />
@@ -399,9 +399,9 @@
 		</variables>
 		<selection value="distinct" />
 		<fields>
+      <field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
 			<field source="PlI" 	name="ItemTag" 						alias=""							datatype="" />
 			<field source="PlI" 	name="SupplyBy" 					alias="SupplyByID"					datatype="" />
-			<field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
 			<field source="PlI" 	name="SP_PlantGroupID" 				alias=""							datatype="" />
 			<field source="PlI" 	name="SP_PartOfID" 					alias=""							datatype="" />
 			<field source="PlI" 	name="aabbcc_code" 					alias=""							datatype="" />
@@ -517,164 +517,7 @@
 	</query> 
 
 
-<!--		Piping Components  -->
-	<query name="SPPIDPipingComponents" stagingDestinationName="PipingComponents">
-		<description>
-		</description>
-		<variables>
-			<textReplacement name="!@~IncludeStockpileJoin" value="false" datatype="boolean" />
-			<declaration name="@PlantGroupID" value="" datatype="int" optional="true" />
-			<declaration name="@UnitCode" value="" datatype="nvarchar(22)" optional="true" />
-			<declaration name="@DrawingNumber" value="M-LO01" datatype="nvarchar(80)" optional="true" />
-			<declaration name="@PipingComponentType" value="" datatype="nvarchar(80)" optional="true" />
-		</variables>
-		<selection value="distinct" />
-		<fields>
-			<field source="PC" 		name="TagSequenceNo" 				alias=""							datatype="" />
-			<field source="PC" 		name="TagPrefix" 					alias=""							datatype="" />
-			<field source="PC" 		name="PipingCompType" 				alias="PipingCompTypeID"			datatype="" />
-			<field source="PC" 		name="PipingCompClass"				alias="PipingCompClassID"			datatype="" />
-			<field source="PC" 		name="PipingCompSubclass" 			alias="PipingCompSubclassID"		datatype="" />
-			<field source="PC" 		name="IsInline" 					alias=""							datatype="" />
-			<field source="PC" 		name="StressReliefReqmt" 			alias=""							datatype="" />
-			<field source="PC" 		name="FluidCode"					alias="FluidCodeID"					datatype="" />
-			<field source="PC" 		name="PipingComponentCode"			alias=""							datatype="" />
-			
-			<field source="PlI" 	name="ItemTag" 						alias=""							datatype="" />
-			<field source="PlI" 	name="SupplyBy" 					alias="SupplyByID"					datatype="" />
-			<field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
-			<field source="PlI" 	name="SP_PlantGroupID" 				alias=""							datatype="" />
-			<field source="PlI" 	name="SP_PartOfID" 					alias=""							datatype="" />
-			<field source="PlI" 	name="aabbcc_code" 					alias=""							datatype="" />
-			<field source="PlI" 	name="ConstructionStatus" 			alias="ConstructionStatusID"		datatype="" />
-			<field source="PlI" 	name="Name" 						alias="PlantItemName"				datatype="" />
-		
-			<field source="IC" 		name="NominalDiameter" 				alias="NominalDiameterID"			datatype="" />
-			<field source="IC" 		name="CoatingReqmts" 				alias="CoatingRequirementsID"		datatype="" />
-			
-			<field source="PR" 		name="SP_ID"		 				alias="PipeRunID"					datatype="" />
-			
-			<field source="PG" 		name="Name" 						alias="PidUnitName"					datatype="" />
-			<field source="PG" 		name="Description" 					alias="PidUnitDescription"			datatype="" />	
 
-			<field source="U" 		name="UnitCode" 					alias="PidUnitCode"					datatype="" />
-			<field source="Rep" 	name="InStockPile" 					alias=""							datatype="" />			
-			
-			<field source="Dr" 		name="DrawingNumber" 				alias=""							datatype="" />
-			<field source="Dr" 		name="Name" 						alias="DrawingName"					datatype="" />
-			<field source="" 		name="" 							alias="Title"						datatype="" 
-				expression="REPLACE(REPLACE(REPLACE(Dr.Title,CHAR(9),' '),CHAR(10),' '),CHAR(13),' ')" />
-			<field source="Dr" 		name="Description" 					alias="DrawingDescription"			datatype="" />
-			
-			<field source="MI" 		name="Description" 					alias="ModelItemDescription"		datatype="" />
-								
-			<field source="Cl_SB" 		name="codeList_text" 			alias="SupplyBy"					datatype="" />
-			<field source="Cl_CS" 		name="codeList_text" 			alias="ConstructionStatus"			datatype="" />
-			<field source="Cl_ND" 		name="codeList_text" 			alias="NominalDiameter"				datatype="" />
-			<field source="Cl_OF" 		name="codeList_text" 			alias="OperatingFluid"				datatype="" />
-			<field source="Cl_PCT" 		name="codeList_text" 			alias="PipingCompType"				datatype="" />
-			<field source="Cl_PCC" 		name="codeList_text" 			alias="PipingCompClass"				datatype="" />
-			<field source="Cl_PCS" 		name="codeList_text" 			alias="PipingCompSubclass"			datatype="" />
-			<field source="Cl_CR" 		name="codeList_text" 			alias="CoatingRequirements"			datatype="" />	
-			
-		</fields>
-		<sources>			
-			<source name="T_PipingComp" 		schema="SPPID"    					joinType="" 				alias="PC">
-			</source>
-			<source name="T_PlantItem"			schema="SPPID"    					joinType="Inner" 			alias="PlI">
-				<relation leftSource="PlI" leftField="SP_ID" rightSource="PC" rightField="SP_ID" 
-					joinToText="" operator="=" conjunction="" />
-			</source>
-			<source name="T_InlineComp"		schema="SPPID"    					joinType="Left" 				alias="IC">
-				<relation leftSource="IC" leftField="SP_ID" rightSource="PC" rightField="SP_ID" 
-					joinToText="" operator="=" conjunction="" />
-			</source>
-			<source name="T_PipeRun"		schema="SPPID"    					joinType="Left" 				alias="PR">
-				<relation leftSource="PR" leftField="SP_ID" rightSource="IC" rightField="SP_PipeRunID" 
-					joinToText="" operator="=" conjunction="" />
-			</source>
-			<source name="T_PlantItem"			schema="SPPID"    					joinType="Left" 			alias="PlI2">
-				<relation leftSource="PlI2" leftField="SP_ID" rightSource="PR" rightField="SP_ID" 
-					joinToText="" operator="=" conjunction="" />
-			</source>
-			<source name="T_PlantGroup" 	schema="SPAPLANT"					joinType="Left"					alias="PG">
-				<relation leftSource="PG" leftField="SP_ID" rightSource="PlI2" rightField="SP_PlantGroupID" 
-					joinToText="" operator="=" conjunction="" />			
-			</source> 
-			<source name="T_Unit"			schema="SPAPLANT"					joinType="!@~IncludeStockpilejoin" 	alias="U" >
-				<relation leftSource="U" leftField="SP_ID" rightSource="PG" rightField="SP_ID" 
-					joinToText="" operator="=" conjunction="" />
-			</source>
-			<source name="T_Representation"	schema="SPPID"						joinType="Left" 				alias="Rep">
-				<relation leftSource="Rep" leftField="SP_ModelItemID" rightSource="PlI" rightField="SP_ID" 
-					joinToText="" operator="=" conjunction="" />
-			</source>
-			<source name="T_Drawing"		schema="SPPID"    					joinType="Inner" 				alias="Dr">
-				<relation leftSource="Dr" leftField="SP_ID" rightSource="Rep" rightField="SP_DrawingID" 
-					joinToText="" operator="=" conjunction="" />
-			</source>
-			<source name="T_ModelItem"		schema="SPPID"    					joinType="Left" 				alias="MI">
-				<relation leftSource="MI" leftField="SP_ID" rightSource="PC" rightField="SP_ID" 
-					joinToText="" operator="=" conjunction="" />
-			</source>
-			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_CS">
-				<relation leftSource="Cl_CS" leftField="codelist_index" rightSource="PlI" rightField="ConstructionStatus" 
-					joinToText="" operator="=" conjunction="" />
-				<relation leftSource="Cl_CS" leftField="codelist_number" rightSource="" rightField="93" 
-					joinToText="" operator="=" conjunction="and" />
-			</source>
-			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_SB">
-				<relation leftSource="Cl_SB" leftField="codelist_index" rightSource="PlI" rightField="SupplyBy" 
-					joinToText="" operator="=" conjunction="" />
-				<relation leftSource="Cl_SB" leftField="codelist_number" rightSource="" rightField="1" 
-					joinToText="" operator="=" conjunction="and" />
-			</source>
-			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_CR">
-				<relation leftSource="Cl_CR" leftField="codelist_index" rightSource="IC" rightField="CoatingReqmts" 
-					joinToText="" operator="=" conjunction="" />
-				<relation leftSource="Cl_CR" leftField="codelist_number" rightSource="" rightField="3" 
-					joinToText="" operator="=" conjunction="and" />
-			</source>			
-			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_ND">
-				<relation leftSource="Cl_ND" leftField="codelist_index" rightSource="IC" rightField="NominalDiameter" 
-					joinToText="" operator="=" conjunction="" />
-				<relation leftSource="Cl_ND" leftField="codelist_number" rightSource="" rightField="8" 
-					joinToText="" operator="=" conjunction="and" />
-			</source>
-			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_OF">
-				<relation leftSource="Cl_OF" leftField="codelist_index" rightSource="PC" rightField="FluidCode" 
-					joinToText="" operator="=" conjunction="" />
-				<relation leftSource="Cl_OF" leftField="codelist_number" rightSource="" rightField="19" 
-					joinToText="" operator="=" conjunction="and" />
-			</source>
-			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_PCT">
-				<relation leftSource="Cl_PCT" leftField="codelist_index" rightSource="PC" rightField="PipingCompType" 
-					joinToText="" operator="=" conjunction="" />
-				<relation leftSource="Cl_PCT" leftField="codelist_number" rightSource="" rightField="25" 
-					joinToText="" operator="=" conjunction="and" />
-			</source>
-			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_PCC">
-				<relation leftSource="Cl_PCC" leftField="codelist_index" rightSource="PC" rightField="PipingCompClass" 
-					joinToText="" operator="=" conjunction="" />
-				<relation leftSource="Cl_PCC" leftField="codelist_number" rightSource="" rightField="27" 
-					joinToText="" operator="=" conjunction="and" />
-			</source>
-			<source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_PCS">
-				<relation leftSource="Cl_PCS" leftField="codelist_index" rightSource="PC" rightField="PipingCompSubclass" 
-					joinToText="" operator="=" conjunction="" />
-				<relation leftSource="Cl_PCS" leftField="codelist_number" rightSource="" rightField="26" 
-					joinToText="" operator="=" conjunction="and" />
-			</source>
-		</sources>
-		<filters>
-			<filter  preParenCount="0" source="PlI" fieldName="SP_PlantGroupID" operator="=" filterValue="@PlantGroupID" postParenCount="0" conjunction="" optional="true" />
-			<filter  preParenCount="0" source="U" fieldName="UnitCode" operator="=" filterValue="@UnitCode" postParenCount="0" conjunction="and" optional="true" />
-			<filter  preParenCount="0" source="Dr" fieldName="DrawingNumber" operator="=" filterValue="@DrawingNumber" postParenCount="0" conjunction="and" optional="true" />
-			<filter  preParenCount="0" source="CL_PCT" fieldName="codelist_text" operator="=" filterValue="@PipingComponentType" postParenCount="0" conjunction="and" optional="true" />
-		</filters>
-		<sorts>
-		</sorts>
-	</query>
 
 	 <!--   Pipe Runs  -->
 	<query name="SPPIDPipeRun" stagingDestinationName="PipeRuns">
@@ -689,9 +532,10 @@
 		</variables>
 		<selection value="distinct" />
 		<fields>
-			<field source="PlI" 	name="ItemTag" 						alias=""							datatype="" />
+      <field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
+      <field source="PlI" 	name="ItemTag" 						alias=""							datatype="" />
 			<field source="PlI" 	name="SupplyBy" 					alias="SupplyByID"					datatype="" />
-			<field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
+			
 			<field source="PlI" 	name="SP_PlantGroupID" 				alias=""							datatype="" />
 			<field source="PlI" 	name="SP_PartOfID" 					alias=""							datatype="" />
 			<field source="PlI" 	name="aabbcc_code" 					alias=""							datatype="" />
@@ -800,7 +644,170 @@
 		</filters>
 		<sorts>
 		</sorts>
-	</query>	
+	</query>
+
+  <!--		Piping Components  -->
+  
+  <query name="SPPIDPipingComponents" stagingDestinationName="PipingComponents">
+
+    <description>
+    </description>
+    <variables>
+      <textReplacement name="!@~IncludeStockpileJoin" value="false" datatype="boolean" />
+      <declaration name="@PlantGroupID" value="" datatype="int" optional="true" />
+      <declaration name="@UnitCode" value="" datatype="nvarchar(22)" optional="true" />
+      <declaration name="@DrawingNumber" value="M-LO01" datatype="nvarchar(80)" optional="true" />
+      <declaration name="@PipingComponentType" value="" datatype="nvarchar(80)" optional="true" />
+    </variables>
+    <selection value="distinct" />
+    <fields>
+      <field source="PlI" 	name="SP_ID" 						alias=""							datatype="" />
+      <field source="PC" 		name="TagSequenceNo" 				alias=""							datatype="" />
+      <!--<field source="PC" 		name="TagPrefix" 					alias=""							datatype="" />
+  <field source="PC" 		name="FluidCode"					alias="FluidCodeID"					datatype="" />
+  <field source="PC" 		name="PipingComponentCode"			alias=""							datatype="" />-->
+      <field source="PC" 		name="PipingCompType" 				alias="PipingCompTypeID"			datatype="" />
+      <field source="PC" 		name="PipingCompClass"				alias="PipingCompClassID"			datatype="" />
+      <field source="PC" 		name="PipingCompSubclass" 			alias="PipingCompSubclassID"		datatype="" />
+      <field source="PC" 		name="IsInline" 					alias=""							datatype="" />
+      <field source="PC" 		name="StressReliefReqmt" 			alias=""							datatype="" />
+
+
+      <field source="PlI" 	name="ItemTag" 						alias=""							datatype="" />
+      <field source="PlI" 	name="SupplyBy" 					alias="SupplyByID"					datatype="" />
+
+      <field source="PlI" 	name="SP_PlantGroupID" 				alias=""							datatype="" />
+      <field source="PlI" 	name="SP_PartOfID" 					alias=""							datatype="" />
+      <field source="PlI" 	name="aabbcc_code" 					alias=""							datatype="" />
+      <field source="PlI" 	name="ConstructionStatus" 			alias="ConstructionStatusID"		datatype="" />
+      <field source="PlI" 	name="Name" 						alias="PlantItemName"				datatype="" />
+
+      <field source="IC" 		name="NominalDiameter" 				alias="NominalDiameterID"			datatype="" />
+      <field source="IC" 		name="CoatingReqmts" 				alias="CoatingRequirementsID"		datatype="" />
+
+      <field source="PR" 		name="SP_ID"		 				alias="PipeRunID"					datatype="" />
+
+      <field source="PG" 		name="Name" 						alias="PidUnitName"					datatype="" />
+      <field source="PG" 		name="Description" 					alias="PidUnitDescription"			datatype="" />
+
+      <field source="U" 		name="UnitCode" 					alias="PidUnitCode"					datatype="" />
+      <field source="Rep" 	name="InStockPile" 					alias=""							datatype="" />
+
+      <field source="Dr" 		name="DrawingNumber" 				alias=""							datatype="" />
+      <field source="Dr" 		name="Name" 						alias="DrawingName"					datatype="" />
+      <field source="" 		name="" 							alias="Title"						datatype=""
+				expression="REPLACE(REPLACE(REPLACE(Dr.Title,CHAR(9),' '),CHAR(10),' '),CHAR(13),' ')" />
+      <field source="Dr" 		name="Description" 					alias="DrawingDescription"			datatype="" />
+
+      <field source="MI" 		name="Description" 					alias="ModelItemDescription"		datatype="" />
+
+      <field source="Cl_SB" 		name="codeList_text" 			alias="SupplyBy"					datatype="" />
+      <field source="Cl_CS" 		name="codeList_text" 			alias="ConstructionStatus"			datatype="" />
+      <field source="Cl_ND" 		name="codeList_text" 			alias="NominalDiameter"				datatype="" />
+      <field source="Cl_OF" 		name="codeList_text" 			alias="OperatingFluid"				datatype="" />
+      <field source="Cl_PCT" 		name="codeList_text" 			alias="PipingCompType"				datatype="" />
+      <field source="Cl_PCC" 		name="codeList_text" 			alias="PipingCompClass"				datatype="" />
+      <field source="Cl_PCS" 		name="codeList_text" 			alias="PipingCompSubclass"			datatype="" />
+      <field source="Cl_CR" 		name="codeList_text" 			alias="CoatingRequirements"			datatype="" />
+
+    </fields>
+    <sources>
+      <source name="T_PipingComp" 		schema="SPPID"    					joinType="" 				alias="PC">
+      </source>
+      <source name="T_PlantItem"			schema="SPPID"    					joinType="Inner" 			alias="PlI">
+        <relation leftSource="PlI" leftField="SP_ID" rightSource="PC" rightField="SP_ID"
+					joinToText="" operator="=" conjunction="" />
+      </source>
+      <source name="T_InlineComp"		schema="SPPID"    					joinType="Left" 				alias="IC">
+        <relation leftSource="IC" leftField="SP_ID" rightSource="PC" rightField="SP_ID"
+					joinToText="" operator="=" conjunction="" />
+      </source>
+      <source name="T_PipeRun"		schema="SPPID"    					joinType="Left" 				alias="PR">
+        <relation leftSource="PR" leftField="SP_ID" rightSource="IC" rightField="SP_PipeRunID"
+					joinToText="" operator="=" conjunction="" />
+      </source>
+      <source name="T_PlantItem"			schema="SPPID"    					joinType="Left" 			alias="PlI2">
+        <relation leftSource="PlI2" leftField="SP_ID" rightSource="PR" rightField="SP_ID"
+					joinToText="" operator="=" conjunction="" />
+      </source>
+      <source name="T_PlantGroup" 	schema="SPAPLANT"					joinType="Left"					alias="PG">
+        <relation leftSource="PG" leftField="SP_ID" rightSource="PlI2" rightField="SP_PlantGroupID"
+					joinToText="" operator="=" conjunction="" />
+      </source>
+      <source name="T_Unit"			schema="SPAPLANT"					joinType="!@~IncludeStockpilejoin" 	alias="U" >
+        <relation leftSource="U" leftField="SP_ID" rightSource="PG" rightField="SP_ID"
+					joinToText="" operator="=" conjunction="" />
+      </source>
+      <source name="T_Representation"	schema="SPPID"						joinType="Left" 				alias="Rep">
+        <relation leftSource="Rep" leftField="SP_ModelItemID" rightSource="PlI" rightField="SP_ID"
+					joinToText="" operator="=" conjunction="" />
+      </source>
+      <source name="T_Drawing"		schema="SPPID"    					joinType="Inner" 				alias="Dr">
+        <relation leftSource="Dr" leftField="SP_ID" rightSource="Rep" rightField="SP_DrawingID"
+					joinToText="" operator="=" conjunction="" />
+      </source>
+      <source name="T_ModelItem"		schema="SPPID"    					joinType="Left" 				alias="MI">
+        <relation leftSource="MI" leftField="SP_ID" rightSource="PC" rightField="SP_ID"
+					joinToText="" operator="=" conjunction="" />
+      </source>
+      <source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_CS">
+        <relation leftSource="Cl_CS" leftField="codelist_index" rightSource="PlI" rightField="ConstructionStatus"
+					joinToText="" operator="=" conjunction="" />
+        <relation leftSource="Cl_CS" leftField="codelist_number" rightSource="" rightField="93"
+					joinToText="" operator="=" conjunction="and" />
+      </source>
+      <source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_SB">
+        <relation leftSource="Cl_SB" leftField="codelist_index" rightSource="PlI" rightField="SupplyBy"
+					joinToText="" operator="=" conjunction="" />
+        <relation leftSource="Cl_SB" leftField="codelist_number" rightSource="" rightField="1"
+					joinToText="" operator="=" conjunction="and" />
+      </source>
+      <source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_CR">
+        <relation leftSource="Cl_CR" leftField="codelist_index" rightSource="IC" rightField="CoatingReqmts"
+					joinToText="" operator="=" conjunction="" />
+        <relation leftSource="Cl_CR" leftField="codelist_number" rightSource="" rightField="3"
+					joinToText="" operator="=" conjunction="and" />
+      </source>
+      <source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_ND">
+        <relation leftSource="Cl_ND" leftField="codelist_index" rightSource="IC" rightField="NominalDiameter"
+					joinToText="" operator="=" conjunction="" />
+        <relation leftSource="Cl_ND" leftField="codelist_number" rightSource="" rightField="8"
+					joinToText="" operator="=" conjunction="and" />
+      </source>
+      <source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_OF">
+        <relation leftSource="Cl_OF" leftField="codelist_index" rightSource="PC" rightField="FluidCode"
+					joinToText="" operator="=" conjunction="" />
+        <relation leftSource="Cl_OF" leftField="codelist_number" rightSource="" rightField="19"
+					joinToText="" operator="=" conjunction="and" />
+      </source>
+      <source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_PCT">
+        <relation leftSource="Cl_PCT" leftField="codelist_index" rightSource="PC" rightField="PipingCompType"
+					joinToText="" operator="=" conjunction="" />
+        <relation leftSource="Cl_PCT" leftField="codelist_number" rightSource="" rightField="25"
+					joinToText="" operator="=" conjunction="and" />
+      </source>
+      <source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_PCC">
+        <relation leftSource="Cl_PCC" leftField="codelist_index" rightSource="PC" rightField="PipingCompClass"
+					joinToText="" operator="=" conjunction="" />
+        <relation leftSource="Cl_PCC" leftField="codelist_number" rightSource="" rightField="27"
+					joinToText="" operator="=" conjunction="and" />
+      </source>
+      <source name="Codelists"		schema="SPPIDDATA_DICTIONARY"    	joinType="Left" 				alias="Cl_PCS">
+        <relation leftSource="Cl_PCS" leftField="codelist_index" rightSource="PC" rightField="PipingCompSubclass"
+					joinToText="" operator="=" conjunction="" />
+        <relation leftSource="Cl_PCS" leftField="codelist_number" rightSource="" rightField="26"
+					joinToText="" operator="=" conjunction="and" />
+      </source>
+    </sources>
+    <filters>
+      <filter  preParenCount="0" source="PlI" fieldName="SP_PlantGroupID" operator="=" filterValue="@PlantGroupID" postParenCount="0" conjunction="" optional="true" />
+      <filter  preParenCount="0" source="U" fieldName="UnitCode" operator="=" filterValue="@UnitCode" postParenCount="0" conjunction="and" optional="true" />
+      <filter  preParenCount="0" source="Dr" fieldName="DrawingNumber" operator="=" filterValue="@DrawingNumber" postParenCount="0" conjunction="and" optional="true" />
+      <filter  preParenCount="0" source="CL_PCT" fieldName="codelist_text" operator="=" filterValue="@PipingComponentType" postParenCount="0" conjunction="and" optional="true" />
+    </filters>
+    <sorts>
+    </sorts>
+  </query>
  
 	
 </configuration>
