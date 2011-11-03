@@ -276,7 +276,11 @@ function setDataObject(editPane, node, dbDict, dataObjectsPane, scopeName, appNa
 
 		if (!node.attributes.properties.objectNamespace)
 			node.attributes.properties.objectNamespace = "org.iringtools.adapter.datalayer.proj_" + scopeName + "." + appName;
-		var dataObjectFormPanel = new Ext.FormPanel({
+
+	  if (!node.attributes.properties.keyDelimiter)
+	    node.attributes.properties.keyDelimiter = '_';
+
+    var dataObjectFormPanel = new Ext.FormPanel({
 			name: 'dataObject',
 			id: scopeName + '.' + appName + '.objectNameForm.' + node.id,
 			border: false,
