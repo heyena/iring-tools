@@ -354,14 +354,11 @@ namespace org.iringtools.services
       else if (format.ToUpper() == "JSON")
       {
         DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
-        DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(DataItems));
-        MemoryStream ms = new MemoryStream();
-        serializer.WriteObject(ms, dataItems);
-        byte[] json = ms.ToArray();
-        ms.Close();
-
+        
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
+        String json = serializer.Serialize(dataItems);
         HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
-        HttpContext.Current.Response.Write(Encoding.UTF8.GetString(json, 0, json.Length));
+        HttpContext.Current.Response.Write(json);
       }
       else
       {
