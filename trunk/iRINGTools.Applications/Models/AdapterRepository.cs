@@ -22,7 +22,7 @@ namespace iRINGTools.Web.Models
         private NameValueCollection _settings = null;
         private WebHttpClient _client = null;
         private string _refDataServiceURI = string.Empty;
-				private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));      
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
 
         [Inject]
         public AdapterRepository()
@@ -33,7 +33,7 @@ namespace iRINGTools.Web.Models
 
         public ScopeProjects GetScopes()
         {
-          _logger.Debug("In AdapterRepository GetScopes");
+            _logger.Debug("In AdapterRepository GetScopes");
 
             ScopeProjects obj = null;
 
@@ -43,9 +43,9 @@ namespace iRINGTools.Web.Models
 
                 _logger.Debug("Successfully called Adapter.");
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
-							_logger.Error(ex.ToString());
+                _logger.Error(ex.ToString());
             }
 
             return obj;
@@ -60,10 +60,10 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Post<ScopeProjects>("/scopes", scopes, true);
             }
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-						}
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
 
             return obj;
         }
@@ -76,10 +76,10 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<DataLayers>("/datalayers");
             }
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-						}
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
 
             return obj;
         }
@@ -92,10 +92,10 @@ namespace iRINGTools.Web.Models
                 WebHttpClient _tempClient = new WebHttpClient(_settings["ReferenceDataServiceUri"]);
                 entity = _tempClient.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
             }
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-						}
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
             return entity;
         }
 
@@ -116,10 +116,10 @@ namespace iRINGTools.Web.Models
             {
                 obj = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name == applicationName);
             }
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-						}
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
 
             return obj;
         }
@@ -132,10 +132,10 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", scopeName, applicationName), true);
             }
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-						}
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
 
             return obj;
         }
@@ -148,10 +148,10 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
             }
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-						}
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
 
             return obj;
         }
@@ -164,10 +164,10 @@ namespace iRINGTools.Web.Models
             {
                 obj = _client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
             }
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-						}
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
 
             return obj;
         }
@@ -190,10 +190,10 @@ namespace iRINGTools.Web.Models
                 obj = _client.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
 
             }
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-						}
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+            }
 
             return obj;
         }
@@ -228,14 +228,14 @@ namespace iRINGTools.Web.Models
 
             if (scopes == null)
             {
-              scopes = new ScopeProjects();
+                scopes = new ScopeProjects();
             }
 
             ScopeProject scope = null;
 
             if (scopes != null)
             {
-              scope = scopes.FirstOrDefault<ScopeProject>(o => o.Name == scopeName);
+                scope = scopes.FirstOrDefault<ScopeProject>(o => o.Name == scopeName);
             }
 
             if (scope == null)
@@ -294,7 +294,7 @@ namespace iRINGTools.Web.Models
             }
 
             //First Step: Save Scopes
-            string result= PostScopes(scopes);
+            string result = PostScopes(scopes);
 
             //Second Step: UpdateBinding
             UpdateBinding(scopeName, applicationName, assembly);
@@ -315,146 +315,146 @@ namespace iRINGTools.Web.Models
         #region NHibernate Configuration Wizard support methods
         public DataProviders GetDBProviders()
         {
-          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          return client.Get<DataProviders>("/providers");
+            WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+            return client.Get<DataProviders>("/providers");
         }
 
-				public string SaveDBDictionary(string scope, string application, string tree)
-				{
-					WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
+        public string SaveDBDictionary(string scope, string application, string tree)
+        {
+            WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+            DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
 
-          string connStr = dbDictionary.ConnectionString;
-          if (!String.IsNullOrEmpty(connStr))
-          {
-            string urlEncodedConnStr = Utility.DecodeFrom64(connStr);
-            dbDictionary.ConnectionString = HttpUtility.UrlDecode(urlEncodedConnStr);
-          }
+            string connStr = dbDictionary.ConnectionString;
+            if (!String.IsNullOrEmpty(connStr))
+            {
+                string urlEncodedConnStr = Utility.DecodeFrom64(connStr);
+                dbDictionary.ConnectionString = HttpUtility.UrlDecode(urlEncodedConnStr);
+            }
 
-					string postResult = null;
-          try
-          {
-						postResult = client.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
-          }
-          catch (Exception ex)
-          {
-						_logger.Error("Error posting DatabaseDictionary." + ex);
-          }
-					return postResult;
-				}
+            string postResult = null;
+            try
+            {
+                postResult = client.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Error posting DatabaseDictionary." + ex);
+            }
+            return postResult;
+        }
 
         public DatabaseDictionary GetDBDictionary(string scope, string application)
         {
-          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          DatabaseDictionary dbDictionary = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+            WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+            DatabaseDictionary dbDictionary = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
 
-          string connStr = dbDictionary.ConnectionString;
-          if (!String.IsNullOrEmpty(connStr))
-          {
-            dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
-          }
+            string connStr = dbDictionary.ConnectionString;
+            if (!String.IsNullOrEmpty(connStr))
+            {
+                dbDictionary.ConnectionString = Utility.EncodeTo64(connStr);
+            }
 
-					return dbDictionary;
-				}
+            return dbDictionary;
+        }
 
         public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,
           string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string portNumber, string serName)
         {
-          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          var uri = String.Format("/{0}/{1}/tables", scope, application);
+            WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+            var uri = String.Format("/{0}/{1}/tables", scope, application);
 
-          Request request = new Request();
-          request.Add("dbProvider",dbProvider);
-          request.Add("dbServer",dbServer);
-          request.Add("portNumber",portNumber);
-          request.Add("dbInstance",dbInstance);
-          request.Add("dbName",dbName);
-          request.Add("dbSchema",dbSchema);
-          request.Add("dbUserName",dbUserName);
-          request.Add("dbPassword",dbPassword);
-					request.Add("serName", serName);
+            Request request = new Request();
+            request.Add("dbProvider", dbProvider);
+            request.Add("dbServer", dbServer);
+            request.Add("portNumber", portNumber);
+            request.Add("dbInstance", dbInstance);
+            request.Add("dbName", dbName);
+            request.Add("dbSchema", dbSchema);
+            request.Add("dbUserName", dbUserName);
+            request.Add("dbPassword", dbPassword);
+            request.Add("serName", serName);
 
-          return client.Post<Request, List<string>>(uri, request, true);
+            return client.Post<Request, List<string>>(uri, request, true);
         }
 
         // use appropriate icons especially node with children
         public List<JsonTreeNode> GetDBObjects(string scope, string application, string dbProvider, string dbServer,
           string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName)
         {
-          List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
+            List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
 
-          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          var uri = String.Format("/{0}/{1}/objects", scope, application);
+            WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+            var uri = String.Format("/{0}/{1}/objects", scope, application);
 
-          Request request = new Request();
-          request.Add("dbProvider", dbProvider);
-          request.Add("dbServer", dbServer);
-          request.Add("portNumber", portNumber);
-          request.Add("dbInstance", dbInstance);
-          request.Add("dbName", dbName);
-          request.Add("dbSchema", dbSchema);
-          request.Add("dbUserName", dbUserName);
-          request.Add("dbPassword", dbPassword);
-          request.Add("tableNames", tableNames);
-					request.Add("serName", serName);
+            Request request = new Request();
+            request.Add("dbProvider", dbProvider);
+            request.Add("dbServer", dbServer);
+            request.Add("portNumber", portNumber);
+            request.Add("dbInstance", dbInstance);
+            request.Add("dbName", dbName);
+            request.Add("dbSchema", dbSchema);
+            request.Add("dbUserName", dbUserName);
+            request.Add("dbPassword", dbPassword);
+            request.Add("tableNames", tableNames);
+            request.Add("serName", serName);
 
-          List<DataObject> dataObjects = client.Post<Request, List<DataObject>>(uri, request, true);
+            List<DataObject> dataObjects = client.Post<Request, List<DataObject>>(uri, request, true);
 
-          foreach (DataObject dataObject in dataObjects)
-          {
-            JsonTreeNode keyPropertiesNode = new JsonTreeNode()
+            foreach (DataObject dataObject in dataObjects)
             {
-              text = "Keys",
-              type = "keys",
-           //  expanded = true,
-							iconCls = "folder",
-              leaf = false,							
-              children = new List<JsonTreeNode>()
-            };
+                JsonTreeNode keyPropertiesNode = new JsonTreeNode()
+                {
+                    text = "Keys",
+                    type = "keys",
+                    //  expanded = true,
+                    iconCls = "folder",
+                    leaf = false,
+                    children = new List<JsonTreeNode>()
+                };
 
-            JsonTreeNode dataPropertiesNode = new JsonTreeNode()
-            {
-              text = "Properties",
-              type = "properties",
-           //   expanded = true,
-							iconCls = "folder",
-              leaf = false,
-              children = new List<JsonTreeNode>()
-            };
+                JsonTreeNode dataPropertiesNode = new JsonTreeNode()
+                {
+                    text = "Properties",
+                    type = "properties",
+                    //   expanded = true,
+                    iconCls = "folder",
+                    leaf = false,
+                    children = new List<JsonTreeNode>()
+                };
 
-            JsonTreeNode relationshipsNode = new JsonTreeNode()
-            {
-              text = "Relationships",
-              type = "relationships",
-            //  expanded = true,
-							iconCls = "folder",
-              leaf = false,
-              children = new List<JsonTreeNode>()
-            };
+                JsonTreeNode relationshipsNode = new JsonTreeNode()
+                {
+                    text = "Relationships",
+                    type = "relationships",
+                    //  expanded = true,
+                    iconCls = "folder",
+                    leaf = false,
+                    children = new List<JsonTreeNode>()
+                };
 
-            // create data object node
-            JsonTreeNode dataObjectNode = new JsonTreeNode()
-            {
-              text = dataObject.tableName,
-              type = "dataObject",
-							iconCls = "object",
-              leaf = false,
-              children = new List<JsonTreeNode>()
+                // create data object node
+                JsonTreeNode dataObjectNode = new JsonTreeNode()
+                {
+                    text = dataObject.tableName,
+                    type = "dataObject",
+                    iconCls = "object",
+                    leaf = false,
+                    children = new List<JsonTreeNode>()
               {
                 keyPropertiesNode, dataPropertiesNode, relationshipsNode
               },
-              properties = new Dictionary<string, string>
+                    properties = new Dictionary<string, string>
               {
                 {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + scope + "." + application},
                 {"objectName", dataObject.objectName},
                 {"keyDelimiter", dataObject.keyDelimeter}
               }
-            };
+                };
 
-            // add key/data property nodes
-            foreach (DataProperty dataProperty in dataObject.dataProperties)
-            {
-              Dictionary<string, string> properties = new Dictionary<string, string>()
+                // add key/data property nodes
+                foreach (DataProperty dataProperty in dataObject.dataProperties)
+                {
+                    Dictionary<string, string> properties = new Dictionary<string, string>()
               {
                 {"columnName", dataProperty.columnName},
                 {"propertyName", dataProperty.propertyName},
@@ -465,72 +465,70 @@ namespace iRINGTools.Web.Models
                 {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
               };
 
-              if (dataObject.isKeyProperty(dataProperty.propertyName))
-              {
-                properties.Add("keyType", dataProperty.keyType.ToString());
+                    if (dataObject.isKeyProperty(dataProperty.propertyName))
+                    {
+                        properties.Add("keyType", dataProperty.keyType.ToString());
 
-                JsonTreeNode keyPropertyNode = new JsonTreeNode()
+                        JsonTreeNode keyPropertyNode = new JsonTreeNode()
+                        {
+                            text = dataProperty.columnName,
+                            type = "keyProperty",
+                            properties = properties,
+                            iconCls = "key",
+                            leaf = true
+                        };
+
+                        keyPropertiesNode.children.Add(keyPropertyNode);
+                    }
+                    else
+                    {
+                        JsonTreeNode dataPropertyNode = new JsonTreeNode()
+                        {
+                            text = dataProperty.columnName,
+                            type = "dataProperty",
+                            iconCls = "property",
+                            leaf = true,
+                            properties = properties
+                        };
+
+                        dataPropertiesNode.children.Add(dataPropertyNode);
+                    }
+                }
+
+                // add relationship nodes
+                if (dataObject.dataRelationships.Count == 0)
                 {
-                  text = dataProperty.columnName,
-                  type = "keyProperty",
-                  properties = properties,
-									iconCls = "key",
-                  leaf = true
-                };
+                    JsonTreeNode relationshipNode = new JsonTreeNode()
+                    {
+                        text = "",
+                        type = "relationship",
+                        leaf = true
+                    };
+                    relationshipsNode.children.Add(relationshipNode);
+                }
 
-                keyPropertiesNode.children.Add(keyPropertyNode);
-              }
-              else
-              {
-                JsonTreeNode dataPropertyNode = new JsonTreeNode()
+                foreach (DataRelationship relationship in dataObject.dataRelationships)
                 {
-                  text = dataProperty.columnName,
-                  type = "dataProperty",
-									iconCls = "property",
-                  leaf = true,
-                  hidden = true,
-                  properties = properties
-                };
+                    JsonTreeNode relationshipNode = new JsonTreeNode()
+                    {
+                        text = relationship.relationshipName,
+                        type = "relationship",
+                        iconCls = "relation",
+                        leaf = true
+                    };
 
-                dataPropertiesNode.children.Add(dataPropertyNode);
-              }
+                    relationshipsNode.children.Add(relationshipNode);
+                }
+
+                dbObjectNodes.Add(dataObjectNode);
             }
 
-            // add relationship nodes
-						if (dataObject.dataRelationships.Count == 0)
-						{
-						  JsonTreeNode relationshipNode = new JsonTreeNode()
-						  {
-						    text = "",
-						    type = "relationship",
-						    leaf = true,
-						    hidden = true
-						  };
-						  relationshipsNode.children.Add(relationshipNode);
-						}
-
-            foreach (DataRelationship relationship in dataObject.dataRelationships)
-            {
-              JsonTreeNode relationshipNode = new JsonTreeNode()
-              {
-                text = relationship.relationshipName,
-                type = "relationship",
-								iconCls = "relation",
-                leaf = true
-              };
-
-							relationshipsNode.children.Add(relationshipNode);
-            }
-
-            dbObjectNodes.Add(dataObjectNode);
-          }
-
-          return dbObjectNodes;
+            return dbObjectNodes;
         }
         public Response RegenAll()
         {
-          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          return client.Get<Response>("/regen");
+            WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
+            return client.Get<Response>("/regen");
         }
         #endregion
     }
