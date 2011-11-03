@@ -474,7 +474,7 @@ namespace iRINGTools.Web.Models
                   text = dataProperty.columnName,
                   type = "keyProperty",
                   properties = properties,
-									iconCls = "key",
+									iconCls = "treeKey",
                   leaf = true
                 };
 
@@ -486,7 +486,7 @@ namespace iRINGTools.Web.Models
                 {
                   text = dataProperty.columnName,
                   type = "dataProperty",
-									iconCls = "property",
+									iconCls = "treeProperty",
                   leaf = true,
                   hidden = true,
                   properties = properties
@@ -515,7 +515,7 @@ namespace iRINGTools.Web.Models
               {
                 text = relationship.relationshipName,
                 type = "relationship",
-								iconCls = "relation",
+                iconCls = "treeRelation",
                 leaf = true
               };
 

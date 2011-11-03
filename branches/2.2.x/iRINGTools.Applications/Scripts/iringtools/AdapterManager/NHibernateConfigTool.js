@@ -153,7 +153,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 										var error = 'SUCCESS = FALSE';
 										var index = rtext.toUpperCase().indexOf(error);
 										if (index == -1) {
-											showDialog(400, 100, 'Saving Result', 'The configuraiton has been saved successfully.', Ext.Msg.OK, null);
+											showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
 											var navpanel = Ext.getCmp('nav-panel');
 											navpanel.onReload();
 										}
