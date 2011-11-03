@@ -43,6 +43,7 @@ using System.Security.Cryptography;
 using System.Data.SqlClient;
 using System.Runtime.Serialization.Json;
 using System.Web;
+using System.Web.Script.Serialization;
 
 namespace org.iringtools.utility
 {
@@ -662,6 +663,38 @@ namespace org.iringtools.utility
       return Serialize<T>(graph, Encoding.UTF8, useDataContractSerializer, null);
     }
 
+    public static string SerializeToJson<T>(T graph, bool useDataContractSerializer)
+    {
+        return SerializeToJson<T>(graph, Encoding.UTF8, useDataContractSerializer);
+    }
+
+    public static string SerializeToJson<T>(T graph, Encoding encoding, bool useDataContractSerializer)
+    {
+        string jsonString = String.Empty;
+
+        try
+        {
+            if (!useDataContractSerializer)
+            {
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                jsonString = serializer.Serialize(graph);
+            }
+            else
+            {
+                MemoryStream stream = new MemoryStream();
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+                serializer.WriteObject(stream, graph);
+                jsonString = Encoding.Default.GetString(stream.ToArray());
+            }
+            return jsonString;
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error serializing [" + typeof(T).Name + "].", exception);
+        }
+
+    }
+
     public static string Serialize<T>(T graph, Encoding encoding, bool useDataContractSerializer, XmlSerializerNamespaces namespaces)
     {
       string xml;
@@ -817,6 +850,41 @@ namespace org.iringtools.utility
       }
     }
 
+    public static T DeserializeFromJson<T>(string jsonString, bool useDataContractSerializer)
+    {
+        T graph = DeserializeFromJson<T>(jsonString, Encoding.UTF8, useDataContractSerializer);
+        return graph;
+    }
+
+    public static T DeserializeFromJson<T>(string jsonString, Encoding encoding, bool useDataContractSerializer)
+    {
+        T graph;
+
+        try
+        {
+            if (!useDataContractSerializer)
+            {
+                JavaScriptSerializer serializer = new JavaScriptSerializer();
+                graph = (T)serializer.Deserialize<T>(jsonString);
+            }
+            else
+            {
+                
+                DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+                byte[] byteArray = encoding.GetBytes(jsonString);
+                MemoryStream stream = new MemoryStream(byteArray);
+                graph = (T)serializer.ReadObject(stream);
+            }
+            return graph;
+        }
+        catch (Exception exception)
+        {
+            throw new Exception("Error deserializing [" + typeof(T).Name + "].", exception);
+        }
+
+    }
+
+
     public static T DeserializeFromXElement<T>(XElement element)
     {      
       try
@@ -835,6 +903,7 @@ namespace org.iringtools.utility
     {
       return DeserializeFromStream<T>(stream, true);
     }
+
 
     public static T DeserializeFromStream<T>(Stream stream, bool useDataContractSerializer)
     {
