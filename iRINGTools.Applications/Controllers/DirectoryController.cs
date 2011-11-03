@@ -354,8 +354,8 @@ namespace org.iringtools.web.controllers
                 }
 
               }
-              return Json(nodes, JsonRequestBehavior.AllowGet);
 
+              return Json(nodes, JsonRequestBehavior.AllowGet);
             }
 
           case "RelationshipNode":
@@ -363,38 +363,45 @@ namespace org.iringtools.web.controllers
               string keytype, datatype;
               string context = form["node"];
               string related = form["related"];
-              string scopeName = context.Split('/')[0];
-              string applicationName = context.Split('/')[1];
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-              DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
-              DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
-              foreach (DataProperty property in dataObject.dataProperties)
+                
+              if (!String.IsNullOrEmpty(related))
               {
-                keytype = getKeytype(property.propertyName, dataObject.dataProperties);
-                datatype = getDatatype(property.propertyName, dataObject.dataProperties);
-                JsonTreeNode node = new JsonTreeNode
+                string scopeName = context.Split('/')[0];
+                string applicationName = context.Split('/')[1];
+                DataDictionary dictionary = _repository.GetDictionary(scopeName, applicationName);
+                DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
+
+                foreach (DataProperty property in dataObject.dataProperties)
                 {
-                  nodeType = "async",
-                  type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
-                  iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
-                  id = context + "/" + property.propertyName,
-                  text = property.propertyName,
-                  expanded = true,
-                  leaf = true,
-                  children = new List<JsonTreeNode>(),
-                  record = new
+                  keytype = getKeytype(property.propertyName, dataObject.dataProperties);
+                  datatype = getDatatype(property.propertyName, dataObject.dataProperties);
+
+                  JsonTreeNode node = new JsonTreeNode
                   {
-                    Name = property.propertyName,
-                    Keytype = keytype,
-                    Datatype = datatype
-                  }
-                };
-                node.property = new Dictionary<string, string>();
-                node.property.Add("Name", property.propertyName);
-                node.property.Add("Type", keytype);
-                node.property.Add("Related", datatype);
-                nodes.Add(node);
+                    nodeType = "async",
+                    type = (dataObject.isKeyProperty(property.propertyName)) ? "KeyDataPropertyNode" : "DataPropertyNode",
+                    iconCls = (dataObject.isKeyProperty(property.propertyName)) ? "treeKey" : "treeProperty",
+                    id = context + "/" + property.propertyName,
+                    text = property.propertyName,
+                    expanded = true,
+                    leaf = true,
+                    children = new List<JsonTreeNode>(),
+                    record = new
+                    {
+                      Name = property.propertyName,
+                      Keytype = keytype,
+                      Datatype = datatype
+                    }
+                  };
+                  node.property = new Dictionary<string, string>();
+                  node.property.Add("Name", property.propertyName);
+                  node.property.Add("Type", keytype);
+                  node.property.Add("Related", datatype);
+                  nodes.Add(node);
+                }
               }
+              
               return Json(nodes, JsonRequestBehavior.AllowGet);
             }
 
