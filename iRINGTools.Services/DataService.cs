@@ -40,158 +40,46 @@ using System.IO;
 using System.Net;
 using System.Web.Script.Serialization;
 using System.Web;
+using System.ServiceModel.Channels;
+using System.Runtime.Serialization.Json;
+using System.Text;
 
 namespace org.iringtools.services
 {
-  [ServiceContract(Namespace = "http://ns.iringtools.org/protocol")]
+  [ServiceContract(Namespace = "http://www.iringtools.org/service")]
   [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
   public class DataService
   {
-    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterService));
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(DataService));
     private AdapterProvider _adapterProvider = null;
 
-    /// <summary>
-    /// Adapter Service Constructor
-    /// </summary>
     public DataService()
     {
       _adapterProvider = new AdapterProvider(ConfigurationManager.AppSettings);
     }
 
-    #region Public Resources
-    #region GetVersion
-    /// <summary>
-    /// Gets the version of the service.
-    /// </summary>
-    /// <returns>Returns the version as a string.</returns>
     [Description("Gets version of the service.")]
-    [WebGet(UriTemplate = "/version")]
-    public VersionInfo GetVersion()
+    [WebGet(UriTemplate = "/version?format={format}")]
+    public VersionInfo GetVersion(string format)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      MapResponseType(format);
 
       return _adapterProvider.GetVersion();
     }
-    #endregion
 
-    #region GetDictionary
-    /// <summary>
-    /// Gets the dictionary of data objects for the specified scope.
-    /// </summary>
-    /// <param name="scope">scope name</param>
-    /// <param name="app">Application name</param>
-    /// <returns>Returns a DataDictionary object.</returns>
     [Description("Gets object definitions of an application.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/dictionary")]
-    public DataDictionary GetDictionary(string scope, string app)
+    [WebGet(UriTemplate = "/{app}/{project}/dictionary?format={format}")]
+    public DataDictionary GetDictionary(string project, string app, string format)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      MapResponseType(format);
 
-      return _adapterProvider.GetDictionary(scope, app);
-    }
-    #endregion
-    #region Get
-    /// <summary>
-    /// Gets an XML scopeion of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="scope">scope name</param>
-    /// <param name="app">Application name</param>
-    /// <param name="graph">Graph name</param>
-    /// <param name="id">id</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML scopeion of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/{id}?format={format}")]
-    public void Get(string scope, string app, string graph, string id, string format)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-
-      try
-      {
-        XDocument xDocument = _adapterProvider.GetDataProjection(scope, app, graph, String.Empty, id, format, false);
-        FormatOutgoingMessage(xDocument.Root, format);
-      }
-      catch (Exception ex)
-      {
-        ExceptionHandler(context, ex);
-      }
+      return _adapterProvider.GetDictionary(project, app);
     }
 
-    /// <summary>
-    /// Gets an XML scopeion of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="scope">scope name</param>
-    /// <param name="app">Application name</param>
-    /// <param name="graph">Graph name</param>
-    /// <param name="graph">Class name</param>
-    /// <param name="id">id</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML scopeion of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/{graph}/{clazz}/{id}?format={format}")]
-    public void GetIndividual(string scope, string app, string graph, string clazz, string id, string format)
+    [Description("Gets an XML or JSON projection of the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetList(string project, string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-
-      try
-      {
-        XDocument xDocument = _adapterProvider.GetDataProjection(scope, app, graph, clazz, id, format, false);
-        FormatOutgoingMessage(xDocument.Root, format);
-      }
-      catch (Exception ex)
-      {
-        ExceptionHandler(context, ex);
-      }
-    }
-    #endregion
-
-    #region GetListWithFilter
-    /// <summary>
-    /// Gets an XML scopeion of the specified scope and graph.
-    /// </summary>
-    /// <param name="scope">scope name</param>
-    /// <param name="app">Application name</param>
-    /// <param name="graph">Graph name</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML scopeion of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
-    public void GetListWithFilter(string scope, string app, string graph, DataFilter filter, string format, int start, int limit, string indexStyle)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-
-      try
-      {
-        bool fullIndex = false;
-        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
-          fullIndex = true;
-
-        XDocument xDocument = _adapterProvider.GetDataProjection(scope, app, graph, filter, format, start, limit, fullIndex);
-        FormatOutgoingMessage(xDocument.Root, format);
-      }
-      catch (Exception ex)
-      {
-        ExceptionHandler(context, ex);
-      }
-    }
-    #endregion
-    #region GetList
-    /// <summary>
-    /// Gets an XML scopeion of the specified scope and graph in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="scope">scope name</param>
-    /// <param name="app">Application name</param>
-    /// <param name="graph">Graph name</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <returns>Returns an arbitrary XML</returns>
-    [Description("Gets an XML scopeion of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
-    public void GetList(string scope, string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
-    {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-
       try
       {
         NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
@@ -199,60 +87,217 @@ namespace org.iringtools.services
         bool fullIndex = false;
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
-        
-        XDocument xDocument = _adapterProvider.GetDataProjection(scope, app, graph, format, start, limit, sortOrder, sortBy, fullIndex, parameters);
+
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, ref format, start, limit, sortOrder, sortBy, fullIndex, parameters);
         FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
       {
-        ExceptionHandler(context, ex);
+        ExceptionHandler(ex);
       }
     }
-    #endregion
 
-    #region PostList
-    /// <summary>
-    /// Updates the specified scope and graph with an XML scopeion in the format (xml, dto, rdf ...) specified.
-    /// </summary>
-    /// <param name="scope">scope name</param>
-    /// <param name="app">Application name</param>
-    /// <param name="graph">Graph name</param>
-    /// <param name="format">Format to be returned (xml, dto, rdf ...)</param>
-    /// <param name="xml">Arbitrary XML</param>
-    /// <returns>Returns a Response object</returns>
-    [Description("Updates the specified scope and graph with an XML scopeion in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}?format={format}")]
-    public Response PostList(string scope, string app, string graph, string format, XElement xElement)
+    [Description("Gets an XML or JSON projection of a single item in the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
+    public void GetItem(string project, string app, string graph, string id, string format)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
-
-      return _adapterProvider.Post(scope, app, graph, format, new XDocument(xElement));
+      try
+      {
+        object content = _adapterProvider.GetDataProjection(project, app, graph, String.Empty, id, ref format, false);
+        FormatOutgoingMessage(content, format);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
     }
-    #endregion
 
-    #region Delete
-    /// <summary>
-    /// Deletes the specified individual based on scope, graph and id.
-    /// </summary>
-    /// <param name="scope">scope name</param>
-    /// <param name="app">Application name</param>
-    /// <param name="graph">Graph name</param>
-    /// <param name="id">id</param>
-    /// <returns>Returns an arbitrary XML</returns>
+    [Description("Gets an XML or JSON projection of a filtered set in the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
+    public void GetWithFilter(string project, string app, string graph, string format, int start, int limit, string indexStyle, Stream stream)
+    {
+      try
+      {
+        format = MapContentType(format);
+
+        DataFilter filter = FormatIncomingMessage<DataFilter>(stream, format, true);
+
+        bool fullIndex = false;
+        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+          fullIndex = true;
+
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, filter, ref format, start, limit, fullIndex);
+        FormatOutgoingMessage(xDocument.Root, format);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
+    }
+
+    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}/search?q={query}&format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetSearch(string project, string app, string graph, string query, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    {
+      try
+      {
+        bool fullIndex = false;
+        if (indexStyle != null && indexStyle.ToUpper() == "FULL")
+          fullIndex = true;
+
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, query, ref format, start, limit, sortOrder, sortBy, fullIndex);
+        FormatOutgoingMessage(xDocument.Root, format);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
+    }
+
+    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{clazz}/{id}?format={format}")]
+    public void GetIndividual(string project, string app, string graph, string clazz, string id, string format)
+    {
+      try
+      {
+        object content = _adapterProvider.GetDataProjection(project, app, graph, clazz, id, ref format, false);
+        FormatOutgoingMessage(content, format);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}?format={format}")]
+    public Response UpdateList(string project, string app, string graph, string format, Stream stream)
+    {
+      format = MapContentType(format);
+
+      if (format == "raw")
+      {
+        throw new Exception("");
+      }
+      else
+      {
+        XElement xElement = FormatIncomingMessage(stream, format);
+
+        return _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+      }
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
+    public Response UpdateItem(string project, string app, string graph, string id, string format, Stream stream)
+    {
+      format = MapContentType(format);
+
+      if (format == "raw")
+      {
+        return _adapterProvider.PostContent(project, app, graph, format, id, stream);
+      }
+      else
+      {
+        XElement xElement = FormatIncomingMessage(stream, format);
+
+        return _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+      }
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format={format}")]
+    public Response CreateItem(string project, string app, string graph, string format, Stream stream)
+    {
+      format = MapContentType(format);
+
+      if (format == "raw")
+      {
+        throw new Exception("");
+      }
+      else
+      {
+        XElement xElement = FormatIncomingMessage(stream, format);
+
+        return _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+      }
+    }
+
     [Description("Deletes a graph in the specified application.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
-    public Response Delete(string scope, string app, string graph, string id)
+    [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
+    public Response DeleteItem(string project, string app, string graph, string id, string format)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      MapContentType(format);
 
-      return _adapterProvider.DeleteIndividual(scope, app, graph, id);
+      return _adapterProvider.DeleteIndividual(project, app, graph, id);
+    }
+
+    #region "All" Methods
+    [Description("Gets object definitions of an application.")]
+    [WebGet(UriTemplate = "/all/{app}/dictionary?format={format}")]
+    public DataDictionary GetDictionaryAll(string app, string format)
+    {
+      return GetDictionary("all", app, format);
+    }
+
+    [Description("Gets an XML or JSON projection of the specified application and graph in the format specified.")]
+    [WebGet(UriTemplate = "/all/{app}/{graph}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}&indexStyle={indexStyle}")]
+    public void GetListAll(string app, string graph, string format, int start, int limit, string sortOrder, string sortBy, string indexStyle)
+    {
+      GetList("all", app, graph, format, start, limit, sortOrder, sortBy, indexStyle);
+    }
+
+    [Description("Gets an XML or JSON projection of a single item in the specified application and graph in the format specified.")]
+    [WebGet(UriTemplate = "/all/{app}/{graph}/{id}?format={format}")]
+    public void GetItemAll(string app, string graph, string id, string format)
+    {
+      GetItem("all", app, graph, id, format);
+    }
+
+    [Description("Gets an XML projection of the specified scope and graph in the format (xml, dto, rdf ...) specified.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{graph}/filter?format={format}&start={start}&limit={limit}&indexStyle={indexStyle}")]
+    public void GetWithFilterAll(string app, string graph, string format, int start, int limit, string indexStyle, Stream stream)
+    {
+      GetWithFilter("all", app, graph, format, start, limit, indexStyle, stream);
+    }
+
+    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
+    [WebGet(UriTemplate = "/all/{app}/{graph}/{clazz}/{id}?format={format}")]
+    public void GetIndividualAll(string app, string graph, string clazz, string id, string format)
+    {
+      GetIndividual("all", app, graph, clazz, id, format);
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{graph}?format={format}")]
+    public Response UpdateListAll(string app, string graph, string format, Stream stream)
+    {
+      return UpdateList("all", app, graph, format, stream);
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{graph}/{id}?format={format}")]
+    public Response UpdateItemAll(string app, string graph, string id, string format, Stream stream)
+    {
+      return UpdateItem("all", app, graph, id, format, stream);
+    }
+
+    [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{graph}?format={format}")]
+    public Response CreateItemAll(string app, string graph, string format, Stream stream)
+    {
+      return CreateItem("all", app, graph, format, stream);
+    }
+
+    [Description("Deletes a graph in the specified application.")]
+    [WebInvoke(Method = "DELETE", UriTemplate = "/all/{app}/{graph}/{id}?format={format}")]
+    public Response DeleteItemAll(string app, string graph, string id, string format)
+    {
+      return DeleteItem("all", app, graph, id, format);
     }
     #endregion
-    #endregion
-    
-    #region Private methods
+
+    #region Private Methods
     private void FormatOutgoingMessage(XElement xElement, string format)
     {
       if (format == null)
@@ -268,11 +313,12 @@ namespace org.iringtools.services
       else if (format.ToUpper() == "JSON")
       {
         DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
-        JavaScriptSerializer serializer = new JavaScriptSerializer();
-        string json = serializer.Serialize(dataItems);
+        MemoryStream ms = Utility.SerializeToStreamJSON<DataItems>(dataItems, false);
+        byte[] json = ms.ToArray();
+        ms.Close();
 
         HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
-        HttpContext.Current.Response.Write(json);
+        HttpContext.Current.Response.Write(Encoding.UTF8.GetString(json, 0, json.Length));
       }
       else
       {
@@ -280,9 +326,109 @@ namespace org.iringtools.services
         HttpContext.Current.Response.Write(xElement.ToString());
       }
     }
-    
-    private void ExceptionHandler(OutgoingWebResponseContext context, Exception ex)
+
+    private void MapResponseType(string format)
     {
+      OutgoingWebResponseContext response = WebOperationContext.Current.OutgoingResponse;
+      if (format != null && format.ToLower() == "xml")
+      {
+        response.ContentType = "application/xml";
+      }
+      else
+      {
+        response.ContentType = "application/json; charset=utf-8";
+      }
+    }
+
+    private string MapContentType(string format)
+    {
+      string postedFormat = "raw";
+
+      IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
+      OutgoingWebResponseContext response = WebOperationContext.Current.OutgoingResponse;
+
+      string contentType = request.ContentType;
+      response.ContentType = contentType;
+
+      if (contentType != null && contentType.ToLower().Contains("application/xml"))
+      {
+        postedFormat = "xml";
+
+        //if it's a known xml format then return it the special format, otherwise we will just try
+        if (format.ToLower().Contains("xml") || format.ToLower().Contains("rdf") || format.ToLower().Contains("dto"))
+        {
+          postedFormat = format;
+        }
+      }
+      else if (contentType != null && contentType.ToLower().Contains("application/json"))
+      {
+        postedFormat = "json";
+      }
+
+      if (format != postedFormat)
+      {
+        throw new Exception("");
+      }
+
+      return postedFormat;
+    }
+
+    private XElement FormatIncomingMessage(Stream stream, string format)
+    {
+      XElement xElement = null;
+
+      if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("rdf") || format.ToLower().Contains("dto")))
+      {
+        xElement = XElement.Load(stream);
+      }
+      else
+      {
+        DataItems dataItems = Utility.DeserializeFromStreamJson<DataItems>(stream, false);
+        xElement = Utility.SerializeToXElement<DataItems>(dataItems);
+      }
+
+      return xElement;
+    }
+
+    private T FormatIncomingMessage<T>(Stream stream, string format, bool useDataContractSerializer)
+    {
+      T graph = default(T);
+
+      if (format != null && format.ToLower().Contains("xml"))
+      {
+        graph = Utility.DeserializeFromStream<T>(stream, useDataContractSerializer);
+      }
+      else
+      {
+        graph = Utility.DeserializeFromStreamJson<T>(stream, useDataContractSerializer);
+      }
+
+      return graph;
+    }
+
+    private void FormatOutgoingMessage(object content, string format)
+    {
+      if (typeof(IContentObject).IsInstanceOfType(content))
+      {
+        IContentObject contentObject = (IContentObject)content;
+        HttpContext.Current.Response.ContentType = contentObject.contentType;
+        HttpContext.Current.Response.BinaryWrite(contentObject.content.ToMemoryStream().GetBuffer());
+      }
+      else if (content.GetType() == typeof(XDocument))
+      {
+        XDocument xDoc = (XDocument)content;
+        FormatOutgoingMessage(xDoc.Root, format);
+      }
+      else
+      {
+        throw new Exception("Invalid response type from DataLayer.");
+      }
+    }
+
+    private void ExceptionHandler(Exception ex)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+
       if (ex is FileNotFoundException)
       {
         context.StatusCode = HttpStatusCode.NotFound;

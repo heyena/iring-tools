@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.ServiceModel.Web;
 
 namespace org.iringtools.utility
 {
@@ -178,7 +179,7 @@ namespace org.iringtools.utility
 
     private void PrepareHeaders(WebRequest request)
     {
-      if (HttpContext.Current != null)
+      if (HttpContext.Current.Request.Cookies.Count > 0)
       {
         if (HttpContext.Current.Request.Cookies["Auth"] != null)
         {
@@ -190,6 +191,18 @@ namespace org.iringtools.utility
         {
           HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
           request.Headers.Add("Authorization", authorizationCookie.Value);
+        }
+      }
+      else if (WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+      {
+        if (WebOperationContext.Current.IncomingRequest.Headers["Auth"] != null)
+        {
+          request.Headers.Add("Auth", WebOperationContext.Current.IncomingRequest.Headers["Auth"]);
+        }
+
+        if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
+        {
+          request.Headers.Add("Authorization", WebOperationContext.Current.IncomingRequest.Headers["Authorization"]);
         }
       }
       else if (_accessToken != String.Empty)
@@ -283,7 +296,7 @@ namespace org.iringtools.utility
     {
       try
       {
-        string uri = _baseUri + relativeUri; 
+        string uri = _baseUri + relativeUri;
         WebRequest request = HttpWebRequest.Create(uri);
 
         PrepareCredentials(request);
@@ -436,6 +449,48 @@ namespace org.iringtools.utility
         T responseEntity = Utility.DeserializeFromStream<T>(response.GetResponseStream(), useDataContractSerializer);
 
         return responseEntity;
+      }
+      catch (Exception exception)
+      {
+        string uri = _baseUri + relativeUri;
+
+        throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+      }
+    }
+
+    public string PostStream(string relativeUri, Stream stream)
+    {
+      try
+      {
+        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+        byte[] bytes = ((MemoryStream)stream).ToArray();
+
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+        PrepareCredentials(request);
+        PrepareHeaders(request);
+
+        request.Timeout = TIMEOUT;
+        request.Method = "POST";
+        request.ContentType = "application/x-www-form-urlencoded";
+        request.ContentLength = bytes.Length;
+
+        System.Net.ServicePointManager.Expect100Continue = false;
+
+        // allows for validation of SSL conversations
+        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+          ValidateRemoteCertificate
+        );
+
+        Stream requestStream = request.GetRequestStream();
+        requestStream.Write(bytes, 0, bytes.Length);
+        requestStream.Flush();
+
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+        string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+        return responseMessage;
       }
       catch (Exception exception)
       {
