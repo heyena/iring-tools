@@ -135,16 +135,11 @@ public final class IOUtils
     String[] words = value.split("\\s+");
 
     for (String word : words)
-    {
-      returnValue.append(word.substring(0, 1).toUpperCase());
-
-      if (word.length() > 1)
+    {     
+      if (word.length() > 0)
       {
-        if (words.length == 1)
-          returnValue.append(word.substring(1));
-        else
-          returnValue.append(word.substring(1).toLowerCase());
-      }        
+        returnValue.append(word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase());        
+      }
     }
     
     return returnValue.toString();

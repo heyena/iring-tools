@@ -22,16 +22,27 @@ public final class JaxbUtils
 	  {
 	  	toXml(object, stream, indent);
 	  }
-	  catch(Exception ex)
+	  finally 
 	  {
-	  	stream.close();
+	    if (stream != null)
+	      stream.close();
 	  }
   }
 	
 	public static <T> String toXml(T object, boolean indent) throws JAXBException, IOException 
   {
-	  OutputStream stream = toStream(object, indent);
-    return stream.toString();   
+	  OutputStream stream = null;
+	  
+	  try
+	  {
+	    stream = toStream(object, indent);
+	    return stream.toString(); 
+	  }
+	  finally
+	  {
+	    if (stream != null)
+	      stream.close();
+	  }
   }
   
 	public static <T> OutputStream toStream(T object, boolean indent) throws JAXBException, IOException
@@ -88,7 +99,8 @@ public final class JaxbUtils
     }
     finally
     {
-      stream.close();
+      if (stream != null)
+        stream.close();
     }
 	}
 }

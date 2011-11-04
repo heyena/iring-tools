@@ -472,283 +472,295 @@ public class ExchangeProvider
   {
     logger.debug("submitExchange(" + scope + ", " + id + ", exchangeRequest)");
     
-    ExchangeResponse exchangeResponse = new ExchangeResponse();    
-    exchangeResponse.setLevel(Level.SUCCESS);
-    
-    XMLGregorianCalendar startTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
-    exchangeResponse.setStartTime(startTime);
-
-    if (exchangeRequest == null)
+    try
     {
-      exchangeResponse.setLevel(Level.WARNING);
-      exchangeResponse.setSummary("Exchange request is empty.");
-      return exchangeResponse;
-    }
-
-    // create exchange log directory
-    String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
-    File dirPath = new File(path);
-
-    if (!dirPath.exists())
-    {
-      dirPath.mkdirs();
-    }
-    
-    Manifest manifest = exchangeRequest.getManifest();
-    DataTransferIndices dtis = exchangeRequest.getDataTransferIndices();
-
-    if (dtis == null)
-      return null;
-
-    String exchangeFile = path + "/" + startTime.toString().replace(":", ".");
-    List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
-
-    if (dtiList.size() == 0)
-      return null;
-
-    initExchangeDefinition(scope, id);
-
-    // add exchange definition info to exchange response
-    exchangeResponse.setSenderUri(sourceUri);
-    exchangeResponse.setSenderScope(sourceScopeName);
-    exchangeResponse.setSenderApp(sourceAppName);
-    exchangeResponse.setSenderGraph(sourceGraphName);
-    exchangeResponse.setReceiverUri(targetUri);
-    exchangeResponse.setReceiverScope(targetScopeName);
-    exchangeResponse.setReceiverApp(targetAppName);
-    exchangeResponse.setReceiverGraph(targetGraphName);
-
-    // get target application uri
-    String targetAppUrl = targetUri + "/" + targetScopeName + "/" + targetAppName;
-    String targetGraphUrl = targetAppUrl + "/" + targetGraphName;
-    String sourceGraphUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName;
-
-    // create a pool DTOs to send to target endpoint
-    int dtiSize = dtiList.size();
-    int presetPoolSize = Integer.parseInt((String) settings.get("poolSize"));
-    int poolSize = Math.min(presetPoolSize, dtiSize);
-    
-    exchangeResponse.setPoolSize(poolSize);
-    exchangeResponse.setItemCount(dtiSize);
-    
-    for (int i = 0; i < dtiSize; i += poolSize)
-    {
-      int actualPoolSize = (dtiSize > (i + poolSize)) ? poolSize : dtiSize - i;
-      List<DataTransferIndex> poolDtiListItems = dtiList.subList(i, i + actualPoolSize);
-
-      List<DataTransferIndex> sourcePoolDtiList = new ArrayList<DataTransferIndex>();
-      List<DataTransferIndex> syncDtiList = new ArrayList<DataTransferIndex>();
-      List<DataTransferIndex> deleteDtiList = new ArrayList<DataTransferIndex>();
-
-      for (DataTransferIndex poolDti : poolDtiListItems)
+      ExchangeResponse exchangeResponse = new ExchangeResponse();    
+      exchangeResponse.setLevel(Level.SUCCESS);
+      
+      XMLGregorianCalendar startTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
+      exchangeResponse.setStartTime(startTime);
+  
+      if (exchangeRequest == null)
       {
-        switch (poolDti.getTransferType())
-        {
-        case SYNC:
-          syncDtiList.add(poolDti);
-          break;
-        case DELETE:
-          deleteDtiList.add(poolDti);
-          break;
-        default:
-          sourcePoolDtiList.add(poolDti);
-          break;
-        }
+        exchangeResponse.setLevel(Level.WARNING);
+        exchangeResponse.setSummary("Exchange request is empty.");
+        return exchangeResponse;
       }
-
-      // only include SYNC DTIs if the DTOs were not reviewed
-      if (!exchangeRequest.getReviewed())
-        sourcePoolDtiList.addAll(syncDtiList);
-
-      DataTransferObjects sourceDtos = null;
-
-      if (sourcePoolDtiList.size() > 0)
+  
+      // create exchange log directory
+      String path = settings.get("baseDirectory") + "/WEB-INF/exchanges/" + scope + "/" + id;
+      File dirPath = new File(path);
+  
+      if (!dirPath.exists())
       {
-        // request source DTOs
-        DxoRequest poolDxoRequest = new DxoRequest();
-        poolDxoRequest.setManifest(manifest);
-        DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
-        poolDxoRequest.setDataTransferIndices(poolDataTransferIndices);
-        DataTransferIndexList poolDtiList = new DataTransferIndexList();
-        poolDataTransferIndices.setDataTransferIndexList(poolDtiList);
-        poolDtiList.setItems(sourcePoolDtiList);
-
-        String sourceDtoUrl = sourceGraphUrl + "/dxo";
-        try
+        dirPath.mkdirs();
+      }
+      
+      Manifest manifest = exchangeRequest.getManifest();
+      DataTransferIndices dtis = exchangeRequest.getDataTransferIndices();
+  
+      if (dtis == null)
+        return null;
+  
+      String exchangeFile = path + "/" + startTime.toString().replace(":", ".");
+      List<DataTransferIndex> dtiList = dtis.getDataTransferIndexList().getItems();
+  
+      if (dtiList.size() == 0)
+        return null;
+  
+      initExchangeDefinition(scope, id);
+  
+      // add exchange definition info to exchange response
+      exchangeResponse.setSenderUri(sourceUri);
+      exchangeResponse.setSenderScope(sourceScopeName);
+      exchangeResponse.setSenderApp(sourceAppName);
+      exchangeResponse.setSenderGraph(sourceGraphName);
+      exchangeResponse.setReceiverUri(targetUri);
+      exchangeResponse.setReceiverScope(targetScopeName);
+      exchangeResponse.setReceiverApp(targetAppName);
+      exchangeResponse.setReceiverGraph(targetGraphName);
+  
+      // get target application uri
+      String targetAppUrl = targetUri + "/" + targetScopeName + "/" + targetAppName;
+      String targetGraphUrl = targetAppUrl + "/" + targetGraphName;
+      String sourceGraphUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName;
+  
+      // create a pool DTOs to send to target endpoint
+      int dtiSize = dtiList.size();
+      int presetPoolSize = Integer.parseInt((String) settings.get("poolSize"));
+      int poolSize = Math.min(presetPoolSize, dtiSize);
+      
+      exchangeResponse.setPoolSize(poolSize);
+      exchangeResponse.setItemCount(dtiSize);
+      
+      for (int i = 0; i < dtiSize; i += poolSize)
+      {
+        int actualPoolSize = (dtiSize > (i + poolSize)) ? poolSize : dtiSize - i;
+        List<DataTransferIndex> poolDtiListItems = dtiList.subList(i, i + actualPoolSize);
+  
+        List<DataTransferIndex> sourcePoolDtiList = new ArrayList<DataTransferIndex>();
+        List<DataTransferIndex> syncDtiList = new ArrayList<DataTransferIndex>();
+        List<DataTransferIndex> deleteDtiList = new ArrayList<DataTransferIndex>();
+  
+        for (DataTransferIndex poolDti : poolDtiListItems)
         {
-          manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
-          sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDxoRequest);
-        }
-        catch (HttpClientException e)
-        {
-          logger.error(e.getMessage());
-          throw new ServiceProviderException(e.getMessage());
-        }
-        
-        List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
-
-        // set transfer type for each DTO and remove SYNC ones if DTO grid is reviewed
-        for (int j = 0; j < sourceDtoListItems.size(); j++)
-        {
-          DataTransferObject sourceDto = sourceDtoListItems.get(j);
-          String identifier = sourceDto.getIdentifier();
-
-          if (sourceDto.getClassObjects() != null)
+          switch (poolDti.getTransferType())
           {
-            for (DataTransferIndex dti : poolDtiListItems)
+          case SYNC:
+            syncDtiList.add(poolDti);
+            break;
+          case DELETE:
+            deleteDtiList.add(poolDti);
+            break;
+          default:
+            sourcePoolDtiList.add(poolDti);
+            break;
+          }
+        }
+  
+        // only include SYNC DTIs if the DTOs were not reviewed
+        if (!exchangeRequest.getReviewed())
+          sourcePoolDtiList.addAll(syncDtiList);
+  
+        DataTransferObjects sourceDtos = null;
+  
+        if (sourcePoolDtiList.size() > 0)
+        {
+          // request source DTOs
+          DxoRequest poolDxoRequest = new DxoRequest();
+          poolDxoRequest.setManifest(manifest);
+          DataTransferIndices poolDataTransferIndices = new DataTransferIndices();
+          poolDxoRequest.setDataTransferIndices(poolDataTransferIndices);
+          DataTransferIndexList poolDtiList = new DataTransferIndexList();
+          poolDataTransferIndices.setDataTransferIndexList(poolDtiList);
+          poolDtiList.setItems(sourcePoolDtiList);
+  
+          String sourceDtoUrl = sourceGraphUrl + "/dxo";
+          try
+          {
+            manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
+            sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, poolDxoRequest);
+            poolDxoRequest = null;
+          }
+          catch (HttpClientException e)
+          {
+            logger.error(e.getMessage());
+            throw new ServiceProviderException(e.getMessage());
+          }
+          
+          List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
+  
+          // set transfer type for each DTO and remove SYNC ones if DTO grid is reviewed
+          for (int j = 0; j < sourceDtoListItems.size(); j++)
+          {
+            DataTransferObject sourceDto = sourceDtoListItems.get(j);
+            String identifier = sourceDto.getIdentifier();
+  
+            if (sourceDto.getClassObjects() != null)
             {
-              if (dti.getIdentifier().equals(identifier))
+              for (DataTransferIndex dti : poolDtiListItems)
               {
-                if (exchangeRequest.getReviewed())
+                if (dti.getIdentifier().equals(identifier))
                 {
-                  sourcePoolDtiList.remove(dti);
-                  
-                  if (dti.getTransferType() == TransferType.SYNC)
+                  if (exchangeRequest.getReviewed())
                   {
-                    sourceDtoListItems.remove(j--); // exclude SYNC DTOs
+                    sourcePoolDtiList.remove(dti);
+                    
+                    if (dti.getTransferType() == TransferType.SYNC)
+                    {
+                      sourceDtoListItems.remove(j--); // exclude SYNC DTOs
+                    }
+                    else
+                    {
+                      sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
+                    }
                   }
                   else
                   {
                     sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
                   }
+  
+                  break;
                 }
-                else
-                {
-                  sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.valueOf(dti.getTransferType().toString()));
-                }
-
-                break;
               }
             }
           }
         }
-      }
-
-      DataTransferObjects poolDtos = new DataTransferObjects();
-      DataTransferObjectList poolDtosList = new DataTransferObjectList();
-      poolDtos.setDataTransferObjectList(poolDtosList);
-
-      List<DataTransferObject> poolDtoListItems = new ArrayList<DataTransferObject>();
-      poolDtosList.setItems(poolDtoListItems);
-
-      if (sourceDtos != null && sourceDtos.getDataTransferObjectList() != null)
-      {
-        poolDtoListItems.addAll(sourceDtos.getDataTransferObjectList().getItems());
-      }
-
-      // create identifiers for deleted DTOs
-      for (DataTransferIndex deleteDti : deleteDtiList)
-      {
-        DataTransferObject deleteDto = new DataTransferObject();
-        deleteDto.setIdentifier(deleteDti.getIdentifier());
-        deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
-        poolDtoListItems.add(deleteDto);
-      }
-
-      // post add/change/delete DTOs to receiver's endpoint
-      if (poolDtoListItems.size() > 0)
-      {
-        Response poolResponse = null;
-        
-        try
-        {
-          poolResponse = httpClient.post(Response.class, targetGraphUrl + "?format=stream", poolDtos, MediaType.TEXT_PLAIN);
-        }
-        catch (HttpClientException e)
-        {
-          logger.error(e.getMessage());
-          throw new ServiceProviderException(e.getMessage());
-        }
-          
-        if (poolResponse != null)
-        {
-          try 
-          {
-            // write pool response to disk
-            String poolResponseFile = exchangeFile + POOL_PREFIX + (i+1) + "-" + (i+actualPoolSize) + ".xml";
-            JaxbUtils.write(poolResponse, poolResponseFile, true);
-          }
-          catch (Exception e) 
-          {
-            logger.error("Error writing pool response to disk: " + e);
-          }
   
-          // update level as necessary
-          if (exchangeResponse.getLevel().ordinal() < poolResponse.getLevel().ordinal())
-          {
-            exchangeResponse.setLevel(poolResponse.getLevel());
-          }
-        }
-      }
-    }
-
-    if (exchangeResponse.getLevel() == Level.ERROR)
-    {
-      String message = "Exchange completed with error.";
-      exchangeResponse.setSummary(message);
-    }
-    else if (exchangeResponse.getLevel() == Level.WARNING)
-    {
-      String message = "Exchange completed with warning.";
-      exchangeResponse.setSummary(message);
-    }
-    else if (exchangeResponse.getLevel() == Level.SUCCESS)
-    {
-      String message = "Exchange completed succesfully.";
-      exchangeResponse.setSummary(message);
-    }
-
-    XMLGregorianCalendar endTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
-    exchangeResponse.setEndTime(endTime);
-
-    // write exchange response to file system    
-    try
-    {
-      JaxbUtils.write(exchangeResponse, exchangeFile + ".xml", false);
-      List<String> exchangeLogs = IOUtils.getFiles(path);
-      
-      /* if number of log files exceed the limit, 
-       * remove the oldest one and its pools
-       */
-      
-      for (int i=0; i < exchangeLogs.size(); i++)
-      {
-        if (exchangeLogs.get(i).contains(POOL_PREFIX))
+        DataTransferObjects poolDtos = new DataTransferObjects();
+        DataTransferObjectList poolDtosList = new DataTransferObjectList();
+        poolDtos.setDataTransferObjectList(poolDtosList);
+  
+        List<DataTransferObject> poolDtoListItems = new ArrayList<DataTransferObject>();
+        poolDtosList.setItems(poolDtoListItems);
+  
+        if (sourceDtos != null && sourceDtos.getDataTransferObjectList() != null)
         {
-          exchangeLogs.remove(i--);
+          poolDtoListItems.addAll(sourceDtos.getDataTransferObjectList().getItems());
         }
-      }
-      
-      Collections.sort(exchangeLogs);
-
-      while (exchangeLogs.size() > Integer.valueOf((String) settings.get("numOfExchangeLogFiles")))
-      {
-        final String filePrefix = (exchangeLogs.get(0).replace(".xml", ""));
-        
-        FileFilter fileFilter = new FileFilter() 
+  
+        // create identifiers for deleted DTOs
+        for (DataTransferIndex deleteDti : deleteDtiList)
         {
-          public boolean accept(File file) 
-          {
-            return file.getName().startsWith(filePrefix);
-          }
-        };
+          DataTransferObject deleteDto = new DataTransferObject();
+          deleteDto.setIdentifier(deleteDti.getIdentifier());
+          deleteDto.setTransferType(org.iringtools.dxfr.dto.TransferType.DELETE);
+          poolDtoListItems.add(deleteDto);
+        }
+  
+        // post add/change/delete DTOs to receiver's endpoint
+        if (poolDtoListItems.size() > 0)
+        {
+          Response poolResponse = null;
           
-        for (File file : new File(path).listFiles(fileFilter))
+          try
+          {
+            poolResponse = httpClient.post(Response.class, targetGraphUrl + "?format=stream", poolDtos, MediaType.TEXT_PLAIN);
+            
+            // free up resources
+            poolDtos = null;  
+            sourceDtos = null;
+            poolDtiListItems = null;
+          }
+          catch (HttpClientException e)
+          {
+            logger.error(e.getMessage());
+            throw new ServiceProviderException(e.getMessage());
+          }
+            
+          if (poolResponse != null)
+          {
+            try 
+            {
+              // write pool response to disk
+              String poolResponseFile = exchangeFile + POOL_PREFIX + (i+1) + "-" + (i+actualPoolSize) + ".xml";
+              JaxbUtils.write(poolResponse, poolResponseFile, true);
+            }
+            catch (Exception e) 
+            {
+              logger.error("Error writing pool response to disk: " + e);
+            }
+    
+            // update level as necessary
+            if (exchangeResponse.getLevel().ordinal() < poolResponse.getLevel().ordinal())
+            {
+              exchangeResponse.setLevel(poolResponse.getLevel());
+            }
+          }
+        }
+      }
+  
+      if (exchangeResponse.getLevel() == Level.ERROR)
+      {
+        String message = "Exchange completed with error.";
+        exchangeResponse.setSummary(message);
+      }
+      else if (exchangeResponse.getLevel() == Level.WARNING)
+      {
+        String message = "Exchange completed with warning.";
+        exchangeResponse.setSummary(message);
+      }
+      else if (exchangeResponse.getLevel() == Level.SUCCESS)
+      {
+        String message = "Exchange completed succesfully.";
+        exchangeResponse.setSummary(message);
+      }
+  
+      XMLGregorianCalendar endTime = datatypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
+      exchangeResponse.setEndTime(endTime);
+  
+      // write exchange response to file system    
+      try
+      {
+        JaxbUtils.write(exchangeResponse, exchangeFile + ".xml", false);
+        List<String> exchangeLogs = IOUtils.getFiles(path);
+        
+        /* if number of log files exceed the limit, 
+         * remove the oldest one and its pools
+         */
+        
+        for (int i=0; i < exchangeLogs.size(); i++)
         {
-          file.delete();
+          if (exchangeLogs.get(i).contains(POOL_PREFIX))
+          {
+            exchangeLogs.remove(i--);
+          }
         }
         
-        exchangeLogs.remove(0);
+        Collections.sort(exchangeLogs);
+  
+        while (exchangeLogs.size() > Integer.valueOf((String) settings.get("numOfExchangeLogFiles")))
+        {
+          final String filePrefix = (exchangeLogs.get(0).replace(".xml", ""));
+          
+          FileFilter fileFilter = new FileFilter() 
+          {
+            public boolean accept(File file) 
+            {
+              return file.getName().startsWith(filePrefix);
+            }
+          };
+            
+          for (File file : new File(path).listFiles(fileFilter))
+          {
+            file.delete();
+          }
+          
+          exchangeLogs.remove(0);
+        }
       }
-    }
-    catch (Exception e)
-    {
-      String message = "Error writing exchange response to disk: " + e;
-      logger.error(message);
-      throw new ServiceProviderException(message);
-    }
+      catch (Exception e)
+      {
+        String message = "Error writing exchange response to disk: " + e;
+        logger.error(message);
+        throw new ServiceProviderException(message);
+      }
 
-    return exchangeResponse;
+      return exchangeResponse;
+    }
+    finally {
+      System.gc();
+    }
   }
 
   private void initExchangeDefinition(String scope, String id) throws ServiceProviderException
