@@ -199,27 +199,30 @@ namespace org.iringtools.adapter.projection
 
         for (int dataObjectIndex = 0; dataObjectIndex < _dataObjects.Count; dataObjectIndex++)
         {
-          DataTransferIndex dti = new DataTransferIndex();
-          Dictionary<string, string> keyValues = new Dictionary<string, string>();
-          StringBuilder internalIdentifier = new StringBuilder();
-          StringBuilder propertyValues = new StringBuilder();
-
-          BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
-            propertyValues, sortIndex, ref sortType);
-
-          foreach (string identifierValue in keyValues.Values)
+          if (_dataObjects[dataObjectIndex] != null)
           {
-            if (internalIdentifier.Length > 0)
+            DataTransferIndex dti = new DataTransferIndex();
+            Dictionary<string, string> keyValues = new Dictionary<string, string>();
+            StringBuilder internalIdentifier = new StringBuilder();
+            StringBuilder propertyValues = new StringBuilder();
+
+            BuildDataTransferIndex(dti, dataObjectIndex, classTemplateMap, keyDelimiter, keyPropertyNames, keyValues,
+              propertyValues, sortIndex, ref sortType);
+
+            foreach (string identifierValue in keyValues.Values)
             {
-              internalIdentifier.Append(keyDelimiter);
+              if (internalIdentifier.Length > 0)
+              {
+                internalIdentifier.Append(keyDelimiter);
+              }
+
+              internalIdentifier.Append(identifierValue);
             }
 
-            internalIdentifier.Append(identifierValue);
+            dti.InternalIdentifier = internalIdentifier.ToString();
+            dti.HashValue = Utility.MD5Hash(propertyValues.ToString());
+            dtis.DataTransferIndexList.Add(dti);
           }
-
-          dti.InternalIdentifier = internalIdentifier.ToString();
-          dti.HashValue = Utility.MD5Hash(propertyValues.ToString());
-          dtis.DataTransferIndexList.Add(dti);
         }
 
         if (sortType != null)

@@ -516,57 +516,65 @@ public class DataModel
   {
     Grid dtoGrid = new Grid();
 
-    List<Field> fields = getFields(fieldsContext, graph, null);
-    dtoGrid.setFields(fields);
-
-    List<List<String>> gridData = new ArrayList<List<String>>();
-    dtoGrid.setData(gridData);
-
-    List<DataTransferObject> dtoList = dtos.getDataTransferObjectList().getItems();
-
-    for (int dtoIndex = 0; dtoIndex < dtoList.size(); dtoIndex++)
+    if (graph != null)
     {
-      DataTransferObject dto = dtoList.get(dtoIndex);
-      List<String> rowData = new ArrayList<String>();
-      List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
-
-      // create a place holder for info field
-      rowData.add("");
-
-      if (dataMode == DataMode.EXCHANGE)
+      if (graph.getClassTemplatesList() != null &&
+          graph.getClassTemplatesList().getItems().size() > 0 &&
+          graph.getClassTemplatesList().getItems().get(0).getClazz() != null)
       {
-        String transferType = dto.getTransferType().toString();
-        rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
-      }
-
-      if (dto.getClassObjects().getItems().size() > 0)
-      {
-        ClassObject classObject = dto.getClassObjects().getItems().get(0);
-        String className = IOUtils.toCamelCase(classObject.getName());
-
-        dtoGrid.setIdentifier(classObject.getClassId());
+        String className = IOUtils.toCamelCase(graph.getClassTemplatesList().getItems().get(0).getClazz().getName());  
         dtoGrid.setDescription(className);
-
-        processClassObject(manifest, graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
       }
-
-      String relatedClassesJson;
-
-      try
+      
+      List<Field> fields = getFields(fieldsContext, graph, null);
+      dtoGrid.setFields(fields);
+  
+      List<List<String>> gridData = new ArrayList<List<String>>();
+      dtoGrid.setData(gridData);
+  
+      List<DataTransferObject> dtoList = dtos.getDataTransferObjectList().getItems();
+  
+      for (int dtoIndex = 0; dtoIndex < dtoList.size(); dtoIndex++)
       {
-        relatedClassesJson = JSONUtil.serialize(relatedClasses);
+        DataTransferObject dto = dtoList.get(dtoIndex);
+        List<String> rowData = new ArrayList<String>();
+        List<RelatedClass> relatedClasses = new ArrayList<RelatedClass>();
+  
+        // create a place holder for info field
+        rowData.add("");
+  
+        if (dataMode == DataMode.EXCHANGE)
+        {
+          String transferType = dto.getTransferType().toString();
+          rowData.add("<span class=\"" + transferType.toLowerCase() + "\">" + transferType + "</span>");
+        }
+  
+        if (dto.getClassObjects().getItems().size() > 0)
+        {
+          ClassObject classObject = dto.getClassObjects().getItems().get(0);
+          dtoGrid.setIdentifier(classObject.getClassId());
+          
+          processClassObject(manifest, graph, dto, dtoIndex, fields, classObject, dtoGrid, rowData, relatedClasses);
+        }
+  
+        String relatedClassesJson;
+  
+        try
+        {
+          relatedClassesJson = JSONUtil.serialize(relatedClasses);
+        }
+        catch (JSONException e)
+        {
+          relatedClassesJson = "[]";
+        }
+  
+        // update info field
+        rowData.set(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
+            + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\",\"" + dto.getIdentifier() + "\","
+            + relatedClassesJson + ")'>");
+  
+        gridData.add(rowData);
       }
-      catch (JSONException e)
-      {
-        relatedClassesJson = "[]";
-      }
-
-      // update info field
-      rowData.set(0, "<input type=\"image\" src=\"resources/images/info-small.png\" "
-          + "onClick='javascript:showIndividualInfo(\"" + dto.getIdentifier() + "\",\"" + dto.getIdentifier() + "\","
-          + relatedClassesJson + ")'>");
-
-      gridData.add(rowData);
     }
 
     return dtoGrid;
@@ -778,7 +786,8 @@ public class DataModel
         {
           for (ValueMap vm : vlm.getValueMaps().getItems())
           {
-            if (vm.getUri().equalsIgnoreCase(value) && vm.getLabel() != null && vm.getLabel().length() > 0)
+            if (vm.getUri() != null && vm.getUri().equalsIgnoreCase(value) && 
+                vm.getLabel() != null && vm.getLabel().length() > 0)
             {
               return vm.getLabel();
             }
