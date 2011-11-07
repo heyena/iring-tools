@@ -342,7 +342,13 @@ namespace org.iringtools.services
 
     private string MapContentType(string format)
     {
-      // if it's a known xml format then return it
+      IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
+      OutgoingWebResponseContext response = WebOperationContext.Current.OutgoingResponse;
+
+      string contentType = request.ContentType;
+      response.ContentType = contentType;
+
+      // if it's a known format then return it
       if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("json") ||
         format.ToLower().Contains("dto") || format.ToLower().Contains("rdf") || format.ToLower().Contains("p7xml")))
       {
@@ -352,19 +358,13 @@ namespace org.iringtools.services
       // make decision on what format to apply based on request content type
       string postedFormat = "raw";
 
-      IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
-      OutgoingWebResponseContext response = WebOperationContext.Current.OutgoingResponse;
-
-      string contentType = request.ContentType;
-      response.ContentType = contentType;
-
       if (contentType != null)
       {
-        if (contentType.ToLower().Contains("application/xml"))
+        if (contentType.ToLower().Contains("xml"))
         {
           postedFormat = "xml";
         }
-        else if (contentType.ToLower().Contains("application/json"))
+        else if (contentType.ToLower().Contains("json"))
         {
           postedFormat = "json";
         }

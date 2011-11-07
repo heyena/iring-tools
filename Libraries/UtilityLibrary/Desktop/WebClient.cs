@@ -428,7 +428,7 @@ namespace org.iringtools.utility
         if (format == null || format.ToLower() == "xml")
         {
           stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
-          request.ContentType = "application/xml";
+          request.ContentType = "text/xml";
           request.ContentLength = stream.Length;
         }
         else if (format.ToLower() == "json")
@@ -439,9 +439,7 @@ namespace org.iringtools.utility
         }
         else 
         {
-          stream = Utility.SerializeToMemoryStream<T>(requestEntity);
-          request.ContentType = "raw";
-          request.ContentLength = stream.Length;
+          throw new Exception("Format " + format + " not allowed.");
         }
         
         PrepareCredentials(request);
@@ -549,7 +547,7 @@ namespace org.iringtools.utility
 
         request.Timeout = TIMEOUT;
         request.Method = "POST";
-        request.ContentType = "application/x-www-form-urlencoded";
+        request.ContentType = "application/octet-stream";
         request.ContentLength = bytes.Length;
 
         System.Net.ServicePointManager.Expect100Continue = false;
