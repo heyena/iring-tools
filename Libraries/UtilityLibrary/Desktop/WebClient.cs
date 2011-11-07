@@ -413,6 +413,83 @@ namespace org.iringtools.utility
       }
     }
 
+    public R Post<T, R>(string relativeUri, T requestEntity, string format, bool useDataContractSerializer)
+    {
+      try
+      {
+        string uri = _baseUri + relativeUri;
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+        request.Timeout = TIMEOUT;
+        request.Method = "POST";
+
+        MemoryStream stream = null;
+
+        if (format == null || format.ToLower() == "xml")
+        {
+          stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
+          request.ContentType = "application/xml";
+          request.ContentLength = stream.Length;
+        }
+        else if (format.ToLower() == "json")
+        {
+          stream = Utility.SerializeToStreamJSON<T>(requestEntity, useDataContractSerializer);
+          request.ContentType = "application/json";
+          request.ContentLength = stream.Length;
+        }
+        else 
+        {
+          stream = Utility.SerializeToMemoryStream<T>(requestEntity);
+          request.ContentType = "raw";
+          request.ContentLength = stream.Length;
+        }
+        
+        PrepareCredentials(request);
+        PrepareHeaders(request);
+
+        // allows for validation of SSL conversations
+        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+          ValidateRemoteCertificate
+        );
+
+        request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        Stream responseStream = response.GetResponseStream();
+
+        if (typeof(R) == typeof(String))
+        {
+          StreamReader reader = new StreamReader(responseStream);
+          string responseStr = reader.ReadToEnd();
+          reader.Close();
+
+          return (R)Convert.ChangeType(responseStr, typeof(R));
+        }
+        else
+        {
+          return Utility.DeserializeFromStream<R>(responseStream.ToMemoryStream(), useDataContractSerializer);
+        }
+      }
+      catch (Exception e)
+      {
+        String error = String.Empty;
+
+        if (e.GetType() == typeof(WebException))
+        {
+          HttpWebResponse response = ((HttpWebResponse)((WebException)e).Response);
+          Stream responseStream = response.GetResponseStream();
+          error = Utility.SerializeFromStream(responseStream);
+        }
+        else
+        {
+          error = e.ToString();
+        }
+
+        string uri = _baseUri + relativeUri;
+        throw new Exception("Error with HTTP POST from URI [" + uri + "]. " + error);
+      }
+    }
+
     public T PostMessage<T>(string relativeUri, string requestMessage, bool useDataContractSerializer)
     {
       try

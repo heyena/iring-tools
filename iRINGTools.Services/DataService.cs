@@ -342,6 +342,14 @@ namespace org.iringtools.services
 
     private string MapContentType(string format)
     {
+      // if it's a known xml format then return it
+      if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("json") ||
+        format.ToLower().Contains("dto") || format.ToLower().Contains("rdf") || format.ToLower().Contains("p7xml")))
+      {
+        return format;
+      }
+
+      // make decision on what format to apply based on request content type
       string postedFormat = "raw";
 
       IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
@@ -350,24 +358,21 @@ namespace org.iringtools.services
       string contentType = request.ContentType;
       response.ContentType = contentType;
 
-      if (contentType != null && contentType.ToLower().Contains("application/xml"))
+      if (contentType != null)
       {
-        postedFormat = "xml";
-
-        //if it's a known xml format then return it the special format, otherwise we will just try
-        if (format.ToLower().Contains("xml") || format.ToLower().Contains("rdf") || format.ToLower().Contains("dto"))
+        if (contentType.ToLower().Contains("application/xml"))
         {
-          postedFormat = format;
+          postedFormat = "xml";
         }
-      }
-      else if (contentType != null && contentType.ToLower().Contains("application/json"))
-      {
-        postedFormat = "json";
+        else if (contentType.ToLower().Contains("application/json"))
+        {
+          postedFormat = "json";
+        }
       }
 
       if (format != postedFormat)
       {
-        throw new Exception("");
+        throw new Exception("Requested format [" + format + "] is invalid.");
       }
 
       return postedFormat;
@@ -377,7 +382,8 @@ namespace org.iringtools.services
     {
       XElement xElement = null;
 
-      if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("rdf") || format.ToLower().Contains("dto")))
+      if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("rdf") || 
+        format.ToLower().Contains("dto") || format.ToLower().Contains("p7xml")))
       {
         xElement = XElement.Load(stream);
       }
