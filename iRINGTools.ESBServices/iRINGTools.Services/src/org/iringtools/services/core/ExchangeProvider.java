@@ -33,6 +33,7 @@ import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
 import org.iringtools.dxfr.manifest.ClassTemplates;
 import org.iringtools.dxfr.manifest.Graph;
+import org.iringtools.dxfr.manifest.Graphs;
 import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.manifest.Role;
 import org.iringtools.dxfr.manifest.Template;
@@ -43,6 +44,7 @@ import org.iringtools.dxfr.request.DxiRequest;
 import org.iringtools.dxfr.request.DxoRequest;
 import org.iringtools.dxfr.request.ExchangeRequest;
 import org.iringtools.dxfr.response.ExchangeResponse;
+import org.iringtools.mapping.ValueListMaps;
 import org.iringtools.utility.HttpClient;
 import org.iringtools.utility.HttpClientException;
 import org.iringtools.utility.HttpUtils;
@@ -826,6 +828,8 @@ public class ExchangeProvider
 
   private Manifest createCrossedManifest() throws ServiceProviderException
   {
+    Manifest crossedManifest = new Manifest();
+    
     // get source manifest
     String sourceManifestUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/manifest";
     Manifest sourceManifest;
@@ -866,6 +870,10 @@ public class ExchangeProvider
     if (sourceGraph != null && sourceGraph.getClassTemplatesList() != null && 
         targetGraph != null && targetGraph.getClassTemplatesList() != null)
     {
+      Graphs crossGraphs = new Graphs();
+      crossGraphs.getItems().add(targetGraph);
+      crossedManifest.setGraphs(crossGraphs);
+      
       List<ClassTemplates> sourceClassTemplatesList = sourceGraph.getClassTemplatesList().getItems();
       List<ClassTemplates> targetClassTemplatesList = targetGraph.getClassTemplatesList().getItems();
 
@@ -919,10 +927,13 @@ public class ExchangeProvider
       }
     }
 
-    // merge source and target value-list maps
-    targetManifest.getValueListMaps().getItems().addAll(sourceManifest.getValueListMaps().getItems());
-
-    return targetManifest;
+    // add source and target value-list maps
+    ValueListMaps valueListMaps = new ValueListMaps();
+    valueListMaps.getItems().addAll(sourceManifest.getValueListMaps().getItems());
+    valueListMaps.getItems().addAll(targetManifest.getValueListMaps().getItems());
+    crossedManifest.setValueListMaps(valueListMaps);
+    
+    return crossedManifest;
   }
   
   private Graph getGraph(Manifest manifest, String graphName)
