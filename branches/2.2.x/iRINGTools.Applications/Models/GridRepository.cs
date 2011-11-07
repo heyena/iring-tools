@@ -84,9 +84,10 @@ namespace iRINGTools.Web.Models
       {
         try
         {
+          string format = "json";
           DataFilter dataFilter = createDataFilter(filter, sort, dir);
-          string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=json&start=" + start + "&limit=" + limit;
-          string dataItemsJson = _client.Post<DataFilter, string>(relativeUri, dataFilter, true);
+          string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
+          string dataItemsJson = _client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
           
           JavaScriptSerializer serializer = new JavaScriptSerializer();
           dataItems = (DataItems)serializer.Deserialize(dataItemsJson, typeof(DataItems));
