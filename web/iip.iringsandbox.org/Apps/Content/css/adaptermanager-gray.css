@@ -15,24 +15,37 @@ a:active {color: black}
 .x-tree { 
 	background-color: #fff; 
 }
-
+.upload-icon {
+     background: url('../img/image_add.png') no-repeat 0 0 !important;
+}
 .x-tree-node .scope {
   background-image: url(../img/cabinet.png);
 }
 
-.x-tree-node .object {
+.x-tree-node .treeObject {
   background-image: url(../img/object.png);
 }
+.x-tree-node .folder {
+  background-image: url(../img/folder.png);
+}
 
-.x-tree-node .property {
+.x-tree-node .treeProperty {
   background-image: url(../img/property.png);
 }
 
-.x-tree-node .key {
+.x-tree-node .treeValue {
+  background-image: url(../img/valuelist.png);
+}
+
+.x-tree-node .treeValuelist {
+  background-image: url(../img/value.png);
+}
+
+.x-tree-node .treeKey {
   background-image: url(../img/key.png);
 }
 
-.x-tree-node .relation {
+.x-tree-node .treeRelation {
   background-image: url(../img/relation.png);
 }
 
@@ -48,12 +61,12 @@ a:active {color: black}
   background-image: url(../img/exchange-grid.png);
 }
 
-.x-tree-node .application {
+.x-tree-node .applications {
   background-image: url(../img/application.png);
 }
 
-.x-tree-node .graph {
-  background-image: url(../img/app-grid.png);
+.x-tree-node .treeGraph {
+  background-image: url(../img/graph-map.png);
 }
 
 .x-tree-node .commodity {
@@ -125,6 +138,7 @@ a:active {color: black}
 .tabsNhibernate {
   background-image:url('../img/16x16/preferences-system.png') !important;
 }
+
 .tabsValueList{
   background-image:url('../img/valuelist.png') !important;
 }
