@@ -397,7 +397,11 @@ namespace org.iringtools.adapter.datalayer
               dataObject.SetPropertyValue(column.Name, _provider.GetValue(col));
             }
           }
-
+          foreach (var col in cfTable.Columns)
+          {
+              if (!((GenericDataObject)dataObject).Dictionary.ContainsKey(col.Name))
+                  dataObject.SetPropertyValue(col.Name, null);
+          }
           dataObjects.Add(dataObject);
         }
 
