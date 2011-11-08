@@ -118,6 +118,7 @@ namespace org.iringtools.adapter.datalayer
         {
           foreach (Sheet sheet in sheets)
           {
+              if (sheet.Name.InnerText.StartsWith("Sheet")) continue;
             WorksheetPart worksheetPart = (WorksheetPart)_document.WorkbookPart.GetPartById(sheet.Id);
             SpreadsheetTable table = new SpreadsheetTable
             {
