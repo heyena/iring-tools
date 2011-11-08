@@ -170,6 +170,7 @@
     <Content Include="Content\img\16x16\document-open.png" />
     <Content Include="Content\img\16x16\document-properties.png" />
     <Content Include="Content\img\16x16\document-save.png" />
+    <Content Include="Content\img\16x16\document-up.png" />
     <Content Include="Content\img\16x16\edit-clear.png" />
     <Content Include="Content\img\16x16\edit-delete.png" />
     <Content Include="Content\img\16x16\equals.png" />
@@ -4727,6 +4728,7 @@
     <Content Include="Scripts\iringtools\AdapterManager\RangeMenu.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />
     <Content Include="Scripts\iringtools\AdapterManager\SearchPanel.js" />
+    <Content Include="Scripts\iringtools\AdapterManager\SpreadsheetLibrary.js" />
     <Content Include="Scripts\iringtools\AdapterManager\StringFilter.js" />
     <Content Include="Scripts\iringtools\AdapterManager\Utility.js" />
     <Content Include="Scripts\iringtools\AdapterManager\ValueListMapPanel.js" />
