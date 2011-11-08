@@ -172,8 +172,26 @@ namespace org.iringtools.adapter.projection
                     ProcessInboundTemplates(i, rootClassInstance, new List<TemplateMap> { classificationTemplate });
                   }
 
-                  IDataObject dataObject = CreateDataObject(_graphMap.dataObjectName, i);
-                  _dataObjects.Add(dataObject);
+                  try
+                  {
+                    IDataObject dataObject = CreateDataObject(_graphMap.dataObjectName, i);
+                    _dataObjects.Add(dataObject);
+                  }
+                  catch (Exception e)
+                  {
+                    StringBuilder builder = new StringBuilder();
+                    Dictionary<string, string> dataRecord = _dataRecords[i];
+
+                    builder.AppendLine("Error creating data object. " + e);
+                    builder.AppendLine("Data Record: ");
+
+                    foreach (var pair in dataRecord)
+                    {
+                      builder.AppendLine("\t" + pair.Key + ": " + pair.Value);
+                    }
+
+                    _logger.Error(builder.ToString());
+                  }
                 }
 
                 // fill related data objects and append them to top level data objects
