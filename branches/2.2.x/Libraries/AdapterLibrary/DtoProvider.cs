@@ -470,11 +470,28 @@ namespace org.iringtools.adapter
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         IList<IDataObject> dataObjects = dtoProjectionEngine.ToDataObjects(_graphMap.name, ref dtoDoc);
 
-        if (dataObjects != null && dataObjects.Count > 0)
+        if (dataObjects.Count < dataTransferObjectList.Count)
+        {
+          response.Level = StatusLevel.Error;
+          response.StatusList.Add(new Status()
+          {
+            Identifier = "N/A",            
+            Messages = new Messages() {
+                 "Error creating data objects - expected [" + dataTransferObjectList.Count +
+                "], actual [" + dataObjects.Count + "]. See log for details."
+            }
+          });
+        }
+                
+        if (dataObjects.Count > 0)
+        {
           response.Append(_dataLayer.Post(dataObjects));  // add/change/sync data objects
+        }
 
         if (deleteIdentifiers.Count > 0)
+        {
           response.Append(_dataLayer.Delete(_graphMap.dataObjectName, deleteIdentifiers));
+        }
       }
       catch (Exception ex)
       {

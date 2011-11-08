@@ -445,11 +445,30 @@ namespace org.iringtools.adapter.projection
         if (objProp.dataType == DataType.String && objProp.dataLength < pair.Value.ToString().Length)
         {
           string value = pair.Value.Substring(0, objProp.dataLength);
-          dataObject.SetPropertyValue(objProp.propertyName, value);
+
+          try
+          {
+            dataObject.SetPropertyValue(objProp.propertyName, value);
+          }
+          catch (Exception e)
+          {
+            string error = "Error setting value for property [" + objProp.propertyName + "]. " + e;
+            _logger.Error(error);
+            throw new Exception(error);
+          }
         }
         else
         {
-          dataObject.SetPropertyValue(objProp.propertyName, pair.Value);
+          try
+          {
+            dataObject.SetPropertyValue(objProp.propertyName, pair.Value);
+          }
+          catch (Exception e)
+          {
+             string error = "Error setting value for property [" + objProp.propertyName + "]. " + e;
+            _logger.Error(error);
+            throw new Exception(error);
+          }
         }
       }
     }

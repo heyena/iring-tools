@@ -482,13 +482,14 @@ namespace org.iringtools.adapter.datalayer
                 status.Level = StatusLevel.Error;
                 status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
                 status.Results.Add("ResultTag", identifier);
-                _logger.Error("Error in Post saving: " + ex);
+                _logger.Error("Error posting data object to data layer: " + ex);
               }
             }
             else
             {
               status.Level = StatusLevel.Error;
-              status.Messages.Add("Data object is null or duplicate.");
+              status.Identifier = String.Empty;
+              status.Messages.Add("Data object is null or duplicate. See log for details.");
             }
 
             response.Append(status);
