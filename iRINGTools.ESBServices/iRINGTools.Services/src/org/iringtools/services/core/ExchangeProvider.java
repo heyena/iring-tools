@@ -690,6 +690,8 @@ public class ExchangeProvider
             {
               exchangeResponse.setLevel(poolResponse.getLevel());
             }
+            
+            poolResponse = null;
           }
         }
       }

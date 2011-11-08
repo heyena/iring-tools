@@ -77,6 +77,7 @@ public class HttpClient
       if (conn != null)
       {
         conn.disconnect();
+        conn = null;
       }
     }
   }
@@ -141,6 +142,7 @@ public class HttpClient
       if (conn != null)
       {
         conn.disconnect();
+        conn = null;
       }
     }
 
@@ -190,6 +192,7 @@ public class HttpClient
       if (conn != null)
       {
         conn.disconnect();
+        conn = null;
       }
     }
 
@@ -258,6 +261,7 @@ public class HttpClient
       if (conn != null)
       {
         conn.disconnect();
+        conn = null;
       }
     }
 
