@@ -839,6 +839,7 @@ function loadTree(rootNode, dbDict) {
 						text: dataObject.dataRelationships[kj].relationshipName,
 						type: 'relationship',
 						leaf: true,
+            iconCls: 'treeRelation',
 						relatedObjMap: [],
 						objectName: dataObjectNode.text,
 						relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
@@ -852,8 +853,8 @@ function loadTree(rootNode, dbDict) {
 						mapItem['dataPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].dataPropertyName;
 						mapItem['relatedPropertyName'] = dataObject.dataRelationships[kj].propertyMaps[kjj].relatedPropertyName;
 						mapArray.push(mapItem);
-		            }
-		            newNode.iconCls = 'treeRelation';
+		      }
+		      newNode.iconCls = 'treeRelation';
 					newNode.attributes.propertyMap = mapArray;
 					relationshipsNode.expanded = true;
 					relationshipsNode.children.push(newNode);
