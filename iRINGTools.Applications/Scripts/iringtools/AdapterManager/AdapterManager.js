@@ -213,7 +213,8 @@ Ext.onReady(function () {
         if (dataLayerValue == 'SpreadsheetLibrary') {
             var newConfig = new AdapterManager.SpreadsheetLibraryPanel({
                 id: 'tab-c.' + scope + '.' + application,
-                title: 'Configure - ' + scope + '.' + application,
+                title: 'Spreadsheet Configuration - ' + scope + '.' + application,
+                iconCls: 'tabsNhibernate',
                 scope: scope,
                 application: application,
                 datalayer: assembly,
@@ -323,7 +324,7 @@ Ext.onReady(function () {
             var application = node.text;
             var scope = node.parentNode.text;
 
-            if (dataLayerValue == 'SpreadsheetDataLayer') {
+            if (dataLayerValue == 'SpreadsheetLibrary') {
                 var configTab = contentPanel.items.map[scope + '.' + application + '.-nh-config'];
             }
             else if (dataLayerValue == 'SPPIDDataLayer') {

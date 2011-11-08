@@ -11,7 +11,6 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
 
   frame: true,
   border: true,
-
   fileUpload: true,
   labelWidth: 150, // label settings here cascade unless    
   method: 'POST',
@@ -58,7 +57,12 @@ AdapterManager.SpreadsheetSourcePanel = Ext.extend(Ext.FormPanel, {
 
     this.bbar = [
           '->',
-          { xtype: 'button', text: 'Upload', scope: this, handler: this.onUpload },
+          { 
+            xtype: 'button',
+            text: 'Upload', 
+            icon: 'Content/img/16x16/document-up.png',
+            scope: this, handler: this.onUpload
+          },
           { xtype: 'button', text: 'Cancel', scope: this }
         ]
 
@@ -160,7 +164,13 @@ AdapterManager.SpreadsheetWorksheetSelection = Ext.extend(Ext.FormPanel, {
 
     this.bbar = [
       '->',
-      { xtype: 'button', text: 'Upload', scope: this, handler: this.onUpload },
+      { 
+        xtype: 'button',
+        text: 'Upload',
+        scope: this,
+        icon: 'Content/img/16x16/document-up.png',
+        handler: this.onUpload 
+      },
       { xtype: 'button', text: 'Cancel', scope: this }
     ]
 
@@ -368,7 +378,7 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
       {
         text: 'Upload',
         handler: this.onUpload,
-        //icon: 'Content/img/list-remove.png',
+        icon: 'Content/img/16x16/document-up.png',
         scope: this
       }
     ]
@@ -514,15 +524,16 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
 
 
   onSave: function (panel) {
-
+    var that = this;
     Ext.Ajax.request({
       url: 'spreadsheet/configure',    // where you wanna post
       method: 'POST',
-      success: function (f, a) {
-
+      success: function (response, request) {
+        that.configurationPanel.root.reload();
+        showDialog(400, 100, 'Saving Result', 'Configuration has been updated successfully.', Ext.Msg.OK, null);
       },   // function called on success
-      failure: function (f, a) {
-
+      failure: function (response, request) {
+        showDialog(660, 300, 'Saving Result', 'An error has occurred while update the configuration.', Ext.Msg.OK, null);
       },
       params: {
         Scope: this.scope,
@@ -556,11 +567,12 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
     Ext.Ajax.request({
       url: 'spreadsheet/updateconfiguration',    // where you wanna post
       method: 'POST',
-      success: function (f, a) {
+      success: function (response, request) {
         that.configurationPanel.root.reload();
+        showDialog(400, 100, 'Saving Result', 'Configuration has been updated successfully.', Ext.Msg.OK, null);
       },   // function called on success
-      failure: function (f, a) {
-
+      failure: function (response, request) {
+        showDialog(660, 300, 'Saving Result', 'An error has occurred while update the configuration.', Ext.Msg.OK, null);
       },
       params: {
         Scope: this.scope.Name,

@@ -678,7 +678,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         else if (node.attributes.type == 'GraphNode') {
             this.fireEvent('opengraphmap', this, node);
         }
-        else if (node.attributes.type == 'DataObjectsNode') {
+        else if (node.attributes.type == 'DataObjectNode') {
             this.fireEvent('LoadPageDto', this, node);
         }
     },
