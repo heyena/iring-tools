@@ -221,15 +221,27 @@ namespace org.iringtools.services
     }
     #endregion
 
-    #region Refresh
-    [Description("Resets data layer state.")]
+    #region RefreshDataObjects
+    [Description("Resets all data objects state in data layer.")]
     [WebGet(UriTemplate = "/{scope}/{app}/refresh")]
-    public Response Refresh(string scope, string app)
+    public Response RefreshDataObjects(string scope, string app)
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
 
-      return _adapterProvider.Refresh(scope, app);
+      return _adapterProvider.RefreshDataObjects(scope, app);
+    }
+    #endregion
+
+    #region RefreshDataObject
+    [Description("Resets a data object state in data layer.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{dataObject}/refresh")]
+    public Response RefreshDataObject(string scope, string app, string dataObject)
+    {
+      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+      context.ContentType = "application/xml";
+
+      return _adapterProvider.RefreshDataObject(scope, app, dataObject);
     }
     #endregion
     #endregion
