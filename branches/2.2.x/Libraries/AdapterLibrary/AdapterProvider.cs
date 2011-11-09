@@ -44,6 +44,7 @@ using org.iringtools.library;
 using org.iringtools.mapping;
 using org.iringtools.utility;
 using StaticDust.Configuration;
+using System.Reflection;
 
 
 namespace org.iringtools.adapter
@@ -1393,33 +1394,56 @@ namespace org.iringtools.adapter
         public DataLayers GetDataLayers()
         {
           DataLayers dataLayers = new DataLayers();
-          Type type = typeof(IDataLayer);
 
-          foreach (System.Reflection.Assembly asm in Thread.GetDomain().GetAssemblies())
+          // Load NHibernate data layer
+          Type nhType = Type.GetType("org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", true);
+          string nhLibrary = nhType.Assembly.GetName().Name;
+          string nhAssembly = string.Format("{0}, {1}", nhType.FullName, nhLibrary);
+          DataLayer nhDataLayer = new DataLayer { Assembly = nhAssembly, Name = nhLibrary, Configurable = true };
+          dataLayers.Add(nhDataLayer);
+
+          // Load Spreadsheet data layer
+          Type ssType = Type.GetType("org.iringtools.adapter.datalayer.SpreadsheetDataLayer, SpreadsheetLibrary", true);
+          string ssLibrary = ssType.Assembly.GetName().Name;
+          string ssAssembly = string.Format("{0}, {1}", ssType.FullName, ssLibrary);
+          DataLayer ssDataLayer = new DataLayer { Assembly = ssAssembly, Name = ssLibrary, Configurable = true };
+          dataLayers.Add(ssDataLayer);
+
+          try
           {
-            try
+            Type type = typeof(IDataLayer);
+            
+            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
-              Type[] asmTypes = asm.GetTypes();
-
-              if (asmTypes != null)
+              try
               {
-                foreach (System.Type asmType in asmTypes)
+                Type[] asmTypes = asm.GetTypes();
+
+                if (asmTypes != null)
                 {
-                  if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+                  foreach (System.Type asmType in asmTypes)
                   {
-                    bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-                    string name = asm.FullName.Split(',')[0];
-                    string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-                    DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
-                    dataLayers.Add(dataLayer);
+                    if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+                    {
+                      bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+                      string name = asm.FullName.Split(',')[0];
+
+                      if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
+                      {
+                        string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+                        DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
+                        dataLayers.Add(dataLayer);
+                      }
+                    }
                   }
                 }
               }
+              catch (Exception) {}
             }
-            catch (Exception e)
-            {
-              _logger.Warn("Error in GetDataLayers() " + e);
-            }
+          }
+          catch (Exception e)
+          {
+            _logger.Error("Error loading data layer: " + e);
           }
 
           return dataLayers;
