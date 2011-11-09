@@ -1567,19 +1567,37 @@ namespace org.iringtools.adapter
             }
         }
 
-        public Response Refresh(string projectName, string applicationName)
+        public Response RefreshDataObjects(string projectName, string applicationName)
         {
           try
           {
             InitializeScope(projectName, applicationName);
             InitializeDataLayer();
 
-            return _dataLayer.Refresh();
+            return _dataLayer.RefreshAll();
           }
           catch (Exception ex)
           {
-            _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
-             throw new Exception(string.Format("Error getting configuration: {0}", ex));
+            string errMsg = String.Format("Error refreshing data objects: {0}", ex);
+            _logger.Error(errMsg);
+            throw new Exception(errMsg);
+          }
+        }
+
+        public Response RefreshDataObject(string projectName, string applicationName, string dataObject)
+        {
+          try
+          {
+            InitializeScope(projectName, applicationName);
+            InitializeDataLayer();
+
+            return _dataLayer.Refresh(dataObject);
+          }
+          catch (Exception ex)
+          {
+            string errMsg = String.Format("Error refreshing data object [{0}]: {1}", dataObject, ex);
+            _logger.Error(errMsg);
+            throw new Exception(errMsg);
           }
         }
     }

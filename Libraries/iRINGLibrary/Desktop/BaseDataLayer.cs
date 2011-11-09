@@ -336,7 +336,13 @@ namespace org.iringtools.library
       throw new NotImplementedException();
     }
 
-    public virtual Response Refresh() {
+    public virtual Response RefreshAll()
+    {
+      throw new NotImplementedException();
+    }
+
+    public virtual Response Refresh(string objectType)
+    {
       throw new NotImplementedException();
     }
   }
