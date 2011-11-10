@@ -6,19 +6,19 @@
   
   <context-param>
     <param-name>ExchangeServiceUri</param-name>
-    <param-value>http://tomcat.dev.iringsandbox.org:8081/services/exchange</param-value>
+    <param-value>http://iringsandbox.org:8081/iipservices/exchange</param-value>
   </context-param>
   <context-param>
     <param-name>HistoryServiceUri</param-name>
-    <param-value>http://tomcat.dev.iringsandbox.org:8081/services/history</param-value>
+    <param-value>http://iringsandbox.org:8081/iipservices/history</param-value>
   </context-param>   
   <context-param>
     <param-name>RefDataServiceUri</param-name>
-    <param-value>http://tomcat.dev.iringsandbox.org:8081/services/refdata</param-value>
+    <param-value>http://iringsandbox.org:8081/iipservices/refdata</param-value>
   </context-param>
   <context-param>
     <param-name>IDGenServiceUri</param-name>
-    <param-value>http://tomcat.dev.iringsandbox.org:8081/services/idgen</param-value>
+    <param-value>http://iringsandbox.org:8081/iipservices/idgen</param-value>
   </context-param>
   <context-param>
     <param-name>FieldFit</param-name>
