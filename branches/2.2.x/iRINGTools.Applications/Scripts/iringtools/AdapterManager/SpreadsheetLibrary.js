@@ -384,11 +384,25 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
             url: 'spreadsheet/configure',    // where you wanna post
             method: 'POST',
             success: function (response, request) {
+              
+              /*need the service send error message { success = false } + msg
+              var rtext = response.responseText;
+              var error = 'SUCCESS = FALSE';
+              var index = rtext.toUpperCase().indexOf(error);
+              if (index == -1) {
+                showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
                 that.configurationPanel.root.reload();
-                showDialog(400, 100, 'Saving Result', 'Configuration has been updated successfully.', Ext.Msg.OK, null);
+              }
+              else {
+                var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
+                showDialog(400, 100, 'An error has occurred while saving the configuration.', msg, Ext.Msg.OK, null);
+              }*/              
+               
+              that.configurationPanel.root.reload();
+              showDialog(400, 100, 'Saving Result', 'Configuration has been saved successfully.', Ext.Msg.OK, null);
             },   // function called on success
             failure: function (response, request) {
-                showDialog(660, 300, 'Saving Result', 'An error has occurred while update the configuration.', Ext.Msg.OK, null);
+                showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
             },
             params: {
                 Scope: this.scope,
@@ -423,11 +437,25 @@ AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
             url: 'spreadsheet/updateconfiguration',    // where you wanna post
             method: 'POST',
             success: function (response, request) {
-                that.configurationPanel.root.reload();
+
+              /* need the service send error message { success = false } + msg
+              var rtext = response.responseText;
+              var error = 'SUCCESS = FALSE';
+              var index = rtext.toUpperCase().indexOf(error);
+              if (index == -1) {
                 showDialog(400, 100, 'Saving Result', 'Configuration has been updated successfully.', Ext.Msg.OK, null);
+                that.configurationPanel.root.reload();
+              }
+              else {
+                var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
+                showDialog(400, 100, 'An error has occurred while updating the configuration.', msg, Ext.Msg.OK, null);
+              }*/            
+
+              that.configurationPanel.root.reload();
+              showDialog(400, 100, 'Saving Result', 'Configuration has been updated successfully.', Ext.Msg.OK, null);
             },   // function called on success
             failure: function (response, request) {
-                showDialog(660, 300, 'Saving Result', 'An error has occurred while update the configuration.', Ext.Msg.OK, null);
+              showDialog(660, 300, 'Saving Result', 'An error has occurred updating update the configuration.', Ext.Msg.OK, null);
             },
             params: {
                 Scope: this.scope.Name,
