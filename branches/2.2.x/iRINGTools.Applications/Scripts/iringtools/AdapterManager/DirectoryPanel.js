@@ -48,13 +48,6 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
             ReloadNode: true
         });
 
-        //    this.contextButton = new Ext.Toolbar.Button({
-        //      pressed: true,
-        //      enableToggle: false,
-        //      text: 'ContextMenu',
-        //      menu: new Ext.menu.Menu()
-        //    });
-
         this.tbar = new Ext.Toolbar();
         this.tbar.add(this.buildToolbar());
         // this.tbar.add(this.contextButton);
@@ -302,13 +295,13 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
 
     buildAppDataMenu: function () {
         return [
-			{
-			    text: 'Open Grid',
-			    handler: this.onLoadPageDto,
-			    icon: 'Content/img/16x16/document-properties.png',
-			    scope: this
-			}
-		]
+            {
+                text: 'Open Grid',
+                handler: this.onLoadPageDto,
+                icon: 'Content/img/16x16/document-properties.png',
+                scope: this
+            }
+        ]
     },
 
     buildvalueListsMenu: function () {
