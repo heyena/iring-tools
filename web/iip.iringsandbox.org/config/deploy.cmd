@@ -2,7 +2,7 @@
 
 setlocal
 set java_dist="c:\bamboo-home\xml-data\build-dir\IRT-IRT22-JAVABUILD\dist\"
-set tomcat_home=c:\Program Files\Apache Software Foundation\Tomcat 6.0\"
+set tomcat_home="c:\Program Files\Apache Software Foundation\Tomcat 6.0\"
 
 cd %~dp0%
 svn update
