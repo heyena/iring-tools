@@ -2,7 +2,10 @@
 
 <html>
 <head id="Head1" runat="server">
-    <title>Adapter Manager</title>
+    <title>iRINGTools: Adapter Manager</title>
+    <meta http-equiv="Cache-Control" content="no-cache"/>
+    <meta http-equiv="Pragma" content="no-cache"/>
+    <meta http-equiv="Expires" content="0"/>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/resources/css/ext-all.css"/>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/examples/ux/css/ux-all.css"/>
     <link rel="stylesheet" type="text/css" href="../../Scripts/ext-3.3.1/examples/ux/css/Multiselect.css"/>
@@ -14,10 +17,11 @@
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/adapter/ext/ext-base.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/json2.js") %>" type="text/javascript"></script>
     <!-- ExtJS library: all widgets -->
-    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all.js") %>" type="text/javascript"></script>
+    <!--<script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all.js") %>" type="text/javascript"></script>-->
+    <script src="<%: Url.Content("~/Scripts/ext-3.3.1/ext-all-debug-w-comments.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ux-all.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/ext-3.3.1/examples/ux/ComboListAutoSizer.js") %>" type="text/javascript"></script>
-    <!-- extensions -->    
+    <!-- extensions -->      
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/App.js") %>" type="text/javascript"></script>    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ActionPanel.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/DirectoryPanel.js") %>" type="text/javascript"></script>
@@ -50,6 +54,7 @@
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/ItemSelector.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/MultiSelect.js") %>" type="text/javascript"></script>
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/sppidConfigWizard.js") %>" type="text/javascript"></script>
+    
     <!-- page specific -->    
     <script src="<%: Url.Content("~/Scripts/iringtools/AdapterManager/AdapterManager.js") %>" type="text/javascript"></script>    
 </head>
@@ -62,7 +67,7 @@
         style="font-family: Arial, Helvetica, Sans-Serif">Adapter Manager</font></span>
     </span>
     <span style="float:right;margin:18px 36px 1px 0"><a
-        href="http://iringug.org/wiki/index.php?title=ESBUsersGuide" target="_blank"  class="headerLnkBlack">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a 
+        href="http://iringug.org/wiki/index.php?title=IRINGTools" target="_blank"  class="headerLnkBlack">Help</a>&nbsp;&nbsp;&nbsp;&nbsp;<a 
         id="about-link" href="#" class="headerLnkBlack">About</a>
     </span>
   </div>    
