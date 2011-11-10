@@ -210,7 +210,7 @@ Ext.onReady(function () {
     var scope = node.parentNode.text;
     var datalayer = node.attributes.record.DataLayer;
 
-    if (dataLayerValue == 'SpreadsheetLibrary') {
+    if (dataLayerValue == 'SpreadsheetDataLayer') {
       var newConfig = new AdapterManager.SpreadsheetLibraryPanel({
         id: 'tab-c.' + scope + '.' + application,
         title: 'Spreadsheet Configuration - ' + scope + '.' + application,
