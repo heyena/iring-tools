@@ -143,6 +143,7 @@ Module Module1
 
 
 
+
         'If File.Exists(ProjConfigPath) Then
         '    Dim asr As New StaticDust.Configuration.AppSettingsReader(ProjConfigPath)
         '    _adapterSettings.AppendSettings(asr)
