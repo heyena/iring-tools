@@ -60,20 +60,24 @@ namespace org.iringtools.services
 
     [Description("Gets version of the service.")]
     [WebGet(UriTemplate = "/version?format={format}")]
-    public VersionInfo GetVersion(string format)
+    public void GetVersion(string format)
     {
-      MapResponseType(format);
+      format = MapContentType(format);
 
-      return _adapterProvider.GetVersion();
+      VersionInfo version = _adapterProvider.GetVersion();
+
+      FormatOutgoingMessage<VersionInfo>(version, format, true);
     }
 
     [Description("Gets object definitions of an application.")]
     [WebGet(UriTemplate = "/{app}/{project}/dictionary?format={format}")]
-    public DataDictionary GetDictionary(string project, string app, string format)
+    public void GetDictionary(string project, string app, string format)
     {
-      MapResponseType(format);
+      format = MapContentType(format);
 
-      return _adapterProvider.GetDictionary(project, app);
+      DataDictionary dictionary = _adapterProvider.GetDictionary(project, app);
+
+      FormatOutgoingMessage<DataDictionary>(dictionary, format, true);
     }
 
     [Description("Gets an XML or JSON projection of the specified project, application and graph in the format specified. Valid formats include json, xml, p7xml, and rdf.")]
@@ -171,7 +175,7 @@ namespace org.iringtools.services
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}?format={format}")]
-    public Response UpdateList(string project, string app, string graph, string format, Stream stream)
+    public void UpdateList(string project, string app, string graph, string format, Stream stream)
     {
       format = MapContentType(format);
 
@@ -183,31 +187,36 @@ namespace org.iringtools.services
       {
         XElement xElement = FormatIncomingMessage(stream, format);
 
-        return _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+        Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+
+        FormatOutgoingMessage<Response>(response, format, true);
       }
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
-    public Response UpdateItem(string project, string app, string graph, string id, string format, Stream stream)
+    public void UpdateItem(string project, string app, string graph, string id, string format, Stream stream)
     {
       format = MapContentType(format);
 
+      Response response = new Response();
       if (format == "raw")
       {
-        return _adapterProvider.PostContent(project, app, graph, format, id, stream);
+        response = _adapterProvider.PostContent(project, app, graph, format, id, stream);
       }
       else
       {
         XElement xElement = FormatIncomingMessage(stream, format);
 
-        return _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+        response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
       }
+
+      FormatOutgoingMessage<Response>(response, format, true);
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{app}/{project}/{graph}?format={format}")]
-    public Response CreateItem(string project, string app, string graph, string format, Stream stream)
+    public void CreateItem(string project, string app, string graph, string format, Stream stream)
     {
       format = MapContentType(format);
 
@@ -219,25 +228,29 @@ namespace org.iringtools.services
       {
         XElement xElement = FormatIncomingMessage(stream, format);
 
-        return _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+        Response response = _adapterProvider.Post(project, app, graph, format, new XDocument(xElement));
+
+        FormatOutgoingMessage<Response>(response, format, true);
       }
     }
 
     [Description("Deletes a graph in the specified application.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/{app}/{project}/{graph}/{id}?format={format}")]
-    public Response DeleteItem(string project, string app, string graph, string id, string format)
+    public void DeleteItem(string project, string app, string graph, string id, string format)
     {
-      MapContentType(format);
+      format = MapContentType(format);
 
-      return _adapterProvider.DeleteIndividual(project, app, graph, id);
+      Response response = _adapterProvider.DeleteIndividual(project, app, graph, id);
+
+      FormatOutgoingMessage<Response>(response, format, true);
     }
 
     #region "All" Methods
     [Description("Gets object definitions of an application.")]
     [WebGet(UriTemplate = "/all/{app}/dictionary?format={format}")]
-    public DataDictionary GetDictionaryAll(string app, string format)
+    public void GetDictionaryAll(string app, string format)
     {
-      return GetDictionary("all", app, format);
+      GetDictionary("all", app, format);
     }
 
     [Description("Gets an XML or JSON projection of the specified application and graph in the format specified.")]
@@ -270,30 +283,30 @@ namespace org.iringtools.services
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{graph}?format={format}")]
-    public Response UpdateListAll(string app, string graph, string format, Stream stream)
+    public void UpdateListAll(string app, string graph, string format, Stream stream)
     {
-      return UpdateList("all", app, graph, format, stream);
+      UpdateList("all", app, graph, format, stream);
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/all/{app}/{graph}/{id}?format={format}")]
-    public Response UpdateItemAll(string app, string graph, string id, string format, Stream stream)
+    public void UpdateItemAll(string app, string graph, string id, string format, Stream stream)
     {
-      return UpdateItem("all", app, graph, id, format, stream);
+      UpdateItem("all", app, graph, id, format, stream);
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "POST", UriTemplate = "/all/{app}/{graph}?format={format}")]
-    public Response CreateItemAll(string app, string graph, string format, Stream stream)
+    public void CreateItemAll(string app, string graph, string format, Stream stream)
     {
-      return CreateItem("all", app, graph, format, stream);
+      CreateItem("all", app, graph, format, stream);
     }
 
     [Description("Deletes a graph in the specified application.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/all/{app}/{graph}/{id}?format={format}")]
-    public Response DeleteItemAll(string app, string graph, string id, string format)
+    public void DeleteItemAll(string app, string graph, string id, string format)
     {
-      return DeleteItem("all", app, graph, id, format);
+      DeleteItem("all", app, graph, id, format);
     }
     #endregion
 
@@ -327,55 +340,39 @@ namespace org.iringtools.services
       }
     }
 
-    private void MapResponseType(string format)
-    {
-      OutgoingWebResponseContext response = WebOperationContext.Current.OutgoingResponse;
-      if (format != null && format.ToLower() == "xml")
-      {
-        response.ContentType = "application/xml";
-      }
-      else
-      {
-        response.ContentType = "application/json; charset=utf-8";
-      }
-    }
-
     private string MapContentType(string format)
     {
       IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
-      OutgoingWebResponseContext response = WebOperationContext.Current.OutgoingResponse;
 
       string contentType = request.ContentType;
-      response.ContentType = contentType;
-
+      
       // if it's a known format then return it
       if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("json") ||
-        format.ToLower().Contains("dto") || format.ToLower().Contains("rdf") || format.ToLower().Contains("p7xml")))
+        format.ToLower().Contains("dto") || format.ToLower().Contains("rdf")))
       {
         return format;
       }
 
-      // make decision on what format to apply based on request content type
-      string postedFormat = "raw";
+      // default to json, but honor the contentType of the request if it has one.
+      format = "json";
 
       if (contentType != null)
       {
-        if (contentType.ToLower().Contains("xml"))
+        if (contentType.ToLower().Contains("application/xml"))
         {
-          postedFormat = "xml";
+          format = "xml";
         }
         else if (contentType.ToLower().Contains("json"))
         {
-          postedFormat = "json";
+          format = "json";
+        }
+        else
+        {
+          format = "raw";
         }
       }
 
-      if (format != postedFormat)
-      {
-        throw new Exception("Requested format [" + format + "] is invalid.");
-      }
-
-      return postedFormat;
+      return format;
     }
 
     private XElement FormatIncomingMessage(Stream stream, string format)
@@ -383,14 +380,14 @@ namespace org.iringtools.services
       XElement xElement = null;
 
       if (format != null && (format.ToLower().Contains("xml") || format.ToLower().Contains("rdf") || 
-        format.ToLower().Contains("dto") || format.ToLower().Contains("p7xml")))
+        format.ToLower().Contains("dto")))
       {
         xElement = XElement.Load(stream);
       }
       else
       {
         DataItems dataItems = Utility.DeserializeFromStreamJson<DataItems>(stream, false);
-        xElement = Utility.SerializeToXElement<DataItems>(dataItems);
+        xElement = dataItems.ToXElement<DataItems>();
       }
 
       return xElement;
@@ -410,6 +407,24 @@ namespace org.iringtools.services
       }
 
       return graph;
+    }
+
+    private void FormatOutgoingMessage<T>(T graph, string format, bool useDataContractSerializer)
+    {
+      if (format.ToUpper() == "JSON")
+      {
+        string json = Utility.SerializeJson<T>(graph, useDataContractSerializer);
+        
+        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
+        HttpContext.Current.Response.Write(json);
+      }
+      else
+      {
+        string xml = Utility.Serialize<T>(graph, useDataContractSerializer);
+
+        HttpContext.Current.Response.ContentType = "application/xml";
+        HttpContext.Current.Response.Write(xml);
+      }
     }
 
     private void FormatOutgoingMessage(object content, string format)

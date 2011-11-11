@@ -68,7 +68,7 @@ namespace iRINGTools.Web.Models
 			{
 				try
         {
-					dataDict = _client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary", true);
+					dataDict = _client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
 
 					if (dataDict == null || dataDict.dataObjects.Count == 0)
 						response = response + "Data dictionary of [" + app + "] is empty.";

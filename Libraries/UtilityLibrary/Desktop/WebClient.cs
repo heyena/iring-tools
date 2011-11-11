@@ -59,6 +59,7 @@ namespace org.iringtools.utility
     private NetworkCredential _credentials = null;
     private IWebProxy _proxy = null;
     private string _accessToken = String.Empty;
+    private string _contentType = String.Empty;
 
     private const string NEW_LINE = "\r\n";
     private const int TIMEOUT = 600000;
@@ -148,6 +149,18 @@ namespace org.iringtools.utility
       }
     }
 
+    public string ContentType
+    {
+      get
+      {
+        return _contentType;
+      }
+      set
+      {
+        _contentType = value;
+      }
+    }
+
     /// <summary>
     /// HttpUtility.UrlEncode does not encode alpha-numeric characters such as _ - . ' ( ) * and !
     /// This function encodes these characters to create a fully encoded uri
@@ -179,7 +192,7 @@ namespace org.iringtools.utility
 
     private void PrepareHeaders(WebRequest request)
     {
-      if (HttpContext.Current.Request.Cookies.Count > 0)
+      if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
       {
         if (HttpContext.Current.Request.Cookies["Auth"] != null)
         {
@@ -193,7 +206,7 @@ namespace org.iringtools.utility
           request.Headers.Add("Authorization", authorizationCookie.Value);
         }
       }
-      else if (WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+      else if (HttpContext.Current != null && WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
       {
         if (WebOperationContext.Current.IncomingRequest.Headers["Auth"] != null)
         {
@@ -530,6 +543,53 @@ namespace org.iringtools.utility
         string uri = _baseUri + relativeUri;
 
         throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+      }
+    }
+
+    public string PutStream(string relativeUri, Stream stream)
+    {
+      try
+      {
+        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+        byte[] bytes = ((MemoryStream)stream).ToArray();
+
+        if (String.IsNullOrEmpty(_contentType))
+        {
+          _contentType = "application/octet-stream";
+        }
+
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+        PrepareCredentials(request);
+        PrepareHeaders(request);
+
+        request.Timeout = TIMEOUT;
+        request.Method = "PUT";
+        request.ContentType = _contentType;
+        request.ContentLength = bytes.Length;
+
+        System.Net.ServicePointManager.Expect100Continue = false;
+
+        // allows for validation of SSL conversations
+        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+          ValidateRemoteCertificate
+        );
+
+        Stream requestStream = request.GetRequestStream();
+        requestStream.Write(bytes, 0, bytes.Length);
+        requestStream.Flush();
+
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+        string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+        return responseMessage;
+      }
+      catch (Exception exception)
+      {
+        string uri = _baseUri + relativeUri;
+
+        throw new Exception("Error while executing HTTP PUT request on " + uri + ".", exception);
       }
     }
 
