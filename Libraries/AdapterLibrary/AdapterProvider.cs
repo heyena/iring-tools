@@ -1512,67 +1512,6 @@ namespace org.iringtools.adapter
                    new XAttribute("to", dataLayer)
                  )
                );
-                    //}
-                    //else
-                    //{
-                    //    #region SPPID DataLayer
-
-                    //    string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
-
-
-                    //    NameValueCollection settings = new NameValueCollection();
-                    //    string _baseDirectory = Directory.GetCurrentDirectory();
-                    //    settings["BaseDirectoryPath"] = string.Format(_baseDirectory + _settings["AppDataPath"]);
-
-                    //    settings["BaseConfigurationPath"] = _settings["AppDataPath"] + _settings["ProjectName"];
-                    //    settings["ProjectConfigurationPath"] = Path.Combine(_baseDirectory, configPath);
-
-
-                    //    //string tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings["AppDataPath"], projectName, applicationName);
-                    //    string tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings["AppDataPath"], "12345_000", "SPPID");
-                    //    settings["StagingConfigurationPath"] = Path.Combine(_baseDirectory, tmp);
-
-                    //    _settings.AppendSettings(settings);
-
-
-                    //    // Create Config File ----------------------
-                    //    XElement config = new XElement("configuration",
-                    //      new XElement("appSettings",
-                    //      new XElement("add",
-                    //      new XAttribute("key", "SPPIDSiteConnectionString"),
-                    //      new XAttribute("value", httpRequest.Form["SiteConnectionString"])),
-                    //      new XElement("add",
-                    //      new XAttribute("key", "SPPIDPlantConnectionString"),
-                    //      new XAttribute("value", httpRequest.Form["PlantConnectionString"])),
-                    //      new XElement("add",
-                    //      new XAttribute("key", "iRingStagingConnectionString"),
-                    //      new XAttribute("value", httpRequest.Form["StagingConnectionString"])
-                    //      ))
-                    //    );
-
-                    //    if (File.Exists(configPath))
-                    //    {
-                    //        File.Delete(configPath);
-                    //    }
-                    //    config.Save(configPath);
-
-                    //    if (File.Exists(_settings["ProjectConfigurationPath"]))
-                    //    {
-                    //        _settings.AppendSettings(new AppSettingsReader(_settings["ProjectConfigurationPath"]));
-                    //    }
-
-                    //    // Create Binding Configuration File ----------------------
-                    //    binding = new XElement("module",
-                    //    new XAttribute("name", _settings["Scope"]),
-                    //        new XElement("bind",
-                    //        new XAttribute("name", "DataLayer"),
-                    //        new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
-                    //        new XAttribute("to", dataLayer)
-                    //    )
-                    //  );
-                    //    #endregion
-                    //}
-
 
                     binding.Save(_settings["BindingConfigurationPath"]);
                     _kernel.Load(_settings["BindingConfigurationPath"]);

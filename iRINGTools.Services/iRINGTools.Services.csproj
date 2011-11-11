@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\default.css" />
+    <Content Include="App_Data\UIFileNames.xml" />
     <Content Include="css\sparql-query.css" />
     <Content Include="css\iring-tools.css" />
     <Content Include="css\reset.css" />
