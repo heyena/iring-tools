@@ -118,15 +118,17 @@ Public Class Test
 
     End Sub
 
-  <Test()>
-  Public Sub GetObjects()
-    'THIS ID IS DIFFERENT FOR EACH TEST DATABASE!
+    '<Test()>
+    Public Sub GetObjects()
+        'THIS ID IS DIFFERENT FOR EACH TEST DATABASE!
         Dim identifiers As IList(Of String) = New List(Of String)() From { _
      "8AE275AC68014EE8B23F68E9FBED0A33",
        "E5E3A74C7A0F431AB5069EA1BCD0407D"
     }
 
+
         Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get("Equipment", identifiers)
+
 
         Console.WriteLine("Object Count: " + dataObjects.Count().ToString())
         For Each dataObject As IDataObject In dataObjects
@@ -136,7 +138,7 @@ Public Class Test
 
     End Sub
 
-    <Test()>
+    '<Test()>
     Public Sub GetCountWithFilters()
 
         Dim dataFilter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
