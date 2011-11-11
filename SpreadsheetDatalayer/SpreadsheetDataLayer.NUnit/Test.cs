@@ -60,38 +60,42 @@ namespace iRINGTools.SDK.SpreadsheetDataLayer.NUnit
         }
     }
 
-    //[Test]
-    //public void Create()
-    //{
-    //  IList<string> identifiers = new List<string>() { 
-    //            "Equip-001", 
-    //            "Equip-002",
-    //            "Equip-003", 
-    //            "Equip-004"
-    //        };
+    [Test]
+    public void Create()
+    {
+        IList<string> identifiers = new List<string>() { 
+                "Equip-101", 
+                "Equip-102",
+                "Equip-103", 
+                "Equip-104",
+                "Equip-105", 
+                "Equip-106",
+                "Equip-107", 
+                "Equip-108"
+            };
 
-    //  Random random = new Random();
+        Random random = new Random();
 
-    //  IList<IDataObject> dataObjects = _dataLayer.Create("Equipment", identifiers);
-    //  foreach (IDataObject dataObject in dataObjects)
-    //  {
-    //    dataObject.SetPropertyValue("PumpType", "PT-" + random.Next(2, 10));
-    //    dataObject.SetPropertyValue("PumpDriverType", "PDT-" + random.Next(2, 10));
-    //    dataObject.SetPropertyValue("DesignTemp", (double)random.Next(2, 10));
-    //    dataObject.SetPropertyValue("DesignPressure", (double)random.Next(2, 10));
-    //    dataObject.SetPropertyValue("Capacity", (double)random.Next(2, 10));
-    //    dataObject.SetPropertyValue("SpecificGravity", (double)random.Next(2, 10));
-    //    dataObject.SetPropertyValue("DifferentialPressure", (double)random.Next(2, 10));
-    //  }
-    //  Response actual = _dataLayer.Post(dataObjects);
+        IList<IDataObject> dataObjects = _dataLayer.Create("Equipment", identifiers);
+        foreach (IDataObject dataObject in dataObjects)
+        {
+            dataObject.SetPropertyValue("PumpType", "PT-" + random.Next(2, 10));
+            dataObject.SetPropertyValue("PumpDriverType", "PDT-" + random.Next(2, 10));
+            dataObject.SetPropertyValue("DesignTemp", (double)random.Next(2, 10));
+            dataObject.SetPropertyValue("DesignPressure", (double)random.Next(2, 10));
+            dataObject.SetPropertyValue("Capacity", (double)random.Next(2, 10));
+            dataObject.SetPropertyValue("SpecificGravity", (double)random.Next(2, 10));
+            dataObject.SetPropertyValue("DifferentialPressure", (double)random.Next(2, 10));
+        }
+        Response actual = _dataLayer.Post(dataObjects);
 
-    //  if (actual.Level != StatusLevel.Success)
-    //  {
-    //    throw new AssertionException(Utility.SerializeDataContract<Response>(actual));
-    //  }
+        if (actual.Level != StatusLevel.Success)
+        {
+            throw new AssertionException(Utility.SerializeDataContract<Response>(actual));
+        }
 
-    //  Assert.IsTrue(actual.Level == StatusLevel.Success);
-    //}
+        Assert.IsTrue(actual.Level == StatusLevel.Success);
+    }
 
     //[Test]
     //public void Read()

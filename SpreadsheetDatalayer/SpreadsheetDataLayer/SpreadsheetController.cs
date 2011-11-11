@@ -340,35 +340,35 @@ namespace org.iringtools.adapter.datalayer
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
-    public JsonResult AddWorksheets(FormCollection form)
-    {
-      SpreadsheetConfiguration configuration = GetConfiguration(form["scope"], form["application"]);
-      List<WorksheetPart> worksheets = _repository.GetWorksheets(configuration);
+    //public JsonResult AddWorksheets(FormCollection form)
+    //{
+    //  SpreadsheetConfiguration configuration = GetConfiguration(form["scope"], form["application"]);
+    //  List<WorksheetPart> worksheets = _repository.GetWorksheets(configuration);
 
-      object worksheetNames = form["worksheets"];
+    //  object worksheetNames = form["worksheets"];
 
-      //foreach (string worksheetName in worksheetNames)
-      //{
-      //  WorksheetPart worksheet = worksheets.FirstOrDefault<WorksheetPart>(o => o.Worksheet.LocalName == worksheetName);
-      ////  ExcelWorksheet worksheet = worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == worksheetName);
-      //  if (worksheet != null && !worksheets.Contains(worksheet))
-      //  {
-      //    SpreadsheetTable t = new SpreadsheetTable();
-      //    t.Name = worksheetName;
-      //    t.Label = worksheetName;
-      //    t.TableType = TableType.Worksheet;
-      //    t.Columns = new List<SpreadsheetColumn>();
-      //    configuration.Tables.Add(t);
-      //  }
-      //}
+    //  //foreach (string worksheetName in worksheetNames)
+    //  //{
+    //  //  WorksheetPart worksheet = worksheets.FirstOrDefault<WorksheetPart>(o => o.Worksheet.LocalName == worksheetName);
+    //  ////  ExcelWorksheet worksheet = worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == worksheetName);
+    //  //  if (worksheet != null && !worksheets.Contains(worksheet))
+    //  //  {
+    //  //    SpreadsheetTable t = new SpreadsheetTable();
+    //  //    t.Name = worksheetName;
+    //  //    t.Label = worksheetName;
+    //  //    t.TableType = TableType.Worksheet;
+    //  //    t.Columns = new List<SpreadsheetColumn>();
+    //  //    configuration.Tables.Add(t);
+    //  //  }
+    //  //}
 
-      return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-    }
+    //  return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+    //}
 
-    public ActionResult AddColumns(FormCollection form)
-    {
-      return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-    }
+    //public ActionResult AddColumns(FormCollection form)
+    //{
+    //  return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+    //}
 
   }
 
