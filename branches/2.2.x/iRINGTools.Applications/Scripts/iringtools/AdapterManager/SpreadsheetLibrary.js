@@ -207,7 +207,7 @@ AdapterManager.SpreadsheetWorksheetSelection = Ext.extend(Ext.FormPanel, {
 * @author by Gert Jansen van Rensburg
 */
 AdapterManager.SpreadsheetLibraryPanel = Ext.extend(Ext.Panel, {
-    title: 'SpreadsheetLibrary',
+    title: 'SpreadsheetDataLayer',
     width: 120,
 
     collapseMode: 'mini',

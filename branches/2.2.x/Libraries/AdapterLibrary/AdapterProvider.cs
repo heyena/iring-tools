@@ -45,6 +45,7 @@ using org.iringtools.mapping;
 using org.iringtools.utility;
 using StaticDust.Configuration;
 using System.Reflection;
+using System.ServiceModel.Web;
 
 
 namespace org.iringtools.adapter
@@ -830,8 +831,20 @@ namespace org.iringtools.adapter
 
                 InitializeDataLayer();
 
-                _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-                IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
+                InitializeProjection(graphName, ref format, false);
+
+                IList<IDataObject> dataObjects = null;
+                if (_isProjectionPart7)
+                {
+                  dataObjects = _projectionEngine.ToDataObjects(_graphMap.name, ref xml);
+                }
+                else
+                {
+                  dataObjects = _projectionEngine.ToDataObjects(_dataObjDef.objectName, ref xml);
+                }
+
+                //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+                //IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
                 response = _dataLayer.Post(dataObjects);
 
                 response.DateTimeStamp = DateTime.Now;
@@ -882,12 +895,20 @@ namespace org.iringtools.adapter
 
                 InitializeDataLayer();
 
-                _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+                //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
 
                 IList<IDataObject> dataObjects = new List<IDataObject>();
-                IContentObject contentObject = (IContentObject)new GenericDataObject();
-                contentObject.identifier = identifier;
+                IList<string> identifiers = new List<string> { identifier };
+                dataObjects = _dataLayer.Create(graphName, identifiers);
+
+                IContentObject contentObject = (IContentObject)dataObjects[0];
                 contentObject.content = stream;
+
+                IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
+                string contentType = request.ContentType;
+                contentObject.contentType = contentType;
+
+                dataObjects = new List<IDataObject>();
                 dataObjects.Add(contentObject);
 
                 response = _dataLayer.Post(dataObjects);

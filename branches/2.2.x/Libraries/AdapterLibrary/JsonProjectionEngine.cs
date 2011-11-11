@@ -50,7 +50,7 @@ namespace org.iringtools.adapter.projection
             {
               if (i == 0)
               {
-                dataItems.type = dataObj.GetType().Name;
+                dataItems.type = graphName;
               }
 
               DataItem dataItem = new DataItem()
@@ -112,11 +112,10 @@ namespace org.iringtools.adapter.projection
         if (objectDefinition != null)
         {
           DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xml.ToString());
-          string dataItemType = dataItems.type;
 
           foreach (DataItem dataItem in dataItems.items)
           {
-            IDataObject dataObject = _dataLayer.Create(dataItemType, null)[0];
+            IDataObject dataObject = _dataLayer.Create(graphName, null)[0];
 
             if (objectDefinition.hasContent)
             {
