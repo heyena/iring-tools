@@ -244,6 +244,7 @@ namespace org.iringtools.adapter.datalayer
 
         response = SaveDataObjects(objectType, dataObjects);
 
+        Response resp = Configure(GetConfiguration());
         return response;
       }
       catch (Exception ex)
