@@ -40,8 +40,7 @@ function setVersion(versionXml) {
 }
 
 function getVersion() { 
-  var url = 'services/adapter/version';
-  //var url = 'http://localhost:54321/adapter/version';
+  var url = 'Services/adapter/version';
   sendRequest(url, setVersion);
 }
 </script>
@@ -53,8 +52,8 @@ function getVersion() {
 <div class="main">
 <p>
 
-This environment is set aside for testing of DataLayers developed using the SDK.  
-DataLayer developers can contact <a href="mailto:support@iringtools.org ">support@iringtools.org </a>.
+This environment is an auto-deployed instance of the latest successful build of the iRINGTools 2.2.X.
+  It is not for production use, and may be non-functional at times.
 </p>
 <br/>
 <h1>iRINGTools Version <span id="major"></span>.<span id="minor"></span>.<span id="build"></span>.<span id="revision"></span></h1>
@@ -65,9 +64,7 @@ DataLayer developers can contact <a href="mailto:support@iringtools.org ">suppor
 		<h2>iRINGTools Adapter</h2>
 		<ul>
             <li><a href="services/sandbox/sparql/query">Sandbox Query</a></li>
-			<li><a href="apps/RefDataEditor">Reference Data Editor</a></li>
 			<li><a href="apps/AdapterManager">Adapter Manager</a></li>
-			<li><a href="apps/MappingEditor">Mapping Editor</a></li>
 			<li><a href="services/facade/sparql/query">Facade Query</a></li>
             <li><a href="services">Services</a></li>
 		</ul>
@@ -75,9 +72,9 @@ DataLayer developers can contact <a href="mailto:support@iringtools.org ">suppor
 		<td>
         <h2>iRINGTools Core</h2>
         <ul>
-			<li><a href="http://tomcat.dev.iringsandbox.org:8081/apps/xchmgr">Exchange Manager</a></li>
-			<li><a href="http://tomcat.dev.iringsandbox.org:8081/apps/fedmgr">Federation Manager</a></li>
-            <li><a href="http://tomcat.dev.iringsandbox.org:8081/services/">Services</a></li>
+			<li><a href="http://iringsandbox.org:8081/iipapps/xchmgr">Exchange Manager</a></li>
+			<li><a href="http://iringsandbox.org:8081/iipapps/fedmgr">Federation Manager</a></li>
+            <li><a href="http://iringsandbox.org:8081/iipservices/">Services</a></li>
 		</ul>
 		</td>
 	</tr>
