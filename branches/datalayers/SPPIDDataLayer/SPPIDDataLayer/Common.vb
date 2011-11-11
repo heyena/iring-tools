@@ -641,8 +641,12 @@ Public Module Common
                 Else
                     If tablesX.Count > 1 Then f.Append(LCase(e.Attribute("joinType").Value) & " join ")
                 End If
-
-                source = svNm & sourceAliasMap(sourceAlias).UniqueName
+              
+                If (SiteDatabaseName <> "") Then
+                    source = svNm & SiteDatabaseName & "." & sourceAliasMap(sourceAlias).UniqueName
+                Else
+                    source = svNm & sourceAliasMap(sourceAlias).UniqueName
+                End If
 
                 l = IIf((Len(source) + Len(tb)) > (tabWidthAlias + 1), Len(source) + Len(tb2), tabWidthAlias)
                 f.Append(LSet(source, l))
@@ -676,11 +680,11 @@ Public Module Common
                             Else
 
                                 ' JoinToText should be FALSE if the join value is a number or variable
-                                If r.Attribute("rightSource").Value = "" Then
-                                    f.Append(r.Attribute("rightField").Value & " ")
-                                Else
-                                    f.Append(r.Attribute("rightSource").Value & "." & r.Attribute("rightField").Value & " ")
-                                End If
+                                'If r.Attribute("rightSource").Value = "" Then
+                                '    f.Append(r.Attribute("rightField").Value & " ")
+                                'Else
+                                f.Append(r.Attribute("rightSource").Value & "." & r.Attribute("rightField").Value & " ")
+                                'End If
 
                             End If
 

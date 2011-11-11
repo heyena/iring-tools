@@ -25,7 +25,7 @@ Imports System.Text.RegularExpressions
 #End Region
 
 Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
-  Implements IDataLayer2
+    Implements IDataLayer2
 #Region " Variables "
 
     'Private _projDatasource As Llama.LMADataSource = Nothing ' SPPID DataSource
@@ -42,7 +42,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Private _projConn As SqlConnection
     Private _stageConn As SqlConnection
     Property _siteConn As SqlConnection
-    Property _plantConn As SqlConnection
+
 
 #End Region
 
@@ -66,11 +66,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         XmlConfigurator.Configure(New System.IO.FileInfo(".\app.config"))
         'XmlConfigurator.Configure()
 
-        _projConn = New SqlConnection(_settings("SPPIDConnectionString"))
-        _stageConn = New SqlConnection(_settings("iRingStagingConnectionString"))
-        _siteConn = New SqlConnection(_settings("SPPIDSiteConnectionString"))
-        _plantConn = New SqlConnection(_settings("SPPIDPLantConnectionString"))
-
         ' ToDo: Enable encryption once encryption is supported 
         'Try
         '    'projectConnStr = Encryption.DecryptString(projectConnStr)
@@ -83,21 +78,31 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
         Try
 
-            configPath = _settings("ProjectConfigurationPath")
+            Dim tmp As String = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings("AppDataPath"), "12345_000", "SPPID")
+            settings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
 
-            StagingConfigurationPath = _settings("StagingConfigurationPath")
-            AddProjConfigSettings(configPath)
-            SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, StagingConfigurationPath, _logger, _plantConn)
-            MigrateSPPIDToStaging()
+            configPath = [String].Format("{0}{1}.{2}.config", _settings("AppDataPath"), _settings("ProjectName"), _settings("ApplicationName"))
+            settings("ProjectConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), configPath)
+
+            AppSettings.AppendSettings(settings)
+
+            If (File.Exists(_settings("ProjectConfigurationPath"))) Then
+                AppSettings.AppendSettings(New StaticDust.Configuration.AppSettingsReader(_settings("ProjectConfigurationPath")))
+            End If
+
+            DecryptConntionInfo(AppSettings("iRingStagingConnectionString"), AppSettings("SPPIDSiteConnectionString"), AppSettings("SPPIDPLantConnectionString"))
+
+            ''Set Connection strings----------------
+            _projConn = New SqlConnection(AppSettings("SPPIDPLantConnectionString"))
+            _stageConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
+            _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
+
+
 
         Catch ex As Exception
             MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
             ' this will likely only be loaded in this way while testing, so ignore the error
         End Try
-
-        'Dim siteNode As String = _settings("SPPIDSiteNode")
-        'Dim projectStr As String = _settings("SPPIDProjectNumber")
-        'projectStr += "!" & projectStr
 
     End Sub
 
@@ -230,7 +235,43 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     End Function
 
     Public Overrides Function Configure(configuration As System.Xml.Linq.XElement) As Response
-        Throw New NotImplementedException()
+
+        Dim Config As SPPIDConfiguration = Utility.DeserializeFromXElement(Of SPPIDConfiguration)(configuration)
+
+        Dim response As New Response
+       
+        '' Create Config File ----------------------
+        Dim configfile As New XElement("configuration", _
+                    New XElement("appSettings", _
+                    New XElement("add", New XAttribute("key", "SPPIDSiteConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.SiteConnectionString))), _
+                    New XElement("add", New XAttribute("key", "SPPIDPlantConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantConnectionString))), _
+                    New XElement("add", New XAttribute("key", "iRingStagingConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.StagingConnectionString)))))
+
+        If (File.Exists(_settings("ProjectConfigurationPath"))) Then
+            File.Delete(_settings("ProjectConfigurationPath"))
+        End If
+
+        configfile.Save(_settings("ProjectConfigurationPath"))
+
+        If (File.Exists(_settings("ProjectConfigurationPath"))) Then
+            AppSettings.AppendSettings(New StaticDust.Configuration.AppSettingsReader(_settings("ProjectConfigurationPath")))
+        End If
+
+
+        ''Set Connection strings----------------
+        _projConn = New SqlConnection(AppSettings("SPPIDPlantConnectionString"))
+        _stageConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
+        _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
+
+
+        Dim success As String = UpdateConfigurations()
+
+        response.Messages.Add(success)
+
+        Return response
     End Function
 
     Public Overrides Function CreateDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
@@ -249,15 +290,35 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Throw New NotImplementedException()
     End Function
 
-    Public Overrides Function RefreshDataTable(tableName As String) As Response
-        Throw New NotImplementedException()
+    Public Overrides Function Refresh(tableName As String) As Response
+
+        Dim success = UpdateConfigurations(tableName)
+
+        Dim response As New Response
+
+        response.Messages.Add(success)
+
+
+        Return response
+
+    End Function
+
+    Public Overrides Function RefreshAll() As Response
+
+        Dim success = UpdateConfigurations()
+
+        Dim response As New Response
+        response.Messages.Add(success)
+
+        Return response
+
     End Function
 
 #End Region
 
 #Region " Staging Methods "
 
-    Public Function MigrateSPPIDToStaging() As String
+    Public Function MigrateSPPIDToStaging(Optional tablename As String = "") As String
 
         Dim replacements As IEnumerable(Of XElement) = Nothing
         Dim declarations As IEnumerable(Of XElement) = Nothing
@@ -276,13 +337,13 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
         Try
 
-            GetStagingQueries(stgCfgQueries)
+            GetStagingQueries(stgCfgQueries, tablename)
 
             For Each q As XElement In stgCfgQueries
 
                 queryParts.Clear()
                 rVal = GetQueryParts(q, SPWorkSet.ColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
-                              queryParts, replacements, declarations, SPWorkSet.QueryVariableMap, SPWorkSet.CommonServerName)
+                              queryParts, replacements, declarations, SPWorkSet.QueryVariableMap, SPWorkSet.CommonServerName, SPWorkSet.ProjectDBName)
                 SetDeclarationValues(queryParts, declarations, SPWorkSet.QueryVariableMap, _logger)
 
                 ' commbine the query parts and perform any necessary replacements. 
@@ -348,6 +409,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
         Catch ex As Exception
             Debug.Print("got here")
+            Return "Fail: " + ex.Message
         End Try
 
         Return "Pass"
@@ -362,7 +424,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     ''' <param name="StagingConfigQueries"></param>
     ''' <returns></returns>
     ''' <remarks></remarks>
-    Private Function GetStagingQueries(ByRef StagingConfigQueries As IEnumerable(Of XElement)) As String
+    Private Function GetStagingQueries(ByRef StagingConfigQueries As IEnumerable(Of XElement), Optional stagingDestinationName As String = "") As String
 
         Dim doc As XDocument
 
@@ -370,11 +432,19 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             doc = XDocument.Load(AppSettings("StagingConfigurationPath"))
 
-            ' fetch all of the queries except any existing templates
-            StagingConfigQueries = _
-                From el In doc...<query>
-                Select el
-                Where el.Attribute("name").Value <> "!Template" AndAlso el.Attribute("name").Value <> "!SiteData"
+            If (stagingDestinationName <> "") Then
+                ' fetch all of the queries except any existing templates
+                StagingConfigQueries = _
+                    From el In doc...<query>
+                    Select el
+                    Where el.Attribute("name").Value <> "!Template" AndAlso el.Attribute("name").Value <> "!SiteData" AndAlso el.Attribute("stagingDestinationName").Value.ToUpper() = stagingDestinationName.ToUpper()
+            Else
+                ' fetch all of the queries except any existing templates
+                StagingConfigQueries = _
+                    From el In doc...<query>
+                    Select el
+                    Where el.Attribute("name").Value <> "!Template" AndAlso el.Attribute("name").Value <> "!SiteData"
+            End If
 
         Catch ex As Exception
             Return "Fail: " & ex.Message
@@ -387,6 +457,29 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 #End Region
 
 #Region "Private Functions"
+
+    ''' <summary>
+    '''Reset or update Data Objects
+    ''' </summary>
+    ''' <param name="tablename"></param>
+    ''' <returns>Success or Failure while Migrating Tables and Data </returns>
+    ''' <remarks></remarks>
+    Private Function UpdateConfigurations(Optional tablename As String = "") As String
+
+
+        Dim configPath As String = AppSettings("ProjectConfigurationPath")
+        Dim StagingConfigurationPath As String = AppSettings("StagingConfigurationPath")
+        AddProjConfigSettings(configPath)
+
+        '   DecryptConntionInfo(_siteConn.ConnectionString, _stageConn.ConnectionString, _plantConn.ConnectionString)
+
+        SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, StagingConfigurationPath, _logger)
+        Dim success As String = MigrateSPPIDToStaging(tablename)
+
+        Return success
+
+    End Function
+
 
     ''' <summary>
     ''' Allows additional configuration settings to be added to the appSettings collection
@@ -422,6 +515,25 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         End Try
 
     End Function
+
+
+    Private Sub DecryptConntionInfo(ByRef siteConn As String, ByRef stageConn As String, ByRef plantconn As String)
+
+        If (stageConn.ToUpper().Contains("DATA SOURCE") = False) Then  '' Check Site Conntion String
+            siteConn = EncryptionUtility.Decrypt(siteConn)
+        End If
+
+        If (stageConn.ToUpper().Contains("DATA SOURCE") = False) Then  '' Check Site Conntion String
+            '' connection string is not encrypted, encrypt and write it back
+
+            stageConn = EncryptionUtility.Decrypt(stageConn)
+        End If
+
+        If (plantconn.ToUpper().Contains("DATA SOURCE") = False) Then  '' Check Site Conntion String
+            '' connection string is not encrypted, encrypt and write it back
+            plantconn = EncryptionUtility.Decrypt(plantconn)
+        End If
+    End Sub
 
     Private Function LoadDataTable(tableName As String) As System.Data.DataTable
         Dim _dataTables As New DataTable()
@@ -877,6 +989,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     'End Function
 
 #End Region
+
+   
 
 End Class
 
