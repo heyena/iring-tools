@@ -113,6 +113,9 @@
     <None Include="12345_000\12345_000.SPPID.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="App_Data\12345_000.SPPID.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -134,6 +137,12 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="12345_000\Configuration.SPPID.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_Data\BindingConfiguration.12345_000.SPPID.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="App_Data\Configuration.SPPID.xml">
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
