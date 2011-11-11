@@ -7,7 +7,7 @@
         <id>1</id>
         <name>ABC</name>
         <description>Test Application</description>
-        <baseUri>http://dev.iringsandbox.org/services/dxfr</baseUri>
+        <baseUri>http://iip.iringsandbox.org/services/dxfr</baseUri>
         <graphs>
           <graph>
             <id>1</id>
@@ -21,7 +21,7 @@
         <id>3</id>
         <name>DEF</name>
         <description>Test Application</description>
-        <baseUri>http://dev.iringsandbox.org/services/dxfr</baseUri>
+        <baseUri>http://iip.iringsandbox.org/services/dxfr</baseUri>
         <graphs>
           <graph>
             <id>2</id>

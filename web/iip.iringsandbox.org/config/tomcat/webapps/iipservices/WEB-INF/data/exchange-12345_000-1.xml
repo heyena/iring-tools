@@ -2,11 +2,11 @@
   <id>1</id>
   <name>12345_000.ABC -> 12345_000.DEF</name>
   <description>Sending Line list from ABC to DEF</description>
-  <sourceUri>http://dev.iringsandbox.org/services/dxfr</sourceUri>
+  <sourceUri>http://iip.iringsandbox.org/services/dxfr</sourceUri>
   <sourceScopeName>12345_000</sourceScopeName>
   <sourceAppName>ABC</sourceAppName>
   <sourceGraphName>LINES</sourceGraphName>
-  <targetUri>http://dev.iringsandbox.org/services/dxfr</targetUri>
+  <targetUri>http://iip.iringsandbox.org/services/dxfr</targetUri>
   <targetScopeName>12345_000</targetScopeName>
   <targetAppName>DEF</targetAppName>
   <targetGraphName>LINES</targetGraphName>
