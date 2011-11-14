@@ -247,7 +247,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         xelement = Utility.SerializeToXElement(_sppidconfiguration)
 
         Return xelement
-        'Throw New NotImplementedException
+
     End Function
 
     Public Overrides Function Configure(configuration As System.Xml.Linq.XElement) As Response
