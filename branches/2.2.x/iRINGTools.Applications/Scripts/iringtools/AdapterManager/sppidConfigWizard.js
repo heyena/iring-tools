@@ -261,7 +261,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
         Ext.EventManager.onWindowResize(this.doLayout, this);
 
         Ext.Ajax.request({
-            url: 'SPPID/GetConfig',
+            url: 'SPPID/GetConfiguration',
 			method: 'POST',
 			params: {
 				scope: scopeName,
@@ -269,8 +269,14 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
 			},
 			success: function (response, request) {
 				dbDict = Ext.util.JSON.decode(response.responseText);
-				if (dbDict.ConnectionString)
-					dbDict.ConnectionString = Base64.decode(dbDict.ConnectionString);
+//				if (dbDict.PlantConnectionString)
+//				    dbDict.PlantConnectionString = Base64.decode(dbDict.PlantConnectionString);
+
+//				if (dbDict.SiteConnectionString)
+//				    dbDict.SiteConnectionString = Base64.decode(dbDict.SiteConnectionString);
+
+//				if (dbDict.StagingConnectionString)
+//				    dbDict.StagingConnectionString = Base64.decode(dbDict.StagingConnectionString);
 
 				var tab = Ext.getCmp('content-panel');
 				var rp = tab.items.map[scopeName + '.' + appName + '.-sppid-config'];
@@ -481,9 +487,7 @@ var providersStore = new Ext.data.JsonStore({
                     bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
                     monitorValid: true,
                     defaults: { anchor: '100%', xtype: 'textfield', allowBlank: false },
-                    items: [
-
-            {
+                    items: [{
                 xtype: 'fieldset',
                 id: 'siteDatabase',
                 title: "SP & ID Site Database Details",
