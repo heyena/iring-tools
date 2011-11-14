@@ -230,8 +230,24 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
+    Dim _sppidconfiguration As SPPIDConfiguration
     Public Overrides Function GetConfiguration() As System.Xml.Linq.XElement
-        Throw New NotImplementedException
+
+        Dim xelement As XElement
+        Dim path As String = _settings("ProjectConfigurationPath")
+
+        If _sppidconfiguration Is Nothing Then
+            _sppidconfiguration = New SPPIDConfiguration() With { _
+              .PlantConnectionString = AppSettings("SPPIDPlantConnectionString"),
+              .SiteConnectionString = AppSettings("SPPIDSiteConnectionString"),
+            .StagingConnectionString = AppSettings("iRingStagingConnectionString")
+            }
+        End If
+
+        xelement = Utility.SerializeToXElement(_sppidconfiguration)
+
+        Return xelement
+        'Throw New NotImplementedException
     End Function
 
     Public Overrides Function Configure(configuration As System.Xml.Linq.XElement) As Response

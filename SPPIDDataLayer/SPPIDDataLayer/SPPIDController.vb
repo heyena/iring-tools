@@ -8,6 +8,7 @@ Imports org.iringtools.library
 Public Class SPPIDController
     Inherits Controller
     Private _settings As NameValueCollection = Nothing
+    Private _keyFormat As String = "Configuration.{0}.{1}"
     Private Property _repository() As ISPPIDRepository
         Get
             Return m__repository
@@ -71,23 +72,17 @@ Public Class SPPIDController
         Return Json(New With {.success = True}, JsonRequestBehavior.AllowGet)
     End Function
 
-    Public Function GetConfig(form As FormCollection) As ActionResult
-        Dim container As New JsonContainer(Of List(Of String))()
+    Public Function GetConfiguration(form As FormCollection) As ActionResult
 
-        Try
-            Dim dataObjects As List(Of String) = _repository.GetConfig(form("scope"), form("app"))
+        Dim key As String = String.Format(_keyFormat, form("scope"), form("app"))
 
+        If Session(key) Is Nothing Then
+            Session(key) = _repository.GetConfiguration(form("scope"), form("app"))
+        End If
+        Dim SPPIDConfiguration As SPPIDConfiguration = DirectCast(Session(key), SPPIDConfiguration)
 
-            container.items = dataObjects
-            container.success = True
-            container.total = dataObjects.Count
-        Catch e As Exception
-            ''_logger.[Error](e.ToString())
-            Throw e
-        End Try
+        Return Json(SPPIDConfiguration, JsonRequestBehavior.AllowGet)
 
-
-        Return Json(container, JsonRequestBehavior.AllowGet)
     End Function
 
     Public Function DBDictionary(form As FormCollection) As ActionResult

@@ -56,12 +56,15 @@
     <Reference Include="Ninject">
       <HintPath>..\library\ninject2\Ninject.dll</HintPath>
     </Reference>
-    <Reference Include="StaticDust.Configuration">
-      <HintPath>..\..\..\2.2.x\ExternalBinaries\Configuration\StaticDust.Configuration.dll</HintPath>
+    <Reference Include="StaticDust.Configuration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=21c5f8854d868864">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\library\configuration\StaticDust.Configuration.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
@@ -151,12 +154,6 @@
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\2.2.x\Libraries\iRINGLibrary\Desktop\iRINGLibrary.Desktop.csproj">
-      <Project>{46FB3942-D0A5-4BFF-97B0-739E56BFB111}</Project>
-      <Name>iRINGLibrary.Desktop</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
