@@ -17,7 +17,7 @@ Imports System.Net
 
 Public Interface ISPPIDRepository
     Function UpdateConfig(scope As String, application As String, datalayer As String, configurations As SPPIDConfiguration) As String
-    Function GetConfig(scope As String, application As String) As List(Of String)
+    Function GetConfiguration(scope As String, application As String) As SPPIDConfiguration
     Function GetDBDictionary(scope As String, application As String) As DatabaseDictionary
 End Interface
 
@@ -105,10 +105,22 @@ Public Class SPPIDRepository
         Return "SUCCESS"
     End Function
 
-    Public Function GetConfig(scope As String, application As String) As List(Of String) Implements ISPPIDRepository.GetConfig
+    Public Function GetConfiguration(scope As String, application As String) As SPPIDConfiguration Implements ISPPIDRepository.GetConfiguration
 
+        Dim obj As SPPIDConfiguration = Nothing
 
-        Return New List(Of String)
+        Try
+            Dim element As XElement = _client.[Get](Of XElement)(String.Format("/{0}/{1}/configuration", scope, application))
+            If Not element.IsEmpty Then
+                obj = Utility.DeserializeFromXElement(Of SPPIDConfiguration)(element)
+            End If
+
+        Catch generatedExceptionName As Exception
+
+        End Try
+
+        Return obj
+
     End Function
 
     Public Function GetDBDictionary(scope As String, application As String) As DatabaseDictionary Implements ISPPIDRepository.GetDBDictionary
