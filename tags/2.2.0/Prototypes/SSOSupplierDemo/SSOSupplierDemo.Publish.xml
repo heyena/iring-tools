@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<publishData>
+  <publishProfile publishUrl="C:\deploy\Supplier" deleteExistingFiles="True" ftpAnonymousLogin="False" ftpPassiveMode="True" msdeploySite="" msdeploySiteID="" msdeployRemoteSitePhysicalPath="" msdeployAllowUntrustedCertificate="False" msdeploySkipExtraFilesOnServer="True" msdeployMarkAsApp="False" profileName="Profile1" publishMethod="FileSystem" replaceMatchingFiles="False" userName="" savePWD="False" userPWD="" SelectedForPublish="True">
+    <file relUrl="Web.config" publishTime="01/03/2011 14:04:03" />
+    <file relUrl="images/HigherGround.css" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="bin/opentoken-agent.dll" publishTime="11/07/2008 11:20:14" />
+    <file relUrl="images/footer-dots.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="images/content.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="Default.aspx" publishTime="01/03/2011 13:50:24" />
+    <file relUrl="images/post.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="bin/SSO.dll" publishTime="01/03/2011 14:07:44" />
+    <file relUrl="images/nav-current.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="images/header-photo.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="images/top-bg.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="bin/SSO.pdb" publishTime="01/03/2011 14:07:43" />
+    <file relUrl="images/dots.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="bin/SSOSupplierDemo.pdb" publishTime="01/03/2011 14:07:45" />
+    <file relUrl="images/nav-hover.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="scripts/jquery-1.3.2.js" publishTime="11/19/2009 09:00:59" />
+    <file relUrl="images/firefox-gray.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="images/header-bg.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="LoggedIn.aspx" publishTime="01/03/2011 13:50:24" />
+    <file relUrl="images/footer-bottom.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="images/nav.jpg" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="images/bullet.gif" publishTime="11/11/2009 13:17:12" />
+    <file relUrl="sp-agent-config.config" publishTime="11/24/2010 09:52:44" />
+    <file relUrl="bin/SSOSupplierDemo.dll" publishTime="01/03/2011 14:07:45" />
+  </publishProfile>
+</publishData>

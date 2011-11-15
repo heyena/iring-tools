@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl2xml "http://www.w3.org/2006/12/owl2-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdl "http://rdl.rdswip.org/sampleReferenceData#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY p8 "http://standards.tc184-sc4.org/iso/15926/-8/template-model#" >
+    <!ENTITY dm "http://standards.tc184-sc4.org/iso/15926/-8/data-model#" >
+    <!ENTITY templates "http://standards.tc184-sc4.org/iso/15926/-8/templates#" >
+]>
+<rdf:RDF xmlns="http://rdl.rdswip.org/sampleReferenceData#"
+     xml:base="http://rdl.rdswip.org/sampleReferenceData"
+     xmlns:owl2xml="http://www.w3.org/2006/12/owl2-xml#"
+     xmlns:p8="http://standards.tc184-sc4.org/iso/15926/-8/template-model#"
+     xmlns:templates="http://standards.tc184-sc4.org/iso/15926/-8/templates#"
+     xmlns:rdl="http://rdl.rdswip.org/sampleReferenceData#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:dm="http://standards.tc184-sc4.org/iso/15926/-8/data-model#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#">
+    <owl:Ontology rdf:about="">
+        <rdfs:comment
+            >This ontology contains examples of how a Reference Data Library can be represented using the OWL native Part 8 format.</rdfs:comment>
+        <owl:imports rdf:resource="http://standards.tc184-sc4.org/iso/15926/-8/data-model"/>
+    </owl:Ontology>
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+    <!-- http://standards.tc184-sc4.org/iso/15926/-8/data-model#Activity -->
+    <owl:Class rdf:about="&dm;Activity"/>
+    
+    <!-- http://standards.tc184-sc4.org/iso/15926/-8/data-model#ArrangedIndividual -->
+    <owl:Class rdf:about="&dm;ArrangedIndividual"/>
+    
+    <!-- http://standards.tc184-sc4.org/iso/15926/-8/data-model#AssemblyOfIndividual -->
+    <owl:Class rdf:about="&dm;AssemblyOfIndividual"/>
+    
+    <!-- http://standards.tc184-sc4.org/iso/15926/-8/data-model#PossibleIndividual -->
+    <owl:Class rdf:about="&dm;PossibleIndividual"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#Driving -->
+    <owl:Class rdf:about="#Driving">
+        <rdfs:label>Driving</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&dm;Activity"/>
+    </owl:Class>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#Equipment -->
+    <owl:Class rdf:about="#Equipment">
+        <rdfs:subClassOf rdf:resource="&dm;ArrangedIndividual"/>
+        <rdfs:comment
+            >Sample class for AssemblyRelation example.</rdfs:comment>
+    </owl:Class>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#EquipmentHasNozzle -->
+    <owl:Class rdf:about="#EquipmentHasNozzle">
+        <rdfs:subClassOf rdf:resource="&dm;AssemblyOfIndividual"/>
+        <rdfs:comment
+            >Sample class for AssemblyRelation example.</rdfs:comment>
+    </owl:Class>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#HardWork -->
+    <owl:Class rdf:about="#HardWork">
+        <rdfs:label>HardWork</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&dm;Activity"/>
+    </owl:Class>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#Nozzle -->
+    <owl:Class rdf:about="#Nozzle">
+        <rdfs:subClassOf rdf:resource="&dm;PossibleIndividual"/>
+        <rdfs:comment
+            >Sample class for AssemblyRelation example.</rdfs:comment>
+    </owl:Class>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#Person -->
+    <owl:Class rdf:about="#Person">
+        <rdfs:label>Driving</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&dm;PossibleIndividual"/>
+    </owl:Class>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSegment -->
+    <owl:Class rdf:about="#PipingNetworkSegment">
+        <rdfs:label
+            >PipingNetworkSegment</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&dm;PossibleIndividual"/>
+        <rdfs:comment
+            >Sample class for AssemblyRelation example.</rdfs:comment>
+    </owl:Class>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSystem -->
+    <owl:Class rdf:about="#PipingNetworkSystem">
+        <rdfs:label
+            >PipingNetworkSystem</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&dm;ArrangedIndividual"/>
+        <rdfs:comment
+            >Sample class for AssemblyRelation example.</rdfs:comment>
+    </owl:Class>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSystemHasSegment -->
+    <owl:Class rdf:about="#PipingNetworkSystemHasSegment">
+        <rdfs:label
+            >PipingNetworkSystemHasSegment</rdfs:label>
+        <rdfs:subClassOf rdf:resource="&dm;AssemblyOfIndividual"/>
+        <rdfs:comment
+            >Sample class for AssemblyRelation example.</rdfs:comment>
+    </owl:Class>
+    
+    <!-- http://www.w3.org/2002/07/owl#Thing -->
+    <owl:Class rdf:about="&owl;Thing"/>
+    
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#Person -->
+    <owl:Thing rdf:about="#Person"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSegment -->
+    <owl:Thing rdf:about="#PipingNetworkSegment"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSystem -->
+    <owl:Thing rdf:about="#PipingNetworkSystem"/>
+    
+    <!-- http://rdl.rdswip.org/sampleReferenceData#PipingNetworkSystemHasSegment -->
+    <owl:Thing rdf:about="#PipingNetworkSystemHasSegment"/>
+</rdf:RDF>
+<!-- Generated by the OWL API (version 2.2.1.1138) http://owlapi.sourceforge.net -->
+
