@@ -54,7 +54,7 @@ namespace org.iringtools.services
       _dxfrProvider = new DataTranferProvider(ConfigurationManager.AppSettings);
     }
 
-    [Description("Gets dto provider version.")]
+    [Description("Gets service version.")]
     [WebGet(UriTemplate = "/version")]
     public void GetVersion()
     {
@@ -73,7 +73,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets manifest for an application.")]
+    [Description("Gets manifest of an application.")]
     [WebGet(UriTemplate = "/{scope}/{app}/manifest")]
     public void GetManifest(string scope, string app)
     {
@@ -92,7 +92,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets data transfer indices for a particular graph.")]
+    [Description("Gets data transfer indices of a graph.")]
     [WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
     public void GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
     {
@@ -114,7 +114,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets data transfer indices according to data filter.")]
+    [Description("Gets data transfer indices of a graph with filter.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter?hashAlgorithm={hashAlgorithm}")]
     public void GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DataFilter filter)
     {
@@ -133,7 +133,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets data transfer indices according to the posted manifest.")]
+    [Description("Gets data transfer indices of requested manifest.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
     public void GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
@@ -152,7 +152,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets data transfer indices according to manifest and filter request.")]
+    [Description("Gets data transfer indices of requested manifest with filter.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi/filter?hashAlgorithm={hashAlgorithm}")]
     public void GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
@@ -171,7 +171,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets data transfer objects according to the posted data transfer indices.")]
+    [Description("Gets data transfer objects of requested indices.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/page")]
     public void GetDataTransferObjects(string scope, string app, string graph, DataTransferIndices dataTransferIndices)
     {
@@ -190,7 +190,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets data transfer objects according to the posted manifest and data transfer indices.")]
+    [Description("Gets data transfer objects of requested indices and manifest.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxo")]
     public void GetDataTransferObjectsWithManifest(string scope, string app, string graph, DxoRequest dxoRequest)
     {
@@ -228,7 +228,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Posts data transfer objects to add/update/delete to data layer.")]
+    [Description("Post data transfer objects to perfom add/update/delete.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}")]
     public void PostDataTransferObjects(string scope, string app, string graph, DataTransferObjects dataTransferObjects)
     {
@@ -247,7 +247,7 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Posts data transfer objects to add/update/delete as stream to data layer.")]
+    [Description("Posts data transfer objects as stream to perform add/update/delete.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}?format=stream")]
     public void PostStream(string scope, string app, string graph, Stream stream)
     {
@@ -265,6 +265,7 @@ namespace org.iringtools.services
         HttpContext.Current.Response.Write(e.ToString());
       }
     }
+
     [Description("Deletes a data transfer object by id.")]
     [WebInvoke(Method = "DELETE", UriTemplate = "/{scope}/{app}/{graph}/{id}")]
     public void DeletetDataTransferObject(string scope, string app, string graph, string id)

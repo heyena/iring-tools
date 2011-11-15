@@ -1,5 +1,6 @@
 ﻿using System.Security.Principal;
 using System.ServiceModel;
+using Ninject;
 using System.Collections;
 using System.Collections.Generic;
 

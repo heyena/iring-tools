@@ -103,11 +103,16 @@ namespace org.iringtools.adapter.projection
 
             if (objectDefinition.hasContent)
             {
-              string base64Content = objEl.Element(ns + "content").Value;
+              XElement xElement = objEl.Element(ns + "content");
 
-              if (!String.IsNullOrEmpty(base64Content))
+              if (xElement != null)
               {
-                ((IContentObject)dataObject).content = base64Content.ToMemoryStream();
+                string base64Content = xElement.Value;
+
+                if (!String.IsNullOrEmpty(base64Content))
+                {
+                  ((IContentObject)dataObject).content = base64Content.ToMemoryStream();
+                }
               }
             }
 

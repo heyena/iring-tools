@@ -44,6 +44,8 @@ using org.iringtools.library;
 using org.iringtools.mapping;
 using org.iringtools.utility;
 using StaticDust.Configuration;
+using System.Reflection;
+using System.ServiceModel.Web;
 
 
 namespace org.iringtools.adapter
@@ -829,8 +831,20 @@ namespace org.iringtools.adapter
 
                 InitializeDataLayer();
 
-                _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-                IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
+                InitializeProjection(graphName, ref format, false);
+
+                IList<IDataObject> dataObjects = null;
+                if (_isProjectionPart7)
+                {
+                  dataObjects = _projectionEngine.ToDataObjects(_graphMap.name, ref xml);
+                }
+                else
+                {
+                  dataObjects = _projectionEngine.ToDataObjects(_dataObjDef.objectName, ref xml);
+                }
+
+                //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+                //IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
                 response = _dataLayer.Post(dataObjects);
 
                 response.DateTimeStamp = DateTime.Now;
@@ -881,12 +895,20 @@ namespace org.iringtools.adapter
 
                 InitializeDataLayer();
 
-                _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+                //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
 
                 IList<IDataObject> dataObjects = new List<IDataObject>();
-                IContentObject contentObject = (IContentObject)new GenericDataObject();
-                contentObject.identifier = identifier;
+                IList<string> identifiers = new List<string> { identifier };
+                dataObjects = _dataLayer.Create(graphName, identifiers);
+
+                IContentObject contentObject = (IContentObject)dataObjects[0];
                 contentObject.content = stream;
+
+                IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
+                string contentType = request.ContentType;
+                contentObject.contentType = contentType;
+
+                dataObjects = new List<IDataObject>();
                 dataObjects.Add(contentObject);
 
                 response = _dataLayer.Post(dataObjects);
@@ -1393,33 +1415,56 @@ namespace org.iringtools.adapter
         public DataLayers GetDataLayers()
         {
           DataLayers dataLayers = new DataLayers();
-          Type type = typeof(IDataLayer);
 
-          foreach (System.Reflection.Assembly asm in Thread.GetDomain().GetAssemblies())
+          // Load NHibernate data layer
+          Type nhType = Type.GetType("org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", true);
+          string nhLibrary = nhType.Assembly.GetName().Name;
+          string nhAssembly = string.Format("{0}, {1}", nhType.FullName, nhLibrary);
+          DataLayer nhDataLayer = new DataLayer { Assembly = nhAssembly, Name = nhLibrary, Configurable = true };
+          dataLayers.Add(nhDataLayer);
+
+          // Load Spreadsheet data layer
+          //Type ssType = Type.GetType("org.iringtools.adapter.datalayer.SpreadsheetDataLayer, SpreadsheetDataLayer", true);
+          //string ssLibrary = ssType.Assembly.GetName().Name;
+          //string ssAssembly = string.Format("{0}, {1}", ssType.FullName, ssLibrary);
+          //DataLayer ssDataLayer = new DataLayer { Assembly = ssAssembly, Name = ssLibrary, Configurable = true };
+          //dataLayers.Add(ssDataLayer);
+
+          try
           {
-            try
+            Type type = typeof(IDataLayer);
+            
+            foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
-              Type[] asmTypes = asm.GetTypes();
-
-              if (asmTypes != null)
+              try
               {
-                foreach (System.Type asmType in asmTypes)
+                Type[] asmTypes = asm.GetTypes();
+
+                if (asmTypes != null)
                 {
-                  if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+                  foreach (System.Type asmType in asmTypes)
                   {
-                    bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-                    string name = asm.FullName.Split(',')[0];
-                    string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-                    DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
-                    dataLayers.Add(dataLayer);
+                    if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+                    {
+                      bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+                      string name = asm.FullName.Split(',')[0];
+
+                      if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
+                      {
+                        string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+                        DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
+                        dataLayers.Add(dataLayer);
+                      }
+                    }
                   }
                 }
               }
+              catch (Exception) {}
             }
-            catch (Exception e)
-            {
-              _logger.Warn("Error in GetDataLayers() " + e);
-            }
+          }
+          catch (Exception e)
+          {
+            _logger.Error("Error loading data layer: " + e);
           }
 
           return dataLayers;
@@ -1467,67 +1512,6 @@ namespace org.iringtools.adapter
                    new XAttribute("to", dataLayer)
                  )
                );
-                    //}
-                    //else
-                    //{
-                    //    #region SPPID DataLayer
-
-                    //    string configPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
-
-
-                    //    NameValueCollection settings = new NameValueCollection();
-                    //    string _baseDirectory = Directory.GetCurrentDirectory();
-                    //    settings["BaseDirectoryPath"] = string.Format(_baseDirectory + _settings["AppDataPath"]);
-
-                    //    settings["BaseConfigurationPath"] = _settings["AppDataPath"] + _settings["ProjectName"];
-                    //    settings["ProjectConfigurationPath"] = Path.Combine(_baseDirectory, configPath);
-
-
-                    //    //string tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings["AppDataPath"], projectName, applicationName);
-                    //    string tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings["AppDataPath"], "12345_000", "SPPID");
-                    //    settings["StagingConfigurationPath"] = Path.Combine(_baseDirectory, tmp);
-
-                    //    _settings.AppendSettings(settings);
-
-
-                    //    // Create Config File ----------------------
-                    //    XElement config = new XElement("configuration",
-                    //      new XElement("appSettings",
-                    //      new XElement("add",
-                    //      new XAttribute("key", "SPPIDSiteConnectionString"),
-                    //      new XAttribute("value", httpRequest.Form["SiteConnectionString"])),
-                    //      new XElement("add",
-                    //      new XAttribute("key", "SPPIDPlantConnectionString"),
-                    //      new XAttribute("value", httpRequest.Form["PlantConnectionString"])),
-                    //      new XElement("add",
-                    //      new XAttribute("key", "iRingStagingConnectionString"),
-                    //      new XAttribute("value", httpRequest.Form["StagingConnectionString"])
-                    //      ))
-                    //    );
-
-                    //    if (File.Exists(configPath))
-                    //    {
-                    //        File.Delete(configPath);
-                    //    }
-                    //    config.Save(configPath);
-
-                    //    if (File.Exists(_settings["ProjectConfigurationPath"]))
-                    //    {
-                    //        _settings.AppendSettings(new AppSettingsReader(_settings["ProjectConfigurationPath"]));
-                    //    }
-
-                    //    // Create Binding Configuration File ----------------------
-                    //    binding = new XElement("module",
-                    //    new XAttribute("name", _settings["Scope"]),
-                    //        new XElement("bind",
-                    //        new XAttribute("name", "DataLayer"),
-                    //        new XAttribute("service", "org.iringtools.library.IDataLayer2, iRINGLibrary"),
-                    //        new XAttribute("to", dataLayer)
-                    //    )
-                    //  );
-                    //    #endregion
-                    //}
-
 
                     binding.Save(_settings["BindingConfigurationPath"]);
                     _kernel.Load(_settings["BindingConfigurationPath"]);
@@ -1567,19 +1551,37 @@ namespace org.iringtools.adapter
             }
         }
 
-        public Response Refresh(string projectName, string applicationName)
+        public Response RefreshDataObjects(string projectName, string applicationName)
         {
           try
           {
             InitializeScope(projectName, applicationName);
             InitializeDataLayer();
 
-            return _dataLayer.Refresh();
+            return _dataLayer.RefreshAll();
           }
           catch (Exception ex)
           {
-            _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
-             throw new Exception(string.Format("Error getting configuration: {0}", ex));
+            string errMsg = String.Format("Error refreshing data objects: {0}", ex);
+            _logger.Error(errMsg);
+            throw new Exception(errMsg);
+          }
+        }
+
+        public Response RefreshDataObject(string projectName, string applicationName, string dataObject)
+        {
+          try
+          {
+            InitializeScope(projectName, applicationName);
+            InitializeDataLayer();
+
+            return _dataLayer.Refresh(dataObject);
+          }
+          catch (Exception ex)
+          {
+            string errMsg = String.Format("Error refreshing data object [{0}]: {1}", dataObject, ex);
+            _logger.Error(errMsg);
+            throw new Exception(errMsg);
           }
         }
     }

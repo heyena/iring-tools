@@ -40,49 +40,48 @@ namespace org.iringtools.adapter.projection
 
         if (dataObjects.Count > 0)
         {
-          try
+          DataObject dataObject = FindGraphDataObject(graphName);
+
+          for (int i = 0; i < dataObjects.Count; i++)
           {
-            dataItems.type = dataObjects[0].GetType().Name;
-          }
-          catch (Exception e)
-          {
-            throw new Exception("Invalid data object: " + e);
-          }
-        }
+            IDataObject dataObj = dataObjects[i];
 
-        DataObject dataObject = FindGraphDataObject(graphName);
-
-        for (int i = 0; i < dataObjects.Count; i++)
-        {
-          IDataObject dataObj = dataObjects[i];
-
-          DataItem dataItem = new DataItem()
-          {
-            properties = new Dictionary<string, string>()
-          };
-
-          foreach (DataProperty dataProperty in dataObject.dataProperties)
-          {
-            string value = Convert.ToString(dataObj.GetPropertyValue(dataProperty.propertyName));
-
-            if (value == null)
+            if (dataObj != null)
             {
-              value = String.Empty;
+              if (i == 0)
+              {
+                dataItems.type = graphName;
+              }
+
+              DataItem dataItem = new DataItem()
+              {
+                properties = new Dictionary<string, string>()
+              };
+
+              foreach (DataProperty dataProperty in dataObject.dataProperties)
+              {
+                string value = Convert.ToString(dataObj.GetPropertyValue(dataProperty.propertyName));
+
+                if (value == null)
+                {
+                  value = String.Empty;
+                }
+                else if (dataProperty.dataType == DataType.DateTime)
+                {
+                  value = Utility.ToXsdDateTime(value);
+                }
+
+                dataItem.properties.Add(dataProperty.propertyName, value);
+
+                if (dataObject.isKeyProperty(dataProperty.propertyName))
+                {
+                  dataItem.id = value;
+                }
+              }
+
+              dataItems.items.Add(dataItem);
             }
-            else if (dataProperty.dataType == DataType.DateTime)
-            {
-              value = Utility.ToXsdDateTime(value);
-            }
-
-            dataItem.properties.Add(dataProperty.propertyName, value);
-            
-            if (dataObject.isKeyProperty(dataProperty.propertyName))
-            {
-              dataItem.id = value;
-            }            
           }
-
-          dataItems.items.Add(dataItem);
         }
         
         dataItems.limit = dataItems.items.Count;
@@ -113,11 +112,10 @@ namespace org.iringtools.adapter.projection
         if (objectDefinition != null)
         {
           DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xml.ToString());
-          string dataItemType = dataItems.type;
 
           foreach (DataItem dataItem in dataItems.items)
           {
-            IDataObject dataObject = _dataLayer.Create(dataItemType, null)[0];
+            IDataObject dataObject = _dataLayer.Create(graphName, null)[0];
 
             if (objectDefinition.hasContent)
             {

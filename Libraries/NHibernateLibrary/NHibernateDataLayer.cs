@@ -149,7 +149,8 @@ namespace org.iringtools.adapter.datalayer
         {
           DataFilter clonedFilter = Utility.CloneDataContractObject<DataFilter>(filter);
           clonedFilter.OrderExpressions = null;
-          string whereClause = clonedFilter.ToSqlWhereClause(_dbDictionary, objectType, null);
+          DataObject dataObject = _dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+          string whereClause = clonedFilter.ToSqlWhereClause(_dbDictionary, dataObject.tableName, String.Empty);
           queryString.Append(whereClause);
         }
 
@@ -190,7 +191,8 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter != null && filter.Expressions.Count > 0)
         {
-          string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
+          DataObject dataObject = _dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+          string whereClause = filter.ToSqlWhereClause(_dbDictionary, dataObject.tableName, String.Empty);
           queryString.Append(whereClause);
         }
 
@@ -480,13 +482,14 @@ namespace org.iringtools.adapter.datalayer
                 status.Level = StatusLevel.Error;
                 status.Messages.Add(string.Format("Error while posting record [{0}]. {1}", identifier, ex));
                 status.Results.Add("ResultTag", identifier);
-                _logger.Error("Error in Post saving: " + ex);
+                _logger.Error("Error posting data object to data layer: " + ex);
               }
             }
             else
             {
               status.Level = StatusLevel.Error;
-              status.Messages.Add("Data object is null or duplicate.");
+              status.Identifier = String.Empty;
+              status.Messages.Add("Data object is null or duplicate. See log for details.");
             }
 
             response.Append(status);
@@ -580,7 +583,8 @@ namespace org.iringtools.adapter.datalayer
 
         if (filter.Expressions.Count > 0)
         {
-          string whereClause = filter.ToSqlWhereClause(_dbDictionary, objectType, null);
+          DataObject dataObject = _dbDictionary.dataObjects.Find(x => x.objectName.ToUpper() == objectType.ToUpper());
+          string whereClause = filter.ToSqlWhereClause(_dbDictionary, dataObject.tableName, String.Empty);          
           queryString.Append(whereClause);
         }
 

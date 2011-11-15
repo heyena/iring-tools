@@ -215,6 +215,7 @@ namespace org.iringtools.web.controllers
       Response response = _repository.RegenAll();
       return Json(response, JsonRequestBehavior.AllowGet);
     }
+
     public class DBProvider
     {
       public string Provider { get; set; }
