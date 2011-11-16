@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+  <constant name="struts.enable.DynamicMethodInvocation" value="false" />
+  <constant name="struts.devMode" value="false" />
+  
+  <package name="default" extends="struts-default">
+      <action name="federationManager">
+        <result>/federationManager.html</result>
+      </action>
+      
+      <action name="exchangeManager">
+        <result>/exchangeManager.html</result>
+      </action>
+  </package>
+  
+  <package name="json" extends="json-default">
+    <action name="federation" class="org.iringtools.controllers.FederationController" method="getFederation">
+      <result type="json">
+        <param name="root">tree.nodes</param>
+      </result>
+    </action>
+    
+    <action name="postFederation" class="org.iringtools.controllers.FederationController" 
+    method="postFederation">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+    </action>
+
+    <action name="deleteNode" class="org.iringtools.controllers.FederationController" method="deleteNode">
+      <result type="json">
+        <param name="root">result</param>
+      </result>
+    </action>
+    
+    <action name="repositoryTypes" class="org.iringtools.controllers.FederationController" method="getRepoTypes">
+      <result type="json">
+        <param name="root">repositoryTypes</param>
+      </result>
+    </action>
+    
+    <action name="directory" class="org.iringtools.controllers.DirectoryController" method="getDirectory">
+      <result type="json">
+        <param name="root">tree.nodes</param>
+      </result>
+    </action>
+    
+    <action name="appDataGrid" class="org.iringtools.controllers.AppdataController" method="getAppDataGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+    
+    <action name="appDataRows" class="org.iringtools.controllers.AppdataController" method="getAppDataRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    
+    <action name="cleanAppDataRows" class="org.iringtools.controllers.AppdataController" method="cleanHashMap">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    <action name="exchDataGrid" class="org.iringtools.controllers.ExchDataController" method="getExchDataGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+    <action name="exchDataRows" class="org.iringtools.controllers.ExchDataController" method="getExchDataRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    <action name="cleanExchDataRows" class="org.iringtools.controllers.ExchDataController" method="cleanHashMap">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>   
+    <action name="appDataRelations" class="org.iringtools.controllers.AppdataController" method="getRelatedAppRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    <action name="relatedAppDataGrid" class="org.iringtools.controllers.AppdataController" method="getDetailRelAppGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+     <action name="relatedAppDataRows" class="org.iringtools.controllers.AppdataController" method="getDetailRelAppRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    
+    <action name="exchangeDataRelatedRows" class="org.iringtools.controllers.ExchDataController" method="getRelatedExchRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    <action name="relatedDataGrid" class="org.iringtools.controllers.ExchDataController" method="getDetailExchGrid">
+      <result type="json">
+        <param name="root">grid</param>
+      </result>
+    </action>
+    
+     <action name="relatedDataRows" class="org.iringtools.controllers.ExchDataController" method="getDetailExchRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>     
+    
+    <action name="relatedAppDataRelationsRows" class="org.iringtools.controllers.AppdataController" method="getRelRelationAppRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>    
+    
+    <action name="relatedDataRelationsRows" class="org.iringtools.controllers.ExchDataController" method="getRelRelationExchRows">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    
+    <action name="exchangeResponse" class="org.iringtools.controllers.ExchDataController" method="setExchangeData">
+      <result type="json">
+        <param name="root">rows</param>
+      </result>
+    </action>
+    
+    <action name="exchangeHistory" class="org.iringtools.controllers.ExchDataController" method="getExchangeHistory">
+      <result type="json">
+        <param name="root">gridDefinition</param>
+      </result>
+    </action>
+    
+    <action name="exchangeHistoryDetail" class="org.iringtools.controllers.ExchDataController" method="getExchangeHistoryDetail">
+      <result type="json">
+        <param name="root">gridDefinition</param>
+      </result>
+    </action>
+    
+    <action name="ShowExchangeHistory" class="org.iringtools.controllers.ExchDataController" method="showExchangeHistory">
+      <result type="json">
+        <param name="root">history</param>
+      </result>
+    </action>
+    
+    
+  </package>    
+</struts>
