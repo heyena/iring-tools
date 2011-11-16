@@ -465,23 +465,23 @@ namespace iRINGTools.Web.Models
                 {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
               };
 
-              if (dataObject.isKeyProperty(dataProperty.propertyName))
+              if (!dataObject.isKeyProperty(dataProperty.propertyName))
               {
-                properties.Add("keyType", dataProperty.keyType.ToString());
+              //  properties.Add("keyType", dataProperty.keyType.ToString());
 
-                JsonTreeNode keyPropertyNode = new JsonTreeNode()
-                {
-                  text = dataProperty.columnName,
-                  type = "keyProperty",
-                  properties = properties,
-									iconCls = "treeKey",
-                  leaf = true
-                };
+              //  JsonTreeNode keyPropertyNode = new JsonTreeNode()
+              //  {
+              //    text = dataProperty.columnName,
+              //    type = "keyProperty",
+              //    properties = properties,
+              //    iconCls = "treeKey",
+              //    leaf = true
+              //  };
 
-                keyPropertiesNode.children.Add(keyPropertyNode);
-              }
-              else
-              {
+              //  keyPropertiesNode.children.Add(keyPropertyNode);
+              //}
+              //else
+              //{
                 JsonTreeNode dataPropertyNode = new JsonTreeNode()
                 {
                   text = dataProperty.columnName,
