@@ -820,7 +820,7 @@ function loadTree(rootNode, dbDict) {
 									hidden: false,
 									properties: properties
 								});
-								newKeyNode.iconCls = 'property';
+							  newKeyNode.iconCls = 'treeKey';
 								propertiesNode.children.splice(ijj, 1);
 								ijj--;
 

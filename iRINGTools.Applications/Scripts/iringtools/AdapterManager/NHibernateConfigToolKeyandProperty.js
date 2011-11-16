@@ -549,11 +549,11 @@ function setKeysFolder(editPane, node, scopeName, appName) {
 										text: keysNode.childNodes[i].text,
 										type: "dataProperty",
 										leaf: true,
-										iconCls: 'property',
+										iconCls: 'treeProperty',
 										properties: properties
 									});
 
-									propertyNode.iconCls = 'property';
+								  propertyNode.iconCls = 'treeProperty';
 									propertiesNode.appendChild(propertyNode);
 									keysNode.removeChild(keysNode.childNodes[i], true);
 									i--;
@@ -587,11 +587,11 @@ function setKeysFolder(editPane, node, scopeName, appName) {
 											text: selectedValues[j].data.text,
 											type: "keyProperty",
 											leaf: true,
-											iconCls: 'key',
+											iconCls: 'treeKey',
 											hidden: false,
 											properties: properties
 										});
-										newKeyNode.iconCls = 'key';
+									  newKeyNode.iconCls = 'treeKey';
 										propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
 										break;
 									}
