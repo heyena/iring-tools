@@ -2,17 +2,11 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-
-
-
-
-
-
-
 [assembly: AssemblyCompany("iringug.org")]
 [assembly: AssemblyProduct("iRINGTools")]
 [assembly: AssemblyCopyright("Copyright © 2011, iringug.org")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("3.0.0.4264")]
-[assembly: AssemblyFileVersion("3.0.0.4264")]
+
+[assembly: AssemblyVersion("2.2.0.4424")]
+[assembly: AssemblyFileVersion("2.2.0.4424")]

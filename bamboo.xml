@@ -2,9 +2,9 @@
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
 
   <PropertyGroup>
-    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs;</AssemblyInfoFile> <!--$(MSBuildProjectDirectory)\iRINGTools.SDK\AssemblyInfo.cs-->
-    <Major>3</Major>
-    <Minor>0</Minor>
+    <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs</AssemblyInfoFile>
+    <Major>2</Major>
+    <Minor>2</Minor>
     <Build>0</Build>
     <Revision>0</Revision>
   </PropertyGroup>
@@ -12,7 +12,7 @@
   <PropertyGroup>
     <MSTestCmd>"$(VSINSTALLDIR)\Common7\IDE\MSTest.exe"</MSTestCmd>
     <ZipCmd>"$(MSBuildProjectDirectory)\ExternalBinaries\7-Zip\7z.exe"</ZipCmd>
-    <NUnit-ToolPath>C:\Program Files (x86)\NUnit 2.5.9\bin\net-2.0</NUnit-ToolPath>
+    <NUnit-ToolPath>$(MSBuildProjectDirectory)\ExternalBinaries\Nunit</NUnit-ToolPath>
     <ServicesDir>$(MSBuildProjectDirectory)\iRINGTools.Services</ServicesDir>
     <ApplicationsDir>$(MSBuildProjectDirectory)\iRINGTools.Applications</ApplicationsDir>
     <LandingPageDir>$(MSBuildProjectDirectory)\iRINGTools.Landing</LandingPageDir>
@@ -23,8 +23,6 @@
     <UnitTestsDir>$(MSBuildProjectDirectory)\UnitTests</UnitTestsDir>
     <AdapterServiceTestsDir>$(UnitTestsDir)\AdapterService.Tests</AdapterServiceTestsDir>
     <RefDataServiceTestsDir>$(UnitTestsDir)\ReferenceDataService.Tests</RefDataServiceTestsDir>
-    <SDKDir>$(MSBuildProjectDirectory)\iRINGTools.SDK</SDKDir>
-    <SDKLibDir>$(SDKDir)\lib</SDKLibDir>
     
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>        
     <DistDir>c:\bamboo.iringtools.org\dist</DistDir>
@@ -33,14 +31,10 @@
     <AppsDeploymentDir>$(DeploymentDir)\iRINGTools\Apps</AppsDeploymentDir>
     <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
     <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
-    <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
-    <CSVDataLayerDeploymentDir>$(SDKDeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>
-    <SDKLibDeploymentDir>$(SDKDeploymentDir)\lib\iring-tools</SDKLibDeploymentDir>
 
-	<DevDeploymentDir>C:\iring-tools-web\dev.iringsandbox.org</DevDeploymentDir>
+    <DevDeploymentDir>C:\iring-tools-web\iip.iringsandbox.org</DevDeploymentDir>
 	
     <SolutionFile>iring-tools.sln</SolutionFile>
-    <SDKSolutionFile>$(SDKDir)\iring-tools-sdk-express.sln</SDKSolutionFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -67,12 +61,6 @@
              $(ServicesDir)\Service.cs;
              $(ServicesDir)\IService.cs;
              $(ServicesDir)\Global.asax.cs;
-             $(ServicesDir)\XML\DataDictionary.*.xml;
-             $(ServicesDir)\XML\DatabaseDictionary.*.xml;
-             $(ServicesDir)\XML\nh-configuration.*.xml;
-             $(ServicesDir)\XML\nh-mapping.*.xml;
-             $(ServicesDir)\XML\Repositories.xml;
-             $(ServicesDir)\XML\Scopes.xml;
              $(ServicesDir)\.svn\**;
              $(ServicesDir)\*\.svn\**;
              $(ServicesDir)\*\*\.svn\**;
@@ -89,7 +77,9 @@
 
     <AppsDeployment
       Include="$(ApplicationsDir)\**"
-      Exclude="$(ApplicationsDir)\bin\*.pdb;
+      Exclude="$(ApplicationsDir)\Controllers\**;
+               $(ApplicationsDir)\Models\**;               
+               $(ApplicationsDir)\bin\*.pdb;
                $(ApplicationsDir)\obj\**;
                $(ApplicationsDir)\Properties\**;
                $(ApplicationsDir)\*.cs;
@@ -107,13 +97,16 @@
     </AppsDeployment>
 
     <UtilitiesDeployment
-      Include="Libraries\iRINGLibrary\bin\Debug\iRINGLibrary.dll;
-               Libraries\iRINGLibrary\bin\Debug\UtilityLibrary.dll;
+      Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
+               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
                Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
                Utilities\ConfigurationTool\bin\Debug\ConfigurationTool.exe;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.dll;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.xml;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\HtmlAgilityPack.dll;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\HtmlAgilityPack.xml;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\Newtonsoft.Json.dll;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\Newtonsoft.Json.xml;
                Utilities\RDFImportExport\RDFImportExport\bin\Debug\RDFImportExport.exe;
                Utilities\RDFImportExport\RDFImportExport\RDFImportExport_Default.config;
                Utilities\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
@@ -127,84 +120,21 @@
                Utilities\FacadeExchange\bin\Debug\*.dll;
                Utilities\FacadeExchange\bin\Debug\*.xml;">
     </UtilitiesDeployment>
-
-    <SDKDeployment
-      Include="$(SDKDir)\**;"
-      Exclude="$(SDKDir)\TestResults\**;
-               $(SDKDir)\CSVDataLayer\bin\**;
-               $(SDKDir)\CSVDataLayer\obj\**;
-               $(SDKDir)\CSVDataLayer\12345_000.CSV.config;
-               $(SDKDir)\CSVDataLayer\12345_000.CSV\Equipment\Equip-001.csv;
-               $(SDKDir)\CSVDataLayer\12345_000.CSV\Equipment\Equip-002.csv;
-               $(SDKDir)\CSVDataLayer\12345_000.CSV\Equipment\Equip-003.csv;
-               $(SDKDir)\CSVDataLayer\12345_000.CSV\Equipment\Equip-004.csv;
-               $(SDKDir)\lib\*.*;
-               $(SDKDir)\.svn\**;
-               $(SDKDir)\*\.svn\**;
-               $(SDKDir)\*\*\.svn\**;
-               $(SDKDir)\*\*\*\.svn\**;">                    
-    </SDKDeployment>
-    
-    <SDKLib
-      Include="Libraries\iRINGLibrary\bin\Debug\iRINGLibrary.dll;
-             Libraries\iRINGLibrary\bin\Debug\UtilityLibrary.dll;">
-    </SDKLib>
-
-    <SDKLibLog4Net
-      Include="ExternalBinaries\log4net\**;"
-      Exclude="ExternalBinaries\*\.svn\**;
-             ExternalBinaries\*\*\.svn\**;
-             ExternalBinaries\*\*\*\.svn\**;">
-    </SDKLibLog4Net>
-
-    <SDKLibNinject2
-      Include="ExternalBinaries\Ninject2\**;"
-      Exclude="ExternalBinaries\*\.svn\**;
-             ExternalBinaries\*\*\.svn\**;
-             ExternalBinaries\*\*\*\.svn\**;">
-    </SDKLibNinject2>
-
-    <SDKLibConfiguration
-      Include="ExternalBinaries\Configuration\**;"
-      Exclude="ExternalBinaries\*\.svn\**;
-             ExternalBinaries\*\*\.svn\**;
-             ExternalBinaries\*\*\*\.svn\**;">
-    </SDKLibConfiguration>
-
-    <SDKLibFlee
-      Include="ExternalBinaries\Flee-0.9.26.0\**;"
-      Exclude="ExternalBinaries\*\.svn\**;
-             ExternalBinaries\*\*\.svn\**;
-             ExternalBinaries\*\*\*\.svn\**;">
-    </SDKLibFlee>
-
-    <SDKLibDeployment
-      Include="ExternalBinaries\Flee-0.9.26.0\**;
-             ExternalBinaries\Configuration\**;
-             ExternalBinaries\Ninject2\**;
-             ExternalBinaries\log4net\**;
-             $(SDKLibDir)\**;">
-    </SDKLibDeployment>
   </ItemGroup>
 
   <ItemGroup>
     <DeploymentPackage Include="*.*">
       <Options>a -tzip -y -r</Options>
       <OutputDir></OutputDir>
-	  <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
-	  <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
-    </DeploymentPackage>
-	<DeploymentPackage Include="*.*">
-      <Options>x -tzip -y -o</Options>
-	  <OutputDir>$(DevDeploymentDir)</OutputDir>
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
-	  <FileSet></FileSet>
+      <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
     </DeploymentPackage>
-    <!--<DeploymentPackage Include="*" Exclude="">
-      <Options>a -tzip -r</Options>
-      <FileSet>$(SDKDeploymentDir)\*</FileSet>
-      <ZipFile>$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip</ZipFile>
-    </DeploymentPackage>-->
+    <DeploymentPackage Include="*.*">
+      <Options>x -tzip -y -o</Options>
+      <OutputDir>$(DevDeploymentDir)</OutputDir>
+      <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
+      <FileSet></FileSet>
+    </DeploymentPackage>
   </ItemGroup>
 
   <Target Name="Version">
@@ -239,8 +169,8 @@
     <Message Text="Preparing build ..." />
     <Exec Condition="!Exists('$(ServicesDir)\Web.config')" 
           Command="Copy $(ServicesDir)\Web_Default.config $(ServicesDir)\Web.config" />
-    <Exec Condition="!Exists('$(ServicesDir)\XML\Repositories.xml')" 
-          Command="Copy $(ServicesDir)\\XML\Repositories_Default.xml $(ServicesDir)\XML\Repositories.xml" />
+    <Exec Condition="!Exists('$(ServicesDir)\App_Data\Repositories.xml')" 
+          Command="Copy $(ServicesDir)\App_Data\Repositories_Default.xml $(ServicesDir)\App_Data\Repositories.xml" />
     <Exec Condition="!Exists('$(ServicesDir)\App_Data\config.ttl')" 
           Command="Copy $(ServicesDir)\App_Data\config_Default.ttl $(ServicesDir)\App_Data\config.ttl" />
     <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
@@ -258,27 +188,20 @@
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
   </Target>
 
-  <Target Name="SDKBuild" DependsOnTargets="DeployToSDK">
-    <Message Text="Performing MSBuild of SDK ..." />
-    <MSBuild Projects="$(SDKSolutionFile)" Targets="Build"/>
-  </Target>
-
-    <Target Name="Test">
-        <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test-results.xml" />
+  <Target Name="Test">
+    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test-results.xml" />
 	</Target>
 
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
     <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
-    <!--<Exec Command="Copy .\ClientAccessPolicy.xml $(ServicesDeploymentDir)\ClientAccessPolicy.xml" />
-    <Exec Command="Copy .\ClientAccessPolicy.xml $(AppsDeploymentDir)\ClientAccessPolicy.xml" />-->
-
+    
     <Message Text="Creating Services deployment ..." />
     <Copy SourceFiles="@(ServicesDeployment)"
           DestinationFiles="@(ServicesDeployment ->'$(ServicesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\Web_Default.config $(ServicesDeploymentDir)\Web.config" />
-    <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Repositories_Default.xml $(ServicesDeploymentDir)\XML\Repositories.xml" />
+    <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Repositories_Default.xml $(ServicesDeploymentDir)\App_Data\Repositories.xml" />
     <Exec Command="Move /Y $(ServicesDeploymentDir)\App_Data\Config_Default.ttl $(ServicesDeploymentDir)\App_Data\Config.ttl" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\Logs" />
     <Exec Command="Mkdir $(ServicesDeploymentDir)\App_Code"/>
@@ -298,38 +221,6 @@
     <Message Text="Creating landing page deployment ..." />
     <Copy SourceFiles="@(LandingDeployment)"
           DestinationFiles="@(LandingDeployment->'$(LandingDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-
-    <!--<Message Text="Creating SDK deployment ..." />
-    <Copy SourceFiles="@(SDKDeployment)"
-          DestinationFiles="@(SDKDeployment->'$(SDKDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Exec Command="Move /Y $(SDKDeploymentDir)\CSVDataLayer\12345_000.CSV_Default.config $(SDKDeploymentDir)\CSVDataLayer\12345_000.CSV.config" />
-
-    <Message Text="Creating SDK library deployment ..." />
-    <Copy SourceFiles="@(SDKLib)"
-          DestinationFiles="@(SDKLib ->'$(SDKLibDeploymentDir)\iring-tools\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(SDKLibLog4Net)"
-          DestinationFiles="@(SDKLibLog4Net ->'$(SDKLibDeploymentDir)\log4net\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(SDKLibNinject2)"
-          DestinationFiles="@(SDKLibNinject2 ->'$(SDKLibDeploymentDir)\ninject2\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(SDKLibConfiguration)"
-          DestinationFiles="@(SDKLibConfiguration ->'$(SDKLibDeploymentDir)\configuration\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(SDKLibFlee)"
-          DestinationFiles="@(SDKLibFlee ->'$(SDKLibDeploymentDir)\flee-0.9.26.0\%(RecursiveDir)%(Filename)%(Extension)')" />-->
-  </Target>
-
-  <Target Name="DeployToSDK">
-   
-    <Message Text="Deploying to SDK library ..." />
-    <Copy SourceFiles="@(SDKLib)"
-          DestinationFiles="@(SDKLib ->'$(SDKLibDir)\iring-tools\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(SDKLibLog4Net)"
-          DestinationFiles="@(SDKLibLog4Net ->'$(SDKLibDir)\log4net\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(SDKLibNinject2)"
-          DestinationFiles="@(SDKLibNinject2 ->'$(SDKLibDir)\ninject2\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(SDKLibConfiguration)"
-          DestinationFiles="@(SDKLibConfiguration ->'$(SDKLibDir)\configuration\%(RecursiveDir)%(Filename)%(Extension)')" />
-    <Copy SourceFiles="@(SDKLibFlee)"
-          DestinationFiles="@(SDKLibFlee ->'$(SDKLibDir)\flee-0.9.26.0\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
@@ -344,9 +235,6 @@
     <Copy SourceFiles="$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip" 
           DestinationFiles="$(DistDir)\iRINGTools-Adapter.zip">
     </Copy>
-    <!--<Copy SourceFiles="$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip" 
-          DestinationFiles="$(DistDir)\iRINGTools-SDK.zip">
-    </Copy>-->
   </Target>
 
   <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages; Distribute"/>

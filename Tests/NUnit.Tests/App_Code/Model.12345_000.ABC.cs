@@ -8,6 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 using System;
+using System.Globalization;
 using System.Collections.Generic;
 using Iesi.Collections.Generic;
 using org.iringtools.library;
@@ -75,58 +76,58 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
           Id = Convert.ToString(value);
           break;
         case "TAG":
-          if (value != null) TAG = Convert.ToString(value);
+          TAG = Convert.ToString(value);
           break;
         case "INTERNAL_TAG":
-          if (value != null) INTERNAL_TAG = Convert.ToString(value);
+          INTERNAL_TAG = Convert.ToString(value);
           break;
         case "ID":
-          if (value != null) ID = Convert.ToString(value);
+          ID = Convert.ToString(value);
           break;
         case "AREA":
-          if (value != null) AREA = Convert.ToString(value);
+          AREA = Convert.ToString(value);
           break;
         case "TRAINNUMBER":
-          if (value != null) TRAINNUMBER = Convert.ToString(value);
+          TRAINNUMBER = Convert.ToString(value);
           break;
         case "EQTYPE":
-          if (value != null) EQTYPE = Convert.ToString(value);
+          EQTYPE = Convert.ToString(value);
           break;
         case "EQPPREFIX":
-          if (value != null) EQPPREFIX = Convert.ToString(value);
+          EQPPREFIX = Convert.ToString(value);
           break;
         case "EQSEQNO":
-          if (value != null) EQSEQNO = Convert.ToString(value);
+          EQSEQNO = Convert.ToString(value);
           break;
         case "EQPSUFF":
-          if (value != null) EQPSUFF = Convert.ToString(value);
+          EQPSUFF = Convert.ToString(value);
           break;
         case "EQUIPDESC1":
-          if (value != null) EQUIPDESC1 = Convert.ToString(value);
+          EQUIPDESC1 = Convert.ToString(value);
           break;
         case "EQUIPDESC2":
-          if (value != null) EQUIPDESC2 = Convert.ToString(value);
+          EQUIPDESC2 = Convert.ToString(value);
           break;
         case "CONSTTYPE":
-          if (value != null) CONSTTYPE = Convert.ToString(value);
+          CONSTTYPE = Convert.ToString(value);
           break;
         case "EWP":
-          if (value != null) EWP = Convert.ToString(value);
+          EWP = Convert.ToString(value);
           break;
         case "USER1":
-          if (value != null) USER1 = Convert.ToString(value);
+          USER1 = Convert.ToString(value);
           break;
         case "USER2":
-          if (value != null) USER2 = Convert.ToString(value);
+          USER2 = Convert.ToString(value);
           break;
         case "USER3":
-          if (value != null) USER3 = Convert.ToString(value);
+          USER3 = Convert.ToString(value);
           break;
         case "TAGSTATUS":
-          if (value != null) TAGSTATUS = Convert.ToString(value);
+          TAGSTATUS = Convert.ToString(value);
           break;
         case "COMMODITY":
-          if (value != null) COMMODITY = Convert.ToString(value);
+          COMMODITY = Convert.ToString(value);
           break;
         default:
           throw new Exception("Property [" + propertyName + "] does not exist.");
@@ -215,70 +216,70 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
           Id = Convert.ToString(value);
           break;
         case "KEYTAG":
-          if (value != null) KEYTAG = Convert.ToString(value);
+          KEYTAG = Convert.ToString(value);
           break;
         case "TAG":
-          if (value != null) TAG = Convert.ToString(value);
+          TAG = Convert.ToString(value);
           break;
         case "TAG_NO":
-          if (value != null) TAG_NO = Convert.ToString(value);
+          TAG_NO = Convert.ToString(value);
           break;
         case "TAG_CODE":
-          if (value != null) TAG_CODE = Convert.ToString(value);
+          TAG_CODE = Convert.ToString(value);
           break;
         case "ASSOC_EQ":
-          if (value != null) ASSOC_EQ = Convert.ToString(value);
+          ASSOC_EQ = Convert.ToString(value);
           break;
         case "IAREA":
-          if (value != null) IAREA = Convert.ToString(value);
+          IAREA = Convert.ToString(value);
           break;
         case "ITRAIN":
-          if (value != null) ITRAIN = Convert.ToString(value);
+          ITRAIN = Convert.ToString(value);
           break;
         case "ITYP":
-          if (value != null) ITYP = Convert.ToString(value);
+          ITYP = Convert.ToString(value);
           break;
         case "INUM":
-          if (value != null) INUM = Convert.ToString(value);
+          INUM = Convert.ToString(value);
           break;
         case "ISUFFIX":
-          if (value != null) ISUFFIX = Convert.ToString(value);
+          ISUFFIX = Convert.ToString(value);
           break;
         case "MODIFIER1":
-          if (value != null) MODIFIER1 = Convert.ToString(value);
+          MODIFIER1 = Convert.ToString(value);
           break;
         case "MODIFIER2":
-          if (value != null) MODIFIER2 = Convert.ToString(value);
+          MODIFIER2 = Convert.ToString(value);
           break;
         case "MODIFIER3":
-          if (value != null) MODIFIER3 = Convert.ToString(value);
+          MODIFIER3 = Convert.ToString(value);
           break;
         case "MODIFIER4":
-          if (value != null) MODIFIER4 = Convert.ToString(value);
+          MODIFIER4 = Convert.ToString(value);
           break;
         case "STD_DETAIL":
-          if (value != null) STD_DETAIL = Convert.ToString(value);
+          STD_DETAIL = Convert.ToString(value);
           break;
         case "DESCRIPT":
-          if (value != null) DESCRIPT = Convert.ToString(value);
+          DESCRIPT = Convert.ToString(value);
           break;
         case "TAG_TYPE":
-          if (value != null) TAG_TYPE = Convert.ToString(value);
+          TAG_TYPE = Convert.ToString(value);
           break;
         case "CONST_TYPE":
-          if (value != null) CONST_TYPE = Convert.ToString(value);
+          CONST_TYPE = Convert.ToString(value);
           break;
         case "COMP_ID":
-          if (value != null) COMP_ID = Convert.ToString(value);
+          COMP_ID = Convert.ToString(value);
           break;
         case "PROJ_STAT":
-          if (value != null) PROJ_STAT = Convert.ToString(value);
+          PROJ_STAT = Convert.ToString(value);
           break;
         case "PID_NO":
-          if (value != null) PID_NO = Convert.ToString(value);
+          PID_NO = Convert.ToString(value);
           break;
         case "LINE_NO":
-          if (value != null) LINE_NO = Convert.ToString(value);
+          LINE_NO = Convert.ToString(value);
           break;
         default:
           throw new Exception("Property [" + propertyName + "] does not exist.");
@@ -385,97 +386,97 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
           Id = Convert.ToString(value);
           break;
         case "TAG":
-          if (value != null) TAG = Convert.ToString(value);
+          TAG = Convert.ToString(value);
           break;
         case "ID":
-          if (value != null) ID = Convert.ToString(value);
+          ID = Convert.ToString(value);
           break;
         case "AREA":
-          if (value != null) AREA = Convert.ToString(value);
+          AREA = Convert.ToString(value);
           break;
         case "TRAINNUMBER":
-          if (value != null) TRAINNUMBER = Convert.ToString(value);
+          TRAINNUMBER = Convert.ToString(value);
           break;
         case "SPEC":
-          if (value != null) SPEC = Convert.ToString(value);
+          SPEC = Convert.ToString(value);
           break;
         case "SYSTEM":
-          if (value != null) SYSTEM = Convert.ToString(value);
+          SYSTEM = Convert.ToString(value);
           break;
         case "LINENO":
-          if (value != null) LINENO = Convert.ToString(value);
+          LINENO = Convert.ToString(value);
           break;
         case "NOMDIAMETER":
-          if (value != null) NOMDIAMETER = Convert.ToSingle(value);
+          NOMDIAMETER = Single.Parse((String)value, NumberStyles.Any);
           break;
         case "INSULATIONTYPE":
-          if (value != null) INSULATIONTYPE = Convert.ToString(value);
+          INSULATIONTYPE = Convert.ToString(value);
           break;
         case "HTRACED":
-          if (value != null) HTRACED = Convert.ToString(value);
+          HTRACED = Convert.ToString(value);
           break;
         case "CONSTTYPE":
-          if (value != null) CONSTTYPE = Convert.ToString(value);
+          CONSTTYPE = Convert.ToString(value);
           break;
         case "DESPRESSURE":
-          if (value != null) DESPRESSURE = Convert.ToString(value);
+          DESPRESSURE = Convert.ToString(value);
           break;
         case "TESTPRESSURE":
-          if (value != null) TESTPRESSURE = Convert.ToString(value);
+          TESTPRESSURE = Convert.ToString(value);
           break;
         case "PWHT":
-          if (value != null) PWHT = Convert.ToString(value);
+          PWHT = Convert.ToString(value);
           break;
         case "TESTMEDIA":
-          if (value != null) TESTMEDIA = Convert.ToString(value);
+          TESTMEDIA = Convert.ToString(value);
           break;
         case "MATLTYPE":
-          if (value != null) MATLTYPE = Convert.ToString(value);
+          MATLTYPE = Convert.ToString(value);
           break;
         case "NDT":
-          if (value != null) NDT = Convert.ToString(value);
+          NDT = Convert.ToString(value);
           break;
         case "NDE":
-          if (value != null) NDE = Convert.ToString(value);
+          NDE = Convert.ToString(value);
           break;
         case "PIPECLASS":
-          if (value != null) PIPECLASS = Convert.ToString(value);
+          PIPECLASS = Convert.ToString(value);
           break;
         case "PIDNUMBER":
-          if (value != null) PIDNUMBER = Convert.ToString(value);
+          PIDNUMBER = Convert.ToString(value);
           break;
         case "DESTEMPERATURE":
-          if (value != null) DESTEMPERATURE = Convert.ToString(value);
+          DESTEMPERATURE = Convert.ToString(value);
           break;
         case "PAINTSYSTEM":
-          if (value != null) PAINTSYSTEM = Convert.ToString(value);
+          PAINTSYSTEM = Convert.ToString(value);
           break;
         case "DESIGNCODE":
-          if (value != null) DESIGNCODE = Convert.ToString(value);
+          DESIGNCODE = Convert.ToString(value);
           break;
         case "COLOURCODE":
-          if (value != null) COLOURCODE = Convert.ToString(value);
+          COLOURCODE = Convert.ToString(value);
           break;
         case "EWP":
-          if (value != null) EWP = Convert.ToString(value);
+          EWP = Convert.ToString(value);
           break;
         case "USER1":
-          if (value != null) USER1 = Convert.ToString(value);
+          USER1 = Convert.ToString(value);
           break;
         case "TAGSTATUS":
-          if (value != null) TAGSTATUS = Convert.ToString(value);
+          TAGSTATUS = Convert.ToString(value);
           break;
         case "FULLLINE":
-          if (value != null) FULLLINE = Convert.ToString(value);
+          FULLLINE = Convert.ToString(value);
           break;
         case "UOM_NOMDIAMETER":
-          if (value != null) UOM_NOMDIAMETER = Convert.ToString(value);
+          UOM_NOMDIAMETER = Convert.ToString(value);
           break;
         case "UOM_DESPRESSURE":
-          if (value != null) UOM_DESPRESSURE = Convert.ToString(value);
+          UOM_DESPRESSURE = Convert.ToString(value);
           break;
         case "UOM_DESTEMPERATURE":
-          if (value != null) UOM_DESTEMPERATURE = Convert.ToString(value);
+          UOM_DESTEMPERATURE = Convert.ToString(value);
           break;
         default:
           throw new Exception("Property [" + propertyName + "] does not exist.");
@@ -556,58 +557,58 @@ namespace org.iringtools.adapter.datalayer.proj_12345_000.ABC
           Id = Convert.ToString(value);
           break;
         case "KEYTAG":
-          if (value != null) KEYTAG = Convert.ToString(value);
+          KEYTAG = Convert.ToString(value);
           break;
         case "TAG_NO":
-          if (value != null) TAG_NO = Convert.ToString(value);
+          TAG_NO = Convert.ToString(value);
           break;
         case "VAREA":
-          if (value != null) VAREA = Convert.ToString(value);
+          VAREA = Convert.ToString(value);
           break;
         case "VTYP":
-          if (value != null) VTYP = Convert.ToString(value);
+          VTYP = Convert.ToString(value);
           break;
         case "VTRAIN":
-          if (value != null) VTRAIN = Convert.ToString(value);
+          VTRAIN = Convert.ToString(value);
           break;
         case "VNUM":
-          if (value != null) VNUM = Convert.ToString(value);
+          VNUM = Convert.ToString(value);
           break;
         case "VSUFFIX":
-          if (value != null) VSUFFIX = Convert.ToString(value);
+          VSUFFIX = Convert.ToString(value);
           break;
         case "TAG_TYPE":
-          if (value != null) TAG_TYPE = Convert.ToString(value);
+          TAG_TYPE = Convert.ToString(value);
           break;
         case "CONST_TYPE":
-          if (value != null) CONST_TYPE = Convert.ToString(value);
+          CONST_TYPE = Convert.ToString(value);
           break;
         case "COMP_ID":
-          if (value != null) COMP_ID = Convert.ToString(value);
+          COMP_ID = Convert.ToString(value);
           break;
         case "VSIZE":
-          if (value != null) VSIZE = Convert.ToString(value);
+          VSIZE = Convert.ToString(value);
           break;
         case "UOM_VSIZE":
-          if (value != null) UOM_VSIZE = Convert.ToString(value);
+          UOM_VSIZE = Convert.ToString(value);
           break;
         case "VSPEC_TYPE":
-          if (value != null) VSPEC_TYPE = Convert.ToString(value);
+          VSPEC_TYPE = Convert.ToString(value);
           break;
         case "VSPEC_NUM":
-          if (value != null) VSPEC_NUM = Convert.ToString(value);
+          VSPEC_NUM = Convert.ToString(value);
           break;
         case "VPRESRATE":
-          if (value != null) VPRESRATE = Convert.ToString(value);
+          VPRESRATE = Convert.ToString(value);
           break;
         case "VCONDITION":
-          if (value != null) VCONDITION = Convert.ToString(value);
+          VCONDITION = Convert.ToString(value);
           break;
         case "PID_NO":
-          if (value != null) PID_NO = Convert.ToString(value);
+          PID_NO = Convert.ToString(value);
           break;
         case "PROJ_STAT":
-          if (value != null) PROJ_STAT = Convert.ToString(value);
+          PROJ_STAT = Convert.ToString(value);
           break;
         default:
           throw new Exception("Property [" + propertyName + "] does not exist.");

@@ -35,10 +35,13 @@ using Ninject;
 using org.ids_adi.qmxf;
 using org.iringtools.library;
 using org.iringtools.utility;
+using org.w3.sparql_results;
 using System.Text;
 using VDS.RDF;
 using VDS.RDF.Query;
+using VDS.RDF.Query.Patterns;
 using VDS.RDF.Update;
+using VDS.RDF.Update.Commands;
 using VDS.RDF.Writing.Formatting;
 using System.Net;
 

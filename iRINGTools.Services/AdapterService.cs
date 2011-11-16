@@ -99,7 +99,14 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/configure")]
     public Response Configure(String scope, String app)
     {
-      return _adapterProvider.Configure(scope, app, HttpContext.Current.Request);
+      try
+      {
+        return _adapterProvider.Configure(scope, app, HttpContext.Current.Request);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
     }
 
     [Description("Get configuration for a selected data layer in the service.")]
@@ -124,7 +131,14 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/scopes")]
     public Response UpdateScopes(ScopeProjects scopes)
     {
-      return _adapterProvider.UpdateScopes(scopes);
+      try
+      {
+        return _adapterProvider.UpdateScopes(scopes);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
     }
     #endregion
 
@@ -155,7 +169,14 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/binding")]
     public Response UpdateBinding(string scope, string app, XElement binding)
     {
-      return _adapterProvider.UpdateBinding(scope, app, binding);
+      try
+      {
+        return _adapterProvider.UpdateBinding(scope, app, binding);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
     }
     #endregion
 
@@ -205,7 +226,14 @@ namespace org.iringtools.services
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/mapping")]
     public Response UpdateMapping(string scope, string app, XElement mappingXml)
     {
-      return _adapterProvider.UpdateMapping(scope, app, mappingXml);
+      try
+      {
+        return _adapterProvider.UpdateMapping(scope, app, mappingXml);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
     }
     #endregion
 
@@ -221,17 +249,57 @@ namespace org.iringtools.services
     }
     #endregion
 
-    #region Refresh
-    [Description("Resets data layer state.")]
+    #region RefreshDataObjects
+    [Description("Resets all data objects state in data layer.")]
     [WebGet(UriTemplate = "/{scope}/{app}/refresh")]
-    public Response Refresh(string scope, string app)
+    public Response RefreshDataObjects(string scope, string app)
     {
-      OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
-      context.ContentType = "application/xml";
+      try
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.ContentType = "application/xml";
 
-      return _adapterProvider.Refresh(scope, app);
+        return _adapterProvider.RefreshDataObjects(scope, app);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
     }
     #endregion
+
+    #region RefreshDataObject
+    [Description("Resets a data object state in data layer.")]
+    [WebGet(UriTemplate = "/{scope}/{app}/{dataObject}/refresh")]
+    public Response RefreshDataObject(string scope, string app, string dataObject)
+    {
+      try
+      {
+        OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
+        context.ContentType = "application/xml";
+
+        return _adapterProvider.RefreshDataObject(scope, app, dataObject);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+    #endregion
+
+    private Response PrepareErrorResponse(Exception ex)
+    {
+      Response response = new Response
+      {
+        Level = StatusLevel.Error,
+        Messages = new Messages
+          {
+            ex.Message
+          }
+      };
+
+      return response;
+    }
     #endregion
   }
 }

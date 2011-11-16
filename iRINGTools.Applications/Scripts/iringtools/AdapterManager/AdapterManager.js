@@ -103,6 +103,8 @@ Ext.onReady(function () {
       url: 'directory/scope'
     });
 
+
+
     newTab.on('save', function (panel) {
       win.close();
       directoryPanel.onReload(node);
@@ -128,6 +130,9 @@ Ext.onReady(function () {
     });
 
     win.show();
+
+    newTab.form.getForm().findField('Name').clearInvalid();
+
   }, this);
 
 
@@ -205,10 +210,11 @@ Ext.onReady(function () {
     var scope = node.parentNode.text;
     var datalayer = node.attributes.record.DataLayer;
 
-    if (dataLayerValue == 'SpreadsheetLibrary') {
+    if (dataLayerValue == 'SpreadsheetDataLayer') {
       var newConfig = new AdapterManager.SpreadsheetLibraryPanel({
         id: 'tab-c.' + scope + '.' + application,
-        title: 'Configure - ' + scope + '.' + application,
+        title: 'Spreadsheet Configuration - ' + scope + '.' + application,
+        iconCls: 'tabsNhibernate',
         scope: scope,
         application: application,
         datalayer: assembly,
@@ -243,18 +249,28 @@ Ext.onReady(function () {
         pidConfigWizard.show();
       }
       else {
-        pidConfigWizard = new AdapterManager.sppidConfigWizard({
-          scope: scope,
-          app: application
-        });
-        contentPanel.add(pidConfigWizard);
-        contentPanel.activate(pidConfigWizard);
+        try {
+          pidConfigWizard = new AdapterManager.sppidConfigWizard({
+            scope: scope,
+            app: application,
+            datalayer: assembly
+
+          });
+          contentPanel.add(pidConfigWizard);
+          contentPanel.activate(pidConfigWizard);
+        }
+        catch (err) {
+          showDialog(400, 100, 'Error', 'No configuration available for \"SPPIDDataLayer\".', Ext.Msg.OK, null);
+        }
       }
+    }
+    else {
+      showDialog(400, 100, 'Error', 'No configuration available for datalayer \"' + dataLayerValue + '\".', Ext.Msg.OK, null);
     }
   }, this);
 
   directoryPanel.on('newapplication', function (npanel, node) {
-
+    Ext.getBody().mask("Loading...", "x-mask-loading");
     var newTab = new AdapterManager.ApplicationPanel({
       id: 'tab-' + node.id,
       scope: node.attributes.record,
@@ -283,10 +299,17 @@ Ext.onReady(function () {
       height: 200,
       width: 430,
       plain: true,
-      items: newTab
+      items: newTab,
+      listeners: {
+        afterlayout: function (pane) {
+          Ext.getBody().unmask();
+        }
+      }
     });
 
     win.show();
+
+    newTab.form.getForm().findField('Name').clearInvalid();
 
   }, this);
 
@@ -375,12 +398,12 @@ Ext.onReady(function () {
 
   }, this);
 
-   directoryPanel.on('LoadPageDto', function (npanel, node) {
-   	var scope = node.parentNode.parentNode.parentNode.text
-   	var app = node.parentNode.parentNode.text;
-   	var graph = node.text;   	
-   	loadAppPageDto(scope, app, graph);
-   }, this);
+  directoryPanel.on('LoadPageDto', function (npanel, node) {
+    var scope = node.parentNode.parentNode.parentNode.text
+    var app = node.parentNode.parentNode.text;
+    var graph = node.text;
+    loadAppPageDto(scope, app, graph);
+  }, this);
 
   directoryPanel.on('opengraphmap', function (npanel, node) {
 
@@ -510,6 +533,26 @@ Ext.onReady(function () {
 
     win.show();
   }, this);
+
+  directoryPanel.on('RefreshFacade', function (npanel, node) {
+    directoryPanel.body.mask('Loading', 'x-mask-loading');
+    Ext.Ajax.request({
+      url: 'facade/refreshFacade',
+      method: 'POST',
+      params: {
+        scope: node.attributes.id
+      },
+      success: function (o) {
+        directoryPanel.onReload(node);
+        directoryPanel.body.unmask();
+      },
+      failure: function (f, a) {
+        //Ext.Msg.alert('Warning', 'Error!!!');
+        var message = 'Error refreshing facade!';
+        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      }
+    });
+  });
 
   directoryPanel.on('editgraphmap', function (npanel, node) {
     var newTab = new AdapterManager.GraphPanel({

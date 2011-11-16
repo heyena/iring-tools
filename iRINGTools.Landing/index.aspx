@@ -8,7 +8,7 @@
   <body>
     <div class="banner">
       <h1>
-        <img src="img/iring-tools-logo.png" />&nbsp; Version 2.01.00
+        <img src="img/iring-tools-logo.png" />&nbsp; Version 2.02.00
       </h1>
     </div>
     <div class="main">
@@ -38,6 +38,10 @@
               <li>
                 <a href="Apps/AdapterManager">
                 AdapterManager</a>
+              </li>
+              <li>
+                <a href="Apps/RefDataEditor">
+                Reference Data Editor</a>
               </li>
               <li>
                 <a href="services/facade/sparql/query">

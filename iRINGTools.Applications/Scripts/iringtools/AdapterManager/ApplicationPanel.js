@@ -1,199 +1,202 @@
-﻿/**
+﻿Ext.ns('AdapterManager');
+/**
 * @class AdapterManager.ApplicationPanel
 * @extends Panel
 * @author by Gert Jansen van Rensburg
 */
-Ext.define('AdapterManager.ApplicationPanel', {
-  extend: 'Ext.panel.Panel',
-  alias: 'widget.AdapterManager.ApplicationPanel',
-  layout: 'fit',
-  border: false,
-  frame: false,
-  split: false,
-  store: null,
-  proxy: null,
-  scope: null,
-  record: null,
-  form: null,
-  url: null,
+AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
+    layout: 'fit',
+    border: false,
+    frame: false,
+    split: false,
 
-  /**
-  * initComponent
-  * @protected
-  */
-  initComponent: function () {
+    scope: null,
+    record: null,
+    id: null,
+    form: null,
+    url: null,
 
-    this.addEvents({
-      close: true,
-      save: true,
-      reset: true,
-      validate: true,
-      tabChange: true,
-      refresh: true,
-      selectionchange: true,
-      configure: true
-    });
+    /**
+    * initComponent
+    * @protected
+    */
+    initComponent: function () {
 
-    var scope = "";
-    var showconfigure = "";
+        this.addEvents({
+            close: true,
+            save: true,
+            reset: true,
+            validate: true,
+            tabChange: true,
+            refresh: true,
+            selectionchange: true,
+            configure: true
+        });
 
-    if (this.scope != null) {
-      scope = this.scope.Name;
-    }
+        var scope = "";
+        var showconfigure = "";
+        var id = "";
 
-    var name = "";
-    var description = "";
-    var dataLayer = "";
-    var assembly = "";
+        if (this.scope != null) {
+            scope = this.scope.Name;
+        }
 
-    if (this.record != null) {
-      name = this.record.Name;
-      description = this.record.Description;
-      dataLayer = this.record.DataLayer;
-      assembly = this.record.Assembly;
-      showconfigure = false;
-    }
-    else {
-      showconfigure = true;
-    }
+        if (this.id != null) {
+            id = this.id;
+        }
 
-    this.proxy = Ext.create('Ext.data.proxy.Ajax', {
-      timeout: 120000,
-      extraParams: {},
-      url: 'directory/datalayers',
-      reader: {
-        type: 'json',
-        root: 'items'
-      }
-    });
+        var name = "";
+        var description = "";
+        var dataLayer = "";
+        var assembly = "";
 
-    if (!Ext.ModelManager.isRegistered('dlModel')) {
-      Ext.define('dlModel', {
-        extend: 'Ext.data.Model',
-        fields: [
-          { name: 'Assembly', type: 'string' },
-          { name: 'Name', type: 'string' },
-          { name: 'Configurable', type: 'string' }
-       ]
-      });
-    }
+        if (this.record != null) {
+            name = this.record.Name;
+            description = this.record.Description;
+            dataLayer = this.record.DataLayer;
+            assembly = this.record.Assembly;
+            showconfigure = false;
+        }
+        else {
+            showconfigure = true;
+        }
 
-    this.store = new Ext.data.Store({
-      id: 'dataLayer',
-      model: 'dlModel',
-      proxy: this.proxy
-    });
+        var dataLayersStore = new Ext.data.JsonStore({
+            // store configs            
+            autoDestroy: true,
+            url: 'directory/dataLayers',
+            // reader configs
+            root: 'items',
+            idProperty: 'assembly',
+            fields: [
+                { name: 'assembly', mapping: 'Assembly', allowBlank: false },
+                { name: 'name', mapping: 'Name', allowBlank: false },
+                { name: 'configurable', mapping: 'Configurable', allowBlank: false }
+            ]
+        });
 
-    var cmbDataLayers = Ext.create('Ext.form.ComboBox', {
-      fieldLabel: 'Data Layer',
-      //boxMaxWidth: 250,
-      width: 250,
-      store: this.store,
-      displayField: 'Name',
-      valueField: 'Assembly',
-      hiddenName: 'Assembly',
-      value: assembly,
-      queryMode: 'local'
-    });
+        var panel = Ext.getCmp(id);
+        dataLayersStore.on('beforeload', function (store, options) {
+            panel.body.mask('Loading...', 'x-mask-loading');
+        }, this);
 
-    cmbDataLayers.on('select', function (combo, record, index) {
-      if (record != null && this.record != null) {
-        this.record.DataLayer = record[0].data.name;
-        this.record.Assembly = record[0].data.assembly;
-      }
-    }, this);
+        dataLayersStore.on('load', function (store, records, options) {
+            panel.body.unmask();
+        }, this);
 
-    that = this;
+        var cmbDataLayers = new Ext.form.ComboBox({
+            fieldLabel: 'Data Layer',
+            boxMaxWidth: 250,
+            width: 250,
+            forceSelection: true,
+            typeAhead: true,
+            triggerAction: 'all',
+            lazyRender: true,
+            //mode: 'remote',
+            store: dataLayersStore,
+            displayField: 'name',
+            valueField: 'assembly',
+            hiddenName: 'Assembly',
+            value: assembly
+        });
 
-    this.form = new Ext.form.Panel({
-      labelWidth: 70, // label settings here cascade unless
-      url: this.url,
-      method: 'POST',
-      bodyStyle: 'padding:10px 5px 0',
-      layout: 'anchor',
-      border: false, // removing the border of the form
+        cmbDataLayers.on('select', function (combo, record, index) {
+            if (record != null && this.record != null) {
+                this.record.DataLayer = record.data.name;
+                this.record.Assembly = record.data.assembly;
+            }
+        }, this);
 
-      frame: false,
+        //that = this;
 
-      defaults: {
-        width: 310,
-        msgTarget: 'side'
-      },
-      defaultType: 'textfield',
+        this.form = new Ext.FormPanel({
+            labelWidth: 70, // label settings here cascade unless
+            url: this.url,
+            method: 'POST',
+            bodyStyle: 'padding:10px 5px 0',
 
-      items: [
-              { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 300, value: scope, allowBlank: false },
-              { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 300, value: name, allowBlank: false },
-              { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 300, value: name, allowBlank: false },
-              { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 300, value: description },
-              cmbDataLayers
-          ],
-      buttonAlign: 'left', // buttons aligned to the left            
-      autoDestroy: false
-    });
+            border: false, // removing the border of the form
 
-    this.items = [
+            frame: false,
+            closable: true,
+            defaults: {
+                width: 310,
+                msgTarget: 'side'
+            },
+            defaultType: 'textfield',
+
+            items: [
+          { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 300, value: scope, allowBlank: false },
+          { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 300, value: name, allowBlank: false },
+          { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 300, value: name, allowBlank: false },
+          { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 300, value: description },
+          cmbDataLayers
+      ],
+            buttonAlign: 'left', // buttons aligned to the left            
+            autoDestroy: false
+        });
+
+        this.items = [
   		    this.form
   	    ];
 
+        this.bbar = this.buildToolbar(showconfigure);
 
+        // super
+        AdapterManager.ApplicationPanel.superclass.initComponent.call(this);
 
-    this.bbar = this.buildToolbar(showconfigure);
+        //var data = dataLayersStore.getById(dataLayer);
+        //cmbDataLayers.Value = data;
 
-    // super
-    this.callParent(arguments);
+    },
 
-    this.store.load();
+    buildToolbar: function (showconfigure) {
+        return [{
+            xtype: 'tbfill'
+        }, {
+            xtype: "tbbutton",
+            text: 'Ok',
+            //icon: 'Content/img/16x16/document-save.png',
+            //tooltip: 'Save',
+            disabled: false,
+            handler: this.onSave,
+            scope: this
+        }, {
+            xtype: "tbbutton",
+            text: 'Cancel',
+            //icon: 'Content/img/16x16/edit-clear.png',
+            //tooltip: 'Clear',
+            disabled: false,
+            handler: this.onReset,
+            scope: this
+        }]
+    },
 
+    onReset: function () {
+        this.form.getForm().reset();
+        this.fireEvent('Cancel', this);
+    },
 
-  },
-
-  buildToolbar: function (showconfigure) {
-    return [{
-      xtype: 'tbfill'
-    }, {
-      xtype: "button",
-      text: 'Ok',
-      //icon: 'Content/img/16x16/document-save.png',
-      //tooltip: 'Save',
-      disabled: false,
-      handler: this.onSave,
-      scope: this
-    }, {
-      xtype: "button",
-      text: 'Canel',
-      //icon: 'Content/img/16x16/edit-clear.png',
-      //tooltip: 'Clear',
-      disabled: false,
-      handler: this.onReset,
-      scope: this
-    }]
-  },
-
-  onReset: function () {
-    this.form.getForm().reset();
-    this.fireEvent('Cancel', this);
-  },
-
-  onSave: function () {
-    var that = this;    // consists the main/prappNameclass object
-    if (this.form.getForm().getFieldValues().Scope != this.form.getForm().getFieldValues().Name) {
-      this.form.getForm().submit({
-        waitMsg: 'Saving Data...',
-        success: function (f, a) {
-          that.fireEvent('Save', that);
-        },
-        failure: function (f, a) {
-          //Ext.Msg.alert('Warning', 'Error saving changes!')
-          var message = 'Error saving changes!';
-          showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+    onSave: function () {
+        var that = this;    // consists the main/prappNameclass object       
+        if (this.form.getForm().getFieldValues().Scope != this.form.getForm().getFieldValues().Name) {
+            this.form.getForm().submit({
+                waitMsg: 'Saving Data...',
+                success: function (f, a) {
+                    that.fireEvent('Save', that);
+                },
+                failure: function (f, a) {
+                    //Ext.Msg.alert('Warning', 'Error saving changes!')
+                    var message = 'Error saving changes!';
+                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                }
+            });
         }
-      });
+        else {
+            var message = 'Scope & Application name cannot be same!';
+            showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+        }
     }
-    else {
-      var message = 'Scope & Application name cannot be same!';
-      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-    }
-  }
 
 });
+
