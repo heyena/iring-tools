@@ -382,6 +382,7 @@ namespace iRINGTools.Web.Models
           string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string tableNames, string portNumber, string serName)
         {
           List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
+          var hasDBDictionary = false;
 
           WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
           var uri = String.Format("/{0}/{1}/objects", scope, application);
@@ -399,6 +400,19 @@ namespace iRINGTools.Web.Models
 					request.Add("serName", serName);
 
           List<DataObject> dataObjects = client.Post<Request, List<DataObject>>(uri, request, true);
+
+          try
+          {
+            DatabaseDictionary dbDictionary = GetDBDictionary(scope, application);
+
+            if (dbDictionary != null)
+              if (dbDictionary.dataObjects.Count > 0)
+                hasDBDictionary = true;
+          }
+          catch (Exception ex)
+          {
+            hasDBDictionary = false;
+          }
 
           foreach (DataObject dataObject in dataObjects)
           {
@@ -465,23 +479,23 @@ namespace iRINGTools.Web.Models
                 {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
               };
 
-              if (!dataObject.isKeyProperty(dataProperty.propertyName))
+              if (dataObject.isKeyProperty(dataProperty.propertyName) && !hasDBDictionary)
+              {                
+                properties.Add("keyType", dataProperty.keyType.ToString());
+
+                JsonTreeNode keyPropertyNode = new JsonTreeNode()
+                {
+                  text = dataProperty.columnName,
+                  type = "keyProperty",
+                  properties = properties,
+                  iconCls = "treeKey",
+                  leaf = true
+                };
+
+                keyPropertiesNode.children.Add(keyPropertyNode);                
+              }
+              else
               {
-              //  properties.Add("keyType", dataProperty.keyType.ToString());
-
-              //  JsonTreeNode keyPropertyNode = new JsonTreeNode()
-              //  {
-              //    text = dataProperty.columnName,
-              //    type = "keyProperty",
-              //    properties = properties,
-              //    iconCls = "treeKey",
-              //    leaf = true
-              //  };
-
-              //  keyPropertiesNode.children.Add(keyPropertyNode);
-              //}
-              //else
-              //{
                 JsonTreeNode dataPropertyNode = new JsonTreeNode()
                 {
                   text = dataProperty.columnName,
