@@ -63,7 +63,6 @@
                     ptype: 'treeviewdragdrop',
                     dropGroup: 'refdataGroup'
                 },
-                store: this.store, //make sure tree.View uses same store
                 stateful: true,
                 stateId: this.id + '-state',
                 stateEvents: ['itemcollapse', 'itemexpand']

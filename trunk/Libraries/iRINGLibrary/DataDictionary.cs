@@ -102,6 +102,9 @@ namespace org.iringtools.library
     [DataMember(IsRequired = false, Order = 8, EmitDefaultValue = false)]
     public bool hasContent { get; set; }
 
+    [DataMember(IsRequired = false, Order = 9, EmitDefaultValue = false)]
+    public bool isListOnly { get; set; }
+
     public bool isKeyProperty(string propertyName)
     {
       foreach (KeyProperty keyProperty in keyProperties)

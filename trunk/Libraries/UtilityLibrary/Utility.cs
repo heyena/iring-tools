@@ -931,13 +931,13 @@ namespace org.iringtools.utility
         return graph;
     }
 
-    public static T DeserializeFromStreamJson<T>(MemoryStream stream, bool useDataContractSerializer)
+    public static T DeserializeFromStreamJson<T>(Stream stream, bool useDataContractSerializer)
     {
         return DeserializeFromStreamJson<T>(stream, Encoding.UTF8, useDataContractSerializer);
     }
 
 
-    public static T DeserializeFromStreamJson<T>(MemoryStream stream, Encoding encoding, bool useDataContractSerializer)
+    public static T DeserializeFromStreamJson<T>(Stream stream, Encoding encoding, bool useDataContractSerializer)
     {
         T graph;
 
@@ -982,6 +982,7 @@ namespace org.iringtools.utility
         }
 
     }
+
     public static T DeserializeFromXElement<T>(XElement element)
     {      
       try
@@ -1000,6 +1001,7 @@ namespace org.iringtools.utility
     {
       return DeserializeFromStream<T>(stream, true);
     }
+
 
     public static T DeserializeFromStream<T>(Stream stream, bool useDataContractSerializer)
     {

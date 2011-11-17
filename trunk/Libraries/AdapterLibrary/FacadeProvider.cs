@@ -148,11 +148,9 @@ namespace org.iringtools.facade
       {
         if (!_isDataLayerInitialized)
         {
-          try
-          {
-            _dataLayer = _kernel.Get<IDataLayer2>("DataLayer");
-          }
-          catch
+          _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
+
+          if (_dataLayer == null)
           {
             _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
           }
@@ -363,30 +361,53 @@ namespace org.iringtools.facade
             endpoint.ProxyCredentials = proxyCreds.GetNetworkCredential();
           }
 
-          VDS.RDF.IGraph resultGraph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");
+          VDS.RDF.IGraph resultGraph = endpoint.QueryWithResultGraph("CONSTRUCT {?s ?p ?o} WHERE {?s ?p ?o}");          
           #endregion
 
-          // call RdfProjectionEngine to fill data objects from a given graph
-          _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+          if (resultGraph != null && resultGraph.Triples.Count > 0)
+          {
+            // call RdfProjectionEngine to fill data objects from a given graph
+            _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
 
-          System.Text.StringBuilder sb = new System.Text.StringBuilder();
-          TextWriter textWriter = new StringWriter(sb);
-          VDS.RDF.Writing.RdfXmlWriter rdfWriter = new VDS.RDF.Writing.RdfXmlWriter();
-          rdfWriter.Save(resultGraph, textWriter);
-          XDocument xDocument = XDocument.Parse(sb.ToString());
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            TextWriter textWriter = new StringWriter(sb);
+            VDS.RDF.Writing.RdfXmlWriter rdfWriter = new VDS.RDF.Writing.RdfXmlWriter();
+            rdfWriter.Save(resultGraph, textWriter);
+            XDocument xDocument = XDocument.Parse(sb.ToString());
 
-          _dataObjects = _projectionEngine.ToDataObjects(graph, ref xDocument);
+            if (xDocument != null && xDocument.Root != null)
+            {
+              _logger.Debug(xDocument.Root.ToString());
+              _dataObjects = _projectionEngine.ToDataObjects(graph, ref xDocument);
 
-          // post data objects to data layer
-          _dataLayer.Post(_dataObjects);
+              if (_dataObjects != null && _dataObjects.Count > 0)
+              {
+                status.Messages.Add("Query target endpoint completed successfully.");
+                status.Messages.Add(String.Format("Number of data objects created [{0}].", _dataObjects.Count));
+                
+                // post data objects to data layer
+                response.Append(_dataLayer.Post(_dataObjects));
 
-          DateTime endTime = DateTime.Now;
-          TimeSpan duration = endTime.Subtract(startTime);
+                DateTime endTime = DateTime.Now;
+                TimeSpan duration = endTime.Subtract(startTime);
 
-          status.Messages.Add(string.Format("Graph [{0}] has been posted to legacy system successfully.", graph));
-
-          status.Messages.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
-            duration.Minutes, duration.Seconds, duration.Milliseconds));
+                status.Messages.Add(String.Format("Execution time [{0}:{1}.{2}] minutes.",
+                  duration.Minutes, duration.Seconds, duration.Milliseconds));
+              }
+              else
+              {
+                status.Messages.Add(string.Format("No data objects being created."));
+              }
+            }
+            else
+            {
+              throw new Exception("Facade document is empty.");
+            }
+          }
+          else
+          {
+            throw new Exception("Facade graph is empty.");
+          }
         }
       }
       catch (Exception ex)

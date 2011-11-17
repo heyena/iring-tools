@@ -120,7 +120,7 @@ namespace org.iringtools.web.controllers
 
     private DataFilter CreateDataFilter(string filter, string sortBy, string sortOrder)
     {
-      DataFilter dataFilter = null;
+        var dataFilter = new DataFilter();
 
       // process filtering
       if (filter != null && filter.Count() > 0)
@@ -131,7 +131,6 @@ namespace org.iringtools.web.controllers
 
           if (filterExpressions != null && filterExpressions.Count > 0)
           {
-            dataFilter = new DataFilter();
 
             List<Expression> expressions = new List<Expression>();
             dataFilter.Expressions = expressions;
@@ -176,8 +175,6 @@ namespace org.iringtools.web.controllers
       // process sorting
       if (sortBy != null && sortBy.Count() > 0 && sortOrder != null && sortOrder.Count() > 0)
       {
-        if (dataFilter == null)
-          dataFilter = new DataFilter();
 
         List<OrderExpression> orderExpressions = new List<OrderExpression>();
         dataFilter.OrderExpressions = orderExpressions;

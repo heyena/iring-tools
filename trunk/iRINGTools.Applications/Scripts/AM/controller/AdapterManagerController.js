@@ -725,8 +725,6 @@
             title: scope + '.' + app + '.' + graph,
             id: scope + app + graph + Ext.id(),
             scope: scope,
-            start: 0,
-            limit: 25,
             app: app,
             graph: graph
         };

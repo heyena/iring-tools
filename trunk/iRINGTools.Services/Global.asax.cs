@@ -20,7 +20,7 @@ namespace org.iringtools.adapter
       RouteTable.Routes.Add(new ServiceRoute("refdata", new WebServiceHostFactory(), typeof(org.iringtools.services.ReferenceDataService)));
       RouteTable.Routes.Add(new ServiceRoute("hibernate", new WebServiceHostFactory(), typeof(org.iringtools.services.HibernateService)));
       RouteTable.Routes.Add(new ServiceRoute("adapter", new WebServiceHostFactory(), typeof(org.iringtools.services.AdapterService)));
-      RouteTable.Routes.Add(new ServiceRoute("data", new WebServiceHostFactory(), typeof(org.iringtools.services.DataService2)));
+      RouteTable.Routes.Add(new ServiceRoute("data", new RawServiceHostFactory(), typeof(org.iringtools.services.DataService)));
       RouteTable.Routes.Add(new ServiceRoute("dxfr", new WebServiceHostFactory(), typeof(org.iringtools.services.DataTransferService)));
       RouteTable.Routes.Add(new ServiceRoute("facade/svc", new WebServiceHostFactory(), typeof(org.iringtools.services.FacadeService)));
     }
