@@ -179,6 +179,7 @@
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\AM\AM.js" />
     <Content Include="Scripts\AM\controller\AdapterManagerController.js" />
+    <Content Include="Scripts\AM\controller\ConfigurationController.js" />
     <Content Include="Scripts\AM\model\DataLayerModel.js" />
     <Content Include="Scripts\AM\model\DirectoryModel.js" />
     <Content Include="Scripts\AM\model\DynamicModel.js" />
@@ -212,6 +213,7 @@
     <Content Include="Scripts\AM\view\nhybernateconfig\KeyPropertyForm.js" />
     <Content Include="Scripts\AM\view\search\SearchPanel.js" />
     <Content Include="Scripts\AM\view\search\SearchTree.js" />
+    <Content Include="Scripts\AM\view\spreadsheet\Source.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />
     <Content Include="Scripts\extjs40\ext-all-debug.js" />
     <Content Include="Scripts\extjs40\ext-debug.js" />

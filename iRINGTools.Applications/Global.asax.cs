@@ -58,11 +58,7 @@ namespace iRINGTools.Web
   {
     public override void Load()
     {
-      //Bind<IFormsAuthentication>().To<FormsAuthenticationService>();
-      //Bind<IMembershipService>().To<AccountMembershipService>();
-      //Bind<MembershipProvider>().ToConstant(Membership.Provider);
       Bind<IAdapterRepository>().To<AdapterRepository>();
-     // Bind<org.iringtools.adapter.datalayer.ISPPIDRepository>().To<org.iringtools.adapter.datalayer.SPPIDRepository>();
     }
   }
 }

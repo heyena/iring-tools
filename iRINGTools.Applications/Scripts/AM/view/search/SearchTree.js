@@ -11,11 +11,12 @@
     selModel: Ext.create('Ext.selection.RowModel', { singleSelect: true }),
     lines: true,
     initComponent: function () {
-        Ext.apply(this, {
+        var me = this;
+        Ext.apply(me, {
             store: Ext.create('Ext.data.TreeStore', {
                 model: 'AM.model.SearchModel',
                 autoLoad: false,
-                storeId: this.id,
+                storeId: me.id,
                 clearOnLoad: true,
                 root: {
                     expanded: true
@@ -41,10 +42,9 @@
                     ptype: 'treeviewdragdrop',
                     dragGroup: 'refdataGroup',
                     enableDrop: false
-                },
-                store: this.store// make sure the tree.View uses same store
+                }
             }
         });
-        this.callParent(arguments);
+        me.callParent(arguments);
     }
 });

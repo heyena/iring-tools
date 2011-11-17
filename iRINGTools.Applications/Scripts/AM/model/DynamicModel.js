@@ -3,6 +3,7 @@
     fields: [],
     proxy: {
         type: 'ajax',
+        timeout: 120000,
         actionMethods: { read: 'POST' },
         url: 'datagrid/getdata',
         extraParams: {

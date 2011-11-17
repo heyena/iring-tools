@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Security.Principal;
+using System.ServiceModel;
+using Ninject;
 using System.Collections;
 using System.Collections.Generic;
 using System.ServiceModel.Web;
+using System.Web;
+using System.Text;
 using log4net;
 using System.Net;
 
@@ -60,7 +65,10 @@ namespace org.iringtools.adapter.identity
           string bechtelUserName = headers.Get("X-myPSN-BechtelUserName");
           _logger.Debug("X-myPSN-BechtelUserName [" + bechtelUserName + "]");
           if (!String.IsNullOrEmpty(bechtelUserName))
+          {
             keyRing.Add("BechtelUserName", bechtelUserName);
+            keyRing.Add("UserName", bechtelUserName);
+          }
 
           string bechtelDomain = headers.Get("X-myPSN-BechtelDomain");
           _logger.Debug("X-myPSN-BechtelDomain [" + bechtelDomain + "]");

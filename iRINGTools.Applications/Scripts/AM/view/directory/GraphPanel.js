@@ -59,7 +59,7 @@
 
 
         if (identifier == '')
-            identifier = 'Drop a Key Property Node here.</div>';
+            identifier = 'Drop a Property Node here.</div>';
         else
             identifier = 'Identifier: ' + identifier + '</div>';
 
@@ -108,19 +108,19 @@
                 var propertydd = new Ext.dd.DropTarget(propertyTarget, {
                     ddGroup: 'propertyGroup',
                     notifyEnter: function (propertydd, e, data) {
-                        if (data.records[0].data.type != 'KeyDataPropertyNode')
+                        if (data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'DataPropertyNode')
                             return this.dropNotAllowed;
                         else
                             return this.dropAllowed;
                     },
                     notifyOver: function (propertydd, e, data) {
-                        if (data.records[0].data.type != 'KeyDataPropertyNode')
+                        if (data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'DataPropertyNode')
                             return this.dropNotAllowed;
                         else
                             return this.dropAllowed;
                     },
                     notifyDrop: function (propertydd, e, data) {
-                        if (data.records[0].data.type != 'KeyDataPropertyNode') {
+                        if (data.records[0].data.type != 'KeyDataPropertyNode' && data.records[0].data.type != 'DataPropertyNode') {
                             return false;
                         }
                         else {
@@ -159,10 +159,10 @@
                                 me.getForm().findField('oldClassLabel').setValue(tempClassLabel);
                                 me.getForm().findField('oldClassUrl').setValue(tempClassUrl);
                             }
-
-                            me.getForm().findField('classLabel').setValue(data.records[0].data.record.Label);
+                            var lbl = (data.records[0].data.record.Label != undefined) ? data.records[0].data.record.Label : data.records[0].data.record.label;
+                            me.getForm().findField('classLabel').setValue(lbl);
                             me.getForm().findField('classUrl').setValue(data.records[0].data.record.Uri);
-                            var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + data.records[0].data.record.Label + '</b></td></tr>'
+                            var msg = '<table style="font-size:13px"><tr><td>Class Label:</td><td><b>' + lbl + '</b></td></tr>'
                             msg += '</table>'
                             me.body.child('div.class-target' + formid).update(msg);
                             return true;

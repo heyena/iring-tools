@@ -147,6 +147,18 @@ namespace org.iringtools.library
         );
     }
 
+    protected DataFilter FormMultipleKeysFilter(IDataObject dataObject)
+    {
+      List<Expression> expressions = BuildKeyFilter(dataObject);
+      
+      DataFilter dataFilter = new DataFilter
+      {
+        Expressions = expressions,
+      };
+
+      return dataFilter;
+    }
+
     protected DataFilter FormMultipleKeysFilter(IList<string> identifiers)
     {
       List<Expression> expressions = new List<Expression>();
@@ -205,6 +217,33 @@ namespace org.iringtools.library
       predicate = dataFilter.ToPredicate(_dataObjectDefinition);
 
       return predicate; 
+    }
+
+    protected List<Expression> BuildKeyFilter(IDataObject dataObject)
+    {
+      List<Expression> expressions = new List<Expression>();
+
+      Expression expression = null;
+      int i = 0;
+      foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
+      {
+        string identifier = dataObject.GetPropertyValue(keyProperty.keyPropertyName).ToString();
+
+        expression = new Expression
+        {
+          PropertyName = keyProperty.keyPropertyName,
+          RelationalOperator = RelationalOperator.EqualTo,
+          Values = new Values
+          {
+            identifier,
+          }
+        };
+
+        expressions.Add(expression);
+        i++;
+      }
+
+      return expressions;
     }
 
     protected List<Expression> BuildKeyFilter(string identifier)
@@ -296,7 +335,14 @@ namespace org.iringtools.library
     {
       throw new NotImplementedException();
     }
-    public virtual Response Refresh() {
+
+    public virtual Response RefreshAll()
+    {
+      throw new NotImplementedException();
+    }
+
+    public virtual Response Refresh(string objectType)
+    {
       throw new NotImplementedException();
     }
   }

@@ -85,7 +85,10 @@ namespace org.iringtools.library
     long GetSearchCount(string objectType, string query);
 
     XElement GetConfiguration();
-    Response Refresh();
+
+    Response RefreshAll();
+
+    Response Refresh(string objectType);
   }
 
   [CollectionDataContract(Name = "authorizedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]
