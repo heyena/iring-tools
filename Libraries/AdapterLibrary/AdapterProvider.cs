@@ -1189,13 +1189,11 @@ namespace org.iringtools.adapter
                         Utility.Write<IDictionary>(_keyRing, @"KeyRing.xml");
                     }
 
-                    try
+                    _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
+
+                    if (_dataLayer == null)
                     {
-                        _dataLayer = _kernel.Get<IDataLayer2>("DataLayer");
-                    }
-                    catch
-                    {
-                        _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
+                      _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
                     }
 
                     _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
