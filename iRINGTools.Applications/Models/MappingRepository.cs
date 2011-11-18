@@ -11,6 +11,7 @@ using log4net;
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
+using System.Net;
 
 namespace iRINGTools.Web.Models
 {
@@ -18,14 +19,35 @@ namespace iRINGTools.Web.Models
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingRepository));
         private NameValueCollection _settings = null;
-        private WebHttpClient _client = null;
+        private WebHttpClient _adapterServiceClient = null;
         private string _refDataServiceURI = string.Empty;
 
         [Inject]
         public MappingRepository()
         {
-            _settings = ConfigurationManager.AppSettings;
-            _client = new WebHttpClient(_settings["AdapterServiceUri"]);
+          NameValueCollection settings = ConfigurationManager.AppSettings;
+          ServiceSettings _settings = new ServiceSettings();
+          _settings.AppendSettings(settings);
+
+          #region initialize webHttpClient for converting old mapping
+          string proxyHost = _settings["ProxyHost"];
+          string proxyPort = _settings["ProxyPort"];
+          string adapterServiceUri = _settings["AdapterServiceUri"];
+
+          if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+          {
+            WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
+            webProxy.Credentials = _settings.GetProxyCredential();
+
+            _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
+          }
+          else
+          {
+            _adapterServiceClient = new WebHttpClient(adapterServiceUri);
+
+          }
+          #endregion
         }
 
         public Mapping GetMapping(string scopeName, string applicationName)
@@ -34,7 +56,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                obj = _client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
+                obj = _adapterServiceClient.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
             }
             catch (Exception ex)
             {
@@ -49,7 +71,7 @@ namespace iRINGTools.Web.Models
             XElement mappingXml = XElement.Parse(Utility.SerializeDataContract<Mapping>(mapping));
             try
             {
-                _client.Post<XElement>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), mappingXml, true);
+                _adapterServiceClient.Post<XElement>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), mappingXml, true);
             }
             catch (Exception ex)
             {

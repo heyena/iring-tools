@@ -8,13 +8,14 @@ using log4net;
 using Ninject;
 using org.iringtools.library;
 using org.iringtools.utility;
+using System.Net;
 
 namespace iRINGTools.Web.Models
 {
     public class GridRepository : IGridRepository
     {
       private NameValueCollection _settings = null;
-      private WebHttpClient _client = null;
+      private WebHttpClient _dataServiceClient = null;
 			private DataDictionary dataDict;
 			private DataItems dataItems;
 			private Grid dataGrid;
@@ -25,9 +26,31 @@ namespace iRINGTools.Web.Models
 			[Inject]
 			public GridRepository()
       {
-        _settings = ConfigurationManager.AppSettings;
-        _client = new WebHttpClient(_settings["DataServiceURI"]);
-				dataGrid = new Grid();
+        dataGrid = new Grid();
+
+        NameValueCollection settings = ConfigurationManager.AppSettings;
+        ServiceSettings _settings = new ServiceSettings();
+        _settings.AppendSettings(settings);
+
+        #region initialize webHttpClient for converting old mapping
+        string proxyHost = _settings["ProxyHost"];
+        string proxyPort = _settings["ProxyPort"];
+        string dataServiceUri = _settings["DataServiceURI"];
+
+        if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+        {
+          WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
+          webProxy.Credentials = _settings.GetProxyCredential();
+
+          _dataServiceClient = new WebHttpClient(dataServiceUri, null, webProxy);
+        }
+        else
+        {
+          _dataServiceClient = new WebHttpClient(dataServiceUri);
+
+        }
+        #endregion
       }
 
 			public string getResponse()
@@ -68,7 +91,7 @@ namespace iRINGTools.Web.Models
 			{
 				try
         {
-					dataDict = _client.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
+					dataDict = _dataServiceClient.Get<DataDictionary>("/" + app + "/" + scope + "/dictionary?format=xml", true);
 
 					if (dataDict == null || dataDict.dataObjects.Count == 0)
 						response = response + "Data dictionary of [" + app + "] is empty.";
@@ -87,7 +110,7 @@ namespace iRINGTools.Web.Models
           string format = "json";
           DataFilter dataFilter = createDataFilter(filter, sort, dir);
           string relativeUri = "/" + app + "/" + scope + "/" + graph + "/filter?format=" + format + "&start=" + start + "&limit=" + limit;
-          string dataItemsJson = _client.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
+          string dataItemsJson = _dataServiceClient.Post<DataFilter, string>(relativeUri, dataFilter, format, true);
           
           JavaScriptSerializer serializer = new JavaScriptSerializer();
           dataItems = (DataItems)serializer.Deserialize(dataItemsJson, typeof(DataItems));
