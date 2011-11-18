@@ -13,6 +13,7 @@ using org.iringtools.utility;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
 using System.Text;
+using System.Net;
 
 
 namespace iRINGTools.Web.Models
@@ -20,15 +21,44 @@ namespace iRINGTools.Web.Models
     public class AdapterRepository : IAdapterRepository
     {
         private NameValueCollection _settings = null;
-        private WebHttpClient _client = null;
-        private string _refDataServiceURI = string.Empty;
+        private WebHttpClient _adapterServiceClient = null;
+        private WebHttpClient _hibernateServiceClient = null;
+        private WebHttpClient _referenceDataServiceClient = null;
+        //private string _referenceDataServiceURI = string.Empty;
 				private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));      
 
         [Inject]
         public AdapterRepository()
         {
-            _settings = ConfigurationManager.AppSettings;
-            _client = new WebHttpClient(_settings["AdapterServiceUri"]);
+            NameValueCollection settings = ConfigurationManager.AppSettings;
+
+            ServiceSettings _settings = new ServiceSettings();
+            _settings.AppendSettings(settings);
+
+            #region initialize webHttpClient for converting old mapping
+            string proxyHost = _settings["ProxyHost"];
+            string proxyPort = _settings["ProxyPort"];
+            string adapterServiceUri = _settings["AdapterServiceUri"];
+            string hibernateServiceUri = _settings["NHibernateServiceUri"];
+            string referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
+
+            if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+            {
+              WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
+              webProxy.Credentials = _settings.GetProxyCredential();
+
+              _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
+              _hibernateServiceClient = new WebHttpClient(hibernateServiceUri, null, webProxy);
+              _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri, null, webProxy);
+            }
+            else
+            {
+              _adapterServiceClient = new WebHttpClient(adapterServiceUri);
+              _hibernateServiceClient = new WebHttpClient(hibernateServiceUri);
+              _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri);
+            }
+            #endregion
         }
 
         public ScopeProjects GetScopes()
@@ -39,7 +69,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                obj = _client.Get<ScopeProjects>("/scopes");
+                obj = _adapterServiceClient.Get<ScopeProjects>("/scopes");
 
                 _logger.Debug("Successfully called Adapter.");
             }
@@ -58,7 +88,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                obj = _client.Post<ScopeProjects>("/scopes", scopes, true);
+                obj = _adapterServiceClient.Post<ScopeProjects>("/scopes", scopes, true);
             }
 						catch (Exception ex)
 						{
@@ -74,7 +104,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                obj = _client.Get<DataLayers>("/datalayers");
+                obj = _adapterServiceClient.Get<DataLayers>("/datalayers");
             }
 						catch (Exception ex)
 						{
@@ -89,8 +119,7 @@ namespace iRINGTools.Web.Models
             Entity entity = new Entity();
             try
             {
-                WebHttpClient _tempClient = new WebHttpClient(_settings["ReferenceDataServiceUri"]);
-                entity = _tempClient.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
+              entity = _referenceDataServiceClient.Get<Entity>(String.Format("/classes/{0}/label", classId), true);
             }
 						catch (Exception ex)
 						{
@@ -130,7 +159,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                obj = _client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", scopeName, applicationName), true);
+                obj = _adapterServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", scopeName, applicationName), true);
             }
 						catch (Exception ex)
 						{
@@ -146,7 +175,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                obj = _client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
+                obj = _adapterServiceClient.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
             }
 						catch (Exception ex)
 						{
@@ -162,7 +191,7 @@ namespace iRINGTools.Web.Models
 
             try
             {
-                obj = _client.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
+                obj = _adapterServiceClient.Get<XElement>(String.Format("/{0}/{1}/binding", scope, application), true);
             }
 						catch (Exception ex)
 						{
@@ -187,7 +216,7 @@ namespace iRINGTools.Web.Models
               )
             );
 
-                obj = _client.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
+                obj = _adapterServiceClient.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
 
             }
 						catch (Exception ex)
@@ -315,14 +344,12 @@ namespace iRINGTools.Web.Models
         #region NHibernate Configuration Wizard support methods
         public DataProviders GetDBProviders()
         {
-          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          return client.Get<DataProviders>("/providers");
+          return _hibernateServiceClient.Get<DataProviders>("/providers");
         }
 
 				public string SaveDBDictionary(string scope, string application, string tree)
 				{
-					WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
+					DatabaseDictionary dbDictionary = Utility.FromJson<DatabaseDictionary>(tree);
 
           string connStr = dbDictionary.ConnectionString;
           if (!String.IsNullOrEmpty(connStr))
@@ -334,7 +361,7 @@ namespace iRINGTools.Web.Models
 					string postResult = null;
           try
           {
-						postResult = client.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
+            postResult = _hibernateServiceClient.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
           }
           catch (Exception ex)
           {
@@ -345,8 +372,7 @@ namespace iRINGTools.Web.Models
 
         public DatabaseDictionary GetDBDictionary(string scope, string application)
         {
-          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          DatabaseDictionary dbDictionary = client.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
+          DatabaseDictionary dbDictionary = _hibernateServiceClient.Get<DatabaseDictionary>(String.Format("/{0}/{1}/dictionary", scope, application));
 
           string connStr = dbDictionary.ConnectionString;
           if (!String.IsNullOrEmpty(connStr))
@@ -360,7 +386,6 @@ namespace iRINGTools.Web.Models
         public List<string> GetTableNames(string scope, string application, string dbProvider, string dbServer,
           string dbInstance, string dbName, string dbSchema, string dbUserName, string dbPassword, string portNumber, string serName)
         {
-          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
           var uri = String.Format("/{0}/{1}/tables", scope, application);
 
           Request request = new Request();
@@ -374,7 +399,7 @@ namespace iRINGTools.Web.Models
           request.Add("dbPassword",dbPassword);
 					request.Add("serName", serName);
 
-          return client.Post<Request, List<string>>(uri, request, true);
+          return _hibernateServiceClient.Post<Request, List<string>>(uri, request, true);
         }
 
         // use appropriate icons especially node with children
@@ -384,7 +409,6 @@ namespace iRINGTools.Web.Models
           List<JsonTreeNode> dbObjectNodes = new List<JsonTreeNode>();
           var hasDBDictionary = false;
 
-          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
           var uri = String.Format("/{0}/{1}/objects", scope, application);
 
           Request request = new Request();
@@ -399,7 +423,7 @@ namespace iRINGTools.Web.Models
           request.Add("tableNames", tableNames);
 					request.Add("serName", serName);
 
-          List<DataObject> dataObjects = client.Post<Request, List<DataObject>>(uri, request, true);
+          List<DataObject> dataObjects = _hibernateServiceClient.Post<Request, List<DataObject>>(uri, request, true);
 
           try
           {
@@ -518,8 +542,7 @@ namespace iRINGTools.Web.Models
 
         public Response RegenAll()
         {
-          WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-          return client.Get<Response>("/regen");
+          return _hibernateServiceClient.Get<Response>("/regen");
         }
         #endregion
     }
