@@ -715,11 +715,9 @@ namespace org.iringtools.adapter
       {
         if (!_isDataLayerInitialized)
         {
-          try
-          {
-            _dataLayer = _kernel.Get<IDataLayer2>("DataLayer");
-          }
-          catch
+          _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
+
+          if (_dataLayer == null)
           {
             _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
           }
