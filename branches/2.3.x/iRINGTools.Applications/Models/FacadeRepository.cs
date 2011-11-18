@@ -8,22 +8,45 @@ using System.Collections.Specialized;
 using Ninject;
 using System.Configuration;
 using log4net;
+using iRINGTools.Web.Helpers;
+using System.Net;
 
 namespace org.iringtools.web.Models
 {
     public class FacadeRepository : IFacadeRepository
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(FacadeRepository));
-        private WebHttpClient _client = null;
         private NameValueCollection _settings = null;
-        private string _facadeServiceURI = string.Empty;
+        private WebHttpClient _facadeServiceClient = null;
+        
         private string relativeUri = string.Empty;
 
         [Inject]
         public FacadeRepository()
         {
-            _settings = ConfigurationManager.AppSettings;
-            _client = new WebHttpClient(_settings["FacadeServiceUri"]);
+          NameValueCollection settings = ConfigurationManager.AppSettings;
+          ServiceSettings _settings = new ServiceSettings();
+          _settings.AppendSettings(settings);
+
+          #region initialize webHttpClient for converting old mapping
+          string proxyHost = _settings["ProxyHost"];
+          string proxyPort = _settings["ProxyPort"];
+          string facadeServiceUri = _settings["FacadeServiceUri"];
+           
+          if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+          {
+            WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
+            webProxy.Credentials = _settings.GetProxyCredential();
+
+            _facadeServiceClient = new WebHttpClient(facadeServiceUri, null, webProxy);              
+          }
+          else
+          {
+            _facadeServiceClient = new WebHttpClient(facadeServiceUri);
+            
+          }
+          #endregion
         }
 
         public Response RefreshGraph(string scope, string app, string graph)
@@ -32,7 +55,7 @@ namespace org.iringtools.web.Models
             try
             {
                 relativeUri = string.Format("/{0}/{1}/{2}/refresh", scope, app, graph);
-                resp = _client.Get<Response>(relativeUri);
+                resp = _facadeServiceClient.Get<Response>(relativeUri);
             }
             catch (Exception ex)
             {
