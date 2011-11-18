@@ -331,6 +331,10 @@ namespace org.iringtools.library
       throw new NotImplementedException();
     }
 
+    public virtual IList<IDataObject> Search(string objectType, string query, DataFilter filter, int pageSize, int startIndex)
+    {
+      throw new NotImplementedException();
+    }
     public virtual long GetSearchCount(string objectType, string query)
     {
       throw new NotImplementedException();
