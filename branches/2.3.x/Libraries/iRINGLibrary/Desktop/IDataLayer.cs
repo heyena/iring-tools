@@ -82,6 +82,8 @@ namespace org.iringtools.library
 
     IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex);
 
+    IList<IDataObject> Search(string objectType, string query, DataFilter filter, int pageSize, int startIndex);
+
     long GetSearchCount(string objectType, string query);
 
     XElement GetConfiguration();
