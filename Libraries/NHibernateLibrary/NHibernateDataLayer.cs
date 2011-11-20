@@ -631,8 +631,8 @@ namespace org.iringtools.adapter.datalayer
       {
         IList<IDataObject> relatedObjects = null;
         DataDictionary dictionary = GetDictionary();
-        DataObject dataObject = dictionary.dataObjects.First(c => c.objectName == sourceDataObject.GetType().Name);
-        DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName == relatedObjectType);
+        DataObject dataObject = dictionary.dataObjects.First(c => c.objectName.ToLower() == sourceDataObject.GetType().Name.ToLower());
+        DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
 
         StringBuilder sql = new StringBuilder();
         sql.Append("from " + dataRelationship.relatedObjectName + " where ");

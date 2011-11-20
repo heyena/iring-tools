@@ -20,7 +20,7 @@ namespace iRINGTools.Web.Models
 {
     public class AdapterRepository : IAdapterRepository
     {
-        private NameValueCollection _settings = null;
+        //private NameValueCollection _settings = null;
         private WebHttpClient _adapterServiceClient = null;
         private WebHttpClient _hibernateServiceClient = null;
         private WebHttpClient _referenceDataServiceClient = null;
@@ -433,7 +433,7 @@ namespace iRINGTools.Web.Models
               if (dbDictionary.dataObjects.Count > 0)
                 hasDBDictionary = true;
           }
-          catch (Exception ex)
+          catch (Exception)
           {
             hasDBDictionary = false;
           }

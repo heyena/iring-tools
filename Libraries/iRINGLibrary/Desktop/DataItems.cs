@@ -37,7 +37,17 @@ namespace org.iringtools.library
     [DataMember(Name = "content", Order = 2, EmitDefaultValue = false)]
     public string content { get; set; }
 
-    [DataMember(Name = "relatedItems", Order = 3, EmitDefaultValue = false)]
-    public List<DataItems> relatedItems { get; set; }
+    [DataMember(Name = "links", Order = 3, EmitDefaultValue = false)]
+    public List<Link> links { get; set; }
+  }
+
+  [DataContract(Namespace = "http://www.iringtools.org/data", Name = "link")]
+  public class Link
+  {
+    [DataMember(Name = "href", Order = 0)]
+    public string href { get; set; }
+
+    [DataMember(Name = "rel", Order = 1)]
+    public string rel { get; set; }
   }
 }

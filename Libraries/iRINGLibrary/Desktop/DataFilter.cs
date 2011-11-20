@@ -1137,6 +1137,11 @@ namespace org.iringtools.library
   [DataContract(Namespace = "http://www.iringtools.org/data/filter", Name = "expression")]
   public class Expression
   {
+    public Expression()
+    {
+      Values = new Values();
+    }
+
     [DataMember(Name = "openGroupCount", Order = 0, EmitDefaultValue = false)]
     public int OpenGroupCount { get; set; }
 
