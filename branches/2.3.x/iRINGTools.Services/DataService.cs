@@ -158,14 +158,31 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{clazz}/{id}?format={format}")]
-    public void GetIndividual(string project, string app, string graph, string clazz, string id, string format)
+    //NOTE: Due to uri conflict, this template serves both part 7 individual and non-part7 related items.
+    [Description("Gets an individual if it is part 7 (/{app}/{project}/{graph}/{clazz}/{id}?format={p7format}) or related items of an individual otherwise.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{id}/{related}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}")]
+    public void GetIndividual(string project, string app, string graph, string id, string related, string format, int start, int limit, string sortOrder, string sortBy)
     {
       try
       {
-        object content = _adapterProvider.GetDataProjection(project, app, graph, clazz, id, ref format, false);
-        FormatOutgoingMessage(content, format);
+        if (format != null)
+        {
+          format = format.ToLower();
+
+          // if format is one of the part 7 formats
+          if (format == "rdf" || format == "dto" || format == "p7xml")
+          {
+            // id is clazz, related is individual
+            object content = _adapterProvider.GetDataProjection(project, app, graph, id, related, ref format, false);
+            FormatOutgoingMessage(content, format);
+          }
+        }
+        else
+        {
+          NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, id, related, ref format, start, limit, sortOrder, sortBy, parameters);
+          FormatOutgoingMessage(xDocument.Root, format);
+        }
       }
       catch (Exception ex)
       {
@@ -278,7 +295,7 @@ namespace org.iringtools.services
     [WebGet(UriTemplate = "/all/{app}/{graph}/{clazz}/{id}?format={format}")]
     public void GetIndividualAll(string app, string graph, string clazz, string id, string format)
     {
-      GetIndividual("all", app, graph, clazz, id, format);
+      GetIndividual("all", app, graph, clazz, id, format, 0, 0, String.Empty, String.Empty);
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
@@ -325,10 +342,15 @@ namespace org.iringtools.services
       }
       else if (format.ToUpper() == "JSON")
       {
-        DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
-        MemoryStream ms = Utility.SerializeToStreamJSON<DataItems>(dataItems, false);
-        byte[] json = ms.ToArray();
-        ms.Close();
+        byte[] json = new byte[0];
+        
+        if (xElement != null)
+        {
+          DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
+          MemoryStream ms = Utility.SerializeToStreamJSON<DataItems>(dataItems, false);
+          json = ms.ToArray();
+          ms.Close();
+        }
 
         HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
         HttpContext.Current.Response.Write(Encoding.UTF8.GetString(json, 0, json.Length));

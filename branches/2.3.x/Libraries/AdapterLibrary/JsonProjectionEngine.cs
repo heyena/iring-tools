@@ -31,6 +31,10 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
+        string app = _settings["ApplicationName"].ToLower();
+        string proj = _settings["ProjectName"].ToLower();
+        string resource = graphName.ToLower();
+
         DataItems dataItems = new DataItems()
         {
           total = this.Count,
@@ -41,6 +45,7 @@ namespace org.iringtools.adapter.projection
         if (dataObjects.Count > 0)
         {
           DataObject dataObject = FindGraphDataObject(graphName);
+          if (dataObject == null) return new XDocument();
 
           for (int i = 0; i < dataObjects.Count; i++)
           {
@@ -76,6 +81,54 @@ namespace org.iringtools.adapter.projection
                 if (dataObject.isKeyProperty(dataProperty.propertyName))
                 {
                   dataItem.id = value;
+                }
+              }
+
+              string itemHref = String.Format("/{0}/{1}/{2}/{3}", app, proj, resource, dataItem.id);
+              
+              dataItem.links = new List<Link> 
+              {
+                new Link {
+                  href = itemHref,
+                  rel = "self"
+                }
+              };
+
+              foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+              {
+                // create data filter to get related object count
+                DataFilter filter = new DataFilter();
+
+                foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+                {
+                  Expression expression = new Expression();
+
+                  if (filter.Expressions.Count > 0)
+                  {
+                    expression.LogicalOperator = LogicalOperator.And;
+                  }
+
+                  expression.PropertyName = propertyMap.relatedPropertyName;
+                  expression.RelationalOperator = RelationalOperator.EqualTo;
+                  expression.Values.Add(dataObj.GetPropertyValue(propertyMap.dataPropertyName).ToString());
+
+                  filter.Expressions.Add(expression);
+                }
+
+                long relObjCount = _dataLayer.GetCount(dataRelationship.relatedObjectName, filter);
+                
+                // only add link for related object that has data
+                if (relObjCount > 0)
+                {
+                  string relObj = dataRelationship.relatedObjectName.ToLower();
+
+                  Link relLink = new Link()
+                  {
+                    href = String.Format("{0}/{1}", itemHref, relObj),
+                    rel = relObj
+                  };
+
+                  dataItem.links.Add(relLink);
                 }
               }
 
