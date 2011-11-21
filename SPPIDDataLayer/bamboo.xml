@@ -16,6 +16,9 @@
     <SPPIDDataLayerDir>$(MSBuildProjectDirectory)\SPPIDDataLayer</SPPIDDataLayerDir>
     <DeploymentDir>$(MSBuildProjectDirectory)\deployment</DeploymentDir>
     <DistDir>C:\iring-tools-web\iip.iringsandbox.org\Services\bin</DistDir>
+    <DistDirApp_Data>C:\iring-tools-web\iip.iringsandbox.org\Services\App_Data</DistDirApp_Data>
+  <DistDirApps>C:\iring-tools-web\iip.iringsandbox.org\Apps\bin</DistDirApps>
+  <DistDirScripts>C:\iring-tools-web\iip.iringsandbox.org\Apps\Scripts</DistDirScripts>
     <SolutionFile>SPPIDDataLayer.sln</SolutionFile>
 
     <!-- 
@@ -41,9 +44,27 @@
       <ZipFile>$(DeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
       <FileSet>SPPIDDataLayer.*</FileSet>
     </DeploymentPackage>
+ <DeploymentPackage Include="*.*">
+      <Options>x -tzip -y -o</Options>
+      <OutputDir>$(DistDirApps)</OutputDir>
+      <ZipFile>$(DeploymentDir)\SPPIDDataLayer-$(Major).$(Minor).$(Build).zip</ZipFile>
+      <FileSet>SPPIDDataLayer.*</FileSet>
+    </DeploymentPackage>
+
     <SPPIDDeployment
-      Include="$(SPPIDDataLayerDir)\bin\Debug\**"
-        Exclude="$(SPPIDDataLayerDir)\bin\*.pdb;
+      Include="$(SPPIDDataLayerDir)\**;
+$(SPPIDDataLayerDir)\bin\Debug\**"
+         Exclude="$(SPPIDDataLayerDir)\bin\*.pdb;
+$(SPPIDDataLayerDir)\*.vbproj;
+$(SPPIDDataLayerDir)\*.vb;
+$(SPPIDDataLayerDir)\obj\**;
+$(SPPIDDataLayerDir)\obj\**;
+$(SPPIDDataLayerDir)\*.xsc;
+$(SPPIDDataLayerDir)\*.xsd;
+$(SPPIDDataLayerDir)\*.xss;
+$(SPPIDDataLayerDir)\My Project\**;
+$(SPPIDDataLayerDir)\app.config;
+               $(SPPIDDataLayerDir)\*.user;
                   $(SPPIDDataLayerDir)\.svn\**;">
 		<!--some XML files may be included later - none for now -->
     </SPPIDDeployment>
@@ -86,17 +107,17 @@
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
-    <MakeDir Directories="$(DeploymentDir);"/>
+    <MakeDir Directories="$(DeploymentDir);$(DistDirApp_Data);$(DistDirScripts);"/>
 
     <Message Text="Creating DataLayers deployment ..." />
     <Copy SourceFiles="@(SPPIDDeployment)"
-          DestinationFiles="@(SPPIDDeployment->'$(DeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
-
-
+         DestinationFiles="@(SPPIDDeployment->'$(DeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 
   <Target Name="CreatePackages" DependsOnTargets="IISReset; CreateDeployment">
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options)%(OutputDir) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
+    <Exec Command="Copy $(SPPIDDataLayerDir)\Scripts\sppidConfigWizard.js $(DistDirScripts)\sppidConfigWizard.js" />
+<Exec Command="Copy $(SPPIDDataLayerDir)\App_Data\12345_000.StagingConfiguration.SPPID.xml $(DistDirApp_Data)\12345_000.StagingConfiguration.SPPID.xml" />
   </Target>
 
   <Target Name="Build">
