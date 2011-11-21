@@ -208,10 +208,37 @@ _:pProcD a dnr:SparqlHttpProtocolProcessor ;
         dnr:usingStore _:sqlStoreD .
 _:sqlStoreD a dnr:TripleStore ;
         dnr:type "VDS.RDF.SqlTripleStore" ;
-        dnr:sqlManager _:sqlServerE .		
-_:sqlServerE a dnr:SqlIOManager ;
+        dnr:sqlManager _:sqlServerD .		
+_:sqlServerD a dnr:SqlIOManager ;
         dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
         dnr:server ".\SQLEXPRESS" ;
         dnr:database "DupontDb" ;
+        dnr:user "dotNetRDF" ;
+        dnr:password "dotNetRDF" .
+<dotnetrdf:/repositories/hatch/*> a dnr:HttpHandler ;
+        dnr:cacheDuration "0";
+        dnr:queryProcessor _:qProcH ;
+        dnr:updateProcessor _:uProcH;
+        dnr:protocolProcessor _:pProcH ;
+		dnr:stylesheet "../css/interface.css" ;		
+        dnr:introText "~/config/HatchIntro.txt" ;
+        dnr:type "VDS.RDF.Web.SparqlServer" ;
+        dnr:defaultQueryFile "~/config/query.txt" .
+_:qProcH a dnr:SparqlQueryProcessor ;
+        dnr:type "VDS.RDF.Query.LeviathanQueryProcessor" ;
+        dnr:usingStore _:sqlStoreH .
+_:uProcH a dnr:SparqlUpdateProcessor ;
+        dnr:type "VDS.RDF.Update.LeviathanUpdateProcessor" ;
+        dnr:usingStore _:sqlStoreH .
+_:pProcH a dnr:SparqlHttpProtocolProcessor ;
+        dnr:type "VDS.RDF.Update.Protocol.LeviathanProtocolProcessor" ;
+        dnr:usingStore _:sqlStoreH .
+_:sqlStoreH a dnr:TripleStore ;
+        dnr:type "VDS.RDF.SqlTripleStore" ;
+        dnr:sqlManager _:sqlServerH .		
+_:sqlServerH a dnr:SqlIOManager ;
+        dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
+        dnr:server ".\SQLEXPRESS" ;
+        dnr:database "HatchDb" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
