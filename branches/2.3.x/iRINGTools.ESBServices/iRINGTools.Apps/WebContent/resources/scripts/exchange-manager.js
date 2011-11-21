@@ -535,17 +535,20 @@ function submitExchange(userResponse) {
           showDialog(660, 300, 'Exchange Result', message, Ext.Msg.OK, null);
       },
       failure: function(response, request) {
-        Ext.getCmp('content-pane').getItem('tab-' + exchange).getEl().unmask();
-        
-        var title = 'Exchange Error (' + response.status + ')';
-        var message = 'Error while exchanging [' + exchange + '].';
-        
-        var responseText = Ext.decode(response.responseText);
-        
-        if (responseText)
-          message += responseText;
-        
-        showDialog(660, 300, title, message, Ext.Msg.OK, null);
+        // ignore timeout error from proxy server
+        if (response.responseText.indexOf('Error Code 1460') != -1) {
+          Ext.getCmp('content-pane').getItem('tab-' + exchange).getEl().unmask();
+          
+          var title = 'Exchange Error (' + response.status + ')';
+          var message = 'Error while exchanging [' + exchange + '].';
+          
+          var responseText = Ext.decode(response.responseText);
+          
+          if (responseText)
+            message += responseText;
+          
+          showDialog(660, 300, title, message, Ext.Msg.OK, null);
+        }
       }
     });
   }
