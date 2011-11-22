@@ -30,12 +30,20 @@ namespace iRINGTools.Web.Models
 
         NameValueCollection settings = ConfigurationManager.AppSettings;
         ServiceSettings _settings = new ServiceSettings();
-        _settings.AppendSettings(settings);
+        _settings.AppendSettings(settings);      
 
         #region initialize webHttpClient for converting old mapping
         string proxyHost = _settings["ProxyHost"];
         string proxyPort = _settings["ProxyPort"];
         string dataServiceUri = _settings["DataServiceURI"];
+
+        response = "";
+
+        if (dataServiceUri == null)
+        {
+          response = response + "DataServiceURI is not configured.";
+          _logger.Error(response);         
+        }
 
         if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
         {
@@ -60,14 +68,6 @@ namespace iRINGTools.Web.Models
 
 			public Grid getGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
 			{
-				response = "";
-				if (_settings["DataServiceURI"] == null)
-				{
-					response = response + "DataServiceURI is not configured.";
-					_logger.Error(response);
-					return null;
-				}
-
 				this.graph = graph;
 				getDatadictionary(scope, app);
 

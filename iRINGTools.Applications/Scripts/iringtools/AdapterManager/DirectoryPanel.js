@@ -77,6 +77,7 @@ AdapterManager.DirectoryPanel = Ext.extend(Ext.Panel, {
         this.graphMenu.add(this.buildGraphMenu());
 
         this.treeLoader = new Ext.tree.TreeLoader({
+            timeout: 600000,
             baseParams: { type: null, related: null },
             url: this.navigationUrl
         });

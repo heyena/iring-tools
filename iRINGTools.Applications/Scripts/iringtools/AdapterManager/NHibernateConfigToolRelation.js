@@ -365,7 +365,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 									text: relationName,
 									type: 'relationship',
 									leaf: true,
-									iconCls: 'relation',
+									iconCls: 'treeRelation',
 									relatedObjMap: [],
 									objectName: node.parentNode.text,
 									relatedObjectName: '',
@@ -373,7 +373,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 									relationshipTypeIndex: '1',
 									propertyMap: []
 								});
-								newNode.iconCls = 'relation';
+								newNode.iconCls = 'treeRelation';
 								node.appendChild(newNode);
 
 								if (node.expanded == false)
