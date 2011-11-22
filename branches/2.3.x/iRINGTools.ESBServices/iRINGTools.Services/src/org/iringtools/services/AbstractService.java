@@ -126,6 +126,16 @@ public abstract class AbstractService
       numOfExchangeLogFiles = "10";
     settings.put("numOfExchangeLogFiles", numOfExchangeLogFiles);
     
+    String manifestTaskTimeout = servletContext.getInitParameter("manifestTaskTimeout");
+    if (manifestTaskTimeout == null || manifestTaskTimeout.equals(""))
+      manifestTaskTimeout = "300";  // in seconds
+    settings.put("manifestTaskTimeout", manifestTaskTimeout);
+    
+    String dtiTaskTimeout = servletContext.getInitParameter("dtiTaskTimeout");
+    if (dtiTaskTimeout == null || dtiTaskTimeout.equals(""))
+      dtiTaskTimeout = "1800";  // in seconds
+    settings.put("dtiTaskTimeout", dtiTaskTimeout);
+    
     /* 
      * PROXY SETTINGS
      */
