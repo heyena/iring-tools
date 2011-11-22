@@ -136,6 +136,11 @@ public abstract class AbstractService
       dtiTaskTimeout = "1800";  // in seconds
     settings.put("dtiTaskTimeout", dtiTaskTimeout);
     
+    String dtoTaskTimeout = servletContext.getInitParameter("dtoTaskTimeout");
+    if (dtoTaskTimeout == null || dtoTaskTimeout.equals(""))
+      dtoTaskTimeout = "600";  // in seconds
+    settings.put("dtoTaskTimeout", dtoTaskTimeout);
+    
     /* 
      * PROXY SETTINGS
      */
