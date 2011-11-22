@@ -162,7 +162,7 @@ public class ExchangeProvider
       execSvc.awaitTermination(Long.parseLong((String) settings.get("dtiTaskTimeout")), TimeUnit.SECONDS);
     } 
     catch (InterruptedException e) {
-      logger.error("Data Indices Executor interrupted: " + e.getMessage());
+      logger.error("DTI Task Executor interrupted: " + e.getMessage());
     }
     
     DataTransferIndices sourceDtis = sourceDtiTask.getDataTransferIndices();
@@ -290,72 +290,100 @@ public class ExchangeProvider
       throw new ServiceProviderException(e.getMessage());
     }
 
-    List<DataTransferIndex> sourceDtiListItems = new ArrayList<DataTransferIndex>();
-    List<DataTransferIndex> targetDtiListItems = new ArrayList<DataTransferIndex>();
+    List<DataTransferIndex> sourceDtiItems = new ArrayList<DataTransferIndex>();
+    List<DataTransferIndex> targetDtiItems = new ArrayList<DataTransferIndex>();
 
     for (DataTransferIndex dti : dtis.getDataTransferIndexList().getItems())
     {
       switch (dti.getTransferType())
       {
       case ADD:
-        sourceDtiListItems.add(dti);
+        sourceDtiItems.add(dti);
         break;
       case CHANGE:
-        sourceDtiListItems.add(dti);
-        targetDtiListItems.add(dti);
+        sourceDtiItems.add(dti);
+        targetDtiItems.add(dti);
         break;
       case SYNC:
-        sourceDtiListItems.add(dti);
+        sourceDtiItems.add(dti);
         break;
       case DELETE:
-        targetDtiListItems.add(dti);
+        targetDtiItems.add(dti);
         break;
       }
     }
-
-    // get source DTOs
-    if (sourceDtiListItems.size() > 0)
+    
+    String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxo";
+    String targetDtoUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxo";
+    
+    Manifest sourceManifest = null;
+    Manifest targetManifest = null;
+    DtoTask sourceDtoTask = null;
+    DtoTask targetDtoTask = null;
+    
+    try
     {
-      DxoRequest sourceDxoRequest = new DxoRequest();
-      sourceDxoRequest.setManifest(manifest);
-      DataTransferIndices sourceDtis = new DataTransferIndices();
-      DataTransferIndexList sourceDtiList = new DataTransferIndexList();
-      sourceDtiList.setItems(sourceDtiListItems);
-      sourceDtis.setDataTransferIndexList(sourceDtiList);
-      sourceDxoRequest.setDataTransferIndices(sourceDtis);
-
-      String sourceDtoUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName + "/dxo";
-      try
-      {
-        manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
-        sourceDtos = httpClient.post(DataTransferObjects.class, sourceDtoUrl, sourceDxoRequest);
-      }
-      catch (HttpClientException e)
-      {
-        logger.error(e.getMessage());
-        throw new ServiceProviderException(e.getMessage());
-      }
-
+      sourceManifest = JaxbUtils.clone(Manifest.class, manifest);
+      sourceManifest.getGraphs().getItems().get(0).setName(sourceGraphName);
+      
+      targetManifest = JaxbUtils.clone(Manifest.class, manifest);
+      targetManifest.getGraphs().getItems().get(0).setName(targetGraphName);
+    }
+    catch (Exception e)
+    {
+      String error = "Error cloning crossed graph: " + e.getMessage();
+      logger.error(error);
+      throw new ServiceProviderException(error);
+    }
+    
+    int numOfDtoTasks = (sourceDtiItems.size() > 0 && targetDtiItems.size() > 0) ? 2 : 1;     
+    ExecutorService execSvc = Executors.newFixedThreadPool(numOfDtoTasks); 
+    
+    if (sourceDtiItems.size() > 0)
+    {
+      sourceDtoTask = new DtoTask(settings, sourceDtoUrl, sourceManifest, sourceDtiItems);    
+      execSvc.execute(sourceDtoTask);    
+    }
+    
+    if (targetDtiItems.size() > 0)
+    {
+      targetDtoTask = new DtoTask(settings, targetDtoUrl, targetManifest, targetDtiItems);    
+      execSvc.execute(targetDtoTask);    
+    }
+    
+    execSvc.shutdown();
+    
+    try {
+      execSvc.awaitTermination(Long.parseLong((String) settings.get("dtoTaskTimeout")), TimeUnit.SECONDS);
+    } 
+    catch (InterruptedException e) {
+      logger.error("DTO Task Executor interrupted: " + e.getMessage());
+    }
+    
+    if (sourceDtoTask != null)
+    {
+      sourceDtos = sourceDtoTask.getDataTransferObjects();
+      
       if (sourceDtos != null)
       {
         sourceDtos.setScopeName(sourceScopeName);
         sourceDtos.setAppName(sourceAppName);
         List<DataTransferObject> sourceDtoListItems = sourceDtos.getDataTransferObjectList().getItems();
-
+  
         // append add/sync DTOs to resultDtoList, leave change DTOs to send to differencing engine
         for (int i = 0; i < sourceDtoListItems.size(); i++)
         {
           DataTransferObject sourceDto = sourceDtoListItems.get(i);
           String sourceDtoIdentifier = sourceDto.getIdentifier();
-
+  
           if (sourceDto.getClassObjects() != null)
           {
-            for (DataTransferIndex sourceDti : sourceDtiListItems)
+            for (DataTransferIndex sourceDti : sourceDtiItems)
             {
               if (sourceDtoIdentifier.equalsIgnoreCase(sourceDti.getIdentifier()))
               {
                 TransferType transferOption = sourceDti.getTransferType();
-
+  
                 if (transferOption == TransferType.ADD)
                 {
                   DataTransferObject addDto = sourceDtoListItems.remove(i--);
@@ -376,45 +404,26 @@ public class ExchangeProvider
         }
       }
     }
-
-    // get target DTOs
-    if (targetDtiListItems.size() > 0)
+    
+    if (targetDtoTask != null)
     {
-      DxoRequest targetDxoRequest = new DxoRequest();
-      targetDxoRequest.setManifest(manifest);
-      DataTransferIndices targetDtis = new DataTransferIndices();
-      DataTransferIndexList targetDtiList = new DataTransferIndexList();
-      targetDtiList.setItems(targetDtiListItems);
-      targetDtis.setDataTransferIndexList(targetDtiList);
-      targetDxoRequest.setDataTransferIndices(targetDtis);
-
-      String targetDtoUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName + "/dxo";
-      try
-      {
-        manifest.getGraphs().getItems().get(0).setName(targetGraphName);
-        targetDtos = httpClient.post(DataTransferObjects.class, targetDtoUrl, targetDxoRequest);
-      }
-      catch (HttpClientException e)
-      {
-        logger.error(e.getMessage());
-        throw new ServiceProviderException(e.getMessage());
-      }
-
+      targetDtos = targetDtoTask.getDataTransferObjects();
+      
       if (targetDtos != null)
       {
         targetDtos.setScopeName(targetScopeName);
         targetDtos.setAppName(targetAppName);
         List<DataTransferObject> targetDtoListItems = targetDtos.getDataTransferObjectList().getItems();
-
+  
         // append delete DTOs to resultDtoList, leave change DTOs to send to differencing engine
         for (int i = 0; i < targetDtoListItems.size(); i++)
         {
           DataTransferObject targetDto = targetDtoListItems.get(i);
           String targetDtoIdentifier = targetDto.getIdentifier();
-
+  
           if (targetDto.getClassObjects() != null)
           {
-            for (DataTransferIndex targetDti : targetDtiListItems)
+            for (DataTransferIndex targetDti : targetDtiItems)
             {
               if (targetDtoIdentifier.equalsIgnoreCase(targetDti.getIdentifier()))
               {
@@ -431,7 +440,7 @@ public class ExchangeProvider
         }
       }
     }
-
+    
     if (sourceDtos != null && sourceDtos.getDataTransferObjectList() != null
         && sourceDtos.getDataTransferObjectList().getItems().size() > 0 && targetDtos != null
         && targetDtos.getDataTransferObjectList() != null
@@ -874,7 +883,7 @@ public class ExchangeProvider
       execSvc.awaitTermination(Long.parseLong((String) settings.get("manifestTaskTimeout")), TimeUnit.SECONDS);
     } 
     catch (InterruptedException e) {
-      logger.error("Manifest Executor interrupted: " + e.getMessage());
+      logger.error("Manifest Task Executor interrupted: " + e.getMessage());
     }
 
     Manifest sourceManifest = sourceManifestTask.getManifest();
