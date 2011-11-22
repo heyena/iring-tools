@@ -16,24 +16,19 @@ import org.iringtools.utility.HttpUtils;
 public class DtoTask implements Runnable
 {
   private static final Logger logger = Logger.getLogger(DtoTask.class);
-  private HttpClient httpClient;
-  private DxoRequest dxoRequest;
+  private Map<String, Object> settings;
+  private String url;
+  private Manifest manifest;
+  private List<DataTransferIndex> dtiItems;
   private DataTransferObjects dtos;
   
   public DtoTask(final Map<String, Object> settings, final String url, final Manifest manifest,
       final List<DataTransferIndex> dtiItems)
   {
-    httpClient = new HttpClient(url);
-    HttpUtils.addOAuthHeaders(settings, httpClient); 
-    
-    DataTransferIndices indices = new DataTransferIndices();
-    DataTransferIndexList dtiList = new DataTransferIndexList();
-    dtiList.setItems(dtiItems);
-    indices.setDataTransferIndexList(dtiList);
-    
-    dxoRequest = new DxoRequest();
-    dxoRequest.setManifest(manifest);    
-    dxoRequest.setDataTransferIndices(indices);
+    this.settings = settings;
+    this.url = url;
+    this.manifest = manifest;
+    this.dtiItems = dtiItems;
   }
   
   @Override
@@ -41,6 +36,18 @@ public class DtoTask implements Runnable
   {
     try 
     {
+      DataTransferIndices indices = new DataTransferIndices();
+      DataTransferIndexList dtiList = new DataTransferIndexList();
+      dtiList.setItems(dtiItems);
+      indices.setDataTransferIndexList(dtiList);
+      
+      DxoRequest dxoRequest = new DxoRequest();
+      dxoRequest.setManifest(manifest);    
+      dxoRequest.setDataTransferIndices(indices);
+      
+      HttpClient httpClient = new HttpClient(url);
+      HttpUtils.addOAuthHeaders(settings, httpClient); 
+      
       dtos = httpClient.post(DataTransferObjects.class, dxoRequest);
     }
     catch (Exception e) 

@@ -11,15 +11,15 @@ import org.iringtools.utility.HttpUtils;
 public class DtiTask implements Runnable
 {
   private static final Logger logger = Logger.getLogger(DtiTask.class);
-  private HttpClient httpClient;
+  private Map<String, Object> settings;
+  private String url;
   private Manifest manifest;
   private DataTransferIndices indices;
   
   public DtiTask(final Map<String, Object> settings, final String url, final Manifest manifest)
   {
-    this.httpClient = new HttpClient(url);
-    HttpUtils.addOAuthHeaders(settings, httpClient); 
-    
+    this.settings = settings;
+    this.url = url;    
     this.manifest = manifest;
   }
   
@@ -28,6 +28,8 @@ public class DtiTask implements Runnable
   {
     try 
     {
+      HttpClient httpClient = new HttpClient(url);
+      HttpUtils.addOAuthHeaders(settings, httpClient); 
       indices = httpClient.post(DataTransferIndices.class, manifest);
     }
     catch (Exception e) 
