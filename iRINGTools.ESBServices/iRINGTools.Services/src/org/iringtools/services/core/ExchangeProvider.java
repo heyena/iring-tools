@@ -7,6 +7,9 @@ import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -115,51 +118,61 @@ public class ExchangeProvider
   public DataTransferIndices getDataTransferIndices(String scope, String id, Manifest manifest)
       throws ServiceProviderException
   {
-    DataTransferIndices dxis = null;
+    logger.debug("getDataTransferIndices(" + scope + "," + id + ",manifest)");
+    
+    if (manifest == null) return null;
 
-    logger.debug("getDataTransferIndices(" + scope + "," + id + ")");
-
-    // init exchange definition
     initExchangeDefinition(scope, id);
 
-    // get source dti
     String sourceDtiUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/" + sourceGraphName
         + "/dxi?hashAlgorithm=" + hashAlgorithm;
-    DataTransferIndices sourceDtis;
 
+    String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName
+        + "/dxi?hashAlgorithm=" + hashAlgorithm;
+    
+    Manifest sourceManifest = null;
+    Manifest targetManifest = null;
+    
     try
     {
-      manifest.getGraphs().getItems().get(0).setName(sourceGraphName);
-      sourceDtis = httpClient.post(DataTransferIndices.class, sourceDtiUrl, manifest);
+      sourceManifest = JaxbUtils.clone(Manifest.class, manifest);
+      sourceManifest.getGraphs().getItems().get(0).setName(sourceGraphName);
+      
+      targetManifest = JaxbUtils.clone(Manifest.class, manifest);
+      targetManifest.getGraphs().getItems().get(0).setName(targetGraphName);
     }
-    catch (HttpClientException e)
+    catch (Exception e)
     {
-      logger.error(e.getMessage());
-      throw new ServiceProviderException(e.getMessage());
+      String error = "Error cloning crossed graph: " + e.getMessage();
+      logger.error(error);
+      throw new ServiceProviderException(error);
     }
-
+    
+    ExecutorService execSvc = Executors.newFixedThreadPool(2); 
+    
+    DtiTask sourceDtiTask = new DtiTask(settings, sourceDtiUrl, sourceManifest);    
+    execSvc.execute(sourceDtiTask);    
+    
+    DtiTask targetDtiTask = new DtiTask(settings, targetDtiUrl, targetManifest);    
+    execSvc.execute(targetDtiTask);    
+    
+    execSvc.shutdown();
+    
+    try {
+      execSvc.awaitTermination(Long.parseLong((String) settings.get("dtiTaskTimeout")), TimeUnit.SECONDS);
+    } 
+    catch (InterruptedException e) {
+      logger.error("Data Indices Executor interrupted: " + e.getMessage());
+    }
+    
+    DataTransferIndices sourceDtis = sourceDtiTask.getDataTransferIndices();
     if (sourceDtis != null)
     {
       sourceDtis.setScopeName(sourceScopeName);
       sourceDtis.setAppName(sourceAppName);
     }
-
-    // get target dti
-    String targetDtiUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/" + targetGraphName
-        + "/dxi?hashAlgorithm=" + hashAlgorithm;
-    DataTransferIndices targetDtis;
-
-    try
-    {
-      manifest.getGraphs().getItems().get(0).setName(targetGraphName);
-      targetDtis = httpClient.post(DataTransferIndices.class, targetDtiUrl, manifest);
-    }
-    catch (HttpClientException e)
-    {
-      logger.error(e.getMessage());
-      throw new ServiceProviderException(e.getMessage());
-    }
-
+    
+    DataTransferIndices targetDtis = targetDtiTask.getDataTransferIndices();
     if (targetDtis != null)
     {
       targetDtis.setScopeName(targetScopeName);
@@ -175,9 +188,10 @@ public class ExchangeProvider
     dfiRequest.getDataTransferIndices().add(sourceDtis);
     dfiRequest.getDataTransferIndices().add(targetDtis);
 
-    // request exchange service to diff the dti
+    // request exchange service to diff the dtis
     String dxiUrl = settings.get("differencingServiceUri") + "/dxi";
-
+    DataTransferIndices dxis = null;
+    
     try
     {
       dxis = httpClient.post(DataTransferIndices.class, dxiUrl, dfiRequest);
@@ -843,37 +857,29 @@ public class ExchangeProvider
   {
     Manifest crossedManifest = new Manifest();
     
-    // get source manifest
     String sourceManifestUrl = sourceUri + "/" + sourceScopeName + "/" + sourceAppName + "/manifest";
-    Manifest sourceManifest;
-
-    try
-    {
-      sourceManifest = httpClient.get(Manifest.class, sourceManifestUrl);
-    }
-    catch (HttpClientException e)
-    {
-      logger.error(e.getMessage());
-      throw new ServiceProviderException(e.getMessage());
-    }
-
-    if (sourceManifest == null || sourceManifest.getGraphs().getItems().size() == 0)
-      return null;
-
-    // get target manifest
     String targetManifestUrl = targetUri + "/" + targetScopeName + "/" + targetAppName + "/manifest";
-    Manifest targetManifest;
-
-    try
-    {
-      targetManifest = httpClient.get(Manifest.class, targetManifestUrl);
+    
+    ExecutorService execSvc = Executors.newFixedThreadPool(2); 
+    
+    ManifestTask sourceManifestTask = new ManifestTask(settings, sourceManifestUrl);    
+    execSvc.execute(sourceManifestTask);    
+    
+    ManifestTask targetManifestTask = new ManifestTask(settings, targetManifestUrl);    
+    execSvc.execute(targetManifestTask);    
+    
+    execSvc.shutdown();
+    
+    try {
+      execSvc.awaitTermination(Long.parseLong((String) settings.get("manifestTaskTimeout")), TimeUnit.SECONDS);
+    } 
+    catch (InterruptedException e) {
+      logger.error("Manifest Executor interrupted: " + e.getMessage());
     }
-    catch (HttpClientException e)
-    {
-      logger.error(e.getMessage());
-      throw new ServiceProviderException(e.getMessage());
-    }
 
+    Manifest sourceManifest = sourceManifestTask.getManifest();
+    Manifest targetManifest = targetManifestTask.getManifest();
+    
     if (targetManifest == null || targetManifest.getGraphs().getItems().size() == 0)
       return null;
 
@@ -942,8 +948,15 @@ public class ExchangeProvider
 
     // add source and target value-list maps
     ValueListMaps valueListMaps = new ValueListMaps();
-    valueListMaps.getItems().addAll(sourceManifest.getValueListMaps().getItems());
-    valueListMaps.getItems().addAll(targetManifest.getValueListMaps().getItems());
+    
+    if (sourceManifest.getValueListMaps() != null) {
+      valueListMaps.getItems().addAll(sourceManifest.getValueListMaps().getItems());
+    }
+    
+    if (targetManifest.getValueListMaps() != null) {
+      valueListMaps.getItems().addAll(targetManifest.getValueListMaps().getItems());
+    }
+    
     crossedManifest.setValueListMaps(valueListMaps);
     
     return crossedManifest;

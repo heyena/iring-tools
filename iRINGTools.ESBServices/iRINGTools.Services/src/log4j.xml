@@ -18,7 +18,7 @@
 
   <!-- iringtools loggers -->
   <logger name="org.iringtools">
-    <level value="INFO" />
+    <level value="DEBUG" />
     <appender-ref ref="fileout" /> 
   </logger>
 

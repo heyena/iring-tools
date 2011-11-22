@@ -103,5 +103,11 @@ public final class JaxbUtils
         stream.close();
     }
 	}
+  
+  public static <T> T clone(Class<T> clazz, T object) throws JAXBException, IOException
+  {
+    String xml = toXml(object, false);
+    return (T) toObject(clazz, xml);    
+  }
 }
 
