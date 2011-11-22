@@ -48,7 +48,7 @@ public class EncryptionUtils
     }
   }
 
-  public static String encrypt(String plainText) throws EncryptionException
+  public static synchronized String encrypt(String plainText) throws EncryptionException
   {
     try
     {
@@ -63,7 +63,7 @@ public class EncryptionUtils
     }
   }
 
-  public static String decrypt(String cipherText) throws EncryptionException
+  public static synchronized String decrypt(String cipherText) throws EncryptionException
   {
     try
     {
