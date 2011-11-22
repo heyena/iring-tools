@@ -68,6 +68,9 @@ namespace iRINGTools.Web.Models
 
 			public Grid getGrid(string scope, string app, string graph, string filter, string sort, string dir, string start, string limit)
 			{
+        if (response != "")
+          return null;
+
 				this.graph = graph;
 				getDatadictionary(scope, app);
 
