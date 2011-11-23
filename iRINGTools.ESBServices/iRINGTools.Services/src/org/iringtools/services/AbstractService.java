@@ -24,6 +24,8 @@ import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.iringtools.security.AuthorizationException;
 import org.iringtools.security.LdapAuthorizationProvider;
 import org.iringtools.security.OAuthFilter;
+import org.iringtools.utility.EncryptionException;
+import org.iringtools.utility.EncryptionUtils;
 import org.iringtools.utility.HttpUtils;
 import org.iringtools.utility.IOUtils;
 
@@ -165,11 +167,28 @@ public abstract class AbstractService
     else
       proxyInfoValid = false;
     
-    String proxyPassword = servletContext.getInitParameter("proxyPassword");
-    if (proxyPassword != null && proxyPassword.length() > 0)
-      sysProps.put("http.proxyPassword", proxyPassword);
+    String encryptedProxyPassword = servletContext.getInitParameter("proxyPassword");
+    if (encryptedProxyPassword != null && encryptedProxyPassword.length() > 0)
+    {
+      String proxyKeyFile = servletContext.getInitParameter("proxySecretKeyFile");
+      
+      try
+      {
+        String proxyPassword = (proxyKeyFile != null && proxyKeyFile.length() > 0)
+          ? EncryptionUtils.decrypt(encryptedProxyPassword, proxyKeyFile)
+          : EncryptionUtils.decrypt(encryptedProxyPassword);
+          
+        sysProps.put("http.proxyPassword", proxyPassword);
+      }
+      catch (EncryptionException e)
+      {
+        proxyInfoValid = false;
+      }      
+    }
     else
+    {
       proxyInfoValid = false;
+    }
     
     String proxyDomain = servletContext.getInitParameter("proxyDomain");
     if (proxyDomain == null)
@@ -177,7 +196,9 @@ public abstract class AbstractService
     sysProps.put("http.proxyDomain", proxyDomain);
     
     if (proxyInfoValid)
-      sysProps.put("proxySet", "true");
+    {
+      sysProps.put("proxySet", "true");      
+    }
     
     /*
      * LDAP SETTINGS
