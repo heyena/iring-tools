@@ -348,15 +348,10 @@ public class HttpClient
       conn = (HttpURLConnection) url.openConnection(httpProxy);
       
       String proxyUserName = System.getProperty("http.proxyUserName");
-      String proxyKeyFile = System.getProperty("http.proxySecretKeyFile");
+      String proxyPassword = System.getProperty("http.proxyPassword");      
+      String proxyDomain = System.getProperty("http.proxyDomain");   
       
-      String proxyPassword = (proxyKeyFile != null && proxyKeyFile.length() > 0)
-        ? EncryptionUtils.decrypt(System.getProperty("http.proxyPassword"), proxyKeyFile)
-        : EncryptionUtils.decrypt(System.getProperty("http.proxyPassword"));
-      
-      String proxyDomain = System.getProperty("http.proxyDomain");      
-      String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);
-      
+      String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);      
       conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
     }
     else

@@ -18,6 +18,8 @@ import org.apache.struts2.interceptor.SessionAware;
 import org.apache.struts2.json.JSONUtil;
 import org.iringtools.security.LdapAuthorizationProvider;
 import org.iringtools.security.OAuthFilter;
+import org.iringtools.utility.EncryptionException;
+import org.iringtools.utility.EncryptionUtils;
 import org.iringtools.utility.HttpUtils;
 import org.iringtools.utility.IOUtils;
 
@@ -39,6 +41,63 @@ public abstract class AbstractController extends ActionSupport implements Sessio
     context = ServletActionContext.getServletContext();
     request = ServletActionContext.getRequest();
     response = ServletActionContext.getResponse();  
+    
+    /* 
+     * PROXY SETTINGS
+     */
+    Properties sysProps = System.getProperties();
+    boolean proxyInfoValid = true;
+    
+    String proxyHost = context.getInitParameter("proxyHost");
+    if (proxyHost != null && proxyHost.length() > 0)
+      sysProps.put("http.proxyHost", proxyHost);
+    else
+      proxyInfoValid = false;
+    
+    String proxyPort = context.getInitParameter("proxyPort");
+    if (proxyPort != null && proxyPort.length() > 0)
+      sysProps.put("http.proxyPort", proxyPort);
+    else
+      proxyInfoValid = false;
+    
+    String proxyUserName = context.getInitParameter("proxyUserName");
+    if (proxyUserName != null && proxyUserName.length() > 0)
+      sysProps.put("http.proxyUserName", proxyUserName);
+    else
+      proxyInfoValid = false;
+    
+    String encryptedProxyPassword = context.getInitParameter("proxyPassword");
+    if (encryptedProxyPassword != null && encryptedProxyPassword.length() > 0)
+    {
+      String proxyKeyFile = context.getInitParameter("proxySecretKeyFile");
+      
+      try
+      {
+        String proxyPassword = (proxyKeyFile != null && proxyKeyFile.length() > 0)
+          ? EncryptionUtils.decrypt(encryptedProxyPassword, proxyKeyFile)
+          : EncryptionUtils.decrypt(encryptedProxyPassword);
+          
+        sysProps.put("http.proxyPassword", proxyPassword);
+      }
+      catch (EncryptionException e)
+      {
+        proxyInfoValid = false;
+      }      
+    }
+    else
+    {
+      proxyInfoValid = false;
+    }
+    
+    String proxyDomain = context.getInitParameter("proxyDomain");
+    if (proxyDomain == null)
+      proxyDomain = "";
+    sysProps.put("http.proxyDomain", proxyDomain);
+    
+    if (proxyInfoValid)
+    {
+      sysProps.put("proxySet", "true");      
+    }
   }
   
   @Override
