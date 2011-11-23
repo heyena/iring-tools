@@ -145,11 +145,13 @@ namespace org.iringtools.services
     {
       try
       {
+        NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
         bool fullIndex = false;
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, query, ref format, start, limit, sortOrder, sortBy, fullIndex);
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, ref format, query, start, limit, sortOrder, sortBy, fullIndex, parameters);
         FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -180,7 +182,8 @@ namespace org.iringtools.services
         else
         {
           NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, id, related, ref format, start, limit, sortOrder, sortBy, parameters);
+          XDocument xDocument = _adapterProvider.GetDataProjection(
+            project, app, graph, id, related, ref format, start, limit, sortOrder, sortBy, parameters);
           FormatOutgoingMessage(xDocument.Root, format);
         }
       }

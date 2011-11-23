@@ -341,6 +341,11 @@ namespace org.iringtools.library
       throw new NotImplementedException();
     }
 
+    public virtual long GetSearchCount(string objectType, string query, DataFilter filter)
+    {
+      throw new NotImplementedException();
+    }
+
     public virtual Response RefreshAll()
     {
       throw new NotImplementedException();
