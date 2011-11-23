@@ -305,7 +305,6 @@ namespace org.iringtools.adapter
 
         return _kernel.TryGet<DataDictionary>();
 
-        //return _dataLayer.GetDictionary();
       }
       catch (Exception ex)
       {
@@ -430,7 +429,8 @@ namespace org.iringtools.adapter
     //Search
     public XDocument GetDataProjection(
       string projectName, string applicationName, string resourceName,
-      string query, ref string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex)
+      ref string format, string query, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
+      NameValueCollection parameters)
     {
       try
       {
@@ -449,29 +449,73 @@ namespace org.iringtools.adapter
         _projectionEngine.Limit = limit;
 
         DataFilter filter = new DataFilter();
-
-        if (!String.IsNullOrEmpty(sortBy))
+        if (parameters != null)
         {
-          OrderExpression orderBy = new OrderExpression
+          foreach (string key in parameters.AllKeys)
           {
-            PropertyName = sortBy,
-          };
+            string[] expectedParameters = { 
+                          "project",
+                          "app",
+                          "format", 
+                          "start", 
+                          "limit", 
+                          "sortBy", 
+                          "sortOrder",
+                          "indexStyle",
+                          "_dc",
+                          "page",
+                          "callback",
+                          "q",
+                        };
 
-          if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
-          {
-            orderBy.SortOrder = SortOrder.Desc;
-          }
-          else
-          {
-            orderBy.SortOrder = SortOrder.Asc;
+            if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
+            {
+              string value = parameters[key];
+
+              Expression expression = new Expression
+              {
+                PropertyName = key,
+                RelationalOperator = RelationalOperator.EqualTo,
+                Values = new Values { value },
+                IsCaseSensitive = false,
+              };
+
+              if (filter.Expressions.Count > 0)
+              {
+                expression.LogicalOperator = LogicalOperator.And;
+              }
+
+              filter.Expressions.Add(expression);
+            }
           }
 
-          filter.OrderExpressions.Add(orderBy);
+          if (!String.IsNullOrEmpty(sortBy))
+          {
+            OrderExpression orderBy = new OrderExpression
+            {
+              PropertyName = sortBy,
+            };
+
+            if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
+            {
+              orderBy.SortOrder = SortOrder.Desc;
+            }
+            else
+            {
+              orderBy.SortOrder = SortOrder.Asc;
+            }
+
+            filter.OrderExpressions.Add(orderBy);
+          }
+
+          _dataObjects = _dataLayer.Search(_dataObjDef.objectName, query, filter, limit, start);
+          //_projectionEngine.Count = _dataLayer.GetSearchCount(_dataObjDef.objectName, query, filter);
         }
-
-        _dataObjects = _dataLayer.Search(_dataObjDef.objectName, query, limit, start);
-        _projectionEngine.Count = _dataLayer.GetSearchCount(_dataObjDef.objectName, query);
-
+        else
+        {
+          _dataObjects = _dataLayer.Search(_dataObjDef.objectName, query, limit, start);
+          _projectionEngine.Count = _dataLayer.GetSearchCount(_dataObjDef.objectName, query);
+        }
         _projectionEngine.FullIndex = fullIndex;
 
         if (_isProjectionPart7)
@@ -662,6 +706,7 @@ namespace org.iringtools.adapter
       }
     }
 
+    //Related
     public XDocument GetDataProjection(
         string projectName, string applicationName, string resourceName, string id, string relatedResourceName,
         ref string format, int start, int limit, string sortOrder, string sortBy, NameValueCollection parameters)

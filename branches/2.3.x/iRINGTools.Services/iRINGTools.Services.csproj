@@ -168,7 +168,6 @@
   <ItemGroup>
     <Folder Include="App_Code\" />
     <Folder Include="Logs\" />
-    <Folder Include="XML\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
