@@ -52,7 +52,7 @@ public final class JaxbUtils
     return stream;
   }
   
-  public static <T> void toXml(T object, OutputStream stream, boolean indent) throws JAXBException, IOException
+  public synchronized static <T> void toXml(T object, OutputStream stream, boolean indent) throws JAXBException, IOException
   {		
     if (object.getClass().getName().equals(String.class.getName()))
     {    
@@ -85,7 +85,7 @@ public final class JaxbUtils
 	}
   
   @SuppressWarnings("unchecked")
-  public static <T> T toObject(Class<T> clazz, InputStream stream) throws JAXBException, IOException 
+  public synchronized static <T> T toObject(Class<T> clazz, InputStream stream) throws JAXBException, IOException 
   {
     if (clazz.getName().equals(String.class.getName()))
       return (T)IOUtils.toString(stream);
@@ -104,7 +104,7 @@ public final class JaxbUtils
     }
 	}
   
-  public static <T> T clone(Class<T> clazz, T object) throws JAXBException, IOException
+  public synchronized static <T> T clone(Class<T> clazz, T object) throws JAXBException, IOException
   {
     String xml = toXml(object, false);
     return (T) toObject(clazz, xml);    
