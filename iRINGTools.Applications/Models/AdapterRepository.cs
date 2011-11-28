@@ -501,6 +501,7 @@ namespace iRINGTools.Web.Models
                 {"nullable", dataProperty.isNullable.ToString()},
                 {"showOnIndex", dataProperty.showOnIndex.ToString()},
                 {"numberOfDecimals", dataProperty.numberOfDecimals.ToString()},
+                {"isHidden", dataProperty.isHidden.ToString()},
               };
 
               if (dataObject.isKeyProperty(dataProperty.propertyName) && !hasDBDictionary)

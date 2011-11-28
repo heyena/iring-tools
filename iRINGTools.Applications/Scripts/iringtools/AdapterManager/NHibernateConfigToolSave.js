@@ -160,7 +160,12 @@ function getFolderFromChildNode(folderNode, dataTypes) {
 						if (keyNodeProf.nullable)
 							tagProps.isNullable = keyNodeProf.nullable.toString().toLowerCase();
 						else
-							tagProps.isNullable = 'false';
+						    tagProps.isNullable = 'false';
+
+						if (keyNodeProf.isHidden)
+						    tagProps.isHidden = keyNodeProf.isHidden.toString().toLowerCase();
+						else
+						    tagProps.isHidden = 'false';
 
 						if (!keyNodeProf.keyType)
 							tagProps.keyType = 1;
@@ -234,8 +239,14 @@ function getFolderFromChildNode(folderNode, dataTypes) {
 		        props.showOnIndex = propertyNodeProf.showOnIndex.toString().toLowerCase();
 		      else
 		        props.showOnIndex = 'false';
+                
+		      if (propertyNodeProf.isHidden)
+		          props.isHidden = propertyNodeProf.isHidden.toString().toLowerCase();
+		      else
+		          props.isHidden = 'false';
 
 		      props.numberOfDecimals = propertyNodeProf.numberOfDecimals;
+
 		      folder.dataProperties.push(props);
 		    }
 		  }

@@ -63,11 +63,15 @@ function setKeyProperty(editPane, node, scopeName, appName, dataTypes) {
 				xtype: 'checkbox',
 				name: 'showOnIndex',
 				fieldLabel: 'Show on Index'
-			}, {
-				xtype: 'numberfield',
-				name: 'numberOfDecimals',
-				fieldLabel: 'Number of Decimals'
-			}, {
+            }, {
+                xtype: 'numberfield',
+                name: 'numberOfDecimals',
+                fieldLabel: 'Number of Decimals'
+            }, {
+                xtype: 'checkbox',
+                name: 'isHidden',
+                fieldLabel: 'Hidden'
+            }, {
 				xtype: 'combo',
 				hiddenName: 'keyType',
 				fieldLabel: 'Key Type',
@@ -134,6 +138,7 @@ function applyProperty(form) {
 	treeNodeProps['nullable'] = form.findField('isNullable').getValue();
 	treeNodeProps['showOnIndex'] = form.findField('showOnIndex').getValue();
 	treeNodeProps['numberOfDecimals'] = form.findField('numberOfDecimals').getValue();
+	treeNodeProps['isHidden'] = form.findField('isHidden').getValue();
 }
 
 function setDataProperty(editPane, node, scopeName, appName, dataTypes) {
@@ -193,11 +198,15 @@ function setDataProperty(editPane, node, scopeName, appName, dataTypes) {
 				xtype: 'checkbox',
 				name: 'showOnIndex',
 				fieldLabel: 'Show on Index'
-			}, {
+            }, {
 				xtype: 'numberfield',
 				name: 'numberOfDecimals',
 				fieldLabel: 'Number of Decimals'
-			}],
+			}, {
+                xtype: 'checkbox',
+                name: 'isHidden',
+                fieldLabel: 'Hidden'
+            }],
 			treeNode: node,
 			tbar: new Ext.Toolbar({
 				items: [{
@@ -258,7 +267,15 @@ function setDataPropertyFields(form, properties) {
 		}
 		else {
 			form.findField('showOnIndex').setValue(false);
-		}
+        }
+
+        if (properties.isHidden.toString().toLowerCase() == 'true') {
+            form.findField('isHidden').setValue(true);
+        }
+        else {
+            form.findField('isHidden').setValue(false);
+        }
+
 		form.findField('numberOfDecimals').setValue(properties.numberOfDecimals);
 	}
 }

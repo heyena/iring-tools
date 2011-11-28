@@ -734,6 +734,7 @@ namespace org.iringtools.adapter
          
         _projectionEngine.Start = start;
         _projectionEngine.Limit = limit;
+
         _projectionEngine.BaseURI = (projectName.ToLower() == "all")
             ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
             : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
