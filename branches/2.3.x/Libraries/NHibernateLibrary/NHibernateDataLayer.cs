@@ -292,14 +292,16 @@ namespace org.iringtools.adapter.datalayer
 
           foreach (string identifier in identifiers)
           {
-            foreach (IDataObject dataObject in dataObjects)
+            if (identifier != null)
             {
-              if (identifier != null)
+              foreach (IDataObject dataObject in dataObjects)
+              {
                 if (dataObject.GetPropertyValue("Id").ToString().ToLower() == identifier.ToLower())
                 {
                   orderedDataObjects.Add(dataObject);
-                  break;
+                  //break;  // include dups also
                 }
+              }
             }
           }
 
