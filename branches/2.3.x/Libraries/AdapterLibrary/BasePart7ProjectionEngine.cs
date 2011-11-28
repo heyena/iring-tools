@@ -102,6 +102,7 @@ namespace org.iringtools.adapter.projection
     public long Count { get; set; }
     public int Start { get; set; }
     public int Limit { get; set; }
+    public string BaseURI { get; set; }
 
     public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping)
     {

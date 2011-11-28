@@ -84,7 +84,7 @@ namespace org.iringtools.adapter.projection
                 }
               }
 
-              string itemHref = String.Format("/{0}/{1}/{2}/{3}", app, proj, resource, dataItem.id);
+              string itemHref = String.Format("{0}/{1}", BaseURI, dataItem.id);
               
               dataItem.links = new List<Link> 
               {
@@ -121,10 +121,11 @@ namespace org.iringtools.adapter.projection
                 if (relObjCount > 0)
                 {
                   string relObj = dataRelationship.relatedObjectName.ToLower();
+                  string relName = dataRelationship.relationshipName.ToLower();
 
                   Link relLink = new Link()
                   {
-                    href = String.Format("{0}/{1}", itemHref, relObj),
+                    href = String.Format("{0}/{1}", itemHref, relName),
                     rel = relObj
                   };
 
