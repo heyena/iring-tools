@@ -193,6 +193,35 @@ namespace org.iringtools.services
       }
     }
 
+    [Description("Gets individual of a related item.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}/{relatedId}?format={format}")]
+    public void GetRelatedIndividual(string project, string app, string resource, string id, string related, string relatedId, string format)
+    {
+      try
+      {
+        if (format != null)
+        {
+          format = format.ToLower();
+
+          // if format is one of the part 7 formats
+          if (format == "rdf" || format == "dto" || format == "p7xml")
+          {
+            throw new Exception("Not supported.");
+          }
+        }
+        else
+        {
+          NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, relatedId, ref format);
+          FormatOutgoingMessage(xDocument.Root, format);
+        }
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
+    }
+
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
     [WebInvoke(Method = "PUT", UriTemplate = "/{app}/{project}/{graph}?format={format}")]
     public void UpdateList(string project, string app, string graph, string format, Stream stream)

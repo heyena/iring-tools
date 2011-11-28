@@ -626,6 +626,9 @@ namespace org.iringtools.adapter
         }
 
         _projectionEngine.FullIndex = fullIndex;
+        _projectionEngine.BaseURI = (projectName.ToLower() == "all")
+            ? String.Format("/{0}/{1}", applicationName, resourceName)
+            : String.Format("/{0}/{1}/{2}", applicationName, projectName, resourceName);
 
         if (_isProjectionPart7)
         {
@@ -721,11 +724,14 @@ namespace org.iringtools.adapter
         if (parentDataObject == null) return new XDocument();
 
         // create data filter to get related objects
-        DataObject relatedDataObject = _dataDictionary.dataObjects.First(c => c.objectName.ToLower() == relatedResourceName.ToLower());
-        DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relatedObjectName.ToLower() == relatedResourceName.ToLower());
-
+        DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
+        DataObject relatedDataObject = _dataDictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
+         
         _projectionEngine.Start = start;
         _projectionEngine.Limit = limit;
+        _projectionEngine.BaseURI = (projectName.ToLower() == "all")
+            ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
+            : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
 
         DataFilter filter = new DataFilter();
 
@@ -800,6 +806,57 @@ namespace org.iringtools.adapter
 
         _dataObjects = _dataLayer.Get(relatedDataObject.objectName, filter, limit, start);
         _projectionEngine.Count = _dataLayer.GetCount(relatedDataObject.objectName, filter);
+
+        XDocument xdoc = _projectionEngine.ToXml(relatedDataObject.objectName, ref _dataObjects);
+        return xdoc;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
+
+    public XDocument GetDataProjection(
+    string projectName, string applicationName, string resourceName, string id, string relatedResourceName, 
+      string relatedId, ref string format)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+        InitializeProjection(resourceName, ref format, false);
+
+        IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
+        if (parentDataObject == null) return new XDocument();
+
+        // create data filter to get related objects
+        DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
+        DataObject relatedDataObject = _dataDictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
+
+        _projectionEngine.BaseURI = (projectName.ToLower() == "all")
+            ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
+            : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
+
+        DataFilter filter = new DataFilter();
+
+        foreach (PropertyMap propertyMap in relationship.propertyMaps)
+        {
+          Expression expression = new Expression();
+
+          if (filter.Expressions.Count > 0)
+          {
+            expression.LogicalOperator = LogicalOperator.And;
+          }
+
+          expression.PropertyName = propertyMap.relatedPropertyName;
+          expression.RelationalOperator = RelationalOperator.EqualTo;
+          expression.Values.Add(parentDataObject.GetPropertyValue(propertyMap.dataPropertyName).ToString());
+
+          filter.Expressions.Add(expression);
+        }
+
+        _dataObjects = _dataLayer.Get(relatedDataObject.objectName, new List<string> { relatedId });
 
         XDocument xdoc = _projectionEngine.ToXml(relatedDataObject.objectName, ref _dataObjects);
         return xdoc;
