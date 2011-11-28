@@ -670,7 +670,12 @@ namespace org.iringtools.adapter
             List<string> identifiers = new List<string> { classIdentifier };
             _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
           }
+
           _projectionEngine.Count = _dataObjects.Count;
+
+          _projectionEngine.BaseURI = (projectName.ToLower() == "all")
+            ? String.Format("/{0}/{1}", applicationName, resourceName)
+            : String.Format("/{0}/{1}/{2}", applicationName, projectName, resourceName);
 
           if (_dataObjects != null && _dataObjects.Count > 0)
           {
@@ -837,24 +842,6 @@ namespace org.iringtools.adapter
         _projectionEngine.BaseURI = (projectName.ToLower() == "all")
             ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
             : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
-
-        DataFilter filter = new DataFilter();
-
-        foreach (PropertyMap propertyMap in relationship.propertyMaps)
-        {
-          Expression expression = new Expression();
-
-          if (filter.Expressions.Count > 0)
-          {
-            expression.LogicalOperator = LogicalOperator.And;
-          }
-
-          expression.PropertyName = propertyMap.relatedPropertyName;
-          expression.RelationalOperator = RelationalOperator.EqualTo;
-          expression.Values.Add(parentDataObject.GetPropertyValue(propertyMap.dataPropertyName).ToString());
-
-          filter.Expressions.Add(expression);
-        }
 
         _dataObjects = _dataLayer.Get(relatedDataObject.objectName, new List<string> { relatedId });
 
