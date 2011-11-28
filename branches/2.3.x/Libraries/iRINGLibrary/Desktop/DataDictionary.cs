@@ -183,6 +183,9 @@ namespace org.iringtools.library
 
     [DataMember(EmitDefaultValue = false, Order = 9)]
     public bool showOnSearch { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 10)]
+    public bool isHidden { get; set; }
   }
 
   [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]

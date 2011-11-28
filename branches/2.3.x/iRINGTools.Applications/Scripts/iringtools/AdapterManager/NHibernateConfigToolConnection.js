@@ -784,6 +784,7 @@ function loadTree(rootNode, dbDict) {
 							propertiesNode.children[j].hidden = false;
 							propertiesNode.children[j].text = dataObject.dataProperties[jj].propertyName;
 							propertiesNode.children[j].properties.propertyName = dataObject.dataProperties[jj].propertyName;
+							propertiesNode.children[j].properties.isHidden = dataObject.dataProperties[jj].isHidden;
 						}
 					}
 				}
@@ -794,8 +795,9 @@ function loadTree(rootNode, dbDict) {
 						for (var ikk = 0; ikk < dataObject.dataProperties.length; ikk++) {
 							if (dataObject.keyProperties[ij].keyPropertyName.toLowerCase() == dataObject.dataProperties[ikk].propertyName.toLowerCase()) {
 								if (keysNode.children[k].text.toLowerCase() == dataObject.dataProperties[ikk].columnName.toLowerCase()) {
-									keysNode.children[k].text = dataObject.keyProperties[ij].keyPropertyName;
-									keysNode.children[k].properties.propertyName = dataObject.keyProperties[ij].keyPropertyName;
+								    keysNode.children[k].text = dataObject.keyProperties[ij].keyPropertyName;
+								    keysNode.children[k].properties.propertyName = dataObject.keyProperties[ij].keyPropertyName;
+								    keysNode.children[k].properties.isHidden = dataObject.keyProperties[ij].isHidden;
 									ij++;
 									break;
 								}

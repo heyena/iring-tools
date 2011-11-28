@@ -64,7 +64,7 @@ namespace org.iringtools.adapter.projection
               };
 
               foreach (DataProperty dataProperty in dataObject.dataProperties)
-              {
+              {                
                 string value = Convert.ToString(dataObj.GetPropertyValue(dataProperty.propertyName));
 
                 if (value == null)
@@ -76,12 +76,15 @@ namespace org.iringtools.adapter.projection
                   value = Utility.ToXsdDateTime(value);
                 }
 
-                dataItem.properties.Add(dataProperty.propertyName, value);
+                if (!dataProperty.isHidden)
+                {
+                  dataItem.properties.Add(dataProperty.propertyName, value);
+                }
 
                 if (dataObject.isKeyProperty(dataProperty.propertyName))
                 {
                   dataItem.id = value;
-                }
+                }                
               }
 
               string itemHref = String.Format("{0}/{1}", BaseURI, dataItem.id);
