@@ -74,13 +74,13 @@
       'menu button[action=deletescope]': {
         click: this.deleteScope
       },
-      'menu button[action=newapp]': {
+      'menu button[action=newapplication]': {
         click: this.newApplication
       },
-      'menu button[action=editapp]': {
+      'menu button[action=editapplication]': {
         click: this.editApplication
       },
-      'menu button[action=deleteapp]': {
+      'menu button[action=deleteapplication]': {
         click: this.deleteApplication
       },
       'menu button[action=showdata]': {

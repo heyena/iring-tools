@@ -127,7 +127,6 @@
       },
       {
           xtype: 'button',
-          xtype: 'button',
           text: 'New Folder',
           icon: 'Content/img/16x16/document-new.png',
           scope: this,
@@ -141,7 +140,7 @@
           text: 'New Endpoint',
           icon: 'Content/img/16x16/document-new.png',
           scope: this,
-          action: 'newapp'
+          action: 'newapplication'
       }
     ]
     },
@@ -149,18 +148,17 @@
         return [
       {
           xtype: 'button',
-          text: 'Edit Application',
+          text: 'Edit Endpoint',
           icon: 'Content/img/16x16/document-properties.png',
-          scope: this
-          //,
-          //action: 'editapp'
+          scope: this,
+          action: 'editapplication'
       },
       {
           xtype: 'button',
-          text: 'Delete Application',
+          text: 'Delete Endpoint',
           icon: 'Content/img/16x16/edit-delete.png',
           scope: this,
-          action: 'deleteapp'
+          action: 'deleteapplication'
       },
       {
           xtype: 'menuseparator'
