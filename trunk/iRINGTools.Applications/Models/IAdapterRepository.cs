@@ -11,28 +11,26 @@ namespace iRINGTools.Web.Models
 {
   public interface IAdapterRepository
   {
-    ScopeProjects GetScopes();
+    Directories GetScopes();
 
-    ScopeProject GetScope(string name);
+    DataLayers GetDataLayers(string contextName, string endpoint);
 
-    DataLayers GetDataLayers();
+    Tree GetDirectoryTree();
 
-    ScopeApplication GetScopeApplication(string scope, string application);
+    DataLayer GetDataLayer(string contextName, string endpoint);
 
-    DataLayer GetDataLayer(string scope, string application);
+    Mapping GetMapping(string contextName, string endpoint);
 
-    Mapping GetMapping(string scope, string application);
-
-    DataDictionary GetDictionary(string scope, string application);
+    DataDictionary GetDictionary(string contextName, string endpoint);
 
     Entity GetClassLabel(string classId);
 
-    string UpdateScope(string scope, string name, string description);
+    string Folder(string newFolderName, string description, string path, string state, string context);
 
-    string DeleteScope(string scope);
+    string DeleteEntry(string path);
 
-    string UpdateApplication(string scope, string application, string name, string description, string assembly);
+    string Endpoint(string newEndpointName, string path, string description, string state);
 
-    string DeleteApplication(string scope, string application);
+    string getNodeIconCls(string type);
   }
 }

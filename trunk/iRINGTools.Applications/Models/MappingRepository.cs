@@ -14,48 +14,47 @@ using org.iringtools.mapping;
 
 namespace iRINGTools.Web.Models
 {
-    public class MappingRepository : IMappingRepository
+  public class MappingRepository : IMappingRepository
+  {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingRepository));
+    private NameValueCollection _settings = null;
+    private WebHttpClient _client = null;
+    private string _refDataServiceURI = string.Empty;
+
+    [Inject]
+    public MappingRepository()
     {
-
-			  private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingRepository));
-        private NameValueCollection _settings = null;
-        private WebHttpClient _client = null;
-        private string _refDataServiceURI = string.Empty;
-
-        [Inject]
-        public MappingRepository()
-        {
-            _settings = ConfigurationManager.AppSettings;
-            _client = new WebHttpClient(_settings["AdapterServiceUri"]);
-        }
-
-        public Mapping GetMapping(string scopeName, string applicationName)
-        {
-            Mapping obj = null;
-
-            try
-            {
-                obj = _client.Get<Mapping>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), true);
-            }
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-						}
-
-            return obj;
-        }
-
-        public void UpdateMapping(string scopeName, string applicationName, Mapping mapping)
-        {
-          XElement mappingXml = XElement.Parse(Utility.SerializeDataContract<Mapping>(mapping));
-            try
-            {
-              _client.Post<XElement>(String.Format("/{0}/{1}/mapping", scopeName, applicationName), mappingXml, true);
-            }
-						catch (Exception ex)
-						{
-							_logger.Error(ex.ToString());
-						}  
-        }
+      _settings = ConfigurationManager.AppSettings;
+      _client = new WebHttpClient(_settings["AdapterServiceUri"]);
     }
+
+    public Mapping GetMapping(string context, string endpoint)
+    {
+      Mapping obj = null;
+
+      try
+      {
+        obj = _client.Get<Mapping>(String.Format("/{0}/{1}/mapping", context, endpoint), true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+      }
+
+      return obj;
+    }
+
+    public void UpdateMapping(Mapping mapping, string context, string endpoint)
+    {
+      XElement mappingXml = XElement.Parse(Utility.SerializeDataContract<Mapping>(mapping));
+      try
+      {
+        _client.Post<XElement>(String.Format("/{0}/{1}/mapping", context, endpoint), mappingXml, true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+      }
+    }
+  }
 }

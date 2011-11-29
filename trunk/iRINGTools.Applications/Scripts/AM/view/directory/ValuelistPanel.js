@@ -2,7 +2,7 @@
     extend: 'Ext.window.Window',
     alias: 'widget.valuelistpanel',
     layout: 'fit',
-    height: 120,
+    height: 110,
     width: 430,
     border: false,
     frame: false,
@@ -11,8 +11,10 @@
     url: null,
     nodeId: null,
     closable: true,
-    bodyPadding: 10,
     iconCls: 'tabsValueList',
+    node: null,
+    state: null,
+
     /**
     * initComponent
     * @protected
@@ -34,14 +36,21 @@
 
         var name = "";
         var nodeId = "";
+        var contextName = '';
+        var endpoint = '';
+        var oldValueListName = '';
 
-        if (this.record != null) {
-            name = this.record.name;
+        if (this.node != null) {
+          nodeId = this.node.id;
+          contextName = this.node.data.property.context;
+          endpoint = this.node.data.property.endpoint;
         }
 
-        if (this.nodeId != null) {
-            nodeId = this.nodeId;
-        }
+        if (this.state == 'edit' && this.record != null) {
+          name = this.record.record.name;
+          oldValueListName = name;
+          this.node = this.node.parentNode;
+        }        
 
         this.items = [{
             xtype: 'form',
@@ -56,22 +65,12 @@
                 msgTarget: 'side'
             },
             defaultType: 'textfield',
-            items:
-             [{
-                 fieldLabel: 'Mapping Node',
-                 name: 'mappingNode',
-                 xtype: 'hidden',
-                 width: 120,
-                 value: nodeId,
-                 allowBlank: false
-             }, {
-                 fieldLabel: 'Value List Name',
-                 name: 'valueList',
-                 xtype: 'textfield',
-                 width: 350,
-                 value: name,
-                 allowBlank: false
-             }],
+            items: [
+              { name: 'oldValueList', xtype: 'hidden', width: 120, value: oldValueListName, allowBlank: false },
+				      { name: 'contextName', xtype: 'hidden', width: 120, value: contextName, allowBlank: false },
+				      { name: 'endpoint', xtype: 'hidden', width: 120, value: endpoint, allowBlank: false },
+				      { fieldLabel: 'Value List Name', name: 'valueList', xtype: 'textfield', width: 230, value: name, allowBlank: false }
+            ],
             autoDestroy: false
         }];
         // super
@@ -107,8 +106,8 @@
         var me = this;    // consists the main/previous class object
         var thisForm = this.items.first().getForm();
         if (thisForm.findField('valueList').getValue() == '') {
-           
-            return;
+          showDialog(400, 100, 'Warning', 'Please type in a value list name before saving.', Ext.Msg.OK, null);
+          return;
         }
         thisForm.submit({
             waitMsg: 'Saving Data...',

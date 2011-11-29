@@ -1,121 +1,177 @@
 ﻿Ext.define('AM.view.directory.ScopePanel', {
-    extend: 'Ext.window.Window',
-    alias: 'widget.scopeform',
-    layout: 'fit',
-    border: false,
-    frame: false,
-    from: null,
-    record: null,
-    url: null,
-    height: 180,
-    width: 430,
-    closable: true,
-    bodyPadding: 10,
-    autoload: true,
-    initComponent: function () {
+  extend: 'Ext.window.Window',
+  alias: 'widget.scopeform',
+  layout: 'fit',
+  border: false,
+  frame: false,
+  from: null,
+  split: true,
+  record: null,
+  url: null,
+  height: 230,
+  width: 460,
+  closable: true,
+  bodyPadding: 1,
+  autoload: true,
+  path: null,
+  state: null,
+  node: null,
 
-        this.addEvents({
-            close: true,
-            save: true,
-            reset: true,
-            validate: true,
-            tabChange: true,
-            refresh: true,
-            selectionchange: true
-        });
+  initComponent: function () {
 
-        this.bbar = new Ext.toolbar.Toolbar();
-        this.bbar.add(this.buildToolbar());
+    this.addEvents({
+      close: true,
+      save: true,
+      reset: true,
+      validate: true,
+      tabChange: true,
+      refresh: true,
+      selectionchange: true
+    });
 
-        var name = ""
-        var description = ""
+    this.bbar = new Ext.toolbar.Toolbar();
+    this.bbar.add(this.buildToolbar());
 
-        if (this.record != null) {
-            name = this.record.Name;
-            description = this.record.Description
-        }
+    var name = ""
+    var description = ""
 
-        this.items = [{
-            xtype: 'form',
-            labelWidth: 70,
-            url: this.url,
-            method: 'POST',
-            bodyStyle: 'padding:10px 5px 0',
-            border: false,
-            frame: false,
-            defaults: {
-                width: 310,
-                msgTarget: 'side'
-            },
-            defaultType: 'textfield',
-            items: [
-                { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 300, value: name, allowBlank: false },
-                { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 300, value: name, allowBlank: false },
-                { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 300, value: description }
-           ],
-            autoDestroy: false
+    if (!this.node.parentNode)
+      var path = '';
+    else
+      var path = this.path;
 
-        }];
+    var state = this.state;
+    var context = this.record.context;
 
-        // super
-        this.callParent(arguments);
-    },
-
-    buildToolbar: function () {
-        return [{
-            xtype: 'tbfill'
-        }, {
-            xtype: "button",
-            text: 'Ok',
-            disabled: false,
-            handler: this.onSave,
-            scope: this
-        }, {
-            xtype: "button",
-            text: 'Cancel',
-            //icon: 'Content/img/16x16/edit-clear.png',      
-            disabled: false,
-            handler: this.onReset,
-            scope: this
-        }]
-    },
-
-    onReset: function () {
-        this.items.first().getForm().reset();
-        this.fireEvent('Cancel', this);
-    },
-
-    onSave: function () {
-        var me = this;
-
-        var returnVal = this.checkidNodeExists()
-
-        if (returnVal == true) {
-            this.items.first().getForm().submit({
-                waitMsg: 'Saving Data...',
-                success: function (f, a) {
-                    me.fireEvent('Save', me);
-                },
-                failure: function (f, a) {
-                    var message = 'Error saving changes!';
-                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-                }
-            });
-        }
-        else {
-            var message = 'Scope & Application name cannot be same!';
-            showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-        }
-    },
-
-    checkidNodeExists: function () {
-        var returnVal = true
-        var tree = Ext.ComponentQuery.query('directorytree');
-        for (var i = 0; i < tree[0].getStore().getRootNode().childNodes.length; i++) {
-            if (tree[0].getStore().getRootNode().childNodes[i].text == this.items.first().getForm().getFieldValues().Name) {
-                returnVal = false
-            }
-        }
-        return returnVal
+    if (this.state == 'edit' && this.record != null) {
+      name = this.record.Name;
+      description = this.record.Description;
     }
+
+    this.items = [{
+      xtype: 'form',
+      labelWidth: 100,
+      url: this.url,
+      method: 'POST',
+      bodyStyle: 'padding:10px 5px 0',
+      border: false,
+      frame: false,
+      defaults: {
+        msgTarget: 'side'
+      },
+      defaultType: 'textfield',
+      items: [
+              { name: 'path', xtype: 'hidden', width: 400, value: path, allowBlank: false },
+              { name: 'state', xtype: 'hidden', width: 400, value: state, allowBlank: false },
+              { fieldLabel: 'Folder name', name: 'Name', xtype: 'textfield', width: 400, value: name, allowBlank: false },
+              { fieldLabel: 'Context name', name: 'contextName', xtype: 'textfield', width: 400, value: context },
+              { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 400, value: description }
+           ],
+      autoDestroy: false
+
+    }];
+
+    // super
+    this.callParent(arguments);
+  },
+
+  buildToolbar: function () {
+    return [{
+      xtype: 'tbfill'
+    }, {
+      xtype: "button",
+      text: 'Ok',
+      disabled: false,
+      handler: this.onSave,
+      scope: this
+    }, {
+      xtype: "button",
+      text: 'Cancel',
+      //icon: 'Content/img/16x16/edit-clear.png',      
+      disabled: false,
+      handler: this.onReset,
+      scope: this
+    }]
+  },
+
+  onReset: function () {
+    this.items.first().getForm().reset();
+    this.fireEvent('Cancel', this);
+  },
+
+  onSave: function () {
+    var me = this;
+
+    var thisForm = me.items.items[0].getForm();
+    var folderName = thisForm.findField('Name').getValue();
+
+    if (ifExistSibling(folderName, this.node, this.state)) {
+      showDialog(400, 100, 'Warning', 'The name \"' + folderName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
+      return;
+    }
+
+    this.items.first().getForm().submit({
+      waitMsg: 'Saving Data...',
+      success: function (f, a) {
+        me.fireEvent('Save', me);
+      },
+      failure: function (f, a) {
+        var message = 'Error saving changes!';
+        showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+      }
+    });
+
+  },
+
+  checkidNodeExists: function () {
+    var returnVal = true
+    var tree = Ext.ComponentQuery.query('directorytree');
+    for (var i = 0; i < tree[0].getStore().getRootNode().childNodes.length; i++) {
+      if (tree[0].getStore().getRootNode().childNodes[i].text == this.items.first().getForm().getFieldValues().Name) {
+        returnVal = false
+      }
+    }
+    return returnVal
+  }
 });
+
+var ifExistSibling = function (str, node, state) {
+  var ifExist = false;
+  var childNodes = node.childNodes;
+  var repeatTime = 0;
+
+  for (var i = 0; i < childNodes.length; i++) {
+    if (childNodes[i].data.text == str) {
+      if (state == 'new')
+        ifExist = true;
+      else {
+        repeatTime++;
+        if (repeatTime > 1)
+          ifExist = true;
+      }
+    }
+  }
+
+  return ifExist;
+};
+
+function showDialog(width, height, title, message, buttons, callback) {
+  if (message.indexOf('\\r\\n') != -1)
+    var msg = message.replace('\\r\\n', '\r\n');
+  else
+    var msg = message;
+
+  if (msg.indexOf("\\") != -1)
+    var msgg = msg.replace(/\\\\/g, "\\");
+  else
+    var msgg = msg;
+
+  var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
+  Ext.Msg.show({
+    title: title,
+    msg: '<textarea ' + style + ' readonly="yes">' + msgg + '</textarea>',
+    buttons: buttons,
+    fn: callback
+  });
+};
+

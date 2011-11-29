@@ -4,14 +4,14 @@
     layout: 'fit',
     border: false,
     frame: false,
-    from: null,
-    scope: null,
+    from: null,    
     record: null,
-    height: 200,
-    width: 330,
+    height: 230,
+    width: 460,
     closable: true,
     bodyPadding: 10,
     autoload: true,
+
     initComponent: function () {
         this.addEvents({
             close: true,
@@ -24,28 +24,28 @@
             configure: true
         });
 
-        var scope = "";
-        var showconfigure = "";
+        var source = "";
+        var id = "";
+        var path = this.path;
+        var state = this.state;
 
-        if (this.scope != null) {
-            scope = this.scope.Name;
+        if (this.id != null) {
+          id = this.id;
         }
 
         var name = "";
         var description = "";
         var dataLayer = "";
         var assembly = "";
+        var context = this.record.context;
 
-        if (this.record != null) {
-            name = this.record.Name;
-            description = this.record.Description;
-            dataLayer = this.record.DataLayer;
-            assembly = this.record.Assembly;
-            showconfigure = false;
+        if (this.state == 'edit' && this.record != null) {
+          name = this.record.Name;
+          description = this.record.Description;
+          dataLayer = this.record.DataLayer;
+          assembly = this.record.Assembly;
         }
-        else {
-            showconfigure = true;
-        }
+        
         var combostore = Ext.create('Ext.data.Store', {
             model: 'AM.model.DataLayerModel'
         });
@@ -53,7 +53,7 @@
         this.items = [{
             xtype: 'form',
             labelWidth: 70,
-            url: 'directory/application',
+            url: 'directory/endpoint',
             method: 'POST',
             border: false,
             frame: false,
@@ -64,10 +64,11 @@
             },
             defaultType: 'textfield',
             items: [
-              { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 300, value: scope, allowBlank: false },
-              { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 300, value: name, allowBlank: false },
-              { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 300, value: name, allowBlank: false },
-              { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 300, value: description },
+              { name: 'path', xtype: 'hidden', value: path, allowBlank: false },
+              { name: 'state', xtype: 'hidden', value: state, allowBlank: false },
+              { fieldLabel: 'Endpoint name', name: 'Name', xtype: 'textfield', value: name, allowBlank: false },
+              { fieldLabel: 'Context name', name: 'contextName', xtype: 'textfield', value: context, disabled: true },
+              { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', value: description },
               { xtype: 'combo', name: 'assembly', fieldLabel: 'Data Layer', width: 250, store: combostore, displayField: 'Name', valueField: 'Assembly', hiddenName: 'Assembly', value: assembly, queryMode: 'local' }
             ]
         }];
@@ -101,8 +102,15 @@
 
     onSave: function () {
         var me = this;
-        var form = this.items.first().getForm();
-        if (form.getFieldValues().Scope != form.getFieldValues().Name) {
+        var thisForm = this.items.first().getForm();
+        var endpointName = thisForm.findField('Name').getValue();
+
+        if (ifExistSibling(endpointName, me.node, me.state)) {
+          showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
+          return;
+        }
+
+        if (this.record.context != this.form.getForm().getFieldValues().Name) {
             form.submit({
                 waitMsg: 'Saving Data...',
                 success: function (f, a) {
@@ -110,7 +118,7 @@
                 },
                 failure: function (f, a) {
                     var message = 'Error saving changes!';
-                   // showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
                 }
             });
         }

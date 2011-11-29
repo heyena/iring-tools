@@ -7,34 +7,47 @@ Ext.define('AM.view.mapping.MapProperty', {
     mappingNode: null,
     classId: null,
     application: null,
-    height: 120,
+    contextName: null,
+    endpoint: null,
+    graphName: null,
+    height: 140,
     width: 430,
     floating: true,
     layout: 'fit',
     initComponent: function () {
         var formid = 'propertytarget-' + this.scope + '-' + this.application;
         this.items = [{
-            xtype: 'form',
-            method: 'POST',
-          //  mappingNode: this.mappingNode,
-          //  classId: this.classId,
-            url: 'mapping/mapproperty',
+            xtype: 'form',                   
             border: false,
             frame: false,
             bodyStyle: 'padding:10px 5px 0',
             bbar: [
                 { xtype: 'tbfill' },
-                { text: 'Ok', scope: this, handler: this.onSave },
+                { text: 'Ok',
+                  scope: this,
+                  handler: function (btn, e) {
+                    var form = btn.findParentByType('form');
+                    var win = btn.findParentByType('window');
+                    var mapPropertyForm = form.getForm();
+
+                    if (mapPropertyForm.isValid()) {
+                      var propertyName = mapPropertyForm.findField('propertyName').getValue();
+                      var relatedObject = mapPropertyForm.findField('relatedObject').getValue();
+                      var roleName = getLastXString(this.mappingNode.data.id, 1);
+                      var index = this.mappingNode.parentNode.parentNode.indexOf(this.mappingNode.parentNode);
+                      
+                      submitMapProperty(propertyName, this.graphName, relatedObject, roleName, this.classId, index, this.contextName, this.endpoint, this.tree, win);
+                    }
+                  } 
+                },
                 { text: 'Cancel', scope: this, handler: this.onReset }
             ],
             items: [
-                    { xtype: 'hidden', name: 'propertyName', id: 'propertyName' },
-                    { xtype: 'hidden', name: 'relatedObject', id: 'relatedObject' },
-                    { xtype: 'hidden', name: 'mappingNode', id: 'mappingNode',value: this.mappingNode },
-                    { xtype: 'hidden', name: 'classId', id: 'classId' }
-                ],
+              { xtype: 'hidden', name: 'propertyName' },
+              { xtype: 'hidden', name: 'relatedObject' }               
+            ],
             html: '<div class="property-target' + formid + '" '
-                        + 'style="border:1px silver solid;margin:5px;padding:8px;height:20px">'
+                        + 'style="border:1px silver solid;margin:5px;padding:8px;height:40px">'
                     + 'Drop a Property Node here.</div>',
 
             afterRender: function (cmp, eOpts) {
@@ -61,12 +74,12 @@ Ext.define('AM.view.mapping.MapProperty', {
                         }
                         else {
                             me.getForm().findField('propertyName').setValue(data.records[0].data.record.Name);
-                            me.getForm().findField('mappingNode').setValue(me.mappingNode);
-                            me.getForm().findField('classId').setValue(me.classId);
+                            
                             if (data.records[0].parentNode != undefined
                                 && data.records[0].parentNode.data.record != undefined
                                 && data.records[0].parentNode.data.type != 'DataObjectNode')
                                 me.getForm().findField('relatedObject').setValue(data.records[0].parentNode.data.record.Name);
+                            
                             var msg = '<table style="font-size:13px"><tr><td>Property:</td><td><b>' + data.records[0].data.record.Name + '</b></td></tr>'
                             msg += '</table>'
                             me.body.child('div.property-target' + formid).update(msg)
@@ -100,4 +113,42 @@ Ext.define('AM.view.mapping.MapProperty', {
             }
         });
     }
-});
+  });
+
+var submitMapProperty = function (propertyName, graphName, relatedObject, roleName, classId, index, contextName, endpoint, tree, win) {
+  Ext.Ajax.request({
+    url: 'mapping/mapproperty',
+    timeout: 600000,
+    method: 'POST',
+    params: {
+      propertyName: propertyName,
+      graphName: graphName,
+      relatedObject: relatedObject,
+      roleName: roleName,
+      classId: classId,
+      index: index,
+      contextName: contextName,
+      endpoint: endpoint
+    },
+    success: function (result, request) {
+      var rtext = result.responseText;
+      if (rtext.toUpperCase().indexOf('FALSE') == -1) {
+        tree.onReload();
+        win.close();
+      }
+      else {
+        var ind = rtext.indexOf('}');
+        var ine = rtext.indexOf('at');
+        var len = rtext.length - ind - 1;
+        var msg = rtext.substring(ind + 1, ine - 7);
+        showDialog(400, 100, 'Mapping property result - Error', msg, Ext.Msg.OK, null);
+      }
+      //Ext.Msg.show({ title: 'Success', msg: 'Mapped ValueList to Rolemap', icon: Ext.MessageBox.INFO, buttons: Ext.Msg.OK });
+    },
+    failure: function (result, request) {
+      //Ext.Msg.show({ title: 'Failure', msg: 'Failed to Map ValueList to RoleMap', icon: Ext.MessageBox.ERROR, buttons: Ext.Msg.CANCEL });
+      var message = 'Failed to Map property';
+      showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+    }
+  })
+};
