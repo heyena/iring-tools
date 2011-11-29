@@ -26,31 +26,55 @@
         });
 
         var source = "";
-        var id = "";
+        var showconfigure = "";
         var path = this.path;
         var state = this.state;
-
-        if (this.id != null) {
-          id = this.id;
-        }
-
+        
         var name = "";
         var description = "";
         var dataLayer = "";
-        var assembly = "";
-        var context = this.record.context;
+        var assembly = '';
+        var context = this.record.context;        
 
         if (this.state == 'edit' && this.record != null) {
-          name = this.record.Name;
-          description = this.record.Description;
-          dataLayer = this.record.DataLayer;
-          assembly = this.record.Assembly;
+            name = this.record.Name;
+            description = this.record.Description;
+            dataLayer = this.record.DataLayer;
+            assembly = this.record.Assembly;
+            showconfigure = false;
         }
-        
-        var combostore = Ext.create('Ext.data.Store', {
-            model: 'AM.model.DataLayerModel'
-        });
+        else
+            showconfigure = true;        
 
+        var cmbDataLayers = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: 'Data Layer',
+            width: 400,
+            editable: false,
+            triggerAction: 'all',
+            store: new Ext.data.Store({
+                model: 'AM.model.DataLayerModel',
+                listeners: {
+                    load: function () {
+                        if (assembly != '') {
+                            cmbDataLayers.setValue(assembly);
+                        }
+                    }
+                }
+            }),
+            displayField: 'name',
+            valueField: 'assembly',
+            hiddenName: 'Assembly',
+            value: assembly,
+            listeners: {
+                'select': function (combo, record, index) {
+                    if (record != null && this.record != null) {
+                        this.record.DataLayer = record.data.name;
+                        this.record.Assembly = record.data.assembly;
+                    }
+                }
+            }
+        });
+       
         this.items = [{
             xtype: 'form',
             labelWidth: 100,
@@ -58,7 +82,7 @@
             method: 'POST',
             bodyStyle: 'padding:10px 5px 0',
             border: false,
-            frame: false,            
+            frame: false,
             defaults: {
                 width: 400,
                 msgTarget: 'side'
@@ -70,16 +94,17 @@
               { fieldLabel: 'Endpoint name', name: 'endpoint', xtype: 'textfield', value: name, allowBlank: false },
               { fieldLabel: 'Context name', name: 'context', xtype: 'textfield', value: context, disabled: true },
               { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', value: description },
-              { xtype: 'combo', name: 'assembly', fieldLabel: 'Data Layer', store: combostore, displayField: 'Name', valueField: 'Assembly', hiddenName: 'Assembly', value: assembly, queryMode: 'local' }
+              cmbDataLayers
             ]
         }];
-        this.bbar = this.buildToolbar();
+
+        this.bbar = this.buildToolbar(showconfigure);
         // super
         this.callParent(arguments);
         this.items.first().items.last().store.load();
     },
 
-    buildToolbar: function () {
+    buildToolbar: function (showconfigure) {
         return [{
             xtype: 'tbfill'
         }, {
@@ -107,8 +132,8 @@
         var endpointName = thisForm.findField('endpoint').getValue();
 
         if (ifExistSibling(endpointName, me.node, me.state)) {
-          showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
-          return;
+            showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
+            return;
         }
 
         thisForm.submit({
@@ -121,7 +146,7 @@
                 showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
             }
         });
-       
-      
+
+
     }
 });

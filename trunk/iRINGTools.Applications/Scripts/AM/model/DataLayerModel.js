@@ -1,13 +1,13 @@
 ﻿Ext.define('AM.model.DataLayerModel', {
     extend: 'Ext.data.Model',
     fields: [
-        { name: 'Assembly', type: 'string' },
-        { name: 'Name', type: 'string' },
-        { name: 'Configurable', type: 'string' }
+        { name: 'assembly', mapping: 'Assembly' },
+        { name: 'name', mapping: 'Name' },
+        { name: 'configurable', mapping: 'Configurable' }
     ],
     proxy: {
         type: 'ajax',
-        timeout: 120000,
+        timeout: 600000,
         actionMethods: { read: 'POST' },
         extraParams: {},
         url: 'directory/datalayers',
