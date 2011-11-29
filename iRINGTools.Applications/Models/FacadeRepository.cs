@@ -16,7 +16,7 @@ namespace org.iringtools.web.Models
     public class FacadeRepository : IFacadeRepository
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(FacadeRepository));
-        private NameValueCollection _settings = null;
+        //private NameValueCollection _settings = null;
         private WebHttpClient _facadeServiceClient = null;
         
         private string relativeUri = string.Empty;

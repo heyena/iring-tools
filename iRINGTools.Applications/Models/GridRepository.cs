@@ -14,7 +14,7 @@ namespace iRINGTools.Web.Models
 {
     public class GridRepository : IGridRepository
     {
-      private NameValueCollection _settings = null;
+      //private NameValueCollection _settings = null;
       private WebHttpClient _dataServiceClient = null;
 			private DataDictionary dataDict;
 			private DataItems dataItems;
@@ -145,24 +145,27 @@ namespace iRINGTools.Web.Models
 					{
 						foreach (DataProperty dataProp in dataObj.dataProperties)
 						{
-							Field field = new Field();
-							string fieldName = dataProp.propertyName;
-							field.dataIndex = fieldName;
-							field.name = fieldName;
+              if (!dataProp.isHidden)
+              {
+                Field field = new Field();
+                string fieldName = dataProp.propertyName;
+                field.dataIndex = fieldName;
+                field.name = fieldName;
 
-							int fieldWidth = fieldName.Count() * 6;
+                int fieldWidth = fieldName.Count() * 6;
 
-							if (fieldWidth > 40)
-							{
-								field.width = fieldWidth + 23;
-							}
-							else
-							{
-								field.width = 50;
-							}
+                if (fieldWidth > 40)
+                {
+                  field.width = fieldWidth + 23;
+                }
+                else
+                {
+                  field.width = 50;
+                }
 
-              field.type = ToExtJsType(dataProp.dataType);
-							fields.Add(field);
+                field.type = ToExtJsType(dataProp.dataType);
+                fields.Add(field);
+              }
 						}
 					}
 				}
