@@ -195,7 +195,7 @@ namespace org.iringtools.services
 
     [Description("Gets individual of a related item.")]
     [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}/{relatedId}?format={format}")]
-    public void GetRelatedIndividual(string project, string app, string resource, string id, string related, string relatedId, string format)
+    public void GetRelatedItem(string project, string app, string resource, string id, string related, string relatedId, string format)
     {
       try
       {
@@ -211,7 +211,6 @@ namespace org.iringtools.services
         }
         else
         {
-          NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
           XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, relatedId, ref format);
           FormatOutgoingMessage(xDocument.Root, format);
         }
@@ -324,10 +323,17 @@ namespace org.iringtools.services
     }
 
     [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/all/{app}/{graph}/{clazz}/{id}?format={format}")]
-    public void GetIndividualAll(string app, string graph, string clazz, string id, string format)
+    [WebGet(UriTemplate = "/all/{app}/{graph}/{clazz}/{id}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}")]
+    public void GetIndividualAll(string app, string graph, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy)
     {
-      GetIndividual("all", app, graph, clazz, id, format, 0, 0, String.Empty, String.Empty);
+      GetIndividual("all", app, graph, clazz, id, format, start, limit, sortOrder, sortBy);
+    }
+
+    [Description("Gets individual of a related item.")]
+    [WebGet(UriTemplate = "/all/{app}/{resource}/{id}/{related}/{relatedId}?format={format}")]
+    public void GetRelatedItemAll(string app, string resource, string id, string related, string relatedId, string format)
+    {
+      GetRelatedItem("all", app, resource, id, related, relatedId, format);
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]

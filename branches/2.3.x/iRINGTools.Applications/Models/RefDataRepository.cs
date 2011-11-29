@@ -17,7 +17,7 @@ namespace iRINGTools.Web.Models
 {
   public class RefDataRepository : IRefDataRepository
   {
-    private NameValueCollection _settings = null;
+    //private NameValueCollection _settings = null;
     private WebHttpClient _referenceDataServiceClient = null;
     private string _refDataServiceURI = string.Empty;
     private string relativeUri = string.Empty;

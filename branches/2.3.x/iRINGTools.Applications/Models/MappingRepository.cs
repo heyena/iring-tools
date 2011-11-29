@@ -18,7 +18,7 @@ namespace iRINGTools.Web.Models
     public class MappingRepository : IMappingRepository
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingRepository));
-        private NameValueCollection _settings = null;
+        //private NameValueCollection _settings = null;
         private WebHttpClient _adapterServiceClient = null;
         private string _refDataServiceURI = string.Empty;
 
