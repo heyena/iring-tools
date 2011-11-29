@@ -24,7 +24,7 @@
                 proxy: {
                     url: 'refdata/getnode',
                     type: 'ajax',
-                    timeout: 120000,
+                    timeout: 600000,
                     actionMethods: { read: 'POST' },
                     extraParams: {
                         id: null,
