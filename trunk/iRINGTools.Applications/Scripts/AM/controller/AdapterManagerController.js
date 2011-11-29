@@ -790,10 +790,11 @@
         node = tree.getSelectedNode(),
         conf = {
           id: 'newwin-' + node.data.id,
-          path: node.id,
+          path: node.internalId,
           state: 'new',
           record: node.data.record,
-          title: 'Add New Application',
+          node: node,
+          title: 'Add New Endpoint',
           iconCls: 'tabsApplication'
         };
     var win = Ext.widget('applicationform', conf);
@@ -816,11 +817,12 @@
         node = tree.getSelectedNode(),
         conf = {
           id: 'tab-' + node.data.id,
-          path: node.id,
+          path: node.internalId,
           record: node.data.record,
+          node: node,
           state: 'edit',
           node: node.parentNode,
-          title: 'Edit Application \"' + node.data.text + '\"',
+          title: 'Edit Endpint \"' + node.data.text + '\"',
           iconCls: 'tabsApplication'
         };
     var win = Ext.widget('applicationform', conf);
@@ -865,12 +867,12 @@
     var tree = this.getDirTree(),
         node = tree.getSelectedNode(),
         conf = {
-          id: 'tab-' + node.id,
+          id: 'tab-' + node.data.id,
           record: node.data.record,
           state: 'new',
           path: node.internalId,
           node: node,
-          title: 'Add New Scope',
+          title: 'Add New Folder',
           iconCls: 'tabsScope',
           url: 'directory/folder'
         };
@@ -901,7 +903,7 @@
           state: 'new',
           path: node.id,
           node: node,
-          title: 'Edit Scope \"' + node.data.text + '\"',
+          title: 'Edit Folder \"' + node.data.text + '\"',
           iconCls: 'tabsScope',
           url: 'directory/folder'
         };

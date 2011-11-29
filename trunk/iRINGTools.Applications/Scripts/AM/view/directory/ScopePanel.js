@@ -57,15 +57,16 @@
       border: false,
       frame: false,
       defaults: {
+          width: 400,
         msgTarget: 'side'
       },
       defaultType: 'textfield',
       items: [
-              { name: 'path', xtype: 'hidden', width: 400, value: path, allowBlank: false },
-              { name: 'state', xtype: 'hidden', width: 400, value: state, allowBlank: false },
-              { fieldLabel: 'Folder name', name: 'Name', xtype: 'textfield', width: 400, value: name, allowBlank: false },
-              { fieldLabel: 'Context name', name: 'contextName', xtype: 'textfield', width: 400, value: context },
-              { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 400, value: description }
+              { name: 'path', xtype: 'hidden', value: path, allowBlank: false },
+              { name: 'state', xtype: 'hidden', value: state, allowBlank: false },
+              { fieldLabel: 'Folder name', name: 'folderName', xtype: 'textfield', value: name, allowBlank: false },
+              { fieldLabel: 'Context name', name: 'contextName', xtype: 'textfield', value: context },
+              { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', value: description }
            ],
       autoDestroy: false
 
@@ -103,7 +104,7 @@
     var me = this;
 
     var thisForm = me.items.items[0].getForm();
-    var folderName = thisForm.findField('Name').getValue();
+    var folderName = thisForm.findField('folderName').getValue();
 
     if (ifExistSibling(folderName, this.node, this.state)) {
       showDialog(400, 100, 'Warning', 'The name \"' + folderName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);

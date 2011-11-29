@@ -436,14 +436,14 @@ namespace org.iringtools.web.controllers
     public JsonResult Folder(FormCollection form)
     {
       string success;
-      success = _repository.Folder(form["name"], form["description"], form["path"], form["state"], form["contextName"]);
+      success = _repository.Folder(form["foldername"], form["description"], form["path"], form["state"], form["contextName"]);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult Endpoint(FormCollection form)
     {
       string success;
-      success = _repository.Endpoint(form["name"], form["path"], form["description"], form["state"]);
+      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"]);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
@@ -451,6 +451,12 @@ namespace org.iringtools.web.controllers
     {
       _repository.DeleteEntry(form["path"]);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult RootSecurityRole()
+    {
+      string rootSecuirtyRole = _repository.getRootSecurityRole();
+      return Json(rootSecuirtyRole, JsonRequestBehavior.AllowGet);
     }
 
     #region Private Methods

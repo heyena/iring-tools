@@ -29,8 +29,10 @@ namespace iRINGTools.Web.Models
 
     string DeleteEntry(string path);
 
-    string Endpoint(string newEndpointName, string path, string description, string state);
+    string Endpoint(string newEndpointName, string path, string description, string states);
 
     string getNodeIconCls(string type);
+
+    string getRootSecurityRole();
   }
 }
