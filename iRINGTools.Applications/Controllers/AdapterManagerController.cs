@@ -154,7 +154,7 @@ namespace org.iringtools.web.controllers
       {
         List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
           form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
-					form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"], form["serName"]);
+          form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"], form["serName"]);
 
         return Json(dbObjects, JsonRequestBehavior.AllowGet);
       }
@@ -190,31 +190,32 @@ namespace org.iringtools.web.controllers
       }
     }
 
-		public ActionResult DataType()
-		{
-			try
-			{
-				Dictionary<String, String> dataTypeNames = new Dictionary<String, String>();				
-				
-				foreach (DataType dataType in Enum.GetValues(typeof(DataType)))
-				{
-					dataTypeNames.Add(((int)dataType).ToString(), dataType.ToString());					
-				}
+    public ActionResult DataType()
+    {
+      try
+      {
+        Dictionary<String, String> dataTypeNames = new Dictionary<String, String>();
 
-				return Json(dataTypeNames, JsonRequestBehavior.AllowGet);
-			}
-			catch (Exception e)
-			{
-				_logger.Error(e.ToString());
-				throw e;
-			}
-		}
+        foreach (DataType dataType in Enum.GetValues(typeof(DataType)))
+        {
+          dataTypeNames.Add(((int)dataType).ToString(), dataType.ToString());
+        }
+
+        return Json(dataTypeNames, JsonRequestBehavior.AllowGet);
+      }
+      catch (Exception e)
+      {
+        _logger.Error(e.ToString());
+        throw e;
+      }
+    }
 
     public JsonResult RegenAll()
     {
       Response response = _repository.RegenAll();
       return Json(response, JsonRequestBehavior.AllowGet);
     }
+
     public class DBProvider
     {
       public string Provider { get; set; }

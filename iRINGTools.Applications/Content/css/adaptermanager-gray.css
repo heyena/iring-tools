@@ -23,19 +23,19 @@ a:active {color: black}
   background-image: url(../img/cabinet.png) !important;
 }
 
-.x-tree-panel .x-grid-row .x-grid-cell-inner .object{
+.x-tree-panel .x-grid-row .x-grid-cell-inner .treeObject{
   background-image: url(../img/object.png) !important;
 }
 
-.x-tree-panel .x-grid-row .x-grid-cell-inner .property {
+.x-tree-panel .x-grid-row .x-grid-cell-inner .treeProperty {
   background-image: url(../img/property.png) !important;
 }
 
-.x-tree-panel .x-grid-row .x-grid-cell-inner .key {
+.x-tree-panel .x-grid-row .x-grid-cell-inner .treeKey {
   background-image: url(../img/key.png) !important;
 }
 
-.x-tree-panel .x-grid-row .x-grid-cell-inner .relation  {
+.x-tree-panel .x-grid-row .x-grid-cell-inner .treeRelation  {
   background-image: url(../img/relation.png) !important;
 }
 

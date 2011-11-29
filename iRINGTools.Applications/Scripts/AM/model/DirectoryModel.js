@@ -13,13 +13,16 @@ Ext.define('AM.model.DirectoryModel', {
     ],
     proxy: {
         type: 'ajax',
-        timeout: 120000,
+        timeout: 1000000,
         url: 'directory/getnode',
         actionMethods: { read: 'POST' },
         extraParams: {
         id: null,
         type: 'ScopesNode',
-        related: null
+        contextName: null,
+        endpoint: null,
+        related: null,
+        security: null
       },
       reader: { type: 'json' }
     }

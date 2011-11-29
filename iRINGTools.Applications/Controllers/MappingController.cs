@@ -25,1339 +25,1281 @@ using System.Text.RegularExpressions;
 
 namespace org.iringtools.web.controllers
 {
-    public class MappingController : BaseController
+  public class MappingController : BaseController
+  {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingController));
+    NamespaceMapper _nsMap = new NamespaceMapper();
+    private NameValueCollection _settings = null;
+    private RefDataRepository _refdata = null;
+    private IMappingRepository _repository { get; set; }
+    private string _keyFormat = "Mapping.{0}.{1}";
+    private const string unMappedToken = "[unmapped]";
+    private char[] delimiters = new char[] { '/' };
+    private bool qn = false;
+    private string qName = string.Empty;
+    private string contextName, endpoint;
+
+    public MappingController() : this(new MappingRepository()) { }
+
+    public MappingController(IMappingRepository repository)
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(MappingController));
-        NamespaceMapper _nsMap = new NamespaceMapper();
-        private NameValueCollection _settings = null;
-        private RefDataRepository _refdata = null;
-        private IMappingRepository _repository { get; set; }
-        private string _keyFormat = "Mapping.{0}.{1}";
-        private const string unMappedToken = "[unmapped]";
-        private char[] delimiters = new char[] { '/' };
-        private bool qn = false;
-        private string qName = string.Empty;
+      _settings = ConfigurationManager.AppSettings;
+      _repository = repository;
+      _refdata = new RefDataRepository();
+      _nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
+      _nsMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
+      _nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+      _nsMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
+      _nsMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
+      _nsMap.AddNamespace("p8dm", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/data-model#"));
+      _nsMap.AddNamespace("owl2xml", new Uri("http://www.w3.org/2006/12/owl2-xml#"));
+      _nsMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+      _nsMap.AddNamespace("templates", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/templates#"));
+    }
 
-        public MappingController() : this(new MappingRepository()) { }
+    public ActionResult Index()
+    {
+      return View();
+    }
 
-        public MappingController(IMappingRepository repository)
+    private Mapping GetMapping()
+    {
+      string key = string.Format(_keyFormat, contextName, endpoint);
+
+      if (Session[key] == null)
+      {
+        Session[key] = _repository.GetMapping(contextName, endpoint);
+      }
+
+      return (Mapping)Session[key];
+    }
+
+    public JsonResult AddClassMap(FormCollection form)
+    {
+      TreeNode nodes = new TreeNode();
+      nodes.children = new List<JsonTreeNode>();
+      setContextEndpoint(form);
+
+      try
+      {
+        int index = Convert.ToInt32(form["index"]);
+        string dataObject = form["dataObject"];
+        string propertyName = form["propertyName"];
+
+
+        string graphName = form["graphName"];
+        //?
+
+        string roleName = form["roleName"];
+        string classId = form["classID"];
+        string classLabel = form["classLabel"];
+        string idents = string.Empty;
+
+        if (string.IsNullOrEmpty(form["relation"]))
+          idents = string.Format("{0}.{1}", dataObject, propertyName);
+        else
         {
-            _settings = ConfigurationManager.AppSettings;
-            _repository = repository;
-            _refdata = new RefDataRepository();
-            _nsMap.AddNamespace("eg", new Uri("http://example.org/data#"));
-            _nsMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
-            _nsMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
-            _nsMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
-            _nsMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
-            _nsMap.AddNamespace("p8dm", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/data-model#"));
-            _nsMap.AddNamespace("owl2xml", new Uri("http://www.w3.org/2006/12/owl2-xml#"));
-            _nsMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
-            _nsMap.AddNamespace("templates", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/templates#"));
+          string relation = form["relation"];
+          //?
+          idents = string.Format("{0}.{1}.{2}", dataObject, relation, propertyName);
         }
 
-        public ActionResult Index()
-        {
-            return View();
-        }
+        Mapping mapping = GetMapping();
+        GraphMap graphMap = mapping.FindGraphMap(graphName);
 
-        private Mapping GetMapping(string scope, string application)
-        {
-            string key = string.Format(_keyFormat, scope, application);
+        string parentClassId = form["parentClassId"];
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
 
-            if (Session[key] == null)
+        if (ctm != null)
+        {
+          ClassMap classMap = new ClassMap();
+          TemplateMap templateMap = ctm.templateMaps[index];
+
+          foreach (var role in templateMap.roleMaps)
+          {
+            if (role.name == roleName)
             {
-                Session[key] = _repository.GetMapping(scope, application);
+              qn = _nsMap.ReduceToQName(classId, out qName);
+              role.type = RoleType.Reference;
+              role.value = qn ? qName : classId;
+              classMap.name = classLabel;
+              classMap.id = qn ? qName : classId;
+              classMap.identifiers = new Identifiers();
+
+              classMap.identifiers.Add(idents);
+              graphMap.AddClassMap(role, classMap);
+              role.classMap = classMap;
+
+              string context = contextName + "/" + endpoint + "/" + graphMap.name + "/" + classMap.name + "/" +
+                templateMap.name + "(" + index + ")" + role.name;
+
+              nodes.children.Add(CreateClassNode(context, classMap));
+
+              break;
+            }
+          }
+        }
+      }
+
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(nodes, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult MapReference(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        string qName = string.Empty;
+        string templateName = string.Empty;
+        string format = String.Empty;
+        string reference = string.Empty;
+
+        bool qn = _nsMap.ReduceToQName(form["reference"], out reference);
+        string classId = form["classId"];
+        string label = form["label"];
+        string roleName = form["roleName"];
+        string roleId = form["roleId"];
+
+        string graph = form["graphName"];
+        //?
+
+        int index = Convert.ToInt32(form["index"]);
+
+        Mapping mapping = GetMapping();
+        GraphMap graphMap = mapping.FindGraphMap(graph);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+        TemplateMap tMap = ctm.templateMaps[index];
+        RoleMap rMap = tMap.roleMaps.Find(c => c.name == roleName);
+
+        if (rMap != null)
+        {
+          rMap.type = RoleType.Reference;
+          rMap.value = reference;
+          rMap.propertyName = null;
+          rMap.valueListName = null;
+        }
+        else
+        {
+          throw new Exception("Error Creating Reference Map...");
+        }
+      }
+      catch (Exception e)
+      {
+        String msg = e.ToString();
+        _logger.Error(msg);
+        return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult AddTemplateMap(FormCollection form)
+    {
+      JsonTreeNode nodes = new JsonTreeNode();
+
+      try
+      {
+        setContextEndpoint(form);
+        string qName = string.Empty;
+        string format = String.Empty;
+        string nodeType = form["nodetype"];
+        string parentType = form["parentType"];
+        string parentId = form["parentId"];
+        string identifier = form["id"];
+        string graph = form["graphName"];
+        string context = string.Format("{0}/{1}", contextName, endpoint);
+
+        ClassMap selectedClassMap = null;
+        Mapping mapping = GetMapping();
+        GraphMap graphMap = mapping.FindGraphMap(graph);
+        ClassMap graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
+        QMXF newtemplate = _refdata.GetTemplate(identifier);
+
+        if (parentType == "GraphMapNode")
+        {
+          selectedClassMap = graphMap.classTemplateMaps.Find(c => c.classMap.id.Equals(parentId)).classMap;
+        }
+        else if (parentType == "ClassMapNode")
+        {
+          foreach (var classTemplateMap in graphMap.classTemplateMaps)
+          {
+            if (classTemplateMap.classMap.id == parentId)
+            {
+              selectedClassMap = classTemplateMap.classMap;
+              break;
+            }
+          }
+        }
+
+        object template = null;
+        TemplateMap templateMap = new TemplateMap();
+
+        if (newtemplate.templateDefinitions.Count > 0)
+        {
+          foreach (var defs in newtemplate.templateDefinitions)
+          {
+            template = defs;
+            templateMap.id = defs.identifier;
+            templateMap.name = defs.name[0].value;
+            templateMap.type = TemplateType.Definition;
+            GetRoleMaps(selectedClassMap.id, template, templateMap);
+          }
+        }
+        else
+        {
+          foreach (var quals in newtemplate.templateQualifications)
+          {
+            template = quals;
+            templateMap.id = quals.identifier;
+            templateMap.name = quals.name[0].value;
+            templateMap.type = TemplateType.Qualification;
+            GetRoleMaps(selectedClassMap.id, template, templateMap);
+          }
+        }
+
+        graphMap.AddTemplateMap(selectedClassMap, templateMap);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(nodes, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult GetNode(FormCollection form)
+    {
+      setContextEndpoint(form);
+      GraphMap graphMap = null;
+      ClassMap graphClassMap = null;
+      string format = String.Empty;
+      string context = form["node"];
+
+      setContextEndpoint(form);
+      
+      string[] variables = context.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+      string graphName = form["graphName"];
+      
+      string key = string.Format(_keyFormat, contextName, endpoint);
+      Mapping mapping = GetMapping();
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+      if (!string.IsNullOrEmpty(graphName))
+        graphMap = mapping.graphMaps.FirstOrDefault<GraphMap>(o => o.name == graphName);
+
+      if (graphMap != null)
+      {
+        graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
+
+        switch (form["type"])
+        {
+          case "MappingNode":
+            foreach (var graph in mapping.graphMaps)
+            {
+              if (graphMap != null && graphMap.name != graph.name) continue;
+              JsonTreeNode graphNode = CreateGraphNode(context, graph, graphClassMap);
+              nodes.Add(graphNode);
             }
 
-            return (Mapping)Session[key];
-        }
+            break;
 
-        public JsonResult AddClassMap(FormCollection form)
-        {
-            JsonTreeNode nodes = new JsonTreeNode();
-            nodes.children = new List<JsonTreeNode>();
-
-            try
+          case "GraphMapNode":
+            if (graphMap != null)
             {
-                string propertyCtx = form["objectName"];
-                string mappingNode = form["mappingNode"];
-                int index = Convert.ToInt32(form["index"]);
-                if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("Object Name/Property Name has no value");
-                string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string[] mappingVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = dataObjectVars[0];
-                string application = dataObjectVars[1];
-                string dataObject = dataObjectVars[4];
-                string propertyName = dataObjectVars[dataObjectVars.Length - 1];
-                string graphName = mappingVars[2];
+              foreach (var templateMaps in graphMap.classTemplateMaps)
+              {
+                if (templateMaps.classMap.name != graphClassMap.name) continue;
+                int templateIndex = 0;
 
-                string roleName = mappingVars[mappingVars.Length - 1];
-                string classId = form["classUrl"];
-                string classLabel = form["classLabel"];
-                string idents = string.Empty;
-
-                if (dataObjectVars.Length == 6)
+                foreach (var templateMap in templateMaps.templateMaps)
                 {
-                    idents = string.Format("{0}.{1}", dataObject, propertyName);
+                  TreeNode templateNode = CreateTemplateNode(context, templateMap, templateIndex);
+                  TreeNode roleNode = new TreeNode();
+
+                  foreach (var role in templateMap.roleMaps)
+                  {
+                    roleNode = new TreeNode
+                    {
+                      nodeType = "async",
+                      type = "RoleMapNode",
+                      iconCls = "treeRole",
+                      id = templateNode.id + "/" + role.name,
+                      text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
+                                                string.Format("{0}{1}", role.name, unMappedToken),
+                      expanded = false,
+                      leaf = false,
+
+                      record = role
+                    };
+
+                    if (role.type == RoleType.Reference)
+                    {
+                      roleNode.property = new Dictionary<string, string>();
+                      roleNode.property.Add("value label", GetClassLabel(role.value));
+                    }
+
+                    if (role.classMap != null && role.classMap.id != graphClassMap.id)
+                    {
+                      TreeNode classNode = CreateClassNode(context, role.classMap);
+
+                      if (roleNode.children == null)
+                        roleNode.children = new List<JsonTreeNode>();
+
+                      roleNode.children.Add(classNode);
+                    }
+                    else
+                    {
+                      roleNode.leaf = true;
+                    }
+
+                    templateNode.children.Add(roleNode);
+                  }
+
+                  nodes.Add(templateNode);
+                  templateIndex++;
                 }
-                else if (dataObjectVars.Length == 7)
+              }
+            }
+
+            break;
+
+          case "ClassMapNode":
+            var classMapId = form["id"];
+            if (graphMap != null)
+            {
+              foreach (var classTemplateMap in graphMap.classTemplateMaps)
+              {
+                if (classTemplateMap.classMap.id == classMapId)
                 {
-                    string relation = dataObjectVars[dataObjectVars.Length - 2];
-                    idents = string.Format("{0}.{1}.{2}", dataObject, relation, propertyName);
-                }
+                  int templateIndex = 0;
 
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
-
-                string parentClassId = form["parentClassId"];
-                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
-
-                if (ctm != null)
-                {
-                    ClassMap classMap = new ClassMap();
-                    TemplateMap templateMap = ctm.templateMaps[index];
+                  foreach (var templateMap in classTemplateMap.templateMaps)
+                  {
+                    TreeNode templateNode = CreateTemplateNode(context, templateMap, templateIndex);
+                    TreeNode roleNode = new TreeNode();
 
                     foreach (var role in templateMap.roleMaps)
                     {
-                        if (role.name == roleName)
-                        {
-                            qn = _nsMap.ReduceToQName(classId, out qName);
-                            role.type = RoleType.Reference;
-                            role.value = qn ? qName : classId;
-                            classMap.name = classLabel;
-                            classMap.id = qn ? qName : classId;
-                            classMap.identifiers = new Identifiers();
+                      roleNode = new TreeNode
+                      {
+                        nodeType = "async",
+                        type = "RoleMapNode",
+                        iconCls = "treeRole",
+                        id = templateNode.id + "/" + role.name,
+                        text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
+                                                 string.Format("{0}{1}", role.name, unMappedToken),
+                        expanded = false,
+                        leaf = false,
+                        record = role
+                      };
 
-                            classMap.identifiers.Add(idents);
-                            graphMap.AddClassMap(role, classMap);
-                            role.classMap = classMap;
+                      if (role.type == RoleType.Reference)
+                      {
+                        roleNode.property = new Dictionary<string, string>();
+                        roleNode.property.Add("value label", GetClassLabel(role.value));
+                      }
 
-                            string context = scope + "/" + application + "/" + graphMap.name + "/" + classMap.name + "/" +
-                              templateMap.name + "(" + index + ")" + role.name;
+                      if (role.classMap != null && role.classMap.id != graphClassMap.id)
+                      {
+                        JsonTreeNode classNode = CreateClassNode(context, role.classMap);
+                        if (roleNode.children == null)
+                          roleNode.children = new List<JsonTreeNode>();
+                        roleNode.children.Add(classNode);
+                      }
+                      else
+                      {
+                        roleNode.leaf = true;
+                      }
 
-                            nodes.children.Add(CreateClassNode(context, classMap));
-
-                            break;
-                        }
+                      templateNode.children.Add(roleNode);
                     }
-                }
-            }
 
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(nodes, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(nodes, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult MapReference(FormCollection form)
-        {
-            try
-            {
-                string qName = string.Empty;
-                string templateName = string.Empty;
-                string format = String.Empty;
-                string propertyCtx = form["ctx"];
-                string reference = string.Empty;
-                bool qn = _nsMap.ReduceToQName(form["reference"], out reference);
-                string classId = form["classId"];
-                string label = form["label"];
-                string roleName = form["roleName"];
-                string roleId = form["roleId"];
-                string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = dataObjectVars[0];
-                string application = dataObjectVars[1];
-                string graph = dataObjectVars[2];
-                int index = Convert.ToInt32(form["index"]);
-
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graph);
-                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
-                TemplateMap tMap = ctm.templateMaps[index];
-                RoleMap rMap = tMap.roleMaps.Find(c => c.name == roleName);
-
-                if (rMap != null)
-                {
-                    rMap.type = RoleType.Reference;
-                    rMap.value = reference;
-                    rMap.propertyName = null;
-                    rMap.valueListName = null;
-                }
-                else
-                {
-                    throw new Exception("Error Creating Reference Map...");
-                }
-            }
-            catch (Exception e)
-            {
-              String msg = e.ToString();
-              _logger.Error(msg);
-              return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult AddTemplateMap(FormCollection form)
-        {
-            JsonTreeNode nodes = new JsonTreeNode();
-
-            try
-            {
-                string qName = string.Empty;
-
-                string format = String.Empty;
-                string propertyCtx = form["ctx"];
-                string nodeType = form["nodetype"];
-                string parentType = form["parentType"];
-                string parentId = form["parentId"];
-                string identifier = form["id"];
-
-                if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
-
-                string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = dataObjectVars[0];
-                string application = dataObjectVars[1];
-                string graph = dataObjectVars[2];
-                string context = string.Format("{0}/{1}", scope, application);
-
-                ClassTemplateMap selectedCtm = null;
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graph);
-                ClassMap graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
-                QMXF templateQmxf = _refdata.GetTemplate(identifier);
-
-                if (parentType == "GraphMapNode")
-                {
-                  selectedCtm = graphMap.classTemplateMaps.Find(c => c.classMap.id.Equals(parentId));
-                }
-                else if (parentType == "ClassMapNode")
-                {
-                  foreach (var classTemplateMap in graphMap.classTemplateMaps)
-                  {
-                    if (classTemplateMap.classMap.id == parentId)
-                    {
-                      selectedCtm = classTemplateMap;
-                      break;
-                        }
-                    }
-                }
-
-                if (selectedCtm != null)
-                {
-                  ClassMap selectedClassMap = selectedCtm.classMap;
-                  TemplateMap newTemplateMap = new TemplateMap();
-                  object template = null;
-                  
-                  if (templateQmxf.templateDefinitions.Count > 0)
-                  {
-                    foreach (var templateDef in templateQmxf.templateDefinitions)
-                    {
-                      template = templateDef;
-                      newTemplateMap.id = templateDef.identifier;
-                      newTemplateMap.name = templateDef.name[0].value;
-                      newTemplateMap.type = TemplateType.Definition;
-                      GetRoleMaps(selectedClassMap.id, template, newTemplateMap);
-                    }
-                  }
-                  else
-                  {
-                    foreach (var templateQual in templateQmxf.templateQualifications)
-                    {
-                      template = templateQual;
-                      newTemplateMap.id = templateQual.identifier;
-                      newTemplateMap.name = templateQual.name[0].value;
-                      newTemplateMap.type = TemplateType.Qualification;
-                      GetRoleMaps(selectedClassMap.id, template, newTemplateMap);
-                    }
+                    nodes.Add(templateNode);
+                    templateIndex++;
                   }
 
-                  #region DO NOT DELETE THIS CODE BLOCK, PENDING FOR MODELER'S CONFIRMATION
-                  // duplicate templates in the same class are not allowed
-                  //foreach (TemplateMap templateMap in selectedCtm.templateMaps)
-                  //{
-                  //  if (templateMap.id.Substring(templateMap.id.IndexOf(":") + 1) == identifier)
-                  //  {
-                  //    foreach (RoleMap roleMap in templateMap.roleMaps)
-                  //    {
-                  //      if (roleMap.type == RoleType.Reference)
-                  //      {
-                  //        RoleMap newRoleMap = newTemplateMap.roleMaps.Find(x => x.id == roleMap.id);
-
-                  //        if (newRoleMap.value != null && newRoleMap.value.ToLower() == roleMap.value.ToLower())
-                  //        {
-                  //          throw new Exception("Duplicate templates in the same class are not allowed!");
-                  //        }
-                  //      }
-                  //    }
-                  //  }
-                  //}
-                  #endregion
-                  graphMap.AddTemplateMap(selectedClassMap, newTemplateMap);
+                  break;
                 }
-            }
-            catch (Exception ex)
-            {
-              string msg = ex.ToString();
-              _logger.Error(msg);
-              return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+              }
             }
 
-            return Json(nodes, JsonRequestBehavior.AllowGet);
-        }
+            break;
 
-        public JsonResult GetNode(FormCollection form)
-        {
-            GraphMap graphMap = null;
-            ClassMap graphClassMap = null;
-            string format = String.Empty;
-            string context = form["node"];
-            string[] formgraph = form["graph"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-            string[] variables = context.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-            string scope = variables[0];
-            string application = variables[1];
-            string graphName = formgraph[formgraph.Count() - 1];
-            string key = string.Format(_keyFormat, scope, application);
-
-            Mapping mapping = GetMapping(scope, application);
-            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
-            if (!string.IsNullOrEmpty(graphName))
-                graphMap = mapping.graphMaps.FirstOrDefault<GraphMap>(o => o.name == graphName);
-
+          case "TemplateMapNode":
+            var templateId = form["id"];
             if (graphMap != null)
             {
-                graphClassMap = graphMap.classTemplateMaps.FirstOrDefault().classMap;
+              string className;
+              if (string.IsNullOrEmpty(form["className"]))
+                className = graphClassMap.name;
+              else
+                className = form["className"];
 
-                switch (form["type"])
+              ClassTemplateMap classTemplateMap =
+                graphMap.classTemplateMaps.Find(ctm => ctm.classMap.name == className);
+
+              if (classTemplateMap == null) break;
+              TemplateMap templateMap =
+                classTemplateMap.templateMaps.Find(tm => tm.id == templateId);
+
+              if (templateMap == null) break;
+              foreach (var role in templateMap.roleMaps)
+              {
+                TreeNode roleNode = CreateRoleNode(context, role);
+
+                if (role.type == RoleType.Reference)
                 {
-                    case "MappingNode":
-                        foreach (var graph in mapping.graphMaps)
-                        {
-                            if (graphMap != null && graphMap.name != graph.name) continue;
-                            JsonTreeNode graphNode = CreateGraphNode(context, graph, graphClassMap);
-                            nodes.Add(graphNode);
-                        }
-
-                        break;
-
-                    case "GraphMapNode":
-                        if (graphMap != null)
-                        {
-                            foreach (var templateMaps in graphMap.classTemplateMaps)
-                            {
-                                if (templateMaps.classMap.name != graphClassMap.name) continue;
-                                int templateIndex = 0;
-
-                                foreach (var templateMap in templateMaps.templateMaps)
-                                {
-                                    JsonTreeNode templateNode = CreateTemplateNode(context, templateMap, templateIndex);
-                                    JsonTreeNode roleNode = new JsonTreeNode();
-
-                                    foreach (var role in templateMap.roleMaps)
-                                    {
-                                        
-                                        roleNode = new JsonTreeNode
-                                        {
-                                            type = "RoleMapNode",
-                                            iconCls = "treeRole",
-                                            id = templateNode.id + "/" + role.name,
-                                            text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
-                                                                      string.Format("{0}{1}", role.name, unMappedToken),
-                                      //      expanded = false,
-                                            leaf = false,
-                                            children = null,
-                                            record = role
-                                        };
-                                        if (role.type == RoleType.Reference)
-                                        {
-                                          roleNode.properties = new Dictionary<string, string>();
-                                          roleNode.properties.Add("value label", GetClassLabel(role.value));
-                                        }
-
-                                        if (role.classMap != null && role.classMap.id != graphClassMap.id)
-                                        {
-                                            JsonTreeNode classNode = CreateClassNode(context, role.classMap);
-
-                                            if (roleNode.children == null)
-                                                roleNode.children = new List<JsonTreeNode>();
-
-                                            roleNode.children.Add(classNode);
-                                        }
-                                        else
-                                        {
-                                            roleNode.leaf = true;
-                                        }
-
-                                        templateNode.children.Add(roleNode);
-                                    }
-
-                                    nodes.Add(templateNode);
-                                    templateIndex++;
-                                }
-                            }
-                        }
-
-                        break;
-
-                    case "ClassMapNode":
-                        var classMapId = form["id"];
-                        if (graphMap != null)
-                        {
-                            foreach (var classTemplateMap in graphMap.classTemplateMaps)
-                            {
-                                if (classTemplateMap.classMap.id == classMapId)
-                                {
-                                    int templateIndex = 0;
-
-                                    foreach (var templateMap in classTemplateMap.templateMaps)
-                                    {
-                                        JsonTreeNode templateNode = CreateTemplateNode(context, templateMap, templateIndex);
-                                        JsonTreeNode roleNode = new JsonTreeNode();
-
-                                        foreach (var role in templateMap.roleMaps)
-                                        {
-                                            roleNode = new JsonTreeNode
-                                            {
-                                                type = "RoleMapNode",
-                                                iconCls = "treeRole",
-                                                id = templateNode.id + "/" + role.name,
-                                                text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
-                                                                         string.Format("{0}{1}", role.name, unMappedToken),
-                                             //   expanded = false,
-                                                leaf = false,
-                                                children = null,
-                                                record = role
-                                            };
-                                            if (role.type == RoleType.Reference)
-                                            {
-                                              roleNode.properties = new Dictionary<string, string>();
-                                              roleNode.properties.Add("value label", GetClassLabel(role.value));
-                                            }
-
-                                            if (role.classMap != null && role.classMap.id != graphClassMap.id)
-                                            {
-                                                JsonTreeNode classNode = CreateClassNode(context, role.classMap);
-                                                if (roleNode.children == null)
-                                                    roleNode.children = new List<JsonTreeNode>();
-                                                roleNode.children.Add(classNode);
-                                            }
-                                            else
-                                            {
-                                                roleNode.leaf = true;
-                                            }
-
-                                            templateNode.children.Add(roleNode);
-                                        }
-
-                                        nodes.Add(templateNode);
-                                        templateIndex++;
-                                    }
-
-                                    break;
-                                }
-                            }
-                        }
-
-                        break;
-
-                    case "TemplateMapNode":
-                        var templateId = form["id"];
-                        if (graphMap != null)
-                        {
-                            string className = graphClassMap.name;
-                            if (variables.Count() > 4)
-                            {
-                                className = variables[variables.Count() - 2];
-                            }
-
-                            ClassTemplateMap classTemplateMap =
-                              graphMap.classTemplateMaps.Find(ctm => ctm.classMap.name == className);
-
-                            if (classTemplateMap == null) break;
-                            TemplateMap templateMap =
-                              classTemplateMap.templateMaps.Find(tm => tm.id == templateId);
-
-                            if (templateMap == null) break;
-                            foreach (var role in templateMap.roleMaps)
-                            {
-                                JsonTreeNode roleNode = CreateRoleNode(context, role);
-
-                                if (role.type == RoleType.Reference)
-                                {
-                                  roleNode.properties = new Dictionary<string, string>();
-                                  roleNode.properties.Add("value label", GetClassLabel(role.value));
-                                }            
-
-                                if (role.classMap != null && role.classMap.id != graphClassMap.id)
-                                {
-                                    JsonTreeNode classNode = CreateClassNode(context, role.classMap);
-                                    if (roleNode.children == null)
-                                        roleNode.children = new List<JsonTreeNode>();
-                                    roleNode.children.Add(classNode);
-                                }
-                                else
-                                {
-                                    roleNode.leaf = true;
-                                }
-                                nodes.Add(roleNode);
-                            }
-                        }
-
-                        break;
-
-                    case "RoleMapNode":
-                        break;
-                }
-            }
-
-            return Json(nodes, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult DeleteClassMap(FormCollection form)
-        {
-            try
-            {
-                string mappingNode = form["mappingNode"];
-
-                string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = dataObjectVars[0];
-                string application = dataObjectVars[1];
-                string graph = dataObjectVars[2];
-                string classId = form["classId"];
-                string parentClassId = form["parentClass"];
-                string parentTemplateId = form["parentTemplate"];
-                string parentRoleId = form["parentRole"];
-                int index = Convert.ToInt32(form["index"]);
-                string className = dataObjectVars[dataObjectVars.Count() - 1];
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graph);
-                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
-                TemplateMap tMap = ctm.templateMaps[index];
-
-                RoleMap rMap = tMap.roleMaps.Find(r => r.id.Equals(parentRoleId));
-                if (rMap != null)
-                    graphMap.DeleteRoleMap(tMap, rMap.id);
-                else
-                    throw new Exception("Error deleting ClassMap...");
-
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(new { success = false } + ex.Message, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult ResetMapping(FormCollection form)
-        {
-            try
-            {
-                string roleId = form["roleId"];
-                string templateId = form["templateId"];
-                string classId = form["parentClassId"];
-                string mappingNode = form["mappingNode"];
-                string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = dataObjectVars[0];
-                string application = dataObjectVars[1];
-                string graphName = dataObjectVars[2];
-
-                int index = Convert.ToInt32(form["index"]);
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
-                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
-                TemplateMap tMap = ctm.templateMaps[index];
-                RoleMap rMap = tMap.roleMaps.Find(r => r.id.Equals(roleId));
-
-                if (rMap.classMap != null)
-                {
-                    graphMap.DeleteRoleMap(tMap, rMap.id);
+                  roleNode.property = new Dictionary<string, string>();
+                  roleNode.property.Add("value label", GetClassLabel(role.value));
                 }
 
-                if (!string.IsNullOrEmpty(rMap.propertyName) || rMap.dataType.StartsWith("xsd"))
-                    rMap.type = RoleType.DataProperty;
-                else
-                    rMap.type = RoleType.Reference;
-
-                rMap.propertyName = null;
-                rMap.value = null;
-                rMap.valueListName = null;
-                rMap.classMap = null;
-
-                rMap.type = RoleType.Reference;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult MakePossessor(FormCollection form)
-        {
-            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
-            try
-            {
-                string mappingNode = form["mappingNode"];
-
-                object selectedNode = form["node"];
-                int index = Convert.ToInt32(form["index"]);
-
-                string[] dataObjectVars = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = dataObjectVars[0];
-                string application = dataObjectVars[1];
-                string graphName = dataObjectVars[2];
-
-                string classId = form["classId"];
-                string roleName = dataObjectVars[dataObjectVars.Length - 1];
-                string context = string.Format("{0}/{1}/{2}/{3}", scope, application, dataObjectVars[2], dataObjectVars[dataObjectVars.Count() - 2]);
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
-                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
-                TemplateMap tMap = ctm.templateMaps[index];
-                RoleMap rMap = tMap.roleMaps.FirstOrDefault(c => c.name == roleName);
-
-                if (rMap != null)
+                if (role.classMap != null && role.classMap.id != graphClassMap.id)
                 {
-                    rMap.type = RoleType.Possessor;
-                    rMap.propertyName = null;
-                    rMap.valueListName = null;
-                    rMap.value = null;
-                    JsonTreeNode roleNode = CreateRoleNode(context, rMap);
-                    roleNode.text.Replace(unMappedToken, "");
-                    nodes.Add(roleNode);
+                  JsonTreeNode classNode = CreateClassNode(context, role.classMap);
+                  if (roleNode.children == null)
+                    roleNode.children = new List<JsonTreeNode>();
+                  roleNode.children.Add(classNode);
                 }
                 else
                 {
-                    throw new Exception("Error Making Possessor Role...");
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(nodes, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(nodes, JsonRequestBehavior.AllowGet);
-        }
-
-        private JsonTreeNode CreateGraphNode(string context, GraphMap graph, ClassMap classMap)
-        {
-            JsonTreeNode graphNode = new JsonTreeNode
-            {
-                identifier = classMap.id,
-                type = "GraphMapNode",
-                iconCls = "treeGraph",
-                id = context + "/" + graph.name + "/" + classMap.name,
-                text = graph.name,
-             //   expanded = false,
-                leaf = false,
-                children = null,
-                record = graph
-            };
-
-            return graphNode;
-        }
-
-        private JsonTreeNode CreateClassNode(string context, ClassMap classMap)
-        {
-            JsonTreeNode classNode = new JsonTreeNode
-            {
-                identifier = classMap.id,
-                type = "ClassMapNode",
-                iconCls = "treeClass",
-                id = context + "/" + classMap.name,
-                text = classMap.name,
-             //   expanded = false,
-                leaf = false,
-                children = null,
-                record = classMap
-            };
-
-            return classNode;
-        }
-
-        private JsonTreeNode CreateTemplateNode(string context, TemplateMap templateMap, int index)
-        {
-            if (!templateMap.id.Contains(":"))
-                templateMap.id = string.Format("tpl:{0}", templateMap.id);
-
-            JsonTreeNode templateNode = new JsonTreeNode
-            {
-                identifier = templateMap.id,
-                type = "TemplateMapNode",
-                iconCls = "treeTemplate",
-                id = context + "/" + templateMap.name + "(" + index + ")",
-                text = templateMap.name,
-             //   expanded = false,
-                leaf = false,
-                children = new List<JsonTreeNode>(),
-                record = templateMap
-            };
-
-            return templateNode;
-        }
-
-        private JsonTreeNode CreateRoleNode(string context, RoleMap role)
-        {
-            JsonTreeNode roleNode = new JsonTreeNode
-            {
-                type = "RoleMapNode",
-                iconCls = "treeRole",
-                id = context + "/" + role.name,
-                text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
-                                         string.Format("{0}{1}", role.name, unMappedToken),
-             //   expanded = false,
-                leaf = false,
-                children = null,
-                record = role
-            };
-
-            return roleNode;
-        }
-
-        public ActionResult GraphMap(FormCollection form)
-        {
-            List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-
-            try
-            {
-                string qName = string.Empty;
-                string format = String.Empty;
-                string oldGraphName = "";
-
-                string[] mappingCtx = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                if (mappingCtx.Length > 3)
-                    oldGraphName = mappingCtx[4];
-                string propertyCtx = form["objectName"];
-                if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
-                string[] dataObjectVars = propertyCtx.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = dataObjectVars[0];
-                string application = dataObjectVars[1];
-                Mapping mapping = GetMapping(scope, application);
-                string context = string.Format("{0}/{1}", scope, application);
-                string newGraphName = form["graphName"];
-                string classLabel = form["classLabel"];
-                string keyProperty = dataObjectVars[5];
-                string dataObject = dataObjectVars[4];
-                string classId = form["classUrl"];
-                string oldClassId = form["oldClassUrl"];
-                string oldClassLabel = form["oldClassLabel"];
-
-                bool qn = false;
-
-                qn = _nsMap.ReduceToQName(classId, out qName);
-                if (string.IsNullOrEmpty(oldClassLabel))
-                    oldClassLabel = classLabel;
-
-                if (string.IsNullOrEmpty(oldClassId))
-                    oldClassId = classId;
-
-                if (oldGraphName == "")
-                {
-                    if (mapping.graphMaps == null)
-                        mapping.graphMaps = new GraphMaps();
-
-                    GraphMap graphMap = new GraphMap
-                    {
-                        name = newGraphName,
-                        dataObjectName = dataObject
-                    };
-
-                    ClassMap classMap = new ClassMap
-                    {
-                        name = classLabel,
-                        id = qn ? qName : classId
-                    };
-
-                    classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
-                    graphMap.AddClassMap(null, classMap);
-                    mapping.graphMaps.Add(graphMap);
-                    nodes.Add(CreateGraphNode(context, graphMap, classMap));
-                }
-                else
-                {
-                    GraphMap graphMap = mapping.FindGraphMap(oldGraphName);
-                    if (graphMap == null)
-                        graphMap = new GraphMap();
-                    graphMap.name = newGraphName;
-                    graphMap.dataObjectName = dataObject;
-                    ClassTemplateMap ctm = graphMap.classTemplateMaps.Find(c => c.classMap.name.Equals(oldClassLabel));
-
-                    ctm.classMap.name = classLabel;
-                    ctm.classMap.id = qn ? qName : classId;
-                    ctm.classMap.identifiers.Clear();
-                    ctm.classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
-                    _repository.UpdateMapping(scope, application, mapping);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(nodes, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult UpdateMapping(FormCollection form)
-        {
-            string scope = form["scope"];
-            string application = form["application"];
-            Mapping mapping = GetMapping(scope, application);
-            try
-            {
-                _repository.UpdateMapping(scope, application, mapping);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-            }
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult DeleteGraphMap(FormCollection form)
-        {
-            try
-            {
-                string scope = form["scope"];
-                string application = form["application"];
-                Mapping mapping = GetMapping(scope, application);
-                string graphName = form["mappingNode"].Split('/')[4];
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
-                if (graphMap != null)
-                    mapping.graphMaps.Remove(graphMap);
-                  _repository.UpdateMapping(scope, application, mapping);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult MapProperty(FormCollection form)
-        {
-            try
-            {
-                string mappingNode = form["mappingNode"];
-                string propertyName = form["propertyName"];
-                string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = mappingCtx[0];
-                string application = mappingCtx[1];
-                string graphName = mappingCtx[2];
-
-                string classId = form["classId"];
-                string relatedObject = form["relatedObject"];
-                string roleName = mappingCtx[mappingCtx.Length - 1];
-                int index = Convert.ToInt16(form["index"]);
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
-                ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
-
-                if (ctMap != null)
-                {
-                    TemplateMap tMap = ctMap.templateMaps[index];
-                  RoleMap rMap = tMap.roleMaps.Find(r => r.name.Equals(roleName));
-
-                  if (!string.IsNullOrEmpty(rMap.dataType) && rMap.dataType.StartsWith("xsd"))
-                  {
-                    if (relatedObject != "undefined" && relatedObject != "")
-                    {
-                      rMap.propertyName = string.Format("{0}.{1}.{2}",
-                        graphMap.dataObjectName,
-                        relatedObject,
-                        propertyName);
-                    }
-                    else
-                    {
-                      rMap.propertyName =
-                          string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
-                    }
-
-                    rMap.type = RoleType.DataProperty;
-                    rMap.valueListName = null;
-                  }
-                  else
-                  {
-                    throw new Exception("Invalid property map.");
-                  }
-                }
-            }
-            catch (Exception ex)
-            {
-                string msg = ex.ToString();
-                _logger.Error(msg);
-                return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult MapValueList(FormCollection form)
-        {
-            try
-            {
-                string mappingNode = form["mappingNode"];
-                string propertyName = form["propertyName"];
-                string objectNames = form["objectNames"];
-                string[] propertyCtx = objectNames.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string[] mappingCtx = mappingNode.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = propertyCtx[0];
-                string classId = form["classId"];
-                string application = propertyCtx[1];
-                string graphName = mappingCtx[2];
-
-                string roleName = mappingCtx[mappingCtx.Length - 1];
-                string valueListName = propertyCtx[propertyCtx.Length - 1];
-                int index = Convert.ToInt16(form["index"]);
-
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(graphName);
-                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
-
-                if (ctm != null)
-                {
-                  TemplateMap tMap = ctm.templateMaps[index];
-                  RoleMap rMap = tMap.roleMaps.Find(rm => rm.name.Equals(roleName));
-
-                  if (rMap != null)
-                  {
-                    rMap.valueListName = valueListName;
-                    rMap.propertyName = string.Format("{0}.{1}", propertyName.Split(delimiters)[4], propertyName.Split(delimiters)[5]);
-                    rMap.type = RoleType.ObjectProperty;
-                    rMap.value = null;
-                  }
-                    else
-                    {
-                        throw new Exception("Error mapping ValueListMap...");
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                string msg = ex.ToString();
-                _logger.Error(msg);
-                return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult DeleteTemplateMap(FormCollection form)
-        {
-            try
-            {
-                string scope = form["scope"];
-                string application = form["application"];
-                string parentNode = form["mappingNode"].Split('/')[2];
-                string templateId = form["identifier"];
-                string parentClassId = form["parentIdentifier"];              
-                int index = Convert.ToInt16(form["index"]);
-
-                Mapping mapping = GetMapping(scope, application);
-                GraphMap graphMap = mapping.FindGraphMap(parentNode);
-                ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
-                ctm.templateMaps.RemoveAt(index);                
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult DeleteValueList(FormCollection form)
-        {
-            try
-            {
-                string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = context[0];
-                string application = context[1];
-                Mapping mapping = GetMapping(scope, application);
-                string deleteValueList = form["valueList"];
-                var valueListMap = mapping.valueListMaps.Find(c => c.name == deleteValueList);
-                if (valueListMap != null)
-                    mapping.valueListMaps.Remove(valueListMap);
-                _repository.UpdateMapping(scope, application, mapping);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
-        }
-
-        public ActionResult valueListMap(FormCollection form)
-        {
-            try
-            {
-                string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = context[0];
-                string valueList = context[4];
-                string application = context[1];
-                string oldClassUrl = form["oldClassUrl"];
-                string internalName = form["internalName"];
-                string classUrl = form["classUrl"];
-                string classLabel = form["classLabel"];
-
-                bool classUrlUsesPrefix = false;
-
-                if (!String.IsNullOrEmpty(classUrl))
-                {
-                    foreach (string prefix in _nsMap.Prefixes)
-                    {
-                        if (classUrl.ToLower().StartsWith(prefix + ":"))
-                        {
-                            classUrlUsesPrefix = true;
-                            qName = classUrl;
-                            break;
-                        }
-                    }
-
-                    if (!classUrlUsesPrefix)
-                    {
-                        qn = _nsMap.ReduceToQName(classUrl, out qName);
-                    }
+                  roleNode.leaf = true;
                 }
 
-                Mapping mapping = GetMapping(scope, application);
-                ValueListMap valuelistMap = null;
-
-                if (mapping.valueListMaps != null)
-                    valuelistMap = mapping.valueListMaps.Find(c => c.name == valueList);
-
-                if (oldClassUrl == "")
-                {
-                    ValueMap valueMap = new ValueMap
-                    {
-                        internalValue = internalName,
-                        uri = qName,
-                        label = classLabel
-                    };
-                    if (valuelistMap.valueMaps == null)
-                        valuelistMap.valueMaps = new ValueMaps();
-                    valuelistMap.valueMaps.Add(valueMap);
-                    _repository.UpdateMapping(scope, application, mapping);
-                }
-                else
-                {
-                    ValueMap valueMap = valuelistMap.valueMaps.Find(c => c.uri.Equals(oldClassUrl));
-                    if (valueMap != null)
-                    {
-                        valueMap.internalValue = internalName;
-                        valueMap.uri = qName;
-                        valueMap.label = classLabel;
-                        _repository.UpdateMapping(scope, application, mapping);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+                nodes.Add(roleNode);
+              }
             }
 
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+            break;
+
+          case "RoleMapNode":
+            break;
+        }
+      }
+
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult DeleteClassMap(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        string graph = form["graphName"];
+        string classId = form["classId"];
+        string parentClassId = form["parentClass"];
+        string parentTemplateId = form["parentTemplate"];
+        string parentRoleId = form["parentRole"];
+        int index = Convert.ToInt32(form["index"]);
+        string className = form["className"];
+
+
+
+        Mapping mapping = GetMapping();
+        GraphMap graphMap = mapping.FindGraphMap(graph);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
+        TemplateMap tMap = ctm.templateMaps[index];
+
+        RoleMap rMap = tMap.roleMaps.Find(r => r.id.Equals(parentRoleId));
+        if (rMap != null)
+          graphMap.DeleteRoleMap(tMap, rMap.id);
+        else
+          throw new Exception("Error deleting ClassMap...");
+
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(new { success = false } + ex.Message, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult ResetMapping(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        string roleId = form["roleId"];
+        string templateId = form["templateId"];
+        string classId = form["parentClassId"];
+        string graphName = form["graphName"];
+
+        int index = Convert.ToInt32(form["index"]);
+        Mapping mapping = GetMapping();
+        GraphMap graphMap = mapping.FindGraphMap(graphName);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+        TemplateMap tMap = ctm.templateMaps[index];
+        RoleMap rMap = tMap.roleMaps.Find(r => r.id.Equals(roleId));
+
+        if (rMap.classMap != null)
+        {
+          graphMap.DeleteRoleMap(tMap, rMap.id);
         }
 
-        public JsonResult DeleteValueMap(FormCollection form)
+        if (!string.IsNullOrEmpty(rMap.propertyName) || rMap.dataType.StartsWith("xsd"))
+          rMap.type = RoleType.DataProperty;
+        else
+          rMap.type = RoleType.Reference;
+
+        rMap.propertyName = null;
+        rMap.value = null;
+        rMap.valueListName = null;
+        rMap.classMap = null;
+
+        rMap.type = RoleType.Reference;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult MakePossessor(FormCollection form)
+    {
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+      try
+      {
+        setContextEndpoint(form);
+        string graphName = form["graphName"];
+        int index = Convert.ToInt32(form["index"]);
+        string classId = form["classId"];
+        string roleName = form["roleName"];
+        string context = string.Format("{0}/{1}/{2}/{3}", contextName, endpoint, graphName, roleName);
+
+        Mapping mapping = GetMapping();
+        GraphMap graphMap = mapping.FindGraphMap(graphName);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+        TemplateMap tMap = ctm.templateMaps[index];
+        RoleMap rMap = tMap.roleMaps.FirstOrDefault(c => c.name == roleName);
+
+        if (rMap != null)
         {
-            try
-            {
-                string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = context[0];
-                string valueList = context[4];
-                string application = context[1];
-                string oldClassUrl = form["oldClassUrl"];
-                Mapping mapping = GetMapping(scope, application);
-                ValueListMap valuelistMap = null;
-
-                if (mapping.valueListMaps != null)
-                    valuelistMap = mapping.valueListMaps.Find(c => c.name == valueList);
-
-                ValueMap valueMap = valuelistMap.valueMaps.Find(c => c.uri.Equals(oldClassUrl));
-                if (valueMap != null)
-                    valuelistMap.valueMaps.Remove(valueMap);
-                _repository.UpdateMapping(scope, application, mapping);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+          rMap.type = RoleType.Possessor;
+          rMap.propertyName = null;
+          rMap.valueListName = null;
+          rMap.value = null;
+          JsonTreeNode roleNode = CreateRoleNode(context, rMap);
+          roleNode.text.Replace(unMappedToken, "");
+          nodes.Add(roleNode);
         }
-
-        public ActionResult valueList(FormCollection form)
+        else
         {
-            try
-            {
-                string oldValueList = "";
-                ValueListMap valueListMap = null;
-
-                string[] context = form["mappingNode"].Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
-                string scope = context[0];
-
-                if (context.Count() >= 1)
-                    oldValueList = context[context.Count() - 1];
-
-                string application = context[1];
-                Mapping mapping = GetMapping(scope, application);
-                string newvalueList = form["valueList"];
-
-                if (mapping.valueListMaps != null)
-                {
-                    if (oldValueList != "")
-                        valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
-                    else
-                        valueListMap = mapping.valueListMaps.Find(c => c.name == newvalueList);
-                }
-                if (valueListMap == null)
-                {
-                    ValueListMap valuelistMap = new ValueListMap
-                    {
-                        name = newvalueList
-                    };
-
-                    mapping.valueListMaps.Add(valuelistMap);
-                    _repository.UpdateMapping(scope, application, mapping);
-                }
-                else
-                {
-                    valueListMap.name = newvalueList;
-                    _repository.UpdateMapping(scope, application, mapping);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+          throw new Exception("Error Making Possessor Role...");
         }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(nodes, JsonRequestBehavior.AllowGet);
+      }
 
-        public string GetClassLabel(string classId)
+      return Json(nodes, JsonRequestBehavior.AllowGet);
+    }
+
+    private JsonTreeNode CreateGraphNode(string context, GraphMap graph, ClassMap classMap)
+    {
+      JsonTreeNode graphNode = new JsonTreeNode
+      {
+        nodeType = "async",
+        identifier = classMap.id,
+        type = "GraphMapNode",
+        iconCls = "treeGraph",
+        id = context + "/" + graph.name + "/" + classMap.name,
+        text = graph.name,
+        expanded = false,
+        leaf = false,
+        record = graph
+      };
+
+      return graphNode;
+    }
+
+    private TreeNode CreateClassNode(string context, ClassMap classMap)
+    {
+      TreeNode classNode = new TreeNode
+      {
+        identifier = classMap.id,
+        nodeType = "async",
+        type = "ClassMapNode",
+        iconCls = "treeClass",
+        id = context + "/" + classMap.name,
+        text = classMap.name,
+        expanded = false,
+        leaf = false,
+
+        record = classMap
+      };
+
+      return classNode;
+    }
+
+    private TreeNode CreateTemplateNode(string context, TemplateMap templateMap, int index)
+    {
+      if (!templateMap.id.Contains(":"))
+        templateMap.id = string.Format("tpl:{0}", templateMap.id);
+
+      TreeNode templateNode = new TreeNode
+      {
+        nodeType = "async",
+        identifier = templateMap.id,
+        type = "TemplateMapNode",
+        iconCls = "treeTemplate",
+        id = context + "/" + templateMap.name + "(" + index + ")",
+        text = templateMap.name,
+        expanded = false,
+        leaf = false,
+        children = new List<JsonTreeNode>(),
+        record = templateMap
+      };
+
+      return templateNode;
+    }
+
+    private TreeNode CreateRoleNode(string context, RoleMap role)
+    {
+      TreeNode roleNode = new TreeNode
+      {
+        nodeType = "async",
+        type = "RoleMapNode",
+        iconCls = "treeRole",
+        id = context + "/" + role.name,
+        text = role.IsMapped() ? string.Format("{0}{1}", role.name, "") :
+                                 string.Format("{0}{1}", role.name, unMappedToken),
+        expanded = false,
+        leaf = false,
+
+        record = role
+      };
+
+      return roleNode;
+    }
+
+    public ActionResult GraphMap(FormCollection form)
+    {
+      List<JsonTreeNode> nodes = new List<JsonTreeNode>();
+
+      try
+      {
+        setContextEndpoint(form);
+        string qName = string.Empty;
+        string format = String.Empty;
+        string oldGraphName = "";
+
+        oldGraphName = form["oldGraphName"];
+        //?
+
+        string propertyCtx = form["objectName"];
+        if (string.IsNullOrEmpty(propertyCtx)) throw new Exception("ObjectName has no value");
+
+        Mapping mapping = GetMapping();
+        string context = string.Format("{0}/{1}", contextName, endpoint);
+        string newGraphName = form["graphName"];
+        string classLabel = form["classLabel"];
+
+        string keyProperty = form["keyProperty"];
+        string dataObject = form["objectName"];
+        //?
+
+        string classId = form["classUrl"];
+        string oldClassId = form["oldClassUrl"];
+        string oldClassLabel = form["oldClassLabel"];
+
+        bool qn = false;
+
+        qn = _nsMap.ReduceToQName(classId, out qName);
+
+        if (oldGraphName == "")
         {
-          string classLabel = String.Empty;
-          
-          if (!String.IsNullOrEmpty(classId))
+          if (mapping.graphMaps == null)
+            mapping.graphMaps = new GraphMaps();
+
+          GraphMap graphMap = new GraphMap
           {
-            if (classId.Contains(":"))
-              classId = classId.Substring(classId.IndexOf(":") + 1);
+            name = newGraphName,
+            dataObjectName = dataObject
+          };
 
-            string key = "class-label-" + classId;
+          ClassMap classMap = new ClassMap
+          {
+            name = classLabel,
+            id = qn ? qName : classId
+          };
 
-            if (Session[key] != null)
+          classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
+          graphMap.AddClassMap(null, classMap);
+          mapping.graphMaps.Add(graphMap);
+          nodes.Add(CreateGraphNode(context, graphMap, classMap));
+        }
+        else
+        {
+          GraphMap graphMap = mapping.FindGraphMap(oldGraphName);
+          if (graphMap == null)
+            graphMap = new GraphMap();
+          graphMap.name = newGraphName;
+          graphMap.dataObjectName = dataObject;
+          ClassTemplateMap ctm = graphMap.classTemplateMaps.Find(c => c.classMap.name.Equals(oldClassLabel));
+
+          ctm.classMap.name = classLabel;
+          ctm.classMap.id = qn ? qName : classId;
+          ctm.classMap.identifiers.Clear();
+          ctm.classMap.identifiers.Add(string.Format("{0}.{1}", dataObject, keyProperty));
+          _repository.UpdateMapping(mapping, contextName, endpoint);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(nodes, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    private void setContextEndpoint(FormCollection form)
+    {
+      contextName = form["contextName"];
+      endpoint = form["endpoint"];
+    }
+
+    public JsonResult UpdateMapping(FormCollection form)
+    {
+      setContextEndpoint(form);
+      Mapping mapping = GetMapping();
+      try
+      {
+        _repository.UpdateMapping(mapping, contextName, endpoint);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult DeleteGraphMap(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        Mapping mapping = GetMapping();
+        string graphName = form["graphName"];
+        GraphMap graphMap = mapping.FindGraphMap(graphName);
+
+        if (graphMap != null)
+        {
+          mapping.graphMaps.Remove(graphMap);
+          _repository.UpdateMapping(mapping, contextName, endpoint);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult MapProperty(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        string propertyName = form["propertyName"];
+        string graphName = form["graphName"];
+        string classId = form["classId"];
+        string relatedObject = form["relatedObject"];
+        string roleName = form["roleName"];
+        int index = Convert.ToInt16(form["index"]);
+
+        Mapping mapping = GetMapping();
+        GraphMap graphMap = mapping.FindGraphMap(graphName);
+        ClassTemplateMap ctMap = graphMap.GetClassTemplateMap(classId);
+
+        if (ctMap != null)
+        {
+          TemplateMap tMap = ctMap.templateMaps[index];
+          RoleMap rMap = tMap.roleMaps.Find(r => r.name.Equals(roleName));
+
+          if (!string.IsNullOrEmpty(rMap.dataType) && rMap.dataType.StartsWith("xsd"))
+          {
+            rMap.propertyName = getPropertyName(relatedObject, propertyName, graphMap);
+            rMap.type = RoleType.DataProperty;
+            rMap.valueListName = null;
+          }
+          else
+          {
+            throw new Exception("Invalid property map.");
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        string msg = ex.ToString();
+        _logger.Error(msg);
+        return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    private string getPropertyName(string relatedObject, string propertyName, GraphMap graphMap)
+    {
+      string rMapPropertyName;
+      if (relatedObject != "undefined" && relatedObject != "")
+      {
+        rMapPropertyName = string.Format("{0}.{1}.{2}",
+          graphMap.dataObjectName,
+          relatedObject,
+          propertyName);
+      }
+      else
+      {
+        rMapPropertyName = string.Format("{0}.{1}", graphMap.dataObjectName, propertyName);
+      }
+      return rMapPropertyName;
+    }
+
+    public JsonResult MapValueList(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        string propertyName = form["propertyName"];
+        string graphName = form["graphName"];
+        string classId = form["classId"];
+        string roleName = form["roleName"];
+        string valueListName = form["valueListName"];
+        int index = Convert.ToInt16(form["index"]);
+        string relatedObject = form["relatedObject"];
+
+        Mapping mapping = GetMapping();
+        GraphMap graphMap = mapping.FindGraphMap(graphName);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(classId);
+
+        if (ctm != null)
+        {
+          TemplateMap tMap = ctm.templateMaps[index];
+          RoleMap rMap = tMap.roleMaps.Find(rm => rm.name.Equals(roleName));
+
+          if (rMap != null)
+          {
+            rMap.propertyName = getPropertyName(relatedObject, propertyName, graphMap);
+            rMap.type = RoleType.DataProperty;
+            rMap.valueListName = valueListName;
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        string msg = ex.ToString();
+        _logger.Error(msg);
+        return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult DeleteTemplateMap(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        string parentNode = form["mappingNode"].Split('/')[2];
+        string templateId = form["identifier"];
+        string parentClassId = form["parentIdentifier"];
+        int index = Convert.ToInt16(form["index"]);
+
+        Mapping mapping = GetMapping();
+        GraphMap graphMap = mapping.FindGraphMap(parentNode);
+        ClassTemplateMap ctm = graphMap.GetClassTemplateMap(parentClassId);
+        ctm.templateMaps.RemoveAt(index);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult DeleteValueList(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        Mapping mapping = GetMapping();
+        string deleteValueList = form["valueList"];
+        var valueListMap = mapping.valueListMaps.Find(c => c.name == deleteValueList);
+
+        if (valueListMap != null)
+          mapping.valueListMaps.Remove(valueListMap);
+        _repository.UpdateMapping(mapping, contextName, endpoint);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public ActionResult valueListMap(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        string valueList = form["valueList"];
+        //?
+        string oldClassUrl = form["oldClassUrl"];
+        string internalName = form["internalName"];
+        string classUrl = form["classUrl"];
+        string classLabel = form["classLabel"];
+
+        bool classUrlUsesPrefix = false;
+
+        if (!String.IsNullOrEmpty(classUrl))
+        {
+          foreach (string prefix in _nsMap.Prefixes)
+          {
+            if (classUrl.ToLower().StartsWith(prefix + ":"))
             {
-              return (string)Session[key];
-            }
-
-            try
-            {
-              Entity entity = _refdata.GetClassLabel(classId);
-
-              classLabel = entity.Label;
-              Session[key] = classLabel;
-            }
-            catch (Exception ex)
-            {
-              _logger.Error("Error getting class label for class id [" + classId + "]: " + ex);
-              throw ex;
+              classUrlUsesPrefix = true;
+              qName = classUrl;
+              break;
             }
           }
 
-          return classLabel;
+          if (!classUrlUsesPrefix)
+          {
+            qn = _nsMap.ReduceToQName(classUrl, out qName);
+          }
         }
-        public JsonResult GetLabels(FormCollection form)
+
+        Mapping mapping = GetMapping();
+        ValueListMap valuelistMap = null;
+
+        if (mapping.valueListMaps != null)
+          valuelistMap = mapping.valueListMaps.Find(c => c.name == valueList);
+
+        if (oldClassUrl == "")
         {
-            JsonArray jsonArray = new JsonArray();
-
-            try
-            {
-                string scope = form["Scope"];
-                string application = form["Application"];
-                string recordId = form["recordId"];
-                string roleType = form["roleType"];
-                string roleValue = form["roleValue"];
-
-                if (!string.IsNullOrEmpty(recordId))
-                {
-                    //   jsonArray.Add( "recordId", _refdata.GetClassLabel(recordId.Split(':')[1]));
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.ToString());
-                return Json(jsonArray, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(jsonArray, JsonRequestBehavior.AllowGet);
+          ValueMap valueMap = new ValueMap
+          {
+            internalValue = internalName,
+            uri = qName,
+            label = classLabel
+          };
+          if (valuelistMap.valueMaps == null)
+            valuelistMap.valueMaps = new ValueMaps();
+          valuelistMap.valueMaps.Add(valueMap);
+          _repository.UpdateMapping(mapping, contextName, endpoint);
         }
-
-        private void GetRoleMaps(string classId, object template, TemplateMap currentTemplateMap)
+        else
         {
-            bool qn = false;
-            string qName = string.Empty;
-
-            if (currentTemplateMap.roleMaps == null)
-                currentTemplateMap.roleMaps = new RoleMaps();
-
-            if (template is TemplateDefinition)
-            {
-                TemplateDefinition templateDefinition = (TemplateDefinition)template;
-                List<RoleDefinition> roleDefinitions = templateDefinition.roleDefinition;
-
-                foreach (RoleDefinition roleDefinition in roleDefinitions)
-                {
-
-                    string range = roleDefinition.range;
-                    RoleMap roleMap = new RoleMap();
-                    if (range != classId && range.StartsWith("xsd:"))
-                    {
-                        qn = _nsMap.ReduceToQName(range, out qName);
-                        roleMap.type = RoleType.DataProperty;
-                        roleMap.name = roleDefinition.name.FirstOrDefault().value;
-                        roleMap.dataType = qn ? qName : range;
-                        roleMap.propertyName = string.Empty;
-                        qn = _nsMap.ReduceToQName(roleDefinition.identifier, out qName);
-                        roleMap.id = qn ? qName : roleDefinition.identifier;
-
-                        currentTemplateMap.roleMaps.Add(roleMap);
-                    }
-                    else if (range != classId && !range.StartsWith("xsd:"))
-                    {
-
-                        roleMap.type = RoleType.ObjectProperty;
-                        roleMap.name = roleDefinition.name.FirstOrDefault().value;
-                        qn = _nsMap.ReduceToQName(range, out qName);
-                        roleMap.dataType = qn ? qName : range;
-                        roleMap.propertyName = string.Empty;
-                        qn = _nsMap.ReduceToQName(roleDefinition.identifier, out qName);
-                        roleMap.id = qn ? qName : roleDefinition.identifier;
-                        currentTemplateMap.roleMaps.Add(roleMap);
-                    }
-                    else if (range == classId)
-                    {
-                        roleMap.type = RoleType.Possessor;
-                        roleMap.name = roleDefinition.name.FirstOrDefault().value;
-                        qn = _nsMap.ReduceToQName(range, out qName);
-                        roleMap.dataType = qn ? qName : range;
-                        roleMap.propertyName = string.Empty;
-                        qn = _nsMap.ReduceToQName(roleDefinition.identifier, out qName);
-                        roleMap.id = qn ? qName : roleDefinition.identifier;
-                        currentTemplateMap.roleMaps.Add(roleMap);
-                    }
-                }
-            }
-
-            if (template is TemplateQualification)
-            {
-                TemplateQualification templateQualification = (TemplateQualification)template;
-                List<RoleQualification> roleQualifications = templateQualification.roleQualification;
-
-                foreach (RoleQualification roleQualification in roleQualifications)
-                {
-                    qn = _nsMap.ReduceToQName(roleQualification.qualifies, out qName);
-                    string range = roleQualification.range;
-                    RoleMap roleMap = new RoleMap();
-
-                    roleMap.name = roleQualification.name.FirstOrDefault().value;
-                    roleMap.id = qn ? qName : roleQualification.qualifies;
-
-                    if (roleQualification.value != null)  // fixed role
-                    {
-                        if (!String.IsNullOrEmpty(roleQualification.value.reference))
-                        {
-                            roleMap.type = RoleType.Reference;
-                            qn = _nsMap.ReduceToQName(roleQualification.value.reference, out qName);
-                            roleMap.value = qn ? qName : roleQualification.value.reference;
-                        }
-                        else if (!String.IsNullOrEmpty(roleQualification.value.text))  // fixed role is a literal
-                        {
-                            roleMap.type = RoleType.FixedValue;
-                            roleMap.value = roleQualification.value.text;
-                            roleMap.dataType = roleQualification.value.As;
-                        }
-
-                        currentTemplateMap.roleMaps.Add(roleMap);
-                    }
-                    else if (range != classId && range.StartsWith("xsd:")) // property role
-                    {
-                        roleMap.type = RoleType.DataProperty;
-                        qn = _nsMap.ReduceToQName(range, out qName);
-                        roleMap.dataType = qn ? qName : range;
-                        roleMap.propertyName = String.Empty;
-                        currentTemplateMap.roleMaps.Add(roleMap);
-                    }
-                    else if (range != classId && !range.StartsWith("xsd:"))
-                    {
-                        roleMap.type = RoleType.ObjectProperty;
-                        qn = _nsMap.ReduceToQName(range, out qName);
-                        roleMap.dataType = qn ? qName : range;
-                        roleMap.propertyName = String.Empty;
-                        currentTemplateMap.roleMaps.Add(roleMap);
-                    }
-
-                    else if (range == classId)    // class role
-                    {
-                        roleMap.type = RoleType.Possessor;
-
-                        qn = _nsMap.ReduceToQName(range, out qName);
-                        roleMap.dataType = qn ? qName : range;
-                        currentTemplateMap.roleMaps.Add(roleMap);
-                    }
-                }
-            }
+          ValueMap valueMap = valuelistMap.valueMaps.Find(c => c.uri.Equals(oldClassUrl));
+          if (valueMap != null)
+          {
+            valueMap.internalValue = internalName;
+            valueMap.uri = qName;
+            valueMap.label = classLabel;
+            _repository.UpdateMapping(mapping, contextName, endpoint);
+          }
         }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
 
-        public ActionResult Export(string scope, string application, string graphMap)
-        {
-            //string scope = form["scope"];
-            //string application = form["application"];
-            //string graphMap = form["graphMap"];
-
-            Mapping mapping = GetMapping(scope, application);
-            Mapping export;
-            if (!string.IsNullOrEmpty(graphMap))
-            {
-                export = new Mapping();
-                export.graphMaps = new GraphMaps();
-                export.graphMaps.Add(mapping.FindGraphMap(graphMap));
-                export.valueListMaps = mapping.valueListMaps;
-            }
-            else
-            {
-                export = mapping;
-            }
-
-            string content = Utility.SerializeDataContract<Mapping>(export);
-
-            return File(Encoding.UTF8.GetBytes(content), "application/xml", string.Format("Mapping.{0}.{1}.xml", scope, application));
-        }
-
-        public ActionResult Import(FormCollection form)
-        {
-            Mapping mapping = Utility.DeserializeDataContract<Mapping>(form["mapping"]);
-
-            return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-        }
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
+
+    public JsonResult DeleteValueMap(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        string valueList = form["valueList"];
+        //?
+        string oldClassUrl = form["oldClassUrl"];
+        Mapping mapping = GetMapping();
+        ValueListMap valuelistMap = null;
+
+        if (mapping.valueListMaps != null)
+          valuelistMap = mapping.valueListMaps.Find(c => c.name == valueList);
+
+        ValueMap valueMap = valuelistMap.valueMaps.Find(c => c.uri.Equals(oldClassUrl));
+        if (valueMap != null)
+          valuelistMap.valueMaps.Remove(valueMap);
+        _repository.UpdateMapping(mapping, contextName, endpoint);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public ActionResult valueList(FormCollection form)
+    {
+      try
+      {
+        setContextEndpoint(form);
+        string oldValueList = "";
+        ValueListMap valueListMap = null;
+
+        oldValueList = form["oldValueList"];
+
+        Mapping mapping = GetMapping();
+        string newvalueList = form["valueList"];
+
+        if (mapping.valueListMaps != null)
+        {
+          if (oldValueList != "")
+            valueListMap = mapping.valueListMaps.Find(c => c.name == oldValueList);
+          else
+            valueListMap = mapping.valueListMaps.Find(c => c.name == newvalueList);
+        }
+        if (valueListMap == null)
+        {
+          ValueListMap valuelistMap = new ValueListMap
+          {
+            name = newvalueList
+          };
+
+          mapping.valueListMaps.Add(valuelistMap);
+          _repository.UpdateMapping(mapping, contextName, endpoint);
+        }
+        else
+        {
+          valueListMap.name = newvalueList;
+          _repository.UpdateMapping(mapping, contextName, endpoint);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(new { success = true }, JsonRequestBehavior.AllowGet);
+    }
+
+    public string GetClassLabel(string classId)
+    {
+      string classLabel = String.Empty;
+
+      if (!String.IsNullOrEmpty(classId))
+      {
+        if (classId.Contains(":"))
+          classId = classId.Substring(classId.IndexOf(":") + 1);
+
+        string key = "class-label-" + classId;
+
+        if (Session[key] != null)
+        {
+          return (string)Session[key];
+        }
+
+        try
+        {
+          Entity entity = _refdata.GetClassLabel(classId);
+          classLabel = entity.Label;
+          Session[key] = classLabel;
+        }
+        catch (Exception ex)
+        {
+          _logger.Error("Error getting class label for class id [" + classId + "]: " + ex);
+          throw ex;
+        }
+      }
+
+      return classLabel;
+    }
+
+    public JsonResult GetLabels(FormCollection form)
+    {
+      JsonArray jsonArray = new JsonArray();
+
+      try
+      {
+        string recordId = form["recordId"];
+        string roleType = form["roleType"];
+        string roleValue = form["roleValue"];
+
+        if (!string.IsNullOrEmpty(recordId))
+        {
+          //   jsonArray.Add( "recordId", _refdata.GetClassLabel(recordId.Split(':')[1]));
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+        return Json(jsonArray, JsonRequestBehavior.AllowGet);
+      }
+
+      return Json(jsonArray, JsonRequestBehavior.AllowGet);
+    }
+
+    private void GetRoleMaps(string classId, object template, TemplateMap currentTemplateMap)
+    {
+      bool qn = false;
+      string qName = string.Empty;
+
+      if (currentTemplateMap.roleMaps == null)
+        currentTemplateMap.roleMaps = new RoleMaps();
+
+      if (template is TemplateDefinition)
+      {
+        TemplateDefinition templateDefinition = (TemplateDefinition)template;
+        List<RoleDefinition> roleDefinitions = templateDefinition.roleDefinition;
+
+        foreach (RoleDefinition roleDefinition in roleDefinitions)
+        {
+          string range = roleDefinition.range;
+          RoleMap roleMap = new RoleMap();
+
+          if (range != classId && range.StartsWith("xsd:"))
+          {
+            qn = _nsMap.ReduceToQName(range, out qName);
+            roleMap.type = RoleType.DataProperty;
+            roleMap.name = roleDefinition.name.FirstOrDefault().value;
+            roleMap.dataType = qn ? qName : range;
+            roleMap.propertyName = string.Empty;
+            qn = _nsMap.ReduceToQName(roleDefinition.identifier, out qName);
+            roleMap.id = qn ? qName : roleDefinition.identifier;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+          else if (range != classId && !range.StartsWith("xsd:"))
+          {
+            roleMap.type = RoleType.ObjectProperty;
+            roleMap.name = roleDefinition.name.FirstOrDefault().value;
+            qn = _nsMap.ReduceToQName(range, out qName);
+            roleMap.dataType = qn ? qName : range;
+            roleMap.propertyName = string.Empty;
+            qn = _nsMap.ReduceToQName(roleDefinition.identifier, out qName);
+            roleMap.id = qn ? qName : roleDefinition.identifier;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+          else if (range == classId)
+          {
+            roleMap.type = RoleType.Possessor;
+            roleMap.name = roleDefinition.name.FirstOrDefault().value;
+            qn = _nsMap.ReduceToQName(range, out qName);
+            roleMap.dataType = qn ? qName : range;
+            roleMap.propertyName = string.Empty;
+            qn = _nsMap.ReduceToQName(roleDefinition.identifier, out qName);
+            roleMap.id = qn ? qName : roleDefinition.identifier;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+        }
+      }
+
+      if (template is TemplateQualification)
+      {
+        TemplateQualification templateQualification = (TemplateQualification)template;
+        List<RoleQualification> roleQualifications = templateQualification.roleQualification;
+
+        foreach (RoleQualification roleQualification in roleQualifications)
+        {
+          qn = _nsMap.ReduceToQName(roleQualification.qualifies, out qName);
+          string range = roleQualification.range;
+          RoleMap roleMap = new RoleMap();
+
+          roleMap.name = roleQualification.name.FirstOrDefault().value;
+          roleMap.id = qn ? qName : roleQualification.qualifies;
+
+          if (roleQualification.value != null)  // fixed role
+          {
+            if (!String.IsNullOrEmpty(roleQualification.value.reference))
+            {
+              roleMap.type = RoleType.Reference;
+              qn = _nsMap.ReduceToQName(roleQualification.value.reference, out qName);
+              roleMap.value = qn ? qName : roleQualification.value.reference;
+            }
+            else if (!String.IsNullOrEmpty(roleQualification.value.text))  // fixed role is a literal
+            {
+              roleMap.type = RoleType.FixedValue;
+              roleMap.value = roleQualification.value.text;
+              roleMap.dataType = roleQualification.value.As;
+            }
+
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+          else if (range != classId && range.StartsWith("xsd:")) // property role
+          {
+            roleMap.type = RoleType.DataProperty;
+            qn = _nsMap.ReduceToQName(range, out qName);
+            roleMap.dataType = qn ? qName : range;
+            roleMap.propertyName = String.Empty;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+          else if (range != classId && !range.StartsWith("xsd:"))
+          {
+            roleMap.type = RoleType.ObjectProperty;
+            qn = _nsMap.ReduceToQName(range, out qName);
+            roleMap.dataType = qn ? qName : range;
+            roleMap.propertyName = String.Empty;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+          else if (range == classId)    // class role
+          {
+            roleMap.type = RoleType.Possessor;
+            qn = _nsMap.ReduceToQName(range, out qName);
+            roleMap.dataType = qn ? qName : range;
+            currentTemplateMap.roleMaps.Add(roleMap);
+          }
+        }
+      }
+    }
+
+    public ActionResult Export(string scope, string application, string graphMap)
+    {
+      this.contextName = scope;
+      this.endpoint = application;
+
+      Mapping mapping = GetMapping();
+      Mapping export;
+      if (!string.IsNullOrEmpty(graphMap))
+      {
+        export = new Mapping();
+        export.graphMaps = new GraphMaps();
+        export.graphMaps.Add(mapping.FindGraphMap(graphMap));
+        export.valueListMaps = mapping.valueListMaps;
+      }
+      else
+      {
+        export = mapping;
+      }
+
+      string content = Utility.SerializeDataContract<Mapping>(export);
+      return File(Encoding.UTF8.GetBytes(content), "application/xml", string.Format("Mapping.{0}.{1}.xml", scope, application));
+    }
+
+    public ActionResult Import(FormCollection form)
+    {
+      Mapping mapping = Utility.DeserializeDataContract<Mapping>(form["mapping"]);
+
+      return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+    }
+  }
 }

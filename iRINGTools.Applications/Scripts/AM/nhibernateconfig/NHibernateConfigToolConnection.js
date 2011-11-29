@@ -798,11 +798,11 @@ function loadTree (rootNode, dbDict) {
 									text: nodeText,
 									type: "keyProperty",
 									leaf: true,
-									iconCls: 'property',
+									iconCls: 'treeKey',
 									hidden: false,
 									properties: properties
 								});
-								newKeyNode.iconCls = 'property';
+							  newKeyNode.iconCls = 'treeKey';
 								propertiesNode.children.splice(ijj, 1);
 								ijj--;
 
@@ -821,14 +821,15 @@ function loadTree (rootNode, dbDict) {
 						text: dataObject.dataRelationships[kj].relationshipName,
 						type: 'relationship',
 						leaf: true,
-						iconCls: 'relation',
+						iconCls: 'treeRelation',
 						relatedObjMap: [],
 						objectName: dataObjectNode.text,
 						relatedObjectName: dataObject.dataRelationships[kj].relatedObjectName,
 						relationshipType: relationTypeStr[dataObject.dataRelationships[kj].relationshipType],
 						relationshipTypeIndex: dataObject.dataRelationships[kj].relationshipType,
 						propertyMap: []
-					});
+				  });
+				  newKeyNode.iconCls = 'treeRelation';
 					var mapArray = new Array();
 					for (var kjj = 0; kjj < dataObject.dataRelationships[kj].propertyMaps.length; kjj++) {
 						var mapItem = new Array();
