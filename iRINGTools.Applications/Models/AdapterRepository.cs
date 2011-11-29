@@ -362,6 +362,24 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
+    public string getRootSecurityRole()
+    {
+      string rootSecurityRole = "";
+
+      try
+      {
+
+        rootSecurityRole = _javaCoreClient.GetMessage(string.Format("/security/{0}", "fwei@bechtel.com"));
+        _logger.Debug("Successfully called Adapter.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+      }
+
+      return rootSecurityRole;
+    }
+
     public string Folder(string newFolderName, string description, string path, string state, string context)
     {
       string obj = null;
@@ -425,7 +443,7 @@ namespace iRINGTools.Web.Models
       }
 
       return obj;
-    }
+    }    
 
     #region NHibernate Configuration Wizard support methods
     public DataProviders GetDBProviders()

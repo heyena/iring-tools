@@ -4,12 +4,13 @@
     layout: 'fit',
     border: false,
     frame: false,
-    from: null,    
+    from: null,
     record: null,
-    height: 230,
+    node: null,
+    height: 261,
     width: 460,
+    bodyPadding: 1,
     closable: true,
-    bodyPadding: 10,
     autoload: true,
 
     initComponent: function () {
@@ -52,33 +53,33 @@
 
         this.items = [{
             xtype: 'form',
-            labelWidth: 70,
+            labelWidth: 100,
             url: 'directory/endpoint',
             method: 'POST',
+            bodyStyle: 'padding:10px 5px 0',
             border: false,
-            frame: false,
-            layout: 'anchor',
+            frame: false,            
             defaults: {
-                width: 310,
+                width: 400,
                 msgTarget: 'side'
             },
             defaultType: 'textfield',
             items: [
               { name: 'path', xtype: 'hidden', value: path, allowBlank: false },
               { name: 'state', xtype: 'hidden', value: state, allowBlank: false },
-              { fieldLabel: 'Endpoint name', name: 'Name', xtype: 'textfield', value: name, allowBlank: false },
-              { fieldLabel: 'Context name', name: 'contextName', xtype: 'textfield', value: context, disabled: true },
+              { fieldLabel: 'Endpoint name', name: 'endpoint', xtype: 'textfield', value: name, allowBlank: false },
+              { fieldLabel: 'Context name', name: 'context', xtype: 'textfield', value: context, disabled: true },
               { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', value: description },
-              { xtype: 'combo', name: 'assembly', fieldLabel: 'Data Layer', width: 250, store: combostore, displayField: 'Name', valueField: 'Assembly', hiddenName: 'Assembly', value: assembly, queryMode: 'local' }
+              { xtype: 'combo', name: 'assembly', fieldLabel: 'Data Layer', store: combostore, displayField: 'Name', valueField: 'Assembly', hiddenName: 'Assembly', value: assembly, queryMode: 'local' }
             ]
         }];
-        this.bbar = this.buildToolbar(showconfigure);
+        this.bbar = this.buildToolbar();
         // super
         this.callParent(arguments);
         this.items.first().items.last().store.load();
     },
 
-    buildToolbar: function (showconfigure) {
+    buildToolbar: function () {
         return [{
             xtype: 'tbfill'
         }, {
@@ -103,28 +104,24 @@
     onSave: function () {
         var me = this;
         var thisForm = this.items.first().getForm();
-        var endpointName = thisForm.findField('Name').getValue();
+        var endpointName = thisForm.findField('endpoint').getValue();
 
         if (ifExistSibling(endpointName, me.node, me.state)) {
           showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
           return;
         }
 
-        if (this.record.context != this.form.getForm().getFieldValues().Name) {
-            form.submit({
-                waitMsg: 'Saving Data...',
-                success: function (f, a) {
-                    me.fireEvent('Save', me);
-                },
-                failure: function (f, a) {
-                    var message = 'Error saving changes!';
-                    showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-                }
-            });
-        }
-        else {
-            var message = 'Scope & Application name cannot be same!';
-            showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
-        }
+        thisForm.submit({
+            waitMsg: 'Saving Data...',
+            success: function (f, a) {
+                me.fireEvent('Save', me);
+            },
+            failure: function (f, a) {
+                var message = 'Error saving changes!';
+                showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
+            }
+        });
+       
+      
     }
 });
