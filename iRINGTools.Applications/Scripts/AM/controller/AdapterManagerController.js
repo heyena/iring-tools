@@ -900,7 +900,7 @@
         conf = {
           id: 'tab-' + node.id,
           record: node.data.record,
-          state: 'new',
+          state: 'edit',
           path: node.id,
           node: node,
           title: 'Edit Folder \"' + node.data.text + '\"',
