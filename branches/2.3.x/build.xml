@@ -138,16 +138,6 @@
       ReplacementText="$(Major).$(Minor).$(Build).$(Revision)"/>
   </Target>
 
-  <Target Name="SvnCleanUp">
-    <Message Text="Performing SVN clean-up ..." />
-    <Exec Command="svn cleanup"/>
-  </Target>
-
-  <Target Name="SvnUpdate">
-    <Message Text="Performing SVN update ..." />
-    <Exec Command="svn update"/>
-  </Target>
-
   <Target Name="CleanBuild">
     <Message Text="Performing MSBuild clean-up ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
@@ -216,8 +206,8 @@
     <Exec Command="RmDir /S /Q $(DeploymentDir)\iRINGTools" />
   </Target>
 
-  <Target Name="Build" DependsOnTargets="SvnUpdate; CoreBuild"/>
-  <Target Name="Rebuild" DependsOnTargets="SvnUpdate; CleanBuild; PrepareBuild; CoreBuild"/>
+  <Target Name="Build" DependsOnTargets="CoreBuild"/>
+  <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild"/>
   
   <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
 </Project>
