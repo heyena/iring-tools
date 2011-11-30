@@ -34,6 +34,7 @@ using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.ServiceModel.Web;
+using log4net;
 
 namespace org.iringtools.utility
 {
@@ -54,6 +55,8 @@ namespace org.iringtools.utility
 
   public class WebHttpClient : IWebHttpClient
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(WebHttpClient));
+
     private string _boundary = Guid.NewGuid().ToString().Replace("-", "");
     private string _baseUri = String.Empty;
     private NetworkCredential _credentials = null;
@@ -141,6 +144,33 @@ namespace org.iringtools.utility
     {
       get
       {
+        if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
+        {
+          if (HttpContext.Current.Request.Cookies["Auth"] != null)
+          {
+            HttpCookie authCookie = HttpContext.Current.Request.Cookies["Auth"];
+            _accessToken = authCookie.Value;
+          }
+
+          if (HttpContext.Current.Request.Cookies["Authorization"] != null)
+          {
+            HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
+            _accessToken = authorizationCookie.Value;
+          }
+        }
+        else if (HttpContext.Current != null && WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+        {
+          if (WebOperationContext.Current.IncomingRequest.Headers["Auth"] != null)
+          {
+            _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Auth"];
+          }
+
+          if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
+          {
+            _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
+          }
+        }
+
         return _accessToken;
       }
       set
@@ -192,36 +222,28 @@ namespace org.iringtools.utility
 
     private void PrepareHeaders(WebRequest request)
     {
-      if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
+      if (_accessToken != String.Empty)
       {
-        if (HttpContext.Current.Request.Cookies["Auth"] != null)
-        {
-          HttpCookie authCookie = HttpContext.Current.Request.Cookies["Auth"];
-          request.Headers.Add("Auth", authCookie.Value);
-        }
-
-        if (HttpContext.Current.Request.Cookies["Authorization"] != null)
-        {
-          HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
-          request.Headers.Add("Authorization", authorizationCookie.Value);
-        }
+        request.Headers.Add("Authorization", _accessToken);
+        _logger.Debug("Authorization Pre Set: " + _accessToken);
+      } else if (
+        HttpContext.Current != null && 
+        WebOperationContext.Current.IncomingRequest.Headers.Count > 0 && 
+        WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
+      {
+        string accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
+        request.Headers.Add("Authorization", accessToken);
+        _logger.Debug("Authorization On Header: " + accessToken);
       }
-      else if (HttpContext.Current != null && WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+      else if (
+        HttpContext.Current != null && 
+        HttpContext.Current.Request.Cookies.Count > 0 &&
+        HttpContext.Current.Request.Cookies["Authorization"] != null)
       {
-        if (WebOperationContext.Current.IncomingRequest.Headers["Auth"] != null)
-        {
-          request.Headers.Add("Auth", WebOperationContext.Current.IncomingRequest.Headers["Auth"]);
-        }
-
-        if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
-        {
-          request.Headers.Add("Authorization", WebOperationContext.Current.IncomingRequest.Headers["Authorization"]);
-        }
-      }
-      else if (_accessToken != String.Empty)
-      {
-        HttpCookie authorizationCookie = new HttpCookie("Authorization", _accessToken);
-        request.Headers.Add("Authorization", authorizationCookie.Value);
+        HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
+        string accessToken = authorizationCookie.Value;
+        request.Headers.Add("Authorization", accessToken);
+        _logger.Debug("Authorization In Cookie: " + accessToken);
       }
     }
 
@@ -229,16 +251,22 @@ namespace org.iringtools.utility
     {
       if (_credentials == null)
       {
+        _logger.Debug("Default Creds");
         request.Credentials = CredentialCache.DefaultCredentials;
+        _logger.Debug("Valid");
       }
       else
       {
+        _logger.Debug("Saved Creds");
         request.Credentials = _credentials;
+        _logger.Debug("Valid");
       }
 
       if (_proxy != null)
       {
+        _logger.Debug("Proxy");
         request.Proxy = _proxy;
+        _logger.Debug("Valid");
       }
     }
 
@@ -311,10 +339,11 @@ namespace org.iringtools.utility
       {
         string uri = _baseUri + relativeUri;
         WebRequest request = HttpWebRequest.Create(uri);
-
+        
         PrepareCredentials(request);
+        _logger.Debug("Got Credentials!");
         PrepareHeaders(request);
-
+        _logger.Debug("Got Headers!");
         request.Method = "Get";
         request.Timeout = TIMEOUT;
 
@@ -323,13 +352,19 @@ namespace org.iringtools.utility
           ValidateRemoteCertificate
         );
 
+        _logger.Debug("Past SSL Check!");
+
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        _logger.Debug("Get Response!");
         Stream responseStream = response.GetResponseStream();
+        _logger.Debug("Get Stream!");
         return responseStream.ToMemoryStream();
       }
       catch (Exception e)
       {
         String error = String.Empty;
+
+        _logger.Error(e.ToString());
 
         if (e.GetType() == typeof(WebException))
         {
@@ -351,6 +386,7 @@ namespace org.iringtools.utility
     {
       try
       {
+        _logger.Debug("I'm in!");
         Stream stream = GetStream(relativeUri);
         string message = Utility.SerializeFromStream(stream);
         return message;

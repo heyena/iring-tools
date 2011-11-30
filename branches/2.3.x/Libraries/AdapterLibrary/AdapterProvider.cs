@@ -509,7 +509,7 @@ namespace org.iringtools.adapter
           }
 
           _dataObjects = _dataLayer.Search(_dataObjDef.objectName, query, filter, limit, start);
-          //_projectionEngine.Count = _dataLayer.GetSearchCount(_dataObjDef.objectName, query, filter);
+          _projectionEngine.Count = _dataLayer.GetSearchCount(_dataObjDef.objectName, query, filter);
         }
         else
         {
@@ -725,8 +725,8 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resourceName, ref format, false);
 
-        IDataObject dataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
-        if (dataObject == null) return new XDocument();
+        IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
+        if (parentDataObject == null) return new XDocument();
 
         // create data filter to get related objects
         DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
@@ -752,7 +752,7 @@ namespace org.iringtools.adapter
 
           expression.PropertyName = propertyMap.relatedPropertyName;
           expression.RelationalOperator = RelationalOperator.EqualTo;
-          expression.Values.Add(dataObject.GetPropertyValue(propertyMap.dataPropertyName).ToString());
+          expression.Values.Add(parentDataObject.GetPropertyValue(propertyMap.dataPropertyName).ToString());
 
           filter.Expressions.Add(expression);
         }
@@ -824,7 +824,8 @@ namespace org.iringtools.adapter
     }
 
     public XDocument GetDataProjection(
-    string projectName, string applicationName, string resourceName, string id, string relatedResourceName, string relatedId, ref string format)
+    string projectName, string applicationName, string resourceName, string id, string relatedResourceName, 
+      string relatedId, ref string format)
     {
       try
       {
@@ -832,20 +833,18 @@ namespace org.iringtools.adapter
         InitializeDataLayer();
         InitializeProjection(resourceName, ref format, false);
 
-        IDataObject dataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
-        if (dataObject == null) return new XDocument();
+        IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
+        if (parentDataObject == null) return new XDocument();
 
         // create data filter to get related objects
         DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
         DataObject relatedDataObject = _dataDictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
 
-        _dataObjects = _dataLayer.Get(relatedDataObject.objectName, new List<string> { relatedId });
-        
-        _projectionEngine.Count = _dataObjects.Count;
-
         _projectionEngine.BaseURI = (projectName.ToLower() == "all")
             ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
             : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
+
+        _dataObjects = _dataLayer.Get(relatedDataObject.objectName, new List<string> { relatedId });
 
         XDocument xdoc = _projectionEngine.ToXml(relatedDataObject.objectName, ref _dataObjects);
         return xdoc;

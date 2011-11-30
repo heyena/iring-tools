@@ -127,6 +127,7 @@
     <Compile Include="BaseProvider.cs" />
     <Compile Include="JsonProjectionEngine.cs" />
     <Compile Include="HtmlProjectionEngine.cs" />
+    <Compile Include="MockIdentityProvider.cs" />
     <Compile Include="SSOIdentityProvider.cs" />
     <Compile Include="DxiRequest.cs" />
     <Compile Include="DxoRequest.cs" />
