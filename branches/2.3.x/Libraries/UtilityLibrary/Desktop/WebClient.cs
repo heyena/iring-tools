@@ -226,8 +226,10 @@ namespace org.iringtools.utility
       {
         request.Headers.Add("Authorization", _accessToken);
         _logger.Debug("Authorization Pre Set: " + _accessToken);
-      } else if (
-        HttpContext.Current != null && 
+      } 
+      else if (
+        WebOperationContext.Current != null && 
+        WebOperationContext.Current.IncomingRequest != null &&
         WebOperationContext.Current.IncomingRequest.Headers.Count > 0 && 
         WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
       {
