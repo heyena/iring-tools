@@ -399,7 +399,7 @@ namespace NUnit.Tests
 				dtoList[0].transferType = TransferType.Delete;
 				dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].oldValue = dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].value; 
 				dtoList[1].classObjects[1].templateObjects[0].roleObjects[2].value = "200";
-				
+
 				string path = String.Format(
 						"{0}DxfrNewDto.xml",
 						_settings["AppDataPath"]

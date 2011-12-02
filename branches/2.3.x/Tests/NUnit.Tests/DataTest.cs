@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using org.iringtools.adapter;
 using org.iringtools.library;
+using System.Collections.Generic;
 
 namespace NUnit.Tests
 {
@@ -38,6 +39,14 @@ namespace NUnit.Tests
       _adapterProvider = new AdapterProvider(_settings);
 
       ResetDatabase();
+    }
+
+    [Test]
+    public void GetSummary()
+    {
+      IList<object> response =
+        _adapterProvider.GetSummary(
+          _settings["ProjectName"], _settings["ApplicationName"]);
     }
 
     [Test]
