@@ -93,6 +93,13 @@ namespace org.iringtools.library
     Response RefreshAll();
 
     Response Refresh(string objectType);
+
+    IList<Object> GetSummary();
+  }
+
+  public interface ISummary
+  {
+    IList<Object> GetSummary();
   }
 
   [CollectionDataContract(Name = "authorizedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]

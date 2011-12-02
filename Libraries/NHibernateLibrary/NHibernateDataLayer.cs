@@ -16,18 +16,19 @@ namespace org.iringtools.adapter.datalayer
   public class NHibernateDataLayer : BaseConfigurableDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
-    private const string UNAUTHORIZED_ERROR = "User not authorized to access NHibernate data layer of [{0}]";
+    protected const string UNAUTHORIZED_ERROR = "User not authorized to access NHibernate data layer of [{0}]";
 
-    private string _dataDictionaryPath = String.Empty;
-    private string _databaseDictionaryPath = string.Empty;
-    private DataDictionary _dataDictionary;
-    private DatabaseDictionary _dbDictionary;
-    private IDictionary _keyRing = null;
-    private string _authorizationPath = string.Empty;
-    private Response _response = null;
     private IKernel _kernel = null;
-    private NHibernateSettings _nSettings = null;
-    private bool _isScopeInitialized = false;
+    
+    protected string _dataDictionaryPath = String.Empty;
+    protected string _databaseDictionaryPath = String.Empty;
+    protected string _authorizationPath = String.Empty;
+    protected string _summaryBindingPath = String.Empty;
+
+    protected DataDictionary _dataDictionary;
+    protected DatabaseDictionary _dbDictionary;
+    protected IDictionary _keyRing = null;
+    protected NHibernateSettings _nSettings = null;
 
     [Inject]
     public NHibernateDataLayer(AdapterSettings settings, IDictionary keyRing) : base(settings)
@@ -36,8 +37,8 @@ namespace org.iringtools.adapter.datalayer
       _nSettings = _kernel.Get<NHibernateSettings>();
       _nSettings.AppendSettings(settings);
       _keyRing = keyRing;
-      _response = new Response();
-      _kernel.Bind<Response>().ToConstant(_response);
+
+      _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
 
       _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml",
         _settings["AppDataPath"],
@@ -58,6 +59,11 @@ namespace org.iringtools.adapter.datalayer
         _settings["AppDataPath"],
         _settings["Scope"]
       );
+
+      _summaryBindingPath = string.Format("{0}SummaryBinding.{1}.xml",
+        _settings["AppDataPath"],
+        _settings["Scope"]
+      );
     }
 
     #region public methods
@@ -66,7 +72,6 @@ namespace org.iringtools.adapter.datalayer
       if (!IsAuthorized())
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
-      
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
 
       try
@@ -676,6 +681,21 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    public override IList<Object> GetSummary()
+    {
+      try
+      {
+        _kernel.Load(_summaryBindingPath);
+        ISummary summary = _kernel.Get<ISummary>();
+        return summary.GetSummary();
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error getting summary: " + e);
+        throw e;
+      }
+    }
+
     public VersionInfo GetVersion()
     {
       Version version = this.GetType().Assembly.GetName().Version;
@@ -690,33 +710,6 @@ namespace org.iringtools.adapter.datalayer
     #endregion
 
     #region private methods
-    private void InitializeScope(string projectName, string applicationName)
-    {
-      try
-      {
-        if (!_isScopeInitialized)
-        {
-          string scope = string.Format("{0}.{1}", projectName, applicationName);
-
-          _settings["ProjectName"] = projectName;
-          _settings["ApplicationName"] = applicationName;
-          _settings["Scope"] = scope;
-
-          _settings["DBDictionaryPath"] = String.Format("{0}DatabaseDictionary.{1}.xml",
-            _settings["AppDataPath"],
-            scope
-          );
-
-          _isScopeInitialized = true;
-        }
-      }
-      catch (Exception ex)
-      {
-        _logger.Error(string.Format("Error initializing application: {0}", ex));
-        throw new Exception(string.Format("Error initializing application: {0})", ex));
-      }
-    }
-
     private void CloseSession(ISession session)
     {
       try

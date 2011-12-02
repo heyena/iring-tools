@@ -43,6 +43,7 @@ using System.Web;
 using System.ServiceModel.Channels;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Collections.Generic;
 
 namespace org.iringtools.services
 {
@@ -302,6 +303,25 @@ namespace org.iringtools.services
       Response response = _adapterProvider.DeleteIndividual(project, app, graph, id);
 
       FormatOutgoingMessage<Response>(response, format, true);
+    }
+
+    [Description("Get summary of an application based on configuration.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{app}/{project}/summary")]
+    public void GetSummary(string project, string app)
+    {
+      try
+      {
+        IList<Object> objects = _adapterProvider.GetSummary(project, app);
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
+        String json = serializer.Serialize(objects);
+        
+        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
+        HttpContext.Current.Response.Write(json);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
     }
 
     #region "All" Methods

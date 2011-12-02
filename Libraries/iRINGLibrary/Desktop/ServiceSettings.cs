@@ -16,7 +16,7 @@ namespace org.iringtools.library
     public ServiceSettings()
     {
       this.Add("BaseDirectoryPath", AppDomain.CurrentDomain.BaseDirectory);
-      this.Add("AppDataPath", @".\App_Data\");
+      this.Add("AppDataPath", this["BaseDirectoryPath"] + @"App_Data\");
       this.Add("XmlPath", this["AppDataPath"]);  // for backward compatibility
       this.Add("ProxyCredentialToken", String.Empty);
       this.Add("ProxyHost", String.Empty);
