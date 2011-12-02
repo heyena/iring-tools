@@ -158,7 +158,10 @@ namespace org.iringtools.utility
             _accessToken = authorizationCookie.Value;
           }
         }
-        else if (HttpContext.Current != null && WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+        else if (
+          WebOperationContext.Current != null &&
+          WebOperationContext.Current.IncomingRequest != null &&
+          WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
         {
           if (WebOperationContext.Current.IncomingRequest.Headers["Auth"] != null)
           {
