@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Runtime.Serialization;
 
-namespace org.iringtools.adapter.datalayer.ext
+namespace org.iringtools.nhibernate.ext
 {
   [CollectionDataContract(Namespace = "http://www.iringtools.org/adapter/datalayer/ext", Name = "config")]
   public class SummaryConfig : List<SummaryItem> {}
