@@ -34,6 +34,7 @@ using System.Configuration;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.ServiceModel.Web;
+using log4net;
 
 namespace org.iringtools.utility
 {
@@ -54,11 +55,14 @@ namespace org.iringtools.utility
 
   public class WebHttpClient : IWebHttpClient
   {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(WebHttpClient));
+
     private string _boundary = Guid.NewGuid().ToString().Replace("-", "");
     private string _baseUri = String.Empty;
     private NetworkCredential _credentials = null;
     private IWebProxy _proxy = null;
     private string _accessToken = String.Empty;
+    private string _contentType = String.Empty;
 
     private const string NEW_LINE = "\r\n";
     private const int TIMEOUT = 600000;
@@ -140,11 +144,53 @@ namespace org.iringtools.utility
     {
       get
       {
+        if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
+        {
+          if (HttpContext.Current.Request.Cookies["Auth"] != null)
+          {
+            HttpCookie authCookie = HttpContext.Current.Request.Cookies["Auth"];
+            _accessToken = authCookie.Value;
+          }
+
+          if (HttpContext.Current.Request.Cookies["Authorization"] != null)
+          {
+            HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
+            _accessToken = authorizationCookie.Value;
+          }
+        }
+        else if (
+          WebOperationContext.Current != null &&
+          WebOperationContext.Current.IncomingRequest != null &&
+          WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+        {
+          if (WebOperationContext.Current.IncomingRequest.Headers["Auth"] != null)
+          {
+            _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Auth"];
+          }
+
+          if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
+          {
+            _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
+          }
+        }
+
         return _accessToken;
       }
       set
       {
         _accessToken = value;
+      }
+    }
+
+    public string ContentType
+    {
+      get
+      {
+        return _contentType;
+      }
+      set
+      {
+        _contentType = value;
       }
     }
 
@@ -179,36 +225,30 @@ namespace org.iringtools.utility
 
     private void PrepareHeaders(WebRequest request)
     {
-      if (HttpContext.Current.Request.Cookies.Count > 0)
+      if (_accessToken != String.Empty)
       {
-        if (HttpContext.Current.Request.Cookies["Auth"] != null)
-        {
-          HttpCookie authCookie = HttpContext.Current.Request.Cookies["Auth"];
-          request.Headers.Add("Auth", authCookie.Value);
-        }
-
-        if (HttpContext.Current.Request.Cookies["Authorization"] != null)
-        {
-          HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
-          request.Headers.Add("Authorization", authorizationCookie.Value);
-        }
+        request.Headers.Add("Authorization", _accessToken);
+        _logger.Debug("Authorization Pre Set: " + _accessToken);
+      } 
+      else if (
+        WebOperationContext.Current != null && 
+        WebOperationContext.Current.IncomingRequest != null &&
+        WebOperationContext.Current.IncomingRequest.Headers.Count > 0 && 
+        WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
+      {
+        string accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
+        request.Headers.Add("Authorization", accessToken);
+        _logger.Debug("Authorization On Header: " + accessToken);
       }
-      else if (WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+      else if (
+        HttpContext.Current != null && 
+        HttpContext.Current.Request.Cookies.Count > 0 &&
+        HttpContext.Current.Request.Cookies["Authorization"] != null)
       {
-        if (WebOperationContext.Current.IncomingRequest.Headers["Auth"] != null)
-        {
-          request.Headers.Add("Auth", WebOperationContext.Current.IncomingRequest.Headers["Auth"]);
-        }
-
-        if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
-        {
-          request.Headers.Add("Authorization", WebOperationContext.Current.IncomingRequest.Headers["Authorization"]);
-        }
-      }
-      else if (_accessToken != String.Empty)
-      {
-        HttpCookie authorizationCookie = new HttpCookie("Authorization", _accessToken);
-        request.Headers.Add("Authorization", authorizationCookie.Value);
+        HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
+        string accessToken = authorizationCookie.Value;
+        request.Headers.Add("Authorization", accessToken);
+        _logger.Debug("Authorization In Cookie: " + accessToken);
       }
     }
 
@@ -216,16 +256,22 @@ namespace org.iringtools.utility
     {
       if (_credentials == null)
       {
+        _logger.Debug("Default Creds");
         request.Credentials = CredentialCache.DefaultCredentials;
+        _logger.Debug("Valid");
       }
       else
       {
+        _logger.Debug("Saved Creds");
         request.Credentials = _credentials;
+        _logger.Debug("Valid");
       }
 
       if (_proxy != null)
       {
+        _logger.Debug("Proxy");
         request.Proxy = _proxy;
+        _logger.Debug("Valid");
       }
     }
 
@@ -298,10 +344,11 @@ namespace org.iringtools.utility
       {
         string uri = _baseUri + relativeUri;
         WebRequest request = HttpWebRequest.Create(uri);
-
+        
         PrepareCredentials(request);
+        _logger.Debug("Got Credentials!");
         PrepareHeaders(request);
-
+        _logger.Debug("Got Headers!");
         request.Method = "Get";
         request.Timeout = TIMEOUT;
 
@@ -310,13 +357,19 @@ namespace org.iringtools.utility
           ValidateRemoteCertificate
         );
 
+        _logger.Debug("Past SSL Check!");
+
         HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+        _logger.Debug("Get Response!");
         Stream responseStream = response.GetResponseStream();
+        _logger.Debug("Get Stream!");
         return responseStream.ToMemoryStream();
       }
       catch (Exception e)
       {
         String error = String.Empty;
+
+        _logger.Error(e.ToString());
 
         if (e.GetType() == typeof(WebException))
         {
@@ -338,6 +391,7 @@ namespace org.iringtools.utility
     {
       try
       {
+        _logger.Debug("I'm in!");
         Stream stream = GetStream(relativeUri);
         string message = Utility.SerializeFromStream(stream);
         return message;
@@ -428,7 +482,7 @@ namespace org.iringtools.utility
         if (format == null || format.ToLower() == "xml")
         {
           stream = Utility.SerializeToMemoryStream<T>(requestEntity, useDataContractSerializer);
-          request.ContentType = "application/xml";
+          request.ContentType = "text/xml";
           request.ContentLength = stream.Length;
         }
         else if (format.ToLower() == "json")
@@ -439,9 +493,7 @@ namespace org.iringtools.utility
         }
         else 
         {
-          stream = Utility.SerializeToMemoryStream<T>(requestEntity);
-          request.ContentType = "raw";
-          request.ContentLength = stream.Length;
+          throw new Exception("Format " + format + " not allowed.");
         }
         
         PrepareCredentials(request);
@@ -489,6 +541,7 @@ namespace org.iringtools.utility
         throw new Exception("Error with HTTP POST from URI [" + uri + "]. " + error);
       }
     }
+
     public T PostMessage<T>(string relativeUri, string requestMessage, bool useDataContractSerializer)
     {
       try
@@ -534,6 +587,53 @@ namespace org.iringtools.utility
       }
     }
 
+    public string PutStream(string relativeUri, Stream stream)
+    {
+      try
+      {
+        string uri = _baseUri + relativeUri; // GetUri(relativeUri);
+        byte[] bytes = ((MemoryStream)stream).ToArray();
+
+        if (String.IsNullOrEmpty(_contentType))
+        {
+          _contentType = "application/octet-stream";
+        }
+
+        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+
+        PrepareCredentials(request);
+        PrepareHeaders(request);
+
+        request.Timeout = TIMEOUT;
+        request.Method = "PUT";
+        request.ContentType = _contentType;
+        request.ContentLength = bytes.Length;
+
+        System.Net.ServicePointManager.Expect100Continue = false;
+
+        // allows for validation of SSL conversations
+        ServicePointManager.ServerCertificateValidationCallback += new RemoteCertificateValidationCallback(
+          ValidateRemoteCertificate
+        );
+
+        Stream requestStream = request.GetRequestStream();
+        requestStream.Write(bytes, 0, bytes.Length);
+        requestStream.Flush();
+
+        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+        string responseMessage = Utility.SerializeFromStream(response.GetResponseStream());
+
+        return responseMessage;
+      }
+      catch (Exception exception)
+      {
+        string uri = _baseUri + relativeUri;
+
+        throw new Exception("Error while executing HTTP PUT request on " + uri + ".", exception);
+      }
+    }
+
     public string PostStream(string relativeUri, Stream stream)
     {
       try
@@ -548,7 +648,7 @@ namespace org.iringtools.utility
 
         request.Timeout = TIMEOUT;
         request.Method = "POST";
-        request.ContentType = "application/x-www-form-urlencoded";
+        request.ContentType = "application/octet-stream";
         request.ContentLength = bytes.Length;
 
         System.Net.ServicePointManager.Expect100Continue = false;
@@ -801,6 +901,11 @@ namespace org.iringtools.utility
 
         throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
       }
+    }
+
+    public string getBaseUri()
+    {
+      return _baseUri;
     }
   }
 }

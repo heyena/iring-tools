@@ -7,7 +7,7 @@
     ],
     proxy: {
         type: 'ajax',
-        timeout: 600000,
+        timeout: 6000000,
         actionMethods: { read: 'POST' },
         extraParams: {},
         url: 'directory/datalayers',

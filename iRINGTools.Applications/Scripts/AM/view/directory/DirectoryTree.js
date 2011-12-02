@@ -102,7 +102,7 @@
         return [
       {
           xtype: 'button',
-          text: 'New Scope',
+          text: 'New Folder',
           icon: 'Content/img/16x16/document-new.png',
           scope: this,
           action: 'newscope'
@@ -304,55 +304,100 @@
         var securityRole = '';
         var me = this;
 
-        if (obj)
-            if (obj.record)
-                if (obj.record.securityRole)
+        if (obj) {
+            if (obj.record) {
+                if (obj.record.securityRole) {
                     securityRole = obj.record.securityRole;
+                }
+                else {
+                    ifsuperadmin = true;
+                }
+            }
+        }
+
 
         if (index == 0) {
             if (node.childNodes[0]) {
-                if (node.childNodes[0].data.record.securityRole.indexOf('superadmin') > -1)
+                if (node.childNodes[0].data.record.securityRole) {
+                    if (node.childNodes[0].data.record.securityRole.indexOf('superadmin') > -1)
+                        ifsuperadmin = true;
+                }
+                else {
                     ifsuperadmin = true;
+                }
             }
             else {
                 Ext.Ajax.request({
-                    url: 'directory/RootSecurityRole',
+                    url: 'directory/baseUrl',
                     method: 'GET',
                     success: function (response, request) {
-                        var rootSecurityRole = response.responseText;
-                        if (rootSecurityRole.indexOf('superadmin') > -1) {
-                            ifsuperadmin = true;
-                            if (securityRole.indexOf('admin') > -1 || ifsuperadmin) {
-                                if (obj.type == "ScopesNode") {
-                                    me.scopesMenu.showAt(e.getXY());
-                                } else if (obj.type == "folder") {
-                                    me.scopeMenu.showAt(e.getXY());
-                                } else if (obj.type == "ApplicationNode") {
-                                    me.applicationMenu.showAt(e.getXY());
-                                } else if (obj.type == "DataObjectNode") {
-                                    me.appDataMenu.showAt(e.getXY());
-                                } else if (obj.type == "ValueListsNode") {
-                                    me.valueListsMenu.showAt(e.getXY());
-                                } else if (obj.type == "ValueListNode") {
-                                    me.valueListMenu.showAt(e.getXY());
-                                } else if (obj.type == "ListMapNode") {
-                                    me.valueListMapMenu.showAt(e.getXY());
-                                } else if (obj.type == "GraphsNode") {
-                                    var menu = new Ext.menu.Menu();
-                                    menu.add(me.buildGraphsMenu(node));
-                                    menu.showAt(e.getXY());
-                                } else if (obj.type == "GraphNode") {
-                                    me.graphMenu.showAt(e.getXY());
-                                }
+                        var baseUrl = response.responseText;
+                        if (baseUrl.indexOf('dirxml')) {
+                            if (obj.type == "ScopesNode") {
+                                me.scopesMenu.showAt(e.getXY());
+                            } else if (obj.type == "folder") {
+                                me.scopeMenu.showAt(e.getXY());
+                            } else if (obj.type == "ApplicationNode") {
+                                me.applicationMenu.showAt(e.getXY());
+                            } else if (obj.type == "DataObjectNode") {
+                                me.appDataMenu.showAt(e.getXY());
+                            } else if (obj.type == "ValueListsNode") {
+                                me.valueListsMenu.showAt(e.getXY());
+                            } else if (obj.type == "ValueListNode") {
+                                me.valueListMenu.showAt(e.getXY());
+                            } else if (obj.type == "ListMapNode") {
+                                me.valueListMapMenu.showAt(e.getXY());
+                            } else if (obj.type == "GraphsNode") {
+                                var menu = new Ext.menu.Menu();
+                                menu.add(this.buildGraphsMenu(node));
+                                menu.showAt(e.getXY());
+                            } else if (obj.type == "GraphNode") {
+                                me.graphMenu.showAt(e.getXY());
                             }
-
                         }
+                        else {
+                            Ext.Ajax.request({
+                                url: 'directory/RootSecurityRole',
+                                method: 'GET',
+                                success: function (response, request) {
+                                    var rootSecurityRole = response.responseText;
+                                    if (rootSecurityRole.indexOf('superadmin') > -1) {
+                                        ifsuperadmin = true;
+                                        if (securityRole.indexOf('admin') > -1 || ifsuperadmin) {
+                                            if (obj.type == "ScopesNode") {
+                                                me.scopesMenu.showAt(e.getXY());
+                                            } else if (obj.type == "folder") {
+                                                me.scopeMenu.showAt(e.getXY());
+                                            } else if (obj.type == "ApplicationNode") {
+                                                me.applicationMenu.showAt(e.getXY());
+                                            } else if (obj.type == "DataObjectNode") {
+                                                me.appDataMenu.showAt(e.getXY());
+                                            } else if (obj.type == "ValueListsNode") {
+                                                me.valueListsMenu.showAt(e.getXY());
+                                            } else if (obj.type == "ValueListNode") {
+                                                me.valueListMenu.showAt(e.getXY());
+                                            } else if (obj.type == "ListMapNode") {
+                                                me.valueListMapMenu.showAt(e.getXY());
+                                            } else if (obj.type == "GraphsNode") {
+                                                var menu = new Ext.menu.Menu();
+                                                menu.add(me.buildGraphsMenu(node));
+                                                menu.showAt(e.getXY());
+                                            } else if (obj.type == "GraphNode") {
+                                                me.graphMenu.showAt(e.getXY());
+                                            }
+                                        }
+
+                                    }
+                                },
+                                failure: function () { }
+                            });
+                        }
+
                     },
                     failure: function () { }
                 });
             }
         }
-
 
 
         if (securityRole.indexOf('admin') > -1 || ifsuperadmin) {
