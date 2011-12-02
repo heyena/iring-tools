@@ -14,8 +14,6 @@ namespace org.iringtools.adapter
     {
       this.Add("InterfaceService", @"http://localhost/services/facade/query");
       this.Add("ReferenceDataServiceUri", @"http://localhost/services/refdata");
-      this.Add("DefaultProjectionFormat", "json");
-      this.Add("DefaultListProjectionFormat", "json");
       this.Add("EndpointTimeout", "30000");
       this.Add("dotNetRDFServer", @".\SQLEXPRESS");
       this.Add("dotNetRDFCatalog", "FacadeDb");
@@ -78,7 +76,11 @@ namespace org.iringtools.adapter
       {
         foreach (string key in keyRing.Keys)
         {
-          string value = keyRing[key].ToString();
+          object valueObj = keyRing[key];
+
+          string value = String.Empty;
+          if (valueObj != null)
+            value = valueObj.ToString();
 
           //Protect existing settings, but add new ones.
           if (!this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase))

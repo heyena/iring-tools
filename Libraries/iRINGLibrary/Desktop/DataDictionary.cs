@@ -105,6 +105,12 @@ namespace org.iringtools.library
     [DataMember(IsRequired = false, Order = 9, EmitDefaultValue = false)]
     public bool isListOnly { get; set; }
 
+    [DataMember(IsRequired = false, Order = 10, EmitDefaultValue = false)]
+    public string defaultProjectionFormat { get; set; }
+
+    [DataMember(IsRequired = false, Order = 11, EmitDefaultValue = false)]
+    public string defaultListProjectionFormat { get; set; }
+
     public bool isKeyProperty(string propertyName)
     {
       foreach (KeyProperty keyProperty in keyProperties)

@@ -313,6 +313,40 @@ namespace org.iringtools.adapter
       }
     }
 
+    public Contexts GetContexts(string applicationName)
+    {
+      try
+      {
+        Contexts contexts = new Contexts();
+
+        foreach (ScopeProject scope in _scopes)
+        {
+          if (scope.Name.ToLower() != "all")
+          {
+            var app = scope.Applications.Find(a => a.Name.ToUpper() == applicationName.ToUpper());
+
+            if (app != null)
+            {
+              Context context = new Context
+              {
+                Name = scope.Name,
+                Description = scope.Description,
+              };
+
+              contexts.Add(context);
+            }
+          }
+        }
+
+        return contexts;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetContexts for {0}: {1}", applicationName, ex));
+        throw new Exception(string.Format("Error in GetContexts for {0}: {1}", applicationName, ex));
+      }
+    }
+
     public mapping.Mapping GetMapping(string projectName, string applicationName)
     {
       try
@@ -731,7 +765,12 @@ namespace org.iringtools.adapter
         // create data filter to get related objects
         DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
         DataObject relatedDataObject = _dataDictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
-         
+
+        if (limit == 0)
+        {
+          limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
+        }
+ 
         _projectionEngine.Start = start;
         _projectionEngine.Limit = limit;
 
@@ -1158,6 +1197,30 @@ namespace org.iringtools.adapter
 
         if (!_isScopeInitialized)
         {
+          _settings["ProjectName"] = projectName;
+          _settings["ApplicationName"] = applicationName;
+          
+          string scopeSettingsPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
+
+          if (File.Exists(scopeSettingsPath))
+          {
+            AppSettingsReader scopeSettings = new AppSettingsReader(scopeSettingsPath);
+            _settings.AppendSettings(scopeSettings);
+          }
+
+          if (projectName.ToLower() != "all")
+          {
+            string appSettingsPath = String.Format("{0}All.{1}.config", _settings["AppDataPath"], applicationName);
+
+            if (File.Exists(appSettingsPath))
+            {
+              AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
+              _settings.AppendSettings(appSettings);
+            }
+          }
+
+          //scope stuff
+
           bool isScopeValid = false;
           foreach (ScopeProject project in _scopes)
           {
@@ -1171,23 +1234,13 @@ namespace org.iringtools.adapter
                 }
               }
             }
-          }
+          }   
 
           if (!isScopeValid)
             scope = String.Format("all.{0}", applicationName);
           //throw new Exception(String.Format("Invalid scope [{0}].", scope));
 
-          _settings["ProjectName"] = projectName;
-          _settings["ApplicationName"] = applicationName;
           _settings["Scope"] = scope;
-
-          string appSettingsPath = String.Format("{0}{1}.config", _settings["AppDataPath"], scope);
-
-          if (File.Exists(appSettingsPath))
-          {
-            AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
-            _settings.AppendSettings(appSettings);
-          }
 
           string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
 
@@ -1275,19 +1328,6 @@ namespace org.iringtools.adapter
               "html"
             };
 
-        if (format == null)
-        {
-          if (isIndividual)
-          {
-            format = _settings["DefaultProjectionFormat"];
-          }
-          else
-          {
-            format = _settings["DefaultListProjectionFormat"];
-          }
-        }
-        _isFormatExpected = expectedFormats.Contains(format.ToLower());
-
         _graphMap = _mapping.FindGraphMap(resourceName);
 
         if (_graphMap != null)
@@ -1309,6 +1349,23 @@ namespace org.iringtools.adapter
             throw new FileNotFoundException("Resource [" + resourceName + "] not found.");
           }
         }
+
+        if (format == null)
+        {
+          if (isIndividual && !String.IsNullOrEmpty(_dataObjDef.defaultProjectionFormat))
+          {
+            format = _dataObjDef.defaultProjectionFormat;
+          }
+          else if (!String.IsNullOrEmpty(_dataObjDef.defaultListProjectionFormat))
+          {
+            format = _dataObjDef.defaultListProjectionFormat;
+          }
+          else
+          {
+            format = "json";
+          }
+        }
+        _isFormatExpected = expectedFormats.Contains(format.ToLower());
 
         if (format != null && _isFormatExpected)
         {
