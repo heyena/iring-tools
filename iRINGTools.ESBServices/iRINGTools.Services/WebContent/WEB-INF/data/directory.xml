@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <directory xmlns="http://www.iringtools.org/directory">
   <scope>
-    <name>12345_000</name>
+	<name>12345_000</name>
     <applicationData>
       <application>
         <id>1</id>
@@ -31,34 +31,6 @@
           </graph>
         </graphs>
       </application>
-      <application>
-        <id>4</id>
-        <name>PCSD2</name>
-        <description>PCSD2 Application</description>
-        <baseUri>http://localhost:54321/dxfr</baseUri>
-        <graphs>
-          <graph>
-            <id>4</id>
-            <name>Instrument</name>
-            <description>PCSD2 Line List</description>
-            <commodity>PipingNetworksSystem</commodity>
-          </graph>
-        </graphs>
-      </application>
-      <application>
-        <id>5</id>
-        <name>SPPID</name>
-        <description>SPPID Application</description>
-        <baseUri>http://localhost:54321/dxfr</baseUri>
-        <graphs>
-          <graph>
-            <id>5</id>
-            <name>InstrumentSP</name>
-            <description>SPPID Line List</description>
-            <commodity>PipingNetworksSystem</commodity>
-          </graph>
-        </graphs>
-      </application>
     </applicationData>
     <dataExchanges>
       <commodity>
@@ -74,174 +46,47 @@
             <name>DEF.LINES -&gt; ABC.LINES</name>
             <description>Line Exchange</description>
           </exchange>
-          <exchange>
-            <id>3</id>
-            <name>PCSD2.Instrument -&gt; SPPID.InstrumentSP</name>
-            <description>Instrument Exchange</description>
-          </exchange>
-          <exchange>
-            <id>4</id>
-            <name>SPPID.InstrumentSP -&gt; PCSD2.Instrument</name>
-            <description>Instrument Exchange</description>
-          </exchange>
-        </exchanges>
-      </commodity>
-    </dataExchanges>
-  </scope>
-  <scope>
-	<name>BSII_Pilot</name>
-    <applicationData>
-      <application>
-        <id>1</id>
-        <name>IPID</name>
-        <description>IPID Application</description>
-        <!--<baseUri>https://api.mypsn.com/apps/v1/iringtools/adapter/dxfr</baseUri>-->
-		<baseUri>http://localhost:54321/dxfr</baseUri>
-		<graphs>
-          <graph>
-            <id>1</id>
-            <name>Pipeline</name>
-            <description>IPID Line List</description>
-            <commodity>PipingNetworkSystem</commodity>
-          </graph>
-		  <graph>
-            <id>2</id>
-            <name>Valve</name>
-            <description>IPID Valve List</description>
-            <commodity>Valve</commodity>
-          </graph>
-        </graphs>
-      </application>
-	  <application>
-        <id>2</id>
-        <name>INSPEC</name>
-        <description>INSPEC Application</description>
-        <!--<baseUri>https://api.mypsn.com/apps/v1/iringtools/adapter/dxfr</baseUri>-->
-		<baseUri>http://localhost:54321/dxfr</baseUri>-->
-        <graphs>
-          <graph>
-            <id>1</id>
-            <name>PipeLineIN</name>
-            <description>INSPEC Line List</description>
-            <commodity>PipingNetworkSystem</commodity>
-          </graph>
-		  <graph>
-            <id>2</id>
-            <name>Valve</name>
-            <description>INSPEC Valve List</description>
-            <commodity>Valve</commodity>
-          </graph>
-        </graphs>
-      </application>
-	  <application>
-        <id>3</id>
-        <name>TW</name>
-        <description>TW Application</description>
-        <!--<baseUri>https://api.mypsn.com/apps/v1/iringtools/adapter/dxfr</baseUri>-->
-		<baseUri>http://localhost:54321/dxfr</baseUri>-->
-        <graphs>
-          <graph>
-            <id>1</id>
-            <name>Line</name>
-            <description>TW Line List</description>
-            <commodity>PipingNetworkSystem</commodity>
-          </graph>
-		  <graph>
-            <id>2</id>
-            <name>Valve</name>
-            <description>TW Valve List</description>
-            <commodity>Valve</commodity>
-          </graph>
-        </graphs>
-      </application>
-	  <application>
-        <id>4</id>
-        <name>PDS</name>
-        <description>PDS Application</description>
-        <!--<baseUri>https://api.mypsn.com/apps/v1/iringtools/adapter/dxfr</baseUri>-->
-		<baseUri>http://localhost:54321/dxfr</baseUri>-->
-        <graphs>
-          <graph>
-            <id>1</id>
-            <name>Line</name>
-            <description>PDS Line List</description>
-            <commodity>PipingNetworkSystem</commodity>
-          </graph>
-		  <graph>
-            <id>2</id>
-            <name>Valve</name>
-            <description>PDS Valve List</description>
-            <commodity>Valve</commodity>
-          </graph>
-        </graphs>
-      </application>
-	   <application>
-        <id>5</id>
-        <name>BPS</name>
-        <description>BPS Application</description>
-        <!--<baseUri>https://api.mypsn.com/apps/v1/iringtools/adapter/dxfr</baseUri>-->
-		<baseUri>http://localhost:54321/dxfr</baseUri>-->
-        <graphs>
-		  <graph>
-            <id>1</id>
-            <name>Valve</name>
-            <description>PDS Valve List</description>
-            <commodity>Valve</commodity>
-          </graph>
-        </graphs>
-      </application>
-    </applicationData>
-    <dataExchanges>
-      <commodity>
-        <name>PipingNetworkSystem</name>
-        <exchanges>
-          <exchange>
-            <id>1</id>
-            <name>IPID.PipeLine -&gt; INSPEC.PipeLineIN</name>
-            <description>Line Exchange IPID to INSPEC</description>
-          </exchange>
-		  <exchange>
-            <id>2</id>
-            <name>INSPEC.PipeLineIN -&gt; IPID.PipeLine</name>
-            <description>Line Exchange INSPEC to IPID</description>
-          </exchange>
-		  <exchange>
-            <id>3</id>
-            <name>INSPEC.PipeLineIN -&gt; TW.Line</name>
-            <description>Line Exchange INSPEC to TW</description>
-          </exchange>
-		  <exchange>
-            <id>4</id>
-            <name>PDS.Line -&gt; TW.Line</name>
-            <description>Line Exchange INSPEC to TW</description>
-          </exchange>
-        </exchanges>
-      </commodity>
-	  <commodity>
-        <name>Valves</name>
-        <exchanges>
-          <exchange>
-            <id>5</id>
-            <name>IPID.Valve -&gt; INSPEC.Valve</name>
-            <description>Line Exchange IPID to INSPEC</description>
-          </exchange>
-		  <exchange>
-            <id>6</id>
-            <name>INSPEC.Valve -&gt; BPS.Valve</name>
-            <description>Line Exchange INSPEC to IPID</description>
-          </exchange>
-		  <exchange>
-            <id>7</id>
-            <name>INSPEC.Valve -&gt; TW.Valve</name>
-            <description>Line Exchange INSPEC to TW</description>
-          </exchange>
-		  <exchange>
-            <id>8</id>
-            <name>PDS.Valve -&gt; TW.Valve</name>
-            <description>Line Exchange INSPEC to TW</description>
-          </exchange>
         </exchanges>
       </commodity>
     </dataExchanges>
 	</scope>
+	<scope>
+	<name>44444</name>
+    <applicationData>
+      <application>
+        <id>5</id>
+        <name>CM</name>
+        <description>Completions Module</description>
+        <baseUri>http://localhost:65432/dxfr</baseUri>
+        <graphs>
+          <graph>
+            <id>5</id>
+            <name>Documents</name>
+            <description>Completion Documents</description>
+            <commodity>Documents</commodity>
+          </graph>
+        </graphs>
+      </application>
+      <application>
+        <id>6</id>
+        <name>eForms</name>
+        <description>Electronic Forms</description>
+        <baseUri>http://localhost:65432/dxfr</baseUri>
+        <graphs>
+          <graph>
+            <id>6</id>
+            <name>Forms</name>
+            <description>Forms</description>
+            <commodity>Forms</commodity>
+          </graph>
+          <graph>
+            <id>7</id>
+            <name>Folders</name>
+            <description>Folders</description>
+            <commodity>Folders</commodity>
+          </graph>
+        </graphs>
+      </application>
+    </applicationData>
+  </scope>
 </directory>
