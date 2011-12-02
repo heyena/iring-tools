@@ -70,6 +70,17 @@ namespace org.iringtools.services
     }
 
     [Description("Gets object definitions of an application.")]
+    [WebGet(UriTemplate = "/{app}/contexts?format={format}")]
+    public void GetContexts(string app, string format)
+    {
+      format = MapContentType(format);
+
+      Contexts contexts = _adapterProvider.GetContexts(app);
+
+      FormatOutgoingMessage<Contexts>(contexts, format, true);
+    }
+
+    [Description("Gets object definitions of an application.")]
     [WebGet(UriTemplate = "/{app}/{project}/dictionary?format={format}")]
     public void GetDictionary(string project, string app, string format)
     {
