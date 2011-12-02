@@ -7,10 +7,12 @@ using Ninject;
 using NHibernate;
 using org.iringtools.nhibernate;
 using org.iringtools.library;
+using org.iringtools.adapter.datalayer;
+using org.iringtools.adapter;
 
-namespace org.iringtools.adapter.datalayer.ext
+namespace org.iringtools.nhibernate.ext
 {
-  public class NHibernateAuthorization : NHibernateDataLayer, ISummary
+  public class NHibernateAuthorization : NHibernateDataLayer, IAuthorization
   {
     private NHibernateSettings _nhSettings;
 
@@ -21,48 +23,19 @@ namespace org.iringtools.adapter.datalayer.ext
       _nhSettings = nhSettings;
     }
 
-    public override IList<Object> GetSummary()
+    public DataFilter Authorize(DataFilter dataFilter)
     {
       List<Object> objects = new List<Object>();
       ISession session = null;
 
       try
       {
-        string configPath = string.Format("{0}SummaryConfig.{1}.xml", _nhSettings["AppDataPath"], _nhSettings["Scope"]);
-        SummaryConfig config = utility.Utility.Read<SummaryConfig>(configPath);
-
         session = NHibernateSessionManager.Instance.GetSession(
           _nhSettings["AppDataPath"], _nhSettings["Scope"]);
 
         if (session != null)
         {
-          foreach (SummaryItem summaryItem in config)
-          {
-            List<string> headers = summaryItem.Headers;
-            IQuery query = session.CreateSQLQuery(summaryItem.Query);
-            IList<object> resultSet = query.List<object>();
-
-            foreach (object result in resultSet)
-            {
-              IDictionary<String, String> nameValuePairs = new Dictionary<String, String>();
-
-              if (result.GetType().IsArray)
-              {
-                object[] values = (object[])result;
-
-                for (int i = 0; i < values.Length; i++)
-                {
-                  nameValuePairs[headers[i]] = values[i].ToString();
-                }
-              }
-              else
-              {
-                nameValuePairs[headers[0]] = result.ToString();
-              }
-
-              objects.Add(nameValuePairs);
-            }
-          }
+          //Do Stuff Here!
         }
       }
       finally
@@ -71,7 +44,7 @@ namespace org.iringtools.adapter.datalayer.ext
           session.Close();
       }
 
-      return objects;
+      return dataFilter;
     }
   }
 }

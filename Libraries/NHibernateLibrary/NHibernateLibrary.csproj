@@ -61,6 +61,7 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="EntityGenerator.cs" />
+    <Compile Include="IExtensions.cs" />
     <Compile Include="NHibernateDataLayer.cs" />
     <Compile Include="NHibernateModule.cs" />
     <Compile Include="NHibernateProvider.cs" />

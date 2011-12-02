@@ -97,11 +97,6 @@ namespace org.iringtools.library
     IList<Object> GetSummary();
   }
 
-  public interface ISummary
-  {
-    IList<Object> GetSummary();
-  }
-
   [CollectionDataContract(Name = "authorizedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]
   public class AuthorizedUsers : List<string> { }
 }

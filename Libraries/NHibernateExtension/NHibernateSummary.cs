@@ -7,8 +7,10 @@ using Ninject;
 using NHibernate;
 using org.iringtools.nhibernate;
 using org.iringtools.library;
+using org.iringtools.adapter.datalayer;
+using org.iringtools.adapter;
 
-namespace org.iringtools.adapter.datalayer.ext
+namespace org.iringtools.nhibernate.ext
 {
   public class NHibernateSummary : NHibernateDataLayer, ISummary
   {

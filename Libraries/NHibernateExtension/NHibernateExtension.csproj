@@ -8,7 +8,7 @@
     <ProjectGuid>{16254768-97F8-457E-ACC8-0FA6315436EE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>org.iringtools.adapter.datalayer.ext</RootNamespace>
+    <RootNamespace>org.iringtools.nhibernate.ext</RootNamespace>
     <AssemblyName>NHibernateExtension</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
