@@ -10,19 +10,21 @@ using Ninject;
 using org.iringtools.library;
 using org.iringtools.nhibernate;
 using org.iringtools.utility;
+using Ninject.Extensions.Xml;
 
 namespace org.iringtools.adapter.datalayer
 {
   public class NHibernateDataLayer : BaseConfigurableDataLayer, IDataLayer2
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
-    protected const string UNAUTHORIZED_ERROR = "User not authorized to access NHibernate data layer of [{0}]";
-
     private IKernel _kernel = null;
+    private IAuthorization _authorization;
+    protected const string UNAUTHORIZED_ERROR = "User not authorized to access NHibernate data layer of [{0}]";
     
     protected string _dataDictionaryPath = String.Empty;
     protected string _databaseDictionaryPath = String.Empty;
-    protected string _authorizationPath = String.Empty;
+    
+    protected string _authorizationBindingPath = String.Empty;
     protected string _summaryBindingPath = String.Empty;
 
     protected DataDictionary _dataDictionary;
@@ -33,7 +35,9 @@ namespace org.iringtools.adapter.datalayer
     [Inject]
     public NHibernateDataLayer(AdapterSettings settings, IDictionary keyRing) : base(settings)
     {
-      _kernel = new StandardKernel(new NHibernateModule());
+      var ninjectSettings = new NinjectSettings { LoadExtensions = false, UseReflectionBasedInjection = true };
+      _kernel = new StandardKernel(ninjectSettings, new NHibernateModule());
+      _kernel.Load(new XmlExtensionModule());
       _nSettings = _kernel.Get<NHibernateSettings>();
       _nSettings.AppendSettings(settings);
       _keyRing = keyRing;
@@ -55,21 +59,33 @@ namespace org.iringtools.adapter.datalayer
         _dbDictionary = NHibernateUtility.LoadDatabaseDictionary(dbDictionaryPath);
       }
 
-      _authorizationPath = string.Format("{0}Authorization.{1}.xml",
+      string relativePath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml",
         _settings["AppDataPath"],
         _settings["Scope"]
       );
 
-      _summaryBindingPath = string.Format("{0}SummaryBinding.{1}.xml",
+      _authorizationBindingPath = Path.Combine(
+        _settings["BaseDirectoryPath"],
+        relativePath
+      );
+      
+      relativePath = String.Format("{0}SummaryBindingConfiguration.{1}.xml",
         _settings["AppDataPath"],
         _settings["Scope"]
+      );
+
+      _summaryBindingPath = Path.Combine(
+        _settings["BaseDirectoryPath"],
+        relativePath
       );
     }
 
     #region public methods
     public override IList<IDataObject> Create(string objectType, IList<string> identifiers)
     {
-      if (!IsAuthorized())
+      AccessLevel accessLevel = Authorize(objectType);
+
+      if (accessLevel < AccessLevel.Read)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
@@ -130,7 +146,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override long GetCount(string objectType, DataFilter filter)
     {
-      if (!IsAuthorized())
+      AccessLevel accessLevel = Authorize(objectType, ref filter);
+
+      if (accessLevel < AccessLevel.Read)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
@@ -176,7 +194,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
-      if (!IsAuthorized())
+      AccessLevel accessLevel = Authorize(objectType, ref filter);
+
+      if (accessLevel < AccessLevel.Read)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
@@ -217,7 +237,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<IDataObject> Get(string objectType, IList<string> identifiers)
     {
-      if (!IsAuthorized())
+      AccessLevel accessLevel = Authorize(objectType);
+
+      if (accessLevel < AccessLevel.Read)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
@@ -328,7 +350,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int pageSize, int startIndex)
     {
-      if (!IsAuthorized())
+      AccessLevel accessLevel = Authorize(objectType, ref filter);
+
+      if (accessLevel < AccessLevel.Read)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
@@ -447,9 +471,6 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Post(IList<IDataObject> dataObjects)
     {
-      if (!IsAuthorized())
-        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
-
       Response response = new Response();
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
       
@@ -457,6 +478,13 @@ namespace org.iringtools.adapter.datalayer
       {
         if (dataObjects != null && dataObjects.Count > 0)
         {
+          string objectType = dataObjects[0].GetType().Name;
+
+          AccessLevel accessLevel = Authorize(objectType);
+
+          if (accessLevel < AccessLevel.Write)
+            throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
+
           foreach (IDataObject dataObject in dataObjects)
           {
             Status status = new Status();
@@ -521,7 +549,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Delete(string objectType, IList<string> identifiers)
     {
-      if (!IsAuthorized())
+      AccessLevel accessLevel = Authorize(objectType);
+
+      if (accessLevel < AccessLevel.Delete)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       Response response = new Response();
@@ -565,7 +595,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override Response Delete(string objectType, DataFilter filter)
     {
-      if (!IsAuthorized())
+      AccessLevel accessLevel = Authorize(objectType, ref filter);
+
+      if (accessLevel < AccessLevel.Delete)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       Response response = new Response();
@@ -629,7 +661,9 @@ namespace org.iringtools.adapter.datalayer
 
     public override IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
     {
-      if (!IsAuthorized())
+      AccessLevel accessLevel = Authorize(relatedObjectType);
+
+      if (accessLevel < AccessLevel.Read)
         throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
 
       ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
@@ -685,6 +719,11 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
+        AccessLevel accessLevel = Authorize("summary");
+
+        if (accessLevel < AccessLevel.Read)
+          throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
+
         _kernel.Load(_summaryBindingPath);
         ISummary summary = _kernel.Get<ISummary>();
         return summary.GetSummary();
@@ -726,46 +765,28 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    private bool IsAuthorized()
+    private AccessLevel Authorize(string objectType)
+    {
+      DataFilter dataFilter = new DataFilter();
+      return Authorize(objectType, ref dataFilter);
+    }
+
+    private AccessLevel Authorize(string objectType, ref DataFilter dataFilter)
     {
       try
       {
-        if (_keyRing != null && _keyRing["UserName"] != null)
+        if (_authorization == null)
         {
-          string userName = _keyRing["UserName"].ToString();
-          userName = userName.Substring(userName.IndexOf('\\') + 1).ToLower();
-
-          _logger.Debug("Authorizing user [" + userName + "]");
-
-          if (userName == "anonymous")
-          {
-            return true;
-          }
-
-          AuthorizedUsers authUsers = Utility.Read<AuthorizedUsers>(_authorizationPath, true);
-
-          if (authUsers != null)
-          {
-            foreach (string authUser in authUsers)
-            {
-              if (authUser.ToLower() == userName)
-              {
-                return true;
-              }
-            }
-          }
+          _kernel.Load(_authorizationBindingPath);
+          _authorization = _kernel.Get<IAuthorization>();
         }
-        else
-        {
-          _logger.Error("KeyRing is empty.");
-        }
+        return _authorization.Authorize(objectType, ref dataFilter);
       }
       catch (Exception e)
       {
-        _logger.Error("Error during processing authorization: " + e);
+        _logger.Error("Error authorizing: " + e);
+        throw e;
       }
-
-      return false;
     }
     #endregion
   }

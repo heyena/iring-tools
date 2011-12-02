@@ -8,7 +8,15 @@ namespace org.iringtools.nhibernate
 {
   public interface IAuthorization
   {
-    DataFilter Authorize(DataFilter dataFilter);
+    AccessLevel Authorize(string objectType, ref DataFilter dataFilter);
+  }
+
+  public enum AccessLevel
+  {
+    AccessDenied = 0,
+    Read,
+    Write,
+    Delete,
   }
 
   public interface ISummary
