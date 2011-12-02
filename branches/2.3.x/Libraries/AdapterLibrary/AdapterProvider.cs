@@ -1813,5 +1813,13 @@ namespace org.iringtools.adapter
         throw new Exception(errMsg);
       }
     }
+
+    public IList<Object> GetSummary(String projectName, String applicationName)
+    {
+      InitializeScope(projectName, applicationName);
+      InitializeDataLayer();
+
+      return _dataLayer.GetSummary();
+    }
   }
 }

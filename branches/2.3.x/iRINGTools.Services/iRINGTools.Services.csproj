@@ -194,6 +194,10 @@
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Libraries\NHibernateExtension\NHibernateExtension.csproj">
+      <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
+      <Name>NHibernateExtension</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

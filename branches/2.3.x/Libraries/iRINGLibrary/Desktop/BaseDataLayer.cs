@@ -355,5 +355,10 @@ namespace org.iringtools.library
     {
       throw new NotImplementedException();
     }
+
+    public virtual IList<Object> GetSummary()
+    {
+      return null;
+    }
   }
 }
