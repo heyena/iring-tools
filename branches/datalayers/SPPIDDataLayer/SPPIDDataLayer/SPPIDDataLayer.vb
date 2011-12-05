@@ -21,6 +21,7 @@ Imports log4net.Config
 Imports System.Data.SqlClient
 Imports System.Text
 Imports System.Text.RegularExpressions
+Imports System.Data.OracleClient
 
 #End Region
 
@@ -41,8 +42,15 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     Private _projConn As SqlConnection
     Private _stageConn As SqlConnection
-    Property _siteConn As SqlConnection
+    Private _siteConn As SqlConnection
 
+    Private _projConnOracle As OracleConnection
+    'Private _stageConnOracle As OracleConnection
+    Private _siteConnOracle As OracleConnection
+    Private _plantConnOracle As OracleConnection
+    Private _plantDicConnOracle As OracleConnection
+    Private _PIDConnOracle As OracleConnection
+    Private _PIDDicConnOracle As OracleConnection
 
 #End Region
 
@@ -77,8 +85,9 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         AppSettings = settings
 
         Try
+            Dim tmp As String = String.Empty
 
-            Dim tmp As String = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings("AppDataPath"), "12345_000", "SPPID")
+            tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings("AppDataPath"), "12345_000", "SPPID")
             settings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
 
             configPath = [String].Format("{0}{1}.{2}.config", _settings("AppDataPath"), _settings("ProjectName"), _settings("ApplicationName"))
@@ -93,11 +102,25 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             DecryptConntionInfo(AppSettings("iRingStagingConnectionString"), AppSettings("SPPIDSiteConnectionString"), AppSettings("SPPIDPLantConnectionString"))
 
             ''Set Connection strings----------------
-            _projConn = New SqlConnection(AppSettings("SPPIDPLantConnectionString"))
+            If AppSettings("SPPIDPLantConnectionString").Contains("PROTOCOL") = False Then
+                _projConn = New SqlConnection(AppSettings("SPPIDPLantConnectionString"))
+
+                _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
+            Else
+                _projConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
+                _siteConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
+                _plantConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
+                _plantDicConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
+                _PIDConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
+                _PIDDicConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
+
+                ''Set Oracle Stagging Files-------------------------
+                tmp = String.Format("{0}{1}.StagingConfiguration.{2}.{3}.xml", _settings("AppDataPath"), "12345_000", "SPPID", "Oracle")
+                settings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
+                AppSettings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
+            End If
+
             _stageConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
-            _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
-
-
 
         Catch ex As Exception
             MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
@@ -237,6 +260,15 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim path As String = _settings("ProjectConfigurationPath")
 
         If _sppidconfiguration Is Nothing Then
+            If AppSettings("SPPIDPlantConnectionString") = Nothing Then
+                AppSettings("SPPIDPlantConnectionString") = String.Empty
+            End If
+            If AppSettings("SPPIDSiteConnectionString") = Nothing Then
+                AppSettings("SPPIDSiteConnectionString") = String.Empty
+            End If
+            If AppSettings("iRingStagingConnectionString") = Nothing Then
+                AppSettings("iRingStagingConnectionString") = String.Empty
+            End If
             _sppidconfiguration = New SPPIDConfiguration() With { _
               .PlantConnectionString = AppSettings("SPPIDPlantConnectionString"),
               .SiteConnectionString = AppSettings("SPPIDSiteConnectionString"),
@@ -255,7 +287,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim Config As SPPIDConfiguration = Utility.DeserializeFromXElement(Of SPPIDConfiguration)(configuration)
 
         Dim response As New Response
-       
+
         '' Create Config File ----------------------
         Dim configfile As New XElement("configuration", _
                     New XElement("appSettings", _
@@ -278,9 +310,24 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 
         ''Set Connection strings----------------
-        _projConn = New SqlConnection(AppSettings("SPPIDPlantConnectionString"))
+        If (AppSettings("SPPIDPlantConnectionString").ToString().Contains("PROTOCOL=TCP")) Then
+            _projConnOracle = New OracleConnection(AppSettings("SPPIDPlantConnectionString"))
+        Else
+            _projConn = New SqlConnection(AppSettings("SPPIDPlantConnectionString"))
+        End If
+        If (AppSettings("SPPIDSiteConnectionString").ToString().Contains("PROTOCOL=TCP")) Then
+            _siteConnOracle = New OracleConnection(AppSettings("SPPIDSiteConnectionString"))
+
+            _plantConnOracle = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT")
+            _plantDicConnOracle = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD")
+            _PIDDicConnOracle = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD")
+
+        Else
+            _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
+        End If
+
+
         _stageConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
-        _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
 
 
         Dim success As String = UpdateConfigurations()
@@ -404,6 +451,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     cmd.CommandText = queryParts(SQLClause.TableDef)
                     cmd.ExecuteNonQuery()
 
+                    
+
                     ' fetch the data
                     cmd = _projConn.CreateCommand()
                     cmd.CommandText = queryText
@@ -432,7 +481,247 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
+    Public Function MigrateSPPIDToStagingfromOracle(Optional tablename As String = "") As String
 
+        Dim replacements As IEnumerable(Of XElement) = Nothing
+        Dim declarations As IEnumerable(Of XElement) = Nothing
+        Dim queryParts As New Dictionary(Of SQLClause, String)
+        Dim queryText As String = ""
+        Dim stgCfgQueries As IEnumerable(Of XElement) = Nothing
+        Dim siteDataQuery As XElement = Nothing
+        Dim tmpStr As String = ""
+        Dim cmd As SqlCommand
+        Dim DT As DataTable
+        Dim DS As DataSet
+        Dim DA As SqlDataAdapter
+        Dim allQueryText As String
+        Dim sbc As New SqlBulkCopy(_stageConn)
+        Dim rVal As String
+        Dim cmdOra As OracleCommand
+        Dim OraDR As OracleDataReader
+
+        Try
+
+            GetStagingQueries(stgCfgQueries, tablename)
+
+            For Each q As XElement In stgCfgQueries
+
+                queryParts.Clear()
+                rVal = GetQueryPartsforOracle(q, SPWorkSet.OraColumnsView, SPWorkSet.TablesView, SPWorkSet.SchemaSubstitutions,
+                              queryParts, replacements, declarations, SPWorkSet.QueryVariableMap, SPWorkSet.CommonServerName, SPWorkSet.ProjectDBName)
+                SetDeclarationValues(queryParts, declarations, SPWorkSet.QueryVariableMap, _logger)
+
+                ' commbine the query parts and perform any necessary replacements. 
+                ' NOTE - although it is possible to make use of an INTO clause to create a selection query that will 
+                ' also automatically create the destination table, this has limitations, the most serious of which is
+                ' it is not safe to assume that the Source DB and Staging DB have the same security requirements. Instead,
+                ' we will always assume that security is separate for these two databases and that the connection strings for the 
+                ' Source and Staging connections provide this information for each individual location. We also cannot assume that
+                ' the specified credentials have the power to create a Linked Server connection or that both SQL Server instances
+                ' allow ad hoc (OpenDataSource) queries. Instead, the provided credentials are used to copy the data to the 
+                ' local machine and then bulk copied out to the staging server, bypassing the need for a more sophisticated security
+                ' check/edit)
+
+                If Mid(rVal, 1, 4) = "Warn" Then _logger.Warn(Mid(rVal, 7))
+                If Mid(rVal, 1, 4) = "Fail" Then : _logger.Error("Query '" & queryParts(SQLClause.QueryName) & "' could not be built due to error: " & Mid(rVal, 7))
+                Else
+
+                    queryParts.BuildQuery(queryText, replacements, SPWorkSet.TextReplacementMap, False)
+                    allQueryText = nl & "--************ Table Definition ***************" & nl & queryParts(SQLClause.TableDef) & nl &
+                        "--**************** End Table Definition  ***************" & nl & nl & queryText
+
+                    _logger.Info("")
+                    _logger.Info("--" & StrDup(18, "*") & LSet("  Start Query '" & queryParts(SQLClause.QueryName) & "'", 60) & StrDup(20, "*"))
+                    _logger.Info(allQueryText)
+                    _logger.Info("--" & StrDup(18, "*") & LSet("  End Query '" & queryParts(SQLClause.QueryName) & "'", 60) & StrDup(20, "*"))
+                    _logger.Info("")
+
+                    ' delete any existing table in the Staging location by the destination name
+                    cmd = _stageConn.CreateCommand
+                    cmd.CommandText = _
+                        "IF  EXISTS (" &
+                        "SELECT object_id " &
+                        "FROM sys.objects " &
+                        "WHERE object_id = OBJECT_ID(N'dbo.[" & queryParts(SQLClause.StagingName) & "]')  AND type in (N'U'))" &
+                        "   DROP TABLE dbo.[" & queryParts(SQLClause.StagingName) & "]"
+
+                   
+
+                    If _stageConn.State = ConnectionState.Closed Then _stageConn.Open()
+                    cmd.ExecuteNonQuery()
+
+                    ' create a new table to hold the data-----------------------------
+                    cmd = _stageConn.CreateCommand()
+                    Dim _queryTableDef As String = queryParts(SQLClause.TableDef).ToString()
+                    _queryTableDef = Regex.Replace(_queryTableDef, "NVARCHAR2", "nvarchar(255)", RegexOptions.IgnoreCase)
+                    _queryTableDef = Regex.Replace(_queryTableDef, "NUMBER", "int", RegexOptions.IgnoreCase)
+                    cmd.CommandText = _queryTableDef
+                    cmd.ExecuteNonQuery()
+
+                    ' Gave Select Grants to other Schemas-----------------------------
+                    ProvideGrants()
+
+                    ' fetch the data-----------------------------
+                    cmdOra = New OracleCommand()
+                    cmdOra = _projConnOracle.CreateCommand()
+                    cmdOra.CommandText = queryText
+
+                    OraDR = cmdOra.ExecuteReader
+
+
+                    Dim dra As DataUtils.DataReaderAdapter = New DataUtils.DataReaderAdapter
+                    Dim _dt As DataTable = New DataTable
+                    dra.FillFromReader(_dt, OraDR)
+                    
+
+                    ' set the destination location and bulk copy the data to the new table-----------------------------
+                    sbc.DestinationTableName = queryParts(SQLClause.StagingName)
+                    sbc.WriteToServer(_dt)
+
+                    ' Revoke Select Grants from other Schemas-----------------------------
+                    RevokeGrants()
+
+                    If _stageConn.State = ConnectionState.Open Then _stageConn.Close()
+
+                    'Close SPPID Database connections-----------------------------
+                    If _PIDConnOracle.State = ConnectionState.Open Then _PIDConnOracle.Close()
+                    If _PIDDicConnOracle.State = ConnectionState.Open Then _PIDDicConnOracle.Close()
+                    If _plantConnOracle.State = ConnectionState.Open Then _plantConnOracle.Close()
+                    If _projConnOracle.State = ConnectionState.Open Then _projConnOracle.Close()
+
+                End If
+                
+            Next
+
+        Catch ex As Exception
+            Debug.Print("got here")
+            Return "Fail: " + ex.Message
+        End Try
+
+        Return "Pass"
+
+    End Function
+
+
+   
+
+#End Region
+
+#Region "Private Functions"
+
+
+    ''' <summary>
+    ''' Gave Grants to all Schema so that single Select Query can acces all tables
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private Sub ProvideGrants()
+        Dim cmdOra As OracleCommand
+
+        ' Gave Select Grants to other Schemas
+        cmdOra = New OracleCommand()
+        Dim OraDR As OracleDataReader
+        If _projConnOracle.State = ConnectionState.Closed Then _projConnOracle.Open()
+        cmdOra = _projConnOracle.CreateCommand()
+        cmdOra.CommandText = "select sys_context('USERENV', 'CURRENT_SCHEMA') CURRENT_SCHEMA from dual"
+        OraDR = cmdOra.ExecuteReader
+        Dim str As String = String.Empty
+        If OraDR.HasRows Then
+            Do While OraDR.Read()
+                str = OraDR.Item("CURRENT_SCHEMA")
+            Loop
+        End If
+
+        cmdOra = New OracleCommand()
+        If _plantDicConnOracle.State = ConnectionState.Closed Then _plantDicConnOracle.Open()
+        cmdOra = _plantDicConnOracle.CreateCommand()
+        Dim strQuery As String = "BEGIN" & _
+        " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+        " EXECUTE IMMEDIATE 'GRANT SELECT ON ' || x.Tname || ' TO " & str & "';" & _
+        " END LOOP;" & _
+        " END; "
+        cmdOra.CommandText = strQuery
+        cmdOra.ExecuteNonQuery()
+
+        'cmdOra = New OracleCommand()
+        'If _PIDConnOracle.State = ConnectionState.Closed Then _PIDConnOracle.Open()
+        'cmdOra = _PIDConnOracle.CreateCommand()
+        'strQuery = "BEGIN" & _
+        '" FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+        '" EXECUTE IMMEDIATE 'GRANT SELECT ON ' || x.Tname || ' TO " & str & "';" & _
+        '" END LOOP;" & _
+        '" END; "
+        'cmdOra.CommandText = strQuery
+        'cmdOra.ExecuteNonQuery()
+
+        cmdOra = New OracleCommand()
+        If _PIDDicConnOracle.State = ConnectionState.Closed Then _PIDDicConnOracle.Open()
+        cmdOra = _PIDDicConnOracle.CreateCommand()
+        strQuery = "BEGIN" & _
+        " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+        " EXECUTE IMMEDIATE 'GRANT SELECT ON ' || x.Tname || ' TO " & str & "';" & _
+        " END LOOP;" & _
+        " END; "
+        cmdOra.CommandText = strQuery
+        cmdOra.ExecuteNonQuery()
+
+    End Sub
+
+
+    ''' <summary>
+    ''' Revoke Grants from all Schemas 
+    ''' </summary>
+    ''' <remarks></remarks>
+    Private Sub RevokeGrants()
+        Dim cmdOra As OracleCommand
+
+        ' Gave Select Grants to other Schemas
+        cmdOra = New OracleCommand()
+        Dim OraDR As OracleDataReader
+        If _projConnOracle.State = ConnectionState.Closed Then _projConnOracle.Open()
+        cmdOra = _projConnOracle.CreateCommand()
+        cmdOra.CommandText = "select sys_context('USERENV', 'CURRENT_SCHEMA') CURRENT_SCHEMA from dual"
+        OraDR = cmdOra.ExecuteReader
+        Dim str As String = String.Empty
+        If OraDR.HasRows Then
+            Do While OraDR.Read()
+                str = OraDR.Item("CURRENT_SCHEMA")
+            Loop
+        End If
+
+        cmdOra = New OracleCommand()
+        If _plantDicConnOracle.State = ConnectionState.Closed Then _plantDicConnOracle.Open()
+        cmdOra = _plantDicConnOracle.CreateCommand()
+        Dim strQuery As String = "BEGIN" & _
+        " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+        " EXECUTE IMMEDIATE 'REVOKE SELECT ON ' || x.Tname || ' FROM " & str & "';" & _
+        " END LOOP;" & _
+        " END; "
+        cmdOra.CommandText = strQuery
+        cmdOra.ExecuteNonQuery()
+
+        'cmdOra = New OracleCommand()
+        'If _PIDConnOracle.State = ConnectionState.Closed Then _PIDConnOracle.Open()
+        'cmdOra = _PIDConnOracle.CreateCommand()
+        'strQuery = "BEGIN" & _
+        ' " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+        ' " EXECUTE IMMEDIATE 'REVOKE SELECT ON ' || x.Tname || ' FROM " & str & "';" & _
+        ' " END LOOP;" & _
+        ' " END; "
+        'cmdOra.CommandText = strQuery
+        'cmdOra.ExecuteNonQuery()
+
+        cmdOra = New OracleCommand()
+        If _PIDDicConnOracle.State = ConnectionState.Closed Then _PIDDicConnOracle.Open()
+        cmdOra = _PIDDicConnOracle.CreateCommand()
+        strQuery = "BEGIN" & _
+         " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+         " EXECUTE IMMEDIATE 'REVOKE SELECT ON ' || x.Tname || ' FROM " & str & "';" & _
+         " END LOOP;" & _
+         " END; "
+        cmdOra.CommandText = strQuery
+        cmdOra.ExecuteNonQuery()
+
+    End Sub
 
     ''' <summary>
     ''' Fetch the queries from the staging configuration XDocument for this project
@@ -470,10 +759,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-#End Region
-
-#Region "Private Functions"
-
     ''' <summary>
     '''Reset or update Data Objects
     ''' </summary>
@@ -485,12 +770,17 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
         Dim configPath As String = AppSettings("ProjectConfigurationPath")
         Dim StagingConfigurationPath As String = AppSettings("StagingConfigurationPath")
+        Dim success As String = String.Empty
         AddProjConfigSettings(configPath)
 
-        '   DecryptConntionInfo(_siteConn.ConnectionString, _stageConn.ConnectionString, _plantConn.ConnectionString)
+        If (_projConnOracle Is Nothing) Then
+            SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, StagingConfigurationPath, _logger)
+            success = MigrateSPPIDToStaging(tablename)
+        Else
+            SPWorkSet = New SPPIDWorkingSet(_projConnOracle, _siteConnOracle, _stageConn, StagingConfigurationPath, _logger, String.Empty)
+            success = MigrateSPPIDToStagingfromOracle(tablename)
+        End If
 
-        SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, StagingConfigurationPath, _logger)
-        Dim success As String = MigrateSPPIDToStaging(tablename)
 
         Return success
 
@@ -1006,7 +1296,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 #End Region
 
-   
+
 
 End Class
 

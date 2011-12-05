@@ -30,6 +30,39 @@ Public Class SPPIDConfiguration
         End Set
     End Property
     Private m_PlantConnectionString As String
+    <DataMember(Name:="plantDataDicConnectionString", Order:=1)> _
+    Public Property PlantDataDicConnectionString() As String
+        Get
+            Return m_PlantDataDicConnectionString
+        End Get
+        Set(value As String)
+            m_PlantDataDicConnectionString = value
+        End Set
+    End Property
+    Private m_PlantDataDicConnectionString As String
+
+    <DataMember(Name:="pidConnectionString", Order:=1)> _
+    Public Property PIDConnectionString() As String
+        Get
+            Return m_PIDConnectionString
+        End Get
+        Set(value As String)
+            m_PIDConnectionString = value
+        End Set
+    End Property
+    Private m_PIDConnectionString As String
+
+    <DataMember(Name:="pidDataDicConnectionString", Order:=1)> _
+    Public Property PIDDataDicConnectionString() As String
+        Get
+            Return m_PIDDataDicConnectionString
+        End Get
+        Set(value As String)
+            m_PIDDataDicConnectionString = value
+        End Set
+    End Property
+    Private m_PIDDataDicConnectionString As String
+
 
     <DataMember(Name:="stagingConnectionString", Order:=2)> _
     Public Property StagingConnectionString() As String
