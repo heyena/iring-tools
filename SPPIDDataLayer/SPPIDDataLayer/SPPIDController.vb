@@ -35,37 +35,69 @@ Public Class SPPIDController
         Return View()
     End Function
     Public Function UpdateConfig(form As FormCollection) As JsonResult
+
+        ''Variable Declration ---------------------
         Dim _siteConnDataSource As String = String.Empty
         Dim _plantConnDataSource As String = String.Empty
         Dim _staggConnDataSource As String = String.Empty
+        Dim connStr, plantConnStr, stageConnStr As String
 
+        ''Set Value of Data Source ---------------------
         If form("dbInstance").ToUpper() = "DEFAULT" Then
             _siteConnDataSource = form("dbServer")
         Else
             _siteConnDataSource = String.Format("{0}\{1}", form("dbServer"), form("dbInstance"))
         End If
-
         If form("dbplantInstance").ToUpper() = "DEFAULT" Then
-            _plantConnDataSource = form("dbServer")
+            _plantConnDataSource = form("dbplantServer")
         Else
             _plantConnDataSource = String.Format("{0}\{1}", form("dbplantServer"), form("dbplantInstance"))
         End If
-
         If form("dbstageInstance").ToUpper() = "DEFAULT" Then
-            _staggConnDataSource = form("dbServer")
+            _staggConnDataSource = form("dbstageServer")
         Else
             _staggConnDataSource = String.Format("{0}\{1}", form("dbstageServer"), form("dbstageInstance"))
         End If
 
 
+        ''Create connection string for Site Database ---------------------
+        If form("dbProvider").ToUpper().Contains("MSSQL") Then
+            connStr = [String].Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3}", _siteConnDataSource, form("dbName"), form("dbUserName"), form("dbPassword"))
+        Else
+            connStr = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbServer"), form("portNumber"), form("serName"), form("dbInstance"), form("dbUserName"), _
+             form("dbPassword"))
+        End If
 
-        Dim siteConn As String = String.Format("user id={0};password={1};Data Source={2};Initial Catalog={3}", form("dbUserName"), form("dbPassword"), _siteConnDataSource, form("dbName"))
-        Dim plantConn As String = String.Format("user id={0};password={1};Data Source={2};Initial Catalog={3}", form("dbplantUserName"), form("dbplantPassword"), _plantConnDataSource, form("dbplantName"))
-        Dim staggConn As String = String.Format("user id={0};password={1};Data Source={2};Initial Catalog={3}", form("dbstageUserName"), form("dbstagePassword"), _staggConnDataSource, form("dbstageName"))
 
-        Dim configurations As New SPPIDConfiguration With {.PlantConnectionString = plantConn, .SiteConnectionString = siteConn, .StagingConnectionString = staggConn}
+        ''Create connection string for Plant Database ---------------------
+        If form("dbplantProvider").ToUpper().Contains("MSSQL") Then
+            plantConnStr = [String].Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3}", _plantConnDataSource, form("dbplantName"), form("dbplantUserName"), form("dbplantPassword"))
+        Else
+            plantConnStr = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbplantServer"), form("dbplantportNumber"), form("dbplantserName"), form("dbplantInstance"), form("dbplantUserName"), _
+             form("dbplantPassword"))
+        End If
+
+        ''Create connection string for Plant Database ---------------------
+        If form("dbstageProvider").ToUpper().Contains("MSSQL") Then
+            stageConnStr = [String].Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3}", _staggConnDataSource, form("dbstageName"), form("dbstageUserName"), form("dbstagePassword"))
+        Else
+            stageConnStr = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbstageServer"), form("dbstageportNumber"), form("dbstageserName"), form("dbstageInstance"), form("dbstageUserName"), _
+             form("dbstagePassword"))
+        End If
 
 
+        ''Set connection string parameter need to be passed to datalayer for configuration---------------------
+        plantConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPID;Password=RUSSELCITY_PILOTPID"
+        connStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=FOS_SITE;Password=FOS_SITE"
+        stageConnStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=PW_iRing_Staging;User ID=sa;Password=manager"
+
+        '  plantConnStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=SPPID_Project_Plant;User ID=sa;Password=manager"
+        '  connStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=SPPID_Project;User ID=sa;Password=manager"
+
+        Dim configurations As New SPPIDConfiguration With {.PlantConnectionString = plantConnStr, .SiteConnectionString = connStr, .StagingConnectionString = stageConnStr}
+
+
+        ''Call repository method which gave call to service---------------------
         Dim success As String = _repository.UpdateConfig(form("scope"), form("app"), form("_datalayer"), configurations)
 
 

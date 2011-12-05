@@ -63,6 +63,7 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.OracleClient" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Mvc, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
@@ -91,6 +92,17 @@
     <Compile Include="DataContractAttribute.vb" />
     <Compile Include="DataMemberAttribute.vb" />
     <Compile Include="Helper\JsonContainer.vb" />
+    <Compile Include="DataReaderAdapter.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="OraSchemaDS.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>OraSchemaDS.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="OraSchemaDS.vb">
+      <DependentUpon>OraSchemaDS.xsd</DependentUpon>
+    </Compile>
     <Compile Include="SPPIDController.vb" />
     <Compile Include="SPPIDProvider.vb" />
     <Compile Include="SPPIDRepository.vb" />
@@ -134,6 +146,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="OraSchemaDS.xsc">
+      <DependentUpon>OraSchemaDS.xsd</DependentUpon>
+    </None>
+    <None Include="OraSchemaDS.xsd">
+      <Generator>MSDataSetGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>OraSchemaDS.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="OraSchemaDS.xss">
+      <DependentUpon>OraSchemaDS.xsd</DependentUpon>
+    </None>
     <None Include="SQLSchemaDS.xsc">
       <DependentUpon>SQLSchemaDS.xsd</DependentUpon>
     </None>
