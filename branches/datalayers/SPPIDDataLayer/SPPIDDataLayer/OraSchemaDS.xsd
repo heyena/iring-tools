@@ -41,7 +41,9 @@
                       ''  NumericPrecisionRadix,
                       DATA_SCALE  NumericScale, ''  DateTimePrecision,
                       CHARACTER_SET_NAME CharacterSetName , ''  CollationName
-                      from all_tab_columns where table_name in (select tname from tab)
+                      from all_tab_columns where table_name in (select TABLE_Name from all_tab_privs_recd where grantee = (select sys_context('USERENV', 'CURRENT_SCHEMA') CURRENT_SCHEMA from dual)
+                      UNION
+                      Select TNAME from tab)
                     </CommandText>
                     <Parameters />
                   </DbCommand>

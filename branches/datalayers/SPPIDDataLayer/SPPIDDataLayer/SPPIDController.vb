@@ -40,7 +40,7 @@ Public Class SPPIDController
         Dim _siteConnDataSource As String = String.Empty
         Dim _plantConnDataSource As String = String.Empty
         Dim _staggConnDataSource As String = String.Empty
-        Dim connStr, plantConnStr, stageConnStr As String
+        Dim connStr, plantConnStr, stageConnStr, _plantDicConnOracle, _PIDDicConnOracle, _PIDConnStr As String
 
         ''Set Value of Data Source ---------------------
         If form("dbInstance").ToUpper() = "DEFAULT" Then
@@ -87,14 +87,20 @@ Public Class SPPIDController
 
 
         ''Set connection string parameter need to be passed to datalayer for configuration---------------------
-        plantConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPID;Password=RUSSELCITY_PILOTPID"
         connStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=FOS_SITE;Password=FOS_SITE"
+
+        plantConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT"
+        _plantDicConnOracle = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD"
+
+        _PIDConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPID;Password=RUSSELCITY_PILOTPID"
+        _PIDDicConnOracle = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD"
+
         stageConnStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=PW_iRing_Staging;User ID=sa;Password=manager"
 
         '  plantConnStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=SPPID_Project_Plant;User ID=sa;Password=manager"
         '  connStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=SPPID_Project;User ID=sa;Password=manager"
 
-        Dim configurations As New SPPIDConfiguration With {.PlantConnectionString = plantConnStr, .SiteConnectionString = connStr, .StagingConnectionString = stageConnStr}
+        Dim configurations As New SPPIDConfiguration With {.PlantConnectionString = plantConnStr, .SiteConnectionString = connStr, .StagingConnectionString = stageConnStr, .PIDConnectionString = _PIDConnStr, .PIDDataDicConnectionString = _PIDDicConnOracle, .PlantDataDicConnectionString = _plantDicConnOracle}
 
 
         ''Call repository method which gave call to service---------------------
