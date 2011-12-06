@@ -5,6 +5,7 @@ Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports System.Reflection
 Imports System.Text.RegularExpressions
+Imports System.Data.OracleClient
 
 Public Module Common
 
@@ -518,18 +519,116 @@ Public Module Common
 #Region " Common Methods "
 
     ''' <summary>
-    ''' 
+    ''' Gave Grants to all Schema so that single Select Query can acces all tables
     ''' </summary>
-    ''' <param name="QueryNode"></param>
-    ''' <param name="ColumnsDV"></param>
-    ''' <param name="TablesDV"></param>
-    ''' <param name="SchemaSubstitutions"></param>
-    ''' <param name="QueryParts"></param>
-    ''' <param name="Replacements"></param>
-    ''' <param name="Declarations"></param>
-    ''' <param name="CommonServerName">If not blank, this is name is prepended to each schema.table source in the FROM clause</param>
-    ''' <returns></returns>
     ''' <remarks></remarks>
+    Public Sub ProvideGrants(ByVal _plantConnOracle As OracleConnection, ByVal _plantDicConnOracle As OracleConnection, ByVal _PIDDicConnOracle As OracleConnection, ByVal _PIDConnOracle As OracleConnection)
+        Dim cmdOra As OracleCommand
+
+        ' Gave Select Grants to other Schemas
+        cmdOra = New OracleCommand()
+        Dim OraDR As OracleDataReader
+        If _plantConnOracle.State = ConnectionState.Closed Then _plantConnOracle.Open()
+        cmdOra = _plantConnOracle.CreateCommand()
+        cmdOra.CommandText = "select sys_context('USERENV', 'CURRENT_SCHEMA') CURRENT_SCHEMA from dual"
+        OraDR = cmdOra.ExecuteReader
+        Dim str As String = String.Empty
+        If OraDR.HasRows Then
+            Do While OraDR.Read()
+                str = OraDR.Item("CURRENT_SCHEMA")
+            Loop
+        End If
+
+        cmdOra = New OracleCommand()
+        If _plantDicConnOracle.State = ConnectionState.Closed Then _plantDicConnOracle.Open()
+        cmdOra = _plantDicConnOracle.CreateCommand()
+        Dim strQuery As String = "BEGIN" & _
+        " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+        " EXECUTE IMMEDIATE 'GRANT SELECT ON ' || x.Tname || ' TO " & str & "';" & _
+        " END LOOP;" & _
+        " END; "
+        cmdOra.CommandText = strQuery
+        cmdOra.ExecuteNonQuery()
+
+        cmdOra = New OracleCommand()
+        If _PIDConnOracle.State = ConnectionState.Closed Then _PIDConnOracle.Open()
+        cmdOra = _PIDConnOracle.CreateCommand()
+        strQuery = "BEGIN" & _
+        " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+        " EXECUTE IMMEDIATE 'GRANT SELECT ON ' || x.Tname || ' TO " & str & "';" & _
+        " END LOOP;" & _
+        " END; "
+        cmdOra.CommandText = strQuery
+        cmdOra.ExecuteNonQuery()
+
+        cmdOra = New OracleCommand()
+        If _PIDDicConnOracle.State = ConnectionState.Closed Then _PIDDicConnOracle.Open()
+        cmdOra = _PIDDicConnOracle.CreateCommand()
+        strQuery = "BEGIN" & _
+        " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+        " EXECUTE IMMEDIATE 'GRANT SELECT ON ' || x.Tname || ' TO " & str & "';" & _
+        " END LOOP;" & _
+        " END; "
+        cmdOra.CommandText = strQuery
+        cmdOra.ExecuteNonQuery()
+
+    End Sub
+
+
+    ''' <summary>
+    ''' Revoke Grants from all Schemas 
+    ''' </summary>
+    Public Sub RevokeGrants(ByVal _plantConnOracle As OracleConnection, ByVal _plantDicConnOracle As OracleConnection, ByVal _PIDDicConnOracle As OracleConnection, ByVal _PIDConnOracle As OracleConnection)
+        Dim cmdOra As OracleCommand
+
+        ' Gave Select Grants to other Schemas
+        cmdOra = New OracleCommand()
+        Dim OraDR As OracleDataReader
+        If _plantConnOracle.State = ConnectionState.Closed Then _plantConnOracle.Open()
+        cmdOra = _plantConnOracle.CreateCommand()
+        cmdOra.CommandText = "select sys_context('USERENV', 'CURRENT_SCHEMA') CURRENT_SCHEMA from dual"
+        OraDR = cmdOra.ExecuteReader
+        Dim str As String = String.Empty
+        If OraDR.HasRows Then
+            Do While OraDR.Read()
+                str = OraDR.Item("CURRENT_SCHEMA")
+            Loop
+        End If
+
+        cmdOra = New OracleCommand()
+        If _plantDicConnOracle.State = ConnectionState.Closed Then _plantDicConnOracle.Open()
+        cmdOra = _plantDicConnOracle.CreateCommand()
+        Dim strQuery As String = "BEGIN" & _
+        " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+        " EXECUTE IMMEDIATE 'REVOKE SELECT ON ' || x.Tname || ' FROM " & str & "';" & _
+        " END LOOP;" & _
+        " END; "
+        cmdOra.CommandText = strQuery
+        cmdOra.ExecuteNonQuery()
+
+        cmdOra = New OracleCommand()
+        If _PIDConnOracle.State = ConnectionState.Closed Then _PIDConnOracle.Open()
+        cmdOra = _PIDConnOracle.CreateCommand()
+        strQuery = "BEGIN" & _
+         " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+         " EXECUTE IMMEDIATE 'REVOKE SELECT ON ' || x.Tname || ' FROM " & str & "';" & _
+         " END LOOP;" & _
+         " END; "
+        cmdOra.CommandText = strQuery
+        cmdOra.ExecuteNonQuery()
+
+        cmdOra = New OracleCommand()
+        If _PIDDicConnOracle.State = ConnectionState.Closed Then _PIDDicConnOracle.Open()
+        cmdOra = _PIDDicConnOracle.CreateCommand()
+        strQuery = "BEGIN" & _
+         " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
+         " EXECUTE IMMEDIATE 'REVOKE SELECT ON ' || x.Tname || ' FROM " & str & "';" & _
+         " END LOOP;" & _
+         " END; "
+        cmdOra.CommandText = strQuery
+        cmdOra.ExecuteNonQuery()
+
+    End Sub
     Public Function GetQueryParts(ByVal QueryNode As XElement,
                                     ByVal ColumnsDV As DataView,
                                     ByVal TablesDV As DataView,
@@ -1212,59 +1311,59 @@ Public Module Common
                     s.Append(nltb & LSet(tmpStr, l))
                 End If
 
-                    If stagingFieldName = "" Then
-                        stagingFieldName = colName
+                If stagingFieldName = "" Then
+                    stagingFieldName = colName
+                Else
+                    s.Append(" " & stagingFieldName)
+                End If
+
+                If isExpression Then
+
+                    ' expressions may provide a datatype hint; if not, use nvarchar(max)
+                    If e.Attribute("datatype").Value = "" Then
+                        dataType = "nvarchar(MAX)"
                     Else
-                        s.Append(" " & stagingFieldName)
+                        ' ToDo - it would be wise to verify this is a valid datatype here to catch typos
+                        dataType = e.Attribute("datatype").Value
                     End If
 
-                    If isExpression Then
+                    colNull = " null"
 
-                        ' expressions may provide a datatype hint; if not, use nvarchar(max)
-                        If e.Attribute("datatype").Value = "" Then
-                            dataType = "nvarchar(MAX)"
-                        Else
-                            ' ToDo - it would be wise to verify this is a valid datatype here to catch typos
-                            dataType = e.Attribute("datatype").Value
+                Else
+
+                    ' look up the data type of the column if this is not an expression
+                    exists = sourceAliasMap.TryGetValue(source, sourceUnique)
+
+                    If exists Then
+
+                        ColumnsDV.RowFilter = "TableSchema='" & sourceUnique.SchemaName & "' " & _
+                        "and TableName='" & sourceUnique.TableName.ToUpper() & "' " & _
+                        "and ColumnName='" & colName & "'"
+
+                        If ColumnsDV.Count <> 1 Then
+                            Throw New InvalidExpressionException("The column '" & _
+                                sourceUnique.UniqueName & d & colName & "' is not a " & _
+                                "valid uniquely identified column; the query cannot be built")
                         End If
 
+                        col = ColumnsDV(0).Row
+                        dataType = col.GetDataTypeString
+
+                        ' I would generally prefer to pay attention to the nullability of the source field, but left joins against the source table
+                        ' make it possible for these values to be null even if the source table does not allow it. It's far safer to 
+                        ' simply set the nullability to 'yes'
+                        'colNull = IIf(col.IsNullable = "Yes", " null", " not null")
                         colNull = " null"
 
-                    Else
-
-                        ' look up the data type of the column if this is not an expression
-                        exists = sourceAliasMap.TryGetValue(source, sourceUnique)
-
-                        If exists Then
-
-                            ColumnsDV.RowFilter = "TableSchema='" & sourceUnique.SchemaName & "' " & _
-                            "and TableName='" & sourceUnique.TableName.ToUpper() & "' " & _
-                            "and ColumnName='" & colName & "'"
-
-                            If ColumnsDV.Count <> 1 Then
-                                Throw New InvalidExpressionException("The column '" & _
-                                    sourceUnique.UniqueName & d & colName & "' is not a " & _
-                                    "valid uniquely identified column; the query cannot be built")
-                            End If
-
-                            col = ColumnsDV(0).Row
-                            dataType = col.GetDataTypeString
-
-                            ' I would generally prefer to pay attention to the nullability of the source field, but left joins against the source table
-                            ' make it possible for these values to be null even if the source table does not allow it. It's far safer to 
-                            ' simply set the nullability to 'yes'
-                            'colNull = IIf(col.IsNullable = "Yes", " null", " not null")
-                            colNull = " null"
-
-                        Else : Throw New InvalidExpressionException("The source value '" & source & _
-                            "' is not a valid uniquely identified table or table reference; the query cannot be built")
-
-                        End If
+                    Else : Throw New InvalidExpressionException("The source value '" & source & _
+                        "' is not a valid uniquely identified table or table reference; the query cannot be built")
 
                     End If
 
-                    If e IsNot fields.First Then t.Append(nltb & ",")
-                    t.Append(stagingFieldName & " " & dataType & colNull)
+                End If
+
+                If e IsNot fields.First Then t.Append(nltb & ",")
+                t.Append(stagingFieldName & " " & dataType & colNull)
 
             Next
 

@@ -239,9 +239,12 @@ Public Class SPPIDWorkingSet
 
     Public Sub New(ProjectConnection As OracleConnection,
                  SiteConnection As OracleConnection,
+                 ProjectDicConnection As OracleConnection,
+                 PIDConnection As OracleConnection,
+                 PIDDicConnection As OracleConnection,
                  StagingConnection As SqlConnection,
                  StagingConfigurationPath As String,
-                 ByRef Logger As ILog, Optional val As String = "")
+                 ByRef Logger As ILog)
 
         Dim SiteDataQuery As XElement = Nothing
 
@@ -267,6 +270,10 @@ Public Class SPPIDWorkingSet
         GetQueryByName("!SiteData", SiteDataQuery)
         GetBaselineSchema(SiteConnection, SiteDataQuery)
 
+        'Gave Select Privileges----------------------
+        ProvideGrants(ProjectConnection, ProjectDicConnection, PIDDicConnection, PIDConnection)
+        'Section End----------------------
+
         _OratablesTA.Connection = ProjectConnection
         _OracolumnsTA.Connection = ProjectConnection
 
@@ -279,47 +286,50 @@ Public Class SPPIDWorkingSet
         _columnsDV.RowFilter = Nothing
         _columnsDV = _OracolumnsDT.DefaultView
 
-        ''''''''''''''''''
-        _OratablesTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT")
-        _OracolumnsTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT")
+        'Remove Select Privileges----------------------
+        RevokeGrants(ProjectConnection, ProjectDicConnection, PIDDicConnection, PIDConnection)
+        'Section End----------------------
+        ' ''''''''''''''''''
+        '_OratablesTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT")
+        '_OracolumnsTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT")
 
-        _OratablesDT = _OraCommonDataDS.SchemaTables
-        _OratablesTA.Fill(_OratablesDT)
-        _tablesDV = _OratablesDT.DefaultView
+        '_OratablesDT = _OraCommonDataDS.SchemaTables
+        '_OratablesTA.Fill(_OratablesDT)
+        '_tablesDV = _OratablesDT.DefaultView
 
-        _OracolumnsDT = _OraCommonDataDS.SchemaColumns
-        _OracolumnsTA.ClearBeforeFill = False
-        _OracolumnsTA.Fill(_OracolumnsDT)
-      _columnsDV.RowFilter = Nothing
-        _columnsDV = _OracolumnsDT.DefaultView
+        '_OracolumnsDT = _OraCommonDataDS.SchemaColumns
+        '_OracolumnsTA.ClearBeforeFill = False
+        '_OracolumnsTA.Fill(_OracolumnsDT)
+        '_columnsDV.RowFilter = Nothing
+        '_columnsDV = _OracolumnsDT.DefaultView
 
-        ''''''''''''''''''''''''''''''''''''''''''
-        _OratablesTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD")
-        _OracolumnsTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD")
+        ' ''''''''''''''''''''''''''''''''''''''''''
+        '_OratablesTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD")
+        '_OracolumnsTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD")
 
-        _OratablesDT = _OraCommonDataDS.SchemaTables
-        _OratablesTA.Fill(_OratablesDT)
-        _tablesDV = _OratablesDT.DefaultView
+        '_OratablesDT = _OraCommonDataDS.SchemaTables
+        '_OratablesTA.Fill(_OratablesDT)
+        '_tablesDV = _OratablesDT.DefaultView
 
-        _OracolumnsDT = _OraCommonDataDS.SchemaColumns
-        _OracolumnsTA.ClearBeforeFill = False
-        _OracolumnsTA.Fill(_OracolumnsDT)
-        _columnsDV.RowFilter = Nothing
-        _columnsDV = _OracolumnsDT.DefaultView
+        '_OracolumnsDT = _OraCommonDataDS.SchemaColumns
+        '_OracolumnsTA.ClearBeforeFill = False
+        '_OracolumnsTA.Fill(_OracolumnsDT)
+        '_columnsDV.RowFilter = Nothing
+        '_columnsDV = _OracolumnsDT.DefaultView
 
-        ''''''''''''''''''''''''''''''''''''''''''
-        _OratablesTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD")
-        _OracolumnsTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD")
+        ' ''''''''''''''''''''''''''''''''''''''''''
+        '_OratablesTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD")
+        '_OracolumnsTA.Connection = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD")
 
-        _OratablesDT = _OraCommonDataDS.SchemaTables
-        _OratablesTA.Fill(_OratablesDT)
-        _tablesDV = _OratablesDT.DefaultView
+        '_OratablesDT = _OraCommonDataDS.SchemaTables
+        '_OratablesTA.Fill(_OratablesDT)
+        '_tablesDV = _OratablesDT.DefaultView
 
-        _OracolumnsDT = _OraCommonDataDS.SchemaColumns
-        _OracolumnsTA.ClearBeforeFill = False
-        _OracolumnsTA.Fill(_OracolumnsDT)
-        _columnsDV.RowFilter = Nothing
-        _columnsDV = _OracolumnsDT.DefaultView
+        '_OracolumnsDT = _OraCommonDataDS.SchemaColumns
+        '_OracolumnsTA.ClearBeforeFill = False
+        '_OracolumnsTA.Fill(_OracolumnsDT)
+        '_columnsDV.RowFilter = Nothing
+        '_columnsDV = _OracolumnsDT.DefaultView
 
 
     End Sub
@@ -359,6 +369,7 @@ Public Class SPPIDWorkingSet
 #End Region
 
 #Region " Private Methods "
+
 
     Private Sub SetSchemaType(SchemaType As SPSchemaType, Value As String)
 

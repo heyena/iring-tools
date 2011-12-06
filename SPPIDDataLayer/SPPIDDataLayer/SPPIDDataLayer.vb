@@ -44,7 +44,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Private _stageConn As SqlConnection
     Private _siteConn As SqlConnection
 
-    Private _projConnOracle As OracleConnection
+
     'Private _stageConnOracle As OracleConnection
     Private _siteConnOracle As OracleConnection
     Private _plantConnOracle As OracleConnection
@@ -99,7 +99,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 AppSettings.AppendSettings(New StaticDust.Configuration.AppSettingsReader(_settings("ProjectConfigurationPath")))
             End If
 
-            DecryptConntionInfo(AppSettings("iRingStagingConnectionString"), AppSettings("SPPIDSiteConnectionString"), AppSettings("SPPIDPLantConnectionString"))
+            DecryptConntionInfo(AppSettings("iRingStagingConnectionString"), AppSettings("SPPIDSiteConnectionString"), AppSettings("SPPIDPLantConnectionString"), AppSettings("PIDDataDicConnectionString"), AppSettings("PIDConnectionString"), AppSettings("PlantDataDicConnectionString"))
 
             ''Set Connection strings----------------
             If AppSettings("SPPIDPLantConnectionString").Contains("PROTOCOL") = False Then
@@ -107,12 +107,11 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
                 _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
             Else
-                _projConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
-                _siteConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
                 _plantConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
-                _plantDicConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
-                _PIDConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
-                _PIDDicConnOracle = New OracleConnection(AppSettings("SPPIDPLantConnectionString"))
+                _siteConnOracle = New OracleConnection(AppSettings("SPPIDSiteConnectionString"))
+                _plantDicConnOracle = New OracleConnection(AppSettings("PlantDataDicConnectionString"))
+                _PIDConnOracle = New OracleConnection(AppSettings("PIDConnectionString"))
+                _PIDDicConnOracle = New OracleConnection(AppSettings("PIDDataDicConnectionString"))
 
                 ''Set Oracle Stagging Files-------------------------
                 tmp = String.Format("{0}{1}.StagingConfiguration.{2}.{3}.xml", _settings("AppDataPath"), "12345_000", "SPPID", "Oracle")
@@ -295,6 +294,12 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     New XAttribute("value", EncryptionUtility.Encrypt(Config.SiteConnectionString))), _
                     New XElement("add", New XAttribute("key", "SPPIDPlantConnectionString"), _
                     New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantConnectionString))), _
+                    New XElement("add", New XAttribute("key", "PlantDataDicConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PlantDataDicConnectionString))), _
+                    New XElement("add", New XAttribute("key", "PIDConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDConnectionString))), _
+                    New XElement("add", New XAttribute("key", "PIDDataDicConnectionString"), _
+                    New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDDataDicConnectionString))), _
                     New XElement("add", New XAttribute("key", "iRingStagingConnectionString"), _
                     New XAttribute("value", EncryptionUtility.Encrypt(Config.StagingConnectionString)))))
 
@@ -311,18 +316,18 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
         ''Set Connection strings----------------
         If (AppSettings("SPPIDPlantConnectionString").ToString().Contains("PROTOCOL=TCP")) Then
-            _projConnOracle = New OracleConnection(AppSettings("SPPIDPlantConnectionString"))
-        Else
-            _projConn = New SqlConnection(AppSettings("SPPIDPlantConnectionString"))
-        End If
-        If (AppSettings("SPPIDSiteConnectionString").ToString().Contains("PROTOCOL=TCP")) Then
             _siteConnOracle = New OracleConnection(AppSettings("SPPIDSiteConnectionString"))
 
-            _plantConnOracle = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT")
-            _plantDicConnOracle = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD")
-            _PIDDicConnOracle = New OracleConnection("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD")
+            _plantConnOracle = New OracleConnection(AppSettings("SPPIDPlantConnectionString"))
+
+            _PIDConnOracle = New OracleConnection(AppSettings("PIDConnectionString"))
+            _PIDDicConnOracle = New OracleConnection(AppSettings("PIDDataDicConnectionString"))
+
+
+            _plantDicConnOracle = New OracleConnection(AppSettings("PlantDataDicConnectionString"))
 
         Else
+            _projConn = New SqlConnection(AppSettings("SPPIDPlantConnectionString"))
             _siteConn = New SqlConnection(AppSettings("SPPIDSiteConnectionString"))
         End If
 
@@ -559,11 +564,11 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     cmd.ExecuteNonQuery()
 
                     ' Gave Select Grants to other Schemas-----------------------------
-                    ProvideGrants()
+                    ProvideGrants(_plantConnOracle, _plantDicConnOracle, _PIDDicConnOracle, _PIDConnOracle)
 
                     ' fetch the data-----------------------------
                     cmdOra = New OracleCommand()
-                    cmdOra = _projConnOracle.CreateCommand()
+                    cmdOra = _plantConnOracle.CreateCommand()
                     cmdOra.CommandText = queryText
 
                     OraDR = cmdOra.ExecuteReader
@@ -579,7 +584,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     sbc.WriteToServer(_dt)
 
                     ' Revoke Select Grants from other Schemas-----------------------------
-                    RevokeGrants()
+                    RevokeGrants(_plantConnOracle, _plantDicConnOracle, _PIDDicConnOracle, _PIDConnOracle)
 
                     If _stageConn.State = ConnectionState.Open Then _stageConn.Close()
 
@@ -587,7 +592,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     If _PIDConnOracle.State = ConnectionState.Open Then _PIDConnOracle.Close()
                     If _PIDDicConnOracle.State = ConnectionState.Open Then _PIDDicConnOracle.Close()
                     If _plantConnOracle.State = ConnectionState.Open Then _plantConnOracle.Close()
-                    If _projConnOracle.State = ConnectionState.Open Then _projConnOracle.Close()
+                    If _plantConnOracle.State = ConnectionState.Open Then _plantConnOracle.Close()
 
                 End If
                 
@@ -609,119 +614,6 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 #Region "Private Functions"
 
-
-    ''' <summary>
-    ''' Gave Grants to all Schema so that single Select Query can acces all tables
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private Sub ProvideGrants()
-        Dim cmdOra As OracleCommand
-
-        ' Gave Select Grants to other Schemas
-        cmdOra = New OracleCommand()
-        Dim OraDR As OracleDataReader
-        If _projConnOracle.State = ConnectionState.Closed Then _projConnOracle.Open()
-        cmdOra = _projConnOracle.CreateCommand()
-        cmdOra.CommandText = "select sys_context('USERENV', 'CURRENT_SCHEMA') CURRENT_SCHEMA from dual"
-        OraDR = cmdOra.ExecuteReader
-        Dim str As String = String.Empty
-        If OraDR.HasRows Then
-            Do While OraDR.Read()
-                str = OraDR.Item("CURRENT_SCHEMA")
-            Loop
-        End If
-
-        cmdOra = New OracleCommand()
-        If _plantDicConnOracle.State = ConnectionState.Closed Then _plantDicConnOracle.Open()
-        cmdOra = _plantDicConnOracle.CreateCommand()
-        Dim strQuery As String = "BEGIN" & _
-        " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
-        " EXECUTE IMMEDIATE 'GRANT SELECT ON ' || x.Tname || ' TO " & str & "';" & _
-        " END LOOP;" & _
-        " END; "
-        cmdOra.CommandText = strQuery
-        cmdOra.ExecuteNonQuery()
-
-        'cmdOra = New OracleCommand()
-        'If _PIDConnOracle.State = ConnectionState.Closed Then _PIDConnOracle.Open()
-        'cmdOra = _PIDConnOracle.CreateCommand()
-        'strQuery = "BEGIN" & _
-        '" FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
-        '" EXECUTE IMMEDIATE 'GRANT SELECT ON ' || x.Tname || ' TO " & str & "';" & _
-        '" END LOOP;" & _
-        '" END; "
-        'cmdOra.CommandText = strQuery
-        'cmdOra.ExecuteNonQuery()
-
-        cmdOra = New OracleCommand()
-        If _PIDDicConnOracle.State = ConnectionState.Closed Then _PIDDicConnOracle.Open()
-        cmdOra = _PIDDicConnOracle.CreateCommand()
-        strQuery = "BEGIN" & _
-        " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
-        " EXECUTE IMMEDIATE 'GRANT SELECT ON ' || x.Tname || ' TO " & str & "';" & _
-        " END LOOP;" & _
-        " END; "
-        cmdOra.CommandText = strQuery
-        cmdOra.ExecuteNonQuery()
-
-    End Sub
-
-
-    ''' <summary>
-    ''' Revoke Grants from all Schemas 
-    ''' </summary>
-    ''' <remarks></remarks>
-    Private Sub RevokeGrants()
-        Dim cmdOra As OracleCommand
-
-        ' Gave Select Grants to other Schemas
-        cmdOra = New OracleCommand()
-        Dim OraDR As OracleDataReader
-        If _projConnOracle.State = ConnectionState.Closed Then _projConnOracle.Open()
-        cmdOra = _projConnOracle.CreateCommand()
-        cmdOra.CommandText = "select sys_context('USERENV', 'CURRENT_SCHEMA') CURRENT_SCHEMA from dual"
-        OraDR = cmdOra.ExecuteReader
-        Dim str As String = String.Empty
-        If OraDR.HasRows Then
-            Do While OraDR.Read()
-                str = OraDR.Item("CURRENT_SCHEMA")
-            Loop
-        End If
-
-        cmdOra = New OracleCommand()
-        If _plantDicConnOracle.State = ConnectionState.Closed Then _plantDicConnOracle.Open()
-        cmdOra = _plantDicConnOracle.CreateCommand()
-        Dim strQuery As String = "BEGIN" & _
-        " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
-        " EXECUTE IMMEDIATE 'REVOKE SELECT ON ' || x.Tname || ' FROM " & str & "';" & _
-        " END LOOP;" & _
-        " END; "
-        cmdOra.CommandText = strQuery
-        cmdOra.ExecuteNonQuery()
-
-        'cmdOra = New OracleCommand()
-        'If _PIDConnOracle.State = ConnectionState.Closed Then _PIDConnOracle.Open()
-        'cmdOra = _PIDConnOracle.CreateCommand()
-        'strQuery = "BEGIN" & _
-        ' " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
-        ' " EXECUTE IMMEDIATE 'REVOKE SELECT ON ' || x.Tname || ' FROM " & str & "';" & _
-        ' " END LOOP;" & _
-        ' " END; "
-        'cmdOra.CommandText = strQuery
-        'cmdOra.ExecuteNonQuery()
-
-        cmdOra = New OracleCommand()
-        If _PIDDicConnOracle.State = ConnectionState.Closed Then _PIDDicConnOracle.Open()
-        cmdOra = _PIDDicConnOracle.CreateCommand()
-        strQuery = "BEGIN" & _
-         " FOR x IN (Select * from tab  where TABTYPE='TABLE') LOOP " & _
-         " EXECUTE IMMEDIATE 'REVOKE SELECT ON ' || x.Tname || ' FROM " & str & "';" & _
-         " END LOOP;" & _
-         " END; "
-        cmdOra.CommandText = strQuery
-        cmdOra.ExecuteNonQuery()
-
-    End Sub
 
     ''' <summary>
     ''' Fetch the queries from the staging configuration XDocument for this project
@@ -773,11 +665,11 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Dim success As String = String.Empty
         AddProjConfigSettings(configPath)
 
-        If (_projConnOracle Is Nothing) Then
+        If (_plantConnOracle Is Nothing) Then
             SPWorkSet = New SPPIDWorkingSet(_projConn, _siteConn, _stageConn, StagingConfigurationPath, _logger)
             success = MigrateSPPIDToStaging(tablename)
         Else
-            SPWorkSet = New SPPIDWorkingSet(_projConnOracle, _siteConnOracle, _stageConn, StagingConfigurationPath, _logger, String.Empty)
+            SPWorkSet = New SPPIDWorkingSet(_plantConnOracle, _siteConnOracle, _plantDicConnOracle, _PIDConnOracle, _PIDDicConnOracle, _stageConn, StagingConfigurationPath, _logger)
             success = MigrateSPPIDToStagingfromOracle(tablename)
         End If
 
@@ -823,7 +715,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     End Function
 
 
-    Private Sub DecryptConntionInfo(ByRef siteConn As String, ByRef stageConn As String, ByRef plantconn As String)
+    Private Sub DecryptConntionInfo(ByRef siteConn As String, ByRef stageConn As String, ByRef plantconn As String, ByRef pidconn As String, ByRef pidDicconn As String, ByRef plantDicconn As String)
 
         If (stageConn.ToUpper().Contains("DATA SOURCE") = False) Then  '' Check Site Conntion String
             siteConn = EncryptionUtility.Decrypt(siteConn)
@@ -838,6 +730,18 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         If (plantconn.ToUpper().Contains("DATA SOURCE") = False) Then  '' Check Site Conntion String
             '' connection string is not encrypted, encrypt and write it back
             plantconn = EncryptionUtility.Decrypt(plantconn)
+        End If
+        If (plantDicconn.ToUpper().Contains("DATA SOURCE") = False) Then  '' Check Site Conntion String
+            '' connection string is not encrypted, encrypt and write it back
+            plantDicconn = EncryptionUtility.Decrypt(plantDicconn)
+        End If
+        If (pidconn.ToUpper().Contains("DATA SOURCE") = False) Then  '' Check Site Conntion String
+            '' connection string is not encrypted, encrypt and write it back
+            pidconn = EncryptionUtility.Decrypt(pidconn)
+        End If
+        If (pidDicconn.ToUpper().Contains("DATA SOURCE") = False) Then  '' Check Site Conntion String
+            '' connection string is not encrypted, encrypt and write it back
+            pidDicconn = EncryptionUtility.Decrypt(pidDicconn)
         End If
     End Sub
 
