@@ -296,7 +296,7 @@ Ext.onReady(function () {
       layout: 'fit',
       title: 'Add New Application',
       iconCls: 'tabsApplication',
-      height: 200,
+      height: 291,
       width: 430,
       plain: true,
       items: newTab,
@@ -361,7 +361,7 @@ Ext.onReady(function () {
       layout: 'fit',
       title: 'Edit Application \"' + node.text + '\"',
       iconCls: 'tabsApplication',
-      height: 200,
+      height: 291,
       width: 430,
       plain: true,
       items: newTab

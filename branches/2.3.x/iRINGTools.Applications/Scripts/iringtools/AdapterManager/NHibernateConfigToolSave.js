@@ -5,6 +5,8 @@ function setTreeProperty(dsConfigPane, dbInfo, dbDict) {
 	if (dsConfigPane) {
 		var dsConfigForm = dsConfigPane.getForm();
 		treeProperty.provider = dsConfigForm.findField('dbProvider').getValue();
+		treeProperty.enableSummary = dsConfigForm.findField('enableSummary').getValue();
+
 		var dbServer = dsConfigForm.findField('dbServer').getValue();
 		dbServer = (dbServer.toLowerCase() == 'localhost' ? '.' : dbServer);
 		var upProvider = treeProperty.provider.toUpperCase();
@@ -92,6 +94,7 @@ function getFolderFromChildNode(folderNode, dataTypes) {
 	folder.tableName = folderNodeProp.tableName;
 	folder.objectNamespace = folderNodeProp.objectNamespace;
 	folder.objectName = folderNodeProp.objectName;
+	folder.description = folderNodeProp.description;
 
 	if (!folderNodeProp.keyDelimiter)
 		folder.keyDelimeter = 'null';
@@ -324,7 +327,8 @@ function getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes) {
 		treeProperty.connectionString = Base64.encode(tProp.connectionString);
 	}
 	treeProperty.schemaName = tProp.schemaName;
-	treeProperty.provider = tProp.provider;	
+	treeProperty.provider = tProp.provider;
+	treeProperty.enableSummary = tProp.enableSummary;	
 
 	var keyName;
 	for (var i = 0; i < rootNode.childNodes.length; i++) {

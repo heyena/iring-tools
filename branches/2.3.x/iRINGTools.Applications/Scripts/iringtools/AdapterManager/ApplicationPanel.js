@@ -129,7 +129,7 @@ AdapterManager.ApplicationPanel = Ext.extend(Ext.Panel, {
           { fieldLabel: 'Scope', name: 'Scope', xtype: 'hidden', width: 300, value: scope, allowBlank: false },
           { fieldLabel: 'Application', name: 'Application', xtype: 'hidden', width: 300, value: name, allowBlank: false },
           { fieldLabel: 'Name', name: 'Name', xtype: 'textfield', width: 300, value: name, allowBlank: false },
-          { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 300, value: description },
+          { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', width: 300, height: 150, value: description },
           cmbDataLayers
       ],
             buttonAlign: 'left', // buttons aligned to the left            
