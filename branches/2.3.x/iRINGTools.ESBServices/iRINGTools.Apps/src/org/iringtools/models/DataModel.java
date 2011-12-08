@@ -29,6 +29,7 @@ import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.RoleValues;
 import org.iringtools.dxfr.dto.TemplateObject;
+import org.iringtools.dxfr.dto.TransferType;
 import org.iringtools.dxfr.manifest.Cardinality;
 import org.iringtools.dxfr.manifest.ClassTemplates;
 import org.iringtools.dxfr.manifest.Graph;
@@ -1219,6 +1220,10 @@ public class DataModel
         RoleValues roleOldValues = roleObject.getOldValues();
         String roleValue = roleObject.getValue();
         String roleOldValue = roleObject.getOldValue();
+        
+        if (roleOldValue == null && dto.getTransferType() == TransferType.CHANGE)
+        	roleOldValue = "";
+        
         RoleType roleType = roleObject.getType();
         Cardinality cardinality = getCardinality(graph, className, templateObject.getName(), roleObject.getName(),
             roleObject.getRelatedClassName());
@@ -1275,7 +1280,7 @@ public class DataModel
             else
             {
               roleValue = roleOldValue + " -> " + roleValue;
-              rowData.add("<span class=\"change\">" + roleValue + "</span>");
+            	rowData.add("<span class=\"change\">" + roleValue + "</span>");
             }
           }
 

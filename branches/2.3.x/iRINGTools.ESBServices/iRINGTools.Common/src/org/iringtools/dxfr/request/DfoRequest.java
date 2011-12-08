@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.iringtools.dxfr.dto.DataTransferObjects;
+import org.iringtools.dxfr.manifest.Manifest;
 
 
 /**
@@ -26,6 +27,7 @@ import org.iringtools.dxfr.dto.DataTransferObjects;
  *         &lt;element name="targetScopeName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="targetAppName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="dataTransferObjects" type="{http://www.iringtools.org/dxfr/dto}DataTransferObjects" maxOccurs="2"/>
+ *         &lt;element name="manifest" type="{http://www.iringtools.org/dxfr/manifest}Manifest"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -40,7 +42,8 @@ import org.iringtools.dxfr.dto.DataTransferObjects;
     "sourceAppName",
     "targetScopeName",
     "targetAppName",
-    "dataTransferObjects"
+    "dataTransferObjects",
+    "manifest"
 })
 @XmlRootElement(name = "dfoRequest")
 public class DfoRequest {
@@ -55,6 +58,8 @@ public class DfoRequest {
     protected String targetAppName;
     @XmlElement(required = true)
     protected List<DataTransferObjects> dataTransferObjects;
+    @XmlElement(required = true)
+    protected Manifest manifest;
 
     /**
      * Gets the value of the sourceScopeName property.
@@ -179,6 +184,30 @@ public class DfoRequest {
             dataTransferObjects = new ArrayList<DataTransferObjects>();
         }
         return this.dataTransferObjects;
+    }
+
+    /**
+     * Gets the value of the manifest property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Manifest }
+     *     
+     */
+    public Manifest getManifest() {
+        return manifest;
+    }
+
+    /**
+     * Sets the value of the manifest property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Manifest }
+     *     
+     */
+    public void setManifest(Manifest value) {
+        this.manifest = value;
     }
 
     /**

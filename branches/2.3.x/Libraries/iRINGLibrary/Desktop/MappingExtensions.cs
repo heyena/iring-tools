@@ -256,7 +256,7 @@ namespace org.iringtools.mapping
           {
             foreach (ValueMap valueMap in valueListMap.valueMaps)
             {
-              if (valueMap.internalValue == value)
+              if (valueMap.internalValue.ToLower() == value.ToLower())
               {
                 return valueMap.uri;  // uri with prefix
               }
