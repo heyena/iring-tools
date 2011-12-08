@@ -389,12 +389,7 @@ public class DifferencingProvider
                 else if (targetTemplateObject != null && sourceTemplateObject == null)
 	              {
 	              	changed = true;
-	              }
-	                
-                if (changed)
-                {
-                	sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
-                }
+	              }                
               }
             }
           }
@@ -405,6 +400,11 @@ public class DifferencingProvider
           else if (sourceClassObject != null && targetClassObject == null)
           {
           	changed = true;
+          }
+          
+          if (changed)
+          {
+          	sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
           }
         }
       }
