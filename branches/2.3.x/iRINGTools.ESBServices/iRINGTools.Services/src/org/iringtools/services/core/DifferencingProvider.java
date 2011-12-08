@@ -278,7 +278,6 @@ public class DifferencingProvider
         {
         	ClassTemplates classTemplates = classTemplatesList.get(j);
         	classId = classTemplates.getClazz().getId();
-          //ClassObject targetClassObject_test = targetClassObjectList.get(j);   
           ClassObject targetClassObject = getClassObject(targetClassObjectList, classId);
           ClassObject sourceClassObject = getClassObject(sourceClassObjectList, classId);
 
