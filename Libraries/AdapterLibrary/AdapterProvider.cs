@@ -46,6 +46,8 @@ using org.iringtools.utility;
 using StaticDust.Configuration;
 using System.Reflection;
 using System.ServiceModel.Web;
+using net.java.dev.wadl;
+using System.Globalization;
 
 
 namespace org.iringtools.adapter
@@ -58,6 +60,7 @@ namespace org.iringtools.adapter
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
     private ScopeProjects _scopes = null;
+    private ScopeApplication _application = null;
     private IDataLayer2 _dataLayer = null;
     private IIdentityLayer _identityLayer = null;
     private IDictionary _keyRing = null;
@@ -347,6 +350,1187 @@ namespace org.iringtools.adapter
       }
     }
 
+    public WADLApplication GetWADL(string projectName, string applicationName)
+    {
+      WADLApplication wadl = new WADLApplication();
+
+      try
+      {
+        bool isAll = projectName == "all";
+        bool isApp = projectName == "app";
+        if (isApp)
+        {
+          //get thie first context and initialize everything
+          Context context = GetContexts(applicationName).FirstOrDefault();
+
+          if (context == null)
+            throw new WebFaultException(HttpStatusCode.NotFound);
+
+          projectName = context.Name;
+        }
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        bool isReadOnly = (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true");
+
+        // load uri maps config
+        Properties _uriMaps = new Properties();
+
+        string uriMapsFilePath = _settings["AppDataPath"] + "UriMaps.conf";
+
+        if (File.Exists(uriMapsFilePath))
+        {
+          try
+          {
+            _uriMaps.Load(uriMapsFilePath);
+          }
+          catch (Exception e)
+          {
+            _logger.Info("Error loading [UriMaps.config]: " + e);
+          }
+        }
+
+        string baseUri = _settings["GraphBaseUri"];
+        if (isAll)
+          baseUri += "all/";
+
+        string appBaseUri = Utility.FormAppBaseURI(_uriMaps, baseUri, applicationName);
+        string baseResource = String.Empty;
+
+        if (!isApp && !isAll)
+        {
+          appBaseUri = appBaseUri + "/" +  projectName;
+        }
+        else if (!isAll)
+        {
+          baseResource = "/{contextName}";
+        }
+
+        WADLResources resources = new WADLResources
+        {
+          @base = appBaseUri,
+        };
+
+        string title = _application.Name;
+        if (title == String.Empty)
+          title = applicationName;
+
+        string appDescription = "This is an iRINGTools endpoint.";
+        if (_application.Description != null && _application.Description != String.Empty)
+          appDescription = _application.Description;
+
+        string header = "<div id=\"wadlDescription\">" +
+            "  <img align=\"right\" src=\"http://iringug.org/wiki/images/6/60/IRINGTools_logo_small.png\"/>" +
+            "  <p class=\"wadlDescText\">" +
+            "    " + appDescription + 
+            "  </p>" +
+            "  <ul class=\"wadlList\">" +
+            "    <li>API access is restricted to Authorized myPSN Users only.</li>" +
+            "    <li>The attributes available for each context may be different.</li>" +
+            "  </ul>" +
+            "</div>";
+
+        XmlDocument dummy = new XmlDocument();
+        XmlNode[] headerDocText = new XmlNode[] { dummy.CreateCDataSection(header) };
+
+        WADLHeaderDocumentation doc = new WADLHeaderDocumentation
+        {
+          title = title,
+          CData = headerDocText,
+        };
+
+        resources.Items.Add(doc);
+
+        if (isApp)
+        {
+          #region Build Contexts Resource
+          WADLResource contexts = new WADLResource
+          {
+            path = "/contexts",
+            Items = new List<object>
+            {
+              new WADLMethod
+              {
+                name = "GET",
+                Items = new List<object>
+                {
+                  new WADLDocumentation
+                  {
+                    Value = "Gets the list of contexts. A context could be a Bechtel project, GBU, or other name that identifies a set of data."
+                  },
+                  new WADLRequest
+                  {
+                    Items = new List<object>
+                    {
+                      new WADLParameter
+                      {
+                        name = "start",
+                        type = "int",
+                        style = "query",
+                        required = false,
+                        @default = "0",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The API pages results by default.  This parameter indicates which item to start with for the current page.  Defaults to 0 or start with the first item."
+                          }
+                        }
+                      },
+                      new WADLParameter
+                      {
+                        name = "limit",
+                        type = "xsd:int",
+                        style = "query",
+                        required = false,
+                        @default = "25",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The API pages results by default.  This parameter indicates how many items to include in the resulting page.  Defaults to 25 items per page."
+                          }
+                        }
+                      },
+                      new WADLParameter
+                      {
+                        name = "format",
+                        type = "xsd:string",
+                        style = "query",
+                        required = false,
+                        @default = "json",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "API response format supplied as a query string.  Valid choices for this parameter are: JSON, HTML &amp; XML (defaults to JSON)"
+                          },
+                          new WADLOption
+                          {
+                            value = "xml",
+                            mediaType = "application/xml",
+                          },
+                          new WADLOption
+                          {
+                            value = "json",
+                            mediaType = "application/json",
+                          },
+                          new WADLOption
+                          {
+                            value = "html",
+                            mediaType = "application/html",
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          };
+
+          resources.Items.Add(contexts);
+          #endregion
+        }
+
+        if (_dataDictionary.enableSummary)
+        {
+          #region Build Summary Resource
+          WADLResource summary = new WADLResource
+          {
+            path = baseResource + "/summary",
+            Items = new List<object>
+            {
+              new WADLMethod
+              {
+                name = "GET",
+                Items = new List<object>
+                {
+                  new WADLDocumentation
+                  {
+                    Value = "Gets a customizable summary of the data on the endpoint. Only JSON is returned at this time."
+                  },
+                  new WADLRequest
+                  {
+                    Items = new List<object>
+                    {
+                      new WADLParameter
+                      {
+                        name = "contextName",
+                        type = "string",
+                        style = "template",
+                        required = true,
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          };
+
+          resources.Items.Add(summary);
+          #endregion
+        }
+
+        foreach (DataObject dataObject in _dataDictionary.dataObjects)
+        {
+          #region Build DataObject List Resource
+          WADLResource list = new WADLResource
+          {
+            path = baseResource + "/" + dataObject.objectName.ToLower(),
+            Items = new List<object>
+            {
+              #region Build GetList Method
+              new WADLMethod
+              {
+                name = "GET",
+                Items = new List<object>
+                {
+                  new WADLDocumentation
+                  {
+                    Value = String.Format(
+                      "Gets a list of {0} data. {1} Data is returned according to the context specific configuration.  In addition to paging and sorting, results can be filtered by using property names as query paramters in the form: ?{{propertyName}}={{value}}.", 
+                       CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower()),
+                      dataObject.description
+                    )
+                  },
+                  new WADLRequest
+                  {
+                    Items = new List<object>
+                    {
+                      new WADLParameter
+                      {
+                        name = "contextName",
+                        type = "string",
+                        style = "template",
+                        required = true,
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories."
+                          }
+                        }
+                      },                      
+                      new WADLParameter
+                      {
+                        name = "start",
+                        type = "int",
+                        style = "query",
+                        required = false,
+                        @default = "0",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The API pages results by default.  This parameter indicates which item to start with for the current page.  Defaults to 0 or start with the first item."
+                          }
+                        }
+                      },
+                      new WADLParameter
+                      {
+                        name = "limit",
+                        type = "xsd:int",
+                        style = "query",
+                        required = false,
+                        @default = "25",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The API pages results by default.  This parameter indicates how many items to include in the resulting page.  Defaults to 25 items per page."
+                          }
+                        }
+                      },
+                      new WADLParameter
+                      {
+                        name = "format",
+                        type = "xsd:string",
+                        style = "query",
+                        required = false,
+                        @default = "json",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "API response format supplied as a query string.  Valid choices for this parameter are: JSON, HTML &amp; XML (defaults to JSON)"
+                          },
+                          new WADLOption
+                          {
+                            value = "xml",
+                            mediaType = "application/xml",
+                          },
+                          new WADLOption
+                          {
+                            value = "json",
+                            mediaType = "application/json",
+                          },
+                          new WADLOption
+                          {
+                            value = "html",
+                            mediaType = "application/html",
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              #endregion
+            }
+          };
+
+          if (!dataObject.isReadOnly && !isReadOnly)
+          {
+            #region Build PutList Method
+            WADLMethod put = new WADLMethod
+            {
+              name = "PUT",
+              Items = new List<object>
+              {
+                new WADLDocumentation
+                {
+                  Value = String.Format(
+                    "Updates a list of {0} data in the specified context. {1}. The response returned provides information about how each item was proccessed, and any issues that were encountered.", 
+                      CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower()),
+                    "This is a dynamic data object"
+                  )
+                },
+                new WADLRequest
+                {
+                  Items = new List<object>
+                  {
+                    new WADLParameter
+                    {
+                      name = "contextName",
+                      type = "string",
+                      style = "template",
+                      required = true,
+                      Items = new List<object>
+                      {
+                        new WADLDocumentation
+                        {
+                          Value = "The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories."
+                        }
+                      }
+                    },
+                    new WADLParameter
+                    {
+                      name = "format",
+                      type = "xsd:string",
+                      style = "query",
+                      required = false,
+                      @default = "json",
+                      Items = new List<object>
+                      {
+                        new WADLDocumentation
+                        {
+                          Value = "API response format supplied as a query string.  Valid choices for this parameter are: JSON &amp; XML (defaults to JSON)"
+                        },
+                        new WADLOption
+                        {
+                          value = "xml",
+                          mediaType = "application/xml",
+                        },
+                        new WADLOption
+                        {
+                          value = "json",
+                          mediaType = "application/json",
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            };
+            #endregion
+
+            list.Items.Add(put);
+
+            #region Build PostList Method
+            WADLMethod post = new WADLMethod
+            {
+              name = "POST",
+              Items = new List<object>
+              {
+                new WADLDocumentation
+                {
+                  Value = String.Format(
+                    "Creates a single {0} item in the specified context. {1}. The response returned provides information about how each item was proccessed, and any issues that were encountered.", 
+                      CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower()),
+                    "This is a dynamic data object"
+                  )
+                },
+                new WADLRequest
+                {
+                  Items = new List<object>
+                  {
+                    new WADLParameter
+                    {
+                      name = "contextName",
+                      type = "string",
+                      style = "template",
+                      required = true,
+                      Items = new List<object>
+                      {
+                        new WADLDocumentation
+                        {
+                          Value = "The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories."
+                        }
+                      }
+                    },
+                    new WADLParameter
+                    {
+                      name = "format",
+                      type = "xsd:string",
+                      style = "query",
+                      required = false,
+                      @default = "json",
+                      Items = new List<object>
+                      {
+                        new WADLDocumentation
+                        {
+                          Value = "API response format supplied as a query string.  Valid choices for this parameter are: JSON &amp; XML (defaults to JSON)"
+                        },
+                        new WADLOption
+                        {
+                          value = "xml",
+                          mediaType = "application/xml",
+                        },
+                        new WADLOption
+                        {
+                          value = "json",
+                          mediaType = "application/json",
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            };
+            #endregion
+
+            list.Items.Add(post);
+          }
+
+          resources.Items.Add(list);
+          #endregion
+
+          if (_dataDictionary.enableSearch)
+          {
+            #region Build DataObject Search Resource
+            WADLResource search = new WADLResource
+            {
+              path = baseResource + "/" + dataObject.objectName.ToLower() + "/search?q={query}",
+              Items = new List<object>
+            {
+              #region Build GetList Method
+              new WADLMethod
+              {
+                name = "GET",
+                Items = new List<object>
+                {
+                  new WADLDocumentation
+                  {
+                    Value = String.Format(
+                      "Searches the  {0} data for the specified context.  The specific properties searched, and whether content is searched, will depend on the context configuration.  In addition to paging and sorting, results can be filtered by using property names as query paramters in the form: ?{{propertyName}}={{value}}.", 
+                       CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower())
+                    )
+                  },
+                  new WADLRequest
+                  {
+                    Items = new List<object>
+                    {
+                      new WADLParameter
+                      {
+                        name = "contextName",
+                        type = "string",
+                        style = "template",
+                        required = true,
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories."
+                          }
+                        }
+                      },
+                      new WADLParameter
+                      {
+                        name = "q",
+                        type = "string",
+                        style = "query",
+                        required = true,
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "Enter full or partial text to search for (minimum 2 characters). The specific properties searched, and whether content is searched, will depend on the repository configuration."
+                          }
+                        }
+                      },
+                      new WADLParameter
+                      {
+                        name = "start",
+                        type = "int",
+                        style = "query",
+                        required = false,
+                        @default = "0",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The API pages results by default.  This parameter indicates which item to start with for the current page.  Defaults to 0 or start with the first item."
+                          }
+                        }
+                      },
+                      new WADLParameter
+                      {
+                        name = "limit",
+                        type = "int",
+                        style = "query",
+                        required = false,
+                        @default = "25",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The API pages results by default.  This parameter indicates how many items to include in the resulting page.  Defaults to 25 items per page."
+                          }
+                        }
+                      },
+                      new WADLParameter
+                      {
+                        name = "format",
+                        type = "string",
+                        style = "query",
+                        required = false,
+                        @default = "json",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "API response format supplied as a query string.  Valid choices for this parameter are: JSON, HTML &amp; XML (defaults to JSON)"
+                          },
+                          new WADLOption
+                          {
+                            value = "xml",
+                            mediaType = "application/xml",
+                          },
+                          new WADLOption
+                          {
+                            value = "json",
+                            mediaType = "application/json",
+                          },
+                          new WADLOption
+                          {
+                            value = "html",
+                            mediaType = "application/html",
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              #endregion
+            }
+            };
+
+            resources.Items.Add(search);
+            #endregion
+          }
+
+          if (!dataObject.isListOnly)
+          {
+            #region Build DataObject Item Resource
+            WADLResource item = new WADLResource
+            {
+              path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}",
+              Items = new List<object>
+              {
+                #region Build GetItem Method
+                new WADLMethod
+                {
+                  name = "GET",
+                  Items = new List<object>
+                  {
+                    new WADLDocumentation
+                    {
+                      Value = String.Format(
+                        "Gets a list containing the specified {0} data. {1}. Data is returned according to the context specific configuration.  In addition to paging and sorting, results can be filtered by using property names as query paramters in the form: ?{{propertyName}}={{value}}.", 
+                         CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower()),
+                        "This is a dynamic data object"
+                      )
+                    },
+                    new WADLRequest
+                    {
+                      Items = new List<object>
+                      {
+                        new WADLParameter
+                        {
+                          name = "contextName",
+                          type = "string",
+                          style = "template",
+                          required = true,
+                          Items = new List<object>
+                          {
+                            new WADLDocumentation
+                            {
+                              Value = "The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories."
+                            }
+                          }
+                        },
+                        new WADLParameter
+                        {
+                          name = "identifier",
+                          type = "string",
+                          style = "template",
+                          required = true,
+                          Items = new List<object>
+                          {
+                            new WADLDocumentation
+                            {
+                              Value = String.Format(
+                                "The identifier of the {0} that you would like to fetch.", 
+                                 CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower())
+                              )
+                            }
+                          }
+                        },
+                        new WADLParameter
+                        {
+                          name = "start",
+                          type = "integer",
+                          style = "query",
+                          required = false,
+                          @default = "0",
+                          Items = new List<object>
+                          {
+                            new WADLDocumentation
+                            {
+                              Value = "The API pages results by default.  This parameter indicates which item to start with for the current page.  Defaults to 0 or start with the first item."
+                            }
+                          }
+                        },
+                        new WADLParameter
+                        {
+                          name = "limit",
+                          type = "xsd:int",
+                          style = "query",
+                          required = false,
+                          @default = "25",
+                          Items = new List<object>
+                          {
+                            new WADLDocumentation
+                            {
+                              Value = "The API pages results by default.  This parameter indicates how many items to include in the resulting page.  Defaults to 25 items per page."
+                            }
+                          }
+                        },
+                        new WADLParameter
+                        {
+                          name = "format",
+                          type = "xsd:string",
+                          style = "query",
+                          required = false,
+                          @default = "json",
+                          Items = new List<object>
+                          {
+                            new WADLDocumentation
+                            {
+                              Value = "API response format supplied as a query string.  Valid choices for this parameter are: JSON, HTML &amp; XML (defaults to JSON)"
+                            },
+                            new WADLOption
+                            {
+                              value = "xml",
+                              mediaType = "application/xml",
+                            },
+                            new WADLOption
+                            {
+                              value = "json",
+                              mediaType = "application/json",
+                            },
+                            new WADLOption
+                            {
+                              value = "html",
+                              mediaType = "application/html",
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                #endregion
+              }
+            };
+
+            if (!dataObject.isReadOnly && !isReadOnly)
+            {
+              #region Build PutItem Method
+              WADLMethod put = new WADLMethod
+              {
+                name = "PUT",
+                Items = new List<object>
+              {
+                new WADLDocumentation
+                {
+                  Value = String.Format(
+                    "Updates the specified {0} in the specified context. {1}. The response returned provides information about how each item was proccessed, and any issues that were encountered.", 
+                      CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower()),
+                    "This is a dynamic data object"
+                  )
+                },
+                new WADLRequest
+                {
+                  Items = new List<object>
+                  {
+                    new WADLParameter
+                    {
+                      name = "contextName",
+                      type = "string",
+                      style = "template",
+                      required = true,
+                      Items = new List<object>
+                      {
+                        new WADLDocumentation
+                        {
+                          Value = "The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories."
+                        }
+                      }
+                    },
+                    new WADLParameter
+                        {
+                          name = "identifier",
+                          type = "string",
+                          style = "template",
+                          required = true,
+                          Items = new List<object>
+                          {
+                            new WADLDocumentation
+                            {
+                              Value = String.Format(
+                                "The identifier of the {0} that you would like to fetch.", 
+                                 CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower())
+                              )
+                            }
+                          }
+                        },
+                    new WADLParameter
+                    {
+                      name = "format",
+                      type = "xsd:string",
+                      style = "query",
+                      required = false,
+                      @default = "json",
+                      Items = new List<object>
+                      {
+                        new WADLDocumentation
+                        {
+                          Value = "API response format supplied as a query string.  Valid choices for this parameter are: JSON &amp; XML (defaults to JSON)"
+                        },
+                        new WADLOption
+                        {
+                          value = "xml",
+                          mediaType = "application/xml",
+                        },
+                        new WADLOption
+                        {
+                          value = "json",
+                          mediaType = "application/json",
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              };
+              #endregion
+
+              item.Items.Add(put);
+
+              #region Build DeleteItem Method
+              WADLMethod delete = new WADLMethod
+              {
+                name = "DELETE",
+                Items = new List<object>
+              {
+                new WADLDocumentation
+                {
+                  Value = String.Format(
+                    "Deletes the specified {0} item in the specified context. {1}. The response returned provides information about how each item was proccessed, and any issues that were encountered.", 
+                      CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower()),
+                    "This is a dynamic data object"
+                  )
+                },
+                new WADLRequest
+                {
+                  Items = new List<object>
+                  {
+                    new WADLParameter
+                    {
+                      name = "contextName",
+                      type = "string",
+                      style = "template",
+                      required = true,
+                      Items = new List<object>
+                      {
+                        new WADLDocumentation
+                        {
+                          Value = "The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories."
+                        }
+                      }
+                    },
+                    new WADLParameter
+                        {
+                          name = "identifier",
+                          type = "string",
+                          style = "template",
+                          required = true,
+                          Items = new List<object>
+                          {
+                            new WADLDocumentation
+                            {
+                              Value = String.Format(
+                                "The identifier of the {0} that you would like to fetch.", 
+                                 CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower())
+                              )
+                            }
+                          }
+                        },
+                    new WADLParameter
+                    {
+                      name = "format",
+                      type = "xsd:string",
+                      style = "query",
+                      required = false,
+                      @default = "json",
+                      Items = new List<object>
+                      {
+                        new WADLDocumentation
+                        {
+                          Value = "API response format supplied as a query string.  Valid choices for this parameter are: JSON &amp; XML (defaults to JSON)"
+                        },
+                        new WADLOption
+                        {
+                          value = "xml",
+                          mediaType = "application/xml",
+                        },
+                        new WADLOption
+                        {
+                          value = "json",
+                          mediaType = "application/json",
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+              };
+              #endregion
+
+              item.Items.Add(delete);
+            }
+
+            resources.Items.Add(item);
+            #endregion
+          }
+
+          foreach (DataRelationship relationship in dataObject.dataRelationships)
+          {
+            #region Build DataObject List Resource
+            WADLResource relatedList = new WADLResource
+            {
+              path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}/" + relationship.relationshipName.ToLower(),
+              Items = new List<object>
+            {
+              #region Build GetList Method
+              new WADLMethod
+              {
+                name = "GET",
+                Items = new List<object>
+                {
+                  new WADLDocumentation
+                  {
+                    Value = String.Format(
+                      "Gets a list containing the {0} data related to the specified {1}. Data is returned according to the context specific configuration.  In addition to paging and sorting, results can be filtered by using property names as query paramters in the form: ?{{propertyName}}={{value}}.", 
+                       CultureInfo.CurrentCulture.TextInfo.ToTitleCase(relationship.relationshipName.ToLower()),
+                       CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower())  
+                    )
+                  },
+                  new WADLRequest
+                  {
+                    Items = new List<object>
+                    {
+                      new WADLParameter
+                      {
+                        name = "contextName",
+                        type = "string",
+                        style = "template",
+                        required = true,
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories."
+                          }
+                        }
+                      },                      
+                      new WADLParameter
+                        {
+                          name = "identifier",
+                          type = "string",
+                          style = "template",
+                          required = true,
+                          Items = new List<object>
+                          {
+                            new WADLDocumentation
+                            {
+                              Value = String.Format(
+                                "The identifier of the {0} that you would like to fetch related items.", 
+                                CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower())
+                              )
+                            }
+                          }
+                        },
+                        new WADLParameter
+                      {
+                        name = "start",
+                        type = "int",
+                        style = "query",
+                        required = false,
+                        @default = "0",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The API pages results by default.  This parameter indicates which item to start with for the current page.  Defaults to 0 or start with the first item."
+                          }
+                        }
+                      },
+                      new WADLParameter
+                      {
+                        name = "limit",
+                        type = "xsd:int",
+                        style = "query",
+                        required = false,
+                        @default = "25",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "The API pages results by default.  This parameter indicates how many items to include in the resulting page.  Defaults to 25 items per page."
+                          }
+                        }
+                      },
+                      new WADLParameter
+                      {
+                        name = "format",
+                        type = "xsd:string",
+                        style = "query",
+                        required = false,
+                        @default = "json",
+                        Items = new List<object>
+                        {
+                          new WADLDocumentation
+                          {
+                            Value = "API response format supplied as a query string.  Valid choices for this parameter are: JSON, HTML &amp; XML (defaults to JSON)"
+                          },
+                          new WADLOption
+                          {
+                            value = "xml",
+                            mediaType = "application/xml",
+                          },
+                          new WADLOption
+                          {
+                            value = "json",
+                            mediaType = "application/json",
+                          },
+                          new WADLOption
+                          {
+                            value = "html",
+                            mediaType = "application/html",
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              #endregion
+            }
+            };
+
+            resources.Items.Add(relatedList);
+            #endregion
+
+            if (relationship.relationshipType == RelationshipType.OneToMany)
+            {
+              #region Build DataObject Item Resource
+              WADLResource relatedItem = new WADLResource
+              {
+                path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}/" + relationship.relationshipName.ToLower() + "/{relatedIdentifier}",
+                Items = new List<object>
+                {
+                  #region Build GetItem Method
+                  new WADLMethod
+                  {
+                    name = "GET",
+                    Items = new List<object>
+                    {
+                      new WADLDocumentation
+                      {
+                        Value = String.Format(
+                          "Gets a list containing the specified {0} data related to the specified {1}. Data is returned according to the context specific configuration.  In addition to paging and sorting, results can be filtered by using property names as query paramters in the form: ?{{propertyName}}={{value}}.", 
+                          CultureInfo.CurrentCulture.TextInfo.ToTitleCase(relationship.relationshipName.ToLower()),
+                          CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower())
+                        )
+                      },
+                      new WADLRequest
+                      {
+                        Items = new List<object>
+                        {
+                          new WADLParameter
+                          {
+                            name = "contextName",
+                            type = "string",
+                            style = "template",
+                            required = true,
+                            Items = new List<object>
+                            {
+                              new WADLDocumentation
+                              {
+                                Value = "The name of the context.  A context can be a Bechtel project, or GBU.  Each context could refer to one or more repositories."
+                              }
+                            }
+                          },
+                          new WADLParameter
+                          {
+                            name = "identifier",
+                            type = "string",
+                            style = "template",
+                            required = true,
+                            Items = new List<object>
+                            {
+                              new WADLDocumentation
+                              {
+                                Value = String.Format(
+                                  "The identifier of the {0} that you would like to fetch related items.",  
+                                   CultureInfo.CurrentCulture.TextInfo.ToTitleCase(dataObject.objectName.ToLower())
+                                )
+                              }
+                            }
+                          },
+                          new WADLParameter
+                          {
+                            name = "relatedIdentifier",
+                            type = "string",
+                            style = "template",
+                            required = true,
+                            Items = new List<object>
+                            {
+                              new WADLDocumentation
+                              {
+                                Value = String.Format(
+                                  "The identifier of the {0} that you would like to fetch.", 
+                                   CultureInfo.CurrentCulture.TextInfo.ToTitleCase(relationship.relationshipName.ToLower())
+                                )
+                              }
+                            }
+                          },
+                          new WADLParameter
+                          {
+                            name = "start",
+                            type = "integer",
+                            style = "query",
+                            required = false,
+                            @default = "0",
+                            Items = new List<object>
+                            {
+                              new WADLDocumentation
+                              {
+                                Value = "The API pages results by default.  This parameter indicates which item to start with for the current page.  Defaults to 0 or start with the first item."
+                              }
+                            }
+                          },
+                          new WADLParameter
+                          {
+                            name = "limit",
+                            type = "xsd:int",
+                            style = "query",
+                            required = false,
+                            @default = "25",
+                            Items = new List<object>
+                            {
+                              new WADLDocumentation
+                              {
+                                Value = "The API pages results by default.  This parameter indicates how many items to include in the resulting page.  Defaults to 25 items per page."
+                              }
+                            }
+                          },
+                          new WADLParameter
+                          {
+                            name = "format",
+                            type = "xsd:string",
+                            style = "query",
+                            required = false,
+                            @default = "json",
+                            Items = new List<object>
+                            {
+                              new WADLDocumentation
+                              {
+                                Value = "API response format supplied as a query string.  Valid choices for this parameter are: JSON, HTML &amp; XML (defaults to JSON)"
+                              },
+                              new WADLOption
+                              {
+                                value = "xml",
+                                mediaType = "application/xml",
+                              },
+                              new WADLOption
+                              {
+                                value = "json",
+                                mediaType = "application/json",
+                              },
+                              new WADLOption
+                              {
+                                value = "html",
+                                mediaType = "application/html",
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  #endregion
+                }
+              };
+
+              resources.Items.Add(relatedItem);
+              #endregion
+            }
+          }
+        }
+
+        wadl.Items.Add(resources);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetDictionary: {0}", ex));
+        throw new Exception(string.Format("Error getting data dictionary: {0}", ex));
+      }
+
+      return wadl;
+    }
+
     public mapping.Mapping GetMapping(string projectName, string applicationName)
     {
       try
@@ -426,8 +1610,11 @@ namespace org.iringtools.adapter
     {
       try
       {
+        _logger.DebugFormat("Initializing Scope: {0}.{1}", projectName, applicationName);
         InitializeScope(projectName, applicationName);
+        _logger.Debug("Initializing DataLayer.");
         InitializeDataLayer();
+        _logger.DebugFormat("Initializing Projection: {0} as {1}", resourceName, format);
         InitializeProjection(resourceName, ref format, false);
 
         _projectionEngine.Start = start;
@@ -440,8 +1627,10 @@ namespace org.iringtools.adapter
           limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
         }
 
+        _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
         _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
         _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
+        _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
         _projectionEngine.FullIndex = fullIndex;
 
         if (_isProjectionPart7)
@@ -470,6 +1659,10 @@ namespace org.iringtools.adapter
       {
         InitializeScope(projectName, applicationName);
         InitializeDataLayer();
+
+        if (!_dataDictionary.enableSearch)
+          throw new WebFaultException(HttpStatusCode.NotFound);
+
         InitializeProjection(resourceName, ref format, false);
 
         IList<string> index = new List<string>();
@@ -576,8 +1769,11 @@ namespace org.iringtools.adapter
     {
       try
       {
+        _logger.DebugFormat("Initializing Scope: {0}.{1}", projectName, applicationName);
         InitializeScope(projectName, applicationName);
+        _logger.Debug("Initializing DataLayer.");
         InitializeDataLayer();
+        _logger.DebugFormat("Initializing Projection: {0} as {1}", resourceName, format);
         InitializeProjection(resourceName, ref format, false);
 
         IList<string> index = new List<string>();
@@ -594,6 +1790,8 @@ namespace org.iringtools.adapter
 
         if (parameters != null)
         {
+          _logger.Debug("Preparing Filter from parameters.");
+
           foreach (string key in parameters.AllKeys)
           {
             string[] expectedParameters = { 
@@ -650,13 +1848,17 @@ namespace org.iringtools.adapter
             filter.OrderExpressions.Add(orderBy);
           }
 
+          _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
           _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
           _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
+          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
         }
         else
         {
+          _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
           _dataObjects = _dataLayer.Get(_dataObjDef.objectName, new DataFilter(), limit, start);
           _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, new DataFilter());
+          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
         }
 
         _projectionEngine.FullIndex = fullIndex;
@@ -770,7 +1972,7 @@ namespace org.iringtools.adapter
         {
           limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
         }
- 
+
         _projectionEngine.Start = start;
         _projectionEngine.Limit = limit;
 
@@ -863,7 +2065,7 @@ namespace org.iringtools.adapter
     }
 
     public XDocument GetDataProjection(
-    string projectName, string applicationName, string resourceName, string id, string relatedResourceName, 
+    string projectName, string applicationName, string resourceName, string id, string relatedResourceName,
       string relatedId, ref string format)
     {
       try
@@ -1199,7 +2401,7 @@ namespace org.iringtools.adapter
         {
           _settings["ProjectName"] = projectName;
           _settings["ApplicationName"] = applicationName;
-          
+
           string scopeSettingsPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
 
           if (File.Exists(scopeSettingsPath))
@@ -1230,11 +2432,12 @@ namespace org.iringtools.adapter
               {
                 if (application.Name.ToUpper() == applicationName.ToUpper())
                 {
+                  _application = application;
                   isScopeValid = true;
                 }
               }
             }
-          }   
+          }
 
           if (!isScopeValid)
             scope = String.Format("all.{0}", applicationName);
@@ -1818,6 +3021,9 @@ namespace org.iringtools.adapter
     {
       InitializeScope(projectName, applicationName);
       InitializeDataLayer();
+
+      if (!_dataDictionary.enableSummary)
+        throw new WebFaultException(HttpStatusCode.NotFound);
 
       return _dataLayer.GetSummary();
     }

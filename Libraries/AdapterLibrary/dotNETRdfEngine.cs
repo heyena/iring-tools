@@ -94,7 +94,7 @@ namespace org.iringtools.adapter.semantic
       string baseUri = _settings["GraphBaseUri"];
       string project = _settings["ProjectName"];
       string app = _settings["ApplicationName"];
-      _graphNs = Utility.FormAppBaseURI(_uriMaps, baseUri, project, app);
+      _graphNs = Utility.FormEndpointBaseURI(_uriMaps, baseUri, project, app);
 
       _dataObjectNs = String.Format("{0}.proj_{1}", DATALAYER_NS, _settings["Scope"]);
 

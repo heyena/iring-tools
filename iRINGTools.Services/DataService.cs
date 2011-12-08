@@ -44,6 +44,7 @@ using System.ServiceModel.Channels;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Collections.Generic;
+using net.java.dev.wadl;
 
 namespace org.iringtools.services
 {
@@ -79,6 +80,33 @@ namespace org.iringtools.services
       Contexts contexts = _adapterProvider.GetContexts(app);
 
       FormatOutgoingMessage<Contexts>(contexts, format, true);
+    }
+
+    [Description("Gets the wadl for an all endpoint.")]
+    [WebGet(UriTemplate = "/all/{app}?wadl")]
+    public void GetAllWADL(string app)
+    {
+      WADLApplication wadl = _adapterProvider.GetWADL("all", app);
+
+      FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
+    }
+
+    [Description("Gets the wadl for an application.")]
+    [WebGet(UriTemplate = "/{app}?wadl")]
+    public void GetAppWADL(string app)
+    {
+      WADLApplication wadl = _adapterProvider.GetWADL("app", app);
+
+      FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
+    }
+
+    [Description("Gets the wadl for an endpoint.")]
+    [WebGet(UriTemplate = "/{app}/{project}?wadl")]
+    public void GetScopeWADL(string app, string project)
+    {
+      WADLApplication wadl = _adapterProvider.GetWADL(project, app);
+
+      FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
     }
 
     [Description("Gets object definitions of an application.")]
