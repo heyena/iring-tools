@@ -298,11 +298,19 @@ namespace org.iringtools.library
           {
             try
             {
-              String value = Convert.ToString(dataRow[objectProperty.columnName]);
-
-              if (value != null)
+              if (dataRow.ItemArray.Contains(objectProperty.columnName))
               {
-                dataObject.SetPropertyValue(objectProperty.propertyName, value);
+                String value = Convert.ToString(dataRow[objectProperty.columnName]);
+
+                if (value != null)
+                {
+                  dataObject.SetPropertyValue(objectProperty.propertyName, value);
+                }
+              }
+              else
+              {
+                _logger.Error(String.Format("Column [{0}] does not exist in table [{1}]", 
+                  objectProperty.columnName, objectDefinition.tableName));
               }
             }
             catch (Exception ex)
