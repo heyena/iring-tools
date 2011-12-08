@@ -21,7 +21,7 @@ import org.iringtools.mapping.ValueListMaps;
  *       &lt;sequence>
  *         &lt;element name="graphs" type="{http://www.iringtools.org/dxfr/manifest}Graphs"/>
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="valueListMaps" type="{http://www.iringtools.org/mapping}ValueListMaps"/>
+ *         &lt;element ref="{http://www.iringtools.org/mapping}valueListMaps"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -43,7 +43,7 @@ public class Manifest {
     protected Graphs graphs;
     @XmlElement(required = true)
     protected String version;
-    @XmlElement(required = true)
+    @XmlElement(namespace = "http://www.iringtools.org/mapping", required = true)
     protected ValueListMaps valueListMaps;
 
     /**

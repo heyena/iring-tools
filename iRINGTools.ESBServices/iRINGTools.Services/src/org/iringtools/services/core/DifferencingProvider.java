@@ -15,8 +15,13 @@ import org.iringtools.dxfr.dto.DataTransferObjects;
 import org.iringtools.dxfr.dto.RoleObject;
 import org.iringtools.dxfr.dto.RoleType;
 import org.iringtools.dxfr.dto.TemplateObject;
+import org.iringtools.dxfr.manifest.ClassTemplates;
+import org.iringtools.dxfr.manifest.Graph;
+import org.iringtools.dxfr.manifest.Manifest;
+import org.iringtools.dxfr.manifest.Template;
 import org.iringtools.dxfr.request.DfiRequest;
 import org.iringtools.dxfr.request.DfoRequest;
+import org.iringtools.utility.JaxbUtils;
 
 public class DifferencingProvider
 {
@@ -92,8 +97,8 @@ public class DifferencingProvider
       }
 
       return sourceDtis;
-    }
-
+    }    
+  	
     List<DataTransferIndex> sourceDtiList = sourceDtis.getDataTransferIndexList().getItems();
     List<DataTransferIndex> targetDtiList = targetDtis.getDataTransferIndexList().getItems();
     IdentifierComparator identifierComparator = new IdentifierComparator();
@@ -128,6 +133,7 @@ public class DifferencingProvider
       resultDtis.setSortType(sourceDtis.getSortType());
       resultDtis.setSortOrder(sourceDtis.getSortOrder());
 
+     
       return resultDtis;
     }
 
@@ -210,8 +216,8 @@ public class DifferencingProvider
     }
 
     resultDtis.setSortType(sourceDtis.getSortType());
-    resultDtis.setSortOrder(sourceDtis.getSortOrder());
-
+    resultDtis.setSortOrder(sourceDtis.getSortOrder());    
+  	
     return resultDtis;
   }
 
@@ -222,7 +228,10 @@ public class DifferencingProvider
     List<DataTransferObjects> dtosList = dfoRequest.getDataTransferObjects();
     DataTransferObjects sourceDtos = null;
     DataTransferObjects targetDtos = null;
-
+    Manifest manifest = dfoRequest.getManifest();
+    String classId;
+    boolean changed = false;
+    
     if (dtosList == null || dtosList.size() < 2)
       return null;
 
@@ -240,7 +249,8 @@ public class DifferencingProvider
 
     if (sourceDtos == null || targetDtos == null)
       return null;
-
+    
+  	
     List<DataTransferObject> targetDtoList = targetDtos.getDataTransferObjectList().getItems();
     List<DataTransferObject> sourceDtoList = sourceDtos.getDataTransferObjectList().getItems();
 
@@ -267,8 +277,11 @@ public class DifferencingProvider
         for (int j = 0; j < targetClassObjectList.size(); j++)
         {
           ClassObject targetClassObject = targetClassObjectList.get(j);
-          ClassObject sourceClassObject = getClassObject(sourceClassObjectList, targetClassObject.getClassId());
+          classId = targetClassObject.getClassId();
+          ClassObject sourceClassObject = getClassObject(sourceClassObjectList, classId);
 
+          ClassTemplates manifestClassObject = getClassTemplates(manifest, classId);          
+          
           if (sourceClassObject != null)
           {
             // assure target and source identifier are still the same
@@ -282,18 +295,22 @@ public class DifferencingProvider
             }
 
             sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
-
+           
+            
             if (targetClassObject.getTemplateObjects() != null && sourceClassObject.getTemplateObjects() != null)
             {
+              List<Template> manifestTemplateList = manifestClassObject.getTemplates().getItems();
               List<TemplateObject> targetTemplateObjectList = targetClassObject.getTemplateObjects().getItems();
               List<TemplateObject> sourceTemplateObjectList = sourceClassObject.getTemplateObjects().getItems();
 
-              for (TemplateObject targetTemplateObject : targetTemplateObjectList)
+              for (Template template : manifestTemplateList)
               {
-                TemplateObject sourceTemplateObject = getTemplateObject(sourceTemplateObjectList,
-                    targetTemplateObject.getTemplateId());
+              	changed = false;
+              	TemplateObject targetTemplateObject = getTemplateObject(targetTemplateObjectList, template.getId());
+        
+                TemplateObject sourceTemplateObject = getTemplateObject(sourceTemplateObjectList, template.getId());
 
-                if (sourceTemplateObject != null)
+                if (targetTemplateObject != null && sourceTemplateObject != null)
                 {
                   sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
 
@@ -314,7 +331,7 @@ public class DifferencingProvider
 
                         if (sourceRoleObject != null)
                         {
-                          boolean changed = false;
+                          changed = false;
 
                           if (sourceRoleObject.getValues() != null)
                           {
@@ -354,25 +371,32 @@ public class DifferencingProvider
                               changed = true;
                             }
                           }
-
                           if (changed)
-                          {
+                          {	                          	
                             sourceTemplateObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
-                            sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
-                            sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                            sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);	                            
                           }
                         }
                       }
                     }
                   }
                 }
+                else if (targetTemplateObject == null && sourceTemplateObject != null)
+	              {
+	              	changed = true;
+	              }
+	                
+                if (changed)
+                {
+                	sourceDto.setTransferType(org.iringtools.dxfr.dto.TransferType.CHANGE);
+                }
               }
             }
           }
         }
       }
-    }
-
+    }  
+  	
     return sourceDtos;
   }
 
@@ -384,6 +408,19 @@ public class DifferencingProvider
         return classObject;
     }
 
+    return null;
+  }
+  
+  private ClassTemplates getClassTemplates(Manifest manifest, String classId)
+  {
+  	for (Graph graph : manifest.getGraphs().getItems())
+  	{
+	    for (ClassTemplates classTemplates : graph.getClassTemplatesList().getItems())
+	    {
+	      if (classTemplates.getClazz().getId().equals(classId))
+	        return classTemplates;
+	    }
+  	}
     return null;
   }
 

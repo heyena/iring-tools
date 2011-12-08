@@ -452,6 +452,7 @@ public class ExchangeProvider
       dfoRequest.setSourceAppName(sourceAppName);
       dfoRequest.setTargetScopeName(targetScopeName);
       dfoRequest.setTargetAppName(targetAppName);
+      dfoRequest.setManifest(manifest);
       dfoRequest.getDataTransferObjects().add(sourceDtos);
       dfoRequest.getDataTransferObjects().add(targetDtos);
 
