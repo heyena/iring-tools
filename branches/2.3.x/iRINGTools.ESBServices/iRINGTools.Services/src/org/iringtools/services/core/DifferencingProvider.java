@@ -296,7 +296,6 @@ public class DifferencingProvider
 
             sourceClassObject.setTransferType(org.iringtools.dxfr.dto.TransferType.SYNC); // default SYNC first
            
-            
             if (targetClassObject.getTemplateObjects() != null && sourceClassObject.getTemplateObjects() != null)
             {
               List<Template> manifestTemplateList = manifestClassObject.getTemplates().getItems();
@@ -382,6 +381,10 @@ public class DifferencingProvider
                   }
                 }
                 else if (targetTemplateObject == null && sourceTemplateObject != null)
+	              {
+	              	changed = true;
+	              }
+                else if (targetTemplateObject != null && sourceTemplateObject == null)
 	              {
 	              	changed = true;
 	              }
