@@ -273,16 +273,18 @@ public class DifferencingProvider
       {
         List<ClassObject> targetClassObjectList = targetDto.getClassObjects().getItems();
         List<ClassObject> sourceClassObjectList = sourceDto.getClassObjects().getItems();
-
-        for (int j = 0; j < targetClassObjectList.size(); j++)
+        List<ClassTemplates> classTemplatesList = manifest.getGraphs().getItems().get(0).getClassTemplatesList().getItems();
+        for (int j = 0; j < classTemplatesList.size(); j++)
         {
-          ClassObject targetClassObject = targetClassObjectList.get(j);
-          classId = targetClassObject.getClassId();
+        	ClassTemplates classTemplates = classTemplatesList.get(j);
+        	classId = classTemplates.getClazz().getId();
+          //ClassObject targetClassObject_test = targetClassObjectList.get(j);   
+          ClassObject targetClassObject = getClassObject(targetClassObjectList, classId);
           ClassObject sourceClassObject = getClassObject(sourceClassObjectList, classId);
 
           ClassTemplates manifestClassObject = getClassTemplates(manifest, classId);          
           
-          if (sourceClassObject != null)
+          if (sourceClassObject != null && targetClassObject != null)
           {
             // assure target and source identifier are still the same
             if (j == 0 && !targetClassObject.getIdentifier().equalsIgnoreCase(sourceClassObject.getIdentifier()))
@@ -395,6 +397,14 @@ public class DifferencingProvider
                 }
               }
             }
+          }
+          else if (sourceClassObject == null && targetClassObject != null)
+          {
+          	changed = true;
+          }
+          else if (sourceClassObject != null && targetClassObject == null)
+          {
+          	changed = true;
           }
         }
       }
