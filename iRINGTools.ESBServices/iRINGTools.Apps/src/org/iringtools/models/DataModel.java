@@ -1224,6 +1224,9 @@ public class DataModel
         if (roleOldValue == null && dto.getTransferType() == TransferType.CHANGE)
         	roleOldValue = "";
         
+        if (roleValue == null && dto.getTransferType() == TransferType.CHANGE)
+        	roleValue = "";
+        
         RoleType roleType = roleObject.getType();
         Cardinality cardinality = getCardinality(graph, className, templateObject.getName(), roleObject.getName(),
             roleObject.getRelatedClassName());
