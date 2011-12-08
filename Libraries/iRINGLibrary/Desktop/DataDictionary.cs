@@ -39,8 +39,15 @@ namespace org.iringtools.library
       dataObjects = new List<DataObject>();
     }
 
-    [DataMember]
+    [DataMember(Order = 1)]
     public List<DataObject> dataObjects { get; set; }
+
+    [DataMember(Order = 1)]
+    public bool enableSearch { get; set; }
+
+    [DataMember(Order = 2)]
+    public bool enableSummary { get; set; }
+
 
     public static bool IsNumeric(DataType dataType)
     {
@@ -110,6 +117,9 @@ namespace org.iringtools.library
 
     [DataMember(IsRequired = false, Order = 11, EmitDefaultValue = false)]
     public string defaultListProjectionFormat { get; set; }
+
+    [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
+    public string description { get; set; }
 
     public bool isKeyProperty(string propertyName)
     {

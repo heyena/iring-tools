@@ -19,6 +19,8 @@ function setDsConfigFields (dsConfigPane, dbInfo, dbDict) {
 	var dbProvider = dsConfigForm.findField('dbProvider');
 
 	if (dbInfo) {
+	    dsConfigForm.findField('enableSummary').setValue(dbDict.enableSummary);
+
 		if (Provider) {
 			if (Provider.indexOf('ORACLE') > -1) {
 				dbName.hide();
@@ -63,7 +65,8 @@ function setDsConfigFields (dsConfigPane, dbInfo, dbDict) {
 			}
 		}
 	}
-	else {
+    else {
+        //new application setting default value
 		dbServer.setValue('localhost');
 		dbServer.show();
 		dbInstance.setValue('default');
@@ -330,8 +333,12 @@ function setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjec
             anchor: '100% - 1',
             border: false,
             frame: false
+          }, {
+            xtype: 'checkbox',
+            name: 'enableSummary',
+            fieldLabel: 'Enable Summary'
           }],
-          tbar: new Ext.Toolbar({
+            tbar: new Ext.Toolbar({
             items: [{
               xtype: 'tbspacer',
               width: 4
@@ -768,6 +775,7 @@ function loadTree(rootNode, dbDict) {
 			dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
 			dataObjectNode.attributes.properties.objectName = dataObject.objectName;
 			dataObjectNode.attributes.properties.keyDelimiter = dataObject.keyDelimeter;
+			dataObjectNode.attributes.properties.description = dataObject.description;
 			dataObjectNode.text = dataObject.objectName;
 			dataObjectNode.attributes.text = dataObject.objectName;
 			dataObjectNode.setText(dataObject.objectName);
