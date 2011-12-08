@@ -97,43 +97,52 @@ namespace org.iringtools.adapter.projection
                 }
               };
 
-              foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+              if (_settings["DisplayLinks"].ToLower() == "true")
               {
-                // create data filter to get related object count
-                DataFilter filter = new DataFilter();
-
-                foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+                foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
                 {
-                  Expression expression = new Expression();
+                  long relObjCount = 0;
+                  bool validateLinks = (_settings["ValidateLinks"].ToLower() == "true");
 
-                  if (filter.Expressions.Count > 0)
+                  if (validateLinks)
                   {
-                    expression.LogicalOperator = LogicalOperator.And;
+                    // create data filter to get related object count
+                    DataFilter filter = new DataFilter();
+
+                    foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+                    {
+                      Expression expression = new Expression();
+
+                      if (filter.Expressions.Count > 0)
+                      {
+                        expression.LogicalOperator = LogicalOperator.And;
+                      }
+
+                      expression.PropertyName = propertyMap.relatedPropertyName;
+                      expression.RelationalOperator = RelationalOperator.EqualTo;
+                      expression.Values.Add(dataObj.GetPropertyValue(propertyMap.dataPropertyName).ToString());
+
+                      filter.Expressions.Add(expression);
+                    }
+
+                    relObjCount = _dataLayer.GetCount(dataRelationship.relatedObjectName, filter);
                   }
-
-                  expression.PropertyName = propertyMap.relatedPropertyName;
-                  expression.RelationalOperator = RelationalOperator.EqualTo;
-                  expression.Values.Add(dataObj.GetPropertyValue(propertyMap.dataPropertyName).ToString());
-
-                  filter.Expressions.Add(expression);
-                }
-
-                long relObjCount = _dataLayer.GetCount(dataRelationship.relatedObjectName, filter);
-                
-                // only add link for related object that has data
-                if (relObjCount > 0)
-                {
-                  string relObj = dataRelationship.relatedObjectName.ToLower();
-                  string relName = dataRelationship.relationshipName.ToLower();
-
-                  Link relLink = new Link()
+                  // only add link for related object that has data
+                  if (!validateLinks || relObjCount > 0)
                   {
-                    href = String.Format("{0}/{1}", itemHref, relName),
-                    rel = relObj
-                  };
+                    string relObj = dataRelationship.relatedObjectName.ToLower();
+                    string relName = dataRelationship.relationshipName.ToLower();
 
-                  dataItem.links.Add(relLink);
+                    Link relLink = new Link()
+                    {
+                      href = String.Format("{0}/{1}", itemHref, relName),
+                      rel = relObj
+                    };
+
+                    dataItem.links.Add(relLink);
+                  }
                 }
+
               }
 
               dataItems.items.Add(dataItem);

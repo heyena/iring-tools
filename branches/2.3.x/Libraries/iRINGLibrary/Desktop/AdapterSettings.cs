@@ -23,6 +23,8 @@ namespace org.iringtools.adapter
       this.Add("DumpSettings", "False");
       this.Add("ExecutingAssemblyName", "App_Code");
       this.Add("DefaultStyleSheet", @".\App_Data\default.css");
+      this.Add("ValidateLinks", "True");
+      this.Add("DisplayLinks", "True");
 
       if (OperationContext.Current != null)
       {
@@ -55,7 +57,9 @@ namespace org.iringtools.adapter
           this[key] = baseAddress;
         }
 
-        if (key.Equals("DefaultProjectionFormat"))
+        if (key.Equals("DefaultProjectionFormat") ||
+            key.Equals("ValidateLinks") ||
+            key.Equals("DisplayLinks"))
         {
           string format = settings[key].ToString();
           this[key] = format;

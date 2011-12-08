@@ -39,7 +39,7 @@ namespace org.iringtools.library
       dataObjects = new List<DataObject>();
     }
 
-    [DataMember(Order = 1)]
+    [DataMember(Order = 0)]
     public List<DataObject> dataObjects { get; set; }
 
     [DataMember(Order = 1)]
@@ -47,7 +47,6 @@ namespace org.iringtools.library
 
     [DataMember(Order = 2)]
     public bool enableSummary { get; set; }
-
 
     public static bool IsNumeric(DataType dataType)
     {

@@ -194,6 +194,10 @@
       <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
       <Name>NHibernateExtension</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Libraries\WADLLibrary\WADLLibrary.csproj">
+      <Project>{B6362A98-B4C0-4729-AFE8-04F93F1B6C79}</Project>
+      <Name>WADLLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

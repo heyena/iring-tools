@@ -158,6 +158,10 @@
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WADLLibrary\WADLLibrary.csproj">
+      <Project>{B6362A98-B4C0-4729-AFE8-04F93F1B6C79}</Project>
+      <Name>WADLLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

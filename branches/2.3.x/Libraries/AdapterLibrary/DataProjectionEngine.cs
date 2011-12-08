@@ -33,7 +33,7 @@ namespace org.iringtools.adapter.projection
         string baseUri = _settings["GraphBaseUri"];
         string project = _settings["ProjectName"];
         string app = _settings["ApplicationName"];
-        string appBaseUri = Utility.FormAppBaseURI(_uriMaps, baseUri, project, app);
+        string appBaseUri = Utility.FormEndpointBaseURI(_uriMaps, baseUri, project, app);
 
         _graphName = graphName;
         _graphNamespace = appBaseUri + graphName + "/";        
