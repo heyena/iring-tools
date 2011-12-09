@@ -525,141 +525,141 @@ function setKeysFolder(editPane, node, scopeName, appName) {
 		});
 
 		var keysSelectorPanel = new Ext.FormPanel({
-			id: scopeName + '.' + appName + '.keysSelector.' + node.id,
-			border: false,
-			autoScroll: true,
-			bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-			labelWidth: 160,
-			defaults: { anchor: '100%' },
-			items: [{
-				xtype: 'label',
-				fieldLabel: 'Select Keys',
-				itemCls: 'form-title',
-				labelSeparator: ''
-			}, keysItemSelector],
-			tbar: new Ext.Toolbar({
-				items: [{
-					xtype: 'tbspacer',
-					width: 4
-				}, {
-					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/apply.png',
-					text: 'Apply',
-					tooltip: 'Apply the current changes to the data objects tree',
-					handler: function (f) {
-						var selectedValues = keysItemSelector.toMultiselect.store.data.items;
-						var keysNode = keysItemSelector.treeNode;
-						var propertiesNode = keysNode.parentNode.childNodes[1];
+		    id: scopeName + '.' + appName + '.keysSelector.' + node.id,
+		    border: false,
+		    autoScroll: true,
+		    bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+		    labelWidth: 160,
+		    defaults: { anchor: '100%' },
+		    items: [{
+		        xtype: 'label',
+		        fieldLabel: 'Select Keys',
+		        itemCls: 'form-title',
+		        labelSeparator: ''
+		    }, keysItemSelector],
+		    tbar: new Ext.Toolbar({
+		        items: [{
+		            xtype: 'tbspacer',
+		            width: 4
+		        }, {
+		            xtype: 'tbbutton',
+		            icon: 'Content/img/16x16/apply.png',
+		            text: 'Apply',
+		            tooltip: 'Apply the current changes to the data objects tree',
+		            handler: function (f) {
+		                var selectedValues = keysItemSelector.toMultiselect.store.data.items;
+		                var keysNode = keysItemSelector.treeNode;
+		                var propertiesNode = keysNode.parentNode.childNodes[1];
 
-						for (var i = 0; i < keysNode.childNodes.length; i++) {
-							var found = false;
+		                for (var i = 0; i < keysNode.childNodes.length; i++) {
+		                    var found = false;
 
-							for (var j = 0; j < selectedValues.length; j++) {
-								if (selectedValues[j].data.text.toLowerCase() == keysNode.childNodes[i].text.toLowerCase()) {
-									found = true;
-									break;
-								}
-							}
+		                    for (var j = 0; j < selectedValues.length; j++) {
+		                        if (selectedValues[j].data.text.toLowerCase() == keysNode.childNodes[i].text.toLowerCase()) {
+		                            found = true;
+		                            break;
+		                        }
+		                    }
 
-							if (!found) {
-								if (keysNode.childNodes[i].attributes.properties)
-									var properties = keysNode.childNodes[i].attributes.properties;
-								else if (keysNode.childNodes[i].attributes.attributes.properties)
-									var properties = keysNode.childNodes[i].attributes.attributes.properties;
+		                    if (!found) {
+		                        if (keysNode.childNodes[i].attributes.properties)
+		                            var properties = keysNode.childNodes[i].attributes.properties;
+		                        else if (keysNode.childNodes[i].attributes.attributes.properties)
+		                            var properties = keysNode.childNodes[i].attributes.attributes.properties;
 
-								if (properties) {
-									properties['isNullable'] = true;
-									delete properties.keyType;
+		                        if (properties) {
+		                            properties['isNullable'] = true;
+		                            delete properties.keyType;
 
-									var propertyNode = new Ext.tree.TreeNode({
-										text: keysNode.childNodes[i].text,
-										type: "dataProperty",
-										leaf: true,
-										iconCls: 'treeProperty',
-										properties: properties
-									});
+		                            var propertyNode = new Ext.tree.TreeNode({
+		                                text: keysNode.childNodes[i].text,
+		                                type: "dataProperty",
+		                                leaf: true,
+		                                iconCls: 'treeProperty',
+		                                properties: properties
+		                            });
 
-								  propertyNode.iconCls = 'treeProperty';
-									propertiesNode.appendChild(propertyNode);
-									keysNode.removeChild(keysNode.childNodes[i], true);
-									i--;
-								}
-							}
-						}
+		                            propertyNode.iconCls = 'treeProperty';
+		                            propertiesNode.appendChild(propertyNode);
+		                            keysNode.removeChild(keysNode.childNodes[i], true);
+		                            i--;
+		                        }
+		                    }
+		                }
 
-						var nodeChildren = new Array();
-						for (var j = 0; j < keysNode.childNodes.length; j++)
-							nodeChildren.push(keysNode.childNodes[j].text);
+		                var nodeChildren = new Array();
+		                for (var j = 0; j < keysNode.childNodes.length; j++)
+		                    nodeChildren.push(keysNode.childNodes[j].text);
 
-						for (var j = 0; j < selectedValues.length; j++) {
-							var found = false;
-							for (var i = 0; i < nodeChildren.length; i++) {
-								if (selectedValues[j].data.text.toLowerCase() == nodeChildren[i].toLowerCase()) {
-									found = true;
-									break;
-								}
-							}
+		                for (var j = 0; j < selectedValues.length; j++) {
+		                    var found = false;
+		                    for (var i = 0; i < nodeChildren.length; i++) {
+		                        if (selectedValues[j].data.text.toLowerCase() == nodeChildren[i].toLowerCase()) {
+		                            found = true;
+		                            break;
+		                        }
+		                    }
 
-							if (!found) {
-								var newKeyNode;
+		                    if (!found) {
+		                        var newKeyNode;
 
-								for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
-									if (propertiesNode.childNodes[jj].text.toLowerCase() == selectedValues[j].data.text.toLowerCase()) {
-										var properties = propertiesNode.childNodes[jj].attributes.properties;
-										properties.keyType = 'assigned';
-										properties.nullable = false;
+		                        for (var jj = 0; jj < propertiesNode.childNodes.length; jj++) {
+		                            if (propertiesNode.childNodes[jj].text.toLowerCase() == selectedValues[j].data.text.toLowerCase()) {
+		                                var properties = propertiesNode.childNodes[jj].attributes.properties;
+		                                properties.keyType = 'assigned';
+		                                properties.nullable = false;
 
-										newKeyNode = new Ext.tree.TreeNode({
-											text: selectedValues[j].data.text,
-											type: "keyProperty",
-											leaf: true,
-											iconCls: 'treeKey',
-											hidden: false,
-											properties: properties
-										});
-									  newKeyNode.iconCls = 'treeKey';
-										propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
-										break;
-									}
-								}
+		                                newKeyNode = new Ext.tree.TreeNode({
+		                                    text: selectedValues[j].data.text,
+		                                    type: "keyProperty",
+		                                    leaf: true,
+		                                    iconCls: 'treeKey',
+		                                    hidden: false,
+		                                    properties: properties
+		                                });
+		                                newKeyNode.iconCls = 'treeKey';
+		                                propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
+		                                jj--;
+		                            }
+		                        }
 
-								if (newKeyNode) {
-									keysNode.appendChild(newKeyNode);
-									if (keysNode.expanded == false)
-										keysNode.expand();
-								}
-							}
-						}
-					}
-				}, {
-					xtype: 'tbspacer',
-					width: 4
-				}, {
-					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/edit-clear.png',
-					text: 'Reset',
-					tooltip: 'Reset to the latest applied changes',
-					handler: function (f) {
-						var availItems = setItemSelectorAvailValues(node);
-						var selectedItems = setItemSelectorselectedValues(node);
-						if (keysItemSelector.fromMultiselect.store.data) {
-							keysItemSelector.fromMultiselect.reset();
-							keysItemSelector.fromMultiselect.store.removeAll();
-						}
+		                        if (newKeyNode) {
+		                            keysNode.appendChild(newKeyNode);
+		                            if (keysNode.expanded == false)
+		                                keysNode.expand();
+		                        }
+		                    }
+		                }
+		            }
+		        }, {
+		            xtype: 'tbspacer',
+		            width: 4
+		        }, {
+		            xtype: 'tbbutton',
+		            icon: 'Content/img/16x16/edit-clear.png',
+		            text: 'Reset',
+		            tooltip: 'Reset to the latest applied changes',
+		            handler: function (f) {
+		                var availItems = setItemSelectorAvailValues(node);
+		                var selectedItems = setItemSelectorselectedValues(node);
+		                if (keysItemSelector.fromMultiselect.store.data) {
+		                    keysItemSelector.fromMultiselect.reset();
+		                    keysItemSelector.fromMultiselect.store.removeAll();
+		                }
 
-						keysItemSelector.fromMultiselect.store.loadData(availItems);
-						keysItemSelector.fromMultiselect.store.commitChanges();
+		                keysItemSelector.fromMultiselect.store.loadData(availItems);
+		                keysItemSelector.fromMultiselect.store.commitChanges();
 
-						if (keysItemSelector.toMultiselect.store.data) {
-							keysItemSelector.toMultiselect.reset();
-							keysItemSelector.toMultiselect.store.removeAll();
-						}
+		                if (keysItemSelector.toMultiselect.store.data) {
+		                    keysItemSelector.toMultiselect.reset();
+		                    keysItemSelector.toMultiselect.store.removeAll();
+		                }
 
-						keysItemSelector.toMultiselect.store.loadData(selectedItems);
-						keysItemSelector.toMultiselect.store.commitChanges();
-					}
-				}]
-			})
+		                keysItemSelector.toMultiselect.store.loadData(selectedItems);
+		                keysItemSelector.toMultiselect.store.commitChanges();
+		            }
+		        }]
+		    })
 		});
 		editPane.add(keysSelectorPanel);
 		var panelIndex = editPane.items.indexOf(keysSelectorPanel);
@@ -675,6 +675,15 @@ function setPropertiesFolder(editPane, node, scopeName, appName) {
 				propertiesSelectorPane.destroy();
 			}
 		}
+
+        var shownProperty = new Array();
+
+        for (var indexOfProperty = 0; indexOfProperty < node.childNodes.length; indexOfProperty++)
+            if (!node.childNodes[indexOfProperty].hidden) {
+                !hasShown(shownProperty, node.childNodes[indexOfProperty].text)
+                shownProperty.push(node.childNodes[indexOfProperty].text);
+                indexOfProperty++;
+            }
 
 		var availItems = new Array();
 		var selectedItems = new Array();
@@ -708,129 +717,133 @@ function setPropertiesFolder(editPane, node, scopeName, appName) {
 				displayField: 'propertyName',
 				valueField: 'propertyValue'				
 			}],
-			treeNode: node
+			treeNode: node,
+			shownProperty: shownProperty
 		});
 
 		var propertiesSelectorPanel = new Ext.FormPanel({
-			id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
-			border: false,
-			autoScroll: true,
-			bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-			labelWidth: 160,			
-			defaults: { anchor: '100%' },			
-			items: [{
-				xtype: 'label',
-				fieldLabel: 'Select Properties',
-				itemCls: 'form-title',
-				labelSeparator: ''
-			}, propertiesItemSelector],
-			tbar: new Ext.Toolbar({
-				items: [{
-					xtype: 'tbspacer',
-					width: 4
-				}, {
-					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/apply.png',
-					text: 'Apply',
-					tooltip: 'Apply the current changes to the data objects tree',
-					handler: function (f) {
-						var selectedValues = propertiesItemSelector.toMultiselect.store.data.items;
-						var treeNode = propertiesItemSelector.treeNode;
+		    id: scopeName + '.' + appName + '.propertiesSelector.' + node.id,
+		    border: false,
+		    autoScroll: true,
+		    bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+		    labelWidth: 160,
+		    defaults: { anchor: '100%' },
+		    items: [{
+		        xtype: 'label',
+		        fieldLabel: 'Select Properties',
+		        itemCls: 'form-title',
+		        labelSeparator: ''
+		    }, propertiesItemSelector],
+		    tbar: new Ext.Toolbar({
+		        items: [{
+		            xtype: 'tbspacer',
+		            width: 4
+		        }, {
+		            xtype: 'tbbutton',
+		            icon: 'Content/img/16x16/apply.png',
+		            text: 'Apply',
+		            tooltip: 'Apply the current changes to the data objects tree',
+		            handler: function (f) {
+		                var selectedValues = propertiesItemSelector.toMultiselect.store.data.items;
+		                var treeNode = propertiesItemSelector.treeNode;
+		                var shownProperty = propertiesItemSelector.shownProperty;
 
-						for (var i = 0; i < treeNode.childNodes.length; i++) {
-							var found = false;
+		                for (var i = 0; i < treeNode.childNodes.length; i++) {
+		                    var found = false;
 
-							for (var j = 0; j < selectedValues.length; j++) {
-								if (selectedValues[j].data.text.toLowerCase() == treeNode.childNodes[i].text.toLowerCase()) {
-									found = true;
-									break;
-								}
-							}
+		                    for (var j = 0; j < selectedValues.length; j++) {
+		                        if (selectedValues[j].data.text.toLowerCase() == treeNode.childNodes[i].text.toLowerCase()) {
+		                            found = true;
+		                            break;
+		                        }
+		                    }
 
-							if (!found)
-								treeNode.childNodes[i].getUI().hide();
-							else
-								treeNode.childNodes[i].getUI().show();
+		                    if (!found)
+		                        treeNode.childNodes[i].getUI().hide();
+		                    else if (!hasShown(shownProperty, treeNode.childNodes[i].text)) {
+		                        treeNode.childNodes[i].getUI().show();
+		                        shownProperty.push(treeNode.childNodes[i].text);
+		                    }
 
-							if (treeNode.expanded == false)
-								treeNode.expand();
-						}
-					}
-				}, {
-					xtype: 'tbspacer',
-					width: 4
-				}, {
-					xtype: 'tbbutton',
-					icon: 'Content/img/16x16/edit-clear.png',
-					text: 'Reset',
-					tooltip: 'Reset to the latest applied changes',
-					handler: function (f) {
-						var availProps = new Array();
-						var selectedProps = new Array();
-						var availPropsSingle = new Array();
-						var toPropsSingle = new Array();
-						var firstAvailProps = new Array();
-						var firstToProps = new Array();
-						for (var i = 0; i < node.childNodes.length; i++) {
-							var itemName = node.childNodes[i].text;
-							if (node.childNodes[i].hidden == false) {
-								selectedProps.push([itemName, itemName]);
-								toPropsSingle.push(itemName);
-							}
-							else {
-								availProps.push([itemName, itemName]);
-								availPropsSingle.push(itemName);
-							}
-						}
+		                    if (treeNode.expanded == false)
+		                        treeNode.expand();
+		                }
+		            }
+		        }, {
+		            xtype: 'tbspacer',
+		            width: 4
+		        }, {
+		            xtype: 'tbbutton',
+		            icon: 'Content/img/16x16/edit-clear.png',
+		            text: 'Reset',
+		            tooltip: 'Reset to the latest applied changes',
+		            handler: function (f) {
+		                var availProps = new Array();
+		                var selectedProps = new Array();
+		                var availPropsSingle = new Array();
+		                var toPropsSingle = new Array();
+		                var firstAvailProps = new Array();
+		                var firstToProps = new Array();
+		                for (var i = 0; i < node.childNodes.length; i++) {
+		                    var itemName = node.childNodes[i].text;
+		                    if (node.childNodes[i].hidden == false) {
+		                        selectedProps.push([itemName, itemName]);
+		                        toPropsSingle.push(itemName);
+		                    }
+		                    else {
+		                        availProps.push([itemName, itemName]);
+		                        availPropsSingle.push(itemName);
+		                    }
+		                }
 
-						if (availProps[0]) {
-							firstAvailProps.push(availProps[0]);
+		                if (availProps[0]) {
+		                    firstAvailProps.push(availProps[0]);
 
-							if (propertiesItemSelector.fromMultiselect.store.data)
-								removeSelectorStore(propertiesItemSelector.fromMultiselect);
+		                    if (propertiesItemSelector.fromMultiselect.store.data)
+		                        removeSelectorStore(propertiesItemSelector.fromMultiselect);
 
-							loadSelectorStore(propertiesItemSelector.fromMultiselect, firstAvailProps);						
-							var firstAvailPropsItems = propertiesItemSelector.fromMultiselect.store.data.items;
-							var loadSingle = false;
-							var availPropName = firstAvailPropsItems[0].data.text;
+		                    loadSelectorStore(propertiesItemSelector.fromMultiselect, firstAvailProps);
+		                    var firstAvailPropsItems = propertiesItemSelector.fromMultiselect.store.data.items;
+		                    var loadSingle = false;
+		                    var availPropName = firstAvailPropsItems[0].data.text;
 
-							if (availPropName[1])
-								if (availPropName[1].length > 1)
-									var loadSingle = true;
+		                    if (availPropName[1])
+		                        if (availPropName[1].length > 1)
+		                            var loadSingle = true;
 
-							if (!loadSingle)
-								setSelectorStore(propertiesItemSelector.fromMultiselect, availProps);
-							else
-								setSelectorStore(propertiesItemSelector.fromMultiselect, availPropsSingle);
-						}
-						else
-							cleanSelectorStore(propertiesItemSelector.fromMultiselect);
+		                    if (!loadSingle)
+		                        setSelectorStore(propertiesItemSelector.fromMultiselect, availProps);
+		                    else
+		                        setSelectorStore(propertiesItemSelector.fromMultiselect, availPropsSingle);
+		                }
+		                else
+		                    cleanSelectorStore(propertiesItemSelector.fromMultiselect);
 
-						if (selectedProps[0]) {
-							firstToProps.push(selectedProps[0]);
+		                if (selectedProps[0]) {
+		                    firstToProps.push(selectedProps[0]);
 
-							if (propertiesItemSelector.toMultiselect.store.data)
-								removeSelectorStore(propertiesItemSelector.toMultiselect);
+		                    if (propertiesItemSelector.toMultiselect.store.data)
+		                        removeSelectorStore(propertiesItemSelector.toMultiselect);
 
-							loadSelectorStore(propertiesItemSelector.toMultiselect, firstToProps);
-							var firstToPropsItems = propertiesItemSelector.toMultiselect.store.data.items;
-							var loadSingle = false;
-							var toPropName = firstToPropsItems[0].data.text;
+		                    loadSelectorStore(propertiesItemSelector.toMultiselect, firstToProps);
+		                    var firstToPropsItems = propertiesItemSelector.toMultiselect.store.data.items;
+		                    var loadSingle = false;
+		                    var toPropName = firstToPropsItems[0].data.text;
 
-							if (toPropName[1])
-								if (toPropName[1].length > 1)
-									var loadSingle = true;
+		                    if (toPropName[1])
+		                        if (toPropName[1].length > 1)
+		                            var loadSingle = true;
 
-							if (!loadSingle)
-								setSelectorStore(propertiesItemSelector.toMultiselect, selectedProps);
-							else
-								setSelectorStore(propertiesItemSelector.toMultiselect, toPropsSingle);
-						}
-						else
-							cleanSelectorStore(propertiesItemSelector.toMultiselect);
-					}
-				}]
-			})
+		                    if (!loadSingle)
+		                        setSelectorStore(propertiesItemSelector.toMultiselect, selectedProps);
+		                    else
+		                        setSelectorStore(propertiesItemSelector.toMultiselect, toPropsSingle);
+		                }
+		                else
+		                    cleanSelectorStore(propertiesItemSelector.toMultiselect);
+		            }
+		        }]
+		    })
 		});
 
 		editPane.add(propertiesSelectorPanel);
@@ -838,6 +851,14 @@ function setPropertiesFolder(editPane, node, scopeName, appName) {
 		editPane.getLayout().setActiveItem(panelIndex);
 	}
 }
+
+function hasShown(shownArray, text)
+{
+    for (var shownIndex = 0; shownIndex < shownArray.length; shownIndex++)
+        if (shownArray[shownIndex] == text)
+            return true;
+    return false;
+};
 
 function removeSelectorStore(selector) {
 	selector.reset();
