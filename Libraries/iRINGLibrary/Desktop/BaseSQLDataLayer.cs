@@ -309,7 +309,7 @@ namespace org.iringtools.library
               }
               else
               {
-                _logger.Error(String.Format("Column [{0}] does not exist in table [{1}]", 
+                _logger.Warn(String.Format("Value for column [{0}] not found in data row of table [{1}]", 
                   objectProperty.columnName, objectDefinition.tableName));
               }
             }
