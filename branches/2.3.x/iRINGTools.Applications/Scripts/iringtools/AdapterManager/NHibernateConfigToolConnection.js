@@ -142,6 +142,7 @@ function setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjec
 			autoLoad: true,
 			autoDestroy: true,
 			url: 'AdapterManager/DBProviders',
+			timeout: 600000,
 			root: 'items',
 			idProperty: 'Provider',
 			fields: [{
@@ -999,6 +1000,7 @@ function showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjects
 
       Ext.Ajax.request({
           url: 'AdapterManager/TableNames',
+          timeout: 600000,
           method: 'POST',
           params: {
               scope: scopeName,
