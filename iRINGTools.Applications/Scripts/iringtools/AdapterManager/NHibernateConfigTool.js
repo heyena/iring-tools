@@ -67,7 +67,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								}
 
 								Ext.Ajax.request({
-									url: 'AdapterManager/DBDictionary',
+								    url: 'AdapterManager/DBDictionary',
+								    timeout: 600000,
 									method: 'POST',
 									params: {
 										scope: scopeName,
@@ -141,7 +142,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								var treeProperty = getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes, tablesSelectorPane);
 
 								Ext.Ajax.request({
-									url: 'AdapterManager/Trees',
+								    url: 'AdapterManager/Trees',
+								    timeout: 600000,
 									method: 'POST',
 									params: {
 										scope: scopeName,
@@ -258,7 +260,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		});
 
 		Ext.Ajax.request({
-			url: 'AdapterManager/DataType',
+		    url: 'AdapterManager/DataType',
+		    timeout: 600000,
 			method: 'GET',
 
 			success: function (response, request) {
@@ -281,7 +284,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		Ext.EventManager.onWindowResize(this.doLayout, this);
 
 		Ext.Ajax.request({
-			url: 'AdapterManager/DBDictionary',
+		    url: 'AdapterManager/DBDictionary',
+		    timeout: 600000,
 			method: 'POST',
 			params: {
 				scope: scopeName,
