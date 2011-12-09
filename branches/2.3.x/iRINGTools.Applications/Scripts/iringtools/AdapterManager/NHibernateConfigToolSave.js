@@ -1,12 +1,17 @@
 ﻿Ext.ns('AdapterManager');
 
-function setTreeProperty(dsConfigPane, dbInfo, dbDict) {
-	var treeProperty = {};
+function setTreeProperty(dsConfigPane, dbInfo, dbDict, tablesSelectorPane) {
+    var treeProperty = {};
+    if (tablesSelectorPane)
+        treeProperty.enableSummary = tablesSelectorPane.getForm().findField('enableSummary').getValue();
+    else if (dbDict.enableSummary)
+        treeProperty.enableSummary = dbDict.enableSummary;
+    else
+        treeProperty.enableSummary = false;
+
 	if (dsConfigPane) {
 		var dsConfigForm = dsConfigPane.getForm();
 		treeProperty.provider = dsConfigForm.findField('dbProvider').getValue();
-		treeProperty.enableSummary = dsConfigForm.findField('enableSummary').getValue();
-
 		var dbServer = dsConfigForm.findField('dbServer').getValue();
 		dbServer = (dbServer.toLowerCase() == 'localhost' ? '.' : dbServer);
 		var upProvider = treeProperty.provider.toUpperCase();
@@ -316,12 +321,12 @@ function getFolderFromChildNode(folderNode, dataTypes) {
 	return folder;
 };
 
-function getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes) {
+function getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes, tablesSelectorPane) {
 	var treeProperty = {};
 	treeProperty.dataObjects = new Array();
 	treeProperty.IdentityConfiguration = null;
 
-	var tProp = setTreeProperty(dsConfigPane, dbInfo, dbDict);
+	var tProp = setTreeProperty(dsConfigPane, dbInfo, dbDict, tablesSelectorPane);
 	treeProperty.connectionString = tProp.connectionString;
 	if (treeProperty.connectionString != null && treeProperty.connectionString.length > 0) {
 		treeProperty.connectionString = Base64.encode(tProp.connectionString);

@@ -15,7 +15,6 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 		var appName = config.app;
 		var dbDict;
 		var dbInfo;
-		var dbTableNames;
 		var userTableNames;
 		var dataTypes = null;		
 		var dataObjectsPane = new Ext.Panel({
@@ -83,7 +82,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
 										if (dbDict.dataObjects.length > 0) {
 											// populate data source form
-										  dbInfo = showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
+										    dbInfo = showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 										}
 										else {
 											dbObjectsTree.disable();
@@ -117,7 +116,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 								if (!editPane) {
 									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 								}
-					      dbTableNames = setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
+					            dbInfo.dbTableNames = setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 							}
 						}, {
 							xtype: 'tbspacer',
@@ -135,10 +134,11 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 								}
 
-								var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
+					            var dsConfigPane = editPane.items.map[scopeName + '.' + appName + '.dsconfigPane'];
+					            var tablesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
 								var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 								var rootNode = dbObjectsTree.getRootNode();
-								var treeProperty = getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes);
+								var treeProperty = getTreeJson(dsConfigPane, rootNode, dbInfo, dbDict, dataTypes, tablesSelectorPane);
 
 								Ext.Ajax.request({
 									url: 'AdapterManager/Trees',
@@ -177,7 +177,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 									var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
 								}
 
-							setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane, dbTableNames);
+                                if (dbInfo.dbTableNames != null)
+							        setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 								return;
 							}
 							else if (!node)
