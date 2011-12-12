@@ -120,6 +120,9 @@ namespace org.iringtools.library
     [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
     public string description { get; set; }
 
+    [DataMember(IsRequired = false, Order = 13, EmitDefaultValue = false)]
+    public bool isRelatedOnly { get; set; }
+
     public bool isKeyProperty(string propertyName)
     {
       foreach (KeyProperty keyProperty in keyProperties)
