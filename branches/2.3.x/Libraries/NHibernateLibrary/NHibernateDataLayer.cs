@@ -42,6 +42,7 @@ namespace org.iringtools.adapter.datalayer
       _nSettings.AppendSettings(settings);
       _keyRing = keyRing;
 
+      _kernel.Rebind<AdapterSettings>().ToConstant(_settings);
       _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
 
       _dataDictionaryPath = string.Format("{0}DataDictionary.{1}.xml",

@@ -28,9 +28,16 @@ namespace org.iringtools.web.controllers
       {
         string enableOAuth = ConfigurationManager.AppSettings["EnableOAuth"];
 
+        _logger.Debug("EnableOAth: " + enableOAuth);
+
         if (!String.IsNullOrEmpty(enableOAuth) && enableOAuth.ToUpper() == "TRUE")
         {
+          _logger.Debug("Calling SSO...");
+
           _authenticationLayer.Authenticate(ref _allClaims, ref _oAuthToken);
+
+          _logger.Debug("Claims: " + _allClaims.ToString());
+          _logger.Debug("OAuthToken: " + _oAuthToken);
 
           if (System.Web.HttpContext.Current.Response.IsRequestBeingRedirected)
             return;
@@ -38,12 +45,19 @@ namespace org.iringtools.web.controllers
           string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
           string ldapConfigFilePath = baseDirectory + @"App_Data\ldap.conf";
 
+          _logger.Debug("LDAPConfigPath: " + ldapConfigFilePath);
+          
           if (System.IO.File.Exists(ldapConfigFilePath))
           {
             Properties ldapConfig = new Properties();
             ldapConfig.Load(ldapConfigFilePath);
+
+            _logger.Debug("LDAPConfig loaded.");
+
             ldapConfig["authorizedGroup"] = "adapterAdmins";
             _authorizationLayer.Init(ldapConfig);
+
+            _logger.Debug("LDAP Authorization Intialized.");
 
             if (!_authorizationLayer.IsAuthorized(_allClaims))
             {

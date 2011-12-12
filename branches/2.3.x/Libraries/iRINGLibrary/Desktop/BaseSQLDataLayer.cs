@@ -298,7 +298,8 @@ namespace org.iringtools.library
           {
             try
             {
-              if (dataRow.ItemArray.Contains(objectProperty.columnName))
+
+              if (dataRow.Table.Columns.Contains(objectProperty.columnName))
               {
                 String value = Convert.ToString(dataRow[objectProperty.columnName]);
 
