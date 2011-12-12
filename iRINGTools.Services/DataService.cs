@@ -221,9 +221,7 @@ namespace org.iringtools.services
         }
         else
         {
-          NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
-          XDocument xDocument = _adapterProvider.GetDataProjection(
-            project, app, graph, id, related, ref format, start, limit, sortOrder, sortBy, parameters);
+          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, id, related, ref format, start, limit);
           FormatOutgoingMessage(xDocument.Root, format);
         }
       }

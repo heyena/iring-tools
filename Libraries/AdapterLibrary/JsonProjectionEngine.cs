@@ -106,27 +106,9 @@ namespace org.iringtools.adapter.projection
 
                   if (validateLinks)
                   {
-                    // create data filter to get related object count
-                    DataFilter filter = new DataFilter();
-
-                    foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
-                    {
-                      Expression expression = new Expression();
-
-                      if (filter.Expressions.Count > 0)
-                      {
-                        expression.LogicalOperator = LogicalOperator.And;
-                      }
-
-                      expression.PropertyName = propertyMap.relatedPropertyName;
-                      expression.RelationalOperator = RelationalOperator.EqualTo;
-                      expression.Values.Add(dataObj.GetPropertyValue(propertyMap.dataPropertyName).ToString());
-
-                      filter.Expressions.Add(expression);
-                    }
-
-                    relObjCount = _dataLayer.GetCount(dataRelationship.relatedObjectName, filter);
+                    relObjCount = _dataLayer.GetRelatedCount(dataObj, dataRelationship.relatedObjectName);
                   }
+
                   // only add link for related object that has data
                   if (!validateLinks || relObjCount > 0)
                   {
