@@ -1953,7 +1953,7 @@ namespace org.iringtools.adapter
     //Related
     public XDocument GetDataProjection(
         string projectName, string applicationName, string resourceName, string id, string relatedResourceName,
-        ref string format, int start, int limit, string sortOrder, string sortBy, NameValueCollection parameters)
+        ref string format, int start, int limit)
     {
       try
       {
@@ -1964,15 +1964,9 @@ namespace org.iringtools.adapter
         IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
         if (parentDataObject == null) return new XDocument();
 
-        // create data filter to get related objects
-        DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
-        DataObject relatedDataObject = _dataDictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
-
-        if (limit == 0)
-        {
-          limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
-        }
-
+        DataRelationship dataRelationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
+        string relatedObjectType = dataRelationship.relatedObjectName;
+        
         _projectionEngine.Start = start;
         _projectionEngine.Limit = limit;
 
@@ -1980,81 +1974,10 @@ namespace org.iringtools.adapter
             ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
             : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
 
-        DataFilter filter = new DataFilter();
+        _projectionEngine.Count = _dataLayer.GetRelatedCount(parentDataObject, relatedObjectType);
+        _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, limit, start);
 
-        foreach (PropertyMap propertyMap in relationship.propertyMaps)
-        {
-          Expression expression = new Expression();
-
-          if (filter.Expressions.Count > 0)
-          {
-            expression.LogicalOperator = LogicalOperator.And;
-          }
-
-          expression.PropertyName = propertyMap.relatedPropertyName;
-          expression.RelationalOperator = RelationalOperator.EqualTo;
-          expression.Values.Add(parentDataObject.GetPropertyValue(propertyMap.dataPropertyName).ToString());
-
-          filter.Expressions.Add(expression);
-        }
-
-        if (parameters != null)
-        {
-          foreach (string key in parameters.AllKeys)
-          {
-            string[] expectedParameters = {
-              "project",
-              "app",
-              "format", 
-              "start", 
-              "limit", 
-              "sortBy", 
-              "sortOrder",
-              "indexStyle",
-              "_dc",
-              "page",
-              "callback",
-            };
-
-            if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
-            {
-              Expression expression = new Expression
-              {
-                LogicalOperator = LogicalOperator.And,
-                PropertyName = key,
-                RelationalOperator = RelationalOperator.EqualTo,
-                Values = new Values { parameters[key] },
-                IsCaseSensitive = false,
-              };
-
-              filter.Expressions.Add(expression);
-            }
-          }
-
-          if (!String.IsNullOrEmpty(sortBy))
-          {
-            OrderExpression orderBy = new OrderExpression
-            {
-              PropertyName = sortBy,
-            };
-
-            if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
-            {
-              orderBy.SortOrder = SortOrder.Desc;
-            }
-            else
-            {
-              orderBy.SortOrder = SortOrder.Asc;
-            }
-
-            filter.OrderExpressions.Add(orderBy);
-          }
-        }
-
-        _dataObjects = _dataLayer.Get(relatedDataObject.objectName, filter, limit, start);
-        _projectionEngine.Count = _dataLayer.GetCount(relatedDataObject.objectName, filter);
-
-        XDocument xdoc = _projectionEngine.ToXml(relatedDataObject.objectName, ref _dataObjects);
+        XDocument xdoc = _projectionEngine.ToXml(relatedObjectType, ref _dataObjects);
         return xdoc;
       }
       catch (Exception ex)
@@ -2064,9 +1987,8 @@ namespace org.iringtools.adapter
       }
     }
 
-    public XDocument GetDataProjection(
-    string projectName, string applicationName, string resourceName, string id, string relatedResourceName,
-      string relatedId, ref string format)
+    public XDocument GetDataProjection(string projectName, string applicationName, string resourceName, string id, 
+      string relatedResourceName, string relatedId, ref string format)
     {
       try
       {
@@ -2077,13 +1999,12 @@ namespace org.iringtools.adapter
         IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
         if (parentDataObject == null) return new XDocument();
 
-        // create data filter to get related objects
-        DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
-        DataObject relatedDataObject = _dataDictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
-
         _projectionEngine.BaseURI = (projectName.ToLower() == "all")
             ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
             : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
+
+        DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
+        DataObject relatedDataObject = _dataDictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
 
         _dataObjects = _dataLayer.Get(relatedDataObject.objectName, new List<string> { relatedId });
 
