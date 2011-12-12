@@ -73,7 +73,7 @@ namespace org.iringtools.adapter.identity
           if (!String.IsNullOrEmpty(bechtelDomain))
           {
             keyRing["X-myPSN-BechtelDomain"] = bechtelDomain;
-            keyRing["DomainName"] = bechtelUserName;
+            keyRing["DomainName"] = bechtelDomain;
           }
 
           string bechtelEmployeeNumber = headers.Get("X-myPSN-BechtelEmployeeNumber");
