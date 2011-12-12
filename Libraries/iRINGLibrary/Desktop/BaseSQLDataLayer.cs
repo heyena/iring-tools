@@ -45,6 +45,12 @@ namespace org.iringtools.library
     // get related data rows of a given data row
     public abstract DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName);
 
+    // get related data rows of a given data row
+    public abstract long GetRelatedCount(DataRow dataRow, string relatedTableName);
+
+    // get related data rows of a given data row
+    public abstract DataTable GetRelatedDataTable(DataRow dataRow, string relatedTableName, long start, long limit);
+
     // post data rows and its related items (data rows)
     public abstract Response PostDataTables(IList<DataTable> dataTables);
     
@@ -188,6 +194,73 @@ namespace org.iringtools.library
       }
 
       return relatedDataObjects;
+    }
+
+    public override long GetRelatedCount(IDataObject dataObject, string relatedObjectType)
+    {
+      string objectType = dataObject.GetType().Name;
+
+      if (objectType == typeof(GenericDataObject).Name)
+      {
+        objectType = ((GenericDataObject)dataObject).ObjectType;
+      }
+
+      try
+      {
+        DataObject objectDefinition = GetObjectDefinition(objectType);
+        DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
+
+        DataTable dataTable = NewDataTable(objectDefinition);
+        DataRow dataRow = CreateDataRow(dataTable, dataObject, objectDefinition);
+
+        if (dataRow != null)
+        {
+          return GetRelatedCount(dataRow, relatedObjectDefinition.tableName);
+        }
+        else
+        {
+          throw new Exception("Error creating/getting data row for object [" + objectDefinition.objectName + "]");
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting related objects: " + ex);
+        throw ex;
+      }
+    }
+
+    public override IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex)
+    {
+      string objectType = dataObject.GetType().Name;
+
+      if (objectType == typeof(GenericDataObject).Name)
+      {
+        objectType = ((GenericDataObject)dataObject).ObjectType;
+      }
+
+      try
+      {
+        DataObject objectDefinition = GetObjectDefinition(objectType);
+        DataObject relatedObjectDefinition = GetObjectDefinition(relatedObjectType);
+
+        DataTable dataTable = NewDataTable(objectDefinition);
+        DataRow dataRow = CreateDataRow(dataTable, dataObject, objectDefinition);
+
+        if (dataRow != null)
+        {
+          DataTable relatedDataTable = GetRelatedDataTable(dataRow, relatedObjectDefinition.tableName, startIndex, pageSize);
+          return ToDataObjects(relatedDataTable, relatedObjectDefinition.objectName);
+        }
+        else
+        {
+          throw new Exception("Error creating/getting data row for object [" + objectDefinition.objectName + "]");
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting related objects: " + ex);
+        throw ex;
+      }
     }
 
     public override Response Post(IList<IDataObject> dataObjects)
@@ -513,6 +586,55 @@ namespace org.iringtools.library
           throw ex;
         }
       }
+    }
+
+    protected DataFilter CreateRelatedDataFilter(DataRow parentDataRow, string relatedObjectType)
+    {
+      DataObject parentDataObject = _dbDictionary.dataObjects.Find(x => x.tableName == parentDataRow.Table.TableName);
+      if (parentDataObject == null)
+      {
+        throw new Exception("Parent data table [" + parentDataRow.Table.TableName + "] not found.");
+      }
+
+      DataRelationship dataRelationship = parentDataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
+      if (dataRelationship == null)
+      {
+        throw new Exception("Relationship between data object [" + relatedObjectType.GetType().Name +
+          "] and related data object [" + relatedObjectType + "] not found.");
+      }
+
+      DataObject relatedDataObject = _dbDictionary.dataObjects.Find(x => x.objectName == dataRelationship.relatedObjectName);
+      if (relatedDataObject == null)
+      {
+        throw new Exception("Related data object [" + dataRelationship.relatedObjectName + "] not found.");
+      }
+
+      DataFilter filter = new DataFilter();
+
+      foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+      {
+        DataProperty parentDataProperty = parentDataObject.dataProperties.Find(x => x.propertyName.ToLower() == propertyMap.dataPropertyName);
+        DataProperty relatedDataProperty = relatedDataObject.dataProperties.Find(x => x.propertyName.ToLower() == propertyMap.relatedPropertyName);
+        
+        Expression expression = new Expression()
+        {
+          PropertyName = relatedDataProperty.columnName,
+          RelationalOperator = RelationalOperator.EqualTo,
+          Values = new Values
+          {
+            parentDataRow[parentDataProperty.columnName].ToString()
+          }
+        };
+
+        if (filter.Expressions.Count > 0)
+        {
+          expression.LogicalOperator = LogicalOperator.And;
+        }
+
+        filter.Expressions.Add(expression);
+      }
+
+      return filter;
     }
     #endregion
   }
