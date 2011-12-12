@@ -14,7 +14,7 @@ using Ninject.Extensions.Xml;
 
 namespace org.iringtools.adapter.datalayer
 {
-  public class NHibernateDataLayer : BaseConfigurableDataLayer, IDataLayer2
+  public class NHibernateDataLayer : BaseConfigurableDataLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(NHibernateDataLayer));
     private IKernel _kernel = null;
@@ -660,22 +660,28 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public override IList<IDataObject> GetRelatedObjects(IDataObject sourceDataObject, string relatedObjectType)
+    public override IList<IDataObject> GetRelatedObjects(IDataObject parentDataObject, string relatedObjectType)
     {
-      AccessLevel accessLevel = Authorize(relatedObjectType);
-
-      if (accessLevel < AccessLevel.Read)
-        throw new UnauthorizedAccessException(String.Format(UNAUTHORIZED_ERROR, _settings["scope"]));
-
-      ISession session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
-
+      IList<IDataObject> relatedObjects = null;
+      ISession session = null;
+       
       try
       {
-        IList<IDataObject> relatedObjects = null;
-        DataDictionary dictionary = GetDictionary();
-        DataObject dataObject = dictionary.dataObjects.First(c => c.objectName.ToLower() == sourceDataObject.GetType().Name.ToLower());
-        DataRelationship dataRelationship = dataObject.dataRelationships.First(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
+        DataObject dataObject = _dataDictionary.dataObjects.Find(c => c.objectName.ToLower() == parentDataObject.GetType().Name.ToLower());
+        if (dataObject == null)
+        {
+          throw new Exception("Parent data object [" + parentDataObject.GetType().Name + "] not found.");
+        }
 
+        DataRelationship dataRelationship = dataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
+        if (dataRelationship == null)
+        {
+          throw new Exception("Relationship between data object [" + parentDataObject.GetType().Name +
+            "] and related data object [" + relatedObjectType + "] not found.");
+        }
+
+        session = NHibernateSessionManager.Instance.GetSession(_settings["AppDataPath"], _settings["Scope"]);
+        
         StringBuilder sql = new StringBuilder();
         sql.Append("from " + dataRelationship.relatedObjectName + " where ");
 
@@ -685,11 +691,11 @@ namespace org.iringtools.adapter.datalayer
 
           if (propertyMap.dataType == DataType.String)
           {
-            sql.Append(map.relatedPropertyName + " = '" + sourceDataObject.GetPropertyValue(map.dataPropertyName) + "' and ");
+            sql.Append(map.relatedPropertyName + " = '" + parentDataObject.GetPropertyValue(map.dataPropertyName) + "' and ");
           }
           else
           {
-            sql.Append(map.relatedPropertyName + " = " + sourceDataObject.GetPropertyValue(map.dataPropertyName) + " and ");
+            sql.Append(map.relatedPropertyName + " = " + parentDataObject.GetPropertyValue(map.dataPropertyName) + " and ");
           }
         }
 
@@ -713,6 +719,36 @@ namespace org.iringtools.adapter.datalayer
       finally
       {
         CloseSession(session);
+      }
+    }
+
+    public override long GetRelatedCount(IDataObject parentDataObject, string relatedObjectType)
+    {
+      try
+      {
+        DataFilter filter = CreateDataFilter(parentDataObject, relatedObjectType);
+        return GetCount(relatedObjectType, filter);
+      }
+      catch (Exception ex)
+      {
+        string error = String.Format("Error getting related object count for object {0}: {1}", relatedObjectType, ex);
+        _logger.Error(error);
+        throw new Exception(error);
+      }
+    }
+
+    public override IList<IDataObject> GetRelatedObjects(IDataObject parentDataObject, string relatedObjectType, int pageSize, int startIndex)
+    {
+      try
+      {
+        DataFilter filter = CreateDataFilter(parentDataObject, relatedObjectType);
+        return Get(relatedObjectType, filter, pageSize, startIndex);
+      }
+      catch (Exception ex)
+      {
+        string error = String.Format("Error getting related objects for object {0}: {1}", relatedObjectType, ex);
+        _logger.Error(error);
+        throw new Exception(error);
       }
     }
 

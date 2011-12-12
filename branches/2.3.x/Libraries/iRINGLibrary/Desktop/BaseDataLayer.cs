@@ -124,6 +124,10 @@ namespace org.iringtools.library
 
     public abstract IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
 
+    public abstract long GetRelatedCount(IDataObject dataObject, string relatedObjectType);
+
+    public abstract IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex);
+
     #endregion
 
     public virtual Response Configure(XElement configuration)
@@ -206,7 +210,6 @@ namespace org.iringtools.library
     protected Expression<Func<IDataObject, bool>> FormKeyPredicate(string identifier)
     {
       Expression<Func<IDataObject, bool>> predicate = null;
-
       List<Expression> expressions = BuildKeyFilter(identifier);
 
       DataFilter dataFilter = new DataFilter
@@ -223,13 +226,11 @@ namespace org.iringtools.library
     {
       List<Expression> expressions = new List<Expression>();
 
-      Expression expression = null;
-      int i = 0;
       foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
       {
         string identifier = dataObject.GetPropertyValue(keyProperty.keyPropertyName).ToString();
 
-        expression = new Expression
+        Expression expression = new Expression
         {
           PropertyName = keyProperty.keyPropertyName,
           RelationalOperator = RelationalOperator.EqualTo,
@@ -239,8 +240,12 @@ namespace org.iringtools.library
           }
         };
 
+        if (expressions.Count > 0)
+        {
+          expression.LogicalOperator = LogicalOperator.And;
+        }
+
         expressions.Add(expression);
-        i++;
       }
 
       return expressions;
@@ -255,15 +260,13 @@ namespace org.iringtools.library
 
       if (identifierParts.Count() == _dataObjectDefinition.keyProperties.Count)
       {
-        Expression expression = null;
-        int i = 0;
-        foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
+        for (int i = 0; i < _dataObjectDefinition.keyProperties.Count; i++)
         {
           string identifierPart = identifierParts[i];
 
-          expression = new Expression
+          Expression expression = new Expression
           {
-            PropertyName = keyProperty.keyPropertyName,
+            PropertyName = _dataObjectDefinition.keyProperties[i].keyPropertyName,
             RelationalOperator = RelationalOperator.EqualTo,
             Values = new Values
             {
@@ -271,12 +274,70 @@ namespace org.iringtools.library
             }
           };
 
+          if (expressions.Count > 0)
+          {
+            expression.LogicalOperator = LogicalOperator.And;
+          }
+
           expressions.Add(expression);
-          i++;
         }
       }
 
       return expressions;
+    }
+
+    protected List<Expression> CreateRelatedFilterExpressions(IDataObject parentDataObject, DataRelationship dataRelationship)
+    {
+      List<Expression> expressions = new List<Expression>();
+
+      foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+      {
+        Expression expression = new Expression()
+        {
+          PropertyName = propertyMap.relatedPropertyName,
+          RelationalOperator = RelationalOperator.EqualTo,
+          Values = new Values
+          {
+            parentDataObject.GetPropertyValue(propertyMap.dataPropertyName).ToString()
+          }
+        };
+
+        if (expressions.Count > 0)
+        {
+          expression.LogicalOperator = LogicalOperator.And;
+        }
+
+        expressions.Add(expression);
+      }
+
+      return expressions;
+    }
+
+    protected DataFilter CreateDataFilter(IDataObject parentDataObject, string relatedObjectType)
+    {
+      DataDictionary dataDictionary = GetDictionary();
+
+      DataObject dataObject = dataDictionary.dataObjects.Find(c => c.objectName.ToLower() == parentDataObject.GetType().Name.ToLower());
+      if (dataObject == null)
+      {
+        throw new Exception("Parent data object [" + parentDataObject.GetType().Name + "] not found.");
+      }
+
+      DataRelationship dataRelationship = dataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
+      if (dataRelationship == null)
+      {
+        throw new Exception("Relationship between data object [" + parentDataObject.GetType().Name +
+          "] and related data object [" + relatedObjectType + "] not found.");
+      }
+
+      List<Expression> expressions = CreateRelatedFilterExpressions(parentDataObject, dataRelationship);
+
+      DataFilter filter = new DataFilter()
+      {
+        Expressions = expressions
+      };
+
+      return filter;
     }
 
     protected void SetKeys(IDataObject dataObject, string identifier)

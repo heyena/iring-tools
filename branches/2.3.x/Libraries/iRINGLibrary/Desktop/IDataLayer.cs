@@ -74,6 +74,10 @@ namespace org.iringtools.library
     DataDictionary GetDictionary();
 
     IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
+
+    long GetRelatedCount(IDataObject dataObject, string relatedObjectType);
+
+    IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex);
   }
 
   public interface IDataLayer2 : IDataLayer
