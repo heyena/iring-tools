@@ -184,7 +184,7 @@ namespace org.iringtools.library
         }
         else
         {
-          _logger.Error("Error create data row for object [" + objectDefinition.objectName + "]");
+          throw new Exception("Error creating/getting data row for object [" + objectDefinition.objectName + "]");
         }
       }
       catch (Exception ex)
@@ -588,7 +588,7 @@ namespace org.iringtools.library
       }
     }
 
-    protected DataFilter CreateRelatedDataFilter(DataRow parentDataRow, string relatedObjectType)
+    protected DataFilter CreateRelatedDataFilter(DataRow parentDataRow, string relatedTableName)
     {
       DataObject parentDataObject = _dbDictionary.dataObjects.Find(x => x.tableName == parentDataRow.Table.TableName);
       if (parentDataObject == null)
@@ -596,17 +596,17 @@ namespace org.iringtools.library
         throw new Exception("Parent data table [" + parentDataRow.Table.TableName + "] not found.");
       }
 
-      DataRelationship dataRelationship = parentDataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
-      if (dataRelationship == null)
-      {
-        throw new Exception("Relationship between data object [" + relatedObjectType.GetType().Name +
-          "] and related data object [" + relatedObjectType + "] not found.");
-      }
-
-      DataObject relatedDataObject = _dbDictionary.dataObjects.Find(x => x.objectName == dataRelationship.relatedObjectName);
+      DataObject relatedDataObject = _dbDictionary.dataObjects.Find(x => x.tableName == relatedTableName);
       if (relatedDataObject == null)
       {
-        throw new Exception("Related data object [" + dataRelationship.relatedObjectName + "] not found.");
+        throw new Exception("Related data table [" + relatedTableName + "] not found.");
+      }
+
+      DataRelationship dataRelationship = parentDataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedDataObject.tableName.ToLower());
+      if (dataRelationship == null)
+      {
+        throw new Exception("Relationship between data table [" + parentDataRow.Table.TableName +
+          "] and related data table [" + relatedTableName + "] not found.");
       }
 
       DataFilter filter = new DataFilter();
@@ -615,7 +615,7 @@ namespace org.iringtools.library
       {
         DataProperty parentDataProperty = parentDataObject.dataProperties.Find(x => x.propertyName.ToLower() == propertyMap.dataPropertyName);
         DataProperty relatedDataProperty = relatedDataObject.dataProperties.Find(x => x.propertyName.ToLower() == propertyMap.relatedPropertyName);
-        
+
         Expression expression = new Expression()
         {
           PropertyName = relatedDataProperty.columnName,
