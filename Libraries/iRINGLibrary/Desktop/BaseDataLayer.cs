@@ -106,6 +106,21 @@ namespace org.iringtools.library
       }
     }
 
+    public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
+    {
+      return null;
+    }
+
+    public virtual long GetRelatedCount(IDataObject dataObject, string relatedObjectType)
+    {
+      return 0;
+    }
+
+    public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex)
+    {
+      return null;
+    }
+
     #region Abstract Public Interface Methods
 
     public abstract IList<string> GetIdentifiers(string objectType, DataFilter filter);
@@ -121,12 +136,6 @@ namespace org.iringtools.library
     public abstract Response Delete(string objectType, DataFilter filter);
 
     public abstract DataDictionary GetDictionary();
-
-    public abstract IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
-
-    public abstract long GetRelatedCount(IDataObject dataObject, string relatedObjectType);
-
-    public abstract IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex);
 
     #endregion
 
