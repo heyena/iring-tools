@@ -459,6 +459,12 @@ namespace org.iringtools.web.controllers
       return Json(rootSecuirtyRole, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult baseUrl()
+    {
+      string baseUrl = _repository.getBaseUrl();
+      return Json(baseUrl, JsonRequestBehavior.AllowGet);
+    }
+
     #region Private Methods
 
     private Mapping GetMapping(string contextName, string endpoint)
