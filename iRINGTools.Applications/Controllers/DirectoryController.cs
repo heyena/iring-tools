@@ -277,6 +277,12 @@ namespace org.iringtools.web.controllers
                     Name = dataObject.objectName
                   }
                 };
+
+                if (dataObject.isRelatedOnly)
+                {
+                  node.hidden = true;
+                }
+
                 node.property = new Dictionary<string, string>();
                 node.property.Add("Name", dataObject.objectName);
                 nodes.Add(node);
