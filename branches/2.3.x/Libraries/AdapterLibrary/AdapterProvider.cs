@@ -420,7 +420,6 @@ namespace org.iringtools.adapter
           appDescription = _application.Description;
 
         string header = "<div id=\"wadlDescription\">" +
-            "  <img align=\"right\" src=\"http://iringug.org/wiki/images/6/60/IRINGTools_logo_small.png\"/>" +
             "  <p class=\"wadlDescText\">" +
             "    " + appDescription + 
             "  </p>" +
@@ -581,11 +580,13 @@ namespace org.iringtools.adapter
 
         foreach (DataObject dataObject in _dataDictionary.dataObjects)
         {
-          #region Build DataObject List Resource
-          WADLResource list = new WADLResource
+          if (!dataObject.isRelatedOnly)
           {
-            path = baseResource + "/" + dataObject.objectName.ToLower(),
-            Items = new List<object>
+            #region Build DataObject List Resource
+            WADLResource list = new WADLResource
+            {
+              path = baseResource + "/" + dataObject.objectName.ToLower(),
+              Items = new List<object>
             {
               #region Build GetList Method
               new WADLMethod
@@ -685,15 +686,15 @@ namespace org.iringtools.adapter
               },
               #endregion
             }
-          };
+            };
 
-          if (!dataObject.isReadOnly && !isReadOnly)
-          {
-            #region Build PutList Method
-            WADLMethod put = new WADLMethod
+            if (!dataObject.isReadOnly && !isReadOnly)
             {
-              name = "PUT",
-              Items = new List<object>
+              #region Build PutList Method
+              WADLMethod put = new WADLMethod
+              {
+                name = "PUT",
+                Items = new List<object>
               {
                 new WADLDocumentation
                 {
@@ -749,16 +750,16 @@ namespace org.iringtools.adapter
                   }
                 }
               }
-            };
-            #endregion
+              };
+              #endregion
 
-            list.Items.Add(put);
+              list.Items.Add(put);
 
-            #region Build PostList Method
-            WADLMethod post = new WADLMethod
-            {
-              name = "POST",
-              Items = new List<object>
+              #region Build PostList Method
+              WADLMethod post = new WADLMethod
+              {
+                name = "POST",
+                Items = new List<object>
               {
                 new WADLDocumentation
                 {
@@ -814,22 +815,22 @@ namespace org.iringtools.adapter
                   }
                 }
               }
-            };
+              };
+              #endregion
+
+              list.Items.Add(post);
+            }
+
+            resources.Items.Add(list);
             #endregion
 
-            list.Items.Add(post);
-          }
-
-          resources.Items.Add(list);
-          #endregion
-
-          if (_dataDictionary.enableSearch)
-          {
-            #region Build DataObject Search Resource
-            WADLResource search = new WADLResource
+            if (_dataDictionary.enableSearch)
             {
-              path = baseResource + "/" + dataObject.objectName.ToLower() + "/search?q={query}",
-              Items = new List<object>
+              #region Build DataObject Search Resource
+              WADLResource search = new WADLResource
+              {
+                path = baseResource + "/" + dataObject.objectName.ToLower() + "/search?q={query}",
+                Items = new List<object>
             {
               #region Build GetList Method
               new WADLMethod
@@ -942,19 +943,19 @@ namespace org.iringtools.adapter
               },
               #endregion
             }
-            };
+              };
 
-            resources.Items.Add(search);
-            #endregion
-          }
+              resources.Items.Add(search);
+              #endregion
+            }
 
-          if (!dataObject.isListOnly)
-          {
-            #region Build DataObject Item Resource
-            WADLResource item = new WADLResource
+            if (!dataObject.isListOnly)
             {
-              path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}",
-              Items = new List<object>
+              #region Build DataObject Item Resource
+              WADLResource item = new WADLResource
+              {
+                path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}",
+                Items = new List<object>
               {
                 #region Build GetItem Method
                 new WADLMethod
@@ -1071,15 +1072,15 @@ namespace org.iringtools.adapter
                 },
                 #endregion
               }
-            };
+              };
 
-            if (!dataObject.isReadOnly && !isReadOnly)
-            {
-              #region Build PutItem Method
-              WADLMethod put = new WADLMethod
+              if (!dataObject.isReadOnly && !isReadOnly)
               {
-                name = "PUT",
-                Items = new List<object>
+                #region Build PutItem Method
+                WADLMethod put = new WADLMethod
+                {
+                  name = "PUT",
+                  Items = new List<object>
               {
                 new WADLDocumentation
                 {
@@ -1152,16 +1153,16 @@ namespace org.iringtools.adapter
                   }
                 }
               }
-              };
-              #endregion
+                };
+                #endregion
 
-              item.Items.Add(put);
+                item.Items.Add(put);
 
-              #region Build DeleteItem Method
-              WADLMethod delete = new WADLMethod
-              {
-                name = "DELETE",
-                Items = new List<object>
+                #region Build DeleteItem Method
+                WADLMethod delete = new WADLMethod
+                {
+                  name = "DELETE",
+                  Items = new List<object>
               {
                 new WADLDocumentation
                 {
@@ -1234,23 +1235,23 @@ namespace org.iringtools.adapter
                   }
                 }
               }
-              };
-              #endregion
+                };
+                #endregion
 
-              item.Items.Add(delete);
+                item.Items.Add(delete);
+              }
+
+              resources.Items.Add(item);
+              #endregion
             }
 
-            resources.Items.Add(item);
-            #endregion
-          }
-
-          foreach (DataRelationship relationship in dataObject.dataRelationships)
-          {
-            #region Build DataObject List Resource
-            WADLResource relatedList = new WADLResource
+            foreach (DataRelationship relationship in dataObject.dataRelationships)
             {
-              path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}/" + relationship.relationshipName.ToLower(),
-              Items = new List<object>
+              #region Build DataObject List Resource
+              WADLResource relatedList = new WADLResource
+              {
+                path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}/" + relationship.relationshipName.ToLower(),
+                Items = new List<object>
             {
               #region Build GetList Method
               new WADLMethod
@@ -1367,18 +1368,18 @@ namespace org.iringtools.adapter
               },
               #endregion
             }
-            };
+              };
 
-            resources.Items.Add(relatedList);
-            #endregion
+              resources.Items.Add(relatedList);
+              #endregion
 
-            if (relationship.relationshipType == RelationshipType.OneToMany)
-            {
-              #region Build DataObject Item Resource
-              WADLResource relatedItem = new WADLResource
+              if (relationship.relationshipType == RelationshipType.OneToMany)
               {
-                path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}/" + relationship.relationshipName.ToLower() + "/{relatedIdentifier}",
-                Items = new List<object>
+                #region Build DataObject Item Resource
+                WADLResource relatedItem = new WADLResource
+                {
+                  path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}/" + relationship.relationshipName.ToLower() + "/{relatedIdentifier}",
+                  Items = new List<object>
                 {
                   #region Build GetItem Method
                   new WADLMethod
@@ -1512,10 +1513,11 @@ namespace org.iringtools.adapter
                   },
                   #endregion
                 }
-              };
+                };
 
-              resources.Items.Add(relatedItem);
-              #endregion
+                resources.Items.Add(relatedItem);
+                #endregion
+              }
             }
           }
         }
@@ -1906,7 +1908,6 @@ namespace org.iringtools.adapter
             List<string> identifiers = new List<string> { classIdentifier };
             _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
           }
-
           _projectionEngine.Count = _dataObjects.Count;
 
           _projectionEngine.BaseURI = (projectName.ToLower() == "all")
@@ -1966,7 +1967,12 @@ namespace org.iringtools.adapter
 
         DataRelationship dataRelationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
         string relatedObjectType = dataRelationship.relatedObjectName;
-        
+
+        if (limit == 0)
+        {
+          limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
+        }
+
         _projectionEngine.Start = start;
         _projectionEngine.Limit = limit;
 
@@ -2459,18 +2465,20 @@ namespace org.iringtools.adapter
           _isResourceGraph = true;
           _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == _graphMap.dataObjectName.ToUpper());
 
-          if (_dataObjDef == null)
+          if (_dataObjDef == null || _dataObjDef.isRelatedOnly)
           {
-            throw new FileNotFoundException("Data object [" + _graphMap.dataObjectName + "] not found.");
+            _logger.Warn("Data object [" + _graphMap.dataObjectName + "] not found.");
+            throw new WebFaultException(HttpStatusCode.NotFound);
           }
         }
         else
         {
           _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == resourceName.ToUpper());
 
-          if (_dataObjDef == null)
+          if (_dataObjDef == null || _dataObjDef.isRelatedOnly)
           {
-            throw new FileNotFoundException("Resource [" + resourceName + "] not found.");
+            _logger.Warn("Resource [" + resourceName + "] not found.");
+            throw new WebFaultException(HttpStatusCode.NotFound);
           }
         }
 
