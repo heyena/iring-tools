@@ -34,5 +34,7 @@ namespace iRINGTools.Web.Models
     string getNodeIconCls(string type);
 
     string getRootSecurityRole();
+
+    string getBaseUrl();
   }
 }
