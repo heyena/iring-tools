@@ -11,6 +11,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -29,108 +30,66 @@ public abstract class AbstractController extends ActionSupport implements Sessio
 {
   private static final long serialVersionUID = 1L;
   private static final Logger logger = Logger.getLogger(AbstractController.class);
-  
+
   protected Map<String, Object> session;
-  
+
   protected ServletContext context;
   protected HttpServletRequest request;
-  protected HttpServletResponse response;  
-  
+  protected HttpServletResponse response;
+
   public AbstractController()
   {
     context = ServletActionContext.getServletContext();
     request = ServletActionContext.getRequest();
-    response = ServletActionContext.getResponse();  
-    
-    /* 
-     * PROXY SETTINGS
-     */
-    Properties sysProps = System.getProperties();
-    boolean proxyInfoValid = true;
-    
-    String proxyHost = context.getInitParameter("proxyHost");
-    if (proxyHost != null && proxyHost.length() > 0)
-      sysProps.put("http.proxyHost", proxyHost);
-    else
-      proxyInfoValid = false;
-    
-    String proxyPort = context.getInitParameter("proxyPort");
-    if (proxyPort != null && proxyPort.length() > 0)
-      sysProps.put("http.proxyPort", proxyPort);
-    else
-      proxyInfoValid = false;
-    
-    String proxyUserName = context.getInitParameter("proxyUserName");
-    if (proxyUserName != null && proxyUserName.length() > 0)
-      sysProps.put("http.proxyUserName", proxyUserName);
-    else
-      proxyInfoValid = false;
-    
-    String encryptedProxyPassword = context.getInitParameter("proxyPassword");
-    if (encryptedProxyPassword != null && encryptedProxyPassword.length() > 0)
-    {
-      String proxyKeyFile = context.getInitParameter("proxySecretKeyFile");
-      
-      try
-      {
-        String proxyPassword = (proxyKeyFile != null && proxyKeyFile.length() > 0)
-          ? EncryptionUtils.decrypt(encryptedProxyPassword, proxyKeyFile)
-          : EncryptionUtils.decrypt(encryptedProxyPassword);
-          
-        sysProps.put("http.proxyPassword", proxyPassword);
-      }
-      catch (EncryptionException e)
-      {
-        proxyInfoValid = false;
-      }      
-    }
-    else
-    {
-      proxyInfoValid = false;
-    }
-    
-    String proxyDomain = context.getInitParameter("proxyDomain");
-    if (proxyDomain == null)
-      proxyDomain = "";
-    sysProps.put("http.proxyDomain", proxyDomain);
-    
-    if (proxyInfoValid)
-    {
-      sysProps.put("proxySet", "true");      
-    }
+    response = ServletActionContext.getResponse();
+
+    prepareHttpProxy();
   }
-  
+
   @Override
   public void setSession(Map<String, Object> session)
   {
     this.session = session;
-  }  
-  
+  }
+
   protected void authorize(String app, String group)
   {
     String authorizationEnabled = context.getInitParameter("AuthorizationEnabled");
-    
+
     if (!IOUtils.isNullOrEmpty(authorizationEnabled) && authorizationEnabled.equalsIgnoreCase("true"))
     {
       String ldapConfigPath = context.getRealPath("/") + "WEB-INF/config/ldap.conf";
-      
+
+      if (!IOUtils.fileExists(ldapConfigPath))
+      {
+        try
+        {
+          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ldap configuration not found.");
+        }
+        catch (IOException unexpectedException)
+        {
+          logger.error(unexpectedException.toString());
+        }
+      }
+
       Cookie[] cookies = request.getCookies();
       Cookie authorizedCookie = HttpUtils.getCookie(cookies, app);
-  
-      if (authorizedCookie == null)  // user not authorized, attempt to authorize
+
+      if (authorizedCookie == null) // user not authorized, attempt to authorize
       {
         Map<String, String> userAttrs = null;
-        
+
         // get user attributes
         try
         {
-          String authUser = (String)session.get(OAuthFilter.AUTHENTICATED_USER_KEY);
+          HttpSession httpSession = request.getSession();
+          String authUser = (String) httpSession.getAttribute(OAuthFilter.AUTHENTICATED_USER_KEY);
           userAttrs = HttpUtils.fromQueryParams(authUser);
         }
         catch (Exception e)
         {
           Cookie authUserCookie = HttpUtils.getCookie(cookies, OAuthFilter.AUTHENTICATED_USER_KEY);
-          
+
           try
           {
             userAttrs = HttpUtils.fromQueryParams(authUserCookie.getValue());
@@ -139,7 +98,8 @@ public abstract class AbstractController extends ActionSupport implements Sessio
           {
             try
             {
-              response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error deserializing Auth cookie: " + ue);
+              response
+                  .sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error deserializing Auth cookie: " + ue);
             }
             catch (IOException unexpectedException)
             {
@@ -147,9 +107,9 @@ public abstract class AbstractController extends ActionSupport implements Sessio
             }
           }
         }
-        
+
         Properties props = new Properties();
-        
+
         try
         {
           props.load(new FileInputStream(ldapConfigPath));
@@ -165,11 +125,11 @@ public abstract class AbstractController extends ActionSupport implements Sessio
             logger.error(unexpectedException.toString());
           }
         }
-        
+
         props.put("authorizedGroup", group);
-        
+
         LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
-        
+
         try
         {
           authProvider.init(props);
@@ -178,15 +138,16 @@ public abstract class AbstractController extends ActionSupport implements Sessio
         {
           try
           {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error initializing authentication provider: " + ne);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                "Error initializing authentication provider: " + ne);
           }
           catch (IOException unexpectedException)
           {
             logger.error(unexpectedException.toString());
           }
         }
-        
-        if (userAttrs == null || !authProvider.isAuthorized(userAttrs))
+
+        if (userAttrs == null || userAttrs.size() == 0 || !authProvider.isAuthorized(userAttrs))
         {
           try
           {
@@ -206,9 +167,61 @@ public abstract class AbstractController extends ActionSupport implements Sessio
     }
   }
 
+  protected void prepareHttpProxy()
+  {
+    Properties sysProps = System.getProperties();
+
+    String proxyHost = context.getInitParameter("proxyHost");
+    if (proxyHost != null && proxyHost.length() > 0)
+      sysProps.put("http.proxyHost", proxyHost);
+    else
+      return;
+
+    String proxyPort = context.getInitParameter("proxyPort");
+    if (proxyPort != null && proxyPort.length() > 0)
+      sysProps.put("http.proxyPort", proxyPort);
+    else
+      return;
+
+    String proxyUserName = context.getInitParameter("proxyUserName");
+    if (proxyUserName != null && proxyUserName.length() > 0)
+      sysProps.put("http.proxyUserName", proxyUserName);
+    else
+      return;
+
+    String encryptedProxyPassword = context.getInitParameter("proxyPassword");
+    if (encryptedProxyPassword != null && encryptedProxyPassword.length() > 0)
+    {
+      String proxyKeyFile = context.getInitParameter("proxySecretKeyFile");
+
+      try
+      {
+        String proxyPassword = (proxyKeyFile != null && proxyKeyFile.length() > 0) ? EncryptionUtils.decrypt(
+            encryptedProxyPassword, proxyKeyFile) : EncryptionUtils.decrypt(encryptedProxyPassword);
+
+        sysProps.put("http.proxyPassword", proxyPassword);
+      }
+      catch (EncryptionException e)
+      {
+        return;
+      }
+    }
+    else
+    {
+      return;
+    }
+
+    String proxyDomain = context.getInitParameter("proxyDomain");
+    if (proxyDomain == null)
+      proxyDomain = "";
+    sysProps.put("http.proxyDomain", proxyDomain);
+
+    sysProps.put("proxySet", "true");
+  }
+
   protected void prepareErrorResponse(int errorCode, String errorMessage)
   {
-    request.setAttribute("javax.servlet.error.message", errorMessage);      
+    request.setAttribute("javax.servlet.error.message", errorMessage);
     response.setStatus(errorCode);
   }
 }

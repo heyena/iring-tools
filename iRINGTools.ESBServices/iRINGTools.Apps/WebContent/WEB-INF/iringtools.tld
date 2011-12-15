@@ -7,11 +7,6 @@
 	<jsp-version>1.2</jsp-version>
 	<short-name>it</short-name>
 	<tag>
-		<name>authorization</name>
-		<tag-class>org.iringtools.security.AuthorizationTag</tag-class>
-		<body-content>JSP</body-content>
-	</tag>
-	<tag>
 		<name>version</name>
 		<tag-class>org.iringtools.tags.VersionTag</tag-class>
 		<body-content>JSP</body-content>
