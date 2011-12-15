@@ -721,7 +721,7 @@ public class DataModel
 
       Entity value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");
 
-      if (value != null)
+      if (value != null && value.getLabel() != null)
       {
         label = value.getLabel();
       }
@@ -765,10 +765,14 @@ public class DataModel
 
   protected String getValueMapKey(String value, HashMap<String, String> valueMaps)
   {
-    for (String key : valueMaps.keySet())
+    for (String key : valueMaps.keySet()) 
+    {
+    	if (valueMaps.get(key) == null)
+    		continue;
+    	
       if (valueMaps.get(key).equalsIgnoreCase(value))
         return key;
-
+    }
     return null;
   }
 
