@@ -143,7 +143,10 @@ public class OAuthFilter implements Filter
     {
       try
       {
-        Map<String, String> userAttrs = HttpUtils.fromQueryParams(authCookie.getValue());
+        String authCookieMultiValue = authCookie.getValue();
+        logger.debug("Auth cookie: " + authCookieMultiValue);
+        
+        Map<String, String> userAttrs = HttpUtils.fromQueryParams(authCookieMultiValue);
         String authCookieValue = HttpUtils.toQueryParams(userAttrs);
         session.setAttribute(AUTHENTICATED_USER_KEY, authCookieValue);
         
@@ -193,11 +196,16 @@ public class OAuthFilter implements Filter
       try
       {
         byte[] data = userAttrsJson.getBytes(URL_ENCODING);
+        logger.debug("User info byte count: " + data.length);
+        
         String apigeeResponse = apigeeClient.postByteData(String.class, "", data);
         
         @SuppressWarnings("unchecked")
         Map<String, Map<String, String>> apigeeResponseObj = (Map<String, Map<String, String>>) JSONUtil.deserialize(apigeeResponse);
+        logger.debug("Apigee access token response: " + apigeeResponseObj);
+        
         Map<String, String> accessToken = apigeeResponseObj.get("accesstoken");  
+        logger.debug("Access token: " + accessToken);
         
         String oAuthToken = accessToken.get("token");        
         logger.debug("OAuth token: " + oAuthToken);

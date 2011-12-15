@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.iringtools.models.DataModel;
-import org.iringtools.models.DirectoryModel;
+import org.iringtools.models.DirectoryModel; 
 import org.iringtools.utility.IOUtils;
 import org.iringtools.widgets.tree.Tree;
 
@@ -18,8 +18,7 @@ public class DirectoryController extends AbstractController
 
   public DirectoryController()
   {
-    super();
-    
+    super();    
     exchangeServiceUri = context.getInitParameter("ExchangeServiceUri");
     authorize("exchangeManager", "exchangeAdmins");
   }
@@ -27,7 +26,7 @@ public class DirectoryController extends AbstractController
   public String getDirectory()
   {
     try
-    {
+    {      
       for (Entry<String, Object> entry : session.entrySet())
       {
         String key = entry.getKey();

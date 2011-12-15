@@ -55,14 +55,18 @@ public final class HttpUtils
   {
     Map<String, String> keyValuePairs = new HashMap<String, String>();
     
-    if (!IOUtils.isNullOrEmpty(queryParams))
+    if (!IOUtils.isNullOrEmpty(queryParams)) 
     {
       String[] pairs = queryParams.split("&");
       
       for (String pair : pairs)
       {
         String[] parts = pair.split("=");
-        keyValuePairs.put(parts[0], URLDecoder.decode(parts[1], "UTF-8"));
+        
+        if (parts.length >= 2 && !IOUtils.isNullOrEmpty(parts[0]) && !IOUtils.isNullOrEmpty(parts[1]))
+        {
+          keyValuePairs.put(parts[0].toLowerCase(), URLDecoder.decode(parts[1], "UTF-8"));
+        }
       }
     }
     
