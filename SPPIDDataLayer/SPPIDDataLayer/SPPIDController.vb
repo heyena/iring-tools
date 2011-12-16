@@ -40,7 +40,12 @@ Public Class SPPIDController
         Dim _siteConnDataSource As String = String.Empty
         Dim _plantConnDataSource As String = String.Empty
         Dim _staggConnDataSource As String = String.Empty
-        Dim connStr, plantConnStr, stageConnStr, _plantDicConnOracle, _PIDDicConnOracle, _PIDConnStr As String
+        Dim connStr As String = String.Empty
+        Dim plantConnStr As String = String.Empty
+        Dim stageConnStr As String = String.Empty
+        Dim _plantDicConnOracle As String = String.Empty
+        Dim _PIDDicConnOracle As String = String.Empty
+        Dim _PIDConnStr As String = String.Empty
 
         ''Set Value of Data Source ---------------------
         If form("dbInstance").ToUpper() = "DEFAULT" Then
@@ -60,54 +65,57 @@ Public Class SPPIDController
         End If
 
 
-        ''Create connection string for Site Database ---------------------
+        ''Create connection string for PID Database ---------------------
         If form("dbProvider").ToUpper().Contains("MSSQL") Then
             connStr = [String].Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3}", _siteConnDataSource, form("dbName"), form("dbUserName"), form("dbPassword"))
+            plantConnStr = [String].Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3}", _plantConnDataSource, form("dbplantName"), form("dbplantUserName"), form("dbplantPassword"))
         Else
             connStr = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbServer"), form("portNumber"), form("serName"), form("dbInstance"), form("dbUserName"), _
              form("dbPassword"))
+
+            plantConnStr = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbServer"), form("portNumber"), form("serName"), form("dbInstance"), form("dbOraPlantUserName"), _
+             form("dbOraPlantPassword"))
+            _plantDicConnOracle = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbServer"), form("portNumber"), form("serName"), form("dbInstance"), form("dbPlantDataDicUserName"), _
+             form("dbPlantDataDicPassword"))
+
+
+
+            _PIDConnStr = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbServer"), form("portNumber"), form("serName"), form("dbInstance"), form("dbPIDUserName"), _
+             form("dbPIDPassword"))
+            _PIDDicConnOracle = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbServer"), form("portNumber"), form("serName"), form("dbInstance"), form("dbPIDDataDicUserName"), _
+             form("dbPIDDataDicPassword"))
+
+            connStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=FOS_SITE;Password=FOS_SITE"
+            plantConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT"
+            _plantDicConnOracle = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD"
+
+            _PIDConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPID;Password=RUSSELCITY_PILOTPID"
+            _PIDDicConnOracle = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD"
+
+
         End If
 
 
-        ''Create connection string for Plant Database ---------------------
-        If form("dbplantProvider").ToUpper().Contains("MSSQL") Then
-            plantConnStr = [String].Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3}", _plantConnDataSource, form("dbplantName"), form("dbplantUserName"), form("dbplantPassword"))
-        Else
-            plantConnStr = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbplantServer"), form("dbplantportNumber"), form("dbplantserName"), form("dbplantInstance"), form("dbplantUserName"), _
-             form("dbplantPassword"))
-        End If
 
-        ''Create connection string for Plant Database ---------------------
-        If form("dbstageProvider").ToUpper().Contains("MSSQL") Then
-            stageConnStr = [String].Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3}", _staggConnDataSource, form("dbstageName"), form("dbstageUserName"), form("dbstagePassword"))
-        Else
-            stageConnStr = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbstageServer"), form("dbstageportNumber"), form("dbstageserName"), form("dbstageInstance"), form("dbstageUserName"), _
-             form("dbstagePassword"))
-        End If
-
-
-        ''Set connection string parameter need to be passed to datalayer for configuration---------------------
-        connStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=FOS_SITE;Password=FOS_SITE"
-
-        plantConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT"
-        _plantDicConnOracle = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD"
-
-        _PIDConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPID;Password=RUSSELCITY_PILOTPID"
-        _PIDDicConnOracle = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD"
-
+        ''Create connection string for Staging Database ---------------------
+        stageConnStr = [String].Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3}", _staggConnDataSource, form("dbstageName"), form("dbstageUserName"), form("dbstagePassword"))
         stageConnStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=PW_iRing_Staging;User ID=sa;Password=manager"
-
-        '  plantConnStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=SPPID_Project_Plant;User ID=sa;Password=manager"
-        '  connStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=SPPID_Project;User ID=sa;Password=manager"
 
         Dim configurations As New SPPIDConfiguration With {.PlantConnectionString = plantConnStr, .SiteConnectionString = connStr, .StagingConnectionString = stageConnStr, .PIDConnectionString = _PIDConnStr, .PIDDataDicConnectionString = _PIDDicConnOracle, .PlantDataDicConnectionString = _plantDicConnOracle}
 
 
         ''Call repository method which gave call to service---------------------
-        Dim success As String = _repository.UpdateConfig(form("scope"), form("app"), form("_datalayer"), configurations)
+        Dim response As List(Of String) = _repository.UpdateConfig(form("scope"), form("app"), form("_datalayer"), configurations)
 
 
-        Return Json(New With {.success = True}, JsonRequestBehavior.AllowGet)
+        If response.Contains("ERROR") Then
+            Dim msg As String = response(0)
+            Return Json(Convert.ToString(New With { _
+              .success = False _
+            }) & msg, JsonRequestBehavior.AllowGet)
+        End If
+
+        Return Json(New With {.success = response}, JsonRequestBehavior.AllowGet)
     End Function
 
     Public Function GetConfiguration(form As FormCollection) As ActionResult
@@ -133,4 +141,15 @@ Public Class SPPIDController
         End Try
     End Function
 
+    Public Function DBObjects(form As FormCollection) As ActionResult
+        Try
+            Dim dbObjects__1 As List(Of JsonTreeNode) = _repository.GetDBObjects(form("scope"), form("app"), form("dbProvider"), form("dbServer"), form("dbInstance"), form("dbName"), _
+             form("dbSchema"), form("dbUserName"), form("dbPassword"), form("tableNames"), form("portNumber"), form("serName"))
+
+            Return Json(dbObjects__1, JsonRequestBehavior.AllowGet)
+        Catch e As Exception
+            ' _logger.[Error](e.ToString())
+            Throw e
+        End Try
+    End Function
 End Class
