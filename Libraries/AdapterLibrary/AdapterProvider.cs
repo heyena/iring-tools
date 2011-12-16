@@ -2881,7 +2881,7 @@ namespace org.iringtools.adapter
         if (httpRequest.Form["Configuration"] != null)
         {
 
-          ((IDataLayer2)_dataLayer).Configure(configuration);
+            response = ((IDataLayer2)_dataLayer).Configure(configuration);
         }
 
         InitializeDictionary();
