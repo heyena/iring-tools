@@ -818,6 +818,64 @@ namespace org.iringtools.utility
         throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
       }
     }
+    public string PostMultipartMessage(string relativeUri, List<MultiPartMessage> requestMessages, bool isreturn)
+    {
+        try
+        {
+            // Encoding encoding = Encoding.UTF8;
+            string uri = _baseUri + relativeUri;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.ContentType = "multipart/form-data; boundary=" + _boundary;
+            request.Method = "POST";
+            request.Timeout = TIMEOUT;
+            MemoryStream stream = new MemoryStream();
+            string header = string.Empty;
+
+            foreach (MultiPartMessage requestMessage in requestMessages)
+            {
+                if (requestMessage.type == MultipartMessageType.File)
+                {
+                    header = string.Format("--{0}\r\nContent-Disposition: file; name=\"{1}\"; filename=\"{2}\";\r\nContent-Type: {3}\r\n\r\n", _boundary, requestMessage.name, requestMessage.fileName, requestMessage.mimeType);
+                    stream.Write(encoding.GetBytes(header), 0, header.Length);
+
+                    //byte[] fileData = (byte[])requestMessage.message;
+                    //stream.Write(fileData, 0, fileData.Length);
+
+                    Stream fileData = (Stream)requestMessage.message;
+                    fileData.CopyTo(stream);
+                    //add linefeed to enable multiple posts
+                    stream.Write(encoding.GetBytes("\r\n"), 0, 2);
+                }
+                else
+                {
+                    header = string.Format("--{0}\r\nContent-Disposition: form-data; name=\"{1}\"\r\n\r\n{2}\r\n", _boundary, requestMessage.name, requestMessage.message);
+                    stream.Write(encoding.GetBytes(header), 0, header.Length);
+                }
+
+            }
+
+            header = string.Format("--{0}--\r\n", _boundary);
+            stream.Write(encoding.GetBytes(header), 0, header.Length);
+
+            PrepareCredentials(request);
+            PrepareHeaders(request);
+
+            request.ContentLength = stream.Length;
+            request.GetRequestStream().Write(stream.ToArray(), 0, (int)stream.Length);
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            stream.Close();
+
+            string message = Utility.SerializeFromStream(response.GetResponseStream());
+
+            return message;
+        }
+        catch (Exception exception)
+        {
+            string uri = _baseUri + relativeUri;
+
+            throw new Exception("Error while executing HTTP POST request on " + uri + ".", exception);
+        }
+    }
 
     public string ForwardPost(string relativeUri, HttpRequestBase requestBase)
     {
