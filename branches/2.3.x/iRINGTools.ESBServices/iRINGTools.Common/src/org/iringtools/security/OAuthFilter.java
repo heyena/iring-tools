@@ -129,7 +129,7 @@ public class OAuthFilter implements Filter
             authCookie = new Cookie(AUTHENTICATED_USER_KEY, authCookieValue);
             authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
             response.addCookie(authCookie);
-            
+ 
             if (!obtainOAuthToken(userAttrsJson))
             {
               String message = "Unable to obtain OAuth token.";
@@ -143,7 +143,7 @@ public class OAuthFilter implements Filter
         }
       }
     }
-    else  // case 3: user signed on but session has not been validated
+    else  // case 3: user signed on but session has not been validated or timed out
     {
       logger.debug("case 3");
       
@@ -158,7 +158,7 @@ public class OAuthFilter implements Filter
         String authCookieValue = HttpUtils.toQueryParams(userAttrs);
         session.setAttribute(AUTHENTICATED_USER_KEY, authCookieValue);
         
-        String userAttrsJson = JSONUtil.serialize(userAttrs);        
+        String userAttrsJson = JSONUtil.serialize(userAttrs);
         if (!obtainOAuthToken(userAttrsJson))
         {
           String message = "Unable to obtain OAuth token.";
@@ -188,7 +188,9 @@ public class OAuthFilter implements Filter
   public void destroy(){}
   
   private boolean obtainOAuthToken(String userAttrsJson) throws IOException
-  {
+  {    
+    logger.debug("Obtaining OAuth token for user: " + userAttrsJson);
+    
     String tokenServiceUri = filterConfig.getInitParameter("tokenServiceUri");
     String applicationKey = filterConfig.getInitParameter("applicationKey");
     

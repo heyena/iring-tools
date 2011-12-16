@@ -19,7 +19,7 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
   private static final Logger logger = Logger.getLogger(LdapAuthorizationProvider.class);
   
   private static final String BASE_DN = "o=iringtools,dc=iringug,dc=org";
-  private static final String USERID_KEY = "EmailAddress";
+  private static final String USERID_KEY = "EMailAddress";
   
   private DirContext dctx;
   private String authorizedGroup;

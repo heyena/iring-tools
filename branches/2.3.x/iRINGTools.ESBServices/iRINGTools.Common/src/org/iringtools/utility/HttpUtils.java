@@ -65,7 +65,7 @@ public final class HttpUtils
         
         if (parts.length >= 2 && !IOUtils.isNullOrEmpty(parts[0]) && !IOUtils.isNullOrEmpty(parts[1]))
         {
-          keyValuePairs.put(parts[0].toLowerCase(), URLDecoder.decode(parts[1], "UTF-8"));
+          keyValuePairs.put(parts[0], URLDecoder.decode(parts[1], "UTF-8"));
         }
       }
     }
