@@ -53,8 +53,10 @@ public class OAuthFilter implements Filter
     {
       String ref = request.getParameter(REF_PARAM);
       
-      if (IOUtils.isNullOrEmpty(ref))  // no reference token, attempt to obtain it
+      if (IOUtils.isNullOrEmpty(ref))  // case 1: no reference token, attempt to obtain it
       {
+        logger.debug("case 1");
+        
         String federationServiceUri = filterConfig.getInitParameter("federationServiceUri");
         String idpId = filterConfig.getInitParameter("idpId");
         String spFederationPath = filterConfig.getInitParameter("spFederationPath");          
@@ -70,8 +72,10 @@ public class OAuthFilter implements Filter
         response.setContentType("text/html");
         response.sendRedirect(ssoUrl);
       }
-      else  // got reference ID, get user info
+      else  // case 2: got reference ID, get user info
       {
+        logger.debug("case 2");
+        
         String authenticationServiceUri = filterConfig.getInitParameter("authenticationServiceUri");
         String pingUserName = filterConfig.getInitParameter("pingUserName");
         String pingPassword = filterConfig.getInitParameter("pingPassword");
@@ -139,14 +143,18 @@ public class OAuthFilter implements Filter
         }
       }
     }
-    else  // user signed on but session has not been validated
+    else  // case 3: user signed on but session has not been validated
     {
+      logger.debug("case 3");
+      
       try
       {
         String authCookieMultiValue = authCookie.getValue();
         logger.debug("Auth cookie: " + authCookieMultiValue);
         
         Map<String, String> userAttrs = HttpUtils.fromQueryParams(authCookieMultiValue);
+        logger.debug("User attributes: " + userAttrs);
+        
         String authCookieValue = HttpUtils.toQueryParams(userAttrs);
         session.setAttribute(AUTHENTICATED_USER_KEY, authCookieValue);
         
@@ -201,7 +209,8 @@ public class OAuthFilter implements Filter
         String apigeeResponse = apigeeClient.postByteData(String.class, "", data);
         
         @SuppressWarnings("unchecked")
-        Map<String, Map<String, String>> apigeeResponseObj = (Map<String, Map<String, String>>) JSONUtil.deserialize(apigeeResponse);
+        Map<String, Map<String, String>> apigeeResponseObj = 
+          (Map<String, Map<String, String>>) JSONUtil.deserialize(apigeeResponse);
         logger.debug("Apigee access token response: " + apigeeResponseObj);
         
         Map<String, String> accessToken = apigeeResponseObj.get("accesstoken");  
@@ -215,7 +224,7 @@ public class OAuthFilter implements Filter
       }
       catch (Exception ex)
       {
-        logger.error("Error obtaining OAuth token for user [" + userAttrsJson + "]. " + ex);
+        logger.error("Error obtaining OAuth token for user [" + userAttrsJson + "]. " + ex.getMessage());
         return false;
       }
     }

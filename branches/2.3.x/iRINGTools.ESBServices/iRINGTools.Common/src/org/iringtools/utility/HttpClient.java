@@ -130,11 +130,11 @@ public class HttpClient
     {
       try
       {
-        throw new HttpClientException(conn.getResponseCode(), e);
+        throw new HttpClientException(conn.getResponseCode(), e.getMessage());
       }
       catch (IOException ex)
       {
-        ex.printStackTrace();
+        logger.error(ex.getMessage());
       }
     }
     finally
@@ -180,11 +180,11 @@ public class HttpClient
     {
       try
       {
-        throw new HttpClientException(conn.getResponseCode(), e);
+        throw new HttpClientException(conn.getResponseCode(), e.getMessage());
       }
       catch (IOException ex)
       {
-        ex.printStackTrace();
+        logger.error(ex.getMessage());
       }
     }
     finally
@@ -249,11 +249,11 @@ public class HttpClient
     {
       try
       {
-        throw new HttpClientException(conn.getResponseCode(), e);
+        throw new HttpClientException(conn.getResponseCode(), e.getMessage());
       }
       catch (IOException ex)
       {
-        ex.printStackTrace();
+        logger.error(ex.getMessage());
       }
     }
     finally

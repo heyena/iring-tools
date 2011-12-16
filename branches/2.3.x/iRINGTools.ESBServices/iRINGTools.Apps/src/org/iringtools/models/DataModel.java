@@ -1064,7 +1064,7 @@ public class DataModel
   protected List<Field> getFields(String fieldsContext, Graph graph, String startClassId) throws DataModelException
   {
     List<Field> fields = null;
-    String fieldsKey = FIELDS_PREFIX + fieldsContext + ((startClassId == null) ? "" : startClassId);
+    String fieldsKey = FIELDS_PREFIX + fieldsContext + graph.getName();
 
     if (session.containsKey(fieldsKey))
     {
