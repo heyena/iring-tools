@@ -122,7 +122,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             _stageConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
 
         Catch ex As Exception
-            MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
+            'MsgBox("Fail: SPPIDDataLayer could not be instantiated due to error: " & ex.Message, MsgBoxStyle.Critical)
             ' this will likely only be loaded in this way while testing, so ignore the error
         End Try
 
@@ -357,6 +357,12 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Public Overrides Function GetRelatedDataTable(dataRow As System.Data.DataRow, relatedTableName As String) As System.Data.DataTable
         Throw New NotImplementedException()
     End Function
+    Public Overrides Function GetRelatedDataTable(dataRow As System.Data.DataRow, relatedTableName As String, start As Long, limit As Long) As System.Data.DataTable
+        Throw New NotImplementedException()
+    End Function
+    Public Overrides Function GetRelatedCount(dataRow As System.Data.DataRow, relatedTableName As String) As Long
+        Throw New NotImplementedException()
+    End Function
 
     Public Overrides Function Refresh(tableName As String) As Response
 
@@ -384,6 +390,23 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 #End Region
 
+    Public Function LoadDataTable(_stageConStr As String) As List(Of String)
+        Dim _dataTables As New List(Of String)
+        Dim _stage As New SqlConnection(_stageConStr)
+        If _stage.State = ConnectionState.Closed Then _stage.Open()
+
+        Dim _selectSql As SqlCommand = _stage.CreateCommand
+        _selectSql.CommandText = "SELECT TABLE_NAME FROM information_schema.tables"
+        Dim _selectSqlDR As SqlDataReader = _selectSql.ExecuteReader()
+        If _selectSqlDR.HasRows Then
+            Do While _selectSqlDR.Read()
+                _dataTables.Add(_selectSqlDR.Item("TABLE_NAME"))
+            Loop
+        End If
+
+        Return _dataTables
+
+    End Function
 #Region " Staging Methods "
 
     Public Function MigrateSPPIDToStaging(Optional tablename As String = "") As String
@@ -745,14 +768,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         End If
     End Sub
 
-    Private Function LoadDataTable(tableName As String) As System.Data.DataTable
-        Dim _dataTables As New DataTable()
-
-        '    Dim _selectSql = ""
-
-        Return _dataTables
-
-    End Function
+   
     Private Function LoadDataObjects(objectType As String) As IList(Of IDataObject)
         '        Try
 
@@ -1200,6 +1216,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 #End Region
 
+   
 
 
 End Class

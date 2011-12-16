@@ -46,7 +46,7 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="iRINGLibrary, Version=2.2.0.4424, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="iRINGLibrary, Version=2.3.0.4521, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\library\iring-tools\iRINGLibrary.dll</HintPath>
     </Reference>
@@ -71,7 +71,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="UtilityLibrary, Version=2.1.0.3107, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="UtilityLibrary, Version=2.3.0.4521, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\library\iring-tools\UtilityLibrary.dll</HintPath>
     </Reference>
@@ -95,6 +95,7 @@
     <Compile Include="DataReaderAdapter.vb">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Helper\JsonTreeNode.vb" />
     <Compile Include="OraSchemaDS.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
