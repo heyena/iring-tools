@@ -40,7 +40,7 @@ function setVersion(versionXml) {
 }
 
 function getVersion() { 
-  var url = 'Services/data/version';
+  var url = 'Services/adapter/version';
   //var url = 'http://localhost:54321/adapter/version';
   sendRequest(url, setVersion);
 }

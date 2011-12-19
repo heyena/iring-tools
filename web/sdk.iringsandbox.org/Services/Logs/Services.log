@@ -1,143 +1,60 @@
-2011-08-05 19:54:26,586 [8] ERROR org.iringtools.adapter.AdapterProvider - Error initializing application: System.IO.FileLoadException: Could not load file or assembly 'Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)
-File name: 'Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7'
-   at System.ModuleHandle.ResolveType(RuntimeModule module, Int32 typeToken, IntPtr* typeInstArgs, Int32 typeInstCount, IntPtr* methodInstArgs, Int32 methodInstCount, ObjectHandleOnStack type)
-   at System.ModuleHandle.ResolveTypeHandleInternal(RuntimeModule module, Int32 typeToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext)
-   at System.ModuleHandle.ResolveTypeHandle(Int32 typeToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext)
-   at System.Reflection.RuntimeModule.ResolveType(Int32 metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-   at System.Reflection.CustomAttribute.FilterCustomAttributeRecord(CustomAttributeRecord caRecord, MetadataImport scope, Assembly& lastAptcaOkAssembly, RuntimeModule decoratedModule, MetadataToken decoratedToken, RuntimeType attributeFilterType, Boolean mustBeInheritable, Object[] attributes, IList derivedAttributes, RuntimeType& attributeType, IRuntimeMethodInfo& ctor, Boolean& ctorHasParameters, Boolean& isVarArg)
-   at System.Reflection.CustomAttribute.IsCustomAttributeDefined(RuntimeModule decoratedModule, Int32 decoratedMetadataToken, RuntimeType attributeFilterType, Boolean mustBeInheritable)
-   at System.Reflection.CustomAttribute.IsDefined(RuntimeConstructorInfo ctor, RuntimeType caType)
-   at Ninject.Selection.Heuristics.StandardConstructorScorer.Score(IContext context, ConstructorInjectionDirective directive)
-   at System.Linq.EnumerableSorter`2.ComputeKeys(TElement[] elements, Int32 count)
-   at System.Linq.EnumerableSorter`1.Sort(TElement[] elements, Int32 count)
-   at System.Linq.OrderedEnumerable`1.<GetEnumerator>d__0.MoveNext()
-   at System.Linq.Enumerable.First[TSource](IEnumerable`1 source)
-   at Ninject.Activation.Providers.StandardProvider.Create(IContext context)
-   at Ninject.Activation.Context.Resolve()
-   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
-   at System.Linq.Enumerable.<CastIterator>d__b1`1.MoveNext()
-   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer(Boolean setDictionary)
+2011-10-18 06:31:52,781 [3] ERROR org.iringtools.adapter.AdapterProvider - Error initializing identity: Ninject.ActivationException: Error activating IIdentityLayer
+No matching bindings are available, and the type is not self-bindable.
+Activation path:
+  1) Request for IIdentityLayer
 
-WRN: Assembly binding logging is turned OFF.
-To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!EnableLog] (DWORD) to 1.
-Note: There is some performance penalty associated with assembly bind failure logging.
-To turn this feature off, remove the registry value [HKLM\Software\Microsoft\Fusion!EnableLog].
+Suggestions:
+  1) Ensure that you have defined a binding for IIdentityLayer.
+  2) If the binding was defined in a module, ensure that the module has been loaded into the kernel.
+  3) Ensure you have not accidentally created more than one kernel.
+  4) If you are using constructor arguments, ensure that the parameter name matches the constructors parameter name.
+  5) If you are using automatic module loading, ensure the search path and filters are correct.
 
-2011-08-05 19:54:26,618 [8] ERROR org.iringtools.adapter.AdapterProvider - Error in GetDictionary: System.Exception: Error initializing application: System.IO.FileLoadException: Could not load file or assembly 'Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)
-File name: 'Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7'
-   at System.ModuleHandle.ResolveType(RuntimeModule module, Int32 typeToken, IntPtr* typeInstArgs, Int32 typeInstCount, IntPtr* methodInstArgs, Int32 methodInstCount, ObjectHandleOnStack type)
-   at System.ModuleHandle.ResolveTypeHandleInternal(RuntimeModule module, Int32 typeToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext)
-   at System.ModuleHandle.ResolveTypeHandle(Int32 typeToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext)
-   at System.Reflection.RuntimeModule.ResolveType(Int32 metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-   at System.Reflection.CustomAttribute.FilterCustomAttributeRecord(CustomAttributeRecord caRecord, MetadataImport scope, Assembly& lastAptcaOkAssembly, RuntimeModule decoratedModule, MetadataToken decoratedToken, RuntimeType attributeFilterType, Boolean mustBeInheritable, Object[] attributes, IList derivedAttributes, RuntimeType& attributeType, IRuntimeMethodInfo& ctor, Boolean& ctorHasParameters, Boolean& isVarArg)
-   at System.Reflection.CustomAttribute.IsCustomAttributeDefined(RuntimeModule decoratedModule, Int32 decoratedMetadataToken, RuntimeType attributeFilterType, Boolean mustBeInheritable)
-   at System.Reflection.CustomAttribute.IsDefined(RuntimeConstructorInfo ctor, RuntimeType caType)
-   at Ninject.Selection.Heuristics.StandardConstructorScorer.Score(IContext context, ConstructorInjectionDirective directive)
-   at System.Linq.EnumerableSorter`2.ComputeKeys(TElement[] elements, Int32 count)
-   at System.Linq.EnumerableSorter`1.Sort(TElement[] elements, Int32 count)
-   at System.Linq.OrderedEnumerable`1.<GetEnumerator>d__0.MoveNext()
-   at System.Linq.Enumerable.First[TSource](IEnumerable`1 source)
-   at Ninject.Activation.Providers.StandardProvider.Create(IContext context)
-   at Ninject.Activation.Context.Resolve()
-   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
-   at System.Linq.Enumerable.<CastIterator>d__b1`1.MoveNext()
-   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer(Boolean setDictionary)
+   at Ninject.KernelBase.Resolve(IRequest request)
+   at Ninject.ResolutionExtensions.Get[T](IResolutionRoot root, String name, IParameter[] parameters)
+   at org.iringtools.adapter.AdapterProvider.InitializeIdentity()
+2011-10-18 06:53:30,015 [3] ERROR org.iringtools.adapter.AdapterProvider - Error initializing identity: Ninject.ActivationException: Error activating IIdentityLayer
+No matching bindings are available, and the type is not self-bindable.
+Activation path:
+  1) Request for IIdentityLayer
 
-WRN: Assembly binding logging is turned OFF.
-To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!EnableLog] (DWORD) to 1.
-Note: There is some performance penalty associated with assembly bind failure logging.
-To turn this feature off, remove the registry value [HKLM\Software\Microsoft\Fusion!EnableLog].
-)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer(Boolean setDictionary)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer()
-   at org.iringtools.adapter.AdapterProvider.GetDictionary(String projectName, String applicationName)
-2011-08-05 19:59:28,196 [8] ERROR org.iringtools.adapter.AdapterProvider - Error initializing application: System.IO.FileLoadException: Could not load file or assembly 'Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)
-File name: 'Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7'
-   at System.ModuleHandle.ResolveType(RuntimeModule module, Int32 typeToken, IntPtr* typeInstArgs, Int32 typeInstCount, IntPtr* methodInstArgs, Int32 methodInstCount, ObjectHandleOnStack type)
-   at System.ModuleHandle.ResolveTypeHandleInternal(RuntimeModule module, Int32 typeToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext)
-   at System.ModuleHandle.ResolveTypeHandle(Int32 typeToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext)
-   at System.Reflection.RuntimeModule.ResolveType(Int32 metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-   at System.Reflection.CustomAttribute.FilterCustomAttributeRecord(CustomAttributeRecord caRecord, MetadataImport scope, Assembly& lastAptcaOkAssembly, RuntimeModule decoratedModule, MetadataToken decoratedToken, RuntimeType attributeFilterType, Boolean mustBeInheritable, Object[] attributes, IList derivedAttributes, RuntimeType& attributeType, IRuntimeMethodInfo& ctor, Boolean& ctorHasParameters, Boolean& isVarArg)
-   at System.Reflection.CustomAttribute.IsCustomAttributeDefined(RuntimeModule decoratedModule, Int32 decoratedMetadataToken, RuntimeType attributeFilterType, Boolean mustBeInheritable)
-   at System.Reflection.CustomAttribute.IsDefined(RuntimeConstructorInfo ctor, RuntimeType caType)
-   at Ninject.Selection.Heuristics.StandardConstructorScorer.Score(IContext context, ConstructorInjectionDirective directive)
-   at System.Linq.EnumerableSorter`2.ComputeKeys(TElement[] elements, Int32 count)
-   at System.Linq.EnumerableSorter`1.Sort(TElement[] elements, Int32 count)
-   at System.Linq.OrderedEnumerable`1.<GetEnumerator>d__0.MoveNext()
-   at System.Linq.Enumerable.First[TSource](IEnumerable`1 source)
-   at Ninject.Activation.Providers.StandardProvider.Create(IContext context)
-   at Ninject.Activation.Context.Resolve()
-   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
-   at System.Linq.Enumerable.<CastIterator>d__b1`1.MoveNext()
-   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer(Boolean setDictionary)
+Suggestions:
+  1) Ensure that you have defined a binding for IIdentityLayer.
+  2) If the binding was defined in a module, ensure that the module has been loaded into the kernel.
+  3) Ensure you have not accidentally created more than one kernel.
+  4) If you are using constructor arguments, ensure that the parameter name matches the constructors parameter name.
+  5) If you are using automatic module loading, ensure the search path and filters are correct.
 
-WRN: Assembly binding logging is turned OFF.
-To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!EnableLog] (DWORD) to 1.
-Note: There is some performance penalty associated with assembly bind failure logging.
-To turn this feature off, remove the registry value [HKLM\Software\Microsoft\Fusion!EnableLog].
+   at Ninject.KernelBase.Resolve(IRequest request)
+   at Ninject.ResolutionExtensions.Get[T](IResolutionRoot root, String name, IParameter[] parameters)
+   at org.iringtools.adapter.AdapterProvider.InitializeIdentity()
+2011-10-18 06:53:32,203 [3] ERROR org.iringtools.adapter.AdapterProvider - Error initializing identity: Ninject.ActivationException: Error activating IIdentityLayer
+No matching bindings are available, and the type is not self-bindable.
+Activation path:
+  1) Request for IIdentityLayer
 
-2011-08-05 19:59:28,196 [8] ERROR org.iringtools.adapter.AdapterProvider - Error in GetDictionary: System.Exception: Error initializing application: System.IO.FileLoadException: Could not load file or assembly 'Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference. (Exception from HRESULT: 0x80131040)
-File name: 'Ninject, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7'
-   at System.ModuleHandle.ResolveType(RuntimeModule module, Int32 typeToken, IntPtr* typeInstArgs, Int32 typeInstCount, IntPtr* methodInstArgs, Int32 methodInstCount, ObjectHandleOnStack type)
-   at System.ModuleHandle.ResolveTypeHandleInternal(RuntimeModule module, Int32 typeToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext)
-   at System.ModuleHandle.ResolveTypeHandle(Int32 typeToken, RuntimeTypeHandle[] typeInstantiationContext, RuntimeTypeHandle[] methodInstantiationContext)
-   at System.Reflection.RuntimeModule.ResolveType(Int32 metadataToken, Type[] genericTypeArguments, Type[] genericMethodArguments)
-   at System.Reflection.CustomAttribute.FilterCustomAttributeRecord(CustomAttributeRecord caRecord, MetadataImport scope, Assembly& lastAptcaOkAssembly, RuntimeModule decoratedModule, MetadataToken decoratedToken, RuntimeType attributeFilterType, Boolean mustBeInheritable, Object[] attributes, IList derivedAttributes, RuntimeType& attributeType, IRuntimeMethodInfo& ctor, Boolean& ctorHasParameters, Boolean& isVarArg)
-   at System.Reflection.CustomAttribute.IsCustomAttributeDefined(RuntimeModule decoratedModule, Int32 decoratedMetadataToken, RuntimeType attributeFilterType, Boolean mustBeInheritable)
-   at System.Reflection.CustomAttribute.IsDefined(RuntimeConstructorInfo ctor, RuntimeType caType)
-   at Ninject.Selection.Heuristics.StandardConstructorScorer.Score(IContext context, ConstructorInjectionDirective directive)
-   at System.Linq.EnumerableSorter`2.ComputeKeys(TElement[] elements, Int32 count)
-   at System.Linq.EnumerableSorter`1.Sort(TElement[] elements, Int32 count)
-   at System.Linq.OrderedEnumerable`1.<GetEnumerator>d__0.MoveNext()
-   at System.Linq.Enumerable.First[TSource](IEnumerable`1 source)
-   at Ninject.Activation.Providers.StandardProvider.Create(IContext context)
-   at Ninject.Activation.Context.Resolve()
-   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
-   at System.Linq.Enumerable.<CastIterator>d__b1`1.MoveNext()
-   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer(Boolean setDictionary)
+Suggestions:
+  1) Ensure that you have defined a binding for IIdentityLayer.
+  2) If the binding was defined in a module, ensure that the module has been loaded into the kernel.
+  3) Ensure you have not accidentally created more than one kernel.
+  4) If you are using constructor arguments, ensure that the parameter name matches the constructors parameter name.
+  5) If you are using automatic module loading, ensure the search path and filters are correct.
 
-WRN: Assembly binding logging is turned OFF.
-To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!EnableLog] (DWORD) to 1.
-Note: There is some performance penalty associated with assembly bind failure logging.
-To turn this feature off, remove the registry value [HKLM\Software\Microsoft\Fusion!EnableLog].
-)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer(Boolean setDictionary)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer()
-   at org.iringtools.adapter.AdapterProvider.GetDictionary(String projectName, String applicationName)
-2011-08-05 20:12:33,789 [3] ERROR org.iringtools.adapter.AdapterProvider - Error initializing application: System.IO.FileNotFoundException: Could not load file or assembly 'WidgetLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' or one of its dependencies. The system cannot find the file specified.
-File name: 'WidgetLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'
-   at org.iringtools.sdk.objects.ObjectDataLayer..ctor(AdapterSettings settings)
-   at DynamicInjector40d28132ff2843e98cb4a77fce314915(Object[] )
-   at Ninject.Activation.Context.Resolve()
-   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
-   at System.Linq.Enumerable.<CastIterator>d__b1`1.MoveNext()
-   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer(Boolean setDictionary)
+   at Ninject.KernelBase.Resolve(IRequest request)
+   at Ninject.ResolutionExtensions.Get[T](IResolutionRoot root, String name, IParameter[] parameters)
+   at org.iringtools.adapter.AdapterProvider.InitializeIdentity()
+2011-10-18 06:55:10,640 [3] ERROR org.iringtools.adapter.AdapterProvider - Error initializing identity: Ninject.ActivationException: Error activating IIdentityLayer
+No matching bindings are available, and the type is not self-bindable.
+Activation path:
+  1) Request for IIdentityLayer
 
-WRN: Assembly binding logging is turned OFF.
-To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!EnableLog] (DWORD) to 1.
-Note: There is some performance penalty associated with assembly bind failure logging.
-To turn this feature off, remove the registry value [HKLM\Software\Microsoft\Fusion!EnableLog].
+Suggestions:
+  1) Ensure that you have defined a binding for IIdentityLayer.
+  2) If the binding was defined in a module, ensure that the module has been loaded into the kernel.
+  3) Ensure you have not accidentally created more than one kernel.
+  4) If you are using constructor arguments, ensure that the parameter name matches the constructors parameter name.
+  5) If you are using automatic module loading, ensure the search path and filters are correct.
 
-2011-08-05 20:12:33,835 [3] ERROR org.iringtools.adapter.AdapterProvider - Error in GetDictionary: System.Exception: Error initializing application: System.IO.FileNotFoundException: Could not load file or assembly 'WidgetLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null' or one of its dependencies. The system cannot find the file specified.
-File name: 'WidgetLibrary, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null'
-   at org.iringtools.sdk.objects.ObjectDataLayer..ctor(AdapterSettings settings)
-   at DynamicInjector40d28132ff2843e98cb4a77fce314915(Object[] )
-   at Ninject.Activation.Context.Resolve()
-   at System.Linq.Enumerable.WhereSelectEnumerableIterator`2.MoveNext()
-   at System.Linq.Enumerable.<CastIterator>d__b1`1.MoveNext()
-   at System.Linq.Enumerable.Single[TSource](IEnumerable`1 source)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer(Boolean setDictionary)
-
-WRN: Assembly binding logging is turned OFF.
-To enable assembly bind failure logging, set the registry value [HKLM\Software\Microsoft\Fusion!EnableLog] (DWORD) to 1.
-Note: There is some performance penalty associated with assembly bind failure logging.
-To turn this feature off, remove the registry value [HKLM\Software\Microsoft\Fusion!EnableLog].
-)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer(Boolean setDictionary)
-   at org.iringtools.adapter.AdapterProvider.InitializeDataLayer()
-   at org.iringtools.adapter.AdapterProvider.GetDictionary(String projectName, String applicationName)
+   at Ninject.KernelBase.Resolve(IRequest request)
+   at Ninject.ResolutionExtensions.Get[T](IResolutionRoot root, String name, IParameter[] parameters)
+   at org.iringtools.adapter.AdapterProvider.InitializeIdentity()

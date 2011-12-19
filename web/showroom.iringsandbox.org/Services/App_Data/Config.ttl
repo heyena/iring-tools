@@ -23,7 +23,7 @@ _:sqlStore a dnr:TripleStore ;
 _:sqlServer a dnr:SqlIOManager ;
         dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
         dnr:server ".\SQLEXPRESS" ;
-        dnr:database "FacadeDb" ;
+        dnr:database "showroom.facade" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" .
 <dotnetrdf:/services/sandbox/sparql/*> a dnr:HttpHandler ;
@@ -50,6 +50,6 @@ _:sqlStoreS a dnr:TripleStore ;
 _:sqlServerS a dnr:SqlIOManager ;
         dnr:type "VDS.RDF.Storage.MicrosoftSqlStoreManager" ;
         dnr:server ".\SQLEXPRESS" ;
-        dnr:database "SandboxDb" ;
+        dnr:database "showroom.sandbox" ;
         dnr:user "dotNetRDF" ;
         dnr:password "dotNetRDF" . 		

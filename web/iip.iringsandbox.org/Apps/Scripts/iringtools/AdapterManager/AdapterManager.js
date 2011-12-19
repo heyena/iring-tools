@@ -332,7 +332,7 @@ Ext.onReady(function () {
       var application = node.text;
       var scope = node.parentNode.text;
 
-      if (dataLayerValue == 'SpreadsheetLibrary') {
+      if (dataLayerValue == 'SpreadsheetDataLayer') {
         var configTab = contentPanel.items.map[scope + '.' + application + '.-nh-config'];
       }
       else if (dataLayerValue == 'SPPIDDataLayer') {

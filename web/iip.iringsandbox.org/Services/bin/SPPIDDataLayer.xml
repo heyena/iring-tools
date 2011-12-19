@@ -6,7 +6,28 @@ SPPIDDataLayer
 </name>
 </assembly>
 <members>
-<member name="P:iRINGTools.SDK.SPPIDDataLayer.My.Resources.Resources.ResourceManager">
+<member name="M:iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer.GetStagingQueries(System.Collections.Generic.IEnumerable{System.Xml.Linq.XElement}@,System.String)">
+	<summary>
+ Fetch the queries from the staging configuration XDocument for this project
+ </summary>
+	<param name="StagingConfigQueries"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer.UpdateConfigurations(System.String)">
+	<summary>
+Reset or update Data Objects
+ </summary>
+	<param name="tablename"></param>
+	<returns>Success or Failure while Migrating Tables and Data </returns>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer.AddProjConfigSettings(System.String)">
+	<summary>
+ Allows additional configuration settings to be added to the appSettings collection
+ </summary>
+	<param name="Path"></param>
+	<returns></returns>
+	<remarks>This allows, for instance, for test settings under a non-standard naming convention to be loaded</remarks>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.My.Resources.Resources.ResourceManager">
 	<summary>
   Returns the cached ResourceManager instance used by this class.
 </summary>
@@ -57,6 +78,341 @@ SPPIDDataLayer
 	<remarks/>
 </member><member name="T:iRINGTools.SDK.SPPIDDataLayer.configurationCommodityAttribute">
 	<remarks/>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SmartPlantDBQueries.AddQuerySections(iRINGTools.SDK.SPPIDDataLayer.SPQueryName,System.String,System.String,System.String,System.String,System.String)">
+	<summary>
+ Add query clauses independently under the appropriate query name to the queries collection
+ </summary>
+	<param name="Name"></param>
+	<param name="Select"></param>
+	<param name="From"></param>
+	<param name="Where"></param>
+	<param name="Having"></param>
+	<param name="OrderBy"></param>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SmartPlantDBQueries.GetQueryTemplate">
+	<summary>
+ GetQueryTemplate()
+ Fetch site data from the Site database, including projects and SP schema mapping
+ </summary>
+	<remarks>Source Function: SmartPlantInstrumentDataQuery </remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SmartPlantDBQueries.GetQuerySiteData">
+	<summary>
+ GetQuerySiteData()
+ Fetch site data from the Site database, including projects and SP schema mapping
+ </summary>
+	<remarks>There is no default WHERE clause
+ Source Function: SmartPlantSiteDbDataQuery </remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SmartPlantDBQueries.GetQueryPanels">
+	<summary>
+ GetQueryPanels()
+ Fetch site data from the Site database, including projects and SP schema mapping
+ </summary>
+	<remarks>There is no default WHERE clause
+ Source Function: SmartPlantPanelDataQuery </remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SmartPlantDBQueries.GetQueryInstruments">
+	<summary>
+ GetQueryInstruments()
+ Fetch site data from the Site database, including projects and SP schema mapping
+ </summary>
+	<remarks>Source Function: SmartPlantInstrumentDataQuery </remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SmartPlantDBQueries.GetQueryEquipment">
+	<summary>
+ GetQueryEquipment()
+ Fetch site data from the Site database, including projects and SP schema mapping
+ </summary>
+	<remarks>Source Function: SmartPlantInstrumentDataQuery </remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SmartPlantDBQueries.ConcatQuery(iRINGTools.SDK.SPPIDDataLayer.SPQueryName,System.String,System.String,System.String,System.String,System.String)">
+	<summary>
+ Concatenates all of the sections of a query into a single string
+ </summary>
+	<param name="name"></param>
+	<param name="s">Select</param>
+	<param name="f">From</param>
+	<param name="w">Where</param>
+	<param name="h">Having</param>
+	<param name="o">Order By</param>
+	<returns></returns>
+	<remarks>Clauses of the query can be replaced by strings provided in the optional arguments
+ In general, clauses should start with the appropriate key word; however, if they do not, 
+ the key word will automatically be added</remarks>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS.SchemaTablesDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS.SchemaColumnsDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS.SiteDataDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS.SchemaTablesRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS.SchemaColumnsRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS.SiteDataRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS.SchemaTablesRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS.SchemaColumnsRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS.SiteDataRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS">
+	<summary>
+Represents a strongly typed in-memory cache of data.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.SchemaTablesTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.SchemaColumnsTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.SiteDataTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.TableAdapterManager.UpdateUpdatedRows(iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS,System.Collections.Generic.List{System.Data.DataRow},System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Update rows in top-down order.
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.TableAdapterManager.UpdateInsertedRows(iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS,System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Insert rows in top-down order.
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.TableAdapterManager.UpdateDeletedRows(iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS,System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Delete rows in bottom-up order.
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.TableAdapterManager.GetRealUpdatedRows(System.Data.DataRow[],System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Remove inserted rows that become updated rows after calling TableAdapter.Update(inserted rows) first
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.TableAdapterManager.UpdateAll(iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDS)">
+	<summary>
+Update all changes to the dataset.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.TableAdapterManager.UpdateOrderOption">
+	<summary>
+Update Order Option
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.TableAdapterManager.SelfReferenceComparer">
+	<summary>
+Used to sort self-referenced table's rows
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.SQLSchemaDSTableAdapters.TableAdapterManager">
+	<summary>
+TableAdapterManager is used to coordinate TableAdapters in the dataset to enable Hierarchical Update scenarios
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SPPIDWorkingSet.GetQueryByName(System.String,System.Xml.Linq.XElement@)">
+	<summary>
+ Fetch the named query from the staging configuration XDocument
+ </summary>
+	<param name="QueryName"></param>
+	<param name="QueryNode"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SPPIDWorkingSet.GetBaselineSchema(System.Data.SqlClient.SqlConnection,System.Xml.Linq.XElement)">
+	<summary>
+ Derive the site schema, and from that, query the site to get the schema for the given database schema information
+ </summary>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SPPIDWorkingSet.GetBaselineSchema(System.Data.OracleClient.OracleConnection,System.Xml.Linq.XElement)">
+	<summary>
+ Derive the site schema, and from that, query the site to get the schema for the given database schema information
+ </summary>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SPPIDWorkingSet.SetProjectVariablesAndReplacements(System.Data.SqlClient.SqlConnection)">
+	<summary>
+ Fetches the variable values and text replacement values from the Staging configuration
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.SPPIDWorkingSet.SetProjectVariablesAndReplacements(System.Data.OracleClient.OracleConnection)">
+	<summary>
+ Fetches the variable values and text replacement values from the Staging configuration
+ </summary>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS.SchemaTablesDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS.SchemaColumnsDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS.SiteDataDataTable">
+	<summary>
+Represents the strongly named DataTable class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS.SchemaTablesRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS.SchemaColumnsRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS.SiteDataRow">
+	<summary>
+Represents strongly named DataRow class.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS.SchemaTablesRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS.SchemaColumnsRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS.SiteDataRowChangeEvent">
+	<summary>
+Row event argument class
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS">
+	<summary>
+Represents a strongly typed in-memory cache of data.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.SchemaTablesTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.SchemaColumnsTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.SiteDataTableAdapter">
+	<summary>
+Represents the connection and commands used to retrieve and save data.
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.TableAdapterManager.UpdateUpdatedRows(iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS,System.Collections.Generic.List{System.Data.DataRow},System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Update rows in top-down order.
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.TableAdapterManager.UpdateInsertedRows(iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS,System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Insert rows in top-down order.
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.TableAdapterManager.UpdateDeletedRows(iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS,System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Delete rows in bottom-up order.
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.TableAdapterManager.GetRealUpdatedRows(System.Data.DataRow[],System.Collections.Generic.List{System.Data.DataRow})">
+	<summary>
+Remove inserted rows that become updated rows after calling TableAdapter.Update(inserted rows) first
+</summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.TableAdapterManager.UpdateAll(iRINGTools.SDK.SPPIDDataLayer.OraSchemaDS)">
+	<summary>
+Update all changes to the dataset.
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.TableAdapterManager.UpdateOrderOption">
+	<summary>
+Update Order Option
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.TableAdapterManager.SelfReferenceComparer">
+	<summary>
+Used to sort self-referenced table's rows
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.OraSchemaDSTableAdapters.TableAdapterManager">
+	<summary>
+TableAdapterManager is used to coordinate TableAdapters in the dataset to enable Hierarchical Update scenarios
+</summary>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.Common.SQLClause">
+	<summary>
+ Note: the order that these clauses are assigned is important to building a query
+ </summary>
+	<remarks></remarks>
+</member><member name="P:iRINGTools.SDK.SPPIDDataLayer.Common.SQLUnique.DataType">
+	<summary>
+ Returns the data type. 
+ </summary>
+	<value></value>
+	<returns></returns>
+	<remarks>The data type for tables is 'structured'</remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.Common.SQLUnique.IsQuotable(System.String)">
+	<summary>
+ determines if a value of a particular type should be quoted or not
+ </summary>
+	<param name="SQLDataType"></param>
+	<returns></returns>
+	<remarks>This function is not very robust - should check to verify that the string represents something that
+ can actually come from information_schema.columns. If not, an error should be thrown</remarks>
+</member><member name="T:iRINGTools.SDK.SPPIDDataLayer.Common.SQLUnique">
+	<summary>
+ Represents a uniquely defined table or column name
+ </summary>
+	<remarks>Also provided functionality for determining whether a column value should be quoted or not</remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.Common.BuildQuery(System.Collections.Generic.Dictionary{iRINGTools.SDK.SPPIDDataLayer.Common.SQLClause,System.String},System.String@,System.Collections.Generic.IEnumerable{System.Xml.Linq.XElement},System.Collections.Generic.Dictionary{System.String,System.String},System.Boolean)">
+	<summary>
+ Assemble the query according to the order of the sql clauses defined by the SQLClause Enumeration
+ Empty clauses and clauses consisting of only the clause start word are skipped
+ </summary>
+	<param name="Parts"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.Common.TrimToChars(System.String)">
+	<summary>
+ removes ALL leading and trailing space characters including tab and new line chars
+ </summary>
+	<param name="CharSequence"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.Common.UnpaddedCount(System.String)">
+	<summary>
+ returns the number of ascii characters a-zA-Z-_0-9 and any non-leading spaces
+ excludes any leading tabs, spaces, and new line characters
+ </summary>
+	<param name="CharSequence"></param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.Common.ProvideGrants(System.Data.OracleClient.OracleConnection,System.Data.OracleClient.OracleConnection,System.Data.OracleClient.OracleConnection,System.Data.OracleClient.OracleConnection)">
+	<summary>
+ Gave Grants to all Schema so that single Select Query can acces all tables
+ </summary>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.Common.RevokeGrants(System.Data.OracleClient.OracleConnection,System.Data.OracleClient.OracleConnection,System.Data.OracleClient.OracleConnection,System.Data.OracleClient.OracleConnection)">
+	<summary>
+ Revoke Grants from all Schemas 
+ </summary>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.Common.GetQueryPartsforOracle(System.Xml.Linq.XElement,System.Data.DataView,System.Data.DataView,System.Collections.Generic.Dictionary{System.String,System.String},System.Collections.Generic.Dictionary{iRINGTools.SDK.SPPIDDataLayer.Common.SQLClause,System.String}@,System.Collections.Generic.IEnumerable{System.Xml.Linq.XElement}@,System.Collections.Generic.IEnumerable{System.Xml.Linq.XElement}@,System.Collections.Generic.Dictionary{System.String,System.String}@,System.String,System.String)">
+	<summary>
+	</summary>
+	<param name="QueryNode"></param>
+	<param name="ColumnsDV"></param>
+	<param name="TablesDV"></param>
+	<param name="SchemaSubstitutions"></param>
+	<param name="QueryParts"></param>
+	<param name="Replacements"></param>
+	<param name="Declarations"></param>
+	<param name="CommonServerName">If not blank, this is name is prepended to each schema.table source in the FROM clause</param>
+	<returns></returns>
+	<remarks></remarks>
+</member><member name="M:iRINGTools.SDK.SPPIDDataLayer.Common.FilterValuesProvided(System.String,System.String,System.Collections.Generic.IEnumerable{System.Xml.Linq.XElement},System.Collections.Generic.Dictionary{System.String,System.String},System.String@)">
+	<summary>
+ Searches the values provided and detects any default values to determine if a valid query can be made using the input filter string
+ </summary>
+	<param name="QueryName"></param>
+	<param name="FilterVal"></param>
+	<param name="Declarations"></param>
+	<param name="vars"></param>
+	<returns></returns>
+	<remarks></remarks>
 </member>
 </members>
 </doc>

@@ -40,7 +40,7 @@ function setVersion(versionXml) {
 }
 
 function getVersion() { 
-  var url = 'Services/AdapterService/version';
+  var url = 'services/adapter/version';
   //var url = 'http://localhost:54321/adapter/version';
   sendRequest(url, setVersion);
 }
@@ -48,7 +48,7 @@ function getVersion() {
 </head>
 <body onload="getVersion()">
 <div class="banner">
-	<h1><img src="img/iring-sandbox-logo.png" />&nbsp; SDK Testing Environment</h1>
+	<h1><img src="img/iring-sandbox-logo.png" />&nbsp; SDK Sample Environment</h1>
 </div>
 <div class="main">
 <p>
@@ -62,28 +62,22 @@ DataLayer developers can contact <a href="mailto:support@iringtools.org ">suppor
 <table width="100%">
 	<tr valign=top>
 		<td>
-		<h2>iRINGTools Applications</h2>
+		<h2>iRINGTools Adapter</h2>
 		<ul>
-			<li><a href="Apps/RefDataEditor">Reference Data Editor</a></li>
-			<li><a href="Apps/AppEditor">Application Editor</a></li>
-			<li><a href="Apps/MappingEditor">Mapping Editor</a></li>
+            <li><a href="services/sandbox/sparql/query">Sandbox Query</a></li>
+			<li><a href="apps/RefDataEditor">Reference Data Editor</a></li>
+			<li><a href="apps/AdapterManager">Adapter Manager</a></li>
+			<li><a href="apps/MappingEditor">Mapping Editor</a></li>
+			<li><a href="services/facade/sparql/query">Facade Query</a></li>
+            <li><a href="services">Services</a></li>
 		</ul>
-		<br />
-		<h2>iRINGTools SPARQL Endpoints</h2>
-		<ul>
-			<li><a href="Services/SandboxService/query">Sandbox</a></li>
-			<li><a href="Services/InterfaceService/query">Façade</a></li>
-		</ul>
-		
 		</td>
 		<td>
-		<h2>iRINGTools Services</h2>
-		<ul>
-			
-			<li><a href="Services/RefDataService/help">Reference Data Service</a></li>
-			<li><a href="Services/AdapterService/help">Adapter Service</a></li>
-			<li><a href="Services/data/help">Data Service</a></li>
-			<li><a href="Services/dxfr/help">DataTransfer Service</a></li>
+        <h2>iRINGTools Core</h2>
+        <ul>
+			<li><a href="http://tomcat.dev.iringsandbox.org:8081/apps/xchmgr">Exchange Manager</a></li>
+			<li><a href="http://tomcat.dev.iringsandbox.org:8081/apps/fedmgr">Federation Manager</a></li>
+            <li><a href="http://tomcat.dev.iringsandbox.org:8081/services/">Services</a></li>
 		</ul>
 		</td>
 	</tr>
