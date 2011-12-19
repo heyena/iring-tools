@@ -22,13 +22,16 @@ namespace QMXFGenerator
     private static string _idsADICredentials = String.Empty;
     private static string _classRegistryBase = String.Empty;
     private static string _templateRegistryBase = String.Empty;
-
+    private static string _targetRepository = string.Empty;
     private static Worksheet _classWorksheet = null;
     private static Worksheet _classSpecializationWorksheet = null;
     private static Worksheet _baseTemplateWorksheet = null;
-
+    private static Worksheet _classificationWorksheet = null;
+    private static WebHttpClient _refdataClient = null;
+    private static string _refdataServiceUri = null;
     private static List<ArrayList> _classes = new List<ArrayList>();
     private static List<ArrayList> _classSpecializations = new List<ArrayList>();
+    private static List<ArrayList> _classifications = new List<ArrayList>();
     private static List<ArrayList> _baseTemplates = new List<ArrayList>();
     private static List<ArrayList> _siTemplates = new List<ArrayList>();
     private static List<ArrayList> _roles = new List<ArrayList>();
@@ -42,16 +45,23 @@ namespace QMXFGenerator
         if (Initialize(args))
         {
             workbook = ExcelLibrary.OpenWorkbook(_excelFilePath);
-
+            _refdataClient = new WebHttpClient(_refdataServiceUri);
             QMXF qmxf = new QMXF();
 
             _classWorksheet = ExcelLibrary.GetWorksheet(workbook, (int)InformationModelWorksheets.Class);
             Worksheet _classSpecializationWorksheet = ExcelLibrary.GetWorksheet(workbook, (int)InformationModelWorksheets.ClassSpecialization);
+            
 
             Console.WriteLine("Processing Classes...");
             qmxf.classDefinitions = ProcessClass(_classWorksheet, _classSpecializationWorksheet);
             Console.WriteLine("  processed " + _classes.Count + " classes.");
 
+            Worksheet _classificationWorksheet = ExcelLibrary.GetWorksheet(workbook, (int)InformationModelWorksheets.Classifications);
+            
+            Console.WriteLine("Processing Classifications...");
+            ProcessClassDefinitions(_classificationWorksheet, qmxf.classDefinitions);
+
+            
             _baseTemplateWorksheet = ExcelLibrary.GetWorksheet(workbook, (int)InformationModelWorksheets.BaseTemplate);
 
             Console.WriteLine("Processing Base Templates...");
@@ -72,12 +82,38 @@ namespace QMXFGenerator
 
             _classWorksheet = null;
 
+            ///Post Classes and Templates induvidually to refdataService
+            ///lets write the qmxf 
             Utility.Write<QMXF>(qmxf, _qmxfFilePath, false);
+            foreach (var cls in qmxf.classDefinitions)
+            {
+                var q = new QMXF { targetRepository = _targetRepository };
+                q.classDefinitions.Add(cls);
+                _refdataClient.Post<QMXF>("/classes", q, true);
+                Console.WriteLine("Success: posted class: " + cls.name[0].value);
+            }
 
+            ///Post baseTemplates
+            foreach (var t in qmxf.templateDefinitions)
+            {
+                var q = new QMXF { targetRepository = _targetRepository };
+                q.templateDefinitions.Add(t);
+                _refdataClient.Post<QMXF>("/templates", q, true);
+                Console.WriteLine("Success: posted baseTemplate: " + t.name[0].value);
+            }
+
+            ///Port Specialised templates
+            foreach (var t in qmxf.templateQualifications)
+            {
+                var q = new QMXF { targetRepository = _targetRepository };
+                q.templateQualifications.Add(t);
+                _refdataClient.Post<QMXF>("/templates", q, true);
+                Console.WriteLine("Success: posted spesialized template: ", t.name[0].value);
+            }
             ExcelLibrary.CloseWorkbook(workbook);
             workbook = null;
 
-            Console.WriteLine("Success: qmxf was generated: " + _qmxfFilePath);
+           // Console.WriteLine("Success: qmxf was generated: " + _qmxfFilePath);
           }
         }
         catch (Exception ex)
@@ -93,6 +129,39 @@ namespace QMXFGenerator
         Console.ReadKey();
       }
 
+    private static void ProcessClassDefinitions(Worksheet _classificationWorksheet, List<ClassDefinition> list)
+    {
+         try
+         {
+             Range labelHeader = _classificationWorksheet.get_Range("C1", Type.Missing);
+             Range classRange = _classificationWorksheet.get_Range("A2", "E" + labelHeader.CurrentRegion.Rows.Count);
+
+             _classifications = MarshallToList(classRange);
+             foreach (var c in _classifications)
+             {
+                 if(!string.IsNullOrEmpty(c[(int)ClassificationColumns.Load].ToString()))
+                 {
+                     var query = from cls in _classes                    
+                             where cls[(int)ClassColumns.Label].ToString().Trim().Equals(c[(int)ClassificationColumns.Classified].ToString())
+                             select cls[(int)ClassColumns.ID];
+                     var cl =  list.SingleOrDefault(l => l.name[0].value.Equals(c[(int)ClassificationColumns.Class].ToString()));
+                     if (query != null || query.Count() == 0 || cl != null)
+                     {
+                         cl.classification.Add(new Classification { label = c[(int)ClassificationColumns.Classified].ToString(), lang = "en", reference = query.FirstOrDefault().ToString() });
+                     }
+                     else
+                     {
+                         Console.WriteLine("Error: classification: " + c[(int)ClassificationColumns.Classified].ToString() + " off class "+ c[(int)ClassificationColumns.Class].ToString() + " not valid..");
+                     }
+                 }
+             }
+
+         }
+         catch (Exception ex)
+         {
+         }
+    }
+
     private static bool Initialize(string[] args)
     {
       try
@@ -101,12 +170,16 @@ namespace QMXFGenerator
         {
           _excelFilePath = System.Configuration.ConfigurationManager.AppSettings["ExcelFilePath"];
           _qmxfFilePath = System.Configuration.ConfigurationManager.AppSettings["QMXFFilePath"];
+          _targetRepository = System.Configuration.ConfigurationManager.AppSettings["TargetRepositoryName"];
+          _refdataServiceUri = System.Configuration.ConfigurationManager.AppSettings["RefdataServiceUri"];
         }
         else
         {
           _excelFilePath = args[0];
           _qmxfFilePath = args[1];
+
         }
+
 
         if (_excelFilePath == String.Empty || _qmxfFilePath == String.Empty)
         {
@@ -161,6 +234,7 @@ namespace QMXFGenerator
 
         List<ClassDefinition> classDefinitions = new List<ClassDefinition>();
 
+        
         foreach (ArrayList row in _classes)
         {
           object load = row[(int)ClassColumns.Load];
@@ -173,7 +247,7 @@ namespace QMXFGenerator
             object entityType = row[(int)ClassColumns.EntityType];
 
             ClassDefinition classDefinition = new ClassDefinition();
-
+            
             string name = String.Empty;
             if (label != null)
             {
@@ -183,7 +257,7 @@ namespace QMXFGenerator
               {
                 QMXFName englishUSName = new QMXFName
                 {
-                    lang = "EN-US",
+                    lang = "en",
                     value = name,
                 };
 
@@ -211,7 +285,7 @@ namespace QMXFGenerator
             {
               Description englishUSDescription = new Description
               {
-                lang = "EN-US",
+                lang = "en",
                 value = description.ToString(),
               };
 
@@ -235,8 +309,8 @@ namespace QMXFGenerator
                 classDefinition.specialization = classSpecialization;
 
             load = String.Empty;
-
-            classDefinitions.Add(classDefinition);
+            if(entityType != null)
+              classDefinitions.Add(classDefinition);
           }
 
           rowIndex++;
@@ -307,7 +381,7 @@ namespace QMXFGenerator
 
         //Find the class specializations
         var specializationList = from specialization in _classSpecializations
-                                 where Convert.ToString(specialization[(int)ClassSpecializationColumns.Subclass]) == className
+                                 where Convert.ToString(specialization[(int)ClassSpecializationColumns.Superclass]) == className
                                  select specialization;
 
         //Get their details from the Class List
@@ -315,19 +389,19 @@ namespace QMXFGenerator
 
         foreach (ArrayList specialization in specializationList)
         {
-          object superclass = specialization[(int)ClassSpecializationColumns.Superclass];
+          object subclass = specialization[(int)ClassSpecializationColumns.Subclass];
 
           var query = from @class in _classes
-                      where Convert.ToString(@class[(int)ClassColumns.Label]).Trim() == superclass.ToString().Trim()
+                      where Convert.ToString(@class[(int)ClassColumns.Label]).Trim() == subclass.ToString().Trim()
                       select @class;
 
-          if (query.FirstOrDefault().Count > 0)
+          if (query.Count() > 0 && query.FirstOrDefault().Count > 0)
           {
             superclasses.Add(query.FirstOrDefault());
           }
           else
           {
-            Utility.WriteString("\n " + superclass.ToString() + " Was Not Found in Class List", "error.log", true);
+            Utility.WriteString("\n " + subclass.ToString() + " Was Not Found in Class List", "error.log", true);
           }
         }
 
@@ -372,12 +446,12 @@ namespace QMXFGenerator
         _baseTemplates = MarshallToList(templateRange);
 
         List<TemplateDefinition> templateDefinitions = new List<TemplateDefinition>();
-
+          
         foreach (ArrayList row in _baseTemplates)
         {
           object load = row[(int)TemplateColumns.Load];
 
-          if (load != null && load.ToString().Trim() != String.Empty)
+          if (load != null && load.ToString().Trim() != String.Empty && load.ToString() != "Load")
           {
             object templateIdentifier = row[(int)TemplateColumns.ID];
             object templateName = row[(int)TemplateColumns.Name];
@@ -394,7 +468,7 @@ namespace QMXFGenerator
               {
                 QMXFName englishUSName = new QMXFName
                 {
-                  lang = "EN-US",
+                  lang = "en",
                   value = name,
                 };
 
@@ -422,7 +496,7 @@ namespace QMXFGenerator
             {
               Description englishUSDescription = new Description
               {
-                lang = "EN-US",
+                lang = "en",
                 value = description.ToString(),
               };
 
@@ -475,7 +549,7 @@ namespace QMXFGenerator
 
             QMXFName englishUSName = new QMXFName
             {
-              lang = "EN-US",
+              lang = "en",
               value = name,
             };
 
@@ -501,7 +575,7 @@ namespace QMXFGenerator
             {
               Description englishUSDescription = new Description
               {
-                lang = "EN-US",
+                lang = "en",
                 value = description.ToString(),
               };
 
@@ -558,7 +632,7 @@ namespace QMXFGenerator
         {
           object load = row[(int)TemplateColumns.Load];
 
-          if (load != null && load.ToString().Trim() != String.Empty)
+          if (load != null && load.ToString().Trim() != String.Empty && load.ToString() != "Load")
           {
             object templateIdentifier = row[(int)TemplateColumns.ID];
             object templateName = row[(int)TemplateColumns.Name];
@@ -576,7 +650,7 @@ namespace QMXFGenerator
               {
                 QMXFName englishUSName = new QMXFName
                 {
-                  lang = "EN-US",
+                  lang = "en",
                   value = name,
                 };
 
@@ -604,7 +678,7 @@ namespace QMXFGenerator
             {
               Description englishUSDescription = new Description
               {
-                lang = "EN-US",
+                lang = "en",
                 value = description.ToString(),
               };
 
@@ -691,7 +765,7 @@ namespace QMXFGenerator
 
             QMXFName englishUSName = new QMXFName
             {
-              lang = "EN-US",
+              lang = "en",
               value = name,
             };
 
@@ -704,7 +778,7 @@ namespace QMXFGenerator
             {
               Description englishUSDescription = new Description
               {
-                lang = "EN-US",
+                lang = "en",
                 value = description.ToString(),
               };
 
