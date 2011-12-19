@@ -68,6 +68,22 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetMembersPart8</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetMembersPart8.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetSubClasses</key>
     <query>
       <bindings>
