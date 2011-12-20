@@ -2485,11 +2485,11 @@ namespace org.iringtools.refdata
                     #endregion Template Definitions Base templates
                     #region Template Qualification
                     /// Qualification / Specialized templates do have the following properties
-                    /// 1) Base class = owl:Thing
-                    /// 2) a = p8:SpecializedTemplate
-                    /// 3) p8:hasSuperTemplate = Super Template ID
-                    /// 4) p8:hasSubTemplate = Sub Template ID
-                    /// 5) rdfs:label = template name
+                    ///  Base class = owl:Class
+                    ///  a = SpecializedTemplate  - tpl:R54325589049
+                    ///  subClassOf SpecializedTemplateStatement  - tpl:R25047886531
+                    ///
+                    ///  rdfs:label = template name
                     /// 
                     if (qmxf.templateQualifications.Count > 0)
                     {
@@ -2578,11 +2578,11 @@ namespace org.iringtools.refdata
                                         if (repository.RepositoryType == RepositoryType.Part8)
                                         {
                                             subj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                            pred = delete.CreateUriNode("p8:valNumberOfRoles");
+                                            pred = delete.CreateUriNode("tpl:R19345658293"); //valNumberOfRoles
                                             obj = delete.CreateLiteralNode(Convert.ToString(oldTQ.roleQualification.Count), new Uri("xsd:integer"));
                                             delete.Assert(new Triple(subj, pred, obj));
                                             subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                            pred = insert.CreateUriNode("p8:valNumberOfRoles");
+                                            pred = insert.CreateUriNode("tpl:R19345658293"); //valNumberOfRoles
                                             obj = insert.CreateLiteralNode(Convert.ToString(newTQ.roleQualification.Count), new Uri("xsd:integer"));
                                             insert.Assert(new Triple(subj, pred, obj));
                                         }
@@ -2652,9 +2652,9 @@ namespace org.iringtools.refdata
                                                     pred = insert.CreateUriNode(rdfType);
                                                     obj = insert.CreateUriNode("owl:Thing");
                                                     insert.Assert(new Triple(subj, pred, obj));
-                                                    obj = insert.CreateUriNode("p8:TemplateRoleDescription");
+                                                    obj = insert.CreateUriNode("tpl:R31633685195"); // TemplateRoleDescription
                                                     insert.Assert(new Triple(subj, pred, obj));
-                                                    pred = insert.CreateUriNode("p8:hasTemplate");
+                                                    pred = insert.CreateUriNode("tpl:R75942876605"); // hasTemplate
                                                     obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                                                     insert.Assert(new Triple(subj, pred, obj));
                                                     foreach (QMXFName nn in nrq.name)
@@ -2671,12 +2671,12 @@ namespace org.iringtools.refdata
                                                     insert.Assert(new Triple(subj, pred, obj));
 
                                                     subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = insert.CreateUriNode("p8:hasTemplate");
+                                                    pred = insert.CreateUriNode("tpl:R75942876605"); // hasTemplate
                                                     obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                                                     insert.Assert(new Triple(subj, pred, obj));
 
                                                     subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    pred = insert.CreateUriNode("p8:hasRole");
+                                                    pred = insert.CreateUriNode("tpl:R97028227425"); // hasRole
                                                     obj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
                                                     insert.Assert(new Triple(subj, pred, obj));
                                                     if (!string.IsNullOrEmpty(nrq.range))
@@ -2685,7 +2685,7 @@ namespace org.iringtools.refdata
                                                         if (qn)
                                                         {
                                                             subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = insert.CreateUriNode("p8:hasRoleFillerType");
+                                                            pred = insert.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
                                                             obj = insert.CreateUriNode(qName);
                                                             insert.Assert(new Triple(subj, pred, obj));
                                                         }
@@ -2698,7 +2698,7 @@ namespace org.iringtools.refdata
                                                             if (qn)
                                                             {
                                                                 subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                                pred = insert.CreateUriNode("p8:hasRoleFillerType");
+                                                                pred = insert.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
                                                                 obj = insert.CreateUriNode(qName);
                                                                 insert.Assert(new Triple(subj, pred, obj));
                                                             }
@@ -2828,9 +2828,9 @@ namespace org.iringtools.refdata
                                                     pred = delete.CreateUriNode(rdfType);
                                                     obj = delete.CreateUriNode("owl:Thing");
                                                     delete.Assert(new Triple(subj, pred, obj));
-                                                    obj = delete.CreateUriNode("p8:TemplateRoleDescription");
+                                                    obj = delete.CreateUriNode("tpl:R31633685195"); // TemplateRoleDescription
                                                     delete.Assert(new Triple(subj, pred, obj));
-                                                    pred = delete.CreateUriNode("p8:hasTemplate");
+                                                    pred = delete.CreateUriNode("tpl:R75942876605"); // hasTemplate
                                                     obj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
                                                     delete.Assert(new Triple(subj, pred, obj));
                                                     foreach (QMXFName nn in orq.name)
@@ -2842,17 +2842,17 @@ namespace org.iringtools.refdata
                                                     }
                                                     var ind = ++count;
                                                     subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = delete.CreateUriNode("p8:valRoleIndex");
+                                                    pred = delete.CreateUriNode("tpl:R93802200201"); // valRoleIndex
                                                     obj = delete.CreateLiteralNode(ind.ToString(), new Uri("xsd:integer"));
                                                     delete.Assert(new Triple(subj, pred, obj));
 
                                                     subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = delete.CreateUriNode("p8:hasTemplate");
+                                                    pred = delete.CreateUriNode("tpl:R75942876605"); // hasTemplate
                                                     obj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
                                                     delete.Assert(new Triple(subj, pred, obj));
 
                                                     subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    pred = insert.CreateUriNode("p8:hasRole");
+                                                    pred = insert.CreateUriNode("tpl:R97028227425"); // hasRole
                                                     obj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
                                                     insert.Assert(new Triple(subj, pred, obj));
                                                     if (!string.IsNullOrEmpty(orq.range))
@@ -2861,7 +2861,7 @@ namespace org.iringtools.refdata
                                                         if (qn)
                                                         {
                                                             subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = insert.CreateUriNode("p8:hasRoleFillerType");
+                                                            pred = insert.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
                                                             obj = insert.CreateUriNode(qName);
                                                             insert.Assert(new Triple(subj, pred, obj));
                                                         }
@@ -2874,7 +2874,7 @@ namespace org.iringtools.refdata
                                                             if (qn)
                                                             {
                                                                 subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                                pred = delete.CreateUriNode("p8:hasRoleFillerType");
+                                                                pred = delete.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
                                                                 obj = delete.CreateUriNode(qName);
                                                                 delete.Assert(new Triple(subj, pred, obj));
                                                             }
@@ -3025,7 +3025,7 @@ namespace org.iringtools.refdata
                                 if (repository.RepositoryType == RepositoryType.Part8)
                                 {
                                     subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                    pred = insert.CreateUriNode("p8:valNumberOfRoles");
+                                    pred = insert.CreateUriNode("tpl:R19345658293"); // valNumberOfRoles
                                     obj = insert.CreateLiteralNode(Convert.ToString(newTQ.roleQualification.Count), new Uri("xsd:integer"));
                                     insert.Assert(new Triple(subj, pred, obj));
                                     qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
@@ -3033,19 +3033,19 @@ namespace org.iringtools.refdata
                                     {
                                         subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                                         pred = insert.CreateUriNode(rdfType);
-                                        obj = insert.CreateUriNode("p8:TemplateDescription");
+                                        obj = insert.CreateUriNode("tpl:R37697644579"); // TemplateDescription
                                         insert.Assert(new Triple(subj, pred, obj));
-                                        obj = insert.CreateUriNode("owl:Thing");
+                                        obj = insert.CreateUriNode("owl:Class");
                                         insert.Assert(new Triple(subj, pred, obj));
-                                        obj = insert.CreateUriNode("p8:CoreTemplate");
+                                        obj = insert.CreateUriNode("tpl:R54325589049"); // SpecializedTemplate
                                         insert.Assert(new Triple(subj, pred, obj));
-                                        pred = insert.CreateUriNode("p8:hasSuperTemplate");
-                                        obj = insert.CreateUriNode(qName);
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        subj = insert.CreateUriNode(qName);
-                                        pred = insert.CreateUriNode("p8:hasSubTemplate");
-                                        obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        insert.Assert(new Triple(subj, pred, obj));
+                                        //pred = insert.CreateUriNode("p8:hasSuperTemplate");
+                                        //obj = insert.CreateUriNode(qName);
+                                        //insert.Assert(new Triple(subj, pred, obj));
+                                        //subj = insert.CreateUriNode(qName);
+                                        //pred = insert.CreateUriNode("p8:hasSubTemplate");
+                                        //obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
+                                        //insert.Assert(new Triple(subj, pred, obj));
                                     }
                                 }
                                 else
@@ -3109,9 +3109,9 @@ namespace org.iringtools.refdata
                                         pred = insert.CreateUriNode(rdfType);
                                         obj = insert.CreateUriNode("owl:Thing");
                                         insert.Assert(new Triple(subj, pred, obj));
-                                        obj = insert.CreateUriNode("p8:TemplateRoleDescription");
+                                        obj = insert.CreateUriNode("tpl:R31633685195"); // TemplateRoleDescription
                                         insert.Assert(new Triple(subj, pred, obj));
-                                        pred = insert.CreateUriNode("p8:hasTemplate");
+                                        pred = insert.CreateUriNode("tpl:R75942876605"); // hasTemplate
                                         obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                                         insert.Assert(new Triple(subj, pred, obj));
                                         foreach (QMXFName newName in newRole.name)
@@ -3123,15 +3123,15 @@ namespace org.iringtools.refdata
                                         }
                                         var ind = ++roleCount;
                                         subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                        pred = insert.CreateUriNode("p8:valRoleIndex");
+                                        pred = insert.CreateUriNode("tpl:R93802200201"); // valRoleIndex
                                         obj = insert.CreateLiteralNode(ind.ToString(), new Uri("xsd:integer"));
                                         insert.Assert(new Triple(subj, pred, obj));
                                         subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                        pred = insert.CreateUriNode("p8:hasTemplate");
+                                        pred = insert.CreateUriNode("tpl:R75942876605"); // hasTemplate
                                         obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
                                         insert.Assert(new Triple(subj, pred, obj));
                                         subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        pred = insert.CreateUriNode("p8:hasRole");
+                                        pred = insert.CreateUriNode("tpl:R97028227425"); // hasRole
                                         obj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
                                         insert.Assert(new Triple(subj, pred, obj));
                                         if (!string.IsNullOrEmpty(newRole.range))
@@ -3140,7 +3140,7 @@ namespace org.iringtools.refdata
                                             if (qn)
                                             {
                                                 subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                                pred = insert.CreateUriNode("p8:hasRoleFillerType");
+                                                pred = insert.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
                                                 obj = insert.CreateUriNode(qName);
                                                 insert.Assert(new Triple(subj, pred, obj));
                                             }
@@ -3153,7 +3153,7 @@ namespace org.iringtools.refdata
                                                 if (qn)
                                                 {
                                                     subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                                    pred = insert.CreateUriNode("p8:hasRoleFillerType");
+                                                    pred = insert.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
                                                     obj = insert.CreateUriNode(qName);
                                                     insert.Assert(new Triple(subj, pred, obj));
                                                 }
