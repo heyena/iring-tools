@@ -48,6 +48,9 @@ namespace org.iringtools.library
     [DataMember(Order = 2)]
     public bool enableSummary { get; set; }
 
+    [DataMember(Order = 3)]
+    public string dataVersion { get; set; }
+
     public static bool IsNumeric(DataType dataType)
     {
       bool isNumeric = false;
