@@ -21,6 +21,7 @@ Public Interface ISPPIDRepository
     Function GetDBDictionary(scope As String, application As String) As DatabaseDictionary
     Function GetDBObjects(scope As String, application As String, dbProvider As String, dbServer As String, dbInstance As String, dbName As String, _
      dbSchema As String, dbUserName As String, dbPassword As String, tableNames As String, portNumber As String, serName As String) As List(Of JsonTreeNode)
+    Function SaveDBDictionary(scope As String, application As String, tree As String) As String
 End Interface
 
 Public Class SPPIDRepository
@@ -265,6 +266,11 @@ Public Class SPPIDRepository
         Next
 
         Return dbObjectNodes
+    End Function
+    Function SaveDBDictionary(scope As String, application As String, tree As String) As String Implements ISPPIDRepository.SaveDBDictionary
+
+        Return String.Empty
+
     End Function
 
 #Region "Private Methods"
