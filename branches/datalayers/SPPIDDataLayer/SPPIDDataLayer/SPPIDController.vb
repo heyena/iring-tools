@@ -109,7 +109,8 @@ Public Class SPPIDController
 
 
         If response.Contains("ERROR") Then
-            Dim msg As String = response(0)
+            Dim inds As Integer = response(1).LastIndexOf("<message>")
+            Dim msg As String = response(1).Substring(inds).Replace("<message>", "").Replace("</message>", Environment.NewLine).Replace("</messages></response>", "")
             Return Json(Convert.ToString(New With { _
               .success = False _
             }) & msg, JsonRequestBehavior.AllowGet)
@@ -149,6 +150,29 @@ Public Class SPPIDController
             Return Json(dbObjects__1, JsonRequestBehavior.AllowGet)
         Catch e As Exception
             ' _logger.[Error](e.ToString())
+            Throw e
+        End Try
+    End Function
+
+    Public Function Trees(form As FormCollection) As ActionResult
+        Try
+            Dim response As String = String.Empty
+
+            response = _repository.SaveDBDictionary(form("scope"), form("app"), form("tree"))
+
+            If response IsNot Nothing AndAlso response.ToUpper().Contains("ERROR") Then
+                Dim inds As Integer = response.ToUpper().IndexOf("<MESSAGE>")
+                Dim inde As Integer = response.ToUpper().IndexOf(";")
+                Dim msg As String = response.Substring(inds + 9, inde - inds - 13)
+                Return Json(Convert.ToString(New With { _
+                 Key .success = False _
+                }) & msg, JsonRequestBehavior.AllowGet)
+            End If
+            Return Json(New With { _
+             Key .success = True _
+            }, JsonRequestBehavior.AllowGet)
+        Catch e As Exception
+
             Throw e
         End Try
     End Function
