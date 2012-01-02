@@ -91,6 +91,7 @@
     <Compile Include="Configuration.vb" />
     <Compile Include="DataContractAttribute.vb" />
     <Compile Include="DataMemberAttribute.vb" />
+    <Compile Include="EntityGenerator.vb" />
     <Compile Include="Helper\JsonContainer.vb" />
     <Compile Include="DataReaderAdapter.vb">
       <SubType>Component</SubType>
