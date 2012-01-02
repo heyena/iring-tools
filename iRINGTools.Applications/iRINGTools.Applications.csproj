@@ -119,6 +119,10 @@
     <Compile Include="Helpers\JsonArray.cs" />
     <Compile Include="Helpers\JsonContainer.cs" />
     <Compile Include="Helpers\JsonTreeNode.cs" />
+    <Compile Include="Helpers\LeafNode.cs" />
+    <Compile Include="Helpers\Node.cs" />
+    <Compile Include="Helpers\Tree.cs" />
+    <Compile Include="Helpers\TreeNode.cs" />
     <Compile Include="Models\AdapterRepository.cs" />
     <Compile Include="Models\FacadeRepository.cs" />
     <Compile Include="Models\IFacadeRepository.cs" />
@@ -170,6 +174,7 @@
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Content\img\list-add.png" />
     <Content Include="Content\img\list-remove.png" />
+    <Content Include="Web.config" />
     <Resource Include="Content\img\relation.png" />
     <Content Include="Content\img\system-file-manager.png" />
     <Content Include="Content\img\table_refresh.png" />
