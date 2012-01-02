@@ -40,6 +40,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Private SPWorkSet As SPPIDWorkingSet
     Private Shared ReadOnly _logger As ILog = LogManager.GetLogger(GetType(SPPIDDataLayer))
 
+    Private _kernel As IKernel = Nothing
+
     Private _projConn As SqlConnection
     Private _stageConn As SqlConnection
     Private _siteConn As SqlConnection
@@ -55,6 +57,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 #End Region
 
 #Region " Instantiation "
+
 
     <Inject()>
     Public Sub New(settings As AdapterSettings)
@@ -271,7 +274,10 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             _sppidconfiguration = New SPPIDConfiguration() With { _
               .PlantConnectionString = AppSettings("SPPIDPlantConnectionString"),
               .SiteConnectionString = AppSettings("SPPIDSiteConnectionString"),
-            .StagingConnectionString = AppSettings("iRingStagingConnectionString")
+            .StagingConnectionString = AppSettings("iRingStagingConnectionString"),
+              .PIDConnectionString = AppSettings("PIDConnectionString"),
+              .PIDDataDicConnectionString = AppSettings("PIDDataDicConnectionString"),
+              .PlantDataDicConnectionString = AppSettings("PlantDataDicConnectionString")
             }
         End If
 
@@ -388,6 +394,30 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
+    Public Function PostDictionary(projectName As String, applicationName As String, DatabaseDictionary As DatabaseDictionary) As Response
+        Dim response As New Response
+        Dim status As New Status
+
+        Try
+            status.Identifier = [String].Format("{0}.{1}", projectName, applicationName)
+            InitializeScope(projectName, applicationName)
+
+            SaveDatabaseDictionary(DatabaseDictionary, _settings("DBDictionaryPath"))
+            response.Append(Generate(projectName, applicationName))
+
+            If response.Level.ToString().ToUpper() = "SUCCESS" Then
+                status.Messages.Add("Database Dictionary saved successfully")
+            Else
+                Throw New Exception(response.StatusList(0).Messages(0).ToString())
+            End If
+
+        Catch ex As Exception
+            status.Messages.Add("Error in saving database dictionary" + ex.Message)
+        End Try
+
+        Return response
+    End Function
+
 #End Region
 
     Public Function LoadDataTable(_stageConStr As String) As List(Of String)
@@ -407,6 +437,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Return _dataTables
 
     End Function
+
 #Region " Staging Methods "
 
     Public Function MigrateSPPIDToStaging(Optional tablename As String = "") As String
@@ -479,7 +510,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     cmd.CommandText = queryParts(SQLClause.TableDef)
                     cmd.ExecuteNonQuery()
 
-                    
+
 
                     ' fetch the data
                     cmd = _projConn.CreateCommand()
@@ -573,7 +604,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                         "WHERE object_id = OBJECT_ID(N'dbo.[" & queryParts(SQLClause.StagingName) & "]')  AND type in (N'U'))" &
                         "   DROP TABLE dbo.[" & queryParts(SQLClause.StagingName) & "]"
 
-                   
+
 
                     If _stageConn.State = ConnectionState.Closed Then _stageConn.Open()
                     cmd.ExecuteNonQuery()
@@ -600,7 +631,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     Dim dra As DataUtils.DataReaderAdapter = New DataUtils.DataReaderAdapter
                     Dim _dt As DataTable = New DataTable
                     dra.FillFromReader(_dt, OraDR)
-                    
+
 
                     ' set the destination location and bulk copy the data to the new table-----------------------------
                     sbc.DestinationTableName = queryParts(SQLClause.StagingName)
@@ -618,7 +649,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     If _plantConnOracle.State = ConnectionState.Open Then _plantConnOracle.Close()
 
                 End If
-                
+
             Next
 
         Catch ex As Exception
@@ -631,12 +662,106 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     End Function
 
 
-   
+
 
 #End Region
 
 #Region "Private Functions"
 
+    Public Shared Sub SaveDatabaseDictionary(dbDictionary As DatabaseDictionary, path As String)
+        Dim connStr As String = dbDictionary.ConnectionString
+
+        If connStr IsNot Nothing Then
+            If connStr.ToUpper().Contains("DATA SOURCE") Then
+                ' connection string is not encrypted, encrypt and write it back
+                dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr)
+            End If
+        End If
+
+        Utility.Write(Of DatabaseDictionary)(dbDictionary, path)
+    End Sub
+
+
+    Private Sub InitializeScope(projectName As String, applicationName As String)
+        Try
+            Dim scope As String = String.Format("{0}.{1}", projectName, applicationName)
+
+            _settings("ProjectName") = projectName
+            _settings("ApplicationName") = applicationName
+            _settings("Scope") = scope
+            _settings("DBDictionaryPath") = [String].Format("{0}DatabaseDictionary.{1}.xml", "D:\Project\iRing-Branch\2.3.x\iRINGTools.Services\App_Data\", scope)
+        Catch ex As Exception
+            Throw New Exception(String.Format("Error initializing application: {0})", ex))
+        End Try
+    End Sub
+
+    Public Shared Function LoadDatabaseDictionary(path As String) As DatabaseDictionary
+        Dim dbDictionary As DatabaseDictionary = Utility.Read(Of DatabaseDictionary)(path)
+        Dim connStr As String = dbDictionary.ConnectionString
+
+        If connStr IsNot Nothing Then
+            If connStr.ToUpper().Contains("DATA SOURCE") Then
+                ' connection string is not encrypted, encrypt and write it back
+                dbDictionary.ConnectionString = EncryptionUtility.Encrypt(connStr)
+                Utility.Write(Of DatabaseDictionary)(dbDictionary, path)
+
+                dbDictionary.ConnectionString = connStr
+            Else
+                dbDictionary.ConnectionString = EncryptionUtility.Decrypt(connStr)
+            End If
+        End If
+
+        Return dbDictionary
+    End Function
+
+    Private Function Generate(projectName As String, applicationName As String) As Response
+        Dim response As New Response()
+        Dim status As New Status()
+
+        response.StatusList.Add(status)
+
+        Try
+            status.Identifier = [String].Format("{0}.{1}", projectName, applicationName)
+            InitializeScope(projectName, applicationName)
+
+            Dim dbDictionary As DatabaseDictionary = LoadDatabaseDictionary(_settings("DBDictionaryPath"))
+            If [String].IsNullOrEmpty(projectName) OrElse [String].IsNullOrEmpty(applicationName) Then
+                status.Messages.Add("Error project name and application name can not be null")
+            ElseIf ValidateDatabaseDictionary(dbDictionary) Then
+                'Dim generator As EntityGenerator = _kernel.[Get](Of EntityGenerator)()
+                Dim generator As New EntityGenerator(_settings)
+                Dim compilerVersion As String = "v4.0"
+                If Not [String].IsNullOrEmpty(_settings("CompilerVersion")) Then
+                    compilerVersion = _settings("CompilerVersion")
+                End If
+
+                response.Append(generator.Generate(compilerVersion, dbDictionary, projectName, applicationName))
+
+               
+
+                status.Messages.Add("Database dictionary of [" & projectName & "." & applicationName & "] updated successfully.")
+            End If
+        Catch ex As Exception
+            _logger.[Error](String.Format("Error in UpdateDatabaseDictionary: {0}", ex))
+
+            status.Level = StatusLevel.[Error]
+            status.Messages.Add(String.Format("Error updating database dictionary: {0}", ex))
+        End Try
+
+        Return response
+    End Function
+
+
+    Private Function ValidateDatabaseDictionary(dbDictionary As DatabaseDictionary) As Boolean
+        ' Validate table key
+        For Each dataObject As DataObject In dbDictionary.dataObjects
+            If dataObject.keyProperties Is Nothing OrElse dataObject.keyProperties.Count = 0 Then
+                Throw New Exception(String.Format("Table ""{0}"" has no key. Must select keys before saving.", dataObject.tableName))
+            End If
+        Next
+
+        Return True
+    End Function
 
     ''' <summary>
     ''' Fetch the queries from the staging configuration XDocument for this project
@@ -768,7 +893,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         End If
     End Sub
 
-   
+
     Private Function LoadDataObjects(objectType As String) As IList(Of IDataObject)
         '        Try
 
@@ -1216,7 +1341,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
 #End Region
 
-   
+
 
 
 End Class

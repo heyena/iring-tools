@@ -595,7 +595,9 @@ Public Class SPPIDWorkingSet
             oraSiteDR = drv.Row
             rVal = [Enum].TryParse(oraSiteDR.SP_Schema_Type, True, schemaTp)
             SetSchemaTypeforOracle(schemaTp, oraSiteDR.UserName)
-            SchemaSubstitutions.Add(oraSiteDR.SP_Schema_Type, oraSiteDR.UserName)
+            If (SchemaSubstitutions.Keys.Contains(oraSiteDR.SP_Schema_Type) = False) Then
+                SchemaSubstitutions.Add(oraSiteDR.SP_Schema_Type, oraSiteDR.UserName)
+            End If
 
         Next
 

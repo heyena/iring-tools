@@ -12,6 +12,7 @@ Imports System.Xml.Linq
 Imports System.Collections.Specialized
 Imports System.IO
 Imports System.Net
+Imports System.Web
 
 
 
@@ -131,9 +132,18 @@ Public Class SPPIDRepository
    
 
     Public Function GetDBDictionary(scope As String, application As String) As DatabaseDictionary Implements ISPPIDRepository.GetDBDictionary
-
-
         Dim dbDictionary As DatabaseDictionary = New DatabaseDictionary()
+        Try
+            dbDictionary = _hibernateclient.Get(Of DatabaseDictionary)(String.Format("/{0}/{1}/dictionary", scope, application))
+            Dim connStr As String = dbDictionary.ConnectionString
+
+            If (Not [String].IsNullOrEmpty(connStr)) Then
+                dbDictionary.ConnectionString = Utility.EncodeTo64(connStr)
+            End If
+            
+        Catch ex As Exception
+
+        End Try
 
         Return dbDictionary
     End Function
@@ -267,7 +277,27 @@ Public Class SPPIDRepository
 
         Return dbObjectNodes
     End Function
+
     Function SaveDBDictionary(scope As String, application As String, tree As String) As String Implements ISPPIDRepository.SaveDBDictionary
+        Dim _sppidDataLayer As New SPPIDDataLayer(_settings)
+
+        Dim dbDictionary As DatabaseDictionary = Utility.FromJson(Of DatabaseDictionary)(tree)
+        Dim connStr As String = dbDictionary.ConnectionString
+        If Not [String].IsNullOrEmpty(connStr) Then
+            Dim urlEncodedConnStr As String = Utility.DecodeFrom64(connStr)
+            dbDictionary.ConnectionString = HttpUtility.UrlDecode(urlEncodedConnStr)
+        End If
+
+        Dim postResult As String = Nothing
+        Try
+            'postResult = _hibernateServiceClient.Post<DatabaseDictionary>("/" + scope + "/" + application + "/dictionary", dbDictionary, true);
+            postResult = _hibernateclient.Post(Of DatabaseDictionary)("/" + scope + "/" + application + "/dictionary", dbDictionary, True)
+            ' postResult = _sppidDataLayer.PostDictionary(scope, application, dbDictionary)
+        Catch ex As Exception
+
+        End Try
+
+
 
         Return String.Empty
 
