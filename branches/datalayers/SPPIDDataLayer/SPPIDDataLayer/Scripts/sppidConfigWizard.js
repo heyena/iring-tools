@@ -16,14 +16,9 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
         var scopeName = config.scope;
         var appName = config.app;
         var datalayer = config.datalayer;
-<<<<<<< .mine
         var dbDict_SPPID;
         var SPPIDdbInfo;
-=======
-        var dbDict;
-        var SPPIDdbInfo;
->>>>>>> .r4568
-        var dbTableNames;
+        var dbTableNames_Stage;
         var userTableNames;
         var dataObjectsPane = new Ext.Panel({
             layout: 'border',
@@ -90,11 +85,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
 
                                         if (dbDict_SPPID.dataObjects.length > 0) {
                                             // populate data source form
-<<<<<<< .mine
-                                            SPPIDdbInfo = showTree(dbObjectsTree_SPPID, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane);
-=======
-                                            SPPIDdbInfo = showTree(dbObjectsTree, SPPIDdbInfo, dbDict, scopeName, appName, dataObjectsPane);
->>>>>>> .r4568
+                                            SPPIDdbInfo = showTree_SPPID(dbObjectsTree_SPPID, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane);
                                         }
                                         else {
                                             dbObjectsTree_SPPID.disable();
@@ -102,11 +93,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                                             if (!editPane) {
                                                 var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
                                             }
-<<<<<<< .mine
                                             setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer);
-=======
-                                            setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict, scopeName, appName, dataObjectsPane, datalayer);
->>>>>>> .r4568
                                         }
                                     },
                                     failure: function (response, request) {
@@ -114,11 +101,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                                         if (!editPane) {
                                             var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
                                         }
-<<<<<<< .mine
                                         setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer);
-=======
-                                        setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict, scopeName, appName, dataObjectsPane, datalayer);
->>>>>>> .r4568
                                         editPane.getLayout().setActiveItem(editPane.items.length - 1);
                                     }
                                 });
@@ -131,16 +114,27 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                             icon: 'Content/img/16x16/document-properties.png',
                             text: 'Edit Connection',
                             tooltip: 'Edit database connection',
-                            handler: function () {
+                            handler: function (button) {
                                 editPane = dataObjectsPane.items.items[1];
                                 if (!editPane) {
                                     var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
                                 }
-<<<<<<< .mine
-                                dbTableNames = setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer);
-=======
-                                dbTableNames = setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict, scopeName, appName, dataObjectsPane, datalayer);
->>>>>>> .r4568
+                                Ext.Ajax.request({
+                                    url: 'SPPID/GetConfiguration',
+                                    timeout: 600000,
+                                    method: 'POST',
+                                    params: {
+                                        scope: scopeName,
+                                        app: appName
+                                    },
+                                    success: function (response, request) {
+                                       //alert(response.responseText);
+                                    },
+                                    failure: function (response, request) {
+                                        showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
+                                    }
+                                });
+                                dbTableNames_Stage = setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer);
                             }
                         }, {
                             xtype: 'tbspacer',
@@ -158,22 +152,16 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                                     var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
                                 }
 
-<<<<<<< .mine
                                 var dsConfigPane_SPPID = editPane.items.map[scopeName + '.' + appName + '.dsConfigPane_SPPID'];
                                 var tablesSelectorPane = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
                                 var dbObjectsTree_SPPID = dataObjectsPane.items.items[0].items.items[0];
                                 var rootNode = dbObjectsTree_SPPID.getRootNode();
                                 var treeProperty = getTreeJson_SPPID(dsConfigPane_SPPID, rootNode, SPPIDdbInfo, dbDict_SPPID, dataTypes_SPPID, tablesSelectorPane);
-                                
-=======
-                                var dsConfigPane_SPPID = editPane.items.map[scopeName + '.' + appName + '.dsConfigPane_SPPID'];
-                                var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-                                var rootNode = dbObjectsTree.getRootNode();
-                                var treeProperty = getTreeJson(dsConfigPane_SPPID, rootNode, SPPIDdbInfo, dbDict, dataTypes);
->>>>>>> .r4568
+
 
                                 Ext.Ajax.request({
-                                    url: null,
+                                    url: 'SPPID/Trees',
+                                    timeout: 600000,
                                     method: 'POST',
                                     params: {
                                         scope: scopeName,
@@ -209,11 +197,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                                     var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
                                 }
 
-<<<<<<< .mine
-                                setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, dbTableNames);
-=======
-                                setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict, scopeName, appName, dataObjectsPane, dbTableNames);
->>>>>>> .r4568
+                                setTablesSelectorPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, dbTableNames_Stage);
                                 return;
                             }
                             else if (!node)
@@ -317,9 +301,8 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
         Ext.EventManager.onWindowResize(this.doLayout, this);
 
         Ext.Ajax.request({
-<<<<<<< .mine
             //url: 'SPPID/GetConfiguration',
-            url:'SPPID/DBDictionary',
+            url: 'SPPID/DBDictionary',
             method: 'POST',
             params: {
                 scope: scopeName,
@@ -327,60 +310,20 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
             },
             success: function (response, request) {
                 dbDict_SPPID = Ext.util.JSON.decode(response.responseText);
-                //				if (dbDict_SPPID.PlantConnectionString)
-                //				    dbDict_SPPID.PlantConnectionString = Base64.decode(dbDict_SPPID.PlantConnectionString);
-=======
-            url: 'SPPID/GetConfiguration',
-            method: 'POST',
-            params: {
-                scope: scopeName,
-                app: appName
-            },
-            success: function (response, request) {
-                dbDict = Ext.util.JSON.decode(response.responseText);
-                //				if (dbDict.PlantConnectionString)
-                //				    dbDict.PlantConnectionString = Base64.decode(dbDict.PlantConnectionString);
->>>>>>> .r4568
 
-<<<<<<< .mine
-                //				if (dbDict_SPPID.SiteConnectionString)
-                //				    dbDict_SPPID.SiteConnectionString = Base64.decode(dbDict_SPPID.SiteConnectionString);
-=======
-                //				if (dbDict.SiteConnectionString)
-                //				    dbDict.SiteConnectionString = Base64.decode(dbDict.SiteConnectionString);
->>>>>>> .r4568
+                if (dbDict_SPPID.ConnectionString)
+                    dbDict_SPPID.ConnectionString = Base64.decode(dbDict_SPPID.ConnectionString);
 
-<<<<<<< .mine
-                //				if (dbDict_SPPID.StagingConnectionString)
-                //				    dbDict_SPPID.StagingConnectionString = Base64.decode(dbDict_SPPID.StagingConnectionString);
-=======
-                //				if (dbDict.StagingConnectionString)
-                //				    dbDict.StagingConnectionString = Base64.decode(dbDict.StagingConnectionString);
->>>>>>> .r4568
-
-<<<<<<< .mine
                 var tab = Ext.getCmp('content-panel');
                 var rp = tab.items.map[scopeName + '.' + appName + '.-sppid-config'];
                 var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
                 var dbObjectsTree_SPPID = dataObjectsPane.items.items[0].items.items[0];
-=======
-                var tab = Ext.getCmp('content-panel');
-                var rp = tab.items.map[scopeName + '.' + appName + '.-sppid-config'];
-                var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
-                var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
->>>>>>> .r4568
 
-<<<<<<< .mine
-                //if (dbDict_SPPID.dataObjects.length > 0) {
-                if (dbDict_SPPID.total > 0) {
-=======
-                //if (dbDict.dataObjects.length > 0) {
-                if (dbDict.total > 0) {
->>>>>>> .r4568
+                if (dbDict_SPPID.dataObjects.length > 0) {
+                    //if (dbDict_SPPID.total > 0) {
 
-<<<<<<< .mine
                     // populate data source form
-                    SPPIDdbInfo = showTree(dbObjectsTree_SPPID, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane);
+                    SPPIDdbInfo = showTree_SPPID(dbObjectsTree_SPPID, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane);
                     var abcdd = 5;
                 }
                 else {
@@ -404,104 +347,34 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
 
         AdapterManager.sppidConfigWizard.superclass.constructor.apply(this, arguments);
     }
-=======
-                    // populate data source form
-                    SPPIDdbInfo = showTree(dbObjectsTree, SPPIDdbInfo, dbDict, scopeName, appName, dataObjectsPane);
-                    var abcdd = 5;
-                }
-                else {
-                    dbObjectsTree.disable();
-                    editPane = dataObjectsPane.items.items[1];
-                    if (!editPane) {
-                        var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-                    }
-                    setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict, scopeName, appName, dataObjectsPane, datalayer);
-                }
-            },
-            failure: function (response, request) {
-                editPane = dataObjectsPane.items.items[1];
-                if (!editPane) {
-                    var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
-                }
-                editPane.add(dsConfigPane_SPPID);
-                editPane.getLayout().setActiveItem(editPane.items.length - 1);
-            }
-        });
-
-        AdapterManager.sppidConfigWizard.superclass.constructor.apply(this, arguments);
-    }
->>>>>>> .r4568
 });
 
 
 //*************************************
-<<<<<<< .mine
-function setDsConfigFields(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID) {
+function setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID) {
     var dsConfigForm_SPPId = dsConfigPane_SPPID.getForm();
     var Provider = null;
-=======
-function setDsConfigFields(dsConfigPane_SPPID, SPPIDdbInfo, dbDict) {
-    var dsConfigForm_SPPId = dsConfigPane_SPPID.getForm();
-    var Provider = null;
->>>>>>> .r4568
 
-<<<<<<< .mine
     if (dbDict_SPPID.Provider)
         Provider = dbDict_SPPID.Provider.toUpperCase();
-=======
-    if (dbDict.Provider)
-        Provider = dbDict.Provider.toUpperCase();
->>>>>>> .r4568
 
-    var dbName = dsConfigForm.findField('dbName');
-    var portNumber = dsConfigForm.findField('portNumber');
-    var host = dsConfigForm.findField('host');
-    var dbServer = dsConfigForm.findField('dbServer');
-    var dbInstance = dsConfigForm.findField('dbInstance');
-    var serviceName = dsConfigPane_SPPID.items.items[0].items.items[9];
-    var dbSchema = dsConfigForm.findField('dbSchema');
-    var userName = dsConfigForm.findField('dbUserName');
-    var password = dsConfigForm.findField('dbPassword');
-    var dbProvider = dsConfigForm.findField('dbProvider');
+    var dbName = dsConfigForm_SPPId.findField('dbstageName');
+    var portNumber = dsConfigForm_SPPId.findField('stageportNumber');
+    var dbServer = dsConfigForm_SPPId.findField('dbstageServer');
+    var dbInstance = dsConfigForm_SPPId.findField('dbstageInstance');
+    var serviceName = '';
+    // var dbSchema = dsConfigForm_SPPId.findField('dbstageSchema');
+    var userName = dsConfigForm_SPPId.findField('dbstageUserName');
+    var password = dsConfigForm_SPPId.findField('dbstagePassword');
+    var dbProvider = dsConfigForm_SPPId.findField('dbstageProvider');
 
     if (SPPIDdbInfo) {
         if (Provider) {
-            if (Provider.indexOf('ORACLE') > -1) {
-                dbName.hide();
-                dbServer.hide();
-                dbInstance.hide();
-
-                dbServer.setValue(SPPIDdbInfo.dbServer);
-                dbInstance.setValue(SPPIDdbInfo.dbInstance);
-                dbName.setValue(SPPIDdbInfo.dbName);
-
-<<<<<<< .mine
-                userName.setValue(SPPIDdbInfo.dbUserName);
-                password.setValue(SPPIDdbInfo.dbPassword);
-                dbProvider.setValue(dbDict_SPPID.Provider);
-                dbSchema.setValue(dbDict_SPPID.SchemaName);
-=======
-                userName.setValue(SPPIDdbInfo.dbUserName);
-                password.setValue(SPPIDdbInfo.dbPassword);
-                dbProvider.setValue(dbDict.Provider);
-                dbSchema.setValue(dbDict.SchemaName);
->>>>>>> .r4568
-
-                host.setValue(SPPIDdbInfo.dbServer);
-                host.show();
-
-                serviceName.show();
-                creatRadioField(serviceName, serviceName.id, SPPIDdbInfo.dbInstance, SPPIDdbInfo.serName);
-
-                portNumber.setValue(SPPIDdbInfo.portNumber);
-                portNumber.show();
-            }
-            else if (Provider.indexOf('MSSQL') > -1) {
+            if (Provider.indexOf('MSSQL') > -1) {
                 portNumber.hide();
-                host.hide();
-                serviceName.hide();
+                //host.hide();
+                // serviceName.hide();
 
-<<<<<<< .mine
                 dbServer.setValue(SPPIDdbInfo.dbServer);
                 dbServer.show();
                 dbInstance.setValue(SPPIDdbInfo.dbInstance);
@@ -509,11 +382,11 @@ function setDsConfigFields(dsConfigPane_SPPID, SPPIDdbInfo, dbDict) {
                 dbName.setValue(SPPIDdbInfo.dbName);
                 dbName.show();
                 dbProvider.setValue(dbDict_SPPID.Provider);
-                host.setValue(SPPIDdbInfo.dbServer);
+                //host.setValue(SPPIDdbInfo.dbServer);
                 portNumber.setValue(SPPIDdbInfo.portNumber);
                 userName.setValue(SPPIDdbInfo.dbUserName);
                 password.setValue(SPPIDdbInfo.dbPassword);
-                dbSchema.setValue(dbDict_SPPID.SchemaName);
+                // dbSchema.setValue(dbDict_SPPID.SchemaName);
             }
         }
     }
@@ -522,34 +395,9 @@ function setDsConfigFields(dsConfigPane_SPPID, SPPIDdbInfo, dbDict) {
         dbServer.show();
         dbInstance.setValue('default');
         dbInstance.show();
-        dbSchema.setValue('dbo');
+        //dbSchema.setValue('dbo');
         portNumber.setValue('1433');
         portNumber.hide();
-=======
-                dbServer.setValue(SPPIDdbInfo.dbServer);
-                dbServer.show();
-                dbInstance.setValue(SPPIDdbInfo.dbInstance);
-                dbInstance.show();
-                dbName.setValue(SPPIDdbInfo.dbName);
-                dbName.show();
-                dbProvider.setValue(dbDict.Provider);
-                host.setValue(SPPIDdbInfo.dbServer);
-                portNumber.setValue(SPPIDdbInfo.portNumber);
-                userName.setValue(SPPIDdbInfo.dbUserName);
-                password.setValue(SPPIDdbInfo.dbPassword);
-                dbSchema.setValue(dbDict.SchemaName);
-            }
-        }
-    }
-    else {
-        dbServer.setValue('localhost');
-        dbServer.show();
-        dbInstance.setValue('default');
-        dbInstance.show();
-        dbSchema.setValue('dbo');
-        portNumber.setValue('1433');
-        portNumber.hide();
->>>>>>> .r4568
 
         dbName.setValue('');
         dbName.clearInvalid();
@@ -557,9 +405,8 @@ function setDsConfigFields(dsConfigPane_SPPID, SPPIDdbInfo, dbDict) {
         userName.setValue('');
         password.setValue('');
         dbProvider.setValue('MsSql2008');
-        host.setValue('');
-        host.hide();
-        serviceName.hide();
+
+        //serviceName.hide();
 
         userName.clearInvalid();
         password.clearInvalid();
@@ -628,17 +475,10 @@ function changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password
     OraclePane.hide();
 }
 
-<<<<<<< .mine
 function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer) {
     if (editPane) {
         if (editPane.items.map[scopeName + '.' + appName + '.dsConfigPane_SPPID']) {
             var dsConfigPanel = editPane.items.map[scopeName + '.' + appName + '.dsConfigPane_SPPID'];
-=======
-function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict, scopeName, appName, dataObjectsPane, datalayer) {
-    if (editPane) {
-        if (editPane.items.map[scopeName + '.' + appName + '.dsConfigPane_SPPID']) {
-            var dsConfigPanel = editPane.items.map[scopeName + '.' + appName + '.dsConfigPane_SPPID'];
->>>>>>> .r4568
 
             if (dsConfigPanel) {
                 var panelIndex = editPane.items.indexOf(dsConfigPanel);
@@ -696,7 +536,6 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict, scopeName, appName
                         var OraclePane = dsConfigPane_SPPID.items.items[2];
                         var plantDatabase = dsConfigPane_SPPID.items.items[1];
 
-<<<<<<< .mine
 
                         if (dbProvider.indexOf('ORACLE') > -1) {
                             if (dbName.hidden == false) {
@@ -761,72 +600,6 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict, scopeName, appName
                         }
                     }
                     }
-=======
-
-                        if (dbProvider.indexOf('ORACLE') > -1) {
-                            if (dbName.hidden == false) {
-                                dbName.hide();
-                                dbServer.hide();
-                                dbInstance.hide();
-                            }
-
-                            if (host.hidden == true) {
-                                if (dbDict.Provider) {
-                                    if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
-                                        host.setValue(dbInfo.dbServer);
-                                        serviceName.show();
-                                        creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
-                                        host.show();
-                                        userName.setValue(dbInfo.dbUserName);
-                                        password.setValue(dbInfo.dbPassword);
-                                        dbSchema.setValue(dbDict.SchemaName);
-
-                                    }
-                                    else
-                                        changeConfigOracle(host, dbSchema, userName, password, serviceName, OraclePane, plantDatabase);
-
-
-                                }
-                                else {
-                                    changeConfigOracle(host, dbSchema, userName, password, serviceName, OraclePane, plantDatabase);
-                                }
-
-                                portNumber.setValue('1521');
-                                portNumber.show();
-                            }
-                        }
-                        else if (dbProvider.indexOf('MSSQL') > -1) {
-                            if (host.hidden == false) {
-                                portNumber.hide();
-                                host.hide();
-                                serviceName.hide();
-                            }
-
-                            if (dbName.hidden == true) {
-                                if (dbDict.Provider) {
-                                    if (dbDict.Provider.toUpperCase().indexOf('MSSQL') > -1) {
-                                        dbName.setValue(dbInfo.dbName);
-                                        dbServer.setValue(dbInfo.dbServer);
-                                        dbInstance.setValue(dbInfo.dbInstance);
-                                        dbName.show();
-                                        dbServer.show();
-                                        dbInstance.show();
-                                        dbSchema.setValue(dbDict.SchemaName);
-                                        userName.setValue(dbInfo.dbUserName);
-                                        password.setValue(dbInfo.dbPassword);
-                                    }
-                                    else
-                                        changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password, plantDatabase, OraclePane);
-                                }
-                                else
-                                    changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password, plantDatabase, OraclePane);
-                            }
-
-                            portNumber.setValue('1433');
-                        }
-                    }
-                    }
->>>>>>> .r4568
                 }, {
                     xtype: 'textfield',
                     name: 'dbServer',
@@ -1159,24 +932,24 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict, scopeName, appName
                                 _datalayer: datalayer
                             },
                             success: function (f, a) {
-                                dbTableNames = Ext.util.JSON.decode(a.response.responseText);
+                                dbTableNames_Stage = Ext.util.JSON.decode(a.response.responseText);
                                 //var tab = Ext.getCmp('content-panel');
                                 //var rp = tab.items.map[scopeName + '.' + appName + '.-nh-config'];
                                 //var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
                                 var editPane = dataObjectsPane.items.map[scopeName + '.' + appName + '.editor-panel'];
-<<<<<<< .mine
                                 var dbObjectsTree_SPPID = dataObjectsPane.items.items[0].items.items[0];
                                 dbObjectsTree_SPPID.disable();
-                                setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, dbTableNames);
-=======
-                                var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-                                dbObjectsTree.disable();
-                                setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict, scopeName, appName, dataObjectsPane, dbTableNames);
->>>>>>> .r4568
+                                setTablesSelectorPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, dbTableNames_Stage);
                             },
                             failure: function (f, a) {
-                                if (a.response)
-                                    showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
+                                if (a.response) {
+                                    var rtext = a.response.responseText;
+                                    var error = 'SUCCESS = FALSE';
+                                    var index = rtext.toUpperCase().indexOf(error);
+                                    var msg = rtext.substring(index + error.length + 2, rtext.length - 1);
+                                    showDialog(400, 100, 'Saving Result - Error', msg, Ext.Msg.OK, null);
+
+                                }
                                 else {
                                     showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
                                 }
@@ -1193,14 +966,14 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict, scopeName, appName
                     text: 'Reset',
                     tooltip: 'Reset to the latest applied changes',
                     handler: function (f) {
-                        setDsConfigFields(dsConfigPane_SPPID);
+                        setDsConfigFields_SPPID(dsConfigPane_SPPID);
                     }
                 }]
             })
         });
 
         if (SPPIDdbInfo) {
-            setDsConfigFields(dsConfigPane_SPPID);
+            setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID);
         }
         editPane.add(dsConfigPane_SPPID);
         var panelIndex = editPane.items.indexOf(dsConfigPane_SPPID);
@@ -1208,25 +981,20 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict, scopeName, appName
     }
 };
 
-<<<<<<< .mine
-function setAvailTables_SPPID(dbObjectsTree_SPPID, dbTableNames) {
-=======
-function setAvailTables_SPPID(dbObjectsTree, dbTableNames) {
->>>>>>> .r4568
+function setAvailTables_SPPID(dbObjectsTree_SPPID, dbTableNames_Stage) {
     var availTableName = new Array();
 
-<<<<<<< .mine
     if (dbObjectsTree_SPPID.disabled) {
-        for (var i = 0; i < dbTableNames.success.length; i++) {
-            var tableName = dbTableNames.success[i];
+        for (var i = 0; i < dbTableNames_Stage.success.length; i++) {
+            var tableName = dbTableNames_Stage.success[i];
             availTableName.push(tableName);
         }
     }
     else {
         var rootNode = dbObjectsTree_SPPID.getRootNode();
-        if (dbTableNames.items) {
-            for (var i = 0; i < dbTableNames.success.length; i++) {
-                availTableName.push(dbTableNames.success[i]);
+        if (dbTableNames_Stage.items) {
+            for (var i = 0; i < dbTableNames_Stage.success.length; i++) {
+                availTableName.push(dbTableNames_Stage.success[i]);
             }
         }
 
@@ -1243,46 +1011,12 @@ function setAvailTables_SPPID(dbObjectsTree, dbTableNames) {
         }
     }
 
-=======
-    if (dbObjectsTree.disabled) {
-        for (var i = 0; i < dbTableNames.success.length; i++) {
-            var tableName = dbTableNames.success[i];
-            availTableName.push(tableName);
-        }
-    }
-    else {
-        var rootNode = dbObjectsTree.getRootNode();
-        if (dbTableNames.items) {
-            for (var i = 0; i < dbTableNames.success.length; i++) {
-                availTableName.push(dbTableNames.success[i]);
-            }
-        }
-
-        if (!dbObjectsTree.disabled) {
-            for (var j = 0; j < availTableName.length; j++)
-                for (var i = 0; i < rootNode.childNodes.length; i++) {
-                    if (rootNode.childNodes[i].attributes.properties.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
-                        found = true;
-                        availTableName.splice(j, 1);
-                        j--;
-                        break;
-                    }
-                }
-        }
-    }
-
->>>>>>> .r4568
     return availTableName;
 }
 
-<<<<<<< .mine
-function setSelectTables_SPPID(dbObjectsTree_SPPID, dbTableNames) {
-=======
-function setSelectTables_SPPID(dbObjectsTree, dbTableNames) {
->>>>>>> .r4568
+function setSelectTables_SPPID(dbObjectsTree_SPPID, dbTableNames_Stage) {
     var selectTableNames = new Array();
 
-<<<<<<< .mine
     if (!dbObjectsTree_SPPID.disabled) {
         var rootNode = dbObjectsTree_SPPID.getRootNode();
         for (var i = 0; i < rootNode.childNodes.length; i++) {
@@ -1290,29 +1024,14 @@ function setSelectTables_SPPID(dbObjectsTree, dbTableNames) {
             selectTableNames.push([nodeText, nodeText]);
         }
     }
-=======
-    if (!dbObjectsTree.disabled) {
-        var rootNode = dbObjectsTree.getRootNode();
-        for (var i = 0; i < rootNode.childNodes.length; i++) {
-            var nodeText = rootNode.childNodes[i].attributes.properties.tableName;
-            selectTableNames.push([nodeText, nodeText]);
-        }
-    }
->>>>>>> .r4568
 
     return selectTableNames;
 }
 
 
-<<<<<<< .mine
-function setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, dbTableNames) {
+function setTablesSelectorPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, dbTableNames_Stage) {
     var dbObjectsTree_SPPID = dataObjectsPane.items.items[0].items.items[0];
 
-=======
-function setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict, scopeName, appName, dataObjectsPane, dbTableNames) {
-    var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
-
->>>>>>> .r4568
     if (editPane) {
         if (editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane']) {
             var tableSelectorPanel = editPane.items.map[scopeName + '.' + appName + '.tablesSelectorPane'];
@@ -1327,13 +1046,8 @@ function setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict, scopeName, appName
             }
         }
 
-<<<<<<< .mine
-        var availItems = setAvailTables_SPPID(dbObjectsTree_SPPID, dbTableNames);
-        var selectItems = setSelectTables_SPPID(dbObjectsTree_SPPID, dbTableNames);
-=======
-        var availItems = setAvailTables_SPPID(dbObjectsTree, dbTableNames);
-        var selectItems = setSelectTables_SPPID(dbObjectsTree, dbTableNames);
->>>>>>> .r4568
+        var availItems_Stage = setAvailTables_SPPID(dbObjectsTree_SPPID, dbTableNames_Stage);
+        var selectItems_Stage = setSelectTables_SPPID(dbObjectsTree_SPPID, dbTableNames_Stage);
 
         var tablesSelectorPane = new Ext.FormPanel({
             frame: false,
@@ -1358,14 +1072,14 @@ function setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict, scopeName, appName
                 multiselects: [{
                     width: 240,
                     height: 370,
-                    store: availItems,
+                    store: availItems_Stage,
                     displayField: 'tableName',
                     valueField: 'tableValue',
                     border: 0
                 }, {
                     width: 240,
                     height: 370,
-                    store: selectItems,
+                    store: selectItems_Stage,
                     displayField: 'tableName',
                     valueField: 'tableValue',
                     border: 0
@@ -1483,7 +1197,6 @@ function setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict, scopeName, appName
                             treeLoader.baseParams = {
                                 scope: scopeName,
                                 app: appName,
-<<<<<<< .mine
                                 dbProvider: dbDict_SPPID.Provider,
                                 dbServer: SPPIDdbInfo.dbServer,
                                 dbInstance: SPPIDdbInfo.dbInstance,
@@ -1492,16 +1205,6 @@ function setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict, scopeName, appName
                                 dbUserName: SPPIDdbInfo.dbUserName,
                                 dbPassword: SPPIDdbInfo.dbPassword,
                                 portNumber: SPPIDdbInfo.portNumber,
-=======
-                                dbProvider: dbDict.Provider,
-                                dbServer: SPPIDdbInfo.dbServer,
-                                dbInstance: SPPIDdbInfo.dbInstance,
-                                dbName: SPPIDdbInfo.dbName,
-                                dbSchema: dbDict.SchemaName,
-                                dbUserName: SPPIDdbInfo.dbUserName,
-                                dbPassword: SPPIDdbInfo.dbPassword,
-                                portNumber: SPPIDdbInfo.portNumber,
->>>>>>> .r4568
                                 tableNames: selectTableNames,
                                 serName: serName
                             };
@@ -1537,8 +1240,8 @@ function setTablesSelectorPane(editPane, SPPIDdbInfo, dbDict, scopeName, appName
                         var availTableName = new Array();
                         var found = false;
 
-                        for (var i = 0; i < dbTableNames.items.length; i++) {
-                            availTableName.push(dbTableNames.items[i]);
+                        for (var i = 0; i < dbTableNames_Stage.items.length; i++) {
+                            availTableName.push(dbTableNames_Stage.items[i]);
                         }
 
                         for (var j = 0; j < availTableName.length; j++)
@@ -1751,8 +1454,8 @@ function setTableNames(dbDict_SPPID) {
     return selectTableNames;
 };
 
-function showTree(dbObjectsTree_SPPID, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane) {
-    alert('w');
+function showTree_SPPID(dbObjectsTree_SPPID, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane) {
+
     var selectTableNames = setTableNames(dbDict_SPPID);
     var connStr = dbDict_SPPID.ConnectionString;
     if (!connStr) {
@@ -1872,7 +1575,7 @@ function showTree(dbObjectsTree_SPPID, SPPIDdbInfo, dbDict_SPPID, scopeName, app
             serName: SPPIDdbInfo.serName
         },
         success: function (response, request) {
-            SPPIDdbInfo.dbTableNames = Ext.util.JSON.decode(response.responseText);
+            SPPIDdbInfo.dbTableNames_Stage = Ext.util.JSON.decode(response.responseText);
         },
         failure: function (f, a) {
             if (a.response)
@@ -2234,33 +1937,33 @@ function setTreeProperty_SPPID(dsConfigPane_SPPID, dbInfo, dbDict, tablesSelecto
         var dbServer = dsConfigForm.findField('dbstageServer').getValue();
         dbServer = (dbServer.toLowerCase() == 'localhost' ? '.' : dbServer);
         var upProvider = treeProperty.provider.toUpperCase();
-/*        var serviceNamePane = dsConfigPane_SPPID.items.items[9].items.items[9];
+        /*        var serviceNamePane = dsConfigPane_SPPID.items.items[9].items.items[9];
         var serviceName = '';
         var serName = '';
         if (serviceNamePane.items.items[0]) {
-            serviceName = serviceNamePane.items.items[0].value;
-            serName = serviceNamePane.items.items[0].serName;
+        serviceName = serviceNamePane.items.items[0].value;
+        serName = serviceNamePane.items.items[0].serName;
         }
         else if (dbInfo) {
-            if (dbInfo.dbInstance)
-                serviceName = dbInfo.dbInstance;
-            if (dbInfo.serName)
-                serName = dbInfo.serName;
+        if (dbInfo.dbInstance)
+        serviceName = dbInfo.dbInstance;
+        if (dbInfo.serName)
+        serName = dbInfo.serName;
         } */
 
         if (upProvider.indexOf('MSSQL') > -1) {
-            var dbInstance = dsConfigForm.findField('dbInstance').getValue();
-            var dbDatabase = dsConfigForm.findField('dbName').getValue();
+            var dbInstance = dsConfigForm.findField('dbstageInstance').getValue();
+            var dbDatabase = dsConfigForm.findField('dbstageName').getValue();
             if (dbInstance.toUpperCase() == "DEFAULT") {
                 var dataSrc = 'Data Source=' + dbServer + ';Initial Catalog=' + dbDatabase;
             } else {
                 var dataSrc = 'Data Source=' + dbServer + '\\' + dbInstance + ';Initial Catalog=' + dbDatabase;
             }
         }
-     /*    else if (upProvider.indexOf('ORACLE') > -1)
-            var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dsConfigForm.findField('portNumber').getValue() + ')))(CONNECT_DATA=(SERVER=DEDICATED)(' + serName + '=' + serviceName + ')))';
+        /*    else if (upProvider.indexOf('ORACLE') > -1)
+        var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dsConfigForm.findField('portNumber').getValue() + ')))(CONNECT_DATA=(SERVER=DEDICATED)(' + serName + '=' + serviceName + ')))';
         else if (upProvider.indexOf('MYSQL') > -1)
-            var dataSrc = 'Data Source=' + dbServer; */
+        var dataSrc = 'Data Source=' + dbServer; */
 
         treeProperty.connectionString = dataSrc
                                   + ';User ID=' + dsConfigForm.findField('dbstageUserName').getValue()
@@ -2272,27 +1975,27 @@ function setTreeProperty_SPPID(dsConfigPane_SPPID, dbInfo, dbDict, tablesSelecto
         treeProperty.provider = dbDict.Provider;
         var dbServer = dbInfo.dbServer;
         var upProvider = treeProperty.provider.toUpperCase();
-        dbServer = (dbServer.toLowerCase() == 'localhost' ? '.' : dbServer);
+        dbServer = (dbServer.toLowerCase() == 'localhost' ? '.' : dbstageServer);
 
         if (upProvider.indexOf('MSSQL') > -1) {
             if (dbInfo.dbInstance) {
                 if (dbInfo.dbInstance.toUpperCase() == "DEFAULT") {
-                    var dataSrc = 'Data Source=' + dbServer + ';Initial Catalog=' + dbInfo.dbName;
+                    var dataSrc = 'Data Source=' + dbstageServer + ';Initial Catalog=' + dbInfo.dbName;
                 } else {
                     var dataSrc = 'Data Source='
-					            + dbServer + '\\' + dbInfo.dbInstance
+					            + dbstageServer + '\\' + dbInfo.dbInstance
 											+ ';Initial Catalog=' + dbInfo.dbName;
                 }
             }
         }
-      /*  else if (upProvider.indexOf('ORACLE') > -1)
-            var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dbInfo.portNumber + ')))(CONNECT_DATA=(SERVER=DEDICATED)(' + dbInfo.serName + '=' + dbInfo.dbInstance + ')))';
+        /*  else if (upProvider.indexOf('ORACLE') > -1)
+        var dataSrc = 'Data Source=' + '(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=' + dbServer + ')(PORT=' + dbInfo.portNumber + ')))(CONNECT_DATA=(SERVER=DEDICATED)(' + dbInfo.serName + '=' + dbInfo.dbInstance + ')))';
         else if (upProvider.indexOf('MYSQL') > -1)
-            var dataSrc = 'Data Source=' + dbServer;
+        var dataSrc = 'Data Source=' + dbServer;
 
         treeProperty.connectionString = dataSrc
-                                        + ';User ID=' + dbInfo.dbUserName
-                                        + ';Password=' + dbInfo.dbPassword;
+        + ';User ID=' + dbInfo.dbUserName
+        + ';Password=' + dbInfo.dbPassword;
         treeProperty.schemaName = dbDict.SchemaName; */
     }
     return treeProperty;
@@ -2539,3 +2242,28 @@ function getFolderFromChildNode_SPPID(folderNode, dataTypes_SPPID) {
     }
     return folder;
 };
+function showDialog(width, height, title, message, buttons, callback) {
+    if (message.indexOf('\\r\\n') != -1)
+        var msg = message.replace('\\r\\n', '\r\n');
+    else
+        var msg = message;
+
+    if (msg.indexOf("\\") != -1)
+        var msgg = msg.replace(/\\\\/g, "\\");
+    else
+        var msgg = msg;
+
+    if (msg.indexOf("\\u0027") != -1)
+        var msgg = msg.replace(/\\u0027/g, "'");
+    else
+        var msgg = msg;
+
+
+    var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
+    Ext.Msg.show({
+        title: title,
+        msg: '<textarea ' + style + ' readonly="yes">' + msgg + '</textarea>',
+        buttons: buttons,
+        fn: callback
+    });
+}
