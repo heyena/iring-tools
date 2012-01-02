@@ -59,10 +59,15 @@ namespace org.iringtools.nhibernate
 		#region public methods
 		public Response Generate(string projectName, string applicationName)
 		{
-      Response response = new Response();
+            Response response = new Response();
 			Status status = new Status();
+            
+            response.StatusList.Add(status);
 
-      response.StatusList.Add(status);
+            AdapterProvider adapterProvider = new AdapterProvider(_settings);
+
+            XElement dataLayer = adapterProvider.GetBinding(projectName, applicationName);
+            _settings.Add("datalayer", dataLayer.Element("bind").Attribute("to").Value.Split(',')[1].Trim());
 
 			try
 			{
@@ -96,8 +101,12 @@ namespace org.iringtools.nhibernate
 						)
 					);
 
-          AdapterProvider adapterProvider = new AdapterProvider(_settings);
-					response.Append(adapterProvider.UpdateBinding(projectName, applicationName, binding));
+
+                    if (_settings["datalayer"] == "NHibernateLibrary")
+                    {
+                        response.Append(adapterProvider.UpdateBinding(projectName, applicationName, binding));
+                    }
+					
 
 					status.Messages.Add("Database dictionary of [" + projectName + "." + applicationName + "] updated successfully.");
 				}
