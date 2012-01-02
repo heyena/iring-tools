@@ -69,6 +69,7 @@
     <Compile Include="DataObjects.cs" />
     <Compile Include="DataProviders.cs" />
     <Compile Include="DataRelationships.cs" />
+    <Compile Include="Directory.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="GenericDataObject.cs" />
     <Compile Include="Grid.cs" />
