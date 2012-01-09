@@ -181,6 +181,8 @@ namespace iRINGTools.Web.Models
       Endpoints endpoints = folder.endpoints;
       string context = "";
       string endpointName;
+      string assembly = "";
+      string dataLayerName = "";
 
       if (endpoints != null)
       {
@@ -203,14 +205,20 @@ namespace iRINGTools.Web.Models
 
           DataLayer dataLayer = GetDataLayer(context, endpointName);
 
+          if (dataLayer != null)
+          {
+            assembly = dataLayer.Assembly;
+            dataLayerName = dataLayer.Name;
+          }
+
           Object record = new
           {
             Name = endpointName,
             Description = endpoint.Description,
-            DataLayer = dataLayer.Name,
+            DataLayer = dataLayerName,
             context = context,
             endpoint = endpointName,
-            Assembly = dataLayer.Assembly,
+            Assembly = assembly,
             securityRole = endpoint.securityRole
           };
 
@@ -219,7 +227,7 @@ namespace iRINGTools.Web.Models
           endPointNode.property.Add("Name", endpointName);
           endPointNode.property.Add("Description", endpoint.Description);
           endPointNode.property.Add("Context", context);
-          endPointNode.property.Add("Data Layer", dataLayer.Name);
+          endPointNode.property.Add("Data Layer", dataLayerName);
         }
       }
 
