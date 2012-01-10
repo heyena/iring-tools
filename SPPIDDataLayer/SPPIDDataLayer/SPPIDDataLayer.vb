@@ -259,7 +259,24 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Public Overrides Function GetConfiguration() As System.Xml.Linq.XElement
 
         Dim xelement As XElement
+        Dim provider As String = ""
+
         Dim path As String = _settings("ProjectConfigurationPath")
+        Dim oFile As System.IO.File
+        Dim oRead As System.IO.StreamReader
+        oRead = oFile.OpenText(path)
+
+
+        Dim LineIn As String
+        Dim value As String = ""
+        While oRead.Peek <> -1
+            LineIn = oRead.ReadLine()
+            If LineIn.Contains("Provider") = True Then
+                value = LineIn.Substring(LineIn.IndexOf("value=") + 7, LineIn.LastIndexOf("""") - (LineIn.IndexOf("value=") + 7))
+            End If
+
+        End While
+        oRead.Close()
 
         If _sppidconfiguration Is Nothing Then
             If AppSettings("SPPIDPlantConnectionString") = Nothing Then
@@ -271,13 +288,15 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
             If AppSettings("iRingStagingConnectionString") = Nothing Then
                 AppSettings("iRingStagingConnectionString") = String.Empty
             End If
+         
             _sppidconfiguration = New SPPIDConfiguration() With { _
               .PlantConnectionString = AppSettings("SPPIDPlantConnectionString"),
               .SiteConnectionString = AppSettings("SPPIDSiteConnectionString"),
             .StagingConnectionString = AppSettings("iRingStagingConnectionString"),
               .PIDConnectionString = AppSettings("PIDConnectionString"),
               .PIDDataDicConnectionString = AppSettings("PIDDataDicConnectionString"),
-              .PlantDataDicConnectionString = AppSettings("PlantDataDicConnectionString")
+              .PlantDataDicConnectionString = AppSettings("PlantDataDicConnectionString"),
+          .Provider = value
             }
         End If
 
@@ -296,6 +315,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         '' Create Config File ----------------------
         Dim configfile As New XElement("configuration", _
                     New XElement("appSettings", _
+                    New XElement("add", New XAttribute("key", "Provider"), _
+                    New XAttribute("value", Config.Provider)), _
                     New XElement("add", New XAttribute("key", "SPPIDSiteConnectionString"), _
                     New XAttribute("value", EncryptionUtility.Encrypt(Config.SiteConnectionString))), _
                     New XElement("add", New XAttribute("key", "SPPIDPlantConnectionString"), _
@@ -308,6 +329,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                     New XAttribute("value", EncryptionUtility.Encrypt(Config.PIDDataDicConnectionString))), _
                     New XElement("add", New XAttribute("key", "iRingStagingConnectionString"), _
                     New XAttribute("value", EncryptionUtility.Encrypt(Config.StagingConnectionString)))))
+
 
         If (File.Exists(_settings("ProjectConfigurationPath"))) Then
             File.Delete(_settings("ProjectConfigurationPath"))
@@ -737,7 +759,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
                 response.Append(generator.Generate(compilerVersion, dbDictionary, projectName, applicationName))
 
-               
+
 
                 status.Messages.Add("Database dictionary of [" & projectName & "." & applicationName & "] updated successfully.")
             End If

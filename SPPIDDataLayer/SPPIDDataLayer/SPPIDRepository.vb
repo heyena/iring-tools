@@ -96,7 +96,6 @@ Public Class SPPIDRepository
           .type = MultipartMessageType.FormData _
         })
 
-
         Dim retVal As String = _client.PostMultipartMessage(String.Format("/{0}/{1}/configure", scope, application), requestMessages, True)
 
         Dim objTableName As List(Of String) = Nothing

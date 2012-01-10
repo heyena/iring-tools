@@ -85,12 +85,12 @@ Public Class SPPIDController
             _PIDDicConnOracle = [String].Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}", form("dbServer"), form("portNumber"), form("serName"), form("dbInstance"), form("dbPIDDataDicUserName"), _
              form("dbPIDDataDicPassword"))
 
-            connStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=FOS_SITE;Password=FOS_SITE"
-            plantConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT"
-            _plantDicConnOracle = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD"
+            'connStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=FOS_SITE;Password=FOS_SITE"
+            'plantConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOT;Password=RUSSELCITY_PILOT"
+            '_plantDicConnOracle = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTD;Password=RUSSELCITY_PILOTD"
 
-            _PIDConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPID;Password=RUSSELCITY_PILOTPID"
-            _PIDDicConnOracle = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD"
+            '_PIDConnStr = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPID;Password=RUSSELCITY_PILOTPID"
+            '_PIDDicConnOracle = "Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=NDHST5005)(PORT=1521)))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=NDHPTST)));User ID=RUSSELCITY_PILOTPIDD;Password=RUSSELCITY_PILOTPIDD"
 
 
         End If
@@ -99,9 +99,9 @@ Public Class SPPIDController
 
         ''Create connection string for Staging Database ---------------------
         stageConnStr = [String].Format("Data Source={0};Initial Catalog={1};User ID={2};Password={3}", _staggConnDataSource, form("dbstageName"), form("dbstageUserName"), form("dbstagePassword"))
-        stageConnStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=PW_iRing_Staging;User ID=sa;Password=manager"
+        ' stageConnStr = "Data Source=NDHD06670\SQLEXPRESSW;Initial Catalog=PW_iRing_Staging;User ID=sa;Password=manager"
 
-        Dim configurations As New SPPIDConfiguration With {.PlantConnectionString = plantConnStr, .SiteConnectionString = connStr, .StagingConnectionString = stageConnStr, .PIDConnectionString = _PIDConnStr, .PIDDataDicConnectionString = _PIDDicConnOracle, .PlantDataDicConnectionString = _plantDicConnOracle}
+        Dim configurations As New SPPIDConfiguration With {.PlantConnectionString = plantConnStr, .SiteConnectionString = connStr, .StagingConnectionString = stageConnStr, .PIDConnectionString = _PIDConnStr, .PIDDataDicConnectionString = _PIDDicConnOracle, .PlantDataDicConnectionString = _plantDicConnOracle, .Provider = form("dbProvider")}
 
 
         ''Call repository method which gave call to service---------------------
@@ -134,8 +134,22 @@ Public Class SPPIDController
 
     Public Function DBDictionary(form As FormCollection) As ActionResult
         Try
+
+            Dim array As New ArrayList
             Dim dbDict As DatabaseDictionary = _repository.GetDBDictionary(form("scope"), form("app"))
-            Return Json(dbDict, JsonRequestBehavior.AllowGet)
+
+            '**************
+            Dim key As String = String.Format(_keyFormat, form("scope"), form("app"))
+
+            If Session(key) Is Nothing Then
+                Session(key) = _repository.GetConfiguration(form("scope"), form("app"))
+            End If
+            Dim SPPIDConfiguration As SPPIDConfiguration = DirectCast(Session(key), SPPIDConfiguration)
+            array.Add(Json(SPPIDConfiguration, JsonRequestBehavior.AllowGet))
+            array.Add(Json(dbDict, JsonRequestBehavior.AllowGet))
+
+            '**************
+            Return Json(array, JsonRequestBehavior.AllowGet)
         Catch e As Exception
             '_logger.[Error](e.ToString())
             Throw e
