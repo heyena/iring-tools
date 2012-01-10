@@ -17,6 +17,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
         var appName = config.app;
         var datalayer = config.datalayer;
         var dbDict_SPPID;
+        var dbPlantDict_SPPID;
         var SPPIDdbInfo;
         var dbTableNames_Stage;
         var userTableNames;
@@ -77,7 +78,9 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                                         app: appName
                                     },
                                     success: function (response, request) {
-                                        dbDict_SPPID = Ext.util.JSON.decode(response.responseText);
+                                        dbDict_SPPID = Ext.util.JSON.decode(response.responseText)[1].Data;
+                                        dbPlantDict_SPPID = Ext.util.JSON.decode(response.responseText)[0].Data;
+
                                         if (dbDict_SPPID.ConnectionString)
                                             dbDict_SPPID.ConnectionString = Base64.decode(dbDict_SPPID.ConnectionString);
 
@@ -93,7 +96,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                                             if (!editPane) {
                                                 var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
                                             }
-                                            setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer);
+                                            setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer, dbPlantDict_SPPID);
                                         }
                                     },
                                     failure: function (response, request) {
@@ -101,7 +104,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                                         if (!editPane) {
                                             var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
                                         }
-                                        setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer);
+                                        setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer, dbPlantDict_SPPID);
                                         editPane.getLayout().setActiveItem(editPane.items.length - 1);
                                     }
                                 });
@@ -128,13 +131,14 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                                         app: appName
                                     },
                                     success: function (response, request) {
-                                       //alert(response.responseText);
+                                        // alert(response.responseText);
+                                        dbPlantDict_SPPID = Ext.util.JSON.decode(response.responseText)
                                     },
                                     failure: function (response, request) {
                                         showDialog(660, 300, 'Saving Result', 'An error has occurred while saving the configuration.', Ext.Msg.OK, null);
                                     }
                                 });
-                                dbTableNames_Stage = setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer);
+                                dbTableNames_Stage = setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer, dbPlantDict_SPPID);
                             }
                         }, {
                             xtype: 'tbspacer',
@@ -309,7 +313,9 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                 app: appName
             },
             success: function (response, request) {
-                dbDict_SPPID = Ext.util.JSON.decode(response.responseText);
+                //dbDict_SPPID = Ext.util.JSON.decode(response.responseText);
+                dbDict_SPPID = Ext.util.JSON.decode(response.responseText)[1].Data;
+                dbPlantDict_SPPID = Ext.util.JSON.decode(response.responseText)[0].Data;
 
                 if (dbDict_SPPID.ConnectionString)
                     dbDict_SPPID.ConnectionString = Base64.decode(dbDict_SPPID.ConnectionString);
@@ -332,7 +338,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
                     if (!editPane) {
                         var editPane = dataObjectsPane.items.items.map[scopeName + '.' + appName + '.editor-panel'];
                     }
-                    setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer);
+                    setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer, dbPlantDict_SPPID);
                 }
             },
             failure: function (response, request) {
@@ -351,7 +357,7 @@ AdapterManager.sppidConfigWizard = Ext.extend(Ext.Container, {
 
 
 //*************************************
-function setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID) {
+function setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID, dbPlantDict_SPPID) {
     var dsConfigForm_SPPId = dsConfigPane_SPPID.getForm();
     var Provider = null;
 
@@ -411,8 +417,236 @@ function setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID) 
         userName.clearInvalid();
         password.clearInvalid();
     }
+
+    var dbName = dsConfigForm_SPPId.findField('dbName');
+    var portNumber = dsConfigForm_SPPId.findField('portNumber');
+    var host = dsConfigForm_SPPId.findField('dbhost');
+    var dbServer = dsConfigForm_SPPId.findField('dbServer');
+    var dbInstance = dsConfigForm_SPPId.findField('dbInstance');
+    var serviceName = dsConfigPane_SPPID.items.items[0].items.items[9];
+    var dbSchema = dsConfigForm_SPPId.findField('dbSchema');
+    var userName = dsConfigForm_SPPId.findField('dbUserName');
+    var password = dsConfigForm_SPPId.findField('dbPassword');
+    var dbProvider = dsConfigForm_SPPId.findField('dbProvider');
+
+    var dbPIDUserName = dsConfigForm_SPPId.findField('dbPIDUserName');
+    var dbPIDPassword = dsConfigForm_SPPId.findField('dbPIDPassword');
+
+    var dbPIDDataDicUserName = dsConfigForm_SPPId.findField('dbPIDDataDicUserName');
+    var dbPIDDataDicPassword = dsConfigForm_SPPId.findField('dbPIDDataDicPassword');
+
+    var dbOraPlantUserName = dsConfigForm_SPPId.findField('dbOraPlantUserName');
+    var dbOraPlantPassword = dsConfigForm_SPPId.findField('dbOraPlantPassword');
+
+    var dbPlantDataDicUserName = dsConfigForm_SPPId.findField('dbPlantDataDicUserName');
+    var dbPlantDataDicPassword = dsConfigForm_SPPId.findField('dbPlantDataDicPassword');
+
+    var dbplantName = dsConfigForm_SPPId.findField('dbplantName');
+    var dbplantServer = dsConfigForm_SPPId.findField('dbplantServer');
+    var plantuserName = dsConfigForm_SPPId.findField('dbplantUserName');
+    var plantpassword = dsConfigForm_SPPId.findField('dbplantPassword');
+    var dbplantProvider = dsConfigForm_SPPId.findField('dbplantProvider');
+
+
+    var OraclePane = dsConfigPane_SPPID.items.items[2];
+    var plantDatabase = dsConfigPane_SPPID.items.items[1];
+
+    var SPPIDPlantdbInfo;
+
+    if (dbPlantDict_SPPID.Provider.indexOf('ORACLE') > -1) {
+
+        SPPIDPlantdbInfo = getdbPlantObjects(dbPlantDict_SPPID.SiteConnectionString, SPPIDPlantdbInfo, dbPlantDict_SPPID.Provider);
+
+        dbName.hide();
+        dbServer.hide();
+        dbInstance.hide();
+        dbServer.setValue(SPPIDPlantdbInfo.dbServer);
+        dbInstance.setValue(SPPIDPlantdbInfo.dbInstance);
+        dbName.setValue(SPPIDPlantdbInfo.dbName);
+        userName.setValue(SPPIDPlantdbInfo.dbUserName);
+        password.setValue(SPPIDPlantdbInfo.dbPassword);
+        dbProvider.setValue(dbPlantDict_SPPID.Provider);
+        dbSchema.setValue(SPPIDPlantdbInfo.SchemaName);
+        host.setValue(SPPIDPlantdbInfo.dbServer);
+        host.show();
+
+        serviceName.show();
+        creatRadioField(serviceName, serviceName.id, SPPIDPlantdbInfo.dbInstance, SPPIDPlantdbInfo.serName);
+
+        setOraclePanevalue(dbPIDUserName, dbPIDPassword, dbPIDDataDicUserName, dbPIDDataDicPassword, dbOraPlantUserName, dbOraPlantPassword, dbPlantDataDicUserName, dbPlantDataDicPassword, dbPlantDict_SPPID);
+
+        OraclePane.show();
+        plantDatabase.hide();
+        
+        portNumber.setValue(SPPIDPlantdbInfo.portNumber);
+        portNumber.show();
+    }
+    else {
+
+        OraclePane.hide();
+
+        SPPIDPlantdbInfo = getdbPlantObjects(dbPlantDict_SPPID.SiteConnectionString, SPPIDPlantdbInfo, dbPlantDict_SPPID.Provider);
+
+        portNumber.hide();
+        host.hide();
+        serviceName.hide();
+
+        dbServer.setValue(SPPIDPlantdbInfo.dbServer);
+        dbServer.show();
+        dbInstance.setValue(SPPIDPlantdbInfo.dbInstance);
+        dbInstance.show();
+        dbName.setValue(SPPIDPlantdbInfo.dbName);
+        dbName.show();
+        dbProvider.setValue(dbPlantDict_SPPID.Provider);
+        host.setValue(SPPIDPlantdbInfo.dbServer);
+        portNumber.setValue(SPPIDPlantdbInfo.portNumber);
+        userName.setValue(SPPIDPlantdbInfo.dbUserName);
+        password.setValue(SPPIDPlantdbInfo.dbPassword);
+        dbSchema.hide();
+        // dbSchema.setValue(dbDict.SchemaName);
+
+        SPPIDPlantdbInfo = {}
+        SPPIDPlantdbInfo = getdbPlantObjects(dbPlantDict_SPPID.PlantConnectionString, SPPIDPlantdbInfo, dbPlantDict_SPPID.Provider);
+        
+        dbplantServer.setValue(SPPIDPlantdbInfo.dbServer);
+        dbplantServer.show();
+
+        dbplantName.setValue(SPPIDPlantdbInfo.dbName);
+        dbplantName.show();
+        dbplantProvider.setValue(dbPlantDict_SPPID.Provider);
+        //host.setValue(SPPIDdbInfo.dbServer);
+        plantuserName.setValue(SPPIDPlantdbInfo.dbUserName);
+        plantpassword.setValue(SPPIDPlantdbInfo.dbPassword);
+        // dbSchema.setValue(dbDict_SPPID.SchemaName);
+
+        plantDatabase.show(); 
+
+    }
 };
 
+
+function setOraclePanevalue(dbPIDUserName, dbPIDPassword, dbPIDDataDicUserName, dbPIDDataDicPassword, dbOraPlantUserName, dbOraPlantPassword, dbPlantDataDicUserName, dbPlantDataDicPassword, connectionStrings) {
+    
+    var PIDConnectionString = connectionStrings.PIDConnectionString;
+    var connStrParts = PIDConnectionString.split(';');
+
+    for (var i = 0; i < connStrParts.length; i++) {
+        var pair = connStrParts[i].split('=');
+        switch (pair[0].toUpperCase()) {
+            case 'USER ID':
+                dbPIDUserName.setValue(pair[1]);
+                break;
+            case 'PASSWORD':
+                dbPIDPassword.setValue(pair[1]);
+                break;
+        }
+    }
+    var PIDDataDicConnectionString = connectionStrings.PIDDataDicConnectionString;
+    connStrParts = PIDDataDicConnectionString.split(';');
+    for (var i = 0; i < connStrParts.length; i++) {
+        var pair = connStrParts[i].split('=');
+        switch (pair[0].toUpperCase()) {
+            case 'USER ID':
+                dbPIDDataDicUserName.setValue(pair[1]);
+                break;
+            case 'PASSWORD':
+                dbPIDDataDicPassword.setValue(pair[1]);
+                break;
+        }
+    }
+
+    var PlantConnectionString = connectionStrings.PlantConnectionString;
+    connStrParts = PlantConnectionString.split(';');
+    for (var i = 0; i < connStrParts.length; i++) {
+        var pair = connStrParts[i].split('=');
+        switch (pair[0].toUpperCase()) {
+            case 'USER ID':
+                dbOraPlantUserName.setValue(pair[1]);
+                break;
+            case 'PASSWORD':
+                dbOraPlantPassword.setValue(pair[1]);
+                break;
+        }
+    }
+
+    var PlantDataDicConnectionString = connectionStrings.PlantDataDicConnectionString;
+    connStrParts = PlantDataDicConnectionString.split(';');
+    for (var i = 0; i < connStrParts.length; i++) {
+        var pair = connStrParts[i].split('=');
+        switch (pair[0].toUpperCase()) {
+            case 'USER ID':
+                dbPlantDataDicUserName.setValue(pair[1]);
+                break;
+            case 'PASSWORD':
+                dbPlantDataDicPassword.setValue(pair[1]);
+                break;
+        }
+    }
+};
+
+function getdbPlantObjects(getdbPlantObjects, SPPIDPlantdbInfo, Provider) {
+    SPPIDPlantdbInfo = {};
+    var connStrParts = getdbPlantObjects.split(';');
+    var provider = Provider.toUpperCase();
+    for (var i = 0; i < connStrParts.length; i++) {
+        var pair = connStrParts[i].split('=');
+        switch (pair[0].toUpperCase()) {
+            case 'DATA SOURCE':
+                if (provider.indexOf('MSSQL') > -1) {
+                    var dsValue = pair[1].split('\\');
+                    SPPIDPlantdbInfo.dbServer = (dsValue[0].toLowerCase() == '.' ? 'localhost' : dsValue[0]);
+                    SPPIDPlantdbInfo.dbInstance = dsValue[1];
+                    SPPIDPlantdbInfo.portNumber = 1433;
+                    SPPIDPlantdbInfo.serName = '';
+                }
+                else if (provider.indexOf('MYSQL') > -1) {
+                    SPPIDPlantdbInfo.dbServer = (pair[1].toLowerCase() == '.' ? 'localhost' : pair[1]);
+                    SPPIDPlantdbInfo.portNumber = 3306;
+                }
+                else if (provider.indexOf('ORACLE') > -1) {
+                    var dsStr = connStrParts[i].substring(12, connStrParts[i].length);
+                    var dsValue = dsStr.split('=');
+                    for (var j = 0; j < dsValue.length; j++) {
+                        dsValue[j] = dsValue[j].substring(dsValue[j].indexOf('(') + 1, dsValue[j].length);
+                        switch (dsValue[j].toUpperCase()) {
+                            case 'HOST':
+                                var server = dsValue[j + 1];
+                                var port = dsValue[j + 2];
+                                var index = server.indexOf(')');
+                                server = server.substring(0, index);
+                                SPPIDPlantdbInfo.portNumber = port.substring(0, 4);
+                                SPPIDPlantdbInfo.dbServer = (server.toLowerCase() == '.' ? 'localhost' : server);
+                                break;
+                            case 'SERVICE_NAME':
+                                var sername = dsValue[j + 1];
+                                index = sername.indexOf(')');
+                                SPPIDPlantdbInfo.dbInstance = sername.substring(0, index);
+                                SPPIDPlantdbInfo.serName = 'SERVICE_NAME';
+                                break;
+                            case 'SID':
+                                var sername = dsValue[j + 1];
+                                index = sername.indexOf(')');
+                                SPPIDPlantdbInfo.dbInstance = sername.substring(0, index);
+                                SPPIDPlantdbInfo.serName = 'SID';
+                                break;
+                        }
+                    }
+                }
+                break;
+            case 'INITIAL CATALOG':
+                SPPIDPlantdbInfo.dbName = pair[1];
+                break;
+            case 'USER ID':
+                SPPIDPlantdbInfo.dbUserName = pair[1];
+                SPPIDPlantdbInfo.SchemaName = pair[1];
+                break;
+            case 'PASSWORD':
+                SPPIDPlantdbInfo.dbPassword = pair[1];
+                break;
+        }
+    }
+    return SPPIDPlantdbInfo;
+};
 function changeConfigOracle(host, dbSchema, userName, password, serviceName, OraclePane, plantDatabase) {
     host.setValue('');
     host.clearInvalid();
@@ -430,11 +664,13 @@ function changeConfigOracle(host, dbSchema, userName, password, serviceName, Ora
     serviceName.show();
     creatRadioField(serviceName, serviceName.id, '', '', 1);
     for (var i = 0; i < OraclePane.items.length; i++) {
-        Ext.getCmp(OraclePane.items.items[i].id).show();
+        for (var j = 0; j < OraclePane.items.items[0].items.length; j++) {
+            Ext.getCmp(OraclePane.items.items[i].items.items[j].id).show();
+        }
     }
     OraclePane.show();
     for (var i = 0; i < plantDatabase.items.length; i++) {
-        if (Ext.getCmp(plantDatabase.items.items[i].id).getValue() == '') {
+        if ((Ext.getCmp(plantDatabase.items.items[i].id).getValue() == '') && (plantDatabase.items.items[i].inputType != 'password')) {
             Ext.getCmp(plantDatabase.items.items[i].id).setValue(' ');
         }
         Ext.getCmp(plantDatabase.items.items[i].id).hide();
@@ -469,13 +705,18 @@ function changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password
     plantDatabase.show();
 
     for (var i = 0; i < OraclePane.items.length; i++) {
-        Ext.getCmp(OraclePane.items.items[i].id).setValue(' ');
-        Ext.getCmp(OraclePane.items.items[i].id).hide();
+        //OraclePane.items.items[0].items.items[0]
+        for (var j = 0; j < OraclePane.items.items[0].items.length; j++) {
+            if (OraclePane.items.items[i].items.items[j].inputType != 'password') {
+                Ext.getCmp(OraclePane.items.items[i].items.items[j].id).setValue(' ');
+                Ext.getCmp(OraclePane.items.items[i].items.items[j].id).hide();
+            }
+        }
     }
     OraclePane.hide();
 }
 
-function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer) {
+function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, appName, dataObjectsPane, datalayer, dbPlantDict_SPPID) {
     if (editPane) {
         if (editPane.items.map[scopeName + '.' + appName + '.dsConfigPane_SPPID']) {
             var dsConfigPanel = editPane.items.map[scopeName + '.' + appName + '.dsConfigPane_SPPID'];
@@ -597,6 +838,8 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
                             }
 
                             portNumber.setValue('1433');
+
+                            changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password, plantDatabase, OraclePane);
                         }
                     }
                     }
@@ -714,13 +957,6 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
                     value: 'localhost',
                     allowBlank: false
                 }, {
-                    xtype: 'textfield',
-                    name: 'plantportNumber',
-                    fieldLabel: 'Port Number',
-                    hidden: true,
-                    value: '1521',
-                    allowBlank: false
-                }, {
                     name: 'dbplantInstance',
                     xtype: 'textfield',
                     fieldLabel: 'Database Instance',
@@ -761,14 +997,16 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
                         xtype: 'textfield',
                         fieldLabel: 'User Name',
                         name: 'dbPIDUserName',
-                        value: 'RUSSELCITY_PILOTPID'
+                        //  value: 'RUSSELCITY_PILOTPID'
+                        value: 'dfgdfh'
                     },
                    {
                        xtype: 'textfield',
                        inputType: 'password',
                        fieldLabel: 'Password',
-                       name: 'dbPIDPassword',
-                       value: 'RUSSELCITY_PILOTPID'
+                       name: 'dbPIDPassword'
+                       // value: 'RUSSELCITY_PILOTPID'
+
                    }]
                 },
                  {
@@ -780,15 +1018,15 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
                      items: [{
                          xtype: 'textfield',
                          fieldLabel: 'User Name',
-                         name: 'dbPIDDataDicUserName',
-                         value: 'RUSSELCITY_PILOTPIDD'
+                         name: 'dbPIDDataDicUserName'
+                         //value: 'RUSSELCITY_PILOTPIDD'
                      },
                         {
                             xtype: 'textfield',
                             inputType: 'password',
                             fieldLabel: 'Password',
-                            name: 'dbPIDDataDicPassword',
-                            value: 'RUSSELCITY_PILOTPIDD'
+                            name: 'dbPIDDataDicPassword'
+                            //value: 'RUSSELCITY_PILOTPIDD'
                         }]
                  },
                     {
@@ -973,7 +1211,7 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
         });
 
         if (SPPIDdbInfo) {
-            setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID);
+            setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID, dbPlantDict_SPPID);
         }
         editPane.add(dsConfigPane_SPPID);
         var panelIndex = editPane.items.indexOf(dsConfigPane_SPPID);
