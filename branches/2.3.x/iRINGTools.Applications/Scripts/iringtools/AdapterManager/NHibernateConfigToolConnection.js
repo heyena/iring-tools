@@ -651,20 +651,20 @@ function setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dat
 							};
 						}
                        
-            treeLoader.on('beforeload', function (treeLoader, node) {
-                dataObjectsPane.body.mask('Loading...', 'x-mask-loading');
-            }, this);
+                        treeLoader.on('beforeload', function (treeLoader, node) {
+                            dataObjectsPane.body.mask('Loading...', 'x-mask-loading');
+                        }, this);
 
-            treeLoader.on('load', function (treeLoader, node) {
-                dataObjectsPane.body.unmask();
-            }, this);
+                        treeLoader.on('load', function (treeLoader, node) {
+                            dataObjectsPane.body.unmask();
+                        }, this);
 
-						var rootNode = dbObjectsTree.getRootNode();
-						rootNode.reload(
-              function (rootNode) {
-                loadTree(rootNode, dbDict);               
-              });
-					  }
+			            var rootNode = dbObjectsTree.getRootNode();
+			            rootNode.reload(
+                          function (rootNode) {
+                            loadTree(rootNode, dbDict);               
+                          });
+			            }
 				}, {
 					xtype: 'tbspacer',
 					width: 4
