@@ -993,6 +993,10 @@ function showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjects
         dataObjectsPane.body.unmask();
     }, this);
 
+    treeLoader.on('loadexception', function (treeLoader, node) {
+        dataObjectsPane.body.unmask();
+    }, this);
+
 	rootNode.reload(
       function (rootNode) {
         loadTree(rootNode, dbDict);

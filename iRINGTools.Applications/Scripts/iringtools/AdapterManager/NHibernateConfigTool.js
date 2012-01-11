@@ -94,8 +94,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
                                             var dbTables = setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 
-                                            if (!dbTables)
-                                                dbInfo.tableNames = dbTables;
+                                            if (dbTables)
+                                                dbInfo.dbTableNames = dbTables;
                                         }
                                     },
                                     failure: function (response, request) {
@@ -105,8 +105,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                                         }
                                         var dbTables = setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
 
-                                        if (!dbTables)
-                                            dbInfo.tableNames = dbTables;
+                                        if (dbTables)
+                                            dbInfo.dbTableNames = dbTables;
 
                                         editPane.getLayout().setActiveItem(editPane.items.length - 1);
                                     }
@@ -127,8 +127,9 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                                 }
 
                                 var dbTables = setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
-                                if (!dbTables)
-                                    dbInfo.tableNames = dbTables;
+                                
+                                if (dbTables)
+                                    dbInfo.dbTableNames = dbTables;
                             }
                         }, {
                             xtype: 'tbspacer',
@@ -328,8 +329,8 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
 
                     var dbTables = setDsConfigPane(editPane, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
                    
-                    if (!dbTables)
-                        dbInfo.tableNames = dbTables;
+                    if (dbTables)
+                        dbInfo.dbTableNames = dbTables;
                 }
             },
             failure: function (response, request) {
