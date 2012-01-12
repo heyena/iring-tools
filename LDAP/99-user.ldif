@@ -1,0 +1,16 @@
+dn: cn=schema
+objectClass: top
+objectClass: ldapSubentry
+objectClass: subschema
+cn: schema
+attributeTypes: ( context-oid NAME 'context' EQUALITY caseIgnoreMatch ORDERING caseIgnoreOrderingMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 USAGE userApplications )
+attributeTypes: ( type-oid NAME 'type' EQUALITY caseIgnoreMatch ORDERING caseIgnoreOrderingMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 USAGE userApplications )
+attributeTypes: ( id-oid NAME 'id' EQUALITY caseIgnoreMatch ORDERING caseIgnoreOrderingMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 USAGE userApplications )
+objectClasses: ( groupWithRoles-oid NAME 'groupWithRoles' SUP groupOfNames STRUCTURAL MUST ( objectClass $ cn ) MAY ( member $ description $ owner $ roleOccupant $ businessCategory $ seeAlso $ ou $ o ) )
+objectClasses: ( endpoint-oid NAME 'endpoint' SUP top STRUCTURAL MUST ( objectClass $ cn ) MAY ( name $ type $ member $ description $ context ) )
+objectClasses: ( role-oid NAME 'role' SUP top STRUCTURAL MUST ( objectClass $ cn ) MAY member )
+objectClasses: ( folder-oid NAME 'folder' SUP top STRUCTURAL MUST ( objectClass $ cn ) MAY ( name $ type $ member $ description $ context ) )
+objectClasses: ( exchange-oid NAME 'exchange' SUP top STRUCTURAL MUST ( objectClass $ cn ) MAY ( id $ name $ type $ member $ description $ context ) )
+modifiersName: cn=Directory Manager,cn=Root DNs,cn=config
+modifyTimestamp: 20111101193801Z
+
