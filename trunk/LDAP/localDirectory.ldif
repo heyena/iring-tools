@@ -1,0 +1,80 @@
+version: 1
+
+dn: o=iringtools,dc=iringDirectory,dc=org
+objectClass: top
+objectClass: organization
+o: iringtools
+
+dn: ou=groups,o=iringtools,dc=iringDirectory,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: groups
+
+dn: ou=roles,o=iringtools,dc=iringDirectory,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: roles
+
+dn: ou=users,o=iringtools,dc=iringDirectory,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+dn: uid=xxxx@gmail.com,ou=users,o=iringtools,dc=iringDirectory,dc=org
+objectClass: person
+objectClass: organizationalPerson
+objectClass: inetOrgPerson
+objectClass: top
+cn: Robin
+sn: Benjamins
+uid: xxxx@gmail.com
+
+dn: cn=admin,ou=roles,o=iringtools,dc=iringDirectory,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: admin
+member: cn=userGroup1,ou=groups,o=iringtools,dc=iringDirectory,dc=org
+
+dn: cn=userGroup1,ou=groups,o=iringtools,dc=iringDirectory,dc=org
+objectClass: groupOfNames
+objectClass: top
+cn: userGroup1
+member: uid=xxxx@gmail.com,ou=users,o=iringtools,dc=iringDirectory,dc=org
+
+dn: ou=directory,o=iringtools,dc=iringDirectory,dc=org
+objectClass: organizationalUnit
+objectClass: top
+ou: directory
+
+dn: cn=12345_000,ou=directory,o=iringtools,dc=iringDirectory,dc=org
+objectClass: folder
+objectClass: top
+cn: 12345_000
+context: 12345_000
+description: Test Project
+member: 
+name: 12345_000
+type: folder
+
+dn: cn=Application Data,cn=12345_000,ou=directory,o=iringtools,dc=iringDirec
+ tory,dc=org
+objectClass: folder
+objectClass: top
+cn: Application Data
+context: 12345_000
+description: Test Folder
+member: 
+name: Application Data
+type: folder
+
+dn: cn=ABC,cn=Application Data,cn=12345_000,ou=directory,o=iringtools,dc=iri
+ ngDirectory,dc=org
+objectClass: top
+objectClass: endpoint
+cn: ABC
+context: 12345_000
+description: Test Application
+member: 
+name: ABC
+type: endpoint
+
