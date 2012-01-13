@@ -51,44 +51,44 @@ namespace NUnit.Tests
     [Test]
     public void GetScopes()
     {
-      List<ScopeProject> scopes = _adapterProvider.GetScopes();
+      List<Folder> scopes = _adapterProvider.GetScopes();
 
       Assert.AreNotEqual(0, scopes.Count);
     }
 
-    [Test]
-    public void UpdateScopes()
-    {
-      string scopesPath = String.Format(
-         "{0}Scopes.xml",
-         _settings["AppDataPath"]
-       );
+    //[Test]
+    //public void UpdateScopes()
+    //{
+    //  string scopesPath = String.Format(
+    //     "{0}Scopes.xml",
+    //     _settings["AppDataPath"]
+    //   );
 
-      ScopeProjects scopes = Utility.Read<ScopeProjects>(scopesPath);
+    //  ScopeProjects scopes = Utility.Read<ScopeProjects>(scopesPath);
 
-      scopes.Clear();
+    //  scopes.Clear();
 
-      ScopeProject scopeProject = new ScopeProject
-      {
-        Name = _settings["ProjectName"],
-        Description = "Test Project",
-        Applications = new ScopeApplications
-        {
-          new ScopeApplication
-          {
-            Name = _settings["ApplicationName"],
-            Description = "Test Application"
-          }
-        }
-      };
+    //  ScopeProject scopeProject = new ScopeProject
+    //  {
+    //    Name = _settings["ProjectName"],
+    //    Description = "Test Project",
+    //    Applications = new ScopeApplications
+    //    {
+    //      new ScopeApplication
+    //      {
+    //        Name = _settings["ApplicationName"],
+    //        Description = "Test Application"
+    //      }
+    //    }
+    //  };
 
-      scopes.Add(scopeProject);
+    //  scopes.Add(scopeProject);
 
-      Response response = _adapterProvider.UpdateScopes(scopes);
+    //  Response response = _adapterProvider.UpdateScopes(scopes);
 
-      Assert.AreEqual(StatusLevel.Success, response.Level);
-      Assert.AreNotEqual(0, response.StatusList.Count);
-    }
+    //  Assert.AreEqual(StatusLevel.Success, response.Level);
+    //  Assert.AreNotEqual(0, response.StatusList.Count);
+    //}
 
     [Test]
     public void GetBinding()
