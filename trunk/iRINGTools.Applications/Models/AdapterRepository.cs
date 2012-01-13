@@ -65,7 +65,7 @@ namespace iRINGTools.Web.Models
         if (_javaCoreClient.getBaseUri().Contains("dirxml"))
           obj = _javaCoreClient.Get<Directories>("", true);
         else
-          obj = _javaCoreClient.Get<Directories>(String.Format("/{0}", "fwei@bechtel.com"), true);
+          obj = _javaCoreClient.Get<Directories>("", true);
 
         _logger.Debug("Successfully called Adapter.");
       }
@@ -379,8 +379,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-
-        rootSecurityRole = _javaCoreClient.GetMessage(string.Format("/security/{0}", "fwei@bechtel.com"));
+        rootSecurityRole = _javaCoreClient.GetMessage("");
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
