@@ -521,12 +521,13 @@ namespace org.iringtools.nhibernate
     public Response Regenerate()
     {
       Response response = new Response();
+      Response regenerateResponse = new Response();
       AdapterProvider adapterProvider = new AdapterProvider(_settings);
-      ScopeProjects scopes = adapterProvider.GetScopes();
+      Directories scopes = adapterProvider.GetScopes();
 
-      foreach (ScopeProject sc in scopes)
+      foreach (Folder sc in scopes)
       {
-        response.Append(Regenerate(sc));
+        response.Append(Regenerate(sc, regenerateResponse));
       }
 
       return response;
@@ -535,13 +536,14 @@ namespace org.iringtools.nhibernate
     public Response Regenerate(String scope)
     {
       AdapterProvider adapterProvider = new AdapterProvider(_settings);
-      ScopeProjects scopes = adapterProvider.GetScopes();
+      Directories scopes = adapterProvider.GetScopes();
+      Response regenerateResponse = new Response();
       
-      foreach (ScopeProject sc in scopes)
+      foreach (Folder sc in scopes)
       {
         if (sc.Name.ToLower() == scope.ToLower())
         {
-          return Regenerate(sc);
+          return Regenerate(sc, regenerateResponse);
         }
       }
 
@@ -557,16 +559,35 @@ namespace org.iringtools.nhibernate
       return response;
     }
 
-    private Response Regenerate(ScopeProject scope)
+    private Response Regenerate(Folder scope, Response response)
     {
-      Response response = new Response();
+      //Response response = new Response();
 
-      foreach (ScopeApplication sa in scope.Applications)
+      //foreach (ScopeApplication sa in scope.Applications)
+      //{
+      //  response.Append(Regenerate(scope.Name, sa.Name));
+      //}
+
+      Endpoints endpoints = scope.endpoints;
+
+      if (endpoints != null)
       {
-        response.Append(Regenerate(scope.Name, sa.Name));
+        foreach (Endpoint endpoint in endpoints)
+        {
+          response.Append(Regenerate(scope.Name, endpoint.Name));
+        }
       }
 
-      return response;
+      if (scope.folders == null)
+        return response;
+      else
+      {
+        foreach (Folder subFolder in scope.folders)
+        {
+          response.Append(Regenerate(subFolder, response));          
+        }
+        return response;
+      }      
     }
 
     public Response Regenerate(String scope, String app)
