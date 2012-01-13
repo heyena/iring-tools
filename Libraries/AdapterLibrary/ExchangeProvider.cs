@@ -32,7 +32,7 @@ namespace org.iringtools.exchange
     private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
-    private ScopeProjects _scopes = null;
+    private Directories _scopes = null;
     private IIdentityLayer _identityLayer = null;
     private IDictionary _keyRing = null;
     private IDataLayer _dataLayer = null;
@@ -58,18 +58,24 @@ namespace org.iringtools.exchange
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
-      string scopesPath = String.Format("{0}Scopes.xml", _settings["XmlPath"]);
-      _settings["ScopesPath"] = scopesPath;
-
-      if (File.Exists(scopesPath))
-      {
-        _scopes = Utility.Read<ScopeProjects>(scopesPath);
-      }
+      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
+      if (_javaCoreClient.getBaseUri().Contains("dirxml"))
+        _scopes = _javaCoreClient.Get<Directories>("", true);
       else
-      {
-        _scopes = new ScopeProjects();
-        Utility.Write<ScopeProjects>(_scopes, scopesPath);
-      }
+        _scopes = _javaCoreClient.Get<Directories>("", true);
+
+      //string scopesPath = String.Format("{0}Scopes.xml", _settings["XmlPath"]);
+      //_settings["ScopesPath"] = scopesPath;
+
+      //if (File.Exists(scopesPath))
+      //{
+      //  _scopes = Utility.Read<ScopeProjects>(scopesPath);
+      //}
+      //else
+      //{
+      //  _scopes = new ScopeProjects();
+      //  Utility.Write<ScopeProjects>(_scopes, scopesPath);
+      //}
 
       _response = new Response();
       _response.StatusList = new List<Status>();
@@ -338,6 +344,37 @@ namespace org.iringtools.exchange
     }
 
     #region helper methods
+
+    private bool traverseDirectory(Folder folder, string applicationName)
+    {
+      Endpoints endpoints = folder.endpoints;
+
+      if (endpoints != null)
+      {
+        foreach (Endpoint endpoint in endpoints)
+        {
+          if (endpoint.Name.ToUpper() == applicationName.ToUpper())
+          {
+            return true;
+          }
+        }
+      }
+
+      if (folder.folders == null)
+        return false;
+      else
+      {
+        bool isScopeValid = false;
+        foreach (Folder subFolder in folder.folders)
+        {
+          isScopeValid = traverseDirectory(subFolder, applicationName);
+          if (isScopeValid)
+            break;
+        }
+        return isScopeValid;
+      }
+    }
+
     private void InitializeScope(string projectName, string applicationName)
     {
       try
@@ -345,17 +382,11 @@ namespace org.iringtools.exchange
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;
-          foreach (ScopeProject project in _scopes)
+          foreach (Folder project in _scopes)
           {
-            if (project.Name == projectName)
+            if (project.context.ToUpper() == projectName.ToUpper())
             {
-              foreach (ScopeApplication application in project.Applications)
-              {
-                if (application.Name == applicationName)
-                {
-                  isScopeValid = true;
-                }
-              }
+              isScopeValid = traverseDirectory(project, applicationName);
             }
           }
 
