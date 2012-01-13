@@ -46,6 +46,8 @@ using org.iringtools.utility;
 using StaticDust.Configuration;
 using System.Reflection;
 using System.ServiceModel.Web;
+using System.ServiceModel;
+using System.Security.Principal;
 
 
 namespace org.iringtools.adapter
@@ -57,7 +59,7 @@ namespace org.iringtools.adapter
 
         private IKernel _kernel = null;
         private AdapterSettings _settings = null;
-        private ScopeProjects _scopes = null;
+        private Directories _scopes = null;
         private IDataLayer2 _dataLayer = null;
         private IIdentityLayer _identityLayer = null;
         private IDictionary _keyRing = null;
@@ -110,18 +112,30 @@ namespace org.iringtools.adapter
             }
             #endregion
 
-            string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-            _settings["ScopesPath"] = scopesPath;
+            WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
+            if (ServiceSecurityContext.Current != null)
+            {
+              IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
+              _settings["UserName"] = identity.Name;
+            }
 
-            if (File.Exists(scopesPath))
-            {
-                _scopes = Utility.Read<ScopeProjects>(scopesPath);
-            }
+            if (_javaCoreClient.getBaseUri().Contains("dirxml"))
+              _scopes = _javaCoreClient.Get<Directories>("", true);
             else
-            {
-                _scopes = new ScopeProjects();
-                Utility.Write<ScopeProjects>(_scopes, scopesPath);
-            }
+              _scopes = _javaCoreClient.Get<Directories>("", true);
+
+            //string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+            //_settings["ScopesPath"] = scopesPath;
+
+            //if (File.Exists(scopesPath))
+            //{
+            //    _scopes = Utility.Read<ScopeProjects>(scopesPath);
+            //}
+            //else
+            //{
+            //    _scopes = new ScopeProjects();
+            //    Utility.Write<ScopeProjects>(_scopes, scopesPath);
+            //}
 
             string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
@@ -137,7 +151,7 @@ namespace org.iringtools.adapter
         }
 
         #region application methods
-        public ScopeProjects GetScopes()
+        public Directories GetScopes()
         {
             try
             {
@@ -163,88 +177,88 @@ namespace org.iringtools.adapter
             };
         }
 
-        public Response UpdateScopes(ScopeProjects scopes)
-        {
-            Response response = new Response();
-            Status status = new Status();
+        //public Response UpdateScopes(ScopeProjects scopes)
+        //{
+        //    Response response = new Response();
+        //    Status status = new Status();
 
-            response.StatusList.Add(status);
+        //    response.StatusList.Add(status);
 
-            try
-            {
-                foreach (ScopeProject project in scopes)
-                {
-                    ScopeProject findProject = scopes.FirstOrDefault<ScopeProject>(o => o.Name == project.Name);
+        //    try
+        //    {
+        //        foreach (ScopeProject project in scopes)
+        //        {
+        //            ScopeProject findProject = scopes.FirstOrDefault<ScopeProject>(o => o.Name == project.Name);
 
-                    if (findProject != null)
-                    {
-                        findProject.Name = project.Name;
-                        findProject.Description = project.Description;
+        //            if (findProject != null)
+        //            {
+        //                findProject.Name = project.Name;
+        //                findProject.Description = project.Description;
 
-                        foreach (ScopeApplication application in project.Applications)
-                        {
-                            ScopeApplication findApplication = findProject.Applications.FirstOrDefault<ScopeApplication>(o => o.Name == application.Name);
+        //                foreach (ScopeApplication application in project.Applications)
+        //                {
+        //                    ScopeApplication findApplication = findProject.Applications.FirstOrDefault<ScopeApplication>(o => o.Name == application.Name);
 
-                            if (findApplication != null)
-                            {
-                                findApplication.Name = application.Name;
-                                findApplication.Description = application.Description;
-                            }
-                            else
-                            {
-                                findProject.Applications.Add(application);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        scopes.Add(project);
-                    }
-                }
+        //                    if (findApplication != null)
+        //                    {
+        //                        findApplication.Name = application.Name;
+        //                        findApplication.Description = application.Description;
+        //                    }
+        //                    else
+        //                    {
+        //                        findProject.Applications.Add(application);
+        //                    }
+        //                }
+        //            }
+        //            else
+        //            {
+        //                scopes.Add(project);
+        //            }
+        //        }
 
-                Utility.Write<ScopeProjects>(scopes, _settings["ScopesPath"], true);
-                _scopes = scopes; //Update global variable
+        //        Utility.Write<ScopeProjects>(scopes, _settings["ScopesPath"], true);
+        //        _scopes = scopes; //Update global variable
 
-                status.Messages.Add("Scopes have been updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
+        //        status.Messages.Add("Scopes have been updated successfully.");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
 
-                status.Level = StatusLevel.Error;
-                status.Messages.Add(string.Format("Error saving scopes: {0}", ex));
-            }
+        //        status.Level = StatusLevel.Error;
+        //        status.Messages.Add(string.Format("Error saving scopes: {0}", ex));
+        //    }
 
-            return response;
-        }
+        //    return response;
+        //}
 
-        public Response DeleteScope(string projectName, string applicationName)
-        {
-            Response response = new Response();
-            Status status = new Status();
+        //public Response DeleteScope(string projectName, string applicationName)
+        //{
+        //    Response response = new Response();
+        //    Status status = new Status();
 
-            response.StatusList.Add(status);
+        //    response.StatusList.Add(status);
 
-            try
-            {
-                status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+        //    try
+        //    {
+        //        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
 
-                InitializeScope(projectName, applicationName);
+        //        InitializeScope(projectName, applicationName);
 
-                DeleteScope();
+        //        DeleteScope();
 
-                status.Messages.Add(String.Format("Scope {0} has been deleted successfully.", _settings["Scope"]));
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in DeleteScope: {0}", ex));
+        //        status.Messages.Add(String.Format("Scope {0} has been deleted successfully.", _settings["Scope"]));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Error(string.Format("Error in DeleteScope: {0}", ex));
 
-                status.Level = StatusLevel.Error;
-                status.Messages.Add(string.Format("Error deleting scope: {0}", ex));
-            }
+        //        status.Level = StatusLevel.Error;
+        //        status.Messages.Add(string.Format("Error deleting scope: {0}", ex));
+        //    }
 
-            return response;
-        }
+        //    return response;
+        //}
 
         public XElement GetBinding(string projectName, string applicationName)
         {
@@ -976,6 +990,37 @@ namespace org.iringtools.adapter
         #endregion
 
         #region private methods
+
+        private bool traverseDirectory(Folder folder, string applicationName)
+        {
+          Endpoints endpoints = folder.endpoints;
+
+          if (endpoints != null)
+          {
+            foreach (Endpoint endpoint in endpoints)
+            {
+              if (endpoint.Name.ToUpper() == applicationName.ToUpper())
+              {
+                return true;
+              }
+            }
+          }
+
+          if (folder.folders == null)
+            return false;
+          else
+          {
+            bool isScopeValid = false;
+            foreach (Folder subFolder in folder.folders)
+            {
+              isScopeValid = traverseDirectory(subFolder, applicationName);
+              if (isScopeValid)
+                break;
+            }
+            return isScopeValid;
+          }
+        }
+
         private void InitializeScope(string projectName, string applicationName, bool loadDataLayer)
         {
             try
@@ -984,20 +1029,14 @@ namespace org.iringtools.adapter
 
                 if (!_isScopeInitialized)
                 {
-                    bool isScopeValid = false;
-                    foreach (ScopeProject project in _scopes)
+                  bool isScopeValid = false;
+                  foreach (Folder project in _scopes)
+                  {
+                    if (project.context.ToUpper() == projectName.ToUpper())
                     {
-                        if (project.Name.ToUpper() == projectName.ToUpper())
-                        {
-                            foreach (ScopeApplication application in project.Applications)
-                            {
-                                if (application.Name.ToUpper() == applicationName.ToUpper())
-                                {
-                                    isScopeValid = true;
-                                }
-                            }
-                        }
+                      isScopeValid = traverseDirectory(project, applicationName);
                     }
+                  }
 
                     if (!isScopeValid)
                         scope = String.Format("all.{0}", applicationName);
@@ -1276,106 +1315,106 @@ namespace org.iringtools.adapter
             return count;
         }
 
-        private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)
-        {
-            try
-            {
-                bool projectExists = false;
-                bool applicationExists = false;
-                ScopeProject existingProject = null;
+        //private void UpdateScopes(string projectName, string projectDescription, string applicationName, string applicationDescription)
+        //{
+        //    try
+        //    {
+        //        bool projectExists = false;
+        //        bool applicationExists = false;
+        //        ScopeProject existingProject = null;
 
-                foreach (ScopeProject project in _scopes)
-                {
-                    if (project.Name.ToUpper() == projectName.ToUpper())
-                    {
-                        foreach (ScopeApplication application in project.Applications)
-                        {
-                            if (application.Name.ToUpper() == applicationName.ToUpper())
-                            {
-                                applicationExists = true;
-                                break;
-                            }
+        //        foreach (ScopeProject project in _scopes)
+        //        {
+        //            if (project.Name.ToUpper() == projectName.ToUpper())
+        //            {
+        //                foreach (ScopeApplication application in project.Applications)
+        //                {
+        //                    if (application.Name.ToUpper() == applicationName.ToUpper())
+        //                    {
+        //                        applicationExists = true;
+        //                        break;
+        //                    }
 
-                            existingProject = project;
-                            projectExists = true;
-                            break;
-                        }
-                    }
-                }
+        //                    existingProject = project;
+        //                    projectExists = true;
+        //                    break;
+        //                }
+        //            }
+        //        }
 
-                // project does not exist, add it
-                if (!projectExists)
-                {
-                    ScopeProject newProject = new ScopeProject()
-                    {
-                        Name = projectName,
-                        Description = projectDescription,
-                        Applications = new ScopeApplications()
-            {
-              new ScopeApplication()
-              {
-                Name = applicationName,
-                Description = applicationDescription,
-              }
-            }
-                    };
+        //        // project does not exist, add it
+        //        if (!projectExists)
+        //        {
+        //            ScopeProject newProject = new ScopeProject()
+        //            {
+        //                Name = projectName,
+        //                Description = projectDescription,
+        //                Applications = new ScopeApplications()
+        //                {
+        //                  new ScopeApplication()
+        //                  {
+        //                    Name = applicationName,
+        //                    Description = applicationDescription,
+        //                  }
+        //                }
+        //            };
 
-                    _scopes.Add(newProject);
-                }
-                else if (!applicationExists)
-                {
-                    existingProject.Applications.Add(
-                      new ScopeApplication()
-                      {
-                          Name = applicationName,
-                          Description = applicationDescription,
-                      }
-                    );
-                }
+        //            _scopes.Add(newProject);
+        //        }
+        //        else if (!applicationExists)
+        //        {
+        //            existingProject.Applications.Add(
+        //              new ScopeApplication()
+        //              {
+        //                  Name = applicationName,
+        //                  Description = applicationDescription,
+        //              }
+        //            );
+        //        }
 
-                Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
-                throw ex;
-            }
-        }
+        //        Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Error(string.Format("Error in UpdateScopes: {0}", ex));
+        //        throw ex;
+        //    }
+        //}
 
-        private void DeleteScope()
-        {
-            try
-            {
-                //Clean up ScopeList
-                foreach (ScopeProject project in _scopes)
-                {
-                    if (project.Name.ToUpper() == _settings["ProjectName"].ToUpper())
-                    {
-                        foreach (ScopeApplication application in project.Applications)
-                        {
-                            if (application.Name.ToUpper() == _settings["ApplicationName"].ToUpper())
-                            {
-                                project.Applications.Remove(application);
-                            }
-                            break;
-                        }
-                        break;
-                    }
-                }
+        //private void DeleteScope()
+        //{
+        //    try
+        //    {
+        //        //Clean up ScopeList
+        //        foreach (ScopeProject project in _scopes)
+        //        {
+        //            if (project.Name.ToUpper() == _settings["ProjectName"].ToUpper())
+        //            {
+        //                foreach (ScopeApplication application in project.Applications)
+        //                {
+        //                    if (application.Name.ToUpper() == _settings["ApplicationName"].ToUpper())
+        //                    {
+        //                        project.Applications.Remove(application);
+        //                    }
+        //                    break;
+        //                }
+        //                break;
+        //            }
+        //        }
 
-                //Save ScopeList
-                Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+        //        //Save ScopeList
+        //        Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
 
-                //BindingConfig
-                File.Delete(_settings["BindingConfigurationPath"]);
+        //        //BindingConfig
+        //        File.Delete(_settings["BindingConfigurationPath"]);
 
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in DeleteScope: {0}", ex));
-                throw ex;
-            }
-        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.Error(string.Format("Error in DeleteScope: {0}", ex));
+        //        throw ex;
+        //    }
+        //}
 
         private IList<IDataObject> CreateDataObjects(string graphName, string dataObjectsString)
         {
