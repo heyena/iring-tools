@@ -85,7 +85,7 @@ namespace org.iringtools.services
     /// <returns>Returns a list of ScopeProject objects.</returns>
     [Description("Gets the scopes (project and application combinations) available from the service.")]
     [WebGet(UriTemplate = "/scopes")]
-    public ScopeProjects GetScopes()
+    public Directories GetScopes()
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";
@@ -127,19 +127,19 @@ namespace org.iringtools.services
     /// </summary>
     /// <param name="scopes">The scopes object.</param>
     /// <returns>Returns a Response object.</returns>
-    [Description("Replaces the available scopes with the posted scopes.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/scopes")]
-    public Response UpdateScopes(ScopeProjects scopes)
-    {
-      try
-      {
-        return _adapterProvider.UpdateScopes(scopes);
-      }
-      catch (Exception ex)
-      {
-        return PrepareErrorResponse(ex);
-      }
-    }
+    //[Description("Replaces the available scopes with the posted scopes.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/scopes")]
+    //public Response UpdateScopes(ScopeProjects scopes)
+    //{
+    //  try
+    //  {
+    //    return _adapterProvider.UpdateScopes(scopes);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return PrepareErrorResponse(ex);
+    //  }
+    //}
     #endregion
 
     #region GetBinding
