@@ -120,9 +120,9 @@ namespace org.iringtools.adapter
             }
 
             if (_javaCoreClient.getBaseUri().Contains("dirxml"))
-              _scopes = _javaCoreClient.Get<Directories>("", true);
+              _scopes = _javaCoreClient.Get<Directories>("directory", true);
             else
-              _scopes = _javaCoreClient.Get<Directories>("", true);
+              _scopes = _javaCoreClient.Get<Directories>("directory", true);
 
             //string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
             //_settings["ScopesPath"] = scopesPath;

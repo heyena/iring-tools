@@ -106,9 +106,9 @@ namespace org.iringtools.adapter
 
       WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
       if (_javaCoreClient.getBaseUri().Contains("dirxml"))
-        _scopes = _javaCoreClient.Get<Directories>("", true);
+        _scopes = _javaCoreClient.Get<Directories>("directory", true);
       else
-        _scopes = _javaCoreClient.Get<Directories>("", true);
+        _scopes = _javaCoreClient.Get<Directories>("directory", true);
 
       //string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
       //_settings["ScopesPath"] = scopesPath;
