@@ -319,6 +319,7 @@
         if (index == 0) {
             if (node.childNodes[0]) {
                 if (node.childNodes[0].data.record.securityRole) {
+                    securityRole = node.childNodes[0].data.record.securityRole;
                     if (node.childNodes[0].data.record.securityRole.indexOf('superadmin') > -1)
                         ifsuperadmin = true;
                 }
