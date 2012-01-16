@@ -1,4 +1,7 @@
-version: 1
+dn: dc=iringug,dc=org
+objectClass: domain
+objectClass: top
+dc: iringug
 
 dn: o=iringtools,dc=iringug,dc=org
 objectClass: top
@@ -25,62 +28,62 @@ objectClass: person
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: top
+uid: karthur
 cn: King
 sn: Arthur
-uid: karthur
-
-dn: cn=admin,ou=rights,o=iringtools,dc=iringug,dc=org
-objectClass: groupOfNames
-objectClass: top
-cn: admin
-member: cn=directoryAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
 
 dn: cn=directoryAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
 objectClass: groupOfNames
 objectClass: top
-cn: directoryAdmins
 description: Controls admin rights on the directory
 member: uid=karthur,ou=users,o=iringtools,dc=iringug,dc=org
+cn: directoryAdmins
+
+dn: cn=admin,ou=rights,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+member: cn=directoryAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+cn: admin
 
 dn: ou=directory,o=iringtools,dc=iringug,dc=org
 objectClass: organizationalUnit
 objectClass: top
 ou: directory
 
-dn: cn=adapterAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
-objectClass: groupOfNames
-objectClass: top
-cn: adapterAdmins
-description: Controls login to AdapterManager
-member: uid=karthur,ou=users,o=iringtools,dc=iringug,dc=org
-member: uid=guest,ou=users,o=iringtools,dc=iringug,dc=org
-
-dn: cn=exchangeAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
-objectClass: groupOfNames
-objectClass: top
-cn: exchangeAdmins
-description: Controls login to ExchangeManager and has exchange right
-member: uid=guest,ou=users,o=iringtools,dc=iringug,dc=org
-member: uid=karthur,ou=users,o=iringtools,dc=iringug,dc=org
-
-dn: cn=exchange,ou=rights,o=iringtools,dc=iringug,dc=org
-objectClass: groupOfNames
-objectClass: top
-cn: exchange
-member: cn=exchangeAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
-
-dn: cn=user,ou=rights,o=iringtools,dc=iringug,dc=org
-objectClass: groupOfNames
-objectClass: top
-cn: user
-member: cn=adapterAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
-
 dn: uid=guest,ou=users,o=iringtools,dc=iringug,dc=org
 objectClass: person
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: top
+uid: guest
 cn: iRINGTools
 sn: Guest
-uid: guest
+
+dn: cn=adapterAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+description: Controls login to AdapterManager
+member: uid=guest,ou=users,o=iringtools,dc=iringug,dc=org
+member: uid=karthur,ou=users,o=iringtools,dc=iringug,dc=org
+cn: adapterAdmins
+
+dn: cn=exchangeAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+description: Controls login to ExchangeManager and has exchange right
+member: uid=guest,ou=users,o=iringtools,dc=iringug,dc=org
+member: uid=karthur,ou=users,o=iringtools,dc=iringug,dc=org
+cn: exchangeAdmins
+
+dn: cn=exchange,ou=rights,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+member: cn=exchangeAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+cn: exchange
+
+dn: cn=user,ou=rights,o=iringtools,dc=iringug,dc=org
+objectClass: groupOfNames
+objectClass: top
+member: cn=adapterAdmins,ou=groups,o=iringtools,dc=iringug,dc=org
+cn: user
 
