@@ -140,7 +140,7 @@
           text: 'New Endpoint',
           icon: 'Content/img/16x16/document-new.png',
           scope: this,
-          action: 'newapplication'
+          action: 'newendpoint'
       }
     ]
     },
@@ -151,14 +151,14 @@
           text: 'Edit Endpoint',
           icon: 'Content/img/16x16/document-properties.png',
           scope: this,
-          action: 'editapplication'
+          action: 'editendpoint'
       },
       {
           xtype: 'button',
           text: 'Delete Endpoint',
           icon: 'Content/img/16x16/edit-delete.png',
           scope: this,
-          action: 'deleteapplication'
+          action: 'deleteendpoint'
       },
       {
           xtype: 'menuseparator'
@@ -168,7 +168,7 @@
           text: 'Open Configuration',
           icon: 'Content/img/16x16/preferences-system.png',
           scope: this,
-          action: 'configure'
+          action: 'configureendpoint'
       }
     ]
     },

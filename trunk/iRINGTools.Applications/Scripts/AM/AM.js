@@ -12,7 +12,8 @@ Ext.application({
     enableQuickTips: true,
     appFolder: 'Scripts/AM',
     controllers: [
-         'AdapterManagerController'
+          'AdapterManagerController'
+        , 'ConfigurationController'
     ],
     launch: function () {
         Ext.QuickTips.init();
