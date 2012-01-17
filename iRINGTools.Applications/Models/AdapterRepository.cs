@@ -424,18 +424,26 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string Endpoint(string newEndpointName, string path, string description, string state)
+    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string assembly)
     {
       string obj = null;
+      string endpointName = null;
 
       if (state == "new")
+      {
         path = path + '.' + newEndpointName;
+        endpointName = newEndpointName;
+      }
+      else
+      {
+        endpointName = path.Substring(path.LastIndexOf('/') + 1);
+      }
 
       path = path.Replace('/', '.');
 
       try
       {
-        obj = _javaCoreClient.PostMessage(string.Format("directory/endpoint/{0}/{1}/{2}", path, newEndpointName, "endpoint"), description, true);
+        obj = _javaCoreClient.PostMessage(string.Format("/endpoint/{0}/{1}/{2}", path, newEndpointName, "endpoint"), description, true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -443,6 +451,7 @@ namespace iRINGTools.Web.Models
         _logger.Error(ex.Message.ToString());
       }
 
+      UpdateBinding(context, endpointName, assembly);
       return obj;
     }
 
