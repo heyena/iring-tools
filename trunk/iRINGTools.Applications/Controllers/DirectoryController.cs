@@ -443,7 +443,7 @@ namespace org.iringtools.web.controllers
     public JsonResult Endpoint(FormCollection form)
     {
       string success;
-      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"]);
+      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["assembly"]);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
