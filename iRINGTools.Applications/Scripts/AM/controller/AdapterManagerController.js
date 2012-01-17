@@ -74,14 +74,14 @@
             'menu button[action=deletescope]': {
                 click: this.deleteScope
             },
-            'menu button[action=newapplication]': {
-                click: this.newApplication
+            'menu button[action=newendpoint]': {
+                click: this.newEndpoint
             },
-            'menu button[action=editapplication]': {
-                click: this.editApplication
+            'menu button[action=editendpoint]': {
+                click: this.editEndpoint
             },
-            'menu button[action=deleteapplication]': {
-                click: this.deleteApplication
+            'menu button[action=deleteendpoint]': {
+                click: this.deleteEndpoint
             },
             'menu button[action=showdata]': {
                 click: this.showDataGrid
@@ -785,7 +785,7 @@
         return true;
     },
 
-    newApplication: function () {
+    newEndpoint: function () {
         var tree = this.getDirTree(),
         node = tree.getSelectedNode(),
         conf = {
@@ -812,7 +812,7 @@
         win.show();
     },
 
-    editApplication: function () {
+    editEndpoint: function () {
         var tree = this.getDirTree(),
         node = tree.getSelectedNode(),
         conf = {
@@ -822,7 +822,7 @@
             node: node,
             state: 'edit',
             node: node.parentNode,
-            title: 'Edit Endpint \"' + node.data.text + '\"',
+            title: 'Edit Endpoint \"' + node.data.text + '\"',
             iconCls: 'tabsApplication'
         };
         var win = Ext.widget('applicationform', conf);
@@ -897,7 +897,7 @@
             win.close();
         }, this);
         win.show();
-    },    
+    },
 
     deleteScope: function () {
         var tree = this.getDirTree(),
@@ -921,7 +921,7 @@
         tree.scopeMenu.hide();
     },
 
-    deleteApplication: function () {
+    deleteEndpoint: function () {
         var tree = this.getDirTree(),
             node = tree.getSelectedNode();
         Ext.Ajax.request({
