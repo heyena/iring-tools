@@ -19,7 +19,7 @@ using System.Xml.Linq;
 
 namespace org.iringtools.adapter.datalayer
 {
-  public class SpreadsheetDataLayer : BaseConfigurableDataLayer , IDataLayer2
+  public class SpreadsheetDataLayer : BaseConfigurableDataLayer
   {
     private SpreadsheetProvider _provider = null;
     //private List<IDataObject> _dataObjects = null;
@@ -243,7 +243,7 @@ namespace org.iringtools.adapter.datalayer
         LoadDataDictionary(objectType);
 
         response = SaveDataObjects(objectType, dataObjects);
-
+        //update configuration accordingly
         Response resp = Configure(GetConfiguration());
         return response;
       }
