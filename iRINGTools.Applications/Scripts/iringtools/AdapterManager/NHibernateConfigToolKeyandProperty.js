@@ -510,6 +510,7 @@ function setKeysFolder(editPane, node, scopeName, appName) {
 				width: 240,
 				height: 370,
 				border: 0,
+				legend: 'Available Keys',				
 				store: availItems,
 				displayField: 'keyName',
 				valueField: 'keyValue'
@@ -517,6 +518,7 @@ function setKeysFolder(editPane, node, scopeName, appName) {
 				width: 240,
 				height: 370,
 				border: 0,
+				legend: 'Selected Keys',
 				store: selectedItems,
 				displayField: 'keyName',
 				valueField: 'keyValue'
@@ -706,6 +708,7 @@ function setPropertiesFolder(editPane, node, scopeName, appName) {
 				width: 240,
 				height: 370,
 				border: 0,
+				legend: 'Available Properties',
 				store: availItems,
 				displayField: 'propertyName',
 				valueField: 'propertyValue'				
@@ -713,6 +716,7 @@ function setPropertiesFolder(editPane, node, scopeName, appName) {
 				width: 240,
 				height: 370,
 				border: 0,
+				legend: 'Selected Properties',
 				store: selectedItems,
 				displayField: 'propertyName',
 				valueField: 'propertyValue'				
