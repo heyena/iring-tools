@@ -762,8 +762,7 @@ function setTablesSelectorPane(editPane, dbInfo, dbDict, scopeName, appName, dat
 };
 
 function loadTree(rootNode, dbDict) {  
-    var shownProperty = new Array();        
-	var relationTypeStr = ['OneToOne', 'OneToMany'];
+    var relationTypeStr = ['OneToOne', 'OneToMany'];
 
 	// sync data object tree with data dictionary
 	for (var i = 0; i < rootNode.childNodes.length; i++) {
@@ -785,7 +784,8 @@ function loadTree(rootNode, dbDict) {
 			dataObjectNode.setText(dataObject.objectName);
 
 			if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
-				var keysNode = dataObjectNode.attributes.children[0];
+			    var shownProperty = new Array();	
+                var keysNode = dataObjectNode.attributes.children[0];
 				var propertiesNode = dataObjectNode.attributes.children[1];
 				var relationshipsNode = dataObjectNode.attributes.children[2];
 
