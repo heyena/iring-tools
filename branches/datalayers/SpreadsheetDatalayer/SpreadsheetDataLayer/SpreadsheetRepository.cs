@@ -81,7 +81,7 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
-    public void Configure(string scope, string application, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile)
+    public void Configure(string context, string endpoint, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile)
     {
       using (InitializeProvider(configuration))
       {
@@ -116,7 +116,7 @@ namespace org.iringtools.adapter.datalayer
             });
             inputFile.Flush();
           }
-          _client.PostMultipartMessage(string.Format("/{0}/{1}/configure", scope, application), requestMessages);
+          _client.PostMultipartMessage(string.Format("/{0}/{1}/configure", context, endpoint), requestMessages);
         }
       }
     }

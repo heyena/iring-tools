@@ -87,7 +87,7 @@ namespace org.iringtools.adapter.datalayer
           HttpPostedFileBase hpf = files[file] as HttpPostedFileBase;
           if (hpf.ContentLength == 0)
             continue;
-          string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["XmlPath"], form["Scope"], form["Application"]);
+          string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["XmlPath"], form["contextName"], form["endpoint"]);
 
           SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
           {
@@ -100,7 +100,7 @@ namespace org.iringtools.adapter.datalayer
             configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
             hpf.InputStream.Flush();
             hpf.InputStream.Position = 0;
-            _repository.Configure(form["Scope"], form["Application"], datalayer, configuration, hpf.InputStream);
+            _repository.Configure(form["contextName"], form["endpoint"], datalayer, configuration, hpf.InputStream);
           }
           else
           {
@@ -108,7 +108,7 @@ namespace org.iringtools.adapter.datalayer
             configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
           }
 
-          SetConfiguration(form["Scope"], form["Application"], configuration);
+          SetConfiguration(form["contextName"], form["endpoint"], configuration);
 
           //break;
         }
@@ -128,13 +128,13 @@ namespace org.iringtools.adapter.datalayer
         };
     }
 
-    private SpreadsheetConfiguration GetConfiguration(string scope, string application)
+    private SpreadsheetConfiguration GetConfiguration(string context, string endpoint)
     {
-      string key = string.Format(_keyFormat, scope, application);
+      string key = string.Format(_keyFormat, context, endpoint);
 
       if (Session[key] == null)
       {
-        Session[key] = _repository.GetConfiguration(scope, application);
+        Session[key] = _repository.GetConfiguration(context, endpoint);
       }
 
       return (SpreadsheetConfiguration)Session[key];
@@ -142,7 +142,7 @@ namespace org.iringtools.adapter.datalayer
 
     public ActionResult UpdateConfiguration(FormCollection form)
     {
-      SpreadsheetConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
+      SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
       if (configuration != null)
       {
         foreach (SpreadsheetTable workSheet in configuration.Tables)
@@ -158,7 +158,7 @@ namespace org.iringtools.adapter.datalayer
             }
           }
         }
-        _repository.Configure(form["scope"], form["application"], form["datalayer"], configuration,null);
+        _repository.Configure(form["context"], form["endpoint"], form["datalayer"], configuration,null);
         return Json(new { success = true }, JsonRequestBehavior.AllowGet);
       }
       else
@@ -167,9 +167,9 @@ namespace org.iringtools.adapter.datalayer
       }
 
     }
-    private void SetConfiguration(string scope, string application, SpreadsheetConfiguration configuration)
+    private void SetConfiguration(string context, string endpoint, SpreadsheetConfiguration configuration)
     {
-      string key = string.Format(_keyFormat, scope, application);
+      string key = string.Format(_keyFormat, context, endpoint);
 
       Session[key] = configuration;
     }
@@ -180,7 +180,7 @@ namespace org.iringtools.adapter.datalayer
 
       if (_repository != null)
       {
-        SpreadsheetConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
+        SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
 
         if (configuration != null)
         {
@@ -300,11 +300,11 @@ namespace org.iringtools.adapter.datalayer
 
     public JsonResult Configure(FormCollection form)
     {
-      SpreadsheetConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
+      SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
 
       if (configuration != null)
       {
-        _repository.Configure(form["Scope"], form["Application"], form["DataLayer"], configuration, null);
+        _repository.Configure(form["context"], form["endpoint"], form["DataLayer"], configuration, null);
         return new JsonResult() //(6)
             {
                 ContentType = "text/html",
@@ -325,7 +325,7 @@ namespace org.iringtools.adapter.datalayer
     public JsonResult GetWorksheets(FormCollection form)
     {
       JsonContainer<List<WorksheetPart>> container = new JsonContainer<List<WorksheetPart>>();
-      container.items = _repository.GetWorksheets(GetConfiguration(form["Scope"], form["Application"]));
+      container.items = _repository.GetWorksheets(GetConfiguration(form["context"], form["endpoint"]));
       container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
@@ -334,41 +334,11 @@ namespace org.iringtools.adapter.datalayer
     public JsonResult GetColumns(FormCollection form)
     {
       JsonContainer<List<SpreadsheetColumn>> container = new JsonContainer<List<SpreadsheetColumn>>();
-      container.items = _repository.GetColumns(GetConfiguration(form["scope"], form["application"]), form["worksheet"]);
+      container.items = _repository.GetColumns(GetConfiguration(form["context"], form["endpoint"]), form["worksheet"]);
       container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }
-
-    //public JsonResult AddWorksheets(FormCollection form)
-    //{
-    //  SpreadsheetConfiguration configuration = GetConfiguration(form["scope"], form["application"]);
-    //  List<WorksheetPart> worksheets = _repository.GetWorksheets(configuration);
-
-    //  object worksheetNames = form["worksheets"];
-
-    //  //foreach (string worksheetName in worksheetNames)
-    //  //{
-    //  //  WorksheetPart worksheet = worksheets.FirstOrDefault<WorksheetPart>(o => o.Worksheet.LocalName == worksheetName);
-    //  ////  ExcelWorksheet worksheet = worksheets.FirstOrDefault<ExcelWorksheet>(o => o.Name == worksheetName);
-    //  //  if (worksheet != null && !worksheets.Contains(worksheet))
-    //  //  {
-    //  //    SpreadsheetTable t = new SpreadsheetTable();
-    //  //    t.Name = worksheetName;
-    //  //    t.Label = worksheetName;
-    //  //    t.TableType = TableType.Worksheet;
-    //  //    t.Columns = new List<SpreadsheetColumn>();
-    //  //    configuration.Tables.Add(t);
-    //  //  }
-    //  //}
-
-    //  return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-    //}
-
-    //public ActionResult AddColumns(FormCollection form)
-    //{
-    //  return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-    //}
 
   }
 
