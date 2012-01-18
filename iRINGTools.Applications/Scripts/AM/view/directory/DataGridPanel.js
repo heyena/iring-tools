@@ -70,8 +70,8 @@ Ext.define('AM.view.directory.DataGridPanel', {
         'Ext.data.*'
   ],
     closable: true,
-    scope: null,
-    app: null,
+    context: null,
+    endpoint: null,
     graph: null,
     url: null,
     reload: null,
@@ -82,7 +82,7 @@ Ext.define('AM.view.directory.DataGridPanel', {
             model: 'AM.model.DynamicModel',
             autoLoad: false,
             pageSize: 25,
-            storeId: this.scope + '.' + this.app + '.' + this.graph+'gridstore'
+            storeId: this.context + '.' + this.endpoint + '.' + this.graph+'gridstore'
         });
 
         var ptb = Ext.create('Ext.PagingToolbar', {
@@ -122,10 +122,10 @@ Ext.define('AM.view.directory.DataGridPanel', {
     },
 
     onBeforeLoad: function (store, action) {
-        store.proxy.extraParams.scope = this.scope;
+        store.proxy.extraParams.context = this.context;
         store.proxy.extraParams.start = (store.currentPage - 1) * store.pageSize;
         store.proxy.extraParams.limit = store.pageSize;
-        store.proxy.extraParams.app = this.app;
+        store.proxy.extraParams.endpoint = this.endpoint;
         store.proxy.extraParams.graph = this.graph;
     }
 });

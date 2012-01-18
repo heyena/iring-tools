@@ -761,16 +761,16 @@
         var tree = this.getDirTree(),
         content = this.getMainContent(),
         node = tree.getSelectedNode(),
-        context = node.data.property.context,
-        endpoint = node.data.property.endpoint,
+        contextName = node.data.property.context,
+        endpointName = node.data.property.endpoint,
         graph = node.data.text;
         var conf = {
-            title: context + '.' + endpoint + '.' + graph,
-            id: context + endpoint + graph + Ext.id(),
-            scope: scope,
+            title: contextName + '.' + endpointName + '.' + graph,
+            id: contextName + endpointName + graph + Ext.id(),
+            context: contextName,
             //start: 0,
             //limit: 25,
-            app: app,
+            endpoint: endpointName,
             graph: graph
         };
         var exist = content.items.map[conf.id];

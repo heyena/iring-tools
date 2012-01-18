@@ -13,7 +13,7 @@ namespace iRINGTools.Web.Models
   {
     Directories GetScopes();
 
-    DataLayers GetDataLayers(string contextName, string endpoint);
+    DataLayers GetDataLayers();
 
     Tree GetDirectoryTree();
 

@@ -29,12 +29,12 @@
         var showconfigure = "";
         var path = this.path;
         var state = this.state;
-        
+
         var name = "";
         var description = "";
         var dataLayer = "";
         var assembly = '';
-        var context = this.record.context;        
+        var context = this.record.context;
 
         if (this.state == 'edit' && this.record != null) {
             name = this.record.Name;
@@ -44,8 +44,8 @@
             showconfigure = false;
         }
         else
-            showconfigure = true;        
-
+            showconfigure = true;
+        var me = this;
         var cmbDataLayers = Ext.create('Ext.form.ComboBox', {
             fieldLabel: 'Data Layer',
             width: 400,
@@ -66,15 +66,16 @@
             hiddenName: 'Assembly',
             value: assembly,
             listeners: {
-                'select': function (combo, record, index) {
-                    if (record != null && this.record != null) {
-                        this.record.DataLayer = record.data.name;
-                        this.record.Assembly = record.data.assembly;
+                'select': function (combo, rec, index) {
+                    if (rec != null && me.record != null) {
+                        me.record.DataLayer = rec[0].data.name;
+                        me.record.Assembly = rec[0].data.assembly;
+                        //  this.getForm().findField('assembly').setValue(record.data.assmply);
                     }
                 }
             }
         });
-       
+
         this.items = [{
             xtype: 'form',
             labelWidth: 100,
@@ -92,7 +93,7 @@
               { name: 'path', xtype: 'hidden', value: path, allowBlank: false },
               { name: 'state', xtype: 'hidden', value: state, allowBlank: false },
               { name: 'contextValue', xtype: 'hidden', value: context, allowBlank: false },
-              { name: 'assembly', xtype: 'hidden', value: cmbDataLayers.value, allowBlank: false },
+              { name: 'assembly', xtype: 'hidden', value: me.record.Assembly, allowBlank: false },
               { fieldLabel: 'Endpoint name', name: 'endpoint', xtype: 'textfield', value: name, allowBlank: false },
               { fieldLabel: 'Context name', name: 'context', xtype: 'textfield', value: context, disabled: true },
               { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', value: description },
@@ -132,7 +133,7 @@
         var me = this;
         var thisForm = this.items.first().getForm();
         var endpointName = thisForm.findField('endpoint').getValue();
-
+        thisForm.findField('assembly').setValue(this.record.Assembly);
         if (ifExistSibling(endpointName, me.node, me.state)) {
             showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
             return;
