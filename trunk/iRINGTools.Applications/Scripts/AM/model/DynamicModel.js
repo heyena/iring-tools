@@ -7,10 +7,10 @@
         actionMethods: { read: 'POST' },
         url: 'datagrid/getdata',
         extraParams: {
-            scope: null,
+            context: null,
             start: 0,
             limit: 25,
-            app: null,
+            endpoint: null,
             graph: null    
         },
         reader: {

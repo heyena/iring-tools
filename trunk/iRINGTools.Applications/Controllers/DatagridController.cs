@@ -40,10 +40,10 @@ namespace org.iringtools.web.controllers
         var gridData = new List<Dictionary<string, object>>();
         var encode = new Dictionary<string, object>();
         DataItems dataItems = new DataItems();
-        string scope = form["scope"];
-        string app = form["app"];
+        string context = form["context"];
+        string endpoint = form["endpoint"];
         string graph = form["graph"];
-        _key = string.Format("Dictionary-{0}.{1}", scope, app);
+        _key = string.Format("Dictionary-{0}.{1}", context, endpoint);
         string filter = form["filter"];
         string sort = form["sort"];
         string dir = form["dir"];
@@ -55,7 +55,7 @@ namespace org.iringtools.web.controllers
         DataFilter dataFilter = CreateDataFilter(filter, sort, dir);
 
         if (((DataDictionary)Session[_key]) == null)
-            GetDatadictionary(scope, app);
+            GetDatadictionary(context, endpoint);
 
         DataObject dataObject = ((DataDictionary)Session[_key]).dataObjects.FirstOrDefault(d => d.objectName == graph);
         var fields = from row in dataObject.dataProperties
@@ -68,7 +68,7 @@ namespace org.iringtools.web.controllers
                      };
 
 
-          dataItems = GetDataObjects(scope, app, graph, dataFilter,start, limit);
+          dataItems = GetDataObjects(context, endpoint, graph, dataFilter,start, limit);
      
         long total = dataItems.total;
 
@@ -204,14 +204,14 @@ namespace org.iringtools.web.controllers
       return dataFilter;
     }
 
-    private void GetDatadictionary(String scope, String app)
+    private void GetDatadictionary(String context, String endpoint)
     {
       try
       {
-        string reluri = string.Format("{0}/{1}", app, scope);
+        string reluri = string.Format("{0}/{1}", endpoint, context);
         Session[_key] = _repository.GetDictionary(reluri);
         if (dataDict.dataObjects.Count == 0)
-          response = "There is no records in the database for data object \"" + app + "\"";
+          response = "There is no records in the database for data object \"" + endpoint + "\"";
       }
       catch (Exception ex)
       {
@@ -222,12 +222,12 @@ namespace org.iringtools.web.controllers
     }
 
 
-    private DataItems GetDataObjects(string scope, string app, string graph, DataFilter dataFilter, int start, int limit)
+    private DataItems GetDataObjects(string context, string endpoint, string graph, DataFilter dataFilter, int start, int limit)
     {
       DataItems dataItems = null;
       try
       {
-        dataItems = _repository.GetDataItems(app, scope, graph, dataFilter, start, limit);
+        dataItems = _repository.GetDataItems(endpoint, context, graph, dataFilter, start, limit);
       }
       catch (Exception ex)
       {

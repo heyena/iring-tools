@@ -423,14 +423,24 @@ namespace org.iringtools.web.controllers
         node.property.Add("endpoint", form["endpoint"]);
     }
 
-    public ActionResult DataLayers(string contextName, string endpoint)
+    //public ActionResult DataLayers(string contextName, string endpoint)
+    //{
+    //  DataLayers dataLayers = _repository.GetDataLayers(contextName, endpoint);
+    //  JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
+    //  container.items = dataLayers;
+    //  container.success = true;
+    //  container.total = dataLayers.Count;
+    //  return Json(container, JsonRequestBehavior.AllowGet);
+    //}
+
+    public ActionResult DataLayers()
     {
-      DataLayers dataLayers = _repository.GetDataLayers(contextName, endpoint);
-      JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
-      container.items = dataLayers;
-      container.success = true;
-      container.total = dataLayers.Count;
-      return Json(container, JsonRequestBehavior.AllowGet);
+        DataLayers dataLayers = _repository.GetDataLayers();
+        JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
+        container.items = dataLayers;
+        container.success = true;
+        container.total = dataLayers.Count;
+        return Json(container, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult Folder(FormCollection form)

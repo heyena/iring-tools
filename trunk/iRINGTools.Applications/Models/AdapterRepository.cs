@@ -287,7 +287,7 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public DataLayers GetDataLayers(string contextName, string endpoint)
+    public DataLayers GetDataLayers()
     {
       DataLayers obj = null;
 
