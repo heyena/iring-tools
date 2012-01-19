@@ -50,40 +50,6 @@
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="Bechtel.Common, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\svncorp\setroute\setroute.net\trunk\source\Satellites\SRDataLayer\Service\bin\Debug\Bechtel.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.SETROUTE.Client">
-      <HintPath>..\..\..\..\svncorp\setroute\setroute.net\trunk\source\Satellites\SRDataLayer\Service\bin\Debug\Bechtel.SETROUTE.Client.exe</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.SETROUTE.Services">
-      <HintPath>..\..\..\..\svncorp\setroute\setroute.net\trunk\source\Satellites\SRDataLayer\Service\bin\Debug\Bechtel.SETROUTE.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.SETROUTE.SRDataLayer">
-      <HintPath>..\..\..\..\svncorp\setroute\setroute.net\trunk\source\Satellites\SRDataLayer\Service\bin\Debug\Bechtel.SETROUTE.SRDataLayer.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.Common, Version=1.1.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\svncorp-dmz\tw\datalayer\trunk\TWDataLayer\bin\Debug\Bechtel.TEAMWorks.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.Services, Version=3.4.0.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\svncorp-dmz\tw\datalayer\trunk\TWDataLayer\bin\Debug\Bechtel.TEAMWorks.Services.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.TWCommon, Version=3.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\svncorp-dmz\tw\datalayer\trunk\TWDataLayer\bin\Debug\Bechtel.TEAMWorks.TWCommon.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.TWScriptEngine, Version=3.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\svncorp-dmz\tw\datalayer\trunk\TWDataLayer\bin\Debug\Bechtel.TEAMWorks.TWScriptEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="Bechtel.TEAMWorks.WinClient, Version=3.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <ExecutableExtension>.exe</ExecutableExtension>
-      <HintPath>..\..\..\..\svncorp-dmz\tw\datalayer\trunk\TWDataLayer\bin\Debug\Bechtel.TEAMWorks.WinClient.exe</HintPath>
-    </Reference>
     <Reference Include="Castle.Core, Version=1.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
@@ -91,6 +57,10 @@
     <Reference Include="Castle.DynamicProxy2, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.DynamicProxy2.dll</HintPath>
+    </Reference>
+    <Reference Include="DocumentsDataLayer, Version=1.1.0.578, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\svncorp-dmz\ipix\documents\trunk\DocumentsDataLayer\bin\Debug\DocumentsDataLayer.dll</HintPath>
     </Reference>
     <Reference Include="dotNetRDF, Version=0.4.2.11625, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -124,9 +94,6 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="TWDataLayer">
-      <HintPath>..\..\..\..\svncorp-dmz\tw\datalayer\trunk\TWDataLayer\bin\Debug\TWDataLayer.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Data\default.css" />

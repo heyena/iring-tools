@@ -92,65 +92,65 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets data transfer indices of a graph.")]
-    [WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
-    public void GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
-    {
-      try
-      {
-        if (hashAlgorithm == null)
-          hashAlgorithm = "MD5";
+    //[Description("Gets data transfer indices of a graph.")]
+    //[WebGet(UriTemplate = "/{scope}/{app}/{graph}?hashAlgorithm={hashAlgorithm}")]
+    //public void GetDataTransferIndices(string scope, string app, string graph, string hashAlgorithm)
+    //{
+    //  try
+    //  {
+    //    if (hashAlgorithm == null)
+    //      hashAlgorithm = "MD5";
 
-        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndices(scope, app, graph, hashAlgorithm);
+    //    DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndices(scope, app, graph, hashAlgorithm);
 
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
-      }
-      catch (Exception e)
-      {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
-      }
-    }
+    //    HttpContext.Current.Response.ContentType = "application/xml";
+    //    HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+    //    HttpContext.Current.Response.ContentType = "text/plain";
+    //    HttpContext.Current.Response.Write(e.ToString());
+    //  }
+    //}
 
-    [Description("Gets data transfer indices of a graph with filter.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter?hashAlgorithm={hashAlgorithm}")]
-    public void GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DataFilter filter)
-    {
-      try
-      {
-        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, filter);
+    //[Description("Gets data transfer indices of a graph with filter.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/filter?hashAlgorithm={hashAlgorithm}")]
+    //public void GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlgorithm, DataFilter filter)
+    //{
+    //  try
+    //  {
+    //    DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesWithFilter(scope, app, graph, hashAlgorithm, filter);
 
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
-      }
-      catch (Exception e)
-      {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
-      }
-    }
+    //    HttpContext.Current.Response.ContentType = "application/xml";
+    //    HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+    //    HttpContext.Current.Response.ContentType = "text/plain";
+    //    HttpContext.Current.Response.Write(e.ToString());
+    //  }
+    //}
 
-    [Description("Gets data transfer indices of requested manifest.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
-    public void GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
-    {
-      try
-      {
-        DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
+    //[Description("Gets data transfer indices of requested manifest.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi?hashAlgorithm={hashAlgorithm}")]
+    //public void GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
+    //{
+    //  try
+    //  {
+    //    DataTransferIndices dtis = _dxfrProvider.GetDataTransferIndicesWithManifest(scope, app, graph, hashAlgorithm, manifest);
 
-        HttpContext.Current.Response.ContentType = "application/xml";
-        HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
-      }
-      catch (Exception e)
-      {
-        WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
-        HttpContext.Current.Response.ContentType = "text/plain";
-        HttpContext.Current.Response.Write(e.ToString());
-      }
-    }
+    //    HttpContext.Current.Response.ContentType = "application/xml";
+    //    HttpContext.Current.Response.Write(Utility.SerializeDataContract<DataTransferIndices>(dtis));
+    //  }
+    //  catch (Exception e)
+    //  {
+    //    WebOperationContext.Current.OutgoingResponse.StatusCode = HttpStatusCode.InternalServerError;
+    //    HttpContext.Current.Response.ContentType = "text/plain";
+    //    HttpContext.Current.Response.Write(e.ToString());
+    //  }
+    //}
 
     [Description("Gets data transfer indices of requested manifest with filter.")]
     [WebInvoke(Method = "POST", UriTemplate = "/{scope}/{app}/{graph}/dxi/filter?hashAlgorithm={hashAlgorithm}")]
