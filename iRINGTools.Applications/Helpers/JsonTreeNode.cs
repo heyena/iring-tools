@@ -41,6 +41,7 @@ namespace iRINGTools.Web.Helpers
     public object @checked { get; set; }
     public object record { get; set; }
     public Dictionary<string, string> property { get; set; }
+    public Dictionary<string, string> nhproperty { get; set; }
     public string iconCls { get; set; }
 
 

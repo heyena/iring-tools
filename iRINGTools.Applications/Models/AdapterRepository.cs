@@ -598,7 +598,7 @@ namespace iRINGTools.Web.Models
               {
                 keyPropertiesNode, dataPropertiesNode, relationshipsNode
               },
-          property = new Dictionary<string, string>
+          nhproperty = new Dictionary<string, string>
               {
                 {"objectNamespace", "org.iringtools.adapter.datalayer.proj_" + scope + "." + application},
                 {"objectName", dataObject.objectName},
@@ -628,7 +628,7 @@ namespace iRINGTools.Web.Models
             {
               text = dataProperty.columnName,
               type = "keyProperty",
-              property = properties,
+              nhproperty = properties,
               iconCls = "treeKey",
               leaf = true
             };
@@ -644,7 +644,7 @@ namespace iRINGTools.Web.Models
               iconCls = "treeProperty",
               leaf = true,
               hidden = true,
-              property = properties
+              nhproperty = properties
             };
 
             dataPropertiesNode.children.Add(dataPropertyNode);
