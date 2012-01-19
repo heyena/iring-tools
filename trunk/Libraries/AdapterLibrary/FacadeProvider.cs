@@ -103,23 +103,7 @@ namespace org.iringtools.facade
       }
 
       WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-      if (_javaCoreClient.getBaseUri().Contains("dirxml"))
-        _scopes = _javaCoreClient.Get<Directories>("directory", true);
-      else
-        _scopes = _javaCoreClient.Get<Directories>("directory", true);
-
-      //string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-      //_settings["ScopesPath"] = scopesPath;
-
-      //if (File.Exists(scopesPath))
-      //{
-      //  _scopes = Utility.Read<ScopeProjects>(scopesPath);
-      //}
-      //else
-      //{
-      //  _scopes = new ScopeProjects();
-      //  Utility.Write<ScopeProjects>(_scopes, scopesPath);
-      //}
+      _scopes = _javaCoreClient.Get<Directories>("directory", true);
 
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
       string bindingConfigurationPath = Path.Combine(
