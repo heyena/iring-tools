@@ -23,9 +23,9 @@
     ],
     init: function () {
         this.control({
-//            'button[action=configureendpoint]': {
-//                click: this.onConfigureEndpoint
-//            },
+            'button[action=configureendpoint]': {
+                click: this.onConfigureEndpoint
+            },
             'button[action=uploadspreadsheet]': {
                 click: this.onUploadspreadsheet
             },
