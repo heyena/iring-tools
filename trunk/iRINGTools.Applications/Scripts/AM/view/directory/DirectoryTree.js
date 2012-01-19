@@ -169,6 +169,13 @@
           icon: 'Content/img/16x16/preferences-system.png',
           scope: this,
           action: 'configureendpoint'
+      },
+      {
+          xtype: 'button',
+          text: 'Open NHConfiguration',
+          icon: 'Content/img/16x16/preferences-system.png',
+          scope: this,
+          action: 'configurenh'
       }
     ]
     },

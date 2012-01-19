@@ -185,7 +185,7 @@
 
 	                for (var j = 0; j < availTableName.length; j++)
 	                    for (var i = 0; i < rootNode.childNodes.length; i++) {
-	                        if (rootNode.childNodes[i].attributes.properties.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
+	                        if (rootNode.childNodes[i].data.property.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
 	                            found = true;
 	                            availTableName.splice(j, 1);
 	                            j--;
@@ -194,7 +194,7 @@
 	                    }
 
 	                for (var i = 0; i < rootNode.childNodes.length; i++) {
-	                    var nodeText = rootNode.childNodes[i].attributes.properties.tableName;
+	                    var nodeText = rootNode.childNodes[i].data.property.tableName;
 	                    selectTableNames.push([nodeText, nodeText]);
 	                    selectTableNamesSingle.push(nodeText);
 	                }
@@ -263,7 +263,7 @@ function loadTree (rootNode) {
 	// sync data object tree with data dictionary
 	for (var i = 0; i < rootNode.childNodes.length; i++) {
 	    var dataObjectNode = rootNode.childNodes[i];
-	    dataObjectNode.attributes.properties.tableName = dataObjectNode.text;
+	    dataObjectNode.raw.nhproperty.tableName = dataObjectNode.raw.text;
 	    for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
 	        var dataObject = dbDict.dataObjects[ijk];
 
@@ -271,19 +271,19 @@ function loadTree (rootNode) {
 	            continue;
 
 	        // sync data object
-	        dataObjectNode.attributes.properties.objectNamespace = dataObject.objectNamespace;
-	        dataObjectNode.attributes.properties.objectName = dataObject.objectName;
-	        dataObjectNode.attributes.properties.keyDelimiter = dataObject.keyDelimeter;
-	        dataObjectNode.attributes.properties.description = dataObject.description;
+	        dataObjectNode.raw.nhproperty.objectNamespace = dataObject.objectNamespace;
+	        dataObjectNode.raw.nhproperty.objectName = dataObject.objectName;
+	        dataObjectNode.raw.nhproperty.keyDelimiter = dataObject.keyDelimeter;
+	        dataObjectNode.raw.nhproperty.description = dataObject.description;
 	        dataObjectNode.text = dataObject.objectName;
-	        dataObjectNode.attributes.text = dataObject.objectName;
+	        dataObjectNode.raw.text = dataObject.objectName;
 	        dataObjectNode.setText(dataObject.objectName);
 
 	        if (dataObject.objectName.toLowerCase() == dataObjectNode.text.toLowerCase()) {
 	            var shownProperty = new Array();
-	            var keysNode = dataObjectNode.attributes.children[0];
-	            var propertiesNode = dataObjectNode.attributes.children[1];
-	            var relationshipsNode = dataObjectNode.attributes.children[2];
+	            var keysNode = dataObjectNode.raw.children[0];
+	            var propertiesNode = dataObjectNode.raw.children[1];
+	            var relationshipsNode = dataObjectNode.raw.children[2];
 
 	            // sync data properties
 	            for (var j = 0; j < propertiesNode.children.length; j++) {
@@ -296,8 +296,8 @@ function loadTree (rootNode) {
 	                        }
 
 	                        propertiesNode.children[j].text = dataObject.dataProperties[jj].propertyName;
-	                        propertiesNode.children[j].properties.propertyName = dataObject.dataProperties[jj].propertyName;
-	                        propertiesNode.children[j].properties.isHidden = dataObject.dataProperties[jj].isHidden;
+	                        propertiesNode.children[j].nhproperty.propertyName = dataObject.dataProperties[jj].propertyName;
+	                        propertiesNode.children[j].nhproperty.isHidden = dataObject.dataProperties[jj].isHidden;
 	                    }
 	                }
 	            }
@@ -309,8 +309,8 @@ function loadTree (rootNode) {
 	                        if (dataObject.keyProperties[ij].keyPropertyName.toLowerCase() == dataObject.dataProperties[ikk].propertyName.toLowerCase()) {
 	                            if (keysNode.children[k].text.toLowerCase() == dataObject.dataProperties[ikk].columnName.toLowerCase()) {
 	                                keysNode.children[k].text = dataObject.keyProperties[ij].keyPropertyName;
-	                                keysNode.children[k].properties.propertyName = dataObject.keyProperties[ij].keyPropertyName;
-	                                keysNode.children[k].properties.isHidden = dataObject.keyProperties[ij].isHidden;
+	                                keysNode.children[k].property.propertyName = dataObject.keyProperties[ij].keyPropertyName;
+	                                keysNode.children[k].property.isHidden = dataObject.keyProperties[ij].isHidden;
 	                                ij++;
 	                                break;
 	                            }
@@ -370,7 +370,7 @@ function loadTree (rootNode) {
 	                    mapArray.push(mapItem);
 	                }
 	                newNode.iconCls = 'treeRelation';
-	                newNode.attributes.propertyMap = mapArray;
+	                newNode.data.propertyMap = mapArray;
 	                relationshipsNode.expanded = true;
 	                relationshipsNode.children.push(newNode);
 	            }
@@ -549,7 +549,7 @@ function setAvailTables (dbObjectsTree) {
 		if (!dbObjectsTree.disabled) {
 			for (var j = 0; j < availTableName.length; j++)
 				for (var i = 0; i < rootNode.childNodes.length; i++) {
-					if (rootNode.childNodes[i].attributes.properties.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
+					if (rootNode.childNodes[i].data.property.tableName.toLowerCase() == availTableName[j].toLowerCase()) {
 						found = true;
 						availTableName.splice(j, 1);
 						j--;
@@ -567,7 +567,7 @@ function setSelectTables (dbObjectsTree) {
 	if (!dbObjectsTree.disabled) {
 		var rootNode = dbObjectsTree.getRootNode();
 		for (var i = 0; i < rootNode.childNodes.length; i++) {
-			var nodeText = rootNode.childNodes[i].attributes.properties.tableName;
+			var nodeText = rootNode.childNodes[i].data.property.tableName;
 			selectTableNames.push([nodeText, nodeText]);
 		}
 	}

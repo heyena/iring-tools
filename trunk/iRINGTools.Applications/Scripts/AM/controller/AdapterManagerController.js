@@ -159,7 +159,7 @@
             'menu button[action=mapvaluelist]': {
                 click: this.mapValueList
             },
-            'menu button[action=configureendpoint]': {
+            'menu button[action=configurenh]': {
                 click: this.nhibernateConfigure
             },
             'button[action=search]': {
