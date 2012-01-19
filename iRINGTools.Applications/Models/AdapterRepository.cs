@@ -63,13 +63,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        msg = _javaCoreClient.GetMessage("directory/session");
-
-        if (_javaCoreClient.getBaseUri().Contains("dirxml"))
-          obj = _javaCoreClient.Get<Directories>("directory", true);
-        else
-          obj = _javaCoreClient.Get<Directories>("directory", true);
-
+        msg = _javaCoreClient.GetMessage("directory/session");        
+        obj = _javaCoreClient.Get<Directories>("directory", true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)

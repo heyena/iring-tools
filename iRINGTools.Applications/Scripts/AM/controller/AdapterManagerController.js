@@ -18,19 +18,34 @@
         'mapping.MappingTree',
         'mapping.MapProperty',
         'mapping.ClassmapForm',
-        'mapping.MapValuelist'
+        'mapping.MapValuelist',
+        'nhibernate.NHibernateTool',
+        'nhibernate.DataObjectPanel',
+        'nhibernate.EditorPanel',
+        'nhibernate.NHibernateTree',
+        'nhibernate.RadioField',
+        'nhibernate.ConnectDatabase',
+        'nhibernate.SelectTablesPanel',
+        'nhibernate.SelectKeysPanel',
+        'nhibernate.SelectPropertiesPanel',
+        'nhibernate.SetPropertyPanel',
+        'nhibernate.SetKeyPanel',
+        'nhibernate.CreateRelations',
+        'nhibernate.SetRelationPanel',
+        'nhibernate.Utility'
     ],
     stores: [
-        'DirectoryStore'
-    //, 'SearchStore'
+        'DirectoryStore',
+        'NHibernateTreeStore'
     // , 'MappingStore'
     ],
     models: [
-        'DirectoryModel'
-        , 'DataLayerModel'
-        , 'DynamicModel'
-        , 'SearchModel'
-        , 'MappingModel'
+        'DirectoryModel',
+        'DataLayerModel',
+        'DynamicModel',
+        'SearchModel',
+        'MappingModel',
+        'NHibernateTreeModel',
     ],
     refs: [
         {
@@ -60,6 +75,10 @@
         {
             ref: 'searchContent',
             selector: 'viewport > centerpanel > searchpanel > contentpanel'
+        },
+        {
+            ref: 'nhibernatePanel',
+            selector: 'viewport > centerpanel > contentpanel > nhibernatePane'
         }
     ],
     parentClass: null,
@@ -139,6 +158,9 @@
             },
             'menu button[action=mapvaluelist]': {
                 click: this.mapValueList
+            },
+            'menu button[action=configure]': {
+                click: this.nhibernateConfigure
             },
             'button[action=search]': {
                 click: this.onSearchRdl
@@ -375,6 +397,24 @@
         }, this);
         win.show();
         tree.rolemapMenu.hide();
+    },
+
+    nhibernateConfigure: function () {
+        var tree = this.getDirTree(),
+        node = tree.getSelectedNode(),
+        contextName = node.data.property.Context,
+        endpoint = node.data.property.Name,
+        me = this,
+
+        conf = {            
+            id: contextName + '.' + endpoint + '.-nh-config',
+            title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
+            contextName: contextName,
+            endpoint: endpoint,
+            tree: tree
+        };
+
+        var nHibernateConfigurePanel = Ext.widget('nhibernatePane', conf);
     },
 
     openGraphMap: function () {

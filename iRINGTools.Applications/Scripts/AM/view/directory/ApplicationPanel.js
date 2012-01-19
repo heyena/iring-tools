@@ -91,6 +91,8 @@
             defaultType: 'textfield',
             items: [
               { name: 'path', xtype: 'hidden', value: path, allowBlank: false },
+              { name: 'contextValue', xtype: 'hidden', value: context, allowBlank: false },
+              { name: 'assembly', xtype: 'hidden', value: cmbDataLayers.value, allowBlank: false },
               { name: 'state', xtype: 'hidden', value: state, allowBlank: false },
               { name: 'contextValue', xtype: 'hidden', value: context, allowBlank: false },
               { name: 'assembly', xtype: 'hidden', value: me.record.Assembly, allowBlank: false },
