@@ -1,10 +1,5 @@
 version: 1
 
-dn: dc=iringug,dc=org
-objectClass: domain
-objectClass: top
-dc: iringug
-
 dn: o=iringtools,dc=iringug,dc=org
 objectClass: organization
 objectClass: top

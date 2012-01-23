@@ -61,6 +61,8 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,6 +75,7 @@
     <Compile Include="BaseTest.cs" />
     <Compile Include="DataTest.cs" />
     <Compile Include="DxfrTest.cs" />
+    <Compile Include="IdentityTest.cs" />
     <Compile Include="NHibernateTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceDataTests.cs" />
@@ -85,6 +88,22 @@
     <Content Include="..\..\iRINGTools.Services\App_Data\ABC.Tables.sql">
       <Link>SQL\ABC.Tables.sql</Link>
     </Content>
+    <Content Include="App_Data\Authorization.12345_000.ABC.xml" />
+    <Content Include="App_Data\AuthorizationBindingConfiguration.12345_000.ABC.xml" />
+    <Content Include="App_Data\BindingConfiguration.12345_000.ABC.xml" />
+    <Content Include="App_Data\BindingConfiguration.Adapter.xml" />
+    <Content Include="App_Data\ClassificationTemplate.xml" />
+    <Content Include="App_Data\config.xml" />
+    <Content Include="App_Data\DatabaseDictionary.12345_000.ABC.xml" />
+    <Content Include="App_Data\DataDictionary.12345_000.ABC.xml" />
+    <Content Include="App_Data\Mapping.12345_000.ABC.xml" />
+    <Content Include="App_Data\nh-configuration.12345_000.ABC.xml" />
+    <Content Include="App_Data\nh-mapping.12345_000.ABC.xml" />
+    <Content Include="App_Data\Queries.xml" />
+    <Content Include="App_Data\Repositories.xml" />
+    <Content Include="App_Data\Scopes.xml" />
+    <Content Include="App_Data\SummaryBindingConfiguration.12345_000.ABC.xml" />
+    <Content Include="App_Data\SummaryConfig.12345_000.ABC.xml" />
     <Content Include="SPARQL\ClassRelations.txt" />
     <Content Include="SPARQL\ContainsSearch.txt" />
     <Content Include="SPARQL\ExactSearch.txt" />
@@ -163,7 +182,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
