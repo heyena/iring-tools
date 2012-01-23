@@ -16,15 +16,14 @@ Ext.define('AM.view.nhibernate.NHibernateTool', {
         var conf = {
             id: this.contextName + '.' + this.endpoint + '.dataObjectsPane',
             contextName: this.contextName,
-            endpoint: this.endpoint,
-            tree: this.tree
+            endpoint: this.endpoint
         };
 
         var dataObjectPane = Ext.widget('dataObjectPane', conf);      
 
-//        this.items = [
-//            { xtype: 'dataObjectPane', region: 'center' }           
-//        ];
+        this.items = [
+            { xtype: 'dataObjectPane', region: 'center' }           
+        ];
 
         this.callParent(arguments);
 

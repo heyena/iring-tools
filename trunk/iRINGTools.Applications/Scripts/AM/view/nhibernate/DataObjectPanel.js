@@ -7,7 +7,10 @@ Ext.define('AM.view.nhibernate.DataObjectPanel', {
     border: false,
     contextName: null,
     endpoint: null,
-    tree: null,
+    items: [
+                { xtype: 'nhibernatetreepanel',  region: 'west' },
+                { xtype: 'editorPanel', region: 'center' }
+            ],
 
     initComponent: function () {
         var wizard = this;
@@ -16,6 +19,21 @@ Ext.define('AM.view.nhibernate.DataObjectPanel', {
         var userTableNames;
 
         if (scopeName) {
+
+            var conf = {
+                id: scopeName + '.' + appName + '.tree-panel',
+                contextName: scopeName,
+                endpoint: appName
+            };
+
+            var treePanel = Ext.widget('nhibernatetree', conf);
+
+            var confEditor = {
+                id: scopeName + '.' + appName + '.editor-panel'
+            };
+
+            var editorPanel = Ext.widget('editorPanel', confEditor);            
+
             Ext.Ajax.request({
                 url: 'AdapterManager/DataType',
                 method: 'GET',
@@ -59,7 +77,7 @@ Ext.define('AM.view.nhibernate.DataObjectPanel', {
 
                     if (dbDict.dataObjects.length > 0) {
                         // populate data source form
-                        showTree(scopeName, appName);
+                        showTree(scopeName, appName);                        
                     }
                     else {
                         dbObjectsTree.disable();
@@ -71,24 +89,7 @@ Ext.define('AM.view.nhibernate.DataObjectPanel', {
                 }
             });
 
-            var conf = {
-                contextName: scopeName,
-                endpoint: appName,
-                tree: this.tree
-            };
 
-            var treePanel = Ext.widget('nhibernatetree', conf);
-
-            var confEditor = {
-                id: scopeName + '.' + appName + '.editor-panel'
-            };
-
-            var editorPanel = Ext.widget('editorPanel', confEditor);
-
-            this.items = [
-                { xtype: 'nhibernatetree' },
-                { xtype: 'editorPanel' }
-            ];
         }
         this.callParent(arguments);
 

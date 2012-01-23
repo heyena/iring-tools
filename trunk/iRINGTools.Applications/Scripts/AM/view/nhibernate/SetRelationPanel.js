@@ -173,8 +173,8 @@
 							var attribute = node.attributes;
 
 						var newNodeName = relationConfigPanel.getForm().findField('relationshipName').getValue();
-						node.setText(newNodeName);
-
+						
+						node.set('title', newNodeName);
 						attribute.relationshipTypeIndex = relationConfigPanel.getForm().findField('relationType').getValue();
 						attribute.relationshipType = relationTypeStr[attribute.relationshipTypeIndex];
 
@@ -399,6 +399,12 @@ function addPropertyMapping (relationConfigPanel) {
 	}
 }
 
+function hasShown(shownArray, text) {
+    for (var shownIndex = 0; shownIndex < shownArray.length; shownIndex++)
+        if (shownArray[shownIndex] == text)
+            return true;
+    return false;
+};
 
 //Ext.grid.RowSelectionModel.override({
 //	getSelectedIndex: function () {

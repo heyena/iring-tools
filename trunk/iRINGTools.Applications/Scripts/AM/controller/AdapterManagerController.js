@@ -19,7 +19,7 @@
         'mapping.MapProperty',
         'mapping.ClassmapForm',
         'mapping.MapValuelist',
-        'nhibernate.NHibernateTool',
+        'nhibernate.NHibernateTreePanel',
         'nhibernate.DataObjectPanel',
         'nhibernate.EditorPanel',
         'nhibernate.NHibernateTree',
@@ -78,7 +78,17 @@
         },
         {
             ref: 'nhibernatePanel',
-            selector: 'viewport > centerpanel > contentpanel > nhibernatePane'
+            selector: 'viewport > centerpanel > contentpanel > dataObjectPane'
+        }
+        ,
+        {
+            ref: 'nhTree',
+            selector: 'viewport > centerpanel > contentpanel > dataObjectPane > nhibernatetree'
+        }
+        ,
+        {
+            ref: 'nhEditor',
+            selector: 'viewport > centerpanel > contentpanel > dataObjectPane > editorPanel'
         }
     ],
     parentClass: null,
@@ -399,24 +409,6 @@
         tree.rolemapMenu.hide();
     },
 
-    nhibernateConfigure: function () {
-        var tree = this.getDirTree(),
-        node = tree.getSelectedNode(),
-        contextName = node.data.property.Context,
-        endpoint = node.data.property.Name,
-        me = this,
-
-        conf = {            
-            id: contextName + '.' + endpoint + '.-nh-config',
-            title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
-            contextName: contextName,
-            endpoint: endpoint,
-            tree: tree
-        };
-
-        var nHibernateConfigurePanel = Ext.widget('nhibernatePane', conf);
-    },
-
     openGraphMap: function () {
         var tree = this.getDirTree(),
         node = tree.getSelectedNode(),
@@ -719,6 +711,27 @@
             failure: function () { }
         });
         tree.graphMenu.hide();
+    },
+
+    nhibernateConfigure: function () {        
+        var tree = this.getDirTree(),
+        node = tree.getSelectedNode(),
+        contextName = node.data.property.Context,
+        endpoint = node.data.property.Name,
+
+        conf = {
+            id: contextName + '.' + endpoint + '.-nh-config',
+            title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
+            contextName: contextName,
+            endpoint: endpoint
+        };
+
+        var nHibernateConfigurePanel = Ext.widget('dataObjectPane', conf);
+
+        var nhpan = this.getNhibernatePanel();
+        var edpan = this.getNhEditor();
+        var nhtree = Ext.widget('nhibernatetree', conf);
+        nhpan.getEl().mask('Loading...');
     },
 
     onSearchRdl: function () {
