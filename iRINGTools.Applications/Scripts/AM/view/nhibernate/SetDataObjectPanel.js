@@ -61,7 +61,7 @@
 			                    dataObject.objectName = objNam;
 			                }
 
-			                form.treeNode.setText(objNam);
+			                form.treeNode.set('title', objNam);
 			                form.treeNode.text = objNam;
 			                form.treeNode.attributes.text = objNam;
 			                form.treeNode.attributes.properties.objectName = objNam;

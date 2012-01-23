@@ -3,7 +3,6 @@
     alias: 'widget.editorPanel',   
     border: 1,
     frame: false,
-    region: 'center',
     layout: 'card',
 
     initComponent: function () {

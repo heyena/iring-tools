@@ -354,7 +354,7 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 							}
 
 							if (exitNode == false) {
-								var newNode = new Ext.tree.TreeNode({
+							    node.appendChild({
 									text: relationName,
 									type: 'relationship',
 									leaf: true,
@@ -366,8 +366,8 @@ function createRelationGrid(gridlabel, dataGridPanel, colModel, dataStore, confi
 									relationshipTypeIndex: '1',
 									propertyMap: []
 								});
-								newNode.iconCls = 'relation';
-								node.appendChild(newNode);
+								//newNode.iconCls = 'relation';
+								//node.appendChild(newNode);
 
 								if (node.expanded == false)
 									node.expand();

@@ -49,7 +49,7 @@
                                 properties['isNullable'] = true;
                                 delete properties.keyType;
 
-                                var propertyNode = new Ext.tree.TreeNode({
+                                propertyNode.appendChild({
                                     text: keysNode.childNodes[i].text,
                                     type: "dataProperty",
                                     leaf: true,
@@ -57,8 +57,8 @@
                                     properties: properties
                                 });
 
-                                propertyNode.iconCls = 'treeProperty';
-                                propertiesNode.appendChild(propertyNode);
+                                //propertyNode.iconCls = 'treeProperty';
+                                //propertiesNode.appendChild(propertyNode);
                                 keysNode.removeChild(keysNode.childNodes[i], true);
                                 i--;
                             }
@@ -87,7 +87,7 @@
                                     properties.keyType = 'assigned';
                                     properties.nullable = false;
 
-                                    newKeyNode = new Ext.tree.TreeNode({
+                                    propertiesNode.appendChild({
                                         text: selectedValues[j].data.text,
                                         type: "keyProperty",
                                         leaf: true,
@@ -95,7 +95,7 @@
                                         hidden: false,
                                         properties: properties
                                     });
-                                    newKeyNode.iconCls = 'treeKey';
+                                    //newKeyNode.iconCls = 'treeKey';
                                     propertiesNode.removeChild(propertiesNode.childNodes[jj], true);
                                     break;
                                 }

@@ -5,6 +5,7 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
     border: false,
     autoScroll: true,
     animate: true,
+    expandAll: true,
     lines: true,
     frame: false,
     enableDD: false,
@@ -13,23 +14,12 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
     contextName: null,
     endpoint: null,
     store: 'NHibernateTreeStore',
-    tree: null,
+   
 
     initComponent: function () {
         var wizard = this;
         var scopeName = this.contextName;
-        var appName = this.endpoint;
-        
-
-        //        Ext.apply(this, {
-        //            store: Ext.create('Ext.data.TreeStore', {
-        //                model: 'AM.model.NHibernateTreeModel',
-        //                root: {
-        //                    text: 'Data Objects',
-        //                    iconCls: 'folder'
-        //                }
-        //            })
-        //        });
+        var appName = this.endpoint;        
 
         this.tbar = new Ext.Toolbar({
             items: [{
