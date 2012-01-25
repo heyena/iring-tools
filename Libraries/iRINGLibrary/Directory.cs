@@ -62,7 +62,10 @@ namespace org.iringtools.library
     [DataMember(Name = "context", Order = 3, EmitDefaultValue = false)]
     public string context { get; set; }
 
-    [DataMember(Name = "securityRole", Order = 4, EmitDefaultValue = false)]
+    [DataMember(Name = "baseUrl", Order = 4, EmitDefaultValue = false)]
+    public string baseUrl { get; set; }
+
+    [DataMember(Name = "securityRole", Order = 5, EmitDefaultValue = false)]
     public string securityRole { get; set; }
   }
 

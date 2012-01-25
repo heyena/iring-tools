@@ -42,6 +42,7 @@
     models: [
         'DirectoryModel',
         'DataLayerModel',
+        'BaseUrlModel',
         'DynamicModel',
         'SearchModel',
         'MappingModel',
@@ -735,8 +736,7 @@
         } else {
             exist.show();
         }
-
-        //nhpan.getEl().mask('Loading...');
+       
     },
 
     onSearchRdl: function () {

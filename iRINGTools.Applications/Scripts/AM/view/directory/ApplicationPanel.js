@@ -7,7 +7,7 @@
     from: null,
     record: null,
     node: null,
-    height: 261,
+    height: 291,
     width: 460,
     bodyPadding: 1,
     closable: true,
@@ -34,6 +34,7 @@
         var description = "";
         var dataLayer = "";
         var assembly = '';
+        var baseurl = '';
         var context = this.record.context;
 
         if (this.state == 'edit' && this.record != null) {
@@ -41,6 +42,7 @@
             description = this.record.Description;
             dataLayer = this.record.DataLayer;
             assembly = this.record.Assembly;
+            baseurl = this.record.BaseUrl;
             showconfigure = false;
         }
         else
@@ -51,7 +53,7 @@
             width: 400,
             editable: false,
             triggerAction: 'all',
-            store: new Ext.data.Store({
+            store: Ext.create('Ext.data.Store', {
                 model: 'AM.model.DataLayerModel',
                 listeners: {
                     load: function () {
@@ -76,6 +78,38 @@
             }
         });
 
+        var availableBaseUris = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: 'Base Url',
+            width: 400,
+            editable: false,
+            triggerAction: 'all',
+            store: Ext.create('Ext.data.Store', {
+                model: 'AM.model.BaseUrlModel',
+                listeners: {
+                    load: function () {
+                        if (baseurl == '')
+                            baseurl = availableBaseUris.store.data.items[0].data.baseurl;
+
+                        availableBaseUris.setValue(baseurl);
+
+                        if (availableBaseUris.store.data.length == 1)
+                            me.record.BaseUrl = baseurl;
+                    }
+                }
+            }),
+            displayField: 'baseurl',
+            valueField: 'baseurl',
+            hiddenName: 'Url',
+            value: baseurl,
+            listeners: {
+                'select': function (combo, rec, index) {
+                    if (rec != null && me.record != null) {
+                        me.record.BaseUrl = rec[0].data.baseurl;
+                    }
+                }
+            }
+        });
+
         this.items = [{
             xtype: 'form',
             labelWidth: 100,
@@ -91,14 +125,14 @@
             defaultType: 'textfield',
             items: [
               { name: 'path', xtype: 'hidden', value: path, allowBlank: false },
-              { name: 'contextValue', xtype: 'hidden', value: context, allowBlank: false },
-              { name: 'assembly', xtype: 'hidden', value: cmbDataLayers.value, allowBlank: false },
               { name: 'state', xtype: 'hidden', value: state, allowBlank: false },
               { name: 'contextValue', xtype: 'hidden', value: context, allowBlank: false },
               { name: 'assembly', xtype: 'hidden', value: me.record.Assembly, allowBlank: false },
+              { name: 'baseUrl', xtype: 'hidden', value: me.record.BaseUrl, allowBlank: false },
               { fieldLabel: 'Endpoint name', name: 'endpoint', xtype: 'textfield', value: name, allowBlank: false },
-              { fieldLabel: 'Context name', name: 'context', xtype: 'textfield', value: context, disabled: true },
               { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', value: description },
+              { fieldLabel: 'Context name', name: 'context', xtype: 'textfield', value: context, disabled: true },
+              availableBaseUris,
               cmbDataLayers
             ]
         }];
@@ -107,6 +141,7 @@
         // super
         this.callParent(arguments);
         this.items.first().items.last().store.load();
+        this.items.first().items.items[this.items.first().items.length - 2].store.load();
     },
 
     buildToolbar: function (showconfigure) {
@@ -136,6 +171,7 @@
         var thisForm = this.items.first().getForm();
         var endpointName = thisForm.findField('endpoint').getValue();
         thisForm.findField('assembly').setValue(this.record.Assembly);
+        thisForm.findField('baseUrl').setValue(this.record.BaseUrl);
         if (ifExistSibling(endpointName, me.node, me.state)) {
             showDialog(400, 100, 'Warning', 'The name \"' + endpointName + '\" already exits in this level, please choose a different name.', Ext.Msg.OK, null);
             return;

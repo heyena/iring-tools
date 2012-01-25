@@ -28,4 +28,18 @@ namespace org.iringtools.library
   public class DataLayers : List<DataLayer>
   {
   }
+
+  [XmlRoot]
+  [DataContract(Namespace = "http://www.iringtools.org/library", Name = "baseUrl")]
+  public class BaseUrl
+  {
+    [XmlElement]
+    [DataMember(Name = "url", Order = 1, EmitDefaultValue = false)]
+    public string Url { get; set; }    
+  }
+
+  [CollectionDataContract(Name = "baseUrls", Namespace = "http://www.iringtools.org/library", ItemName = "baseUrl")]
+  public class BaseUrls : List<BaseUrl>
+  {
+  }
 }

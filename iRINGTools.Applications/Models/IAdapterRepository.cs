@@ -29,12 +29,14 @@ namespace iRINGTools.Web.Models
 
     string DeleteEntry(string path);
 
-    string Endpoint(string newEndpointName, string path, string description, string states, string context, string assembly);
+    string Endpoint(string newEndpointName, string path, string description, string states, string context, string assembly, string baseUrl);
 
     string getNodeIconCls(string type);
 
     string getRootSecurityRole();
 
-    string getBaseUrl();
+    string getDirectoryBaseUrl();
+
+    BaseUrls getEndpointBaseUrl();
   }
 }
