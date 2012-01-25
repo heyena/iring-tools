@@ -23,6 +23,13 @@
     EntityType,
   }
 
+  enum ClassificationColumns
+  {
+      Load,
+      Note,
+      Class,
+      Classified
+  }
   enum ClassSpecializationColumns
   {
     Load,
