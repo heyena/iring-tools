@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.EditorPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.editorPanel',   
+    alias: 'widget.editorpanel',   
     border: 1,
     frame: false,
     layout: 'card',

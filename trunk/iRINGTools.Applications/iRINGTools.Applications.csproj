@@ -188,6 +188,8 @@
     <Content Include="Scripts\AM\model\DirectoryModel.js" />
     <Content Include="Scripts\AM\model\DynamicModel.js" />
     <Content Include="Scripts\AM\model\MappingModel.js" />
+    <Content Include="Scripts\AM\model\NHibernateTreeModel.js" />
+    <Content Include="Scripts\AM\model\ProviderModel.js" />
     <Content Include="Scripts\AM\model\SearchModel.js" />
     <Content Include="Scripts\AM\model\SpreadsheetModel.js" />
     <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigTool.js" />
@@ -196,6 +198,7 @@
     <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigToolRelation.js" />
     <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigToolSave.js" />
     <Content Include="Scripts\AM\store\DirectoryStore.js" />
+    <Content Include="Scripts\AM\store\NHibernateTreeStore.js" />
     <Content Include="Scripts\AM\store\SearchStore.js" />
     <Content Include="Scripts\AM\view\common\CenterPanel.js" />
     <Content Include="Scripts\AM\view\common\ContentPanel.js" />
@@ -206,6 +209,24 @@
     <Content Include="Scripts\AM\view\directory\DirectoryTree.js" />
     <Content Include="Scripts\AM\view\directory\GraphPanel.js" />
     <Content Include="Scripts\AM\view\directory\ScopePanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\ConnectDatabase.js" />
+    <Content Include="Scripts\AM\view\nhibernate\CreateRelations.js" />
+    <Content Include="Scripts\AM\view\nhibernate\DataObjectPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\EditorPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\KeysSelector.js" />
+    <Content Include="Scripts\AM\view\nhibernate\NHibernateTool.js" />
+    <Content Include="Scripts\AM\view\nhibernate\NHibernateTree.js" />
+    <Content Include="Scripts\AM\view\nhibernate\NHibernateTreePanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\RadioField.js" />
+    <Content Include="Scripts\AM\view\nhibernate\SelectKeysPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\SelectPropertiesPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\SelectTablesPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\SetDataObjectPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\SetKeyPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\SetPropertyPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\SetRelationPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\TreePanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\Utility.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetSource.js" />
     <Content Include="Scripts\AM\view\directory\ValuelistMapPanel.js" />
     <Content Include="Scripts\AM\view\directory\ValuelistPanel.js" />
@@ -216,7 +237,6 @@
     <Content Include="Scripts\AM\view\mapping\MapValuelist.js" />
     <Content Include="Scripts\AM\view\search\SearchPanel.js" />
     <Content Include="Scripts\AM\view\search\SearchTree.js" />
-    <Content Include="Scripts\AM\view\spreadsheet\ConfigWindow.js" />
     <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetConfigPanel.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />
     <Content Include="Scripts\extjs40\ext-all-debug.js" />
@@ -1521,7 +1541,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Scripts\AM\ux\plugin\" />
-    <Folder Include="Scripts\AM\view\nhibernateconfig\" />
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>

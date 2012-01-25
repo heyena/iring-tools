@@ -1,12 +1,32 @@
 ﻿Ext.define('AM.store.NHibernateTreeStore', {
     extend: 'Ext.data.TreeStore',
-    alias: 'widget.nhTreeStore',   
     model: 'AM.model.NHibernateTreeModel',    
     clearOnLoad: true,
     root: {
         expanded: true,
         text: 'Data Objects',
         iconCls: 'folder'
+    },
+    proxy: {
+        type: 'ajax',
+        timeout: 600000,
+        url: 'AdapterManager/DBObjects',
+        actionMethods: { read: 'POST' },
+        extraParams: {
+            scope: null,
+            app: null,
+            dbProvider: null,
+            dbServer: null,
+            dbInstance: null,
+            dbName: null,
+            dbSchema: null,
+            dbUserName: null,
+            dbPassword: null,
+            portNumber: null,
+            tableNames: null,
+            serName: null
+        },
+        reader: { type: 'json' }
     }
 });
 

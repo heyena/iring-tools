@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.SelectTablesPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.selectTables',   
+    alias: 'widget.selecttables',   
     frame: false,
 	border: false,
 	autoScroll: true,	

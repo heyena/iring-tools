@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.ConnectDatabase', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.connectDatabase',
+    alias: 'widget.connectdatabase',
     labelWidth: 150,
     frame: false,
     border: false,
@@ -15,14 +15,9 @@
         var scopeName = this.scopeName;
         var appName = this.appName;
 
-        Ext.define('AM.model.provider', {
-            extend: 'Ext.data.Model',
-            fields: ['name']
-        });
-
         Ext.define('AM.store.providersStore', {
             extend: 'Ext.data.Store',
-            model: 'AM.model.provider',
+            model: 'AM.model.ProviderModel',
             autoLoad: true,
             autoDestroy: true,
 
@@ -207,13 +202,13 @@
                 border: false,
                 frame: false
             }];
-
+            ///TODO All processing logic MUST be moved to controller
         this.tbar = new Ext.Toolbar({
             items: [{
                 xtype: 'tbspacer',
                 width: 4
             }, {
-                xtype: 'tbbutton',
+                xtype: 'button',
                 icon: 'Content/img/16x16/document-properties.png',
                 text: 'Connect',
                 tooltip: 'Connect',
@@ -276,7 +271,7 @@
                 xtype: 'tbspacer',
                 width: 4
             }, {
-                xtype: 'tbbutton',
+                xtype: 'button',
                 icon: 'Content/img/16x16/edit-clear.png',
                 text: 'Reset',
                 tooltip: 'Reset to the latest applied changes',

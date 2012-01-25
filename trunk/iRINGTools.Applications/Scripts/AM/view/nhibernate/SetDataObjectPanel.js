@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.SetDataObjectPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.setDataObjectPanel',
+    alias: 'widget.setdataobjectpanel',
     name: 'dataObject',
     border: false,
     autoScroll: true,

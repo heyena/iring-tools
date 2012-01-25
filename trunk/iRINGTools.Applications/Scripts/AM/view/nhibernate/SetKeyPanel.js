@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.SetKeyPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.setKey',
+    alias: 'widget.setkey',
     border: false,
     name: 'keyProperty',
     autoScroll: true,

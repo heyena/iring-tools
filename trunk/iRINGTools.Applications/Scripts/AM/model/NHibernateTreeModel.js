@@ -1,7 +1,6 @@
 ﻿
 Ext.define('AM.model.NHibernateTreeModel', {
-    extend: 'Ext.data.Model',
-    alias: 'widget.nhTreeModel',   
+    extend: 'Ext.data.Model', 
     fields: [
          { name: 'id', type: 'string' },
          { name: 'hidden', type: 'boolean' },
@@ -9,27 +8,6 @@ Ext.define('AM.model.NHibernateTreeModel', {
          { name: 'identifier', type: 'string' },
          { name: 'text', type: 'string' },
          { name: 'type', type: 'string' }
-    ],
-    proxy: {
-        type: 'ajax',
-        timeout: 600000,
-        url: '',
-        actionMethods: { read: 'POST' },
-        extraParams: {
-            scope: null,
-            app: null,
-            dbProvider: null,
-            dbServer: null,
-            dbInstance: null,
-            dbName: null,
-            dbSchema: null,
-            dbUserName: null,
-            dbPassword: null,
-            portNumber: null,
-            tableNames: null,
-            serName: null
-        },
-        reader: { type: 'json' }
-    }
+    ]
 });
 

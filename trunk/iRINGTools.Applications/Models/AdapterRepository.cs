@@ -64,7 +64,7 @@ namespace iRINGTools.Web.Models
       try
       {
         msg = _javaCoreClient.GetMessage("directory/session");        
-        obj = _javaCoreClient.Get<Directories>("directory", true);
+        obj = _javaCoreClient.Get<Directories>("/directory", true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -438,7 +438,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _javaCoreClient.PostMessage(string.Format("/endpoint/{0}/{1}/{2}", path, newEndpointName, "endpoint"), description, true);
+        obj = _javaCoreClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}", path, newEndpointName, "endpoint"), description, true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
