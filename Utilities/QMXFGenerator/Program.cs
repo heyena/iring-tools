@@ -80,11 +80,8 @@ namespace QMXFGenerator
                             Console.WriteLine("  processed " + _siTemplates.Count + " templates.");
 
                             specializedIndividualTemplateWorksheet = null;
-
                             _baseTemplateWorksheet = null;
-
                             _classSpecializationWorksheet = null;
-
                             _classWorksheet = null;
 
                             ///Post Classes and Templates induvidually to refdataService
@@ -94,7 +91,7 @@ namespace QMXFGenerator
                             {
                                 var q = new QMXF { targetRepository = _targetRepository };
                                 q.classDefinitions.Add(cls);
-                                _refdataClient.Post<QMXF>("/classes", q, true);
+                                var resp = _refdataClient.Post<QMXF>("/classes", q, true);
                                 Console.WriteLine("Success: posted class: " + cls.name[0].value);
                             }
 
@@ -103,16 +100,16 @@ namespace QMXFGenerator
                             {
                                 var q = new QMXF { targetRepository = _targetRepository };
                                 q.templateDefinitions.Add(t);
-                                _refdataClient.Post<QMXF>("/templates", q, true);
+                                var resp = _refdataClient.Post<QMXF>("/templates", q, true);
                                 Console.WriteLine("Success: posted baseTemplate: " + t.name[0].value);
                             }
 
-                            ///Port Specialised templates
+                            ///Post Specialised templates
                             foreach (var t in qmxf.templateQualifications)
                             {
                                 var q = new QMXF { targetRepository = _targetRepository };
                                 q.templateQualifications.Add(t);
-                                _refdataClient.Post<QMXF>("/templates", q, true);
+                                var resp = _refdataClient.Post<QMXF>("/templates", q, true);
                                 Console.WriteLine("Success: posted spesialized template: ", t.name[0].value);
                             }
 
@@ -131,18 +128,14 @@ namespace QMXFGenerator
 
         private static WorksheetPartWrapper GetWorksheet(SpreadsheetDocumentWrapper document, string sheetName)
         {
-            var sheet = document.WorkbookPart.WorksheetParts[sheetName];
-            //   var sheet = document.WorkbookPart.GetTablePart(sheetName).Table;
-            return sheet;
+            return document.WorkbookPart.WorksheetParts[sheetName];
         }
 
         private string GetCellValue(WorksheetPartWrapper part, int startCol, int startRow)
         {
-            //string reference = startCol + startRow;
+          
             var row = part.Worksheet.SheetData.Rows.FirstOrDefault(c => c.RowIndex == startRow);
-            var col = row.GetCell(startCol, false);
-            //get exact cell based on reference 
-            return col.CellValue.Value;
+            return row.GetCell(startCol, false).CellValue.Value;
         }
 
         private static void ProcessClassDefinitions(WorksheetPartWrapper _classificationWorksheet, List<ClassDefinition> list)
@@ -159,7 +152,11 @@ namespace QMXFGenerator
                     var cl = list.SingleOrDefault(l => l.name[0].value.Equals(c[(int)ClassificationColumns.Class].ToString()));
                     if (cl != null && query != null && query.Count() > 0)
                     {
-                        cl.classification.Add(new Classification { label = c[(int)ClassificationColumns.Classified].ToString(), lang = "en", reference = query.FirstOrDefault().ToString() });
+                        cl.classification.Add(new Classification { 
+                            label = c[(int)ClassificationColumns.Classified].ToString(), 
+                            lang = "en", 
+                            reference = query.FirstOrDefault().ToString() 
+                        });
                     }
                     else
                     {
@@ -388,7 +385,9 @@ namespace QMXFGenerator
                     object subclass = specialization[(int)ClassSpecializationColumns.Subclass];
 
                     var query = from @class in _classes
-                                where Convert.ToString(@class[(int)ClassColumns.Label]).Trim() == subclass.ToString().Trim()
+                                where Convert
+                                   .ToString(@class[(int)ClassColumns.Label])
+                                   .Trim() == subclass.ToString().Trim()
                                 select @class;
 
                     if (query.Count() > 0 && query.FirstOrDefault().Count > 0)
