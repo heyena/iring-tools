@@ -107,8 +107,7 @@ namespace QMXFGenerator
                                 Console.WriteLine("Success: posted baseTemplate: " + t.name[0].value);
                             }
 
-                            ///Port Specialised templates
-                            foreach (var t in qmxf.templateQualifications)
+                            foreach(var t in qmxf.templateQualifications)
                             {
                                 var q = new QMXF { targetRepository = _targetRepository };
                                 q.templateQualifications.Add(t);
