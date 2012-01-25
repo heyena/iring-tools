@@ -13,9 +13,3 @@ pause
 echo Building C# projects ...
 msbuild build.xml /t:All /fileLogger /flp:errorsonly;logfile=msbuild.error.log /fileLogger /flp1:warningsonly;logfile=msbuild.warning.log
 pause
-
-echo Building Java projects ...
-cd %javabasedir%
-call ant
-if %ERRORLEVEL% equ 0 copy /y %javabasedir%dist\*.* %deploymentdir%
-pause
