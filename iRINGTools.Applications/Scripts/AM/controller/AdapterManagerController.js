@@ -47,7 +47,7 @@
         'SearchModel',
         'MappingModel',
         'NHibernateTreeModel',
-        'ProviderModel'
+        //'ProviderModel'
     ],
     refs: [
         {
