@@ -329,9 +329,9 @@
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
   </Target>
 
-  <Target Name="Build" DependsOnTargets="SvnUpdate; CoreBuild; SDKBuild"/>
+  <Target Name="Build" DependsOnTargets="CoreBuild"/>
 
-  <Target Name="Rebuild" DependsOnTargets="SvnUpdate; CleanBuild; PrepareBuild; CoreBuild; SDKBuild"/>
+  <Target Name="Rebuild" DependsOnTargets="CleanBuild; PrepareBuild; CoreBuild"/>
 
   <Target Name="All" DependsOnTargets="Rebuild; Test; CreatePackages"/>
 </Project>
