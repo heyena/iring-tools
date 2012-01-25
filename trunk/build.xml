@@ -1,10 +1,10 @@
-<Project DefaultTargets="Build" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="All" ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets" />
 
   <PropertyGroup>
     <AssemblyInfoFile>$(MSBuildProjectDirectory)\AssemblyInfo.cs; $(MSBuildProjectDirectory)\iRINGTools.SDK\AssemblyInfo.cs</AssemblyInfoFile>
-    <Major>3</Major>
-    <Minor>0</Minor>
+    <Major>2</Major>
+    <Minor>4</Minor>
     <Build>0</Build>
     <Revision>0</Revision>
   </PropertyGroup>
