@@ -336,7 +336,7 @@
             }
             else {
                 Ext.Ajax.request({
-                    url: 'directory/baseUrl',
+                    url: 'directory/directoryBaseUrl',
                     method: 'GET',
                     success: function (response, request) {
                         var baseUrl = response.responseText;

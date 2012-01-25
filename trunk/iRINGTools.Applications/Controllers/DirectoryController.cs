@@ -453,7 +453,7 @@ namespace org.iringtools.web.controllers
     public JsonResult Endpoint(FormCollection form)
     {
       string success;
-      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["assembly"]);
+      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["assembly"], form["baseUrl"]);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
@@ -469,10 +469,20 @@ namespace org.iringtools.web.controllers
       return Json(rootSecuirtyRole, JsonRequestBehavior.AllowGet);
     }
 
-    public JsonResult baseUrl()
+    public JsonResult directoryBaseUrl()
     {
-      string baseUrl = _repository.getBaseUrl();
+      string baseUrl = _repository.getDirectoryBaseUrl();
       return Json(baseUrl, JsonRequestBehavior.AllowGet);
+    }
+
+    public JsonResult endpointBaseUrl()
+    {
+      BaseUrls baseUrls = _repository.getEndpointBaseUrl();
+      JsonContainer<BaseUrls> container = new JsonContainer<BaseUrls>();
+      container.items = baseUrls;
+      container.success = true;
+      container.total = baseUrls.Count;
+      return Json(container, JsonRequestBehavior.AllowGet);      
     }
 
     #region Private Methods

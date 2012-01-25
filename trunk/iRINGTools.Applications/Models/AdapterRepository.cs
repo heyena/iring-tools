@@ -64,7 +64,7 @@ namespace iRINGTools.Web.Models
       try
       {
         msg = _javaCoreClient.GetMessage("directory/session");        
-        obj = _javaCoreClient.Get<Directories>("/directory", true);
+        obj = _javaCoreClient.Get<Directories>("directory", true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -179,6 +179,7 @@ namespace iRINGTools.Web.Models
       Endpoints endpoints = folder.endpoints;
       string context = "";
       string endpointName;
+      string baseUrl = "";
       string assembly = "";
       string dataLayerName = "";
 
@@ -201,6 +202,9 @@ namespace iRINGTools.Web.Models
           if (endpoint.context != null)
             context = endpoint.context;
 
+          if (endpoint.baseUrl != null)
+            baseUrl = endpoint.baseUrl.Replace('.', '/');
+
           DataLayer dataLayer = GetDataLayer(context, endpointName);
 
           if (dataLayer != null)
@@ -215,6 +219,7 @@ namespace iRINGTools.Web.Models
             Description = endpoint.Description,
             DataLayer = dataLayerName,
             context = context,
+            BaseUrl = baseUrl,
             endpoint = endpointName,
             Assembly = assembly,
             securityRole = endpoint.securityRole
@@ -388,9 +393,17 @@ namespace iRINGTools.Web.Models
       return rootSecurityRole;
     }
 
-    public string getBaseUrl()
+    public string getDirectoryBaseUrl()
     {
       return _javaCoreClient.getBaseUri();
+    }
+
+    public BaseUrls getEndpointBaseUrl()
+    {
+      BaseUrls baseUrls = new BaseUrls();
+      BaseUrl baseUrl = new BaseUrl { Url = _client.getBaseUri() };      
+      baseUrls.Add(baseUrl);      
+      return baseUrls;
     }
 
     public string Folder(string newFolderName, string description, string path, string state, string context)
@@ -419,14 +432,14 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string assembly)
+    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string assembly, string baseUrl)
     {
       string obj = null;
       string endpointName = null;
 
       if (state == "new")
       {
-        path = path + '.' + newEndpointName;
+        path = path + '/' + newEndpointName;
         endpointName = newEndpointName;
       }
       else
@@ -435,10 +448,11 @@ namespace iRINGTools.Web.Models
       }
 
       path = path.Replace('/', '.');
+      baseUrl = baseUrl.Replace('/', '.');
 
       try
       {
-        obj = _javaCoreClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}", path, newEndpointName, "endpoint"), description, true);
+        obj = _javaCoreClient.PostMessage(string.Format("directory/endpoint/{0}/{1}/{2}/{3}", path, newEndpointName, "endpoint", baseUrl), description, true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
