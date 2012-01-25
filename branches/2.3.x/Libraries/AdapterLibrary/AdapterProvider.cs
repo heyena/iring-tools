@@ -2793,8 +2793,16 @@ namespace org.iringtools.adapter
       {
         Type type = typeof(IDataLayer);
         Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+          
+        var loadedAssemblies = domainAssemblies.ToList();
+        var loadedPaths = loadedAssemblies.Select(a => a.Location).ToArray();
+        var referencedPaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "Bin", "*.dll");
+        var toLoad = referencedPaths.Where(r => !loadedPaths.Contains(r, StringComparer.InvariantCultureIgnoreCase)).ToList();
+        toLoad.ForEach(path => loadedAssemblies.Add(AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(path))));
 
-        foreach (Assembly asm in domainAssemblies)
+
+
+        foreach (Assembly asm in loadedAssemblies)
         {
 
           try
