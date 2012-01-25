@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.SelectKeysPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.selectKeysPanel',
+    alias: 'widget.selectkeyspanel',
     border: false,
     autoScroll: true,
     bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',

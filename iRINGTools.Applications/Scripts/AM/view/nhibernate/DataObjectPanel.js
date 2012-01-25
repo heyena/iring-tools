@@ -1,7 +1,7 @@
 ﻿
 Ext.define('AM.view.nhibernate.DataObjectPanel', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.dataObjectPane',
+    alias: 'widget.dataobjectpane',
     layout: 'border',
     frame: false,
     border: false,
@@ -9,7 +9,7 @@ Ext.define('AM.view.nhibernate.DataObjectPanel', {
     endpoint: null,
     items: [
                 { xtype: 'nhibernatetreepanel',  region: 'west' },
-                { xtype: 'editorPanel', region: 'center' }
+                { xtype: 'editorpanel', region: 'center' }
             ],
 
     initComponent: function () {
@@ -32,7 +32,7 @@ Ext.define('AM.view.nhibernate.DataObjectPanel', {
                 id: scopeName + '.' + appName + '.editor-panel'
             };
 
-            var editorPanel = Ext.widget('editorPanel', confEditor);            
+            var editorPanel = Ext.widget('editorpanel', confEditor);            
 
             Ext.Ajax.request({
                 url: 'AdapterManager/DataType',

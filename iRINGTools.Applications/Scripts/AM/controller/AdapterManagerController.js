@@ -46,6 +46,7 @@
         'SearchModel',
         'MappingModel',
         'NHibernateTreeModel',
+        'ProviderModel'
     ],
     refs: [
         {
@@ -78,17 +79,17 @@
         },
         {
             ref: 'nhibernatePanel',
-            selector: 'viewport > centerpanel > contentpanel > dataObjectPane'
+            selector: 'dataobjectpane'
         }
         ,
         {
             ref: 'nhTree',
-            selector: 'viewport > centerpanel > contentpanel > dataObjectPane > nhibernatetree'
+            selector: 'nhibernatetree'
         }
         ,
         {
             ref: 'nhEditor',
-            selector: 'viewport > centerpanel > contentpanel > dataObjectPane > editorPanel'
+            selector: 'editorpanel'
         }
     ],
     parentClass: null,
@@ -716,6 +717,7 @@
     nhibernateConfigure: function () {        
         var tree = this.getDirTree(),
         node = tree.getSelectedNode(),
+        content = this.getMainContent(),
         contextName = node.data.property.Context,
         endpoint = node.data.property.Name,
 
@@ -726,12 +728,15 @@
             endpoint: endpoint
         };
 
-        var nHibernateConfigurePanel = Ext.widget('dataObjectPane', conf);
+        var nhpan = Ext.widget('dataobjectpane', conf);
+        var exist = content.items.map[conf.id];
+        if (exist == null) {
+            content.add(nhpan).show();
+        } else {
+            exist.show();
+        }
 
-        var nhpan = this.getNhibernatePanel();
-        var edpan = this.getNhEditor();
-        var nhtree = Ext.widget('nhibernatetree', conf);
-        nhpan.getEl().mask('Loading...');
+        //nhpan.getEl().mask('Loading...');
     },
 
     onSearchRdl: function () {

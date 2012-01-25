@@ -31,7 +31,7 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
                 text: 'Reload',
                 tooltip: 'Reload Data Objects',
                 handler: function () {
-                    var editPane = Ext.widget('editorPanel');
+                    var editPane = Ext.widget('editorpanel');
                     var items = editPane.items.items;
 
                     for (var i = 0; i < items.length; i++) {
@@ -139,7 +139,7 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
                 nodeType = node.attributes.attributes.type;
 
             if (nodeType) {
-                var editPane = Ext.widget('editorPanel');
+                var editPane = Ext.widget('editorpanel');
                 editPane.show();
                 var editPaneLayout = editPane.getLayout();
 
@@ -183,11 +183,11 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
 });
 
 function setDataObject(node, scopeName, appName) {
-    var editPane = Ext.widget('editorPanel');
+    var editPane = Ext.widget('editorpanel');
 
     if (editPane && node) {
-        if (Ext.widget('setDataObjectPanel')) {
-            var objectNameFormPane = Ext.widget('setDataObjectPanel');
+        if (Ext.widget('setdataobjectpanel')) {
+            var objectNameFormPane = Ext.widget('setdataobjectpanel');
             if (objectNameFormPane) {
                 var panelIndex = editPane.items.indexOf(objectNameFormPane);
                 editPane.getLayout().setActiveItem(panelIndex);
@@ -205,16 +205,16 @@ function setDataObject(node, scopeName, appName) {
             endpoint: this.endpoint
         };
 
-        var setDataObjectPanel = Ext.widget('setDataObjectPanel', conf);
+        var setDataObjectPanel = Ext.widget('setdataobjectpanel', conf);
     }
 };
 
 function setDsConfigPane(scopeName, appName) {
-    var editPane = Ext.widget('editorPanel');
+    var editPane = Ext.widget('editorpanel');
 
     if (editPane) {
-        if (Ext.widget('connectDatabase')) {
-            var dsConfigPanel = Ext.widget('connectDatabase');
+        if (Ext.widget('connectdatabase')) {
+            var dsConfigPanel = Ext.widget('connectdatabase');
            
             if (dsConfigPanel) {
                 var panelIndex = editPane.items.indexOf(dsConfigPanel);
@@ -229,16 +229,16 @@ function setDsConfigPane(scopeName, appName) {
             appName: appName
         };
 
-        var connectDBPanel = Ext.widget('connectDatabase', confConnect);
+        var connectDBPanel = Ext.widget('connectdatabase', confConnect);
     }
 };
 
 function setTablesSelectorPane(scopeName, appName) {
-    var editPane = Ext.widget('editorPanel');
+    var editPane = Ext.widget('editorpanel');
 
     if (editPane) {
-        if (Ext.widget('selectTables')) {
-            var tableSelectorPanel = Ext.widget('selectTables');
+        if (Ext.widget('selecttables')) {
+            var tableSelectorPanel = Ext.widget('selecttables');
             if (tableSelectorPanel) {
                 if (dbObjectsTree.disabled)
                     tableSelectorPanel.destroy();
@@ -255,16 +255,16 @@ function setTablesSelectorPane(scopeName, appName) {
             appName: appName
         };
 
-        var setTablesPanel = Ext.widget('selectTables', confsetTables);
+        var setTablesPanel = Ext.widget('selecttables', confsetTables);
     }
 };
 
 function setKeysFolder(node, scopeName, appName) {
-    var editPane = Ext.widget('editorPanel');
+    var editPane = Ext.widget('editorpanel');
 
     if (editPane && node) {
-        if (Ext.widget('selectKeysPanel')) {
-            var keysSelectorPane = Ext.widget('selectKeysPanel');
+        if (Ext.widget('selectkeyspanel')) {
+            var keysSelectorPane = Ext.widget('selectkeyspanel');
             if (keysSelectorPane) {                
                 keysSelectorPane.destroy();
             }
@@ -277,16 +277,16 @@ function setKeysFolder(node, scopeName, appName) {
             appName: appName
         };
 
-        var setKeysFolderPanel = Ext.widget('selectKeysPanel', confselectKeys);
+        var setKeysFolderPanel = Ext.widget('selectkeyspanel', confselectKeys);
     }
 };
 
 function setKeyProperty(node, scopeName, appName) {
-    var editPane = Ext.widget('editorPanel');
+    var editPane = Ext.widget('editorpanel');
 
     if (editPane && node) {
-        if (Ext.widget('setKey')) {
-            var keyPropertyFormPane = Ext.widget('setKey');
+        if (Ext.widget('setkey')) {
+            var keyPropertyFormPane = Ext.widget('setkey');
             if (keyPropertyFormPane) {
                 var panelIndex = editPane.items.indexOf(keyPropertyFormPane);
                 editPane.getLayout().setActiveItem(panelIndex);
@@ -302,14 +302,14 @@ function setKeyProperty(node, scopeName, appName) {
             appName: appName
         };
 
-        var setKeyPropPanel = Ext.widget('setKey', confsetKeyProp);
+        var setKeyPropPanel = Ext.widget('setkey', confsetKeyProp);
     }
 };
 
 function setPropertiesFolder(node, scopeName, appName) {
     if (editPane && node) {
-        if (Ext.widget('selectProperties')) {
-            var propertiesSelectorPane = Ext.widget('selectProperties');
+        if (Ext.widget('selectproperties')) {
+            var propertiesSelectorPane = Ext.widget('selectproperties');
             if (propertiesSelectorPane) {
                 propertiesSelectorPane.destroy();
             }
@@ -321,16 +321,16 @@ function setPropertiesFolder(node, scopeName, appName) {
             appName: appName
         };
 
-        var setPropsFolderPanel = Ext.widget('selectProperties', confsetPropsFolder);
+        var setPropsFolderPanel = Ext.widget('selectproperties', confsetPropsFolder);
     }
 };
 
 function setDataProperty(node, scopeName, appName) {
-    var editPane = Ext.widget('editorPanel');
+    var editPane = Ext.widget('editorpanel');
 
     if (editPane && node) {
-        if (Ext.widget('setProperty')) {
-            var dataPropertyFormPane = Ext.widget('setProperty');
+        if (Ext.widget('setproperty')) {
+            var dataPropertyFormPane = Ext.widget('setproperty');
             if (dataPropertyFormPane) {
                 var panelIndex = editPane.items.indexOf(dataPropertyFormPane);
                 editPane.getLayout().setActiveItem(panelIndex);
@@ -344,16 +344,16 @@ function setDataProperty(node, scopeName, appName) {
             appName: appName
         };
 
-        var setPropPanel = Ext.widget('setProperty', confsetProp);
+        var setPropPanel = Ext.widget('setproperty', confsetProp);
     }
 };
 
 function setRelations(node, scopeName, appName) {
-    var editPane = Ext.widget('editorPanel');
+    var editPane = Ext.widget('editorpanel');
 
     if (editPane && node) {
-        if (Ext.widget('createRelations')) {
-            var relationCreatePane = Ext.widget('createRelations');
+        if (Ext.widget('createrelations')) {
+            var relationCreatePane = Ext.widget('createrelations');
             if (relationCreatePane) {
                 relationCreatePane.destroy();
             }
@@ -365,12 +365,12 @@ function setRelations(node, scopeName, appName) {
             appName: appName
         };
 
-        var setRelationsPanel = Ext.widget('createRelations', confsetRelations);
+        var setRelationsPanel = Ext.widget('createrelations', confsetRelations);
     }
 };
 
 function setRelationFields(node, scopeName, appName) {
-    var editPane = Ext.widget('editorPanel');
+    var editPane = Ext.widget('editorpanel');
 
     if (editPane && node) {
         var relationFolderNode = node.parentNode;
@@ -559,7 +559,7 @@ function setRelationFields(node, scopeName, appName) {
             appName: appName
         };
 
-        var setRelationFieldPanel = Ext.widget('setRelation', confsetRelationField);
+        var setRelationFieldPanel = Ext.widget('setrelation', confsetRelationField);
     }
 };
 

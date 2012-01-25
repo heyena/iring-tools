@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.CreateRelations', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.createRelations',
+    alias: 'widget.createrelations',
     labelWidth: 160,
     border: false,
     autoScroll: false,

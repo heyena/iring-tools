@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.SetPropertyPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.setProperty',
+    alias: 'widget.setproperty',
     name: 'dataProperty',
 	border: false,
 	autoScroll: true,

@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.SetRelationPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.setRelation',
+    alias: 'widget.setrelation',
     labelWidth: 143,
 	border: false,
 	autoScroll: true,
