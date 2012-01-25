@@ -43,8 +43,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\OpenXML\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
-    <Reference Include="ExtremeML">
-      <HintPath>..\..\..\..\..\ExtremeML\ExtremeML.dll</HintPath>
+    <Reference Include="ExtremeML, Version=1.0.4057.17698, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\ExtremeML\ExtremeML.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Office.Interop.Excel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
       <EmbedInteropTypes>True</EmbedInteropTypes>
