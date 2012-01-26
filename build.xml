@@ -105,7 +105,7 @@
                Utilities\RDFImportExport\RDFImportExport\RDFImportExport_Default.config;
                Utilities\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
                Utilities\QMXFGenerator\QMXFGenerator_Default.config;
-               Utilities\QMXFGenerator\InformationModel.xls;
+               Utilities\QMXFGenerator\InformationModel.xlsx;
                Utilities\QMXFTransforms\*.dtd;
                Utilities\QMXFTransforms\*.xsd;
                Utilities\QMXFTransforms\*.xsl;
