@@ -141,6 +141,10 @@ namespace org.iringtools.nhibernate
               Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
           }
           DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
+          dataDictionary.dataVersion = dbSchema.dataVersion;
+          dataDictionary.enableSearch = dbSchema.enableSearch;
+          dataDictionary.enableSummary = dbSchema.enableSummary;
+
           Utility.Write<DataDictionary>(dataDictionary, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 
