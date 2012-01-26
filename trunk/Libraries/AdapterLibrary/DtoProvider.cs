@@ -57,7 +57,7 @@ namespace org.iringtools.adapter
 
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
-    private Directories _scopes = null;
+    private Resource _scopes = null;
     private IDataLayer2 _dataLayer = null;
     private DataDictionary _dataDictionary = null;
     private Mapping _mapping = null;
@@ -102,10 +102,10 @@ namespace org.iringtools.adapter
       if (!String.IsNullOrEmpty(_settings["fixedIdentifierBoundary"]))
       {
         _fixedIdentifierBoundary = _settings["fixedIdentifierBoundary"];
-      }      
+      }
 
-      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-      _scopes = _javaCoreClient.Get<Directories>("directory", true);
+      if (_scopes == null)
+        getResource();  
 
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
@@ -595,35 +595,14 @@ namespace org.iringtools.adapter
       return dataTransferObjects;
     }
 
-    private bool traverseDirectory(Folder folder, string applicationName)
+    private void getResource()
     {
-      Endpoints endpoints = folder.endpoints;
-
-      if (endpoints != null)
-      {
-        foreach (Endpoint endpoint in endpoints)
-        {
-          if (endpoint.Name.ToUpper() == applicationName.ToUpper())
-          {
-            return true;
-          }
-        }
-      }
-
-      if (folder.folders == null)
-        return false;
-      else
-      {
-        bool isScopeValid = false;
-        foreach (Folder subFolder in folder.folders)
-        {
-          isScopeValid = traverseDirectory(subFolder, applicationName);
-          if (isScopeValid)
-            break;
-        }
-        return isScopeValid;
-      }
+      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
+      WebHttpClient _adapterServiceClient = new WebHttpClient(_settings["AdapterServiceUri"]);
+      _scopes = _javaCoreClient.Get<Resource>(String.Format("directory/resource/{0}", _adapterServiceClient.getBaseUri()), true);
     }
+
+    
 
     private void InitializeScope(string projectName, string applicationName)
     {
@@ -632,11 +611,16 @@ namespace org.iringtools.adapter
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;
-          foreach (Folder project in _scopes)
+
+          foreach (Locator project in _scopes.locators)
           {
             if (project.context.ToUpper() == projectName.ToUpper())
             {
-              isScopeValid = traverseDirectory(project, applicationName);
+              foreach (EndpointApplication application in project.applications)
+              {
+                if (application.endpoint.ToUpper() == applicationName.ToUpper())
+                  isScopeValid = true;
+              }
             }
           }
 

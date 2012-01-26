@@ -58,11 +58,8 @@ namespace org.iringtools.exchange
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
-      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-      if (_javaCoreClient.getBaseUri().Contains("dirxml"))
-        _scopes = _javaCoreClient.Get<Directories>("", true);
-      else
-        _scopes = _javaCoreClient.Get<Directories>("", true);
+      if (_scopes == null)
+        getResource();       
 
       //string scopesPath = String.Format("{0}Scopes.xml", _settings["XmlPath"]);
       //_settings["ScopesPath"] = scopesPath;
@@ -345,34 +342,11 @@ namespace org.iringtools.exchange
 
     #region helper methods
 
-    private bool traverseDirectory(Folder folder, string applicationName)
+    private void getResource()
     {
-      Endpoints endpoints = folder.endpoints;
-
-      if (endpoints != null)
-      {
-        foreach (Endpoint endpoint in endpoints)
-        {
-          if (endpoint.Name.ToUpper() == applicationName.ToUpper())
-          {
-            return true;
-          }
-        }
-      }
-
-      if (folder.folders == null)
-        return false;
-      else
-      {
-        bool isScopeValid = false;
-        foreach (Folder subFolder in folder.folders)
-        {
-          isScopeValid = traverseDirectory(subFolder, applicationName);
-          if (isScopeValid)
-            break;
-        }
-        return isScopeValid;
-      }
+      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
+      WebHttpClient _adapterServiceClient = new WebHttpClient(_settings["AdapterServiceUri"]);
+      _scopes = _javaCoreClient.Get<Resource>(String.Format("directory/resource/{0}", _adapterServiceClient.getBaseUri()), true);
     }
 
     private void InitializeScope(string projectName, string applicationName)
@@ -382,11 +356,16 @@ namespace org.iringtools.exchange
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;
-          foreach (Folder project in _scopes)
+
+          foreach (Locator project in _scopes.locators)
           {
             if (project.context.ToUpper() == projectName.ToUpper())
             {
-              isScopeValid = traverseDirectory(project, applicationName);
+              foreach (EndpointApplication application in project.applications)
+              {
+                if (application.endpoint.ToUpper() == applicationName.ToUpper())
+                  isScopeValid = true;
+              }
             }
           }
 

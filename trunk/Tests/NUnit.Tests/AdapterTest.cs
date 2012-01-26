@@ -51,9 +51,9 @@ namespace NUnit.Tests
     [Test]
     public void GetScopes()
     {
-      List<Folder> scopes = _adapterProvider.GetScopes();
+      Resource scopes = _adapterProvider.GetScopes();
 
-      Assert.AreNotEqual(0, scopes.Count);
+      Assert.AreNotEqual(0, scopes.locators.Count);
     }
 
     //[Test]
