@@ -85,7 +85,7 @@ namespace org.iringtools.services
     /// <returns>Returns a list of ScopeProject objects.</returns>
     [Description("Gets the scopes (project and application combinations) available from the service.")]
     [WebGet(UriTemplate = "/scopes")]
-    public Directories GetScopes()
+    public Resource GetScopes()
     {
       OutgoingWebResponseContext context = WebOperationContext.Current.OutgoingResponse;
       context.ContentType = "application/xml";

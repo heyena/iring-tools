@@ -67,6 +67,7 @@
             valueField: 'assembly',
             hiddenName: 'Assembly',
             value: assembly,
+            allowBlank: false,
             listeners: {
                 'select': function (combo, rec, index) {
                     if (rec != null && me.record != null) {

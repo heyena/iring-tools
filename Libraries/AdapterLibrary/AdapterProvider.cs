@@ -59,7 +59,7 @@ namespace org.iringtools.adapter
 
         private IKernel _kernel = null;
         private AdapterSettings _settings = null;
-        private Directories _scopes = null;
+        private Resource _scopes = null;
         private IDataLayer2 _dataLayer = null;
         private IIdentityLayer _identityLayer = null;
         private IDictionary _keyRing = null;
@@ -110,17 +110,10 @@ namespace org.iringtools.adapter
             {
                 _webHttpClient = new WebHttpClient(rdsUri);
             }
-            #endregion
+            #endregion           
 
-            WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-            if (ServiceSecurityContext.Current != null)
-            {
-              IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
-              _settings["UserName"] = identity.Name;
-            }
-
-            
-            _scopes = _javaCoreClient.Get<Directories>("directory", true);           
+            if (_scopes == null)
+              getResource();       
 
             string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
@@ -136,11 +129,14 @@ namespace org.iringtools.adapter
         }
 
         #region application methods
-        public Directories GetScopes()
+        public Resource GetScopes()
         {
             try
             {
-                return _scopes;
+              if (_scopes == null)
+                getResource();
+
+              return _scopes;
             }
             catch (Exception ex)
             {
@@ -975,35 +971,12 @@ namespace org.iringtools.adapter
         #endregion
 
         #region private methods
-
-        private bool traverseDirectory(Folder folder, string applicationName)
+        
+        private void getResource()
         {
-          Endpoints endpoints = folder.endpoints;
-
-          if (endpoints != null)
-          {
-            foreach (Endpoint endpoint in endpoints)
-            {
-              if (endpoint.Name.ToUpper() == applicationName.ToUpper())
-              {
-                return true;
-              }
-            }
-          }
-
-          if (folder.folders == null)
-            return false;
-          else
-          {
-            bool isScopeValid = false;
-            foreach (Folder subFolder in folder.folders)
-            {
-              isScopeValid = traverseDirectory(subFolder, applicationName);
-              if (isScopeValid)
-                break;
-            }
-            return isScopeValid;
-          }
+          WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
+          WebHttpClient _adapterServiceClient = new WebHttpClient(_settings["AdapterServiceUri"]);
+          _scopes = _javaCoreClient.Get<Resource>(String.Format("directory/resource/{0}", _adapterServiceClient.getBaseUri()), true);    
         }
 
         private void InitializeScope(string projectName, string applicationName, bool loadDataLayer)
@@ -1015,11 +988,16 @@ namespace org.iringtools.adapter
                 if (!_isScopeInitialized)
                 {
                   bool isScopeValid = false;
-                  foreach (Folder project in _scopes)
+
+                  foreach (Locator project in _scopes.locators)
                   {
                     if (project.context.ToUpper() == projectName.ToUpper())
                     {
-                      isScopeValid = traverseDirectory(project, applicationName);
+                      foreach (EndpointApplication application in project.applications)
+                      {
+                        if (application.endpoint.ToUpper() == applicationName.ToUpper())
+                          isScopeValid = true;
+                      }
                     }
                   }
 
