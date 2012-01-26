@@ -148,11 +148,6 @@
     <Content Include="SPARQL\TemplateExactSearch.txt" />
     <Content Include="SPARQL\TemplateGetProperties.txt" />
     <Content Include="SPARQL\TemplateTypes.txt" />
-    <Content Include="XML\BindingConfiguration.Adapter.xml" />
-    <Content Include="XML\ClassificationTemplate.xml" />
-    <Content Include="XML\Queries.xml" />
-    <Content Include="XML\Repositories.xml" />
-    <Content Include="XML\Scopes.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\AdapterLibrary\AdapterLibrary.csproj">
