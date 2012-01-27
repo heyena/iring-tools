@@ -90108,8 +90108,5 @@ Ext.define('Ext.view.TableChunker', {
 });
 
 
-// added for debug purpose
-Ext.Loader.setConfig({
-    enabled: true,
-    disableCaching: false
-});
+
+
