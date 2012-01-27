@@ -174,49 +174,18 @@
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Content\img\list-add.png" />
     <Content Include="Content\img\list-remove.png" />
-    <Resource Include="Content\img\relation.png" />
-    <Content Include="Content\img\system-file-manager.png" />
-    <Content Include="Content\img\table_refresh.png" />
-    <Content Include="Content\img\template.png" />
-    <Content Include="favicon.ico" />
-    <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
-    <Content Include="Scripts\AM\AM.js" />
-    <Content Include="Scripts\AM\controller\AdapterManagerController.js" />
     <Content Include="Scripts\AM\controller\ConfigurationController.js" />
-    <Content Include="Scripts\AM\model\DataLayerModel.js" />
-    <Content Include="Scripts\AM\model\DirectoryModel.js" />
-    <Content Include="Scripts\AM\model\DynamicModel.js" />
-    <Content Include="Scripts\AM\model\MappingModel.js" />
+    <Content Include="Scripts\AM\model\BaseUrlModel.js" />
     <Content Include="Scripts\AM\model\NHibernateTreeModel.js" />
-    <Content Include="Scripts\AM\model\ProviderModel.js" />
-    <Content Include="Scripts\AM\model\SearchModel.js" />
-    <Content Include="Scripts\AM\model\SpreadsheetModel.js" />
-    <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigTool.js" />
-    <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigToolConnection.js" />
-    <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigToolKeyandProperty.js" />
-    <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigToolRelation.js" />
-    <Content Include="Scripts\AM\nhibernateconfig\NHibernateConfigToolSave.js" />
-    <Content Include="Scripts\AM\store\DirectoryStore.js" />
     <Content Include="Scripts\AM\store\NHibernateTreeStore.js" />
-    <Content Include="Scripts\AM\store\SearchStore.js" />
-    <Content Include="Scripts\AM\view\common\CenterPanel.js" />
-    <Content Include="Scripts\AM\view\common\ContentPanel.js" />
-    <Content Include="Scripts\AM\view\common\PropertyPanel.js" />
-    <Content Include="Scripts\AM\view\directory\ApplicationPanel.js" />
-    <Content Include="Scripts\AM\view\directory\DataGridPanel.js" />
-    <Content Include="Scripts\AM\view\directory\DirectoryPanel.js" />
-    <Content Include="Scripts\AM\view\directory\DirectoryTree.js" />
-    <Content Include="Scripts\AM\view\directory\GraphPanel.js" />
-    <Content Include="Scripts\AM\view\directory\ScopePanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\ConnectDatabase.js" />
     <Content Include="Scripts\AM\view\nhibernate\CreateRelations.js" />
     <Content Include="Scripts\AM\view\nhibernate\DataObjectPanel.js" />
+    <Content Include="Scripts\AM\view\nhibernate\NHibernateTreePanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\EditorPanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\KeysSelector.js" />
     <Content Include="Scripts\AM\view\nhibernate\NHibernateTool.js" />
     <Content Include="Scripts\AM\view\nhibernate\NHibernateTree.js" />
-    <Content Include="Scripts\AM\view\nhibernate\NHibernateTreePanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\RadioField.js" />
     <Content Include="Scripts\AM\view\nhibernate\SelectKeysPanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\SelectPropertiesPanel.js" />
@@ -227,7 +196,37 @@
     <Content Include="Scripts\AM\view\nhibernate\SetRelationPanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\TreePanel.js" />
     <Content Include="Scripts\AM\view\nhibernate\Utility.js" />
-    <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetSource.js" />
+    <Content Include="Scripts\extjs40\bootstrap.js" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web_Default.config" />
+    <Resource Include="Content\img\relation.png" />
+    <Content Include="Content\img\system-file-manager.png" />
+    <Content Include="Content\img\table_refresh.png" />
+    <Content Include="Content\img\template.png" />
+    <Content Include="favicon.ico" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Scripts\AM\AM.js" />
+    <Content Include="Scripts\AM\controller\AdapterManagerController.js" />
+    <Content Include="Scripts\AM\model\DataLayerModel.js" />
+    <Content Include="Scripts\AM\model\DirectoryModel.js" />
+    <Content Include="Scripts\AM\model\DynamicModel.js" />
+    <Content Include="Scripts\AM\model\MappingModel.js" />
+    <Content Include="Scripts\AM\model\SearchModel.js" />
+    <Content Include="Scripts\AM\store\DirectoryStore.js" />
+    <Content Include="Scripts\AM\store\SearchStore.js" />
+    <Content Include="Scripts\AM\view\common\CenterPanel.js" />
+    <Content Include="Scripts\AM\view\common\ContentPanel.js" />
+    <Content Include="Scripts\AM\view\common\PropertyPanel.js" />
+    <Content Include="Scripts\AM\view\directory\ApplicationPanel.js" />
+    <Content Include="Scripts\AM\view\directory\DataGridPanel.js" />
+    <Content Include="Scripts\AM\view\directory\DirectoryPanel.js" />
+    <Content Include="Scripts\AM\view\directory\DirectoryTree.js" />
+    <Content Include="Scripts\AM\view\directory\GraphPanel.js" />
+    <Content Include="Scripts\AM\view\directory\ScopePanel.js" />
+    <Content Include="Scripts\AM\view\directory\SpreadsheetPanel.js" />
     <Content Include="Scripts\AM\view\directory\ValuelistMapPanel.js" />
     <Content Include="Scripts\AM\view\directory\ValuelistPanel.js" />
     <Content Include="Scripts\AM\view\mapping\ClassmapForm.js" />
@@ -237,7 +236,7 @@
     <Content Include="Scripts\AM\view\mapping\MapValuelist.js" />
     <Content Include="Scripts\AM\view\search\SearchPanel.js" />
     <Content Include="Scripts\AM\view\search\SearchTree.js" />
-    <Content Include="Scripts\AM\view\spreadsheet\SpreadsheetConfigPanel.js" />
+    <Content Include="Scripts\AM\view\spreadsheet\Source.js" />
     <Content Include="Scripts\AM\view\Viewport.js" />
     <Content Include="Scripts\extjs40\ext-all-debug.js" />
     <Content Include="Scripts\extjs40\ext-debug.js" />
@@ -1423,31 +1422,6 @@
     <Content Include="Scripts\extjs40\resources\themes\images\gray\window\window-default-sides.gif" />
     <Content Include="Scripts\extjs40\resources\themes\templates\resources\css\my-ext-theme.css" />
     <Content Include="Scripts\extjs40\ux\TabScrollerMenu.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ActionPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\AdapterManager.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\AjaxRowExpander.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\App.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ApplicationPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\AppDataGrid.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\BooleanFilter.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\DateFilter.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\Filter.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\GridFilters.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ItemSelector.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ListFilter.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ListMenu.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\MultiSelect.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\DictionaryPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\DirectoryPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\HrefItem.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\NumericFilter.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\paging-toolbar-resizer.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\RangeMenu.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ScopePanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\SearchPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\StringFilter.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ValueListMapPanel.js" />
-    <Content Include="Scripts\iringtools\AdapterManager\ValueListPanel.js" />
     <Content Include="Views\AdapterManager\Index.aspx" />
     <None Include="Scripts\extjs40\resources\sass\config.rb" />
     <None Include="Scripts\extjs40\resources\sass\ext-all-access.scss" />
@@ -1544,13 +1518,13 @@
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\branches\datalayers\SpreadsheetDatalayer\SpreadsheetDataLayer\SpreadsheetLibrary.csproj">
-      <Project>{4ABA9650-C7C8-4D30-BAB4-39DE2CC065FD}</Project>
-      <Name>SpreadsheetLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
       <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
       <Name>iRINGLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\SpreadsheetLibrary\SpreadsheetLibrary.csproj">
+      <Project>{A07F5056-4D03-4CB6-912B-A07561E9716E}</Project>
+      <Name>SpreadsheetLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
