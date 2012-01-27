@@ -110,10 +110,7 @@ namespace org.iringtools.adapter
             {
                 _webHttpClient = new WebHttpClient(rdsUri);
             }
-            #endregion           
-
-            if (_scopes == null)
-              getResource();       
+            #endregion               
 
             string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
@@ -976,13 +973,16 @@ namespace org.iringtools.adapter
         {
           WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
           WebHttpClient _adapterServiceClient = new WebHttpClient(_settings["AdapterServiceUri"]);
-          _scopes = _javaCoreClient.Get<Resource>(String.Format("directory/resource/{0}", _adapterServiceClient.getBaseUri()), true);    
+          _scopes = _javaCoreClient.PostMessage<Resource>(String.Format("directory/resource/{0}", _adapterServiceClient.getBaseUri().Replace('/', '.')), "", true);    
         }
 
         private void InitializeScope(string projectName, string applicationName, bool loadDataLayer)
         {
             try
             {
+                if (_scopes == null)
+                  getResource();      
+
                 string scope = String.Format("{0}.{1}", projectName, applicationName);
 
                 if (!_isScopeInitialized)
