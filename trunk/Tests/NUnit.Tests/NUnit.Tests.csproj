@@ -36,6 +36,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Iesi.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="iRINGLibrary, Version=3.0.0.4264, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\iRINGLibrary\bin\Debug\iRINGLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
@@ -66,6 +70,10 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UtilityLibrary, Version=3.0.0.4264, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\iRINGLibrary\bin\Debug\UtilityLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdapterTest.cs" />
@@ -91,7 +99,9 @@
     <Content Include="App_Data\BindingConfiguration.12345_000.DEF.xml" />
     <Content Include="App_Data\BindingConfiguration.Adapter.xml" />
     <Content Include="App_Data\ClassificationTemplate.xml" />
-    <Content Include="App_Data\config.xml" />
+    <Content Include="App_Data\config.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_Data\DatabaseDictionary.12345_000.ABC.xml" />
     <Content Include="App_Data\DatabaseDictionary.12345_000.DEF.xml" />
     <Content Include="App_Data\DataDictionary.12345_000.ABC.xml" />
@@ -219,7 +229,9 @@
     <Content Include="App_Data\nh-mapping.12345_000.DEF.xml" />
     <Content Include="App_Data\Queries.xml" />
     <Content Include="App_Data\Repositories.xml" />
-    <Content Include="App_Data\Scopes.xml" />
+    <Content Include="App_Data\Scopes.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="SPARQL\ClassRelations.txt" />
     <Content Include="SPARQL\ContainsSearch.txt" />
     <Content Include="SPARQL\ExactSearch.txt" />
@@ -271,10 +283,6 @@
       <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
       <Name>AdapterLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
-      <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
-      <Name>iRINGLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\NHibernateLibrary\NHibernateLibrary.csproj">
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
       <Name>NHibernateLibrary</Name>
@@ -282,10 +290,6 @@
     <ProjectReference Include="..\..\Libraries\ReferenceDataLibrary\ReferenceDataLibrary.csproj">
       <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
       <Name>ReferenceDataLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
-      <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
-      <Name>UtilityLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

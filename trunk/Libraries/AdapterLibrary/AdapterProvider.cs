@@ -132,7 +132,7 @@ namespace org.iringtools.adapter
             {
               if (_scopes == null)
                 getResource();
-
+              
               return _scopes;
             }
             catch (Exception ex)
@@ -155,6 +155,7 @@ namespace org.iringtools.adapter
             };
         }
 
+        // Move to Java Service
         //public Response UpdateScopes(ScopeProjects scopes)
         //{
         //    Response response = new Response();
@@ -210,6 +211,7 @@ namespace org.iringtools.adapter
         //    return response;
         //}
 
+        //Move to Java Service
         //public Response DeleteScope(string projectName, string applicationName)
         //{
         //    Response response = new Response();
@@ -973,7 +975,10 @@ namespace org.iringtools.adapter
         {
           WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
           WebHttpClient _adapterServiceClient = new WebHttpClient(_settings["AdapterServiceUri"]);
-          _scopes = _javaCoreClient.PostMessage<Resource>(String.Format("directory/resource/{0}", _adapterServiceClient.getBaseUri().Replace('/', '.')), "", true);    
+          _scopes = _javaCoreClient.PostMessage<Resource>(String.Format("/directory/resource/{0}", _adapterServiceClient.getBaseUri().Replace('/', '.')), "", true);
+
+          string scopesPath = String.Format("{0}FangWeiScopes.xml", _settings["AppDataPath"]);
+          Utility.Write<Resource>(_scopes, scopesPath);
         }
 
         private void InitializeScope(string projectName, string applicationName, bool loadDataLayer)
@@ -1409,6 +1414,11 @@ namespace org.iringtools.adapter
 
 
         #endregion
+
+        public void setScopes(Resource importScopes)
+        {
+          _scopes = importScopes;
+        }
 
         public DataLayers GetDataLayers()
         {
