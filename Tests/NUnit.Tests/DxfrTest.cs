@@ -44,6 +44,11 @@ namespace NUnit.Tests
 				Directory.SetCurrentDirectory(_baseDirectory);
         _dxfrProvider = new DataTranferProvider(_settings);
 
+        string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+
+        Resource importScopes = Utility.Read<Resource>(scopesPath);
+        _dxfrProvider.setScopes(importScopes);
+
         ResetDatabase();
       }			
 

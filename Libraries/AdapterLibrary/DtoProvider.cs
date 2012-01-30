@@ -104,9 +104,6 @@ namespace org.iringtools.adapter
         _fixedIdentifierBoundary = _settings["fixedIdentifierBoundary"];
       }
 
-      if (_scopes == null)
-        getResource();  
-
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
       string bindingConfigurationPath = Path.Combine(
@@ -116,6 +113,11 @@ namespace org.iringtools.adapter
 
       _kernel.Load(bindingConfigurationPath);
       InitializeIdentity();
+    }
+
+    public void setScopes(Resource importScopes)
+    {
+      _scopes = importScopes;
     }
 
     public VersionInfo GetVersion()
@@ -599,15 +601,16 @@ namespace org.iringtools.adapter
     {
       WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
       WebHttpClient _adapterServiceClient = new WebHttpClient(_settings["AdapterServiceUri"]);
-      _scopes = _javaCoreClient.PostMessage<Resource>(String.Format("directory/resource/{0}", _adapterServiceClient.getBaseUri().Replace('/', '.')), "", true);
+      _scopes = _javaCoreClient.PostMessage<Resource>(String.Format("/directory/resource/{0}", _adapterServiceClient.getBaseUri().Replace('/', '.')), "", true);
     }
-
-    
 
     private void InitializeScope(string projectName, string applicationName)
     {
       try
       {
+        if (_scopes == null)
+          getResource();  
+
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;

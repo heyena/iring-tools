@@ -36,19 +36,62 @@ namespace NUnit.Tests
       _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\\Bin"));
       _settings["BaseDirectoryPath"] = _baseDirectory;
       Directory.SetCurrentDirectory(_baseDirectory);
-
       _adapterProvider = new AdapterProvider(_settings);
+
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+      
+      Resource importScopes = Utility.Read<Resource>(scopesPath);
+      _adapterProvider.setScopes(importScopes);
     }
 
     [Test]
     public void GetDataLayers()
     {
-      DataLayers dataLayers = _adapterProvider.GetDataLayers();
-     
+      DataLayers dataLayers = _adapterProvider.GetDataLayers();     
       Assert.AreNotEqual(0, dataLayers.Count);
     }
 
     [Test]
+    public void UpdateBinding()
+    {
+      string bindingPath = String.Format(
+         "{0}BindingConfiguration.{1}.{2}.xml",
+         _settings["AppDataPath"],
+         _settings["ProjectName"], 
+         _settings["ApplicationName"]
+       );
+
+      XElement binding = XDocument.Load(bindingPath).Root;
+      
+      Response response = _adapterProvider.UpdateBinding(
+        _settings["ProjectName"], _settings["ApplicationName"],
+        binding);
+
+      Assert.AreEqual(StatusLevel.Success, response.Level);
+      Assert.AreNotEqual(0, response.StatusList.Count);
+    }
+
+    [Test]
+    public void UpdateMapping()
+    {
+      string mappingPath = String.Format(
+         "{0}Mapping.{1}.{2}.xml",
+         _settings["AppDataPath"],
+         _settings["ProjectName"],
+         _settings["ApplicationName"]
+       );
+
+        XElement mapping = XDocument.Load(mappingPath).Root;
+
+        Response response = _adapterProvider.UpdateMapping(
+          _settings["ProjectName"], _settings["ApplicationName"],
+          mapping);
+
+        Assert.AreEqual(StatusLevel.Success, response.Level);
+        Assert.AreNotEqual(0, response.StatusList.Count);
+    }
+
+    [Test] 
     public void GetScopes()
     {
       Resource scopes = _adapterProvider.GetScopes();
@@ -56,7 +99,7 @@ namespace NUnit.Tests
       Assert.AreNotEqual(0, scopes.locators.Count);
     }
 
-    //[Test]
+    //[Test] Move to JUnit
     //public void UpdateScopes()
     //{
     //  string scopesPath = String.Format(
@@ -90,7 +133,7 @@ namespace NUnit.Tests
     //  Assert.AreNotEqual(0, response.StatusList.Count);
     //}
 
-    [Test]
+    [Test] 
     public void GetBinding()
     {
       XElement binding = _adapterProvider.GetBinding(
@@ -99,27 +142,7 @@ namespace NUnit.Tests
       Assert.AreNotEqual(0, binding.Elements("bind").Count());
     }
 
-    [Test]
-    public void UpdateBinding()
-    {
-      string bindingPath = String.Format(
-         "{0}BindingConfiguration.{1}.{2}.xml",
-         _settings["AppDataPath"],
-         _settings["ProjectName"], 
-         _settings["ApplicationName"]
-       );
-
-      XElement binding = XDocument.Load(bindingPath).Root;
-      
-      Response response = _adapterProvider.UpdateBinding(
-        _settings["ProjectName"], _settings["ApplicationName"],
-        binding);
-
-      Assert.AreEqual(StatusLevel.Success, response.Level);
-      Assert.AreNotEqual(0, response.StatusList.Count);
-    }
-
-    [Test]
+    [Test] 
     public void GetDictionary()
     {
         DataDictionary dictionary = _adapterProvider.GetDictionary(
@@ -135,26 +158,6 @@ namespace NUnit.Tests
       _settings["ProjectName"], _settings["ApplicationName"]);
 
       Assert.AreNotEqual(0, mapping.graphMaps.Count);
-    }
-
-    [Test]
-    public void UpdateMapping()
-    {
-      string mappingPath = String.Format(
-         "{0}Mapping.{1}.{2}.xml",
-         _settings["AppDataPath"],
-         _settings["ProjectName"],
-         _settings["ApplicationName"]
-       );
-
-        XElement mapping = XDocument.Load(mappingPath).Root;
-
-        Response response = _adapterProvider.UpdateMapping(
-          _settings["ProjectName"], _settings["ApplicationName"],
-          mapping);
-
-        Assert.AreEqual(StatusLevel.Success, response.Level);
-        Assert.AreNotEqual(0, response.StatusList.Count);
     }
   }
 }

@@ -44,6 +44,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ExternalBinaries\dotnetRDF\core\net35\dotNetRDF.dll</HintPath>
     </Reference>
+    <Reference Include="iRINGLibrary, Version=3.0.0.4264, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\iRINGLibrary\bin\Debug\iRINGLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
@@ -56,6 +60,10 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="UtilityLibrary, Version=3.0.0.4264, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Libraries\iRINGLibrary\bin\Debug\UtilityLibrary.dll</HintPath>
     </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
@@ -134,16 +142,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
-      <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
-      <Name>iRINGLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
-      <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
-      <Name>UtilityLibrary</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

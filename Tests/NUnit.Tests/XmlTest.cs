@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using org.iringtools.adapter;
 using org.iringtools.library;
+using org.iringtools.utility;
 
 namespace NUnit.Tests
 {
@@ -35,6 +36,11 @@ namespace NUnit.Tests
       Directory.SetCurrentDirectory(_baseDirectory);
 
       _adapterProvider = new AdapterProvider(_settings);
+
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+
+      Resource importScopes = Utility.Read<Resource>(scopesPath);
+      _adapterProvider.setScopes(importScopes);
 
       ResetDatabase();
     }

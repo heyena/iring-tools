@@ -63,8 +63,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        msg = _javaCoreClient.GetMessage("directory/session");        
-        obj = _javaCoreClient.Get<Directories>("directory", true);
+        msg = _javaCoreClient.GetMessage("/directory/session");        
+        obj = _javaCoreClient.Get<Directories>("/directory", true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -276,7 +276,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _javaCoreClient.Post<Directories>("directory", scopes, true);
+        obj = _javaCoreClient.Post<Directories>("/directory", scopes, true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -382,7 +382,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        rootSecurityRole = _javaCoreClient.GetMessage("directory/security");
+        rootSecurityRole = _javaCoreClient.GetMessage("/directory/security");
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -421,7 +421,7 @@ namespace iRINGTools.Web.Models
       path = path.Replace('/', '.');
       try
       {
-        obj = _javaCoreClient.PostMessage(string.Format("directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
+        obj = _javaCoreClient.PostMessage(string.Format("/directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -452,7 +452,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _javaCoreClient.PostMessage(string.Format("directory/endpoint/{0}/{1}/{2}/{3}", path, newEndpointName, "endpoint", baseUrl), description, true);
+        obj = _javaCoreClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}", path, newEndpointName, "endpoint", baseUrl), description, true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -470,7 +470,7 @@ namespace iRINGTools.Web.Models
       path = path.Replace('/', '.');
       try
       {
-        obj = _javaCoreClient.Post<String>(String.Format("directory/{0}", path), "", true);
+        obj = _javaCoreClient.Post<String>(String.Format("/directory/{0}", path), "", true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
