@@ -976,9 +976,6 @@ namespace org.iringtools.adapter
           WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
           WebHttpClient _adapterServiceClient = new WebHttpClient(_settings["AdapterServiceUri"]);
           _scopes = _javaCoreClient.PostMessage<Resource>(String.Format("/directory/resource/{0}", _adapterServiceClient.getBaseUri().Replace('/', '.')), "", true);
-
-          string scopesPath = String.Format("{0}FangWeiScopes.xml", _settings["AppDataPath"]);
-          Utility.Write<Resource>(_scopes, scopesPath);
         }
 
         private void InitializeScope(string projectName, string applicationName, bool loadDataLayer)
