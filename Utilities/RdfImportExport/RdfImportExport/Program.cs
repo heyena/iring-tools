@@ -96,35 +96,35 @@ namespace RdfImportExport
       }
 
       graphUri = ConfigurationManager.AppSettings["GraphUri"];
-      if (String.IsNullOrEmpty(graphUri))
-      {
-        graphUri = "dotnetrdf:default-graph";
-      }
+      
     }
 
     private static void DoExport()
     {
-      MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
-      SqlGraph sqlGraph = null;
-      List<Uri> graphUris = msStore.GetGraphUris();
+      MicrosoftAdoManager msStore = new MicrosoftAdoManager(dbServer, dbName, dbUser, dbPassword);
+      IGraph sqlGraph = null;
+      IEnumerable<Uri> graphUris = msStore.ListGraphs();
       PrettyRdfXmlWriter rdfXmlWriter = new PrettyRdfXmlWriter();
-
-      if (graphUri == null || graphUri == string.Empty)
+      if (String.IsNullOrEmpty(graphUri))
       {
-          sqlGraph = new SqlGraph(graphUris[0], msStore);
+          graphUri = graphUris.FirstOrDefault().ToString(); ;
       }
       else
       {
-          bool exist = msStore.Exists(new Uri(graphUri));
-          if (exist) 
-              sqlGraph = new SqlGraph(new Uri(graphUri), msStore);
+          bool exist = !msStore.GetGraphID(new Uri(graphUri)).Equals(null);
+          if (exist)
+          {
+              msStore.LoadGraph(sqlGraph, new Uri(graphUri));
+              sqlGraph.BaseUri = new Uri(graphUri);
+          }
           else
               throw new Exception(graphUri + " does not exist in Sql store ...");
       }
 
       rdfXmlWriter.Save(sqlGraph, rdfFullFilename);
+     // msStore.SaveGraph(sqlGraph);
 
-      if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
+     // if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
       Console.WriteLine("Graph[" + graphUri + "] written to " + rdfFullFilename);
       Console.WriteLine("Press any key to continue....");
       Console.ReadKey();
@@ -133,39 +133,45 @@ namespace RdfImportExport
 
     private static void DoImport()
     {
-      MicrosoftSqlStoreManager msStore = new MicrosoftSqlStoreManager(dbServer, dbName, dbUser, dbPassword);
+        MicrosoftAdoManager msStore = new MicrosoftAdoManager(dbServer, dbName, dbUser, dbPassword);
       
-      List<Uri> graphUris = msStore.GetGraphUris();
-      SqlGraph sqlGraph = null;
+      IEnumerable<Uri> graphUris = msStore.ListGraphs();
+      IGraph sqlGraph = new Graph();
         // let's load the existing graph
-      if (graphUri == null || graphUri == string.Empty)
+      if (String.IsNullOrEmpty(graphUri))
       {
-         sqlGraph  = new SqlGraph(graphUris[0], msStore);
+          graphUri = graphUris.FirstOrDefault().ToString(); ;
       }
       else
       {
-          bool uriExist = msStore.Exists(new Uri(graphUri));
-          if (uriExist)
-          sqlGraph = new SqlGraph(new Uri(graphUri), msStore);
-          else 
-              throw new Exception(graphUri + " does not exists in Sql Store ... ");
+          bool exist = msStore.GetGraphID(new Uri(graphUri)).Equals(null);
+          if (exist)
+          {
+              msStore.LoadGraph(sqlGraph, new Uri(graphUri));
+              sqlGraph.BaseUri = new Uri(graphUri);
+          }
+          else
+          {
+              sqlGraph.BaseUri = new Uri(graphUri);
+          }
+//              throw new Exception(graphUri + " does not exists in Sql Store ... ");
       }
         // do we need to clear it first?
       if (clearBeforeImport)
       {
-          sqlGraph.Clear();
+          msStore.DeleteGraph(graphUri);
       }
-      Graph g = new Graph();
+      IGraph g = new Graph();
       FileLoader.Load(g, rdfFullFilename);
       foreach (Triple t in g.Triples)
       {
           sqlGraph.Assert(t);
       }
 
-      sqlGraph.Manager.Flush();
+      msStore.SaveGraph(sqlGraph);
 
-      if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
-      Console.WriteLine("Graph[" + graphUri + "] imported from " + rdfFullFilename);
+      //if (graphUri == string.Empty) graphUri = "dotnetrf:default-graph";
+       Console.WriteLine("Graph[" + graphUri + "] imported from " + rdfFullFilename);
       Console.ReadKey();
     }
 
