@@ -22,57 +22,43 @@
     <FacadeExchangeDir>$(UtilitiesDir)\FacadeExchange</FacadeExchangeDir>
     <UnitTestsDir>$(MSBuildProjectDirectory)\UnitTests</UnitTestsDir>
     <AdapterServiceTestsDir>$(UnitTestsDir)\AdapterService.Tests</AdapterServiceTestsDir>
-    <RefDataServiceTestsDir>$(UnitTestsDir)\ReferenceDataService.Tests</RefDataServiceTestsDir>
-    <SDKDir>$(MSBuildProjectDirectory)\iRINGTools.SDK</SDKDir>
-    <SDKLibDir>$(SDKDir)\lib</SDKLibDir>
-    
+    <RefDataServiceTestsDir>$(UnitTestsDir)\ReferenceDataService.Tests</RefDataServiceTestsDir>    
     <DeploymentDir>$(MSBuildProjectDirectory)\Deployment</DeploymentDir>
     <ServicesDeploymentDir>$(DeploymentDir)\iRINGTools\Services</ServicesDeploymentDir>
     <AppsDeploymentDir>$(DeploymentDir)\iRINGTools\Apps</AppsDeploymentDir>
     <UtilitiesDeploymentDir>$(DeploymentDir)\iRINGTools\Utils</UtilitiesDeploymentDir>
     <LandingDeploymentDir>$(DeploymentDir)\iRINGTools</LandingDeploymentDir>
-    <SDKDeploymentDir>$(DeploymentDir)\SDK</SDKDeploymentDir>
-    <CSVDataLayerDeploymentDir>$(SDKDeploymentDir)\CSVDataLayer</CSVDataLayerDeploymentDir>
-    <SDKLibDeploymentDir>$(SDKDeploymentDir)\lib\iring-tools</SDKLibDeploymentDir>
-
     <SolutionFile>iring-tools.sln</SolutionFile>
-    <SDKSolutionFile>$(SDKDir)\iring-tools-sdk-express.sln</SDKSolutionFile>
   </PropertyGroup>
 
   <ItemGroup>
     <ServicesDeployment
       Include="$(ServicesDir)\**;"
       Exclude="$(ServicesDir).Tests\**;
-             $(ServicesDir)\AdapterSettings.xml;
-             $(ServicesDir)\KeyRing.xml;
-             $(ServicesDir)\App_Code\**;
-             $(ServicesDir)\App_Data\config_Developer.ttl;
-             $(ServicesDir)\bin\*.pdb;
-             $(ServicesDir)\obj\**;
-             $(ServicesDir)\Properties\**;
-             $(ServicesDir)\Logs\**;
-             $(ServicesDir)\Templates\**;
-             $(ServicesDir)\Transforms\**;
-             $(ServicesDir)\obj\**;
-             $(ServicesDir)\*.cs;
-             $(ServicesDir)\*.csproj;
-             $(ServicesDir)\*.user;
-             $(ServicesDir)\*.vspscc;
-             $(ServicesDir)\*.log;
-             $(ServicesDir)\web.config;
-             $(ServicesDir)\Service.cs;
-             $(ServicesDir)\IService.cs;
-             $(ServicesDir)\Global.asax.cs;
-             $(ServicesDir)\XML\DataDictionary.*.xml;
-             $(ServicesDir)\XML\DatabaseDictionary.*.xml;
-             $(ServicesDir)\XML\nh-configuration.*.xml;
-             $(ServicesDir)\XML\nh-mapping.*.xml;
-             $(ServicesDir)\XML\Repositories.xml;
-             $(ServicesDir)\XML\Scopes.xml;
-             $(ServicesDir)\.svn\**;
-             $(ServicesDir)\*\.svn\**;
-             $(ServicesDir)\*\*\.svn\**;
-             $(ServicesDir)\*\*\*\.svn\**;">
+               $(ServicesDir)\AdapterSettings.xml;
+               $(ServicesDir)\KeyRing.xml;
+               $(ServicesDir)\App_Code\**;
+               $(ServicesDir)\App_Data\config_Developer.ttl;
+               $(ServicesDir)\bin\*.pdb;
+               $(ServicesDir)\obj\**;
+               $(ServicesDir)\Properties\**;
+               $(ServicesDir)\Logs\**;
+               $(ServicesDir)\Templates\**;
+               $(ServicesDir)\Transforms\**;
+               $(ServicesDir)\obj\**;
+               $(ServicesDir)\*.cs;
+               $(ServicesDir)\*.csproj;
+               $(ServicesDir)\*.user;
+               $(ServicesDir)\*.vspscc;
+               $(ServicesDir)\*.log;
+               $(ServicesDir)\web.config;
+               $(ServicesDir)\Service.cs;
+               $(ServicesDir)\IService.cs;
+               $(ServicesDir)\Global.asax.cs;
+               $(ServicesDir)\.svn\**;
+               $(ServicesDir)\*\.svn\**;
+               $(ServicesDir)\*\*\.svn\**;
+               $(ServicesDir)\*\*\*\.svn\**;">
     </ServicesDeployment>
 
     <LandingDeployment
@@ -127,7 +113,8 @@
 
   <ItemGroup>
     <DeploymentPackage Include="*.*" Exclude="*.zip">
-      <Options>a -tzip -r</Options>
+      <Options>a -tzip -y -r</Options>
+      <OutputDir>$(DeploymentDir)</OutputDir>
       <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
     </DeploymentPackage>
@@ -146,16 +133,6 @@
       ReplacementText="$(Major).$(Minor).$(Build).$(Revision)"/>
   </Target>
 
-  <Target Name="SvnCleanUp">
-    <Message Text="Performing SVN clean-up ..." />
-    <Exec Command="svn cleanup"/>
-  </Target>
-
-  <Target Name="SvnUpdate">
-    <Message Text="Performing SVN update ..." />
-    <Exec Command="svn update"/>
-  </Target>
-
   <Target Name="CleanBuild">
     <Message Text="Performing MSBuild clean-up ..." />
     <MSBuild Projects="$(SolutionFile)" Targets="Clean"/>
@@ -165,8 +142,8 @@
     <Message Text="Preparing build ..." />
     <Exec Condition="!Exists('$(ServicesDir)\Web.config')" 
           Command="Copy $(ServicesDir)\Web_Default.config $(ServicesDir)\Web.config" />
-    <Exec Condition="!Exists('$(ServicesDir)\XML\Repositories.xml')" 
-          Command="Copy $(ServicesDir)\App_Data\Repositories_Default.xml $(ServicesDir)\XML\Repositories.xml" />
+    <Exec Condition="!Exists('$(ServicesDir)\App_Data\Repositories.xml')" 
+          Command="Copy $(ServicesDir)\App_Data\Repositories_Default.xml $(ServicesDir)\App_Data\Repositories.xml" />
     <Exec Condition="!Exists('$(ServicesDir)\App_Data\config.ttl')" 
           Command="Copy $(ServicesDir)\App_Data\config_Default.ttl $(ServicesDir)\App_Data\config.ttl" />
     <Exec Condition="!Exists('$(ApplicationsDir)\Web.config')"
@@ -184,22 +161,15 @@
     <MSBuild Projects="$(SolutionFile)" Targets="Build"/>
   </Target>
 
-  <Target Name="SDKBuild" DependsOnTargets="DeployToSDK">
-    <Message Text="Performing MSBuild of SDK ..." />
-    <MSBuild Projects="$(SDKSolutionFile)" Targets="Build"/>
-  </Target>
-
-    <Target Name="Test">
-        <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test-results.xml" />
+  <Target Name="Test">
+    <NUnit ToolPath="$(NUnit-ToolPath)" DisableShadowCopy="true" Assemblies="Tests\NUnit.Tests\Bin\NUnit.Tests.dll" OutputXmlFile="test-reports\test-results.xml" />
 	</Target>
 
   <Target Name="CreateDeployment">
     <Message Text="Cleaning up old deployment folders..." />
     <Exec Command="RmDir /S /Q $(DeploymentDir)" />
     <MakeDir Directories="$(ServicesDeploymentDir); $(AppsDeploymentDir); $(LandingDeploymentDir); $(UtilitiesDeploymentDir);"/>
-    <!--<Exec Command="Copy .\ClientAccessPolicy.xml $(ServicesDeploymentDir)\ClientAccessPolicy.xml" />
-    <Exec Command="Copy .\ClientAccessPolicy.xml $(AppsDeploymentDir)\ClientAccessPolicy.xml" />-->
-
+    
     <Message Text="Creating Services deployment ..." />
     <Copy SourceFiles="@(ServicesDeployment)"
           DestinationFiles="@(ServicesDeployment ->'$(ServicesDeploymentDir)\%(RecursiveDir)%(Filename)%(Extension)')" />
@@ -228,6 +198,7 @@
 
   <Target Name="CreatePackages" DependsOnTargets="CreateDeployment">
     <Exec Command="$(zipCmd) %(DeploymentPackage.Options) %(DeploymentPackage.ZipFile) %(DeploymentPackage.FileSet)" />
+    <Exec Command="RmDir /S /Q $(DeploymentDir)\iRINGTools" />
   </Target>
 
   <Target Name="Build" DependsOnTargets="CoreBuild"/>
