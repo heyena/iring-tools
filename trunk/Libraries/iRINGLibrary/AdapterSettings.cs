@@ -14,6 +14,7 @@ namespace org.iringtools.adapter
     {
       this.Add("InterfaceService", @"http://localhost/services/facade/query");
       this.Add("ReferenceDataServiceUri", @"http://localhost/services/refdata");
+      this.Add("JavaCoreUri", @"http://localhost/services/dir");
       this.Add("DefaultProjectionFormat", "json");
       this.Add("DefaultListProjectionFormat", "json");
       this.Add("EndpointTimeout", "30000");
