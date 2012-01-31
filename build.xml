@@ -131,11 +131,6 @@
       <FileSet>$(ServicesDeploymentDir) $(AppsDeploymentDir) $(UtilitiesDeploymentDir) $(LandingDeploymentDir)\*</FileSet>
       <ZipFile>$(DeploymentDir)\iRINGTools-$(Major).$(Minor).$(Build).zip</ZipFile>
     </DeploymentPackage>
-    <DeploymentPackage Include="*" Exclude="">
-      <Options>a -tzip -r</Options>
-      <FileSet>$(SDKDeploymentDir)\*</FileSet>
-      <ZipFile>$(DeploymentDir)\iRINGTools-SDK-$(Major).$(Minor).$(Build).zip</ZipFile>
-    </DeploymentPackage>
   </ItemGroup>
 
   <Target Name="Version">
