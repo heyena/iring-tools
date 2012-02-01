@@ -313,7 +313,7 @@ AdapterManager.NHibernateConfigWizard = Ext.extend(Ext.Container, {
                 var dataObjectsPane = rp.items.map[scopeName + '.' + appName + '.dataObjectsPane'];
                 var dbObjectsTree = dataObjectsPane.items.items[0].items.items[0];
 
-                if (dbDict.dataObjects.length > 0) {
+                if (dbDict.ConnectionString != null) {
                     // populate data source form
                     dbInfo = showTree(dbObjectsTree, dbInfo, dbDict, scopeName, appName, dataObjectsPane);
                     var abcdd = 5;

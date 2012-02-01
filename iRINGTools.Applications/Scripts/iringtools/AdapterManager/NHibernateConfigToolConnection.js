@@ -881,7 +881,11 @@ function loadTree(rootNode, dbDict) {
 			}
 		}
 		ijk++;
-	}
+    }
+
+    if (rootNode.childNodes.length == 1)
+        if (rootNode.childNodes[0].text == "")
+            rootNode.removeChild(rootNode.childNodes[0], true);
 };		
 
 function setTableNames (dbDict) {
