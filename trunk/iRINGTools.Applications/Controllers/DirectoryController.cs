@@ -55,19 +55,8 @@ namespace org.iringtools.web.controllers
         {
           case "ScopesNode":
             {
-              string user = GetUserId((IDictionary<string, string>)_allClaims);               
-              string _key = user + "." + "tree";
-
-              Tree directoryTree = null;
-
-              if (Session[_key] == null)
-              {
-                directoryTree = _repository.GetDirectoryTree(user);
-                Session[_key] = directoryTree;
-              }
-              else
-                directoryTree = (Tree)Session[_key];
-
+              string user = GetUserId((IDictionary<string, string>)_allClaims);             
+              Tree directoryTree = _repository.GetDirectoryTree(user); 
               return Json(directoryTree.getNodes(), JsonRequestBehavior.AllowGet);
             }
           case "ApplicationNode":
