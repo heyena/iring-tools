@@ -382,6 +382,13 @@ namespace org.iringtools.library
 
     protected string GetIdentifier(IDataObject dataObject)
     {
+      return GetIdentifier(_dataObjectDefinition, dataObject);
+    }
+
+    protected string GetIdentifier(DataObject dataObjectDefinition, IDataObject dataObject)
+    {
+      _dataObjectDefinition = dataObjectDefinition;
+
       string[] identifierParts = new string[_dataObjectDefinition.keyProperties.Count];
 
       int i = 0;
@@ -391,9 +398,7 @@ namespace org.iringtools.library
         i++;
       }
 
-      string identifier = String.Join(_dataObjectDefinition.keyDelimeter, identifierParts);
-
-      return identifier;
+      return String.Join(_dataObjectDefinition.keyDelimeter, identifierParts);
     }
 
     public virtual IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex)
