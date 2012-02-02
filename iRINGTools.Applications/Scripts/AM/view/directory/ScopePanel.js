@@ -113,10 +113,19 @@
 
         this.items.first().getForm().submit({
             waitMsg: 'Saving Data...',
-            success: function (f, a) {
-                me.fireEvent('Save', me);
+            success: function (response, request) {
+                me.fireEvent('Save', me);                
             },
-            failure: function (f, a) {
+            failure: function (response, request) {
+                var rtext = request.result;
+                if (rtext.toUpperCase().indexOf('FALSE') > 0) {
+                    var ind = rtext.indexOf('}');
+                    var len = rtext.length - ind - 1;
+                    var msg = rtext.substring(ind + 1, rtext.length - 1);
+                    showDialog(400, 100, 'Error saving endpoint changes', msg, Ext.Msg.OK, null);
+                    return;
+                }
+                
                 var message = 'Error saving changes!';
                 showDialog(400, 100, 'Warning', message, Ext.Msg.OK, null);
             }

@@ -21,11 +21,14 @@ namespace org.iringtools.web.controllers
     private string _keyFormat = "Mapping.{0}.{1}";
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
     private System.Web.Script.Serialization.JavaScriptSerializer oSerializer;
-
+    private const string USERID_KEY = "emailaddress";   
 
     public DirectoryController()
       : this(new AdapterRepository())
     {
+      string user = GetUserId((IDictionary<string, string>)_allClaims);
+      Session[user + "." + "tree"] = null;
+      Session[user + "." + "directory"] = null;
     }
 
     public DirectoryController(IAdapterRepository repository)
@@ -52,7 +55,19 @@ namespace org.iringtools.web.controllers
         {
           case "ScopesNode":
             {
-              Tree directoryTree = _repository.GetDirectoryTree();
+              string user = GetUserId((IDictionary<string, string>)_allClaims);               
+              string _key = user + "." + "tree";
+
+              Tree directoryTree = null;
+
+              if (Session[_key] == null)
+              {
+                directoryTree = _repository.GetDirectoryTree(user);
+                Session[_key] = directoryTree;
+              }
+              else
+                directoryTree = (Tree)Session[_key];
+
               return Json(directoryTree.getNodes(), JsonRequestBehavior.AllowGet);
             }
           case "ApplicationNode":
@@ -446,20 +461,37 @@ namespace org.iringtools.web.controllers
     public JsonResult Folder(FormCollection form)
     {
       string success;
-      success = _repository.Folder(form["foldername"], form["description"], form["path"], form["state"], form["contextName"]);
+      string user = GetUserId((IDictionary<string, string>)_allClaims);
+      success = _repository.Folder(form["foldername"], form["description"], form["path"], form["state"], form["contextName"], user);
+      
+      if (success == "ERROR")
+      {
+        string msg = _repository.getCombinationMsg();
+        return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+      }
+
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult Endpoint(FormCollection form)
     {
       string success;
-      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["assembly"], form["baseUrl"]);
+      string user = GetUserId((IDictionary<string, string>)_allClaims);
+      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["assembly"], form["baseUrl"], user);
+
+      if (success == "ERROR")
+      {
+        string msg = _repository.getCombinationMsg();
+        return Json(new { success = false } + msg, JsonRequestBehavior.AllowGet);
+      }
+
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult DeleteEntry(FormCollection form)
     {
-      _repository.DeleteEntry(form["path"]);
+      string user = GetUserId((IDictionary<string, string>)_allClaims);
+      _repository.DeleteEntry(form["path"], user);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
@@ -487,6 +519,19 @@ namespace org.iringtools.web.controllers
 
     #region Private Methods
 
+    private string GetUserId(IDictionary<string, string> claims)
+    {
+      foreach (var pair in claims)
+      {
+        if (pair.Key.ToLower() == USERID_KEY)
+        {
+          return pair.Value;
+        }
+      }
+
+      return "";
+    }
+   
     private Mapping GetMapping(string contextName, string endpoint)
     {
       string key = string.Format(_keyFormat, contextName, endpoint);
