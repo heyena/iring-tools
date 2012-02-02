@@ -13,6 +13,7 @@ using org.iringtools.utility;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
 using System.Text;
+using System.Collections;
 
 
 namespace iRINGTools.Web.Models
@@ -26,6 +27,7 @@ namespace iRINGTools.Web.Models
     private string _refDataServiceURI = string.Empty;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
     private static Dictionary<string, NodeIconCls> nodeIconClsMap;
+    private string combinationMsg = null;
 
     [Inject]
     public AdapterRepository()
@@ -35,25 +37,8 @@ namespace iRINGTools.Web.Models
       _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
       _dataClient = new WebHttpClient(_settings["DataServiceURI"]);
       setNodeIconClsMap();
-    }
-
-    private static void setNodeIconClsMap()
-    {
-      nodeIconClsMap = new Dictionary<string, NodeIconCls>()
-          {
-  	        {"folder", NodeIconCls.folder},
-  	        {"project", NodeIconCls.project},
-  	        {"scope", NodeIconCls.scope},
-  	        {"proj", NodeIconCls.project},
-  	        {"application", NodeIconCls.application},
-  	        {"app", NodeIconCls.application},
-  	        {"resource", NodeIconCls.resource},
-  	        {"resrc", NodeIconCls.resource}, 	
-            {"key", NodeIconCls.key}, 
-            {"property", NodeIconCls.property}, 
-            {"relation", NodeIconCls.relation} 
-          };
-    }
+      combinationMsg = null;
+    }    
 
     public Directories GetScopes()
     {
@@ -97,12 +82,23 @@ namespace iRINGTools.Web.Models
       }
     }
 
-    public Tree GetDirectoryTree()
+    public Tree GetDirectoryTree(string user)
     {
       _logger.Debug("In ScopesNode case block");
-      Directories directory = GetScopes();
+      Directories directory = null;
+
+      string _key = user + "." + "directory";
+      if (HttpContext.Current.Session[_key] == null)
+      {
+        directory = GetScopes();
+        HttpContext.Current.Session[_key] = directory;
+      }
+      else
+        directory = (Directories)HttpContext.Current.Session[_key];
+
       Tree tree = null;
       string context = "";
+      string treePath = "";
 
       if (directory != null)
       {
@@ -119,6 +115,7 @@ namespace iRINGTools.Web.Models
           folderNode.leaf = false;
           folderNode.iconCls = getNodeIconCls(folder.type);
           folderNode.type = "folder";
+          treePath = folder.Name;
 
           if (folder.context != null)
             context = folder.context;
@@ -130,15 +127,17 @@ namespace iRINGTools.Web.Models
             Description = folder.Description,
             securityRole = folder.securityRole
           };
+
           folderNode.record = record;
           folderNode.property = new Dictionary<string, string>();
           folderNode.property.Add("Name", folder.Name);
           folderNode.property.Add("Description", folder.Description);
           folderNode.property.Add("Context", folder.context);
           folderNodes.Add(folderNode);
-          traverseDirectory(folderNode, folder);
+          traverseDirectory(folderNode, folder, treePath);
         }
       }
+     
       return tree;
     }
 
@@ -171,103 +170,6 @@ namespace iRINGTools.Web.Models
       }
 
       return dataLayer;
-    }
-
-    private void traverseDirectory(TreeNode folderNode, Folder folder)
-    {
-      List<JsonTreeNode> folderNodeList = folderNode.getChildren();
-      Endpoints endpoints = folder.endpoints;
-      string context = "";
-      string endpointName;
-      string baseUrl = "";
-      string assembly = "";
-      string dataLayerName = "";
-
-      if (endpoints != null)
-      {
-        foreach (Endpoint endpoint in endpoints)
-        {
-          LeafNode endPointNode = new LeafNode();
-          endpointName = endpoint.Name;
-          endPointNode.text = endpoint.Name;
-          endPointNode.iconCls = "application";
-          endPointNode.type = "ApplicationNode";
-          endPointNode.setLeaf(false);
-          endPointNode.hidden = false;
-          endPointNode.id = folderNode.id + "/" + endpoint.Name;
-          endPointNode.identifier = endPointNode.id;
-          endPointNode.nodeType = "async";
-          folderNodeList.Add(endPointNode);
-
-          if (endpoint.context != null)
-            context = endpoint.context;
-
-          if (endpoint.baseUrl != null)
-            baseUrl = endpoint.baseUrl.Replace('.', '/');
-
-          DataLayer dataLayer = GetDataLayer(context, endpointName);
-
-          if (dataLayer != null)
-          {
-            assembly = dataLayer.Assembly;
-            dataLayerName = dataLayer.Name;
-          }
-
-          Object record = new
-          {
-            Name = endpointName,
-            Description = endpoint.Description,
-            DataLayer = dataLayerName,
-            context = context,
-            BaseUrl = baseUrl,
-            endpoint = endpointName,
-            Assembly = assembly,
-            securityRole = endpoint.securityRole
-          };
-
-          endPointNode.record = record;
-          endPointNode.property = new Dictionary<string, string>();
-          endPointNode.property.Add("Name", endpointName);
-          endPointNode.property.Add("Description", endpoint.Description);
-          endPointNode.property.Add("Context", context);
-          endPointNode.property.Add("Data Layer", dataLayerName);
-        }
-      }
-
-      if (folder.folders == null)
-        return;
-      else
-      {
-        foreach (Folder subFolder in folder.folders)
-        {
-          TreeNode subFolderNode = new TreeNode();
-          subFolderNode.text = subFolder.Name;
-          subFolderNode.iconCls = getNodeIconCls(subFolder.type);
-          subFolderNode.type = "folder";
-          subFolderNode.hidden = false;
-          subFolderNode.leaf = false;
-          subFolderNode.id = folderNode.id + "/" + subFolder.Name;
-          subFolderNode.identifier = subFolderNode.id;
-
-          if (subFolder.context != null)
-            context = subFolder.context;
-
-          Object record = new
-          {
-            Name = subFolder.Name,
-            context = context,
-            Description = subFolder.Description,
-            securityRole = subFolder.securityRole
-          };
-          subFolderNode.record = record;
-          subFolderNode.property = new Dictionary<string, string>();
-          subFolderNode.property.Add("Name", subFolder.Name);
-          subFolderNode.property.Add("Description", subFolder.Description);
-          subFolderNode.property.Add("Context", subFolder.context);
-          folderNodeList.Add(subFolderNode);
-          traverseDirectory(subFolderNode, subFolder);
-        }
-      }
     }
 
     public string PostScopes(Directories scopes)
@@ -357,8 +259,8 @@ namespace iRINGTools.Web.Models
       try
       {
         XElement binding = new XElement("module",
-    new XAttribute("name", string.Format("{0}.{1}", scope, application)),
-      new XElement("bind",
+        new XAttribute("name", string.Format("{0}.{1}", scope, application)),
+        new XElement("bind",
         new XAttribute("name", "DataLayer"),
         new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
         new XAttribute("to", dataLayer)
@@ -406,9 +308,9 @@ namespace iRINGTools.Web.Models
       return baseUrls;
     }
 
-    public string Folder(string newFolderName, string description, string path, string state, string context)
+    public string Folder(string newFolderName, string description, string path, string state, string context, string user)
     {
-      string obj = null;
+      string obj = null;      
 
       if (state == "new")
       {
@@ -418,21 +320,28 @@ namespace iRINGTools.Web.Models
           path = newFolderName;
       }
 
-      path = path.Replace('/', '.');
+      path = path.Replace('/', '.');      
+
       try
       {
+        if (state != "new")        
+          checkCombination(path, context, user);       
+
         obj = _javaCoreClient.PostMessage(string.Format("/directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
         _logger.Debug("Successfully called Adapter.");
+
+        clearDirSession(user);
       }
       catch (Exception ex)
       {
         _logger.Error(ex.ToString());
-      }
+        obj = "ERROR";
+      }      
 
       return obj;
     }
 
-    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string assembly, string baseUrl)
+    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string assembly, string baseUrl, string user)
     {
       string obj = null;
       string endpointName = null;
@@ -448,23 +357,26 @@ namespace iRINGTools.Web.Models
       }
 
       path = path.Replace('/', '.');
-      baseUrl = baseUrl.Replace('/', '.');
+      baseUrl = baseUrl.Replace('/', '.');      
 
       try
       {
+        checkeCombination(baseUrl, context, endpointName, path);
         obj = _javaCoreClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}", path, newEndpointName, "endpoint", baseUrl), description, true);
         _logger.Debug("Successfully called Adapter.");
+        clearDirSession(user);
       }
       catch (Exception ex)
       {
         _logger.Error(ex.Message.ToString());
-      }
+        obj = "ERROR";
+      }     
 
       UpdateBinding(context, endpointName, assembly);
       return obj;
     }
 
-    public string DeleteEntry(string path)
+    public string DeleteEntry(string path, string user)
     {
       string obj = null;
       path = path.Replace('/', '.');
@@ -472,6 +384,7 @@ namespace iRINGTools.Web.Models
       {
         obj = _javaCoreClient.Post<String>(String.Format("/directory/{0}", path), "", true);
         _logger.Debug("Successfully called Adapter.");
+        clearDirSession(user);
       }
       catch (Exception ex)
       {
@@ -479,7 +392,257 @@ namespace iRINGTools.Web.Models
       }
 
       return obj;
-    }    
+    }
+
+    public string getCombinationMsg()
+    {
+      return combinationMsg;
+    }
+
+    #region Private methods for Directory 
+    private static void setNodeIconClsMap()
+    {
+      nodeIconClsMap = new Dictionary<string, NodeIconCls>()
+          {
+  	        {"folder", NodeIconCls.folder},
+  	        {"project", NodeIconCls.project},
+  	        {"scope", NodeIconCls.scope},
+  	        {"proj", NodeIconCls.project},
+  	        {"application", NodeIconCls.application},
+  	        {"app", NodeIconCls.application},
+  	        {"resource", NodeIconCls.resource},
+  	        {"resrc", NodeIconCls.resource}, 	
+            {"key", NodeIconCls.key}, 
+            {"property", NodeIconCls.property}, 
+            {"relation", NodeIconCls.relation} 
+          };
+    }
+    
+    private void clearDirSession(string user)
+    {
+      if (HttpContext.Current.Session[user + "." + "tree"] != null)
+        HttpContext.Current.Session[user + "." + "tree"] = null;
+
+      if (HttpContext.Current.Session[user + "." + "directory"] != null)
+        HttpContext.Current.Session[user + "." + "directory"] = null;
+    }
+
+    private void checkeCombination(string baseUrl, string context, string endpointName, string path)
+    {
+      string sessionKey = baseUrl + "." + context + "." + endpointName;
+      string getPath = "";
+
+      if (HttpContext.Current.Session[sessionKey] != null)
+        getPath = HttpContext.Current.Session[sessionKey].ToString();
+
+      if (getPath == "")
+        HttpContext.Current.Session[sessionKey] = path;
+      else if (getPath != path)
+      {
+        combinationMsg = "The combination of (" + baseUrl.Replace(".", "/") + ", " + context + ", " + endpointName + ") at " + path.Replace(".", "/") + " is allready existed at " + getPath.Replace(".", "/") + ".";
+        _logger.Error("Duplicated combination of baseUrl, context, and endpoint name");
+        throw new Exception("Duplicated combination of baseUrl, context, and endpoint name");
+      }
+    }
+
+    private void checkCombination(Folder folder, string path, string context)
+    {
+      Endpoints endpoints = folder.endpoints;
+
+      if (endpoints != null)
+      {
+        foreach (Endpoint endpoint in endpoints)
+        {
+          path = path + "." + endpoint.Name;
+          checkeCombination(endpoint.baseUrl, context, endpoint.Name, path);
+        }
+      }
+
+      Folders subFolders = folder.folders;
+
+      if (subFolders == null)
+        return;
+      else
+      {
+        foreach (Folder subFolder in subFolders)
+        {
+          path = path + subFolder.Name;
+          checkCombination(subFolder, path, context);
+        }
+      }
+    }
+
+    private void checkCombination(string path, string context, string user)
+    {
+      string _key = user + "." + "directory";
+      if (HttpContext.Current.Session[_key] != null)
+      {
+        Directories directory = (Directories)HttpContext.Current.Session[_key];
+        Folder folder = findFolder(directory, path);
+        checkCombination(folder, path, context);
+      }
+    }
+
+    private void getLastName(string path, out string newpath, out string name)
+    {
+      int dotPos = path.LastIndexOf('.');
+      newpath = path.Substring(0, dotPos);
+      name = path.Substring(dotPos + 1, path.Length - dotPos - 1);
+    }
+
+    private Folder findFolder(List<Folder> scopes, string path)
+    {
+      string folderName, newpath;
+      getLastName(path, out newpath, out folderName);
+      Folders folders = getFolders(scopes, newpath);
+      return folders.FirstOrDefault<Folder>(o => o.Name == folderName);
+    }
+
+    private Folders getFolders(List<Folder> scopes, string path)
+    {
+      string[] level = path.Split('/');
+
+      foreach (Folder folder in scopes)
+      {
+        if (folder.Name == level[0])
+          return traverseGetFolders(folder, level, 0);
+      }
+      return null;
+    }
+
+    private Folders traverseGetFolders(Folder folder, string[] level, int depth)
+    {
+      if (folder.folders == null)
+      {
+        folder.folders = new Folders();
+        return folder.folders;
+      }
+      else
+      {
+        if (level.Length > depth + 1)
+        {
+          foreach (Folder subFolder in folder.folders)
+          {
+            if (subFolder.Name == level[depth + 1])
+              return traverseGetFolders(subFolder, level, depth + 1);
+          }
+        }
+        else
+        {
+          return folder.folders;
+        }
+      }
+      return null;
+    }
+
+    private void traverseDirectory(TreeNode folderNode, Folder folder, string treePath)
+    {
+      List<JsonTreeNode> folderNodeList = folderNode.getChildren();
+      Endpoints endpoints = folder.endpoints;
+      string context = "";
+      string endpointName;
+      string folderName;
+      string baseUrl = "";
+      string assembly = "";
+      string dataLayerName = "";
+      string sessionKey = "";
+      string folderPath = treePath;
+
+      if (endpoints != null)
+      {
+        foreach (Endpoint endpoint in endpoints)
+        {
+          LeafNode endPointNode = new LeafNode();
+          endpointName = endpoint.Name;
+          endPointNode.text = endpoint.Name;
+          endPointNode.iconCls = "application";
+          endPointNode.type = "ApplicationNode";
+          endPointNode.setLeaf(false);
+          endPointNode.hidden = false;
+          endPointNode.id = folderNode.id + "/" + endpoint.Name;
+          endPointNode.identifier = endPointNode.id;
+          endPointNode.nodeType = "async";
+          folderNodeList.Add(endPointNode);
+          treePath = folderPath + "." + endpoint.Name;
+
+          if (endpoint.context != null)
+            context = endpoint.context;
+
+          if (endpoint.baseUrl != null)
+            baseUrl = endpoint.baseUrl;
+
+          sessionKey = baseUrl + "." + context + "." + endpointName;
+          HttpContext.Current.Session[sessionKey] = treePath;
+
+          baseUrl = baseUrl.Replace('.', '/');
+
+          DataLayer dataLayer = GetDataLayer(context, endpointName);
+
+          if (dataLayer != null)
+          {
+            assembly = dataLayer.Assembly;
+            dataLayerName = dataLayer.Name;
+          }
+
+          Object record = new
+          {
+            Name = endpointName,
+            Description = endpoint.Description,
+            DataLayer = dataLayerName,
+            context = context,
+            BaseUrl = baseUrl,
+            endpoint = endpointName,
+            Assembly = assembly,
+            securityRole = endpoint.securityRole
+          };
+
+          endPointNode.record = record;
+          endPointNode.property = new Dictionary<string, string>();
+          endPointNode.property.Add("Name", endpointName);
+          endPointNode.property.Add("Description", endpoint.Description);
+          endPointNode.property.Add("Context", context);
+          endPointNode.property.Add("Data Layer", dataLayerName);
+        }
+      }
+
+      if (folder.folders == null)
+        return;
+      else
+      {
+        foreach (Folder subFolder in folder.folders)
+        {
+          folderName = subFolder.Name;
+          TreeNode subFolderNode = new TreeNode();
+          subFolderNode.text = folderName;
+          subFolderNode.iconCls = getNodeIconCls(subFolder.type);
+          subFolderNode.type = "folder";
+          subFolderNode.hidden = false;
+          subFolderNode.leaf = false;
+          subFolderNode.id = folderNode.id + "/" + subFolder.Name;
+          subFolderNode.identifier = subFolderNode.id;
+
+          if (subFolder.context != null)
+            context = subFolder.context;
+
+          Object record = new
+          {
+            Name = folderName,
+            context = context,
+            Description = subFolder.Description,
+            securityRole = subFolder.securityRole
+          };
+          subFolderNode.record = record;
+          subFolderNode.property = new Dictionary<string, string>();
+          subFolderNode.property.Add("Name", folderName);
+          subFolderNode.property.Add("Description", subFolder.Description);
+          subFolderNode.property.Add("Context", subFolder.context);
+          folderNodeList.Add(subFolderNode);
+          treePath = folderPath + "." + folderName;
+          traverseDirectory(subFolderNode, subFolder, treePath);
+        }
+      }
+    }
+    #endregion
 
     #region NHibernate Configuration Wizard support methods
     public DataProviders GetDBProviders()

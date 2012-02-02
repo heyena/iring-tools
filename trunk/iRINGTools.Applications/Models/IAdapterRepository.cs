@@ -6,6 +6,8 @@ using System.Web;
 using org.iringtools.library;
 using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
+using System.Collections;
+
 
 namespace iRINGTools.Web.Models
 {
@@ -15,7 +17,7 @@ namespace iRINGTools.Web.Models
 
     DataLayers GetDataLayers();
 
-    Tree GetDirectoryTree();
+    Tree GetDirectoryTree(string user);
 
     DataLayer GetDataLayer(string contextName, string endpoint);
 
@@ -25,11 +27,11 @@ namespace iRINGTools.Web.Models
 
     Entity GetClassLabel(string classId);
 
-    string Folder(string newFolderName, string description, string path, string state, string context);
+    string Folder(string newFolderName, string description, string path, string state, string context, string user);
 
-    string DeleteEntry(string path);
+    string DeleteEntry(string path, string user);
 
-    string Endpoint(string newEndpointName, string path, string description, string states, string context, string assembly, string baseUrl);
+    string Endpoint(string newEndpointName, string path, string description, string states, string context, string assembly, string baseUrl, string user);
 
     string getNodeIconCls(string type);
 
@@ -38,5 +40,7 @@ namespace iRINGTools.Web.Models
     string getDirectoryBaseUrl();
 
     BaseUrls getEndpointBaseUrl();
+
+    string getCombinationMsg();
   }
 }
