@@ -88,13 +88,8 @@ namespace iRINGTools.Web.Models
       Directories directory = null;
 
       string _key = user + "." + "directory";
-      if (HttpContext.Current.Session[_key] == null)
-      {
-        directory = GetScopes();
-        HttpContext.Current.Session[_key] = directory;
-      }
-      else
-        directory = (Directories)HttpContext.Current.Session[_key];
+      directory = GetScopes();
+      HttpContext.Current.Session[_key] = directory;      
 
       Tree tree = null;
       string context = "";
