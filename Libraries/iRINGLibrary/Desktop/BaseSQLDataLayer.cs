@@ -524,10 +524,50 @@ namespace org.iringtools.library
       return dataTable;
     }
 
+    protected IList<string> GetKeyColumns(DataObject objectDefinition)
+    {
+      IList<string> keyCols = new List<string>();
+
+      foreach (DataProperty dataProp in objectDefinition.dataProperties)
+      {
+        foreach (KeyProperty keyProp in objectDefinition.keyProperties)
+        {
+          if (dataProp.propertyName == keyProp.keyPropertyName)
+          {
+            keyCols.Add(dataProp.columnName);
+          }
+        }
+      }
+
+      return keyCols;
+    }
+
+    protected string GetIdentifier(DataObject objectDefinition, DataRow row)
+    {
+      IList<string> keyCols = GetKeyColumns(objectDefinition);
+      string identifier = string.Empty;
+
+      foreach (string key in keyCols)
+      {
+        if (identifier.Length > 0)
+          identifier += objectDefinition.keyDelimeter;
+
+        identifier += row[key];
+      }
+
+      return identifier;
+    }
+
     protected IList<DataTable> ToDataTables(IList<IDataObject> dataObjects)
     {
-      Dictionary<string, DataTable> dataTableDictionary = new Dictionary<string, DataTable>();
+      IList<DataTable> dataTables = new List<DataTable>();
 
+      //TODO: create a class for these structures
+      Dictionary<string, DataObject> objectTypesObjectDefinitions = new Dictionary<string, DataObject>();
+      Dictionary<string, IList<string>> objectTypesIdentifiers = new Dictionary<string, IList<string>>();
+      Dictionary<string, IList<IDataObject>> objectTypesDataObjects = new Dictionary<string, IList<IDataObject>>();
+
+      // collect info about each object type
       if (dataObjects != null)
       {
         foreach (IDataObject dataObject in dataObjects)
@@ -539,37 +579,114 @@ namespace org.iringtools.library
             objectType = ((GenericDataObject)dataObject).ObjectType;
           }
 
-          DataObject objectDefinition = GetObjectDefinition(objectType);
-          DataTable dataTable = null;
-
-          if (dataTableDictionary.ContainsKey(objectType))
+          if (objectTypesIdentifiers.ContainsKey(objectType))
           {
-            dataTable = dataTableDictionary[objectType];
+            DataObject objectDefinition = objectTypesObjectDefinitions[objectType];
+            string identifier = GetIdentifier(objectDefinition, dataObject);
+            objectTypesIdentifiers[objectType].Add(identifier);
+            objectTypesDataObjects[objectType].Add(dataObject);
           }
           else
           {
-            dataTable = NewDataTable(objectDefinition);
-            dataTableDictionary[objectType] = dataTable;
-          }
-
-          try
-          {
-            DataRow dataRow = CreateDataRow(dataTable, dataObject, objectDefinition);
-
-            if (dataRow != null)
-            {
-              dataTable.Rows.Add(dataRow);
-            }
-          }
-          catch (Exception ex)
-          {
-            _logger.Error("Error populating data row: " + ex);
-            throw ex;
+            DataObject objectDefinition = GetObjectDefinition(objectType);
+            string identifier = GetIdentifier(objectDefinition, dataObject);
+            objectTypesObjectDefinitions[objectType] = objectDefinition;
+            objectTypesIdentifiers[objectType] = new List<string>() { identifier };
+            objectTypesDataObjects[objectType] = new List<IDataObject>() { dataObject };
           }
         }
       }
+      
+      // create or update rows accordingly
+      foreach (var pair in objectTypesIdentifiers)
+      {
+        DataObject objectDefinition = objectTypesObjectDefinitions[pair.Key];
+        IList<string> identifiers = objectTypesIdentifiers[pair.Key];
+        DataTable dataTable = GetDataTable(objectDefinition.tableName, pair.Value);
+        DataRow dataRow = null;
 
-      return dataTableDictionary.Values.ToList();
+        for (int i = 0; i < identifiers.Count; i++)
+        {
+          string identifier = identifiers[i];
+
+          // find row with same identifier
+          foreach (DataRow row in dataTable.Rows)
+          {
+            string rowIdentifier = GetIdentifier(objectDefinition, row);
+
+            if (rowIdentifier == identifier)
+            {
+              dataRow = row;
+              dataTable.AcceptChanges();
+              break;
+            }
+          }
+
+          // if row does not exist, create new one
+          if (dataRow == null)
+          {
+            dataRow = dataTable.NewRow();
+            dataTable.Rows.Add(dataRow);
+          }
+
+          // update or fill row values from data object properties
+          IDataObject dataObject = objectTypesDataObjects[pair.Key][i];
+
+          foreach (DataProperty objectProperty in objectDefinition.dataProperties)
+          {
+            object value = dataObject.GetPropertyValue(objectProperty.propertyName);
+
+            if (value != null && value.ToString().Trim().Length > 0)
+            {
+              switch (objectProperty.dataType)
+              {
+                case DataType.Boolean:
+                  dataRow[objectProperty.columnName] = Convert.ToBoolean(value);
+                  break;
+                case DataType.Byte:
+                  dataRow[objectProperty.columnName] = Convert.ToByte(value);
+                  break;
+                case DataType.Int16:
+                  dataRow[objectProperty.columnName] = Convert.ToInt16(value);
+                  break;
+                case DataType.Int32:
+                  dataRow[objectProperty.columnName] = Convert.ToInt32(value);
+                  break;
+                case DataType.Int64:
+                  dataRow[objectProperty.columnName] = Convert.ToInt64(value);
+                  break;
+                case DataType.Decimal:
+                  dataRow[objectProperty.columnName] = Convert.ToDecimal(value);
+                  break;
+                case DataType.Single:
+                  dataRow[objectProperty.columnName] = Convert.ToSingle(value);
+                  break;
+                case DataType.Double:
+                  dataRow[objectProperty.columnName] = Convert.ToDouble(value);
+                  break;
+                case DataType.DateTime:
+                  dataRow[objectProperty.columnName] = Convert.ToDateTime(value);
+                  break;
+                default:
+                  dataRow[objectProperty.columnName] = value;
+                  break;
+              }
+            }
+            else if (objectProperty.dataType == DataType.String || objectProperty.isNullable)
+            {
+              dataRow[objectProperty.columnName] = DBNull.Value;
+            }
+            else
+            {
+              _logger.Error(string.Format("Object property [{0}] does not allow null value.", objectProperty.propertyName));
+            }
+          }
+        }
+
+          dataTables.Add(dataTable);
+      }
+
+      return dataTables;
     }
 
     private void InitializeDatabaseDictionary()
