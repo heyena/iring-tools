@@ -9,10 +9,18 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
@@ -212,7 +220,7 @@ public class HttpClient
       {
         conn.setRequestProperty(pair.getKey(), pair.getValue());
       }
-
+      
       StringBuilder requestEntity = new StringBuilder();
 
       if (formData != null)
@@ -379,6 +387,8 @@ public class HttpClient
       conn.setDoInput(true);
     }
 
+    ignoreSslCheck(conn);
+    
     return conn;
   }
 
@@ -392,5 +402,40 @@ public class HttpClient
     }
 
     return new String(Base64.encodeBase64(creds.getBytes()));
+  }
+  
+  private void ignoreSslCheck(URLConnection connection) 
+  {
+    try
+    {
+      TrustManager[] trustAllCerts = new TrustManager[] { 
+        new X509TrustManager()
+        {
+          @Override
+          public void checkClientTrusted(X509Certificate[] chain, String authType){}
+  
+          @Override
+          public void checkServerTrusted(X509Certificate[] chain, String authType){}
+  
+          @Override
+          public X509Certificate[] getAcceptedIssuers()
+          {
+            return null;
+          }
+        } 
+      };
+  
+      SSLContext sslContext = SSLContext.getInstance("SSL");
+      sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+      
+      SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();  
+      ((HttpsURLConnection) connection).setSSLSocketFactory(sslSocketFactory);      
+
+      System.setProperty("sun.security.ssl.allowUnsafeRenegotiation", "true");
+    }
+    catch (Exception ex)
+    {
+      logger.error(ex.getMessage());
+    }
   }
 }
