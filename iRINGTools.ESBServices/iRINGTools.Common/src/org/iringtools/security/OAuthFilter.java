@@ -30,6 +30,7 @@ public class OAuthFilter implements Filter
   public static final String AUTHENTICATED_USER_KEY = "Auth";
   public static final int AUTH_COOKIE_EXPIRY = 28800;  // 8 hours
   public static final String AUTHORIZATION_TOKEN_KEY = "Authorization";
+  public static final String APPLICATION_KEY = "X-myPSN-AppKey";
   public static final String REF_PARAM = "REF";
   public static final String URL_ENCODING = "UTF-8";
   
@@ -53,7 +54,7 @@ public class OAuthFilter implements Filter
     {
       String ref = request.getParameter(REF_PARAM);
       
-      if (IOUtils.isNullOrEmpty(ref))  // case 1: no reference token, attempt to obtain it
+      if (IOUtils.isNullOrEmpty(ref))  // case 1: user needs to login
       {
         logger.debug("case 1");
         
@@ -72,7 +73,7 @@ public class OAuthFilter implements Filter
         response.setContentType("text/html");
         response.sendRedirect(ssoUrl);
       }
-      else  // case 2: got reference ID, get user info
+      else  // case 2: the user has logged in but the application needs to process the SSO event
       {
         logger.debug("case 2");
         
@@ -143,7 +144,7 @@ public class OAuthFilter implements Filter
         }
       }
     }
-    else  // case 3: user signed on but session has not been validated or timed out
+    else  // case 3: the user has already logged in and the application has already processed the SSO event
     {
       logger.debug("case 3");
       
@@ -223,6 +224,9 @@ public class OAuthFilter implements Filter
         
         session.setAttribute(AUTHORIZATION_TOKEN_KEY, oAuthToken);
         response.addHeader(AUTHORIZATION_TOKEN_KEY, oAuthToken);
+        
+        session.setAttribute(APPLICATION_KEY, applicationKey);
+        response.addHeader(APPLICATION_KEY, applicationKey);
       }
       catch (Exception ex)
       {
