@@ -10,7 +10,7 @@ public class CommonTests
   @Test
   public void testGetHttps()
   {
-    String url = "https://iring-tools.googlecode.com";
+    String url = "https://iringcore.staging.mypsn.com";
     HttpClient client = new HttpClient(url);
     
     try
