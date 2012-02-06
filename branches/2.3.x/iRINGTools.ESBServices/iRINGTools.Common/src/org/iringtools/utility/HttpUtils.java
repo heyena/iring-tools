@@ -129,16 +129,16 @@ public final class HttpUtils
   
   public static void addAuthHeaders(Map<String, Object> settings, HttpClient httpClient)
   {    
-    String authorizationToken = (String)settings.get(OAuthFilter.AUTHORIZATION);
-    if (!IOUtils.isNullOrEmpty(authorizationToken))
+    Object authorizationToken = settings.get(OAuthFilter.AUTHORIZATION);
+    if (authorizationToken != null)
     {
-      httpClient.addHeader(OAuthFilter.AUTHORIZATION, authorizationToken);
+      httpClient.addHeader(OAuthFilter.AUTHORIZATION, (String)authorizationToken);
     }
     
-    String applicationKey = (String)settings.get(OAuthFilter.APP_KEY);
-    if (!IOUtils.isNullOrEmpty(applicationKey))
+    Object applicationKey = settings.get(OAuthFilter.APP_KEY);
+    if (applicationKey != null)
     {
-      httpClient.addHeader(OAuthFilter.APP_KEY, applicationKey);
+      httpClient.addHeader(OAuthFilter.APP_KEY, (String)applicationKey);
     }
   }
 }

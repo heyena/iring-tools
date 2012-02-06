@@ -61,6 +61,7 @@ namespace org.iringtools.utility
     private string _baseUri = String.Empty;
     private NetworkCredential _credentials = null;
     private IWebProxy _proxy = null;
+    private string _appKey = String.Empty;
     private string _accessToken = String.Empty;
     private string _contentType = String.Empty;
 
@@ -146,12 +147,6 @@ namespace org.iringtools.utility
       {
         if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
         {
-          if (HttpContext.Current.Request.Cookies["Auth"] != null)
-          {
-            HttpCookie authCookie = HttpContext.Current.Request.Cookies["Auth"];
-            _accessToken = authCookie.Value;
-          }
-
           if (HttpContext.Current.Request.Cookies["Authorization"] != null)
           {
             HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
@@ -163,11 +158,6 @@ namespace org.iringtools.utility
           WebOperationContext.Current.IncomingRequest != null &&
           WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
         {
-          if (WebOperationContext.Current.IncomingRequest.Headers["Auth"] != null)
-          {
-            _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Auth"];
-          }
-
           if (WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
           {
             _accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
@@ -179,6 +169,37 @@ namespace org.iringtools.utility
       set
       {
         _accessToken = value;
+      }
+    }
+
+    public string AppKey
+    {
+      get
+      {
+        if (HttpContext.Current != null && HttpContext.Current.Request.Cookies.Count > 0)
+        {
+          if (HttpContext.Current.Request.Cookies["X-myPSN-AppKey"] != null)
+          {
+            HttpCookie appKeyCookie = HttpContext.Current.Request.Cookies["X-myPSN-AppKey"];
+            _appKey = appKeyCookie.Value;
+          }
+        }
+        else if (
+          WebOperationContext.Current != null &&
+          WebOperationContext.Current.IncomingRequest != null &&
+          WebOperationContext.Current.IncomingRequest.Headers.Count > 0)
+        {
+          if (WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"] != null)
+          {
+            _appKey = WebOperationContext.Current.IncomingRequest.Headers["X-myPSN-AppKey"];
+          }
+        }
+
+        return _appKey;
+      }
+      set
+      {
+        _appKey = value;
       }
     }
 
@@ -225,30 +246,8 @@ namespace org.iringtools.utility
 
     private void PrepareHeaders(WebRequest request)
     {
-      if (_accessToken != String.Empty)
-      {
-        request.Headers.Add("Authorization", _accessToken);
-        _logger.Debug("Authorization Pre Set: " + _accessToken);
-      } else if (
-        WebOperationContext.Current != null && 
-        WebOperationContext.Current.IncomingRequest != null &&
-        WebOperationContext.Current.IncomingRequest.Headers.Count > 0 && 
-        WebOperationContext.Current.IncomingRequest.Headers["Authorization"] != null)
-      {
-        string accessToken = WebOperationContext.Current.IncomingRequest.Headers["Authorization"];
-        request.Headers.Add("Authorization", accessToken);
-        _logger.Debug("Authorization On Header: " + accessToken);
-      }
-      else if (
-        HttpContext.Current != null && 
-        HttpContext.Current.Request.Cookies.Count > 0 &&
-        HttpContext.Current.Request.Cookies["Authorization"] != null)
-      {
-        HttpCookie authorizationCookie = HttpContext.Current.Request.Cookies["Authorization"];
-        string accessToken = authorizationCookie.Value;
-        request.Headers.Add("Authorization", accessToken);
-        _logger.Debug("Authorization In Cookie: " + accessToken);
-      }
+      request.Headers.Add("Authorization", AccessToken);
+      request.Headers.Add("X-myPSN-AppKey", AppKey);
     }
 
     private void PrepareCredentials(WebRequest request)

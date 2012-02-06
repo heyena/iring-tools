@@ -34,7 +34,7 @@ public abstract class AbstractService
     request = messageContext.getHttpServletRequest();
     response = messageContext.getHttpServletResponse(); 
     
-    HttpUtils.prepareHttpProxy(request.getServletContext());
+    HttpUtils.prepareHttpProxy(servletContext);
     
     /*
      * COMMON SETTINGS
