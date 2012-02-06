@@ -44,7 +44,7 @@ namespace iRINGTools.Web.Models
         {
           return null;
         }
-        string relativeUrl = string.Format("/{0}/dictionary", scope);
+        string relativeUrl = string.Format("/{0}/dictionary?format=xml", scope);
         return _client.Get<DataDictionary>(relativeUrl, true);
       }
 

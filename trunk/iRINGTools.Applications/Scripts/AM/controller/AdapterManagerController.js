@@ -18,25 +18,11 @@
         'mapping.MappingTree',
         'mapping.MapProperty',
         'mapping.ClassmapForm',
-        'mapping.MapValuelist',
-        'nhibernate.NHibernateTreePanel',
-        'nhibernate.DataObjectPanel',
-        'nhibernate.EditorPanel',
-        'nhibernate.NHibernateTree',
-        'nhibernate.RadioField',
-        'nhibernate.ConnectDatabase',
-        'nhibernate.SelectTablesPanel',
-        'nhibernate.SelectKeysPanel',
-        'nhibernate.SelectPropertiesPanel',
-        'nhibernate.SetPropertyPanel',
-        'nhibernate.SetKeyPanel',
-        'nhibernate.CreateRelations',
-        'nhibernate.SetRelationPanel',
-        'nhibernate.Utility'
+        'mapping.MapValuelist'
     ],
     stores: [
-        'DirectoryStore',
-        'NHibernateTreeStore'
+        'DirectoryStore'
+
     // , 'MappingStore'
     ],
     models: [
@@ -45,9 +31,8 @@
         'BaseUrlModel',
         'DynamicModel',
         'SearchModel',
-        'MappingModel',
-        'NHibernateTreeModel',
-        //'ProviderModel'
+        'MappingModel'
+
     ],
     refs: [
         {
@@ -77,20 +62,6 @@
         {
             ref: 'searchContent',
             selector: 'viewport > centerpanel > searchpanel > contentpanel'
-        },
-        {
-            ref: 'nhibernatePanel',
-            selector: 'dataobjectpane'
-        }
-        ,
-        {
-            ref: 'nhTree',
-            selector: 'nhibernatetree'
-        }
-        ,
-        {
-            ref: 'nhEditor',
-            selector: 'editorpanel'
         }
     ],
     parentClass: null,
@@ -170,9 +141,6 @@
             },
             'menu button[action=mapvaluelist]': {
                 click: this.mapValueList
-            },
-            'menu button[action=configurenh]': {
-                click: this.nhibernateConfigure
             },
             'button[action=search]': {
                 click: this.onSearchRdl
@@ -715,30 +683,6 @@
         tree.graphMenu.hide();
     },
 
-    nhibernateConfigure: function () {        
-        var tree = this.getDirTree(),
-        node = tree.getSelectedNode(),
-        content = this.getMainContent(),
-        contextName = node.data.property.Context,
-        endpoint = node.data.property.Name,
-
-        conf = {
-            id: contextName + '.' + endpoint + '.-nh-config',
-            title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
-            contextName: contextName,
-            endpoint: endpoint
-        };
-
-        var nhpan = Ext.widget('dataobjectpane', conf);
-        var exist = content.items.map[conf.id];
-        if (exist == null) {
-            content.add(nhpan).show();
-        } else {
-            exist.show();
-        }
-       
-    },
-
     onSearchRdl: function () {
         var pan = this.getSearchPanel(),
           searchText = pan.dockedItems.items[1].items.items[0].getValue(),
@@ -1002,11 +946,50 @@
         tree.applicationMenu.hide();
     },
 
-    beforeLoad: function (store, rec) {
-        store.proxy.extraParams.type = rec.node.data.type;
-        if (rec.node.data.record != undefined && rec.node.data.record.Related != undefined) {
-            store.proxy.extraParams.related = rec.node.data.record.Related;
+    beforeLoad: function (store, operation, options) {
+        if (operation.node != undefined) {
+            var operationNode = operation.node.data;
+            //var param = store.proxy.extraParams;
+
+            if (operationNode.type != undefined)
+                store.proxy.extraParams.type = operationNode.type;
+
+            if (operationNode.record != undefined && operationNode.record.Related != undefined)
+                store.proxy.extraParams.related = operationNode.record.Related;
+
+            if (operationNode.record != undefined) {
+                operationNode.leaf = false;
+
+                if (operationNode.record.context)
+                    store.proxy.extraParams.contextName = operationNode.record.context;
+
+                if (operationNode.record.endpoint)
+                    store.proxy.extraParams.endpoint = operationNode.record.endpoint;
+
+                if (operationNode.record.securityRole)
+                    store.proxy.extraParams.security = operationNode.record.securityRole;
+
+                if (operationNode.text != undefined)
+                    store.proxy.extraParams.text = operationNode.text;
+            }
+            else if (operationNode.property != undefined) {
+                operationNode.leaf = false;
+                if (operationNode.property.context)
+                    param.contextName = operationNode.property.context;
+
+                if (operationNode.property.endpoint)
+                    store.proxy.extraParams.endpoint = operationNode.property.endpoint;
+
+                if (operationNode.text != undefined)
+                    store.proxy.extraParams.text = operationNode.text;
+            }
         }
+
+
+        //        console.log( 'manual load ' + operation.params );
+        //        console.log( operation.params );
+        //        console.log( 'proxy defined params ' + store.proxy.extraParams );
+        //        console.log( store.proxy.extraParams )
     },
 
     getParentClass: function (n) {

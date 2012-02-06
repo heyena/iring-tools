@@ -63,7 +63,7 @@
             url: this.url,
             method: 'POST',
             success: function (f, a) {
-                frm.hide();
+                me.hide();
             },
             failure: function (f, a) {
                 Ext.Msg.alert('Warning', 'Error uploading file "' + f.items[3] + '"!');

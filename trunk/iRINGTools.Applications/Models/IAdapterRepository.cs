@@ -33,14 +33,14 @@ namespace iRINGTools.Web.Models
 
     string Endpoint(string newEndpointName, string path, string description, string states, string context, string assembly, string baseUrl, string user);
 
-    string getNodeIconCls(string type);
+    string GetNodeIconCls(string type);
 
-    string getRootSecurityRole();
+    string GetRootSecurityRole();
 
-    string getDirectoryBaseUrl();
+    string GetDirectoryBaseUrl();
 
-    BaseUrls getEndpointBaseUrl();
+    BaseUrls GetEndpointBaseUrl();
 
-    string getCombinationMsg();
+    string GetCombinationMsg();
   }
 }

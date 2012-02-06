@@ -43,7 +43,7 @@ namespace org.iringtools.web.controllers
         string context = form["context"];
         string endpoint = form["endpoint"];
         string graph = form["graph"];
-        _key = string.Format("Dictionary-{0}.{1}", context, endpoint);
+        _key = string.Format("Datadictionary-{0}.{1}", context, endpoint);
         string filter = form["filter"];
         string sort = form["sort"];
         string dir = form["dir"];
@@ -209,7 +209,8 @@ namespace org.iringtools.web.controllers
       try
       {
         string reluri = string.Format("{0}/{1}", endpoint, context);
-        Session[_key] = _repository.GetDictionary(reluri);
+        if(Session[_key] == null)
+          Session[_key] = _repository.GetDictionary(reluri);
         if (dataDict.dataObjects.Count == 0)
           response = "There is no records in the database for data object \"" + endpoint + "\"";
       }

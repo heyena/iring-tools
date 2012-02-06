@@ -36,7 +36,7 @@ namespace iRINGTools.Web.Models
       _client = new WebHttpClient(_settings["AdapterServiceUri"]);
       _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
       _dataClient = new WebHttpClient(_settings["DataServiceURI"]);
-      setNodeIconClsMap();
+      SetNodeIconClsMap();
       combinationMsg = null;
     }    
 
@@ -60,7 +60,7 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string getNodeIconCls(string type)
+    public string GetNodeIconCls(string type)
     {
       try
       {
@@ -108,7 +108,7 @@ namespace iRINGTools.Web.Models
           folderNode.identifier = folderNode.id;
           folderNode.hidden = false;
           folderNode.leaf = false;
-          folderNode.iconCls = getNodeIconCls(folder.type);
+          folderNode.iconCls = GetNodeIconCls(folder.type);
           folderNode.type = "folder";
           treePath = folder.Name;
 
@@ -129,7 +129,7 @@ namespace iRINGTools.Web.Models
           folderNode.property.Add("Description", folder.Description);
           folderNode.property.Add("Context", folder.context);
           folderNodes.Add(folderNode);
-          traverseDirectory(folderNode, folder, treePath);
+          TraverseDirectory(folderNode, folder, treePath);
         }
       }
      
@@ -273,7 +273,7 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string getRootSecurityRole()
+    public string GetRootSecurityRole()
     {
       string rootSecurityRole = "";
 
@@ -290,15 +290,15 @@ namespace iRINGTools.Web.Models
       return rootSecurityRole;
     }
 
-    public string getDirectoryBaseUrl()
+    public string GetDirectoryBaseUrl()
     {
-      return _javaCoreClient.getBaseUri();
+      return _javaCoreClient.GetBaseUri();
     }
 
-    public BaseUrls getEndpointBaseUrl()
+    public BaseUrls GetEndpointBaseUrl()
     {
       BaseUrls baseUrls = new BaseUrls();
-      BaseUrl baseUrl = new BaseUrl { Url = _client.getBaseUri() };      
+      BaseUrl baseUrl = new BaseUrl { Url = _client.GetBaseUri() };      
       baseUrls.Add(baseUrl);      
       return baseUrls;
     }
@@ -320,12 +320,12 @@ namespace iRINGTools.Web.Models
       try
       {
         if (state != "new")        
-          checkCombination(path, context, user);       
+          CheckCombination(path, context, user);       
 
         obj = _javaCoreClient.PostMessage(string.Format("/directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
         _logger.Debug("Successfully called Adapter.");
 
-        clearDirSession(user);
+        ClearDirSession(user);
       }
       catch (Exception ex)
       {
@@ -356,10 +356,10 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        checkeCombination(baseUrl, context, endpointName, path);
+        CheckeCombination(baseUrl, context, endpointName, path);
         obj = _javaCoreClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}", path, newEndpointName, "endpoint", baseUrl), description, true);
         _logger.Debug("Successfully called Adapter.");
-        clearDirSession(user);
+        ClearDirSession(user);
       }
       catch (Exception ex)
       {
@@ -379,7 +379,7 @@ namespace iRINGTools.Web.Models
       {
         obj = _javaCoreClient.Post<String>(String.Format("/directory/{0}", path), "", true);
         _logger.Debug("Successfully called Adapter.");
-        clearDirSession(user);
+        ClearDirSession(user);
       }
       catch (Exception ex)
       {
@@ -389,13 +389,13 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string getCombinationMsg()
+    public string GetCombinationMsg()
     {
       return combinationMsg;
     }
 
     #region Private methods for Directory 
-    private static void setNodeIconClsMap()
+    private static void SetNodeIconClsMap()
     {
       nodeIconClsMap = new Dictionary<string, NodeIconCls>()
           {
@@ -413,7 +413,7 @@ namespace iRINGTools.Web.Models
           };
     }
     
-    private void clearDirSession(string user)
+    private void ClearDirSession(string user)
     {
       if (HttpContext.Current.Session[user + "." + "tree"] != null)
         HttpContext.Current.Session[user + "." + "tree"] = null;
@@ -422,7 +422,7 @@ namespace iRINGTools.Web.Models
         HttpContext.Current.Session[user + "." + "directory"] = null;
     }
 
-    private void checkeCombination(string baseUrl, string context, string endpointName, string path)
+    private void CheckeCombination(string baseUrl, string context, string endpointName, string path)
     {
       string sessionKey = baseUrl + "." + context + "." + endpointName;
       string getPath = "";
@@ -440,7 +440,7 @@ namespace iRINGTools.Web.Models
       }
     }
 
-    private void checkCombination(Folder folder, string path, string context)
+    private void CheckCombination(Folder folder, string path, string context)
     {
       Endpoints endpoints = folder.endpoints;
 
@@ -449,7 +449,7 @@ namespace iRINGTools.Web.Models
         foreach (Endpoint endpoint in endpoints)
         {
           path = path + "." + endpoint.Name;
-          checkeCombination(endpoint.baseUrl, context, endpoint.Name, path);
+          CheckeCombination(endpoint.baseUrl, context, endpoint.Name, path);
         }
       }
 
@@ -462,50 +462,50 @@ namespace iRINGTools.Web.Models
         foreach (Folder subFolder in subFolders)
         {
           path = path + subFolder.Name;
-          checkCombination(subFolder, path, context);
+          CheckCombination(subFolder, path, context);
         }
       }
     }
 
-    private void checkCombination(string path, string context, string user)
+    private void CheckCombination(string path, string context, string user)
     {
       string _key = user + "." + "directory";
       if (HttpContext.Current.Session[_key] != null)
       {
         Directories directory = (Directories)HttpContext.Current.Session[_key];
-        Folder folder = findFolder(directory, path);
-        checkCombination(folder, path, context);
+        Folder folder = FindFolder(directory, path);
+        CheckCombination(folder, path, context);
       }
     }
 
-    private void getLastName(string path, out string newpath, out string name)
+    private void GetLastName(string path, out string newpath, out string name)
     {
       int dotPos = path.LastIndexOf('.');
       newpath = path.Substring(0, dotPos);
       name = path.Substring(dotPos + 1, path.Length - dotPos - 1);
     }
 
-    private Folder findFolder(List<Folder> scopes, string path)
+    private Folder FindFolder(List<Folder> scopes, string path)
     {
       string folderName, newpath;
-      getLastName(path, out newpath, out folderName);
-      Folders folders = getFolders(scopes, newpath);
+      GetLastName(path, out newpath, out folderName);
+      Folders folders = GetFolders(scopes, newpath);
       return folders.FirstOrDefault<Folder>(o => o.Name == folderName);
     }
 
-    private Folders getFolders(List<Folder> scopes, string path)
+    private Folders GetFolders(List<Folder> scopes, string path)
     {
       string[] level = path.Split('/');
 
       foreach (Folder folder in scopes)
       {
         if (folder.Name == level[0])
-          return traverseGetFolders(folder, level, 0);
+          return TraverseGetFolders(folder, level, 0);
       }
       return null;
     }
 
-    private Folders traverseGetFolders(Folder folder, string[] level, int depth)
+    private Folders TraverseGetFolders(Folder folder, string[] level, int depth)
     {
       if (folder.folders == null)
       {
@@ -519,7 +519,7 @@ namespace iRINGTools.Web.Models
           foreach (Folder subFolder in folder.folders)
           {
             if (subFolder.Name == level[depth + 1])
-              return traverseGetFolders(subFolder, level, depth + 1);
+              return TraverseGetFolders(subFolder, level, depth + 1);
           }
         }
         else
@@ -530,7 +530,7 @@ namespace iRINGTools.Web.Models
       return null;
     }
 
-    private void traverseDirectory(TreeNode folderNode, Folder folder, string treePath)
+    private void TraverseDirectory(TreeNode folderNode, Folder folder, string treePath)
     {
       List<JsonTreeNode> folderNodeList = folderNode.getChildren();
       Endpoints endpoints = folder.endpoints;
@@ -609,7 +609,7 @@ namespace iRINGTools.Web.Models
           folderName = subFolder.Name;
           TreeNode subFolderNode = new TreeNode();
           subFolderNode.text = folderName;
-          subFolderNode.iconCls = getNodeIconCls(subFolder.type);
+          subFolderNode.iconCls = GetNodeIconCls(subFolder.type);
           subFolderNode.type = "folder";
           subFolderNode.hidden = false;
           subFolderNode.leaf = false;
@@ -633,7 +633,7 @@ namespace iRINGTools.Web.Models
           subFolderNode.property.Add("Context", subFolder.context);
           folderNodeList.Add(subFolderNode);
           treePath = folderPath + "." + folderName;
-          traverseDirectory(subFolderNode, subFolder, treePath);
+          TraverseDirectory(subFolderNode, subFolder, treePath);
         }
       }
     }

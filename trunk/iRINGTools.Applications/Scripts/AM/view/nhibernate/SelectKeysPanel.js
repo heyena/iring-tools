@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.SelectKeysPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.selectkeyspanel',
+    alias: 'widget.selectdatakeysform',
     border: false,
     autoScroll: true,
     bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
@@ -20,7 +20,7 @@
                 xtype: 'tbspacer',
                 width: 4
             }, {
-                xtype: 'tbbutton',
+                xtype: 'button',
                 icon: 'Content/img/16x16/apply.png',
                 text: 'Apply',
                 tooltip: 'Apply the current changes to the data objects tree',
@@ -113,7 +113,7 @@
                 xtype: 'tbspacer',
                 width: 4
             }, {
-                xtype: 'tbbutton',
+                xtype: 'button',
                 icon: 'Content/img/16x16/edit-clear.png',
                 text: 'Reset',
                 tooltip: 'Reset to the latest applied changes',
