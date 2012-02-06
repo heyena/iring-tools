@@ -59,9 +59,6 @@ namespace org.iringtools.adapter.security
           //call ping federate to get the attributes of the authenticated user
           string referenceID = HttpContext.Current.Request.QueryString["REF"].ToString();
 
-          //WebHttpClient client = new WebHttpClient()
-          //string test = client.GetMessage();
-
           //this information is unique to the application 
           WebRequest req = WebRequest.Create(ConfigurationManager.AppSettings["AuthenticationWebServiceAddress"].ToString() + referenceID);
           req.Headers.Add("ping.uname", ConfigurationManager.AppSettings["AuthWebServiceUserName"].ToString());
@@ -69,12 +66,15 @@ namespace org.iringtools.adapter.security
           req.Headers.Add("ping.instanceId", ConfigurationManager.AppSettings["AuthWebServiceInstanceID"].ToString());
 
           //if you need to use a proxy to get there, then this is that
-          if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["ProxyAddress"]))
+          string proxyCreds = ConfigurationManager.AppSettings["ProxyCredentialToken"];
+          if (!String.IsNullOrEmpty(proxyCreds))
           {
-            req.Proxy = new WebProxy(ConfigurationManager.AppSettings["ProxyAddress"].ToString(), true);
-            req.Proxy.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["ProxyCredentialUserName"].ToString(),
-                ConfigurationManager.AppSettings["ProxyCredentialPassword"].ToString(),
-                ConfigurationManager.AppSettings["ProxyCredentialDomain"].ToString());
+            string host = ConfigurationManager.AppSettings["ProxyHost"];
+            int port = int.Parse(ConfigurationManager.AppSettings["ProxyPort"]);
+            WebProxyCredentials webCreds = new WebProxyCredentials(proxyCreds, host, port);
+
+            req.Proxy = webCreds.GetWebProxy();
+            req.Proxy.Credentials = webCreds.GetNetworkCredential();
           }
 
           //get the response from the service 
