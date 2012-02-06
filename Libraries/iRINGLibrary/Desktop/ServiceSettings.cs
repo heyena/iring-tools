@@ -112,8 +112,6 @@ namespace org.iringtools.library
           this["ProxyCredentialToken"],
           this["ProxyHost"], 
           portNumber);
-
-        proxyCredentials.Decrypt();
       }
 
       return proxyCredentials;

@@ -106,12 +106,14 @@ namespace org.iringtools.adapter.security
             WebRequest reqApigee = WebRequest.Create(tokenServerAddress);
             reqApigee.Method = "POST";
 
-            if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["ProxyAddress"]))
+            if (!String.IsNullOrEmpty(proxyCreds))
             {
-              reqApigee.Proxy = new WebProxy(ConfigurationManager.AppSettings["ProxyAddress"].ToString(), true);
-              reqApigee.Proxy.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["ProxyCredentialUserName"].ToString(),
-                  ConfigurationManager.AppSettings["ProxyCredentialPassword"].ToString(),
-                  ConfigurationManager.AppSettings["ProxyCredentialDomain"].ToString());
+              string host = ConfigurationManager.AppSettings["ProxyHost"];
+              int port = int.Parse(ConfigurationManager.AppSettings["ProxyPort"]);
+              WebProxyCredentials webCreds = new WebProxyCredentials(proxyCreds, host, port);
+
+              reqApigee.Proxy = webCreds.GetWebProxy();
+              reqApigee.Proxy.Credentials = webCreds.GetNetworkCredential();
             }
 
             //post the json response from ping federate to the apigee url
@@ -142,13 +144,16 @@ namespace org.iringtools.adapter.security
 
               if (entry.Key.ToString() == "token")
               {
-                OAuthToken = entry.Value.ToString(); 
+                OAuthToken = entry.Value.ToString();
+                _logger.Debug("OAuthToken: " + OAuthToken);
                 
                 HttpCookie authorizationCookie = new HttpCookie("Authorization");
                 authorizationCookie.Value = OAuthToken;
                 HttpContext.Current.Response.Cookies.Add(authorizationCookie);
 
-                _logger.Debug("OAuthToken: " + OAuthToken);
+                HttpCookie appKeyCookie = new HttpCookie("X-myPSN-AppKey");
+                appKeyCookie.Value = ConfigurationManager.AppSettings["applicationKey"];
+                HttpContext.Current.Response.Cookies.Add(appKeyCookie);
               }
             }
           }
