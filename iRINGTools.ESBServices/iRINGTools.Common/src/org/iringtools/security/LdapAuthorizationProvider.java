@@ -1,7 +1,5 @@
 package org.iringtools.security;
 
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.naming.NamingEnumeration;
@@ -19,7 +17,6 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
   private static final Logger logger = Logger.getLogger(LdapAuthorizationProvider.class);
   
   private static final String BASE_DN = "o=iringtools,dc=iringug,dc=org";
-  private static final String USERID_KEY = "EMailAddress";
   
   private DirContext dctx;
   private String authorizedGroup;
@@ -52,10 +49,8 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
     dctx = new InitialDirContext(ldapConfig);
   }
   
-  public boolean isAuthorized(Map<String, String> claims)
+  public boolean isAuthorized(String userId)
   {
-    String userId = getUserId(claims);
-
     if (userId != null && dctx != null)
     {
       logger.debug("Attempting to authorize user [" + userId + "].");
@@ -83,18 +78,5 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
     }
 
     return false;
-  }
-
-  private String getUserId(Map<String, String> claims)
-  {
-    for (Entry<String, String> entry : claims.entrySet())
-    {
-      if (entry.getKey().equalsIgnoreCase(USERID_KEY))
-      {
-        return entry.getValue();
-      }
-    }
-
-    return null;
   }
 }

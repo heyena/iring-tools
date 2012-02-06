@@ -89,7 +89,7 @@ public class ExchangeProvider
     }
 
     httpClient = new HttpClient();
-    HttpUtils.addOAuthHeaders(settings, httpClient);
+    HttpUtils.addAuthHeaders(settings, httpClient);
   }
 
   public Directory getDirectory() throws ServiceProviderException

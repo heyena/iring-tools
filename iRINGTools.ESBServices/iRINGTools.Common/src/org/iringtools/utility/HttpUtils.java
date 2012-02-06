@@ -73,24 +73,18 @@ public final class HttpUtils
     return keyValuePairs;
   }
   
-  public static void addOAuthHeaders(Map<String, Object> settings, HttpClient httpClient)
+  public static void addAuthHeaders(Map<String, Object> settings, HttpClient httpClient)
   {    
-    String authorizationToken = (String)settings.get(OAuthFilter.AUTHORIZATION_TOKEN_KEY);
+    String authorizationToken = (String)settings.get(OAuthFilter.AUTHORIZATION);
     if (!IOUtils.isNullOrEmpty(authorizationToken))
     {
-      httpClient.addHeader(OAuthFilter.AUTHORIZATION_TOKEN_KEY, authorizationToken);
+      httpClient.addHeader(OAuthFilter.AUTHORIZATION, authorizationToken);
     }
     
-    String applicationKey = (String)settings.get(OAuthFilter.APPLICATION_KEY);
+    String applicationKey = (String)settings.get(OAuthFilter.APP_KEY);
     if (!IOUtils.isNullOrEmpty(applicationKey))
     {
-      httpClient.addHeader(OAuthFilter.APPLICATION_KEY, applicationKey);
-    }
-    
-    String authenticatedUser = (String)settings.get(OAuthFilter.AUTHENTICATED_USER_KEY);
-    if (!IOUtils.isNullOrEmpty(authenticatedUser))
-    {
-      httpClient.addHeader(OAuthFilter.AUTHENTICATED_USER_KEY, authenticatedUser);
+      httpClient.addHeader(OAuthFilter.APP_KEY, applicationKey);
     }
   }
 }
