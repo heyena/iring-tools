@@ -178,7 +178,7 @@ public class DataModel
       dxiRequest.setDataFilter(new DataFilter());
 
       HttpClient httpClient = new HttpClient(serviceUri);
-      HttpUtils.addOAuthHeaders(session, httpClient);
+      HttpUtils.addAuthHeaders(session, httpClient);
 
       try
       {
@@ -222,7 +222,7 @@ public class DataModel
       dxiRequest.setDataFilter(dataFilter);
 
       HttpClient httpClient = new HttpClient(serviceUri);
-      HttpUtils.addOAuthHeaders(session, httpClient);
+      HttpUtils.addAuthHeaders(session, httpClient);
 
       try
       {
@@ -330,7 +330,7 @@ public class DataModel
         List<DataTransferIndex> partialDtiList = null;
 
         HttpClient httpClient = new HttpClient(serviceUri);
-        HttpUtils.addOAuthHeaders(session, httpClient);
+        HttpUtils.addAuthHeaders(session, httpClient);
 
         String destinationUri = dtiRelativePath + "?destination=source";
 
@@ -490,7 +490,7 @@ public class DataModel
       dxoRequest.setDataTransferIndices(dtis);
 
       HttpClient httpClient = new HttpClient(serviceUri);
-      HttpUtils.addOAuthHeaders(session, httpClient);
+      HttpUtils.addAuthHeaders(session, httpClient);
 
       dtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
     }
@@ -606,7 +606,7 @@ public class DataModel
         try
         {
           HttpClient httpClient = new HttpClient(serviceUri);
-          HttpUtils.addOAuthHeaders(session, httpClient);
+          HttpUtils.addAuthHeaders(session, httpClient);
 
           relatedDtos = httpClient.post(DataTransferObjects.class, dtoRelativePath, dxoRequest);
 
@@ -717,7 +717,7 @@ public class DataModel
     try
     {
       HttpClient httpClient = new HttpClient(refDataServiceUri);
-      HttpUtils.addOAuthHeaders(session, httpClient);
+      HttpUtils.addAuthHeaders(session, httpClient);
 
       Entity value = httpClient.get(Entity.class, "/classes/" + id.substring(4, id.length()) + "/label");
 
@@ -938,7 +938,7 @@ public class DataModel
     else
     {
       HttpClient httpClient = new HttpClient(serviceUri);
-      HttpUtils.addOAuthHeaders(session, httpClient);
+      HttpUtils.addAuthHeaders(session, httpClient);
 
       try
       {

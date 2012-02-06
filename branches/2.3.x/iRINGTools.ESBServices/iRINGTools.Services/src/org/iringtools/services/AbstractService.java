@@ -1,16 +1,11 @@
 package org.iringtools.services;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.naming.NamingException;
 import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -22,12 +17,9 @@ import javax.ws.rs.core.SecurityContext;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.iringtools.security.AuthorizationException;
-import org.iringtools.security.LdapAuthorizationProvider;
 import org.iringtools.security.OAuthFilter;
 import org.iringtools.utility.EncryptionException;
 import org.iringtools.utility.EncryptionUtils;
-import org.iringtools.utility.HttpUtils;
-import org.iringtools.utility.IOUtils;
 
 public abstract class AbstractService
 {
@@ -35,22 +27,17 @@ public abstract class AbstractService
   @Context protected MessageContext messageContext; 
   @Context protected SecurityContext securityContext;
   
-  private String serviceType;
-  private String authUser;
-  
   protected Map<String, Object> settings;
-  protected HttpServletRequest httpRequest;
-  protected HttpServletResponse httpResponse;   
-  protected HttpSession httpSession;
+  protected HttpServletRequest request;
+  protected HttpServletResponse response;   
+  protected HttpSession session;
   
   public void initService(String serviceType) throws AuthorizationException
   {
-    this.serviceType = serviceType;
-    
     settings = java.util.Collections.synchronizedMap(new HashMap<String, Object>());    
-    httpRequest = messageContext.getHttpServletRequest();
-    httpResponse = messageContext.getHttpServletResponse();   
-    httpSession = httpRequest.getSession();
+    request = messageContext.getHttpServletRequest();
+    response = messageContext.getHttpServletResponse();   
+    session = request.getSession();
     
     /*
      * COMMON SETTINGS
@@ -73,24 +60,21 @@ public abstract class AbstractService
     settings.put("idGenServiceUri", idGenServiceUri);
     
     /*
-     * OAUTH SETTINGS
+     * REQUEST HEADERS
      */    
     MultivaluedMap<String, String> headers = messageContext.getHttpHeaders().getRequestHeaders();
     
-    List<String> authHeader = headers.get(OAuthFilter.AUTHENTICATED_USER_KEY);    
-    if (authHeader != null && authHeader.size() > 0)
+    List<String> authorizationHeader = headers.get(OAuthFilter.AUTHORIZATION); 
+    if (authorizationHeader != null && authorizationHeader.size() > 0)
     {
-      authUser = authHeader.get(0);
-      settings.put(OAuthFilter.AUTHENTICATED_USER_KEY, authUser);
-    }
+      settings.put(OAuthFilter.AUTHORIZATION, authorizationHeader.get(0));
+    }   
     
-    List<String> tokenHeader = headers.get(OAuthFilter.AUTHORIZATION_TOKEN_KEY); 
-    if (tokenHeader != null && tokenHeader.size() > 0)
+    List<String> appKeyHeader = headers.get(OAuthFilter.APP_KEY);    
+    if (appKeyHeader != null && appKeyHeader.size() > 0)
     {
-      settings.put(OAuthFilter.AUTHORIZATION_TOKEN_KEY, tokenHeader.get(0));
+      settings.put(OAuthFilter.APP_KEY, appKeyHeader.get(0));
     }
-    
-    authorize();    
     
     /*
      * REFERENCE DATA SETTINGS
@@ -198,93 +182,6 @@ public abstract class AbstractService
     if (proxyInfoValid)
     {
       sysProps.put("proxySet", "true");      
-    }
-    
-    /*
-     * LDAP SETTINGS
-     */    
-    String ldapConfigPath = servletContext.getInitParameter("ldapConfigPath");
-    if (ldapConfigPath != null && ldapConfigPath.length() > 0)
-      settings.put("ldapConfigPath", ldapConfigPath);
-    else
-      settings.put("ldapConfigPath", "WEB-INF/config/ldap.conf");
-  }
-  
-  protected void authorize() throws AuthorizationException
-  {
-    String authorizationEnabled = servletContext.getInitParameter("authorizationEnabled");
-    
-    if (!IOUtils.isNullOrEmpty(authorizationEnabled) && authorizationEnabled.equalsIgnoreCase("true"))
-    {    
-      String ldapConfigPath = servletContext.getRealPath("/") + "WEB-INF/config/ldap.conf";
-      String authorizedGroup = serviceType + "Admins";
-  
-      Cookie[] cookies = httpRequest.getCookies();
-      Cookie authorizedCookie = HttpUtils.getCookie(cookies, authorizedGroup);
-  
-      if (authorizedCookie == null)  // user not authorized, attempt to authorize
-      {
-        Map<String, String> userAttrs = null;
-        
-        // get user attributes
-        try
-        {
-          userAttrs = HttpUtils.fromQueryParams(authUser);
-        }
-        catch (Exception e)
-        {
-          Cookie authUserCookie = HttpUtils.getCookie(cookies, OAuthFilter.AUTHENTICATED_USER_KEY);
-          
-          try
-          {
-            userAttrs = HttpUtils.fromQueryParams(authUserCookie.getValue());
-          }
-          catch (UnsupportedEncodingException ue)
-          {
-            throw new AuthorizationException("Error deserializing Auth cookie: " + ue);
-          }
-        }
-        
-        if (userAttrs != null && userAttrs.size() > 0)
-        {
-          Properties props = new Properties();
-          
-          try
-          {
-            props.load(new FileInputStream(ldapConfigPath));
-          }
-          catch (IOException ioe)
-          {
-            throw new AuthorizationException("Error loading LDAP properties: " + ioe);
-          }
-          
-          props.put("authorizedGroup", authorizedGroup);
-          
-          LdapAuthorizationProvider authProvider = new LdapAuthorizationProvider();
-          
-          try
-          {
-            authProvider.init(props);
-          }
-          catch (NamingException ne)
-          {
-            throw new AuthorizationException("Error initializing authentication provider: " + ne);
-          }
-          
-          if (userAttrs == null || !authProvider.isAuthorized(userAttrs))
-          {
-            throw new AuthorizationException("User not authorized");
-          }
-          else
-          {
-            httpResponse.addCookie(new Cookie(authorizedGroup, "authorized"));
-          }
-        }
-        else
-        {
-          throw new AuthorizationException("Invalid identity.");
-        }
-      }
     }
   }
   

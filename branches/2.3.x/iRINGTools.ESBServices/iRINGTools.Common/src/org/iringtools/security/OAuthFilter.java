@@ -13,7 +13,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.json.JSONException;
@@ -27,16 +26,16 @@ public class OAuthFilter implements Filter
 {
   private static final Logger logger = Logger.getLogger(OAuthFilter.class);
   
-  public static final String AUTHENTICATED_USER_KEY = "Auth";
   public static final int AUTH_COOKIE_EXPIRY = 28800;  // 8 hours
-  public static final String AUTHORIZATION_TOKEN_KEY = "Authorization";
-  public static final String APPLICATION_KEY = "X-myPSN-AppKey";
   public static final String REF_PARAM = "REF";
   public static final String URL_ENCODING = "UTF-8";
+  public static final String AUTHENTICATED_USER = "Auth";
+  public static final String AUTHORIZATION = "Authorization";
+  public static final String APP_KEY = "X-myPSN-AppKey";
+  public static final String USER_ID = "UserId";
   
   private FilterConfig filterConfig;
   private HttpServletRequest request;
-  private HttpSession session;
   private HttpServletResponse response; 
   
   @SuppressWarnings("unchecked")
@@ -46,11 +45,10 @@ public class OAuthFilter implements Filter
   {
     response = (HttpServletResponse) res;
     request = (HttpServletRequest) req;
-    session = request.getSession();
     
-    Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTHENTICATED_USER_KEY);
+    Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTHENTICATED_USER);
     
-    if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))  // use has not signed on
+    if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))
     {
       String ref = request.getParameter(REF_PARAM);
       
@@ -72,6 +70,7 @@ public class OAuthFilter implements Filter
         
         response.setContentType("text/html");
         response.sendRedirect(ssoUrl);
+        return;
       }
       else  // case 2: the user has logged in but the application needs to process the SSO event
       {
@@ -90,28 +89,28 @@ public class OAuthFilter implements Filter
         
         logger.debug("Requesting identity: " + authServiceUrl);
         
-        String userAttrsJson = null;
+        String userJson = null;
         
         try
         {
-          userAttrsJson = pingIdClient.get(String.class);
+          userJson = pingIdClient.get(String.class);
         }
         catch (HttpClientException e)
         {
           logger.error(e);
         }
         
-        if (userAttrsJson == null)
+        if (userJson == null)
         {
           response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
         else 
-        {
+        {  
           Map<String, String> userAttrs = null;
           
           try
           {
-            userAttrs = (Map<String, String>) JSONUtil.deserialize(userAttrsJson);
+            userAttrs = (Map<String, String>) JSONUtil.deserialize(userJson);
           }
           catch (JSONException e)
           {
@@ -120,26 +119,20 @@ public class OAuthFilter implements Filter
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
           }
           
-          if (userAttrs != null)
+          String authCookieValue = HttpUtils.toQueryParams(userAttrs);          
+          authCookie = new Cookie(AUTHENTICATED_USER, authCookieValue);
+          authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
+          response.addCookie(authCookie);
+          
+          if (!obtainOAuthToken(userJson))
           {
-            String authCookieValue = HttpUtils.toQueryParams(userAttrs);
-            
-            // make authenticated user attributes available in both session and cookie
-            session.setAttribute(AUTHENTICATED_USER_KEY, authCookieValue);
-            
-            authCookie = new Cookie(AUTHENTICATED_USER_KEY, authCookieValue);
-            authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
-            response.addCookie(authCookie);
- 
-            if (!obtainOAuthToken(userAttrsJson))
-            {
-              String message = "Unable to obtain OAuth token.";
-              response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-            }
-            else
-            {
-              chain.doFilter(req, res); 
-            }
+            String message = "Unable to obtain OAuth token.";
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+          }
+          else
+          {            
+            chain.doFilter(req, res); 
+            return;
           }
         }
       }
@@ -156,11 +149,8 @@ public class OAuthFilter implements Filter
         Map<String, String> userAttrs = HttpUtils.fromQueryParams(authCookieMultiValue);
         logger.debug("User attributes: " + userAttrs);
         
-        String authCookieValue = HttpUtils.toQueryParams(userAttrs);
-        session.setAttribute(AUTHENTICATED_USER_KEY, authCookieValue);
-        
-        String userAttrsJson = JSONUtil.serialize(userAttrs);
-        if (!obtainOAuthToken(userAttrsJson))
+        String userJson = JSONUtil.serialize(userAttrs);
+        if (!obtainOAuthToken(userJson))
         {
           String message = "Unable to obtain OAuth token.";
           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
@@ -168,6 +158,7 @@ public class OAuthFilter implements Filter
         else
         {
           chain.doFilter(req, res);
+          return;
         }
       }
       catch (JSONException e)
@@ -188,25 +179,20 @@ public class OAuthFilter implements Filter
   @Override
   public void destroy(){}
   
-  private boolean obtainOAuthToken(String userAttrsJson) throws IOException
+  private boolean obtainOAuthToken(String userJson) throws IOException
   {    
-    logger.debug("Obtaining OAuth token for user: " + userAttrsJson);
+    logger.debug("Obtaining OAuth token for user: " + userJson);    
+    Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTHORIZATION);
     
-    String tokenServiceUri = filterConfig.getInitParameter("tokenServiceUri");
-    String applicationKey = filterConfig.getInitParameter("applicationKey");
-    
-    if (session.getAttribute(AUTHORIZATION_TOKEN_KEY) != null)
+    if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))
     {
-      response.addHeader(AUTHORIZATION_TOKEN_KEY, (String)session.getAttribute(AUTHORIZATION_TOKEN_KEY));      
-    }
-    else if (request.getHeader(AUTHORIZATION_TOKEN_KEY) == null &&
-        !IOUtils.isNullOrEmpty(tokenServiceUri) && !IOUtils.isNullOrEmpty(applicationKey))
-    {
-      HttpClient apigeeClient = new HttpClient(tokenServiceUri + applicationKey);
+      String tokenServiceUri = filterConfig.getInitParameter("tokenServiceUri");
+      String appKey = filterConfig.getInitParameter("applicationKey");
+      HttpClient apigeeClient = new HttpClient(tokenServiceUri + appKey);
       
       try
       {
-        byte[] data = userAttrsJson.getBytes(URL_ENCODING);
+        byte[] data = userJson.getBytes(URL_ENCODING);
         logger.debug("User info byte count: " + data.length);
         
         String apigeeResponse = apigeeClient.postByteData(String.class, "", data);
@@ -221,20 +207,40 @@ public class OAuthFilter implements Filter
         
         String oAuthToken = accessToken.get("token");        
         logger.debug("OAuth token: " + oAuthToken);
-        
-        session.setAttribute(AUTHORIZATION_TOKEN_KEY, oAuthToken);
-        response.addHeader(AUTHORIZATION_TOKEN_KEY, oAuthToken);
-        
-        session.setAttribute(APPLICATION_KEY, applicationKey);
-        response.addHeader(APPLICATION_KEY, applicationKey);
+
+        request.setAttribute(AUTHORIZATION, oAuthToken);        
+        request.setAttribute(APP_KEY, appKey);
+        request.setAttribute(USER_ID, getUserId(userJson));
       }
       catch (Exception ex)
       {
-        logger.error("Error obtaining OAuth token for user [" + userAttrsJson + "]. " + ex.getMessage());
+        logger.error("Error obtaining OAuth token for user [" + userJson + "]. " + ex.getMessage());
         return false;
       }
     }
     
     return true;
   } 
+  
+  @SuppressWarnings("unchecked")
+  private String getUserId(String userJson) throws IOException
+  {
+    Map<String, String> userAttrs = null;
+    
+    try
+    {
+      userAttrs = (Map<String, String>) JSONUtil.deserialize(userJson);
+    }
+    catch (JSONException e)
+    {
+      String message = "Error deserializing user json: " + e;
+      logger.error(message);
+      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+    }
+    
+    if (userAttrs.containsKey("BechtelUserName"))
+      return userAttrs.get("BechtelUserName");
+          
+    return userAttrs.get("EMailAddress");
+  }
 }

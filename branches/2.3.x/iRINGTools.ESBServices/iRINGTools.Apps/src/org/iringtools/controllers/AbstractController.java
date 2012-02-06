@@ -2,7 +2,6 @@ package org.iringtools.controllers;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -11,12 +10,10 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.interceptor.SessionAware;
-import org.apache.struts2.json.JSONUtil;
 import org.iringtools.security.LdapAuthorizationProvider;
 import org.iringtools.security.OAuthFilter;
 import org.iringtools.utility.EncryptionException;
@@ -42,7 +39,7 @@ public abstract class AbstractController extends ActionSupport implements Sessio
     context = ServletActionContext.getServletContext();
     request = ServletActionContext.getRequest();
     response = ServletActionContext.getResponse();
-
+    
     prepareHttpProxy();
   }
 
@@ -50,6 +47,9 @@ public abstract class AbstractController extends ActionSupport implements Sessio
   public void setSession(Map<String, Object> session)
   {
     this.session = session;
+    
+    this.session.put(OAuthFilter.AUTHORIZATION, request.getAttribute(OAuthFilter.AUTHORIZATION));
+    this.session.put(OAuthFilter.APP_KEY, request.getAttribute(OAuthFilter.APP_KEY));
   }
 
   protected void authorize(String app, String group)
@@ -77,37 +77,6 @@ public abstract class AbstractController extends ActionSupport implements Sessio
 
       if (authorizedCookie == null) // user not authorized, attempt to authorize
       {
-        Map<String, String> userAttrs = null;
-
-        // get user attributes
-        try
-        {
-          HttpSession httpSession = request.getSession();
-          String authUser = (String) httpSession.getAttribute(OAuthFilter.AUTHENTICATED_USER_KEY);
-          userAttrs = HttpUtils.fromQueryParams(authUser);
-        }
-        catch (Exception e)
-        {
-          Cookie authUserCookie = HttpUtils.getCookie(cookies, OAuthFilter.AUTHENTICATED_USER_KEY);
-
-          try
-          {
-            userAttrs = HttpUtils.fromQueryParams(authUserCookie.getValue());
-          }
-          catch (UnsupportedEncodingException ue)
-          {
-            try
-            {
-              response
-                  .sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error deserializing Auth cookie: " + ue);
-            }
-            catch (IOException unexpectedException)
-            {
-              logger.error(unexpectedException.toString());
-            }
-          }
-        }
-
         Properties props = new Properties();
 
         try
@@ -146,12 +115,14 @@ public abstract class AbstractController extends ActionSupport implements Sessio
             logger.error(unexpectedException.toString());
           }
         }
+        
+        String userId = request.getAttribute(OAuthFilter.USER_ID).toString();
 
-        if (userAttrs == null || userAttrs.size() == 0 || !authProvider.isAuthorized(userAttrs))
+        if (!authProvider.isAuthorized(userId))
         {
           try
           {
-            String errorMessage = "User [" + JSONUtil.serialize(userAttrs) + "] not authorized.";
+            String errorMessage = "User [" + userId + "] not authorized.";
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMessage);
           }
           catch (Exception e)

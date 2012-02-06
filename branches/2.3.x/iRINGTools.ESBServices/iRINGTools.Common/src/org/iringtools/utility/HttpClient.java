@@ -387,7 +387,10 @@ public class HttpClient
       conn.setDoInput(true);
     }
 
-    ignoreSslCheck(conn);
+    if (baseUri.toLowerCase().startsWith("https"))
+    {
+      ignoreSslCheck(conn);
+    }    
     
     return conn;
   }

@@ -100,7 +100,7 @@ public class ExchangeDataModel extends DataModel
     try
     {
       HttpClient httpClient = new HttpClient(serviceUri + exchangeRelativePath);
-      HttpUtils.addOAuthHeaders(session, httpClient);
+      HttpUtils.addAuthHeaders(session, httpClient);
       
       response = httpClient.post(ExchangeResponse.class, "/submit", request);
 
@@ -141,7 +141,7 @@ public class ExchangeDataModel extends DataModel
     History xlogs = null;
 
     HttpClient httpClient = new HttpClient(serviceUri);
-    HttpUtils.addOAuthHeaders(session, httpClient);
+    HttpUtils.addAuthHeaders(session, httpClient);
     
     try
     {
@@ -250,7 +250,7 @@ public class ExchangeDataModel extends DataModel
     else
     {
       HttpClient httpClient = new HttpClient(xlogsServiceUri);
-      HttpUtils.addOAuthHeaders(session, httpClient);
+      HttpUtils.addAuthHeaders(session, httpClient);
       
       try
       {

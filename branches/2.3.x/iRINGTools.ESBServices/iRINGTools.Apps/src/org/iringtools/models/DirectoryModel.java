@@ -32,7 +32,7 @@ public class DirectoryModel
   public Tree getDirectoryTree(String directoryUrl) throws HttpClientException
   {
     HttpClient httpClient = new HttpClient(directoryUrl);
-    HttpUtils.addOAuthHeaders(settings, httpClient);
+    HttpUtils.addAuthHeaders(settings, httpClient);
     
     Directory directory = httpClient.get(Directory.class);
     return directoryToTree(directory);
