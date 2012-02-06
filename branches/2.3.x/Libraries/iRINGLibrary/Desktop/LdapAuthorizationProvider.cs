@@ -13,10 +13,8 @@ namespace org.iringtools.adapter.security
   public class LdapAuthorizationProvider : IAuthorizationLayer
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(LdapAuthorizationProvider));
+    private const string BASE_DN = "o=iringtools,dc=iringug,dc=org";    
 
-    private const string BASE_DN = "o=iringtools,dc=iringug,dc=org";
-    private const string USERID_KEY = "emailaddress";
-    
     private LdapConnection ldapConnection;
     private string authorizedGroup;
 
@@ -66,15 +64,10 @@ namespace org.iringtools.adapter.security
 
     private string GetUserId(IDictionary<string, string> claims)
     {
-      foreach (var pair in claims)
-      {
-        if (pair.Key.ToLower() == USERID_KEY)
-        {
-          return pair.Value;
-        }
-      }
+      if (claims.ContainsKey("BechtelUserName"))
+        return claims["BechtelUserName"];
 
-      return null;
+      return claims["EMailAddress"];
     }
   }
 }
