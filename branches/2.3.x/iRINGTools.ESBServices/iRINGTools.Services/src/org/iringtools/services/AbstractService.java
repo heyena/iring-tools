@@ -3,12 +3,10 @@ package org.iringtools.services;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -18,8 +16,7 @@ import javax.ws.rs.core.SecurityContext;
 import org.apache.cxf.jaxrs.ext.MessageContext;
 import org.iringtools.security.AuthorizationException;
 import org.iringtools.security.OAuthFilter;
-import org.iringtools.utility.EncryptionException;
-import org.iringtools.utility.EncryptionUtils;
+import org.iringtools.utility.HttpUtils;
 
 public abstract class AbstractService
 {
@@ -29,15 +26,15 @@ public abstract class AbstractService
   
   protected Map<String, Object> settings;
   protected HttpServletRequest request;
-  protected HttpServletResponse response;   
-  protected HttpSession session;
+  protected HttpServletResponse response;
   
   public void initService(String serviceType) throws AuthorizationException
   {
     settings = java.util.Collections.synchronizedMap(new HashMap<String, Object>());    
     request = messageContext.getHttpServletRequest();
-    response = messageContext.getHttpServletResponse();   
-    session = request.getSession();
+    response = messageContext.getHttpServletResponse(); 
+    
+    HttpUtils.prepareHttpProxy(request.getServletContext());
     
     /*
      * COMMON SETTINGS
@@ -126,63 +123,6 @@ public abstract class AbstractService
     if (dtoTaskTimeout == null || dtoTaskTimeout.equals(""))
       dtoTaskTimeout = "600";  // in seconds
     settings.put("dtoTaskTimeout", dtoTaskTimeout);
-    
-    /* 
-     * PROXY SETTINGS
-     */
-    Properties sysProps = System.getProperties();
-    boolean proxyInfoValid = true;
-    
-    String proxyHost = servletContext.getInitParameter("proxyHost");
-    if (proxyHost != null && proxyHost.length() > 0)
-      sysProps.put("http.proxyHost", proxyHost);
-    else
-      proxyInfoValid = false;
-    
-    String proxyPort = servletContext.getInitParameter("proxyPort");
-    if (proxyPort != null && proxyPort.length() > 0)
-      sysProps.put("http.proxyPort", proxyPort);
-    else
-      proxyInfoValid = false;
-    
-    String proxyUserName = servletContext.getInitParameter("proxyUserName");
-    if (proxyUserName != null && proxyUserName.length() > 0)
-      sysProps.put("http.proxyUserName", proxyUserName);
-    else
-      proxyInfoValid = false;
-    
-    String encryptedProxyPassword = servletContext.getInitParameter("proxyPassword");
-    if (encryptedProxyPassword != null && encryptedProxyPassword.length() > 0)
-    {
-      String proxyKeyFile = servletContext.getInitParameter("proxySecretKeyFile");
-      
-      try
-      {
-        String proxyPassword = (proxyKeyFile != null && proxyKeyFile.length() > 0)
-          ? EncryptionUtils.decrypt(encryptedProxyPassword, proxyKeyFile)
-          : EncryptionUtils.decrypt(encryptedProxyPassword);
-          
-        sysProps.put("http.proxyPassword", proxyPassword);
-      }
-      catch (EncryptionException e)
-      {
-        proxyInfoValid = false;
-      }      
-    }
-    else
-    {
-      proxyInfoValid = false;
-    }
-    
-    String proxyDomain = servletContext.getInitParameter("proxyDomain");
-    if (proxyDomain == null)
-      proxyDomain = "";
-    sysProps.put("http.proxyDomain", proxyDomain);
-    
-    if (proxyInfoValid)
-    {
-      sysProps.put("proxySet", "true");      
-    }
   }
   
   protected Response prepareErrorResponse(int errorCode, Exception e)

@@ -5,14 +5,68 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 
 import org.iringtools.security.OAuthFilter;
 
 public final class HttpUtils
 {
+  public static void prepareHttpProxy(ServletContext context)
+  {
+    Properties sysProps = System.getProperties();
+
+    String proxyHost = context.getInitParameter("proxyHost");
+    if (proxyHost != null && proxyHost.length() > 0)
+      sysProps.put("http.proxyHost", proxyHost);
+    else
+      return;
+
+    String proxyPort = context.getInitParameter("proxyPort");
+    if (proxyPort != null && proxyPort.length() > 0)
+      sysProps.put("http.proxyPort", proxyPort);
+    else
+      return;
+
+    String proxyUserName = context.getInitParameter("proxyUserName");
+    if (proxyUserName != null && proxyUserName.length() > 0)
+      sysProps.put("http.proxyUserName", proxyUserName);
+    else
+      return;
+
+    String encryptedProxyPassword = context.getInitParameter("proxyPassword");
+    if (encryptedProxyPassword != null && encryptedProxyPassword.length() > 0)
+    {
+      String proxyKeyFile = context.getInitParameter("proxySecretKeyFile");
+
+      try
+      {
+        String proxyPassword = (proxyKeyFile != null && proxyKeyFile.length() > 0) ? EncryptionUtils.decrypt(
+            encryptedProxyPassword, proxyKeyFile) : EncryptionUtils.decrypt(encryptedProxyPassword);
+
+        sysProps.put("http.proxyPassword", proxyPassword);
+      }
+      catch (EncryptionException e)
+      {
+        return;
+      }
+    }
+    else
+    {
+      return;
+    }
+
+    String proxyDomain = context.getInitParameter("proxyDomain");
+    if (proxyDomain == null)
+      proxyDomain = "";
+    sysProps.put("http.proxyDomain", proxyDomain);
+
+    sysProps.put("proxySet", "true");
+  }
+  
   public static Cookie getCookie(Cookie[] cookies, String cookieName)
   {   
     if (cookies != null && cookies.length > 0)

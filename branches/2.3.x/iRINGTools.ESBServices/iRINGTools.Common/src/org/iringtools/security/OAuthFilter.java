@@ -46,6 +46,7 @@ public class OAuthFilter implements Filter
     response = (HttpServletResponse) res;
     request = (HttpServletRequest) req;
     
+    HttpUtils.prepareHttpProxy(filterConfig.getServletContext());    
     Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTHENTICATED_USER);
     
     if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))
