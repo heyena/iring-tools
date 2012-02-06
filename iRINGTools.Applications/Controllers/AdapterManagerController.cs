@@ -27,8 +27,7 @@ namespace org.iringtools.web.controllers
       try
       {
         string enableOAuth = ConfigurationManager.AppSettings["EnableOAuth"];
-
-        _logger.Debug("EnableOAth: " + enableOAuth);
+        _logger.Debug("EnableOAuth: " + enableOAuth);
 
         if (!String.IsNullOrEmpty(enableOAuth) && enableOAuth.ToUpper() == "TRUE")
         {
