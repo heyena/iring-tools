@@ -10,7 +10,7 @@
     proxy: {
         type: 'ajax',
         timeout: 600000,
-        url: '',
+        url: 'NHibernate/GetDBObjects',
         actionMethods: { read: 'POST' },
         extraParams: {
             scope: null,

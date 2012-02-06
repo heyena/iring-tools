@@ -9,7 +9,7 @@ Ext.define('AM.view.nhibernate.NHibernateTreePanel', {
     appName: null,
     bodyStyle: 'background:#fff',   
     items:[
-           { xtype: 'nhibernatetree', region: 'center' }                
+           { xtype: 'nhibernatetreepanel', region: 'center' }                
           ],
     initComponent: function () {
         this.callParent(arguments);

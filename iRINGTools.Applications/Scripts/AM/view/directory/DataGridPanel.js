@@ -77,17 +77,17 @@ Ext.define('AM.view.directory.DataGridPanel', {
     reload: null,
     initComponent: function () {
         var grid = this;
-
-        this.store = Ext.create('Ext.data.Store', {
+        var me = this;
+        me.store = Ext.create('Ext.data.Store', {
             model: 'AM.model.DynamicModel',
             autoLoad: false,
             pageSize: 25,
-            storeId: this.context + '.' + this.endpoint + '.' + this.graph+'gridstore'
+            storeId: me.context + '.' + me.endpoint + '.' + me.graph + 'gridstore'
         });
 
         var ptb = Ext.create('Ext.PagingToolbar', {
             pageSize: 25,
-            store: this.store,
+            store: me.store,
             displayInfo: true,
             displayMsg: 'Records {0} - {1} of {2}',
             emptyMsg: "No records to display",
@@ -96,7 +96,12 @@ Ext.define('AM.view.directory.DataGridPanel', {
 
         Ext.apply(this, {
             iconCls: 'tabsData',
-            //store: this.store,
+//            store: Ext.create('Ext.data.Store', {
+//                model: 'AM.model.DynamicModel',
+//                autoLoad: false,
+//                pageSize: 25,
+//                storeId: me.context + '.' + me.endpoint + '.' + me.graph + 'gridstore'
+//            }),
             bbar: ptb,
             columns: {
                 defaults: {
@@ -107,9 +112,9 @@ Ext.define('AM.view.directory.DataGridPanel', {
 
 		this.callParent(arguments);
 
-        this.store.on('beforeload', this.onBeforeLoad, this);
-        var gridstore = this.store;
-        this.store.load({
+        me.store.on('beforeload', me.onBeforeLoad, this);
+        var gridstore = me.store;
+        me.store.load({
             callback: function (recs) {
                 grid.reconfigure(gridstore, recs[0].store.proxy.reader.fields);
                 grid.show();

@@ -1,6 +1,6 @@
 ﻿Ext.define('AM.view.nhibernate.SetKeyPanel', {
     extend: 'Ext.form.Panel',
-    alias: 'widget.setkey',
+    alias: 'widget.setdatakeyform',
     border: false,
     name: 'keyProperty',
     autoScroll: true,
@@ -69,7 +69,7 @@
                 xtype: 'tbspacer',
                 width: 4
             }, {
-                xtype: 'tbbutton',
+                xtype: 'button',
                 icon: 'Content/img/16x16/apply.png',
                 text: 'Apply',
                 tooltip: 'Apply the current changes to the data objects tree',
@@ -83,7 +83,7 @@
                 xtype: 'tbspacer',
                 width: 4
             }, {
-                xtype: 'tbbutton',
+                xtype: 'button',
                 icon: 'Content/img/16x16/edit-clear.png',
                 text: 'Reset',
                 tooltip: 'Reset to the latest applied changes',
