@@ -1,16 +1,21 @@
 ﻿
 Ext.define('AM.view.nhibernate.DataObjectPanel', {
-    extend: 'Ext.panel.Panel',
-    alias: 'widget.dataobjectpanel',
-    layout: 'border',
-    frame: false,
-    closable: true,
-    border: false,
-    contextName: null,
-    endpoint: null,
-    items: [],
-    initComponent: function () {
-        var me = this;
+  extend: 'Ext.panel.Panel',
+  alias: 'widget.dataobjectpanel',
+  layout: 'border',
+  frame: false,
+  closable: true,
+  border: false,
+  contextName: null,
+  endpoint: null,
+  items: [],
+  initComponent: function () {
+    var me = this; 
+    this.callParent(arguments);
+
+  }
+});
+
 //        var scopeName = this.contextName;
 //        var appName = this.endpoint;
 //        var userTableNames;
@@ -79,11 +84,8 @@ Ext.define('AM.view.nhibernate.DataObjectPanel', {
 //            });
 
 
-     //   }
-        this.callParent(arguments);
+//   }
 
-    }
-});
 
 //function showTree(scopeName, appName) {
 //    //dbObjectsTree, dbInfo, dbDict, 
@@ -167,12 +169,12 @@ Ext.define('AM.view.nhibernate.DataObjectPanel', {
 //            }
 //        }
 
-   // var treeModel = Ext.widget('nhTreeModel');
-   // treeModel.proxy.url = 'AdapterManager/DBObjects';
-   // treeModel.proxy.type = 'ajax';
-   // treeModel.proxy.timeout = 6000000;
-   // treeModel.proxy.actionMethods.read = 'POST';
-   // treeModel.proxy.reader.type = 'json';
+// var treeModel = Ext.widget('nhTreeModel');
+// treeModel.proxy.url = 'AdapterManager/DBObjects';
+// treeModel.proxy.type = 'ajax';
+// treeModel.proxy.timeout = 6000000;
+// treeModel.proxy.actionMethods.read = 'POST';
+// treeModel.proxy.reader.type = 'json';
 
 //    var rootNode = dbObjectsTree[0].getRootNode();
 

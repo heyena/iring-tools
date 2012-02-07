@@ -1,90 +1,101 @@
 ﻿Ext.define('AM.view.nhibernate.SetDataObjectPanel', {
-    extend: 'Ext.form.Panel',
-    alias: 'widget.setdataobjectpanel',
-    name: 'dataObject',
-    border: false,
-    autoScroll: true,
-    monitorValid: true,
-    labelWidth: 160,
-    contextName: null,
-    endpoint: null,
-    bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
-    defaults: {
-        anchor: '100%',
-        xtype: 'textfield',
-        allowBlank: false
-    },
-    initComponent: function () {
-        var me = this;
-        me.items = [
+  extend: 'Ext.form.Panel',
+  alias: 'widget.setdataobjectpanel',
+  name: 'dataObject',
+  border: false,
+  autoScroll: true,
+  monitorValid: true,
+  contextName: null,
+  endpoint: null,
+  width: 400,
+  bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+  defaults: {
+    anchor: '100%',
+    xtype: 'textfield',
+    labelWidth: 150,
+    allowBlank: false
+  },
+  initComponent: function () {
+    var me = this;
+    me.items = [
             {
-                xtype: 'label',
-                fieldLabel: 'Data Object',
-                labelSeparator: '',
-                itemCls: 'form-title'
+              xtype: 'hidden',
+              name: 'contextName',
+              value: me.contextName
+            },
+             {
+               xtype: 'hidden',
+               name: 'endpoint',
+               value: me.endpoint
+             },
+            {
+              xtype: 'label',
+              fieldLabel: 'Data Object',
+              labelSeparator: '',
+              itemCls: 'form-title'
             },
             {
-                xtype: 'textfield',
-                name: 'tableName',
-                fieldLabel: 'Table Name',
-                disabled: true
+              xtype: 'textfield',
+              name: 'tableName',
+              fieldLabel: 'Table Name',
+              readOnly: true
             },
             {
-                xtype: 'textfield',
-                name: 'objectNamespace',
-                fieldLabel: 'Object Namespace'
+              xtype: 'textfield',
+              name: 'objectNamespace',
+              fieldLabel: 'Object Namespace'
             },
             {
-                xtype: 'textfield',
-                name: 'objectName',
-                fieldLabel: 'Object Name'
+              xtype: 'textfield',
+              name: 'objectName',
+              fieldLabel: 'Object Name'
             },
             {
-                xtype: 'textfield',
-                name: 'keyDelimeter',
-                fieldLabel: 'Key Delimiter',
-                allowBlank: true
+              xtype: 'textfield',
+              name: 'keyDelimeter',
+              fieldLabel: 'Key Delimiter',
+              allowBlank: true
             }
         ];
-        me.tbar = new Ext.Toolbar({
-            items: [
+    me.tbar = new Ext.Toolbar({
+      items: [
                 {
-                    xtype: 'tbspacer',
-                    width: 4
+                  xtype: 'tbspacer',
+                  width: 4
                 },
                 {
-                    xtype: 'button',
-                    icon: 'Content/img/16x16/apply.png',
-                    text: 'Apply',
-                    tooltip: 'Apply the current changes to the data objects tree',
-                    scope: this,
-                    action: 'applydbobjectchanges'
+                  xtype: 'button',
+                  icon: 'Content/img/16x16/apply.png',
+                  text: 'Apply',
+                  tooltip: 'Apply the current changes to the data objects tree',
+                  scope: this,
+                  action: 'applydbobjectchanges'
 
                 },
                 {
-                    xtype: 'tbspacer',
-                    width: 4
+                  xtype: 'tbspacer',
+                  width: 4
                 },
                 {
-                    xtype: 'button',
-                    icon: 'Content/img/16x16/edit-clear.png',
-                    text: 'Reset',
-                    tooltip: 'Reset to the latest applied changes',
-                    scope: this,
-                    action: 'resetdbobjectchanges'
+                  xtype: 'button',
+                  icon: 'Content/img/16x16/edit-clear.png',
+                  text: 'Reset',
+                  tooltip: 'Reset to the latest applied changes',
+                  scope: this,
+                  action: 'resetdbobjectchanges'
                 }
             ]
-        }),
+    }),
         this.callParent(arguments);
-    },
+  },
 
-    setActiveRecord: function (record) {
-        if (record) {       
-            this.getForm().setValues(record);
-        } else {
-           this.getForm().reset();
-        }
+  setActiveRecord: function (record) {
+    if (record) {
+      this.getForm().setValues(record);
+    } else {
+      this.getForm().reset();
     }
+  }
 });
 
 
@@ -177,6 +188,6 @@
 //			            }
 //			        }
 
-        //        editPane.add(dataObjectFormPanel);
-        //        var panelIndex = editPane.items.indexOf(dataObjectFormPanel);
-        //        editPane.getLayout().setActiveItem(panelIndex);
+//        editPane.add(dataObjectFormPanel);
+//        var panelIndex = editPane.items.indexOf(dataObjectFormPanel);
+//        editPane.getLayout().setActiveItem(panelIndex);
