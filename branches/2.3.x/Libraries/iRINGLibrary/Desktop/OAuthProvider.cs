@@ -98,65 +98,66 @@ namespace org.iringtools.adapter.security
 
 
           //call apigee to get the oauth headers for calling services
-          if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["applicationKey"]))
-          {
-            _logger.Debug("ApplicationKey: " + ConfigurationManager.AppSettings["applicationKey"]);
+          //if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["applicationKey"]))
+          //{
+          //  _logger.Debug("ApplicationKey: " + ConfigurationManager.AppSettings["applicationKey"]);
 
-            string tokenServerAddress = ConfigurationManager.AppSettings["tokenServiceAddress"].ToString() + ConfigurationManager.AppSettings["applicationKey"].ToString();
-            WebRequest reqApigee = WebRequest.Create(tokenServerAddress);
-            reqApigee.Method = "POST";
+          //  string tokenServerAddress = ConfigurationManager.AppSettings["tokenServiceAddress"].ToString() + ConfigurationManager.AppSettings["applicationKey"].ToString();
+          //  WebRequest reqApigee = WebRequest.Create(tokenServerAddress);
+          //  reqApigee.Method = "POST";
 
-            if (!String.IsNullOrEmpty(proxyCreds))
-            {
-              string host = ConfigurationManager.AppSettings["ProxyHost"];
-              int port = int.Parse(ConfigurationManager.AppSettings["ProxyPort"]);
-              WebProxyCredentials webCreds = new WebProxyCredentials(proxyCreds, host, port);
+          //  if (!String.IsNullOrEmpty(proxyCreds))
+          //  {
+          //    string host = ConfigurationManager.AppSettings["ProxyHost"];
+          //    int port = int.Parse(ConfigurationManager.AppSettings["ProxyPort"]);
+          //    WebProxyCredentials webCreds = new WebProxyCredentials(proxyCreds, host, port);
 
-              reqApigee.Proxy = webCreds.GetWebProxy();
-              reqApigee.Proxy.Credentials = webCreds.GetNetworkCredential();
-            }
+          //    reqApigee.Proxy = webCreds.GetWebProxy();
+          //    reqApigee.Proxy.Credentials = webCreds.GetNetworkCredential();
+          //  }
 
-            //post the json response from ping federate to the apigee url
-            ASCIIEncoding encoding = new ASCIIEncoding();
-            byte[] data = encoding.GetBytes(response);
+          //  //post the json response from ping federate to the apigee url
+          //  ASCIIEncoding encoding = new ASCIIEncoding();
+          //  byte[] data = encoding.GetBytes(response);
 
-            reqApigee.ContentType = "application/xml";
-            reqApigee.ContentLength = data.Length;
-            Stream newStream = reqApigee.GetRequestStream();
+          //  reqApigee.ContentType = "application/xml";
+          //  reqApigee.ContentLength = data.Length;
+          //  Stream newStream = reqApigee.GetRequestStream();
 
-            // Send the data.
-            newStream.Write(data, 0, data.Length);
-            newStream.Close();
+          //  // Send the data.
+          //  newStream.Write(data, 0, data.Length);
+          //  newStream.Close();
 
-            //get back the response from apigee
-            WebResponse respApigee = reqApigee.GetResponse();
-            StreamReader streamApigee = new StreamReader(respApigee.GetResponseStream());
-            string responseApigee = streamApigee.ReadToEnd();
-            string accessToken = responseApigee.Replace("{\"accesstoken\":", "");
+          //  //get back the response from apigee
+          //  WebResponse respApigee = reqApigee.GetResponse();
+          //  StreamReader streamApigee = new StreamReader(respApigee.GetResponseStream());
+          //  string responseApigee = streamApigee.ReadToEnd();
+          //  string accessToken = responseApigee.Replace("{\"accesstoken\":", "");
 
-            //response from apigee is json - deserialize that into dictionaries for the purposes of display
-            JavaScriptSerializer desApigee = new JavaScriptSerializer();
-            IDictionary apigeeInfo = desApigee.Deserialize<Dictionary<string, string>>(accessToken.Replace("}}", "}"));
+          //  //response from apigee is json - deserialize that into dictionaries for the purposes of display
+          //  JavaScriptSerializer desApigee = new JavaScriptSerializer();
+          //  IDictionary apigeeInfo = desApigee.Deserialize<Dictionary<string, string>>(accessToken.Replace("}}", "}"));
 
-            foreach (DictionaryEntry entry in apigeeInfo)
-            {
-              userInfo.Add("OAuth " + entry.Key.ToString(), entry.Value);
+            //foreach (DictionaryEntry entry in userInfo)
+            //{
+            //  userInfo.Add("OAuth " + entry.Key.ToString(), entry.Value);
 
-              if (entry.Key.ToString() == "token")
-              {
-                OAuthToken = entry.Value.ToString();
-                _logger.Debug("OAuthToken: " + OAuthToken);
+            //  if (entry.Key.ToString() == "token")
+            //  {
+
+          OAuthToken = userInfo["OAuthToken"].ToString();
+          _logger.Debug("OAuthToken: " + OAuthToken);
                 
-                HttpCookie authorizationCookie = new HttpCookie("Authorization");
-                authorizationCookie.Value = OAuthToken;
-                HttpContext.Current.Response.Cookies.Add(authorizationCookie);
+          HttpCookie authorizationCookie = new HttpCookie("Authorization");
+          authorizationCookie.Value = OAuthToken;
+          HttpContext.Current.Response.Cookies.Add(authorizationCookie);
 
-                HttpCookie appKeyCookie = new HttpCookie("X-myPSN-AppKey");
-                appKeyCookie.Value = ConfigurationManager.AppSettings["applicationKey"];
-                HttpContext.Current.Response.Cookies.Add(appKeyCookie);
-              }
-            }
-          }
+          HttpCookie appKeyCookie = new HttpCookie("X-myPSN-AppKey");
+          appKeyCookie.Value = ConfigurationManager.AppSettings["applicationKey"];
+          HttpContext.Current.Response.Cookies.Add(appKeyCookie);
+          //    }
+          //  }
+          //}
           //end of apigee interaction
           //---------------------------------------------
 
