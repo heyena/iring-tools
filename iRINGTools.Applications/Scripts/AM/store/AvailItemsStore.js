@@ -10,9 +10,7 @@
         url: 'NHibernate/DBProviders',
         reader: {
             type: 'json',
-            root: 'items'//,
-            //            idProperty: 'Provider',
-            //            successProperty: 'success'
+            root: 'items'
         }
     }
 });

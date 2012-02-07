@@ -339,7 +339,7 @@ namespace org.iringtools.web.Controllers
 
         }
 
-        public ActionResult GetAvailableProperties(FormCollection form)
+        public ActionResult AvailableProperties(FormCollection form)
        {
              try
             {
@@ -351,7 +351,7 @@ namespace org.iringtools.web.Controllers
             return Json(new { success = true }, JsonRequestBehavior.AllowGet);
       }
 
-        public ActionResult GetSelectedProperties(FormCollection form)
+        public ActionResult SelectedProperties(FormCollection form)
         {
              try
             {
@@ -379,15 +379,19 @@ namespace org.iringtools.web.Controllers
         {
             try
             {
-                var dbTableName = form["dbTableName"];
-                var dbObjectProps = form["objectProps"];
+                var dbTableName = form["tableName"];
+                var objNameSpace = form["objectNamespace"];
+                var objName = form["objectName"];
+                var keyDelim = form["keyDelimeter"];
                 var context = form["contextName"];
                 var endpoint = form["endpoint"];
                 var dbDict = GetDbDictionary(context, endpoint);
                 DataObject dataObject = dbDict.dataObjects.Where(d=>d.tableName.Equals(dbTableName)).FirstOrDefault();
                 if (dataObject != null)
                 {
-                    
+                    dataObject.objectName = objName;
+                    dataObject.objectNamespace = objNameSpace;
+                    dataObject.keyDelimeter = keyDelim;
                 }
             }
             catch
