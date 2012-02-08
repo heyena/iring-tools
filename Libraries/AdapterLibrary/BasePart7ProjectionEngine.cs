@@ -443,6 +443,11 @@ namespace org.iringtools.adapter.projection
       {
         DataProperty objProp = objDef.dataProperties.Find(p => p.propertyName.ToLower() == pair.Key.ToLower());
 
+        if (objProp == null)
+        {
+          throw new Exception("Object property [" + pair.Key + "] not found.");
+        }
+
         if (objProp.dataType == DataType.String && objProp.dataLength < pair.Value.ToString().Length)
         {
           string value = pair.Value.Substring(0, objProp.dataLength);

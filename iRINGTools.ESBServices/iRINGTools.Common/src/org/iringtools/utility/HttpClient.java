@@ -136,14 +136,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      try
-      {
-        throw new HttpClientException(conn.getResponseCode(), e.getMessage());
-      }
-      catch (IOException ex)
-      {
-        logger.error(ex.getMessage());
-      }
+      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.getMessage());
     }
     finally
     {
@@ -153,8 +146,6 @@ public class HttpClient
         conn = null;
       }
     }
-
-    return null;
   }
 
   public <R> R postByteData(Class<R> responseClass, String relativeUri, byte[] data) throws HttpClientException
@@ -186,14 +177,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      try
-      {
-        throw new HttpClientException(conn.getResponseCode(), e.getMessage());
-      }
-      catch (IOException ex)
-      {
-        logger.error(ex.getMessage());
-      }
+      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.getMessage());
     }
     finally
     {
@@ -203,8 +187,6 @@ public class HttpClient
         conn = null;
       }
     }
-
-    return null;
   }
 
   public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData,
@@ -255,14 +237,7 @@ public class HttpClient
     }
     catch (Exception e)
     {
-      try
-      {
-        throw new HttpClientException(conn.getResponseCode(), e.getMessage());
-      }
-      catch (IOException ex)
-      {
-        logger.error(ex.getMessage());
-      }
+      throw new HttpClientException("Error posting to [" + conn.getURL().toString() + "]. " + e.getMessage());
     }
     finally
     {
@@ -272,8 +247,6 @@ public class HttpClient
         conn = null;
       }
     }
-
-    return null;
   }
 
   public <T> T postFormData(Class<T> responseClass, String relativeUri, Map<String, String> formData)
@@ -382,7 +355,7 @@ public class HttpClient
       String key = header.getKey();
       String value = header.getValue();
       
-      // workaround for apigee bug
+      // ignore accept header
       if (key.toLowerCase().equals("accept"))
       {
         continue;
