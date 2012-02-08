@@ -401,7 +401,7 @@ public class HttpClient
     
     if (url.getProtocol().equalsIgnoreCase("https"))
     {
-      ignoreSslErros(conn);
+      ignoreSslErrors(conn);
     }
     
     return conn;
@@ -419,7 +419,7 @@ public class HttpClient
     return new String(Base64.encodeBase64(creds.getBytes()));
   }
   
-  private void ignoreSslErros(URLConnection connection) 
+  private void ignoreSslErrors(URLConnection connection) 
   {
     try
     {
