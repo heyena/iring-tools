@@ -21,7 +21,6 @@ import org.iringtools.dxfr.manifest.Manifest;
 import org.iringtools.dxfr.manifest.Template;
 import org.iringtools.dxfr.request.DfiRequest;
 import org.iringtools.dxfr.request.DfoRequest;
-import org.iringtools.utility.JaxbUtils;
 
 public class DifferencingProvider
 {

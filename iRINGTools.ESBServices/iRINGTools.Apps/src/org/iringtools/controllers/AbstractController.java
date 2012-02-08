@@ -45,9 +45,6 @@ public abstract class AbstractController extends ActionSupport implements Sessio
   public void setSession(Map<String, Object> session)
   {
     this.session = session;
-    
-    this.session.put(OAuthFilter.AUTHORIZATION, request.getAttribute(OAuthFilter.AUTHORIZATION));
-    this.session.put(OAuthFilter.APP_KEY, request.getAttribute(OAuthFilter.APP_KEY));
   }
 
   protected void authorize(String app, String group)

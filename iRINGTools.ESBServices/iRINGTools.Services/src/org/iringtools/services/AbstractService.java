@@ -3,6 +3,7 @@ package org.iringtools.services;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -14,12 +15,14 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
 import org.apache.cxf.jaxrs.ext.MessageContext;
+import org.apache.log4j.Logger;
 import org.iringtools.security.AuthorizationException;
-import org.iringtools.security.OAuthFilter;
 import org.iringtools.utility.HttpUtils;
 
 public abstract class AbstractService
 {
+  private static final Logger logger = Logger.getLogger(AbstractService.class);
+  
   @Context protected ServletContext servletContext; 
   @Context protected MessageContext messageContext; 
   @Context protected SecurityContext securityContext;
@@ -28,8 +31,10 @@ public abstract class AbstractService
   protected HttpServletRequest request;
   protected HttpServletResponse response;
   
-  public void initService(String serviceType) throws AuthorizationException
+  public void initService(String serviceName) throws AuthorizationException
   {
+    logger.info("Initializing " + serviceName);
+    
     settings = java.util.Collections.synchronizedMap(new HashMap<String, Object>());    
     request = messageContext.getHttpServletRequest();
     response = messageContext.getHttpServletResponse(); 
@@ -37,7 +42,7 @@ public abstract class AbstractService
     HttpUtils.prepareHttpProxy(servletContext);
     
     /*
-     * COMMON SETTINGS
+     * PREPARE COMMON SETTINGS
      */
     settings.put("baseDirectory", servletContext.getRealPath("/"));
 
@@ -57,24 +62,7 @@ public abstract class AbstractService
     settings.put("idGenServiceUri", idGenServiceUri);
     
     /*
-     * REQUEST HEADERS
-     */    
-    MultivaluedMap<String, String> headers = messageContext.getHttpHeaders().getRequestHeaders();
-    
-    List<String> authorizationHeader = headers.get(OAuthFilter.AUTHORIZATION); 
-    if (authorizationHeader != null && authorizationHeader.size() > 0)
-    {
-      settings.put(OAuthFilter.AUTHORIZATION, authorizationHeader.get(0));
-    }   
-    
-    List<String> appKeyHeader = headers.get(OAuthFilter.APP_KEY);    
-    if (appKeyHeader != null && appKeyHeader.size() > 0)
-    {
-      settings.put(OAuthFilter.APP_KEY, appKeyHeader.get(0));
-    }
-    
-    /*
-     * REFERENCE DATA SETTINGS
+     * PREPARE REFERENCE DATA SETTINGS
      */    	
     String exampleRegistryBase = servletContext.getInitParameter("ExampleRegistryBase");
     if (exampleRegistryBase == null || exampleRegistryBase.equals(""))
@@ -97,7 +85,7 @@ public abstract class AbstractService
     settings.put("UseExampleRegistryBase", useExampleRegistryBase);
         
     /*
-     * EXCHANGE SETTINGS
+     * PREPARE EXCHANGE SETTINGS
      */
     String poolSize = servletContext.getInitParameter("poolSize");
     if (poolSize == null || poolSize.equals(""))
@@ -123,6 +111,21 @@ public abstract class AbstractService
     if (dtoTaskTimeout == null || dtoTaskTimeout.equals(""))
       dtoTaskTimeout = "600";  // in seconds
     settings.put("dtoTaskTimeout", dtoTaskTimeout);
+    
+    /*
+     * CARRY ON REQUEST HEADERS
+     */    
+    MultivaluedMap<String, String> headers = messageContext.getHttpHeaders().getRequestHeaders();
+    
+    for (Entry<String, List<String>> header : headers.entrySet())
+    {
+      List<String> values = header.getValue();
+      
+      if (values != null && values.size() > 0)
+      {
+        settings.put("http-header-" + header.getKey(), values.get(0));
+      }
+    }
   }
   
   protected Response prepareErrorResponse(int errorCode, Exception e)

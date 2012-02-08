@@ -26,7 +26,7 @@ public class ManifestTask implements Runnable
     try 
     {
       HttpClient httpClient = new HttpClient(url);
-      HttpUtils.addAuthHeaders(settings, httpClient);
+      HttpUtils.addHttpHeaders(settings, httpClient);
       manifest = httpClient.get(Manifest.class);
     }
     catch (Exception e) 

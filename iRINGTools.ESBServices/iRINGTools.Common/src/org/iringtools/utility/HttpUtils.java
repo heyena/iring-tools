@@ -5,13 +5,11 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
-
-import org.iringtools.security.OAuthFilter;
 
 public final class HttpUtils
 {
@@ -75,7 +73,7 @@ public final class HttpUtils
       {
         Cookie cookie = cookies[i];
         
-        if (cookie.getName().equalsIgnoreCase(cookieName))
+        if (cookie != null && cookie.getName().equalsIgnoreCase(cookieName))
           return cookie;
       }
     }
@@ -127,18 +125,17 @@ public final class HttpUtils
     return keyValuePairs;
   }
   
-  public static void addAuthHeaders(Map<String, Object> settings, HttpClient httpClient)
+  public static void addHttpHeaders(Map<String, Object> settings, HttpClient httpClient)
   {    
-    Object authorizationToken = settings.get(OAuthFilter.AUTHORIZATION);
-    if (authorizationToken != null)
-    {
-      httpClient.addHeader(OAuthFilter.AUTHORIZATION, (String)authorizationToken);
-    }
+    String prefix = "http-header-";
+    int index = prefix.length();
     
-    Object applicationKey = settings.get(OAuthFilter.APP_KEY);
-    if (applicationKey != null)
+    for (Entry<String, Object> entry : settings.entrySet())
     {
-      httpClient.addHeader(OAuthFilter.APP_KEY, (String)applicationKey);
+      if (entry.getKey().startsWith(prefix))
+      {
+        httpClient.addHeader(entry.getKey().substring(index), entry.getValue().toString());
+      }
     }
   }
 }

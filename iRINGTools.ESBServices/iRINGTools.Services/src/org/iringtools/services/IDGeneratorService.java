@@ -21,7 +21,7 @@ import org.iringtools.services.core.IDGeneratorProvider;
 @Produces("application/xml")
 public class IDGeneratorService extends AbstractService
 {
-  private final String SERVICE_TYPE = "coreService";
+  private final String SERVICE_NAME = "IDGeneratorService";
   
   public IDGeneratorService() {}
 
@@ -54,7 +54,7 @@ public class IDGeneratorService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
