@@ -29,7 +29,7 @@ public class DtiTask implements Runnable
     try 
     {
       HttpClient httpClient = new HttpClient(url);
-      HttpUtils.addAuthHeaders(settings, httpClient); 
+      HttpUtils.addHttpHeaders(settings, httpClient); 
       indices = httpClient.post(DataTransferIndices.class, manifest);
     }
     catch (Exception e) 

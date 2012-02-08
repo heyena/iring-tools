@@ -17,7 +17,7 @@ import org.iringtools.services.core.DirectoryProvider;
 @Produces(MediaType.APPLICATION_XML)
 public class DirectoryService extends AbstractService
 {
-  private final String SERVICE_TYPE = "coreService";
+  private final String SERVICE_NAME = "DirectoryService";
   
   @GET
   @Path("/directory")
@@ -27,7 +27,7 @@ public class DirectoryService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -56,7 +56,7 @@ public class DirectoryService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {

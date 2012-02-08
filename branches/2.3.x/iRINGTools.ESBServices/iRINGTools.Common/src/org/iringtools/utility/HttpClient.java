@@ -343,7 +343,7 @@ public class HttpClient
       baseUri = "";
 
     URL url = new URL(baseUri + relativeUri);
-    logger.debug("Opening URL connection [" + url + "].");
+    logger.debug("Opening URL connection [" + url + "]");
     
     String proxySet = System.getProperty("proxySet");
     if (proxySet != null && proxySet.equalsIgnoreCase("true"))
@@ -361,6 +361,8 @@ public class HttpClient
       
       String proxyCredsToken = createCredentialsToken(proxyUserName, proxyPassword, proxyDomain);      
       conn.setRequestProperty("Proxy-Authorization", "Basic " + proxyCredsToken);
+
+      logger.debug("Connecting thru proxy server [" + proxyHost + "]");
     }
     else
     {
@@ -377,7 +379,17 @@ public class HttpClient
     // add headers
     for (Entry<String, String> header : headers.entrySet())
     {
-      conn.setRequestProperty(header.getKey(), header.getValue());
+      String key = header.getKey();
+      String value = header.getValue();
+      
+      // workaround for apigee bug
+      if (key.toLowerCase().equals("accept"))
+      {
+        continue;
+      }
+      
+      logger.debug(key + ": " + value);
+      conn.setRequestProperty(key, value);
     }
 
     if (method.equalsIgnoreCase(POST_METHOD))
@@ -386,11 +398,11 @@ public class HttpClient
       conn.setDoOutput(true);
       conn.setDoInput(true);
     }
-
-    if (baseUri.toLowerCase().startsWith("https"))
+    
+    if (url.getProtocol().equalsIgnoreCase("https"))
     {
       ignoreSslErros(conn);
-    }    
+    }
     
     return conn;
   }

@@ -80,16 +80,16 @@ public class ExchangeProvider
     try
     {
       datatypeFactory = DatatypeFactory.newInstance();
+
+      httpClient = new HttpClient();
+      HttpUtils.addHttpHeaders(settings, httpClient);
     }
     catch (DatatypeConfigurationException e)
     {
-      String message = "Error initializing data type factory: " + e;
+      String message = "Error initializing exchange provider: " + e;
       logger.error(message);
       throw new ServiceProviderException(message);
     }
-
-    httpClient = new HttpClient();
-    HttpUtils.addAuthHeaders(settings, httpClient);
   }
 
   public Directory getDirectory() throws ServiceProviderException
@@ -98,11 +98,19 @@ public class ExchangeProvider
 
     try
     {
-      return httpClient.get(Directory.class, settings.get("directoryServiceUri") + "/directory");
+      String url = settings.get("directoryServiceUri") + "/directory";      
+      Directory directory = httpClient.get(Directory.class, url);
+      
+      if (directory == null)
+      {
+        logger.warn("Directory is empty");
+      }
+      
+      return directory;
     }
     catch (HttpClientException e)
     {
-      logger.error(e.getMessage());
+      logger.error("Error getting directory information: " + e.getMessage());
       throw new ServiceProviderException(e.getMessage());
     }
   }

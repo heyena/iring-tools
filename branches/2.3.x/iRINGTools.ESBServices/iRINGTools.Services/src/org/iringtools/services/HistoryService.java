@@ -14,7 +14,7 @@ import org.iringtools.services.core.HistoryProvider;
 @Produces("application/xml")
 public class HistoryService extends AbstractService
 {  
-  private final String SERVICE_TYPE = "coreService";
+  private final String SERVICE_NAME = "HistoryService";
   
   @GET
   @Path("/{scope}/exchanges/{exchangeId}")
@@ -26,7 +26,7 @@ public class HistoryService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -59,7 +59,7 @@ public class HistoryService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {

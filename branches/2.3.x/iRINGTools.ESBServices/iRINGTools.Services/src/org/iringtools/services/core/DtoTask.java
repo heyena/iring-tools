@@ -46,7 +46,7 @@ public class DtoTask implements Runnable
       dxoRequest.setDataTransferIndices(indices);
       
       HttpClient httpClient = new HttpClient(url);
-      HttpUtils.addAuthHeaders(settings, httpClient); 
+      HttpUtils.addHttpHeaders(settings, httpClient);
       
       dtos = httpClient.post(DataTransferObjects.class, dxoRequest);
     }

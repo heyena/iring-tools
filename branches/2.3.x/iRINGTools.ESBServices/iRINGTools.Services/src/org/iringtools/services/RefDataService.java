@@ -26,7 +26,7 @@ import org.iringtools.services.core.RefDataProvider;
 @Produces("application/xml")
 public class RefDataService extends AbstractService
 {
-  private final String SERVICE_TYPE = "refDataService";
+  private final String SERVICE_NAME = "RefDataService";
   
   @GET
   @Path("/federation")
@@ -36,7 +36,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -64,7 +64,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -92,7 +92,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -120,7 +120,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -148,7 +148,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -176,7 +176,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -204,7 +204,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -232,7 +232,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -268,7 +268,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -297,7 +297,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -325,7 +325,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -353,7 +353,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -381,7 +381,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -390,7 +390,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
       RefDataProvider refdataProvider = new RefDataProvider(settings);
       entityList = refdataProvider.getSuperClasses(id);
     }
@@ -410,7 +410,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -438,7 +438,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -466,7 +466,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -494,7 +494,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -523,7 +523,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -564,7 +564,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -610,7 +610,7 @@ public class RefDataService extends AbstractService
     
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -654,7 +654,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {
@@ -682,7 +682,7 @@ public class RefDataService extends AbstractService
 
     try
     {
-      initService(SERVICE_TYPE);
+      initService(SERVICE_NAME);
     }
     catch (AuthorizationException e)
     {

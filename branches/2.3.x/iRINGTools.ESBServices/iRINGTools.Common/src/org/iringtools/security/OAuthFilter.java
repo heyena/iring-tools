@@ -30,9 +30,9 @@ public class OAuthFilter implements Filter
   public static final String REF_PARAM = "REF";
   public static final String URL_ENCODING = "UTF-8";
   public static final String AUTHENTICATED_USER = "Auth";
-  public static final String AUTHORIZATION = "Authorization";
-  public static final String APP_KEY = "X-myPSN-AppKey";
-  public static final String USER_ID = "UserId";
+  public static final String AUTHORIZATION = "http-header-Authorization";
+  public static final String APP_KEY = "http-header-X-myPSN-AppKey";
+  public static final String USER_ID = "http-header-X-myPSN-UserId";
   
   private FilterConfig filterConfig;
   private HttpServletRequest request;
@@ -45,6 +45,9 @@ public class OAuthFilter implements Filter
   {
     response = (HttpServletResponse) res;
     request = (HttpServletRequest) req;
+    
+    String appKey = filterConfig.getInitParameter("applicationKey");
+    request.getSession().setAttribute(APP_KEY, appKey);    
     
     HttpUtils.prepareHttpProxy(filterConfig.getServletContext());    
     Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTHENTICATED_USER);
@@ -125,16 +128,11 @@ public class OAuthFilter implements Filter
           authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
           response.addCookie(authCookie);
           
-          if (!obtainOAuthToken(userJson))
-          {
-            String message = "Unable to obtain OAuth token.";
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-          }
-          else
-          {            
-            chain.doFilter(req, res); 
-            return;
-          }
+          request.getSession().setAttribute(AUTHORIZATION, userAttrs.get("OAuthToken")); 
+          request.getSession().setAttribute(USER_ID, getUserId(userAttrs));
+          
+          chain.doFilter(req, res);
+          return;
         }
       }
     }
@@ -142,32 +140,14 @@ public class OAuthFilter implements Filter
     {
       logger.debug("case 3");
       
-      try
-      {
-        String authCookieMultiValue = authCookie.getValue();
-        logger.debug("Auth cookie: " + authCookieMultiValue);
-        
-        Map<String, String> userAttrs = HttpUtils.fromQueryParams(authCookieMultiValue);
-        logger.debug("User attributes: " + userAttrs);
-        
-        String userJson = JSONUtil.serialize(userAttrs);
-        if (!obtainOAuthToken(userJson))
-        {
-          String message = "Unable to obtain OAuth token.";
-          response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-        }
-        else
-        {
-          chain.doFilter(req, res);
-          return;
-        }
-      }
-      catch (JSONException e)
-      {
-        String message = "Error serializing user info: " + e;
-        logger.error(message);
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-      }        
+      String authCookieMultiValue = authCookie.getValue();      
+      Map<String, String> userAttrs = HttpUtils.fromQueryParams(authCookieMultiValue);
+            
+      request.getSession().setAttribute(AUTHORIZATION, userAttrs.get("OAuthToken"));
+      request.getSession().setAttribute(USER_ID, getUserId(userAttrs));
+      
+      chain.doFilter(req, res);
+      return;
     }
   }
 
@@ -180,65 +160,8 @@ public class OAuthFilter implements Filter
   @Override
   public void destroy(){}
   
-  private boolean obtainOAuthToken(String userJson) throws IOException
-  {    
-    logger.debug("Obtaining OAuth token for user: " + userJson);    
-    Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTHORIZATION);
-    
-    if (authCookie == null || IOUtils.isNullOrEmpty(authCookie.getValue()))
-    {
-      String tokenServiceUri = filterConfig.getInitParameter("tokenServiceUri");
-      String appKey = filterConfig.getInitParameter("applicationKey");
-      HttpClient apigeeClient = new HttpClient(tokenServiceUri + appKey);
-      
-      try
-      {
-        byte[] data = userJson.getBytes(URL_ENCODING);
-        logger.debug("User info byte count: " + data.length);
-        
-        String apigeeResponse = apigeeClient.postByteData(String.class, "", data);
-        
-        @SuppressWarnings("unchecked")
-        Map<String, Map<String, String>> apigeeResponseObj = 
-          (Map<String, Map<String, String>>) JSONUtil.deserialize(apigeeResponse);
-        logger.debug("Apigee access token response: " + apigeeResponseObj);
-        
-        Map<String, String> accessToken = apigeeResponseObj.get("accesstoken");  
-        logger.debug("Access token: " + accessToken);
-        
-        String oAuthToken = accessToken.get("token");        
-        logger.debug("OAuth token: " + oAuthToken);
-
-        request.setAttribute(AUTHORIZATION, oAuthToken);        
-        request.setAttribute(APP_KEY, appKey);
-        request.setAttribute(USER_ID, getUserId(userJson));
-      }
-      catch (Exception ex)
-      {
-        logger.error("Error obtaining OAuth token for user [" + userJson + "]. " + ex.getMessage());
-        return false;
-      }
-    }
-    
-    return true;
-  } 
-  
-  @SuppressWarnings("unchecked")
-  private String getUserId(String userJson) throws IOException
+  private String getUserId(Map<String, String> userAttrs) throws IOException
   {
-    Map<String, String> userAttrs = null;
-    
-    try
-    {
-      userAttrs = (Map<String, String>) JSONUtil.deserialize(userJson);
-    }
-    catch (JSONException e)
-    {
-      String message = "Error deserializing user json: " + e;
-      logger.error(message);
-      response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-    }
-    
     if (userAttrs.containsKey("BechtelUserName"))
       return userAttrs.get("BechtelUserName");
           
