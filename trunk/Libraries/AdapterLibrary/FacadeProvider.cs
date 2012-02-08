@@ -182,8 +182,9 @@ namespace org.iringtools.facade
     private void getResource()
     {
       WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-      WebHttpClient _adapterServiceClient = new WebHttpClient(_settings["AdapterServiceUri"]);
-      _scopes = _javaCoreClient.PostMessage<Resource>(String.Format("/directory/resource/{0}", _adapterServiceClient.getBaseUri().Replace('/', '.')), "", true);
+      System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
+      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port + ".adapter";
+      _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
     }
 
     private void InitializeScope(string projectName, string applicationName)
