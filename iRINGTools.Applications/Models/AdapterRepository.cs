@@ -461,7 +461,7 @@ namespace iRINGTools.Web.Models
       {
         foreach (Folder subFolder in subFolders)
         {
-          path = path + subFolder.Name;
+          path = path + "." + subFolder.Name;
           CheckCombination(subFolder, path, context);
         }
       }
@@ -481,20 +481,45 @@ namespace iRINGTools.Web.Models
     private void GetLastName(string path, out string newpath, out string name)
     {
       int dotPos = path.LastIndexOf('.');
-      newpath = path.Substring(0, dotPos);
-      name = path.Substring(dotPos + 1, path.Length - dotPos - 1);
+
+      if (dotPos < 0)
+      {
+        newpath = "";
+        name = path;
+      }
+      else
+      {
+        newpath = path.Substring(0, dotPos);
+        name = path.Substring(dotPos + 1, path.Length - dotPos - 1);
+      }
     }
 
     private Folder FindFolder(List<Folder> scopes, string path)
     {
       string folderName, newpath;
       GetLastName(path, out newpath, out folderName);
-      Folders folders = GetFolders(scopes, newpath);
-      return folders.FirstOrDefault<Folder>(o => o.Name == folderName);
+
+      if (newpath == "")
+      {
+        foreach (Folder folder in scopes)
+        {
+          if (folder.Name == folderName)
+            return folder;
+        }
+      }
+      else
+      {
+        Folders folders = GetFolders(scopes, newpath);
+        return folders.FirstOrDefault<Folder>(o => o.Name == folderName);
+      }
+      return null;
     }
 
     private Folders GetFolders(List<Folder> scopes, string path)
     {
+      if (path == "")
+        return (Folders)scopes;
+
       string[] level = path.Split('/');
 
       foreach (Folder folder in scopes)

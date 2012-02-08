@@ -903,7 +903,7 @@ namespace org.iringtools.utility
       }
     }
 
-    public string getBaseUri()
+    public string GetBaseUri()
     {
       return _baseUri;
     }
