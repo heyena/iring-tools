@@ -13,6 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.apache.struts2.json.JSONException;
@@ -29,6 +30,7 @@ public class OAuthFilter implements Filter
   public static final int AUTH_COOKIE_EXPIRY = 28800;  // 8 hours
   public static final String REF_PARAM = "REF";
   public static final String URL_ENCODING = "UTF-8";
+  public static final String OAUTH_TOKEN = "OAuthToken";
   public static final String AUTHENTICATED_USER = "Auth";
   public static final String AUTHORIZATION = "http-header-Authorization";
   public static final String APP_KEY = "http-header-X-myPSN-AppKey";
@@ -37,6 +39,7 @@ public class OAuthFilter implements Filter
   private FilterConfig filterConfig;
   private HttpServletRequest request;
   private HttpServletResponse response; 
+  private HttpSession session;
   
   @SuppressWarnings("unchecked")
   @Override
@@ -45,9 +48,10 @@ public class OAuthFilter implements Filter
   {
     response = (HttpServletResponse) res;
     request = (HttpServletRequest) req;
+    session = request.getSession();
     
     String appKey = filterConfig.getInitParameter("applicationKey");
-    request.getSession().setAttribute(APP_KEY, appKey);    
+    session.setAttribute(APP_KEY, appKey);    
     
     HttpUtils.prepareHttpProxy(filterConfig.getServletContext());    
     Cookie authCookie = HttpUtils.getCookie(request.getCookies(), AUTHENTICATED_USER);
@@ -98,6 +102,7 @@ public class OAuthFilter implements Filter
         try
         {
           userJson = pingIdClient.get(String.class);
+          logger.debug("User JSON: " + userJson);
         }
         catch (HttpClientException e)
         {
@@ -115,6 +120,14 @@ public class OAuthFilter implements Filter
           try
           {
             userAttrs = (Map<String, String>) JSONUtil.deserialize(userJson);
+            
+            String authCookieValue = HttpUtils.toQueryParams(userAttrs);          
+            authCookie = new Cookie(AUTHENTICATED_USER, authCookieValue);
+            authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
+            response.addCookie(authCookie);
+            
+            session.setAttribute(AUTHORIZATION, userAttrs.get(OAUTH_TOKEN)); 
+            session.setAttribute(USER_ID, getUserId(userAttrs));
           }
           catch (JSONException e)
           {
@@ -122,14 +135,6 @@ public class OAuthFilter implements Filter
             logger.error(message);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
           }
-          
-          String authCookieValue = HttpUtils.toQueryParams(userAttrs);          
-          authCookie = new Cookie(AUTHENTICATED_USER, authCookieValue);
-          authCookie.setMaxAge(AUTH_COOKIE_EXPIRY);
-          response.addCookie(authCookie);
-          
-          request.getSession().setAttribute(AUTHORIZATION, userAttrs.get("OAuthToken")); 
-          request.getSession().setAttribute(USER_ID, getUserId(userAttrs));
           
           chain.doFilter(req, res);
           return;
@@ -143,8 +148,8 @@ public class OAuthFilter implements Filter
       String authCookieMultiValue = authCookie.getValue();      
       Map<String, String> userAttrs = HttpUtils.fromQueryParams(authCookieMultiValue);
             
-      request.getSession().setAttribute(AUTHORIZATION, userAttrs.get("OAuthToken"));
-      request.getSession().setAttribute(USER_ID, getUserId(userAttrs));
+      session.setAttribute(AUTHORIZATION, userAttrs.get(OAUTH_TOKEN));
+      session.setAttribute(USER_ID, getUserId(userAttrs));
       
       chain.doFilter(req, res);
       return;

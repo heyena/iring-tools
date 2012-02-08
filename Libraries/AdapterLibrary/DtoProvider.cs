@@ -271,80 +271,29 @@ namespace org.iringtools.adapter
       return manifest;
     }
 
-    //public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlogrithm)
-    //{
-    //  DataTransferIndices dataTransferIndices = null;
+    public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
+    {
+      DataTransferIndices dataTransferIndices = null;
 
-    //  try
-    //  {
-    //    InitializeScope(scope, app);
-    //    InitializeDataLayer();
+      try
+      {
+        InitializeScope(scope, app);
+        InitializeDataLayer();
 
-    //    _graphMap = _mapping.FindGraphMap(graph);
+        BuildCrossGraphMap(manifest, graph);
 
-    //    IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
-    //    DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null, 0, 0);
+        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
+        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error getting data transfer indices: " + ex);
+        throw ex;
+      }
 
-    //    dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    _logger.Error("Error getting data transfer indices: " + ex);
-    //    throw ex;
-    //  }
-
-    //  return dataTransferIndices;
-    //}
-
-    //public DataTransferIndices GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlogrithm, DataFilter filter)
-    //{
-    //  DataTransferIndices dataTransferIndices = null;
-
-    //  try
-    //  {
-    //    InitializeScope(scope, app);
-    //    InitializeDataLayer();
-
-    //    _graphMap = _mapping.FindGraphMap(graph);
-
-    //    DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-    //    dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
-
-    //    IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, 0, 0);
-    //    dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    _logger.Error("Error getting data transfer indices: " + ex);
-    //    throw ex;
-    //  }
-
-    //  return dataTransferIndices;
-    //}
-
-    //public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
-    //{
-    //  DataTransferIndices dataTransferIndices = null;
-
-    //  try
-    //  {
-    //    InitializeScope(scope, app);
-    //    InitializeDataLayer();
-
-    //    BuildCrossGraphMap(manifest, graph);
-
-    //    IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null, 0, 0);
-    //    DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-    //    dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    _logger.Error("Error getting data transfer indices: " + ex);
-    //    throw ex;
-    //  }
-
-    //  return dataTransferIndices;
-    //}
+      return dataTransferIndices;
+    }
 
     public DataTransferIndices GetDataTransferIndicesByRequest(string scope, string app, string graph, string hashAlgorithm, DxiRequest request)
     {
