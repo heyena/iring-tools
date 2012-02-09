@@ -46,6 +46,7 @@
                $(ServicesDir)\Templates\**;
                $(ServicesDir)\Transforms\**;
                $(ServicesDir)\obj\**;
+               $(ServicesDir)\*.sln;
                $(ServicesDir)\*.cs;
                $(ServicesDir)\*.csproj;
                $(ServicesDir)\*.user;
@@ -91,25 +92,24 @@
     </AppsDeployment>
 
     <UtilitiesDeployment
-      Include="Libraries\iRINGLibrary\Desktop\bin\Debug\iRINGLibrary.dll;
-               Libraries\iRINGLibrary\Desktop\bin\Debug\UtilityLibrary.dll;
-               Utilities\EncryptCredentials\bin\Debug\EncryptCredentials.exe;
-               Utilities\ConfigurationTool\bin\Debug\ConfigurationTool.exe;
-               Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.dll;
-               Utilities\RDFImportExport\RDFImportExport\bin\Debug\dotNetRDF.xml;
-               Utilities\RDFImportExport\RDFImportExport\bin\Debug\HtmlAgilityPack.dll;
-               Utilities\RDFImportExport\RDFImportExport\bin\Debug\RDFImportExport.exe;
+      Include="Utilities\EncryptCredentials\bin\Debug\*.exe;
+               Utilities\EncryptCredentials\bin\Debug\*.dll;
+               Utilities\ConfigurationTool\bin\Debug\*.exe;
+               Utilities\ConfigurationTool\bin\Debug\*.dll;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\*.exe;
+               Utilities\RDFImportExport\RDFImportExport\bin\Debug\*.dll;
                Utilities\RDFImportExport\RDFImportExport\RDFImportExport_Default.config;
-               Utilities\QMXFGenerator\bin\Debug\QMXFGenerator.exe;
+               Utilities\QMXFGenerator\bin\Debug\*.exe;
+               Utilities\QMXFGenerator\bin\Debug\*.dll;
                Utilities\QMXFGenerator\QMXFGenerator_Default.config;
                Utilities\QMXFGenerator\InformationModel.xlsx;
                Utilities\QMXFTransforms\*.dtd;
                Utilities\QMXFTransforms\*.xsd;
                Utilities\QMXFTransforms\*.xsl;
-               Utilities\FacadeExchange\bin\Debug\FacadeExchange.exe;
-               Utilities\FacadeExchange\App_Default.config;
+               Utilities\FacadeExchange\bin\Debug\*.exe;
                Utilities\FacadeExchange\bin\Debug\*.dll;
-               Utilities\FacadeExchange\bin\Debug\*.xml;">
+               Utilities\FacadeExchange\bin\Debug\*.xml;
+               Utilities\FacadeExchange\App_Default.config;">
     </UtilitiesDeployment>
   </ItemGroup>
 
