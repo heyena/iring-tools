@@ -477,7 +477,7 @@ function setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID, 
 
         OraclePane.show();
         plantDatabase.hide();
-        
+
         portNumber.setValue(SPPIDPlantdbInfo.portNumber);
         portNumber.show();
     }
@@ -507,7 +507,7 @@ function setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID, 
 
         SPPIDPlantdbInfo = {}
         SPPIDPlantdbInfo = getdbPlantObjects(dbPlantDict_SPPID.PlantConnectionString, SPPIDPlantdbInfo, dbPlantDict_SPPID.Provider);
-        
+
         dbplantServer.setValue(SPPIDPlantdbInfo.dbServer);
         dbplantServer.show();
 
@@ -519,14 +519,14 @@ function setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID, 
         plantpassword.setValue(SPPIDPlantdbInfo.dbPassword);
         // dbSchema.setValue(dbDict_SPPID.SchemaName);
 
-        plantDatabase.show(); 
+        plantDatabase.show();
 
     }
 };
 
 
 function setOraclePanevalue(dbPIDUserName, dbPIDPassword, dbPIDDataDicUserName, dbPIDDataDicPassword, dbOraPlantUserName, dbOraPlantPassword, dbPlantDataDicUserName, dbPlantDataDicPassword, connectionStrings) {
-    
+
     var PIDConnectionString = connectionStrings.PIDConnectionString;
     var connStrParts = PIDConnectionString.split(';');
 
@@ -672,6 +672,9 @@ function changeConfigOracle(host, dbSchema, userName, password, serviceName, Ora
     for (var i = 0; i < plantDatabase.items.length; i++) {
         if ((Ext.getCmp(plantDatabase.items.items[i].id).getValue() == '') && (plantDatabase.items.items[i].inputType != 'password')) {
             Ext.getCmp(plantDatabase.items.items[i].id).setValue(' ');
+        }
+        if (plantDatabase.items.items[i].inputType == 'password') {
+            Ext.getCmp(plantDatabase.items.items[i].id).allowBlank = true
         }
         Ext.getCmp(plantDatabase.items.items[i].id).hide();
     }

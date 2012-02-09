@@ -21,7 +21,8 @@ Imports log4net.Config
 Imports System.Data.SqlClient
 Imports System.Text
 Imports System.Text.RegularExpressions
-Imports System.Data.OracleClient
+'Imports System.Data.OracleClient
+Imports Oracle.DataAccess.Client
 
 #End Region
 
@@ -137,27 +138,16 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     Public Overrides Function GetDatabaseDictionary() As DatabaseDictionary
 
-        Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
+        Dim path As String = [String].Format("{0}{1}DatabaseDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
 
-        Dim DataDictionary = Utility.Read(Of DataDictionary)(path)
-
-        _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
-
-        '*************************************************
-        Dim databaseDictionary As New DatabaseDictionary
-        databaseDictionary.dataObjects = DataDictionary.dataObjects
-        databaseDictionary.Provider = "MsSql2008"
-        databaseDictionary.ConnectionString = "Data Source=.\SQLEXPRESS;database=SPPID;User ID=SPPID;Password=sppid"
-        databaseDictionary.SchemaName = "dbo"
-        '*************************************************
-
+        Dim databaseDictionary = Utility.Read(Of DatabaseDictionary)(path)
         Return databaseDictionary
 
     End Function
 
     Public Overrides Function GetDictionary() As DataDictionary
 
-        Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
+        Dim path As String = [String].Format("{0}{1}DataDictionary.{2}.{3}.xml", _settings("BaseDirectoryPath"), _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
 
         If (File.Exists(path)) Then
 
@@ -176,7 +166,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Public Overrides Function GetDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
 
         Dim filter As DataFilter = FormMultipleKeysFilter(identifiers)
-
+        _projConn = _stageConn
         'TODO: Is the whereClauseAlias always set?
         Dim whereClause As String = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias)
 
@@ -201,9 +191,9 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         'Public Overrides Function GetDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
 
         Dim query As String = "SELECT * FROM " & tableName & " " & whereClause
-
+        _projConn = _stageConn
         Dim adapter As New SqlDataAdapter()
-        adapter.SelectCommand = New SqlCommand(query, _projConn)
+        adapter.SelectCommand = New SqlCommand(query, _projConn) ' need to set connection string.
 
         Dim command As New SqlCommandBuilder(adapter)
 
@@ -416,29 +406,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     End Function
 
-    Public Function PostDictionary(projectName As String, applicationName As String, DatabaseDictionary As DatabaseDictionary) As Response
-        Dim response As New Response
-        Dim status As New Status
-
-        Try
-            status.Identifier = [String].Format("{0}.{1}", projectName, applicationName)
-            InitializeScope(projectName, applicationName)
-
-            SaveDatabaseDictionary(DatabaseDictionary, _settings("DBDictionaryPath"))
-            response.Append(Generate(projectName, applicationName))
-
-            If response.Level.ToString().ToUpper() = "SUCCESS" Then
-                status.Messages.Add("Database Dictionary saved successfully")
-            Else
-                Throw New Exception(response.StatusList(0).Messages(0).ToString())
-            End If
-
-        Catch ex As Exception
-            status.Messages.Add("Error in saving database dictionary" + ex.Message)
-        End Try
-
-        Return response
-    End Function
+   
 
 #End Region
 
@@ -736,42 +704,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Return dbDictionary
     End Function
 
-    Private Function Generate(projectName As String, applicationName As String) As Response
-        Dim response As New Response()
-        Dim status As New Status()
-
-        response.StatusList.Add(status)
-
-        Try
-            status.Identifier = [String].Format("{0}.{1}", projectName, applicationName)
-            InitializeScope(projectName, applicationName)
-
-            Dim dbDictionary As DatabaseDictionary = LoadDatabaseDictionary(_settings("DBDictionaryPath"))
-            If [String].IsNullOrEmpty(projectName) OrElse [String].IsNullOrEmpty(applicationName) Then
-                status.Messages.Add("Error project name and application name can not be null")
-            ElseIf ValidateDatabaseDictionary(dbDictionary) Then
-                'Dim generator As EntityGenerator = _kernel.[Get](Of EntityGenerator)()
-                Dim generator As New EntityGenerator(_settings)
-                Dim compilerVersion As String = "v4.0"
-                If Not [String].IsNullOrEmpty(_settings("CompilerVersion")) Then
-                    compilerVersion = _settings("CompilerVersion")
-                End If
-
-                response.Append(generator.Generate(compilerVersion, dbDictionary, projectName, applicationName))
-
-
-
-                status.Messages.Add("Database dictionary of [" & projectName & "." & applicationName & "] updated successfully.")
-            End If
-        Catch ex As Exception
-            _logger.[Error](String.Format("Error in UpdateDatabaseDictionary: {0}", ex))
-
-            status.Level = StatusLevel.[Error]
-            status.Messages.Add(String.Format("Error updating database dictionary: {0}", ex))
-        End Try
-
-        Return response
-    End Function
+  
 
 
     Private Function ValidateDatabaseDictionary(dbDictionary As DatabaseDictionary) As Boolean
