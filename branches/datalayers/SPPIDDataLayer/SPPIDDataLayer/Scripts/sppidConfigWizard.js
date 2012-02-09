@@ -476,6 +476,19 @@ function setDsConfigFields_SPPID(dsConfigPane_SPPID, SPPIDdbInfo, dbDict_SPPID, 
         setOraclePanevalue(dbPIDUserName, dbPIDPassword, dbPIDDataDicUserName, dbPIDDataDicPassword, dbOraPlantUserName, dbOraPlantPassword, dbPlantDataDicUserName, dbPlantDataDicPassword, dbPlantDict_SPPID);
 
         OraclePane.show();
+
+        plantpassword.setValue('');
+        plantpassword.allowBlank = true;
+
+        plantuserName.setValue('');
+        plantuserName.allowBlank = true;
+
+        dbplantName.setValue('');
+        dbplantName.allowBlank = true;
+        
+        dbplantServer.setValue('');
+        dbplantServer.allowBlank = true;
+
         plantDatabase.hide();
 
         portNumber.setValue(SPPIDPlantdbInfo.portNumber);
@@ -1041,14 +1054,14 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
                             xtype: 'textfield',
                             fieldLabel: 'User Name',
                             name: 'dbOraPlantUserName',
-                            value: 'RUSSELCITY_PILOT'
+                           // value: 'RUSSELCITY_PILOT'
                         },
                         {
                             xtype: 'textfield',
                             inputType: 'password',
                             fieldLabel: 'Password',
                             name: 'dbOraPlantPassword',
-                            value: 'RUSSELCITY_PILOT'
+                           // value: 'RUSSELCITY_PILOT'
                         }]
                     },
                     {
@@ -1060,14 +1073,14 @@ function setDsConfigPane_SPPID(editPane, SPPIDdbInfo, dbDict_SPPID, scopeName, a
                             xtype: 'textfield',
                             fieldLabel: 'User Name',
                             name: 'dbPlantDataDicUserName',
-                            value: 'RUSSELCITY_PILOTD'
+                          //  value: 'RUSSELCITY_PILOTD'
                         },
                         {
                             xtype: 'textfield',
                             inputType: 'password',
                             fieldLabel: 'Password',
                             name: 'dbPlantDataDicPassword',
-                            value: 'RUSSELCITY_PILOTD'
+                          //  value: 'RUSSELCITY_PILOTD'
                         }]
                     }]
             },
