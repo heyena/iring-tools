@@ -14,6 +14,7 @@ namespace org.iringtools.library
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(BaseSQLDataLayer));
     protected DatabaseDictionary _dbDictionary = null;
+    protected DataFilter _dataFilter = null;
     protected string _whereClauseAlias = String.Empty;
      
     #region BaseSQLDataLayer methods
@@ -74,6 +75,8 @@ namespace org.iringtools.library
 
     public override long GetCount(string objectType, DataFilter filter)
     {
+      _dataFilter = filter;
+
       try
       {
         InitializeDatabaseDictionary();
@@ -92,6 +95,8 @@ namespace org.iringtools.library
 
     public override IList<string> GetIdentifiers(string objectType, DataFilter filter)
     {
+      _dataFilter = filter;
+      
       try
       {
         InitializeDatabaseDictionary();
@@ -142,6 +147,8 @@ namespace org.iringtools.library
 
     public override IList<IDataObject> Get(string objectType, DataFilter filter, int limit, int start)
     {
+      _dataFilter = filter;
+
       try
       {
         InitializeDatabaseDictionary();
@@ -279,6 +286,8 @@ namespace org.iringtools.library
 
     public override Response Delete(string objectType, DataFilter filter)
     {
+      _dataFilter = filter;
+
       try
       {
         InitializeDatabaseDictionary();
