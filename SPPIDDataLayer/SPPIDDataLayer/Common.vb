@@ -5,7 +5,8 @@ Imports System.Runtime.CompilerServices
 Imports System.Text
 Imports System.Reflection
 Imports System.Text.RegularExpressions
-Imports System.Data.OracleClient
+'Imports System.Data.OracleClient
+Imports Oracle.DataAccess.Client
 
 Public Module Common
 

@@ -4,7 +4,8 @@ Option Compare Text
 Imports System.Data.SqlClient
 Imports System.IO
 Imports log4net
-Imports System.Data.OracleClient
+'Imports System.Data.OracleClient
+Imports Oracle.DataAccess.Client
 
 Public Class SPPIDWorkingSet
 
