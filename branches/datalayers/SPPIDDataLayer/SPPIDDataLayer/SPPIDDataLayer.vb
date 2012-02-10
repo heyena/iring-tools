@@ -43,6 +43,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
     Private _kernel As IKernel = Nothing
 
+    Private _dataDictionary As DataDictionary
+
     Private _projConn As SqlConnection
     Private _stageConn As SqlConnection
     Private _siteConn As SqlConnection
@@ -155,7 +157,8 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
 
             _dataObjectDefinition = DataDictionary.dataObjects.Find(Function(o) o.objectName.ToUpper() = "EQUIPMENT")
 
-            Return Utility.Read(Of DataDictionary)(path)
+            _dataDictionary = Utility.Read(Of DataDictionary)(path)
+            Return _dataDictionary
 
         Else
             Return New DataDictionary()
@@ -211,8 +214,35 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Return dataObjects.Rows.Count()
     End Function
 
-    Public Overrides Function GetIdentifiers(tableName As String, whereClause As String) As IList(Of String)
-        Throw New NotImplementedException()
+    Public Overrides Function GetIdentifiers(ByVal tableName As String, ByVal whereClause As String) As IList(Of String)
+
+        Try
+            Dim identifiers As New List(Of String)()
+
+
+            Dim dataTable As DataTable = GetDataTable(tableName, whereClause, 0, 0)
+
+            Dim dataObjects As IList(Of IDataObject) = ToDataObjects(dataTable, tableName)
+            Dim _list As List(Of org.iringtools.library.KeyProperty)
+            For value As Integer = 0 To _dataDictionary.dataObjects.Count()
+                If (_dataDictionary.dataObjects(value).objectName.ToUpper() = tableName.ToUpper()) Then
+                    _list = _dataDictionary.dataObjects(value).keyProperties
+                    Exit For
+                End If
+
+            Next
+
+            For Each dataObject As IDataObject In dataObjects
+                For value As Integer = 0 To _list.Count() - 1
+                    identifiers.Add(DirectCast(dataObject.GetPropertyValue(_list(value).keyPropertyName), String))
+                Next
+            Next
+
+            Return identifiers
+        Catch ex As Exception
+            Throw New Exception("Error while getting a list of identifiers of type [" & tableName & "].", ex)
+        End Try
+
     End Function
 
     Public Overrides Function PostDataTables(dataTables As IList(Of System.Data.DataTable)) As Response

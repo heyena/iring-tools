@@ -62,6 +62,10 @@
     <Reference Include="nunit.framework">
       <HintPath>..\library\nunit\framework\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Oracle.DataAccess, Version=4.112.3.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\library\Oracle\Oracle.DataAccess.dll</HintPath>
+    </Reference>
     <Reference Include="StaticDust.Configuration, Version=1.0.0.0, Culture=neutral, PublicKeyToken=21c5f8854d868864">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\library\configuration\StaticDust.Configuration.dll</HintPath>
@@ -127,12 +131,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SPPIDDataLayer\SPPIDDataLayer.vbproj">
-      <Project>{5541C20E-0ADA-44E3-B626-7CD54E05C412}</Project>
-      <Name>SPPIDDataLayer</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="12345_000\BindingConfiguration.12345_000.SPPID.xml">
       <SubType>Designer</SubType>
     </Content>
@@ -148,6 +146,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SPPIDDataLayer\SPPIDDataLayer.vbproj">
+      <Project>{5541C20E-0ADA-44E3-B626-7CD54E05C412}</Project>
+      <Name>SPPIDDataLayer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

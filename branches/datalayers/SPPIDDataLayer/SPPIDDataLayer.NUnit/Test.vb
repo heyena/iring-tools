@@ -10,6 +10,8 @@ Imports StaticDust.Configuration
 Imports Ninject
 Imports Ninject.Extensions.Xml
 Imports System.Reflection
+Imports Oracle.DataAccess.Client
+Imports iRINGTools.SDK.SPPIDDataLayer
 
 <TestFixture()>
 Public Class Test
@@ -18,6 +20,7 @@ Public Class Test
     Private _settings As NameValueCollection
     Private _adapterSettings As AdapterSettings
     Private _sppidDataLayer As IDataLayer2
+    Private _objectType As String
     Public Sub New()
         ' N inject magic
 
@@ -47,6 +50,8 @@ Public Class Test
         _settings("BaseDirectoryPath") = _baseDirectory
         _settings("ExecutingAssemblyName") = Assembly.GetExecutingAssembly().GetName().Name
 
+        _objectType = "Equipment"
+
         Dim tmp = [String].Format("{0}.{1}.config", _settings("BaseConcatPath"), _settings("ApplicationName"))
         _settings("ProjectConfigurationPath") = Path.Combine(_baseDirectory, tmp)
 
@@ -75,7 +80,7 @@ Public Class Test
         ' Ninject Extension requires fully qualified path.
         Dim bindingConfigurationPath As String = Path.Combine(_settings("BaseDirectoryPath"), relativePath)
 
-       
+
 
 
         _kernel.Load(bindingConfigurationPath)
@@ -91,10 +96,10 @@ Public Class Test
         ' for queries in SPPID; this information is instead taken from the ProjectConfiguration file
         'queryVariables.Add("!All.@ProjectDBName", "whatever")
 
-        _sppidDataLayer = New iRINGTools.SDK.SPPIDDataLayer.SPPIDDataLayer(_adapterSettings)
-    '_sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
+        _sppidDataLayer = New SPPIDDataLayer(_adapterSettings)
+        '_sppidDataLayer = _kernel.[Get](Of IDataLayer2)()
     End Sub
-  '<Test()>
+    '<Test()>
     Public Sub Create()
         Dim identifiers As IList(Of String) = New List(Of String)() From { _
      "E5E3A74C7A0F431AB5069EA1BCD0407D"
@@ -118,42 +123,101 @@ Public Class Test
 
     End Sub
 
-    '<Test()>
-    Public Sub GetObjects()
-        'THIS ID IS DIFFERENT FOR EACH TEST DATABASE!
+    <Test()>
+    Public Sub TestGetObjects()
+
         Dim identifiers As IList(Of String) = New List(Of String)() From { _
-     "8AE275AC68014EE8B23F68E9FBED0A33",
-       "E5E3A74C7A0F431AB5069EA1BCD0407D"
-    }
+               "-2608A", _
+               "1-WL-MT-2610", _
+               "345-MV-9982", _
+               "345-MV-9983" _
+         }
+
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get(_objectType, identifiers)
+
+        If (dataObjects.Count() <= 0) Then
+            Assert.IsTrue(True, "No Rows returned.")
+        End If
 
 
-        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get("Equipment", identifiers)
-
-
-        Console.WriteLine("Object Count: " + dataObjects.Count().ToString())
         For Each dataObject As IDataObject In dataObjects
-            Debug.WriteLine(dataObject.GetPropertyValue("SP_ID"), "Equipment")
+            Assert.IsNotNull(dataObject.GetPropertyValue("DrawingName"))
+            Assert.IsNotNull(dataObject.GetPropertyValue("Title"))
+            Assert.IsNotNull(dataObject.GetPropertyValue("PlantItemName"))
+            Assert.IsNotNull(dataObject.GetPropertyValue("PidUnitDescription"))
+            Assert.IsNotNull(dataObject.GetPropertyValue("PidUnitName"))
         Next
-
 
     End Sub
 
-    '<Test()>
-    Public Sub GetCountWithFilters()
+    <Test()>
+    Public Sub TestGetWithIdentifiers()
+        Dim identifiers As IList(Of String) = _sppidDataLayer.GetIdentifiers(_objectType, New DataFilter())
+
+        Dim identifier As IList(Of String) = DirectCast(identifiers, List(Of String)).GetRange(0, 10)
+
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get(_objectType, identifier)
+
+        Assert.IsTrue(True, "Success")
+
+    End Sub
+
+    <Test()>
+    Public Sub TestGetIdentifiersWithFilter()
+        Dim _filter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
+          New Expression() With { _
+            .PropertyName = "PlantItemName", _
+            .RelationalOperator = RelationalOperator.EqualTo, _
+            .Values = New Values() From { _
+            "TANK" _
+             }
+         }
+     }
+ }
+        Dim identifiers As IList(Of String) = DirectCast(_sppidDataLayer.GetIdentifiers(_objectType, _filter), List(Of String))
+
+
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get(_objectType, identifiers)
+
+
+        Assert.Greater(dataObjects.Count, 0)
+    End Sub
+
+ 
+
+    <Test()>
+    Public Sub TestGetTotalCount()
+        Dim identifiers As IList(Of String) = New List(Of String)() From { _
+              "AA-MV-9983", _
+              "345-ED-9982", _
+              "345-MV-9982", _
+              "345-MV-9983" _
+        }
+
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get(_objectType, identifiers)
+
+        If (dataObjects.Count() <= 0) Then
+            Assert.IsTrue(True, "No Rows returned.")
+        End If
+
+        Assert.IsNotNull(True, dataObjects.Count.ToString())
+    End Sub
+
+    <Test()>
+    Public Sub TestGetCountWithFilter()
 
         Dim dataFilter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
               New Expression() With { _
-                .PropertyName = "Drawing_DocumentCategory", _
+                .PropertyName = "PlantItemName", _
                 .RelationalOperator = RelationalOperator.EqualTo, _
                 .Values = New Values() From { _
-                "PipingDocuments" _
-    }
-    }
-    }
+                "TANK" _
+            }
+        }
+     }
     }
 
-
-        Dim dataObjects As Long = _sppidDataLayer.GetCount("Equipment", dataFilter)
+        Dim dataObjects As Long = _sppidDataLayer.GetCount(_objectType, dataFilter)
 
         If dataObjects = -1 Then
             Assert.IsNotNull(dataObjects)
@@ -164,33 +228,39 @@ Public Class Test
     End Sub
 
     <Test()>
-    Public Sub GetDictionary()
+    Public Sub TestGetDictionary()
         Dim benchmark As DataDictionary = Nothing
 
         Dim dictionary As DataDictionary = _sppidDataLayer.GetDictionary()
 
         Assert.IsNotNull(dictionary)
 
-        Dim path As String = [String].Format("{0}DataDictionary.{1}.{2}.xml", _adapterSettings("XmlPath"), _settings("ProjectName"), _adapterSettings("ApplicationName"))
-
-        Utility.Write(Of DataDictionary)(dictionary, path, True)
     End Sub
 
-    Public Sub ReadWithFilter()
+    <Test()>
+    Public Sub TestGetPageWithFilter()
 
+        Dim _filter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
+                         New Expression() With { _
+                           .PropertyName = "PlantItemName", _
+                           .RelationalOperator = RelationalOperator.EqualTo, _
+                           .Values = New Values() From { _
+                           "TANK" _
+                            }
+                        }
+                    }
+                }
 
-        Dim dataFilter As New DataFilter() With {.Expressions = New List(Of Expression)() From { _
-              New Expression() With { _
-                .PropertyName = "PlantItemType", _
-                .RelationalOperator = RelationalOperator.NotEqualTo, _
-                .Values = New Values() From { _
-                "Null" _
-    }
-    }
-    }
-    }
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get(_objectType, _filter, 20, 0)
 
-        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get("Equipment", dataFilter, 10, 0)
+        Assert.Greater(dataObjects.Count, 0)
+    End Sub
+
+    <Test()>
+    Public Sub TestGetPage()
+
+        Dim dataObjects As IList(Of IDataObject) = _sppidDataLayer.Get(_objectType, New DataFilter(), 25, 0)
+        Assert.Greater(dataObjects.Count, 0)
 
     End Sub
 End Class
