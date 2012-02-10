@@ -60,6 +60,7 @@ public abstract class AbstractController extends ActionSupport implements Sessio
         try
         {
           response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Ldap configuration not found.");
+          return;
         }
         catch (IOException unexpectedException)
         {
@@ -83,6 +84,7 @@ public abstract class AbstractController extends ActionSupport implements Sessio
           try
           {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error loading LDAP properties: " + ioe);
+            return;
           }
           catch (IOException unexpectedException)
           {
@@ -104,6 +106,7 @@ public abstract class AbstractController extends ActionSupport implements Sessio
           {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                 "Error initializing authentication provider: " + ne);
+            return;
           }
           catch (IOException unexpectedException)
           {
@@ -111,7 +114,7 @@ public abstract class AbstractController extends ActionSupport implements Sessio
           }
         }
         
-        String userId = request.getAttribute(OAuthFilter.USER_ID).toString();
+        String userId = request.getSession().getAttribute(OAuthFilter.USER_ID).toString();
 
         if (!authProvider.isAuthorized(userId))
         {
@@ -119,6 +122,7 @@ public abstract class AbstractController extends ActionSupport implements Sessio
           {
             String errorMessage = "User [" + userId + "] not authorized.";
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, errorMessage);
+            return;
           }
           catch (Exception e)
           {

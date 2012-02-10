@@ -13,7 +13,6 @@ public class FederationController extends AbstractController implements ServletR
 {
   private static final long serialVersionUID = 1L;
 
-  private FederationModel federation;
   private Tree tree;
   private HttpServletRequest httpRequest = null;
   private Result result = new Result();
@@ -24,7 +23,6 @@ public class FederationController extends AbstractController implements ServletR
   public FederationController()
   {
     super();
-    federation = new FederationModel();
     authorize("federationManager", "federationAdmins");
   }
 
@@ -85,6 +83,7 @@ public class FederationController extends AbstractController implements ServletR
 
   public String getFederation()
   {
+    FederationModel federation = new FederationModel(this.session);
     federation.populate();
     tree = federation.toTree();
     return Action.SUCCESS;
@@ -93,6 +92,7 @@ public class FederationController extends AbstractController implements ServletR
   public String postFederation()
   {
     System.out.println("Reaching post Federation");
+    FederationModel federation = new FederationModel(this.session);
     boolean successStatus = federation.readTree(httpRequest);
     result.setSuccess(successStatus);
     // result.setMessage("Details Successfully saved!");
@@ -103,6 +103,7 @@ public class FederationController extends AbstractController implements ServletR
   public String deleteNode()
   {
     System.out.println("Reaching deleteNode");
+    FederationModel federation = new FederationModel(this.session);
     boolean successStatus = federation.deleteNode(nodeId, parentNodeID);
     System.out.println("deleteNode executed :" + successStatus);
     result.setSuccess(successStatus);
