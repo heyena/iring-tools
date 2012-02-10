@@ -22,6 +22,7 @@ import org.iringtools.widgets.tree.Node;
 import org.iringtools.widgets.tree.Tree;
 import org.iringtools.widgets.tree.TreeNode;
 import org.iringtools.utility.HttpClient;
+import org.iringtools.utility.HttpUtils;
 import org.apache.struts2.json.JSONException;
 import org.apache.struts2.json.JSONUtil;
 
@@ -29,15 +30,19 @@ import com.opensymphony.xwork2.ActionContext;
 
 public class FederationModel
 {
+  private Map<String, Object> session = null;
   private Federation federation = null;
   private HttpClient httpClient = null;
 
-  public FederationModel()
+  public FederationModel(Map<String, Object> session)
   {
+    this.session = session;
+    
     try
     {
       String uri = ActionContext.getContext().getApplication().get("RefDataServiceUri").toString();
       httpClient = new HttpClient(uri);
+      HttpUtils.addHttpHeaders(this.session, httpClient);
     }
     catch (Exception e)
     {

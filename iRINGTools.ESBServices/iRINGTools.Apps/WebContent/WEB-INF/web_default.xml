@@ -47,4 +47,9 @@
     <error-code>401</error-code>
     <location>/errors/401.jsp</location>
   </error-page>
+  
+  <error-page>
+    <error-code>500</error-code>
+    <location>/errors/500.jsp</location>
+  </error-page>
 </web-app>
