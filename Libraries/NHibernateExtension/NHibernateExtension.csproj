@@ -65,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EveryoneAuthorization.cs" />
     <Compile Include="NHibernateAuthorization.cs" />
     <Compile Include="NHibernateSummary.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
