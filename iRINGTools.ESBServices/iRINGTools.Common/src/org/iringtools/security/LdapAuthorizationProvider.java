@@ -47,14 +47,19 @@ public class LdapAuthorizationProvider implements AuthorizationProvider
     ldapConfig.put("java.naming.security.credentials", password);
     
     dctx = new InitialDirContext(ldapConfig);
+    
+    if (dctx == null)
+    {
+      logger.error("Directory context failed to initialize.");
+    }
   }
   
   public boolean isAuthorized(String userId)
   {
+    logger.debug("Authorizing user [" + userId + "].");
+    
     if (userId != null && dctx != null)
     {
-      logger.debug("Attempting to authorize user [" + userId + "].");
-      
       String groupDN = "cn=" + authorizedGroup + ",ou=groups," + BASE_DN;
       String qualUserId = "uid=" + userId + ",ou=users," + BASE_DN;
       String filter = "(member=" + qualUserId + ")";
