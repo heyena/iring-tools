@@ -62,7 +62,7 @@ public class OAuthFilter implements Filter
       
       if (IOUtils.isNullOrEmpty(ref))  // case 1: user needs to login
       {
-        logger.debug("case 1");
+        logger.debug("Process login");
         
         String federationServiceUri = filterConfig.getInitParameter("federationServiceUri");
         String idpId = filterConfig.getInitParameter("idpId");
@@ -82,7 +82,7 @@ public class OAuthFilter implements Filter
       }
       else  // case 2: the user has logged in but the application needs to process the SSO event
       {
-        logger.debug("case 2");
+        logger.debug("Get user info");
         
         String authenticationServiceUri = filterConfig.getInitParameter("authenticationServiceUri");
         String pingUserName = filterConfig.getInitParameter("pingUserName");
@@ -143,9 +143,11 @@ public class OAuthFilter implements Filter
     }
     else  // case 3: the user has already logged in and the application has already processed the SSO event
     {
-      logger.debug("case 3");
+      logger.debug("Retrieve user info");
       
       String authCookieMultiValue = authCookie.getValue();      
+      logger.debug("User info [" + authCookieMultiValue + "]");
+      
       Map<String, String> userAttrs = HttpUtils.fromQueryParams(authCookieMultiValue);
             
       session.setAttribute(AUTHORIZATION, userAttrs.get(OAUTH_TOKEN));

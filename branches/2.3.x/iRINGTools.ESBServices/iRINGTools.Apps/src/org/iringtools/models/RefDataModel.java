@@ -1,8 +1,8 @@
 package org.iringtools.models;
 
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +20,7 @@ import org.ids_adi.ns.qxf.model.TemplateDefinition;
 import org.iringtools.refdata.response.Entity;
 import org.iringtools.refdata.response.Response;
 import org.iringtools.utility.HttpClient;
+import org.iringtools.utility.HttpUtils;
 import org.iringtools.widgets.tree.LeafNode;
 import org.iringtools.widgets.tree.Node;
 import org.iringtools.widgets.tree.Tree;
@@ -31,18 +32,22 @@ import com.opensymphony.xwork2.ActionContext;
 public class RefDataModel
 {
   private Response response = null;
-  
+  private Map<String, Object> session = null;
   private HttpClient httpClient = null;
   private HttpClient idGenHttpClient = null;
 
-  public RefDataModel()
+  public RefDataModel(Map<String, Object> session)
   {
+    this.session = session;
+    
     try
     {
       String uri = ActionContext.getContext().getApplication().get("RefDataServiceUri").toString();
       httpClient = new HttpClient(uri);
+      HttpUtils.addHttpHeaders(this.session, httpClient);
       uri = ActionContext.getContext().getApplication().get("IDGenServiceUri").toString();
       idGenHttpClient = new HttpClient(uri);
+      HttpUtils.addHttpHeaders(this.session, idGenHttpClient);
     }
     catch (Exception e)
     {

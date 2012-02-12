@@ -12,106 +12,124 @@ import org.iringtools.widgets.tree.Type;
 
 import com.opensymphony.xwork2.Action;
 
+public class RefDataController extends AbstractController implements ServletRequestAware
+{
+  private static final long serialVersionUID = 1L;
 
-public class RefDataController implements ServletRequestAware{
-	
-	private RefDataModel refdata;
-	private Tree tree;
-	private Response response;
-	private Result result=new Result();
-	private Qmxf qmxf;
+  private Tree tree;
+  private Response response;
+  private Result result = new Result();
+  private Qmxf qmxf;
 
-	public Qmxf getQmxf() {
-		return qmxf;
-	}
+  public Qmxf getQmxf()
+  {
+    return qmxf;
+  }
 
-	public void setQmxf(Qmxf qmxf) {
-		this.qmxf = qmxf;
-	}
+  public void setQmxf(Qmxf qmxf)
+  {
+    this.qmxf = qmxf;
+  }
 
-	public Response getResponse() {
-		return response;
-	}
+  public Response getResponse()
+  {
+    return response;
+  }
 
-	public void setResponse(Response response) {
-		this.response = response;
-	}
+  public void setResponse(Response response)
+  {
+    this.response = response;
+  }
 
-	private HttpServletRequest httpRequest = null;
-	
-	public RefDataController()
-	{
-		refdata = new RefDataModel();
-	}
+  private HttpServletRequest httpRequest = null;
 
-	public void setTree(Tree tree) {
-		this.tree = tree;
-	}
+  public RefDataController()
+  {
+    super();
+  }
 
-	public Tree getTree() {
-		return tree;
-	}
-	public Result getResult() {
-		return result;
-	}
+  public void setTree(Tree tree)
+  {
+    this.tree = tree;
+  }
 
-	public void setResult(Result result) {
-		this.result = result;
-	}
+  public Tree getTree()
+  {
+    return tree;
+  }
 
-	
-	public void setServletRequest(HttpServletRequest request) {
-		this.httpRequest = request;  
-		} 
-	
-	public String searchPage() {
-		//String query=httpRequest.getParameter("query");
-		Type type = Type.fromValue(httpRequest.getParameter("type"));
+  public Result getResult()
+  {
+    return result;
+  }
 
-		switch(type){
-		case SEARCH:
-			tree = refdata.populate(httpRequest);
-			break;
-		case CLASS:
-			tree = refdata.getClass(httpRequest.getParameter("id"));
-			break;
-		case CLASSIFICATION:
-			tree = refdata.getClass(httpRequest.getParameter("id"));
-			break;
-		case MEMBERS:
-			tree = refdata.getMembers(httpRequest.getParameter("id"));
-		case SUPERCLASS:
-			tree = refdata.getSubSuperClasses(httpRequest.getParameter("id"),"Super");
-			break;
-		case SUBCLASS:
-			tree = refdata.getSubSuperClasses(httpRequest.getParameter("id"), "Sub");
-			break;
-		case CLASSTEMPLATE:
-			tree = refdata.getTemplates(httpRequest.getParameter("id"));
-			break;
-		case TEMPLATENODE:
-			tree = refdata.getRole(httpRequest.getParameter("id"));
-			break;
-		}
-    	
-		return Action.SUCCESS;
-    	}
-	
-	public String getTemplates(){
-		String id = httpRequest.getParameter("id");
-		tree = refdata.getTemplates(id);
-		return Action.SUCCESS;
-	}
-	public String postClass() {		
-		System.out.println("Reaching post Class");
-		boolean successStatus = refdata.postClass(httpRequest);
-		result.setSuccess(successStatus);
-        return Action.SUCCESS;
-	}
-	public String postTemplate() {		
-		System.out.println("Reaching post Class");
-		boolean successStatus = refdata.postTemplate(httpRequest);
-		result.setSuccess(successStatus);
-        return Action.SUCCESS;
-	}	
+  public void setResult(Result result)
+  {
+    this.result = result;
+  }
+
+  public void setServletRequest(HttpServletRequest request)
+  {
+    this.httpRequest = request;
+  }
+
+  public String searchPage()
+  {
+
+    RefDataModel refdata = new RefDataModel(session);
+    Type type = Type.fromValue(httpRequest.getParameter("type"));
+
+    switch (type)
+    {
+    case SEARCH:
+      tree = refdata.populate(httpRequest);
+      break;
+    case CLASS:
+      tree = refdata.getClass(httpRequest.getParameter("id"));
+      break;
+    case CLASSIFICATION:
+      tree = refdata.getClass(httpRequest.getParameter("id"));
+      break;
+    case MEMBERS:
+      tree = refdata.getMembers(httpRequest.getParameter("id"));
+    case SUPERCLASS:
+      tree = refdata.getSubSuperClasses(httpRequest.getParameter("id"), "Super");
+      break;
+    case SUBCLASS:
+      tree = refdata.getSubSuperClasses(httpRequest.getParameter("id"), "Sub");
+      break;
+    case CLASSTEMPLATE:
+      tree = refdata.getTemplates(httpRequest.getParameter("id"));
+      break;
+    case TEMPLATENODE:
+      tree = refdata.getRole(httpRequest.getParameter("id"));
+      break;
+    }
+
+    return Action.SUCCESS;
+  }
+
+  public String getTemplates()
+  {
+    RefDataModel refdata = new RefDataModel(session);
+    String id = httpRequest.getParameter("id");
+    tree = refdata.getTemplates(id);
+    return Action.SUCCESS;
+  }
+
+  public String postClass()
+  {
+    RefDataModel refdata = new RefDataModel(session); 
+    boolean successStatus = refdata.postClass(httpRequest);
+    result.setSuccess(successStatus);
+    return Action.SUCCESS;
+  }
+
+  public String postTemplate()
+  {
+    RefDataModel refdata = new RefDataModel(session);
+    boolean successStatus = refdata.postTemplate(httpRequest);
+    result.setSuccess(successStatus);
+    return Action.SUCCESS;
+  }
 }
