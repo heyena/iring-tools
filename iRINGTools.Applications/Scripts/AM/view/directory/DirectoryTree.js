@@ -441,10 +441,10 @@
         //get state from tree
         var me = this;
         var state = this.getState();
-        this.body.mask('Loading', 'x-mask-loading');
+        //this.body.mask('Loading', 'x-mask-loading');
 
         this.getStore().load(node);
-        this.body.unmask();
+        //this.body.unmask();
         this.applyState(state, true);
     },
 
