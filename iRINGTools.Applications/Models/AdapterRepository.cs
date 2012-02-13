@@ -227,22 +227,6 @@ namespace iRINGTools.Web.Models
       return dataLayer;
     }
 
-    //public string AddScope(ScopeProject scope)
-    //{
-    //  string obj = null;
-
-    //  try
-    //  {
-    //    obj = _adapterServiceClient.Post<ScopeProject>("/scopes", scope, true);
-    //  }
-    //  catch (Exception ex)
-    //  {
-    //    _logger.Error(ex.ToString());
-    //  }
-
-    //  return obj;
-    //}
-
     public string UpdateScope(string name, string description)
     {
       string obj = null;
