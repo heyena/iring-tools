@@ -1,24 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!--This file represents the results of running a test suite-->
-<test-results name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\SPPIDDataLayer.NUnit.vbproj" total="8" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2012-02-10" time="12:11:59">
-  <environment nunit-version="2.5.8.10295" clr-version="4.0.30319.1" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Project\Branches\datalayers\SPPIDDataLayer\library\nunit\NUnit.Runner\bin\Debug" machine-name="NDHD06635" user="nbhardwa" user-domain="IEAMS" />
+<test-results name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\SPPIDDataLayer.NUnit.vbproj" total="10" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2012-02-13" time="13:21:50">
+  <environment nunit-version="2.5.8.10295" clr-version="4.0.30319.239" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Project\Branches\datalayers\SPPIDDataLayer\library\nunit\NUnit.Runner\bin\Debug" machine-name="NDHD06635" user="nbhardwa" user-domain="IEAMS" />
   <culture-info current-culture="en-US" current-uiculture="en-US" />
-  <test-suite type="Project" name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\SPPIDDataLayer.NUnit.vbproj" executed="True" result="Success" success="True" time="3.082" asserts="0">
+  <test-suite type="Project" name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\SPPIDDataLayer.NUnit.vbproj" executed="True" result="Success" success="True" time="256.153" asserts="0">
     <results>
-      <test-suite type="Assembly" name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" executed="True" result="Success" success="True" time="3.075" asserts="0">
+      <test-suite type="Assembly" name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" executed="True" result="Success" success="True" time="256.142" asserts="0">
         <results>
-          <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="3.075" asserts="0">
+          <test-suite type="Namespace" name="Tests" executed="True" result="Success" success="True" time="256.139" asserts="0">
             <results>
-              <test-suite type="TestFixture" name="Test" executed="True" result="Success" success="True" time="3.074" asserts="0">
+              <test-suite type="TestFixture" name="Test" executed="True" result="Success" success="True" time="256.129" asserts="0">
                 <results>
-                  <test-case name="Tests.Test.TestGetCountWithFilter" executed="True" result="Success" success="True" time="1.003" asserts="1" />
-                  <test-case name="Tests.Test.TestGetDictionary" executed="True" result="Success" success="True" time="0.095" asserts="1" />
-                  <test-case name="Tests.Test.TestGetIdentifiersWithFilter" executed="True" result="Success" success="True" time="0.029" asserts="1" />
-                  <test-case name="Tests.Test.TestGetObjects" executed="True" result="Success" success="True" time="0.007" asserts="10" />
-                  <test-case name="Tests.Test.TestGetPage" executed="True" result="Success" success="True" time="0.018" asserts="1" />
-                  <test-case name="Tests.Test.TestGetPageWithFilter" executed="True" result="Success" success="True" time="0.006" asserts="1" />
-                  <test-case name="Tests.Test.TestGetTotalCount" executed="True" result="Success" success="True" time="0.006" asserts="2" />
-                  <test-case name="Tests.Test.TestGetWithIdentifiers" executed="True" result="Success" success="True" time="0.012" asserts="1" />
+                  <test-case name="Tests.Test.TestGetCountWithFilter" executed="True" result="Success" success="True" time="1.178" asserts="1" />
+                  <test-case name="Tests.Test.TestGetDictionary" executed="True" result="Success" success="True" time="0.024" asserts="1" />
+                  <test-case name="Tests.Test.TestGetIdentifiersWithFilter" executed="True" result="Success" success="True" time="0.045" asserts="1" />
+                  <test-case name="Tests.Test.TestGetObjects" executed="True" result="Success" success="True" time="0.010" asserts="10" />
+                  <test-case name="Tests.Test.TestGetPage" executed="True" result="Success" success="True" time="0.017" asserts="1" />
+                  <test-case name="Tests.Test.TestGetPageWithFilter" executed="True" result="Success" success="True" time="0.007" asserts="1" />
+                  <test-case name="Tests.Test.TestGetTotalCount" executed="True" result="Success" success="True" time="0.009" asserts="2" />
+                  <test-case name="Tests.Test.TestGetWithIdentifiers" executed="True" result="Success" success="True" time="0.017" asserts="1" />
+                  <test-case name="Tests.Test.TestRefresh" executed="True" result="Success" success="True" time="136.781" asserts="1" />
+                  <test-case name="Tests.Test.TestRefreshAll" executed="True" result="Success" success="True" time="116.342" asserts="1" />
                 </results>
               </test-suite>
             </results>
