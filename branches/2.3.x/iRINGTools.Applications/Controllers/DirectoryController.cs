@@ -475,26 +475,23 @@ namespace org.iringtools.web.controllers
 
     public JsonResult Scope(FormCollection form)
     {
-      string success = _repository.UpdateScope(form["scope"], form["name"], form["description"]);
+      string success = _repository.UpdateScope(form["name"], form["description"]);
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult Application(FormCollection form)
     {
-      #region Works in case of New Application
-      string name = string.Empty;
-      if (form["Application"] == string.Empty)
-      {
-        name = form["Name"];
-      }
-      else
-      {
-        name = form["Application"];
-      }
-      #endregion
+      string scopeName = form["Scope"];
 
-      string success = _repository.UpdateApplication(form["Scope"], name, form["Name"], form["Description"], form["assembly"]);
+      ScopeApplication application = new ScopeApplication()
+      {
+        Name = form["Name"],
+        Description = form["Description"],
+        Assembly = form["assembly"]
+      };
+
+      string success = _repository.UpdateApplication(scopeName, application);
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }

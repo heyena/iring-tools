@@ -116,31 +116,64 @@ namespace org.iringtools.services
       return _adapterProvider.GetConfiguration(scope, app);
     }
     #endregion Config methods
-
-   
     #endregion
 
     #region Private Resources
-    #region UpdateScopes
-    /// <summary>
-    /// Replaces the available scopes.
-    /// </summary>
-    /// <param name="scopes">The scopes object.</param>
-    /// <returns>Returns a Response object.</returns>
-    [Description("Replaces the available scopes with the posted scopes.")]
+    [Description("Creates new scope or replaces existing with the posted one.")]
     [WebInvoke(Method = "POST", UriTemplate = "/scopes")]
-    public Response UpdateScopes(ScopeProjects scopes)
+    public Response UpdateScope(ScopeProject scope)
     {
       try
       {
-        return _adapterProvider.UpdateScopes(scopes);
+        return _adapterProvider.UpdateScope(scope);
       }
       catch (Exception ex)
       {
         return PrepareErrorResponse(ex);
       }
     }
-    #endregion
+
+    [Description("Deletes a scope.")]
+    [WebInvoke(Method = "DELETE", UriTemplate = "/scopes/{scopeName}/delete")]
+    public Response DeleteScope(String scopeName)
+    {
+      try
+      {
+        return _adapterProvider.DeleteScope(scopeName);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+
+    [Description("Creates new application or replaces existing with the posted one.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scopeName}")]
+    public Response UpdateApplication(string scopeName, ScopeApplication application)
+    {
+      try
+      {
+        return _adapterProvider.UpdateApplication(scopeName, application);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+
+    [Description("Deletes a scope in a specific scope.")]
+    [WebInvoke(Method = "DELETE", UriTemplate = "/scopes/{scopeName}/{appName}/delete")]
+    public Response DeleteApplication(string scopeName, string appName)
+    {
+      try
+      {
+        return _adapterProvider.DeleteApplication(scopeName, appName);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
 
     #region GetBinding
     /// <summary>

@@ -27,11 +27,11 @@ namespace iRINGTools.Web.Models
 
     Entity GetClassLabel(string classId);
 
-    string UpdateScope(string scope, string name, string description);
+    string UpdateScope(string name, string description);
 
-    string DeleteScope(string scope);
+    string DeleteScope(string name);
 
-    string UpdateApplication(string scope, string application, string name, string description, string assembly);
+    string UpdateApplication(string scopeName, ScopeApplication application);
 
     string DeleteApplication(string scope, string application);
   }
