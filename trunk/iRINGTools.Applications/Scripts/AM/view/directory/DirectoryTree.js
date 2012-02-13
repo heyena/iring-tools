@@ -72,7 +72,7 @@
             // function to store state of tree recursively 
             var storeTreeState = function (node, expandedNodes) {
                 if (node.isExpanded() && node.childNodes.length > 0) {
-                    expandedNodes.push(node.getPath()); //'text'));
+                    expandedNodes.push(node.get('id')); //'text'));
                     node.eachChild(function (child) {
                         storeTreeState(child, expandedNodes);
                     });
@@ -87,12 +87,15 @@
     },
 
     applyState: function (state) {
+        var that = this;
         var nodes = state.expandedNodes || [],
             len = nodes.length;
         //  this.collapseAll();
         for (var i = 0; i < len; i++) {
             if (typeof nodes[i] != 'undefined') {
-                this.expandPath(nodes[i]); //, 'text');
+                var treeNode = that.getRootNode().findChild('id', nodes[i], true);
+                treeNode.expand();
+                //that.expandPath(nodes[i]); //, 'text');
             }
         }
         // this.callParent(arguments);
@@ -170,13 +173,13 @@
           scope: this,
           action: 'configureendpoint'
       }//,
-//      {
-//          xtype: 'button',
-//          text: 'Open NHConfiguration',
-//          icon: 'Content/img/16x16/preferences-system.png',
-//          scope: this,
-//          action: 'configurenh'
-//      }
+        //      {
+        //          xtype: 'button',
+        //          text: 'Open NHConfiguration',
+        //          icon: 'Content/img/16x16/preferences-system.png',
+        //          scope: this,
+        //          action: 'configurenh'
+        //      }
     ]
     },
     buildAppDataMenu: function () {
