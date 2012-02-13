@@ -263,5 +263,32 @@ Public Class Test
         Assert.Greater(dataObjects.Count, 0)
 
     End Sub
+
+    <Test()>
+    Public Sub TestRefresh()
+        Dim response As Response = _sppidDataLayer.Refresh(_objectType)
+
+        If response.Level <> StatusLevel.Success Then
+
+            Throw New AssertionException(Utility.SerializeDataContract(Of Response)(response))
+
+        End If
+
+        Assert.IsTrue(response.Level = StatusLevel.Success)
+    End Sub
+
+    <Test()>
+    Public Sub TestRefreshAll()
+        Dim response As Response = _sppidDataLayer.RefreshAll()
+
+        If response.Level <> StatusLevel.Success Then
+
+            Throw New AssertionException(Utility.SerializeDataContract(Of Response)(response))
+
+        End If
+
+        Assert.IsTrue(response.Level = StatusLevel.Success)
+
+    End Sub
 End Class
 
