@@ -520,7 +520,7 @@ namespace iRINGTools.Web.Models
       if (path == "")
         return (Folders)scopes;
 
-      string[] level = path.Split('/');
+      string[] level = path.Split('.');
 
       foreach (Folder folder in scopes)
       {
