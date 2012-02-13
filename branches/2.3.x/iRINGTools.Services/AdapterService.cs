@@ -134,7 +134,7 @@ namespace org.iringtools.services
     }
 
     [Description("Deletes a scope.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/scopes/{scopeName}/delete")]
+    [WebInvoke(Method = "GET", UriTemplate = "/scopes/{scopeName}/delete")]
     public Response DeleteScope(String scopeName)
     {
       try
@@ -162,7 +162,7 @@ namespace org.iringtools.services
     }
 
     [Description("Deletes a scope in a specific scope.")]
-    [WebInvoke(Method = "DELETE", UriTemplate = "/scopes/{scopeName}/{appName}/delete")]
+    [WebInvoke(Method = "GET", UriTemplate = "/scopes/{scopeName}/{appName}/delete")]
     public Response DeleteApplication(string scopeName, string appName)
     {
       try
