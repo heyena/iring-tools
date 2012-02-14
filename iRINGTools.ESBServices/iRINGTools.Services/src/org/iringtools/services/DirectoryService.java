@@ -38,7 +38,7 @@ public class DirectoryService extends AbstractService
 
     try
     {
-      directory = directoryProvider.getExchanges();
+      directory = directoryProvider.getDirectory();
     }
     catch (Exception e)
     {

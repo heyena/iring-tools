@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.iringtools.directory.Directory;
 import org.iringtools.directory.ExchangeDefinition;
+import org.iringtools.utility.IOUtils;
 import org.iringtools.utility.JaxbUtils;
 
 public class DirectoryProvider
@@ -17,13 +18,20 @@ public class DirectoryProvider
     this.settings = settings;
   }
 
-  public Directory getExchanges() throws ServiceProviderException
+  public Directory getDirectory() throws ServiceProviderException
   {
     String path = settings.get("baseDirectory") + "/WEB-INF/data/directory.xml";
     
     try
     {
-      return JaxbUtils.read(Directory.class, path);
+      if (IOUtils.fileExists(path))
+      {
+        return JaxbUtils.read(Directory.class, path);
+      }
+      
+      Directory directory = new Directory();
+      JaxbUtils.write(directory, path, false);      
+      return directory;
     }
     catch (Exception e)
     {
