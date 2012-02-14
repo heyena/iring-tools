@@ -40,10 +40,10 @@
 			    <a href="xchmgr">
 			    Exchange Manager</a>
 			  </li>
-			  <li>
+			  <!--<li>
 			    <a href="fedmgr">
 			    Federation Manager</a>
-			  </li>
+			  </li>-->
             </ul>
           </td>
           <td>
@@ -57,10 +57,10 @@
 				  <a href="../services/history?_wadl&_type=xml">
 				  History Service</a>
 				</li>
-				<li>
+				<!--<li>
 				  <a href="../services/refdata?_wadl&_type=xml">
 				  RefData Service</a>
-				</li>
+				</li>-->
 				<li>
 				  <a href="../services/esb?_wadl&_type=xml">
 				  ESB Service (Temporary)</a>
