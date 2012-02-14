@@ -68,7 +68,7 @@ namespace org.iringtools.services
     /// Gets the version of the service.
     /// </summary>
     /// <returns>Returns the version as a string.</returns>
-    [Description("Gets the version of the service.")]
+    [Description("Gets version of the service.")]
     [WebGet(UriTemplate = "/version")]
     public VersionInfo GetVersion()
     {
@@ -133,13 +133,13 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Updates an existing scopee.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scopeName}")]
-    public Response UpdateScope(string scopeName, ScopeProject updatedScope)
+    [Description("Updates an existing scope.")]
+    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}")]
+    public Response UpdateScope(string scope, ScopeProject updatedScope)
     {
       try
       {
-        return _adapterProvider.UpdateScope(scopeName, updatedScope);
+        return _adapterProvider.UpdateScope(scope, updatedScope);
       }
       catch (Exception ex)
       {
@@ -148,12 +148,12 @@ namespace org.iringtools.services
     }
 
     [Description("Deletes a scope.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/scopes/{scopeName}/delete")]
-    public Response DeleteScope(String scopeName)
+    [WebInvoke(Method = "GET", UriTemplate = "/scopes/{scope}/delete")]
+    public Response DeleteScope(string scope)
     {
       try
       {
-        return _adapterProvider.DeleteScope(scopeName);
+        return _adapterProvider.DeleteScope(scope);
       }
       catch (Exception ex)
       {
@@ -162,12 +162,12 @@ namespace org.iringtools.services
     }
 
     [Description("Creates a new application in a specific scope.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scopeName}/apps")]
-    public Response AddApplication(string scopeName, ScopeApplication application)
+    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}/apps")]
+    public Response AddApplication(string scope, ScopeApplication application)
     {
       try
       {
-        return _adapterProvider.AddApplication(scopeName, application);
+        return _adapterProvider.AddApplication(scope, application);
       }
       catch (Exception ex)
       {
@@ -176,12 +176,12 @@ namespace org.iringtools.services
     }
 
     [Description("Updates an existing application in a specific scope.")]
-    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scopeName}/apps/{applicationName}")]
-    public Response UpdateApplication(string scopeName, string applicationName, ScopeApplication updatedApplication)
+    [WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}/apps/{app}")]
+    public Response UpdateApplication(string scope, string app, ScopeApplication updatedApplication)
     {
       try
       {
-        return _adapterProvider.UpdateApplication(scopeName, applicationName, updatedApplication);
+        return _adapterProvider.UpdateApplication(scope, app, updatedApplication);
       }
       catch (Exception ex)
       {
@@ -190,12 +190,12 @@ namespace org.iringtools.services
     }
 
     [Description("Deletes an application in a specific scope.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/scopes/{scopeName}/apps/{appName}/delete")]
-    public Response DeleteApplication(string scopeName, string appName)
+    [WebInvoke(Method = "GET", UriTemplate = "/scopes/{scope}/apps/{app}/delete")]
+    public Response DeleteApplication(string scope, string app)
     {
       try
       {
-        return _adapterProvider.DeleteApplication(scopeName, appName);
+        return _adapterProvider.DeleteApplication(scope, app);
       }
       catch (Exception ex)
       {
