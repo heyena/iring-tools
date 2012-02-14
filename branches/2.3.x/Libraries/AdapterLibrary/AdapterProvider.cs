@@ -591,9 +591,9 @@ namespace org.iringtools.adapter
       }
 
       string nhMappingPath = String.Format("{0}nh-mapping.{1}.xml", path, context);
-      if (File.Exists(nhConfigPath))
+      if (File.Exists(nhMappingPath))
       {
-        File.Delete(nhConfigPath);
+        File.Delete(nhMappingPath);
       }
 
       string summaryBindingConfigurationPath = String.Format("{0}SummaryBindingConfiguration.{1}.xml", path, context);
@@ -621,7 +621,7 @@ namespace org.iringtools.adapter
       Response response = new Response();
       Status status = new Status()
       {
-        Identifier = "All"
+        Identifier = "Scopes"
       };
 
       response.StatusList.Add(status);
@@ -672,10 +672,29 @@ namespace org.iringtools.adapter
     private Response Generate(ScopeProject scope)
     {
       Response response = new Response();
-
-      foreach (ScopeApplication app in scope.Applications)
+      Status status = new Status()
       {
-        response.Append(Generate(scope.Name, app.Name));
+        Identifier = scope.Name
+      };
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        foreach (ScopeApplication app in scope.Applications)
+        {
+          response.Append(Generate(scope.Name, app.Name));
+        }
+
+        status.Messages.Add("Artifacts are generated successfully.");
+      }
+      catch (Exception ex)
+      {
+        string error = String.Format("Error generating application artifacts, {0}", ex);
+        _logger.Error(error);
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(error);
       }
 
       return response;
