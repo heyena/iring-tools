@@ -475,15 +475,25 @@ namespace org.iringtools.web.controllers
 
     public JsonResult Scope(FormCollection form)
     {
-      string success = _repository.UpdateScope(form["name"], form["description"]);
+      string success = String.Empty;
+
+      if (String.IsNullOrEmpty(form["scope"]))
+      {
+        success = _repository.AddScope(form["name"], form["description"]);
+      }
+      else
+      {
+        success = _repository.UpdateScope(form["scope"], form["name"], form["description"]);
+      }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult Application(FormCollection form)
     {
+      string success = String.Empty;
       string scopeName = form["Scope"];
-
+      
       ScopeApplication application = new ScopeApplication()
       {
         Name = form["Name"],
@@ -491,7 +501,14 @@ namespace org.iringtools.web.controllers
         Assembly = form["assembly"]
       };
 
-      string success = _repository.UpdateApplication(scopeName, application);
+      if (String.IsNullOrEmpty(form["Application"]))
+      {
+        success = _repository.AddApplication(scopeName, application);
+      }
+      else
+      {
+        success = _repository.UpdateApplication(scopeName, form["Application"], application);
+      }
 
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }

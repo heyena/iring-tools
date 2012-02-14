@@ -20,6 +20,11 @@ namespace org.iringtools.library
   [DataContract(Name = "scope", Namespace = "http://www.iringtools.org/library")]
   public class ScopeProject
   {
+    public ScopeProject()
+    {
+      Applications = new ScopeApplications();
+    }
+
     /// <summary>
     /// The name of the project
     /// </summary>
