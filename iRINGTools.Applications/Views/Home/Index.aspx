@@ -1,16 +1,23 @@
 ﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<dynamic>" %>
+
+<% 
+    string major = typeof(org.iringtools.web.controllers.HomeController).Assembly.GetName().Version.Major.ToString();
+    string minor = typeof(org.iringtools.web.controllers.HomeController).Assembly.GetName().Version.Minor.ToString("00");
+    string patch = typeof(org.iringtools.web.controllers.HomeController).Assembly.GetName().Version.Build.ToString("00");
+%>
+
 <html>
   <head>
     <meta http-equiv="Cache-Control" content="no-cache"/>
     <meta http-equiv="Pragma" content="no-cache"/>
     <meta http-equiv="Expires" content="0"/>
     <link rel="stylesheet" type="text/css" href="<%=ResolveUrl("~/content/css/iring-tools.css") %>"/>
-    <title>iRINGTools Version 2.02.00</title>
+    <title>iRINGTools Version <%=major %>.<%=minor %>.<%=patch %></title>
   </head>
   <body>
     <div class="banner">
     <h1>
-      <img src="<%=ResolveUrl("~/content/img/iring-tools-logo.png") %>" />&nbsp; Version 2.03.00</h1>
+      <img src="<%=ResolveUrl("~/content/img/iring-tools-logo.png") %>" />&nbsp; Version <%=major%>.<%=minor %>.<%=patch %></h1>
     </div>      
     <div class="main">
       <p>iRINGTools is a set of free, public domain, open source (BSD 3 license) software applications and utilities that 
