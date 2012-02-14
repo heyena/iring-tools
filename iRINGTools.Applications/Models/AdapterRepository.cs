@@ -197,8 +197,8 @@ namespace iRINGTools.Web.Models
             new XAttribute("name", "DataLayer"),
             new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
             new XAttribute("to", dataLayer)
-        )
-    );
+          )
+        );
 
         obj = _adapterServiceClient.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
 
@@ -227,7 +227,7 @@ namespace iRINGTools.Web.Models
       return dataLayer;
     }
 
-    public string UpdateScope(string name, string description)
+    public string AddScope(string name, string description)
     {
       string obj = null;
 
@@ -240,6 +240,29 @@ namespace iRINGTools.Web.Models
         };
 
         obj = _adapterServiceClient.Post<ScopeProject>("/scopes", scope, true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+      }
+
+      return obj;
+    }
+
+    public string UpdateScope(string name, string newName, string newDescription)
+    {
+      string obj = null;
+
+      try
+      {
+        ScopeProject scope = new ScopeProject()
+        {
+          Name = newName,
+          Description = newDescription
+        };
+
+        string uri = string.Format("/scopes/{0}", name);
+        obj = _adapterServiceClient.Post<ScopeProject>(uri, scope, true);
       }
       catch (Exception ex)
       {
@@ -266,13 +289,30 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string UpdateApplication(string scopeName, ScopeApplication application)
+    public string AddApplication(string scopeName, ScopeApplication application)
     {
       string obj = null;
 
       try
       {
-        string uri = String.Format("/scopes/{0}", scopeName);
+        string uri = String.Format("/scopes/{0}/apps", scopeName);
+        obj = _adapterServiceClient.Post<ScopeApplication>(uri, application, true);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+      }
+
+      return obj;
+    }
+
+    public string UpdateApplication(string scopeName, string applicationName, ScopeApplication application)
+    {
+      string obj = null;
+
+      try
+      {
+        string uri = String.Format("/scopes/{0}/apps/{1}", scopeName, applicationName);
         obj = _adapterServiceClient.Post<ScopeApplication>(uri, application, true);
       }
       catch (Exception ex)
@@ -289,7 +329,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        string uri = String.Format("/scopes/{0}/{1}/delete", scopeName, applicationName);
+        string uri = String.Format("/scopes/{0}/apps/{1}/delete", scopeName, applicationName);
         obj = _adapterServiceClient.Get<string>(uri, true);
       }
       catch (Exception ex)
@@ -502,7 +542,7 @@ namespace iRINGTools.Web.Models
 
     public Response RegenAll()
     {
-      return _hibernateServiceClient.Get<Response>("/regen");
+      return _adapterServiceClient.Get<Response>("/generate");
     }
     #endregion
   }

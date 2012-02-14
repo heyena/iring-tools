@@ -48,7 +48,8 @@ using System.Reflection;
 using System.ServiceModel.Web;
 using net.java.dev.wadl;
 using System.Globalization;
-
+using org.iringtools.nhibernate;
+using org.iringtools.adapter.datalayer;
 
 namespace org.iringtools.adapter
 {
@@ -165,7 +166,7 @@ namespace org.iringtools.adapter
       };
     }
 
-    public Response UpdateScope(ScopeProject scope)
+    public Response AddScope(ScopeProject scope)
     {
       Response response = new Response();
       Status status = new Status();
@@ -174,26 +175,80 @@ namespace org.iringtools.adapter
 
       try
       {
-        bool found = false;
+        ScopeProject sc = _scopes.Find(x => x.Name.ToLower() == scope.Name.ToLower());
 
-        foreach (ScopeProject sc in _scopes)
-        {
-          if (sc.Name.ToLower() == scope.Name.ToLower())
-          {
-            sc.Name = scope.Name;
-            sc.Description = scope.Description;
-            found = true;
-            break;
-          }
-        }
-
-        if (!found)
+        if (sc == null)
         {
           _scopes.Add(scope);
+          Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+          status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
         }
+        else
+        {
+          status.Level = StatusLevel.Error;
+          status.Messages.Add(String.Format("Scope [{0}] already exists.", scope.Name));
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
 
-        Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
-        status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
+      }
+
+      return response;
+    }
+
+    public Response UpdateScope(string scopeName, ScopeProject scope)
+    {
+      Response response = new Response();
+      Status status = new Status();
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        ScopeProject sc = _scopes.Find(x => x.Name.ToLower() == scopeName.ToLower());
+
+        if (sc == null)
+        {
+          status.Level = StatusLevel.Error;
+          status.Messages.Add(String.Format("Scope [{0}] does not exist.", scope.Name));
+        }
+        else
+        {
+          //
+          // add new scope and move applications in the existing scope to the new one
+          //
+          AddScope(scope);
+
+          if (sc.Applications != null)
+          {
+            foreach (ScopeApplication app in sc.Applications)
+            {
+              //
+              // copy database dictionary
+              //
+              string path = _settings["AppDataPath"];
+              string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, app.Name);
+
+              if (File.Exists(currDictionaryPath))
+              {
+                string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scope.Name, app.Name);
+                File.Copy(currDictionaryPath, updatedDictionaryPath);
+              }
+              
+              AddApplication(scope.Name, app);
+            }
+          }
+
+          // delete old scope
+          DeleteScope(scopeName);
+
+          Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+          status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
+        }
       }
       catch (Exception ex)
       {
@@ -215,25 +270,31 @@ namespace org.iringtools.adapter
 
       try
       {
-        bool found = false;
+        ScopeProject sc = _scopes.Find(x => x.Name.ToLower() == scopeName.ToLower());
 
-        foreach (ScopeProject sc in _scopes)
-        {
-          if (sc.Name.ToLower() == scopeName.ToLower())
-          {
-            _scopes.Remove(sc);
-            found = true;
-            break;
-          }
-        }
-
-        if (!found)
+        if (sc == null)
         {
           status.Level = StatusLevel.Error;
           status.Messages.Add(String.Format("Scope [{0}] not found.", scopeName));
         }
-        else
+        else 
         {
+          //
+          // delete all applications under scope
+          //
+          if (sc.Applications != null)
+          {
+            for (int i = 0; i < sc.Applications.Count; i++)
+            {
+              ScopeApplication app = sc.Applications[i];
+              DeleteApplicationArtifacts(sc.Name, app.Name);
+              sc.Applications.RemoveAt(i--);
+            }
+          }
+
+          // remove scope from scope list
+          _scopes.Remove(sc);
+
           Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
           status.Messages.Add(String.Format("Scope [{0}] deleted successfully.", scopeName));
         }
@@ -249,7 +310,136 @@ namespace org.iringtools.adapter
       return response;
     }
 
-    public Response UpdateApplication(string scopeName, ScopeApplication application)
+    public Response AddApplication(string scopeName, ScopeApplication application)
+    {
+      Response response = new Response();
+      Status status = new Status();
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        ScopeProject scope = _scopes.FirstOrDefault<ScopeProject>(o => o.Name.ToLower() == scopeName.ToLower());
+
+        if (scope == null)
+        {
+          throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
+        }
+
+        //
+        // update binding configurations
+        //
+        string adapterBindingConfigPath = String.Format("{0}BindingConfiguration.Adapter.xml",
+          _settings["AppDataPath"], scope.Name, application.Name);
+
+        if (File.Exists(adapterBindingConfigPath))
+        {
+          XElement adapterBindingConfig = XElement.Load(adapterBindingConfigPath);
+
+          //
+          // update authorization binding
+          //
+          foreach (XElement bindElement in adapterBindingConfig.Elements("bind"))
+          {
+            if (bindElement.Attribute("name").Value == "IdentityLayer")
+            {
+              XAttribute toAttribute = bindElement.Attribute("to");
+              XElement authorizationBinding = null;
+
+              if (toAttribute.Value.ToString().Contains(typeof(AnonymousIdentityProvider).FullName))
+              {
+                authorizationBinding = new XElement("module",
+                  new XAttribute("name", "AuthorizationBinding" + "." + scope.Name + "." + application.Name),
+                  new XElement("bind",
+                    new XAttribute("name", "AuthorizationBinding"),
+                    new XAttribute("service", "org.iringtools.nhibernate.IAuthorization, NHibernateLibrary"),
+                    new XAttribute("to", "org.iringtools.nhibernate.ext.EveryoneAuthorization, NHibernateExtension")
+                  )
+                );
+              }
+              else  // default to NHibernate Authorization
+              {
+                authorizationBinding = new XElement("module",
+                  new XAttribute("name", "AuthorizationBinding" + "." + scope.Name + "." + application.Name),
+                  new XElement("bind",
+                    new XAttribute("name", "AuthorizationBinding"),
+                    new XAttribute("service", "org.iringtools.nhibernate.IAuthorization, NHibernateLibrary"),
+                    new XAttribute("to", "org.iringtools.nhibernate.ext.NHibernateAuthorization, NHibernateExtension")
+                  )
+                );
+              }
+
+              authorizationBinding.Save(String.Format("{0}AuthorizationBindingConfiguration.{1}.{2}.xml",
+                  _settings["AppDataPath"], scope.Name, application.Name));
+            }
+
+            break;
+          }
+
+          //
+          // update summary binding
+          //
+          XElement summaryBinding = new XElement("module",
+            new XAttribute("name", "SummaryBinding" + "." + scope.Name + "." + application.Name),
+            new XElement("bind",
+              new XAttribute("name", "SummaryBinding"),
+              new XAttribute("service", "org.iringtools.nhibernate.ISummary, NHibernateLibrary"),
+              new XAttribute("to", "org.iringtools.nhibernate.ext.NHibernateSummary, NHibernateExtension")
+            )
+          );
+
+          summaryBinding.Save(String.Format("{0}SummaryBindingConfiguration.{1}.{2}.xml",
+              _settings["AppDataPath"], scope.Name, application.Name));
+
+          //
+          // update data layer binding
+          //
+          if (!String.IsNullOrEmpty(application.Assembly))
+          {
+            XElement dataLayerBinding = new XElement("module",
+              new XAttribute("name", "DataLayerBinding" + "." + scope.Name + "." + application.Name),
+              new XElement("bind",
+                new XAttribute("name", "DataLayer"),
+                new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+                new XAttribute("to", application.Assembly)
+              )
+            );
+
+            dataLayerBinding.Save(String.Format("{0}BindingConfiguration.{1}.{2}.xml",
+                _settings["AppDataPath"], scope.Name, application.Name));
+          }
+        }
+        else
+        {
+          throw new Exception("Adapter binding configuration not found.");
+        }
+
+        //
+        // now add scope to scopes.xml
+        //
+        if (scope.Applications == null)
+        {
+          scope.Applications = new ScopeApplications();
+        }
+
+        scope.Applications.Add(application);
+        Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+
+        response.Append(Generate(scope.Name, application.Name));
+        status.Messages.Add("Application [{0}.{1}] updated successfully.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, application.Name, ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, application.Name, ex));
+      }
+
+      return response;
+    }
+
+    public Response UpdateApplication(string scopeName, string appName, ScopeApplication updatedApp)
     {
       Response response = new Response();
       Status status = new Status();
@@ -266,113 +456,28 @@ namespace org.iringtools.adapter
           throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
         }
 
-        // check if this application exists in the scope
-        ScopeApplication updatedApp = null;
-
-        if (scope.Applications == null)
+        ScopeApplication application = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name.ToLower() == appName.ToLower());
+        
+        if (application != null)  // application exists, delete and re-create it
         {
-          scope.Applications = new ScopeApplications();
-        }
-        else
-        {
-          updatedApp = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name.ToLower() == application.Name.ToLower());
-        }
-
-        if (updatedApp != null)  // application exists, update it
-        {
-          updatedApp.Name = application.Name;
-          updatedApp.Description = application.Description;
-          updatedApp.Assembly = application.Assembly;
-        }
-        else  // application does not exist, create it
-        {
-          scope.Applications.Add(application);
-          updatedApp = application;
-        }
-
-        //
-        // create/update binding configurations
-        //
-        string adapterBindingConfigPath = String.Format("{0}BindingConfiguration.Adapter.xml",
-          _settings["AppDataPath"], scope.Name, updatedApp.Name);
-
-        if (File.Exists(adapterBindingConfigPath))
-        {
-          XElement adapterBindingConfig = XElement.Load(adapterBindingConfigPath);
-
           //
-          // create/update authorization binding
+          // copy database dictionary
           //
-          foreach (XElement bindElement in adapterBindingConfig.Elements("bind"))
+          string path = _settings["AppDataPath"];          
+          string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, appName);
+          
+          if (File.Exists(currDictionaryPath))
           {
-            if (bindElement.Attribute("name").Value == "IdentityLayer")
-            {
-              XAttribute toAttribute = bindElement.Attribute("to");
-              XElement authorizationBinding = null;
-
-              if (toAttribute.Value.ToString().Contains(typeof(AnonymousIdentityProvider).FullName))
-              {
-                authorizationBinding = new XElement("module",
-                  new XAttribute("name", "AuthorizationBinding" + "." + scope.Name + "." + updatedApp.Name),
-                  new XElement("bind",
-                    new XAttribute("name", "AuthorizationBinding"),
-                    new XAttribute("service", "org.iringtools.nhibernate.IAuthorization, NHibernateLibrary"),
-                    new XAttribute("to", "org.iringtools.nhibernate.ext.EveryoneAuthorization, NHibernateExtension")
-                  )
-                );
-              }
-              else  // default to NHibernate Authorization
-              {
-                authorizationBinding = new XElement("module",
-                  new XAttribute("name", "AuthorizationBinding" + "." + scope.Name + "." + updatedApp.Name),
-                  new XElement("bind",
-                    new XAttribute("name", "AuthorizationBinding"),
-                    new XAttribute("service", "org.iringtools.nhibernate.IAuthorization, NHibernateLibrary"),
-                    new XAttribute("to", "org.iringtools.nhibernate.ext.NHibernateAuthorization, NHibernateExtension")
-                  )
-                );
-              }
-
-              authorizationBinding.Save(String.Format("{0}AuthorizationBindingConfiguration.{1}.{2}.xml",
-                _settings["AppDataPath"], scope.Name, updatedApp.Name));
-            }
-
-            break;
+            string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, updatedApp.Name);
+            File.Copy(currDictionaryPath, updatedDictionaryPath);
           }
 
-          //
-          // create/update summary binding
-          //
-          XElement summaryBinding = new XElement("module",
-            new XAttribute("name", "SummaryBinding" + "." + scope.Name + "." + updatedApp.Name),
-            new XElement("bind",
-              new XAttribute("name", "SummaryBinding"),
-              new XAttribute("service", "org.iringtools.nhibernate.ISummary, NHibernateLibrary"),
-              new XAttribute("to", "org.iringtools.nhibernate.ext.NHibernateSummary, NHibernateExtension")
-            )
-          );
-
-          summaryBinding.Save(String.Format("{0}SummaryBindingConfiguration.{1}.{2}.xml",
-                _settings["AppDataPath"], scope.Name, updatedApp.Name));
-
-          //
-          // create/update data layer binding
-          //
-          XElement dataLayerBinding = new XElement("module",
-            new XAttribute("name", "DataLayerBinding" + "." + scope.Name + "." + updatedApp.Name),
-            new XElement("bind",
-              new XAttribute("name", "DataLayer"),
-              new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-              new XAttribute("to", updatedApp.Assembly)
-            )
-          );
-
-          dataLayerBinding.Save(String.Format("{0}BindingConfiguration.{1}.{2}.xml",
-              _settings["AppDataPath"], scope.Name, updatedApp.Name));
+          DeleteApplication(scopeName, appName);
+          AddApplication(scopeName, updatedApp);
         }
-        else
+        else  // application does not exist, stop processing
         {
-          throw new Exception("Adapter binding configuration not found.");
+          throw new Exception(String.Format("Application [{0}.{1}] not found.", scopeName, appName));
         }
 
         Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
@@ -380,10 +485,10 @@ namespace org.iringtools.adapter
       }
       catch (Exception ex)
       {
-        _logger.Error(string.Format("Error updating application [{0}{1}]: {2}", scopeName, application.Name, ex));
+        _logger.Error(string.Format("Error updating application [{0}.{1}]: {2}", scopeName, updatedApp.Name, ex));
 
         status.Level = StatusLevel.Error;
-        status.Messages.Add(string.Format("Error updating application [{0}{1}]: {2}", scopeName, application.Name, ex));
+        status.Messages.Add(string.Format("Error updating application [{0}.{1}]: {2}", scopeName, updatedApp.Name, ex));
       }
 
       return response;
@@ -402,16 +507,16 @@ namespace org.iringtools.adapter
 
         foreach (ScopeProject sc in _scopes)
         {
-          if (sc.Name.ToLower() == scopeName.ToLower())
+          if (sc.Name.ToLower() == scopeName.ToLower() && sc.Applications != null)
           {
-            foreach (ScopeApplication app in sc.Applications)
+            for (int i = 0; i < sc.Applications.Count; i++)
             {
+              ScopeApplication app = sc.Applications[i];
+
               if (app.Name.ToLower() == appName.ToLower())
               {
-                sc.Applications.Remove(app);
-
-                //TODO: delete application artifacts
-
+                DeleteApplicationArtifacts(sc.Name, app.Name);
+                sc.Applications.RemoveAt(i--);
                 found = true;
                 break;
               }
@@ -442,6 +547,217 @@ namespace org.iringtools.adapter
 
       return response;
     }
+
+    // delete all application artifacts except for its mapping
+    private void DeleteApplicationArtifacts(string scopeName, string appName)
+    {
+      string path = _settings["AppDataPath"]; 
+      string context = scopeName + "." + appName;
+
+      string authorizationPath = String.Format("{0}Authorization.{1}.xml", path, context);
+      if (File.Exists(authorizationPath))
+      {
+        File.Delete(authorizationPath);
+      }
+
+      string authorizationBindingPath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml", path, context);
+      if (File.Exists(authorizationBindingPath))
+      {
+        File.Delete(authorizationBindingPath);
+      }
+
+      string bindingConfigurationPath = String.Format("{0}BindingConfiguration.{1}.xml", path, context);
+      if (File.Exists(bindingConfigurationPath))
+      {
+        File.Delete(bindingConfigurationPath);
+      }
+
+      string databaseDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", path, context);
+      if (File.Exists(databaseDictionaryPath))
+      {
+        File.Delete(databaseDictionaryPath);
+      }
+
+      string dataDictionaryPath = String.Format("{0}DataDictionary.{1}.xml", path, context);
+      if (File.Exists(dataDictionaryPath))
+      {
+        File.Delete(dataDictionaryPath);
+      }
+
+      string nhConfigPath = String.Format("{0}nh-configuration.{1}.xml", path, context);
+      if (File.Exists(nhConfigPath))
+      {
+        File.Delete(nhConfigPath);
+      }
+
+      string nhMappingPath = String.Format("{0}nh-mapping.{1}.xml", path, context);
+      if (File.Exists(nhConfigPath))
+      {
+        File.Delete(nhConfigPath);
+      }
+
+      string summaryBindingConfigurationPath = String.Format("{0}SummaryBindingConfiguration.{1}.xml", path, context);
+      if (File.Exists(summaryBindingConfigurationPath))
+      {
+        File.Delete(summaryBindingConfigurationPath);
+      }
+
+      string summaryConfigPath = String.Format("{0}SummaryConfig.{1}.xml", path, context);
+      if (File.Exists(summaryConfigPath))
+      {
+        File.Delete(summaryConfigPath);
+      }
+
+      string appCodePath = String.Format("{0}Model.{1}.cs", _settings["AppCodePath"], context);
+      if (File.Exists(appCodePath))
+      {
+        File.Delete(appCodePath);
+      }
+    }
+
+    #region Generate methods
+    public Response Generate()
+    {
+      Response response = new Response();
+      Status status = new Status()
+      {
+        Identifier = "All"
+      };
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        foreach (ScopeProject scope in _scopes)
+        {
+          response.Append(Generate(scope));
+        }
+
+        status.Messages.Add("Artifacts are generated successfully.");
+      }
+      catch (Exception ex)
+      {
+        string error = String.Format("Error generating application artifacts, {0}", ex);
+        _logger.Error(error);
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(error);
+      }
+
+      return response;
+    }
+
+    public Response Generate(string scope)
+    {
+      foreach (ScopeProject sc in _scopes)
+      {
+        if (sc.Name.ToLower() == scope.ToLower())
+        {
+          return Generate(sc);
+        }
+      }
+
+      Response response = new Response()
+      {
+        Level = StatusLevel.Warning,
+        Messages = new Messages()
+        {
+          "Scope [" + scope + "] not found."
+        }
+      };
+
+      return response;
+    }
+
+    private Response Generate(ScopeProject scope)
+    {
+      Response response = new Response();
+
+      foreach (ScopeApplication app in scope.Applications)
+      {
+        response.Append(Generate(scope.Name, app.Name));
+      }
+
+      return response;
+    }
+
+    public Response Generate(string scopeName, string appName)
+    {
+      Response response = new Response();
+      Status status = new Status()
+      {
+        Identifier = scopeName + "." + appName
+      };
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        InitializeScope(scopeName, appName);
+
+        ScopeProject scope = _scopes.FirstOrDefault<ScopeProject>(o => o.Name.ToLower() == scopeName.ToLower());
+
+        if (scope == null)
+        {
+          throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
+        }
+
+        if (scope.Applications == null)
+        {
+          throw new Exception(String.Format("No applications found in scope [{0}].", scopeName));
+        }
+
+        ScopeApplication application = scope.Applications.Find(o => o.Name.ToLower() == appName.ToLower());
+        if (scope.Applications == null)
+        {
+          throw new Exception(String.Format("Application [{0}.{1}] not found.", scopeName, appName));
+        }
+
+        string path = _settings["AppDataPath"];
+        string context = scope.Name + "." + application.Name;
+        string bindingPath = String.Format("{0}BindingConfiguration.{1}.xml", path, context);
+        XElement binding = XElement.Load(bindingPath);
+
+        if (binding.Element("bind").Attribute("to").Value.Contains(typeof(NHibernateDataLayer).Name))
+        {
+          string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", path, context);
+          DatabaseDictionary dbDictionary = null;
+
+          if (File.Exists(dbDictionaryPath))
+          {
+            dbDictionary = NHibernateUtility.LoadDatabaseDictionary(dbDictionaryPath);
+          }
+
+          if (dbDictionary != null && dbDictionary.dataObjects != null)
+          {
+            EntityGenerator generator = _kernel.Get<EntityGenerator>();
+
+            string compilerVersion = "v4.0";
+            if (!String.IsNullOrEmpty(_settings["CompilerVersion"]))
+            {
+              compilerVersion = _settings["CompilerVersion"];
+            }
+
+            response.Append(generator.Generate(compilerVersion, dbDictionary, scope.Name, application.Name));
+          }
+          else
+          {
+            status.Level = StatusLevel.Warning;
+            status.Messages.Add(string.Format("Database dictionary [{0}.{1}] does not exist.", scopeName, application.Name));
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, appName, ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, appName, ex));
+      }
+
+      return response;
+    }
+    #endregion Generate methods
 
     public XElement GetBinding(string projectName, string applicationName)
     {
