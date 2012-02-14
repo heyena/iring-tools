@@ -267,7 +267,16 @@ namespace org.iringtools.adapter
         }
 
         // check if this application exists in the scope
-        ScopeApplication updatedApp = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name.ToLower() == application.Name.ToLower());
+        ScopeApplication updatedApp = null;
+
+        if (scope.Applications == null)
+        {
+          scope.Applications = new ScopeApplications();
+        }
+        else
+        {
+          updatedApp = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name.ToLower() == application.Name.ToLower());
+        }
 
         if (updatedApp != null)  // application exists, update it
         {
