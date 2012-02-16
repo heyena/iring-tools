@@ -64,6 +64,7 @@
             items: [
               { name: 'path', xtype: 'hidden', value: path, allowBlank: false },
               { name: 'state', xtype: 'hidden', value: state, allowBlank: false },
+              { name: 'oldContext', xtype: 'hidden', value: context, allowBlank: false },
               { fieldLabel: 'Folder name', name: 'folderName', xtype: 'textfield', value: name, allowBlank: false },
               { fieldLabel: 'Context name', name: 'contextName', xtype: 'textfield', value: context, allowBlank: false },
               { fieldLabel: 'Description', name: 'Description', allowBlank: true, xtype: 'textarea', value: description }

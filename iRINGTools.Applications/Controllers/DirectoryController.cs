@@ -447,11 +447,12 @@ namespace org.iringtools.web.controllers
         return Json(container, JsonRequestBehavior.AllowGet);
     }
 
+
     public JsonResult Folder(FormCollection form)
     {
       string success;
       string user = GetUserId((IDictionary<string, string>)_allClaims);
-      success = _repository.Folder(form["foldername"], form["description"], form["path"], form["state"], form["contextName"], user);
+      success = _repository.Folder(form["foldername"], form["description"], form["path"], form["state"], form["contextName"], form["oldContext"], user);
       
       if (success == "ERROR")
       {
@@ -466,7 +467,7 @@ namespace org.iringtools.web.controllers
     {
       string success;
       string user = GetUserId((IDictionary<string, string>)_allClaims);
-      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["assembly"], form["baseUrl"], user);
+      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["assembly"], form["baseUrl"], form["oldBaseUrl"], user);
 
       if (success == "ERROR")
       {
