@@ -6,7 +6,7 @@ A minor release of iRINGTools 2.3 that includes new features.
 
 There are 4 packages:
 
- * iRINGTools Adapter - The original C#-based iRINGTools web applications and services, some apps have been consolidated into the new AdapterManager.  This requires IIS6 or higher with .NET 4.0 on Windows.
+ * iRINGTools Adapter - The original C#-based iRINGTools web applications and services.  This requires IIS6 or higher with .NET 4.0 on Windows.
  * iRINGTools Adapter Utils - The C#-based Utils folder has been removed from the Adapter package, for convenience. This requires .NET 4.0 on Windows.
  * iRINGTools Core - The Java-based web applications and services for centralized Directory, Reference Data, Comparison and Exchange services. This requires Java and Apache Tomcat 6 on any OS.
  * iRINGTools Core Utils - A new Java-based encryption utility.  This requires Java on any OS.
