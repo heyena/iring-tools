@@ -70,8 +70,16 @@ namespace org.iringtools.utility
     private Encoding encoding = Encoding.UTF8;
 
     public WebHttpClient(string baseUri)
-      : this(baseUri, String.Empty, String.Empty, String.Empty)
     {
+      _baseUri = baseUri;
+
+      object accessToken = ConfigurationManager.AppSettings["AccessToken"];
+      if (accessToken != null)
+        _accessToken = accessToken.ToString();
+
+      object appKey = ConfigurationManager.AppSettings["AppKey"];
+      if (appKey != null)
+        _appKey = appKey.ToString();
     }
 
     public WebHttpClient(string baseUri, string userName, string password)
@@ -80,9 +88,8 @@ namespace org.iringtools.utility
     }
 
     public WebHttpClient(string baseUri, string userName, string password, string domain)
+      : this(baseUri)
     {
-      _baseUri = baseUri;
-
       if (userName != String.Empty && userName != null && domain != String.Empty && domain != null)
       {
         _credentials = new NetworkCredential(userName, password, domain);
@@ -94,9 +101,8 @@ namespace org.iringtools.utility
     }
 
     public WebHttpClient(string baseUri, string proxyUserName, string proxyPassword, string proxyDomain, string proxyHost, int proxyPort)
+      : this(baseUri)
     {
-      _baseUri = baseUri;
-
       if (proxyHost != String.Empty && proxyHost != null)
       {
         if (proxyUserName != String.Empty && proxyUserName != null && proxyDomain != String.Empty && proxyDomain != null)
@@ -114,9 +120,8 @@ namespace org.iringtools.utility
     }
 
     public WebHttpClient(string baseUri, NetworkCredential credentials, string proxyHost, int proxyPort, NetworkCredential proxyCredentials)
+      : this(baseUri)
     {
-      _baseUri = baseUri;
-
       _credentials = credentials;
 
       if (proxyHost != String.Empty && proxyHost != null)
@@ -127,18 +132,16 @@ namespace org.iringtools.utility
     }
 
     public WebHttpClient(string baseUri, NetworkCredential credentials, IWebProxy webProxy)
+      : this(baseUri)
     {
-      _baseUri = baseUri;
-
       _credentials = credentials;
       _proxy = webProxy;
     }
 
     public WebHttpClient(string baseUri, NetworkCredential credentials)
+      : this(baseUri)
     {
-      this._baseUri = baseUri;
-
-      this._credentials = credentials;
+      _credentials = credentials;
     }
 
     public string AccessToken
