@@ -303,24 +303,24 @@ namespace iRINGTools.Web.Models
       return baseUrls;
     }
 
-    public string Folder(string newFolderName, string description, string path, string state, string context, string user)
+    public string Folder(string newFolderName, string description, string path, string state, string context, string oldContext, string user)
     {
-      string obj = null;      
+      string obj = null;
 
       if (state == "new")
       {
         if (path != "")
           path = path + '.' + newFolderName;
         else
-          path = newFolderName;
+          path = newFolderName;        
       }
-
-      path = path.Replace('/', '.');      
+     
+      path = path.Replace('/', '.');       
 
       try
       {
         if (state != "new")        
-          CheckCombination(path, context, user);       
+          CheckCombination(path, context, oldContext, user);       
 
         obj = _javaCoreClient.PostMessage(string.Format("/directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
         _logger.Debug("Successfully called Adapter.");
@@ -336,7 +336,7 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string assembly, string baseUrl, string user)
+    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string assembly, string baseUrl, string oldBaseUrl, string user)
     {
       string obj = null;
       string endpointName = null;
@@ -356,7 +356,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        CheckeCombination(baseUrl, context, endpointName, path);
+        CheckeCombination(baseUrl, oldBaseUrl, context, context, newEndpointName, endpointName, path);
         obj = _javaCoreClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}", path, newEndpointName, "endpoint", baseUrl), description, true);
         _logger.Debug("Successfully called Adapter.");
         ClearDirSession(user);
@@ -422,34 +422,50 @@ namespace iRINGTools.Web.Models
         HttpContext.Current.Session[user + "." + "directory"] = null;
     }
 
-    private void CheckeCombination(string baseUrl, string context, string endpointName, string path)
+    private void CheckeCombination(string baseUrl, string oldBaseUrl, string context, string oldContext, string endpointName, string oldEndpointName, string path)
     {
-      string sessionKey = baseUrl + "." + context + "." + endpointName;
+      string newSessionKey = baseUrl + "." + context + "." + endpointName;
+      string oldSessionKey = oldBaseUrl + "." + oldContext + "." + oldEndpointName;
       string getPath = "";
 
-      if (HttpContext.Current.Session[sessionKey] != null)
-        getPath = HttpContext.Current.Session[sessionKey].ToString();
-
-      if (getPath == "")
-        HttpContext.Current.Session[sessionKey] = path;
-      else if (getPath != path)
+      if (!newSessionKey.Equals(oldSessionKey))
       {
-        combinationMsg = "The combination of (" + baseUrl.Replace(".", "/") + ", " + context + ", " + endpointName + ") at " + path.Replace(".", "/") + " is allready existed at " + getPath.Replace(".", "/") + ".";
-        _logger.Error("Duplicated combination of baseUrl, context, and endpoint name");
-        throw new Exception("Duplicated combination of baseUrl, context, and endpoint name");
+        if (HttpContext.Current.Session[oldSessionKey] != null)
+        {
+          HttpContext.Current.Session[oldSessionKey] = null;
+        }
       }
+        
+      if (HttpContext.Current.Session[newSessionKey] != null)
+      {
+        getPath = HttpContext.Current.Session[newSessionKey].ToString();
+
+        if (getPath == "")
+          HttpContext.Current.Session[newSessionKey] = path;
+        else if (!getPath.Equals(path))
+        {
+          combinationMsg = "The combination of (" + baseUrl.Replace(".", "/") + ", " + context + ", " + endpointName + ") at " + path.Replace(".", "/") + " is allready existed at " + getPath.Replace(".", "/") + ".";
+          _logger.Error("Duplicated combination of baseUrl, context, and endpoint name");
+          throw new Exception("Duplicated combination of baseUrl, context, and endpoint name");
+        }
+      }
+      else
+      {
+        HttpContext.Current.Session[newSessionKey] = path;
+      } 
     }
 
-    private void CheckCombination(Folder folder, string path, string context)
+    private void CheckCombination(Folder folder, string path, string context, string oldContext)
     {
       Endpoints endpoints = folder.endpoints;
+      string endpointPath = "";
 
       if (endpoints != null)
       {
         foreach (Endpoint endpoint in endpoints)
         {
-          path = path + "." + endpoint.Name;
-          CheckeCombination(endpoint.baseUrl, context, endpoint.Name, path);
+          endpointPath = path + "." + endpoint.Name;
+          CheckeCombination(endpoint.baseUrl, endpoint.baseUrl, context, oldContext, endpoint.Name, endpoint.Name, endpointPath);
         }
       }
 
@@ -462,19 +478,19 @@ namespace iRINGTools.Web.Models
         foreach (Folder subFolder in subFolders)
         {
           path = path + "." + subFolder.Name;
-          CheckCombination(subFolder, path, context);
+          CheckCombination(subFolder, path, context, oldContext);
         }
       }
     }
 
-    private void CheckCombination(string path, string context, string user)
+    private void CheckCombination(string path, string context, string oldContext, string user)
     {
       string _key = user + "." + "directory";
       if (HttpContext.Current.Session[_key] != null)
       {
         Directories directory = (Directories)HttpContext.Current.Session[_key];
         Folder folder = FindFolder(directory, path);
-        CheckCombination(folder, path, context);
+        CheckCombination(folder, path, context, oldContext);
       }
     }
 
@@ -524,8 +540,13 @@ namespace iRINGTools.Web.Models
 
       foreach (Folder folder in scopes)
       {
-        if (folder.Name == level[0])
-          return TraverseGetFolders(folder, level, 0);
+        if (folder.Name.Equals(level[0]))
+        {
+          if (level.Length == 1)
+            return folder.folders;
+          else
+            return TraverseGetFolders(folder, level, 0);
+        }
       }
       return null;
     }

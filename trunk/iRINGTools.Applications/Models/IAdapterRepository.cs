@@ -27,11 +27,11 @@ namespace iRINGTools.Web.Models
 
     Entity GetClassLabel(string classId);
 
-    string Folder(string newFolderName, string description, string path, string state, string context, string user);
+    string Folder(string newFolderName, string description, string path, string state, string context, string oldContext, string user);
 
     string DeleteEntry(string path, string user);
 
-    string Endpoint(string newEndpointName, string path, string description, string states, string context, string assembly, string baseUrl, string user);
+    string Endpoint(string newEndpointName, string path, string description, string states, string context, string assembly, string baseUrl, string oldBaseUrl, string user);
 
     string GetNodeIconCls(string type);
 
