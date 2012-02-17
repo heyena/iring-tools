@@ -68,11 +68,6 @@
     <Compile Include="RegistryResult.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
       <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
       <Name>iRINGLibrary</Name>
