@@ -2440,7 +2440,7 @@ namespace org.iringtools.refdata
                           GenerateRoleCount(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
                         }
                       }
-                      //// TODO need to work out howto correctly handle specializations
+      
                       foreach (Specialization ns in newTQ.specialization)
                       {
                         Specialization os = oldTQ.specialization.FirstOrDefault();
