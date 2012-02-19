@@ -2026,1637 +2026,1042 @@ namespace org.iringtools.refdata
 
         public Response PostTemplate(QMXF qmxf)
         {
-            Graph delete = new Graph();
-            Graph insert = new Graph();
-            //add namespaces to graphs 
-            delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
-            delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
-            delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
-            delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
-            delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
-            insert.NamespaceMap.Import(delete.NamespaceMap);
+          Graph delete = new Graph();
+          Graph insert = new Graph();
+          //add namespaces to graphs 
+          delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+          delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
+          delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
+          delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
+          delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+          insert.NamespaceMap.Import(delete.NamespaceMap);
 
-            Response response = new Response();
-            response.Level = StatusLevel.Success;
-            Repository repository = null;
-            bool qn = false;
-            try
+          Response response = new Response();
+          response.Level = StatusLevel.Success;
+          Repository repository = null;
+          bool qn = false;
+          try
+          {
+            repository = GetRepository(qmxf.targetRepository);
+            if (repository == null || repository.IsReadOnly)
             {
-                repository = GetRepository(qmxf.targetRepository);
-                if (repository == null || repository.IsReadOnly)
+              Status status = new Status();
+              status.Level = StatusLevel.Error;
+              if (repository == null)
+                status.Messages.Add("Repository not found!");
+              else
+                status.Messages.Add("Repository [" + qmxf.targetRepository + "] is read-only!");
+
+              _response.Append(status);
+            }
+            else
+            {
+              string registry = _useExampleRegistryBase ? _settings["ExampleRegistryBase"] : _settings["ClassRegistryBase"];
+              #region Template Definitions
+              ///////////////////////////////////////////////////////////////////////////////
+              /// Base templates do have the following properties
+              /// 1) Base class of owl:Thing
+              /// 2) rdf:type = p8:TemplateDescription
+              /// 3) rdf:type = p8:BaseTemplateStateMent
+              /// 4) rdfs:label name of template
+              /// 5) optional rdfs:comment
+              /// 6) p8:valNumberOfRoles
+              /// 7) p8:hasTemplate = tpl:{TemplateName} - this probably could be eliminated -- pointer to self 
+              ///////////////////////////////////////////////////////////////////////////////
+              if (qmxf.templateDefinitions.Count > 0)
+              {
+                foreach (TemplateDefinition newTDef in qmxf.templateDefinitions)
                 {
-                    Status status = new Status();
-                    status.Level = StatusLevel.Error;
-                    if (repository == null)
-                        status.Messages.Add("Repository not found!");
+                  string language = string.Empty;
+                  int roleCount = 0;
+                  string templateName = string.Empty;
+                  string templateId = string.Empty;
+                  string generatedId = string.Empty;
+                  string roleDefinition = string.Empty;
+                  int index = 1;
+                  if (!string.IsNullOrEmpty(newTDef.identifier))
+                    templateId = Utility.GetIdFromURI(newTDef.identifier);
+
+                  templateName = newTDef.name[0].value;
+                  //check for exisitng template
+                  QMXF oldQmxf = new QMXF();
+                  if (!String.IsNullOrEmpty(templateId))
+                  {
+                    oldQmxf = GetTemplate(templateId, QMXFType.Definition, repository);
+                  }
+                  else
+                  {
+                    if (_useExampleRegistryBase)
+                      generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
                     else
-                        status.Messages.Add("Repository [" + qmxf.targetRepository + "] is read-only!");
+                      generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
+                    templateId = Utility.GetIdFromURI(generatedId);
+                  }
 
-                    _response.Append(status);
+                  #region Form Delete/Insert
+                  if (oldQmxf.templateDefinitions.Count > 0)
+                  {
+                    foreach (TemplateDefinition oldTDef in oldQmxf.templateDefinitions)
+                    {
+                      ///process template label(s)
+                      foreach (QMXFName newName in newTDef.name)
+                      {
+                        templateName = newName.value;
+                        QMXFName oldName = oldTDef.name.Find(n => n.lang == newName.lang);
+                        if (String.Compare(oldName.value, newName.value, true) != 0)
+                        {
+                          GenerateName(ref delete, oldName, templateId, oldTDef);
+                          GenerateName(ref insert, newName, templateId, newTDef);
+                        }
+                      }
+                      //append changing descriptions to each block
+                      foreach (Description newDescr in newTDef.description)
+                      {
+                        Description oldDescr = oldTDef.description.Find(d => d.lang == newDescr.lang);
+                        if (oldDescr != null && newDescr != null)
+                        {
+                          if (String.Compare(oldDescr.value, newDescr.value, true) != 0)
+                          {
+                            GenerateDescription(ref delete, oldDescr, templateId);
+                            GenerateDescription(ref insert, newDescr, templateId);
+                          }
+                        }
+                        else if (newDescr != null && oldDescr == null)
+                        {
+                          GenerateDescription(ref insert, newDescr, templateId);
+                        }
+                      }
+
+                      index = 1;
+                      ///  BaseTemplate roles do have the following properties
+                      /// 1) baseclass of owl:Class
+                      /// 2) rdf:type = p8:TemplateRoleDescription
+                      /// 3) rdfs:label = rolename
+                      /// 4) p8:valRoleIndex
+                      /// 5) p8:hasRoleFillerType = qualifified class or dm:entityType
+                      /// 6) p8:hasTemplate = template ID
+                      /// 7) p8:hasRole = role ID --- again probably should not use this --- pointer to self
+                      if (oldTDef.roleDefinition.Count < newTDef.roleDefinition.Count) ///Role(s) added
+                      {
+                        foreach (RoleDefinition nrd in newTDef.roleDefinition)
+                        {
+                          string roleName = nrd.name[0].value;
+                          string newRoleID = nrd.identifier;
+                          if (string.IsNullOrEmpty(newRoleID))
+                          {
+                            if (_useExampleRegistryBase)
+                              generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], roleName);
+                            else
+                              generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], roleName);
+                            newRoleID = generatedId;
+                          }
+                          RoleDefinition ord = oldTDef.roleDefinition.Find(r => r.identifier == newRoleID);
+                          if (ord == null) /// need to add it
+                          {
+                            foreach (QMXFName name in nrd.name)
+                            {
+                              GenerateName(ref insert, name, Utility.GetIdFromURI(newRoleID), nrd);
+                            }
+                            if (nrd.description != null)
+                            {
+                              GenerateDescription(ref insert, nrd.description, Utility.GetIdFromURI(newRoleID));
+                            }
+                            if (repository.RepositoryType == RepositoryType.Part8)
+                            {
+                              GenerateTypesPart8(ref insert, Utility.GetIdFromURI(newRoleID), templateId, nrd);
+                              GenerateRoleIndexPart8(ref insert, Utility.GetIdFromURI(newRoleID), index, nrd);
+                            }
+                            else
+                            {
+                              GenerateTypes(ref insert, Utility.GetIdFromURI(newRoleID), templateId, nrd);
+                              GenerateRoleIndex(ref insert, Utility.GetIdFromURI(newRoleID), index);
+                            }
+                          }
+                          if (nrd.range != null)
+                          {
+                            qn = nsMap.ReduceToQName(nrd.range, out qName);
+                            if (repository.RepositoryType == RepositoryType.Part8)
+                            {
+                              GenerateRoleFillerType(ref insert, Utility.GetIdFromURI(newRoleID), qName);
+                            }
+                            else
+                            {
+                              GenerateRoleDomain(ref insert, Utility.GetIdFromURI(newRoleID), templateId);
+                            }
+                          }
+                        }
+                      }
+                      else if (oldTDef.roleDefinition.Count > newTDef.roleDefinition.Count) ///Role(s) removed
+                      {
+                        foreach (RoleDefinition ord in oldTDef.roleDefinition)
+                        {
+                          RoleDefinition nrd = newTDef.roleDefinition.Find(r => r.identifier == ord.identifier);
+                          if (nrd == null) /// need to add it
+                          {
+                            foreach (QMXFName name in ord.name)
+                            {
+                              GenerateName(ref delete, name, Utility.GetIdFromURI(ord.identifier), ord);
+                            }
+                            if (ord.description != null)
+                            {
+                              GenerateDescription(ref delete, ord.description, Utility.GetIdFromURI(ord.identifier));
+                            }
+                            if (repository.RepositoryType == RepositoryType.Part8)
+                            {
+                              GenerateTypesPart8(ref delete, Utility.GetIdFromURI(ord.identifier), templateId, ord);
+                              GenerateRoleIndexPart8(ref delete, Utility.GetIdFromURI(ord.identifier), index, ord);
+                            }
+                            else
+                            {
+                              GenerateTypes(ref delete, Utility.GetIdFromURI(ord.identifier), templateId, ord);
+                              GenerateRoleIndex(ref delete, Utility.GetIdFromURI(ord.identifier), index);
+                            }
+                          }
+                          if (ord.range != null)
+                          {
+                            qn = nsMap.ReduceToQName(ord.range, out qName);
+                            if (repository.RepositoryType == RepositoryType.Part8)
+                            {
+                              GenerateRoleFillerType(ref delete, Utility.GetIdFromURI(ord.identifier), qName);
+                            }
+                            else
+                            {
+                              GenerateRoleDomain(ref delete, Utility.GetIdFromURI(ord.identifier), templateId);
+                            }
+                          }
+                        }
+                      }
+                    }
+                    if (delete.IsEmpty && insert.IsEmpty)
+                    {
+                      string errMsg = "No changes made to template [" + templateName + "]";
+                      Status status = new Status();
+                      response.Level = StatusLevel.Warning;
+                      status.Messages.Add(errMsg);
+                      response.Append(status);
+                      continue;//Nothing to be done
+                    }
+                  }
+
+                  #endregion Form Delete/Insert
+                  #region Form Insert SPARQL
+                  if (insert.IsEmpty && delete.IsEmpty)
+                  {
+                    if (repository.RepositoryType == RepositoryType.Part8)
+                    {
+                      GenerateTypesPart8(ref insert, templateId, null, newTDef);
+                      GenerateRoleCountPart8(ref insert, newTDef.roleDefinition.Count, templateId, newTDef);
+                    }
+                    else
+                    {
+                      GenerateTypes(ref insert, templateId, null, newTDef);
+                      GenerateRoleCount(ref insert, newTDef.roleDefinition.Count, templateId, newTDef);
+                    }
+                    foreach (QMXFName name in newTDef.name)
+                    {
+                      GenerateName(ref insert, name, templateId, newTDef);
+                    }
+
+                    foreach (Description descr in newTDef.description)
+                    {
+                      GenerateDescription(ref insert, descr, templateId);
+                    }
+                    //form labels
+                    foreach (RoleDefinition newRole in newTDef.roleDefinition)
+                    {
+
+                      string roleLabel = newRole.name.FirstOrDefault().value;
+                      string newRoleID = string.Empty;
+                      generatedId = string.Empty;
+                      string genName = string.Empty;
+                      string range = newRole.range;
+
+                      genName = "Role definition " + roleLabel;
+                      if (string.IsNullOrEmpty(newRole.identifier))
+                      {
+                        if (_useExampleRegistryBase)
+                          generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                        else
+                          generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+                        newRoleID = Utility.GetIdFromURI(generatedId);
+                      }
+                      else
+                      {
+                        newRoleID = Utility.GetIdFromURI(newRole.identifier);
+                      }
+                      foreach (QMXFName newName in newRole.name)
+                      {
+                        GenerateName(ref insert, newName, newRoleID, newRole);
+                      }
+
+                      if (newRole.description != null)
+                      {
+                        GenerateDescription(ref insert, newRole.description, newRoleID);
+                      }
+
+                      if (repository.RepositoryType == RepositoryType.Part8)
+                      {
+                        GenerateRoleIndexPart8(ref insert, newRoleID, ++roleCount, newRole);
+                        GenerateHasTemplate(ref insert, newRoleID, templateId, newRole);
+                        GenerateHasRole(ref insert, templateId, newRoleID, newRole);
+                      }
+                      else
+                      {
+                        GenerateRoleIndex(ref insert, newRoleID, ++roleCount);
+                      }
+                      if (!string.IsNullOrEmpty(newRole.range))
+                      {
+                        qn = nsMap.ReduceToQName(newRole.range, out qName);
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateRoleFillerType(ref insert, newRoleID, qName);
+                        }
+                        else
+                        {
+                          GenerateRoleDomain(ref insert, newRoleID, templateId);
+                          GenerateTypes(ref insert, newRoleID, null, newRole);
+                        }
+                      }
+                    }
+                  }
+                  #endregion
+                  #region Generate Query and post Template Definition
+                  if (!delete.IsEmpty)
+                  {
+                    sparqlBuilder.AppendLine(deleteData);
+                    foreach (Triple t in delete.Triples)
+                    {
+                      sparqlBuilder.AppendLine(t.ToString(formatter));
+                    }
+                    if (insert.IsEmpty)
+                      sparqlBuilder.AppendLine("}");
+                    else
+                      sparqlBuilder.AppendLine("};");
+                  }
+                  if (!insert.IsEmpty)
+                  {
+                    sparqlBuilder.AppendLine(insertData);
+                    foreach (Triple t in insert.Triples)
+                    {
+                      sparqlBuilder.AppendLine(t.ToString(formatter));
+                    }
+                    sparqlBuilder.AppendLine("}");
+                  }
+                  string sparql = sparqlBuilder.ToString();
+                  Response postResponse = PostToRepository(repository, sparql);
+                  response.Append(postResponse);
                 }
-                else
+              }
+                  #endregion Generate Query and post Template Definition
+              #endregion Template Definitions
+              #region Template Qualification
+              /// Qualification templates do have the following properties
+              /// 1) Base class = owl:Thing
+              /// 2) rdf:type = p8:CoreTemplate
+              /// 3) p8:hasSuperTemplate = Super Template ID
+              /// 4) p8:hasSubTemplate = Sub Template ID
+              /// 5) rdfs:label = template name
+              /// 
+              if (qmxf.templateQualifications.Count > 0)
+              {
+                foreach (TemplateQualification newTQ in qmxf.templateQualifications)
                 {
-                    string registry = _useExampleRegistryBase ? _settings["ExampleRegistryBase"] : _settings["ClassRegistryBase"];
-                    #region Template Definitions Base templates
-                    ///////////////////////////////////////////////////////////////////////////////
-                    /// Base template  do have the following properties
-                    ///  SubClassOf BaseTemplateStatement - tpl:R76833983018
-                    ///  Base class of owl:Class
-                    ///  rdfs:type = p8:TemplateDescription - tpl:R37697644579
-                    ///  rdfs:label name of template
-                    ///  optional rdfs:comment
-                    ///  p8:valNumberOfRoles - tpl:R19345658293
-                    ///  p8:hasTemplate = tpl:{TemplateName} - this probably should be eliminated -- pointer to self 
-                    ///////////////////////////////////////////////////////////////////////////////
-                    if (qmxf.templateDefinitions.Count > 0)
+                  int roleCount = 0;
+                  string templateName = string.Empty;
+                  string templateID = string.Empty;
+                  string generatedId = string.Empty;
+                  string roleQualification = string.Empty;
+                  //int index = 1;
+                  if (!string.IsNullOrEmpty(newTQ.identifier))
+                    templateID = Utility.GetIdFromURI(newTQ.identifier);
+
+                  templateName = newTQ.name[0].value;
+                  QMXF oldQmxf = new QMXF();
+                  if (!String.IsNullOrEmpty(templateID))
+                  {
+                    oldQmxf = GetTemplate(templateID, QMXFType.Qualification, repository);
+                  }
+                  else
+                  {
+                    if (_useExampleRegistryBase)
+                      generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
+                    else
+                      generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
+
+                    templateID = Utility.GetIdFromURI(generatedId);
+                  }
+                  #region Form Delete/Insert SPARQL
+                  if (oldQmxf.templateQualifications.Count > 0)
+                  {
+                    foreach (TemplateQualification oldTQ in oldQmxf.templateQualifications)
                     {
-                        foreach (TemplateDefinition newTDef in qmxf.templateDefinitions)
+                      qn = nsMap.ReduceToQName(oldTQ.qualifies, out qName);
+                      foreach (QMXFName nn in newTQ.name)
+                      {
+                        templateName = nn.value;
+                        QMXFName on = oldTQ.name.Find(n => n.lang == nn.lang);
+                        if (on != null)
                         {
-                            string language = string.Empty;
-                            int roleCount = 0;
-                            string templateName = string.Empty;
-                            string templateId = string.Empty;
-                            string generatedId = string.Empty;
-                            string roleDefinition = string.Empty;
-                            int index = 1;
-                            if (!string.IsNullOrEmpty(newTDef.identifier))
-                                templateId = Utility.GetIdFromURI(newTDef.identifier);
-
-                            templateName = newTDef.name[0].value;
-                            //check for exisitng template
-                            QMXF oldQmxf = new QMXF();
-                            if (!String.IsNullOrEmpty(templateId))
-                            {
-                                oldQmxf = GetTemplate(templateId, QMXFType.Definition, repository);
-                            }
-                            else
-                            {
-                                if (_useExampleRegistryBase)
-                                    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
-                                else
-                                    generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
-                                templateId = Utility.GetIdFromURI(generatedId);
-                            }
-
-                            #region Form Delete/Insert
-                            if (oldQmxf.templateDefinitions.Count > 0)
-                            {
-                                foreach (TemplateDefinition oldTDef in oldQmxf.templateDefinitions)
-                                {
-
-                                    ///process template label(s)
-                                    foreach (QMXFName newName in newTDef.name)
-                                    {
-                                        templateName = newName.value;
-                                        QMXFName oldName = oldTDef.name.Find(n => n.lang == newName.lang);
-                                        if (String.Compare(oldName.value, newName.value, true) != 0)
-                                        {
-                                            subj = delete.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                            pred = delete.CreateUriNode("rdfs:label");
-                                            obj = delete.CreateLiteralNode(oldName.value, string.IsNullOrEmpty(oldName.lang) ? defaultLanguage : oldName.lang);
-                                            delete.Assert(new Triple(subj, pred, obj));
-                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                            pred = insert.CreateUriNode("rdfs:label");
-                                            obj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                    }
-                                    //append changing descriptions to each block
-                                    foreach (Description newDescr in newTDef.description)
-                                    {
-                                        Description oldDescr = oldTDef.description.Find(d => d.lang == newDescr.lang);
-                                        if (oldDescr != null && newDescr != null)
-                                        {
-                                            if (String.Compare(oldDescr.value, newDescr.value, true) != 0)
-                                            {
-                                          
-                                                subj = delete.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                                pred = delete.CreateUriNode("rdfs:comment");
-                                                obj = delete.CreateLiteralNode(oldDescr.value, string.IsNullOrEmpty(oldDescr.lang) ? defaultLanguage : oldDescr.lang);
-                                                delete.Assert(new Triple(subj, pred, obj));
-                                              
-                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                                pred = insert.CreateUriNode("rdfs:comment");
-                                                obj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? defaultLanguage : newDescr.lang);
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                            }
-                                        }
-                                        else if (newDescr != null && oldDescr == null)
-                                        {
-                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                            pred = insert.CreateUriNode("rdfs:comment");
-                                            obj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? defaultLanguage : newDescr.lang);
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                    }
-    
-
-                                    index = 1;
-                                    ///  BaseTemplate roles do have the following properties
-                                    ///  baseclass of owl:Thing
-                                    ///  a = p8:TemplateRoleDescription - tpl:R31633685195
-                                    ///  rdfs:label = rolename
-                                    ///  SubClassOf basetemplateStatement
-                                    ///  p8:valRoleIndex - tpl:R93802200201
-                                    ///  p8:hasRoleFillerType = qualifified part 2 class - tpl:R10425950896
-                                    ///  p8:hasTemplate = template ID  - tpl:R75942876605
-                                    ///  p8:hasRole = role ID --- tlp:R97028227425
-                                    if (oldTDef.roleDefinition.Count < newTDef.roleDefinition.Count) ///Role(s) added
-                                    {
-                                        foreach (RoleDefinition nrd in newTDef.roleDefinition)
-                                        {
-                                            string roleName = nrd.name[0].value;
-                                            string newRoleID = nrd.identifier;
-                                            if (string.IsNullOrEmpty(newRoleID))
-                                            {
-                                                if (_useExampleRegistryBase)
-                                                    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], roleName);
-                                                else
-                                                    generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], roleName);
-                                                newRoleID = generatedId;
-                                            }
-                                            RoleDefinition ord = oldTDef.roleDefinition.Find(r => r.identifier == newRoleID);
-                                            if (ord == null) /// need to add it
-                                            {
-                                                foreach (QMXFName name in nrd.name)
-                                                {
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(newRoleID)));
-                                                    pred = insert.CreateUriNode("rdfs:label");
-                                                    obj = insert.CreateLiteralNode(name.value, string.IsNullOrEmpty(name.lang) ? defaultLanguage : name.lang);
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                }
-                                                if (nrd.description != null && nrd.description.value != null)
-                                                {
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                                    pred = insert.CreateUriNode("rdfs:comment");
-                                                    obj = insert.CreateLiteralNode(nrd.description.value, string.IsNullOrEmpty(nrd.description.lang) ? defaultLanguage : nrd.description.lang);
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                }
-                                                if (repository.RepositoryType == RepositoryType.Part8)
-                                                {
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(newRoleID)));
-                                                    pred = insert.CreateUriNode(rdfType);
-                                                    obj = insert.CreateUriNode("owl:Thing");
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    obj = insert.CreateUriNode("tpl:R31633685195"); //TemplateRoleDescription
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    pred = insert.CreateUriNode("tpl:R75942876605"); //hasTemplate
-                                                    obj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(newRoleID)));
-                                                    pred = insert.CreateUriNode("tpl:R93802200201"); //valRoleIndex
-                                                    obj = insert.CreateLiteralNode(index.ToString(), new Uri("xsd:integer"));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                }
-                                                else
-                                                {
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(newRoleID)));
-                                                    pred = insert.CreateUriNode(rdfType);
-                                                    obj = insert.CreateUriNode("tpl:R74478971040");
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(newRoleID)));
-                                                    pred = insert.CreateUriNode("tpl:R97483568938");
-                                                    obj = insert.CreateLiteralNode(index.ToString(), new Uri("xsd:integer"));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                }
-                                            }
-                                            if (nrd.range != null)
-                                            {
-                                                qn = nsMap.ReduceToQName(nrd.range, out qName);
-                                                if (repository.RepositoryType == RepositoryType.Part8)
-                                                {
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(newRoleID)));
-                                                    pred = insert.CreateUriNode("tpl:R10425950896"); //hasRoleFillerType
-                                                    obj = insert.CreateUriNode(qName);
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                }
-                                                else
-                                                {
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(newRoleID)));
-                                                    pred = insert.CreateUriNode("rdfs:domain");
-                                                    obj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else if (oldTDef.roleDefinition.Count > newTDef.roleDefinition.Count) ///Role(s) removed
-                                    {
-                                        foreach (RoleDefinition ord in oldTDef.roleDefinition)
-                                        {
-                                            RoleDefinition nrd = newTDef.roleDefinition.Find(r => r.identifier == ord.identifier);
-                                            if (nrd == null) /// need to delete it
-                                            {
-                                                foreach (QMXFName name in ord.name)
-                                                {
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(ord.identifier)));
-                                                    pred = delete.CreateUriNode("rdfs:label");
-                                                    obj = delete.CreateLiteralNode(name.value, string.IsNullOrEmpty(name.lang) ? defaultLanguage : name.lang);
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                }
-                                                if (ord.description != null)
-                                                {
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", ord.identifier));
-                                                    pred = delete.CreateUriNode("rdfs:comment");
-                                                    obj = delete.CreateLiteralNode(ord.description.value, string.IsNullOrEmpty(ord.description.lang) ? defaultLanguage : ord.description.lang);
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                }
-                                                if (repository.RepositoryType == RepositoryType.Part8)
-                                                {
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(ord.identifier)));
-                                                    pred = delete.CreateUriNode(rdfType);
-                                                    obj = delete.CreateUriNode("owl:Thing");
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                    obj = delete.CreateUriNode("tpl:R31633685195"); //TemplateRoleDescription
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                    pred = delete.CreateUriNode("tpl:R75942876605"); //hasTemplate
-                                                    obj = delete.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(ord.identifier)));
-                                                    pred = delete.CreateUriNode("tpl:R93802200201"); //valRoleIndex
-                                                    obj = delete.CreateLiteralNode(index.ToString(), new Uri("xsd:integer"));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                }
-                                                else
-                                                {
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(ord.identifier)));
-                                                    pred = delete.CreateUriNode(rdfType);
-                                                    obj = delete.CreateUriNode("tpl:R74478971040");
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(ord.identifier)));
-                                                    pred = delete.CreateUriNode("tpl:R97483568938");
-                                                    obj = delete.CreateLiteralNode(index.ToString(), new Uri("xsd:integer"));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                }
-                                            }
-                                            if (ord.range != null)
-                                            {
-                                                qn = nsMap.ReduceToQName(ord.range, out qName);
-                                                if (repository.RepositoryType == RepositoryType.Part8)
-                                                {
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(ord.identifier)));
-                                                    pred = delete.CreateUriNode("tpl:R10425950896"); //hasRoleFillerType
-                                                    obj = delete.CreateUriNode(qName);
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                }
-                                                else
-                                                {
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", Utility.GetIdFromURI(ord.identifier)));
-                                                    pred = delete.CreateUriNode("rdfs:domain");
-                                                    obj = delete.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                if (delete.IsEmpty && insert.IsEmpty)
-                                {
-                                    string errMsg = "No changes made to template [" + templateName + "]";
-                                    Status status = new Status();
-                                    response.Level = StatusLevel.Warning;
-                                    status.Messages.Add(errMsg);
-                                    response.Append(status);
-                                    continue;//Nothing to be done
-                                }
-                            }
-
-                            #endregion Form Delete/Insert
-                            #region Form Insert SPARQL
-                            if (insert.IsEmpty && delete.IsEmpty)
-                            {
-                                if (repository.RepositoryType == RepositoryType.Part8)
-                                {
-                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                    pred = insert.CreateUriNode(rdfType);
-                                    obj = insert.CreateUriNode("owl:Class");   
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                    pred = insert.CreateUriNode(rdfssubClassOf);
-                                    obj = insert.CreateUriNode("tpl:R76833983018");//BaseTemplateStatement
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                    pred = insert.CreateUriNode("tpl:R19345658293"); //valNumberOfRoles
-                                    obj = insert.CreateLiteralNode(Convert.ToString(newTDef.roleDefinition.Count), new Uri("xsd:integer"));
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                }
-                                else
-                                {
-                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                    pred = insert.CreateUriNode(rdfType);
-                                    obj = insert.CreateUriNode("tpl:R16376066707");
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                    pred = insert.CreateUriNode("tpl:R35529169909");
-                                    obj = insert.CreateLiteralNode(Convert.ToString(newTDef.roleDefinition.Count), new Uri("xsd:integer"));
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                }
-                                foreach (QMXFName name in newTDef.name)
-                                {
-                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                    pred = insert.CreateUriNode("rdfs:label");
-                                    obj = insert.CreateLiteralNode(name.value, string.IsNullOrEmpty(name.lang) ? defaultLanguage : name.lang);
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                }
-
-                                foreach (Description descr in newTDef.description)
-                                {
-                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                    pred = insert.CreateUriNode("rdfs:comment");
-                                    obj = insert.CreateLiteralNode(descr.value, string.IsNullOrEmpty(descr.lang) ? defaultLanguage : descr.lang);
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                }
-                                //form labels
-                                foreach (RoleDefinition newRole in newTDef.roleDefinition)
-                                {
-
-                                    string roleLabel = newRole.name.FirstOrDefault().value;
-                                    string newRoleID = string.Empty;
-                                    generatedId = string.Empty;
-                                    string genName = string.Empty;
-                                    string range = newRole.range;
-
-                                    genName = "Role definition " + roleLabel;
-                                    if (string.IsNullOrEmpty(newRole.identifier))
-                                    {
-                                        if (_useExampleRegistryBase)
-                                            generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
-                                        else
-                                            generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
-                                        newRoleID = Utility.GetIdFromURI(generatedId);
-                                    }
-                                    else
-                                    {
-                                        newRoleID = Utility.GetIdFromURI(newRole.identifier);
-                                    }
-                                    foreach (QMXFName newName in newRole.name)
-                                    {
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
-                                        pred = insert.CreateUriNode("rdfs:label");
-                                        obj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                    }
-
-                                    if (newRole.description != null && newRole.description.value != null)
-                                    {
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
-                                        pred = insert.CreateUriNode("rdfs:comment");
-                                        obj = insert.CreateLiteralNode(newRole.description.value, string.IsNullOrEmpty(newRole.description.lang) ? defaultLanguage : newRole.description.lang);
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                    }
-
-                                    if (repository.RepositoryType == RepositoryType.Part8)
-                                    {
-                                        var ind = ++roleCount;
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
-                                        pred = insert.CreateUriNode("tpl:R93802200201"); //valRoleIndex
-                                        obj = insert.CreateLiteralNode(ind.ToString(), new Uri("xsd:integer"));
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        pred = insert.CreateUriNode("tpl:R75942876605"); //hasTemplate
-                                        obj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        pred = insert.CreateUriNode(rdfType);
-                                        obj = insert.CreateUriNode("tpl:R31633685195");  // TemplateRoleDescription
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        obj = insert.CreateUriNode("owl:Thing");
-                                        insert.Assert(new Triple(subj, pred, obj));
-
-                                    }
-                                    else
-                                    {
-                                        var ind = ++roleCount;
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
-                                        pred = insert.CreateUriNode("tpl:R97483568938");
-                                        obj = insert.CreateLiteralNode(ind.ToString(), new Uri("xsd:integer"));
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                    }
-                                    if (!string.IsNullOrEmpty(newRole.range))
-                                    {
-                                        qn = nsMap.ReduceToQName(newRole.range, out qName);
-                                        if (repository.RepositoryType == RepositoryType.Part8)
-                                        {
-                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
-                                            pred = insert.CreateUriNode("tpl:R10425950896"); //hasRoleFillerType
-                                            obj = insert.CreateUriNode(qName);
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                        else
-                                        {
-                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
-                                            pred = insert.CreateUriNode("rdfs:domain");
-                                            obj = insert.CreateUriNode(string.Format("tpl:{0}", templateId));
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", newRoleID));
-                                            pred = insert.CreateUriNode(rdfType);
-                                            obj = insert.CreateUriNode("tpl:R74478971040");
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                    }
-                                }
-                            }
-                            #endregion
-                            #region Generate Query and post Template Definition
-                            if (!delete.IsEmpty)
-                            {
-                                sparqlBuilder.AppendLine(deleteData);
-                                foreach (Triple t in delete.Triples)
-                                {
-                                    sparqlBuilder.AppendLine(t.ToString(formatter));
-                                }
-                                if (insert.IsEmpty)
-                                    sparqlBuilder.AppendLine("}");
-                                else
-                                    sparqlBuilder.AppendLine("};");
-                            }
-                            if (!insert.IsEmpty)
-                            {
-                                sparqlBuilder.AppendLine(insertData);
-                                foreach (Triple t in insert.Triples)
-                                {
-                                    sparqlBuilder.AppendLine(t.ToString(formatter));
-                                }
-                                sparqlBuilder.AppendLine("}");
-                            }
-                            string sparql = sparqlBuilder.ToString();
-                            Response postResponse = PostToRepository(repository, sparql);
-                            response.Append(postResponse);
+                          if (String.Compare(on.value, nn.value, true) != 0)
+                          {
+                            GenerateName(ref delete, on, templateID, oldTQ);
+                            GenerateName(ref insert, nn, templateID, newTQ);
+                          }
                         }
+                      }
+                      foreach (Description nd in newTQ.description)
+                      {
+                        if (nd.lang == null) nd.lang = defaultLanguage;
+                        Description od = null;
+                        od = oldTQ.description.Find(d => d.lang == nd.lang);
+
+                        if (od != null && od.value != null)
+                        {
+                          if (string.Compare(od.value, nd.value, true) != 0)
+                          {
+                            GenerateDescription(ref delete, od, templateID);
+                            GenerateDescription(ref insert, nd, templateID);
+                          }
+                        }
+                        else if (od == null && nd.value != null)
+                        {
+                          GenerateDescription(ref insert, nd, templateID);
+                        }
+                      }
+                      //role count
+                      if (oldTQ.roleQualification.Count != newTQ.roleQualification.Count)
+                      {
+                        if (repository.RepositoryType == RepositoryType.Part8)
+                        {
+                          GenerateRoleCountPart8(ref delete, oldTQ.roleQualification.Count, templateID, oldTQ);
+                          GenerateRoleCountPart8(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+                        }
+                        else
+                        {
+                          GenerateRoleCount(ref delete, oldTQ.roleQualification.Count, templateID, oldTQ);
+                          GenerateRoleCount(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+                        }
+                      }
+                      //// TODO need to work out howto correctly handle specializations
+                      foreach (Specialization ns in newTQ.specialization)
+                      {
+                        Specialization os = oldTQ.specialization.FirstOrDefault();
+
+                        if (os != null && os.reference != ns.reference)
+                        {
+                          if (repository.RepositoryType == RepositoryType.Part8)
+                          {
+
+                          }
+                          else
+                          {
+
+                          }
+                        }
+                      }
+
+                      //index = 1;
+                      ///  Qualification roles do have the following properties
+                      /// 1) baseclass of owl:Thing
+                      /// 2) rdf:type = p8:TemplateRoleDescription
+                      /// 3) rdfs:label = rolename
+                      /// 4) p8:valRoleIndex
+                      /// 5) p8:hasRoleFillerType = qualifified class
+                      /// 6) p8:hasTemplate = template ID
+                      /// 6) p8:hasRole = tpl:{roleName} probably don't need to use this -- pointer to self
+                      if (oldTQ.roleQualification.Count < newTQ.roleQualification.Count)
+                      {
+                        int count = 0;
+                        foreach (RoleQualification nrq in newTQ.roleQualification)
+                        {
+                          string roleName = nrq.name[0].value;
+                          string newRoleID = nrq.identifier;
+
+                          if (string.IsNullOrEmpty(newRoleID))
+                          {
+                            if (_useExampleRegistryBase)
+                              generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], roleName);
+                            else
+                              generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], roleName);
+                            newRoleID = generatedId;
+                          }
+                          RoleQualification orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
+                          if (orq == null)
+                          {
+                            if (repository.RepositoryType == RepositoryType.Part8)
+                            {
+                              GenerateTypesPart8(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
+                              foreach (QMXFName nn in nrq.name)
+                              {
+                                GenerateName(ref insert, nn, Utility.GetIdFromURI(newRoleID), nrq);
+                              }
+                              GenerateRoleIndexPart8(ref insert, Utility.GetIdFromURI(newRoleID), ++count, nrq);
+                              GenerateHasTemplate(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
+                              GenerateHasRole(ref insert, templateID, Utility.GetIdFromURI(newRoleID), newTQ);
+                              if (!string.IsNullOrEmpty(nrq.range))
+                              {
+                                qn = nsMap.ReduceToQName(nrq.range, out qName);
+                                if (qn) GenerateRoleFillerType(ref insert, Utility.GetIdFromURI(newRoleID), qName);
+                              }
+                              else if (nrq.value != null)
+                              {
+                                if (nrq.value.reference != null)
+                                {
+                                  qn = nsMap.ReduceToQName(nrq.value.reference, out qName);
+                                  if (qn) GenerateRoleFillerType(ref insert, Utility.GetIdFromURI(newRoleID), qName);
+                                }
+                                else if (nrq.value.text != null)
+                                {
+                                  ///TODO
+                                }
+                              }
+                            }
+                            else //Not Part8 repository
+                            {
+                              if (!string.IsNullOrEmpty(nrq.range)) //range restriction
+                              {
+                                qn = nsMap.ReduceToQName(nrq.range, out qName);
+                                if (qn) GenerateRange(ref insert, Utility.GetIdFromURI(newRoleID), qName, nrq);
+                                GenerateTypes(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
+                                GenerateQualifies(ref insert, Utility.GetIdFromURI(newRoleID), nrq.qualifies.Split('#')[1], nrq);
+                              }
+                              else if (nrq.value != null)
+                              {
+                                if (nrq.value.reference != null) //reference restriction
+                                {
+                                  GenerateReferenceType(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
+                                  GenerateReferenceQual(ref insert, Utility.GetIdFromURI(newRoleID), nrq.qualifies.Split('#')[1], nrq);
+                                  qn = nsMap.ReduceToQName(nrq.value.reference, out qName);
+                                  if (qn) GenerateReferenceTpl(ref insert, Utility.GetIdFromURI(newRoleID), qName, nrq);
+                                }
+                                else if (nrq.value.text != null)// value restriction
+                                {
+                                  GenerateValue(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
+                                }
+                              }
+                              GenerateTypes(ref insert, Utility.GetIdFromURI(newRoleID), templateID, nrq);
+                              GenerateRoleDomain(ref insert, Utility.GetIdFromURI(newRoleID), templateID);
+                              GenerateRoleIndex(ref insert, Utility.GetIdFromURI(newRoleID), ++count);
+                            }
+                          }
+                        }
+                      }
+                      else if (oldTQ.roleQualification.Count > newTQ.roleQualification.Count)
+                      {
+                        int count = 0;
+                        foreach (RoleQualification orq in oldTQ.roleQualification)
+                        {
+                          string roleName = orq.name[0].value;
+                          string newRoleID = orq.identifier;
+
+                          if (string.IsNullOrEmpty(newRoleID))
+                          {
+                            if (_useExampleRegistryBase)
+                              generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], roleName);
+                            else
+                              generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], roleName);
+                            newRoleID = generatedId;
+                          }
+                          RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
+                          if (nrq == null)
+                          {
+                            if (repository.RepositoryType == RepositoryType.Part8)
+                            {
+                              GenerateTypesPart8(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                              foreach (QMXFName nn in orq.name)
+                              {
+                                GenerateName(ref delete, nn, Utility.GetIdFromURI(newRoleID), orq);
+                              }
+                              GenerateRoleIndexPart8(ref delete, Utility.GetIdFromURI(newRoleID), ++count, orq);
+                              GenerateHasTemplate(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                              GenerateHasRole(ref delete, templateID, Utility.GetIdFromURI(newRoleID), oldTQ);
+                              if (!string.IsNullOrEmpty(orq.range))
+                              {
+                                qn = nsMap.ReduceToQName(orq.range, out qName);
+                                if (qn) GenerateRoleFillerType(ref delete, Utility.GetIdFromURI(newRoleID), qName);
+                              }
+                              else if (orq.value != null)
+                              {
+                                if (orq.value.reference != null)
+                                {
+                                  qn = nsMap.ReduceToQName(orq.value.reference, out qName);
+                                  if (qn) GenerateRoleFillerType(ref delete, Utility.GetIdFromURI(newRoleID), qName);
+                                }
+                                else if (nrq.value.text != null)
+                                {
+                                  ///TODO
+                                }
+                              }
+                            }
+                            else //Not Part8 repository
+                            {
+                              if (!string.IsNullOrEmpty(orq.range)) //range restriction
+                              {
+                                qn = nsMap.ReduceToQName(orq.range, out qName);
+                                if (qn) GenerateRange(ref delete, Utility.GetIdFromURI(newRoleID), qName, orq);
+                                GenerateTypes(ref delete, Utility.GetIdFromURI(newRoleID), templateID, nrq);
+                                GenerateQualifies(ref delete, Utility.GetIdFromURI(newRoleID), orq.qualifies.Split('#')[1], orq);
+                              }
+                              else if (orq.value != null)
+                              {
+                                if (orq.value.reference != null) //reference restriction
+                                {
+                                  GenerateReferenceType(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                                  GenerateReferenceQual(ref delete, Utility.GetIdFromURI(newRoleID), orq.qualifies.Split('#')[1], orq);
+                                  qn = nsMap.ReduceToQName(orq.value.reference, out qName);
+                                  if (qn) GenerateReferenceTpl(ref insert, Utility.GetIdFromURI(newRoleID), qName, orq);
+                                }
+                                else if (orq.value.text != null)// value restriction
+                                {
+                                  GenerateValue(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                                }
+                              }
+                              GenerateTypes(ref delete, Utility.GetIdFromURI(newRoleID), templateID, orq);
+                              GenerateRoleDomain(ref delete, Utility.GetIdFromURI(newRoleID), templateID);
+                              GenerateRoleIndex(ref delete, Utility.GetIdFromURI(newRoleID), ++count);
+                            }
+                          }
+                        }
+                      }
                     }
-                            #endregion Generate Query and post Template Definition
-                    #endregion Template Definitions Base templates
-                    #region Template Qualification
-                    /// Qualification / Specialized templates do have the following properties
-                    ///  Base class = owl:Class
-                    ///  a = SpecializedTemplate  - tpl:R54325589049
-                    ///  subClassOf SpecializedTemplateStatement  - tpl:R25047886531
-                    ///
-                    ///  rdfs:label = template name
-                    /// 
-                    if (qmxf.templateQualifications.Count > 0)
+                    if (delete.IsEmpty && insert.IsEmpty)
                     {
-                        foreach (TemplateQualification newTQ in qmxf.templateQualifications)
-                        {
-                            int roleCount = 0;
-                            string templateName = string.Empty;
-                            string templateID = string.Empty;
-                            string generatedId = string.Empty;
-                            string roleQualification = string.Empty;
-                            //int index = 1;
-                            if (!string.IsNullOrEmpty(newTQ.identifier))
-                                templateID = Utility.GetIdFromURI(newTQ.identifier);
+                      string errMsg = "No changes made to template [" + templateName + "]";
+                      Status status = new Status();
+                      response.Level = StatusLevel.Warning;
+                      status.Messages.Add(errMsg);
+                      response.Append(status);
+                      continue;//Nothing to be done
+                    }
+                  }
+                  #endregion
+                  #region Form Insert SPARQL
+                  if (delete.IsEmpty)
+                  {
+                    string templateLabel = String.Empty;
+                    string labelSparql = String.Empty;
 
-                            templateName = newTQ.name[0].value;
-                            QMXF oldQmxf = new QMXF();
-                            if (!String.IsNullOrEmpty(templateID))
-                            {
-                                oldQmxf = GetTemplate(templateID, QMXFType.Qualification, repository);
-                            }
-                            else
-                            {
-                                if (_useExampleRegistryBase)
-                                    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], templateName);
-                                else
-                                    generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], templateName);
-
-                                templateID = Utility.GetIdFromURI(generatedId);
-                            }
-                            #region Form Delete/Insert SPARQL
-                            if (oldQmxf.templateQualifications.Count > 0)
-                            {
-                                foreach (TemplateQualification oldTQ in oldQmxf.templateQualifications)
-                                {
-                                    qn = nsMap.ReduceToQName(oldTQ.qualifies, out qName);
-                                    foreach (QMXFName nn in newTQ.name)
-                                    {
-                                        templateName = nn.value;
-                                        QMXFName on = oldTQ.name.Find(n => n.lang == nn.lang);
-                                        if (on != null)
-                                        {
-                                            if (String.Compare(on.value, nn.value, true) != 0)
-                                            {
-                                                subj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                pred = delete.CreateUriNode("rdfs:label");
-                                                obj = delete.CreateLiteralNode(on.value, string.IsNullOrEmpty(on.lang) ? defaultLanguage : on.lang);
-                                                delete.Assert(new Triple(subj, pred, obj));
-                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                pred = insert.CreateUriNode("rdfs:label");
-                                                obj = insert.CreateLiteralNode(nn.value, string.IsNullOrEmpty(nn.lang) ? defaultLanguage : nn.lang);
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                            }
-                                        }
-                                    }
-                                    foreach (Description nd in newTQ.description)
-                                    {
-                                        if (nd.lang == null) nd.lang = defaultLanguage;
-                                        Description od = null;
-                                        od = oldTQ.description.Find(d => d.lang == nd.lang);
-
-                                        if (od != null && od.value != null)
-                                        {
-                                            if (string.Compare(od.value, nd.value, true) != 0)
-                                            {
-                                                subj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                pred = delete.CreateUriNode("rdfs:comment");
-                                                obj = delete.CreateLiteralNode(od.value, string.IsNullOrEmpty(od.lang) ? defaultLanguage : od.lang);
-                                                delete.Assert(new Triple(subj, pred, obj));
-                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                pred = insert.CreateUriNode("rdfs:comment");
-                                                obj = insert.CreateLiteralNode(nd.value, string.IsNullOrEmpty(nd.lang) ? defaultLanguage : nd.lang);
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                            }
-                                        }
-                                        else if (od == null && nd.value != null)
-                                        {
-                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                            pred = insert.CreateUriNode("rdfs:comment");
-                                            obj = insert.CreateLiteralNode(nd.value, string.IsNullOrEmpty(nd.lang) ? defaultLanguage : nd.lang);
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                    }
-                                    //role count
-                                    if (oldTQ.roleQualification.Count != newTQ.roleQualification.Count)
-                                    {
-                                        if (repository.RepositoryType == RepositoryType.Part8)
-                                        {
-                                            subj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                            pred = delete.CreateUriNode("tpl:R19345658293"); //valNumberOfRoles
-                                            obj = delete.CreateLiteralNode(Convert.ToString(oldTQ.roleQualification.Count), new Uri("xsd:integer"));
-                                            delete.Assert(new Triple(subj, pred, obj));
-                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                            pred = insert.CreateUriNode("tpl:R19345658293"); //valNumberOfRoles
-                                            obj = insert.CreateLiteralNode(Convert.ToString(newTQ.roleQualification.Count), new Uri("xsd:integer"));
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                        else
-                                        {
-                                            subj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                            pred = delete.CreateUriNode("tpl:R35529169909");
-                                            obj = delete.CreateLiteralNode(Convert.ToString(oldTQ.roleQualification.Count), new Uri("xsd:integer"));
-                                            delete.Assert(new Triple(subj, pred, obj));
-                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                            pred = insert.CreateUriNode("tpl:R35529169909");
-                                            obj = insert.CreateLiteralNode(Convert.ToString(newTQ.roleQualification.Count), new Uri("xsd:integer"));
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                    }
-                                    //// TODO need to work out howto correctly handle specializations
-                                    foreach (Specialization ns in newTQ.specialization)
-                                    {
-                                        Specialization os = oldTQ.specialization.FirstOrDefault();
-
-                                        if (os != null && os.reference != ns.reference)
-                                        {
-                                            if (repository.RepositoryType == RepositoryType.Part8)
-                                            {
-
-                                            }
-                                            else
-                                            {
-
-                                            }
-                                        }
-                                    }
-
-                                    //index = 1;
-                                    ///  Qualification roles do have the following properties
-                                    /// 1) baseclass of owl:Thing
-                                    /// 2) a = p8:TemplateRoleDescription
-                                    /// 3) rdfs:label = rolename
-                                    /// 4) p8:valRoleIndex
-                                    /// 5) p8:hasRoleFillerType = qualifified class
-                                    /// 6) p8:hasTemplate = template ID
-                                    /// 6) p8:hasRole = tpl:{roleName} probably don't need to use this -- pointer to self
-                                    if (oldTQ.roleQualification.Count < newTQ.roleQualification.Count)
-                                    {
-                                        int count = 0;
-                                        foreach (RoleQualification nrq in newTQ.roleQualification)
-                                        {
-                                            string roleName = nrq.name[0].value;
-                                            string newRoleID = nrq.identifier;
-
-                                            if (string.IsNullOrEmpty(newRoleID))
-                                            {
-                                                if (_useExampleRegistryBase)
-                                                    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], roleName);
-                                                else
-                                                    generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], roleName);
-                                                newRoleID = generatedId;
-                                            }
-                                            RoleQualification orq = oldTQ.roleQualification.Find(r => r.identifier == newRoleID);
-                                            if (orq == null)
-                                            {
-                                                if (repository.RepositoryType == RepositoryType.Part8)
-                                                {
-                                                    var ind = ++count;
-                                                    var ident = Utility.GetIdFromURI(newRoleID);
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = insert.CreateUriNode(rdfType);
-                                                    obj = insert.CreateUriNode("owl:Thing");
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    obj = insert.CreateUriNode("tpl:R31633685195"); // TemplateRoleDescription
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    pred = insert.CreateUriNode("tpl:R75942876605"); // hasTemplate
-                                                    obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    foreach (QMXFName nn in nrq.name)
-                                                    {
-                                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                        pred = insert.CreateUriNode("rdfs:label");
-                                                        obj = insert.CreateLiteralNode(nn.value, string.IsNullOrEmpty(nn.lang) ? defaultLanguage : nn.lang);
-                                                        insert.Assert(new Triple(subj, pred, obj));
-                                                    }
-
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = insert.CreateUriNode("p8:valRoleIndex");
-                                                    obj = insert.CreateLiteralNode(ind.ToString(), new Uri("xsd:integer"));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = insert.CreateUriNode("tpl:R75942876605"); // hasTemplate
-                                                    obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    pred = insert.CreateUriNode("tpl:R97028227425"); // hasRole
-                                                    obj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    if (!string.IsNullOrEmpty(nrq.range))
-                                                    {
-                                                        qn = nsMap.ReduceToQName(nrq.range, out qName);
-                                                        if (qn)
-                                                        {
-                                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = insert.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
-                                                            obj = insert.CreateUriNode(qName);
-                                                            insert.Assert(new Triple(subj, pred, obj));
-                                                        }
-                                                    }
-                                                    else if (nrq.value != null)
-                                                    {
-                                                        if (nrq.value.reference != null)
-                                                        {
-                                                            qn = nsMap.ReduceToQName(nrq.value.reference, out qName);
-                                                            if (qn)
-                                                            {
-                                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                                pred = insert.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
-                                                                obj = insert.CreateUriNode(qName);
-                                                                insert.Assert(new Triple(subj, pred, obj));
-                                                            }
-                                                        }
-                                                        else if (nrq.value.text != null)
-                                                        {
-                                                            ///TODO
-                                                        }
-                                                    }
-                                                }
-                                                else //Not Part8 repository
-                                                {
-                                                    var ident = Utility.GetIdFromURI(newRoleID);
-                                                    if (!string.IsNullOrEmpty(nrq.range)) //range restriction
-                                                    {
-                                                        qn = nsMap.ReduceToQName(nrq.range, out qName);
-                                                        if (qn)
-                                                        {
-                                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = insert.CreateUriNode("rdfs:range");
-                                                            obj = insert.CreateUriNode(qName);
-                                                            insert.Assert(new Triple(subj, pred, obj));
-                                                            pred = insert.CreateUriNode("tpl:R98983340497");
-                                                            obj = insert.CreateUriNode(qName);
-                                                            insert.Assert(new Triple(subj, pred, obj));
-                                                        }
-                                                        subj = insert.CreateUriNode(Utility.GetIdFromURI(newRoleID));
-                                                        pred = insert.CreateUriNode(rdfType);
-                                                        obj = insert.CreateUriNode("tpl:R76288246068");
-                                                        insert.Assert(new Triple(subj, pred, obj));
-                                                        pred = insert.CreateUriNode("tpl:R99672026745");
-                                                        obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                        insert.Assert(new Triple(subj, pred, obj));
-                                                        pred = insert.CreateUriNode(rdfType);
-                                                        obj = insert.CreateUriNode("tpl:R67036823327");
-                                                        insert.Assert(new Triple(subj, pred, obj));
-                                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                        pred = insert.CreateUriNode("tpl:R91125890543");
-                                                        obj = insert.CreateUriNode(string.Format("tpl:{0}", nrq.qualifies.Split('#')[1]));
-                                                        insert.Assert(new Triple(subj, pred, obj));
-                                                    }
-                                                    else if (nrq.value != null)
-                                                    {
-                                                        if (nrq.value.reference != null) //reference restriction
-                                                        {
-                                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = insert.CreateUriNode(rdfType);
-                                                            obj = insert.CreateUriNode("tpl:R40103148466");
-                                                            insert.Assert(new Triple(subj, pred, obj));
-                                                            pred = insert.CreateUriNode("tpl:R49267603385");
-                                                            obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                            insert.Assert(new Triple(subj, pred, obj));
-                                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = insert.CreateUriNode("tpl:R30741601855");
-                                                            obj = insert.CreateUriNode(string.Format("tpl:{0}", nrq.qualifies.Split('#')[1]));
-                                                            insert.Assert(new Triple(subj, pred, obj));
-                                                            qn = nsMap.ReduceToQName(nrq.value.reference, out qName);
-                                                            if (qn)
-                                                            {
-                                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                                pred = insert.CreateUriNode("tpl:R21129944603");
-                                                                obj = insert.CreateUriNode(qName);
-                                                                insert.Assert(new Triple(subj, pred, obj));
-                                                            }
-                                                        }
-                                                        else if (nrq.value.text != null)// value restriction
-                                                        {
-                                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                            pred = insert.CreateUriNode("tpl:R56456315674");
-                                                            obj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            insert.Assert(new Triple(subj, pred, obj));
-                                                            pred = insert.CreateUriNode("tpl:R89867215482");
-                                                            obj = insert.CreateUriNode(string.Format("tpl:{0}", nrq.qualifies.Split('#')[1]));
-                                                            insert.Assert(new Triple(subj, pred, obj));
-                                                            pred = insert.CreateUriNode("tpl:R29577887690");
-                                                            obj = insert.CreateLiteralNode(nrq.value.text, string.IsNullOrEmpty(nrq.value.lang) ? defaultLanguage : nrq.value.lang);
-                                                            insert.Assert(new Triple(subj, pred, obj));
-                                                        }
-                                                    }
-                                                    subj = insert.CreateUriNode(ident);
-                                                    pred = insert.CreateUriNode(rdfType);
-                                                    obj = insert.CreateUriNode("tpl:R76288246068");
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    pred = insert.CreateUriNode("tpl:R99672026745");
-                                                    obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    pred = insert.CreateUriNode(rdfType);
-                                                    obj = insert.CreateUriNode("tpl:R67036823327");
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = insert.CreateUriNode("rdfs:domain");
-                                                    obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-
-                                                    var ind = ++count;
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = insert.CreateUriNode("tpl:R97483568938");
-                                                    obj = insert.CreateLiteralNode(ind.ToString(), new Uri("xsd:integer"));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else if (oldTQ.roleQualification.Count > newTQ.roleQualification.Count)
-                                    {
-                                        int count = 0;
-                                        foreach (RoleQualification orq in oldTQ.roleQualification)
-                                        {
-                                            string roleName = orq.name[0].value;
-                                            string newRoleID = orq.identifier;
-
-                                            if (string.IsNullOrEmpty(newRoleID))
-                                            {
-                                                if (_useExampleRegistryBase)
-                                                    generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], roleName);
-                                                else
-                                                    generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], roleName);
-                                                newRoleID = generatedId;
-                                            }
-                                            RoleQualification nrq = newTQ.roleQualification.Find(r => r.identifier == newRoleID);
-                                            if (nrq == null)
-                                            {
-                                                if (repository.RepositoryType == RepositoryType.Part8)
-                                                {
-                                                    var ident = Utility.GetIdFromURI(newRoleID);
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = delete.CreateUriNode(rdfType);
-                                                    obj = delete.CreateUriNode("owl:Thing");
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                    obj = delete.CreateUriNode("tpl:R31633685195"); // TemplateRoleDescription
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                    pred = delete.CreateUriNode("tpl:R75942876605"); // hasTemplate
-                                                    obj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                    foreach (QMXFName nn in orq.name)
-                                                    {
-                                                        subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                        pred = delete.CreateUriNode("rdfs:label");
-                                                        obj = delete.CreateLiteralNode(nn.value, string.IsNullOrEmpty(nn.lang) ? defaultLanguage : nn.lang);
-                                                        delete.Assert(new Triple(subj, pred, obj));
-                                                    }
-                                                    var ind = ++count;
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = delete.CreateUriNode("tpl:R93802200201"); // valRoleIndex
-                                                    obj = delete.CreateLiteralNode(ind.ToString(), new Uri("xsd:integer"));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = delete.CreateUriNode("tpl:R75942876605"); // hasTemplate
-                                                    obj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    pred = insert.CreateUriNode("tpl:R97028227425"); // hasRole
-                                                    obj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                    if (!string.IsNullOrEmpty(orq.range))
-                                                    {
-                                                        qn = nsMap.ReduceToQName(orq.range, out qName);
-                                                        if (qn)
-                                                        {
-                                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = insert.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
-                                                            obj = insert.CreateUriNode(qName);
-                                                            insert.Assert(new Triple(subj, pred, obj));
-                                                        }
-                                                    }
-                                                    else if (orq.value != null)
-                                                    {
-                                                        if (orq.value.reference != null)
-                                                        {
-                                                            qn = nsMap.ReduceToQName(orq.value.reference, out qName);
-                                                            if (qn)
-                                                            {
-                                                                subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                                pred = delete.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
-                                                                obj = delete.CreateUriNode(qName);
-                                                                delete.Assert(new Triple(subj, pred, obj));
-                                                            }
-                                                        }
-                                                        else if (nrq.value.text != null)
-                                                        {
-                                                            ///TODO
-                                                        }
-                                                    }
-                                                }
-                                                else //Not Part8 repository
-                                                {
-                                                    var ident = Utility.GetIdFromURI(newRoleID);
-                                                    if (!string.IsNullOrEmpty(orq.range)) //range restriction
-                                                    {
-                                                        qn = nsMap.ReduceToQName(orq.range, out qName);
-                                                        if (qn)
-                                                        {
-                                                            subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = delete.CreateUriNode("rdfs:range");
-                                                            obj = delete.CreateUriNode(qName);
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                            pred = delete.CreateUriNode("tpl:R98983340497");
-                                                            obj = delete.CreateUriNode(qName);
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                        }
-                                                        subj = delete.CreateUriNode(ident);
-                                                        pred = delete.CreateUriNode(rdfType);
-                                                        obj = delete.CreateUriNode("tpl:R76288246068");
-                                                        delete.Assert(new Triple(subj, pred, obj));
-                                                        pred = delete.CreateUriNode("tpl:R99672026745");
-                                                        obj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                        delete.Assert(new Triple(subj, pred, obj));
-                                                        pred = delete.CreateUriNode(rdfType);
-                                                        obj = delete.CreateUriNode("tpl:R67036823327");
-                                                        delete.Assert(new Triple(subj, pred, obj));
-                                                        subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                        pred = delete.CreateUriNode("tpl:R91125890543");
-                                                        obj = delete.CreateUriNode(string.Format("tpl:{0}", orq.qualifies.Split('#')[1]));
-                                                        delete.Assert(new Triple(subj, pred, obj));
-                                                    }
-                                                    else if (orq.value != null)
-                                                    {
-                                                        if (orq.value.reference != null) //reference restriction
-                                                        {
-                                                            subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = delete.CreateUriNode(rdfType);
-                                                            obj = delete.CreateUriNode("tpl:R40103148466");
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                            pred = delete.CreateUriNode("tpl:R49267603385");
-                                                            obj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                            subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = delete.CreateUriNode("tpl:R30741601855");
-                                                            obj = delete.CreateUriNode(string.Format("tpl:{0}", orq.qualifies.Split('#')[1]));
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                            qn = nsMap.ReduceToQName(orq.value.reference, out qName);
-                                                            if (qn)
-                                                            {
-                                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                                pred = insert.CreateUriNode("tpl:R21129944603");
-                                                                obj = insert.CreateUriNode(qName);
-                                                                insert.Assert(new Triple(subj, pred, obj));
-                                                            }
-                                                        }
-                                                        else if (orq.value.text != null)// value restriction
-                                                        {
-                                                            subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = delete.CreateUriNode("tpl:R56456315674");
-                                                            obj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                            pred = delete.CreateUriNode("tpl:R89867215482");
-                                                            obj = delete.CreateUriNode(string.Format("tpl:{0}", orq.qualifies.Split('#')[1]));
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                            pred = delete.CreateUriNode("tpl:R29577887690");
-                                                            obj = delete.CreateLiteralNode(orq.value.text, string.IsNullOrEmpty(orq.value.lang) ? defaultLanguage : orq.value.lang);
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                            subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                            pred = delete.CreateUriNode("tpl:R56456315674");
-                                                            obj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                            pred = delete.CreateUriNode("tpl:R89867215482");
-                                                            obj = delete.CreateUriNode(string.Format("tpl:{0}", orq.qualifies.Split('#')[1]));
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                            pred = delete.CreateUriNode("tpl:R29577887690");
-                                                            obj = delete.CreateLiteralNode(orq.value.text, string.IsNullOrEmpty(orq.value.lang) ? defaultLanguage : orq.value.lang);
-                                                            delete.Assert(new Triple(subj, pred, obj));
-                                                        }
-                                                    }
-                                                    subj = delete.CreateUriNode(ident);
-                                                    pred = delete.CreateUriNode(rdfType);
-                                                    obj = delete.CreateUriNode("tpl:R76288246068");
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                    pred = delete.CreateUriNode("tpl:R99672026745");
-                                                    obj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                    pred = delete.CreateUriNode(rdfType);
-                                                    obj = delete.CreateUriNode("tpl:R67036823327");
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = delete.CreateUriNode("rdfs:domain");
-                                                    obj = delete.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-
-                                                    var ind = ++count;
-                                                    subj = delete.CreateUriNode(string.Format("tpl:{0}", ident));
-                                                    pred = delete.CreateUriNode("tpl:R97483568938");
-                                                    obj = delete.CreateLiteralNode(ind.ToString(), new Uri("xsd:integer"));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                if (delete.IsEmpty && insert.IsEmpty)
-                                {
-                                    string errMsg = "No changes made to template [" + templateName + "]";
-                                    Status status = new Status();
-                                    response.Level = StatusLevel.Warning;
-                                    status.Messages.Add(errMsg);
-                                    response.Append(status);
-                                    continue;//Nothing to be done
-                                }
-                            }
-                            #endregion
-                            #region Form Insert SPARQL
-                            if (delete.IsEmpty)
-                            {
-                                string templateLabel = String.Empty;
-                                string labelSparql = String.Empty;
-
-                                foreach (QMXFName newName in newTQ.name)
-                                {
-                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                    pred = insert.CreateUriNode("rdfs:label");
-                                    obj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                }
-                                foreach (Description newDescr in newTQ.description)
-                                {
-                                    if (string.IsNullOrEmpty(newDescr.value)) continue;
-                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                    pred = insert.CreateUriNode("rdfs:comment");
-                                    obj = insert.CreateLiteralNode(newDescr.value, string.IsNullOrEmpty(newDescr.lang) ? defaultLanguage : newDescr.lang);
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                }
-
-                                if (repository.RepositoryType == RepositoryType.Part8)
-                                {
-                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                    pred = insert.CreateUriNode("tpl:R19345658293"); // valNumberOfRoles
-                                    obj = insert.CreateLiteralNode(Convert.ToString(newTQ.roleQualification.Count), new Uri("xsd:integer"));
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                    qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
-                                    if (qn)
-                                    {
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        pred = insert.CreateUriNode(rdfType);
-                                        obj = insert.CreateUriNode("tpl:R37697644579"); // TemplateDescription
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        obj = insert.CreateUriNode("owl:Class");
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        obj = insert.CreateUriNode("tpl:R54325589049"); // SpecializedTemplate
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        //pred = insert.CreateUriNode("p8:hasSuperTemplate");
-                                        //obj = insert.CreateUriNode(qName);
-                                        //insert.Assert(new Triple(subj, pred, obj));
-                                        //subj = insert.CreateUriNode(qName);
-                                        //pred = insert.CreateUriNode("p8:hasSubTemplate");
-                                        //obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        //insert.Assert(new Triple(subj, pred, obj));
-                                    }
-                                }
-                                else
-                                {
-                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                    pred = insert.CreateUriNode("tpl:R35529169909");
-                                    obj = insert.CreateLiteralNode(Convert.ToString(newTQ.roleQualification.Count), new Uri("xsd:integer"));
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                    qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
-                                    if (qn)
-                                    {
-                                        subj = insert.CreateUriNode(qName);
-                                        pred = insert.CreateUriNode("dm:hasSubclass");
-                                        obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        pred = insert.CreateUriNode("dm:hasSuperclass");
-                                        obj = insert.CreateUriNode(qName);
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                    }
-
-                                }
-                                foreach (Specialization spec in newTQ.specialization)
-                                {
-                                    string specialization = spec.reference;
-                                    if (repository.RepositoryType == RepositoryType.Part8)
-                                    {
-                                        ///TODO
-                                    }
-                                    else
-                                    {
-                                        ///TODO
-                                    }
-                                }
-
-                                foreach (RoleQualification newRole in newTQ.roleQualification)
-                                {
-                                    string roleLabel = newRole.name.FirstOrDefault().value;
-                                    string roleID = string.Empty;
-                                    generatedId = string.Empty;
-                                    string genName = string.Empty;
-                                    string range = newRole.range;
-
-                                    genName = "Role Qualification " + roleLabel;
-                                    if (string.IsNullOrEmpty(newRole.identifier))
-                                    {
-                                        if (_useExampleRegistryBase)
-                                            generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
-                                        else
-                                            generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
-
-                                        roleID = Utility.GetIdFromURI(generatedId);
-                                    }
-                                    else
-                                    {
-                                        roleID = Utility.GetIdFromURI(newRole.identifier);
-                                    }
-                                    if (repository.RepositoryType == RepositoryType.Part8)
-                                    {
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                        pred = insert.CreateUriNode(rdfType);
-                                        obj = insert.CreateUriNode("owl:Thing");
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        obj = insert.CreateUriNode("tpl:R31633685195"); // TemplateRoleDescription
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        pred = insert.CreateUriNode("tpl:R75942876605"); // hasTemplate
-                                        obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        foreach (QMXFName newName in newRole.name)
-                                        {
-                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                            pred = insert.CreateUriNode("rdfs:label");
-                                            obj = insert.CreateLiteralNode(newName.value, string.IsNullOrEmpty(newName.lang) ? defaultLanguage : newName.lang);
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                        var ind = ++roleCount;
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                        pred = insert.CreateUriNode("tpl:R93802200201"); // valRoleIndex
-                                        obj = insert.CreateLiteralNode(ind.ToString(), new Uri("xsd:integer"));
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                        pred = insert.CreateUriNode("tpl:R75942876605"); // hasTemplate
-                                        obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        pred = insert.CreateUriNode("tpl:R97028227425"); // hasRole
-                                        obj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        if (!string.IsNullOrEmpty(newRole.range))
-                                        {
-                                            qn = nsMap.ReduceToQName(newRole.range, out qName);
-                                            if (qn)
-                                            {
-                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                                pred = insert.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
-                                                obj = insert.CreateUriNode(qName);
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                            }
-                                        }
-                                        else if (newRole.value != null)
-                                        {
-                                            if (newRole.value.reference != null)
-                                            {
-                                                qn = nsMap.ReduceToQName(newRole.value.reference, out qName);
-                                                if (qn)
-                                                {
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                                    pred = insert.CreateUriNode("tpl:R10425950896"); // hasRoleFillerType
-                                                    obj = insert.CreateUriNode(qName);
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                }
-                                            }
-                                            else if (newRole.value.text != null)
-                                            {
-                                                ///TODO
-                                            }
-                                        }
-                                    }
-                                    else //Not Part8 repository
-                                    {
-                                        if (!string.IsNullOrEmpty(newRole.range)) //range restriction
-                                        {
-                                            qn = nsMap.ReduceToQName(newRole.range, out qName);
-                                            if (qn)
-                                            {
-                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                                pred = insert.CreateUriNode("rdfs:range");
-                                                obj = insert.CreateUriNode(qName);
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                                pred = insert.CreateUriNode("tpl:R98983340497");
-                                                obj = insert.CreateUriNode(qName);
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                            }
-                                            subj = insert.CreateUriNode(roleID);
-                                            pred = insert.CreateUriNode(rdfType);
-                                            obj = insert.CreateUriNode("tpl:R76288246068");
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                            pred = insert.CreateUriNode("tpl:R99672026745");
-                                            obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                            pred = insert.CreateUriNode(rdfType);
-                                            obj = insert.CreateUriNode("tpl:R67036823327");
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                            subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                            pred = insert.CreateUriNode("tpl:R91125890543");
-                                            obj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.qualifies.Split('#')[1]));
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                        else if (newRole.value != null)
-                                        {
-                                            if (newRole.value.reference != null) //reference restriction
-                                            {
-                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                                pred = insert.CreateUriNode(rdfType);
-                                                obj = insert.CreateUriNode("tpl:R40103148466");
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                                pred = insert.CreateUriNode("tpl:R49267603385");
-                                                obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                                pred = insert.CreateUriNode("tpl:R30741601855");
-                                                obj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.qualifies.Split('#')[1]));
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                                qn = nsMap.ReduceToQName(newRole.value.reference, out qName);
-                                                if (qn)
-                                                {
-                                                    subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                                    pred = insert.CreateUriNode("tpl:R21129944603");
-                                                    obj = insert.CreateUriNode(qName);
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                }
-                                            }
-                                            else if (newRole.value.text != null)// value restriction
-                                            {
-                                                subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                                pred = insert.CreateUriNode("tpl:R56456315674");
-                                                obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                                pred = insert.CreateUriNode("tpl:R89867215482");
-                                                obj = insert.CreateUriNode(string.Format("tpl:{0}", newRole.qualifies.Split('#')[1]));
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                                pred = insert.CreateUriNode("tpl:R29577887690");
-                                                obj = insert.CreateLiteralNode(newRole.value.text, string.IsNullOrEmpty(newRole.value.lang) ? defaultLanguage : newRole.value.lang);
-                                                insert.Assert(new Triple(subj, pred, obj));
-                                            }
-                                        }
-                                        subj = insert.CreateUriNode(roleID);
-                                        pred = insert.CreateUriNode(rdfType);
-                                        obj = insert.CreateUriNode("tpl:R76288246068");
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        pred = insert.CreateUriNode("tpl:R99672026745");
-                                        obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        pred = insert.CreateUriNode(rdfType);
-                                        obj = insert.CreateUriNode("tpl:R67036823327");
-                                        insert.Assert(new Triple(subj, pred, obj));
-                                        subj = insert.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                        pred = insert.CreateUriNode("rdfs:domain");
-                                        obj = insert.CreateUriNode(string.Format("tpl:{0}", templateID));
-                                        insert.Assert(new Triple(subj, pred, obj));
-
-                                        var ind = ++roleCount;
-                                        subj = delete.CreateUriNode(string.Format("tpl:{0}", roleID));
-                                        pred = delete.CreateUriNode("tpl:R97483568938");
-                                        obj = delete.CreateLiteralNode(ind.ToString(), new Uri("xsd:integer"));
-                                        delete.Assert(new Triple(subj, pred, obj));
-                                    }
-                                }
-                            }
-                            #endregion
-                            #region Generate Query and Post Qualification Template
-                            if (!delete.IsEmpty)
-                            {
-                                sparqlBuilder.Append(deleteData);
-                                foreach (Triple t in delete.Triples)
-                                {
-                                    sparqlBuilder.AppendLine(t.ToString(formatter));
-                                }
-                                if (insert.IsEmpty)
-                                    sparqlBuilder.AppendLine("}");
-                                else
-                                    sparqlBuilder.AppendLine("};");
-                            }
-                            if (!insert.IsEmpty)
-                            {
-                                sparqlBuilder.AppendLine(insertData);
-                                foreach (Triple t in insert.Triples)
-                                {
-                                    sparqlBuilder.AppendLine(t.ToString(formatter));
-                                }
-                                sparqlBuilder.AppendLine("}");
-                            }
-
-                            string sparql = sparqlBuilder.ToString();
-                            Response postResponse = PostToRepository(repository, sparql);
-                            response.Append(postResponse);
-                        }
+                    foreach (QMXFName newName in newTQ.name)
+                    {
+                      GenerateName(ref insert, newName, templateID, newTQ);
+                    }
+                    foreach (Description newDescr in newTQ.description)
+                    {
+                      if (string.IsNullOrEmpty(newDescr.value)) continue;
+                      GenerateDescription(ref insert, newDescr, templateID);
                     }
 
+                    if (repository.RepositoryType == RepositoryType.Part8)
+                    {
+                      GenerateRoleCountPart8(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+                      qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
+                      if (qn) GenerateTypesPart8(ref insert, templateID, qName, newTQ);
+                    }
+                    else
+                    {
+                      GenerateRoleCount(ref insert, newTQ.roleQualification.Count, templateID, newTQ);
+                      qn = nsMap.ReduceToQName(newTQ.qualifies, out qName);
+                      if (qn) GenerateTypes(ref insert, templateID, qName, newTQ);
+
+                    }
+                    foreach (Specialization spec in newTQ.specialization)
+                    {
+                      string specialization = spec.reference;
+                      if (repository.RepositoryType == RepositoryType.Part8)
+                      {
+                        ///TODO
+                      }
+                      else
+                      {
+                        ///TODO
+                      }
+                    }
+
+                    foreach (RoleQualification newRole in newTQ.roleQualification)
+                    {
+                      string roleLabel = newRole.name.FirstOrDefault().value;
+                      string roleID = string.Empty;
+                      generatedId = string.Empty;
+                      string genName = string.Empty;
+                      string range = newRole.range;
+
+                      genName = "Role Qualification " + roleLabel;
+                      if (string.IsNullOrEmpty(newRole.identifier))
+                      {
+                        if (_useExampleRegistryBase)
+                          generatedId = CreateIdsAdiId(_settings["ExampleRegistryBase"], genName);
+                        else
+                          generatedId = CreateIdsAdiId(_settings["TemplateRegistryBase"], genName);
+
+                        roleID = Utility.GetIdFromURI(generatedId);
+                      }
+                      else
+                      {
+                        roleID = Utility.GetIdFromURI(newRole.identifier);
+                      }
+                      if (repository.RepositoryType == RepositoryType.Part8)
+                      {
+                        GenerateTypesPart8(ref insert, roleID, templateID, newRole);
+                        foreach (QMXFName newName in newRole.name)
+                        {
+                          GenerateName(ref insert, newName, roleID, newRole);
+                        }
+                        GenerateRoleIndexPart8(ref insert, roleID, ++roleCount, newRole);
+                        GenerateHasTemplate(ref insert, roleID, templateID, newRole);
+                        GenerateHasRole(ref insert, templateID, roleID, newTQ);
+                        if (!string.IsNullOrEmpty(newRole.range))
+                        {
+                          qn = nsMap.ReduceToQName(newRole.range, out qName);
+                          if (qn) GenerateRoleFillerType(ref insert, roleID, qName);
+                        }
+                        else if (newRole.value != null)
+                        {
+                          if (newRole.value.reference != null)
+                          {
+                            qn = nsMap.ReduceToQName(newRole.value.reference, out qName);
+                            if (qn) GenerateRoleFillerType(ref insert, roleID, qName);
+                          }
+                          else if (newRole.value.text != null)
+                          {
+                            ///TODO
+                          }
+                        }
+                      }
+                      else //Not Part8 repository
+                      {
+                        if (!string.IsNullOrEmpty(newRole.range)) //range restriction
+                        {
+
+                          qn = nsMap.ReduceToQName(newRole.range, out qName);
+                          if (qn) GenerateRange(ref insert, roleID, qName, newRole);
+                          GenerateTypes(ref insert, roleID, templateID, newRole);
+                          GenerateQualifies(ref insert, roleID, newRole.qualifies.Split('#')[1], newRole);
+                        }
+                        else if (newRole.value != null)
+                        {
+                          if (newRole.value.reference != null) //reference restriction
+                          {
+                            GenerateReferenceType(ref insert, roleID, templateID, newRole);
+                            GenerateReferenceQual(ref insert, roleID, newRole.qualifies.Split('#')[1], newRole);
+                            qn = nsMap.ReduceToQName(newRole.value.reference, out qName);
+                            if (qn) GenerateReferenceTpl(ref insert, roleID, qName, newRole);
+                          }
+                          else if (newRole.value.text != null)// value restriction
+                          {
+                            GenerateValue(ref insert, roleID, templateID, newRole);
+                          }
+                        }
+                        GenerateTypes(ref insert, roleID, templateID, newRole);
+                        GenerateRoleDomain(ref insert, roleID, templateID);
+                        GenerateRoleIndex(ref insert, roleID, ++roleCount);
+                      }
+                    }
+                  }
+                  #endregion
+                  #region Generate Query and Post Qualification Template
+                  if (!delete.IsEmpty)
+                  {
+                    sparqlBuilder.Append(deleteData);
+                    foreach (Triple t in delete.Triples)
+                    {
+                      sparqlBuilder.AppendLine(t.ToString(formatter));
+                    }
+                    if (insert.IsEmpty)
+                      sparqlBuilder.AppendLine("}");
+                    else
+                      sparqlBuilder.AppendLine("};");
+                  }
+                  if (!insert.IsEmpty)
+                  {
+                    sparqlBuilder.AppendLine(insertData);
+                    foreach (Triple t in insert.Triples)
+                    {
+                      sparqlBuilder.AppendLine(t.ToString(formatter));
+                    }
+                    sparqlBuilder.AppendLine("}");
+                  }
+
+                  string sparql = sparqlBuilder.ToString();
+                  Response postResponse = PostToRepository(repository, sparql);
+                  response.Append(postResponse);
                 }
+              }
+
             }
+          }
 
-            catch (Exception ex)
-            {
-                string errMsg = "Error in PostTemplate: " + ex;
-                Status status = new Status();
+          catch (Exception ex)
+          {
+            string errMsg = "Error in PostTemplate: " + ex;
+            Status status = new Status();
 
-                response.Level = StatusLevel.Error;
-                status.Messages.Add(errMsg);
-                response.Append(status);
+            response.Level = StatusLevel.Error;
+            status.Messages.Add(errMsg);
+            response.Append(status);
 
-                _logger.Error(errMsg);
-            }
+            _logger.Error(errMsg);
+          }
 
-            return response;
+          return response;
         }
-                            #endregion
         public Response PostClass(QMXF qmxf)
         {
-            Graph delete = new Graph();
-            Graph insert = new Graph();
-            //add namespaces to graphs 
-            delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
-            delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
-            delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
-            delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
-            delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
-            insert.NamespaceMap.Import(delete.NamespaceMap);
+          Graph delete = new Graph();
+          Graph insert = new Graph();
+          //add namespaces to graphs 
+          delete.NamespaceMap.AddNamespace("rdl", new Uri("http://rdl.rdlfacade.org/data#"));
+          delete.NamespaceMap.AddNamespace("tpl", new Uri("http://tpl.rdlfacade.org/data#"));
+          delete.NamespaceMap.AddNamespace("owl", new Uri("http://www.w3.org/2002/07/owl#"));
+          delete.NamespaceMap.AddNamespace("dm", new Uri("http://dm.rdlfacade.org/data#"));
+          delete.NamespaceMap.AddNamespace("p8", new Uri("http://standards.tc184-sc4.org/iso/15926/-8/template-model#"));
+          insert.NamespaceMap.Import(delete.NamespaceMap);
 
-            Response response = new Response();
-            response.Level = StatusLevel.Success;
-            try
+          Response response = new Response();
+          response.Level = StatusLevel.Success;
+          try
+          {
+            Repository repository = GetRepository(qmxf.targetRepository);
+
+            if (repository == null || repository.IsReadOnly)
             {
-                Repository repository = GetRepository(qmxf.targetRepository);
+              Status status = new Status();
+              status.Level = StatusLevel.Error;
 
-                if (repository == null || repository.IsReadOnly)
+              if (repository == null)
+                status.Messages.Add("Repository not found!");
+              else
+                status.Messages.Add("Repository [" + qmxf.targetRepository + "] is read-only!");
+
+              _response.Append(status);
+            }
+            else
+            {
+              string registry = _useExampleRegistryBase ? _settings["ExampleRegistryBase"] : _settings["ClassRegistryBase"];
+              foreach (ClassDefinition newClsDef in qmxf.classDefinitions)
+              {
+                string language = string.Empty;
+                string clsId = Utility.GetIdFromURI(newClsDef.identifier);
+                QMXF oldQmxf = new QMXF();
+
+                if (!String.IsNullOrEmpty(clsId))
                 {
-                    Status status = new Status();
-                    status.Level = StatusLevel.Error;
-
-                    if (repository == null)
-                        status.Messages.Add("Repository not found!");
-                    else
-                        status.Messages.Add("Repository [" + qmxf.targetRepository + "] is read-only!");
-
-                    _response.Append(status);
+                  oldQmxf = GetClass(clsId, repository);
                 }
-                else
+                // delete class
+                if (oldQmxf.classDefinitions.Count > 0)
                 {
-                    string registry = _useExampleRegistryBase ? _settings["ExampleRegistryBase"] : _settings["ClassRegistryBase"];
-                    foreach (ClassDefinition newClsDef in qmxf.classDefinitions)
+                  foreach (ClassDefinition oldClsDef in oldQmxf.classDefinitions)
+                  {
+                    foreach (QMXFName nn in newClsDef.name)
                     {
-                        string language = string.Empty;
-                        string clsId = Utility.GetIdFromURI(newClsDef.identifier);
-                        QMXF oldQmxf = new QMXF();
-
-                        if (!String.IsNullOrEmpty(clsId))
+                      QMXFName on = oldClsDef.name.Find(n => n.lang == nn.lang);
+                      if (on != null)
+                      {
+                        if (String.Compare(on.value, nn.value, true) != 0)
                         {
-                            oldQmxf = GetClass(clsId, repository);
+                          GenerateClassName(ref delete, on, clsId, oldClsDef);
+                          GenerateClassName(ref insert, nn, clsId, newClsDef);
                         }
-                        // delete class
-                        if (oldQmxf.classDefinitions.Count > 0)
+                      }
+                      foreach (Description nd in newClsDef.description)
+                      {
+                        Description od = oldClsDef.description.Find(d => d.lang == nd.lang);
+                        if (od != null)
                         {
-                            foreach (ClassDefinition oldClsDef in oldQmxf.classDefinitions)
-                            {
-                                foreach (QMXFName nn in newClsDef.name)
-                                {
-                                    QMXFName on = oldClsDef.name.Find(n => n.lang == nn.lang);
-                                    if (on != null)
-                                    {
-                                        if (String.Compare(on.value, nn.value, true) != 0)
-                                        {
-                                            subj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                            pred = insert.CreateUriNode("rdfs:label");
-                                            obj = insert.CreateLiteralNode(nn.value, string.IsNullOrEmpty(nn.lang) ? defaultLanguage : nn.lang);
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                            subj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                            pred = delete.CreateUriNode("rdfs:label");
-                                            obj = delete.CreateLiteralNode(on.value, string.IsNullOrEmpty(on.lang) ? defaultLanguage : nn.lang);
-                                            delete.Assert(new Triple(subj, pred, obj));
-                                        }
-                                    }
-                                    foreach (Description nd in newClsDef.description)
-                                    {
-                                        Description od = oldClsDef.description.Find(d => d.lang == nd.lang);
-                                        if (od != null && od.value != null)
-                                        {
-                                            if (String.Compare(od.value, nd.value, true) != 0)
-                                            {
-                                                subj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                                pred = delete.CreateUriNode("rdfs:comment");
-                                                obj = delete.CreateLiteralNode(od.value, string.IsNullOrEmpty(od.lang) ? defaultLanguage : od.lang);
-                                                delete.Assert(new Triple(subj, pred, obj));
-                                                subj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                                pred = insert.CreateUriNode("rdfs:comment");
-                                                obj = insert.CreateLiteralNode(nd.value, string.IsNullOrEmpty(nd.lang) ? defaultLanguage : nd.lang);
-                                                insert.Assert(new Triple(subj, pred, obj));
-
-                                            }
-                                        }
-                                    }
-                                    //specialization
-                                    if (newClsDef.specialization.Count == oldClsDef.specialization.Count)
-                                    {
-                                        continue; /// no change ... so continue
-                                    }
-                                    else if (newClsDef.specialization.Count < oldClsDef.specialization.Count) //some is deleted ...focus on old to find deleted
-                                    {
-                                        foreach (Specialization os in oldClsDef.specialization)
-                                        {
-                                            Specialization ns = newClsDef.specialization.Find(s => s.reference == os.reference);
-                                            if (ns == null)
-                                            {
-                                                qn = nsMap.ReduceToQName(os.reference, out qName);
-                                                if (qn)
-                                                {
-                                                    subj = delete.CreateUriNode(qName);
-                                                    pred = delete.CreateUriNode("rdfs:subClassOf");
-                                                    obj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                                    delete.Assert(new Triple(subj, pred, obj));
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else if (newClsDef.specialization.Count > oldClsDef.specialization.Count)//some is added ... find added 
-                                    {
-                                        foreach (Specialization ns in newClsDef.specialization)
-                                        {
-                                            Specialization os = oldClsDef.specialization.Find(s => s.reference == ns.reference);
-                                            if (os == null)
-                                            {
-                                                qn = nsMap.ReduceToQName(ns.reference, out qName);
-                                                if (qn)
-                                                {
-                                                    subj = insert.CreateUriNode(qName);
-                                                    pred = insert.CreateUriNode("rdfs:subClassOf");
-                                                    obj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                                    insert.Assert(new Triple(subj, pred, obj));
-                                                }
-                                            }
-                                        }
-                                    }
-                                    // classification
-                                    if (newClsDef.classification.Count == oldClsDef.classification.Count)
-                                    {
-                                        continue; //no change...so continue
-                                    }
-                                    else if (newClsDef.classification.Count < oldClsDef.classification.Count) //some is deleted ...focus on old to find deleted
-                                    {
-                                        foreach (Classification oc in oldClsDef.classification)
-                                        {
-                                            Classification nc = newClsDef.classification.Find(c => c.reference == oc.reference);
-                                            if (nc == null)
-                                            {
-                                                qn = nsMap.ReduceToQName(oc.reference, out qName);
-                                                if (repository.RepositoryType == RepositoryType.Part8)
-                                                {
-                                                    if (qn)
-                                                    {
-                                                        subj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                                        pred = delete.CreateUriNode(rdfType);
-                                                        obj = delete.CreateUriNode(qName);
-                                                        delete.Assert(new Triple(subj, pred, obj));
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    if (qn)
-                                                    {
-                                                        subj = delete.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                                        pred = delete.CreateUriNode("dm:hasClassified");
-                                                        obj = delete.CreateUriNode(qName);
-                                                        delete.Assert(new Triple(subj, pred, obj));
-                                                        pred = delete.CreateUriNode("dm:hasClassifier");
-                                                        delete.Assert(new Triple(subj, pred, obj));
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                    else if (newClsDef.classification.Count > oldClsDef.classification.Count)//some is added ... find added classifications
-                                    {
-                                        foreach (Classification nc in newClsDef.classification)
-                                        {
-                                            Classification oc = oldClsDef.classification.Find(c => c.reference == nc.reference);
-                                            if (oc == null)
-                                            {
-                                                qn = nsMap.ReduceToQName(nc.reference, out qName);
-                                                if (repository.RepositoryType == RepositoryType.Part8)
-                                                {
-                                                    if (qn)
-                                                    {
-                                                        subj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                                        pred = insert.CreateUriNode(rdfType);
-                                                        obj = insert.CreateUriNode(qName);
-                                                        insert.Assert(new Triple(subj, pred, obj));
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    if (qn)
-                                                    {
-                                                        subj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                                        pred = insert.CreateUriNode("dm:hasClassified");
-                                                        obj = insert.CreateUriNode(qName);
-                                                        insert.Assert(new Triple(subj, pred, obj));
-                                                        pred = insert.CreateUriNode("dm:hasClassifier");
-                                                        insert.Assert(new Triple(subj, pred, obj));
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            if (delete.IsEmpty && insert.IsEmpty)
-                            {
-                                string errMsg = "No changes made to class [" + qmxf.classDefinitions[0].name[0].value + "]";
-                                Status status = new Status();
-                                response.Level = StatusLevel.Warning;
-                                status.Messages.Add(errMsg);
-                                response.Append(status);
-                                continue;//Nothing to be done
-                            }
+                          if (String.Compare(od.value, nd.value, true) != 0)
+                          {
+                            GenerateClassDescription(ref delete, od, clsId);
+                            GenerateClassDescription(ref insert, nd, clsId);
+                          }
                         }
-                        // add class
-                        if (delete.IsEmpty && insert.IsEmpty)
+                      }
+                      //specialization
+                      if (newClsDef.specialization.Count == oldClsDef.specialization.Count)
+                      {
+                        continue; /// no change ... so continue
+                      }
+                      else if (newClsDef.specialization.Count < oldClsDef.specialization.Count) //some is deleted ...focus on old to find deleted
+                      {
+                        foreach (Specialization os in oldClsDef.specialization)
                         {
-                            string clsLabel = newClsDef.name[0].value;
-                            if (string.IsNullOrEmpty(clsId))
-                            {
-                                string newClsName = "Class definition " + clsLabel;
-                                clsId = CreateIdsAdiId(registry, newClsName);
-                                clsId = Utility.GetIdFromURI(clsId);
-                            }
-                            // append entity type
-                            if (newClsDef.entityType != null && !String.IsNullOrEmpty(newClsDef.entityType.reference))
-                            {
-                                qn = nsMap.ReduceToQName(newClsDef.entityType.reference, out qName);
-                                if (qn)
-                                {
-                                    subj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                    pred = insert.CreateUriNode(rdfType);
-                                    obj = insert.CreateUriNode(qName);
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                    pred = insert.CreateUriNode(rdfType);
-                                    obj = insert.CreateUriNode("owl:Class");
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                }
-                            }
-                            // append specialization
-                            foreach (Specialization ns in newClsDef.specialization)
-                            {
-                                if (!String.IsNullOrEmpty(ns.reference))
-                                {
-                                    qn = nsMap.ReduceToQName(ns.reference, out qName);
-                                    if (repository.RepositoryType == RepositoryType.Part8)
-                                    {
-                                        if (qn)
-                                        {
-                                            subj = insert.CreateUriNode(qName);
-                                            pred = insert.CreateUriNode("rdfs:subClassOf");
-                                            obj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (qn)
-                                        {
-                                            subj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                            pred = insert.CreateUriNode("dm:hasSubclass");
-                                            obj = insert.CreateUriNode(qName);
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                    }
-                                }
-                            }
-                            // append description
-                            foreach (Description nd in newClsDef.description)
-                            {
-                                if (!String.IsNullOrEmpty(nd.value))
-                                {
-                                    subj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                    pred = insert.CreateUriNode("rdfs:comment");
-                                    obj = insert.CreateLiteralNode(nd.value, string.IsNullOrEmpty(nd.lang) ? defaultLanguage : nd.lang);
-                                    insert.Assert(new Triple(subj, pred, obj));
-                                    // GenerateClassDescription(ref insert, nd, clsId);
-                                }
-                            }
-                            foreach (QMXFName nn in newClsDef.name)
-                            {
-                                // append label
-                                subj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                pred = insert.CreateUriNode("rdfs:label");
-                                obj = insert.CreateLiteralNode(nn.value, string.IsNullOrEmpty(nn.lang) ? defaultLanguage : nn.lang);
-                                insert.Assert(new Triple(subj, pred, obj));
-                                // GenerateClassName(ref insert, nn, clsId, newClsDef);
-                            }
-                            // append classification
-                            foreach (Classification nc in newClsDef.classification)
-                            {
-                                if (!string.IsNullOrEmpty(nc.reference))
-                                {
-                                    qn = nsMap.ReduceToQName(nc.reference, out qName);
-                                    if (repository.RepositoryType == RepositoryType.Part8)
-                                    {
-                                        if (qn)
-                                        {
-                                            subj = insert.CreateUriNode(qName);
-                                            pred = insert.CreateUriNode("rdf:type");
-                                            obj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (qn)
-                                        {
-                                            subj = insert.CreateUriNode(string.Format("rdl:{0}", clsId));
-                                            pred = insert.CreateUriNode("dm:hasClassified");
-                                            obj = insert.CreateUriNode(qName);
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                            pred = insert.CreateUriNode("dm:hasClassifier");
-                                            insert.Assert(new Triple(subj, pred, obj));
-                                        }
-                                    }
-                                }
-                            }
+                          Specialization ns = newClsDef.specialization.Find(s => s.reference == os.reference);
+                          if (ns == null)
+                          {
+                            qn = nsMap.ReduceToQName(os.reference, out qName);
+                            if (qn) GenerateRdfSubClass(ref delete, clsId, qName);
+                          }
                         }
-                        if (!delete.IsEmpty)
+                      }
+                      else if (newClsDef.specialization.Count > oldClsDef.specialization.Count)//some is added ... find added 
+                      {
+                        foreach (Specialization ns in newClsDef.specialization)
                         {
-                            sparqlBuilder.AppendLine(deleteData);
-                            foreach (Triple t in delete.Triples)
+                          Specialization os = oldClsDef.specialization.Find(s => s.reference == ns.reference);
+                          if (os == null)
+                          {
+                            qn = nsMap.ReduceToQName(ns.reference, out qName);
+                            if (qn) GenerateRdfSubClass(ref insert, clsId, qName);
+                          }
+                        }
+                      }
+                      // classification
+                      if (newClsDef.classification.Count == oldClsDef.classification.Count)
+                      {
+                        continue; //no change...so continue
+                      }
+                      else if (newClsDef.classification.Count < oldClsDef.classification.Count) //some is deleted ...focus on old to find deleted
+                      {
+                        foreach (Classification oc in oldClsDef.classification)
+                        {
+                          Classification nc = newClsDef.classification.Find(c => c.reference == oc.reference);
+                          if (nc == null)
+                          {
+                            qn = nsMap.ReduceToQName(oc.reference, out qName);
+                            if (repository.RepositoryType == RepositoryType.Part8)
                             {
-                                sparqlBuilder.AppendLine(t.ToString(formatter));
+                              if (qn) GenerateSuperClass(ref delete, qName, clsId); ///delete from old
                             }
-                            if (insert.IsEmpty)
-                                sparqlBuilder.AppendLine("}");
                             else
-                                sparqlBuilder.AppendLine("};");
-                        }
-                        if (!insert.IsEmpty)
-                        {
-                            sparqlBuilder.AppendLine(insertData);
-                            foreach (Triple t in insert.Triples)
                             {
-                                sparqlBuilder.AppendLine(t.ToString(formatter));
+                              if (qn) GenerateDmClassification(ref delete, clsId, qName);
                             }
-                            sparqlBuilder.AppendLine("}");
+                          }
                         }
-
-                        string sparql = sparqlBuilder.ToString();
-                        Response postResponse = PostToRepository(repository, sparql);
-                        response.Append(postResponse);
+                      }
+                      else if (newClsDef.classification.Count > oldClsDef.classification.Count)//some is added ... find added classifications
+                      {
+                        foreach (Classification nc in newClsDef.classification)
+                        {
+                          Classification oc = oldClsDef.classification.Find(c => c.reference == nc.reference);
+                          if (oc == null)
+                          {
+                            qn = nsMap.ReduceToQName(nc.reference, out qName);
+                            if (repository.RepositoryType == RepositoryType.Part8)
+                            {
+                              if (qn) GenerateSuperClass(ref insert, qName, clsId); ///insert from new
+                            }
+                            else
+                            {
+                              if (qn) GenerateDmClassification(ref insert, clsId, qName);
+                            }
+                          }
+                        }
+                      }
                     }
+                  }
+                  if (delete.IsEmpty && insert.IsEmpty)
+                  {
+                    string errMsg = "No changes made to class [" + qmxf.classDefinitions[0].name[0].value + "]";
+                    Status status = new Status();
+                    response.Level = StatusLevel.Warning;
+                    status.Messages.Add(errMsg);
+                    response.Append(status);
+                    continue;//Nothing to be done
+                  }
                 }
+                // add class
+                if (delete.IsEmpty && insert.IsEmpty)
+                {
+                  string clsLabel = newClsDef.name[0].value;
+                  if (string.IsNullOrEmpty(clsId))
+                  {
+                    string newClsName = "Class definition " + clsLabel;
+                    clsId = CreateIdsAdiId(registry, newClsName);
+                    clsId = Utility.GetIdFromURI(clsId);
+                  }
+                  // append entity type
+                  if (newClsDef.entityType != null && !String.IsNullOrEmpty(newClsDef.entityType.reference))
+                  {
+                    qn = nsMap.ReduceToQName(newClsDef.entityType.reference, out qName);
+                    if (qn) GenerateTypesPart8(ref insert, clsId, qName, newClsDef);
+                  }
+                  // append specialization
+                  foreach (Specialization ns in newClsDef.specialization)
+                  {
+                    if (!String.IsNullOrEmpty(ns.reference))
+                    {
+                      qn = nsMap.ReduceToQName(ns.reference, out qName);
+                      if (repository.RepositoryType == RepositoryType.Part8)
+                      {
+                        if (qn) GenerateRdfSubClass(ref insert, clsId, qName);
+                      }
+                      else
+                      {
+                        if (qn) GenerateDmSubClass(ref insert, clsId, qName);
+                      }
+                    }
+                  }
+                  // append description
+                  foreach (Description nd in newClsDef.description)
+                  {
+                    if (!String.IsNullOrEmpty(nd.value))
+                    {
+                      GenerateClassDescription(ref insert, nd, clsId);
+                    }
+                  }
+                  foreach (QMXFName nn in newClsDef.name)
+                  {
+                    // append label
+                    GenerateClassName(ref insert, nn, clsId, newClsDef);
+                  }
+                  // append classification
+                  foreach (Classification nc in newClsDef.classification)
+                  {
+                    if (!string.IsNullOrEmpty(nc.reference))
+                    {
+                      qn = nsMap.ReduceToQName(nc.reference, out qName);
+                      if (repository.RepositoryType == RepositoryType.Part8)
+                      {
+                        if (qn) GenerateSuperClass(ref insert, qName, clsId);
+                      }
+                      else
+                      {
+                        if (qn) GenerateDmClassification(ref insert, clsId, qName);
+                      }
+                    }
+                  }
+                }
+                if (!delete.IsEmpty)
+                {
+                  sparqlBuilder.AppendLine(deleteData);
+                  foreach (Triple t in delete.Triples)
+                  {
+                    sparqlBuilder.AppendLine(t.ToString(formatter));
+                  }
+                  if (insert.IsEmpty)
+                    sparqlBuilder.AppendLine("}");
+                  else
+                    sparqlBuilder.AppendLine("};");
+                }
+                if (!insert.IsEmpty)
+                {
+                  sparqlBuilder.AppendLine(insertData);
+                  foreach (Triple t in insert.Triples)
+                  {
+                    sparqlBuilder.AppendLine(t.ToString(formatter));
+                  }
+                  sparqlBuilder.AppendLine("}");
+                }
+
+                string sparql = sparqlBuilder.ToString();
+                Response postResponse = PostToRepository(repository, sparql);
+                response.Append(postResponse);
+              }
             }
-            catch (Exception ex)
-            {
-                string errMsg = "Error in PostClass: " + ex;
-                Status status = new Status();
+          }
+          catch (Exception ex)
+          {
+            string errMsg = "Error in PostClass: " + ex;
+            Status status = new Status();
 
-                response.Level = StatusLevel.Error;
-                status.Messages.Add(errMsg);
-                response.Append(status);
+            response.Level = StatusLevel.Error;
+            status.Messages.Add(errMsg);
+            response.Append(status);
 
-                _logger.Error(errMsg);
-            }
+            _logger.Error(errMsg);
+          }
 
-            return response;
+          return response;
         }
 
                     #endregion
@@ -3722,5 +3127,326 @@ namespace org.iringtools.refdata
                 Revision = version.Revision
             };
         }
+
+        private void GenerateValue(ref Graph work, string subjId, string objId, object gobj)
+        {
+          RoleQualification role = (RoleQualification)gobj;
+          pred = work.CreateUriNode("tpl:R56456315674");
+          obj = work.CreateUriNode(string.Format("tpl:{0}", objId));
+          work.Assert(new Triple(subj, pred, obj));
+          pred = work.CreateUriNode("tpl:R89867215482");
+          obj = work.CreateUriNode(string.Format("tpl:{0}", role.qualifies.Split('#')[1]));
+          work.Assert(new Triple(subj, pred, obj));
+          pred = work.CreateUriNode("tpl:R29577887690");
+          obj = work.CreateLiteralNode(role.value.text, string.IsNullOrEmpty(role.value.lang) ? defaultLanguage : role.value.lang);
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateReferenceQual(ref Graph work, string subjId, string objId, object gobj)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+          pred = work.CreateUriNode("tpl:R30741601855");
+          obj = work.CreateUriNode(string.Format("tpl:{0}", objId));
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateReferenceType(ref Graph work, string subjId, string objId, object gobj)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+          pred = work.CreateUriNode(rdfType);
+          obj = work.CreateUriNode("tpl:R40103148466");
+          work.Assert(new Triple(subj, pred, obj));
+          pred = work.CreateUriNode("tpl:R49267603385");
+          obj = work.CreateUriNode(string.Format("tpl:{0}", objId));
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateReferenceTpl(ref Graph work, string subjId, string objId, object gobj)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+          pred = work.CreateUriNode("tpl:R21129944603");
+          obj = work.CreateUriNode(objId);
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateQualifies(ref Graph work, string subjId, string objId, object gobj)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+          pred = work.CreateUriNode("tpl:R91125890543");
+          obj = work.CreateUriNode(string.Format("tpl:{0}", objId));
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateRange(ref Graph work, string subjId, string objId, object gobj)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+          pred = work.CreateUriNode("rdfs:range");
+          obj = work.CreateUriNode(objId);
+          work.Assert(new Triple(subj, pred, obj));
+          pred = work.CreateUriNode("tpl:R98983340497");
+          obj = work.CreateUriNode(qName);
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateHasRole(ref Graph work, string subjId, string objId, object gobj)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+          pred = work.CreateUriNode("p8:hasRole");
+          obj = work.CreateUriNode(string.Format("tpl:{0}", objId));
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateHasTemplate(ref Graph work, string subjId, string objId, object gobj)
+        {
+          if (gobj is RoleDefinition || gobj is RoleQualification)
+          {
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode("p8:hasTemplate");
+            obj = work.CreateUriNode(string.Format("tpl:{0}", objId));
+            work.Assert(new Triple(subj, pred, obj));
+          }
+        }
+
+        private void GenerateRoleIndex(ref Graph work, string subjId, int index)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+          pred = work.CreateUriNode("tpl:R97483568938");
+          obj = work.CreateLiteralNode(index.ToString(), new Uri("xsd:integer"));
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateRoleIndexPart8(ref Graph work, string subjId, int index, object gobj)
+        {
+          if (gobj is RoleDefinition || gobj is RoleQualification)
+          {
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode("p8:valRoleIndex");
+            obj = work.CreateLiteralNode(index.ToString(), new Uri("xsd:integer"));
+            work.Assert(new Triple(subj, pred, obj));
+          }
+        }
+
+        private void GenerateRoleDomain(ref Graph work, string subjId, string objId)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+          pred = work.CreateUriNode("rdfs:domain");
+          obj = work.CreateUriNode(string.Format("tpl:{0}", objId));
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateRoleFillerType(ref Graph work, string subjId, string qName)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+          pred = work.CreateUriNode("p8:hasRoleFillerType");
+          obj = work.CreateUriNode(qName);
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateRoleCount(ref Graph work, int rolecount, string subjId, object gobj)
+        {
+          if (gobj is TemplateDefinition || gobj is TemplateQualification)
+          {
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode("tpl:R35529169909");
+            obj = work.CreateLiteralNode(Convert.ToString(rolecount), new Uri("xsd:integer"));
+            work.Assert(new Triple(subj, pred, obj));
+          }
+        }
+
+        private void GenerateRoleCountPart8(ref Graph work, int rolecount, string subjId, object gobj)
+        {
+          if (gobj is TemplateDefinition || gobj is TemplateQualification)
+          {
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode("p8:valNumberOfRoles");
+            obj = work.CreateLiteralNode(Convert.ToString(rolecount), new Uri("xsd:integer"));
+            work.Assert(new Triple(subj, pred, obj));
+          }
+
+        }
+
+        private void GenerateTypesPart8(ref Graph work, string subjId, string objectId, object gobj)
+        {
+          if (gobj is TemplateDefinition)
+          {
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode(rdfType);
+            obj = work.CreateUriNode("p8:TemplateDescription");
+            work.Assert(new Triple(subj, pred, obj));
+            obj = work.CreateUriNode("p8:BaseTemplateStatement");
+            work.Assert(new Triple(subj, pred, obj));
+            obj = work.CreateUriNode("owl:Thing");
+            work.Assert(new Triple(subj, pred, obj));
+          }
+          else if(gobj is RoleQualification)
+          {
+            if (((RoleQualification)gobj).range != null)
+              qn = nsMap.ReduceToQName(((RoleQualification)gobj).range, out qName);
+            else
+              qn = nsMap.ReduceToQName(((RoleQualification)gobj).value.reference, out qName);
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode(rdfType);
+            obj = work.CreateUriNode("owl:Thing");
+            work.Assert(new Triple(subj, pred, obj));
+            obj = work.CreateUriNode("p8:TemplateRoleDescription");
+            work.Assert(new Triple(subj, pred, obj));
+            pred = work.CreateUriNode("p8:hasTemplate");
+            obj = work.CreateUriNode(string.Format("tpl:{0}", objectId));
+            work.Assert(new Triple(subj, pred, obj));
+            pred = work.CreateUriNode("p8:hasRolefillerType");
+            obj = work.CreateUriNode(qName);
+            work.Assert(new Triple(subj, pred, obj));
+          }
+          else if (gobj is RoleDefinition)
+          {
+            if (((RoleDefinition)gobj).range != null)
+              qn = nsMap.ReduceToQName(((RoleDefinition)gobj).range, out qName);
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode(rdfType);
+            obj = work.CreateUriNode("owl:Thing");
+            work.Assert(new Triple(subj, pred, obj));
+            obj = work.CreateUriNode("p8:TemplateRoleDescription");
+            work.Assert(new Triple(subj, pred, obj));
+            pred = work.CreateUriNode("p8:hasTemplate");
+            obj = work.CreateUriNode(string.Format("tpl:{0}", objectId));
+            work.Assert(new Triple(subj, pred, obj));
+            pred = work.CreateUriNode("p8:hasRolefillerType");
+            obj = work.CreateUriNode(qName);
+            work.Assert(new Triple(subj, pred, obj));
+          }
+          else if (gobj is TemplateQualification)
+          {
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode(rdfType);
+            obj = work.CreateUriNode("p8:TemplateDescription");
+            work.Assert(new Triple(subj, pred, obj));
+            obj = work.CreateUriNode("owl:Thing");
+            work.Assert(new Triple(subj, pred, obj));
+            obj = work.CreateUriNode("p8:SpecializedTemplateStatement");
+            work.Assert(new Triple(subj, pred, obj));
+            pred = work.CreateUriNode(rdfssubClassOf);
+            obj = work.CreateUriNode(objectId);
+            work.Assert(new Triple(subj, pred, obj));
+            subj = work.CreateUriNode(objectId);
+          }
+          else if (gobj is ClassDefinition)
+          {
+            subj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
+            pred = work.CreateUriNode(rdfType);
+            obj = work.CreateUriNode(objectId);
+            work.Assert(new Triple(subj, pred, obj));
+            pred = work.CreateUriNode("rdfs:subClassOf");
+            obj = work.CreateUriNode("owl:Class");
+            work.Assert(new Triple(subj, pred, obj));
+          }
+        }
+
+        private void GenerateTypes(ref Graph work, string subjId, string objId, object gobj)
+        {
+          if (gobj is TemplateDefinition)
+          {
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode(rdfType);
+            obj = work.CreateUriNode("tpl:R16376066707");
+            work.Assert(new Triple(subj, pred, obj));
+          }
+          else if (gobj is RoleDefinition)
+          {
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode(rdfType);
+            obj = work.CreateUriNode("tpl:R74478971040");
+            work.Assert(new Triple(subj, pred, obj));
+          }
+          else if (gobj is TemplateQualification)
+          {
+            subj = work.CreateUriNode(objId);
+            pred = work.CreateUriNode("dm:hasSubclass");
+            obj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            work.Assert(new Triple(subj, pred, obj));
+            subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+            pred = work.CreateUriNode("dm:hasSuperclass");
+            obj = work.CreateUriNode(objId);
+            work.Assert(new Triple(subj, pred, obj));
+          }
+          else if (gobj is RoleQualification)
+          {
+            subj = work.CreateUriNode(subjId);
+            pred = work.CreateUriNode(rdfType);
+            obj = work.CreateUriNode("tpl:R76288246068");
+            work.Assert(new Triple(subj, pred, obj));
+            pred = work.CreateUriNode("tpl:R99672026745");
+            obj = work.CreateUriNode(string.Format("tpl:{0}", objId));
+            work.Assert(new Triple(subj, pred, obj));
+            pred = work.CreateUriNode(rdfType);
+            obj = work.CreateUriNode("tpl:R67036823327");
+            work.Assert(new Triple(subj, pred, obj));
+          }
+        }
+
+        private void GenerateName(ref Graph work, QMXFName name, string subjId, object gobj)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
+          pred = work.CreateUriNode("rdfs:label");
+          obj = work.CreateLiteralNode(name.value, string.IsNullOrEmpty(name.lang) ? defaultLanguage : name.lang);
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateClassName(ref Graph work, QMXFName name, string subjId, object gobj)
+        {
+          subj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
+          pred = work.CreateUriNode("rdfs:label");
+          obj = work.CreateLiteralNode(name.value, string.IsNullOrEmpty(name.lang) ? defaultLanguage : name.lang);
+          work.Assert(new Triple(subj, pred, obj));
+        }
+        private void GenerateDescription(ref Graph work, Description descr, string subjectId)
+        {
+          subj = work.CreateUriNode(string.Format("tpl:{0}", subjectId));
+          pred = work.CreateUriNode("rdfs:comment");
+          obj = work.CreateLiteralNode(descr.value, string.IsNullOrEmpty(descr.lang) ? defaultLanguage : descr.lang);
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateClassDescription(ref Graph work, Description descr, string subjectId)
+        {
+          subj = work.CreateUriNode(string.Format("rdl:{0}", subjectId));
+          pred = work.CreateUriNode("rdfs:comment");
+          obj = work.CreateLiteralNode(descr.value, string.IsNullOrEmpty(descr.lang) ? defaultLanguage : descr.lang);
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateSuperClass(ref Graph work, string subjId, string objId)
+        {
+          subj = work.CreateUriNode(string.Format("rdl:{0}", objId));
+          pred = work.CreateUriNode("rdfs:subClassOf");
+          obj = work.CreateUriNode(subjId);
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateRdfSubClass(ref Graph work, string subjId, string objId)
+        {
+          subj = work.CreateUriNode(objId);
+          pred = work.CreateUriNode("rdfs:subClassOf");
+          obj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateDmClassification(ref Graph work, string subjId, string objId)
+        {
+          subj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
+          pred = work.CreateUriNode("dm:hasClassified");
+          obj = work.CreateUriNode(objId);
+          work.Assert(new Triple(subj, pred, obj));
+          pred = work.CreateUriNode("dm:hasClassifier");
+          work.Assert(new Triple(subj, pred, obj));
+        }
+
+        private void GenerateDmSubClass(ref Graph work, string subjId, string objId)
+        {
+          subj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
+          pred = work.CreateUriNode("dm:hasSubclass");
+          obj = work.CreateUriNode(objId);
+          work.Assert(new Triple(subj, pred, obj));
+        }
+              #endregion
     }
 }
