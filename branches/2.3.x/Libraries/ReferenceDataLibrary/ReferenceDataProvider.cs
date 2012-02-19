@@ -2357,10 +2357,8 @@ namespace org.iringtools.refdata
               #region Template Qualification
               /// Qualification templates do have the following properties
               /// 1) Base class = owl:Thing
-              /// 2) rdf:type = p8:CoreTemplate
-              /// 3) p8:hasSuperTemplate = Super Template ID
-              /// 4) p8:hasSubTemplate = Sub Template ID
-              /// 5) rdfs:label = template name
+              /// 2) rdf:type = p8:SpecializedTemplateStatement
+              /// 3) rdfs:label = template name
               /// 
               if (qmxf.templateQualifications.Count > 0)
               {
@@ -3335,7 +3333,7 @@ namespace org.iringtools.refdata
             pred = work.CreateUriNode(rdfType);
             obj = work.CreateUriNode(objectId);
             work.Assert(new Triple(subj, pred, obj));
-            pred = work.CreateUriNode("rdfs:subClassOf");
+            pred = work.CreateUriNode(rdfType);
             obj = work.CreateUriNode("owl:Class");
             work.Assert(new Triple(subj, pred, obj));
           }
@@ -3416,17 +3414,17 @@ namespace org.iringtools.refdata
 
         private void GenerateSuperClass(ref Graph work, string subjId, string objId)
         {
-          subj = work.CreateUriNode(string.Format("rdl:{0}", objId));
+          subj = work.CreateUriNode(subjId);
           pred = work.CreateUriNode("rdfs:subClassOf");
-          obj = work.CreateUriNode(subjId);
+          obj = work.CreateUriNode(string.Format("rdl:{0}", objId));
           work.Assert(new Triple(subj, pred, obj));
         }
 
         private void GenerateRdfSubClass(ref Graph work, string subjId, string objId)
         {
-          subj = work.CreateUriNode(objId);
+          subj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
           pred = work.CreateUriNode("rdfs:subClassOf");
-          obj = work.CreateUriNode(string.Format("rdl:{0}", subjId));
+          obj = work.CreateUriNode(objId);
           work.Assert(new Triple(subj, pred, obj));
         }
 
