@@ -5,6 +5,6 @@ SELECT ?uri ?label
 WHERE {
 ?s dm:hasClassifier rdl:param1 . 
 ?s dm:hasClassified ?uri . 
-?uri rdfs:label ?label 
+  OPTIONAL{ ?uri rdfs:label ?label } 
 }
  ORDER BY ?label
