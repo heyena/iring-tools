@@ -2,13 +2,11 @@ PREFIX tpl: <http://tpl.rdlfacade.org/data#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX p8: <http://standards.tc184-sc4.org/iso/15926/-8/template-model#>
-
 SELECT	DISTINCT ?label ?definition
-WHERE
 {
-	tpl:param1	rdf:type	 p8:BaseTemplateStatement . 
-	tpl:param1	rdfs:label	?label . 
-	OPTIONAL	{ tpl:param1	rdfs:comment	?definition . }
+  tpl:param1 a p8:BaseTemplateStatement . 
+  tpl:param1 rdfs:label ?label . 
+  OPTIONAL{ tpl:param1 rdfs:comment ?definition . }
 }
 
 
