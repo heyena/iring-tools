@@ -3,6 +3,6 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 SELECT (COUNT(?uri) AS ?label) 
 WHERE {
-?uri rdfs:subClassOf	rdl:param1 
+rdl:param1 rdfs:subClassOf ?uri . 
 OPTIONAL { ?uri rdfs:label ?label }
 }
