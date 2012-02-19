@@ -4,8 +4,7 @@ PREFIX tpl: <http://tpl.rdlfacade.org/data#>
 PREFIX p8: <http://standards.tc184-sc4.org/iso/15926/-8/template-model#>
 
 SELECT (COUNT(DISTINCT  ?uri) AS ?label)
-WHERE {
-?template p8:hasRoleFillerType dm:param1 ;
-		  p8:hasTemplate		?uri .
-OPTIONAL { ?uri rdfs:label ?label }
+{
+ ?classRole p8:hasRoleFillerType rdl:param1 .
+ ?classRole p8:hasTemplate ?uri .
 }
