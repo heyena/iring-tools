@@ -152,7 +152,7 @@ namespace org.iringtools.adapter
       Manifest manifest = new Manifest()
       {
         graphs = new Graphs(),
-        version = "2.1.1",
+        version = "2.3.1",
         valueListMaps = new ValueListMaps()
       };      
 
