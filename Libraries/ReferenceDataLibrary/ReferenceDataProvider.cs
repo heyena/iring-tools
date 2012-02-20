@@ -3291,9 +3291,9 @@ namespace org.iringtools.refdata
             pred = work.CreateUriNode("p8:hasTemplate");
             obj = work.CreateUriNode(string.Format("tpl:{0}", objectId));
             work.Assert(new Triple(subj, pred, obj));
-            pred = work.CreateUriNode("p8:hasRolefillerType");
-            obj = work.CreateUriNode(qName);
-            work.Assert(new Triple(subj, pred, obj));
+            //pred = work.CreateUriNode("p8:hasRoleFillerType");
+            //obj = work.CreateUriNode(qName);
+            //work.Assert(new Triple(subj, pred, obj));
           }
           else if (gobj is RoleDefinition)
           {
@@ -3308,7 +3308,7 @@ namespace org.iringtools.refdata
             pred = work.CreateUriNode("p8:hasTemplate");
             obj = work.CreateUriNode(string.Format("tpl:{0}", objectId));
             work.Assert(new Triple(subj, pred, obj));
-            pred = work.CreateUriNode("p8:hasRolefillerType");
+            pred = work.CreateUriNode("p8:hasRoleFillerType");
             obj = work.CreateUriNode(qName);
             work.Assert(new Triple(subj, pred, obj));
           }
@@ -3325,7 +3325,6 @@ namespace org.iringtools.refdata
             pred = work.CreateUriNode(rdfssubClassOf);
             obj = work.CreateUriNode(objectId);
             work.Assert(new Triple(subj, pred, obj));
-            subj = work.CreateUriNode(objectId);
           }
           else if (gobj is ClassDefinition)
           {
