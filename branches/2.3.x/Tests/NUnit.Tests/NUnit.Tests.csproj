@@ -90,7 +90,9 @@
     <Content Include="App_Data\Authorization.12345_000.ABC.xml" />
     <Content Include="App_Data\AuthorizationBindingConfiguration.12345_000.ABC.xml" />
     <Content Include="App_Data\BindingConfiguration.12345_000.ABC.xml" />
-    <Content Include="App_Data\BindingConfiguration.Adapter.xml" />
+    <Content Include="App_Data\BindingConfiguration.Adapter.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="App_Data\ClassificationTemplate.xml" />
     <Content Include="App_Data\config.xml" />
     <Content Include="App_Data\DatabaseDictionary.12345_000.ABC.xml" />
@@ -170,16 +172,14 @@
       <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
       <Name>ReferenceDataLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\SpreadsheetDatalayer\SpreadsheetDatalayer.csproj">
+      <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
+      <Name>SpreadsheetDatalayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
       <Name>UtilityLibrary.Desktop</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>
-      </SubType>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
