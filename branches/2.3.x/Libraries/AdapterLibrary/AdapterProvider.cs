@@ -3235,7 +3235,7 @@ namespace org.iringtools.adapter
       dataLayers.Add(nhDataLayer);
 
       // Load Spreadsheet data layer
-      Type ssType = Type.GetType("org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDataLayer", true);
+      Type ssType = Type.GetType("org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer", true);
       string ssLibrary = ssType.Assembly.GetName().Name;
       string ssAssembly = string.Format("{0}, {1}", ssType.FullName, ssLibrary);
       DataLayer ssDataLayer = new DataLayer { Assembly = ssAssembly, Name = ssLibrary, Configurable = true };
