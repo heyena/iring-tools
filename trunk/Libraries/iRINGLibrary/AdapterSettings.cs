@@ -14,9 +14,6 @@ namespace org.iringtools.adapter
     {
       this.Add("InterfaceService", @"http://localhost/services/facade/query");
       this.Add("ReferenceDataServiceUri", @"http://localhost/services/refdata");
-      this.Add("JavaCoreUri", @"http://localhost/services/dir");
-      this.Add("DefaultProjectionFormat", "json");
-      this.Add("DefaultListProjectionFormat", "json");
       this.Add("EndpointTimeout", "30000");
       this.Add("dotNetRDFServer", @".\SQLEXPRESS");
       this.Add("dotNetRDFCatalog", "FacadeDb");
@@ -26,6 +23,8 @@ namespace org.iringtools.adapter
       this.Add("DumpSettings", "False");
       this.Add("ExecutingAssemblyName", "App_Code");
       this.Add("DefaultStyleSheet", @".\App_Data\default.css");
+      this.Add("ValidateLinks", "True");
+      this.Add("DisplayLinks", "True");
 
       if (OperationContext.Current != null)
       {
@@ -58,7 +57,9 @@ namespace org.iringtools.adapter
           this[key] = baseAddress;
         }
 
-        if (key.Equals("DefaultProjectionFormat"))
+        if (key.Equals("DefaultProjectionFormat") ||
+            key.Equals("ValidateLinks") ||
+            key.Equals("DisplayLinks"))
         {
           string format = settings[key].ToString();
           this[key] = format;
@@ -79,7 +80,11 @@ namespace org.iringtools.adapter
       {
         foreach (string key in keyRing.Keys)
         {
-          string value = keyRing[key].ToString();
+          object valueObj = keyRing[key];
+
+          string value = String.Empty;
+          if (valueObj != null)
+            value = valueObj.ToString();
 
           //Protect existing settings, but add new ones.
           if (!this.AllKeys.Contains(key, StringComparer.CurrentCultureIgnoreCase))

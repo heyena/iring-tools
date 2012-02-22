@@ -106,6 +106,21 @@ namespace org.iringtools.library
       }
     }
 
+    public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType)
+    {
+      return null;
+    }
+
+    public virtual long GetRelatedCount(IDataObject dataObject, string relatedObjectType)
+    {
+      return 0;
+    }
+
+    public virtual IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex)
+    {
+      return null;
+    }
+
     #region Abstract Public Interface Methods
 
     public abstract IList<string> GetIdentifiers(string objectType, DataFilter filter);
@@ -121,8 +136,6 @@ namespace org.iringtools.library
     public abstract Response Delete(string objectType, DataFilter filter);
 
     public abstract DataDictionary GetDictionary();
-
-    public abstract IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
 
     #endregion
 
@@ -206,7 +219,6 @@ namespace org.iringtools.library
     protected Expression<Func<IDataObject, bool>> FormKeyPredicate(string identifier)
     {
       Expression<Func<IDataObject, bool>> predicate = null;
-
       List<Expression> expressions = BuildKeyFilter(identifier);
 
       DataFilter dataFilter = new DataFilter
@@ -223,13 +235,11 @@ namespace org.iringtools.library
     {
       List<Expression> expressions = new List<Expression>();
 
-      Expression expression = null;
-      int i = 0;
       foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
       {
         string identifier = dataObject.GetPropertyValue(keyProperty.keyPropertyName).ToString();
 
-        expression = new Expression
+        Expression expression = new Expression
         {
           PropertyName = keyProperty.keyPropertyName,
           RelationalOperator = RelationalOperator.EqualTo,
@@ -239,8 +249,12 @@ namespace org.iringtools.library
           }
         };
 
+        if (expressions.Count > 0)
+        {
+          expression.LogicalOperator = LogicalOperator.And;
+        }
+
         expressions.Add(expression);
-        i++;
       }
 
       return expressions;
@@ -255,15 +269,13 @@ namespace org.iringtools.library
 
       if (identifierParts.Count() == _dataObjectDefinition.keyProperties.Count)
       {
-        Expression expression = null;
-        int i = 0;
-        foreach (KeyProperty keyProperty in _dataObjectDefinition.keyProperties)
+        for (int i = 0; i < _dataObjectDefinition.keyProperties.Count; i++)
         {
           string identifierPart = identifierParts[i];
 
-          expression = new Expression
+          Expression expression = new Expression
           {
-            PropertyName = keyProperty.keyPropertyName,
+            PropertyName = _dataObjectDefinition.keyProperties[i].keyPropertyName,
             RelationalOperator = RelationalOperator.EqualTo,
             Values = new Values
             {
@@ -271,12 +283,70 @@ namespace org.iringtools.library
             }
           };
 
+          if (expressions.Count > 0)
+          {
+            expression.LogicalOperator = LogicalOperator.And;
+          }
+
           expressions.Add(expression);
-          i++;
         }
       }
 
       return expressions;
+    }
+
+    protected List<Expression> CreateRelatedFilterExpressions(IDataObject parentDataObject, DataRelationship dataRelationship)
+    {
+      List<Expression> expressions = new List<Expression>();
+
+      foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
+      {
+        Expression expression = new Expression()
+        {
+          PropertyName = propertyMap.relatedPropertyName,
+          RelationalOperator = RelationalOperator.EqualTo,
+          Values = new Values
+          {
+            parentDataObject.GetPropertyValue(propertyMap.dataPropertyName).ToString()
+          }
+        };
+
+        if (expressions.Count > 0)
+        {
+          expression.LogicalOperator = LogicalOperator.And;
+        }
+
+        expressions.Add(expression);
+      }
+
+      return expressions;
+    }
+
+    protected DataFilter CreateDataFilter(IDataObject parentDataObject, string relatedObjectType)
+    {
+      DataDictionary dataDictionary = GetDictionary();
+
+      DataObject dataObject = dataDictionary.dataObjects.Find(c => c.objectName.ToLower() == parentDataObject.GetType().Name.ToLower());
+      if (dataObject == null)
+      {
+        throw new Exception("Parent data object [" + parentDataObject.GetType().Name + "] not found.");
+      }
+
+      DataRelationship dataRelationship = dataObject.dataRelationships.Find(c => c.relatedObjectName.ToLower() == relatedObjectType.ToLower());
+      if (dataRelationship == null)
+      {
+        throw new Exception("Relationship between data object [" + parentDataObject.GetType().Name +
+          "] and related data object [" + relatedObjectType + "] not found.");
+      }
+
+      List<Expression> expressions = CreateRelatedFilterExpressions(parentDataObject, dataRelationship);
+
+      DataFilter filter = new DataFilter()
+      {
+        Expressions = expressions
+      };
+
+      return filter;
     }
 
     protected void SetKeys(IDataObject dataObject, string identifier)
@@ -312,6 +382,13 @@ namespace org.iringtools.library
 
     protected string GetIdentifier(IDataObject dataObject)
     {
+      return GetIdentifier(_dataObjectDefinition, dataObject);
+    }
+
+    protected string GetIdentifier(DataObject dataObjectDefinition, IDataObject dataObject)
+    {
+      _dataObjectDefinition = dataObjectDefinition;
+
       string[] identifierParts = new string[_dataObjectDefinition.keyProperties.Count];
 
       int i = 0;
@@ -321,9 +398,7 @@ namespace org.iringtools.library
         i++;
       }
 
-      string identifier = String.Join(_dataObjectDefinition.keyDelimeter, identifierParts);
-
-      return identifier;
+      return String.Join(_dataObjectDefinition.keyDelimeter, identifierParts);
     }
 
     public virtual IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex)
@@ -335,7 +410,13 @@ namespace org.iringtools.library
     {
       throw new NotImplementedException();
     }
+
     public virtual long GetSearchCount(string objectType, string query)
+    {
+      throw new NotImplementedException();
+    }
+
+    public virtual long GetSearchCount(string objectType, string query, DataFilter filter)
     {
       throw new NotImplementedException();
     }
@@ -348,6 +429,11 @@ namespace org.iringtools.library
     public virtual Response Refresh(string objectType)
     {
       throw new NotImplementedException();
+    }
+
+    public virtual IList<Object> GetSummary()
+    {
+      return null;
     }
   }
 }

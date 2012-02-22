@@ -31,6 +31,10 @@ namespace org.iringtools.adapter.projection
     {
       try
       {
+        string app = _settings["ApplicationName"].ToLower();
+        string proj = _settings["ProjectName"].ToLower();
+        string resource = graphName.ToLower();
+
         DataItems dataItems = new DataItems()
         {
           total = this.Count,
@@ -41,6 +45,7 @@ namespace org.iringtools.adapter.projection
         if (dataObjects.Count > 0)
         {
           DataObject dataObject = FindGraphDataObject(graphName);
+          if (dataObject == null) return new XDocument();
 
           for (int i = 0; i < dataObjects.Count; i++)
           {
@@ -59,7 +64,7 @@ namespace org.iringtools.adapter.projection
               };
 
               foreach (DataProperty dataProperty in dataObject.dataProperties)
-              {
+              {                
                 string value = Convert.ToString(dataObj.GetPropertyValue(dataProperty.propertyName));
 
                 if (value == null)
@@ -71,12 +76,55 @@ namespace org.iringtools.adapter.projection
                   value = Utility.ToXsdDateTime(value);
                 }
 
-                dataItem.properties.Add(dataProperty.propertyName, value);
+                if (!dataProperty.isHidden)
+                {
+                  dataItem.properties.Add(dataProperty.propertyName, value);
+                }
 
                 if (dataObject.isKeyProperty(dataProperty.propertyName))
                 {
                   dataItem.id = value;
+                }                
+              }
+
+              string itemHref = String.Format("{0}/{1}", BaseURI, dataItem.id);
+              
+              dataItem.links = new List<Link> 
+              {
+                new Link {
+                  href = itemHref,
+                  rel = "self"
                 }
+              };
+
+              if (_settings["DisplayLinks"].ToLower() == "true")
+              {
+                foreach (DataRelationship dataRelationship in dataObject.dataRelationships)
+                {
+                  long relObjCount = 0;
+                  bool validateLinks = (_settings["ValidateLinks"].ToLower() == "true");
+
+                  if (validateLinks)
+                  {
+                    relObjCount = _dataLayer.GetRelatedCount(dataObj, dataRelationship.relatedObjectName);
+                  }
+
+                  // only add link for related object that has data
+                  if (!validateLinks || relObjCount > 0)
+                  {
+                    string relObj = dataRelationship.relatedObjectName.ToLower();
+                    string relName = dataRelationship.relationshipName.ToLower();
+
+                    Link relLink = new Link()
+                    {
+                      href = String.Format("{0}/{1}", itemHref, relName),
+                      rel = relObj
+                    };
+
+                    dataItem.links.Add(relLink);
+                  }
+                }
+
               }
 
               dataItems.items.Add(dataItem);

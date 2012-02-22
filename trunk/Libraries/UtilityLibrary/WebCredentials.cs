@@ -121,7 +121,8 @@ namespace org.iringtools.utility
 
     public WebProxyCredentials(string encryptedCredentials, string hostName, int port)
       : base(encryptedCredentials)
-    { 
+    {
+        Decrypt();
         this.proxyHost = hostName;
         this.proxyPort = port;     
     }

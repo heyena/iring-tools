@@ -116,7 +116,10 @@ namespace org.iringtools.library
     [DataMember(Name = "context", Order = 0)]
     public string context { get; set; }
 
-    [DataMember(Name = "applications", Order = 1, EmitDefaultValue = false)]
+    [DataMember(Name = "description", Order = 1, EmitDefaultValue = false)]
+    public string description { get; set; }
+
+    [DataMember(Name = "applications", Order = 2, EmitDefaultValue = false)]
     public EndpointApplications applications { get; set; }
   }
 
@@ -125,6 +128,9 @@ namespace org.iringtools.library
   {
     [DataMember(Name = "endpoint", Order = 0)]
     public string endpoint { get; set; }
+
+    [DataMember(Name = "description", Order = 1, EmitDefaultValue = false)]
+    public string description { get; set; }
   }
 
 }

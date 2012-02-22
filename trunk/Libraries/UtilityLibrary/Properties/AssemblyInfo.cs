@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("UtilityLibrary")]
+[assembly: AssemblyTitle("Utility Library")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 
@@ -15,4 +15,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("ec913174-3dfd-41f9-868c-9286f63547d7")]
+[assembly: Guid("8e3a4a42-6d0a-4170-b111-42f3c414a979")]

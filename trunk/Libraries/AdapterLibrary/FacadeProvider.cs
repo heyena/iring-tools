@@ -56,7 +56,7 @@ namespace org.iringtools.facade
     private IDictionary _keyRing = null;
     private IDataLayer2 _dataLayer = null;
     private ISemanticLayer _semanticEngine = null;
-    private Resource _scopes = null;
+    private ScopeProjects _scopes = null;
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private IList<IDataObject> _dataObjects = new List<IDataObject>();
@@ -96,8 +96,24 @@ namespace org.iringtools.facade
       }
       #endregion
 
-      if (_scopes == null)
-        getResource();       
+      if (ServiceSecurityContext.Current != null)
+      {
+        IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
+        _settings["UserName"] = identity.Name;
+      }
+
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+      _settings["ScopesPath"] = scopesPath;
+
+      if (File.Exists(scopesPath))
+      {
+        _scopes = Utility.Read<ScopeProjects>(scopesPath);
+      }
+      else
+      {
+        _scopes = new ScopeProjects();
+        Utility.Write<ScopeProjects>(_scopes, scopesPath);
+      }
 
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
       string bindingConfigurationPath = Path.Combine(
@@ -179,14 +195,6 @@ namespace org.iringtools.facade
       return response;
     }
 
-    private void getResource()
-    {
-      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-      System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
-      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port + ".adapter";
-      _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
-    }
-
     private void InitializeScope(string projectName, string applicationName)
     {
       try
@@ -194,15 +202,16 @@ namespace org.iringtools.facade
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;
-
-          foreach (Locator project in _scopes.locators)
+          foreach (ScopeProject project in _scopes)
           {
-            if (project.context.ToUpper() == projectName.ToUpper())
+            if (project.Name.ToUpper() == projectName.ToUpper())
             {
-              foreach (EndpointApplication application in project.applications)
+              foreach (ScopeApplication application in project.Applications)
               {
-                if (application.endpoint.ToUpper() == applicationName.ToUpper())
+                if (application.Name.ToUpper() == applicationName.ToUpper())
+                {
                   isScopeValid = true;
+                }
               }
             }
           }

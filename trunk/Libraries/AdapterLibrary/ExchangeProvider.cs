@@ -32,7 +32,7 @@ namespace org.iringtools.exchange
     private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
-    private Directories _scopes = null;
+    private ScopeProjects _scopes = null;
     private IIdentityLayer _identityLayer = null;
     private IDictionary _keyRing = null;
     private IDataLayer _dataLayer = null;
@@ -58,21 +58,18 @@ namespace org.iringtools.exchange
 
       Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
-      if (_scopes == null)
-        getResource();       
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["XmlPath"]);
+      _settings["ScopesPath"] = scopesPath;
 
-      //string scopesPath = String.Format("{0}Scopes.xml", _settings["XmlPath"]);
-      //_settings["ScopesPath"] = scopesPath;
-
-      //if (File.Exists(scopesPath))
-      //{
-      //  _scopes = Utility.Read<ScopeProjects>(scopesPath);
-      //}
-      //else
-      //{
-      //  _scopes = new ScopeProjects();
-      //  Utility.Write<ScopeProjects>(_scopes, scopesPath);
-      //}
+      if (File.Exists(scopesPath))
+      {
+        _scopes = Utility.Read<ScopeProjects>(scopesPath);
+      }
+      else
+      {
+        _scopes = new ScopeProjects();
+        Utility.Write<ScopeProjects>(_scopes, scopesPath);
+      }
 
       _response = new Response();
       _response.StatusList = new List<Status>();
@@ -341,15 +338,6 @@ namespace org.iringtools.exchange
     }
 
     #region helper methods
-
-    private void getResource()
-    {
-      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-      System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
-      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port + ".adapter";
-      _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
-    }
-
     private void InitializeScope(string projectName, string applicationName)
     {
       try
@@ -357,15 +345,16 @@ namespace org.iringtools.exchange
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;
-
-          foreach (Locator project in _scopes.locators)
+          foreach (ScopeProject project in _scopes)
           {
-            if (project.context.ToUpper() == projectName.ToUpper())
+            if (project.Name == projectName)
             {
-              foreach (EndpointApplication application in project.applications)
+              foreach (ScopeApplication application in project.Applications)
               {
-                if (application.endpoint.ToUpper() == applicationName.ToUpper())
+                if (application.Name == applicationName)
+                {
                   isScopeValid = true;
+                }
               }
             }
           }

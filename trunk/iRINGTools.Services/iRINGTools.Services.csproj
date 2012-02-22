@@ -54,17 +54,13 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="dotNetRDF, Version=0.5.1.15359, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Castle.DynamicProxy2, Version=2.1.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalBinaries\dotnetRDF\core\net35\dotNetRDF.dll</HintPath>
+      <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Castle.DynamicProxy2.dll</HintPath>
     </Reference>
-    <Reference Include="dotNetRDF.Data.Sql, Version=0.5.0.20572, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF, Version=0.5.0.13616, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalBinaries\dotnetRDF\data\Sql\net35\dotNetRDF.Data.Sql.dll</HintPath>
-    </Reference>
-    <Reference Include="HtmlAgilityPack, Version=1.4.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalBinaries\dotnetRDF\core\net35\HtmlAgilityPack.dll</HintPath>
+      <HintPath>..\ExternalBinaries\dotnetRDF\dotNetRDF.dll</HintPath>
     </Reference>
     <Reference Include="Iesi.Collections">
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\Iesi.Collections.dll</HintPath>
@@ -72,18 +68,6 @@
     <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>
-    </Reference>
-    <Reference Include="MSSQLLibrary, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\iRing\trunk\datalayers\MSSQLLibrary\bin\Debug\MSSQLLibrary.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data, Version=6.4.3.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalBinaries\dotnetRDF\core\net35\MySql.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json.Net35, Version=4.0.2.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\ExternalBinaries\dotnetRDF\core\net35\Newtonsoft.Json.Net35.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate, Version=2.1.1.4000, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -205,6 +189,10 @@
     <ProjectReference Include="..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
       <Name>UtilityLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\WADLLibrary\WADLLibrary.csproj">
+      <Project>{B6362A98-B4C0-4729-AFE8-04F93F1B6C79}</Project>
+      <Name>WADLLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

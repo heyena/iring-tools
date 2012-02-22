@@ -88,17 +88,37 @@
 
     applyState: function (state) {
         var that = this;
+        var rootNode = that.getRootNode();
+
+        var findChildById = function (root, id) {
+            var i = 0;
+            while (root.childNodes[i]) {
+                var node = root.childNodes[i]
+                if (node.data.id == id)
+                    return node;
+                i++;
+            }
+            return null;
+        };
+
+        var treeNode = rootNode;
         var nodes = state.expandedNodes || [],
             len = nodes.length;
         //  this.collapseAll();
         for (var i = 0; i < len; i++) {
             if (typeof nodes[i] != 'undefined') {
-                var treeNode = that.getRootNode().findChild('id', nodes[i], true);
-                treeNode.expand();
+                if (treeNode) {
+                    var treeNode = findChildById(treeNode, nodes[i]);
+                    if (treeNode && treeNode.data.expanded == false) {
+                        treeNode.expand();
+                    }
+                }
                 //that.expandPath(nodes[i]); //, 'text');
             }
         }
         // this.callParent(arguments);
+
+
     },
 
     buildScopesMenu: function () {

@@ -136,8 +136,13 @@ namespace org.iringtools.nhibernate
 
           Utility.WriteString(hibernateConfig, _settings["AppDataPath"] + "nh-configuration." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
           Utility.WriteString(mappingXml, _settings["AppDataPath"] + "nh-mapping." + projectName + "." + applicationName + ".xml", Encoding.UTF8);
-          Utility.WriteString(sourceCode, _settings["CodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
+          Utility.WriteString(sourceCode, _settings["AppCodePath"] + "Model." + projectName + "." + applicationName + ".cs", Encoding.ASCII);
+          
           DataDictionary dataDictionary = CreateDataDictionary(dbSchema.dataObjects);
+          dataDictionary.dataVersion = dbSchema.dataVersion;
+          dataDictionary.enableSearch = dbSchema.enableSearch;
+          dataDictionary.enableSummary = dbSchema.enableSummary;
+
           Utility.Write<DataDictionary>(dataDictionary, _settings["AppDataPath"] + "DataDictionary." + projectName + "." + applicationName + ".xml");
           #endregion
 

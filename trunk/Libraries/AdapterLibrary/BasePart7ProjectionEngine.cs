@@ -102,6 +102,7 @@ namespace org.iringtools.adapter.projection
     public long Count { get; set; }
     public int Start { get; set; }
     public int Limit { get; set; }
+    public string BaseURI { get; set; }
 
     public BasePart7ProjectionEngine(AdapterSettings settings, IDataLayer2 dataLayer, Mapping mapping)
     {
@@ -441,6 +442,11 @@ namespace org.iringtools.adapter.projection
       if (pair.Value != null && pair.Value != String.Empty)
       {
         DataProperty objProp = objDef.dataProperties.Find(p => p.propertyName.ToLower() == pair.Key.ToLower());
+
+        if (objProp == null)
+        {
+          throw new Exception("Object property [" + pair.Key + "] not found.");
+        }
 
         if (objProp.dataType == DataType.String && objProp.dataLength < pair.Value.ToString().Length)
         {
