@@ -265,7 +265,7 @@ Ext.onReady(function () {
       }
     }
     else {
-      showDialog(400, 100, 'Error', 'No configuration available for datalayer \"' + dataLayerValue + '\".', Ext.Msg.OK, null);
+      showDialog(400, 100, 'Info', 'The datalayer \"' + dataLayerValue + '\" is not configurable.', Ext.Msg.OK, null);
     }
   }, this);
 
