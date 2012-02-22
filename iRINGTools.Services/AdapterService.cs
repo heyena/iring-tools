@@ -68,7 +68,7 @@ namespace org.iringtools.services
     /// Gets the version of the service.
     /// </summary>
     /// <returns>Returns the version as a string.</returns>
-    [Description("Gets the version of the service.")]
+    [Description("Gets version of the service.")]
     [WebGet(UriTemplate = "/version")]
     public VersionInfo GetVersion()
     {
@@ -116,31 +116,92 @@ namespace org.iringtools.services
       return _adapterProvider.GetConfiguration(scope, app);
     }
     #endregion Config methods
-
-   
     #endregion
 
-    #region Private Resources
-    #region UpdateScopes
-    /// <summary>
-    /// Replaces the available scopes.
-    /// </summary>
-    /// <param name="scopes">The scopes object.</param>
-    /// <returns>Returns a Response object.</returns>
-    //[Description("Replaces the available scopes with the posted scopes.")]
+    //#region Private Resources
+    //[Description("Creates a new scope.")]
     //[WebInvoke(Method = "POST", UriTemplate = "/scopes")]
-    //public Response UpdateScopes(ScopeProjects scopes)
+    //public Response AddScope(ScopeProject scope)
     //{
     //  try
     //  {
-    //    return _adapterProvider.UpdateScopes(scopes);
+    //    return _adapterProvider.AddScope(scope);
     //  }
     //  catch (Exception ex)
     //  {
     //    return PrepareErrorResponse(ex);
     //  }
     //}
-    #endregion
+
+    //[Description("Updates an existing scope.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}")]
+    //public Response UpdateScope(string scope, ScopeProject updatedScope)
+    //{
+    //  try
+    //  {
+    //    return _adapterProvider.UpdateScope(scope, updatedScope);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return PrepareErrorResponse(ex);
+    //  }
+    //}
+
+    //[Description("Deletes a scope.")]
+    //[WebInvoke(Method = "GET", UriTemplate = "/scopes/{scope}/delete")]
+    //public Response DeleteScope(string scope)
+    //{
+    //  try
+    //  {
+    //    return _adapterProvider.DeleteScope(scope);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return PrepareErrorResponse(ex);
+    //  }
+    //}
+
+    //[Description("Creates a new application in a specific scope.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}/apps")]
+    //public Response AddApplication(string scope, ScopeApplication application)
+    //{
+    //  try
+    //  {
+    //    return _adapterProvider.AddApplication(scope, application);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return PrepareErrorResponse(ex);
+    //  }
+    //}
+
+    //[Description("Updates an existing application in a specific scope.")]
+    //[WebInvoke(Method = "POST", UriTemplate = "/scopes/{scope}/apps/{app}")]
+    //public Response UpdateApplication(string scope, string app, ScopeApplication updatedApplication)
+    //{
+    //  try
+    //  {
+    //    return _adapterProvider.UpdateApplication(scope, app, updatedApplication);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return PrepareErrorResponse(ex);
+    //  }
+    //}
+
+    //[Description("Deletes an application in a specific scope.")]
+    //[WebInvoke(Method = "GET", UriTemplate = "/scopes/{scope}/apps/{app}/delete")]
+    //public Response DeleteApplication(string scope, string app)
+    //{
+    //  try
+    //  {
+    //    return _adapterProvider.DeleteApplication(scope, app);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    return PrepareErrorResponse(ex);
+    //  }
+    //}
 
     #region GetBinding
     /// <summary>
@@ -179,6 +240,50 @@ namespace org.iringtools.services
       }
     }
     #endregion
+
+    #region Generate methods
+    [Description("Generate artifacts for all applications in all projects.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/generate")]
+    public Response GenerateAll()
+    {
+      try
+      {
+        return _adapterProvider.Generate();
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+
+    [Description("Generate artifacts for all applications in a specific project.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/generate")]
+    public Response GenerateScope(string scope)
+    {
+      try
+      {
+        return _adapterProvider.Generate(scope);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+
+    [Description("Generate artifacts for a specific application in a project.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/generate")]
+    public Response Generate(string scope, string app)
+    {
+      try
+      {
+        return _adapterProvider.Generate(scope, app);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+    #endregion Generate methods
 
     #region GetDictionary
     /// <summary>
@@ -285,7 +390,7 @@ namespace org.iringtools.services
         return PrepareErrorResponse(ex);
       }
     }
-    #endregion
+    
 
     private Response PrepareErrorResponse(Exception ex)
     {

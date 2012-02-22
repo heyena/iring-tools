@@ -74,6 +74,10 @@ namespace org.iringtools.library
     DataDictionary GetDictionary();
 
     IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType);
+
+    long GetRelatedCount(IDataObject dataObject, string relatedObjectType);
+
+    IList<IDataObject> GetRelatedObjects(IDataObject dataObject, string relatedObjectType, int pageSize, int startIndex);
   }
 
   public interface IDataLayer2 : IDataLayer
@@ -83,6 +87,9 @@ namespace org.iringtools.library
     IList<IDataObject> Search(string objectType, string query, int pageSize, int startIndex);
 
     IList<IDataObject> Search(string objectType, string query, DataFilter filter, int pageSize, int startIndex);
+
+    long GetSearchCount(string objectType, string query, DataFilter filter);
+
     long GetSearchCount(string objectType, string query);
 
     XElement GetConfiguration();
@@ -90,6 +97,8 @@ namespace org.iringtools.library
     Response RefreshAll();
 
     Response Refresh(string objectType);
+
+    IList<Object> GetSummary();
   }
 
   [CollectionDataContract(Name = "authorizedUsers", Namespace = "http://www.iringtools.org/library", ItemName = "userId")]

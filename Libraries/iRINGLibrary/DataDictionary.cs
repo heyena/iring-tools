@@ -39,8 +39,17 @@ namespace org.iringtools.library
       dataObjects = new List<DataObject>();
     }
 
-    [DataMember]
+    [DataMember(Order = 0)]
     public List<DataObject> dataObjects { get; set; }
+
+    [DataMember(Order = 1)]
+    public bool enableSearch { get; set; }
+
+    [DataMember(Order = 2)]
+    public bool enableSummary { get; set; }
+
+    [DataMember(Order = 3)]
+    public string dataVersion { get; set; }
 
     public static bool IsNumeric(DataType dataType)
     {
@@ -104,6 +113,18 @@ namespace org.iringtools.library
 
     [DataMember(IsRequired = false, Order = 9, EmitDefaultValue = false)]
     public bool isListOnly { get; set; }
+
+    [DataMember(IsRequired = false, Order = 10, EmitDefaultValue = false)]
+    public string defaultProjectionFormat { get; set; }
+
+    [DataMember(IsRequired = false, Order = 11, EmitDefaultValue = false)]
+    public string defaultListProjectionFormat { get; set; }
+
+    [DataMember(IsRequired = false, Order = 12, EmitDefaultValue = false)]
+    public string description { get; set; }
+
+    [DataMember(IsRequired = false, Order = 13, EmitDefaultValue = false)]
+    public bool isRelatedOnly { get; set; }
 
     public bool isKeyProperty(string propertyName)
     {
@@ -183,6 +204,9 @@ namespace org.iringtools.library
 
     [DataMember(EmitDefaultValue = false, Order = 9)]
     public bool showOnSearch { get; set; }
+
+    [DataMember(EmitDefaultValue = false, Order = 10)]
+    public bool isHidden { get; set; }
   }
 
   [DataContract(Name = "keyProperty", Namespace = "http://www.iringtools.org/library")]

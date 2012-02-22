@@ -1481,23 +1481,33 @@ namespace org.iringtools.utility
       return uri;
     }
 
-    public static string FormAppBaseURI(Properties uriMaps, string baseUri, string project, string app)
+    public static string FormAppBaseURI(Properties uriMaps, string baseUri, string app)
+    {
+      string appBaseUri = String.Empty;
+
+      baseUri = GetMapUri(uriMaps, baseUri);
+      appBaseUri = String.Format("{0}{1}", baseUri, HttpUtility.UrlEncode(app));
+      
+      return appBaseUri;
+    }
+
+    public static string FormEndpointBaseURI(Properties uriMaps, string baseUri, string project, string app)
     {
       const string DEFAULT_PROJECT = "all";
-      string appBaseUri = String.Empty;
+      string endpointBaseUri = String.Empty;
 
       if (project.ToLower() == DEFAULT_PROJECT)
       {
-        appBaseUri = String.Format("{0}{1}/{2}/", baseUri, DEFAULT_PROJECT, HttpUtility.UrlEncode(app));
-        appBaseUri = GetMapUri(uriMaps, appBaseUri);
+        endpointBaseUri = String.Format("{0}{1}/{2}/", baseUri, DEFAULT_PROJECT, HttpUtility.UrlEncode(app));
+        endpointBaseUri = GetMapUri(uriMaps, endpointBaseUri);
       }
       else
       {
         baseUri = GetMapUri(uriMaps, baseUri);
-        appBaseUri = String.Format("{0}{1}/{2}/", baseUri, HttpUtility.UrlEncode(app), HttpUtility.UrlEncode(project));
+        endpointBaseUri = String.Format("{0}{1}/{2}/", baseUri, HttpUtility.UrlEncode(app), HttpUtility.UrlEncode(project));
       }
 
-      return appBaseUri;
+      return endpointBaseUri;
     }
   }
 }

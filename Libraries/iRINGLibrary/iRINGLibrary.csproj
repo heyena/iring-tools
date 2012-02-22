@@ -60,6 +60,7 @@
     <Compile Include="BaseConfigurableDataLayer.cs" />
     <Compile Include="BaseDataLayer.cs" />
     <Compile Include="BaseSQLDataLayer.cs" />
+    <Compile Include="Contexts.cs" />
     <Compile Include="DatabaseDictionary.cs" />
     <Compile Include="DataDictionary.cs" />
     <Compile Include="DataFilter.cs" />

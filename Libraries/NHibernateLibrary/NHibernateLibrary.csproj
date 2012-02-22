@@ -47,6 +47,10 @@
     <Reference Include="Ninject">
       <HintPath>..\..\ExternalBinaries\Ninject2\Ninject.dll</HintPath>
     </Reference>
+    <Reference Include="Ninject.Extensions.Xml, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ExternalBinaries\Ninject2\extensions\Ninject.Extensions.Xml.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -61,6 +65,7 @@
       <Link>AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="EntityGenerator.cs" />
+    <Compile Include="IExtensions.cs" />
     <Compile Include="NHibernateDataLayer.cs" />
     <Compile Include="NHibernateModule.cs" />
     <Compile Include="NHibernateProvider.cs" />
@@ -70,10 +75,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AdapterLibrary\AdapterLibrary.csproj">
-      <Project>{6AFEF057-8D02-4F3C-AC41-6815E9CFD15A}</Project>
-      <Name>AdapterLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\iRINGLibrary\iRINGLibrary.csproj">
       <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
       <Name>iRINGLibrary</Name>

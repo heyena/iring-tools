@@ -94,6 +94,9 @@
             'menu button[action=refreshfacade]': {
                 click: this.onRefreshFacade
             },
+            'menu button[action=regenerateAll]': {
+                click: this.onRegenerateAll
+            },
             'menu button[action=editgraph]': {
                 click: this.onEditGraph
             },
@@ -149,6 +152,37 @@
                 beforeload: this.beforeLoad
             }
         });
+    },
+
+    onRegenerateAll: function (btn, ev) {
+        Ext.Ajax.request({
+            url: 'AdapterManager/RegenAll',
+            method: 'GET',
+            success: function (result, request) {
+                var responseObj = Ext.decode(result.responseText);
+                var msg = '';
+
+                for (var i = 0; i < responseObj.StatusList.length; i++) {
+                    var status = responseObj.StatusList[i];
+
+                    if (msg != '') {
+                        msg += '\r\n';
+                    }
+
+                    msg += status.Identifier + ':\r\n';
+
+                    for (var j = 0; j < status.Messages.length; j++) {
+                        msg += '    ' + status.Messages[j] + '\r\n';
+                    }
+                }
+
+                showDialog(600, 340, 'NHibernate Regeneration Result', msg, Ext.Msg.OK, null);
+            },
+            failure: function (result, request) {
+                var msg = result.responseText;
+                showDialog(500, 240, 'NHibernate Regeneration Error', msg, Ext.Msg.OK, null);
+            }
+        })
     },
 
     onRefreshFacade: function () {

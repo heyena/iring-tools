@@ -14,6 +14,7 @@ namespace org.iringtools.adapter
     int Start { get; set; }
     int Limit { get; set; }
     bool FullIndex { get; set; }
+    string BaseURI { get; set; }
     XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects);
     XDocument ToXml(string graphName, ref IList<IDataObject> dataObjects, string className, string classIdentifier);
     IList<IDataObject> ToDataObjects(string graphName, ref XDocument xDocument);

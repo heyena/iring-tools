@@ -20,6 +20,11 @@ namespace org.iringtools.library
   [DataContract(Name = "scope", Namespace = "http://www.iringtools.org/library")]
   public class ScopeProject
   {
+    public ScopeProject()
+    {
+      Applications = new ScopeApplications();
+    }
+
     /// <summary>
     /// The name of the project
     /// </summary>
@@ -57,6 +62,13 @@ namespace org.iringtools.library
     /// </summary>
     /// <returns>A string of the Description of the application</returns>
     [DataMember(Name = "description", Order = 1, EmitDefaultValue = false)]
-    public string Description { get; set; }    
+    public string Description { get; set; }
+
+    /// <summary>
+    /// The assembly of the application represented by this instance
+    /// </summary>
+    /// <returns>A string of the assembly of the application</returns>
+    [DataMember(Name = "assembly", Order = 2, EmitDefaultValue = false)]
+    public string Assembly { get; set; }  
   }
 }

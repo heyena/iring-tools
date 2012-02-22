@@ -14,6 +14,7 @@ using org.iringtools.mapping;
 using iRINGTools.Web.Helpers;
 using System.Text;
 using System.Collections;
+using System.Net;
 
 
 namespace iRINGTools.Web.Models
@@ -21,10 +22,10 @@ namespace iRINGTools.Web.Models
   public class AdapterRepository : IAdapterRepository
   {
     private NameValueCollection _settings = null;
-    private WebHttpClient _client = null;
-    private WebHttpClient _javaCoreClient = null;
-    private WebHttpClient _dataClient = null;
-    private string _refDataServiceURI = string.Empty;
+    private WebHttpClient _adapterServiceClient = null;
+    private WebHttpClient _hibernateServiceClient = null;
+    private WebHttpClient _referenceDataServiceClient = null;
+    private WebHttpClient _javaServiceClient = null;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
     private static Dictionary<string, NodeIconCls> nodeIconClsMap;
     private string combinationMsg = null;
@@ -32,13 +33,36 @@ namespace iRINGTools.Web.Models
     [Inject]
     public AdapterRepository()
     {
-      _settings = ConfigurationManager.AppSettings;
-      _client = new WebHttpClient(_settings["AdapterServiceUri"]);
-      _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-      _dataClient = new WebHttpClient(_settings["DataServiceURI"]);
-      SetNodeIconClsMap();
-      combinationMsg = null;
-    }    
+      NameValueCollection settings = ConfigurationManager.AppSettings;
+
+      ServiceSettings _settings = new ServiceSettings();
+      _settings.AppendSettings(settings);
+
+      #region initialize webHttpClient for converting old mapping
+      string proxyHost = _settings["ProxyHost"];
+      string proxyPort = _settings["ProxyPort"];
+      string adapterServiceUri = _settings["AdapterServiceUri"];
+      string hibernateServiceUri = _settings["NHibernateServiceUri"];
+      string referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
+
+      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      {
+        WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
+        webProxy.Credentials = _settings.GetProxyCredential();
+
+        _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
+        _hibernateServiceClient = new WebHttpClient(hibernateServiceUri, null, webProxy);
+        _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri, null, webProxy);
+      }
+      else
+      {
+        _adapterServiceClient = new WebHttpClient(adapterServiceUri);
+        _hibernateServiceClient = new WebHttpClient(hibernateServiceUri);
+        _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri);
+      }
+      #endregion
+    }
 
     public Directories GetScopes()
     {
@@ -48,8 +72,8 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        msg = _javaCoreClient.GetMessage("/directory/session");        
-        obj = _javaCoreClient.Get<Directories>("/directory", true);
+        msg = _javaServiceClient.GetMessage("/directory/session");        
+        obj = _javaServiceClient.Get<Directories>("/directory", true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -142,7 +166,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _client.Get<XElement>(String.Format("/{0}/{1}/binding", context, endpoint), true);
+        obj = _adapterServiceClient.Get<XElement>(String.Format("/{0}/{1}/binding", context, endpoint), true);
       }
       catch (Exception ex)
       {
@@ -173,7 +197,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _javaCoreClient.Post<Directories>("/directory", scopes, true);
+        obj = _javaServiceClient.Post<Directories>("/directory", scopes, true);
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -190,7 +214,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _client.Get<DataLayers>("/datalayers");
+        obj = _adapterServiceClient.Get<DataLayers>("/datalayers");
       }
       catch (Exception ex)
       {
@@ -221,7 +245,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _client.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", contextName, endpoint), true);
+        obj = _adapterServiceClient.Get<DataDictionary>(String.Format("/{0}/{1}/dictionary", contextName, endpoint), true);
       }
       catch (Exception ex)
       {
@@ -237,7 +261,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        obj = _client.Get<Mapping>(String.Format("/{0}/{1}/mapping", contextName, endpoint), true);
+        obj = _adapterServiceClient.Get<Mapping>(String.Format("/{0}/{1}/mapping", contextName, endpoint), true);
       }
       catch (Exception ex)
       {
@@ -262,7 +286,7 @@ namespace iRINGTools.Web.Models
       )
     );
 
-        obj = _client.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
+        obj = _adapterServiceClient.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
 
       }
       catch (Exception ex)
@@ -279,7 +303,7 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        rootSecurityRole = _javaCoreClient.GetMessage("/directory/security");
+        rootSecurityRole = _javaServiceClient.GetMessage("/directory/security");
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -292,13 +316,13 @@ namespace iRINGTools.Web.Models
 
     public string GetDirectoryBaseUrl()
     {
-      return _javaCoreClient.GetBaseUri();
+      return _javaServiceClient.GetBaseUri();
     }
 
     public BaseUrls GetEndpointBaseUrl()
     {
       BaseUrls baseUrls = new BaseUrls();
-      BaseUrl baseUrl = new BaseUrl { Url = _client.GetBaseUri() };      
+      BaseUrl baseUrl = new BaseUrl { Url = _adapterServiceClient.GetBaseUri() };      
       baseUrls.Add(baseUrl);      
       return baseUrls;
     }
@@ -322,7 +346,7 @@ namespace iRINGTools.Web.Models
         if (state != "new")        
           CheckCombination(path, context, oldContext, user);       
 
-        obj = _javaCoreClient.PostMessage(string.Format("/directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
+        obj = _javaServiceClient.PostMessage(string.Format("/directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
         _logger.Debug("Successfully called Adapter.");
 
         ClearDirSession(user);
@@ -357,7 +381,7 @@ namespace iRINGTools.Web.Models
       try
       {
         CheckeCombination(baseUrl, oldBaseUrl, context, context, newEndpointName, endpointName, path);
-        obj = _javaCoreClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}", path, newEndpointName, "endpoint", baseUrl), description, true);
+        obj = _javaServiceClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}", path, newEndpointName, "endpoint", baseUrl), description, true);
         _logger.Debug("Successfully called Adapter.");
         ClearDirSession(user);
       }
@@ -377,7 +401,7 @@ namespace iRINGTools.Web.Models
       path = path.Replace('/', '.');
       try
       {
-        obj = _javaCoreClient.Post<String>(String.Format("/directory/{0}", path), "", true);
+        obj = _javaServiceClient.Post<String>(String.Format("/directory/{0}", path), "", true);
         _logger.Debug("Successfully called Adapter.");
         ClearDirSession(user);
       }
@@ -903,9 +927,9 @@ namespace iRINGTools.Web.Models
 
     public Response RegenAll()
     {
-      WebHttpClient client = new WebHttpClient(_settings["NHibernateServiceURI"]);
-      return client.Get<Response>("/regen");
+      return _adapterServiceClient.Get<Response>("/generate");
     }
+
     #endregion
   }
 }

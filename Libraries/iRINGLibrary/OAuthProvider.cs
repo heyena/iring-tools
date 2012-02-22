@@ -59,9 +59,6 @@ namespace org.iringtools.adapter.security
           //call ping federate to get the attributes of the authenticated user
           string referenceID = HttpContext.Current.Request.QueryString["REF"].ToString();
 
-          //WebHttpClient client = new WebHttpClient()
-          //string test = client.GetMessage();
-
           //this information is unique to the application 
           WebRequest req = WebRequest.Create(ConfigurationManager.AppSettings["AuthenticationWebServiceAddress"].ToString() + referenceID);
           req.Headers.Add("ping.uname", ConfigurationManager.AppSettings["AuthWebServiceUserName"].ToString());
@@ -69,12 +66,15 @@ namespace org.iringtools.adapter.security
           req.Headers.Add("ping.instanceId", ConfigurationManager.AppSettings["AuthWebServiceInstanceID"].ToString());
 
           //if you need to use a proxy to get there, then this is that
-          if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["ProxyAddress"]))
+          string proxyCreds = ConfigurationManager.AppSettings["ProxyCredentialToken"];
+          if (!String.IsNullOrEmpty(proxyCreds))
           {
-            req.Proxy = new WebProxy(ConfigurationManager.AppSettings["ProxyAddress"].ToString(), true);
-            req.Proxy.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["ProxyCredentialUserName"].ToString(),
-                ConfigurationManager.AppSettings["ProxyCredentialPassword"].ToString(),
-                ConfigurationManager.AppSettings["ProxyCredentialDomain"].ToString());
+            string host = ConfigurationManager.AppSettings["ProxyHost"];
+            int port = int.Parse(ConfigurationManager.AppSettings["ProxyPort"]);
+            WebProxyCredentials webCreds = new WebProxyCredentials(proxyCreds, host, port);
+
+            req.Proxy = webCreds.GetWebProxy();
+            req.Proxy.Credentials = webCreds.GetNetworkCredential();
           }
 
           //get the response from the service 
@@ -98,60 +98,66 @@ namespace org.iringtools.adapter.security
 
 
           //call apigee to get the oauth headers for calling services
-          if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["applicationKey"]))
-          {
-            _logger.Debug("ApplicationKey: " + ConfigurationManager.AppSettings["applicationKey"]);
+          //if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["applicationKey"]))
+          //{
+          //  _logger.Debug("ApplicationKey: " + ConfigurationManager.AppSettings["applicationKey"]);
 
-            string tokenServerAddress = ConfigurationManager.AppSettings["tokenServiceAddress"].ToString() + ConfigurationManager.AppSettings["applicationKey"].ToString();
-            WebRequest reqApigee = WebRequest.Create(tokenServerAddress);
-            reqApigee.Method = "POST";
+          //  string tokenServerAddress = ConfigurationManager.AppSettings["tokenServiceAddress"].ToString() + ConfigurationManager.AppSettings["applicationKey"].ToString();
+          //  WebRequest reqApigee = WebRequest.Create(tokenServerAddress);
+          //  reqApigee.Method = "POST";
 
-            if (!String.IsNullOrEmpty(ConfigurationManager.AppSettings["ProxyAddress"]))
-            {
-              reqApigee.Proxy = new WebProxy(ConfigurationManager.AppSettings["ProxyAddress"].ToString(), true);
-              reqApigee.Proxy.Credentials = new NetworkCredential(ConfigurationManager.AppSettings["ProxyCredentialUserName"].ToString(),
-                  ConfigurationManager.AppSettings["ProxyCredentialPassword"].ToString(),
-                  ConfigurationManager.AppSettings["ProxyCredentialDomain"].ToString());
-            }
+          //  if (!String.IsNullOrEmpty(proxyCreds))
+          //  {
+          //    string host = ConfigurationManager.AppSettings["ProxyHost"];
+          //    int port = int.Parse(ConfigurationManager.AppSettings["ProxyPort"]);
+          //    WebProxyCredentials webCreds = new WebProxyCredentials(proxyCreds, host, port);
 
-            //post the json response from ping federate to the apigee url
-            ASCIIEncoding encoding = new ASCIIEncoding();
-            byte[] data = encoding.GetBytes(response);
+          //    reqApigee.Proxy = webCreds.GetWebProxy();
+          //    reqApigee.Proxy.Credentials = webCreds.GetNetworkCredential();
+          //  }
 
-            reqApigee.ContentType = "application/xml";
-            reqApigee.ContentLength = data.Length;
-            Stream newStream = reqApigee.GetRequestStream();
+          //  //post the json response from ping federate to the apigee url
+          //  ASCIIEncoding encoding = new ASCIIEncoding();
+          //  byte[] data = encoding.GetBytes(response);
 
-            // Send the data.
-            newStream.Write(data, 0, data.Length);
-            newStream.Close();
+          //  reqApigee.ContentType = "application/xml";
+          //  reqApigee.ContentLength = data.Length;
+          //  Stream newStream = reqApigee.GetRequestStream();
 
-            //get back the response from apigee
-            WebResponse respApigee = reqApigee.GetResponse();
-            StreamReader streamApigee = new StreamReader(respApigee.GetResponseStream());
-            string responseApigee = streamApigee.ReadToEnd();
-            string accessToken = responseApigee.Replace("{\"accesstoken\":", "");
+          //  // Send the data.
+          //  newStream.Write(data, 0, data.Length);
+          //  newStream.Close();
 
-            //response from apigee is json - deserialize that into dictionaries for the purposes of display
-            JavaScriptSerializer desApigee = new JavaScriptSerializer();
-            IDictionary apigeeInfo = desApigee.Deserialize<Dictionary<string, string>>(accessToken.Replace("}}", "}"));
+          //  //get back the response from apigee
+          //  WebResponse respApigee = reqApigee.GetResponse();
+          //  StreamReader streamApigee = new StreamReader(respApigee.GetResponseStream());
+          //  string responseApigee = streamApigee.ReadToEnd();
+          //  string accessToken = responseApigee.Replace("{\"accesstoken\":", "");
 
-            foreach (DictionaryEntry entry in apigeeInfo)
-            {
-              userInfo.Add("OAuth " + entry.Key.ToString(), entry.Value);
+          //  //response from apigee is json - deserialize that into dictionaries for the purposes of display
+          //  JavaScriptSerializer desApigee = new JavaScriptSerializer();
+          //  IDictionary apigeeInfo = desApigee.Deserialize<Dictionary<string, string>>(accessToken.Replace("}}", "}"));
 
-              if (entry.Key.ToString() == "token")
-              {
-                OAuthToken = entry.Value.ToString(); 
+            //foreach (DictionaryEntry entry in userInfo)
+            //{
+            //  userInfo.Add("OAuth " + entry.Key.ToString(), entry.Value);
+
+            //  if (entry.Key.ToString() == "token")
+            //  {
+
+          OAuthToken = userInfo["OAuthToken"].ToString();
+          _logger.Debug("OAuthToken: " + OAuthToken);
                 
-                HttpCookie authorizationCookie = new HttpCookie("Authorization");
-                authorizationCookie.Value = OAuthToken;
-                HttpContext.Current.Response.Cookies.Add(authorizationCookie);
+          HttpCookie authorizationCookie = new HttpCookie("Authorization");
+          authorizationCookie.Value = OAuthToken;
+          HttpContext.Current.Response.Cookies.Add(authorizationCookie);
 
-                _logger.Debug("OAuthToken: " + OAuthToken);
-              }
-            }
-          }
+          HttpCookie appKeyCookie = new HttpCookie("X-myPSN-AppKey");
+          appKeyCookie.Value = ConfigurationManager.AppSettings["applicationKey"];
+          HttpContext.Current.Response.Cookies.Add(appKeyCookie);
+          //    }
+          //  }
+          //}
           //end of apigee interaction
           //---------------------------------------------
 

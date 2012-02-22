@@ -43,6 +43,8 @@ using System.Web;
 using System.ServiceModel.Channels;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Collections.Generic;
+using net.java.dev.wadl;
 
 namespace org.iringtools.services
 {
@@ -67,6 +69,44 @@ namespace org.iringtools.services
       VersionInfo version = _adapterProvider.GetVersion();
 
       FormatOutgoingMessage<VersionInfo>(version, format, true);
+    }
+
+    [Description("Gets object definitions of an application.")]
+    [WebGet(UriTemplate = "/{app}/contexts?format={format}")]
+    public void GetContexts(string app, string format)
+    {
+      format = MapContentType(format);
+
+      Contexts contexts = _adapterProvider.GetContexts(app);
+
+      FormatOutgoingMessage<Contexts>(contexts, format, true);
+    }
+
+    [Description("Gets the wadl for an all endpoint.")]
+    [WebGet(UriTemplate = "/all/{app}?wadl")]
+    public void GetAllWADL(string app)
+    {
+      WADLApplication wadl = _adapterProvider.GetWADL("all", app);
+
+      FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
+    }
+
+    [Description("Gets the wadl for an application.")]
+    [WebGet(UriTemplate = "/{app}?wadl")]
+    public void GetAppWADL(string app)
+    {
+      WADLApplication wadl = _adapterProvider.GetWADL("app", app);
+
+      FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
+    }
+
+    [Description("Gets the wadl for an endpoint.")]
+    [WebGet(UriTemplate = "/{app}/{project}?wadl")]
+    public void GetScopeWADL(string app, string project)
+    {
+      WADLApplication wadl = _adapterProvider.GetWADL(project, app);
+
+      FormatOutgoingMessage<WADLApplication>(wadl, "xml", false);
     }
 
     [Description("Gets object definitions of an application.")]
@@ -145,11 +185,13 @@ namespace org.iringtools.services
     {
       try
       {
+        NameValueCollection parameters = WebOperationContext.Current.IncomingRequest.UriTemplateMatch.QueryParameters;
+
         bool fullIndex = false;
         if (indexStyle != null && indexStyle.ToUpper() == "FULL")
           fullIndex = true;
 
-        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, query, ref format, start, limit, sortOrder, sortBy, fullIndex);
+        XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, ref format, query, start, limit, sortOrder, sortBy, fullIndex, parameters);
         FormatOutgoingMessage(xDocument.Root, format);
       }
       catch (Exception ex)
@@ -158,14 +200,58 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{clazz}/{id}?format={format}")]
-    public void GetIndividual(string project, string app, string graph, string clazz, string id, string format)
+    //NOTE: Due to uri conflict, this template serves both part 7 individual and non-part7 related items.
+    [Description("Gets an individual if it is part 7 (/{app}/{project}/{graph}/{clazz}/{id}?format={p7format}) or related items of an individual otherwise.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{graph}/{id}/{related}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}")]
+    public void GetIndividual(string project, string app, string graph, string id, string related, string format, int start, int limit, string sortOrder, string sortBy)
     {
       try
       {
-        object content = _adapterProvider.GetDataProjection(project, app, graph, clazz, id, ref format, false);
-        FormatOutgoingMessage(content, format);
+        if (format != null)
+        {
+          format = format.ToLower();
+
+          // if format is one of the part 7 formats
+          if (format == "rdf" || format == "dto" || format == "p7xml")
+          {
+            // id is clazz, related is individual
+            object content = _adapterProvider.GetDataProjection(project, app, graph, id, related, ref format, false);
+            FormatOutgoingMessage(content, format);
+          }
+        }
+        else
+        {
+          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, graph, id, related, ref format, start, limit);
+          FormatOutgoingMessage(xDocument.Root, format);
+        }
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
+    }
+
+    [Description("Gets individual of a related item.")]
+    [WebGet(UriTemplate = "/{app}/{project}/{resource}/{id}/{related}/{relatedId}?format={format}")]
+    public void GetRelatedItem(string project, string app, string resource, string id, string related, string relatedId, string format)
+    {
+      try
+      {
+        if (format != null)
+        {
+          format = format.ToLower();
+
+          // if format is one of the part 7 formats
+          if (format == "rdf" || format == "dto" || format == "p7xml")
+          {
+            throw new Exception("Not supported.");
+          }
+        }
+        else
+        {
+          XDocument xDocument = _adapterProvider.GetDataProjection(project, app, resource, id, related, relatedId, ref format);
+          FormatOutgoingMessage(xDocument.Root, format);
+        }
       }
       catch (Exception ex)
       {
@@ -245,6 +331,25 @@ namespace org.iringtools.services
       FormatOutgoingMessage<Response>(response, format, true);
     }
 
+    [Description("Get summary of an application based on configuration.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{app}/{project}/summary")]
+    public void GetSummary(string project, string app)
+    {
+      try
+      {
+        IList<Object> objects = _adapterProvider.GetSummary(project, app);
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
+        String json = serializer.Serialize(objects);
+        
+        HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
+        HttpContext.Current.Response.Write(json);
+      }
+      catch (Exception ex)
+      {
+        ExceptionHandler(ex);
+      }
+    }
+
     #region "All" Methods
     [Description("Gets object definitions of an application.")]
     [WebGet(UriTemplate = "/all/{app}/dictionary?format={format}")]
@@ -275,10 +380,17 @@ namespace org.iringtools.services
     }
 
     [Description("Gets an XML projection of the specified scope, graph and id in the format (xml, dto, rdf ...) specified.")]
-    [WebGet(UriTemplate = "/all/{app}/{graph}/{clazz}/{id}?format={format}")]
-    public void GetIndividualAll(string app, string graph, string clazz, string id, string format)
+    [WebGet(UriTemplate = "/all/{app}/{graph}/{clazz}/{id}?format={format}&start={start}&limit={limit}&sortOrder={sortOrder}&sortBy={sortBy}")]
+    public void GetIndividualAll(string app, string graph, string clazz, string id, string format, int start, int limit, string sortOrder, string sortBy)
     {
-      GetIndividual("all", app, graph, clazz, id, format);
+      GetIndividual("all", app, graph, clazz, id, format, start, limit, sortOrder, sortBy);
+    }
+
+    [Description("Gets individual of a related item.")]
+    [WebGet(UriTemplate = "/all/{app}/{resource}/{id}/{related}/{relatedId}?format={format}")]
+    public void GetRelatedItemAll(string app, string resource, string id, string related, string relatedId, string format)
+    {
+      GetRelatedItem("all", app, resource, id, related, relatedId, format);
     }
 
     [Description("Updates the specified scope and graph with an XML projection in the format (xml, dto, rdf ...) specified. Returns a response with status.")]
@@ -325,10 +437,15 @@ namespace org.iringtools.services
       }
       else if (format.ToUpper() == "JSON")
       {
-        DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
-        MemoryStream ms = Utility.SerializeToStreamJSON<DataItems>(dataItems, false);
-        byte[] json = ms.ToArray();
-        ms.Close();
+        byte[] json = new byte[0];
+        
+        if (xElement != null)
+        {
+          DataItems dataItems = Utility.DeserializeDataContract<DataItems>(xElement.ToString());
+          MemoryStream ms = Utility.SerializeToStreamJSON<DataItems>(dataItems, false);
+          json = ms.ToArray();
+          ms.Close();
+        }
 
         HttpContext.Current.Response.ContentType = "application/json; charset=utf-8";
         HttpContext.Current.Response.Write(Encoding.UTF8.GetString(json, 0, json.Length));

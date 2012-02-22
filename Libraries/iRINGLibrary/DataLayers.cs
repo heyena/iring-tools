@@ -35,7 +35,7 @@ namespace org.iringtools.library
   {
     [XmlElement]
     [DataMember(Name = "url", Order = 1, EmitDefaultValue = false)]
-    public string Url { get; set; }    
+    public string Url { get; set; }
   }
 
   [CollectionDataContract(Name = "baseUrls", Namespace = "http://www.iringtools.org/library", ItemName = "baseUrl")]

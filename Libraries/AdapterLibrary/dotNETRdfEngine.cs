@@ -1,15 +1,26 @@
 ﻿using System;
+using System.Data.SqlClient;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using org.iringtools.adapter;
+using org.iringtools.adapter.semantic;
 using org.iringtools.utility;
 using org.iringtools.library;
 using VDS.RDF;
 using VDS.RDF.Parsing;
+using VDS.RDF.Query;
+using VDS.RDF.Query.Patterns;
 using VDS.RDF.Storage;
 using Ninject;
 using log4net;
 using System.IO;
+using System.Net;
 using System.Xml;
 using System.Xml.Linq;
+using Microsoft.ServiceModel.Web;
+using System.Text.RegularExpressions;
+using org.w3.sparql_results;
 using org.iringtools.mapping;
 
 namespace org.iringtools.adapter.semantic
@@ -41,7 +52,7 @@ namespace org.iringtools.adapter.semantic
     private Mapping _mapping = null;
     private GraphMap _graphMap = null;
     private Graph _graph = null;  // dotNetRdf graph
-    private MicrosoftAdoManager _tripleStore = null;
+    private MicrosoftSqlStoreManager _tripleStore = null;
     private XNamespace _graphNs = String.Empty;
     private string _dataObjectsAssemblyName = String.Empty;
     private string _dataObjectNs = String.Empty;
@@ -69,7 +80,7 @@ namespace org.iringtools.adapter.semantic
         }
       }
 
-      _tripleStore = new MicrosoftAdoManager(
+      _tripleStore = new MicrosoftSqlStoreManager(
         _settings["dotNetRDFServer"],
         _settings["dotNetRDFCatalog"],
         _settings["dotNetRDFUser"],
@@ -83,7 +94,7 @@ namespace org.iringtools.adapter.semantic
       string baseUri = _settings["GraphBaseUri"];
       string project = _settings["ProjectName"];
       string app = _settings["ApplicationName"];
-      _graphNs = Utility.FormAppBaseURI(_uriMaps, baseUri, project, app);
+      _graphNs = Utility.FormEndpointBaseURI(_uriMaps, baseUri, project, app);
 
       _dataObjectNs = String.Format("{0}.proj_{1}", DATALAYER_NS, _settings["Scope"]);
 
@@ -164,12 +175,12 @@ namespace org.iringtools.adapter.semantic
       {
         status.Identifier = graphUri.ToString();
 
-        int graphId = _tripleStore.GetGraphID(graphUri);
+        string graphId = _tripleStore.GetGraphID(graphUri);
 
-        if (graphId != null)
+        if (!String.IsNullOrEmpty(graphId))
         {
-           Uri uri =  _tripleStore.GetGraphUri(graphId);
-          _tripleStore.DeleteGraph(uri);
+          _tripleStore.ClearGraph(graphId);
+          _tripleStore.RemoveGraph(graphId);
         }
 
         status.Messages.Add(String.Format("Graph [{0}] has been deleted successfully.", graphUri));

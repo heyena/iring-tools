@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Forms;
 
 #if SILVERLIGHT
 using System.Windows.Browser;
@@ -28,6 +27,7 @@ namespace org.iringtools.utility.Loggers
     /// <param name="priority">The priority.</param>
     public void Log(string message, Category category, Priority priority)
     {
+      string a;
       string catPri = string.Format("{0}({1})", category, priority);
       message = DateTime.Now.ToLongTimeString() + " " + message;
       Debug.WriteLine(message, catPri);
@@ -40,7 +40,8 @@ namespace org.iringtools.utility.Loggers
         // for Exceptions (High Priority) because it is being
         // used by web services.  Enable during development
         if (IsMessageBoxEnabled)
-          MessageBox.Show(message, catPri);
+          a = "";
+          //MessageBox.Show(message, catPri);
 #endif
 
     }

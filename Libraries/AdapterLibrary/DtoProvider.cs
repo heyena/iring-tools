@@ -104,6 +104,25 @@ namespace org.iringtools.adapter
         _fixedIdentifierBoundary = _settings["fixedIdentifierBoundary"];
       }
 
+      if (ServiceSecurityContext.Current != null)
+      {
+        IIdentity identity = ServiceSecurityContext.Current.PrimaryIdentity;
+        _settings["UserName"] = identity.Name;
+      }
+
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+      _settings["ScopesPath"] = scopesPath;
+
+      if (File.Exists(scopesPath))
+      {
+        _scopes = Utility.Read<Resource>(scopesPath);
+      }
+      else
+      {
+        _scopes = new Resource();
+        Utility.Write<Resource>(_scopes, scopesPath);
+      }
+
       string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
 
       string bindingConfigurationPath = Path.Combine(
@@ -138,7 +157,7 @@ namespace org.iringtools.adapter
       Manifest manifest = new Manifest()
       {
         graphs = new Graphs(),
-        version = "3.0.0",
+        version = "2.1.1",
         valueListMaps = new ValueListMaps()
       };      
 
@@ -257,57 +276,6 @@ namespace org.iringtools.adapter
       return manifest;
     }
 
-    public DataTransferIndices GetDataTransferIndices(string scope, string app, string graph, string hashAlogrithm)
-    {
-      DataTransferIndices dataTransferIndices = null;
-
-      try
-      {
-        InitializeScope(scope, app);
-        InitializeDataLayer();
-
-        _graphMap = _mapping.FindGraphMap(graph);
-
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-
-        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error getting data transfer indices: " + ex);
-        throw ex;
-      }
-
-      return dataTransferIndices;
-    }
-
-    public DataTransferIndices GetDataTransferIndicesWithFilter(string scope, string app, string graph, string hashAlogrithm, DataFilter filter)
-    {
-      DataTransferIndices dataTransferIndices = null;
-
-      try
-      {
-        InitializeScope(scope, app);
-        InitializeDataLayer();
-
-        _graphMap = _mapping.FindGraphMap(graph);
-
-        DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
-        dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
-
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, 0, 0);
-        dataTransferIndices = dtoProjectionEngine.GetDataTransferIndices(_graphMap, dataObjects, String.Empty);
-      }
-      catch (Exception ex)
-      {
-        _logger.Error("Error getting data transfer indices: " + ex);
-        throw ex;
-      }
-
-      return dataTransferIndices;
-    }
-
     public DataTransferIndices GetDataTransferIndicesWithManifest(string scope, string app, string graph, string hashAlgorithm, Manifest manifest)
     {
       DataTransferIndices dataTransferIndices = null;
@@ -347,7 +315,16 @@ namespace org.iringtools.adapter
         DtoProjectionEngine dtoProjectionEngine = (DtoProjectionEngine)_kernel.Get<IProjectionLayer>("dto");
         dtoProjectionEngine.ProjectDataFilter(_dataDictionary, ref filter, graph);
 
-        IList<IDataObject> dataObjects = _dataLayer.Get(_graphMap.dataObjectName, filter, 0, 0);
+        // get total count then page data objects
+        long count = _dataLayer.GetCount(_graphMap.dataObjectName, filter);
+        List<IDataObject> dataObjects = new List<IDataObject>();
+        int defaultPageSize = (String.IsNullOrEmpty(_settings["DefaultPageSize"])) ? 25 : 
+          int.Parse(_settings["DefaultPageSize"]);
+
+        for (int i = 0; i < count; i = i + defaultPageSize)
+        {
+          dataObjects.AddRange(_dataLayer.Get(_graphMap.dataObjectName, filter, defaultPageSize, i));
+        }
         
         // get sort index
         string sortIndex = String.Empty;        
@@ -597,21 +574,10 @@ namespace org.iringtools.adapter
       return dataTransferObjects;
     }
 
-    private void getResource()
-    {
-      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-      System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
-      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port + ".adapter";
-      _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
-    }
-
     private void InitializeScope(string projectName, string applicationName)
     {
       try
       {
-        if (_scopes == null)
-          getResource();  
-
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;

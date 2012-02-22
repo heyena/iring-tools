@@ -73,23 +73,33 @@ namespace org.iringtools.library
 
     public void Append(Status newStatus)
     {
-      foreach (Status status in StatusList)
+      string identifier = newStatus.Identifier;
+      Status status = null;
+      
+      foreach (Status stat in StatusList)
       {
-        if (status.Identifier == newStatus.Identifier)
+        if (stat.Identifier != null && identifier != null &&
+          stat.Identifier.ToLower() == identifier.ToLower())
         {
-          if (status.Level < newStatus.Level)
-            status.Level = newStatus.Level;
-
-          foreach (string message in newStatus.Messages)
-          {
-            status.Messages.Add(message);
-          } 
-
-          return;
+          status = stat;
+          break;
         }
       }
 
-      StatusList.Add(newStatus);
+      if (status != null)
+      {
+        if (status.Level < newStatus.Level)
+          status.Level = newStatus.Level;
+
+        foreach (string message in newStatus.Messages.ToList<string>())
+        {
+          status.Messages.Add(message);
+        }
+      }
+      else
+      {
+        StatusList.Add(newStatus);
+      }
 
       if (Level < newStatus.Level)
         Level = newStatus.Level;

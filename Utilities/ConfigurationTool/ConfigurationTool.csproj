@@ -158,6 +158,10 @@
     <Resource Include="Resources\iRINGTools_logo_small.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
+      <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
+      <Name>iRINGLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
       <Name>UtilityLibrary</Name>
