@@ -165,6 +165,10 @@
       <Project>{02377ADB-F40D-4AD0-B8A8-95810CB55047}</Project>
       <Name>NHibernateLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SpreadsheetDatalayer\SpreadsheetDatalayer.csproj">
+      <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
+      <Name>SpreadsheetDatalayer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WADLLibrary\WADLLibrary.csproj">
       <Project>{B6362A98-B4C0-4729-AFE8-04F93F1B6C79}</Project>
       <Name>WADLLibrary</Name>
