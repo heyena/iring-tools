@@ -222,7 +222,7 @@ namespace QMXFGenerator
 
         }
 
-        if (_excelFilePath == String.Empty || _qmxfFilePath == String.Empty)
+        if (_excelFilePath == String.Empty)
         {
           Console.WriteLine("Usage: \n");
           Console.WriteLine("   qmxfgen.exe <excel file> <output file>");
@@ -373,7 +373,8 @@ namespace QMXFGenerator
         if (!string.IsNullOrEmpty(_proxyHost))
         {
           WebCredentials proxyCredentials = new WebCredentials(_proxyCredentials);
-
+          if(proxyCredentials.isEncrypted)
+            proxyCredentials.Decrypt();
           webProxy = new WebProxy(_proxyHost, Convert.ToInt32(_proxyPort));
           webProxy.Credentials = proxyCredentials.GetNetworkCredential();
         }
@@ -381,7 +382,7 @@ namespace QMXFGenerator
                               HttpUtility.UrlEncode(registryBase) + "&registry-comment=";
         string serviceUrl = baseServiceUrl + HttpUtility.UrlEncode(name);
         WebHttpClient webClient = new WebHttpClient(serviceUrl, webCredentials.GetNetworkCredential(), webProxy);
-
+        
         RegistryResult registryResult = webClient.Get<RegistryResult>(serviceUrl, false);
         //Utility.WriteString("\n" + registryResult.registryid, "Generated IDs.log", true);
 
