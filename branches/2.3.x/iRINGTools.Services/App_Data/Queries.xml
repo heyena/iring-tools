@@ -553,7 +553,7 @@
     </query>
   </queryItem>
   <queryItem>
-    <key>GetPart8Specialization</key>
+    <key>GetSuperClassOf</key>
     <query>
       <bindings>
         <queryBinding>
@@ -565,7 +565,7 @@
           <type>Literal</type>
         </queryBinding>
       </bindings>
-      <fileName>part8getsuperclass.txt</fileName>
+      <fileName>GetSuperClassOf.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
@@ -617,7 +617,7 @@
     </query>
   </queryItem>
   <queryItem>
-    <key>GetSubClassOfInverse</key>
+    <key>GetSubClassOf</key>
     <query>
       <bindings>
         <queryBinding>
@@ -629,11 +629,11 @@
           <type>Literal</type>
         </queryBinding>
       </bindings>
-      <fileName>GetSubClassOfInverse.txt</fileName>
+      <fileName>GetSubClassOf.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
-    <key>GetSubClassOfInverseCount</key>
+    <key>GetSubClassOfCount</key>
     <query>
       <bindings>
         <queryBinding>
@@ -641,7 +641,7 @@
           <type>Uri</type>
         </queryBinding>
       </bindings>
-      <fileName>GetSubClassOfInverseCount.txt</fileName>
+      <fileName>GetSubClassOfCount.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
