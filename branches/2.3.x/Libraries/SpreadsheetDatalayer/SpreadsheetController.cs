@@ -18,6 +18,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using DocumentFormat.OpenXml.Packaging;
+using log4net;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -52,6 +53,7 @@ namespace org.iringtools.adapter.datalayer
     private ISpreadsheetRepository _repository { get; set; }
     private string _keyFormat = "Configuration.{0}.{1}";
     private string _appData = string.Empty;
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(SpreadsheetController));
 
     public SpreadsheetController()
       : this(new SpreadsheetRepository())
@@ -87,7 +89,7 @@ namespace org.iringtools.adapter.datalayer
           HttpPostedFileBase hpf = files[file] as HttpPostedFileBase;
           if (hpf.ContentLength == 0)
             continue;
-          string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["XmlPath"], form["Scope"], form["Application"]);
+          string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["AppDataPath"], form["Scope"], form["Application"]);
 
           SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
           {
@@ -113,12 +115,13 @@ namespace org.iringtools.adapter.datalayer
           //break;
         }
       }
-      catch
+      catch (Exception ex)
       {
+        ;
         return new JsonResult()
         {
           ContentType = "text/html",
-          Data = new { success = false }
+          Data = PrepareErrorResponse(ex)
         };
       }
       return new JsonResult()
@@ -338,6 +341,16 @@ namespace org.iringtools.adapter.datalayer
       container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
+    }
+
+    private Response PrepareErrorResponse(Exception ex)
+    {
+      Response response = new Response();
+      response.Level = StatusLevel.Error;
+      response.Messages = new Messages();
+      response.Messages.Add(ex.Message);
+      response.Messages.Add(ex.StackTrace);
+      return response;
     }
 
   }
