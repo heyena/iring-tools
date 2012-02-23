@@ -153,7 +153,7 @@ Public Class SPPIDRepository
         Dim dbObjectNodes As New List(Of JsonTreeNode)()
 
 
-        Dim obj As New SPPIDDataLayer(_settings)
+        'Dim obj As New SPPIDDataLayer(_settings)
 
         Dim hasDBDictionary = False
 
