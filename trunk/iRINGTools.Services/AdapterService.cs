@@ -390,7 +390,7 @@ namespace org.iringtools.services
         return PrepareErrorResponse(ex);
       }
     }
-    
+    #endregion
 
     private Response PrepareErrorResponse(Exception ex)
     {
