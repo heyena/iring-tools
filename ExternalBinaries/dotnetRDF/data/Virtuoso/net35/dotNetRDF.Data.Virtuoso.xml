@@ -4,108 +4,24 @@
         <name>dotNetRDF.Data.Virtuoso</name>
     </assembly>
     <members>
-        <member name="T:VDS.RDF.Storage.NonNativeVirtuosoManager">
+        <member name="T:VDS.RDF.PluginExtensions">
             <summary>
-            A <see cref="T:VDS.RDF.Storage.ISqlIOManager">ISqlIOManager</see> implementation which uses a Virtual Database from Virtuoso Universal Server as the backing store
+            Represents common extensions that are useful across all Plugin libraries
             </summary>
-            <threadsafety instance="true">
-            <para>
-            Designed to be Thread safe for concurrent read and write access
-            </para>
-            <para>
-            <strong>Note:</strong> To ensure correct behaviour for multi-threaded writing you must set the <see cref="P:VDS.RDF.Storage.BaseStoreManager.DisableTransactions">DisableTransactions</see> property to be true.  Classes which are designed specifically to do multi-threaded writing will <em>usually</em> set this automatically.
-            </para>
-            <para>
-            Will only be thread safe for writing if all the classes writing to the database are using a single instance of this Manager.
-            </para>
-            </threadsafety>
-            <remarks>
-            Since there is no way of knowing what the underlying Database of a Virtual Database in Virtuoso is this Manager cannot automatically create the dotNetRDF Store since it does not know which SQL Setup script to use.  You <strong>must</strong> configure your virtual database yourself before using this Manager to access it.
-            </remarks>
         </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.#ctor(System.String,System.Int32,System.String,System.String,System.String)">
+        <member name="M:VDS.RDF.PluginExtensions.ToSafeString(System.Object)">
             <summary>
-            Creates a new instance of the Non-Native Virtuoso Manager
+            Gets either the String form of the Object of the Empty String
             </summary>
-            <param name="server">Server</param>
-            <param name="port">Port</param>
-            <param name="db">Database Name</param>
-            <param name="user">Username</param>
-            <param name="password">Password</param>
+            <param name="obj">Object</param>
+            <returns>Result of calling <strong>ToString()</strong> on non-null objects and the empty string for null objects</returns>
         </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.#ctor(System.String,System.String,System.String,System.String)">
+        <member name="M:VDS.RDF.PluginExtensions.EnsureObjectFactory(VDS.RDF.Configuration.ConfigurationSerializationContext,System.Type)">
             <summary>
-            Creates a new instance of the Non-Native Virtuoso Manager
-            </summary>
-            <param name="server">Server</param>
-            <param name="db">Database Name</param>
-            <param name="user">Username</param>
-            <param name="password">Password</param>
-            <remarks>Assumes the Database uses the default port of <strong>1111</strong></remarks>
-        </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.#ctor(System.String,System.String,System.String)">
-            <summary>
-            Creates a new instance of the Non-Native Virtuoso Manager
-            </summary>
-            <param name="db">Database Name</param>
-            <param name="user">Username</param>
-            <param name="password">Password</param>
-            <remarks>Assumes the Database is on the <strong>localhost</strong> and uses the default port of <strong>1111</strong></remarks>
-        </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.Open(System.Boolean)">
-            <summary>
-            Opens a Connection to the Database
-            </summary>
-            <param name="keepOpen">Indicates that the Connection should be kept open and a Transaction started</param>
-            <remarks>A Connection and Transaction per Thread are used</remarks>
-        </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.Close(System.Boolean,System.Boolean)">
-            <summary>
-            Closes the Connection to the Database
-            </summary>
-            <param name="forceClose">Indicates that the connection should be closed even if keepOpen was specified when the Connection was opened</param>
-            <param name="rollbackTrans">Indicates that the Transaction should be rolled back because something has gone wrong</param>
-            <remarks>A Connection and Transaction per Thread are used</remarks>
-        </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.ExecuteNonQuery(System.String)">
-            <summary>
-            Executes a Non-Query SQL Command against the database
-            </summary>
-            <param name="sqlCmd">SQL Command</param>
-        </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.ExecuteQuery(System.String)">
-            <summary>
-            Executes a Query SQL Command against the database and returns a DataTable
-            </summary>
-            <param name="sqlCmd">SQL Command</param>
-            <returns>DataTable of results</returns>
-        </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.ExecuteQuery(System.String,System.Data.DataTable)">
-            <summary>
-            Executes a Query SQL Command against the database and fills the supplied DataTable with the results
-            </summary>
-            <param name="sqlCmd">SQL Command</param>
-            <param name="data">DataTable to fill with results</param>
-            <remarks>Allows for queries which wish to strongly type the results for quicker reading</remarks>
-        </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.ExecuteStreamingQuery(System.String)">
-            <summary>
-            Executes a Query SQL Command against the database and returns the results in a streaming fashion
-            </summary>
-            <param name="sqlCmd">SQL Command</param>
-        </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.ExecuteScalar(System.String)">
-            <summary>
-            Executes a Query SQL Command against the database and returns the scalar result (first column of first row of the result)
-            </summary>
-            <param name="sqlCmd">SQL Command</param>
-            <returns>First Column of First Row of the Results</returns>
-        </member>
-        <member name="M:VDS.RDF.Storage.NonNativeVirtuosoManager.SerializeConfiguration(VDS.RDF.Configuration.ConfigurationSerializationContext)">
-            <summary>
-            Serializes the connection's configuration
+            Ensures that a specific Object Factory type is registered in a Configuration Graph
             </summary>
             <param name="context">Configuration Serialization Context</param>
+            <param name="factoryType">Factory Type</param>
         </member>
         <member name="T:VDS.RDF.Storage.VirtuosoManager">
             <summary>
@@ -136,35 +52,24 @@
             Default Database for Virtuoso Server Quad Store
             </summary>
         </member>
-        <member name="F:VDS.RDF.Storage.VirtuosoManager._dbserver">
-            <summary>
-            Variables for Database Connection Properties
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Storage.VirtuosoManager._dbname">
-            <summary>
-            Variables for Database Connection Properties
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Storage.VirtuosoManager._dbuser">
-            <summary>
-            Variables for Database Connection Properties
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Storage.VirtuosoManager._dbpwd">
-            <summary>
-            Variables for Database Connection Properties
-            </summary>
-        </member>
-        <member name="F:VDS.RDF.Storage.VirtuosoManager._dbport">
-            <summary>
-            Database Port
-            </summary>
-        </member>
         <member name="F:VDS.RDF.Storage.VirtuosoManager._keepOpen">
             <summary>
             Indicates whether the Database Connection is currently being kept open
             </summary>
+        </member>
+        <member name="M:VDS.RDF.Storage.VirtuosoManager.#ctor(System.String,System.Int32,System.String,System.String,System.String,System.Int32)">
+            <summary>
+            Creates a Manager for a Virtuoso Native Quad Store
+            </summary>
+            <param name="server">Server</param>
+            <param name="port">Port</param>
+            <param name="db">Database Name</param>
+            <param name="user">Username</param>
+            <param name="password">Password</param>
+            <param name="timeout">Connection Timeout in Seconds</param>
+            <remarks>
+            Timeouts less than equal to zero are ignored and treated as using the default timeout which is dictated by the underlying Virtuoso ADO.Net provider
+            </remarks>
         </member>
         <member name="M:VDS.RDF.Storage.VirtuosoManager.#ctor(System.String,System.Int32,System.String,System.String,System.String)">
             <summary>
@@ -175,6 +80,18 @@
             <param name="db">Database Name</param>
             <param name="user">Username</param>
             <param name="password">Password</param>
+        </member>
+        <member name="M:VDS.RDF.Storage.VirtuosoManager.#ctor(System.String,System.String,System.String,System.Int32)">
+            <summary>
+            Creates a Manager for a Virtuoso Native Quad Store
+            </summary>
+            <param name="db">Database Name</param>
+            <param name="user">Username</param>
+            <param name="password">Password</param>
+            <param name="timeout">Connection Timeout in Seconds</param>
+            <remarks>
+            Assumes the Server is on the localhost and the port is the default installation port of 1111
+            </remarks>
         </member>
         <member name="M:VDS.RDF.Storage.VirtuosoManager.#ctor(System.String,System.String,System.String)">
             <summary>
@@ -402,6 +319,11 @@
             </summary>
             <param name="context">Configuration Serialization Context</param>
         </member>
+        <member name="P:VDS.RDF.Storage.VirtuosoManager.IOBehaviour">
+            <summary>
+            Gets the IO Behaviour of the store
+            </summary>
+        </member>
         <member name="P:VDS.RDF.Storage.VirtuosoManager.UpdateSupported">
             <summary>
             Indicates that Updates are supported by the Virtuoso Native Quad Store
@@ -505,7 +427,7 @@
             Currently Graphs added/removed from this Class do not affect the Virtuoso Store
             </para>
             <para>
-            If you wish to alter the Store you must manipulate the Store directly using the <see cref="T:VDS.RDF.Storage.VirtuosoManager">VirtuosoManager</see> or by issuing SPARQL Update commands using the <see cref="!:VirtuosoTripleStore.ExecuteUpdate()">ExecuteUpdate()</see> method.
+            If you wish to alter the Store you must manipulate the Store directly using the <see cref="T:VDS.RDF.Storage.VirtuosoManager">VirtuosoManager</see> or by issuing SPARQL Update commands using the <see cref="M:VDS.RDF.VirtuosoTripleStore.ExecuteUpdate(System.String)">ExecuteUpdate()</see> method.
             </para>
             </remarks>
         </member>
@@ -571,10 +493,10 @@
             This method invokes the <see cref="M:VDS.RDF.Storage.VirtuosoManager.Query(System.String)">Query</see> method of the <see cref="T:VDS.RDF.Storage.VirtuosoManager">VirtuosoManager</see> which executes the SPARQL query against the store using SPASQL (Sparql+SQL).
             </para>
             <para>
-            You can use this method to issue SPARQL Update commands against the Store if the user account you are using to connect has the relevant privilege <strong>SPARQL_UPDATE</strong> granted to them, for new development we recommend you use the <see cref="!:VirtuosoTripleStore.ExecuteUpdate()">ExecuteUpdate()</see> method instead.
+            You can use this method to issue SPARQL Update commands against the Store if the user account you are using to connect has the relevant privilege <strong>SPARQL_UPDATE</strong> granted to them, for new development we recommend you use the <see cref="M:VDS.RDF.VirtuosoTripleStore.ExecuteUpdate(System.String)">ExecuteUpdate()</see> method instead.
             </para>
             <para>
-            <strong>Warning:</strong> In rare cases we have been able to crash Virtuoso by issuing malformed Sparql Update commands to it, this appears to be an issue with Virtuoso.
+            <strong>Warning:</strong> In rare cases we have been able to crash Virtuoso by issuing malformed SPARQL Update commands to it, this appears to be an issue with Virtuoso.
             </para>
             </remarks>
             <exception cref="T:VDS.RDF.Query.RdfQueryException">Thrown if the query is malformed or the results cannot be processed</exception>
