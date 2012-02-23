@@ -12,6 +12,7 @@ using org.iringtools.library;
 using org.iringtools.utility;
 using System.Xml.Linq;
 using DocumentFormat.OpenXml.Packaging;
+using log4net;
 
 namespace org.iringtools.adapter.datalayer 
 {
@@ -29,6 +30,7 @@ namespace org.iringtools.adapter.datalayer
     private AdapterSettings _settings { get; set; }
     private SpreadsheetProvider _provider { get; set; }
     private WebHttpClient _client { get; set; }
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(SpreadsheetRepository));
 
     [Inject]
     public SpreadsheetRepository()
@@ -40,11 +42,17 @@ namespace org.iringtools.adapter.datalayer
 
     private SpreadsheetProvider InitializeProvider(SpreadsheetConfiguration configuration)
     {
-      if (_provider == null)
+      try
       {
-        _provider = new SpreadsheetProvider(configuration);
+        if (_provider == null)
+        {
+          _provider = new SpreadsheetProvider(configuration);
+        }
       }
-
+      catch (Exception ex)
+      {
+        PrepareErrorResponse(ex);
+      }
       return _provider;
     }
 
@@ -83,41 +91,48 @@ namespace org.iringtools.adapter.datalayer
 
     public void Configure(string context, string endpoint, string datalayer, SpreadsheetConfiguration configuration, Stream inputFile)
     {
-      using (InitializeProvider(configuration))
+      try
       {
-        List<MultiPartMessage> requestMessages = new List<MultiPartMessage>();
-
-        if (datalayer != null)
+        using (InitializeProvider(configuration))
         {
-          requestMessages.Add(new MultiPartMessage
-          {
-            name = "DataLayer",
-            message = datalayer,
-            type = MultipartMessageType.FormData
-          });
+          List<MultiPartMessage> requestMessages = new List<MultiPartMessage>();
 
-          requestMessages.Add(new MultiPartMessage
+          if (datalayer != null)
           {
-            name = "Configuration",
-            message = Utility.Serialize<XElement>(Utility.SerializeToXElement(configuration), true),
-            type = MultipartMessageType.FormData
-          });
-          if (inputFile != null)
-          {
-            inputFile.Position = 0;
             requestMessages.Add(new MultiPartMessage
             {
-              name = "SourceFile",
-              fileName = configuration.Location,
-              message = inputFile,
-              //mimeType = "application/zip",
-              mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-              type = MultipartMessageType.File
+              name = "DataLayer",
+              message = datalayer,
+              type = MultipartMessageType.FormData
             });
-            inputFile.Flush();
+
+            requestMessages.Add(new MultiPartMessage
+            {
+              name = "Configuration",
+              message = Utility.Serialize<XElement>(Utility.SerializeToXElement(configuration), true),
+              type = MultipartMessageType.FormData
+            });
+            if (inputFile != null)
+            {
+              inputFile.Position = 0;
+              requestMessages.Add(new MultiPartMessage
+              {
+                name = "SourceFile",
+                fileName = configuration.Location,
+                message = inputFile,
+                //mimeType = "application/zip",
+                mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                type = MultipartMessageType.File
+              });
+              inputFile.Flush();
+            }
+            _client.PostMultipartMessage(string.Format("/{0}/{1}/configure", context, endpoint), requestMessages);
           }
-          _client.PostMultipartMessage(string.Format("/{0}/{1}/configure", context, endpoint), requestMessages);
         }
+      }
+      catch (Exception ex)
+      {
+        PrepareErrorResponse(ex);
       }
     }
 
@@ -133,15 +148,27 @@ namespace org.iringtools.adapter.datalayer
           obj = Utility.DeserializeFromXElement<SpreadsheetConfiguration>(element);
         }
       }
-      catch (Exception)
+      catch (Exception ex)
       {
-
+        PrepareErrorResponse(ex);
       }
 
       return obj;
 
     }
+    private Response PrepareErrorResponse(Exception ex)
+    {
+      Response response = new Response
+      {
+        Level = StatusLevel.Error,
+        Messages = new Messages
+          {
+            ex.Message
+          }
+      };
 
+      return response;
+    }
   }
 
 }
