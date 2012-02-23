@@ -16,7 +16,7 @@ namespace org.iringtools.web.controllers
   {
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DatagridController));
     private IGridRepository _repository { get; set; }
-    private DataDictionary dataDict;
+    private DataDictionary dataDict = null;
 
     private JavaScriptSerializer serializer;
     private string response = "success";

@@ -26,25 +26,25 @@ namespace org.iringtools.library
   public class Folder
   {
     [DataMember(Name = "endpoints", Order = 0, EmitDefaultValue = false)]
-    public Endpoints endpoints { get; set; }
+    public Endpoints Endpoints { get; set; }
 
     [DataMember(Name = "folders", Order = 1, EmitDefaultValue = false)]
-    public Folders folders { get; set; }
+    public Folders Folders { get; set; }
 
     [DataMember(Name = "name", Order = 2)]
     public string Name { get; set; }
 
     [DataMember(Name = "type", Order = 3)]
-    public string type { get; set; }
+    public string Type { get; set; }
 
     [DataMember(Name = "description", Order = 4, EmitDefaultValue = false)]
     public string Description { get; set; }
 
     [DataMember(Name = "context", Order = 5, EmitDefaultValue = false)]
-    public string context { get; set; }
+    public string Context { get; set; }
 
     [DataMember(Name = "securityRole", Order = 6, EmitDefaultValue = false)]
-    public string securityRole { get; set; }
+    public string SecurityRole { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/directory", Name = "endpoint")]
@@ -54,19 +54,19 @@ namespace org.iringtools.library
     public string Name { get; set; }   
 
     [DataMember(Name = "type", Order = 1, EmitDefaultValue = false)]
-    public string type { get; set; }
+    public string Type { get; set; }
 
     [DataMember(Name = "description", Order = 2, EmitDefaultValue = false)]
     public string Description { get; set; }
 
     [DataMember(Name = "context", Order = 3, EmitDefaultValue = false)]
-    public string context { get; set; }
+    public string Context { get; set; }
 
     [DataMember(Name = "baseUrl", Order = 4, EmitDefaultValue = false)]
-    public string baseUrl { get; set; }
+    public string BaseUrl { get; set; }
 
     [DataMember(Name = "securityRole", Order = 5, EmitDefaultValue = false)]
-    public string securityRole { get; set; }
+    public string SecurityRole { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/directory")]
@@ -104,33 +104,33 @@ namespace org.iringtools.library
   public class Resource
   {
     [DataMember(Name = "baseUrl", Order = 0)]
-    public string baseUrl { get; set; }
+    public string BaseUrl { get; set; }
 
     [DataMember(Name = "locators", Order = 1, EmitDefaultValue = false)]
-    public Locators locators { get; set; }
+    public Locators Locators { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/directory", Name = "locator")]
   public class Locator
   {
     [DataMember(Name = "context", Order = 0)]
-    public string context { get; set; }
+    public string Context { get; set; }
 
     [DataMember(Name = "description", Order = 1, EmitDefaultValue = false)]
-    public string description { get; set; }
+    public string Description { get; set; }
 
     [DataMember(Name = "applications", Order = 2, EmitDefaultValue = false)]
-    public EndpointApplications applications { get; set; }
+    public EndpointApplications Applications { get; set; }
   }
 
   [DataContract(Namespace = "http://www.iringtools.org/directory", Name = "application")]
   public class EndpointApplication
   {
     [DataMember(Name = "endpoint", Order = 0)]
-    public string endpoint { get; set; }
+    public string Endpoint { get; set; }
 
     [DataMember(Name = "description", Order = 1, EmitDefaultValue = false)]
-    public string description { get; set; }
+    public string Description { get; set; }
   }
 
 }

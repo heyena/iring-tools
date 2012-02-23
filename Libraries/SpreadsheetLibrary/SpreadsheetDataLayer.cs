@@ -24,7 +24,6 @@ namespace org.iringtools.adapter.datalayer
   public class SpreadsheetDataLayer : BaseConfigurableDataLayer
   {
     private SpreadsheetProvider _provider = null;
-    private List<IDataObject> _dataObjects = null;
     private ILog _logger = LogManager.GetLogger(typeof(SpreadsheetDataLayer));
 
     [Inject]
@@ -523,7 +522,7 @@ namespace org.iringtools.adapter.datalayer
         string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"], string.Format("spreadsheet-configuration.{0}.xml", _settings["scope"]));
         Utility.Write<SpreadsheetConfiguration>(config, path, true);
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         Status stat  = new Status { Level = StatusLevel.Error };
         resp.StatusList.Add(stat);

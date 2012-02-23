@@ -96,7 +96,7 @@ namespace NUnit.Tests
     {
       Resource scopes = _adapterProvider.GetScopes();
 
-      Assert.AreNotEqual(0, scopes.locators.Count);
+      Assert.AreNotEqual(0, scopes.Locators.Count);
     }
 
     //[Test] Move to JUnit
