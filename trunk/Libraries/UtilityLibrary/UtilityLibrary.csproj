@@ -57,11 +57,6 @@
     <Compile Include="EncryptionUtility.cs" />
     <Compile Include="GenericDataTable.cs" />
     <Compile Include="IWebHttpClient.cs" />
-    <Compile Include="Loggers\DebugLogger.cs" />
-    <Compile Include="Loggers\DefaultLogger.cs" />
-    <Compile Include="Loggers\ILog.cs" />
-    <Compile Include="Loggers\ILogger.cs" />
-    <Compile Include="Loggers\LoggerHelper.cs" />
     <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

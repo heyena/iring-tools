@@ -1524,10 +1524,6 @@
     <Folder Include="Views\Shared\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\branches\datalayers\SpreadsheetDatalayer\SpreadsheetDataLayer\SpreadsheetDatalayer.csproj">
-      <Project>{4ABA9650-C7C8-4D30-BAB4-39DE2CC065FD}</Project>
-      <Name>SpreadsheetDatalayer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Libraries\iRINGLibrary\iRINGLibrary.csproj">
       <Project>{D9A14BFC-001F-46DB-8F0B-8A81017D0D27}</Project>
       <Name>iRINGLibrary</Name>

@@ -22,7 +22,7 @@ namespace org.iringtools.adapter.datalayer
     private string _configurationPath = string.Empty;
     private SpreadsheetConfiguration _configuration = null;
     private SpreadsheetDocument _document = null;
-    private Stream _stream = null;
+    //private Stream _stream = null;
 
     public SpreadsheetProvider(SpreadsheetConfiguration configuration)
     {
@@ -79,7 +79,7 @@ namespace org.iringtools.adapter.datalayer
       {
         doc = SpreadsheetDocument.Open(path, true);
       }
-      catch (IOException e)
+      catch (IOException)
       {
         throw new IOException(string.Format("File {0} is locked by other process", _configuration.Location));
       }

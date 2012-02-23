@@ -199,7 +199,7 @@ namespace QMXFGenerator
           }
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
       }
     }
@@ -721,7 +721,7 @@ namespace QMXFGenerator
     private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow)
     {
       int roleIndex = 0;
-      int idx = 0;
+      //int idx = 0;
 
       try
       {

@@ -628,7 +628,7 @@ namespace org.iringtools.adapter
 
       try
       {
-        foreach (Locator scope in _scopes.locators)
+        foreach (Locator scope in _scopes.Locators)
         {
           response.Append(Generate(scope));
         }
@@ -652,16 +652,16 @@ namespace org.iringtools.adapter
       Response response = new Response();
       Status status = new Status()
       {
-        Identifier = scope.context
+        Identifier = scope.Context
       };
 
       response.StatusList.Add(status);
 
       try
       {
-        foreach (EndpointApplication app in scope.applications)
+        foreach (EndpointApplication app in scope.Applications)
         {
-          response.Append(Generate(scope.context, app.endpoint));
+          response.Append(Generate(scope.Context, app.Endpoint));
         }
 
         status.Messages.Add("Artifacts are generated successfully.");
@@ -680,9 +680,9 @@ namespace org.iringtools.adapter
 
     public Response Generate(string scope)
     {
-      foreach (Locator sc in _scopes.locators)
+      foreach (Locator sc in _scopes.Locators)
       {
-        if (sc.context.ToLower() == scope.ToLower())
+        if (sc.Context.ToLower() == scope.ToLower())
         {
           return Generate(sc);
         }
@@ -717,19 +717,19 @@ namespace org.iringtools.adapter
       {
         InitializeScope(scopeName, appName);
 
-        scope = _scopes.locators.FirstOrDefault<Locator>(o => o.context.ToLower() == scopeName.ToLower());
+        scope = _scopes.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == scopeName.ToLower());
 
         if (scope == null)
         {
           throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
         }
 
-        if (scope.applications == null)
+        if (scope.Applications == null)
         {
           throw new Exception(String.Format("No applications found in scope [{0}].", scopeName));
         }
 
-        application = scope.applications.Find(o => o.endpoint.ToLower() == appName.ToLower());
+        application = scope.Applications.Find(o => o.Endpoint.ToLower() == appName.ToLower());
 
         if (application == null)
         {
@@ -737,7 +737,7 @@ namespace org.iringtools.adapter
         }
 
         string path = _settings["AppDataPath"];
-        string context = scope.context + "." + application.endpoint;
+        string context = scope.Context + "." + application.Endpoint;
         string bindingPath = String.Format("{0}BindingConfiguration.{1}.xml", path, context);
         XElement binding = XElement.Load(bindingPath);
 
@@ -761,12 +761,12 @@ namespace org.iringtools.adapter
               compilerVersion = _settings["CompilerVersion"];
             }
 
-            response.Append(generator.Generate(compilerVersion, dbDictionary, scope.context, application.endpoint));
+            response.Append(generator.Generate(compilerVersion, dbDictionary, scope.Context, application.Endpoint));
           }
           else
           {
             status.Level = StatusLevel.Warning;
-            status.Messages.Add(string.Format("Database dictionary [{0}.{1}] does not exist.", scopeName, application.endpoint));
+            status.Messages.Add(string.Format("Database dictionary [{0}.{1}] does not exist.", scopeName, application.Endpoint));
           }
         }
       }
@@ -856,17 +856,17 @@ namespace org.iringtools.adapter
       {
         Contexts contexts = new Contexts();
 
-        foreach (Locator scope in _scopes.locators)
+        foreach (Locator scope in _scopes.Locators)
         {
-          if (scope.context.ToLower() != "all")
+          if (scope.Context.ToLower() != "all")
           {
-            var app = scope.applications.Find(a => a.endpoint.ToUpper() == applicationName.ToUpper());
+            var app = scope.Applications.Find(a => a.Endpoint.ToUpper() == applicationName.ToUpper());
 
             if (app != null)
             {
               Context context = new Context
               {
-                Name = scope.context,
+                Name = scope.Context,
                 Description = "",
               };
 
@@ -945,7 +945,7 @@ namespace org.iringtools.adapter
           @base = appBaseUri,
         };
 
-        string title = _application.endpoint;
+        string title = _application.Endpoint;
         if (title == String.Empty)
           title = applicationName;
 
@@ -2897,13 +2897,13 @@ namespace org.iringtools.adapter
           //scope stuff
 
           bool isScopeValid = false;
-          foreach (Locator project in _scopes.locators)
+          foreach (Locator project in _scopes.Locators)
           {
-            if (project.context.ToUpper() == projectName.ToUpper())
+            if (project.Context.ToUpper() == projectName.ToUpper())
             {
-              foreach (EndpointApplication application in project.applications)
+              foreach (EndpointApplication application in project.Applications)
               {
-                if (application.endpoint.ToUpper() == applicationName.ToUpper())
+                if (application.Endpoint.ToUpper() == applicationName.ToUpper())
                 {
                   _application = application;
                   isScopeValid = true;

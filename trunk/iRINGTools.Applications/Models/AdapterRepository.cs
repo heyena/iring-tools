@@ -100,7 +100,7 @@ namespace iRINGTools.Web.Models
           default: return "folder";
         }
       }
-      catch (Exception ex)
+      catch (Exception)
       {
         return "folder";
       }
@@ -132,26 +132,26 @@ namespace iRINGTools.Web.Models
           folderNode.identifier = folderNode.id;
           folderNode.hidden = false;
           folderNode.leaf = false;
-          folderNode.iconCls = GetNodeIconCls(folder.type);
+          folderNode.iconCls = GetNodeIconCls(folder.Type);
           folderNode.type = "folder";
           treePath = folder.Name;
 
-          if (folder.context != null)
-            context = folder.context;
+          if (folder.Context != null)
+            context = folder.Context;
 
           Object record = new
           {
             Name = folder.Name,
             context = context,
             Description = folder.Description,
-            securityRole = folder.securityRole
+            securityRole = folder.SecurityRole
           };
 
           folderNode.record = record;
           folderNode.property = new Dictionary<string, string>();
           folderNode.property.Add("Name", folder.Name);
           folderNode.property.Add("Description", folder.Description);
-          folderNode.property.Add("Context", folder.context);
+          folderNode.property.Add("Context", folder.Context);
           folderNodes.Add(folderNode);
           TraverseDirectory(folderNode, folder, treePath);
         }
@@ -481,7 +481,7 @@ namespace iRINGTools.Web.Models
 
     private void CheckCombination(Folder folder, string path, string context, string oldContext)
     {
-      Endpoints endpoints = folder.endpoints;
+      Endpoints endpoints = folder.Endpoints;
       string endpointPath = "";
 
       if (endpoints != null)
@@ -489,11 +489,11 @@ namespace iRINGTools.Web.Models
         foreach (Endpoint endpoint in endpoints)
         {
           endpointPath = path + "." + endpoint.Name;
-          CheckeCombination(endpoint.baseUrl, endpoint.baseUrl, context, oldContext, endpoint.Name, endpoint.Name, endpointPath);
+          CheckeCombination(endpoint.BaseUrl, endpoint.BaseUrl, context, oldContext, endpoint.Name, endpoint.Name, endpointPath);
         }
       }
 
-      Folders subFolders = folder.folders;
+      Folders subFolders = folder.Folders;
 
       if (subFolders == null)
         return;
@@ -567,7 +567,7 @@ namespace iRINGTools.Web.Models
         if (folder.Name.Equals(level[0]))
         {
           if (level.Length == 1)
-            return folder.folders;
+            return folder.Folders;
           else
             return TraverseGetFolders(folder, level, 0);
         }
@@ -577,16 +577,16 @@ namespace iRINGTools.Web.Models
 
     private Folders TraverseGetFolders(Folder folder, string[] level, int depth)
     {
-      if (folder.folders == null)
+      if (folder.Folders == null)
       {
-        folder.folders = new Folders();
-        return folder.folders;
+        folder.Folders = new Folders();
+        return folder.Folders;
       }
       else
       {
         if (level.Length > depth + 1)
         {
-          foreach (Folder subFolder in folder.folders)
+          foreach (Folder subFolder in folder.Folders)
           {
             if (subFolder.Name == level[depth + 1])
               return TraverseGetFolders(subFolder, level, depth + 1);
@@ -594,7 +594,7 @@ namespace iRINGTools.Web.Models
         }
         else
         {
-          return folder.folders;
+          return folder.Folders;
         }
       }
       return null;
@@ -603,7 +603,7 @@ namespace iRINGTools.Web.Models
     private void TraverseDirectory(TreeNode folderNode, Folder folder, string treePath)
     {
       List<JsonTreeNode> folderNodeList = folderNode.getChildren();
-      Endpoints endpoints = folder.endpoints;
+      Endpoints endpoints = folder.Endpoints;
       string context = "";
       string endpointName;
       string folderName;
@@ -630,11 +630,11 @@ namespace iRINGTools.Web.Models
           folderNodeList.Add(endPointNode);
           treePath = folderPath + "." + endpoint.Name;
 
-          if (endpoint.context != null)
-            context = endpoint.context;
+          if (endpoint.Context != null)
+            context = endpoint.Context;
 
-          if (endpoint.baseUrl != null)
-            baseUrl = endpoint.baseUrl;
+          if (endpoint.BaseUrl != null)
+            baseUrl = endpoint.BaseUrl;
 
           sessionKey = baseUrl + "." + context + "." + endpointName;
           HttpContext.Current.Session[sessionKey] = treePath;
@@ -658,7 +658,7 @@ namespace iRINGTools.Web.Models
             BaseUrl = baseUrl,
             endpoint = endpointName,
             Assembly = assembly,
-            securityRole = endpoint.securityRole
+            securityRole = endpoint.SecurityRole
           };
 
           endPointNode.record = record;
@@ -670,37 +670,37 @@ namespace iRINGTools.Web.Models
         }
       }
 
-      if (folder.folders == null)
+      if (folder.Folders == null)
         return;
       else
       {
-        foreach (Folder subFolder in folder.folders)
+        foreach (Folder subFolder in folder.Folders)
         {
           folderName = subFolder.Name;
           TreeNode subFolderNode = new TreeNode();
           subFolderNode.text = folderName;
-          subFolderNode.iconCls = GetNodeIconCls(subFolder.type);
+          subFolderNode.iconCls = GetNodeIconCls(subFolder.Type);
           subFolderNode.type = "folder";
           subFolderNode.hidden = false;
           subFolderNode.leaf = false;
           subFolderNode.id = folderNode.id + "/" + subFolder.Name;
           subFolderNode.identifier = subFolderNode.id;
 
-          if (subFolder.context != null)
-            context = subFolder.context;
+          if (subFolder.Context != null)
+            context = subFolder.Context;
 
           Object record = new
           {
             Name = folderName,
             context = context,
             Description = subFolder.Description,
-            securityRole = subFolder.securityRole
+            securityRole = subFolder.SecurityRole
           };
           subFolderNode.record = record;
           subFolderNode.property = new Dictionary<string, string>();
           subFolderNode.property.Add("Name", folderName);
           subFolderNode.property.Add("Description", subFolder.Description);
-          subFolderNode.property.Add("Context", subFolder.context);
+          subFolderNode.property.Add("Context", subFolder.Context);
           folderNodeList.Add(subFolderNode);
           treePath = folderPath + "." + folderName;
           TraverseDirectory(subFolderNode, subFolder, treePath);

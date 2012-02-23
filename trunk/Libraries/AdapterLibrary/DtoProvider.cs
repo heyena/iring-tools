@@ -582,13 +582,13 @@ namespace org.iringtools.adapter
         {
           bool isScopeValid = false;
 
-          foreach (Locator project in _scopes.locators)
+          foreach (Locator project in _scopes.Locators)
           {
-            if (project.context.ToUpper() == projectName.ToUpper())
+            if (project.Context.ToUpper() == projectName.ToUpper())
             {
-              foreach (EndpointApplication application in project.applications)
+              foreach (EndpointApplication application in project.Applications)
               {
-                if (application.endpoint.ToUpper() == applicationName.ToUpper())
+                if (application.Endpoint.ToUpper() == applicationName.ToUpper())
                   isScopeValid = true;
               }
             }
