@@ -222,7 +222,7 @@ namespace QMXFGenerator
 
         }
 
-        if (_excelFilePath == String.Empty || _qmxfFilePath == String.Empty)
+        if (_excelFilePath == String.Empty)
         {
           Console.WriteLine("Usage: \n");
           Console.WriteLine("   qmxfgen.exe <excel file> <output file>");
@@ -373,6 +373,8 @@ namespace QMXFGenerator
         if (!string.IsNullOrEmpty(_proxyHost))
         {
           WebCredentials proxyCredentials = new WebCredentials(_proxyCredentials);
+          if (proxyCredentials.isEncrypted)
+            proxyCredentials.Decrypt();
 
           webProxy = new WebProxy(_proxyHost, Convert.ToInt32(_proxyPort));
           webProxy.Credentials = proxyCredentials.GetNetworkCredential();
@@ -399,10 +401,9 @@ namespace QMXFGenerator
       try
       {
         List<Specialization> classSpecializations = new List<Specialization>();
-
         //Find the class specializations
         var specializationList = from specialization in _classSpecializations
-                                 where Convert.ToString(specialization[(int)ClassSpecializationColumns.Superclass]) == className
+                                 where Convert.ToString(specialization[(int)ClassSpecializationColumns.Subclass]) == className
                                  select specialization;
 
         //Get their details from the Class List
@@ -410,12 +411,12 @@ namespace QMXFGenerator
 
         foreach (ArrayList specialization in specializationList)
         {
-          object subclass = specialization[(int)ClassSpecializationColumns.Subclass];
+          object superclass = specialization[(int)ClassSpecializationColumns.Superclass];
 
           var query = from @class in _classes
                       where Convert
                          .ToString(@class[(int)ClassColumns.Label])
-                         .Trim() == subclass.ToString().Trim()
+                         .Trim() == superclass.ToString().Trim()
                       select @class;
 
           if (query.Count() > 0 && query.FirstOrDefault().Count > 0)
@@ -424,7 +425,7 @@ namespace QMXFGenerator
           }
           else
           {
-            Utility.WriteString("\n " + subclass.ToString() + " Was Not Found in Class List", "error.log", true);
+            Utility.WriteString("\n " + superclass.ToString() + " Was Not Found in Class List", "error.log", true);
           }
         }
 
@@ -843,7 +844,7 @@ namespace QMXFGenerator
         foreach (var row in part.Worksheet.SheetData.Rows.Where(r => r.RowIndex != 1))
         {
           var value = row.GetCellValue<string>(0);
-          if (value == null || value.ToUpper() != "X") continue;
+         // if (value == null || value.ToUpper() != "X") continue;  ///Need all rows in collections
           rw = new ArrayList();
           for (int i = 0; i <= row.Worksheet.ColumnSets[0].Columns.Count; i++)
           {
