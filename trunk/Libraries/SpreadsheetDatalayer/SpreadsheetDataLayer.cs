@@ -19,15 +19,14 @@ using System.Xml.Linq;
 
 namespace org.iringtools.adapter.datalayer
 {
-
-
-  public class SpreadsheetDataLayer : BaseConfigurableDataLayer
+  public class SpreadsheetDatalayer : BaseConfigurableDataLayer
   {
     private SpreadsheetProvider _provider = null;
-    private ILog _logger = LogManager.GetLogger(typeof(SpreadsheetDataLayer));
+    //private List<IDataObject> _dataObjects = null;
+    private ILog _logger = LogManager.GetLogger(typeof(SpreadsheetDatalayer));
 
     [Inject]
-    public SpreadsheetDataLayer(AdapterSettings settings)
+    public SpreadsheetDatalayer(AdapterSettings settings)
       : base(settings)
     {
       _provider = new SpreadsheetProvider(settings);
@@ -77,7 +76,6 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception e)
       {
-        _logger.Error("Error while creating dictionary.", e);
         throw new Exception("Error while creating dictionary.", e);
       }
       finally
@@ -143,7 +141,7 @@ namespace org.iringtools.adapter.datalayer
           _dataObjects = allDataObjects.ToList();
         }
         //Page and Sort The Data
-        if (pageSize > _dataObjects.Count())
+        if (pageSize > _dataObjects.Count() || pageSize == 0)
           pageSize = _dataObjects.Count();
         _dataObjects = _dataObjects.GetRange(startIndex, pageSize);
 
@@ -169,9 +167,7 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         //NOTE: pageSize of 0 indicates that all rows should be returned.
-        IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
-
-        return dataObjects.Count();
+        return Get(objectType, filter, 0, 0).Count;
       }
       catch (Exception ex)
       {
@@ -193,13 +189,15 @@ namespace org.iringtools.adapter.datalayer
       try
       {
         List<string> identifiers = new List<string>();
-
+        var dataDictionary = GetDictionary();
+        var obj = dataDictionary.dataObjects.First(c => c.objectName.Equals(objectType));
+        var ids = obj.keyProperties.ToList();
         //NOTE: pageSize of 0 indicates that all rows should be returned.
         IList<IDataObject> dataObjects = Get(objectType, filter, 0, 0);
 
         foreach (IDataObject dataObject in dataObjects)
         {
-          identifiers.Add((string)dataObject.GetPropertyValue("Tag"));
+          identifiers.Add((string)dataObject.GetPropertyValue(ids[0].keyPropertyName));
         }
 
         return identifiers;
@@ -245,7 +243,8 @@ namespace org.iringtools.adapter.datalayer
         LoadDataDictionary(objectType);
 
         response = SaveDataObjects(objectType, dataObjects);
-
+        //update configuration accordingly
+        Response resp = Configure(GetConfiguration());
         return response;
       }
       catch (Exception ex)
@@ -399,7 +398,11 @@ namespace org.iringtools.adapter.datalayer
               dataObject.SetPropertyValue(column.Name, _provider.GetValue(col));
             }
           }
-
+          foreach (var col in cfTable.Columns)
+          {
+              if (!((GenericDataObject)dataObject).Dictionary.ContainsKey(col.Name))
+                  dataObject.SetPropertyValue(col.Name, null);
+          }
           dataObjects.Add(dataObject);
         }
 
@@ -521,6 +524,7 @@ namespace org.iringtools.adapter.datalayer
         SpreadsheetConfiguration config = Utility.DeserializeFromXElement<SpreadsheetConfiguration>(configuration);
         string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"], string.Format("spreadsheet-configuration.{0}.xml", _settings["scope"]));
         Utility.Write<SpreadsheetConfiguration>(config, path, true);
+
       }
       catch (Exception)
       {
