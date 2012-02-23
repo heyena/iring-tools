@@ -144,9 +144,9 @@
     <Content Include="SPARQL\TemplateGetProperties.txt" />
     <Content Include="SPARQL\TemplateTypes.txt" />
     <None Include="App_Data\config.ttl" />
-    <None Include="Web.config">
+    <Content Include="Web.config">
       <SubType>Designer</SubType>
-    </None>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.cs">
@@ -186,6 +186,10 @@
     <ProjectReference Include="..\Libraries\ReferenceDataLibrary\ReferenceDataLibrary.csproj">
       <Project>{F271963F-10B1-4495-B047-BD5A977ED187}</Project>
       <Name>ReferenceDataLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Libraries\SpreadsheetDatalayer\SpreadsheetDatalayer.csproj">
+      <Project>{2EEBBD3F-C066-4990-8154-26E287464E09}</Project>
+      <Name>SpreadsheetDatalayer</Name>
     </ProjectReference>
     <ProjectReference Include="..\Libraries\UtilityLibrary\Desktop\UtilityLibrary.Desktop.csproj">
       <Project>{E937EE2D-064B-4EDA-9E81-7E7F509A784A}</Project>
