@@ -13,12 +13,12 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using log4net;
 
 using org.iringtools.library;
 using org.iringtools.utility;
 using org.iringtools.mapping;
 using DocumentFormat.OpenXml.Packaging;
+using log4net;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -52,7 +52,8 @@ namespace org.iringtools.adapter.datalayer
     private NameValueCollection _settings = null;
     private ISpreadsheetRepository _repository { get; set; }
     private string _keyFormat = "Configuration.{0}.{1}";
-    private ILog _logger = LogManager.GetLogger(typeof(SpreadsheetController)); 
+    private string _appData = string.Empty;
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(SpreadsheetController));
 
     public SpreadsheetController()
       : this(new SpreadsheetRepository())
@@ -77,8 +78,8 @@ namespace org.iringtools.adapter.datalayer
     {
       try
       {
-       
-        string datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDataLayer, SpreadsheetLibrary";
+
+        string datalayer = "org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer";
         string savedFileName = string.Empty;
 
         HttpFileCollectionBase files = Request.Files;
@@ -88,7 +89,7 @@ namespace org.iringtools.adapter.datalayer
           HttpPostedFileBase hpf = files[file] as HttpPostedFileBase;
           if (hpf.ContentLength == 0)
             continue;
-          string fileLocation = string.Format(@"App_Data\SpreadsheetData.{0}.{1}.xlsx", form["Scope"], form["Application"]);
+          string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["AppDataPath"], form["Scope"], form["Application"]);
 
           SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
           {
@@ -116,11 +117,11 @@ namespace org.iringtools.adapter.datalayer
       }
       catch (Exception ex)
       {
-        _logger.Error("Error uploading file ..." + ex);
+        ;
         return new JsonResult()
         {
           ContentType = "text/html",
-          Data = new { success = false }
+          Data = PrepareErrorResponse(ex)
         };
       }
       return new JsonResult()
@@ -130,13 +131,13 @@ namespace org.iringtools.adapter.datalayer
         };
     }
 
-    private SpreadsheetConfiguration GetConfiguration(string scope, string application)
+    private SpreadsheetConfiguration GetConfiguration(string context, string endpoint)
     {
-      string key = string.Format(_keyFormat, scope, application);
+      string key = string.Format(_keyFormat, context, endpoint);
 
       if (Session[key] == null)
       {
-        Session[key] = _repository.GetConfiguration(scope, application);
+        Session[key] = _repository.GetConfiguration(context, endpoint);
       }
 
       return (SpreadsheetConfiguration)Session[key];
@@ -144,7 +145,7 @@ namespace org.iringtools.adapter.datalayer
 
     public ActionResult UpdateConfiguration(FormCollection form)
     {
-      SpreadsheetConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
+      SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
       if (configuration != null)
       {
         foreach (SpreadsheetTable workSheet in configuration.Tables)
@@ -160,7 +161,7 @@ namespace org.iringtools.adapter.datalayer
             }
           }
         }
-        _repository.Configure(form["scope"], form["application"], form["datalayer"], configuration,null);
+        _repository.Configure(form["context"], form["endpoint"], form["datalayer"], configuration,null);
         return Json(new { success = true }, JsonRequestBehavior.AllowGet);
       }
       else
@@ -169,9 +170,9 @@ namespace org.iringtools.adapter.datalayer
       }
 
     }
-    private void SetConfiguration(string scope, string application, SpreadsheetConfiguration configuration)
+    private void SetConfiguration(string context, string endpoint, SpreadsheetConfiguration configuration)
     {
-      string key = string.Format(_keyFormat, scope, application);
+      string key = string.Format(_keyFormat, context, endpoint);
 
       Session[key] = configuration;
     }
@@ -182,7 +183,7 @@ namespace org.iringtools.adapter.datalayer
 
       if (_repository != null)
       {
-        SpreadsheetConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
+        SpreadsheetConfiguration configuration = GetConfiguration(form["scope"], form["application"]);
 
         if (configuration != null)
         {
@@ -336,25 +337,20 @@ namespace org.iringtools.adapter.datalayer
     public JsonResult GetColumns(FormCollection form)
     {
       JsonContainer<List<SpreadsheetColumn>> container = new JsonContainer<List<SpreadsheetColumn>>();
-      container.items = _repository.GetColumns(GetConfiguration(form["scope"], form["application"]), form["worksheet"]);
+      container.items = _repository.GetColumns(GetConfiguration(form["Scope"], form["Application"]), form["worksheet"]);
       container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
     }
 
-    public JsonResult AddWorksheets(FormCollection form)
+    private Response PrepareErrorResponse(Exception ex)
     {
-      SpreadsheetConfiguration configuration = GetConfiguration(form["scope"], form["application"]);
-      List<WorksheetPart> worksheets = _repository.GetWorksheets(configuration);
-
-      object worksheetNames = form["worksheets"];
-
-      return Json(new { success = false }, JsonRequestBehavior.AllowGet);
-    }
-
-    public ActionResult AddColumns(FormCollection form)
-    {
-      return Json(new { success = false }, JsonRequestBehavior.AllowGet);
+      Response response = new Response();
+      response.Level = StatusLevel.Error;
+      response.Messages = new Messages();
+      response.Messages.Add(ex.Message);
+      response.Messages.Add(ex.StackTrace);
+      return response;
     }
 
   }

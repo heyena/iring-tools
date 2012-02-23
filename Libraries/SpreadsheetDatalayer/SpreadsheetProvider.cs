@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
-using System.Text;
-
-using org.iringtools.adapter;
-using org.iringtools.utility;
-using org.iringtools.library;
-
+using System.Linq;
+using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml;
-using org.iringtools.adapter.datalayer;
+using org.iringtools.library;
+using org.iringtools.utility;
 
 namespace org.iringtools.adapter.datalayer
 {
@@ -79,10 +73,11 @@ namespace org.iringtools.adapter.datalayer
       {
         doc = SpreadsheetDocument.Open(path, true);
       }
-      catch (IOException)
+      catch (IOException e)
       {
-        throw new IOException(string.Format("File {0} is locked by other process", _configuration.Location));
+        throw new IOException(string.Format("File {0} is locked by other process. " + e, _configuration.Location));
       }
+
       return doc;
     }
 
@@ -123,6 +118,7 @@ namespace org.iringtools.adapter.datalayer
         {
           foreach (Sheet sheet in sheets)
           {
+              if (sheet.Name.InnerText.StartsWith("Sheet")) continue;
             WorksheetPart worksheetPart = (WorksheetPart)_document.WorkbookPart.GetPartById(sheet.Id);
             SpreadsheetTable table = new SpreadsheetTable
             {
