@@ -41,16 +41,16 @@ Public Class Test
         _adapterSettings.AppendSettings(New AppSettingsReader("App.config"))
 
         _settings = New NameValueCollection()
-        _settings("BaseConfigurationPath") = _settings("XmlPath") & _settings("ProjectName")
-        _settings("BaseConcatPath") = _settings("ProjectDirName") & _settings("ProjectName")
+        _settings("BaseConfigurationPath") = _adapterSettings("XmlPath") & _adapterSettings("ProjectName")
+        _settings("BaseConcatPath") = _settings("ProjectDirName") & _adapterSettings("ProjectName")
 
         _settings("BaseDirectoryPath") = Directory.GetCurrentDirectory()
         _settings("ExecutingAssemblyName") = Assembly.GetExecutingAssembly().GetName().Name
 
-        Dim tmp = [String].Format("{0}.{1}.config", _settings("BaseConcatPath"), _settings("ApplicationName"))
+        Dim tmp = [String].Format("{0}.{1}.config", _settings("BaseConcatPath"), _adapterSettings("ApplicationName"))
         _settings("ProjectConfigurationPath") = Path.Combine(_baseDirectory, tmp)
 
-        tmp = [String].Format("{0}.StagingConfiguration.{1}.xml", _settings("BaseConcatPath"), _settings("ApplicationName"))
+        tmp = [String].Format("{0}.StagingConfiguration.{1}.xml", _settings("BaseConcatPath"), _adapterSettings("ApplicationName"))
         _settings("StagingConfigurationPath") = Path.Combine(_baseDirectory, tmp)
 
         
