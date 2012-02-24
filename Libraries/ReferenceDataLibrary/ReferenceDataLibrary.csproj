@@ -31,13 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dotNetRDF, Version=0.5.0.20572, Culture=neutral, PublicKeyToken=8b91af99db2769f2, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF, Version=0.6.0.2145, Culture=neutral, PublicKeyToken=8b91af99db2769f2, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\dotnetRDF\Core\net35\dotNetRDF.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\dotnetRDF\core\net40\dotNetRDF.dll</HintPath>
     </Reference>
-    <Reference Include="dotNetRDF.Data.Sql, Version=0.5.0.20572, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="dotNetRDF.Data.Sql, Version=0.6.0.2145, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ExternalBinaries\dotnetRDF\Data\Sql\net35\dotNetRDF.Data.Sql.dll</HintPath>
+      <HintPath>..\..\ExternalBinaries\dotnetRDF\data\Sql\net40\dotNetRDF.Data.Sql.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\ExternalBinaries\NHibernate 2.0\bin\net-2.0\log4net.dll</HintPath>

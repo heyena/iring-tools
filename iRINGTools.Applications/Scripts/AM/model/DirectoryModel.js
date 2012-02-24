@@ -10,20 +10,21 @@ Ext.define('AM.model.DirectoryModel', {
          { name: 'text', type: 'string' },
          { name: 'type', type: 'string' },
          { name: 'record', type: 'object' }
-    ],
-    proxy: {
-        type: 'ajax',
-        timeout: 600000,
-        url: 'directory/getnode',
-        actionMethods: { read: 'POST' },
-        extraParams: {
-        id: null,
-        type: 'ScopesNode',
-        contextName: null,
-        endpoint: null,
-        related: null,
-        security: null
-      },
-      reader: { type: 'json' }
-    }
+    ]//,
+//    idProperty: 'id',
+//    proxy: {
+//        type: 'ajax',
+//        timeout: 600000,
+//        url: 'directory/getnode',
+//        actionMethods: { read: 'POST' },
+//        extraParams: {
+//        id: null,
+//        type: 'ScopesNode',
+//        contextName: null,
+//        endpoint: null,
+//        related: null,
+//        security: null
+//      },
+//      reader: { type: 'json' }
+//    }
 });

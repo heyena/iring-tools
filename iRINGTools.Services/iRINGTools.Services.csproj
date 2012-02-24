@@ -191,10 +191,6 @@
       <Project>{16254768-97F8-457E-ACC8-0FA6315436EE}</Project>
       <Name>NHibernateExtension</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Libraries\SpreadsheetLibrary\SpreadsheetLibrary.csproj">
-      <Project>{A07F5056-4D03-4CB6-912B-A07561E9716E}</Project>
-      <Name>SpreadsheetLibrary</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Libraries\UtilityLibrary\UtilityLibrary.csproj">
       <Project>{3CE8F652-0478-4863-A9DD-9986315F55AB}</Project>
       <Name>UtilityLibrary</Name>
