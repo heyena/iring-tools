@@ -4,7 +4,6 @@ Imports System.Runtime.Serialization
 Imports System.Linq
 Imports System.Text
 
-Imports org.iringtools.library
 
 
 <DataContract(Name:="document")> _

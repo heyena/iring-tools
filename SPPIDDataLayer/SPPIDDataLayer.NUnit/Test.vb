@@ -35,36 +35,32 @@ Public Class Test
         _adapterSettings = _kernel.[Get](Of AdapterSettings)()
 
         ' Start with some generic settings
+        _baseDirectory = Directory.GetCurrentDirectory()
+        Directory.SetCurrentDirectory(_baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\bin")))
+
+        _adapterSettings.AppendSettings(New AppSettingsReader("App.config"))
+
         _settings = New NameValueCollection()
-
-
-        _settings("XmlPath") = ".\12345_000\"
-        _settings("ProjectDirName") = "12345_000\"
-        _settings("ProjectName") = "12345_000"
-        _settings("ApplicationName") = "SPPID"
         _settings("BaseConfigurationPath") = _settings("XmlPath") & _settings("ProjectName")
         _settings("BaseConcatPath") = _settings("ProjectDirName") & _settings("ProjectName")
 
-        _baseDirectory = Directory.GetCurrentDirectory()
-        _baseDirectory = _baseDirectory.Substring(0, _baseDirectory.LastIndexOf("\bin"))
-        _settings("BaseDirectoryPath") = _baseDirectory
+        _settings("BaseDirectoryPath") = Directory.GetCurrentDirectory()
         _settings("ExecutingAssemblyName") = Assembly.GetExecutingAssembly().GetName().Name
-
-        _objectType = "Equipment"
 
         Dim tmp = [String].Format("{0}.{1}.config", _settings("BaseConcatPath"), _settings("ApplicationName"))
         _settings("ProjectConfigurationPath") = Path.Combine(_baseDirectory, tmp)
 
-
         tmp = [String].Format("{0}.StagingConfiguration.{1}.xml", _settings("BaseConcatPath"), _settings("ApplicationName"))
         _settings("StagingConfigurationPath") = Path.Combine(_baseDirectory, tmp)
 
-        'TO-Do Temporary settings
-        ' _settings("ExecutingAssemblyName") = "SPPIDDataLayer"
+        
 
         Directory.SetCurrentDirectory(_baseDirectory)
 
         _adapterSettings.AppendSettings(_settings)
+
+        'Set Commodity 
+        _objectType = _adapterSettings("ObjectType")
 
         ' Add our specific settings
         Dim appSettingsPath As String = [String].Format("{0}12345_000.SPPID.config", _adapterSettings("XmlPath"))
