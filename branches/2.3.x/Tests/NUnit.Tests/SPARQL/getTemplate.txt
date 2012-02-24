@@ -8,6 +8,6 @@ WHERE
 { 
 	OPTIONAL	{ tpl:param1	rdf:type	tpl:Template }
 	?templateDescription	p8:hasTemplate	tpl:param1 . 
-	tpl:param1				rdfs:label		?label ; 
-							rdfs:comment	?definition . 
+	tpl:param1	rdfs:label	?label ; 
+	rdfs:comment	?definition . 
 }
