@@ -416,7 +416,7 @@ namespace org.iringtools.refdata
         sparql = ReadSPARQL(queryGetSpecialization.FileName);
         sparql = sparql.Replace("param1", id);
 
-        Query queryGetSubClassOf = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassOf").Query;
+        Query queryGetSubClassOf = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
 
         sparqlPart8 = ReadSPARQL(queryGetSubClassOf.FileName);
         sparqlPart8 = sparqlPart8.Replace("param1", id);
@@ -842,7 +842,7 @@ namespace org.iringtools.refdata
         sparql = ReadSPARQL(queryGetSubClasses.FileName);
         sparql = sparql.Replace("param1", id);
 
-        Query queryGetSubClassOfInverse = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassOfInverse").Query;
+        Query queryGetSubClassOfInverse = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassOf").Query;
 
         sparqlPart8 = ReadSPARQL(queryGetSubClassOfInverse.FileName);
         sparqlPart8 = sparqlPart8.Replace("param1", id);
@@ -937,7 +937,7 @@ namespace org.iringtools.refdata
         sparql = ReadSPARQL(queryGetSubClasses.FileName);
         sparql = sparql.Replace("param1", id);
 
-        Query queryGetSubClassOfInverse = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassOfInverseCount").Query;
+        Query queryGetSubClassOfInverse = (Query)_queries.FirstOrDefault(c => c.Key == "GetSubClassOfCount").Query;
 
         sparqlPart8 = ReadSPARQL(queryGetSubClassOfInverse.FileName);
         sparqlPart8 = sparqlPart8.Replace("param1", id);
@@ -2917,7 +2917,7 @@ namespace org.iringtools.refdata
                         qn = nsMap.ReduceToQName(oc.reference, out qName);
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          if (qn) GenerateSuperClass(ref delete, qName, clsId); ///delete from old
+                          if (qn)  GenerateSuperClass(ref delete, qName, clsId); ///delete from old
                         }
                         else
                         {

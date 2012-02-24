@@ -18,6 +18,8 @@ namespace iRINGTools.Web
 
   public class MvcApplication : NinjectHttpApplication
   {
+    private bool _isUnauthorized = false;
+
     public static void RegisterRoutes(RouteCollection routes)
     {
       routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
@@ -43,6 +45,31 @@ namespace iRINGTools.Web
       RegisterRoutes(RouteTable.Routes);
     }
 
+    protected void Application_BeginRequest(object sender, EventArgs e)
+    {
+      _isUnauthorized = false;
+    }
+
+    protected void Application_EndRequest()
+    {
+      if (_isUnauthorized)
+      {
+        Context.Response.Clear();
+        Context.Response.StatusCode = 401;
+        Context.Response.Write("Unauthorized");
+      }
+    }
+
+    protected void Application_Error(Object sender, System.EventArgs e)
+    {
+      Exception exception = Server.GetLastError();
+
+      if (exception.GetType() == typeof(UnauthorizedAccessException))
+      {
+        _isUnauthorized = true;
+      }
+    }
+
     protected override IKernel CreateKernel()
     {
       var modules = new INinjectModule[]
@@ -58,7 +85,11 @@ namespace iRINGTools.Web
   {
     public override void Load()
     {
+      //Bind<IFormsAuthentication>().To<FormsAuthenticationService>();
+      //Bind<IMembershipService>().To<AccountMembershipService>();
+      //Bind<MembershipProvider>().ToConstant(Membership.Provider);
       Bind<IAdapterRepository>().To<AdapterRepository>();
+     // Bind<org.iringtools.adapter.datalayer.ISPPIDRepository>().To<org.iringtools.adapter.datalayer.SPPIDRepository>();
     }
   }
 }

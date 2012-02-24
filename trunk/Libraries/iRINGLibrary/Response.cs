@@ -78,7 +78,7 @@ namespace org.iringtools.library
       
       foreach (Status stat in StatusList)
       {
-        if (stat.Identifier != null && identifier != null &&
+     if (stat.Identifier != null && identifier != null &&
           stat.Identifier.ToLower() == identifier.ToLower())
         {
           status = stat;

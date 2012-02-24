@@ -66,7 +66,6 @@
           ptype: 'treeviewdragdrop',
           dropGroup: 'refdataGroup'
         },
-        //store: this.store, //make sure tree.View uses same store
         stateful: true,
         stateId: this.id + '-state',
         stateEvents: ['itemcollapse', 'itemexpand']
@@ -90,8 +89,6 @@
     this.callParent(arguments);
 
     this.on("beforeload", function (store, operation, eopts) {
-      //if (this.body != undefined)
-      //this.body.mask('Loading...', 'x-mask-loading');
       store.proxy.extraParams.type = operation.node.data.type;
       if (store.proxy.extraParams != undefined) {
         store.proxy.extraParams.id = operation.node.data.id;
@@ -107,7 +104,7 @@
       // function to store state of tree recursively 
       var storeTreeState = function (node, expandedNodes) {
         if (node.isExpanded() && node.childNodes.length > 0) {
-          expandedNodes.push(node.getPath('text'));
+          expandedNodes.push(node.getPath('id'));
           node.eachChild(function (child) {
             storeTreeState(child, expandedNodes);
           });
@@ -122,14 +119,13 @@
   },
 
   applyState: function (state) {
+    var me = this;
     var nodes = state.expandedNodes || [],
             len = nodes.length;
     //  this.collapseAll();
-    for (var i = 0; i < len; i++) {
-      if (typeof nodes[i] != 'undefined') {
-        this.expandPath(nodes[i], 'text');
-      }
-    }
+    Ext.each(nodes, function (path) {
+      me.expandPath(path, 'id');
+    });
   },
 
   buildToolbar: function () {

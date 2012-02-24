@@ -81,6 +81,9 @@
       },
       'button[action=applydbobjectchanges]': {
         click: this.applyDbObjectChanges
+      },
+      'button[action=connecttodatabase]': {
+        click: this.connectToDatabase
       }
     })
   },
@@ -103,9 +106,30 @@
     }
   },
 
+  setPropertiesFolder: function (editor, node, context, endpoint) {
+
+  },
+
+  setDataProperty: function (editor, node, context, endpoint) {
+
+  },
+
   setKeysFolder: function (editor, node, context, endpoint) {
 
   },
+
+  setKeyProperty: function (editor, node, context, endpoint) {
+
+  },
+
+  setRelations: function (editor, node, context, endpoint) {
+
+  },
+
+  setRelationFields: function (editor, node, context, endpoint) {
+
+  },
+
   setDataObject: function (editor, node, context, endpoint) {
     if (editor) {
       var content = this.getMainContent();
@@ -126,23 +150,16 @@
       editor.getLayout().setActiveItem(panelIndex);
       editor.doLayout();
     }
-
-
   },
-  setTablesSelectorPane: function (node, editor, context, endpoint) {
+
+  setTablesSelectorPane: function (editor, context, endpoint) {
     if (editor) {
       var dbDict = AM.view.nhibernate.dbDict.value;
       if (dbDict)
-        var selTables = [];
-      for (var ijk = 0; ijk < dbDict.dataObjects.length; ijk++) {
-        var dataObject = dbDict.dataObjects[ijk];
-        selTables.push(dataObject.objectName);
-      };
-      var content = this.getMainContent();
+        var content = this.getMainContent();
       var conf = {
         contextName: context,
         endpoint: endpoint,
-        selectItems: selTables,
         height: 300,
         width: 400,
         region: 'center',
@@ -166,7 +183,7 @@
     var content = this.getMainContent();
     if (node.isRoot()) {
       var editor = this.getEditPanel();
-      this.setTablesSelectorPane(node, editor, tree.contextName, tree.endpoint);
+      this.setTablesSelectorPane(editor, tree.contextName, tree.endpoint);
       return;
     }
     var nodeType = node.data.type.toUpperCase();
@@ -181,19 +198,19 @@
           this.setKeysFolder(editor, node, tree.contextName, tree.endpoint);
           break;
         case 'KEYPROPERTY':
-          setKeyProperty(editor, node, tree.contextName, tree.endpoint);
+          this.setKeyProperty(editor, node, tree.contextName, tree.endpoint);
           break;
         case 'PROPERTIES':
-          setPropertiesFolder(editor, node, tree.contextName, tree.endpoint);
+          this.setPropertiesFolder(editor, node, tree.contextName, tree.endpoint);
           break;
         case 'DATAPROPERTY':
-          setDataProperty(editor, node, tree.contextName, tree.endpoint);
+          this.setDataProperty(editor, node, tree.contextName, tree.endpoint);
           break;
         case 'RELATIONSHIPS':
-          setRelations(editor, node, tree.contextName, tree.endpoint);
+          this.setRelations(editor, node, tree.contextName, tree.endpoint);
           break;
         case 'RELATIONSHIP':
-          setRelationFields(editor, node, tree.contextName, tree.endpoint);
+          this.setRelationFields(editor, node, tree.contextName, tree.endpoint);
           break;
       }
     }
@@ -208,11 +225,13 @@
   },
 
   onEditDbConnection: function (btn, evt) {
+
     var editor = this.getEditPanel();
     var dbDict = AM.view.nhibernate.dbDict.value;
     if (dbDict) {
       var cstr = dbDict.ConnectionString;
-      var dbInfo = this.getConnStringParts(cstr);
+      if (cstr)
+        var dbInfo = this.getConnStringParts(cstr);
     };
     var conf = {
       contextName: editor.contextName,
@@ -319,6 +338,82 @@
       failure: function (response, request) {
         //                setDsConfigPane(scopeName, appName);
       }
+    });
+  },
+
+  connectToDatabase: function (btn, evt) {
+    var dbDict = AM.view.nhibernate.dbDict.value;
+    var datatree = this.getDataTree();
+    var form = btn.up('form');
+
+    form.getForm().submit({
+      url: 'nhibernate/parseconnectionstring',
+      method: 'POST',
+      success: function (req, res) {
+        dbDict.ConnectionString = Ext.JSON.decode(res.responseText);
+      },
+      failure: function (req, res) {
+      }
+    });
+    var dbProvider = form.getForm().findField('dbProvider').getValue().toUpperCase();
+    var dbName = form.getForm().findField('dbName');
+    var portNumber = form.getForm().findField('portNumber');
+    var host = form.getForm().findField('host');
+    var dbServer = form.getForm().findField('dbServer');
+    var dbInstance = form.getForm().findField('dbInstance');
+    var serviceNamePane = form.items.items[10];
+    var dbSchema = form.getForm().findField('dbSchema');
+    var servieName = '';
+    var serName = '';
+    if (dbProvider.indexOf('ORACLE') > -1) {
+      dbServer.setValue(host.getValue());
+      dbName.setValue(dbSchema.getValue());
+      servieName = serviceNamePane.items.items[0].value;
+      serName = serviceNamePane.items.items[0].serName;
+      dbInstance.setValue(servieName);
+    }
+    else if (dbProvider.indexOf('MSSQL') > -1) {
+      host.setValue(dbServer.getValue());
+      serviceName = dbInstance.getValue();
+    }
+    else if (dbProvider.indexOf('MYSQL') > -1) {
+      dbName.setValue(dbSchema.getValue());
+      dbInstance.setValue(dbSchema.getValue());
+    }
+    var me = this;
+    form.getForm().submit({
+
+      url: 'nhibernate/TableNames',
+      timeout: 600000,
+      params: {
+        scope: form.contextName,
+        app: form.endpoint,
+        serName: serName
+      },
+      success: function (f, a) {
+        AM.view.nhibernate.dbInfo.value = form.getForm().getValues();
+        var dbInfo = AM.view.nhibernate.dbInfo.value;
+        var dbDict = AM.view.nhibernate.dbDict.value;
+        var selected = {};
+        for (var d in dbDict.dbObjects) {
+          selected.push(d.objectName);
+        }
+
+        if (!dbInfo)
+          dbInfo = {};
+        dbInfo.dbTableNames = Ext.JSON.decode(a.response.responseText);
+
+        me.setTablesSelectorPane(me.getEditPanel(), form.contextName, form.endpoint, dbInfo.dbTableNames.items, selected);
+        return dbInfo.dbTableNames;
+      },
+      failure: function (f, a) {
+        if (a.response)
+          showDialog(500, 400, 'Error', a.response.responseText, Ext.Msg.OK, null);
+        else {
+          showDialog(400, 100, 'Warning', 'Please fill in every field in this form.', Ext.Msg.OK, null);
+        }
+      },
+      waitMsg: 'Loading ...'
     });
   },
 
@@ -431,17 +526,15 @@
 
     switch (datalayer) {
       case 'NHibernateLibrary':
-        if (!AM.view.nhibernate.dbDict.value) {
-          this.getDbdictionary(contextName, endpoint);
-          this.getDataTypes();
-        };
-        // this.getTableNames(contextName, endpoint);
+
+        this.getDbdictionary(contextName, endpoint);
+        this.getDataTypes();
+
         conf = {
           id: contextName + '.' + endpoint + '.-nh-config',
           title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
           contextName: contextName,
           endpoint: endpoint,
-          //region: 'center',
           layout: {
             type: 'border',
             padding: 2
@@ -520,7 +613,14 @@
                   url: 'spreadsheet/configure'
                 };
         var sctree = Ext.widget('spreadsheetconfig', conf);
-        var scprop = Ext.widget('propertypanel', { title: 'Details', region: 'east', width: 350, height: 150, split: true, collapsible: true });
+        var scprop = Ext.widget('propertypanel', {
+          title: 'Details',
+          region: 'east',
+          width: 350,
+          height: 150,
+          split: true,
+          collapsible: true
+        });
         var panconf = {
           id: 'tab-c.' + contextName + '.' + endpoint,
           title: 'Spreadsheet Configuration - ' + contextName + '.' + endpoint,
@@ -567,5 +667,37 @@
         dirtree.applicationMenu.hide();
         break;
     }
+  },
+  setItemSelectorAvailValues: function(node) {
+    var availItems = new Array();
+    var propertiesNode = node.parentNode.childNodes[1];
+
+    for (var i = 0; i < propertiesNode.childNodes.length; i++) {
+      var itemName = propertiesNode.childNodes[i].text;
+      var found = false;
+
+      for (var j = 0; j < node.childNodes.length; j++) {
+        if (node.childNodes[j].text.toLowerCase() == itemName.toLowerCase()) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        availItems.push([itemName, itemName]);
+      }
+    }
+    return availItems;
+  },
+
+  setItemSelectorselectedValues: function(node) {
+    var selectedItems = new Array();
+    var propertiesNode = node.parentNode.childNodes[1];
+
+    for (var i = 0; i < node.childNodes.length; i++) {
+      var keyName = node.childNodes[i].text;
+      selectedItems.push([keyName, keyName]);
+    }
+    return selectedItems;
   }
+
 });

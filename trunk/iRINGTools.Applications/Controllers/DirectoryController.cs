@@ -72,7 +72,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "folder",
                 id = context + "/DataObjects",
                 text = "Data Objects",
-                expanded = false,
+                //expanded = false,
                 leaf = false,
                 children = null,
                 record = new
@@ -90,7 +90,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "folder",
                 id = context + "/Graphs",
                 text = "Graphs",
-                expanded = false,
+                //expanded = false,
                 leaf = false,
                 children = null,
                 record = new
@@ -108,7 +108,7 @@ namespace org.iringtools.web.controllers
                 iconCls = "folder",
                 id = context + "/ValueLists",
                 text = "ValueLists",
-                expanded = false,
+                //expanded = false,
                 leaf = false,
                 children = null,
                 record = new
@@ -143,7 +143,7 @@ namespace org.iringtools.web.controllers
                   iconCls = "valuelistmap",
                   id = context + "/ValueList/" + valueList.name,
                   text = valueList.name,
-                  expanded = false,
+                  //expanded = false,
                   leaf = false,
                   record = new
                   {
@@ -197,7 +197,7 @@ namespace org.iringtools.web.controllers
                   iconCls = "valuemap",
                   id = context + "/ValueMap/" + valueMap.internalValue,
                   text = classLabel + " [" + valueMap.internalValue + "]",
-                  expanded = false,
+                  //expanded = false,
                   leaf = true,
                   record = new
                   {
@@ -233,7 +233,7 @@ namespace org.iringtools.web.controllers
                   iconCls = "treeObject",
                   id = form["node"] + "/DataObject/" + dataObject.objectName,
                   text = dataObject.objectName,
-                  expanded = false,
+                  //expanded = false,
                   leaf = false,
 
                   record = new
@@ -303,7 +303,7 @@ namespace org.iringtools.web.controllers
                     iconCls = "treeRelation",
                     id = context + "/" + dataObject.objectName + "/" + relation.relationshipName,
                     text = relation.relationshipName,
-                    expanded = false,
+                    //expanded = false,
                     leaf = false,
 
                     record = new

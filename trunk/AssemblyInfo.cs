@@ -14,5 +14,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © 2011, iringug.org")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-[assembly: AssemblyVersion("3.0.0.4264")]
-[assembly: AssemblyFileVersion("3.0.0.4264")]
+[assembly: AssemblyVersion("3.0.0.4645")]
+[assembly: AssemblyFileVersion("3.0.0.4645")]

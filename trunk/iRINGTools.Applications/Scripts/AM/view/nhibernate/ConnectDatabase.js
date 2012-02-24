@@ -15,9 +15,20 @@
     allowBlank: false
   },
   initComponent: function () {
+    var me = this;
     var contextName = this.contextName;
     var endpoint = this.endpoint;
     this.items = [
+            {
+              xtype: 'hidden',
+              name: 'contextName',
+              value: me.contextName
+            },
+            {
+              xtype: 'hidden',
+              name: 'endpoint',
+              value: me.endpoint
+            },
             {
               xtype: 'label',
               fieldLabel: 'Configure Data Source',
@@ -28,6 +39,7 @@
               xtype: 'combo',
               fieldLabel: 'Database Provider',
               hiddenName: 'dbProvider',
+              name:'dbProvider',
               allowBlank: false,
               store: 'ProviderStore',
               mode: 'local',
@@ -76,8 +88,16 @@
               xtype: 'textfield',
               name: 'dbUserName',
               fieldLabel: 'User Name',
-              allowBlank: false
-
+              allowBlank: false,
+              listeners: { 'change': function (field, newValue, oldValue) {
+                var dbProvider = me.getForm().findField('dbProvider').getValue().toUpperCase();
+                if (dbProvider.indexOf('ORACLE') > -1) {
+                  var dbSchema = this.getForm().findField('dbSchema');
+                  dbSchema.setValue(newValue);
+                  dbSchema.show();
+                }
+              }
+              }
             },
             {
               xtype: 'textfield',

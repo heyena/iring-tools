@@ -21,7 +21,7 @@
         'mapping.MapValuelist'
     ],
     stores: [
-        'DirectoryStore'
+       // 'DirectoryStore'
 
     // , 'MappingStore'
     ],
@@ -747,7 +747,8 @@
                 store.proxy.extraParams.id = action.node.parentNode.data.identifier;
             } else {
                 store.proxy.extraParams.id = action.node.data.identifier;
-            }
+              }
+             
         }, this);
         tree.on('beforeitemexpand', function () {
             content.getEl().mask('Loading...');
@@ -1018,12 +1019,6 @@
                     store.proxy.extraParams.text = operationNode.text;
             }
         }
-
-
-        //        console.log( 'manual load ' + operation.params );
-        //        console.log( operation.params );
-        //        console.log( 'proxy defined params ' + store.proxy.extraParams );
-        //        console.log( store.proxy.extraParams )
     },
 
     getParentClass: function (n) {
