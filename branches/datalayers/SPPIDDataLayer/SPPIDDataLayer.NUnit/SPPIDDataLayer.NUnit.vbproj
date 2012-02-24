@@ -117,6 +117,7 @@
     <None Include="12345_000\12345_000.SPPID.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="app.config" />
     <None Include="App_Data\12345_000.SPPID.config">
       <SubType>Designer</SubType>
     </None>
