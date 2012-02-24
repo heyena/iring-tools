@@ -143,7 +143,7 @@ namespace org.iringtools.adapter.datalayer
         //Page and Sort The Data
         if (pageSize > _dataObjects.Count() || pageSize == 0)
           pageSize = _dataObjects.Count();
-        _dataObjects = _dataObjects.GetRange(startIndex, pageSize);
+        _dataObjects = _dataObjects.Skip(startIndex).Take(pageSize).ToList();
 
         return _dataObjects;
       }
