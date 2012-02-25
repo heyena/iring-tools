@@ -97,6 +97,33 @@ namespace NUnit.Tests
       Resource scopes = _adapterProvider.GetScopes();
 
       Assert.AreNotEqual(0, scopes.Locators.Count);
+    }    
+
+    [Test] 
+    public void GetBinding()
+    {
+      XElement binding = _adapterProvider.GetBinding(
+        _settings["ProjectName"], _settings["ApplicationName"]);
+
+      Assert.AreNotEqual(0, binding.Elements("bind").Count());
+    }
+
+    [Test] 
+    public void GetDictionary()
+    {
+        DataDictionary dictionary = _adapterProvider.GetDictionary(
+          _settings["ProjectName"], _settings["ApplicationName"]);
+
+        Assert.AreNotEqual(0, dictionary.dataObjects.Count);
+    }
+
+    [Test]
+    public void GetMapping()
+    {
+      Mapping mapping = _adapterProvider.GetMapping(
+      _settings["ProjectName"], _settings["ApplicationName"]);
+
+      Assert.AreNotEqual(0, mapping.graphMaps.Count);
     }
 
     //[Test] Move to JUnit
@@ -132,33 +159,6 @@ namespace NUnit.Tests
     //  Assert.AreEqual(StatusLevel.Success, response.Level);
     //  Assert.AreNotEqual(0, response.StatusList.Count);
     //}
-
-    [Test] 
-    public void GetBinding()
-    {
-      XElement binding = _adapterProvider.GetBinding(
-        _settings["ProjectName"], _settings["ApplicationName"]);
-
-      Assert.AreNotEqual(0, binding.Elements("bind").Count());
-    }
-
-    [Test] 
-    public void GetDictionary()
-    {
-        DataDictionary dictionary = _adapterProvider.GetDictionary(
-          _settings["ProjectName"], _settings["ApplicationName"]);
-
-        Assert.AreNotEqual(0, dictionary.dataObjects.Count);
-    }
-
-    [Test]
-    public void GetMapping()
-    {
-      Mapping mapping = _adapterProvider.GetMapping(
-      _settings["ProjectName"], _settings["ApplicationName"]);
-
-      Assert.AreNotEqual(0, mapping.graphMaps.Count);
-    }
   }
 }
 
