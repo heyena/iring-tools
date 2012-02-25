@@ -42,6 +42,7 @@ namespace iRINGTools.Web.Models
       string proxyHost = _settings["ProxyHost"];
       string proxyPort = _settings["ProxyPort"];
       string adapterServiceUri = _settings["AdapterServiceUri"];
+      string javaCoreUri = _settings["JavaCoreUri"];
       string hibernateServiceUri = _settings["NHibernateServiceUri"];
       string referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
 
@@ -51,12 +52,14 @@ namespace iRINGTools.Web.Models
 
         webProxy.Credentials = _settings.GetProxyCredential();
 
+        _javaServiceClient = new WebHttpClient(javaCoreUri, null, webProxy);
         _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
         _hibernateServiceClient = new WebHttpClient(hibernateServiceUri, null, webProxy);
         _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri, null, webProxy);
       }
       else
       {
+        _javaServiceClient = new WebHttpClient(javaCoreUri);
         _adapterServiceClient = new WebHttpClient(adapterServiceUri);
         _hibernateServiceClient = new WebHttpClient(hibernateServiceUri);
         _referenceDataServiceClient = new WebHttpClient(referenceDataServiceUri);

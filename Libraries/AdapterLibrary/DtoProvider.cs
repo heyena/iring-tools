@@ -574,10 +574,21 @@ namespace org.iringtools.adapter
       return dataTransferObjects;
     }
 
+    private void getResource()
+    {
+      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
+      System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
+      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port + ".adapter";
+      _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
+    }
+
     private void InitializeScope(string projectName, string applicationName)
     {
       try
       {
+        if (_scopes == null)
+          getResource();
+
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;

@@ -32,7 +32,7 @@ namespace org.iringtools.exchange
     private Response _response = null;
     private IKernel _kernel = null;
     private AdapterSettings _settings = null;
-    private ScopeProjects _scopes = null;
+    private Resource _scopes = null;
     private IIdentityLayer _identityLayer = null;
     private IDictionary _keyRing = null;
     private IDataLayer _dataLayer = null;
@@ -63,12 +63,12 @@ namespace org.iringtools.exchange
 
       if (File.Exists(scopesPath))
       {
-        _scopes = Utility.Read<ScopeProjects>(scopesPath);
+        _scopes = Utility.Read<Resource>(scopesPath);
       }
       else
       {
-        _scopes = new ScopeProjects();
-        Utility.Write<ScopeProjects>(_scopes, scopesPath);
+        _scopes = new Resource();
+        Utility.Write<Resource>(_scopes, scopesPath);
       }
 
       _response = new Response();
@@ -338,6 +338,15 @@ namespace org.iringtools.exchange
     }
 
     #region helper methods
+
+    private void getResource()
+    {
+      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
+      System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
+      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port + ".adapter";
+      _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
+    }
+
     private void InitializeScope(string projectName, string applicationName)
     {
       try
@@ -345,16 +354,15 @@ namespace org.iringtools.exchange
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;
-          foreach (ScopeProject project in _scopes)
+
+          foreach (Locator project in _scopes.Locators)
           {
-            if (project.Name == projectName)
+            if (project.Context.ToUpper() == projectName.ToUpper())
             {
-              foreach (ScopeApplication application in project.Applications)
+              foreach (EndpointApplication application in project.Applications)
               {
-                if (application.Name == applicationName)
-                {
+                if (application.Endpoint.ToUpper() == applicationName.ToUpper())
                   isScopeValid = true;
-                }
               }
             }
           }
