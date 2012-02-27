@@ -93,7 +93,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
         Try
             Dim tmp As String = String.Empty
 
-            tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings("AppDataPath"), "12345_000", "SPPID")
+            tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings("AppDataPath"), _settings("ProjectName"), _settings("ApplicationName"))
             settings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
 
             configPath = [String].Format("{0}{1}.{2}.config", _settings("AppDataPath"), _settings("ProjectName"), _settings("ApplicationName"))
@@ -120,7 +120,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
                 _PIDDicConnOracle = New OracleConnection(AppSettings("PIDDataDicConnectionString"))
 
                 ''Set Oracle Stagging Files-------------------------
-                tmp = String.Format("{0}{1}.StagingConfiguration.{2}.{3}.xml", _settings("AppDataPath"), "12345_000", "SPPID", "Oracle")
+                tmp = String.Format("{0}{1}.StagingConfiguration.{2}.{3}.xml", _settings("AppDataPath"), _settings("ProjectName"), _settings("ApplicationName"), "Oracle")
                 settings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
                 AppSettings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
             End If
@@ -169,7 +169,7 @@ Public Class SPPIDDataLayer : Inherits BaseSQLDataLayer
     Public Overrides Function GetDataTable(tableName As String, identifiers As IList(Of String)) As System.Data.DataTable
 
         Dim filter As DataFilter = FormMultipleKeysFilter(identifiers)
-        _projConn = _stageConn
+        _projConn = New SqlConnection(AppSettings("iRingStagingConnectionString"))
         'TODO: Is the whereClauseAlias always set?
         Dim whereClause As String = filter.ToSqlWhereClause(_dbDictionary, tableName, _whereClauseAlias)
 
