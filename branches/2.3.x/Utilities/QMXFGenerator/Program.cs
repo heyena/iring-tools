@@ -592,13 +592,14 @@ namespace QMXFGenerator
 
               roleDefinition.description = englishUSDescription;
             }
-
+            object clist;
             if (type != null && type.ToString() != String.Empty)
             {
-              var query = from @class in _classes
-                          where Convert.ToString(@class[(int)ClassColumns.Label]) == type.ToString()
-                          select @class;
-              if (query.FirstOrDefault() != null && query.FirstOrDefault()[(int)ClassColumns.Label].ToString().Trim().Equals(type.ToString()))
+             
+              var query = from clss in _classes
+                          where Convert.ToString(clss[(int)ClassColumns.Label].ToString().ToUpper()) == type.ToString().ToUpper()
+                          select clss;
+              if (query.FirstOrDefault() != null & query.FirstOrDefault()[(int)ClassColumns.Label].ToString().Trim().Equals(type.ToString()))
               {
                 roleDefinition.range = query.FirstOrDefault()[(int)ClassColumns.ID].ToString().Trim();
               }
@@ -627,12 +628,14 @@ namespace QMXFGenerator
     private static List<TemplateQualification> ProcessSpecializedIndividualTemplates(WorksheetPartWrapper part)
     {
       int rowIndex = 0;
+      int idx = 0;
       try
       {
         _siTemplates = MarshallToList(part);
         List<TemplateQualification> templateQualifications = new List<TemplateQualification>();
         foreach (ArrayList row in _siTemplates)
         {
+          rowIndex = Convert.ToInt32(row[row.Count - 1]);
           object load = row[(int)TemplateColumns.Load];
 
           if (load != null && load.ToString().Trim() != String.Empty && load.ToString() != "Load")
@@ -695,7 +698,7 @@ namespace QMXFGenerator
                   Utility.WriteString("Template Qualification \"" + templateQualification.identifier + "\" qualifies ID not found.\n", "error.log", true);
                 }
                 templateQualification.qualifies = (templateQualifiesId ?? "").ToString().Trim();
-                templateQualification.roleQualification = ProcessRoleQualification(templateQualification.name.FirstOrDefault().value, row, parentRow);
+                templateQualification.roleQualification = ProcessRoleQualification(templateQualification.name.FirstOrDefault().value, row, parentRow, rowIndex, part);
               }
               else
               {
@@ -703,9 +706,14 @@ namespace QMXFGenerator
               }
             }
             load = String.Empty;
-            templateQualifications.Add(templateQualification);
+            if (templateQualification.roleQualification.Count > 0)
+            {
+              templateQualifications.Add(templateQualification);
+            }
+            else
+              Utility.WriteString("Template Qualification \"" + templateQualification.identifier + "\" RoleQualifications failed.\n", "error.log", true);
           }
-          rowIndex++;
+          idx++;
         }
         return templateQualifications;
       }
@@ -718,7 +726,7 @@ namespace QMXFGenerator
       }
     }
 
-    private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow)
+    private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow,int rowIndex, WorksheetPartWrapper part)
     {
       int roleIndex = 0;
       int idx = 0;
@@ -731,6 +739,7 @@ namespace QMXFGenerator
         {
           int roleOffset = (int)TemplateColumns.Roles + ((int)RoleColumns.Count * roleIndex);
 
+          object identifier = row[(int)RoleColumns.ID + roleOffset];
           object label = row[(int)RoleColumns.Name + roleOffset];
           object description = row[(int)RoleColumns.Description + roleOffset];
           object type = row[(int)RoleColumns.Type + roleOffset];
@@ -749,6 +758,19 @@ namespace QMXFGenerator
             }
 
             RoleQualification roleQualification = new RoleQualification();
+
+            if (identifier == null || identifier.ToString() == String.Empty)
+            {
+              identifier = GenerateID(_templateRegistryBase, name);
+
+              //write to the in-memory list
+              _siTemplates[idx][(int)RoleColumns.ID + roleOffset] = identifier;
+
+              //write to the sheet, but offset counters for 1-based array
+              part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)RoleColumns.ID + roleOffset), identifier);
+            }
+
+            roleQualification.identifier = identifier.ToString();
 
             QMXFName englishUSName = new QMXFName
             {
@@ -844,13 +866,13 @@ namespace QMXFGenerator
         foreach (var row in part.Worksheet.SheetData.Rows.Where(r => r.RowIndex != 1))
         {
           var value = row.GetCellValue<string>(0);
-          if (value == null || value.ToUpper() != "X") continue;
+        
           rw = new ArrayList();
           for (int i = 0; i <= row.Worksheet.ColumnSets[0].Columns.Count; i++)
           {
             if (row.GetCellValue<string>(i) != null)
             {
-              vals = row.GetCellValue<string>(i);
+              vals = row.GetCellValue<string>(i).Trim();
             }
             else
             {
