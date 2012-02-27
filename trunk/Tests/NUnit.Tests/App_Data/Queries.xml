@@ -52,6 +52,38 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetMembers</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetMembers.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetMembersPart8</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>uri</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetMembersPart8.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetSubClasses</key>
     <query>
       <bindings>
@@ -65,6 +97,18 @@
         </queryBinding>
       </bindings>
       <fileName>GetSubClass.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetSubClassesCount</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetSubClassCount.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
@@ -188,6 +232,26 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetBaseTemplatePart8</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>definition</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>creationDate</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetBaseTemplatePart8.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>GetTemplateQualification</key>
     <query>
       <bindings>
@@ -213,6 +277,26 @@
         </queryBinding>
       </bindings>
       <fileName>GetTemplateQualification.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetTemplateQualificationPart8</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>qualifies</name>
+          <type>Uri</type>
+        </queryBinding>
+        <queryBinding>
+          <name>name</name>
+          <type>Literal</type>
+        </queryBinding>
+        <queryBinding>
+          <name>description</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetTemplateQualificationPart8.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
@@ -368,6 +452,18 @@
     </query>
   </queryItem>
   <queryItem>
+    <key>GetClassTemplatesCount</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetClassTemplatesCount.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
     <key>ClassProperties</key>
     <query>
       <bindings>
@@ -457,7 +553,7 @@
     </query>
   </queryItem>
   <queryItem>
-    <key>GetPart8Specialization</key>
+    <key>GetSuperClassOf</key>
     <query>
       <bindings>
         <queryBinding>
@@ -469,7 +565,7 @@
           <type>Literal</type>
         </queryBinding>
       </bindings>
-      <fileName>part8getsuperclass.txt</fileName>
+      <fileName>GetSuperClassOf.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
@@ -521,7 +617,7 @@
     </query>
   </queryItem>
   <queryItem>
-    <key>GetSubClassOfInverse</key>
+    <key>GetSubClassOf</key>
     <query>
       <bindings>
         <queryBinding>
@@ -533,7 +629,19 @@
           <type>Literal</type>
         </queryBinding>
       </bindings>
-      <fileName>GetSubClassOfInverse.txt</fileName>
+      <fileName>GetSubClassOf.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetSubClassOfCount</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>count</name>
+          <type>Uri</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetSubClassOfCount.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
@@ -550,6 +658,18 @@
         </queryBinding>
       </bindings>
       <fileName>GetRelatedTemplates.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetRelatedTemplatesCount</key>
+    <query>
+      <bindings>
+        <queryBinding>
+          <name>label</name>
+          <type>Literal</type>
+        </queryBinding>
+      </bindings>
+      <fileName>GetRelatedTemplatesCount.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
@@ -570,6 +690,12 @@
         </queryBinding>
       </bindings>
       <fileName>TemplateContainsSearch.txt</fileName>
+    </query>
+  </queryItem>
+  <queryItem>
+    <key>GetEntityTypes</key>
+    <query>
+      <fileName>GetEntityTypes.txt</fileName>
     </query>
   </queryItem>
   <queryItem>
@@ -606,34 +732,6 @@
     <key>PostPart8Template_5_2</key>
     <query>
       <fileName>PostPart8Template_5_2.txt</fileName>
-    </query>
-  </queryItem>
-  <queryItem>
-    <key>GetPart8TemplateQualification</key>
-    <query>
-      <bindings>
-        <queryBinding>
-          <name>qualifies</name>
-          <type>Uri</type>
-        </queryBinding>
-        <queryBinding>
-          <name>name</name>
-          <type>Literal</type>
-        </queryBinding>
-        <queryBinding>
-          <name>description</name>
-          <type>Literal</type>
-        </queryBinding>
-        <queryBinding>
-          <name>statusClass</name>
-          <type>Uri</type>
-        </queryBinding>
-        <queryBinding>
-          <name>statusAuthority</name>
-          <type>Uri</type>
-        </queryBinding>
-      </bindings>
-      <fileName>GetPart8TemplateQualification.txt</fileName>
     </query>
   </queryItem>
 </queries>
