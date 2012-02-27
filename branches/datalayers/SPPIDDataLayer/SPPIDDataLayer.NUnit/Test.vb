@@ -12,6 +12,7 @@ Imports Ninject.Extensions.Xml
 Imports System.Reflection
 Imports Oracle.DataAccess.Client
 Imports iRINGTools.SDK.SPPIDDataLayer
+Imports System.Data.SqlClient
 
 <TestFixture()>
 Public Class Test
@@ -21,6 +22,18 @@ Public Class Test
     Private _adapterSettings As AdapterSettings
     Private _sppidDataLayer As IDataLayer2
     Private _objectType As String
+
+    Private _projConn As SqlConnection
+    Private _stageConn As SqlConnection
+    Private _siteConn As SqlConnection
+
+
+    'Private _stageConnOracle As OracleConnection
+    Private _siteConnOracle As OracleConnection
+    Private _plantConnOracle As OracleConnection
+    Private _plantDicConnOracle As OracleConnection
+    Private _PIDConnOracle As OracleConnection
+    Private _PIDDicConnOracle As OracleConnection
     Public Sub New()
         ' N inject magic
 
@@ -40,22 +53,19 @@ Public Class Test
 
         _adapterSettings.AppendSettings(New AppSettingsReader("App.config"))
 
+
         _settings = New NameValueCollection()
-        _settings("BaseConfigurationPath") = _adapterSettings("XmlPath") & _adapterSettings("ProjectName")
-        _settings("BaseConcatPath") = _settings("ProjectDirName") & _adapterSettings("ProjectName")
 
         _settings("BaseDirectoryPath") = Directory.GetCurrentDirectory()
         _settings("ExecutingAssemblyName") = Assembly.GetExecutingAssembly().GetName().Name
 
-        Dim tmp = [String].Format("{0}.{1}.config", _settings("BaseConcatPath"), _adapterSettings("ApplicationName"))
-        _settings("ProjectConfigurationPath") = Path.Combine(_baseDirectory, tmp)
+        Dim tmp = [String].Format("{0}{1}.{2}.config", _adapterSettings("AppDataPath"), _adapterSettings("ProjectName"), _adapterSettings("ApplicationName"))
+        _settings("ProjectConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
 
-        tmp = [String].Format("{0}.StagingConfiguration.{1}.xml", _settings("BaseConcatPath"), _adapterSettings("ApplicationName"))
-        _settings("StagingConfigurationPath") = Path.Combine(_baseDirectory, tmp)
 
-        
+        tmp = String.Format("{0}{1}.StagingConfiguration.{2}.xml", _settings("AppDataPath"), _adapterSettings("ProjectName"), _adapterSettings("ApplicationName"))
+        _settings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
 
-        Directory.SetCurrentDirectory(_baseDirectory)
 
         _adapterSettings.AppendSettings(_settings)
 
@@ -69,6 +79,26 @@ Public Class Test
             Dim appSettings As New AppSettingsReader(appSettingsPath)
             _adapterSettings.AppendSettings(appSettings)
         End If
+
+        ''Set Connection strings----------------
+        If _adapterSettings("SPPIDPLantConnectionString").Contains("PROTOCOL") = False Then
+            _projConn = New SqlConnection(_adapterSettings("SPPIDPLantConnectionString"))
+
+            _siteConn = New SqlConnection(_adapterSettings("SPPIDSiteConnectionString"))
+        Else
+            _plantConnOracle = New OracleConnection(_adapterSettings("SPPIDPLantConnectionString"))
+            _siteConnOracle = New OracleConnection(_adapterSettings("SPPIDSiteConnectionString"))
+            _plantDicConnOracle = New OracleConnection(_adapterSettings("PlantDataDicConnectionString"))
+            _PIDConnOracle = New OracleConnection(_adapterSettings("PIDConnectionString"))
+            _PIDDicConnOracle = New OracleConnection(_adapterSettings("PIDDataDicConnectionString"))
+
+            ''Set Oracle Stagging Files-------------------------
+            tmp = String.Format("{0}{1}.StagingConfiguration.{2}.{3}.xml", _settings("AppDataPath"), _adapterSettings("ProjectName"), _adapterSettings("ApplicationName"), "Oracle")
+            _adapterSettings("StagingConfigurationPath") = Path.Combine(_settings("BaseDirectoryPath"), tmp)
+        End If
+
+        _stageConn = New SqlConnection(_adapterSettings("iRingStagingConnectionString"))
+
 
         ' and run the thing
         Dim relativePath As String = [String].Format("{0}BindingConfiguration.{1}.{2}.xml", _settings("XmlPath"), _settings("ProjectName"), _settings("ApplicationName"))
@@ -179,7 +209,7 @@ Public Class Test
         Assert.Greater(dataObjects.Count, 0)
     End Sub
 
- 
+
 
     <Test()>
     Public Sub TestGetTotalCount()

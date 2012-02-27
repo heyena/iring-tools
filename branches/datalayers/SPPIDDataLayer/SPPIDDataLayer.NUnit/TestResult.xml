@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <!--This file represents the results of running a test suite-->
-<test-results name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\SPPIDDataLayer.NUnit.vbproj" total="10" errors="0" failures="10" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2012-02-24" time="14:59:25">
+<test-results name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\SPPIDDataLayer.NUnit.vbproj" total="10" errors="0" failures="10" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2012-02-27" time="12:34:37">
   <environment nunit-version="2.5.8.10295" clr-version="4.0.30319.239" os-version="Microsoft Windows NT 6.1.7601 Service Pack 1" platform="Win32NT" cwd="C:\Project\Branches\datalayers\SPPIDDataLayer\library\nunit\NUnit.Runner\bin\Debug" machine-name="NDHD06635" user="nbhardwa" user-domain="IEAMS" />
   <culture-info current-culture="en-US" current-uiculture="en-US" />
-  <test-suite type="Project" name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\SPPIDDataLayer.NUnit.vbproj" executed="True" result="Failure" success="False" time="75.363" asserts="0">
+  <test-suite type="Project" name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\SPPIDDataLayer.NUnit.vbproj" executed="True" result="Failure" success="False" time="10.883" asserts="0">
     <results>
-      <test-suite type="Assembly" name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" executed="True" result="Failure" success="False" time="75.300" asserts="0">
+      <test-suite type="Assembly" name="C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\bin\Debug\Tests.dll" executed="True" result="Failure" success="False" time="10.753" asserts="0">
         <results>
-          <test-suite type="Namespace" name="Tests" executed="True" result="Failure" success="False" time="75.241" asserts="0">
+          <test-suite type="Namespace" name="Tests" executed="True" result="Failure" success="False" time="10.675" asserts="0">
             <results>
-              <test-suite type="TestFixture" name="Test" executed="True" result="Error" success="False" time="75.127" asserts="0">
+              <test-suite type="TestFixture" name="Test" executed="True" result="Error" success="False" time="10.487" asserts="0">
                 <failure>
-                  <message><![CDATA[SetUp : System.ArgumentOutOfRangeException : Length cannot be less than zero.
-Parameter name: length]]></message>
-                  <stack-trace><![CDATA[at System.String.InternalSubStringWithChecks(Int32 startIndex, Int32 length, Boolean fAlwaysCopy)
-at System.String.Substring(Int32 startIndex, Int32 length)
-at Tests.Test..ctor() in C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\Test.vb:line 54
+                  <message><![CDATA[SetUp : System.FormatException : Index (zero based) must be greater than or equal to zero and less than the size of the argument list.]]></message>
+                  <stack-trace><![CDATA[at System.Text.StringBuilder.AppendFormat(IFormatProvider provider, String format, Object[] args)
+at System.String.Format(IFormatProvider provider, String format, Object[] args)
+at System.String.Format(String format, Object arg0, Object arg1, Object arg2)
+at Tests.Test..ctor() in C:\Project\Branches\datalayers\SPPIDDataLayer\SPPIDDataLayer.NUnit\Test.vb:line 66
 ]]></stack-trace>
                 </failure>
                 <results>
