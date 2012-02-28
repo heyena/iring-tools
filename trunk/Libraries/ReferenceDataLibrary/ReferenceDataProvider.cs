@@ -411,16 +411,6 @@ namespace org.iringtools.refdata
 
         List<Specialization> specializations = new List<Specialization>();
 
-        Query queryGetSpecialization = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
-
-        sparql = ReadSPARQL(queryGetSpecialization.FileName);
-        sparql = sparql.Replace("param1", id);
-
-        Query queryGetSubClassOf = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
-
-        sparqlPart8 = ReadSPARQL(queryGetSubClassOf.FileName);
-        sparqlPart8 = sparqlPart8.Replace("param1", id);
-
         foreach (Repository repository in _repositories)
         {
           if (rep != null)
@@ -428,7 +418,10 @@ namespace org.iringtools.refdata
 
           if (repository.RepositoryType == RepositoryType.Part8)
           {
+              Query queryGetSuperClassOf = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
 
+            sparqlPart8 = ReadSPARQL(queryGetSuperClassOf.FileName);
+            sparqlPart8 = sparqlPart8.Replace("param1", id);
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparqlPart8);
 
             foreach (SparqlResult result in sparqlResults)
@@ -464,6 +457,9 @@ namespace org.iringtools.refdata
           }
           else
           {
+              Query queryGetSpecialization = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
+              sparql = ReadSPARQL(queryGetSpecialization.FileName);
+              sparql = sparql.Replace("param1", id);
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
             foreach (SparqlResult result in sparqlResults)
             {
@@ -502,7 +498,7 @@ namespace org.iringtools.refdata
       catch (Exception e)
       {
         _logger.Error("Error in GetSpecializations: " + e);
-        throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+       throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
       }
     }
 
@@ -546,9 +542,9 @@ namespace org.iringtools.refdata
         sparql = ReadSPARQL(queryContainsSearch.FileName);
 
         if (namespaceUrl == String.Empty || namespaceUrl == null)
-          namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
-
-        string uri = namespaceUrl + id;
+        namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
+   
+        string uri = String.Concat("<",namespaceUrl,id,">");
         sparql = sparql.Replace("param1", uri);
 
         foreach (Repository repository in _repositories)
@@ -658,11 +654,10 @@ namespace org.iringtools.refdata
       List<string> names = new List<string>();
       try
       {
-        List<Specialization> specializations = GetSpecializations(id, null);
-
-        foreach (Specialization specialization in specializations)
-        {
-          string uri = specialization.reference;
+          List<Specialization> specializations = GetSpecializations(id, null);
+          foreach (Specialization specialization in specializations)
+            {
+            string uri = specialization.reference;
 
           string label = specialization.label;
 
@@ -676,7 +671,7 @@ namespace org.iringtools.refdata
             language = names[names.Count - 1];
 
 
-          Entity resultEntity = new Entity
+          Entity resultEntity=new Entity
           {
             Uri = uri,
             Label = names[0],
@@ -685,7 +680,7 @@ namespace org.iringtools.refdata
           Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
           //queryResult.Add(resultEntity);
         }
-      }
+       }
       catch (Exception e)
       {
         _logger.Error("Error in GetSuperClasses: " + e);
