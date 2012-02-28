@@ -351,7 +351,7 @@ namespace QMXFGenerator
       catch (Exception ex)
       {
         Utility.WriteString("\nError Processing Class \n Worksheet: " + classPart +
-                            "\t Row: " + rowIndex + " \n" + ex.ToString() + "\n", "error.log");
+                            "\t Row: " + idx + " \n" + ex.ToString() + "\n", "error.log");
         throw ex;
       }
     }
@@ -533,7 +533,7 @@ namespace QMXFGenerator
       catch (Exception e)
       {
         Utility.WriteString("\nError Processing Template \n Worksheet: " + part.Name + "\tRow: "
-                             + rowIndex + " \n" + e.ToString() + "\n", "error.log", true);
+                             + idx + " \n" + e.ToString() + "\n", "error.log", true);
         throw e;
       }
     }
@@ -666,7 +666,7 @@ namespace QMXFGenerator
             {
               templateIdentifier = GenerateID(_templateRegistryBase, name);
               //write to the in-memory list
-              _siTemplates[rowIndex][(int)TemplateColumns.ID] = templateIdentifier;
+              _siTemplates[rowIndex-1][(int)TemplateColumns.ID] = templateIdentifier;
               //write to the sheet, but offset counters for 1-based array
               part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)TemplateColumns.ID), templateIdentifier);
             }
@@ -720,7 +720,7 @@ namespace QMXFGenerator
       catch (Exception ex)
       {
         Utility.WriteString("\nError Processing Individual Template \n" +
-                            "Worksheet: " + part.Name + "\tRow: " + rowIndex +
+                            "Worksheet: " + part.Name + "\tRow: " + idx +
                             " \n" + ex.ToString() + "\n", "error.log", true);
         throw ex;
       }
