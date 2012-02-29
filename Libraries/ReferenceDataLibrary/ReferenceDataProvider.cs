@@ -411,7 +411,15 @@ namespace org.iringtools.refdata
 
                 List<Specialization> specializations = new List<Specialization>();
 
+                Query queryGetSpecialization = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
 
+                sparql = ReadSPARQL(queryGetSpecialization.FileName);
+                sparql = sparql.Replace("param1", id);
+
+        Query queryGetSubClassOf = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
+
+                sparqlPart8 = ReadSPARQL(queryGetSubClassOf.FileName);
+                sparqlPart8 = sparqlPart8.Replace("param1", id);
                 foreach (Repository repository in _repositories)
                 {
                     if (rep != null)
@@ -419,9 +427,6 @@ namespace org.iringtools.refdata
 
                     if (repository.RepositoryType == RepositoryType.Part8)
                     {
-                      Query queryGetSuperClassOf = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
-                      sparqlPart8 = ReadSPARQL(queryGetSuperClassOf.FileName);
-                      sparqlPart8 = sparqlPart8.Replace("param1", id);
 
                         SparqlResultSet sparqlResults = QueryFromRepository(repository, sparqlPart8);
 
@@ -458,9 +463,6 @@ namespace org.iringtools.refdata
                     }
                     else
                     {
-                      Query queryGetSpecialization = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
-                      sparql = ReadSPARQL(queryGetSpecialization.FileName);
-                      sparql = sparql.Replace("param1", id);
                         SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
                         foreach (SparqlResult result in sparqlResults)
                         {
@@ -544,9 +546,9 @@ namespace org.iringtools.refdata
 
                 if (namespaceUrl == String.Empty || namespaceUrl == null)
                     namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
-                namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
 
-                string uri = String.Concat("<", namespaceUrl, id, ">");
+                string uri = namespaceUrl + id;
+                sparql = sparql.Replace("param1", uri);
                 foreach (Repository repository in _repositories)
                 {
                     ClassDefinition classDefinition = null;
