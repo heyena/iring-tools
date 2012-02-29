@@ -150,10 +150,12 @@ namespace org.iringtools.adapter.security
                 
           HttpCookie authorizationCookie = new HttpCookie("Authorization");
           authorizationCookie.Value = OAuthToken;
+          authorizationCookie.Expires = DateTime.Now.AddHours(8.0);
           HttpContext.Current.Response.Cookies.Add(authorizationCookie);
 
           HttpCookie appKeyCookie = new HttpCookie("X-myPSN-AppKey");
           appKeyCookie.Value = ConfigurationManager.AppSettings["applicationKey"];
+          appKeyCookie.Expires = DateTime.Now.AddHours(8.0);
           HttpContext.Current.Response.Cookies.Add(appKeyCookie);
           //    }
           //  }
