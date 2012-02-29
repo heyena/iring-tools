@@ -10,6 +10,6 @@ rem svn update build.xml
 rem pause
 
 echo Building VB projects ...
-msbuild bamboo.xml /t:All
+msbuild build.xml /t:All
 pause
 
