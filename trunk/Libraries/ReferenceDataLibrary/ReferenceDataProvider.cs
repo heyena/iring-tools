@@ -411,6 +411,15 @@ namespace org.iringtools.refdata
 
         List<Specialization> specializations = new List<Specialization>();
 
+        Query queryGetSpecialization = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
+
+        sparql = ReadSPARQL(queryGetSpecialization.FileName);
+        sparql = sparql.Replace("param1", id);
+
+        Query queryGetSubClassOf = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
+
+        sparqlPart8 = ReadSPARQL(queryGetSubClassOf.FileName);
+        sparqlPart8 = sparqlPart8.Replace("param1", id);
         foreach (Repository repository in _repositories)
         {
           if (rep != null)
@@ -418,10 +427,7 @@ namespace org.iringtools.refdata
 
           if (repository.RepositoryType == RepositoryType.Part8)
           {
-              Query queryGetSuperClassOf = (Query)_queries.FirstOrDefault(c => c.Key == "GetSuperClassOf").Query;
 
-            sparqlPart8 = ReadSPARQL(queryGetSuperClassOf.FileName);
-            sparqlPart8 = sparqlPart8.Replace("param1", id);
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparqlPart8);
 
             foreach (SparqlResult result in sparqlResults)
@@ -457,9 +463,6 @@ namespace org.iringtools.refdata
           }
           else
           {
-              Query queryGetSpecialization = (Query)_queries.FirstOrDefault(c => c.Key == "GetSpecialization").Query;
-              sparql = ReadSPARQL(queryGetSpecialization.FileName);
-              sparql = sparql.Replace("param1", id);
             SparqlResultSet sparqlResults = QueryFromRepository(repository, sparql);
             foreach (SparqlResult result in sparqlResults)
             {
@@ -498,7 +501,7 @@ namespace org.iringtools.refdata
       catch (Exception e)
       {
         _logger.Error("Error in GetSpecializations: " + e);
-       throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
+        throw new Exception("Error while Getting Class: " + id + ".\n" + e.ToString(), e);
       }
     }
 
@@ -542,11 +545,10 @@ namespace org.iringtools.refdata
         sparql = ReadSPARQL(queryContainsSearch.FileName);
 
         if (namespaceUrl == String.Empty || namespaceUrl == null)
-        namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
-   
-        string uri = String.Concat("<",namespaceUrl,id,">");
-        sparql = sparql.Replace("param1", uri);
+          namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
 
+        string uri = namespaceUrl + id;
+        sparql = sparql.Replace("param1", uri);
         foreach (Repository repository in _repositories)
         {
           ClassDefinition classDefinition = null;
@@ -654,10 +656,11 @@ namespace org.iringtools.refdata
       List<string> names = new List<string>();
       try
       {
-          List<Specialization> specializations = GetSpecializations(id, null);
-          foreach (Specialization specialization in specializations)
-            {
-            string uri = specialization.reference;
+        List<Specialization> specializations = GetSpecializations(id, null);
+
+        foreach (Specialization specialization in specializations)
+        {
+          string uri = specialization.reference;
 
           string label = specialization.label;
 
@@ -671,7 +674,7 @@ namespace org.iringtools.refdata
             language = names[names.Count - 1];
 
 
-          Entity resultEntity=new Entity
+          Entity resultEntity = new Entity
           {
             Uri = uri,
             Label = names[0],
@@ -680,7 +683,7 @@ namespace org.iringtools.refdata
           Utility.SearchAndInsert(queryResult, resultEntity, Entity.sortAscending());
           //queryResult.Add(resultEntity);
         }
-       }
+      }
       catch (Exception e)
       {
         _logger.Error("Error in GetSuperClasses: " + e);
@@ -2056,12 +2059,11 @@ namespace org.iringtools.refdata
           ///////////////////////////////////////////////////////////////////////////////
           /// Base templates do have the following properties
           /// 1) Base class of owl:Thing
-          /// 2) rdf:type = p8:TemplateDescription
-          /// 3) rdf:type = p8:BaseTemplateStateMent
-          /// 4) rdfs:label name of template
-          /// 5) optional rdfs:comment
-          /// 6) p8:valNumberOfRoles
-          /// 7) p8:hasTemplate = tpl:{TemplateName} - this probably could be eliminated -- pointer to self 
+          /// 2) rdfs:subClassOf = p8:BaseTemplateStateMent
+          /// 3) rdfs:label name of template
+          /// 4) optional rdfs:comment
+          /// 5) p8:valNumberOfRoles
+          /// 6) p8:hasTemplate = tpl:{TemplateName} - this probably could be eliminated -- pointer to self 
           ///////////////////////////////////////////////////////////////////////////////
           if (qmxf.templateDefinitions.Count > 0)
           {
@@ -2130,7 +2132,7 @@ namespace org.iringtools.refdata
                   index = 1;
                   ///  BaseTemplate roles do have the following properties
                   /// 1) baseclass of owl:Class
-                  /// 2) rdf:type = p8:TemplateRoleDescription
+                  /// 2) rdfs:subClassOf = p8:TemplateRoleDescription
                   /// 3) rdfs:label = rolename
                   /// 4) p8:valRoleIndex
                   /// 5) p8:hasRoleFillerType = qualifified class or dm:entityType
@@ -2289,7 +2291,7 @@ namespace org.iringtools.refdata
                     GenerateName(ref insert, newName, newRoleID, newRole);
                   }
 
-                  if (newRole.description != null)
+                  if (newRole.description != null && newRole.description.value != null)
                   {
                     GenerateDescription(ref insert, newRole.description, newRoleID);
                   }
@@ -2912,7 +2914,7 @@ namespace org.iringtools.refdata
                         qn = nsMap.ReduceToQName(oc.reference, out qName);
                         if (repository.RepositoryType == RepositoryType.Part8)
                         {
-                          if (qn)  GenerateSuperClass(ref delete, qName, clsId); ///delete from old
+                          if (qn) GenerateSuperClass(ref delete, qName, clsId); ///delete from old
                         }
                         else
                         {
@@ -3264,11 +3266,11 @@ namespace org.iringtools.refdata
       {
         subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
         pred = work.CreateUriNode(rdfType);
-        obj = work.CreateUriNode("p8:TemplateDescription");
-        work.Assert(new Triple(subj, pred, obj));
-        obj = work.CreateUriNode("p8:BaseTemplateStatement");
-        work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("owl:Thing");
+        //obj = work.CreateUriNode("p8:TemplateDescription");
+        work.Assert(new Triple(subj, pred, obj));
+        pred = work.CreateUriNode(rdfssubClassOf);
+        obj = work.CreateUriNode("p8:BaseTemplateStatement");
         work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is RoleQualification)
@@ -3286,9 +3288,9 @@ namespace org.iringtools.refdata
         pred = work.CreateUriNode("p8:hasTemplate");
         obj = work.CreateUriNode(string.Format("tpl:{0}", objectId));
         work.Assert(new Triple(subj, pred, obj));
-        //pred = work.CreateUriNode("p8:hasRoleFillerType");
-        //obj = work.CreateUriNode(qName);
-        //work.Assert(new Triple(subj, pred, obj));
+        pred = work.CreateUriNode("p8:hasRoleFillerType");
+        obj = work.CreateUriNode(qName);
+        work.Assert(new Triple(subj, pred, obj));
       }
       else if (gobj is RoleDefinition)
       {
@@ -3311,10 +3313,11 @@ namespace org.iringtools.refdata
       {
         subj = work.CreateUriNode(string.Format("tpl:{0}", subjId));
         pred = work.CreateUriNode(rdfType);
-        obj = work.CreateUriNode("p8:TemplateDescription");
-        work.Assert(new Triple(subj, pred, obj));
+        //obj = work.CreateUriNode("p8:TemplateDescription");
+        //work.Assert(new Triple(subj, pred, obj));
         obj = work.CreateUriNode("owl:Thing");
         work.Assert(new Triple(subj, pred, obj));
+        pred = work.CreateUriNode(rdfssubClassOf);
         obj = work.CreateUriNode("p8:SpecializedTemplateStatement");
         work.Assert(new Triple(subj, pred, obj));
         pred = work.CreateUriNode(rdfssubClassOf);
