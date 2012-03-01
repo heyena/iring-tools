@@ -550,7 +550,7 @@ namespace org.iringtools.utility
       try
       {
         stream = new FileStream(path, FileMode.Open, FileAccess.Read);
-        reader = XmlDictionaryReader.CreateTextReader(stream, new XmlDictionaryReaderQuotas());
+        reader = XmlDictionaryReader.CreateTextReader(stream, new XmlDictionaryReaderQuotas { MaxStringContentLength = int.MaxValue });
 
         if (useDataContractSerializer)
         {
@@ -757,7 +757,7 @@ namespace org.iringtools.utility
         MemoryStream stream = new MemoryStream();
         if (!useDataContractSerializer)
         {
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
+            JavaScriptSerializer serializer = new JavaScriptSerializer{ MaxJsonLength = int.MaxValue };
             string jsonString = serializer.Serialize(graph);
             byte[] byteArray = encoding.GetBytes(jsonString);
             stream = new MemoryStream(byteArray);
