@@ -547,7 +547,7 @@ namespace org.iringtools.refdata
         if (namespaceUrl == String.Empty || namespaceUrl == null)
           namespaceUrl = nsMap.GetNamespaceUri("rdl").ToString();
 
-        string uri = namespaceUrl + id;
+        string uri = String.Concat("<", namespaceUrl, id, ">");
         sparql = sparql.Replace("param1", uri);
         foreach (Repository repository in _repositories)
         {
