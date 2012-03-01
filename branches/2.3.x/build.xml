@@ -47,6 +47,7 @@
                $(ServicesDir)\Transforms\**;
                $(ServicesDir)\obj\**;
                $(ServicesDir)\*.sln;
+               $(ServicesDir)\*.suo;
                $(ServicesDir)\*.cs;
                $(ServicesDir)\*.csproj;
                $(ServicesDir)\*.user;
@@ -77,6 +78,7 @@
                $(ApplicationsDir)\bin\*.pdb;
                $(ApplicationsDir)\obj\**;
                $(ApplicationsDir)\Properties\**;
+               $(ApplicationsDir)\*.suo;
                $(ApplicationsDir)\*.cs;
                $(ApplicationsDir)\*.csproj;
                $(ApplicationsDir)\*.user;
