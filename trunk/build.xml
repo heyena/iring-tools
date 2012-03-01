@@ -46,6 +46,7 @@
                $(ServicesDir)\Templates\**;
                $(ServicesDir)\Transforms\**;
                $(ServicesDir)\obj\**;
+               $(ServicesDir)\*.suo;
                $(ServicesDir)\*.cs;
                $(ServicesDir)\*.csproj;
                $(ServicesDir)\*.user;
@@ -65,7 +66,7 @@
       Include="$(LandingPageDir)\**"
       Exclude="$(LandingPageDir)\.svn\**;
                $(LandingPageDir)\*\.svn\**;
-	       $(LandingPageDir)\.settings\**;
+               $(LandingPageDir)\.settings\**;
                $(LandingPageDir)\.project;">
     </LandingDeployment>
 
@@ -74,6 +75,7 @@
       Exclude="$(ApplicationsDir)\bin\*.pdb;
                $(ApplicationsDir)\obj\**;
                $(ApplicationsDir)\Properties\**;
+               $(ApplicationsDir)\*.suo;
                $(ApplicationsDir)\*.cs;
                $(ApplicationsDir)\*.csproj;
                $(ApplicationsDir)\*.user;
@@ -82,10 +84,10 @@
                $(ApplicationsDir)\.svn\**;
                $(ApplicationsDir)\**\.svn\**;
                $(ApplicationsDir)\*\*\.svn\**;
-			   $(ApplicationsDir)\*\*\*\.svn\**;
-			   $(ApplicationsDir)\*\*\*\*\.svn\**;
-			   $(ApplicationsDir)\*\*\*\*\*\.svn\**;
-			   $(ApplicationsDir)\*\*\*\*\*\*\.svn\**;">
+               $(ApplicationsDir)\*\*\*\.svn\**;
+               $(ApplicationsDir)\*\*\*\*\.svn\**;
+               $(ApplicationsDir)\*\*\*\*\*\.svn\**;
+               $(ApplicationsDir)\*\*\*\*\*\*\.svn\**;">
     </AppsDeployment>
 
     <UtilitiesDeployment
