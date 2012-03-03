@@ -203,6 +203,50 @@ namespace org.iringtools.adapter.datalayer
       }
     }
 
+    private int GetDataLength(DataType type)
+    {
+      if (type == DataType.Boolean)
+      {
+        return 8;
+      }
+      else if (type == DataType.DateTime)
+      {
+        return 50;
+      }
+      else if (type == DataType.TimeSpan)
+      {
+        return 50;
+      }
+      else if (type == DataType.Decimal)
+      {
+        return 128;
+      }
+      else if (type == DataType.Double)
+      {
+        return 64;
+      }
+      else if (type == DataType.Int16)
+      {
+        return 16;
+      }
+      else if (type == DataType.Int32)
+      {
+        return 32;
+      }
+      else if (type == DataType.Int64)
+      {
+        return 64;
+      }
+      else if (type == DataType.Single)
+      {
+        return 32;
+      }
+      else
+      {
+        return 1024;
+      }
+    }
+
     public List<SpreadsheetColumn> GetColumns(SpreadsheetTable table)
     {
         if (table.Columns == null)
@@ -225,7 +269,8 @@ namespace org.iringtools.adapter.datalayer
               Name = value,
               Label = value,
               DataType = GetDataType(cell.DataType),
-              ColumnIdx = SpreadsheetReference.GetColumnName(cell.CellReference)
+              ColumnIdx = SpreadsheetReference.GetColumnName(cell.CellReference),
+              DataLength = GetDataLength(GetDataType(cell.DataType))
             };
 
             columns.Add(column);
