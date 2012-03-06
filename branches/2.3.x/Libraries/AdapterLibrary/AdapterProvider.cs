@@ -3252,27 +3252,35 @@ namespace org.iringtools.adapter
           try
           {
             Type[] asmTypes = asm.GetTypes();
-
-            if (asmTypes != null)
+            try
             {
-              foreach (System.Type asmType in asmTypes)
-              {
-                if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+                if (asmTypes != null)
                 {
-                  bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-                  string name = asm.FullName.Split(',')[0];
+                    foreach (System.Type asmType in asmTypes)
+                    {
+                        if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+                        {
+                            bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+                            string name = asm.FullName.Split(',')[0];
 
-                  if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
-                  {
-                    string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-                    DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
-                    dataLayers.Add(dataLayer);
-                  }
+                            if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
+                            {
+                                string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+                                DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
+                                dataLayers.Add(dataLayer);
+                            }
+                        }
+                    }
                 }
-              }
+            }
+            catch (Exception e)
+            {
+                _logger.Error("Error loading data layer (While getting types): " + e);
             }
           }
-          catch (Exception) { }
+          catch (Exception e) {
+              _logger.Error("Error loading data layer: " + e);
+          }
         }
       }
       catch (Exception e)
