@@ -27,15 +27,15 @@
 }		
 
 .ux-filtered-column.sort-asc .x-grid3-sort-icon {
-	background-image: url(../images/sort_filtered_asc.gif) !important;
+	background-image: url(../img/16x16/sort_filtered_asc.gif) !important;
 }
 
 .ux-filtered-column.sort-desc .x-grid3-sort-icon {
-	background-image: url(../images/sort_filtered_desc.gif) !important;
+	background-image: url(../img/16x16/sort_filtered_desc.gif) !important;
 }
 
 .ux-gridfilter-text-icon {
-	background-image: url(../images/find.png) !important;
+	background-image: url(../img/16x16/find.png) !important;
 }
 
 /* Temporary Patch for Bug ??? */

@@ -4,6 +4,7 @@
 
 // Application instance for showing user-feedback messages.
 var App = new Ext.App({});
+Ext.BLANK_IMAGE_URL = "Scripts/ext-3.3.1/resources/images/gray/s.gif";
 
 Ext.onReady(function () {
   Ext.QuickTips.init();
@@ -210,7 +211,7 @@ Ext.onReady(function () {
     var scope = node.parentNode.text;
     var datalayer = node.attributes.record.DataLayer;
 
-    if (dataLayerValue == 'SpreadsheetDataLayer') {
+    if (dataLayerValue == 'SpreadsheetDatalayer') {
       var newConfig = new AdapterManager.SpreadsheetLibraryPanel({
         id: 'tab-c.' + scope + '.' + application,
         title: 'Spreadsheet Configuration - ' + scope + '.' + application,
