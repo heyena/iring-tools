@@ -519,8 +519,16 @@ namespace org.iringtools.nhibernate
       }
 
       if (dbProvider.ToUpper().Contains("MSSQL"))
-        connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
-          dbServer, dbInstance, dbName, dbUserName, dbPassword);
+        if (dbInstance == "default")
+        {
+          connStr = String.Format("Data Source={0};Initial Catalog={2};User ID={3};Password={4}",
+           dbServer, dbInstance, dbName, dbUserName, dbPassword);
+        }
+        else
+        {
+          connStr = String.Format("Data Source={0}\\{1};Initial Catalog={2};User ID={3};Password={4}",
+            dbServer, dbInstance, dbName, dbUserName, dbPassword);
+        }
       else
         connStr = String.Format("Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={0})(PORT={1})))(CONNECT_DATA=(SERVER=DEDICATED)({2}={3})));User ID={4};Password={5}",
           dbServer, portNumber, serName, dbInstance, dbUserName, dbPassword);
@@ -590,9 +598,9 @@ namespace org.iringtools.nhibernate
           t2.max_length as data_length, t2.is_identity as is_identity, 
           t2.is_nullable as is_nullable, t4.column_id as is_primary_key from sys.objects t1
           inner join sys.columns t2 on t2.object_id = t1.object_id  
+          left join sys.index_columns t4 on t4.object_id = t1.object_id and t4.column_id = t2.column_id
           left join sys.indexes t3 on t3.object_id = t1.object_id and t3.is_unique = 1
-          left join sys.index_columns t4 on t4.object_id = t1.object_id 
-          and t4.index_id = t3.index_id and t4.column_id = t2.column_id
+          and t3.index_id = t4.index_id
           where (upper(t1.type) = 'U' or upper(t1.type) = 'V') 
           and upper(schema_name(t1.schema_id)) = '{0}' and upper(t1.name) = '{1}'",
           schemaName.ToUpper(), tableName.ToUpper());
