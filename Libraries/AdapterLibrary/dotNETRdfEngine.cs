@@ -11,6 +11,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Linq;
 using org.iringtools.mapping;
+using System.Net;
 
 namespace org.iringtools.adapter.semantic
 {

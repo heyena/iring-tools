@@ -31,8 +31,8 @@ namespace org.iringtools.utils.exchange
     #region Member Variables
       private ObservableCollection<StatusMessage> _messages = new ObservableCollection<StatusMessage>();
       Application _app = Application.Current;
-      ScopeProject _project = null;
-      ScopeApplication _application = null;
+      Locator _project = null;
+      EndpointApplication _application = null;
       GraphMap _graph = null;
       List<string> _graphUris = null;
       string _graphUri = String.Empty;
@@ -124,8 +124,8 @@ namespace org.iringtools.utils.exchange
 
                 Uri pullURI = new Uri(
                     localFacadeUrl + "/" +
-                    _project.Name + "/" +
-                    _application.Name + "/" +
+                    _project.Context + "/" +
+                    _application.Endpoint + "/" +
                     _graph.name + "/pull");
 
                 Request request = new Request();
@@ -205,7 +205,7 @@ namespace org.iringtools.utils.exchange
                 string rootUrl = textBoxAdapterURL.Text.Substring(0, textBoxAdapterURL.Text.LastIndexOf("/"));
                 string localFacadeUrl = rootUrl + "/facade/svc";
 
-                Uri refreshURI = new Uri(localFacadeUrl + "/" + _project.Name + "/" + _application.Name + "/" + comboBoxGraphName.Text + "/refresh");
+                Uri refreshURI = new Uri(localFacadeUrl + "/" + _project.Context + "/" + _application.Endpoint + "/" + comboBoxGraphName.Text + "/refresh");
 
                 client.DownloadStringAsync(refreshURI);
             }
@@ -410,7 +410,7 @@ namespace org.iringtools.utils.exchange
         {
             if (comboBoxProjectName.SelectedIndex != -1)
             {
-                _project = (ScopeProject)comboBoxProjectName.SelectedItem;
+                _project = (Locator)comboBoxProjectName.SelectedItem;
                 comboBoxAppName.DisplayMemberPath = "Name";
                 comboBoxAppName.ItemsSource = _project.Applications;
                 comboBoxAppName.SelectionChanged += new SelectionChangedEventHandler(comboBoxAppName_SelectionChanged);
@@ -429,9 +429,9 @@ namespace org.iringtools.utils.exchange
     {
         try
         {
-            _application = (ScopeApplication)comboBoxAppName.SelectedItem;
+            _application = (EndpointApplication)comboBoxAppName.SelectedItem;
 
-            if (_application != null && _application.Name != null && _application.Name != String.Empty)
+            if (_application != null && _application.Endpoint != null && _application.Endpoint != String.Empty)
             {
                 WebClient client = new WebClient();
                 #region Prepare proxy and facade credentials if required
@@ -458,7 +458,7 @@ namespace org.iringtools.utils.exchange
 
                 client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(client_GetMappingCompleted);
 
-                Uri mappingURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Name + "/" + _application.Name + "/mapping");
+                Uri mappingURI = new Uri(textBoxAdapterURL.Text + "/" + _project.Context + "/" + _application.Endpoint + "/mapping");
 
                 client.DownloadStringAsync(mappingURI);
             }
@@ -539,7 +539,7 @@ namespace org.iringtools.utils.exchange
     {
         try
         {
-            ObservableCollection<ScopeProject> scopes = e.Result.DeserializeDataContract<ObservableCollection<ScopeProject>>();
+            ObservableCollection<Locator> scopes = e.Result.DeserializeDataContract<ObservableCollection<Locator>>();
 
             if (scopes != null && scopes.Count > 0)
             {

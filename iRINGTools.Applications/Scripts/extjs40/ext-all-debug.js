@@ -52533,7 +52533,7 @@ Ext.define('Ext.data.NodeInterface', {
                     return Ext.Array.indexOf(this.childNodes, child);
                 },
 
-                getPath: function(field, separator) {
+                getPath: function(node, field, separator) {
                     field = field || this.idProperty;
                     separator = separator || '/';
 
@@ -90108,5 +90108,9 @@ Ext.define('Ext.view.TableChunker', {
 });
 
 
+// added for debug purpose
 
-
+Ext.Loader.setConfig({
+    enabled: true,
+    disableCaching: false
+});

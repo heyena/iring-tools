@@ -343,7 +343,7 @@ namespace org.iringtools.exchange
     {
       WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
       System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
-      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port + ".adapter";
+      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port;
       _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
     }
 
@@ -351,6 +351,9 @@ namespace org.iringtools.exchange
     {
       try
       {
+        if (_scopes.Locators == null)
+          getResource();
+
         if (!_isScopeInitialized)
         {
           bool isScopeValid = false;

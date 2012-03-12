@@ -27,8 +27,8 @@ namespace org.iringtools.web.controllers
       : this(new AdapterRepository())
     {
       string user = GetUserId((IDictionary<string, string>)_allClaims);
-      Session[user + "." + "tree"] = null;
       Session[user + "." + "directory"] = null;
+      Session[user + "." + "resource"] = null;
     }
 
     public DirectoryController(IAdapterRepository repository)
@@ -466,8 +466,9 @@ namespace org.iringtools.web.controllers
     public JsonResult Endpoint(FormCollection form)
     {
       string success;
-      string user = GetUserId((IDictionary<string, string>)_allClaims);
-      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["assembly"], form["baseUrl"], form["oldBaseUrl"], user);
+      string user = GetUserId((IDictionary<string, string>)_allClaims);      
+
+      success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["oldAssembly"], form["assembly"], form["baseUrl"], form["oldBaseUrl"], user);
 
       if (success == "ERROR")
       {
@@ -481,7 +482,7 @@ namespace org.iringtools.web.controllers
     public JsonResult DeleteEntry(FormCollection form)
     {
       string user = GetUserId((IDictionary<string, string>)_allClaims);
-      _repository.DeleteEntry(form["path"], user);
+      _repository.DeleteEntry(form["path"], form["type"], form["contextName"], form["baseUrl"], user);
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
@@ -491,10 +492,10 @@ namespace org.iringtools.web.controllers
       return Json(rootSecuirtyRole, JsonRequestBehavior.AllowGet);
     }
 
-    public JsonResult DirectoryBaseUrl()
+    public JsonResult UseLdap()
     {
-      string baseUrl = _repository.GetDirectoryBaseUrl();
-      return Json(baseUrl, JsonRequestBehavior.AllowGet);
+      string ifUseLdap = _repository.GetUserLdap();
+      return Json(ifUseLdap, JsonRequestBehavior.AllowGet);
     }
 
     public JsonResult EndpointBaseUrl()
@@ -519,7 +520,7 @@ namespace org.iringtools.web.controllers
         }
       }
 
-      return "karthur";
+      return "guest";
     }
    
     private Mapping GetMapping(string contextName, string endpoint)
