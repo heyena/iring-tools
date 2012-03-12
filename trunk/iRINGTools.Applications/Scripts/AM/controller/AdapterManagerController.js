@@ -69,7 +69,7 @@
         this.control({
             'menu button[action=newscope]': {
                 click: this.newScope
-            },
+            },           
             'menu button[action=editscope]': {
                 click: this.editScope
             },
@@ -906,7 +906,7 @@
 
         win.items.first().getForm().findField('Name').clearInvalid();
 
-    },
+    },    
 
     editScope: function () {
         var tree = this.getDirTree(),
@@ -943,7 +943,10 @@
             url: 'directory/deleteEntry',
             method: 'POST',
             params: {
-                'path': node.data.id
+                'path': node.data.id,
+                'type': 'folder',
+                'baseUrl': '',
+                'contextName': node.data.property.Context
             },
             success: function () {
                 tree.onReload(node);
@@ -965,7 +968,10 @@
             url: 'directory/deleteEntry',
             method: 'POST',
             params: {
-                'path': node.data.id
+                'path': node.data.id,
+                'type': 'endpoint',
+                'baseUrl': node.data.record.BaseUrl,
+                'contextName': node.data.property.Context
             },
             success: function () {
                 tree.onReload();

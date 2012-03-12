@@ -114,23 +114,6 @@
     return state;
   },
 
-  applyState: function (state) {
-    var me = this;
-    var nodes = state.expandedNodes || [];
-
-    var root = this.getRootNode();
-    Ext.each(nodes, function (path) {
-      var n = me.store.getNodeById(path)
-      if(n)
-       n.bubble(function(node) { node.expand() });
-    //  me.expandPath(path);
-    });
-
-<<<<<<< .mine
-    //     this.callParent(arguments);
-  },
-  //  applyState: function (state) {
-=======
     applyState: function (state) {
         var that = this;
         var rootNode = that.getRootNode();
@@ -165,16 +148,6 @@
 
 
     },
->>>>>>> .r4752
-
-  //    if (state) {
-  //      Ext.apply(this, state);
-  //    }
-  //  },
-  //  expandNode: function (bool, node) {
-  //    if (!node.isExpanded())
-  //       node.expand();
-  //  },
 
   buildScopesMenu: function () {
     return [
@@ -184,7 +157,14 @@
         icon: 'Content/img/16x16/document-new.png',
         scope: this,
         action: 'newscope'
-      }
+    }, {
+        xtype: 'button',
+        text: 'Regenerate Files',        
+        icon: 'Content/img/16x16/document-new.png',
+        scope: this,
+        action: 'regenerateAll'
+        // HibernateDataLayer artifacts
+    }
     ]
   },
   buildScopeMenu: function () {
@@ -414,11 +394,11 @@
       }
       else {
         Ext.Ajax.request({
-          url: 'directory/directoryBaseUrl',
+          url: 'directory/UseLdap',
           method: 'GET',
           success: function (response, request) {
             var baseUrl = response.responseText;
-            if (baseUrl.indexOf('dirxml')) {
+            if (baseUrl == 'false') {
               if (obj.type == "ScopesNode") {
                 me.scopesMenu.showAt(e.getXY());
               } else if (obj.type == "folder") {

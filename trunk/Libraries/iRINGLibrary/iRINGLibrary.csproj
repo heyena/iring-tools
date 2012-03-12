@@ -93,7 +93,6 @@
     <Compile Include="Repositories.cs" />
     <Compile Include="Request.cs" />
     <Compile Include="Response.cs" />
-    <Compile Include="Scopes.cs" />
     <Compile Include="ServiceClient.cs" />
     <Compile Include="ServiceSettings.cs" />
     <Compile Include="SPARQLClient.cs" />

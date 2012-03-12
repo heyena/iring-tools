@@ -29,15 +29,15 @@ namespace iRINGTools.Web.Models
 
     string Folder(string newFolderName, string description, string path, string state, string context, string oldContext, string user);
 
-    string DeleteEntry(string path, string user);
+    string DeleteEntry(string path, string type, string context, string baseUrl, string user);
 
-    string Endpoint(string newEndpointName, string path, string description, string states, string context, string assembly, string baseUrl, string oldBaseUrl, string user);
+    string Endpoint(string newEndpointName, string path, string description, string states, string context, string oldAssembly, string newAssembly, string baseUrl, string oldBaseUrl, string user);
 
     string GetNodeIconCls(string type);
 
     string GetRootSecurityRole();
 
-    string GetDirectoryBaseUrl();
+    string GetUserLdap();
 
     BaseUrls GetEndpointBaseUrl();
 

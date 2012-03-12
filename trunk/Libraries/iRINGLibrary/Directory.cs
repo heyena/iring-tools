@@ -100,6 +100,11 @@ namespace org.iringtools.library
   {
   }
 
+  [CollectionDataContract(Name = "resources", Namespace = "http://www.iringtools.org/directory", ItemName = "resource")]
+  public class Resources : List<Resource>
+  {
+  }  
+  
   [DataContract(Namespace = "http://www.iringtools.org/directory", Name = "resource")]
   public class Resource
   {
@@ -131,6 +136,12 @@ namespace org.iringtools.library
 
     [DataMember(Name = "description", Order = 1, EmitDefaultValue = false)]
     public string Description { get; set; }
+
+    [DataMember(Name = "assembly", Order = 2, EmitDefaultValue = false)]
+    public string Assembly { get; set; }
+
+    [DataMember(Name = "lpath", Order = 3, EmitDefaultValue = false)]
+    public string Path { get; set; }  
   }
 
 }

@@ -5,7 +5,7 @@
         type: 'ajax',
         timeout: 600000,
         actionMethods: { read: 'POST' },
-        url: 'datagrid/getdata',
+        url: 'GridManager/Pages',
         extraParams: {
             context: null,
             start: 0,

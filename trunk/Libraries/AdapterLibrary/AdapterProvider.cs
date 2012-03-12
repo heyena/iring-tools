@@ -53,934 +53,901 @@ using org.iringtools.adapter.datalayer;
 
 namespace org.iringtools.adapter
 {
-    public class AdapterProvider : BaseProvider
+  public class AdapterProvider : BaseProvider
+  {
+    private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
+    private static readonly int DEFAULT_PAGE_SIZE = 25;
+
+    private IKernel _kernel = null;
+    private AdapterSettings _settings = null;
+    private Resource _scopes = null;
+    private EndpointApplication _application = null;
+    private IDataLayer2 _dataLayer = null;
+    private IIdentityLayer _identityLayer = null;
+    private IDictionary _keyRing = null;
+    private ISemanticLayer _semanticEngine = null;
+    private IProjectionLayer _projectionEngine = null;
+    private DataDictionary _dataDictionary = null;
+    private mapping.Mapping _mapping = null;
+    private mapping.GraphMap _graphMap = null;
+    private DataObject _dataObjDef = null;
+    private bool _isResourceGraph = false;
+    private bool _isProjectionPart7 = false;
+    private bool _isFormatExpected = true;
+
+    //Projection specific stuff
+    private IList<IDataObject> _dataObjects = new List<IDataObject>(); // dictionary of object names and list of data objects
+    private Dictionary<string, List<string>> _classIdentifiers = new Dictionary<string, List<string>>(); // dictionary of class ids and list of identifiers
+
+    private bool _isScopeInitialized = false;
+    private bool _isDataLayerInitialized = false;
+
+    [Inject]
+    public AdapterProvider(NameValueCollection settings)
     {
-        private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterProvider));
-        private static readonly int DEFAULT_PAGE_SIZE = 25;
+      var ninjectSettings = new NinjectSettings { LoadExtensions = false, UseReflectionBasedInjection = true };
+      _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
 
-        private IKernel _kernel = null;
-        private AdapterSettings _settings = null;
-        private Resource _scopes = null;
-        private EndpointApplication _application = null;
-        private IDataLayer2 _dataLayer = null;
-        private IIdentityLayer _identityLayer = null;
-        private IDictionary _keyRing = null;
-        private ISemanticLayer _semanticEngine = null;
-        private IProjectionLayer _projectionEngine = null;
-        private DataDictionary _dataDictionary = null;
-        private mapping.Mapping _mapping = null;
-        private mapping.GraphMap _graphMap = null;
-        private DataObject _dataObjDef = null;
-        private bool _isResourceGraph = false;
-        private bool _isProjectionPart7 = false;
-        private bool _isFormatExpected = true;
+      _kernel.Load(new XmlExtensionModule());
+      _settings = _kernel.Get<AdapterSettings>();
+      _settings.AppendSettings(settings);
 
-        //Projection specific stuff
-        private IList<IDataObject> _dataObjects = new List<IDataObject>(); // dictionary of object names and list of data objects
-        private Dictionary<string, List<string>> _classIdentifiers = new Dictionary<string, List<string>>(); // dictionary of class ids and list of identifiers
+      Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
 
-        private bool _isScopeInitialized = false;
-        private bool _isDataLayerInitialized = false;
+      #region initialize webHttpClient for converting old mapping
+      string proxyHost = _settings["ProxyHost"];
+      string proxyPort = _settings["ProxyPort"];
+      string rdsUri = _settings["ReferenceDataServiceUri"];
 
-        [Inject]
-        public AdapterProvider(NameValueCollection settings)
+      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      {
+        WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+
+        webProxy.Credentials = _settings.GetProxyCredential();
+
+        _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
+      }
+      else
+      {
+        _webHttpClient = new WebHttpClient(rdsUri);
+      }
+      #endregion
+
+      string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
+      _settings["ScopesPath"] = scopesPath;
+
+      if (File.Exists(scopesPath))
+      {
+        _scopes = Utility.Read<Resource>(scopesPath);
+      }
+      else
+      {
+        _scopes = new Resource();
+        Utility.Write<Resource>(_scopes, scopesPath);
+      }
+
+      string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
+
+      //Ninject Extension requires fully qualified path.
+      string bindingConfigurationPath = Path.Combine(
+        _settings["BaseDirectoryPath"],
+        relativePath
+      );
+
+      _kernel.Load(bindingConfigurationPath);
+
+      InitializeIdentity();
+    }
+
+    #region application methods
+    public Resource GetScopes()
+    {
+      try
+      {
+        return _scopes;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetScopes: {0}", ex));
+        throw new Exception(string.Format("Error getting the list of scopes: {0}", ex));
+      }
+    }
+
+    public VersionInfo GetVersion()
+    {
+      Version version = this.GetType().Assembly.GetName().Version;
+
+      return new VersionInfo()
+      {
+        Major = version.Major,
+        Minor = version.Minor,
+        Build = version.Build,
+        Revision = version.Revision
+      };
+    }
+
+    //public Response AddScope(ScopeProject scope)
+    //{
+    //  Response response = new Response();
+    //  Status status = new Status();
+
+    //  response.StatusList.Add(status);
+
+    //  try
+    //  {
+    //    Resource sc = _scopes.Find(x => x.Name.ToLower() == scope.Name.ToLower());
+
+    //    if (sc == null)
+    //    {
+    //      _scopes.Add(scope);
+    //      Utility.Write<Resource>(_scopes, _settings["ScopesPath"], true);
+    //      status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
+    //    }
+    //    else
+    //    {
+    //      status.Level = StatusLevel.Error;
+    //      status.Messages.Add(String.Format("Scope [{0}] already exists.", scope.Name));
+    //    }
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
+
+    //    status.Level = StatusLevel.Error;
+    //    status.Messages.Add(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
+    //  }
+
+    //  return response;
+    //}
+
+    public Response UpdateScope(string newScope, Locator oldScope)
+    {
+      Response response = new Response();
+      Status status = new Status();
+      response.StatusList.Add(status);
+
+      try
+      {
+        if (oldScope == null)
         {
-            var ninjectSettings = new NinjectSettings { LoadExtensions = false, UseReflectionBasedInjection = true };
-            _kernel = new StandardKernel(ninjectSettings, new AdapterModule());
+          status.Level = StatusLevel.Error;
+          status.Messages.Add(String.Format("Scope [{0}] does not exist.", oldScope));
+        }
+        else
+        {
+          //
+          // add new scope and move applications in the existing scope to the new one
+          //
+          //AddScope(scope);
 
-            _kernel.Load(new XmlExtensionModule());
-            _settings = _kernel.Get<AdapterSettings>();
-            _settings.AppendSettings(settings);
-
-            Directory.SetCurrentDirectory(_settings["BaseDirectoryPath"]);
-
-            #region initialize webHttpClient for converting old mapping
-            string proxyHost = _settings["ProxyHost"];
-            string proxyPort = _settings["ProxyPort"];
-            string rdsUri = _settings["ReferenceDataServiceUri"];
-
-            if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+          if (oldScope.Applications != null)
+          {
+            foreach (EndpointApplication app in oldScope.Applications)
             {
-                WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+              //
+              // copy database dictionary
+              //
+              string path = _settings["AppDataPath"];
+              string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, oldScope.Context, app.Endpoint);
 
-                webProxy.Credentials = _settings.GetProxyCredential();
+              if (File.Exists(currDictionaryPath))
+              {
+                string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, newScope, app.Endpoint);
+                File.Copy(currDictionaryPath, updatedDictionaryPath);
+              }
 
-                _webHttpClient = new WebHttpClient(rdsUri, null, webProxy);
+              AddApplication(newScope, app);
+              DeleteApplicationArtifacts(oldScope.Context, app.Endpoint);
             }
-            else
+          }
+
+          // delete old scope
+          //DeleteScope(oldScope.Context);          
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(String.Format("Error updating scope [{0}]: {1}", oldScope.Context, ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(String.Format("Error updating scope [{0}]: {1}", oldScope.Context, ex));
+      }
+
+      return response;
+    }
+
+    public Response DeleteScope(string scopeName)
+    {
+      Response response = new Response();
+      Status status = new Status();
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        if (_scopes.Locators == null)
+          GetResource();
+
+        Locator sc = _scopes.Locators.Find(x => x.Context.ToLower() == scopeName.ToLower());
+
+        if (sc == null)
+        {
+          status.Level = StatusLevel.Error;
+          status.Messages.Add(String.Format("Scope [{0}] not found.", scopeName));
+        }
+        else
+        {
+          //
+          // delete all applications under scope
+          //
+          if (sc.Applications != null)
+          {
+            for (int i = 0; i < sc.Applications.Count; i++)
             {
-                _webHttpClient = new WebHttpClient(rdsUri);
+              EndpointApplication app = sc.Applications[i];
+              DeleteApplicationArtifacts(sc.Context, app.Endpoint);
+              sc.Applications.RemoveAt(i--);
             }
-            #endregion
+          }
 
-            string scopesPath = String.Format("{0}Scopes.xml", _settings["AppDataPath"]);
-            _settings["ScopesPath"] = scopesPath;
+          // remove scope from scope list
+          //_scopes.Remove(sc);
 
-            if (File.Exists(scopesPath))
+          //Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+          status.Messages.Add(String.Format("Scope [{0}] deleted successfully.", scopeName));
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(String.Format("Error deleting scope [{0}]: {1}", scopeName, ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(String.Format("Error deleting scope [{0}]: {1}", scopeName, ex));
+      }
+
+      return response;
+    }
+
+    public Response AddApplication(string scopeName, EndpointApplication application)
+    {
+      Response response = new Response();
+      Status status = new Status();
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        //
+        // update binding configurations
+        //
+        string adapterBindingConfigPath = String.Format("{0}BindingConfiguration.Adapter.xml",
+          _settings["AppDataPath"]);
+
+        if (File.Exists(adapterBindingConfigPath))
+        {
+          XElement adapterBindingConfig = XElement.Load(adapterBindingConfigPath);
+
+          //
+          // update authorization binding
+          //
+          foreach (XElement bindElement in adapterBindingConfig.Elements("bind"))
+          {
+            if (bindElement.Attribute("name").Value == "IdentityLayer")
             {
-                _scopes = Utility.Read<Resource>(scopesPath);
-            }
-            else
-            {
-                _scopes = new Resource();
-                Utility.Write<Resource>(_scopes, scopesPath);
+              XAttribute toAttribute = bindElement.Attribute("to");
+              XElement authorizationBinding = null;
+
+              if (toAttribute.Value.ToString().Contains(typeof(AnonymousIdentityProvider).FullName))
+              {
+                authorizationBinding = new XElement("module",
+                  new XAttribute("name", "AuthorizationBindingConfiguration" + "." + scopeName + "." + application.Endpoint),
+                  new XElement("bind",
+                    new XAttribute("name", "AuthorizationBinding"),
+                    new XAttribute("service", "org.iringtools.nhibernate.IAuthorization, NHibernateLibrary"),
+                    new XAttribute("to", "org.iringtools.nhibernate.ext.EveryoneAuthorization, NHibernateExtension")
+                  )
+                );
+              }
+              else  // default to NHibernate Authorization
+              {
+                authorizationBinding = new XElement("module",
+                  new XAttribute("name", "AuthorizationBinding" + "." + scopeName + "." + application.Endpoint),
+                  new XElement("bind",
+                    new XAttribute("name", "AuthorizationBinding"),
+                    new XAttribute("service", "org.iringtools.nhibernate.IAuthorization, NHibernateLibrary"),
+                    new XAttribute("to", "org.iringtools.nhibernate.ext.NHibernateAuthorization, NHibernateExtension")
+                  )
+                );
+              }
+
+              authorizationBinding.Save(String.Format("{0}AuthorizationBindingConfiguration.{1}.{2}.xml",
+                  _settings["AppDataPath"], scopeName, application.Endpoint));
             }
 
-            string relativePath = String.Format("{0}BindingConfiguration.Adapter.xml", _settings["AppDataPath"]);
+            break;
+          }
 
-            //Ninject Extension requires fully qualified path.
-            string bindingConfigurationPath = Path.Combine(
-              _settings["BaseDirectoryPath"],
-              relativePath
+          //
+          // update summary binding
+          //
+          XElement summaryBinding = new XElement("module",
+            new XAttribute("name", "SummaryBinding" + "." + scopeName + "." + application.Endpoint),
+            new XElement("bind",
+              new XAttribute("name", "SummaryBinding"),
+              new XAttribute("service", "org.iringtools.nhibernate.ISummary, NHibernateLibrary"),
+              new XAttribute("to", "org.iringtools.nhibernate.ext.NHibernateSummary, NHibernateExtension")
+            )
+          );
+
+          summaryBinding.Save(String.Format("{0}SummaryBindingConfiguration.{1}.{2}.xml",
+              _settings["AppDataPath"], scopeName, application.Endpoint));
+
+          //
+          // update data layer binding
+          //
+          if (!String.IsNullOrEmpty(application.Assembly))
+          {
+            XElement dataLayerBinding = new XElement("module",
+              new XAttribute("name", "DataLayerBinding" + "." + scopeName + "." + application.Endpoint),
+              new XElement("bind",
+                new XAttribute("name", "DataLayer"),
+                new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+                new XAttribute("to", application.Assembly)
+              )
             );
 
-            _kernel.Load(bindingConfigurationPath);
-
-            InitializeIdentity();
+            dataLayerBinding.Save(String.Format("{0}BindingConfiguration.{1}.{2}.xml",
+                _settings["AppDataPath"], scopeName, application.Endpoint));
+          }
+        }
+        else
+        {
+          throw new Exception("Adapter binding configuration not found.");
         }
 
-        #region application methods
-        public Resource GetScopes()
+        //
+        // now add scope to scopes.xml
+        //
+        //if (scope.Applications == null)
+        //{
+        //  scope.Applications = new ScopeApplications();
+        //}
+
+        //scope.Applications.Add(application);
+        //Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+
+        response.Append(Generate(scopeName, application.Endpoint));
+        status.Messages.Add("Application [{0}.{1}] updated successfully.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, application.Endpoint, ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, application.Endpoint, ex));
+      }
+
+      return response;
+    }
+
+    public Response UpdateApplication(string scopeName, string appName, EndpointApplication updatedApp)
+    {
+      Response response = new Response();
+      Status status = new Status();
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        // check if this scope exists in the current scope list
+
+        if (_scopes.Locators == null)
+          GetResource();
+
+        Locator scope = _scopes.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == scopeName.ToLower());
+
+        if (scope == null)
         {
-            try
-            {
-                return _scopes;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in GetScopes: {0}", ex));
-                throw new Exception(string.Format("Error getting the list of scopes: {0}", ex));
-            }
+          throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
         }
 
-        public VersionInfo GetVersion()
-        {
-            Version version = this.GetType().Assembly.GetName().Version;
+        EndpointApplication application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == appName.ToLower());
 
-            return new VersionInfo()
-            {
-                Major = version.Major,
-                Minor = version.Minor,
-                Build = version.Build,
-                Revision = version.Revision
-            };
+        if (application != null)  // application exists, delete and re-create it
+        {
+          //
+          // copy database dictionary
+          //
+          string path = _settings["AppDataPath"];
+          string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, updatedApp.Endpoint);
+
+          if (File.Exists(currDictionaryPath))
+          {
+            string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, appName);
+            File.Copy(currDictionaryPath, updatedDictionaryPath);
+          }
+
+          DeleteApplication(scopeName, updatedApp);
+          AddApplication(scopeName, application);
+        }
+        else  // application does not exist, stop processing
+        {
+          throw new Exception(String.Format("Application [{0}.{1}] not found.", scopeName, appName));
         }
 
-        //public Response AddScope(ScopeProject scope)
-        //{
-        //  Response response = new Response();
-        //  Status status = new Status();
-
-        //  response.StatusList.Add(status);
-
-        //  try
-        //  {
-        //    Resource sc = _scopes.Find(x => x.Name.ToLower() == scope.Name.ToLower());
-
-        //    if (sc == null)
-        //    {
-        //      _scopes.Add(scope);
-        //      Utility.Write<Resource>(_scopes, _settings["ScopesPath"], true);
-        //      status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
-        //    }
-        //    else
-        //    {
-        //      status.Level = StatusLevel.Error;
-        //      status.Messages.Add(String.Format("Scope [{0}] already exists.", scope.Name));
-        //    }
-        //  }
-        //  catch (Exception ex)
-        //  {
-        //    _logger.Error(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
-
-        //    status.Level = StatusLevel.Error;
-        //    status.Messages.Add(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
-        //  }
-
-        //  return response;
-        //}
-
-        //public Response UpdateScope(string scopeName, ScopeProject scope)
-        //{
-        //  Response response = new Response();
-        //  Status status = new Status();
-
-        //  response.StatusList.Add(status);
-
-        //  try
-        //  {
-        //    ScopeProject sc = _scopes.Find(x => x.Name.ToLower() == scopeName.ToLower());
-
-        //    if (sc == null)
-        //    {
-        //      status.Level = StatusLevel.Error;
-        //      status.Messages.Add(String.Format("Scope [{0}] does not exist.", scope.Name));
-        //    }
-        //    else
-        //    {
-        //      //
-        //      // add new scope and move applications in the existing scope to the new one
-        //      //
-        //      AddScope(scope);
-
-        //      if (sc.Applications != null)
-        //      {
-        //        foreach (ScopeApplication app in sc.Applications)
-        //        {
-        //          //
-        //          // copy database dictionary
-        //          //
-        //          string path = _settings["AppDataPath"];
-        //          string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, app.Name);
-
-        //          if (File.Exists(currDictionaryPath))
-        //          {
-        //            string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scope.Name, app.Name);
-        //            File.Copy(currDictionaryPath, updatedDictionaryPath);
-        //          }
-
-        //          AddApplication(scope.Name, app);
-        //        }
-        //      }
-
-        //      // delete old scope
-        //      DeleteScope(scopeName);
-
-        //      Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
-        //      status.Messages.Add(String.Format("Scope [{0}] updated successfully.", scope.Name));
-        //    }
-        //  }
-        //  catch (Exception ex)
-        //  {
-        //    _logger.Error(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
-
-        //    status.Level = StatusLevel.Error;
-        //    status.Messages.Add(String.Format("Error updating scope [{0}]: {1}", scope.Name, ex));
-        //  }
-
-        //  return response;
-        //}
-
-        //public Response DeleteScope(string scopeName)
-        //{
-        //  Response response = new Response();
-        //  Status status = new Status();
-
-        //  response.StatusList.Add(status);
-
-        //  try
-        //  {
-        //    ScopeProject sc = _scopes.Find(x => x.Name.ToLower() == scopeName.ToLower());
-
-        //    if (sc == null)
-        //    {
-        //      status.Level = StatusLevel.Error;
-        //      status.Messages.Add(String.Format("Scope [{0}] not found.", scopeName));
-        //    }
-        //    else 
-        //    {
-        //      //
-        //      // delete all applications under scope
-        //      //
-        //      if (sc.Applications != null)
-        //      {
-        //        for (int i = 0; i < sc.Applications.Count; i++)
-        //        {
-        //          ScopeApplication app = sc.Applications[i];
-        //          DeleteApplicationArtifacts(sc.Name, app.Name);
-        //          sc.Applications.RemoveAt(i--);
-        //        }
-        //      }
-
-        //      // remove scope from scope list
-        //      _scopes.Remove(sc);
-
-        //      Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
-        //      status.Messages.Add(String.Format("Scope [{0}] deleted successfully.", scopeName));
-        //    }
-        //  }
-        //  catch (Exception ex)
-        //  {
-        //    _logger.Error(String.Format("Error deleting scope [{0}]: {1}", scopeName, ex));
-
-        //    status.Level = StatusLevel.Error;
-        //    status.Messages.Add(String.Format("Error deleting scope [{0}]: {1}", scopeName, ex));
-        //  }
-
-        //  return response;
-        //}
-
-        //public Response AddApplication(string scopeName, ScopeApplication application)
-        //{
-        //  Response response = new Response();
-        //  Status status = new Status();
-
-        //  response.StatusList.Add(status);
-
-        //  try
-        //  {
-        //    ScopeProject scope = _scopes.FirstOrDefault<ScopeProject>(o => o.Name.ToLower() == scopeName.ToLower());
-
-        //    if (scope == null)
-        //    {
-        //      throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
-        //    }
-
-        //    //
-        //    // update binding configurations
-        //    //
-        //    string adapterBindingConfigPath = String.Format("{0}BindingConfiguration.Adapter.xml",
-        //      _settings["AppDataPath"], scope.Name, application.Name);
-
-        //    if (File.Exists(adapterBindingConfigPath))
-        //    {
-        //      XElement adapterBindingConfig = XElement.Load(adapterBindingConfigPath);
-
-        //      //
-        //      // update authorization binding
-        //      //
-        //      foreach (XElement bindElement in adapterBindingConfig.Elements("bind"))
-        //      {
-        //        if (bindElement.Attribute("name").Value == "IdentityLayer")
-        //        {
-        //          XAttribute toAttribute = bindElement.Attribute("to");
-        //          XElement authorizationBinding = null;
-
-        //          if (toAttribute.Value.ToString().Contains(typeof(AnonymousIdentityProvider).FullName))
-        //          {
-        //            authorizationBinding = new XElement("module",
-        //              new XAttribute("name", "AuthorizationBinding" + "." + scope.Name + "." + application.Name),
-        //              new XElement("bind",
-        //                new XAttribute("name", "AuthorizationBinding"),
-        //                new XAttribute("service", "org.iringtools.nhibernate.IAuthorization, NHibernateLibrary"),
-        //                new XAttribute("to", "org.iringtools.nhibernate.ext.EveryoneAuthorization, NHibernateExtension")
-        //              )
-        //            );
-        //          }
-        //          else  // default to NHibernate Authorization
-        //          {
-        //            authorizationBinding = new XElement("module",
-        //              new XAttribute("name", "AuthorizationBinding" + "." + scope.Name + "." + application.Name),
-        //              new XElement("bind",
-        //                new XAttribute("name", "AuthorizationBinding"),
-        //                new XAttribute("service", "org.iringtools.nhibernate.IAuthorization, NHibernateLibrary"),
-        //                new XAttribute("to", "org.iringtools.nhibernate.ext.NHibernateAuthorization, NHibernateExtension")
-        //              )
-        //            );
-        //          }
-
-        //          authorizationBinding.Save(String.Format("{0}AuthorizationBindingConfiguration.{1}.{2}.xml",
-        //              _settings["AppDataPath"], scope.Name, application.Name));
-        //        }
-
-        //        break;
-        //      }
-
-        //      //
-        //      // update summary binding
-        //      //
-        //      XElement summaryBinding = new XElement("module",
-        //        new XAttribute("name", "SummaryBinding" + "." + scope.Name + "." + application.Name),
-        //        new XElement("bind",
-        //          new XAttribute("name", "SummaryBinding"),
-        //          new XAttribute("service", "org.iringtools.nhibernate.ISummary, NHibernateLibrary"),
-        //          new XAttribute("to", "org.iringtools.nhibernate.ext.NHibernateSummary, NHibernateExtension")
-        //        )
-        //      );
-
-        //      summaryBinding.Save(String.Format("{0}SummaryBindingConfiguration.{1}.{2}.xml",
-        //          _settings["AppDataPath"], scope.Name, application.Name));
-
-        //      //
-        //      // update data layer binding
-        //      //
-        //      if (!String.IsNullOrEmpty(application.Assembly))
-        //      {
-        //        XElement dataLayerBinding = new XElement("module",
-        //          new XAttribute("name", "DataLayerBinding" + "." + scope.Name + "." + application.Name),
-        //          new XElement("bind",
-        //            new XAttribute("name", "DataLayer"),
-        //            new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-        //            new XAttribute("to", application.Assembly)
-        //          )
-        //        );
-
-        //        dataLayerBinding.Save(String.Format("{0}BindingConfiguration.{1}.{2}.xml",
-        //            _settings["AppDataPath"], scope.Name, application.Name));
-        //      }
-        //    }
-        //    else
-        //    {
-        //      throw new Exception("Adapter binding configuration not found.");
-        //    }
-
-        //    //
-        //    // now add scope to scopes.xml
-        //    //
-        //    if (scope.Applications == null)
-        //    {
-        //      scope.Applications = new ScopeApplications();
-        //    }
-
-        //    scope.Applications.Add(application);
-        //    Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
-
-        //    response.Append(Generate(scope.Name, application.Name));
-        //    status.Messages.Add("Application [{0}.{1}] updated successfully.");
-        //  }
-        //  catch (Exception ex)
-        //  {
-        //    _logger.Error(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, application.Name, ex));
-
-        //    status.Level = StatusLevel.Error;
-        //    status.Messages.Add(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, application.Name, ex));
-        //  }
-
-        //  return response;
-        //}
-
-        //public Response UpdateApplication(string scopeName, string appName, ScopeApplication updatedApp)
-        //{
-        //  Response response = new Response();
-        //  Status status = new Status();
-
-        //  response.StatusList.Add(status);
-
-        //  try
-        //  {
-        //    // check if this scope exists in the current scope list
-        //    ScopeProject scope = _scopes.FirstOrDefault<ScopeProject>(o => o.Name.ToLower() == scopeName.ToLower());
-
-        //    if (scope == null)
-        //    {
-        //      throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
-        //    }
-
-        //    ScopeApplication application = scope.Applications.FirstOrDefault<ScopeApplication>(o => o.Name.ToLower() == appName.ToLower());
-
-        //    if (application != null)  // application exists, delete and re-create it
-        //    {
-        //      //
-        //      // copy database dictionary
-        //      //
-        //      string path = _settings["AppDataPath"];          
-        //      string currDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, appName);
-
-        //      if (File.Exists(currDictionaryPath))
-        //      {
-        //        string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, updatedApp.Name);
-        //        File.Copy(currDictionaryPath, updatedDictionaryPath);
-        //      }
-
-        //      DeleteApplication(scopeName, appName);
-        //      AddApplication(scopeName, updatedApp);
-        //    }
-        //    else  // application does not exist, stop processing
-        //    {
-        //      throw new Exception(String.Format("Application [{0}.{1}] not found.", scopeName, appName));
-        //    }
-
-        //    Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
-        //    status.Messages.Add("Application [{0}.{1}] updated successfully.");
-        //  }
-        //  catch (Exception ex)
-        //  {
-        //    _logger.Error(string.Format("Error updating application [{0}.{1}]: {2}", scopeName, updatedApp.Name, ex));
-
-        //    status.Level = StatusLevel.Error;
-        //    status.Messages.Add(string.Format("Error updating application [{0}.{1}]: {2}", scopeName, updatedApp.Name, ex));
-        //  }
-
-        //  return response;
-        //}
-
-        //public Response DeleteApplication(string scopeName, string appName)
-        //{
-        //  Response response = new Response();
-        //  Status status = new Status();
-
-        //  response.StatusList.Add(status);
-
-        //  try
-        //  {
-        //    bool found = false;
-
-        //    foreach (ScopeProject sc in _scopes)
-        //    {
-        //      if (sc.Name.ToLower() == scopeName.ToLower() && sc.Applications != null)
-        //      {
-        //        for (int i = 0; i < sc.Applications.Count; i++)
-        //        {
-        //          ScopeApplication app = sc.Applications[i];
-
-        //          if (app.Name.ToLower() == appName.ToLower())
-        //          {
-        //            DeleteApplicationArtifacts(sc.Name, app.Name);
-        //            sc.Applications.RemoveAt(i--);
-        //            found = true;
-        //            break;
-        //          }
-        //        }
-
-        //        break;
-        //      }
-        //    }
-
-        //    if (!found)
-        //    {
-        //      status.Level = StatusLevel.Error;
-        //      status.Messages.Add(String.Format("Application [{0}.{1}] not found.", scopeName, appName));
-        //    }
-        //    else
-        //    {
-        //      Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
-        //      status.Messages.Add(String.Format("Application [{0}.{1}] deleted successfully.", scopeName, appName));
-        //    }
-        //  }
-        //  catch (Exception ex)
-        //  {
-        //    _logger.Error(String.Format("Error deleting application [{0}.{1}]: {2}", scopeName, appName, ex));
-
-        //    status.Level = StatusLevel.Error;
-        //    status.Messages.Add(String.Format("Error deleting application [{0}.{1}]: {2}", scopeName, appName, ex));
-        //  }
-
-        //  return response;
-        //}
-
-        // delete all application artifacts except for its mapping
-        private void DeleteApplicationArtifacts(string scopeName, string appName)
+        //Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+        status.Messages.Add(String.Format("Application [{0}.{1}] updated successfully.", scopeName, appName));
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error updating application [{0}.{1}]: {2}", scopeName, updatedApp.Endpoint, ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error updating application [{0}.{1}]: {2}", scopeName, updatedApp.Endpoint, ex));
+      }
+
+      return response;
+    }
+
+    public Response DeleteApplication(string scopeName, EndpointApplication oldApp)
+    {
+      Response response = new Response();
+      Status status = new Status();
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        DeleteApplicationArtifacts(scopeName, oldApp.Endpoint);
+        status.Messages.Add(String.Format("Application [{0}.{1}] deleted successfully.", scopeName, oldApp));
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(String.Format("Error deleting application [{0}.{1}]: {2}", scopeName, oldApp, ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(String.Format("Error deleting application [{0}.{1}]: {2}", scopeName, oldApp, ex));
+      }
+
+      return response;
+    }
+
+    // delete all application artifacts except for its mapping
+    private void DeleteApplicationArtifacts(string scopeName, string appName)
+    {
+      string path = _settings["AppDataPath"];
+      string context = scopeName + "." + appName;
+
+      string authorizationPath = String.Format("{0}Authorization.{1}.xml", path, context);
+      if (File.Exists(authorizationPath))
+      {
+        File.Delete(authorizationPath);
+      }
+
+      string authorizationBindingPath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml", path, context);
+      if (File.Exists(authorizationBindingPath))
+      {
+        File.Delete(authorizationBindingPath);
+      }
+
+      string bindingConfigurationPath = String.Format("{0}BindingConfiguration.{1}.xml", path, context);
+      if (File.Exists(bindingConfigurationPath))
+      {
+        File.Delete(bindingConfigurationPath);
+      }
+
+      string databaseDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", path, context);
+      if (File.Exists(databaseDictionaryPath))
+      {
+        File.Delete(databaseDictionaryPath);
+      }
+
+      string dataDictionaryPath = String.Format("{0}DataDictionary.{1}.xml", path, context);
+      if (File.Exists(dataDictionaryPath))
+      {
+        File.Delete(dataDictionaryPath);
+      }
+
+      string nhConfigPath = String.Format("{0}nh-configuration.{1}.xml", path, context);
+      if (File.Exists(nhConfigPath))
+      {
+        File.Delete(nhConfigPath);
+      }
+
+      string nhMappingPath = String.Format("{0}nh-mapping.{1}.xml", path, context);
+      if (File.Exists(nhMappingPath))
+      {
+        File.Delete(nhMappingPath);
+      }
+
+      string summaryBindingConfigurationPath = String.Format("{0}SummaryBindingConfiguration.{1}.xml", path, context);
+      if (File.Exists(summaryBindingConfigurationPath))
+      {
+        File.Delete(summaryBindingConfigurationPath);
+      }
+
+      string summaryConfigPath = String.Format("{0}SummaryConfig.{1}.xml", path, context);
+      if (File.Exists(summaryConfigPath))
+      {
+        File.Delete(summaryConfigPath);
+      }
+
+      string appCodePath = String.Format("{0}Model.{1}.cs", _settings["AppCodePath"], context);
+      if (File.Exists(appCodePath))
+      {
+        File.Delete(appCodePath);
+      }
+    }
+
+    #region Generate methods
+    public Response Generate()
+    {
+      Response response = new Response();
+      Status status = new Status()
+      {
+        Identifier = "Contexts"
+      };
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        if (_scopes.Locators == null)
+          GetResource();
+
+        foreach (Locator scope in _scopes.Locators)
         {
-            string path = _settings["AppDataPath"];
-            string context = scopeName + "." + appName;
-
-            string authorizationPath = String.Format("{0}Authorization.{1}.xml", path, context);
-            if (File.Exists(authorizationPath))
-            {
-                File.Delete(authorizationPath);
-            }
-
-            string authorizationBindingPath = String.Format("{0}AuthorizationBindingConfiguration.{1}.xml", path, context);
-            if (File.Exists(authorizationBindingPath))
-            {
-                File.Delete(authorizationBindingPath);
-            }
-
-            string bindingConfigurationPath = String.Format("{0}BindingConfiguration.{1}.xml", path, context);
-            if (File.Exists(bindingConfigurationPath))
-            {
-                File.Delete(bindingConfigurationPath);
-            }
-
-            string databaseDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", path, context);
-            if (File.Exists(databaseDictionaryPath))
-            {
-                File.Delete(databaseDictionaryPath);
-            }
-
-            string dataDictionaryPath = String.Format("{0}DataDictionary.{1}.xml", path, context);
-            if (File.Exists(dataDictionaryPath))
-            {
-                File.Delete(dataDictionaryPath);
-            }
-
-            string nhConfigPath = String.Format("{0}nh-configuration.{1}.xml", path, context);
-            if (File.Exists(nhConfigPath))
-            {
-                File.Delete(nhConfigPath);
-            }
-
-            string nhMappingPath = String.Format("{0}nh-mapping.{1}.xml", path, context);
-            if (File.Exists(nhMappingPath))
-            {
-                File.Delete(nhMappingPath);
-            }
-
-            string summaryBindingConfigurationPath = String.Format("{0}SummaryBindingConfiguration.{1}.xml", path, context);
-            if (File.Exists(summaryBindingConfigurationPath))
-            {
-                File.Delete(summaryBindingConfigurationPath);
-            }
-
-            string summaryConfigPath = String.Format("{0}SummaryConfig.{1}.xml", path, context);
-            if (File.Exists(summaryConfigPath))
-            {
-                File.Delete(summaryConfigPath);
-            }
-
-            string appCodePath = String.Format("{0}Model.{1}.cs", _settings["AppCodePath"], context);
-            if (File.Exists(appCodePath))
-            {
-                File.Delete(appCodePath);
-            }
+          response.Append(Generate(scope));
         }
 
-        #region Generate methods
-        public Response Generate()
+        status.Messages.Add("Artifacts are generated successfully.");
+      }
+      catch (Exception ex)
+      {
+        string error = String.Format("Error generating application artifacts, {0}", ex);
+        _logger.Error(error);
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(error);
+      }
+
+      return response;
+    }
+
+    private Response Generate(Locator scope)
+    {
+      Response response = new Response();
+      Status status = new Status()
+      {
+        Identifier = scope.Context
+      };
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        foreach (EndpointApplication app in scope.Applications)
         {
-            Response response = new Response();
-            Status status = new Status()
-            {
-                Identifier = "Scopes"
-            };
-
-            response.StatusList.Add(status);
-
-            try
-            {
-                foreach (Locator scope in _scopes.Locators)
-                {
-                    response.Append(Generate(scope));
-                }
-
-                status.Messages.Add("Artifacts are generated successfully.");
-            }
-            catch (Exception ex)
-            {
-                string error = String.Format("Error generating application artifacts, {0}", ex);
-                _logger.Error(error);
-
-                status.Level = StatusLevel.Error;
-                status.Messages.Add(error);
-            }
-
-            return response;
+          response.Append(Generate(scope.Context, app.Endpoint));
         }
 
-        private Response Generate(Locator scope)
+        status.Messages.Add("Artifacts are generated successfully.");
+      }
+      catch (Exception ex)
+      {
+        string error = String.Format("Error generating application artifacts, {0}", ex);
+        _logger.Error(error);
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(error);
+      }
+
+      return response;
+    }
+
+    public Response Generate(string scope)
+    {
+      foreach (Locator sc in _scopes.Locators)
+      {
+        if (sc.Context.ToLower() == scope.ToLower())
         {
-            Response response = new Response();
-            Status status = new Status()
-            {
-                Identifier = scope.Context
-            };
-
-            response.StatusList.Add(status);
-
-            try
-            {
-                foreach (EndpointApplication app in scope.Applications)
-                {
-                    response.Append(Generate(scope.Context, app.Endpoint));
-                }
-
-                status.Messages.Add("Artifacts are generated successfully.");
-            }
-            catch (Exception ex)
-            {
-                string error = String.Format("Error generating application artifacts, {0}", ex);
-                _logger.Error(error);
-
-                status.Level = StatusLevel.Error;
-                status.Messages.Add(error);
-            }
-
-            return response;
+          return Generate(sc);
         }
+      }
 
-        public Response Generate(string scope)
-        {
-            foreach (Locator sc in _scopes.Locators)
-            {
-                if (sc.Context.ToLower() == scope.ToLower())
-                {
-                    return Generate(sc);
-                }
-            }
-
-            Response response = new Response()
-            {
-                Level = StatusLevel.Warning,
-                Messages = new Messages()
+      Response response = new Response()
+      {
+        Level = StatusLevel.Warning,
+        Messages = new Messages()
         {
           "Scope [" + scope + "] not found."
         }
-            };
+      };
 
-            return response;
+      return response;
+    }
+
+    public Response Generate(string scopeName, string newAppName)
+    {
+      Response response = new Response();
+      Locator scope = null;
+      EndpointApplication application = null;
+
+      Status status = new Status()
+      {
+        Identifier = scopeName + "." + newAppName
+      };
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        InitializeScope(scopeName, newAppName);
+
+        scope = _scopes.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == scopeName.ToLower());
+
+        if (scope == null)
+        {
+          throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
         }
 
-        public Response Generate(string scopeName, string appName)
+        if (scope.Applications == null)
         {
-            Response response = new Response();
-            Locator scope = null;
-            EndpointApplication application = null;
-
-            Status status = new Status()
-            {
-                Identifier = scopeName + "." + appName
-            };
-
-            response.StatusList.Add(status);
-
-            try
-            {
-                InitializeScope(scopeName, appName);
-
-                scope = _scopes.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == scopeName.ToLower());
-
-                if (scope == null)
-                {
-                    throw new Exception(String.Format("Scope [{0}] not found.", scopeName));
-                }
-
-                if (scope.Applications == null)
-                {
-                    throw new Exception(String.Format("No applications found in scope [{0}].", scopeName));
-                }
-
-                application = scope.Applications.Find(o => o.Endpoint.ToLower() == appName.ToLower());
-
-                if (application == null)
-                {
-                    throw new Exception(String.Format("Application [{0}] is not found in scope [{1}].", appName, scopeName));
-                }
-
-                string path = _settings["AppDataPath"];
-                string context = scope.Context + "." + application.Endpoint;
-                string bindingPath = String.Format("{0}BindingConfiguration.{1}.xml", path, context);
-                XElement binding = XElement.Load(bindingPath);
-
-                if (binding.Element("bind").Attribute("to").Value.Contains(typeof(NHibernateDataLayer).Name))
-                {
-                    string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", path, context);
-                    DatabaseDictionary dbDictionary = null;
-
-                    if (File.Exists(dbDictionaryPath))
-                    {
-                        dbDictionary = NHibernateUtility.LoadDatabaseDictionary(dbDictionaryPath);
-                    }
-
-                    if (dbDictionary != null && dbDictionary.dataObjects != null)
-                    {
-                        EntityGenerator generator = _kernel.Get<EntityGenerator>();
-
-                        string compilerVersion = "v4.0";
-                        if (!String.IsNullOrEmpty(_settings["CompilerVersion"]))
-                        {
-                            compilerVersion = _settings["CompilerVersion"];
-                        }
-
-                        response.Append(generator.Generate(compilerVersion, dbDictionary, scope.Context, application.Endpoint));
-                    }
-                    else
-                    {
-                        status.Level = StatusLevel.Warning;
-                        status.Messages.Add(string.Format("Database dictionary [{0}.{1}] does not exist.", scopeName, application.Endpoint));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, appName, ex));
-
-                status.Level = StatusLevel.Error;
-                status.Messages.Add(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, appName, ex));
-            }
-
-            return response;
-        }
-        #endregion Generate methods
-
-        public XElement GetBinding(string projectName, string applicationName)
-        {
-            XElement binding = null;
-
-            try
-            {
-                InitializeScope(projectName, applicationName);
-
-                binding = XElement.Load(_settings["BindingConfigurationPath"]);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
-                throw ex;
-            }
-            return binding;
+          throw new Exception(String.Format("No applications found in scope [{0}].", scopeName));
         }
 
-        public Response UpdateBinding(string projectName, string applicationName, XElement binding)
+        application = scope.Applications.Find(o => o.Endpoint.ToLower() == newAppName.ToLower());
+
+        if (application == null)
         {
-            Response response = new Response();
-            Status status = new Status();
-
-            response.StatusList.Add(status);
-
-            try
-            {
-                status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
-
-                InitializeScope(projectName, applicationName);
-
-                XDocument bindingConfiguration = new XDocument();
-                bindingConfiguration.Add(binding);
-
-                bindingConfiguration.Save(_settings["BindingConfigurationPath"]);
-
-                status.Messages.Add("BindingConfiguration of [" + projectName + "." + applicationName + "] updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
-
-                status.Level = StatusLevel.Error;
-                status.Messages.Add(string.Format("Error updating the binding configuration: {0}", ex));
-            }
-
-            return response;
-        }
-        #endregion
-
-        #region adapter methods
-        public DataDictionary GetDictionary(string projectName, string applicationName)
-        {
-            try
-            {
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-
-                return _kernel.TryGet<DataDictionary>();
-
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in GetDictionary: {0}", ex));
-                throw new Exception(string.Format("Error getting data dictionary: {0}", ex));
-            }
+          throw new Exception(String.Format("Application [{0}] is not found in scope [{1}].", newAppName, scopeName));
         }
 
-        public Contexts GetContexts(string applicationName)
+        string path = _settings["AppDataPath"];
+        string context = scope.Context + "." + newAppName;
+        string bindingPath = String.Format("{0}BindingConfiguration.{1}.xml", path, context);
+        XElement binding = XElement.Load(bindingPath);
+
+        if (binding.Element("bind").Attribute("to").Value.Contains(typeof(NHibernateDataLayer).Name))
         {
-            try
+          string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", path, context);
+          DatabaseDictionary dbDictionary = null;
+
+          if (File.Exists(dbDictionaryPath))
+          {
+            dbDictionary = NHibernateUtility.LoadDatabaseDictionary(dbDictionaryPath);
+          }
+
+          if (dbDictionary != null && dbDictionary.dataObjects != null)
+          {
+            EntityGenerator generator = _kernel.Get<EntityGenerator>();
+
+            string compilerVersion = "v4.0";
+            if (!String.IsNullOrEmpty(_settings["CompilerVersion"]))
             {
-                Contexts contexts = new Contexts();
-
-                foreach (Locator scope in _scopes.Locators)
-                {
-                    if (scope.Context.ToLower() != "all")
-                    {
-                        var app = scope.Applications.Find(a => a.Endpoint.ToUpper() == applicationName.ToUpper());
-
-                        if (app != null)
-                        {
-                            Context context = new Context
-                            {
-                                Name = scope.Context,
-                                Description = "",
-                            };
-
-                            contexts.Add(context);
-                        }
-                    }
-                }
-
-                return contexts;
+              compilerVersion = _settings["CompilerVersion"];
             }
-            catch (Exception ex)
+
+            response.Append(generator.Generate(compilerVersion, dbDictionary, scope.Context, application.Endpoint));
+          }
+          else
+          {
+            status.Level = StatusLevel.Warning;
+            status.Messages.Add(string.Format("Database dictionary [{0}.{1}] does not exist.", scopeName, application.Endpoint));
+          }
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, newAppName, ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error adding application [{0}.{1}]: {2}", scopeName, newAppName, ex));
+      }
+
+      return response;
+    }
+    #endregion Generate methods
+
+    public XElement GetBinding(string projectName, string applicationName)
+    {
+      XElement binding = null;
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+
+        binding = XElement.Load(_settings["BindingConfigurationPath"]);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
+        //throw ex;
+      }
+      return binding;
+    }
+
+    public Response UpdateBinding(string projectName, string applicationName, XElement binding)
+    {
+      Response response = new Response();
+      Status status = new Status();
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
+        InitializeScope(projectName, applicationName);
+
+        XDocument bindingConfiguration = new XDocument();
+        bindingConfiguration.Add(binding);
+
+        bindingConfiguration.Save(_settings["BindingConfigurationPath"]);
+
+        status.Messages.Add("BindingConfiguration of [" + projectName + "." + applicationName + "] updated successfully.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in UpdateBindingConfiguration: {0}", ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error updating the binding configuration: {0}", ex));
+      }
+
+      return response;
+    }
+    #endregion
+
+    #region adapter methods
+    public DataDictionary GetDictionary(string projectName, string applicationName)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        return _kernel.TryGet<DataDictionary>();
+
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetDictionary: {0}", ex));
+        throw new Exception(string.Format("Error getting data dictionary: {0}", ex));
+      }
+    }
+
+    public Contexts GetContexts(string applicationName)
+    {
+      try
+      {
+        Contexts contexts = new Contexts();
+
+        foreach (Locator scope in _scopes.Locators)
+        {
+          if (scope.Context.ToLower() != "all")
+          {
+            var app = scope.Applications.Find(a => a.Endpoint.ToUpper() == applicationName.ToUpper());
+
+            if (app != null)
             {
-                _logger.Error(string.Format("Error in GetContexts for {0}: {1}", applicationName, ex));
-                throw new Exception(string.Format("Error in GetContexts for {0}: {1}", applicationName, ex));
+              Context context = new Context
+              {
+                Name = scope.Context,
+                Description = "",
+              };
+
+              contexts.Add(context);
             }
+          }
         }
 
-        public WADLApplication GetWADL(string projectName, string applicationName)
+        return contexts;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetContexts for {0}: {1}", applicationName, ex));
+        throw new Exception(string.Format("Error in GetContexts for {0}: {1}", applicationName, ex));
+      }
+    }
+
+    public WADLApplication GetWADL(string projectName, string applicationName)
+    {
+      WADLApplication wadl = new WADLApplication();
+
+      try
+      {
+        bool isAll = projectName == "all";
+        bool isApp = projectName == "app";
+        if (isApp)
         {
-            WADLApplication wadl = new WADLApplication();
+          //get thie first context and initialize everything
+          Context context = GetContexts(applicationName).FirstOrDefault();
 
-            try
-            {
-                bool isAll = projectName == "all";
-                bool isApp = projectName == "app";
-                if (isApp)
-                {
-                    //get thie first context and initialize everything
-                    Context context = GetContexts(applicationName).FirstOrDefault();
+          if (context == null)
+            throw new WebFaultException(HttpStatusCode.NotFound);
 
-                    if (context == null)
-                        throw new WebFaultException(HttpStatusCode.NotFound);
+          projectName = context.Name;
+        }
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
 
-                    projectName = context.Name;
-                }
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
+        bool isReadOnly = (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true");
 
-                bool isReadOnly = (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true");
+        // load uri maps config
+        Properties _uriMaps = new Properties();
 
-                // load uri maps config
-                Properties _uriMaps = new Properties();
+        string uriMapsFilePath = _settings["AppDataPath"] + "UriMaps.conf";
 
-                string uriMapsFilePath = _settings["AppDataPath"] + "UriMaps.conf";
+        if (File.Exists(uriMapsFilePath))
+        {
+          try
+          {
+            _uriMaps.Load(uriMapsFilePath);
+          }
+          catch (Exception e)
+          {
+            _logger.Info("Error loading [UriMaps.config]: " + e);
+          }
+        }
 
-                if (File.Exists(uriMapsFilePath))
-                {
-                    try
-                    {
-                        _uriMaps.Load(uriMapsFilePath);
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.Info("Error loading [UriMaps.config]: " + e);
-                    }
-                }
+        string baseUri = _settings["GraphBaseUri"];
+        if (isAll)
+          baseUri += "all/";
 
-                string baseUri = _settings["GraphBaseUri"];
-                if (isAll)
-                    baseUri += "all/";
+        string appBaseUri = Utility.FormAppBaseURI(_uriMaps, baseUri, applicationName);
+        string baseResource = String.Empty;
 
-                string appBaseUri = Utility.FormAppBaseURI(_uriMaps, baseUri, applicationName);
-                string baseResource = String.Empty;
+        if (!isApp && !isAll)
+        {
+          appBaseUri = appBaseUri + "/" + projectName;
+        }
+        else if (!isAll)
+        {
+          baseResource = "/{contextName}";
+        }
 
-                if (!isApp && !isAll)
-                {
-                    appBaseUri = appBaseUri + "/" + projectName;
-                }
-                else if (!isAll)
-                {
-                    baseResource = "/{contextName}";
-                }
+        WADLResources resources = new WADLResources
+        {
+          @base = appBaseUri,
+        };
 
-                WADLResources resources = new WADLResources
-                {
-                    @base = appBaseUri,
-                };
+        string title = _application.Endpoint;
+        if (title == String.Empty)
+          title = applicationName;
 
-                string title = _application.Endpoint;
-                if (title == String.Empty)
-                    title = applicationName;
+        string appDescription = "This is an iRINGTools endpoint.";
+        if (_application.Description != null && _application.Description != String.Empty)
+          appDescription = _application.Description;
 
-                string appDescription = "This is an iRINGTools endpoint.";
-                if (_application.Description != null && _application.Description != String.Empty)
-                    appDescription = _application.Description;
+        string header = "<div id=\"wadlDescription\">" +
+            "  <p class=\"wadlDescText\">" +
+            "    " + appDescription +
+            "  </p>" +
+            "  <ul class=\"wadlList\">" +
+            "    <li>API access is restricted to Authorized myPSN Users only.</li>" +
+            "    <li>The attributes available for each context may be different.</li>" +
+            "  </ul>" +
+            "</div>";
 
-                string header = "<div id=\"wadlDescription\">" +
-                    "  <p class=\"wadlDescText\">" +
-                    "    " + appDescription +
-                    "  </p>" +
-                    "  <ul class=\"wadlList\">" +
-                    "    <li>API access is restricted to Authorized myPSN Users only.</li>" +
-                    "    <li>The attributes available for each context may be different.</li>" +
-                    "  </ul>" +
-                    "</div>";
+        XmlDocument dummy = new XmlDocument();
+        XmlNode[] headerDocText = new XmlNode[] { dummy.CreateCDataSection(header) };
 
-                XmlDocument dummy = new XmlDocument();
-                XmlNode[] headerDocText = new XmlNode[] { dummy.CreateCDataSection(header) };
+        WADLHeaderDocumentation doc = new WADLHeaderDocumentation
+        {
+          title = title,
+          CData = headerDocText,
+        };
 
-                WADLHeaderDocumentation doc = new WADLHeaderDocumentation
-                {
-                    title = title,
-                    CData = headerDocText,
-                };
+        resources.Items.Add(doc);
 
-                resources.Items.Add(doc);
-
-                if (isApp)
-                {
-                    #region Build Contexts Resource
-                    WADLResource contexts = new WADLResource
-                    {
-                        path = "/contexts",
-                        Items = new List<object>
+        if (isApp)
+        {
+          #region Build Contexts Resource
+          WADLResource contexts = new WADLResource
+          {
+            path = "/contexts",
+            Items = new List<object>
             {
               new WADLMethod
               {
@@ -1060,19 +1027,19 @@ namespace org.iringtools.adapter
                 }
               }
             }
-                    };
+          };
 
-                    resources.Items.Add(contexts);
-                    #endregion
-                }
+          resources.Items.Add(contexts);
+          #endregion
+        }
 
-                if (_dataDictionary.enableSummary)
-                {
-                    #region Build Summary Resource
-                    WADLResource summary = new WADLResource
-                    {
-                        path = baseResource + "/summary",
-                        Items = new List<object>
+        if (_dataDictionary.enableSummary)
+        {
+          #region Build Summary Resource
+          WADLResource summary = new WADLResource
+          {
+            path = baseResource + "/summary",
+            Items = new List<object>
             {
               new WADLMethod
               {
@@ -1106,21 +1073,21 @@ namespace org.iringtools.adapter
                 }
               }
             }
-                    };
+          };
 
-                    resources.Items.Add(summary);
-                    #endregion
-                }
+          resources.Items.Add(summary);
+          #endregion
+        }
 
-                foreach (DataObject dataObject in _dataDictionary.dataObjects)
-                {
-                    if (!dataObject.isRelatedOnly)
-                    {
-                        #region Build DataObject List Resource
-                        WADLResource list = new WADLResource
-                        {
-                            path = baseResource + "/" + dataObject.objectName.ToLower(),
-                            Items = new List<object>
+        foreach (DataObject dataObject in _dataDictionary.dataObjects)
+        {
+          if (!dataObject.isRelatedOnly)
+          {
+            #region Build DataObject List Resource
+            WADLResource list = new WADLResource
+            {
+              path = baseResource + "/" + dataObject.objectName.ToLower(),
+              Items = new List<object>
             {
               #region Build GetList Method
               new WADLMethod
@@ -1220,15 +1187,15 @@ namespace org.iringtools.adapter
               },
               #endregion
             }
-                        };
+            };
 
-                        if (!dataObject.isReadOnly && !isReadOnly)
-                        {
-                            #region Build PutList Method
-                            WADLMethod put = new WADLMethod
-                            {
-                                name = "PUT",
-                                Items = new List<object>
+            if (!dataObject.isReadOnly && !isReadOnly)
+            {
+              #region Build PutList Method
+              WADLMethod put = new WADLMethod
+              {
+                name = "PUT",
+                Items = new List<object>
               {
                 new WADLDocumentation
                 {
@@ -1284,16 +1251,16 @@ namespace org.iringtools.adapter
                   }
                 }
               }
-                            };
-                            #endregion
+              };
+              #endregion
 
-                            list.Items.Add(put);
+              list.Items.Add(put);
 
-                            #region Build PostList Method
-                            WADLMethod post = new WADLMethod
-                            {
-                                name = "POST",
-                                Items = new List<object>
+              #region Build PostList Method
+              WADLMethod post = new WADLMethod
+              {
+                name = "POST",
+                Items = new List<object>
               {
                 new WADLDocumentation
                 {
@@ -1349,22 +1316,22 @@ namespace org.iringtools.adapter
                   }
                 }
               }
-                            };
-                            #endregion
+              };
+              #endregion
 
-                            list.Items.Add(post);
-                        }
+              list.Items.Add(post);
+            }
 
-                        resources.Items.Add(list);
-                        #endregion
+            resources.Items.Add(list);
+            #endregion
 
-                        if (_dataDictionary.enableSearch)
-                        {
-                            #region Build DataObject Search Resource
-                            WADLResource search = new WADLResource
-                            {
-                                path = baseResource + "/" + dataObject.objectName.ToLower() + "/search?q={query}",
-                                Items = new List<object>
+            if (_dataDictionary.enableSearch)
+            {
+              #region Build DataObject Search Resource
+              WADLResource search = new WADLResource
+              {
+                path = baseResource + "/" + dataObject.objectName.ToLower() + "/search?q={query}",
+                Items = new List<object>
             {
               #region Build GetList Method
               new WADLMethod
@@ -1477,19 +1444,19 @@ namespace org.iringtools.adapter
               },
               #endregion
             }
-                            };
+              };
 
-                            resources.Items.Add(search);
-                            #endregion
-                        }
+              resources.Items.Add(search);
+              #endregion
+            }
 
-                        if (!dataObject.isListOnly)
-                        {
-                            #region Build DataObject Item Resource
-                            WADLResource item = new WADLResource
-                            {
-                                path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}",
-                                Items = new List<object>
+            if (!dataObject.isListOnly)
+            {
+              #region Build DataObject Item Resource
+              WADLResource item = new WADLResource
+              {
+                path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}",
+                Items = new List<object>
               {
                 #region Build GetItem Method
                 new WADLMethod
@@ -1606,15 +1573,15 @@ namespace org.iringtools.adapter
                 },
                 #endregion
               }
-                            };
+              };
 
-                            if (!dataObject.isReadOnly && !isReadOnly)
-                            {
-                                #region Build PutItem Method
-                                WADLMethod put = new WADLMethod
-                                {
-                                    name = "PUT",
-                                    Items = new List<object>
+              if (!dataObject.isReadOnly && !isReadOnly)
+              {
+                #region Build PutItem Method
+                WADLMethod put = new WADLMethod
+                {
+                  name = "PUT",
+                  Items = new List<object>
               {
                 new WADLDocumentation
                 {
@@ -1687,16 +1654,16 @@ namespace org.iringtools.adapter
                   }
                 }
               }
-                                };
-                                #endregion
+                };
+                #endregion
 
-                                item.Items.Add(put);
+                item.Items.Add(put);
 
-                                #region Build DeleteItem Method
-                                WADLMethod delete = new WADLMethod
-                                {
-                                    name = "DELETE",
-                                    Items = new List<object>
+                #region Build DeleteItem Method
+                WADLMethod delete = new WADLMethod
+                {
+                  name = "DELETE",
+                  Items = new List<object>
               {
                 new WADLDocumentation
                 {
@@ -1769,23 +1736,23 @@ namespace org.iringtools.adapter
                   }
                 }
               }
-                                };
-                                #endregion
+                };
+                #endregion
 
-                                item.Items.Add(delete);
-                            }
+                item.Items.Add(delete);
+              }
 
-                            resources.Items.Add(item);
-                            #endregion
-                        }
+              resources.Items.Add(item);
+              #endregion
+            }
 
-                        foreach (DataRelationship relationship in dataObject.dataRelationships)
-                        {
-                            #region Build DataObject List Resource
-                            WADLResource relatedList = new WADLResource
-                            {
-                                path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}/" + relationship.relationshipName.ToLower(),
-                                Items = new List<object>
+            foreach (DataRelationship relationship in dataObject.dataRelationships)
+            {
+              #region Build DataObject List Resource
+              WADLResource relatedList = new WADLResource
+              {
+                path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}/" + relationship.relationshipName.ToLower(),
+                Items = new List<object>
             {
               #region Build GetList Method
               new WADLMethod
@@ -1902,18 +1869,18 @@ namespace org.iringtools.adapter
               },
               #endregion
             }
-                            };
+              };
 
-                            resources.Items.Add(relatedList);
-                            #endregion
+              resources.Items.Add(relatedList);
+              #endregion
 
-                            if (relationship.relationshipType == RelationshipType.OneToMany)
-                            {
-                                #region Build DataObject Item Resource
-                                WADLResource relatedItem = new WADLResource
-                                {
-                                    path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}/" + relationship.relationshipName.ToLower() + "/{relatedIdentifier}",
-                                    Items = new List<object>
+              if (relationship.relationshipType == RelationshipType.OneToMany)
+              {
+                #region Build DataObject Item Resource
+                WADLResource relatedItem = new WADLResource
+                {
+                  path = baseResource + "/" + dataObject.objectName.ToLower() + "/{identifier}/" + relationship.relationshipName.ToLower() + "/{relatedIdentifier}",
+                  Items = new List<object>
                 {
                   #region Build GetItem Method
                   new WADLMethod
@@ -2047,176 +2014,176 @@ namespace org.iringtools.adapter
                   },
                   #endregion
                 }
-                                };
+                };
 
-                                resources.Items.Add(relatedItem);
-                                #endregion
-                            }
-                        }
-                    }
-                }
-
-                wadl.Items.Add(resources);
+                resources.Items.Add(relatedItem);
+                #endregion
+              }
             }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in GetDictionary: {0}", ex));
-                throw new Exception(string.Format("Error getting data dictionary: {0}", ex));
-            }
-
-            return wadl;
+          }
         }
 
-        public mapping.Mapping GetMapping(string projectName, string applicationName)
-        {
-            try
-            {
-                InitializeScope(projectName, applicationName);
+        wadl.Items.Add(resources);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetDictionary: {0}", ex));
+        throw new Exception(string.Format("Error getting data dictionary: {0}", ex));
+      }
 
-                return _mapping;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in GetMapping: {0}", ex));
-                throw new Exception(string.Format("Error getting mapping: {0}", ex));
-            }
+      return wadl;
+    }
+
+    public mapping.Mapping GetMapping(string projectName, string applicationName)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+
+        return _mapping;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetMapping: {0}", ex));
+        throw new Exception(string.Format("Error getting mapping: {0}", ex));
+      }
+    }
+
+    public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
+    {
+      Response response = new Response();
+      Status status = new Status();
+
+      response.StatusList.Add(status);
+
+      string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["AppDataPath"], projectName, applicationName);
+
+      try
+      {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
+        mapping.Mapping mapping = LoadMapping(path, mappingXml, ref status);
+
+        Utility.Write<mapping.Mapping>(mapping, path, true);
+
+        status.Messages.Add("Mapping of [" + projectName + "." + applicationName + "] updated successfully.");
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in UpdateMapping: {0}", ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error saving mapping file to path [{0}]: {1}", path, ex));
+      }
+
+      return response;
+    }
+
+    public Response Refresh(string projectName, string applicationName, string graphName)
+    {
+      Response response = new Response();
+      Status status = new Status();
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        response.Append(Refresh(graphName));
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in Refresh: {0}", ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error refreshing graph [{0}]: {1}", graphName, ex));
+      }
+
+      return response;
+    }
+
+    //DataFilter List
+    public XDocument GetDataProjection(
+      string projectName, string applicationName, string resourceName,
+        DataFilter filter, ref string format, int start, int limit, bool fullIndex)
+    {
+      try
+      {
+        _logger.DebugFormat("Initializing Scope: {0}.{1}", projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+        _logger.Debug("Initializing DataLayer.");
+        InitializeDataLayer();
+        _logger.DebugFormat("Initializing Projection: {0} as {1}", resourceName, format);
+        InitializeProjection(resourceName, ref format, false);
+
+        _projectionEngine.Start = start;
+        _projectionEngine.Limit = limit;
+
+        IList<string> index = new List<string>();
+
+        if (limit == 0)
+        {
+          limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
         }
 
-        public Response UpdateMapping(string projectName, string applicationName, XElement mappingXml)
+        _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
+        _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
+        _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
+        _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
+        _projectionEngine.FullIndex = fullIndex;
+
+        if (_isProjectionPart7)
         {
-            Response response = new Response();
-            Status status = new Status();
+          return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
+        }
+        else
+        {
+          return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
 
-            response.StatusList.Add(status);
+    //Search
+    public XDocument GetDataProjection(
+      string projectName, string applicationName, string resourceName,
+      ref string format, string query, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
+      NameValueCollection parameters)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
 
-            string path = string.Format("{0}Mapping.{1}.{2}.xml", _settings["AppDataPath"], projectName, applicationName);
+        if (!_dataDictionary.enableSearch)
+          throw new WebFaultException(HttpStatusCode.NotFound);
 
-            try
-            {
-                status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
+        InitializeProjection(resourceName, ref format, false);
 
-                mapping.Mapping mapping = LoadMapping(path, mappingXml, ref status);
+        IList<string> index = new List<string>();
 
-                Utility.Write<mapping.Mapping>(mapping, path, true);
-
-                status.Messages.Add("Mapping of [" + projectName + "." + applicationName + "] updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in UpdateMapping: {0}", ex));
-
-                status.Level = StatusLevel.Error;
-                status.Messages.Add(string.Format("Error saving mapping file to path [{0}]: {1}", path, ex));
-            }
-
-            return response;
+        if (limit == 0)
+        {
+          limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
         }
 
-        public Response Refresh(string projectName, string applicationName, string graphName)
+        _projectionEngine.Start = start;
+        _projectionEngine.Limit = limit;
+
+        DataFilter filter = new DataFilter();
+        if (parameters != null)
         {
-            Response response = new Response();
-            Status status = new Status();
-
-            response.StatusList.Add(status);
-
-            try
-            {
-                status.Identifier = String.Format("{0}.{1}", projectName, applicationName);
-
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-
-                response.Append(Refresh(graphName));
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in Refresh: {0}", ex));
-
-                status.Level = StatusLevel.Error;
-                status.Messages.Add(string.Format("Error refreshing graph [{0}]: {1}", graphName, ex));
-            }
-
-            return response;
-        }
-
-        //DataFilter List
-        public XDocument GetDataProjection(
-          string projectName, string applicationName, string resourceName,
-            DataFilter filter, ref string format, int start, int limit, bool fullIndex)
-        {
-            try
-            {
-                _logger.DebugFormat("Initializing Scope: {0}.{1}", projectName, applicationName);
-                InitializeScope(projectName, applicationName);
-                _logger.Debug("Initializing DataLayer.");
-                InitializeDataLayer();
-                _logger.DebugFormat("Initializing Projection: {0} as {1}", resourceName, format);
-                InitializeProjection(resourceName, ref format, false);
-
-                _projectionEngine.Start = start;
-                _projectionEngine.Limit = limit;
-
-                IList<string> index = new List<string>();
-
-                if (limit == 0)
-                {
-                    limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
-                }
-
-                _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
-                _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
-                _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
-                _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-                _projectionEngine.FullIndex = fullIndex;
-
-                if (_isProjectionPart7)
-                {
-                    return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
-                }
-                else
-                {
-                    return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-                throw ex;
-            }
-        }
-
-        //Search
-        public XDocument GetDataProjection(
-          string projectName, string applicationName, string resourceName,
-          ref string format, string query, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
-          NameValueCollection parameters)
-        {
-            try
-            {
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-
-                if (!_dataDictionary.enableSearch)
-                    throw new WebFaultException(HttpStatusCode.NotFound);
-
-                InitializeProjection(resourceName, ref format, false);
-
-                IList<string> index = new List<string>();
-
-                if (limit == 0)
-                {
-                    limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
-                }
-
-                _projectionEngine.Start = start;
-                _projectionEngine.Limit = limit;
-
-                DataFilter filter = new DataFilter();
-                if (parameters != null)
-                {
-                    foreach (string key in parameters.AllKeys)
-                    {
-                        string[] expectedParameters = { 
+          foreach (string key in parameters.AllKeys)
+          {
+            string[] expectedParameters = { 
                           "project",
                           "app",
                           "format", 
@@ -2231,106 +2198,106 @@ namespace org.iringtools.adapter
                           "q",
                         };
 
-                        if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
-                        {
-                            string value = parameters[key];
-
-                            Expression expression = new Expression
-                            {
-                                PropertyName = key,
-                                RelationalOperator = RelationalOperator.EqualTo,
-                                Values = new Values { value },
-                                IsCaseSensitive = false,
-                            };
-
-                            if (filter.Expressions.Count > 0)
-                            {
-                                expression.LogicalOperator = LogicalOperator.And;
-                            }
-
-                            filter.Expressions.Add(expression);
-                        }
-                    }
-
-                    if (!String.IsNullOrEmpty(sortBy))
-                    {
-                        OrderExpression orderBy = new OrderExpression
-                        {
-                            PropertyName = sortBy,
-                        };
-
-                        if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
-                        {
-                            orderBy.SortOrder = SortOrder.Desc;
-                        }
-                        else
-                        {
-                            orderBy.SortOrder = SortOrder.Asc;
-                        }
-
-                        filter.OrderExpressions.Add(orderBy);
-                    }
-
-                    _dataObjects = _dataLayer.Search(_dataObjDef.objectName, query, filter, limit, start);
-                    _projectionEngine.Count = _dataLayer.GetSearchCount(_dataObjDef.objectName, query, filter);
-                }
-                else
-                {
-                    _dataObjects = _dataLayer.Search(_dataObjDef.objectName, query, limit, start);
-                    _projectionEngine.Count = _dataLayer.GetSearchCount(_dataObjDef.objectName, query);
-                }
-                _projectionEngine.FullIndex = fullIndex;
-
-                if (_isProjectionPart7)
-                {
-                    return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
-                }
-                else
-                {
-                    return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
-                }
-            }
-            catch (Exception ex)
+            if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
             {
-                _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-                throw ex;
+              string value = parameters[key];
+
+              Expression expression = new Expression
+              {
+                PropertyName = key,
+                RelationalOperator = RelationalOperator.EqualTo,
+                Values = new Values { value },
+                IsCaseSensitive = false,
+              };
+
+              if (filter.Expressions.Count > 0)
+              {
+                expression.LogicalOperator = LogicalOperator.And;
+              }
+
+              filter.Expressions.Add(expression);
             }
+          }
+
+          if (!String.IsNullOrEmpty(sortBy))
+          {
+            OrderExpression orderBy = new OrderExpression
+            {
+              PropertyName = sortBy,
+            };
+
+            if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
+            {
+              orderBy.SortOrder = SortOrder.Desc;
+            }
+            else
+            {
+              orderBy.SortOrder = SortOrder.Asc;
+            }
+
+            filter.OrderExpressions.Add(orderBy);
+          }
+
+          _dataObjects = _dataLayer.Search(_dataObjDef.objectName, query, filter, limit, start);
+          _projectionEngine.Count = _dataLayer.GetSearchCount(_dataObjDef.objectName, query, filter);
+        }
+        else
+        {
+          _dataObjects = _dataLayer.Search(_dataObjDef.objectName, query, limit, start);
+          _projectionEngine.Count = _dataLayer.GetSearchCount(_dataObjDef.objectName, query);
+        }
+        _projectionEngine.FullIndex = fullIndex;
+
+        if (_isProjectionPart7)
+        {
+          return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
+        }
+        else
+        {
+          return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
+
+    //List
+    public XDocument GetDataProjection(
+      string projectName, string applicationName, string resourceName,
+      ref string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
+      NameValueCollection parameters)
+    {
+      try
+      {
+        _logger.DebugFormat("Initializing Scope: {0}.{1}", projectName, applicationName);
+        InitializeScope(projectName, applicationName);
+        _logger.Debug("Initializing DataLayer.");
+        InitializeDataLayer();
+        _logger.DebugFormat("Initializing Projection: {0} as {1}", resourceName, format);
+        InitializeProjection(resourceName, ref format, false);
+
+        IList<string> index = new List<string>();
+
+        if (limit == 0)
+        {
+          limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
         }
 
-        //List
-        public XDocument GetDataProjection(
-          string projectName, string applicationName, string resourceName,
-          ref string format, int start, int limit, string sortOrder, string sortBy, bool fullIndex,
-          NameValueCollection parameters)
+        _projectionEngine.Start = start;
+        _projectionEngine.Limit = limit;
+
+        DataFilter filter = new DataFilter();
+
+        if (parameters != null)
         {
-            try
-            {
-                _logger.DebugFormat("Initializing Scope: {0}.{1}", projectName, applicationName);
-                InitializeScope(projectName, applicationName);
-                _logger.Debug("Initializing DataLayer.");
-                InitializeDataLayer();
-                _logger.DebugFormat("Initializing Projection: {0} as {1}", resourceName, format);
-                InitializeProjection(resourceName, ref format, false);
+          _logger.Debug("Preparing Filter from parameters.");
 
-                IList<string> index = new List<string>();
-
-                if (limit == 0)
-                {
-                    limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
-                }
-
-                _projectionEngine.Start = start;
-                _projectionEngine.Limit = limit;
-
-                DataFilter filter = new DataFilter();
-
-                if (parameters != null)
-                {
-                    _logger.Debug("Preparing Filter from parameters.");
-
-                    foreach (string key in parameters.AllKeys)
-                    {
-                        string[] expectedParameters = { 
+          foreach (string key in parameters.AllKeys)
+          {
+            string[] expectedParameters = { 
                           "project",
                           "app",
                           "format", 
@@ -2344,647 +2311,647 @@ namespace org.iringtools.adapter
                           "callback",
                         };
 
-                        if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
-                        {
-                            string value = parameters[key];
-
-                            Expression expression = new Expression
-                            {
-                                PropertyName = key,
-                                RelationalOperator = RelationalOperator.EqualTo,
-                                Values = new Values { value },
-                                IsCaseSensitive = false,
-                            };
-
-                            if (filter.Expressions.Count > 0)
-                            {
-                                expression.LogicalOperator = LogicalOperator.And;
-                            }
-
-                            filter.Expressions.Add(expression);
-                        }
-                    }
-
-                    if (!String.IsNullOrEmpty(sortBy))
-                    {
-                        OrderExpression orderBy = new OrderExpression
-                        {
-                            PropertyName = sortBy,
-                        };
-
-                        if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
-                        {
-                            orderBy.SortOrder = SortOrder.Desc;
-                        }
-                        else
-                        {
-                            orderBy.SortOrder = SortOrder.Asc;
-                        }
-
-                        filter.OrderExpressions.Add(orderBy);
-                    }
-
-                    _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
-                    _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
-                    _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
-                    _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-                }
-                else
-                {
-                    _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
-                    _dataObjects = _dataLayer.Get(_dataObjDef.objectName, new DataFilter(), limit, start);
-                    _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, new DataFilter());
-                    _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
-                }
-
-                _projectionEngine.FullIndex = fullIndex;
-                _projectionEngine.BaseURI = (projectName.ToLower() == "all")
-                    ? String.Format("/{0}/{1}", applicationName, resourceName)
-                    : String.Format("/{0}/{1}/{2}", applicationName, projectName, resourceName);
-
-                if (_isProjectionPart7)
-                {
-                    return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
-                }
-                else
-                {
-                    return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
-                }
-            }
-            catch (Exception ex)
+            if (!expectedParameters.Contains(key, StringComparer.CurrentCultureIgnoreCase))
             {
-                _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-                throw ex;
+              string value = parameters[key];
+
+              Expression expression = new Expression
+              {
+                PropertyName = key,
+                RelationalOperator = RelationalOperator.EqualTo,
+                Values = new Values { value },
+                IsCaseSensitive = false,
+              };
+
+              if (filter.Expressions.Count > 0)
+              {
+                expression.LogicalOperator = LogicalOperator.And;
+              }
+
+              filter.Expressions.Add(expression);
             }
+          }
+
+          if (!String.IsNullOrEmpty(sortBy))
+          {
+            OrderExpression orderBy = new OrderExpression
+            {
+              PropertyName = sortBy,
+            };
+
+            if (String.Compare(SortOrder.Desc.ToString(), sortOrder, true) == 0)
+            {
+              orderBy.SortOrder = SortOrder.Desc;
+            }
+            else
+            {
+              orderBy.SortOrder = SortOrder.Asc;
+            }
+
+            filter.OrderExpressions.Add(orderBy);
+          }
+
+          _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
+          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, filter, limit, start);
+          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, filter);
+          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
+        }
+        else
+        {
+          _logger.DebugFormat("Getting DataObjects Page: {0} {1}", start, limit);
+          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, new DataFilter(), limit, start);
+          _projectionEngine.Count = _dataLayer.GetCount(_dataObjDef.objectName, new DataFilter());
+          _logger.DebugFormat("DataObjects Total Count: {0}", _projectionEngine.Count);
         }
 
-        //Individual
-        public object GetDataProjection(
-          string projectName, string applicationName, string resourceName, string className,
-           string classIdentifier, ref string format, bool fullIndex)
+        _projectionEngine.FullIndex = fullIndex;
+        _projectionEngine.BaseURI = (projectName.ToLower() == "all")
+            ? String.Format("/{0}/{1}", applicationName, resourceName)
+            : String.Format("/{0}/{1}/{2}", applicationName, projectName, resourceName);
+
+        if (_isProjectionPart7)
         {
-            string dataObjectName = String.Empty;
+          return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects);
+        }
+        else
+        {
+          return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
 
-            try
+    //Individual
+    public object GetDataProjection(
+      string projectName, string applicationName, string resourceName, string className,
+       string classIdentifier, ref string format, bool fullIndex)
+    {
+      string dataObjectName = String.Empty;
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+        InitializeProjection(resourceName, ref format, true);
+
+        if (_isFormatExpected)
+        {
+          if (_isResourceGraph)
+          {
+            _dataObjects = GetDataObject(className, classIdentifier);
+          }
+          else
+          {
+            List<string> identifiers = new List<string> { classIdentifier };
+            _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
+          }
+          _projectionEngine.Count = _dataObjects.Count;
+
+          _projectionEngine.BaseURI = (projectName.ToLower() == "all")
+            ? String.Format("/{0}/{1}", applicationName, resourceName)
+            : String.Format("/{0}/{1}/{2}", applicationName, projectName, resourceName);
+
+          if (_dataObjects != null && _dataObjects.Count > 0)
+          {
+            if (_isProjectionPart7)
             {
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-                InitializeProjection(resourceName, ref format, true);
-
-                if (_isFormatExpected)
-                {
-                    if (_isResourceGraph)
-                    {
-                        _dataObjects = GetDataObject(className, classIdentifier);
-                    }
-                    else
-                    {
-                        List<string> identifiers = new List<string> { classIdentifier };
-                        _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
-                    }
-                    _projectionEngine.Count = _dataObjects.Count;
-
-                    _projectionEngine.BaseURI = (projectName.ToLower() == "all")
-                      ? String.Format("/{0}/{1}", applicationName, resourceName)
-                      : String.Format("/{0}/{1}/{2}", applicationName, projectName, resourceName);
-
-                    if (_dataObjects != null && _dataObjects.Count > 0)
-                    {
-                        if (_isProjectionPart7)
-                        {
-                            return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects, className, classIdentifier);
-                        }
-                        else
-                        {
-                            return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Data object with identifier [" + classIdentifier + "] not found.");
-                    }
-                }
-                else
-                {
-                    List<string> identifiers = new List<string> { classIdentifier };
-                    _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
-
-                    if (_dataObjects != null && _dataObjects.Count > 0)
-                    {
-                        IContentObject contentObject = (IContentObject)_dataObjects[0];
-                        return contentObject;
-                    }
-
-                    return null;
-                }
+              return _projectionEngine.ToXml(_graphMap.name, ref _dataObjects, className, classIdentifier);
             }
-            catch (Exception ex)
+            else
             {
-                _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-                throw ex;
+              return _projectionEngine.ToXml(_dataObjDef.objectName, ref _dataObjects);
             }
+          }
+          else
+          {
+            throw new Exception("Data object with identifier [" + classIdentifier + "] not found.");
+          }
+        }
+        else
+        {
+          List<string> identifiers = new List<string> { classIdentifier };
+          _dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
+
+          if (_dataObjects != null && _dataObjects.Count > 0)
+          {
+            IContentObject contentObject = (IContentObject)_dataObjects[0];
+            return contentObject;
+          }
+
+          return null;
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
+
+    //Related
+    public XDocument GetDataProjection(
+        string projectName, string applicationName, string resourceName, string id, string relatedResourceName,
+        ref string format, int start, int limit)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+        InitializeProjection(resourceName, ref format, false);
+
+        IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
+        if (parentDataObject == null) return new XDocument();
+
+        DataRelationship dataRelationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
+        string relatedObjectType = dataRelationship.relatedObjectName;
+
+        if (limit == 0)
+        {
+          limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
         }
 
-        //Related
-        public XDocument GetDataProjection(
-            string projectName, string applicationName, string resourceName, string id, string relatedResourceName,
-            ref string format, int start, int limit)
+        _projectionEngine.Start = start;
+        _projectionEngine.Limit = limit;
+
+        _projectionEngine.BaseURI = (projectName.ToLower() == "all")
+            ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
+            : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
+
+        _projectionEngine.Count = _dataLayer.GetRelatedCount(parentDataObject, relatedObjectType);
+        _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, limit, start);
+
+        XDocument xdoc = _projectionEngine.ToXml(relatedObjectType, ref _dataObjects);
+        return xdoc;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
+
+    public XDocument GetDataProjection(string projectName, string applicationName, string resourceName, string id,
+      string relatedResourceName, string relatedId, ref string format)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+        InitializeProjection(resourceName, ref format, false);
+
+        IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
+        if (parentDataObject == null) return new XDocument();
+
+        _projectionEngine.BaseURI = (projectName.ToLower() == "all")
+            ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
+            : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
+
+        DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
+        DataObject relatedDataObject = _dataDictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
+
+        _dataObjects = _dataLayer.Get(relatedDataObject.objectName, new List<string> { relatedId });
+
+        XDocument xdoc = _projectionEngine.ToXml(relatedDataObject.objectName, ref _dataObjects);
+        return xdoc;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetProjection: {0}", ex));
+        throw ex;
+      }
+    }
+
+    private IList<IDataObject> GetDataObject(string className, string classIdentifier)
+    {
+      DataFilter filter = new DataFilter();
+
+      IList<string> identifiers = new List<string> { classIdentifier };
+
+      string fixedIdentifierBoundary = (_settings["fixedIdentifierBoundary"] == null)
+        ? "#" : _settings["fixedIdentifierBoundary"];
+
+      #region parse identifier to build data filter
+      ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMapByName(className);
+
+      if (classTemplateMap != null && classTemplateMap.classMap != null)
+      {
+        mapping.ClassMap classMap = classTemplateMap.classMap;
+
+        string[] identifierValues = !String.IsNullOrEmpty(classMap.identifierDelimiter)
+          ? classIdentifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
+          : new string[] { classIdentifier };
+
+        for (int i = 0; i < classMap.identifiers.Count; i++)
         {
-            try
+          if (!(classMap.identifiers[i].StartsWith(fixedIdentifierBoundary) && classMap.identifiers[i].EndsWith(fixedIdentifierBoundary)))
+          {
+            string clsIdentifier = classMap.identifiers[i];
+            string identifierValue = identifierValues[i];
+
+            if (clsIdentifier.Split('.').Length > 2)  // related property
             {
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-                InitializeProjection(resourceName, ref format, false);
+              string[] clsIdentifierParts = clsIdentifier.Split('.');
+              string relatedObjectType = clsIdentifierParts[clsIdentifierParts.Length - 2];
 
-                IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
-                if (parentDataObject == null) return new XDocument();
+              // get related object then assign its related properties to top level data object properties
+              DataFilter relatedObjectFilter = new DataFilter();
 
-                DataRelationship dataRelationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
-                string relatedObjectType = dataRelationship.relatedObjectName;
+              Expression relatedExpression = new Expression
+              {
+                PropertyName = clsIdentifierParts.Last(),
+                Values = new Values { identifierValue }
+              };
 
-                if (limit == 0)
+              relatedObjectFilter.Expressions.Add(relatedExpression);
+              IList<IDataObject> relatedObjects = _dataLayer.Get(relatedObjectType, relatedObjectFilter, 0, 0);
+
+              if (relatedObjects != null && relatedObjects.Count > 0)
+              {
+                IDataObject relatedObject = relatedObjects.First();
+                DataRelationship dataRelationship = _dataObjDef.dataRelationships.Find(c => c.relatedObjectName == relatedObjectType);
+
+                foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
                 {
-                    limit = (_settings["DefaultPageSize"] != null) ? int.Parse(_settings["DefaultPageSize"]) : DEFAULT_PAGE_SIZE;
-                }
+                  Expression expression = new Expression();
 
-                _projectionEngine.Start = start;
-                _projectionEngine.Limit = limit;
+                  if (filter.Expressions.Count > 0)
+                    expression.LogicalOperator = LogicalOperator.And;
 
-                _projectionEngine.BaseURI = (projectName.ToLower() == "all")
-                    ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
-                    : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
-
-                _projectionEngine.Count = _dataLayer.GetRelatedCount(parentDataObject, relatedObjectType);
-                _dataObjects = _dataLayer.GetRelatedObjects(parentDataObject, relatedObjectType, limit, start);
-
-                XDocument xdoc = _projectionEngine.ToXml(relatedObjectType, ref _dataObjects);
-                return xdoc;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-                throw ex;
-            }
-        }
-
-        public XDocument GetDataProjection(string projectName, string applicationName, string resourceName, string id,
-          string relatedResourceName, string relatedId, ref string format)
-        {
-            try
-            {
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-                InitializeProjection(resourceName, ref format, false);
-
-                IDataObject parentDataObject = _dataLayer.Get(_dataObjDef.objectName, new List<string> { id }).FirstOrDefault<IDataObject>();
-                if (parentDataObject == null) return new XDocument();
-
-                _projectionEngine.BaseURI = (projectName.ToLower() == "all")
-                    ? String.Format("/{0}/{1}/{2}/{3}", applicationName, resourceName, id, relatedResourceName)
-                    : String.Format("/{0}/{1}/{2}/{3}/{4}", applicationName, projectName, resourceName, id, relatedResourceName);
-
-                DataRelationship relationship = _dataObjDef.dataRelationships.First(c => c.relationshipName.ToLower() == relatedResourceName.ToLower());
-                DataObject relatedDataObject = _dataDictionary.dataObjects.First(c => c.objectName.ToLower() == relationship.relatedObjectName.ToLower());
-
-                _dataObjects = _dataLayer.Get(relatedDataObject.objectName, new List<string> { relatedId });
-
-                XDocument xdoc = _projectionEngine.ToXml(relatedDataObject.objectName, ref _dataObjects);
-                return xdoc;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in GetProjection: {0}", ex));
-                throw ex;
-            }
-        }
-
-        private IList<IDataObject> GetDataObject(string className, string classIdentifier)
-        {
-            DataFilter filter = new DataFilter();
-
-            IList<string> identifiers = new List<string> { classIdentifier };
-
-            string fixedIdentifierBoundary = (_settings["fixedIdentifierBoundary"] == null)
-              ? "#" : _settings["fixedIdentifierBoundary"];
-
-            #region parse identifier to build data filter
-            ClassTemplateMap classTemplateMap = _graphMap.GetClassTemplateMapByName(className);
-
-            if (classTemplateMap != null && classTemplateMap.classMap != null)
-            {
-                mapping.ClassMap classMap = classTemplateMap.classMap;
-
-                string[] identifierValues = !String.IsNullOrEmpty(classMap.identifierDelimiter)
-                  ? classIdentifier.Split(new string[] { classMap.identifierDelimiter }, StringSplitOptions.None)
-                  : new string[] { classIdentifier };
-
-                for (int i = 0; i < classMap.identifiers.Count; i++)
-                {
-                    if (!(classMap.identifiers[i].StartsWith(fixedIdentifierBoundary) && classMap.identifiers[i].EndsWith(fixedIdentifierBoundary)))
-                    {
-                        string clsIdentifier = classMap.identifiers[i];
-                        string identifierValue = identifierValues[i];
-
-                        if (clsIdentifier.Split('.').Length > 2)  // related property
-                        {
-                            string[] clsIdentifierParts = clsIdentifier.Split('.');
-                            string relatedObjectType = clsIdentifierParts[clsIdentifierParts.Length - 2];
-
-                            // get related object then assign its related properties to top level data object properties
-                            DataFilter relatedObjectFilter = new DataFilter();
-
-                            Expression relatedExpression = new Expression
-                            {
-                                PropertyName = clsIdentifierParts.Last(),
-                                Values = new Values { identifierValue }
-                            };
-
-                            relatedObjectFilter.Expressions.Add(relatedExpression);
-                            IList<IDataObject> relatedObjects = _dataLayer.Get(relatedObjectType, relatedObjectFilter, 0, 0);
-
-                            if (relatedObjects != null && relatedObjects.Count > 0)
-                            {
-                                IDataObject relatedObject = relatedObjects.First();
-                                DataRelationship dataRelationship = _dataObjDef.dataRelationships.Find(c => c.relatedObjectName == relatedObjectType);
-
-                                foreach (PropertyMap propertyMap in dataRelationship.propertyMaps)
-                                {
-                                    Expression expression = new Expression();
-
-                                    if (filter.Expressions.Count > 0)
-                                        expression.LogicalOperator = LogicalOperator.And;
-
-                                    expression.PropertyName = propertyMap.dataPropertyName;
-                                    expression.Values = new Values { 
+                  expression.PropertyName = propertyMap.dataPropertyName;
+                  expression.Values = new Values { 
                     relatedObject.GetPropertyValue(propertyMap.relatedPropertyName).ToString() 
                   };
-                                    filter.Expressions.Add(expression);
-                                }
-                            }
-                        }
-                        else  // direct property
-                        {
-                            Expression expression = new Expression();
-
-                            if (filter.Expressions.Count > 0)
-                                expression.LogicalOperator = LogicalOperator.And;
-
-                            expression.PropertyName = clsIdentifier.Substring(clsIdentifier.LastIndexOf('.') + 1);
-                            expression.Values = new Values { identifierValue };
-                            filter.Expressions.Add(expression);
-                        }
-                    }
+                  filter.Expressions.Add(expression);
                 }
-
-                identifiers = _dataLayer.GetIdentifiers(_dataObjDef.objectName, filter);
-                if (identifiers == null || identifiers.Count == 0)
-                {
-                    throw new Exception("Identifier [" + classIdentifier + "] of class [" + className + "] is not found.");
-                }
+              }
             }
-            #endregion
-
-            IList<IDataObject> dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
-            if (dataObjects != null && dataObjects.Count > 0)
+            else  // direct property
             {
-                return dataObjects;
-            }
+              Expression expression = new Expression();
 
-            return null;
+              if (filter.Expressions.Count > 0)
+                expression.LogicalOperator = LogicalOperator.And;
+
+              expression.PropertyName = clsIdentifier.Substring(clsIdentifier.LastIndexOf('.') + 1);
+              expression.Values = new Values { identifierValue };
+              filter.Expressions.Add(expression);
+            }
+          }
         }
 
-
-        public Response Delete(string projectName, string applicationName, string graphName)
+        identifiers = _dataLayer.GetIdentifiers(_dataObjDef.objectName, filter);
+        if (identifiers == null || identifiers.Count == 0)
         {
-            Response response = new Response();
-            Status status = new Status();
+          throw new Exception("Identifier [" + classIdentifier + "] of class [" + className + "] is not found.");
+        }
+      }
+      #endregion
 
-            response.StatusList.Add(status);
+      IList<IDataObject> dataObjects = _dataLayer.Get(_dataObjDef.objectName, identifiers);
+      if (dataObjects != null && dataObjects.Count > 0)
+      {
+        return dataObjects;
+      }
 
+      return null;
+    }
+
+
+    public Response Delete(string projectName, string applicationName, string graphName)
+    {
+      Response response = new Response();
+      Status status = new Status();
+
+      response.StatusList.Add(status);
+
+      try
+      {
+        status.Identifier = String.Format("{0}.{1}.{2}", projectName, applicationName, graphName);
+
+        InitializeScope(projectName, applicationName);
+
+        _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
+
+        response.Append(_semanticEngine.Delete(graphName));
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error deleting {0} graphs: {1}", graphName, ex));
+
+        status.Level = StatusLevel.Error;
+        status.Messages.Add(string.Format("Error deleting all graphs: {0}", ex));
+      }
+
+      return response;
+    }
+
+    public Response Post(string projectName, string applicationName, string graphName, string format, XDocument xml)
+    {
+      Response response = null;
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+
+        if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+        {
+          string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
+          _logger.Error(message);
+
+          response = new Response();
+          response.DateTimeStamp = DateTime.Now;
+          response.Level = StatusLevel.Error;
+          response.Messages = new Messages() { message };
+
+          return response;
+        }
+
+        InitializeDataLayer();
+
+        InitializeProjection(graphName, ref format, false);
+
+        IList<IDataObject> dataObjects = null;
+        if (_isProjectionPart7)
+        {
+          dataObjects = _projectionEngine.ToDataObjects(_graphMap.name, ref xml);
+        }
+        else
+        {
+          dataObjects = _projectionEngine.ToDataObjects(_dataObjDef.objectName, ref xml);
+        }
+
+        //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+        //IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
+        response = _dataLayer.Post(dataObjects);
+
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Success;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Post: " + ex);
+        if (response == null)
+        {
+          response = new Response();
+        }
+
+        Status status = new Status
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message },
+        };
+
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Error;
+        response.StatusList.Add(status);
+      }
+
+      return response;
+    }
+
+    public Response PostContent(string projectName, string applicationName, string graphName, string format, string identifier, Stream stream)
+    {
+      Response response = null;
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+
+        if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
+        {
+          string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
+          _logger.Error(message);
+
+          response = new Response();
+          response.DateTimeStamp = DateTime.Now;
+          response.Level = StatusLevel.Error;
+          response.Messages = new Messages() { message };
+
+          return response;
+        }
+
+        InitializeDataLayer();
+
+        //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
+
+        IList<IDataObject> dataObjects = new List<IDataObject>();
+        IList<string> identifiers = new List<string> { identifier };
+        dataObjects = _dataLayer.Create(graphName, identifiers);
+
+        IContentObject contentObject = (IContentObject)dataObjects[0];
+        contentObject.content = stream;
+
+        IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
+        string contentType = request.ContentType;
+        contentObject.contentType = contentType;
+
+        dataObjects = new List<IDataObject>();
+        dataObjects.Add(contentObject);
+
+        response = _dataLayer.Post(dataObjects);
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Success;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in Post: " + ex);
+        if (response == null)
+        {
+          response = new Response();
+        }
+
+        Status status = new Status
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message },
+        };
+
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Error;
+        response.StatusList.Add(status);
+      }
+
+      return response;
+    }
+
+    public Response DeleteIndividual(string projectName, string applicationName, string graphName, string identifier)
+    {
+      Response response = null;
+
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        mapping.GraphMap graphMap = _mapping.FindGraphMap(graphName);
+
+        string objectType = graphMap.dataObjectName;
+        response = _dataLayer.Delete(objectType, new List<String> { identifier });
+
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Success;
+      }
+      catch (Exception ex)
+      {
+        _logger.Error("Error in DeleteIndividual: " + ex);
+        if (response == null)
+        {
+          response = new Response();
+        }
+
+        Status status = new Status
+        {
+          Level = StatusLevel.Error,
+          Messages = new Messages { ex.Message },
+        };
+
+        response.DateTimeStamp = DateTime.Now;
+        response.Level = StatusLevel.Error;
+        response.StatusList.Add(status);
+      }
+
+      return response;
+    }
+    #endregion
+
+    #region private methods
+
+    private void GetResource()
+    {
+      WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
+      System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
+      string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port;
+      _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
+    }
+
+    private void InitializeScope(string projectName, string applicationName, bool loadDataLayer)
+    {
+      try
+      {
+        if (_scopes.Locators == null)
+          GetResource();
+
+        string scope = String.Format("{0}.{1}", projectName, applicationName);
+
+        if (!_isScopeInitialized)
+        {
+          _settings["ProjectName"] = projectName;
+          _settings["ApplicationName"] = applicationName;
+
+          string scopeSettingsPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
+
+          if (File.Exists(scopeSettingsPath))
+          {
+            AppSettingsReader scopeSettings = new AppSettingsReader(scopeSettingsPath);
+            _settings.AppendSettings(scopeSettings);
+          }
+
+          if (projectName.ToLower() != "all")
+          {
+            string appSettingsPath = String.Format("{0}All.{1}.config", _settings["AppDataPath"], applicationName);
+
+            if (File.Exists(appSettingsPath))
+            {
+              AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
+              _settings.AppendSettings(appSettings);
+            }
+          }
+
+          //scope stuff
+
+          bool isScopeValid = false;
+          foreach (Locator project in _scopes.Locators)
+          {
+            if (project.Context.ToUpper() == projectName.ToUpper())
+            {
+              foreach (EndpointApplication application in project.Applications)
+              {
+                if (application.Endpoint.ToUpper() == applicationName.ToUpper())
+                {
+                  _application = application;
+                  isScopeValid = true;
+                }
+              }
+            }
+          }
+
+          if (!isScopeValid)
+            scope = String.Format("all.{0}", applicationName);
+          //throw new Exception(String.Format("Invalid scope [{0}].", scope));
+
+          _settings["Scope"] = scope;
+
+          string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
+
+          //Ninject Extension requires fully qualified path.
+          string bindingConfigurationPath = Path.Combine(
+            _settings["BaseDirectoryPath"],
+            relativePath
+          );
+
+          _settings["BindingConfigurationPath"] = bindingConfigurationPath;
+
+          if (File.Exists(bindingConfigurationPath))
+          {
+            _kernel.Load(bindingConfigurationPath);
+          }
+          else
+          {
+            _logger.Error("Binding configuration not found.");
+          }
+
+          string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["AppDataPath"], scope);
+
+          _settings["DBDictionaryPath"] = dbDictionaryPath;
+
+          string mappingPath = String.Format("{0}Mapping.{1}.xml", _settings["AppDataPath"], scope);
+
+          if (File.Exists(mappingPath))
+          {
             try
             {
-                status.Identifier = String.Format("{0}.{1}.{2}", projectName, applicationName, graphName);
-
-                InitializeScope(projectName, applicationName);
-
-                _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
-
-                response.Append(_semanticEngine.Delete(graphName));
+              _mapping = Utility.Read<mapping.Mapping>(mappingPath);
             }
-            catch (Exception ex)
+            catch (Exception legacyEx)
             {
-                _logger.Error(string.Format("Error deleting {0} graphs: {1}", graphName, ex));
+              _logger.Warn("Error loading mapping file [" + mappingPath + "]:" + legacyEx);
+              Status status = new Status();
 
-                status.Level = StatusLevel.Error;
-                status.Messages.Add(string.Format("Error deleting all graphs: {0}", ex));
+              _mapping = LoadMapping(mappingPath, ref status);
+              _logger.Info(status.ToString());
             }
+          }
+          else
+          {
+            _mapping = new mapping.Mapping();
+            Utility.Write<mapping.Mapping>(_mapping, mappingPath);
+          }
 
-            return response;
+          _kernel.Bind<mapping.Mapping>().ToConstant(_mapping);
+          _isScopeInitialized = true;
         }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing application: {0}", ex));
+        throw new Exception(string.Format("Error initializing application: {0})", ex));
+      }
+    }
 
-        public Response Post(string projectName, string applicationName, string graphName, string format, XDocument xml)
-        {
-            Response response = null;
+    private void InitializeScope(string projectName, string applicationName)
+    {
+      InitializeScope(projectName, applicationName, true);
+    }
 
-            try
-            {
-                InitializeScope(projectName, applicationName);
-
-                if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
-                {
-                    string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
-                    _logger.Error(message);
-
-                    response = new Response();
-                    response.DateTimeStamp = DateTime.Now;
-                    response.Level = StatusLevel.Error;
-                    response.Messages = new Messages() { message };
-
-                    return response;
-                }
-
-                InitializeDataLayer();
-
-                InitializeProjection(graphName, ref format, false);
-
-                IList<IDataObject> dataObjects = null;
-                if (_isProjectionPart7)
-                {
-                    dataObjects = _projectionEngine.ToDataObjects(_graphMap.name, ref xml);
-                }
-                else
-                {
-                    dataObjects = _projectionEngine.ToDataObjects(_dataObjDef.objectName, ref xml);
-                }
-
-                //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-                //IList<IDataObject> dataObjects = _projectionEngine.ToDataObjects(graphName, ref xml);
-                response = _dataLayer.Post(dataObjects);
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Success;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error in Post: " + ex);
-                if (response == null)
-                {
-                    response = new Response();
-                }
-
-                Status status = new Status
-                {
-                    Level = StatusLevel.Error,
-                    Messages = new Messages { ex.Message },
-                };
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
-
-            return response;
-        }
-
-        public Response PostContent(string projectName, string applicationName, string graphName, string format, string identifier, Stream stream)
-        {
-            Response response = null;
-
-            try
-            {
-                InitializeScope(projectName, applicationName);
-
-                if (_settings["ReadOnlyDataLayer"] != null && _settings["ReadOnlyDataLayer"].ToString().ToLower() == "true")
-                {
-                    string message = "Can not perform post on read-only data layer of [" + projectName + "." + applicationName + "].";
-                    _logger.Error(message);
-
-                    response = new Response();
-                    response.DateTimeStamp = DateTime.Now;
-                    response.Level = StatusLevel.Error;
-                    response.Messages = new Messages() { message };
-
-                    return response;
-                }
-
-                InitializeDataLayer();
-
-                //_projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-
-                IList<IDataObject> dataObjects = new List<IDataObject>();
-                IList<string> identifiers = new List<string> { identifier };
-                dataObjects = _dataLayer.Create(graphName, identifiers);
-
-                IContentObject contentObject = (IContentObject)dataObjects[0];
-                contentObject.content = stream;
-
-                IncomingWebRequestContext request = WebOperationContext.Current.IncomingRequest;
-                string contentType = request.ContentType;
-                contentObject.contentType = contentType;
-
-                dataObjects = new List<IDataObject>();
-                dataObjects.Add(contentObject);
-
-                response = _dataLayer.Post(dataObjects);
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Success;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error in Post: " + ex);
-                if (response == null)
-                {
-                    response = new Response();
-                }
-
-                Status status = new Status
-                {
-                    Level = StatusLevel.Error,
-                    Messages = new Messages { ex.Message },
-                };
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
-
-            return response;
-        }
-
-        public Response DeleteIndividual(string projectName, string applicationName, string graphName, string identifier)
-        {
-            Response response = null;
-
-            try
-            {
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-
-                mapping.GraphMap graphMap = _mapping.FindGraphMap(graphName);
-
-                string objectType = graphMap.dataObjectName;
-                response = _dataLayer.Delete(objectType, new List<String> { identifier });
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Success;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error("Error in DeleteIndividual: " + ex);
-                if (response == null)
-                {
-                    response = new Response();
-                }
-
-                Status status = new Status
-                {
-                    Level = StatusLevel.Error,
-                    Messages = new Messages { ex.Message },
-                };
-
-                response.DateTimeStamp = DateTime.Now;
-                response.Level = StatusLevel.Error;
-                response.StatusList.Add(status);
-            }
-
-            return response;
-        }
-        #endregion
-
-        #region private methods
-
-        private void getResource()
-        {
-            WebHttpClient _javaCoreClient = new WebHttpClient(_settings["JavaCoreUri"]);
-            System.Uri uri = new System.Uri(_settings["GraphBaseUri"]);
-            string baseUrl = uri.Scheme + ":.." + uri.Host + ":" + uri.Port + ".adapter";
-            _scopes = _javaCoreClient.PostMessage<Resource>("/directory/resource", baseUrl, true);
-        }
-
-        private void InitializeScope(string projectName, string applicationName, bool loadDataLayer)
-        {
-            try
-            {
-                if (_scopes == null)
-                    getResource();
-
-                string scope = String.Format("{0}.{1}", projectName, applicationName);
-
-                if (!_isScopeInitialized)
-                {
-                    _settings["ProjectName"] = projectName;
-                    _settings["ApplicationName"] = applicationName;
-
-                    string scopeSettingsPath = String.Format("{0}{1}.{2}.config", _settings["AppDataPath"], projectName, applicationName);
-
-                    if (File.Exists(scopeSettingsPath))
-                    {
-                        AppSettingsReader scopeSettings = new AppSettingsReader(scopeSettingsPath);
-                        _settings.AppendSettings(scopeSettings);
-                    }
-
-                    if (projectName.ToLower() != "all")
-                    {
-                        string appSettingsPath = String.Format("{0}All.{1}.config", _settings["AppDataPath"], applicationName);
-
-                        if (File.Exists(appSettingsPath))
-                        {
-                            AppSettingsReader appSettings = new AppSettingsReader(appSettingsPath);
-                            _settings.AppendSettings(appSettings);
-                        }
-                    }
-
-                    //scope stuff
-
-                    bool isScopeValid = false;
-                    foreach (Locator project in _scopes.Locators)
-                    {
-                        if (project.Context.ToUpper() == projectName.ToUpper())
-                        {
-                            foreach (EndpointApplication application in project.Applications)
-                            {
-                                if (application.Endpoint.ToUpper() == applicationName.ToUpper())
-                                {
-                                    _application = application;
-                                    isScopeValid = true;
-                                }
-                            }
-                        }
-                    }
-
-                    if (!isScopeValid)
-                        scope = String.Format("all.{0}", applicationName);
-                    //throw new Exception(String.Format("Invalid scope [{0}].", scope));
-
-                    _settings["Scope"] = scope;
-
-                    string relativePath = String.Format("{0}BindingConfiguration.{1}.xml", _settings["AppDataPath"], scope);
-
-                    //Ninject Extension requires fully qualified path.
-                    string bindingConfigurationPath = Path.Combine(
-                      _settings["BaseDirectoryPath"],
-                      relativePath
-                    );
-
-                    _settings["BindingConfigurationPath"] = bindingConfigurationPath;
-
-                    if (File.Exists(bindingConfigurationPath))
-                    {
-                        _kernel.Load(bindingConfigurationPath);
-                    }
-                    else
-                    {
-                        _logger.Error("Binding configuration not found.");
-                    }
-
-                    string dbDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.xml", _settings["AppDataPath"], scope);
-
-                    _settings["DBDictionaryPath"] = dbDictionaryPath;
-
-                    string mappingPath = String.Format("{0}Mapping.{1}.xml", _settings["AppDataPath"], scope);
-
-                    if (File.Exists(mappingPath))
-                    {
-                        try
-                        {
-                            _mapping = Utility.Read<mapping.Mapping>(mappingPath);
-                        }
-                        catch (Exception legacyEx)
-                        {
-                            _logger.Warn("Error loading mapping file [" + mappingPath + "]:" + legacyEx);
-                            Status status = new Status();
-
-                            _mapping = LoadMapping(mappingPath, ref status);
-                            _logger.Info(status.ToString());
-                        }
-                    }
-                    else
-                    {
-                        _mapping = new mapping.Mapping();
-                        Utility.Write<mapping.Mapping>(_mapping, mappingPath);
-                    }
-
-                    _kernel.Bind<mapping.Mapping>().ToConstant(_mapping);
-                    _isScopeInitialized = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error initializing application: {0}", ex));
-                throw new Exception(string.Format("Error initializing application: {0})", ex));
-            }
-        }
-
-        private void InitializeScope(string projectName, string applicationName)
-        {
-            InitializeScope(projectName, applicationName, true);
-        }
-
-        private void InitializeProjection(string resourceName, ref string format, bool isIndividual)
-        {
-            try
-            {
-                string[] expectedFormats = { 
+    private void InitializeProjection(string resourceName, ref string format, bool isIndividual)
+    {
+      try
+      {
+        string[] expectedFormats = { 
               "rdf", 
               "dto",
               "p7xml",
@@ -2993,448 +2960,442 @@ namespace org.iringtools.adapter
               "html"
             };
 
-                _graphMap = _mapping.FindGraphMap(resourceName);
+        _graphMap = _mapping.FindGraphMap(resourceName);
 
-                if (_graphMap != null)
-                {
-                    _isResourceGraph = true;
-                    _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == _graphMap.dataObjectName.ToUpper());
-
-                    if (_dataObjDef == null || _dataObjDef.isRelatedOnly)
-                    {
-                        _logger.Warn("Data object [" + _graphMap.dataObjectName + "] not found.");
-                        throw new WebFaultException(HttpStatusCode.NotFound);
-                    }
-                }
-                else
-                {
-                    _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == resourceName.ToUpper());
-
-                    if (_dataObjDef == null || _dataObjDef.isRelatedOnly)
-                    {
-                        _logger.Warn("Resource [" + resourceName + "] not found.");
-                        throw new WebFaultException(HttpStatusCode.NotFound);
-                    }
-                }
-
-                if (format == null)
-                {
-                    if (isIndividual && !String.IsNullOrEmpty(_dataObjDef.defaultProjectionFormat))
-                    {
-                        format = _dataObjDef.defaultProjectionFormat;
-                    }
-                    else if (!String.IsNullOrEmpty(_dataObjDef.defaultListProjectionFormat))
-                    {
-                        format = _dataObjDef.defaultListProjectionFormat;
-                    }
-                    else
-                    {
-                        format = "json";
-                    }
-                }
-                _isFormatExpected = expectedFormats.Contains(format.ToLower());
-
-                if (format != null && _isFormatExpected)
-                {
-                    _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
-
-                    if (_projectionEngine.GetType().BaseType == typeof(BasePart7ProjectionEngine))
-                    {
-                        _isProjectionPart7 = true;
-                        if (_graphMap == null)
-                        {
-                            throw new FileNotFoundException("Requested resource [" + resourceName + "] cannot be rendered as Part7.");
-                        }
-                    }
-                }
-                else if (format == _settings["DefaultProjectionFormat"] && _isResourceGraph)
-                {
-                    format = "p7xml";
-                    _projectionEngine = _kernel.Get<IProjectionLayer>("p7xml");
-                    _isProjectionPart7 = true;
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error initializing application: {0}", ex));
-                throw new Exception(string.Format("Error initializing application: {0})", ex));
-            }
-        }
-
-        private void InitializeDataLayer()
+        if (_graphMap != null)
         {
-            InitializeDataLayer(true);
-        }
+          _isResourceGraph = true;
+          _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == _graphMap.dataObjectName.ToUpper());
 
-        private void InitializeDataLayer(bool setDictionary)
+          if (_dataObjDef == null || _dataObjDef.isRelatedOnly)
+          {
+            _logger.Warn("Data object [" + _graphMap.dataObjectName + "] not found.");
+            throw new WebFaultException(HttpStatusCode.NotFound);
+          }
+        }
+        else
         {
-            try
-            {
-                if (!_isDataLayerInitialized)
-                {
-                    _logger.Debug("Initializing data layer...");
+          _dataObjDef = _dataDictionary.dataObjects.Find(o => o.objectName.ToUpper() == resourceName.ToUpper());
 
-                    if (_settings["DumpSettings"] == "True")
-                    {
-                        Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
-                        foreach (string key in _settings.AllKeys)
-                        {
-                            settingsDictionary.Add(key, _settings[key]);
-                        }
-                        Utility.Write<Dictionary<string, string>>(settingsDictionary, @"AdapterSettings.xml");
-                        Utility.Write<IDictionary>(_keyRing, @"KeyRing.xml");
-                    }
-
-                    _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
-
-                    if (_dataLayer == null)
-                    {
-                        _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
-                    }
-
-                    _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
-
-                    if (setDictionary)
-                        InitializeDictionary();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error initializing application: {0}", ex));
-                throw new Exception(string.Format("Error initializing application: {0})", ex));
-            }
+          if (_dataObjDef == null || _dataObjDef.isRelatedOnly)
+          {
+            _logger.Warn("Resource [" + resourceName + "] not found.");
+            throw new WebFaultException(HttpStatusCode.NotFound);
+          }
         }
 
-        private void InitializeDictionary()
+        if (format == null)
         {
-            if (!_isDataLayerInitialized)
-            {
-                _dataDictionary = _dataLayer.GetDictionary();
-                _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
-                _isDataLayerInitialized = true;
-            }
+          if (isIndividual && !String.IsNullOrEmpty(_dataObjDef.defaultProjectionFormat))
+          {
+            format = _dataObjDef.defaultProjectionFormat;
+          }
+          else if (!String.IsNullOrEmpty(_dataObjDef.defaultListProjectionFormat))
+          {
+            format = _dataObjDef.defaultListProjectionFormat;
+          }
+          else
+          {
+            format = "json";
+          }
         }
+        _isFormatExpected = expectedFormats.Contains(format.ToLower());
 
-        private void InitializeIdentity()
+        if (format != null && _isFormatExpected)
         {
-            try
-            {
-                _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
-                _keyRing = _identityLayer.GetKeyRing();
-                _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
-                _settings.AppendKeyRing(_keyRing);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error initializing identity: {0}", ex));
-                throw new Exception(string.Format("Error initializing identity: {0})", ex));
-            }
-        }
+          _projectionEngine = _kernel.Get<IProjectionLayer>(format.ToLower());
 
-        private Response Refresh(string graphName)
+          if (_projectionEngine.GetType().BaseType == typeof(BasePart7ProjectionEngine))
+          {
+            _isProjectionPart7 = true;
+            if (_graphMap == null)
+            {
+              throw new FileNotFoundException("Requested resource [" + resourceName + "] cannot be rendered as Part7.");
+            }
+          }
+        }
+        else if (format == _settings["DefaultProjectionFormat"] && _isResourceGraph)
         {
-            _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
-
-            _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
-
-            LoadDataObjectSet(graphName, null);
-
-            XDocument rdf = _projectionEngine.ToXml(graphName, ref _dataObjects);
-
-            return _semanticEngine.Refresh(graphName, rdf);
+          format = "p7xml";
+          _projectionEngine = _kernel.Get<IProjectionLayer>("p7xml");
+          _isProjectionPart7 = true;
         }
-
-        private long LoadDataObjectSet(string graphName, IList<string> identifiers)
-        {
-            _graphMap = _mapping.FindGraphMap(graphName);
-
-            _dataObjects.Clear();
-
-            if (identifiers != null)
-                _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
-            else
-                _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
-
-            return _dataObjects.Count;
-        }
-
-        private long LoadDataObjectSet(string graphName, DataFilter dataFilter, int start, int limit)
-        {
-            _graphMap = _mapping.FindGraphMap(graphName);
-
-            _dataObjects.Clear();
-
-            if (dataFilter != null)
-                _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, dataFilter, limit, start);
-            else
-                _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
-
-            long count = _dataLayer.GetCount(_graphMap.dataObjectName, dataFilter);
-
-            return count;
-        }
-
-        //private void DeleteScope()
-        //{
-        //  try
-        //  {
-        //    // clean up ScopeList
-        //    foreach (ScopeProject project in _scopes)
-        //    {
-        //      if (project.Name.ToUpper() == _settings["ProjectName"].ToUpper())
-        //      {
-        //        foreach (ScopeApplication application in project.Applications)
-        //        {
-        //          if (application.Name.ToUpper() == _settings["ApplicationName"].ToUpper())
-        //          {
-        //            project.Applications.Remove(application);
-        //          }
-        //          break;
-        //        }
-        //        break;
-        //      }
-        //    }
-
-        //    // save ScopeList
-        //    Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
-
-        //    // delete its bindings
-        //    File.Delete(_settings["BindingConfigurationPath"]);
-        //  }
-        //  catch (Exception ex)
-        //  {
-        //    _logger.Error(string.Format("Error in DeleteScope: {0}", ex));
-        //    throw ex;
-        //  }
-        //}
-
-        private IList<IDataObject> CreateDataObjects(string graphName, string dataObjectsString)
-        {
-            IList<IDataObject> dataObjects = new List<IDataObject>();
-            dataObjects = _dataLayer.Create(graphName, null);
-
-            if (dataObjectsString != null && dataObjectsString != String.Empty)
-            {
-                XmlReader reader = XmlReader.Create(new StringReader(dataObjectsString));
-                XDocument file = XDocument.Load(reader);
-                file = Utility.RemoveNamespace(file);
-
-                var dtoResults = from c in file.Elements("ArrayOf" + graphName).Elements(graphName) select c;
-                int j = 0;
-                foreach (var dtoResult in dtoResults)
-                {
-                    var dtoProperties = from c in dtoResult.Elements("Properties").Elements("Property") select c;
-                    IDataObject dto = dataObjects[j];
-                    j++;
-                    foreach (var dtoProperty in dtoProperties)
-                    {
-                        dto.SetPropertyValue(dtoProperty.Attribute("name").Value, dtoProperty.Attribute("value").Value);
-                    }
-                    dataObjects.Add(dto);
-                }
-            }
-            return dataObjects;
-        }
-
-
-        #endregion
-
-        public void setScopes(Resource importScopes)
-        {
-            _scopes = importScopes;
-        }
-
-        public DataLayers GetDataLayers()
-        {
-            DataLayers dataLayers = new DataLayers();
-
-            // Load NHibernate data layer
-            Type nhType = Type.GetType("org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", true);
-            string nhLibrary = nhType.Assembly.GetName().Name;
-            string nhAssembly = string.Format("{0}, {1}", nhType.FullName, nhLibrary);
-            DataLayer nhDataLayer = new DataLayer { Assembly = nhAssembly, Name = nhLibrary, Configurable = true };
-            dataLayers.Add(nhDataLayer);
-
-            // Load Spreadsheet data layer
-            Type ssType = Type.GetType("org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer", true);
-            string ssLibrary = ssType.Assembly.GetName().Name;
-            string ssAssembly = string.Format("{0}, {1}", ssType.FullName, ssLibrary);
-            DataLayer ssDataLayer = new DataLayer { Assembly = ssAssembly, Name = ssLibrary, Configurable = true };
-            dataLayers.Add(ssDataLayer);
-
-            try
-            {
-                Type type = typeof(IDataLayer);
-                Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-                foreach (Assembly asm in domainAssemblies)
-                {
-
-                    try
-                    {
-                        Type[] asmTypes = asm.GetTypes();
-                        try
-                        {
-                            if (asmTypes != null)
-                            {
-                                foreach (System.Type asmType in asmTypes)
-                                {
-                                    if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
-                                    {
-                                        bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
-                                        string name = asm.FullName.Split(',')[0];
-
-                                        if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
-                                        {
-                                            string assembly = string.Format("{0}, {1}", asmType.FullName, name);
-                                            DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
-                                            dataLayers.Add(dataLayer);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            _logger.Error("Error loading data layer: " + e);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.Error("Error loading data layer: " + e);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                _logger.Error("Error loading data layer: " + e);
-            }
-
-            return dataLayers;
-        }
-
-        public Response Configure(string projectName, string applicationName, HttpRequest httpRequest)
-        {
-            Response response = new Response();
-            response.Messages = new Messages();
-            XElement binding;
-            XElement configuration = null;
-            try
-            {
-                string savedFileName = string.Empty;
-
-                foreach (string file in httpRequest.Files)
-                {
-                    HttpPostedFile hpf = httpRequest.Files[file] as HttpPostedFile;
-                    if (hpf.ContentLength == 0)
-                        continue;
-                    hpf.InputStream.Position = 0;
-
-                    savedFileName = Path.Combine(
-                    AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"],
-                    Path.GetFileName(hpf.FileName));
-                    hpf.SaveAs(savedFileName);
-                    hpf.InputStream.Flush();
-                }
-
-                InitializeScope(projectName, applicationName, false);
-
-                string dataLayer = httpRequest.Form["DataLayer"];
-                // Check request whether have Configuration in Request or not. SP & ID don't have this ----------------------
-                if (httpRequest.Form["Configuration"] != null)
-                {
-                    configuration = Utility.DeserializeXml<XElement>(httpRequest.Form["Configuration"]);
-
-                    binding = new XElement("module",
-                       new XAttribute("name", _settings["Scope"]),
-                         new XElement("bind",
-                           new XAttribute("name", "DataLayer"),
-                           new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-                           new XAttribute("to", dataLayer)
-                         )
-                       );
-
-                    binding.Save(_settings["BindingConfigurationPath"]);
-                    _kernel.Load(_settings["BindingConfigurationPath"]);
-                }
-                InitializeDataLayer(false);
-                if (httpRequest.Form["Configuration"] != null)
-                {
-
-                    response = ((IDataLayer2)_dataLayer).Configure(configuration);
-                }
-
-                InitializeDictionary();
-
-            }
-            catch (Exception ex)
-            {
-                response.Messages.Add(String.Format("Failed to Upload Files[{0}]", _settings["Scope"]));
-                response.Messages.Add(ex.Message);
-                response.Level = StatusLevel.Error;
-            }
-            return response;
-        }
-
-        public XElement GetConfiguration(string projectName, string applicationName)
-        {
-            try
-            {
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-
-                return _dataLayer.GetConfiguration();
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
-                throw new Exception(string.Format("Error getting configuration: {0}", ex));
-            }
-        }
-
-        public Response RefreshDataObjects(string projectName, string applicationName)
-        {
-            try
-            {
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-
-                return _dataLayer.RefreshAll();
-            }
-            catch (Exception ex)
-            {
-                string errMsg = String.Format("Error refreshing data objects: {0}", ex);
-                _logger.Error(errMsg);
-                throw new Exception(errMsg);
-            }
-        }
-
-        public Response RefreshDataObject(string projectName, string applicationName, string dataObject)
-        {
-            try
-            {
-                InitializeScope(projectName, applicationName);
-                InitializeDataLayer();
-
-                return _dataLayer.Refresh(dataObject);
-            }
-            catch (Exception ex)
-            {
-                string errMsg = String.Format("Error refreshing data object [{0}]: {1}", dataObject, ex);
-                _logger.Error(errMsg);
-                throw new Exception(errMsg);
-            }
-        }
-
-        public IList<Object> GetSummary(String projectName, String applicationName)
-        {
-            InitializeScope(projectName, applicationName);
-            InitializeDataLayer();
-
-            if (!_dataDictionary.enableSummary)
-                throw new WebFaultException(HttpStatusCode.NotFound);
-
-            return _dataLayer.GetSummary();
-        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing application: {0}", ex));
+        throw new Exception(string.Format("Error initializing application: {0})", ex));
+      }
     }
+
+    private void InitializeDataLayer()
+    {
+      InitializeDataLayer(true);
+    }
+
+    private void InitializeDataLayer(bool setDictionary)
+    {
+      try
+      {
+        if (!_isDataLayerInitialized)
+        {
+          _logger.Debug("Initializing data layer...");
+
+          if (_settings["DumpSettings"] == "True")
+          {
+            Dictionary<string, string> settingsDictionary = new Dictionary<string, string>();
+            foreach (string key in _settings.AllKeys)
+            {
+              settingsDictionary.Add(key, _settings[key]);
+            }
+            Utility.Write<Dictionary<string, string>>(settingsDictionary, @"AdapterSettings.xml");
+            Utility.Write<IDictionary>(_keyRing, @"KeyRing.xml");
+          }
+
+          _dataLayer = _kernel.TryGet<IDataLayer2>("DataLayer");
+
+          if (_dataLayer == null)
+          {
+            _dataLayer = (IDataLayer2)_kernel.Get<IDataLayer>("DataLayer");
+          }
+
+          _kernel.Rebind<IDataLayer2>().ToConstant(_dataLayer);
+
+          if (setDictionary)
+            InitializeDictionary();
+        }
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing application: {0}", ex));
+        throw new Exception(string.Format("Error initializing application: {0})", ex));
+      }
+    }
+
+    private void InitializeDictionary()
+    {
+      if (!_isDataLayerInitialized)
+      {
+        _dataDictionary = _dataLayer.GetDictionary();
+        _kernel.Bind<DataDictionary>().ToConstant(_dataDictionary);
+        _isDataLayerInitialized = true;
+      }
+    }
+
+    private void InitializeIdentity()
+    {
+      try
+      {
+        _identityLayer = _kernel.Get<IIdentityLayer>("IdentityLayer");
+        _keyRing = _identityLayer.GetKeyRing();
+        _kernel.Bind<IDictionary>().ToConstant(_keyRing).Named("KeyRing");
+        _settings.AppendKeyRing(_keyRing);
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error initializing identity: {0}", ex));
+        throw new Exception(string.Format("Error initializing identity: {0})", ex));
+      }
+    }
+
+    private Response Refresh(string graphName)
+    {
+      _semanticEngine = _kernel.Get<ISemanticLayer>("dotNetRDF");
+
+      _projectionEngine = _kernel.Get<IProjectionLayer>("rdf");
+
+      LoadDataObjectSet(graphName, null);
+
+      XDocument rdf = _projectionEngine.ToXml(graphName, ref _dataObjects);
+
+      return _semanticEngine.Refresh(graphName, rdf);
+    }
+
+    private long LoadDataObjectSet(string graphName, IList<string> identifiers)
+    {
+      _graphMap = _mapping.FindGraphMap(graphName);
+
+      _dataObjects.Clear();
+
+      if (identifiers != null)
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, identifiers);
+      else
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
+
+      return _dataObjects.Count;
+    }
+
+    private long LoadDataObjectSet(string graphName, DataFilter dataFilter, int start, int limit)
+    {
+      _graphMap = _mapping.FindGraphMap(graphName);
+
+      _dataObjects.Clear();
+
+      if (dataFilter != null)
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, dataFilter, limit, start);
+      else
+        _dataObjects = _dataLayer.Get(_graphMap.dataObjectName, null);
+
+      long count = _dataLayer.GetCount(_graphMap.dataObjectName, dataFilter);
+
+      return count;
+    }
+
+    //private void DeleteScope()
+    //{
+    //  try
+    //  {
+    //    // clean up ScopeList
+    //    foreach (ScopeProject project in _scopes)
+    //    {
+    //      if (project.Name.ToUpper() == _settings["ProjectName"].ToUpper())
+    //      {
+    //        foreach (ScopeApplication application in project.Applications)
+    //        {
+    //          if (application.Name.ToUpper() == _settings["ApplicationName"].ToUpper())
+    //          {
+    //            project.Applications.Remove(application);
+    //          }
+    //          break;
+    //        }
+    //        break;
+    //      }
+    //    }
+
+    //    // save ScopeList
+    //    Utility.Write<ScopeProjects>(_scopes, _settings["ScopesPath"], true);
+
+    //    // delete its bindings
+    //    File.Delete(_settings["BindingConfigurationPath"]);
+    //  }
+    //  catch (Exception ex)
+    //  {
+    //    _logger.Error(string.Format("Error in DeleteScope: {0}", ex));
+    //    throw ex;
+    //  }
+    //}
+
+    private IList<IDataObject> CreateDataObjects(string graphName, string dataObjectsString)
+    {
+      IList<IDataObject> dataObjects = new List<IDataObject>();
+      dataObjects = _dataLayer.Create(graphName, null);
+
+      if (dataObjectsString != null && dataObjectsString != String.Empty)
+      {
+        XmlReader reader = XmlReader.Create(new StringReader(dataObjectsString));
+        XDocument file = XDocument.Load(reader);
+        file = Utility.RemoveNamespace(file);
+
+        var dtoResults = from c in file.Elements("ArrayOf" + graphName).Elements(graphName) select c;
+        int j = 0;
+        foreach (var dtoResult in dtoResults)
+        {
+          var dtoProperties = from c in dtoResult.Elements("Properties").Elements("Property") select c;
+          IDataObject dto = dataObjects[j];
+          j++;
+          foreach (var dtoProperty in dtoProperties)
+          {
+            dto.SetPropertyValue(dtoProperty.Attribute("name").Value, dtoProperty.Attribute("value").Value);
+          }
+          dataObjects.Add(dto);
+        }
+      }
+      return dataObjects;
+    }
+
+
+    #endregion
+
+    public void setScopes(Resource importScopes)
+    {
+      _scopes = importScopes;
+    }
+
+    public DataLayers GetDataLayers()
+    {
+      DataLayers dataLayers = new DataLayers();
+
+      // Load NHibernate data layer
+      Type nhType = Type.GetType("org.iringtools.adapter.datalayer.NHibernateDataLayer, NHibernateLibrary", true);
+      string nhLibrary = nhType.Assembly.GetName().Name;
+      string nhAssembly = string.Format("{0}, {1}", nhType.FullName, nhLibrary);
+      DataLayer nhDataLayer = new DataLayer { Assembly = nhAssembly, Name = nhLibrary, Configurable = true };
+      dataLayers.Add(nhDataLayer);
+
+      // Load Spreadsheet data layer
+      Type ssType = Type.GetType("org.iringtools.adapter.datalayer.SpreadsheetDatalayer, SpreadsheetDatalayer", true);
+      string ssLibrary = ssType.Assembly.GetName().Name;
+      string ssAssembly = string.Format("{0}, {1}", ssType.FullName, ssLibrary);
+      DataLayer ssDataLayer = new DataLayer { Assembly = ssAssembly, Name = ssLibrary, Configurable = true };
+      dataLayers.Add(ssDataLayer);
+
+      try
+      {
+        Type type = typeof(IDataLayer);
+        Assembly[] domainAssemblies = AppDomain.CurrentDomain.GetAssemblies();
+
+        foreach (Assembly asm in domainAssemblies)
+        {
+
+          try
+          {
+            if (asm.GetTypes() != null)
+            {
+              Type[] asmTypes = asm.GetTypes();
+
+              if (asmTypes != null)
+              {
+                foreach (System.Type asmType in asmTypes)
+                {
+                  if (type.IsAssignableFrom(asmType) && !(asmType.IsInterface || asmType.IsAbstract))
+                  {
+                    bool configurable = asmType.BaseType.Equals(typeof(BaseConfigurableDataLayer));
+                    string name = asm.FullName.Split(',')[0];
+
+                    if (!dataLayers.Exists(x => x.Name.ToLower() == name.ToLower()))
+                    {
+                      string assembly = string.Format("{0}, {1}", asmType.FullName, name);
+                      DataLayer dataLayer = new DataLayer { Assembly = assembly, Name = name, Configurable = configurable };
+                      dataLayers.Add(dataLayer);
+                    }
+                  }
+                }
+              }
+            }
+          }
+          catch (Exception) { }
+        }
+      }
+      catch (Exception e)
+      {
+        _logger.Error("Error loading data layer: " + e);
+      }
+
+      return dataLayers;
+    }
+
+    public Response Configure(string projectName, string applicationName, HttpRequest httpRequest)
+    {
+      Response response = new Response();
+      response.Messages = new Messages();
+      XElement binding;
+      XElement configuration = null;
+      try
+      {
+        string savedFileName = string.Empty;
+
+        foreach (string file in httpRequest.Files)
+        {
+          HttpPostedFile hpf = httpRequest.Files[file] as HttpPostedFile;
+          if (hpf.ContentLength == 0)
+            continue;
+          hpf.InputStream.Position = 0;
+
+          savedFileName = Path.Combine(
+          AppDomain.CurrentDomain.BaseDirectory, _settings["AppDataPath"],
+          Path.GetFileName(hpf.FileName));
+          hpf.SaveAs(savedFileName);
+          hpf.InputStream.Flush();
+        }
+
+        InitializeScope(projectName, applicationName, false);
+
+        string dataLayer = httpRequest.Form["DataLayer"];
+        // Check request whether have Configuration in Request or not. SP & ID don't have this ----------------------
+        if (httpRequest.Form["Configuration"] != null)
+        {
+          configuration = Utility.DeserializeXml<XElement>(httpRequest.Form["Configuration"]);
+
+          binding = new XElement("module",
+             new XAttribute("name", _settings["Scope"]),
+               new XElement("bind",
+                 new XAttribute("name", "DataLayer"),
+                 new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+                 new XAttribute("to", dataLayer)
+               )
+             );
+
+          binding.Save(_settings["BindingConfigurationPath"]);
+          _kernel.Load(_settings["BindingConfigurationPath"]);
+        }
+        InitializeDataLayer(false);
+        if (httpRequest.Form["Configuration"] != null)
+        {
+
+          response = ((IDataLayer2)_dataLayer).Configure(configuration);
+        }
+
+        InitializeDictionary();
+
+      }
+      catch (Exception ex)
+      {
+        response.Messages.Add(String.Format("Failed to Upload Files[{0}]", _settings["Scope"]));
+        response.Messages.Add(ex.Message);
+        response.Level = StatusLevel.Error;
+      }
+      return response;
+    }
+
+    public XElement GetConfiguration(string projectName, string applicationName)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        return _dataLayer.GetConfiguration();
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(string.Format("Error in GetConfiguration: {0}", ex));
+        throw new Exception(string.Format("Error getting configuration: {0}", ex));
+      }
+    }
+
+    public Response RefreshDataObjects(string projectName, string applicationName)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        return _dataLayer.RefreshAll();
+      }
+      catch (Exception ex)
+      {
+        string errMsg = String.Format("Error refreshing data objects: {0}", ex);
+        _logger.Error(errMsg);
+        throw new Exception(errMsg);
+      }
+    }
+
+    public Response RefreshDataObject(string projectName, string applicationName, string dataObject)
+    {
+      try
+      {
+        InitializeScope(projectName, applicationName);
+        InitializeDataLayer();
+
+        return _dataLayer.Refresh(dataObject);
+      }
+      catch (Exception ex)
+      {
+        string errMsg = String.Format("Error refreshing data object [{0}]: {1}", dataObject, ex);
+        _logger.Error(errMsg);
+        throw new Exception(errMsg);
+      }
+    }
+
+    public IList<Object> GetSummary(String projectName, String applicationName)
+    {
+      InitializeScope(projectName, applicationName);
+      InitializeDataLayer();
+
+      if (!_dataDictionary.enableSummary)
+        throw new WebFaultException(HttpStatusCode.NotFound);
+
+      return _dataLayer.GetSummary();
+    }
+  }
 }

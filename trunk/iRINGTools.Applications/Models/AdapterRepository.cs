@@ -26,9 +26,13 @@ namespace iRINGTools.Web.Models
     private WebHttpClient _hibernateServiceClient = null;
     private WebHttpClient _referenceDataServiceClient = null;
     private WebHttpClient _javaServiceClient = null;
+    private string proxyHost = "";
+    private string proxyPort = "";
+    private WebProxy webProxy = null;
     private static readonly ILog _logger = LogManager.GetLogger(typeof(AdapterRepository));
     private static Dictionary<string, NodeIconCls> nodeIconClsMap;
     private string combinationMsg = null;
+    private string adapterServiceUri = "";
 
     [Inject]
     public AdapterRepository()
@@ -39,16 +43,17 @@ namespace iRINGTools.Web.Models
       _settings.AppendSettings(settings);
 
       #region initialize webHttpClient for converting old mapping
-      string proxyHost = _settings["ProxyHost"];
-      string proxyPort = _settings["ProxyPort"];
-      string adapterServiceUri = _settings["AdapterServiceUri"];
+      proxyHost = _settings["ProxyHost"];
+      proxyPort = _settings["ProxyPort"];
+      adapterServiceUri = _settings["AdapterServiceUri"];
       string javaCoreUri = _settings["JavaCoreUri"];
       string hibernateServiceUri = _settings["NHibernateServiceUri"];
       string referenceDataServiceUri = _settings["ReferenceDataServiceUri"];
+      SetNodeIconClsMap();
 
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
-        WebProxy webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
+        webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
 
         webProxy.Credentials = _settings.GetProxyCredential();
 
@@ -67,16 +72,46 @@ namespace iRINGTools.Web.Models
       #endregion
     }
 
-    public Directories GetScopes()
+    public WebHttpClient getServiceClinet(string uri)
     {
-      _logger.Debug("In AdapterRepository GetScopes");
-      Directories obj = null;
-      string msg = null;
+      WebHttpClient _newServiceClient = null;
+
+      if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
+      {
+        _newServiceClient = new WebHttpClient(uri, null, webProxy);
+      }
+      else
+      {
+        _newServiceClient = new WebHttpClient(uri);       
+      }
+      return _newServiceClient;
+    }
+
+    public Resources GetResource(String user)
+    {
+      Resources resources = null;      
 
       try
       {
-        msg = _javaServiceClient.GetMessage("/directory/session");        
-        obj = _javaServiceClient.Get<Directories>("/directory", true);
+        resources = _javaServiceClient.Get<Resources>("/directory/resources", true);
+        HttpContext.Current.Session[user + "." + "resources"] = resources; 
+      }
+      catch (Exception ex)
+      {
+        _logger.Error(ex.ToString());
+      }
+
+      return resources;
+    }
+
+    public Directories GetScopes()
+    {
+      _logger.Debug("In AdapterRepository GetScopes");
+      Directories obj = null;     
+
+      try
+      {
+        obj = _javaServiceClient.Get<Directories>("/directory", true);             
         _logger.Debug("Successfully called Adapter.");
       }
       catch (Exception ex)
@@ -113,10 +148,13 @@ namespace iRINGTools.Web.Models
     {
       _logger.Debug("In ScopesNode case block");
       Directories directory = null;
+      Resources resources = null;
 
       string _key = user + "." + "directory";
+      string _resource = user + "." + "resource";
       directory = GetScopes();
-      HttpContext.Current.Session[_key] = directory;      
+      HttpContext.Current.Session[user + "." + "directory"] = directory; 
+      resources = GetResource(user);
 
       Tree tree = null;
       string context = "";
@@ -281,13 +319,13 @@ namespace iRINGTools.Web.Models
       try
       {
         XElement binding = new XElement("module",
-        new XAttribute("name", string.Format("{0}.{1}", scope, application)),
-        new XElement("bind",
-        new XAttribute("name", "DataLayer"),
-        new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
-        new XAttribute("to", dataLayer)
-      )
-    );
+            new XAttribute("name", string.Format("{0}.{1}", scope, application)),
+            new XElement("bind",
+            new XAttribute("name", "DataLayer"),
+            new XAttribute("service", "org.iringtools.library.IDataLayer, iRINGLibrary"),
+            new XAttribute("to", dataLayer)
+          )
+        );
 
         obj = _adapterServiceClient.Post<XElement>(String.Format("/{0}/{1}/binding", scope, application), binding, true);
 
@@ -317,9 +355,9 @@ namespace iRINGTools.Web.Models
       return rootSecurityRole;
     }
 
-    public string GetDirectoryBaseUrl()
+    public string GetUserLdap()
     {
-      return _javaServiceClient.GetBaseUri();
+      return _javaServiceClient.GetMessage("/directory/userldap");
     }
 
     public BaseUrls GetEndpointBaseUrl()
@@ -334,7 +372,7 @@ namespace iRINGTools.Web.Models
     {
       string obj = null;
 
-      if (state == "new")
+      if (state.Equals("new"))
       {
         if (path != "")
           path = path + '.' + newFolderName;
@@ -346,13 +384,36 @@ namespace iRINGTools.Web.Models
 
       try
       {
-        if (state != "new")        
-          CheckCombination(path, context, oldContext, user);       
+        if (!state.Equals("new"))        
+          CheckCombination(path, context, oldContext, user);
 
+        Resources resources = (Resources)HttpContext.Current.Session[user + ".resources"]; 
         obj = _javaServiceClient.PostMessage(string.Format("/directory/folder/{0}/{1}/{2}/{3}", path, newFolderName, "folder", context), description, true);
-        _logger.Debug("Successfully called Adapter.");
 
-        ClearDirSession(user);
+        if (state != "new" && !context.Equals(oldContext))
+        {
+          Folder folder = PrepareFolder(user, path);
+
+          if (folder != null)
+          {
+            foreach (Endpoint endpoint in folder.Endpoints)
+            {
+              Resource resource = FindResource(endpoint.BaseUrl, resources);
+              Locator scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == oldContext.ToLower());
+
+              if (!endpoint.BaseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+              {
+                WebHttpClient _newServiceClient = getServiceClinet(endpoint.BaseUrl + "/adapter");
+                obj = _newServiceClient.Post<Locator>(string.Format("/scopes/{0}", context), scope, true);
+              }
+              else
+                obj = _adapterServiceClient.Post<Locator>(string.Format("/scopes/{0}", context), scope, true);
+            }
+          }
+        }
+
+        _logger.Debug("Successfully called Adapter and Java Directory Service.");    
+        ClearDirSession(user);        
       }
       catch (Exception ex)
       {
@@ -363,29 +424,94 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
-    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string assembly, string baseUrl, string oldBaseUrl, string user)
+    public string Endpoint(string newEndpointName, string path, string description, string state, string context, string oldAssembly, string newAssembly, string baseUrl, string oldBaseUrl, string user)
     {
-      string obj = null;
+      string obj = "";
+      Locator scope = null;
+      EndpointApplication application = null;
       string endpointName = null;
+      Resource resourceOld = null;
+      Resource resourceNew = null;
 
-      if (state == "new")
+      string baseUri = CleanBaseUrl(baseUrl, '.');
+      if (state.Equals("new"))
       {
         path = path + '/' + newEndpointName;
         endpointName = newEndpointName;
+        oldAssembly = newAssembly;
+        oldBaseUrl = baseUrl;
       }
       else
       {
         endpointName = path.Substring(path.LastIndexOf('/') + 1);
       }
 
-      path = path.Replace('/', '.');
-      baseUrl = baseUrl.Replace('/', '.');      
+      path = path.Replace('/', '.');      
 
       try
       {
-        CheckeCombination(baseUrl, oldBaseUrl, context, context, newEndpointName, endpointName, path);
-        obj = _javaServiceClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}", path, newEndpointName, "endpoint", baseUrl), description, true);
-        _logger.Debug("Successfully called Adapter.");
+        CheckeCombination(baseUrl, oldBaseUrl, context, context, newEndpointName, endpointName, path, user);
+        Resources resourcesOld = (Resources)HttpContext.Current.Session[user + ".resources"];
+        obj = _javaServiceClient.PostMessage(string.Format("/directory/endpoint/{0}/{1}/{2}/{3}/{4}", path, newEndpointName, "endpoint", baseUri.Replace('/', '.'), newAssembly), description, true);
+        Resources resourcesNew = GetResource(user); 
+
+        //&& (!newAssembly.Equals(oldAssembly) || !newEndpointName.Equals(endpointName))
+        if (!state.Equals("new"))
+        {
+          resourceOld = FindResource(CleanBaseUrl(baseUrl, '/'), resourcesOld); 
+            
+          if (resourceOld != null)
+          {
+            scope = resourceOld.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
+            application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == endpointName.ToLower());
+          }
+          else
+          {
+            application = new EndpointApplication()
+            {
+              Endpoint = endpointName,
+              Description = description,
+              Assembly = oldAssembly
+            };
+          }
+
+          if (!baseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+          {
+            WebHttpClient _newServiceClient = getServiceClinet(baseUrl);
+            obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps/{1}", context, newEndpointName), application, true);
+          }
+          else
+            obj = _adapterServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps/{1}", context, newEndpointName), application, true);
+        }
+        else if (state.Equals("new"))
+        {
+          resourceNew = FindResource(CleanBaseUrl(baseUrl, '.'), resourcesNew);           
+
+          if (resourceNew != null)
+          {
+            scope = resourceNew.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
+            application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == newEndpointName.ToLower());
+          }
+          else
+          {
+            application = new EndpointApplication()
+            {
+              Endpoint = newEndpointName,
+              Description = description,
+              Assembly = newAssembly
+            };
+          }
+
+          if (!baseUrl.ToLower().Equals(adapterServiceUri.ToLower()))
+          {
+            WebHttpClient _newServiceClient = getServiceClinet(baseUrl);
+            obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps", context), application, true);          
+          }
+          else
+            obj = _adapterServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps", context), application, true);          
+        }
+
+        _logger.Debug("Successfully called Adapter and Java Directory Service.");
         ClearDirSession(user);
       }
       catch (Exception ex)
@@ -394,18 +520,48 @@ namespace iRINGTools.Web.Models
         obj = "ERROR";
       }     
 
-      UpdateBinding(context, endpointName, assembly);
+      //UpdateBinding(context, endpointName, assembly);
       return obj;
     }
 
-    public string DeleteEntry(string path, string user)
+    public string DeleteEntry(string path, string type, string context, string baseUrl, string user)
     {
-      string obj = null;
+      string obj = null;     
+
+      string name = null;
       path = path.Replace('/', '.');
+      Locator scope = null;
+      EndpointApplication application = null;
+
       try
       {
+        Resources resources = (Resources)HttpContext.Current.Session[user + ".resources"];
+        name = path.Substring(path.LastIndexOf('.') + 1);                  
+
+        if (type.Equals("endpoint"))
+        {
+          Resource resource = FindResource(CleanBaseUrl(baseUrl, '/'), resources);
+          scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
+          application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == name.ToLower());
+
+          if (!baseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+          {
+            WebHttpClient _newServiceClient = getServiceClinet(baseUrl);
+            obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
+          }
+          else
+            obj = _adapterServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
+        }
+        else if (type.Equals("folder"))
+        {
+          Folder folder = PrepareFolder(user, path);
+
+          if (folder != null)
+            DeleteFolders(folder, context, resources);          
+        }
+
         obj = _javaServiceClient.Post<String>(String.Format("/directory/{0}", path), "", true);
-        _logger.Debug("Successfully called Adapter.");
+        _logger.Debug("Successfully called Adapter.");      
         ClearDirSession(user);
       }
       catch (Exception ex)
@@ -422,6 +578,57 @@ namespace iRINGTools.Web.Models
     }
 
     #region Private methods for Directory 
+
+    private Folder PrepareFolder(string user, string path)
+    {
+      string _key = user + "." + "directory";
+      if (HttpContext.Current.Session[_key] != null)
+      {
+        Directories directory = (Directories)HttpContext.Current.Session[_key];
+        return FindFolder(directory, path);        
+      }
+      return null;
+    }
+
+    private void DeleteFolders(Folder folder, string context, Resources resources)
+    {
+      Endpoints endpoints = folder.Endpoints;    
+      Resource resource = null;
+      EndpointApplication application = null;
+
+      Locator scope = null;
+
+      if (endpoints != null)
+      {
+        foreach (Endpoint endpoint in endpoints)
+        {
+          resource = FindResource(endpoint.BaseUrl, resources);
+          scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
+          application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == endpoint.Name.ToLower());
+
+          if (!endpoint.BaseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+          {
+            WebHttpClient _newServiceClient = getServiceClinet(endpoint.BaseUrl);
+            _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
+          }
+          else
+            _adapterServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
+        }
+      }
+
+      Folders subFolders = folder.Folders;
+
+      if (subFolders == null)
+        return;
+      else
+      {
+        foreach (Folder subFolder in subFolders)
+        {
+          DeleteFolders(subFolder, context, resources);
+        }
+      }
+    }
+
     private static void SetNodeIconClsMap()
     {
       nodeIconClsMap = new Dictionary<string, NodeIconCls>()
@@ -442,47 +649,61 @@ namespace iRINGTools.Web.Models
     
     private void ClearDirSession(string user)
     {
-      if (HttpContext.Current.Session[user + "." + "tree"] != null)
-        HttpContext.Current.Session[user + "." + "tree"] = null;
-
       if (HttpContext.Current.Session[user + "." + "directory"] != null)
         HttpContext.Current.Session[user + "." + "directory"] = null;
+
+      if (HttpContext.Current.Session[user + "." + "resource"] != null)
+        HttpContext.Current.Session[user + "." + "resource"] = null;
     }
 
-    private void CheckeCombination(string baseUrl, string oldBaseUrl, string context, string oldContext, string endpointName, string oldEndpointName, string path)
+    private Resource FindResource(string baseUrl, Resources resources)
     {
-      string newSessionKey = baseUrl + "." + context + "." + endpointName;
-      string oldSessionKey = oldBaseUrl + "." + oldContext + "." + oldEndpointName;
-      string getPath = "";
-
-      if (!newSessionKey.Equals(oldSessionKey))
+      foreach (Resource rc in resources)
       {
-        if (HttpContext.Current.Session[oldSessionKey] != null)
+        if (rc.BaseUrl.ToLower().Equals(baseUrl.ToLower()))
         {
-          HttpContext.Current.Session[oldSessionKey] = null;
+          return rc;
         }
       }
-        
-      if (HttpContext.Current.Session[newSessionKey] != null)
-      {
-        getPath = HttpContext.Current.Session[newSessionKey].ToString();
-
-        if (getPath == "")
-          HttpContext.Current.Session[newSessionKey] = path;
-        else if (!getPath.Equals(path))
-        {
-          combinationMsg = "The combination of (" + baseUrl.Replace(".", "/") + ", " + context + ", " + endpointName + ") at " + path.Replace(".", "/") + " is allready existed at " + getPath.Replace(".", "/") + ".";
-          _logger.Error("Duplicated combination of baseUrl, context, and endpoint name");
-          throw new Exception("Duplicated combination of baseUrl, context, and endpoint name");
-        }
-      }
-      else
-      {
-        HttpContext.Current.Session[newSessionKey] = path;
-      } 
+      return null;
     }
 
-    private void CheckCombination(Folder folder, string path, string context, string oldContext)
+    private string CleanBaseUrl(string url, char con)
+    {
+      System.Uri uri = new System.Uri(url);
+      return uri.Scheme + ":" + con + con + uri.Host + ":" + uri.Port;
+    }
+
+    private void CheckeCombination(string baseUrl, string oldBaseUrl, string context, string oldContext, string endpointName, string oldEndpointName, string path, string user)
+    {
+      string _resource = user + ".resources";
+      string lpath = "";
+      Locator scope = null;
+
+      if (HttpContext.Current.Session[_resource] != null)
+      {
+        Resources resources = (Resources)HttpContext.Current.Session[_resource];
+        Resource resource = FindResource(CleanBaseUrl(oldBaseUrl, '/'), resources);
+
+        if (resource != null)
+          scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
+        
+        if (scope != null)
+        {
+          EndpointApplication application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == endpointName.ToLower());
+          
+          if (application != null && !application.Path.Replace("/", ".").Equals(path))
+          {
+            lpath = application.Path;
+            combinationMsg = "The combination of (" + baseUrl.Replace(".", "/") + ", " + context + ", " + endpointName + ") at " + path.Replace(".", "/") + " is allready existed at " + lpath + ".";
+            _logger.Error("Duplicated combination of baseUrl, context, and endpoint name");
+            throw new Exception("Duplicated combination of baseUrl, context, and endpoint name");
+          }
+        }        
+      }      
+    }
+
+    private void CheckCombination(Folder folder, string path, string context, string oldContext, string user)
     {
       Endpoints endpoints = folder.Endpoints;
       string endpointPath = "";
@@ -492,7 +713,7 @@ namespace iRINGTools.Web.Models
         foreach (Endpoint endpoint in endpoints)
         {
           endpointPath = path + "." + endpoint.Name;
-          CheckeCombination(endpoint.BaseUrl, endpoint.BaseUrl, context, oldContext, endpoint.Name, endpoint.Name, endpointPath);
+          CheckeCombination(endpoint.BaseUrl, endpoint.BaseUrl, context, oldContext, endpoint.Name, endpoint.Name, endpointPath, user);
         }
       }
 
@@ -505,7 +726,7 @@ namespace iRINGTools.Web.Models
         foreach (Folder subFolder in subFolders)
         {
           path = path + "." + subFolder.Name;
-          CheckCombination(subFolder, path, context, oldContext);
+          CheckCombination(subFolder, path, context, oldContext, user);
         }
       }
     }
@@ -517,7 +738,7 @@ namespace iRINGTools.Web.Models
       {
         Directories directory = (Directories)HttpContext.Current.Session[_key];
         Folder folder = FindFolder(directory, path);
-        CheckCombination(folder, path, context, oldContext);
+        CheckCombination(folder, path, context, oldContext, user);
       }
     }
 
@@ -613,7 +834,6 @@ namespace iRINGTools.Web.Models
       string baseUrl = "";
       string assembly = "";
       string dataLayerName = "";
-      string sessionKey = "";
       string folderPath = treePath;
 
       if (endpoints != null)
@@ -637,13 +857,8 @@ namespace iRINGTools.Web.Models
             context = endpoint.Context;
 
           if (endpoint.BaseUrl != null)
-            baseUrl = endpoint.BaseUrl;
-
-          sessionKey = baseUrl + "." + context + "." + endpointName;
-          HttpContext.Current.Session[sessionKey] = treePath;
-
-          baseUrl = baseUrl.Replace('.', '/');
-
+            baseUrl = endpoint.BaseUrl + "/adapter";
+          
           DataLayer dataLayer = GetDataLayer(context, endpointName);
 
           if (dataLayer != null)
