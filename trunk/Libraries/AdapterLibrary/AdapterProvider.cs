@@ -463,7 +463,7 @@ namespace org.iringtools.adapter
 
           if (File.Exists(currDictionaryPath))
           {
-            string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, appName);
+            string updatedDictionaryPath = String.Format("{0}DatabaseDictionary.{1}.{2}.xml", path, scopeName, updatedApp.Endpoint);
             File.Copy(currDictionaryPath, updatedDictionaryPath);
           }
 

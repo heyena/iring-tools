@@ -950,8 +950,9 @@
             },
             success: function () {
                 tree.onReload(node);
-                if (node.parentNode.expanded == false)
-                    node.parentNode.expand();
+                if (node.parentNode)
+                    if (node.parentNode.expanded == false)
+                        node.parentNode.expand();
             },
             failure: function () {
                 var message = 'Error deleting folder!';
