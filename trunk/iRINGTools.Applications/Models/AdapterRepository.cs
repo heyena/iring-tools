@@ -395,21 +395,7 @@ namespace iRINGTools.Web.Models
           Folder folder = PrepareFolder(user, path);
 
           if (folder != null)
-          {
-            foreach (Endpoint endpoint in folder.Endpoints)
-            {
-              Resource resource = FindResource(endpoint.BaseUrl, resources);
-              Locator scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == oldContext.ToLower());
-
-              if (!endpoint.BaseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
-              {
-                WebHttpClient _newServiceClient = getServiceClinet(endpoint.BaseUrl + "/adapter");
-                obj = _newServiceClient.Post<Locator>(string.Format("/scopes/{0}", context), scope, true);
-              }
-              else
-                obj = _adapterServiceClient.Post<Locator>(string.Format("/scopes/{0}", context), scope, true);
-            }
-          }
+            obj = UpdateFolders(folder, context, resources, oldContext);          
         }
 
         _logger.Debug("Successfully called Adapter and Java Directory Service.");    
@@ -590,8 +576,47 @@ namespace iRINGTools.Web.Models
       return null;
     }
 
-    private void DeleteFolders(Folder folder, string context, Resources resources)
+    private string UpdateFolders(Folder folder, string context, Resources resources, String oldContext)
     {
+      string obj = null;
+      Endpoints endpoints = folder.Endpoints;
+      Resource resource = null;
+
+      if (endpoints != null)
+      {
+        foreach (Endpoint endpoint in folder.Endpoints)
+        {
+          resource = FindResource(endpoint.BaseUrl, resources);
+          Locator scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == oldContext.ToLower());
+
+          if (!endpoint.BaseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+          {
+            WebHttpClient _newServiceClient = getServiceClinet(endpoint.BaseUrl + "/adapter");
+            obj = _newServiceClient.Post<Locator>(string.Format("/scopes/{0}", context), scope, true);
+          }
+          else
+            obj = _adapterServiceClient.Post<Locator>(string.Format("/scopes/{0}", context), scope, true);
+        }
+      }
+
+      Folders subFolders = folder.Folders;
+
+      if (subFolders == null)
+        return null;
+      else
+      {
+        foreach (Folder subFolder in subFolders)
+        {
+          obj = UpdateFolders(subFolder, context, resources, oldContext);
+        }
+      }
+
+      return obj;
+    }
+
+    private string DeleteFolders(Folder folder, string context, Resources resources)
+    {
+      string obj = null;
       Endpoints endpoints = folder.Endpoints;    
       Resource resource = null;
       EndpointApplication application = null;
@@ -609,24 +634,26 @@ namespace iRINGTools.Web.Models
           if (!endpoint.BaseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
           {
             WebHttpClient _newServiceClient = getServiceClinet(endpoint.BaseUrl);
-            _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
+            obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
           }
           else
-            _adapterServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
+            obj = _adapterServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
         }
       }
 
       Folders subFolders = folder.Folders;
 
       if (subFolders == null)
-        return;
+        return null;
       else
       {
         foreach (Folder subFolder in subFolders)
         {
-          DeleteFolders(subFolder, context, resources);
+          obj = DeleteFolders(subFolder, context, resources);
         }
       }
+
+      return obj;
     }
 
     private static void SetNodeIconClsMap()
