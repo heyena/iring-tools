@@ -385,7 +385,7 @@
       if (node.childNodes[0]) {
         if (node.childNodes[0].data.record.securityRole) {
           securityRole = node.childNodes[0].data.record.securityRole;
-          if (node.childNodes[0].data.record.securityRole.indexOf('superadmin') > -1)
+          if (node.childNodes[0].data.record.securityRole.indexOf('rootadmin') > -1)
             ifsuperadmin = true;
         }
         else {
@@ -427,46 +427,49 @@
                 method: 'GET',
                 success: function (response, request) {
                   var rootSecurityRole = response.responseText;
-                  if (rootSecurityRole.indexOf('superadmin') > -1) {
+                  if (rootSecurityRole.indexOf('rootadmin') > -1) {
                     ifsuperadmin = true;
-                    if (securityRole.indexOf('admin') > -1 || ifsuperadmin) {
-                      if (obj.type == "ScopesNode") {
-                        me.scopesMenu.showAt(e.getXY());
-                      } else if (obj.type == "folder") {
-                        me.scopeMenu.showAt(e.getXY());
-                      } else if (obj.type == "ApplicationNode") {
-                        me.applicationMenu.showAt(e.getXY());
-                      } else if (obj.type == "DataObjectNode") {
-                        me.appDataMenu.showAt(e.getXY());
-                      } else if (obj.type == "ValueListsNode") {
-                        me.valueListsMenu.showAt(e.getXY());
-                      } else if (obj.type == "ValueListNode") {
-                        me.valueListMenu.showAt(e.getXY());
-                      } else if (obj.type == "ListMapNode") {
-                        me.valueListMapMenu.showAt(e.getXY());
-                      } else if (obj.type == "GraphsNode") {
-                        var menu = new Ext.menu.Menu();
-                        menu.add(me.buildGraphsMenu(node));
-                        menu.showAt(e.getXY());
-                      } else if (obj.type == "GraphNode") {
-                        me.graphMenu.showAt(e.getXY());
-                      }
-                    }
 
+                    if (obj.type == "ScopesNode") {
+                      me.scopesMenu.showAt(e.getXY());
+                    } 
+                    else if (obj.type == "folder") {
+                      me.scopeMenu.showAt(e.getXY());
+                    } 
+                    else if (obj.type == "ApplicationNode") {
+                      me.applicationMenu.showAt(e.getXY());
+                    } 
+                    else if (obj.type == "DataObjectNode") {
+                      me.appDataMenu.showAt(e.getXY());
+                    } 
+                    else if (obj.type == "ValueListsNode") {
+                      me.valueListsMenu.showAt(e.getXY());
+                    } 
+                    else if (obj.type == "ValueListNode") {
+                      me.valueListMenu.showAt(e.getXY());
+                    } 
+                    else if (obj.type == "ListMapNode") {
+                      me.valueListMapMenu.showAt(e.getXY());
+                    } 
+                    else if (obj.type == "GraphsNode") {
+                      var menu = new Ext.menu.Menu();
+                      menu.add(me.buildGraphsMenu(node));
+                      menu.showAt(e.getXY());
+                    } 
+                    else if (obj.type == "GraphNode") {
+                      me.graphMenu.showAt(e.getXY());
+                    } 
                   }
                 },
                 failure: function () { }
               });
             }
-
           },
           failure: function () { }
         });
       }
     }
-
-
-    if (securityRole.indexOf('admin') > -1 || ifsuperadmin) {
+    else if (securityRole.indexOf('admin') > -1 || ifsuperadmin) {
       if (obj.type == "ScopesNode") {
         this.scopesMenu.showAt(e.getXY());
       } else if (obj.type == "folder") {

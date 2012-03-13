@@ -904,7 +904,8 @@
         }, this);
         win.show();
 
-        win.items.first().getForm().findField('Name').clearInvalid();
+        if (win.items.first().getForm().findField('Name'))
+          win.items.first().getForm().findField('Name').clearInvalid();
 
     },    
 
