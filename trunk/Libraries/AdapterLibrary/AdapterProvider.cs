@@ -3239,10 +3239,10 @@ namespace org.iringtools.adapter
 
           try
           {
-            if (asm.GetTypes() != null)
-            {
-              Type[] asmTypes = asm.GetTypes();
+            Type[] asmTypes = asm.GetTypes();
 
+            try
+            {
               if (asmTypes != null)
               {
                 foreach (System.Type asmType in asmTypes)
@@ -3261,9 +3261,17 @@ namespace org.iringtools.adapter
                   }
                 }
               }
+            }          
+            catch (Exception e)
+            {
+              _logger.Error("Error loading data layer (While getting types): " + e);
             }
+
           }
-          catch (Exception) { }
+          catch (Exception e) 
+          {
+            _logger.Error("Error loading data layer: " + e);
+          }
         }
       }
       catch (Exception e)
