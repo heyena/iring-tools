@@ -612,7 +612,7 @@ namespace org.iringtools.adapter
       }
 
       return response;
-    }
+    }    
 
     private Response Generate(Locator scope)
     {
@@ -736,6 +736,7 @@ namespace org.iringtools.adapter
             status.Messages.Add(string.Format("Database dictionary [{0}.{1}] does not exist.", scopeName, application.Endpoint));
           }
         }
+
       }
       catch (Exception ex)
       {

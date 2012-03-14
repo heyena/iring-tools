@@ -156,7 +156,7 @@
 
     onRegenerateAll: function (btn, ev) {
         Ext.Ajax.request({
-            url: 'AdapterManager/RegenAll',
+            url: 'directory/RegenAll',
             method: 'GET',
             success: function (result, request) {
                 var responseObj = Ext.decode(result.responseText);

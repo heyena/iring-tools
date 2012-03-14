@@ -42,5 +42,7 @@ namespace iRINGTools.Web.Models
     BaseUrls GetEndpointBaseUrl();
 
     string GetCombinationMsg();
+
+    Response RegenAll(string user);
   }
 }
