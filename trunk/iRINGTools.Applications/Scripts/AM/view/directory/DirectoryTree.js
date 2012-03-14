@@ -17,7 +17,7 @@
   lines: true,
   tbar: null,
   scroll: 'both',
- // store: 'DirectoryStore',
+  // store: 'DirectoryStore',
   initComponent: function () {
 
     this.tbar = [{
@@ -62,6 +62,12 @@
 
     this.scopesMenu = new Ext.menu.Menu();
     this.scopesMenu.add(this.buildScopesMenu());
+
+    this.generateMenu = new Ext.menu.Menu();
+    this.generateMenu.add(this.buildGenerateMenu());
+
+    this.scopesGenerateMenu = new Ext.menu.Menu();
+    this.scopesGenerateMenu.add(this.buildScopesGenerateMenu());
 
     this.scopeMenu = new Ext.menu.Menu();
     this.scopeMenu.add(this.buildScopeMenu());
@@ -114,40 +120,40 @@
     return state;
   },
 
-    applyState: function (state) {
-        var that = this;
-        var rootNode = that.getRootNode();
+  applyState: function (state) {
+    var that = this;
+    var rootNode = that.getRootNode();
 
-        var findChildById = function (root, id) {
-            var i = 0;
-            while (root.childNodes[i]) {
-                var node = root.childNodes[i]
-                if (node.data.id == id)
-                    return node;
-                i++;
-            }
-            return null;
-        };
+    var findChildById = function (root, id) {
+      var i = 0;
+      while (root.childNodes[i]) {
+        var node = root.childNodes[i]
+        if (node.data.id == id)
+          return node;
+        i++;
+      }
+      return null;
+    };
 
-        var treeNode = rootNode;
-        var nodes = state.expandedNodes || [],
+    var treeNode = rootNode;
+    var nodes = state.expandedNodes || [],
             len = nodes.length;
-        //  this.collapseAll();
-        for (var i = 0; i < len; i++) {
-            if (typeof nodes[i] != 'undefined') {
-                if (treeNode) {
-                    var treeNode = findChildById(treeNode, nodes[i]);
-                    if (treeNode && treeNode.data.expanded == false) {
-                        treeNode.expand();
-                    }
-                }
-                //that.expandPath(nodes[i]); //, 'text');
-            }
+    //  this.collapseAll();
+    for (var i = 0; i < len; i++) {
+      if (typeof nodes[i] != 'undefined') {
+        if (treeNode) {
+          var treeNode = findChildById(treeNode, nodes[i]);
+          if (treeNode && treeNode.data.expanded == false) {
+            treeNode.expand();
+          }
         }
-        // this.callParent(arguments);
+        //that.expandPath(nodes[i]); //, 'text');
+      }
+    }
+    // this.callParent(arguments);
 
 
-    },
+  },
 
   buildScopesMenu: function () {
     return [
@@ -157,16 +163,39 @@
         icon: 'Content/img/16x16/document-new.png',
         scope: this,
         action: 'newscope'
-    }, {
-        xtype: 'button',
-        text: 'Regenerate Files',        
-        icon: 'Content/img/16x16/document-new.png',
-        scope: this,
-        action: 'regenerateAll'
-        // HibernateDataLayer artifacts
-    }
-    ]
+      }]
   },
+
+  buildScopesGenerateMenu: function () {
+    return [
+    {
+      xtype: 'button',
+      text: 'New Folder',
+      icon: 'Content/img/16x16/document-new.png',
+      scope: this,
+      action: 'newscope'
+    }, {
+      xtype: 'button',
+      text: 'Regenerate NH Files',
+      icon: 'Content/img/16x16/document-new.png',
+      scope: this,
+      action: 'regenerateAll'
+      // HibernateDataLayer artifacts
+    }]
+  },
+
+  buildGenerateMenu: function () {
+    return [
+    {
+      xtype: 'button',
+      text: 'Regenerate NH Files',
+      icon: 'Content/img/16x16/document-new.png',
+      scope: this,
+      action: 'regenerateAll'
+      // HibernateDataLayer artifacts
+    }]
+  },
+
   buildScopeMenu: function () {
     return [
       {
@@ -380,46 +409,35 @@
       }
     }
 
-
+    //right clicks the root node
     if (index == 0) {
+      //when root node has children
       if (node.childNodes[0]) {
         if (node.childNodes[0].data.record.securityRole) {
           securityRole = node.childNodes[0].data.record.securityRole;
-          if (node.childNodes[0].data.record.securityRole.indexOf('rootadmin') > -1)
-            ifsuperadmin = true;
+          
+          if (node.childNodes[0].data.record.securityRole.indexOf('rootadmin') > -1) {
+            ifsuperadmin = true;            
+            me.scopesMenu.showAt(e.getXY());           
+          }
+          else if (securityRole.indexOf('admin') > -1) {
+            me.generateMenu.showAt(e.getXY());           
+          }
         }
         else {
           ifsuperadmin = true;
         }
       }
+      //when starting from scratch (root node has no children)
       else {
         Ext.Ajax.request({
           url: 'directory/UseLdap',
           method: 'GET',
           success: function (response, request) {
             var baseUrl = response.responseText;
+
             if (baseUrl == 'false') {
-              if (obj.type == "ScopesNode") {
-                me.scopesMenu.showAt(e.getXY());
-              } else if (obj.type == "folder") {
-                me.scopeMenu.showAt(e.getXY());
-              } else if (obj.type == "ApplicationNode") {
-                me.applicationMenu.showAt(e.getXY());
-              } else if (obj.type == "DataObjectNode") {
-                me.appDataMenu.showAt(e.getXY());
-              } else if (obj.type == "ValueListsNode") {
-                me.valueListsMenu.showAt(e.getXY());
-              } else if (obj.type == "ValueListNode") {
-                me.valueListMenu.showAt(e.getXY());
-              } else if (obj.type == "ListMapNode") {
-                me.valueListMapMenu.showAt(e.getXY());
-              } else if (obj.type == "GraphsNode") {
-                var menu = new Ext.menu.Menu();
-                menu.add(this.buildGraphsMenu(node));
-                menu.showAt(e.getXY());
-              } else if (obj.type == "GraphNode") {
-                me.graphMenu.showAt(e.getXY());
-              }
+              me.scopesGenerateMenu.showAt(e.getXY());              
             }
             else {
               Ext.Ajax.request({
@@ -429,36 +447,10 @@
                   var rootSecurityRole = response.responseText;
                   if (rootSecurityRole.indexOf('rootadmin') > -1) {
                     ifsuperadmin = true;
-
-                    if (obj.type == "ScopesNode") {
-                      me.scopesMenu.showAt(e.getXY());
-                    } 
-                    else if (obj.type == "folder") {
-                      me.scopeMenu.showAt(e.getXY());
-                    } 
-                    else if (obj.type == "ApplicationNode") {
-                      me.applicationMenu.showAt(e.getXY());
-                    } 
-                    else if (obj.type == "DataObjectNode") {
-                      me.appDataMenu.showAt(e.getXY());
-                    } 
-                    else if (obj.type == "ValueListsNode") {
-                      me.valueListsMenu.showAt(e.getXY());
-                    } 
-                    else if (obj.type == "ValueListNode") {
-                      me.valueListMenu.showAt(e.getXY());
-                    } 
-                    else if (obj.type == "ListMapNode") {
-                      me.valueListMapMenu.showAt(e.getXY());
-                    } 
-                    else if (obj.type == "GraphsNode") {
-                      var menu = new Ext.menu.Menu();
-                      menu.add(me.buildGraphsMenu(node));
-                      menu.showAt(e.getXY());
-                    } 
-                    else if (obj.type == "GraphNode") {
-                      me.graphMenu.showAt(e.getXY());
-                    } 
+                    me.scopesMenu.showAt(e.getXY());                    
+                  }
+                  else if (securityRole.indexOf('admin') > -1) {
+                    me.generateMenu.showAt(e.getXY());                    
                   }
                 },
                 failure: function () { }
@@ -469,10 +461,9 @@
         });
       }
     }
+    //right clicks tree nodes which are not the root node
     else if (securityRole.indexOf('admin') > -1 || ifsuperadmin) {
-      if (obj.type == "ScopesNode") {
-        this.scopesMenu.showAt(e.getXY());
-      } else if (obj.type == "folder") {
+      if (obj.type == "folder") {
         this.scopeMenu.showAt(e.getXY());
       } else if (obj.type == "ApplicationNode") {
         this.applicationMenu.showAt(e.getXY());

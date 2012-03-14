@@ -159,13 +159,7 @@ namespace org.iringtools.web.controllers
         _logger.Error(e.ToString());
         throw e;
       }
-    }
-
-    public JsonResult RegenAll()
-    {
-      Response response = _repository.RegenAll();
-      return Json(response, JsonRequestBehavior.AllowGet);
-    }
+    }    
 
     public class DBProvider
     {

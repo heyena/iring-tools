@@ -256,20 +256,6 @@ namespace org.iringtools.services
       }
     }
 
-    [Description("Generate artifacts for all applications in a specific project.")]
-    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/generate")]
-    public Response GenerateScope(string scope)
-    {
-      try
-      {
-        return _adapterProvider.Generate(scope);
-      }
-      catch (Exception ex)
-      {
-        return PrepareErrorResponse(ex);
-      }
-    }
-
     [Description("Generate artifacts for a specific application in a project.")]
     [WebInvoke(Method = "GET", UriTemplate = "/{scope}/{app}/generate")]
     public Response Generate(string scope, string app)
@@ -283,6 +269,21 @@ namespace org.iringtools.services
         return PrepareErrorResponse(ex);
       }
     }
+
+    [Description("Generate artifacts for all applications in a specific project.")]
+    [WebInvoke(Method = "GET", UriTemplate = "/{scope}/generate")]
+    public Response GenerateScope(string scope)
+    {
+      try
+      {
+        return _adapterProvider.Generate(scope);
+      }
+      catch (Exception ex)
+      {
+        return PrepareErrorResponse(ex);
+      }
+    }
+    
     #endregion Generate methods
 
     #region GetDictionary

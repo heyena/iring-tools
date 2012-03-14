@@ -486,6 +486,13 @@ namespace org.iringtools.web.controllers
       return Json(new { success = true }, JsonRequestBehavior.AllowGet);
     }
 
+    public JsonResult RegenAll()
+    {
+      string user = GetUserId((IDictionary<string, string>)_allClaims);
+      Response response = _repository.RegenAll(user);
+      return Json(response, JsonRequestBehavior.AllowGet);
+    }
+
     public JsonResult RootSecurityRole()
     {
       string rootSecuirtyRole = _repository.GetRootSecurityRole();

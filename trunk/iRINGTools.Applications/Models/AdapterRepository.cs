@@ -461,7 +461,7 @@ namespace iRINGTools.Web.Models
             };
           }
 
-          if (!baseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+          if (!CleanBaseUrl(baseUrl.ToLower(), '/').Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
           {
             WebHttpClient _newServiceClient = getServiceClinet(baseUrl);
             obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/apps/{1}", context, newEndpointName), application, true);
@@ -530,7 +530,7 @@ namespace iRINGTools.Web.Models
           scope = resource.Locators.FirstOrDefault<Locator>(o => o.Context.ToLower() == context.ToLower());
           application = scope.Applications.FirstOrDefault<EndpointApplication>(o => o.Endpoint.ToLower() == name.ToLower());
 
-          if (!baseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+          if (!CleanBaseUrl(baseUrl.ToLower(), '/').Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
           {
             WebHttpClient _newServiceClient = getServiceClinet(baseUrl);
             obj = _newServiceClient.Post<EndpointApplication>(String.Format("/scopes/{0}/delete", context), application, true);
@@ -558,12 +558,66 @@ namespace iRINGTools.Web.Models
       return obj;
     }
 
+    public Response RegenAll(string user)
+    {
+      Response obj = new Response();
+      Response totalObj = new Response();
+      string _key = user + "." + "directory";
+      Directories directory = null;
+      if (HttpContext.Current.Session[_key] != null)      
+        directory = (Directories)HttpContext.Current.Session[_key];
+
+      foreach (Folder folder in directory)
+      {
+        obj.Append(GenerateFolders(folder, totalObj));
+      }
+      return obj;      
+    }
+    
     public string GetCombinationMsg()
     {
       return combinationMsg;
     }
 
     #region Private methods for Directory 
+
+    private Response GenerateFolders(Folder folder, Response totalObj)
+    {
+      Response obj = null;
+      Endpoints endpoints = folder.Endpoints;      
+
+      if (endpoints != null)
+      {
+        foreach (Endpoint endpoint in endpoints)
+        {
+          if (!endpoint.BaseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+          {
+            WebHttpClient _newServiceClient = getServiceClinet(endpoint.BaseUrl);
+            obj = _newServiceClient.Get<Response>(String.Format("/{0}/{1}/generate", endpoint.Context, endpoint.Name));
+            totalObj.Append(obj);
+          }
+          else
+          {
+            obj = _adapterServiceClient.Get<Response>(String.Format("/{0}/{1}/generate", endpoint.Context, endpoint.Name));
+            totalObj.Append(obj);
+          }
+        }
+      }
+
+      Folders subFolders = folder.Folders;
+
+      if (subFolders == null)
+        return totalObj;
+      else
+      {
+        foreach (Folder subFolder in subFolders)
+        {
+          obj = GenerateFolders(subFolder, totalObj);
+        }
+      }
+
+      return totalObj;
+    }
 
     private Folder PrepareFolder(string user, string path)
     {
@@ -1168,13 +1222,7 @@ namespace iRINGTools.Web.Models
       }
 
       return dbObjectNodes;
-    }
-
-    public Response RegenAll()
-    {
-      return _adapterServiceClient.Get<Response>("/generate");
-    }
-
+    }    
     #endregion
   }
 }
