@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Net;
 using System.Web;
 using System.Xml.Linq;
@@ -21,6 +22,7 @@ namespace QMXFGenerator
     #region Private Members
     private static string _excelFilePath = String.Empty;
     private static string _qmxfFilePath = String.Empty;
+    private static string _processedFilePath = String.Empty;
     private static string _proxyHost = String.Empty;
     private static string _proxyPort = String.Empty;
     private static string _proxyCredentials = String.Empty;
@@ -54,7 +56,9 @@ namespace QMXFGenerator
           QMXF qmxf = new QMXF();
           if (Initialize(args))
           {
-            using (document = SpreadsheetDocumentWrapper.Open(_excelFilePath))
+            var backup = new FileStream(_processedFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            var input = new FileStream(_excelFilePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            using (document = SpreadsheetDocumentWrapper.Open(input, backup))
             {
               _refdataClient = new WebHttpClient(_refdataServiceUri);
 
@@ -86,7 +90,7 @@ namespace QMXFGenerator
 
 
             }
-            ///Post Classes and Templates induvidually to refdataService
+            ///Post Classes and Templates individually to refdataService
             var error = false;
             if (!string.IsNullOrEmpty(_updateRun))
             {
@@ -254,6 +258,7 @@ namespace QMXFGenerator
         if (args.Length < 2)
         {
           _excelFilePath = System.Configuration.ConfigurationManager.AppSettings["ExcelFilePath"];
+          _processedFilePath = System.Configuration.ConfigurationManager.AppSettings["ProcessedFilePath"];
           _qmxfFilePath = System.Configuration.ConfigurationManager.AppSettings["QMXFFilePath"];
           _targetRepository = System.Configuration.ConfigurationManager.AppSettings["TargetRepositoryName"];
           _refdataServiceUri = System.Configuration.ConfigurationManager.AppSettings["RefdataServiceUri"];
@@ -775,7 +780,7 @@ namespace QMXFGenerator
       }
     }
 
-    private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow, int rowIndex, WorksheetPartWrapper part)
+    private static List<RoleQualification> ProcessRoleQualification(string templateName, ArrayList row, ArrayList parentRow, int rowIndex, WorksheetPartWrapper part) 
     {
       int roleIndex = 0;
       int idx = 0;
@@ -788,7 +793,7 @@ namespace QMXFGenerator
         {
           int roleOffset = (int)TemplateColumns.Roles + ((int)RoleColumns.Count * roleIndex);
 
-          object identifier = row[(int)RoleColumns.ID + roleOffset];
+          object identifier = parentRow[(int)RoleColumns.ID + roleOffset];
           object label = row[(int)RoleColumns.Name + roleOffset];
           object description = row[(int)RoleColumns.Description + roleOffset];
           object type = row[(int)RoleColumns.Type + roleOffset];
@@ -807,18 +812,6 @@ namespace QMXFGenerator
             }
 
             RoleQualification roleQualification = new RoleQualification();
-
-            if (identifier == null || identifier.ToString() == String.Empty)
-            {
-              identifier = GenerateID(_templateRegistryBase, name);
-
-              //write to the in-memory list
-              _siTemplates[idx][(int)RoleColumns.ID + roleOffset] = identifier;
-
-              //write to the sheet, but offset counters for 1-based array
-              part.Worksheet.SetCellValue(new GridReference(rowIndex - 1, (int)RoleColumns.ID + roleOffset), identifier);
-            }
-
             roleQualification.identifier = identifier.ToString();
 
             QMXFName englishUSName = new QMXFName
