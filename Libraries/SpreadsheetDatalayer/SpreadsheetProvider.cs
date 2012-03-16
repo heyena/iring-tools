@@ -333,7 +333,8 @@ namespace org.iringtools.adapter.datalayer
 
     public SpreadsheetConfiguration GetConfiguration()
     {
-      if (_configuration == null) _configuration = new SpreadsheetConfiguration() { Tables = new List<SpreadsheetTable>() };
+      if (_configuration == null) 
+        _configuration = new SpreadsheetConfiguration() { Tables = new List<SpreadsheetTable>() };
       return _configuration;
     }
 
