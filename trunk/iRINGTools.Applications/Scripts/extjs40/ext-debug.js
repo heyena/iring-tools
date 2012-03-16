@@ -6923,7 +6923,7 @@ var Base = Ext.Base = function() {};
  *        .require({String/Array} expressions);
  *
  *     // Include everything except Ext.data.*
- *     Ext.exclude('Ext.data.*').require('*');Â 
+ *     Ext.exclude('Ext.data.*').require('*');Â 
  *
  *     // Include all widgets except widget.checkbox*,
  *     // which will match widget.checkbox, widget.checkboxfield, widget.checkboxgroup, etc.

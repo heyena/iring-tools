@@ -558,26 +558,27 @@
         var nhpan = Ext.widget('panel', conf);
 
         var nhtree = Ext.widget('nhibernatetreepanel', treeconf);
+        var store = nhtree.getStore();
         nhtree.on('beforeload', function (store, operation) {
           if (operation.node != undefined) {
             var operationNode = operation.node.data;
-            var param = store.proxy.extraParams;
+            //var param = store.proxy.extraParams;
             if (operationNode.type != undefined)
-              param.type = operationNode.type;
+              store.proxy.extraParams.type = operationNode.type;
             if (operationNode.record && operationNode.record.Name != null)
-              param.id = operationNode.record.Name;
+              store.proxy.extraParams.id = operationNode.record.Name;
             if (operationNode.record != undefined && operationNode.record.Related != undefined)
-              param.related = operationNode.record.Related;
+              store.proxy.extraParams.related = operationNode.record.Related;
             if (operationNode.record != undefined) {
               operationNode.leaf = false;
               if (operationNode.record.context)
-                param.contextName = operationNode.record.context;
+                store.proxy.extraParams.contextName = operationNode.record.context;
               if (operationNode.record.endpoint)
-                param.endpoint = operationNode.record.endpoint;
+                store.proxy.extraParams.endpoint = operationNode.record.endpoint;
               if (operationNode.record.securityRole)
-                param.security = operationNode.record.securityRole;
+                store.proxy.extraParams.security = operationNode.record.securityRole;
               if (operationNode.text != undefined)
-                param.text = operationNode.text;
+                store.proxy.extraParams.text = operationNode.text;
             }
             else if (operationNode.property != undefined) {
               operationNode.leaf = false;
@@ -668,7 +669,7 @@
         break;
     }
   },
-  setItemSelectorAvailValues: function(node) {
+  setItemSelectorAvailValues: function (node) {
     var availItems = new Array();
     var propertiesNode = node.parentNode.childNodes[1];
 
@@ -689,7 +690,7 @@
     return availItems;
   },
 
-  setItemSelectorselectedValues: function(node) {
+  setItemSelectorselectedValues: function (node) {
     var selectedItems = new Array();
     var propertiesNode = node.parentNode.childNodes[1];
 

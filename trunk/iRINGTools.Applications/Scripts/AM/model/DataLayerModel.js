@@ -4,6 +4,7 @@
         { name: 'assembly', mapping: 'Assembly' },
         { name: 'name', mapping: 'Name' },
         { name: 'configurable', mapping: 'Configurable' }
+
     ],
     proxy: {
         type: 'ajax',
