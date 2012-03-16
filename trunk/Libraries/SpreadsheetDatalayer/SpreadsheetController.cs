@@ -89,7 +89,7 @@ namespace org.iringtools.adapter.datalayer
           HttpPostedFileBase hpf = files[file] as HttpPostedFileBase;
           if (hpf.ContentLength == 0)
             continue;
-          string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["AppDataPath"], form["Scope"], form["Application"]);
+          string fileLocation = string.Format(@"{0}SpreadsheetData.{1}.{2}.xlsx",_settings["AppDataPath"], form["contextName"], form["endpoint"]);
 
           SpreadsheetConfiguration configuration = new SpreadsheetConfiguration()
           {
@@ -183,7 +183,7 @@ namespace org.iringtools.adapter.datalayer
 
       if (_repository != null)
       {
-        SpreadsheetConfiguration configuration = GetConfiguration(form["scope"], form["application"]);
+        SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
 
         if (configuration != null)
         {
@@ -303,11 +303,11 @@ namespace org.iringtools.adapter.datalayer
 
     public JsonResult Configure(FormCollection form)
     {
-      SpreadsheetConfiguration configuration = GetConfiguration(form["Scope"], form["Application"]);
+      SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
 
       if (configuration != null)
       {
-        _repository.Configure(form["Scope"], form["Application"], form["DataLayer"], configuration, null);
+        _repository.Configure(form["context"], form["endpoint"], form["DataLayer"], configuration, null);
         return new JsonResult() //(6)
             {
                 ContentType = "text/html",
@@ -328,7 +328,7 @@ namespace org.iringtools.adapter.datalayer
     public JsonResult GetWorksheets(FormCollection form)
     {
       JsonContainer<List<WorksheetPart>> container = new JsonContainer<List<WorksheetPart>>();
-      container.items = _repository.GetWorksheets(GetConfiguration(form["Scope"], form["Application"]));
+      container.items = _repository.GetWorksheets(GetConfiguration(form["context"], form["endpoint"]));
       container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
@@ -337,7 +337,7 @@ namespace org.iringtools.adapter.datalayer
     public JsonResult GetColumns(FormCollection form)
     {
       JsonContainer<List<SpreadsheetColumn>> container = new JsonContainer<List<SpreadsheetColumn>>();
-      container.items = _repository.GetColumns(GetConfiguration(form["Scope"], form["Application"]), form["worksheet"]);
+      container.items = _repository.GetColumns(GetConfiguration(form["context"], form["endpoint"]), form["worksheet"]);
       container.success = true;
 
       return Json(container, JsonRequestBehavior.AllowGet);
