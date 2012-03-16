@@ -709,14 +709,6 @@ Ext.String = {
         return format.replace(Ext.String.formatRe, function(m, i) {
             return args[i];
         });
-    },
-
-    
-    repeat: function(pattern, count, sep) {
-        for (var buf = [], i = count; i--; ) {
-            buf.push(pattern);
-        }
-        return buf.join(sep || '');
     }
 };
 
@@ -1275,24 +1267,9 @@ Ext.num = function() {
         },
 
         
-        
-        slice: ([1,2].slice(1, undefined).length ?
-            function (array, begin, end) {
-                return slice.call(array, begin, end);
-            } :
-            
-            function (array, begin, end) {
-                
-                
-                if (typeof begin === 'undefined') {
-                    return slice.call(array);
-                }
-                if (typeof end === 'undefined') {
-                    return slice.call(array, begin);
-                }
-                return slice.call(array, begin, end);
-            }
-        ),
+        slice: function(array, begin, end) {
+            return slice.call(array, begin, end);
+        },
 
         
         sort: function(array, sortFn) {
@@ -1508,12 +1485,6 @@ Ext.Function = {
 
     
     bind: function(fn, scope, args, appendArgs) {
-        if (arguments.length === 2) {
-            return function() {
-                return fn.apply(scope, arguments);
-            }
-        }
-
         var method = fn,
             slice = Array.prototype.slice;
 
@@ -1524,7 +1495,7 @@ Ext.Function = {
                 callArgs = slice.call(arguments, 0);
                 callArgs = callArgs.concat(args);
             }
-            else if (typeof appendArgs == 'number') {
+            else if (Ext.isNumber(appendArgs)) {
                 callArgs = slice.call(arguments, 0); 
                 Ext.Array.insert(callArgs, appendArgs, args);
             }
@@ -1612,7 +1583,7 @@ Ext.Function = {
             return function() {
                 var me = this;
                 if (timerId) {
-                    clearTimeout(timerId);
+                    clearInterval(timerId);
                     timerId = null;
                 }
                 timerId = setTimeout(function(){
@@ -1639,28 +1610,6 @@ Ext.Function = {
             } else {
                 timer = setTimeout(execute, interval - elapsed);
             }
-        };
-    },
-
-    
-    interceptBefore: function(object, methodName, fn) {
-        var method = object[methodName] || Ext.emptyFn;
-
-        return object[methodName] = function() {
-            var ret = fn.apply(this, arguments);
-            method.apply(this, arguments);
-
-            return ret;
-        };
-    },
-
-    
-    interceptAfter: function(object, methodName, fn) {
-        var method = object[methodName] || Ext.emptyFn;
-
-        return object[methodName] = function() {
-            method.apply(this, arguments);
-            return fn.apply(this, arguments);
         };
     }
 };
@@ -52533,21 +52482,7 @@ Ext.define('Ext.data.NodeInterface', {
                     return Ext.Array.indexOf(this.childNodes, child);
                 },
 
-                getPath: function(node, field, separator) {
-                    field = field || this.idProperty;
-                    separator = separator || '/';
-
-                    var path = [this.get(field)],
-                        parent = this.parentNode;
-
-                    while (parent) {
-                        path.unshift(parent.get(field));
-                        parent = parent.parentNode;
-                    }
-                    return separator + path.join(separator);
-                },
-				
-				
+                
                 getDepth : function() {
                     return this.get('depth');
                 },
@@ -90108,9 +90043,5 @@ Ext.define('Ext.view.TableChunker', {
 });
 
 
-// added for debug purpose
 
-Ext.Loader.setConfig({
-    enabled: true,
-    disableCaching: false
-});
+

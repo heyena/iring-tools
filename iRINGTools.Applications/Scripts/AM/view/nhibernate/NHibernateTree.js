@@ -26,30 +26,30 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
   },
   initComponent: function () {
     var me = this;
-//    Ext.apply(this, {
-//      store: Ext.create('Ext.data.TreeStore', {
-//        model: 'AM.model.NHibernateTreeModel',
-//        clearOnLoad: true,
-//        root: {
-//          expanded: true,
-//          type: 'DATAOBJECTS',
-//          text: 'Data Objects',
-//          iconCls: 'folder'
-//        },
-//        proxy: {
-//          type: 'ajax',
-//          timeout: 600000,
-//          url: 'NHibernate/getnode',
-//          actionMethods: { read: 'POST' },
-//          extraParams: {
-//            contextName: me.contextName,
-//            endpoint: me.endpoint,
-//            type: 'DATAOBJECTS'
-//          },
-//          reader: { type: 'json' }
-//        }
-//      })
-//    });
+    Ext.apply(this, {
+      store: Ext.create('Ext.data.TreeStore', {
+        model: 'AM.model.NHibernateTreeModel',
+        clearOnLoad: true,
+        root: {
+          expanded: true,
+          type: 'DATAOBJECTS',
+          text: 'Data Objects',
+          iconCls: 'folder'
+        },
+        proxy: {
+          type: 'ajax',
+          timeout: 600000,
+          url: 'NHibernate/getnode',
+          actionMethods: { read: 'POST' },
+          extraParams: {
+            contextName: me.contextName,
+            endpoint: me.endpoint,
+            type: 'DATAOBJECTS'
+          },
+          reader: { type: 'json' }
+        }
+      })
+    });
 
     var wizard = this;
     var scopeName = this.contextName;
