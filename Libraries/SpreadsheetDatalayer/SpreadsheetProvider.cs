@@ -243,7 +243,7 @@ namespace org.iringtools.adapter.datalayer
       }
       else
       {
-        return 1024;
+        return 2048;
       }
     }
 
@@ -284,6 +284,7 @@ namespace org.iringtools.adapter.datalayer
         }
 
     }
+
 
     public WorksheetPart GetWorksheetPart(SpreadsheetTable table)
     {

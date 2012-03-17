@@ -102,7 +102,7 @@ namespace org.iringtools.adapter.datalayer
             configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
             hpf.InputStream.Flush();
             hpf.InputStream.Position = 0;
-            _repository.Configure(form["Scope"], form["Application"], datalayer, configuration, hpf.InputStream);
+            _repository.Configure(form["contextName"], form["endpoint"], datalayer, configuration, hpf.InputStream);
           }
           else
           {
@@ -110,7 +110,7 @@ namespace org.iringtools.adapter.datalayer
             configuration = _repository.ProcessConfiguration(configuration, hpf.InputStream);
           }
 
-          SetConfiguration(form["Scope"], form["Application"], configuration);
+          SetConfiguration(form["contextName"], form["endpoint"], configuration);
 
           //break;
         }
@@ -305,7 +305,7 @@ namespace org.iringtools.adapter.datalayer
     {
       SpreadsheetConfiguration configuration = GetConfiguration(form["context"], form["endpoint"]);
 
-      if (configuration != null)
+      if (configuration != null && configuration.Tables.Count > 0)
       {
         _repository.Configure(form["context"], form["endpoint"], form["DataLayer"], configuration, null);
         return new JsonResult() //(6)
