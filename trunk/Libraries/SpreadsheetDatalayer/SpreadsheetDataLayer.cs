@@ -58,7 +58,8 @@ namespace org.iringtools.adapter.datalayer
             {
               propertyName = column.Label,
               columnName = column.Name,
-              dataType = column.DataType
+              dataType = column.DataType,
+              dataLength = column.DataLength
             };
 
             if (table.Identifier.Equals(column.Label))

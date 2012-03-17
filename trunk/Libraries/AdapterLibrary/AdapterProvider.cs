@@ -3325,7 +3325,16 @@ namespace org.iringtools.adapter
              );
 
           binding.Save(_settings["BindingConfigurationPath"]);
-          _kernel.Load(_settings["BindingConfigurationPath"]);
+          try
+          {
+            _kernel.Load(_settings["BindingConfigurationPath"]);
+          }
+          catch
+          {
+              ///ignore error if already loaded
+              ///this is required for Spreadsheet Datalayer 
+              ///when spreadsheet is re-uploaded
+          }
         }
         InitializeDataLayer(false);
         if (httpRequest.Form["Configuration"] != null)
