@@ -12,8 +12,10 @@ Ext.application({
   enableQuickTips: true,
   appFolder: 'Scripts/AM',
   controllers: [
-          'AdapterManagerController'
-        , 'ConfigurationController'
+          'AdapterManager'
+        , 'Configuration'
+        , 'Mapping'
+        , 'Search'
     ],
   launch: function () {
     Ext.QuickTips.init();
@@ -78,6 +80,26 @@ String.format = String.prototype.format = function () {
   for (; i < arguments.length; i++)
     string = string.replace(/\{\d+?\}/, arguments[i]);
   return string;
+};
+
+function showDialog(width, height, title, message, buttons, callback) {
+  if (message.indexOf('\\r\\n') != -1)
+    var msg = message.replace('\\r\\n', '\r\n');
+  else
+    var msg = message;
+
+  if (msg.indexOf("\\") != -1)
+    var msgg = msg.replace(/\\\\/g, "\\");
+  else
+    var msgg = msg;
+
+  var style = 'style="margin:0;padding:0;width:' + width + 'px;height:' + height + 'px;border:1px solid #aaa;overflow:auto"';
+  Ext.Msg.show({
+    title: title,
+    msg: '<textarea ' + style + ' readonly="yes">' + msgg + '</textarea>',
+    buttons: buttons,
+    fn: callback
+  });
 };
 
 //Function to activate context menus with touch events

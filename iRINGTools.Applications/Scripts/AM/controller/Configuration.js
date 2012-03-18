@@ -1,4 +1,4 @@
-﻿Ext.define('AM.controller.ConfigurationController', {
+﻿Ext.define('AM.controller.Configuration', {
   extend: 'Ext.app.Controller',
   views: [
       'spreadsheet.SpreadsheetSource'

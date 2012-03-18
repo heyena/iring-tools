@@ -1,17 +1,15 @@
 ﻿Ext.define('AM.view.Viewport', {
-    extend: 'Ext.container.Viewport',
-    // requires: [],
-    layout: {
-        type: 'border'
-//        padding: 2
-    },
-    items: [
+  extend: 'Ext.container.Viewport',
+  layout: {
+    type: 'border'
+  },
+  items: [
         {
-            xtype: 'box',
-            height: 55, 
-            region: 'north',
-            html: '<div id="header" class="exchangeBanner">' +
-                  '<span style="float: left">' + 
+          xtype: 'box',
+          height: 55,
+          region: 'north',
+          html: '<div id="header" class="exchangeBanner">' +
+                  '<span style="float: left">' +
                   '<img alt="q" src="Content/img/iRINGTools_logo.png" style="margin: 0 0 0 11px; vertical-align: -20%" />' +
                   '<span style="margin: 0 0 0 6px;"><font size="5px" style="font-family: Arial, Helvetica, Sans-Serif">' +
                   'Adapter Manager</font></span> </span><span style="float: right; margin: 18px 36px 1px 0">' +
@@ -20,19 +18,19 @@
         },
         { xtype: 'centerpanel', region: 'center' },
         {
-            xtype: 'directorypanel',
-            region: 'west',
-            items: [
+          xtype: 'directorypanel',
+          region: 'west',
+          items: [
                 { xtype: 'directorytree', region: 'center' },
                 { xtype: 'propertypanel', region: 'south', height: 250 }
             ]
         }
     ],
-    listeners: {
-        render: function () {
-            Ext.getBody().on("contextmenu", Ext.emptyFn, null, {
-                preventDefault: true
-            });
-        }
+  listeners: {
+    render: function () {
+      Ext.getBody().on("contextmenu", Ext.emptyFn, null, {
+        preventDefault: true
+      });
     }
+  }
 });
