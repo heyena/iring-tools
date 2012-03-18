@@ -75,10 +75,11 @@ Ext.define('AM.view.directory.DataGridPanel', {
     graph: null,
     url: null,
     reload: null,
+    store: null,
     initComponent: function () {
         var grid = this;
         var me = this;
-        me.store = Ext.create('Ext.data.Store', {
+        this.store = Ext.create('Ext.data.Store', {
             model: 'AM.model.DynamicModel',
             autoLoad: false,
             pageSize: 25,

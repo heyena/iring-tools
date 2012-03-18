@@ -108,9 +108,9 @@
     <Compile Include="ConfigFile.cs" />
     <Compile Include="Controllers\AdapterManagerController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\DataGridController.cs" />
     <Compile Include="Controllers\DirectoryController.cs" />
     <Compile Include="Controllers\FacadeController.cs" />
-    <Compile Include="Controllers\GridManagerController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MappingController.cs" />
     <Compile Include="Controllers\NHibernateController.cs" />
