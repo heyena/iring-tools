@@ -176,7 +176,7 @@
       action: 'newscope'
     }, {
       xtype: 'button',
-      text: 'Regenerate NH Files',
+      text: 'Generate NH Files',
       icon: 'Content/img/16x16/document-new.png',
       scope: this,
       action: 'regenerateAll'
@@ -188,7 +188,7 @@
     return [
     {
       xtype: 'button',
-      text: 'Regenerate NH Files',
+      text: 'Generate NH Files',
       icon: 'Content/img/16x16/document-new.png',
       scope: this,
       action: 'regenerateAll'
@@ -394,6 +394,7 @@
     var node = model.store.getAt(index);
     var obj = node.data;
     var ifsuperadmin = false;
+    var baseUrl = 'false';
 
     var securityRole = '';
     var me = this;
@@ -411,54 +412,57 @@
 
     //right clicks the root node
     if (index == 0) {
+      Ext.Ajax.request({
+        url: 'directory/UseLdap',
+        method: 'GET',
+        success: function (response, request) {
+          baseUrl = response.responseText;
+        },
+        failure: function () { }
+      });
+
       //when root node has children
       if (node.childNodes[0]) {
-        if (node.childNodes[0].data.record.securityRole) {
-          securityRole = node.childNodes[0].data.record.securityRole;
-          
-          if (node.childNodes[0].data.record.securityRole.indexOf('rootadmin') > -1) {
-            ifsuperadmin = true;            
-            me.scopesMenu.showAt(e.getXY());           
-          }
-          else if (securityRole.indexOf('admin') > -1) {
-            me.generateMenu.showAt(e.getXY());           
+        if (baseUrl.toLowerCase() == 'true') {
+          if (node.childNodes[0].data.record.securityRole) {
+            securityRole = node.childNodes[0].data.record.securityRole;
+
+            if (node.childNodes[0].data.record.securityRole.indexOf('rootadmin') > -1) {
+              ifsuperadmin = true;
+              me.scopesMenu.showAt(e.getXY());
+            }
+            else if (securityRole.indexOf('admin') > -1) {
+              me.generateMenu.showAt(e.getXY());
+            }
           }
         }
         else {
           ifsuperadmin = true;
+          me.scopesGenerateMenu.showAt(e.getXY());
         }
       }
       //when starting from scratch (root node has no children)
       else {
-        Ext.Ajax.request({
-          url: 'directory/UseLdap',
-          method: 'GET',
-          success: function (response, request) {
-            var baseUrl = response.responseText;
-
-            if (baseUrl == 'false') {
-              me.scopesGenerateMenu.showAt(e.getXY());              
-            }
-            else {
-              Ext.Ajax.request({
-                url: 'directory/RootSecurityRole',
-                method: 'GET',
-                success: function (response, request) {
-                  var rootSecurityRole = response.responseText;
-                  if (rootSecurityRole.indexOf('rootadmin') > -1) {
-                    ifsuperadmin = true;
-                    me.scopesMenu.showAt(e.getXY());                    
-                  }
-                  else if (securityRole.indexOf('admin') > -1) {
-                    me.generateMenu.showAt(e.getXY());                    
-                  }
-                },
-                failure: function () { }
-              });
-            }
-          },
-          failure: function () { }
-        });
+        if (baseUrl == 'false') {
+          me.scopesGenerateMenu.showAt(e.getXY());
+        }
+        else {
+          Ext.Ajax.request({
+            url: 'directory/RootSecurityRole',
+            method: 'GET',
+            success: function (response, request) {
+              var rootSecurityRole = response.responseText;
+              if (rootSecurityRole.indexOf('rootadmin') > -1) {
+                ifsuperadmin = true;
+                me.scopesMenu.showAt(e.getXY());
+              }
+              else if (securityRole.indexOf('admin') > -1) {
+                me.generateMenu.showAt(e.getXY());
+              }
+            },
+            failure: function () { }
+          });
+        }
       }
     }
     //right clicks tree nodes which are not the root node

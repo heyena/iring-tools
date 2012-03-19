@@ -41,12 +41,14 @@
     var context = '';
     var endpoint = '';
     var valuelist = '';
+    var baseUrl = '';
 
     if (this.node != null) {
       nodeId = this.node.data.id;
       formid = 'valueListMapTarget-' + this.node.parentNode.parentNode.data.text + '-' + this.node.parentNode.data.text;
       contextName = this.node.data.property.context;
       endpoint = this.node.data.property.endpoint;
+      baseUrl = this.node.data.property.baseUrl;
       valuelist = getLastXString(nodeId, 1);
     }
     if (this.record != null && this.node.data.type == 'ListMapNode') {
@@ -78,7 +80,8 @@
         { name: 'contextName', xtype: 'hidden', width: 120, value: contextName, allowBlank: false },
 				{ name: 'endpoint', xtype: 'hidden', width: 120, value: endpoint, allowBlank: false },
         { name: 'valueList', xtype: 'hidden', width: 120, value: valuelist, allowBlank: false },
-		    { fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 230, value: nodeId, allowBlank: true },
+        { name: 'baseUrl', xtype: 'hidden', width: 120, value: baseUrl, allowBlank: false },
+		    { fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 120, value: nodeId, allowBlank: true },
         { fieldLabel: 'Internal Name', name: 'internalName', xtype: 'textfield', width: 230, value: interName, allowBlank: false },
         { fieldLabel: 'Class Url', name: 'classUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false },
         { fieldLabel: 'Old Class Url', name: 'oldClassUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: false },

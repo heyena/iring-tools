@@ -44,11 +44,13 @@
     var contextName = '';
     var endpoint = '';
     var graphName = '';
+    var baseUrl = '';
 
     if (this.node != null) {
       nodeId = this.node.data.id;
       contextName = this.node.data.property.context;
       endpoint = this.node.data.property.endpoint;
+      baseUrl = this.node.data.property.baseUrl;
       formid = 'graphtarget-' + contextName + '-' + endpoint;
     }
 
@@ -88,16 +90,17 @@
       defaultType: 'textfield',
 
       items: [
-            { name: 'contextName', xtype: 'hidden', width: 230, value: contextName, allowBlank: true },
-				    { name: 'endpoint', xtype: 'hidden', width: 230, value: endpoint, allowBlank: true },
-            { name: 'oldGraphName', xtype: 'hidden', width: 230, value: graphName, allowBlank: true },
-			      { fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 230, value: nodeId, allowBlank: true },
+            { name: 'contextName', xtype: 'hidden', width: 120, value: contextName, allowBlank: true },
+				    { name: 'endpoint', xtype: 'hidden', width: 120, value: endpoint, allowBlank: true },
+            { name: 'oldGraphName', xtype: 'hidden', width: 120, value: graphName, allowBlank: true },
+            { name: 'baseUrl', xtype: 'hidden', width: 120, value: baseUrl, allowBlank: false },
+			      { fieldLabel: 'Mapping Node', name: 'mappingNode', xtype: 'hidden', width: 120, value: nodeId, allowBlank: true },
 				    { fieldLabel: 'Graph Name', name: 'graphName', xtype: 'textfield', width: 230, value: name, allowBlank: false },
-				    { fieldLabel: 'Object Name', name: 'objectName', xtype: 'hidden', width: 230, value: objectName, allowBlank: true },
-            { fieldLabel: 'Class Label', name: 'classLabel', xtype: 'hidden', width: 230, value: classLabel, allowBlank: true },
-            { fieldLabel: 'Class Url', name: 'classUrl', xtype: 'hidden', width: 230, value: classUrl, allowBlank: true },
-            { fieldLabel: 'OldClass Label', name: 'oldClassLabel', xtype: 'hidden', width: 230, value: "", allowBlank: true },
-            { fieldLabel: 'OldClass Url', name: 'oldClassUrl', xtype: 'hidden', width: 230, value: "", allowBlank: true }
+				    { fieldLabel: 'Object Name', name: 'objectName', xtype: 'hidden', width: 120, value: objectName, allowBlank: true },
+            { fieldLabel: 'Class Label', name: 'classLabel', xtype: 'hidden', width: 120, value: classLabel, allowBlank: true },
+            { fieldLabel: 'Class Url', name: 'classUrl', xtype: 'hidden', width: 120, value: classUrl, allowBlank: true },
+            { fieldLabel: 'OldClass Label', name: 'oldClassLabel', xtype: 'hidden', width: 120, value: "", allowBlank: true },
+            { fieldLabel: 'OldClass Url', name: 'oldClassUrl', xtype: 'hidden', width: 120, value: "", allowBlank: true }
           ],
 
       html: '<div class="property-target' + formid + '" '
