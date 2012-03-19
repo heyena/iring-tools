@@ -476,16 +476,19 @@ namespace org.iringtools.web.Controllers
             try
             {
                 DataProviders dataProviders = _repository.GetDBProviders();
+                
 
                 List<DBProvider> providers = new List<DBProvider>();
-                foreach (Provider dataProvider in dataProviders)
+                foreach (Provider dataProvider in dataProviders.Distinct().ToList())
                 {
-                    providers.Add(new DBProvider() { Provider = dataProvider.ToString() });
+                   
+                        providers.Add(new DBProvider() { Provider = dataProvider.ToString() });
+                   
                 }
 
                 container.items = providers;
                 container.success = true;
-                container.total = dataProviders.Count;
+                container.total = providers.Count;
 
             }
             catch (Exception e)
