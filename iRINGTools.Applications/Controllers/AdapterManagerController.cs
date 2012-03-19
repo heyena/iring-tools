@@ -34,13 +34,14 @@ namespace org.iringtools.web.controllers
       return View();
     }
 
-    public ActionResult DBProviders()
+    public ActionResult DBProviders(FormCollection form)
     {
       JsonContainer<List<DBProvider>> container = new JsonContainer<List<DBProvider>>();
 
       try
       {
-        DataProviders dataProviders = _repository.GetDBProviders();
+        string baseUrl = form["baseUrl"];
+        DataProviders dataProviders = _repository.GetDBProviders(baseUrl);
 
         List<DBProvider> providers = new List<DBProvider>();
         foreach (Provider dataProvider in dataProviders)
@@ -66,7 +67,7 @@ namespace org.iringtools.web.controllers
     {
       try
       {
-        DatabaseDictionary dbDict = _repository.GetDBDictionary(form["scope"], form["app"]);
+        DatabaseDictionary dbDict = _repository.GetDBDictionary(form["scope"], form["app"], form["baseUrl"]);
         return Json(dbDict, JsonRequestBehavior.AllowGet);
       }
       catch (Exception e)
@@ -84,7 +85,7 @@ namespace org.iringtools.web.controllers
       {
         List<string> dataObjects = _repository.GetTableNames(
           form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
-          form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"], form["serName"]);
+          form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["portNumber"], form["serName"], form["baseUrl"]);
 
 
         container.items = dataObjects;
@@ -106,7 +107,7 @@ namespace org.iringtools.web.controllers
       {
         List<JsonTreeNode> dbObjects = _repository.GetDBObjects(
           form["scope"], form["app"], form["dbProvider"], form["dbServer"], form["dbInstance"],
-          form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"], form["serName"]);
+          form["dbName"], form["dbSchema"], form["dbUserName"], form["dbPassword"], form["tableNames"], form["portNumber"], form["serName"], form["baseUrl"]);
 
         return Json(dbObjects, JsonRequestBehavior.AllowGet);
       }
@@ -123,7 +124,7 @@ namespace org.iringtools.web.controllers
       {
         string response = string.Empty;
 
-        response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"]);
+        response = _repository.SaveDBDictionary(form["scope"], form["app"], form["tree"], form["baseUrl"]);
 
         if (response != null && response.ToUpper().Contains("ERROR"))
         {
