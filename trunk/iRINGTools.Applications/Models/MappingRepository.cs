@@ -87,7 +87,10 @@ namespace iRINGTools.Web.Models
 
     private WebHttpClient getAdapterServiceClient(string baseUrl)
     {
-      if (!baseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+      string baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
+      string adapterBaseUri = CleanBaseUrl(adapterServiceUri.ToLower(), '/');
+
+      if (!baseUri.Equals(adapterBaseUri))
         return getServiceClinet(baseUrl, "adapter");
       else
         return _adapterServiceClient;

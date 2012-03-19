@@ -368,14 +368,26 @@ namespace iRINGTools.Web.Models
 
     public BaseUrls GetEndpointBaseUrl(string user)
     {
+      bool ifExit = false;
+      string baseUri = _adapterServiceClient.GetBaseUri();
       Resources resources = GetResource(user);
       BaseUrls baseUrls = new BaseUrls();
+      BaseUrl baseUrl;
 
       foreach (Resource resource in resources)
       {
-        BaseUrl baseUrl = new BaseUrl { Url = resource.BaseUrl };
+        baseUrl = new BaseUrl { Url = resource.BaseUrl };
+        baseUrls.Add(baseUrl);
+        if (resource.BaseUrl.ToLower().Equals(CleanBaseUrl(baseUri, '/')))
+          ifExit = true;
+      }
+
+      if (!ifExit)
+      {
+        baseUrl = new BaseUrl { Url = baseUri };
         baseUrls.Add(baseUrl);
       }
+
       return baseUrls;
     }
 
@@ -577,7 +589,13 @@ namespace iRINGTools.Web.Models
 
     private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
     {
-      if (!baseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+      if (baseUrl == "" || baseUrl == null)
+        return _adapterServiceClient;
+
+      string baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
+      string adapterBaseUri = CleanBaseUrl(adapterServiceUri.ToLower(), '/');
+
+      if (!baseUri.Equals(adapterBaseUri))
         return getServiceClinet(baseUrl, serviceName);
       else
         return _adapterServiceClient;

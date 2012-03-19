@@ -22,8 +22,7 @@ namespace org.iringtools.web.Models
     private static Dictionary<string, NodeIconCls> nodeIconClsMap;
     private string proxyHost = "";
     private string proxyPort = "";
-    private WebProxy webProxy = null;
-    private string adapterServiceUri = "";
+    private WebProxy webProxy = null;    
     private string hibernateServiceUri = "";
 
     [Inject]
@@ -38,20 +37,17 @@ namespace org.iringtools.web.Models
 
       #region initialize webHttpClient for converting old mapping
       proxyHost = _settings["ProxyHost"];
-      proxyPort = _settings["ProxyPort"];
-      adapterServiceUri = _settings["AdapterServiceUri"];
+      proxyPort = _settings["ProxyPort"];      
       hibernateServiceUri = _settings["NHibernateServiceUri"];
 
       if (!String.IsNullOrEmpty(proxyHost) && !String.IsNullOrEmpty(proxyPort))
       {
         webProxy = new WebProxy(proxyHost, Int32.Parse(proxyPort));
         webProxy.Credentials = _settings.GetProxyCredential();
-        _adapterServiceClient = new WebHttpClient(adapterServiceUri, null, webProxy);
         _hibernateServiceClient = new WebHttpClient(hibernateServiceUri, null, webProxy);
       }
       else
       {
-        _adapterServiceClient = new WebHttpClient(adapterServiceUri);
         _hibernateServiceClient = new WebHttpClient(hibernateServiceUri);
       }
       #endregion
@@ -328,21 +324,20 @@ namespace org.iringtools.web.Models
       }
 
       return dbObjectNodes;
-    }
-
-    //Exsited in AdapterRepository.cs
-    //public Response RegenAll(string baseUrl)
-    //{
-    //  WebHttpClient _newServiceClient = getAdapterServiceClient(baseUrl);
-    //  return _newServiceClient.Get<Response>("/regen");
-    //}
+    }    
 
     private WebHttpClient PrepareServiceClient(string baseUrl, string serviceName)
     {
-      if (!baseUrl.ToLower().Equals(CleanBaseUrl(adapterServiceUri.ToLower(), '/')))
+      if (baseUrl == "" || baseUrl == null)
+        return _hibernateServiceClient;
+      
+      string baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
+      string adapterBaseUri = CleanBaseUrl(hibernateServiceUri.ToLower(), '/');
+
+      if (!baseUri.Equals(adapterBaseUri))
         return GetServiceClinet(baseUrl, serviceName);
       else
-        return _adapterServiceClient;
+        return _hibernateServiceClient;
     }
 
     private WebHttpClient GetServiceClinet(string uri, string serviceName)

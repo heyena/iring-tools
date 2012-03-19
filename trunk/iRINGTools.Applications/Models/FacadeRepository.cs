@@ -67,7 +67,10 @@ namespace org.iringtools.web.Models
 
     private WebHttpClient GetFacadeServiceClient(string baseUrl)
     {
-      if (!baseUrl.ToLower().Equals(CleanBaseUrl(facadeServiceUri.ToLower(), '/')))
+      string baseUri = CleanBaseUrl(baseUrl.ToLower(), '/');
+      string facadeBaseUri = CleanBaseUrl(facadeServiceUri.ToLower(), '/');
+
+      if (!baseUri.Equals(facadeBaseUri))
         return GetServiceClinet(baseUrl, "facade/svc");
       else
         return _facadeServiceClient;

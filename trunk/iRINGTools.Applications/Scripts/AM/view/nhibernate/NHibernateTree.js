@@ -2,7 +2,7 @@
 Ext.define('AM.view.nhibernate.NHibernateTree', {
   extend: 'Ext.tree.Panel',
   alias: 'widget.nhibernatetreepanel',
-  border: false,
+  bodyStyle: 'padding:0.5px 1px 1px 1px',
   autoScroll: true,
   animate: true,
   expandAll: true,
@@ -16,6 +16,7 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
   dataTypes: null,
   contextName: null,
   endpoint: null,
+  baseUrl: null,
  // store: null,
   width: 300,
   root: {
@@ -44,6 +45,7 @@ Ext.define('AM.view.nhibernate.NHibernateTree', {
           extraParams: {
             contextName: me.contextName,
             endpoint: me.endpoint,
+            baseUrl: me.baseUrl,
             type: 'DATAOBJECTS'
           },
           reader: { type: 'json' }

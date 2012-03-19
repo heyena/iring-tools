@@ -177,7 +177,6 @@
     <Content Include="Content\img\iRINGTools_logo.png" />
     <Content Include="Content\img\list-add.png" />
     <Content Include="Content\img\list-remove.png" />
-    <Content Include="Scripts\AM\controller\ConfigurationController.js" />
     <Content Include="Scripts\AM\model\AvailItemsModel.js" />
     <Content Include="Scripts\AM\model\BaseUrlModel.js" />
     <Content Include="Scripts\AM\model\NHibernateTreeModel.js" />
@@ -216,7 +215,6 @@
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
     <Content Include="Scripts\AM\AM.js" />
-    <Content Include="Scripts\AM\controller\AdapterManagerController.js" />
     <Content Include="Scripts\AM\model\DataLayerModel.js" />
     <Content Include="Scripts\AM\model\DirectoryModel.js" />
     <Content Include="Scripts\AM\model\DynamicModel.js" />
@@ -1518,6 +1516,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Scripts\AM\controller\" />
     <Folder Include="Scripts\AM\ux\plugin\" />
     <Folder Include="Scripts\AM\view\spreadsheet\" />
     <Folder Include="Scripts\extjs40\ux\" />
