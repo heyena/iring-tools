@@ -21,7 +21,7 @@ namespace org.iringtools.web.controllers
     private string _keyFormat = "Mapping.{0}.{1}";
     private static readonly ILog _logger = LogManager.GetLogger(typeof(DirectoryController));
     private System.Web.Script.Serialization.JavaScriptSerializer oSerializer;
-    private const string USERID_KEY = "emailaddress";   
+    private const string USERID_KEY = "emailaddress";
 
     public DirectoryController()
       : this(new AdapterRepository())
@@ -55,8 +55,8 @@ namespace org.iringtools.web.controllers
         {
           case "ScopesNode":
             {
-              string user = GetUserId((IDictionary<string, string>)_allClaims);             
-              Tree directoryTree = _repository.GetDirectoryTree(user); 
+              string user = GetUserId((IDictionary<string, string>)_allClaims);
+              Tree directoryTree = _repository.GetDirectoryTree(user);
               return Json(directoryTree.getNodes(), JsonRequestBehavior.AllowGet);
             }
           case "ApplicationNode":
@@ -81,7 +81,7 @@ namespace org.iringtools.web.controllers
                 }
               };
               dataObjectsNode.property = new Dictionary<string, string>();
-              AddContextEndpointtoNode(dataObjectsNode, form);
+              AddPropertiestoNode(dataObjectsNode, form);
 
               TreeNode graphsNode = new TreeNode
               {
@@ -99,7 +99,7 @@ namespace org.iringtools.web.controllers
                 }
               };
               graphsNode.property = new Dictionary<string, string>();
-              AddContextEndpointtoNode(graphsNode, form);
+              AddPropertiestoNode(graphsNode, form);
 
               TreeNode ValueListsNode = new TreeNode
               {
@@ -117,7 +117,7 @@ namespace org.iringtools.web.controllers
                 }
               };
               ValueListsNode.property = new Dictionary<string, string>();
-              AddContextEndpointtoNode(ValueListsNode, form);
+              AddPropertiestoNode(ValueListsNode, form);
               nodes.Add(dataObjectsNode);
               nodes.Add(graphsNode);
               nodes.Add(ValueListsNode);
@@ -129,8 +129,9 @@ namespace org.iringtools.web.controllers
               string context = form["node"];
               string contextName = form["contextName"];
               string endpoint = form["endpoint"];
+              string baseUrl = form["baseUrl"];
 
-              Mapping mapping = GetMapping(contextName, endpoint);
+              Mapping mapping = GetMapping(contextName, endpoint, baseUrl);
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
@@ -154,7 +155,7 @@ namespace org.iringtools.web.controllers
 
                 node.property = new Dictionary<string, string>();
                 node.property.Add("Name", valueList.name);
-                AddContextEndpointtoNode(node, form);
+                AddPropertiestoNode(node, form);
                 nodes.Add(node);
               }
 
@@ -166,9 +167,10 @@ namespace org.iringtools.web.controllers
               string valueList = form["text"];
               string contextName = form["contextName"];
               string endpoint = form["endpoint"];
+              string baseUrl = form["baseUrl"];
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-              Mapping mapping = GetMapping(contextName, endpoint);
+              Mapping mapping = GetMapping(contextName, endpoint, baseUrl);
               ValueListMap valueListMap = mapping.valueListMaps.Find(c => c.name == valueList);
 
               foreach (var valueMap in valueListMap.valueMaps)
@@ -210,7 +212,7 @@ namespace org.iringtools.web.controllers
                 node.property = new Dictionary<string, string>();
                 node.property.Add("Name", valueMap.internalValue);
                 node.property.Add("Class Label", classLabel);
-                AddContextEndpointtoNode(node, form);
+                AddPropertiestoNode(node, form);
                 nodes.Add(node);
               }
 
@@ -221,7 +223,8 @@ namespace org.iringtools.web.controllers
             {
               string contextName = form["contextName"];
               string endpoint = form["endpoint"];
-              DataDictionary dictionary = _repository.GetDictionary(contextName, endpoint);
+              string baseUrl = form["baseUrl"];
+              DataDictionary dictionary = _repository.GetDictionary(contextName, endpoint, baseUrl);
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
               foreach (DataObject dataObject in dictionary.dataObjects)
@@ -244,7 +247,7 @@ namespace org.iringtools.web.controllers
                 };
                 node.property = new Dictionary<string, string>();
                 node.property.Add("Name", dataObject.objectName);
-                AddContextEndpointtoNode(node, form);
+                AddPropertiestoNode(node, form);
                 nodes.Add(node);
               }
               return Json(nodes, JsonRequestBehavior.AllowGet);
@@ -257,8 +260,9 @@ namespace org.iringtools.web.controllers
               string dataObjectName = form["text"];
               string contextName = form["contextName"];
               string endpoint = form["endpoint"];
+              string baseUrl = form["baseUrl"];
 
-              DataDictionary dictionary = _repository.GetDictionary(contextName, endpoint);
+              DataDictionary dictionary = _repository.GetDictionary(contextName, endpoint, baseUrl);
               DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName == dataObjectName);
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
@@ -289,7 +293,7 @@ namespace org.iringtools.web.controllers
                 node.property.Add("Name", properties.propertyName);
                 node.property.Add("Keytype", keytype);
                 node.property.Add("Datatype", datatype);
-                AddContextEndpointtoNode(node, form);
+                AddPropertiestoNode(node, form);
                 nodes.Add(node);
               }
               if (dataObject.dataRelationships.Count > 0)
@@ -318,7 +322,7 @@ namespace org.iringtools.web.controllers
                   node.property.Add("Name", relation.relationshipName);
                   node.property.Add("Type", relation.relationshipType.ToString());
                   node.property.Add("Related", relation.relatedObjectName);
-                  AddContextEndpointtoNode(node, form);
+                  AddPropertiestoNode(node, form);
                   nodes.Add(node);
                 }
               }
@@ -333,9 +337,10 @@ namespace org.iringtools.web.controllers
               string related = form["related"];
               string contextName = form["contextName"];
               string endpoint = form["endpoint"];
+              string baseUrl = form["baseUrl"];
 
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
-              DataDictionary dictionary = _repository.GetDictionary(contextName, endpoint);
+              DataDictionary dictionary = _repository.GetDictionary(contextName, endpoint, baseUrl);
               DataObject dataObject = dictionary.dataObjects.FirstOrDefault(o => o.objectName.ToUpper() == related.ToUpper());
               foreach (DataProperty properties in dataObject.dataProperties)
               {
@@ -363,7 +368,7 @@ namespace org.iringtools.web.controllers
                 node.property.Add("Name", properties.propertyName);
                 node.property.Add("Type", keytype);
                 node.property.Add("Related", related);
-                AddContextEndpointtoNode(node, form);
+                AddPropertiestoNode(node, form);
                 nodes.Add(node);
               }
               return Json(nodes, JsonRequestBehavior.AllowGet);
@@ -374,7 +379,8 @@ namespace org.iringtools.web.controllers
               string context = form["node"];
               string contextName = form["contextName"];
               string endpoint = form["endpoint"];
-              Mapping mapping = GetMapping(contextName, endpoint);
+              string baseUrl = form["baseUrl"];
+              Mapping mapping = GetMapping(contextName, endpoint, baseUrl);
               List<JsonTreeNode> nodes = new List<JsonTreeNode>();
 
               foreach (GraphMap graph in mapping.graphMaps)
@@ -400,7 +406,7 @@ namespace org.iringtools.web.controllers
                 node.property.Add("Name", graph.name);
                 node.property.Add("Identifier", graph.classTemplateMaps[0].classMap.identifiers[0].Split('.')[1]);
                 node.property.Add("Class Label", graph.classTemplateMaps[0].classMap.name);
-                AddContextEndpointtoNode(node, form);
+                AddPropertiestoNode(node, form);
                 nodes.Add(node);
               }
 
@@ -419,32 +425,32 @@ namespace org.iringtools.web.controllers
       }
     }
 
-    private void AddContextEndpointtoNode(JsonTreeNode node, FormCollection form)
+    private void AddPropertiestoNode(JsonTreeNode node, FormCollection form)
     {
       if (form["contextName"] != null)
         node.property.Add("context", form["contextName"]);
       if (form["endpoint"] != null)
         node.property.Add("endpoint", form["endpoint"]);
+      if (form["baseUrl"] != null)
+        node.property.Add("baseUrl", form["baseUrl"]);
     }
 
-
-    public ActionResult DataLayers()
+    public ActionResult DataLayers(JsonTreeNode node, FormCollection form)
     {
-        DataLayers dataLayers = _repository.GetDataLayers();
-        JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
-        container.items = dataLayers;
-        container.success = true;
-        container.total = dataLayers.Count;
-        return Json(container, JsonRequestBehavior.AllowGet);
+      DataLayers dataLayers = _repository.GetDataLayers(form["baseUrl"]);
+      JsonContainer<DataLayers> container = new JsonContainer<DataLayers>();
+      container.items = dataLayers;
+      container.success = true;
+      container.total = dataLayers.Count;
+      return Json(container, JsonRequestBehavior.AllowGet);
     }
-
 
     public JsonResult Folder(FormCollection form)
     {
       string success;
       string user = GetUserId((IDictionary<string, string>)_allClaims);
       success = _repository.Folder(form["foldername"], form["description"], form["path"], form["state"], form["contextName"], form["oldContext"], user);
-      
+
       if (success == "ERROR")
       {
         string msg = _repository.GetCombinationMsg();
@@ -457,7 +463,7 @@ namespace org.iringtools.web.controllers
     public JsonResult Endpoint(FormCollection form)
     {
       string success;
-      string user = GetUserId((IDictionary<string, string>)_allClaims);      
+      string user = GetUserId((IDictionary<string, string>)_allClaims);
 
       success = _repository.Endpoint(form["endpoint"], form["path"], form["description"], form["state"], form["contextValue"], form["oldAssembly"], form["assembly"], form["baseUrl"], form["oldBaseUrl"], user);
 
@@ -498,12 +504,13 @@ namespace org.iringtools.web.controllers
 
     public JsonResult EndpointBaseUrl()
     {
-      BaseUrls baseUrls = _repository.GetEndpointBaseUrl();
+      string user = GetUserId((IDictionary<string, string>)_allClaims);
+      BaseUrls baseUrls = _repository.GetEndpointBaseUrl(user);
       JsonContainer<BaseUrls> container = new JsonContainer<BaseUrls>();
       container.items = baseUrls;
       container.success = true;
       container.total = baseUrls.Count;
-      return Json(container, JsonRequestBehavior.AllowGet);      
+      return Json(container, JsonRequestBehavior.AllowGet);
     }
 
     #region Private Methods
@@ -520,14 +527,14 @@ namespace org.iringtools.web.controllers
 
       return "guest";
     }
-   
-    private Mapping GetMapping(string contextName, string endpoint)
+
+    private Mapping GetMapping(string contextName, string endpoint, string baseUrl)
     {
       string key = string.Format(_keyFormat, contextName, endpoint);
 
       if (Session[key] == null)
       {
-        Session[key] = _repository.GetMapping(contextName, endpoint);
+        Session[key] = _repository.GetMapping(contextName, endpoint, baseUrl);
       }
 
       return (Mapping)Session[key];
