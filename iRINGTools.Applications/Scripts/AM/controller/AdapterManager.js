@@ -111,7 +111,8 @@
       url: 'facade/refreshFacade',
       method: 'POST',
       params: {
-        scope: node.data.id
+        scope: node.data.id,
+        baseUrl: node.data.property.baseUrl
       },
       success: function (o) {
         tree.onReload(node);
@@ -362,6 +363,9 @@
         if (operationNode.record.context)
           store.proxy.extraParams.contextName = operationNode.record.context;
 
+        if (operationNode.record.BaseUrl)
+          store.proxy.extraParams.baseUrl = operationNode.record.BaseUrl;
+
         if (operationNode.record.endpoint)
           store.proxy.extraParams.endpoint = operationNode.record.endpoint;
 
@@ -373,11 +377,15 @@
       }
       else if (operationNode.property != undefined) {
         operationNode.leaf = false;
+
         if (operationNode.property.context)
-          param.contextName = operationNode.property.context;
+          store.proxy.extraParams.contextName = operationNode.property.context;
 
         if (operationNode.property.endpoint)
           store.proxy.extraParams.endpoint = operationNode.property.endpoint;
+
+        if (operationNode.property.baseUrl)
+          store.proxy.extraParams.baseUrl = operationNode.property.baseUrl;
 
         if (operationNode.text != undefined)
           store.proxy.extraParams.text = operationNode.text;

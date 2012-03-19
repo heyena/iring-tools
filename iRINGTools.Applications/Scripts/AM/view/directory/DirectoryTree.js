@@ -47,6 +47,7 @@
             type: 'ScopesNode',
             contextName: null,
             endpoint: null,
+            baseUrl: null,
             related: null,
             security: null
           },

@@ -1,11 +1,10 @@
 ﻿Ext.define('AM.view.nhibernate.EditorPanel', {
     extend: 'Ext.panel.Panel',
-    alias: 'widget.editorpanel',   
-    border: false,
+    alias: 'widget.editorpanel',
+    border: 1,
     frame: false,
     layout: 'card',
     autoScroll: true,
-    bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
     labelWidth: 140,
     monitorValid: true,
     items: [],

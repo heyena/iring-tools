@@ -24,7 +24,6 @@
 				valueField: 'keyValue'
 			}];
 		this.treeNode = node
-		});
-    }
+		});    
 });
 

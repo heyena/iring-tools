@@ -1,13 +1,12 @@
 ﻿Ext.define('AM.view.nhibernate.ConnectDatabase', {
   extend: 'Ext.form.Panel',
   alias: 'widget.connectdatabase',
-  labelWidth: 170,
   frame: false,
   border: false,
   autoScroll: true,
   contextName: null,
   endpoint: null,
-  bodyStyle: 'background:#eee;padding:10px 10px 0px 10px',
+  bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
   monitorValid: true,
   defaults: {
     anchor: '100%',
@@ -19,137 +18,137 @@
     var contextName = this.contextName;
     var endpoint = this.endpoint;
     this.items = [
-            {
-              xtype: 'hidden',
-              name: 'contextName',
-              value: me.contextName
-            },
-            {
-              xtype: 'hidden',
-              name: 'endpoint',
-              value: me.endpoint
-            },
-            {
-              xtype: 'label',
-              fieldLabel: 'Configure Data Source',
-              labelSeparator: '',
-              itemCls: 'form-title'
-            },
-            {
-              xtype: 'combo',
-              fieldLabel: 'Database Provider',
-              hiddenName: 'dbProvider',
-              name:'dbProvider',
-              allowBlank: false,
-              store: 'ProviderStore',
-              mode: 'local',
-              editable: false,
-              value: 'MsSql2008',
-              triggerAction: 'all',
-              displayField: 'Provider',
-              valueField: 'Provider'//,
+        {
+          xtype: 'label',
+          fieldLabel: 'Configure Data Source',
+          labelSeparator: '',
+          itemCls: 'form-title'
+        },
+        {
+          xtype: 'combo',
+          labelWidth: 150,
+          fieldLabel: 'Database Provider',
+          hiddenName: 'dbProvider',
+          name: 'dbProvider',
+          allowBlank: false,
+          store: 'ProviderStore',
+          mode: 'local',
+          editable: false,
+          value: 'MsSql2008',
+          triggerAction: 'all',
+          displayField: 'Provider',
+          valueField: 'Provider'//,
 
-            },
-            {
-              xtype: 'textfield',
-              name: 'dbServer',
-              fieldLabel: 'Database Server',
-              value: 'localhost',
-              allowBlank: false
-            },
-            {
-              xtype: 'textfield',
-              name: 'host',
-              fieldLabel: 'Host Name',
-              hidden: true,
-              allowBlank: false
-            },
-            {
-              xtype: 'textfield',
-              name: 'portNumber',
-              fieldLabel: 'Port Number',
-              hidden: true,
-              value: '1521',
-              allowBlank: false
-            },
-            {
-              name: 'dbInstance',
-              fieldLabel: 'Database Instance',
-              value: 'default',
-              allowBlank: false
-            },
-            {
-              xtype: 'textfield',
-              name: 'dbName',
-              fieldLabel: 'Database Name',
-              allowBlank: false
-            },
-            {
-              xtype: 'textfield',
-              name: 'dbUserName',
-              fieldLabel: 'User Name',
-              allowBlank: false,
-              listeners: { 'change': function (field, newValue, oldValue) {
-                var dbProvider = me.getForm().findField('dbProvider').getValue().toUpperCase();
-                if (dbProvider.indexOf('ORACLE') > -1) {
-                  var dbSchema = this.getForm().findField('dbSchema');
-                  dbSchema.setValue(newValue);
-                  dbSchema.show();
-                }
-              }
-              }
-            },
-            {
-              xtype: 'textfield',
-              inputType: 'password',
-              name: 'dbPassword',
-              fieldLabel: 'Password',
-              allowBlank: false
-            },
-            {
-              xtype: 'textfield',
-              name: 'dbSchema',
-              fieldLabel: 'Schema Name',
-              value: 'dbo',
-              allowBlank: false
-            },
-            {
-              xtype: 'panel',
-              id: this.contextName + '.' + this.endpoint + '.servicename',
-              name: 'serviceName',
-              layout: 'fit',
-              anchor: '100% - 1',
-              border: false,
-              frame: false
+        },
+        {
+          xtype: 'textfield',
+          labelWidth: 150,
+          name: 'dbServer',
+          fieldLabel: 'Database Server',
+          value: 'localhost',
+          allowBlank: false
+        },
+        {
+          xtype: 'textfield',
+          labelWidth: 150,
+          name: 'host',
+          fieldLabel: 'Host Name',
+          hidden: true,
+          allowBlank: false
+        },
+        {
+          xtype: 'textfield',
+          labelWidth: 150,
+          name: 'portNumber',
+          fieldLabel: 'Port Number',
+          hidden: true,
+          value: '1521',
+          allowBlank: false
+        },
+        {
+          name: 'dbInstance',
+          labelWidth: 150,
+          fieldLabel: 'Database Instance',
+          value: 'default',
+          allowBlank: false
+        },
+        {
+          xtype: 'textfield',
+          labelWidth: 150,
+          name: 'dbName',
+          fieldLabel: 'Database Name',
+          allowBlank: false
+        },
+        {
+          xtype: 'textfield',
+          labelWidth: 150,
+          name: 'dbUserName',
+          fieldLabel: 'User Name',
+          allowBlank: false,
+          listeners: { 'change': function (field, newValue, oldValue) {
+            var dbProvider = me.getForm().findField('dbProvider').getValue().toUpperCase();
+            if (dbProvider.indexOf('ORACLE') > -1) {
+              var dbSchema = this.getForm().findField('dbSchema');
+              dbSchema.setValue(newValue);
+              dbSchema.show();
             }
+          }
+          }
+        },
+        {
+          xtype: 'textfield',
+          labelWidth: 150,
+          inputType: 'password',
+          name: 'dbPassword',
+          fieldLabel: 'Password',
+          allowBlank: false
+        },
+        {
+          xtype: 'textfield',
+          labelWidth: 150,
+          name: 'dbSchema',
+          fieldLabel: 'Schema Name',
+          value: 'dbo',
+          allowBlank: false
+        },
+        {
+          xtype: 'panel',
+          labelWidth: 150,
+          id: this.contextName + '.' + this.endpoint + '.servicename',
+          name: 'serviceName',
+          layout: 'fit',
+          anchor: '100% - 1',
+          border: false,
+          frame: false
+        }
         ];
     this.tbar = new Ext.Toolbar({
       items: [
-                {
-                  xtype: 'tbspacer',
-                  width: 4
-                },
-                {
-                  xtype: 'button',
-                  icon: 'Content/img/16x16/document-properties.png',
-                  text: 'Connect',
-                  tooltip: 'Connect',
-                  action: 'connecttodatabase'
+          {
+            xtype: 'tbspacer',
+            width: 4
+          },
+          {
+            xtype: 'button',
+            icon: 'Content/img/16x16/document-properties.png',
+            text: 'Connect',
+            tooltip: 'Connect',
+            action: 'connecttodatabase'
 
-                },
-                {
-                  xtype: 'tbspacer',
-                  width: 4
-                },
-                {
-                  xtype: 'button',
-                  icon: 'Content/img/16x16/edit-clear.png',
-                  text: 'Reset',
-                  tooltip: 'Reset to the latest applied changes',
-                  action: 'resettables'
+          },
+          {
+            xtype: 'tbspacer',
+            width: 4
+          },
+          {
+            xtype: 'button',
+            icon: 'Content/img/16x16/edit-clear.png',
+            text: 'Reset',
+            tooltip: 'Reset to the latest applied changes',
+            action: 'resettables'
 
-                }
-             ]
+          }
+        ]
     });
     this.callParent(arguments);
   },

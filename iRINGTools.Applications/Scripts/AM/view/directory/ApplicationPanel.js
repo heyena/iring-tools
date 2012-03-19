@@ -59,10 +59,13 @@
           load: function () {
             if (assembly != '') {
               cmbDataLayers.setValue(assembly);
-                        }
-                    }
-                }
-            }),
+            }
+          },
+          beforeLoad: function (store, action) {
+            store.proxy.extraParams.baseUrl = baseurl;
+          }
+        }
+      }),
       displayField: 'name',
       valueField: 'assembly',
       hiddenName: 'Assembly',
@@ -100,6 +103,7 @@
       }),
       displayField: 'baseurl',
       valueField: 'baseurl',
+      editable: true,
       hiddenName: 'Url',
       value: baseurl,
       listeners: {

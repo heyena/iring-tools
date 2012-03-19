@@ -120,6 +120,7 @@
           node = tree.getSelectedNode(),
           contextName = tree.contextName,
           endpoint = tree.endpoint,
+          baseUrl = tree.baseUrl,
           graphName = tree.graphName,
           index = node.parentNode.parentNode.parentNode.indexOf(node.parentNode.parentNode);
     Ext.Ajax.request({
@@ -128,6 +129,7 @@
       params: {
         contextName: contextName,
         endpoint: endpoint,
+        baseUrl: baseUrl,
         graphName: graphName,
         classId: node.data.identifier,
         className: getLastXString(node.data.id, 1),
@@ -148,6 +150,7 @@
           node = tree.getSelectedNode(),
           index = node.parentNode.indexOf(node),
           contextName = tree.contextName,
+          baseUrl = tree.baseUrl,
           endpoint = tree.endpoint;
 
     this.getParentClass(node);
@@ -157,6 +160,7 @@
       params: {
         contextName: contextName,
         endpoint: endpoint,
+        baseUrl: baseUrl,
         mappingNode: node.data.id,
         parentIdentifier: this.parentClass,
         identifier: node.data.identifier,
@@ -177,6 +181,7 @@
         index = node.parentNode.parentNode.indexOf(node.parentNode),
         contextName = tree.contextName,
         endpoint = tree.endpoint,
+        baseUrl = tree.baseUrl,
         graphName = tree.graphName;
 
     this.getParentClass(node);
@@ -186,6 +191,7 @@
       params: {
         contextName: contextName,
         endpoint: endpoint,
+        baseUrl: baseUrl,
         roleId: node.data.record.id,
         templateId: node.parentNode.data.record.id,
         parentClassId: node.parentNode.parentNode.data.identifier,
@@ -206,6 +212,7 @@
         index = node.parentNode.parentNode.indexOf(node.parentNode),
         graphName = tree.graphName,
         contextName = tree.contextName,
+        baseUrl = tree.baseUrl,
         endpoint = tree.endpoint;
     Ext.Ajax.request({
       url: 'mapping/makePossessor',
@@ -213,6 +220,7 @@
       params: {
         contextName: contextName,
         endpoint: endpoint,
+        baseUrl: baseUrl,
         graphName: graphName,
         roleName: getLastXString(node.data.id, 1),
         classId: node.parentNode.parentNode.data.identifier,
@@ -231,12 +239,14 @@
         node = tree.getSelectedNode(),
         graphName = tree.graphName,
         contextName = tree.contextName,
+        baseUrl = tree.baseUrl,
         endpoint = tree.endpoint;
     this.getParentClass(node);
     var conf = {
       tree: tree,
       contextName: contextName,
       endpoint: endpoint,
+      baseUrl: baseUrl,
       graphName: graphName,
       mappingNode: node,
       index: node.parentNode.parentNode.indexOf(node.parentNode),
@@ -262,11 +272,13 @@
       node = tree.getSelectedNode(),
       contextName = tree.contextName,
       endpoint = tree.endpoint,
+      baseUrl = tree.baseUrl,
       graphName = tree.graphName,
       conf = {
         tree: tree,
         contextName: contextName,
         endpoint: endpoint,
+        baseUrl: baseUrl,
         graphName: graphName,
         classId: node.parentNode.parentNode.data.identifier,
         mappingNode: node
@@ -293,6 +305,7 @@
         content = this.getMainContent(),
         contextName = node.data.property.context,
         endpoint = node.data.property.endpoint,
+        baseUrl = node.data.property.baseUrl,
         graphName = node.data.text,
         me = this;
 
@@ -300,6 +313,7 @@
       contextName: contextName,
       endpoint: endpoint,
       record: node,
+      baseUrl: baseUrl,
       graphName: graphName
     },
       maptree = Ext.widget('mappingtree', conf);
@@ -388,7 +402,8 @@
       method: 'POST',
       params: {
         mappingNode: node.data.id,
-        oldClassUrl: node.data.record.uri
+        oldClassUrl: node.data.record.uri,
+        baseUrl: node.data.property.baseUrl
       },
       success: function () {
         tree.onReload();
@@ -454,6 +469,7 @@
       params: {
         contextName: node.data.property.context,
         endpoint: node.data.property.endpoint,
+        baseUrl: node.data.property.baseUrl,
         valueList: getLastXString(node.id, 1)
       },
       success: function () {
@@ -580,6 +596,7 @@
       params: {
         contextName: node.data.property.context,
         endpoint: node.data.property.endpoint,
+        baseUrl: node.data.property.baseUrl,
         mappingNode: node.id,
         graphName: getLastXString(node.id, 1)
       },

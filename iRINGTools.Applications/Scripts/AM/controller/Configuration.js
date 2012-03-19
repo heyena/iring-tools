@@ -318,14 +318,15 @@
     });
   },
 
-  getDbdictionary: function (context, endpoint) {
+  getDbdictionary: function (context, endpoint, baseUrl) {
     Ext.Ajax.request({
       url: 'NHibernate/DBDictionary',
       method: 'POST',
       timeout: 6000000,
       params: {
         scope: context,
-        app: endpoint
+        app: endpoint,
+        baseUrl: baseUrl
       },
       success: function (response, request) {
         AM.view.nhibernate.dbDict.value = Ext.JSON.decode(response.responseText);
@@ -365,6 +366,8 @@
     var dbSchema = form.getForm().findField('dbSchema');
     var servieName = '';
     var serName = '';
+    var baseUrl = datatree.baseUrl;
+
     if (dbProvider.indexOf('ORACLE') > -1) {
       dbServer.setValue(host.getValue());
       dbName.setValue(dbSchema.getValue());
@@ -388,7 +391,8 @@
       params: {
         scope: form.contextName,
         app: form.endpoint,
-        serName: serName
+        serName: serName,
+        baseUrl: baseUrl
       },
       success: function (f, a) {
         AM.view.nhibernate.dbInfo.value = form.getForm().getValues();
@@ -487,7 +491,7 @@
     return dbInfo;
   },
 
-  getTableNames: function (context, endpoint) {
+  getTableNames: function (context, endpoint, baseUrl) {
     var dbInfo = AM.view.nhibernate.dbInfo.value;
     var dbDict = AM.view.nhibernate.dbDict.value;
     Ext.Ajax.request({
@@ -504,7 +508,8 @@
         dbPassword: dbInfo.dbPassword,
         portNumber: dbInfo.portNumber,
         tableNames: selectTableNames,
-        serName: dbInfo.serName
+        serName: dbInfo.serName,
+        baseUrl: baseUrl
       },
       success: function (response, request) {
         AM.view.nhibernate.dbTableNames = Ext.JSON.decode(response.responseText);
@@ -523,11 +528,12 @@
     var contextName = node.data.record.context;
     var datalayer = node.data.record.DataLayer;
     var endpoint = node.data.record.endpoint;
+    var baseUrl = node.data.record.BaseUrl;
 
     switch (datalayer) {
       case 'NHibernateLibrary':
 
-        this.getDbdictionary(contextName, endpoint);
+        this.getDbdictionary(contextName, endpoint, baseUrl);
         this.getDataTypes();
 
         conf = {
