@@ -8,6 +8,9 @@
         type: 'ajax',
         timeout: 600000,
         url: 'NHibernate/DBProviders',
+        extraParams: {
+          baseUrl: null
+        },
         reader: {
             type: 'json',
             root: 'items'//,
