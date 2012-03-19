@@ -9,6 +9,7 @@ Ext.define('AM.view.mapping.MapProperty', {
     application: null,
     contextName: null,
     endpoint: null,
+    baseUrl: null,
     graphName: null,
     height: 140,
     width: 430,
@@ -36,7 +37,7 @@ Ext.define('AM.view.mapping.MapProperty', {
                       var roleName = getLastXString(this.mappingNode.data.id, 1);
                       var index = this.mappingNode.parentNode.parentNode.indexOf(this.mappingNode.parentNode);
                       
-                      submitMapProperty(propertyName, this.graphName, relatedObject, roleName, this.classId, index, this.contextName, this.endpoint, this.tree, win);
+                      submitMapProperty(propertyName, this.graphName, relatedObject, roleName, this.classId, index, this.contextName, this.endpoint, this.baseUrl, this.tree, win);
                     }
                   } 
                 },
@@ -115,7 +116,7 @@ Ext.define('AM.view.mapping.MapProperty', {
     }
   });
 
-var submitMapProperty = function (propertyName, graphName, relatedObject, roleName, classId, index, contextName, endpoint, tree, win) {
+var submitMapProperty = function (propertyName, graphName, relatedObject, roleName, classId, index, contextName, endpoint, baseUrl, tree, win) {
   Ext.Ajax.request({
     url: 'mapping/mapproperty',
     timeout: 600000,
@@ -128,7 +129,8 @@ var submitMapProperty = function (propertyName, graphName, relatedObject, roleNa
       classId: classId,
       index: index,
       contextName: contextName,
-      endpoint: endpoint
+      endpoint: endpoint,
+      baseUrl: baseUrl
     },
     success: function (result, request) {
       var rtext = result.responseText;

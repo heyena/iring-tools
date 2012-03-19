@@ -3,6 +3,7 @@
   alias: 'widget.valuelistform',
   title: 'Map Valuelist to RoleMap',
   contextName: null,
+  baseUrl: null,
   mappingNode: null,
   graphName: null,
   classId: null,
@@ -34,7 +35,7 @@
                     var propertyName = mapValuelistForm.findField('propertyName').getValue();
                     
                     var roleName = getLastXString(this.mappingNode.data.id, 1);
-                    submitValuelistMap(valueListName, propertyName, relation, this.classId, roleName, this.graphName, this.contextName, this.endpoint, this.index, this.tree, win);
+                    submitValuelistMap(valueListName, propertyName, relation, this.classId, roleName, this.graphName, this.contextName, this.endpoint, this.baseUrl, this.index, this.tree, win);
                   }
                 }
               },
@@ -129,7 +130,7 @@
   }
 });
 
-var submitValuelistMap = function (valueListName, propertyName, relation, classId, roleName, graphName, contextName, endpoint, index, tree, win) {
+var submitValuelistMap = function (valueListName, propertyName, relation, classId, roleName, graphName, contextName, endpoint, baseUrl, index, tree, win) {
   Ext.Ajax.request({
     url: 'mapping/mapvaluelist',    
     method: 'POST',
@@ -141,6 +142,7 @@ var submitValuelistMap = function (valueListName, propertyName, relation, classI
       relatedObject: relation,
       contextName: contextName,
       endpoint: endpoint,
+      baseUrl: baseUrl,
       valueListName: valueListName,
       index: index
     },
