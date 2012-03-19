@@ -15,15 +15,15 @@ namespace iRINGTools.Web.Models
   {
     Directories GetScopes();
 
-    DataLayers GetDataLayers();
+    DataLayers GetDataLayers(string baseUrl);
 
     Tree GetDirectoryTree(string user);
 
-    DataLayer GetDataLayer(string contextName, string endpoint);
+    DataLayer GetDataLayer(string contextName, string endpoint, string baseUrl);
 
-    Mapping GetMapping(string contextName, string endpoint);
+    Mapping GetMapping(string contextName, string endpoint, string baseUrl);
 
-    DataDictionary GetDictionary(string contextName, string endpoint);
+    DataDictionary GetDictionary(string contextName, string endpoint, string baseUrl);
 
     Entity GetClassLabel(string classId);
 
@@ -39,7 +39,7 @@ namespace iRINGTools.Web.Models
 
     string GetUserLdap();
 
-    BaseUrls GetEndpointBaseUrl();
+    BaseUrls GetEndpointBaseUrl(string user);
 
     string GetCombinationMsg();
 
