@@ -11,7 +11,8 @@
             start: 0,
             limit: 25,
             endpoint: null,
-            graph: null    
+            graph: null,
+            baseUrl: null    
         },
         reader: {
             totalProperty: 'totalCount' 

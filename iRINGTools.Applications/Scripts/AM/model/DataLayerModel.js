@@ -10,7 +10,9 @@
         type: 'ajax',
         timeout: 6000000,
         actionMethods: { read: 'POST' },
-        extraParams: {},
+        extraParams: {
+          baseUrl: null
+        },
         url: 'directory/datalayers',
         reader: {
             type: 'json',
