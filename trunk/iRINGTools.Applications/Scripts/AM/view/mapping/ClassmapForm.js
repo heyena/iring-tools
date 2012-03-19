@@ -3,6 +3,7 @@
   alias: 'widget.classmapform',
   contextName: null,
   endpoint: null,
+  baseUrl: null,
   graphName: null,
   tree: null,
   mappingNode: null,
@@ -50,7 +51,7 @@
               }
 
               //(contextName, endpoint, propertyName, graphName, objectname, roleName, classurl, classlabel, relation, parentClassId, index, tree, win)
-              submitAddClassMap(this.contextName, this.endpoint, propertyName, this.graphName, dataObject, roleName, classurl, classlabel, relation, this.parentClassId, this.index, this.tree, win);
+              submitAddClassMap(this.contextName, this.endpoint, this.baseUrl, propertyName, this.graphName, dataObject, roleName, classurl, classlabel, relation, this.parentClassId, this.index, this.tree, win);
             }
           }
         },
@@ -170,13 +171,14 @@
   }
 });
 
-var submitAddClassMap = function (contextName, endpoint, propertyName, graphName, dataObject, roleName, classurl, classlabel, relation, parentClassId, index, tree, win) {
+var submitAddClassMap = function (contextName, endpoint, baseUrl, propertyName, graphName, dataObject, roleName, classurl, classlabel, relation, parentClassId, index, tree, win) {
   Ext.Ajax.request({
     url: 'mapping/addclassmap',
       method: 'POST',
       params: {
         contextName: contextName,
         endpoint: endpoint,
+        baseUrl: baseUrl,
         dataObject: dataObject,
         graphName: graphName,
         propertyName: propertyName,

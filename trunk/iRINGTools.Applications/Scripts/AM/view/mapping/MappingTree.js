@@ -17,6 +17,7 @@
   contextName: null,
   node: null,
   endpoint: null,
+  baseUrl: null,
   record: null,
   rootId: null,
   parentClass: null,
@@ -56,7 +57,8 @@
             range: null,
             graphName: this.graphName,
             contextName: this.contextName,
-            endpoint: this.endpoint
+            endpoint: this.endpoint,
+            baseUrl: this.baseUrl
           },
           reader: { type: 'json' }
         }
@@ -237,7 +239,8 @@
       method: 'POST',
       params: {
         contextName: me.contextName,
-        endpoint: me.endpoint
+        endpoint: me.endpoint,
+        baseUrl: me.baseUrl
       },
       success: function (result, request) {
         me.onReload();
@@ -323,7 +326,8 @@
           contextName: me.contextName,
           endpoint: me.endpoint,
           index: index,
-          graphName: graphName
+          graphName: graphName,
+          baseUrl: me.baseUrl
         },
         success: function (result, request) {
           tree.getEl().unmask();
@@ -353,6 +357,7 @@
         params: {
           contextName: me.contextName,
           endpoint: me.endpoint,
+          baseUrl: me.baseUrl,
           nodetype: thistype,
           parentType: ntype,
           parentId: parentid,
