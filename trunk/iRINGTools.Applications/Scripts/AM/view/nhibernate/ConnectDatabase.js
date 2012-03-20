@@ -20,9 +20,8 @@
     this.items = [
         {
           xtype: 'label',
-          fieldLabel: 'Configure Data Source',
-          labelSeparator: '',
-          itemCls: 'form-title'
+          text: 'Configure Data Source',          
+          cls: 'form-title'
         },
         {
           xtype: 'combo',
@@ -37,7 +36,93 @@
           value: 'MsSql2008',
           triggerAction: 'all',
           displayField: 'Provider',
-          valueField: 'Provider'//,
+          valueField: 'Provider',
+          listeners: { 'select': function (combo, record, index) {
+            var dbProvider = record[0].data.Provider.toUpperCase();
+            var dbName = me.getForm().findField('dbName');
+            var portNumber = me.getForm().findField('portNumber');
+            var host = me.getForm().findField('host');
+            var dbServer = me.getForm().findField('dbServer');
+            var dbInstance = me.getForm().findField('dbInstance');
+            var serviceName = me.items.items[10];
+            var dbSchema = me.getForm().findField('dbSchema');
+            var userName = me.getForm().findField('dbUserName');
+            var password = me.getForm().findField('dbPassword');
+
+            if (dbProvider.indexOf('ORACLE') > -1) {
+              if (dbName.hidden == false) {
+                dbName.hide();
+                dbServer.hide();
+                dbInstance.hide();
+              }
+
+              if (host.hidden == true) {
+                if (dbDict.Provider) {
+                  if (dbDict.Provider.toUpperCase().indexOf('ORACLE') > -1) {
+                    host.setValue(dbInfo.dbServer);
+                    serviceName.show();
+                    creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
+                    host.show();
+                    userName.setValue(dbInfo.dbUserName);
+                    password.setValue(dbInfo.dbPassword);
+                    dbSchema.setValue(dbDict.SchemaName);
+                  }
+                  else
+                    changeConfigOracle(host, dbSchema, userName, password, serviceName);
+                }
+                else
+                  changeConfigOracle(host, dbSchema, userName, password, serviceName);
+
+                portNumber.setValue('1521');
+                portNumber.show();
+              }
+            }
+            else if (dbProvider.indexOf('MSSQL') > -1) {
+              if (host.hidden == false) {
+                portNumber.hide();
+                host.hide();
+                serviceName.hide();
+              }
+
+              if (dbName.hidden == true) {
+                if (dbDict.Provider) {
+                  if (dbDict.Provider.toUpperCase().indexOf('MSSQL') > -1) {
+                    dbName.setValue(dbInfo.dbName);
+                    dbServer.setValue(dbInfo.dbServer);
+                    dbInstance.setValue(dbInfo.dbInstance);
+                    dbName.show();
+                    dbServer.show();
+                    dbInstance.show();
+                    dbSchema.setValue(dbDict.SchemaName);
+                    userName.setValue(dbInfo.dbUserName);
+                    password.setValue(dbInfo.dbPassword);
+                  }
+                  else
+                    changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password);
+                }
+                else
+                  changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password);
+              }
+
+              portNumber.setValue('1433');
+            }
+            else if (dbProvider.indexOf('MYSQL') > -1) {
+              if (dbServer.hidden == true) {
+                dbServer.setValue('');
+                dbServer.clearInvalid();
+                dbServer.show();
+              }
+
+              if (host.hidden == false) {
+                portNumber.hide();
+                host.hide();
+                serviceName.hide();
+                portNumber.setValue('3306');
+              }
+            }
+          }
+          }
+
 
         },
         {
