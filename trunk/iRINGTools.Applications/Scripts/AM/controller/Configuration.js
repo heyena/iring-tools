@@ -1,34 +1,35 @@
 ﻿Ext.define('AM.controller.Configuration', {
   extend: 'Ext.app.Controller',
   views: [
-      'spreadsheet.SpreadsheetSource'
-    , 'spreadsheet.SpreadsheetConfigPanel'
-    , 'common.PropertyPanel'
-    , 'common.ContentPanel'
-    , 'common.CenterPanel'
-    , 'nhibernate.TreePanel'
-    , 'nhibernate.SetDataObjectPanel'
-    , 'nhibernate.DataObjectPanel'
-    , 'nhibernate.EditorPanel'
-    , 'nhibernate.NHibernateTree'
-    , 'nhibernate.RadioField'
-    , 'nhibernate.ConnectDatabase'
-    , 'nhibernate.SelectTablesPanel'
-    , 'nhibernate.SelectKeysPanel'
-    , 'nhibernate.SelectPropertiesPanel'
-    , 'nhibernate.SetPropertyPanel'
-    , 'nhibernate.SetKeyPanel'
-    , 'nhibernate.CreateRelations'
-    , 'nhibernate.SetRelationPanel'
-    , 'nhibernate.Utility'
+     'spreadsheet.SpreadsheetSource',
+     'spreadsheet.SpreadsheetConfigPanel',
+     'common.PropertyPanel',
+     'common.ContentPanel',
+     'common.CenterPanel',
+     'nhibernate.TreePanel',
+     'nhibernate.SetDataObjectPanel',
+     'nhibernate.DataObjectPanel',
+     'nhibernate.EditorPanel',
+     'nhibernate.NHibernateTree',
+     'nhibernate.RadioField',
+     'nhibernate.ConnectDatabase',
+     'nhibernate.SelectTablesPanel',
+     'nhibernate.SelectKeysPanel',
+     'nhibernate.SelectPropertiesPanel',
+     'nhibernate.SetPropertyPanel',
+     'nhibernate.SetKeyPanel',
+     'nhibernate.CreateRelations',
+     'nhibernate.SetRelationPanel',
+     'nhibernate.Utility',
+     'nhibernate.RadioField'
     ],
   stores: [
-       'ProviderStore'
+       //'ProviderStore'
     ],
   models: [
-       'SpreadsheetModel'
-      , 'NHibernateTreeModel'
-      , 'ProviderModel'
+      'SpreadsheetModel',
+      'NHibernateTreeModel',
+      'ProviderModel'
     ],
   refs: [
       {
@@ -235,9 +236,9 @@
     };
     var conf = {
       contextName: editor.contextName,
-      endpoint: editor.endpoint,
-      width: 350,
-      region: 'center',
+      dbDict: dbDict,
+      endpoint: editor.endpoint,      
+      baseUrl: editor.baseUrl,      
       id: editor.contextName + '.' + editor.endpoint + '.conform'
     };
 
@@ -253,47 +254,7 @@
     editor.getLayout().setActiveItem(panelIndex);
   },
 
-  onSaveSpreadsheet: function () {
-    var tree = this.getDirTree(),
-        node = tree.getSelectedNode();
-    var contextName = node.data.record.context;
-    var datalayer = node.data.record.Assembly;
-    var endpointName = node.data.record.endpoint;
-    Ext.Ajax.request({
-      url: 'spreadsheet/configure',    // where you wanna post
-      method: 'POST',
-      success: function (f, a) {
-
-      },   // function called on success
-      failure: function (f, a) {
-
-      },
-      params: {
-        context: contextName,
-        endpoint: endpointName,
-        DataLayer: datalayer
-      }
-    });
-  },
-  onUploadspreadsheet: function (panel) {
-    var tree = this.getDirTree(),
-        node = tree.getSelectedNode();
-    var contextName = node.data.record.context;
-    var datalayer = node.data.record.DataLayer;
-    var endpoint = node.data.record.endpoint;
-    var that = this;
-    var sourceconf = {
-      width: 450,
-      title: 'Upload ' + contextName + '-' + endpoint,
-      context: contextName,
-      endpoint: endpoint,
-      DataLayer: datalayer,
-      method: 'POST',
-      url: 'spreadsheet/upload'
-    },
-        form = Ext.widget('spreadsheetsource', sourceconf);
-    form.show();
-  },
+  
 
   getDataTypes: function () {
     Ext.Ajax.request({
@@ -551,12 +512,14 @@
         var treeconf = {
           contextName: contextName,
           endpoint: endpoint,
+          baseUrl: baseUrl,
           region: 'west',
           layout: 'fit'
         };
         var editconf = {
           contextName: contextName,
           endpoint: endpoint,
+          baseUrl: baseUrl,
           region: 'center',
           width: 400,
           height: 200
@@ -705,6 +668,48 @@
       selectedItems.push([keyName, keyName]);
     }
     return selectedItems;
-  }
+  },
+  
+  onSaveSpreadsheet: function () {
+    var tree = this.getDirTree(),
+        node = tree.getSelectedNode();
+    var contextName = node.data.record.context;
+    var datalayer = node.data.record.Assembly;
+    var endpointName = node.data.record.endpoint;
+    Ext.Ajax.request({
+      url: 'spreadsheet/configure',    // where you wanna post
+      method: 'POST',
+      success: function (f, a) {
+
+      },   // function called on success
+      failure: function (f, a) {
+
+      },
+      params: {
+        context: contextName,
+        endpoint: endpointName,
+        DataLayer: datalayer
+      }
+    });
+  },
+  onUploadspreadsheet: function (panel) {
+    var tree = this.getDirTree(),
+        node = tree.getSelectedNode();
+    var contextName = node.data.record.context;
+    var datalayer = node.data.record.DataLayer;
+    var endpoint = node.data.record.endpoint;
+    var that = this;
+    var sourceconf = {
+      width: 450,
+      title: 'Upload ' + contextName + '-' + endpoint,
+      context: contextName,
+      endpoint: endpoint,
+      DataLayer: datalayer,
+      method: 'POST',
+      url: 'spreadsheet/upload'
+    },
+        form = Ext.widget('spreadsheetsource', sourceconf);
+    form.show();
+  },
 
 });

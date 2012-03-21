@@ -4,118 +4,117 @@ Ext.define('AM.view.nhibernate.RadioField', {
   alias: 'widget.radiotextfield',
   value: null,
   serName: null,
+  bodyStyle: 'background:#eee',
+  layout: 'column',
+  border: false,
+  frame: false,
+  items: [],
 
   initComponent: function () {
-      this.callParent(arguments);
-		//Ext.apply(this, config);
+    var serName = this.serName;
+    var value = this.value;
+    var me = this;
 
-		this.bodyStyle = 'background:#eee';
+    var field1 = Ext.create('Ext.form.TextField', {
+      disabled: true,
+      labelWidth: 125,
+      allowBlank: false,
+      fieldLabel: 'Sid',
+      value: value,
+      name: 'field_sid',
+      listeners: {
+        'change': function (field, newValue, oldValue) {
+          me.value = newValue.toUpperCase();
+        }
+      }
+    });
 
-		this.radioGroup = new Ext.form.RadioGroup({
-			columns: 1,
-			items: [{
-				name: 'sid',
-				inputValue: 0,
-				style: 'margin-top: 4px'
-			}, {
-				name: 'sid',
-				inputValue: 1,
-				style: 'margin-top: 4px'
-			}]
-		});
+    var field2 = Ext.create('Ext.form.TextField', {
+      disabled: true,
+      labelWidth: 125,
+      allowBlank: false,
+      fieldLabel: 'Service Name',
+      value: value,
+      name: 'field_serviceName',
+      listeners: {
+        'change': function (field, newValue, oldValue) {
+          me.value = newValue.toUpperCase();
+        }
+      }
+    });
 
-		var that = this;
-		this.field1 = new Ext.form.TextField({
-			disabled: true,
-			allowBlank: false,
-			fieldLabel: 'Sid',
-			value: this.value,
-			name: 'field_sid',
-			listeners: {
-				'change': function (field, newValue, oldValue) {
-					that.value = newValue.toUpperCase();
-				}
-			}
-		});
+    var radioGroup = Ext.create('Ext.form.RadioGroup', {
+      columns: 1,
+      items: [{
+        name: 'sid',
+        inputValue: 0,
+        style: 'margin-top: 4px'
+      }, {
+        name: 'sid',
+        inputValue: 1,
+        style: 'margin-top: 4px'
+      }],
+      listeners: {
+        'change': function (e, changed) {
+          if (changed) {
+            var value = radioGroup.getValue().sid;
+            if (value == 0) {
+              field2.disable();
+              field2.clearInvalid();
+              field1.enable();
+              field1.focus();
+              serName = 'SID';
+            }
+            else {
+              field1.clearInvalid();
+              field1.disable();
+              field2.enable();
+              field2.focus();
+              serName = 'SERVICE_NAME';
+            }
+          }
+        }
+      }
+    });
 
-		this.field2 = new Ext.form.TextField({
-			disabled: true,
-			allowBlank: false,
-			fieldLabel: 'Service Name',
-			value: this.value,
-			name: 'field_serviceName',
-			listeners: {
-				'change': function (field, newValue, oldValue) {
-					that.value = newValue.toUpperCase();
-				}
-			}
-		});
+    this.items = [{
+      width: 25,
+      layout: 'fit',
+      labelWidth: 0.1,      
+      border: false,
+      frame: false,  
+      bodyStyle: 'background:#eee',
+      items: [radioGroup]
+    }, {
+      columnWidth: 1,      
+      bodyStyle: 'background:#eee',
+      border: false,
+      frame: false,
+      defaults: { anchor: '100%' },
+      layout: 'anchor',      
+      items: [ field1, field2 ]
+    }];   
 
-		if (this.serName != '') {
-			if (this.serName.toUpperCase() == 'SID') {
-				this.field1.disabled = false;
-				this.field2.disabled = true;
+    if (serName != '') {
+      if (serName.toUpperCase() == 'SID') {
+        field1.disabled = false;
+        field2.disabled = true;
+        field2.value = '';
+        radioGroup.items[0].checked = true;
+      }
+      else {
+        field1.disabled = true;
+        field1.value = '';
+        field2.disabled = false;
+        radioGroup.items[1].checked = true;
+      }
+    }
 
-				this.field2.value = '';
-				this.radioGroup.items[0].checked = true;
-			}
-			else {
-				this.field1.disabled = true;
-				this.field1.value = '';
-				this.field2.disabled = false;
-				this.radioGroup.items[1].checked = true;
-			}
-		}
 
-		this.layout = 'column';
-		this.border = false;
-		this.frame = false;
 
-		this.add([{
-			width: 40,
-			layout: 'form',
-			labelWidth: 0.1,
-			items: this.radioGroup,
-			border: false,
-			frame: false,
-			bodyStyle: 'background:#eee'
-		}, {
-			columnWidth: 1,
-			layout: 'form',
-			labelWidth: 110,
-			defaults: { anchor: '100%', allowBlank: false },
-			items: [this.field1, this.field2],
-			border: false,
-			frame: false,
-			bodyStyle: 'background:#eee'
-		}]);
-
-		this.subscribeEvents();
-	},
-	subscribeEvents: function () {
-		this.radioGroup.on('change', this.toggleState, this);
-	},
-	toggleState: function (e, changed) {
-		if (changed) {
-			var value = this.radioGroup.getValue().inputValue;
-			if (value == 0) {
-				this.field2.disable();
-				this.field2.clearInvalid();
-				this.field1.enable();
-				this.field1.focus();
-				this.serName = 'SID';
-			}
-			else {
-				this.field1.clearInvalid();
-				this.field1.disable();
-				this.field2.enable();
-				this.field2.focus();
-				this.serName = 'SERVICE_NAME';
-			}
-		}
-	}
+    this.callParent(arguments);
+  }
 });
-
 
 function creatRadioField(panel, idLabel, value, serName) {
 	if (panel.items) {
@@ -125,13 +124,15 @@ function creatRadioField(panel, idLabel, value, serName) {
 		}
 	}
 
-	var radioField = new RadioField({
-		id: idLabel + 'radioField',
-		value: value,
-		serName: serName
-	});
+  var conf = {
+    value: value,
+    serName: serName,
+    id: idLabel + 'radioField'
+  };
 
-	panel.add(radioField);
+  var radioField = Ext.widget('radiotextfield', conf);
+	
+	panel.items.add(radioField);
 	panel.doLayout();
 }
 
