@@ -5,6 +5,7 @@ Ext.define('AM.view.search.SearchPanel', {
     title: 'Reference Data Search',
     layout: 'border',
     margins: '0 0 5 0',
+    collapsible: true,
     height: 250,
     split: true,
     store: null,

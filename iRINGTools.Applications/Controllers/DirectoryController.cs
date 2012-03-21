@@ -56,6 +56,7 @@ namespace org.iringtools.web.controllers
           case "ScopesNode":
             {
               string user = GetUserId((IDictionary<string, string>)_allClaims);
+              Session[user + "." + "directory"] = null;
               Tree directoryTree = _repository.GetDirectoryTree(user);
               return Json(directoryTree.getNodes(), JsonRequestBehavior.AllowGet);
             }
