@@ -8,6 +8,7 @@ Ext.define('AM.view.nhibernate.DataObjectPanel', {
   border: false,
   contextName: null,
   endpoint: null,
+  baseUrl: null,
   items: [],
   initComponent: function () {
     this.callParent(arguments);
