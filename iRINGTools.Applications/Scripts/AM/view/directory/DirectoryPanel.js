@@ -1,4 +1,4 @@
-﻿/// <reference path="../../../extjs40/ext-debug.js" />
+﻿/// <reference path="../../../extjs407/ext-debug.js" />
 Ext.define('AM.view.directory.DirectoryPanel', {
     extend: 'Ext.panel.Panel',
     alias: 'widget.directorypanel',

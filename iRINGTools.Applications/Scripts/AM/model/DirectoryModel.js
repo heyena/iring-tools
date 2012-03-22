@@ -1,4 +1,4 @@
-﻿/// <reference path="../../extjs40/ext-debug.js" />
+﻿/// <reference path="../../extjs407/ext-debug.js" />
 
 Ext.define('AM.model.DirectoryModel', {
     extend: 'Ext.data.Model',
@@ -10,21 +10,5 @@ Ext.define('AM.model.DirectoryModel', {
          { name: 'text', type: 'string' },
          { name: 'type', type: 'string' },
          { name: 'record', type: 'object' }
-    ]//,
-//    idProperty: 'id',
-//    proxy: {
-//        type: 'ajax',
-//        timeout: 600000,
-//        url: 'directory/getnode',
-//        actionMethods: { read: 'POST' },
-//        extraParams: {
-//        id: null,
-//        type: 'ScopesNode',
-//        contextName: null,
-//        endpoint: null,
-//        related: null,
-//        security: null
-//      },
-//      reader: { type: 'json' }
-//    }
+    ]
 });

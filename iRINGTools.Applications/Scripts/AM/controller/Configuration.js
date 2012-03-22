@@ -44,10 +44,6 @@
         ref: 'dataTree',
         selector: 'nhibernatetreepanel'
       },
-       {
-         ref: 'dataPanel',
-         selector: 'nhibernatepanel'
-       },
       {
         ref: 'editPanel',
         selector: 'editorpanel'
@@ -229,6 +225,7 @@
 
     var editor = this.getEditPanel();
     var dbDict = AM.view.nhibernate.dbDict.value;
+    var dbInfo = AM.view.nhibernate.dbInfo.value;
     if (dbDict) {
       var cstr = dbDict.ConnectionString;
       if (cstr)
@@ -237,6 +234,7 @@
     var conf = {
       contextName: editor.contextName,
       dbDict: dbDict,
+      dbInfo: dbInfo,
       endpoint: editor.endpoint,      
       baseUrl: editor.baseUrl,      
       id: editor.contextName + '.' + editor.endpoint + '.conform'
@@ -280,6 +278,7 @@
   },
 
   getDbdictionary: function (context, endpoint, baseUrl) {
+    var me = this;
     Ext.Ajax.request({
       url: 'NHibernate/DBDictionary',
       method: 'POST',
@@ -292,12 +291,23 @@
       success: function (response, request) {
         AM.view.nhibernate.dbDict.value = Ext.JSON.decode(response.responseText);
         var dbDict = AM.view.nhibernate.dbDict.value;
-        if (dbDict.ConnectionString) {
+        if (dbDict.ConnectionString != null) {
           var base64 = AM.view.nhibernate.Utility;
           AM.view.nhibernate.dbDict.value.ConnectionString = base64.decode(dbDict.ConnectionString);
         }
+        else {
+          var datatree = me.getDataTree();
+          datatree.disable();
+
+          if (AM.view.nhibernate.dbInfo.value == null)
+            AM.view.nhibernate.dbInfo.value = {};
+
+          var dbTables = me.onEditDbConnection();
+        }
       },
       failure: function (response, request) {
+        var dataObjPanel = this.getDataObjectPanel();
+
         //                setDsConfigPane(scopeName, appName);
       }
     });
@@ -388,8 +398,8 @@
     var dbDict = AM.view.nhibernate.dbDict.value;
     var provider = dbDict.Provider.toUpperCase();
     if (!dbInfo)
-      dbInfo = {};
-    dbInfo.dbName = dbDict.SchemaName;
+      AM.view.nhibernate.dbInfo = {};
+    AM.view.nhibernate.dbInfo.dbName = dbDict.SchemaName;
 
     if (!dbInfo.dbUserName)
       for (var i = 0; i < connStrParts.length; i++) {
@@ -398,14 +408,14 @@
           case 'DATA SOURCE':
             if (provider.indexOf('MSSQL') > -1) {
               var dsValue = pair[1].split('\\');
-              dbInfo.dbServer = (dsValue[0].toLowerCase() == '.' ? 'localhost' : dsValue[0]);
-              dbInfo.dbInstance = dsValue[1];
-              dbInfo.portNumber = 1433;
-              dbInfo.serName = '';
+              AM.view.nhibernate.dbInfo.dbServer = (dsValue[0].toLowerCase() == '.' ? 'localhost' : dsValue[0]);
+              AM.view.nhibernate.dbInfo.dbInstance = dsValue[1];
+              AM.view.nhibernate.dbInfo.portNumber = 1433;
+              AM.view.nhibernate.dbInfo.serName = '';
             }
             else if (provider.indexOf('MYSQL') > -1) {
-              dbInfo.dbServer = (pair[1].toLowerCase() == '.' ? 'localhost' : pair[1]);
-              dbInfo.portNumber = 3306;
+              AM.view.nhibernate.dbInfo.dbServer = (pair[1].toLowerCase() == '.' ? 'localhost' : pair[1]);
+              AM.view.nhibernate.dbInfo.portNumber = 3306;
             }
             else if (provider.indexOf('ORACLE') > -1) {
               var dsStr = connStrParts[i].substring(12, connStrParts[i].length);
@@ -418,38 +428,37 @@
                     var port = dsValue[j + 2];
                     var index = server.indexOf(')');
                     server = server.substring(0, index);
-                    dbInfo.portNumber = port.substring(0, 4);
-                    dbInfo.dbServer = (server.toLowerCase() == '.' ? 'localhost' : server);
+                    AM.view.nhibernate.dbInfo.portNumber = port.substring(0, 4);
+                    AM.view.nhibernate.dbInfo.dbServer = (server.toLowerCase() == '.' ? 'localhost' : server);
                     break;
                   case 'SERVICE_NAME':
                     var sername = dsValue[j + 1];
                     index = sername.indexOf(')');
-                    dbInfo.dbInstance = sername.substring(0, index);
-                    dbInfo.serName = 'SERVICE_NAME';
+                    AM.view.nhibernate.dbInfo.dbInstance = sername.substring(0, index);
+                    AM.view.nhibernate.dbInfo.serName = 'SERVICE_NAME';
                     break;
                   case 'SID':
                     var sername = dsValue[j + 1];
                     index = sername.indexOf(')');
-                    dbInfo.dbInstance = sername.substring(0, index);
-                    dbInfo.serName = 'SID';
+                    AM.view.nhibernate.dbInfo.dbInstance = sername.substring(0, index);
+                    AM.view.nhibernate.dbInfo.serName = 'SID';
                     break;
                 }
               }
             }
             break;
           case 'INITIAL CATALOG':
-            dbInfo.dbName = pair[1];
+            AM.view.nhibernate.dbInfo.dbName = pair[1];
             break;
           case 'USER ID':
-            dbInfo.dbUserName = pair[1];
+            AM.view.nhibernate.dbInfo.dbUserName = pair[1];
             break;
           case 'PASSWORD':
-            dbInfo.dbPassword = pair[1];
+            AM.view.nhibernate.dbInfo.dbPassword = pair[1];
             break;
         }
       }
-    AM.view.nhibernate.dbInfo.value = dbInfo;
-    return dbInfo;
+    return AM.view.nhibernate.dbInfo;
   },
 
   getTableNames: function (context, endpoint, baseUrl) {
@@ -492,16 +501,14 @@
     var baseUrl = node.data.record.BaseUrl;
 
     switch (datalayer) {
-      case 'NHibernateLibrary':
-
-        this.getDbdictionary(contextName, endpoint, baseUrl);
-        this.getDataTypes();
+      case 'NHibernateLibrary':       
 
         conf = {
           id: contextName + '.' + endpoint + '.-nh-config',
           title: 'NHibernate Configuration - ' + contextName + '.' + endpoint,
           contextName: contextName,
           endpoint: endpoint,
+          baseUrl: baseUrl,
           layout: {
             type: 'border',
             padding: 2
@@ -524,7 +531,7 @@
           width: 400,
           height: 200
         };
-        var nhpan = Ext.widget('panel', conf);
+        var nhpan = Ext.widget('dataobjectpanel', conf);
 
         var nhtree = Ext.widget('nhibernatetreepanel', treeconf);
         var store = nhtree.getStore();
@@ -572,7 +579,13 @@
           exist.show();
         }
         dirtree.applicationMenu.hide();
+
+        this.getDataTypes();
+        this.getDbdictionary(contextName, endpoint, baseUrl);
+
+        
         break;
+
 
       case 'SpreadsheetDatalayer':
         var conf =

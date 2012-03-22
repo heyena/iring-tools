@@ -4,26 +4,30 @@
   frame: false,
   border: false,
   dbDict: null,
+  dbInfo: null,
   autoScroll: true,
   contextName: null,
   endpoint: null,
   baseUrl: null,
   bodyStyle: 'background:#eee;padding:10px 0px 0px 10px',
   monitorValid: true,
-  
+
   initComponent: function () {
     var me = this;
     var contextName = this.contextName;
     var endpoint = this.endpoint;
     var dbDict = this.dbDict;
     var baseUrl = this.baseUrl;
-    
+    var dbInfo = this.dbInfo;
+    var dbDict = this.dbDict;
+
     this.items = [
         {
           xtype: 'label',
           text: 'Configure Data Source',
           anchor: '100%',
-          cls: 'form-title'
+          cls: 'x-form-item',
+          style: 'font-weight:bold;'
         },
         {
           xtype: 'combo',
@@ -32,21 +36,20 @@
           anchor: '100%',
           hiddenName: 'dbProvider',
           name: 'dbProvider',
-          allowBlank: false,
+          editable: false,
+          mode: 'local',          
+          value: 'MsSql2008',
+          triggerAction: 'all',
+          displayField: 'Provider',
+          valueField: 'Provider',
           store: Ext.create('Ext.data.Store', {
             model: 'AM.model.ProviderModel',
-            listeners: {              
+            listeners: {
               beforeLoad: function (store, action) {
                 store.proxy.extraParams.baseUrl = baseUrl;
               }
             }
           }),
-          mode: 'local',
-          editable: false,
-          value: 'MsSql2008',
-          triggerAction: 'all',
-          displayField: 'Provider',
-          valueField: 'Provider',
           listeners: { 'select': function (combo, record, index) {
             var dbProvider = record[0].data.Provider.toUpperCase();
             var dbName = me.getForm().findField('dbName');
@@ -132,8 +135,6 @@
             }
           }
           }
-
-
         },
         {
           xtype: 'textfield',
@@ -164,7 +165,7 @@
           allowBlank: false
         },
         {
-        	xtype: 'textfield',
+          xtype: 'textfield',
           name: 'dbInstance',
           anchor: '100%',
           labelWidth: 150,
@@ -251,12 +252,18 @@
             icon: 'Content/img/16x16/edit-clear.png',
             text: 'Reset',
             tooltip: 'Reset to the latest applied changes',
-            action: 'resettables'
-
+            handler: function (f) {
+              setDsConfigFields(me, dbInfo, dbDict);
+            }
           }
         ]
     });
+
     this.callParent(arguments);
+
+    if (dbDict.Provider) {
+      setDsConfigFields(me, dbInfo, dbDict)
+    }   
   },
 
   setActiveRecord: function (record) {
@@ -284,5 +291,127 @@ function changeConfigOracle(host, dbSchema, userName, password, serviceName) {
   password.clearInvalid();
   serviceName.show();
   creatRadioField(serviceName, serviceName.id, '', '', 1);
-}
+};
+
+function changeConfig(dbName, dbServer, dbInstance, dbSchema, userName, password) {
+  dbName.setValue('');
+  dbName.clearInvalid();
+  dbName.show();
+
+  dbServer.setValue('localhost');
+  dbServer.show();
+
+  dbInstance.setValue('default');
+  dbInstance.show();
+
+  dbSchema.setValue('dbo');
+
+  userName.setValue('');
+  userName.clearInvalid();
+
+  password.setValue('');
+  password.clearInvalid();
+};
+
+function setDsConfigFields(dsConfigPane, dbInfo, dbDict) {
+  var dsConfigForm = dsConfigPane.getForm();
+  var Provider = null;
+
+  if (dbDict.Provider)
+    Provider = dbDict.Provider.toUpperCase();
+
+  var dbName = dsConfigForm.findField('dbName');
+  var portNumber = dsConfigForm.findField('portNumber');
+  var host = dsConfigForm.findField('host');
+  var dbServer = dsConfigForm.findField('dbServer');
+  var dbInstance = dsConfigForm.findField('dbInstance');
+  var serviceName = dsConfigPane.items.items[10];
+  var dbSchema = dsConfigForm.findField('dbSchema');
+  var userName = dsConfigForm.findField('dbUserName');
+  var password = dsConfigForm.findField('dbPassword');
+  var dbProvider = dsConfigForm.findField('dbProvider');
+
+  if (dbInfo) {
+    if (Provider) {
+      if (Provider.indexOf('ORACLE') > -1)
+        setDSOracle(portNumber, host, serviceName, dbServer, dbInstance, dbName, dbProvider, userName, password, dbSchema, dbInfo, dbDict);
+      else if (Provider.indexOf('MSSQL') > -1)
+        setDSMSSql(portNumber, host, serviceName, dbServer, dbInstance, dbName, dbProvider, userName, password, dbSchema, dbInfo, dbDict);
+    }
+    else
+    //new application setting default value
+      setDSDefault(portNumber, host, serviceName, dbServer, dbInstance, dbName, dbProvider, userName, password, dbSchema);
+  }
+  else {
+    //new application setting default value
+    setDSDefault(portNumber, host, serviceName, dbServer, dbInstance, dbName, dbProvider, userName, password, dbSchema);
+  }
+};
+
+
+function setDSDefault(portNumber, host, serviceName, dbServer, dbInstance, dbName, dbProvider, userName, password, dbSchema) {
+  dbServer.setValue('localhost');
+  dbServer.show();
+  dbInstance.setValue('default');
+  dbInstance.show();
+  dbSchema.setValue('dbo');
+  portNumber.setValue('1433');
+  portNumber.hide();
+
+  dbName.setValue('');
+  dbName.clearInvalid();
+  dbName.show();
+  userName.setValue('');
+  password.setValue('');
+  dbProvider.setValue('MsSql2008');
+  host.setValue('');
+  host.hide();
+  serviceName.hide();
+
+  userName.clearInvalid();
+  password.clearInvalid();
+};
+
+function setDSMSSql(portNumber, host, serviceName, dbServer, dbInstance, dbName, dbProvider, userName, password, dbSchema, dbInfo, dbDict) {
+  portNumber.hide();
+  host.hide();
+  serviceName.hide();
+
+  dbServer.setValue(dbInfo.dbServer);
+  dbServer.show();
+  dbInstance.setValue(dbInfo.dbInstance);
+  dbInstance.show();
+  dbName.setValue(dbInfo.dbName);
+  dbName.show();
+  dbProvider.setValue(dbDict.Provider);
+  host.setValue(dbInfo.dbServer);
+  portNumber.setValue(dbInfo.portNumber);
+  userName.setValue(dbInfo.dbUserName);
+  password.setValue(dbInfo.dbPassword);
+  dbSchema.setValue(dbDict.SchemaName);
+};
+
+function setDSOracle(portNumber, host, serviceName, dbServer, dbInstance, dbName, dbProvider, userName, password, dbSchema, dbInfo, dbDict) {
+  dbName.hide();
+  dbServer.hide();
+  dbInstance.hide();
+
+  dbServer.setValue(dbInfo.dbServer);
+  dbInstance.setValue(dbInfo.dbInstance);
+  dbName.setValue(dbInfo.dbName);
+
+  userName.setValue(dbInfo.dbUserName);
+  password.setValue(dbInfo.dbPassword);
+  dbProvider.setValue(dbDict.Provider);
+  dbSchema.setValue(dbDict.SchemaName);
+
+  host.setValue(dbInfo.dbServer);
+  host.show();
+
+  serviceName.show();
+  creatRadioField(serviceName, serviceName.id, dbInfo.dbInstance, dbInfo.serName);
+
+  portNumber.setValue(dbInfo.portNumber);
+  portNumber.show();
+};
 
